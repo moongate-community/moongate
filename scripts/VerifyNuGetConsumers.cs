@@ -1,6 +1,9 @@
+#:package Npgsql@5.0.18
+
 using System.Diagnostics;
 using System.Text.RegularExpressions;
 using System.Xml.Linq;
+using Npgsql;
 
 namespace Moongate.Tools.Internal;
 
@@ -51,10 +54,12 @@ internal static class VerifyNuGetConsumers
                 Directory.CreateDirectory(directory);
                 ExtractExamples(Path.Combine(repository, "src", id, "README.md"), directory, id);
                 WriteProject(repository, directory, id, version);
-                await RunDotnetAsync(directory, cache, "restore", "Consumer.csproj", "--configfile", config);
-                await RunDotnetAsync(directory, cache, "build", "Consumer.csproj", "-c", "Release", "--no-restore");
-                var stdout = await RunDotnetAsync(directory, cache,
-                    "run", "--project", "Consumer.csproj", "-c", "Release", "--no-build", "--no-restore");
+                await RunDotnetAsync(directory, cache, null, "restore", "Consumer.csproj", "--configfile", config);
+                await RunDotnetAsync(directory, cache, null, "build", "Consumer.csproj", "-c", "Release", "--no-restore");
+                var stdout = id == "Moongate.Persistence"
+                    ? await RunPersistenceConsumerAsync(directory, cache)
+                    : await RunDotnetAsync(directory, cache, null,
+                        "run", "--project", "Consumer.csproj", "-c", "Release", "--no-build", "--no-restore");
                 var lastLine = stdout.Split('\n', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries).LastOrDefault();
                 if (lastLine != expectedOutput)
                 {
@@ -101,6 +106,7 @@ internal static class VerifyNuGetConsumers
         if (id == "Moongate.Persistence")
         {
             expected.Add("Player.cs");
+            expected.Add("PlayerModule.cs");
         }
         if (id == "Moongate.Api")
         {
@@ -122,13 +128,6 @@ internal static class VerifyNuGetConsumers
     {
         var references = new XElement("ItemGroup",
             new XElement("PackageReference", new XAttribute("Include", id), new XAttribute("Version", $"[{version}]")));
-        if (id == "Moongate.Persistence")
-        {
-            var project = XDocument.Load(Path.Combine(repository, "src", id, $"{id}.csproj"));
-            var memoryPack = project.Descendants("PackageReference").Single(reference => (string?)reference.Attribute("Include") == "MemoryPack");
-            references.Add(new XElement("PackageReference", new XAttribute("Include", "MemoryPack"),
-                new XAttribute("Version", memoryPack.Attribute("Version")!.Value)));
-        }
         if (id == "Moongate.Api")
         {
             var project = XDocument.Load(Path.Combine(repository, "src", id, $"{id}.csproj"));
@@ -145,7 +144,47 @@ internal static class VerifyNuGetConsumers
                 new XElement("IsPackable", "false")), references)).Save(Path.Combine(directory, "Consumer.csproj"));
     }
 
-    private static async Task<string> RunDotnetAsync(string workingDirectory, string cacheDirectory, params string[] arguments)
+    private static async Task<string> RunPersistenceConsumerAsync(string directory, string cache)
+    {
+        var adminConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_POSTGRES_CONNECTION_STRING");
+        if (string.IsNullOrWhiteSpace(adminConnectionString))
+        {
+            throw new InvalidOperationException(
+                "MOONGATE_TEST_POSTGRES_CONNECTION_STRING is required to run the Moongate.Persistence package example.");
+        }
+
+        var databaseName = $"moongate_test_nuget_{Guid.NewGuid():N}";
+        var quotedDatabaseName = new NpgsqlCommandBuilder().QuoteIdentifier(databaseName);
+        await using var admin = new NpgsqlConnection(adminConnectionString);
+        await admin.OpenAsync();
+        await using (var create = new NpgsqlCommand($"CREATE DATABASE {quotedDatabaseName}", admin))
+        {
+            await create.ExecuteNonQueryAsync();
+        }
+
+        try
+        {
+            var runtime = new NpgsqlConnectionStringBuilder(adminConnectionString)
+            {
+                Database = databaseName,
+                Pooling = false
+            };
+            return await RunDotnetAsync(directory, cache,
+                new Dictionary<string, string> { ["MOONGATE_PERSISTENCE_DATABASE"] = runtime.ConnectionString },
+                "run", "--project", "Consumer.csproj", "-c", "Release", "--no-build", "--no-restore");
+        }
+        finally
+        {
+            await using var drop = new NpgsqlCommand($"DROP DATABASE {quotedDatabaseName} WITH (FORCE)", admin);
+            await drop.ExecuteNonQueryAsync();
+        }
+    }
+
+    private static async Task<string> RunDotnetAsync(
+        string workingDirectory,
+        string cacheDirectory,
+        IReadOnlyDictionary<string, string>? environment = null,
+        params string[] arguments)
     {
         var start = new ProcessStartInfo("dotnet")
         {
@@ -155,6 +194,13 @@ internal static class VerifyNuGetConsumers
             UseShellExecute = false
         };
         start.Environment["NUGET_PACKAGES"] = cacheDirectory;
+        if (environment is not null)
+        {
+            foreach (var (name, value) in environment)
+            {
+                start.Environment[name] = value;
+            }
+        }
         foreach (var argument in arguments)
         {
             start.ArgumentList.Add(argument);

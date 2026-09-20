@@ -11,7 +11,7 @@ using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Tests.Support.Events;
-using Moongate.Tests.Support.Persistence;
+using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.Support.Server;
 using Moongate.Tests.Support.Server.Interfaces;
 using Moongate.Tests.TestSupport.Plugins;
@@ -57,24 +57,21 @@ public sealed class PluginLifecycleEventTests
     [Fact]
     public async Task StartAndStopAsync_PluginCallbacks_ObservePersistenceAndContainerPhaseOrder()
     {
-        using var root = new TemporaryPersistenceDirectory();
+        await using var fixture = await HostPersistenceFixture.CreateAsync();
         var events = new List<string>();
         var serial = new Serial(0x40000001);
         var service = new RecordingStartupService("plugin", events);
-        var container = new Container();
-        container.RegisterMoongatePersistence(root.Path)
-            .RegisterDataAccess<TestEntity>("items")
-            .RegisterMoongateService<MoongatePersistenceStartupService>(MoongatePersistenceStartupService.StartupPriority);
+        var container = fixture.Container;
+        fixture.RegisterEntity();
         container.RegisterInstance(new RecordingDisposable(events, "container:dispose"));
         var plugin = CreatePlugin(pluginContainer =>
         {
             events.Add("plugin:register");
             pluginContainer.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
-            pluginContainer.OnEvent<MoongateStartedEvent>((_, _) =>
+            pluginContainer.OnEvent<MoongateStartedEvent>(async (_, _) =>
             {
-                Assert.Empty(pluginContainer.Resolve<IDataAccess<TestEntity>>().GetAll());
+                Assert.Empty(await pluginContainer.Resolve<IDataAccess<TestEntity>>().GetAllAsync(CancellationToken.None));
                 events.Add("started");
-                return Task.CompletedTask;
             });
             pluginContainer.OnEvent<MoongateStoppingEvent>(async (_, token) =>
             {
@@ -85,10 +82,7 @@ public sealed class PluginLifecycleEventTests
             pluginContainer.OnEvent<MoongateStoppedEvent>(async (_, token) =>
             {
                 Assert.NotNull(pluginContainer.Resolve<RecordingDisposable>());
-                await using var reopened = new MoongatePersistenceService(root.Path);
-                var items = reopened.Register<TestEntity>("items");
-                await reopened.InitializeAsync(token);
-                Assert.Equal("saved while stopping", items.GetById(serial)?.Name);
+                Assert.Equal("saved while stopping", await fixture.Database.ScalarAsync<string>("SELECT name FROM host_test.items"));
                 events.Add("stopped");
             });
         });

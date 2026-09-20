@@ -6,8 +6,8 @@
     </PropertyGroup>
     <ItemGroup>
         <ProjectReference Include="../Moongate.Core/Moongate.Core.csproj" />
-        <PackageReference Include="MemoryPack" Version="1.21.4" />
-        <PackageReference Include="ZLinq" Version="1.5.6" />
+        <PackageReference Include="FreeSql.Provider.PostgreSQL" Version="3.5.311" />
+        <InternalsVisibleTo Include="Moongate.Persistence.Tests" />
         <InternalsVisibleTo Include="Moongate.Tests" />
     </ItemGroup>
 
@@ -15,8 +15,8 @@
         <IsPackable>true</IsPackable>
         <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
         <PackageId>Moongate.Persistence</PackageId>
-        <Description>Binary snapshot and journal persistence for serial-identified entities, powered by MemoryPack.</Description>
-        <PackageTags>moongate;persistence;memorypack;serialization</PackageTags>
+        <Description>Asynchronous PostgreSQL persistence for serial-identified entities, powered by FreeSql.</Description>
+        <PackageTags>moongate;persistence;postgresql;freesql</PackageTags>
     </PropertyGroup>
 
 </Project>

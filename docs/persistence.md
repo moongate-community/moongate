@@ -1,218 +1,226 @@
-# Persistence and world saves
+# PostgreSQL persistence and world saves
 
-`Moongate.Persistence` stores MemoryPack entities in named binary collections.
-Each collection has a snapshot and a write-ahead journal. The library works
-without the game server; the host adds game-loop capture, autosave and retention.
-See the [binary format](persistence-format.md) for headers and recovery rules.
+Moongate stores registered entities in PostgreSQL through FreeSql. A deployment
+uses one Accounts database and one database for each realm. Transactions and
+world saves are independent across those targets; there is no cross-database
+atomic commit.
 
-## Define and register an entity
+The old snapshot/journal backend is no longer a runtime option. See
+[Migrating from binary persistence](persistence-format.md) before upgrading an
+existing installation.
 
-Reference `Moongate.Persistence` and `MemoryPack` 1.21.4 in a .NET 10 project.
-Put this model in `Player.cs`:
+## Entities and module ownership
+
+Every persisted type implements `IMoongateEntity`, has an application-assigned,
+nonzero `Serial`, and belongs to exactly one `IPersistenceModule`. A module owns
+one unique PostgreSQL schema in either the Accounts or Realm target.
 
 ```csharp
-using MemoryPack;
-using Moongate.Core.Attributes.Entities;
+using FreeSql.DataAnnotations;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Interfaces;
+using Moongate.Persistence.Types.Persistence;
 
-[MemoryPackable(GenerateType.VersionTolerant), PersistenceCollection("players")]
-public partial class Player : IMoongateEntity
+[Table(Name = "inventory.items")]
+public sealed class Item : IMoongateEntity
 {
-    [MemoryPackOrder(0)]
+    [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
 
-    [MemoryPackOrder(1)]
-    public string Name { get; set; } = string.Empty;
+    [Column(Name = "name", StringLength = 100)]
+    public string Name { get; set; } = "";
 }
-```
 
-The application assigns a stable, nonzero `Serial`; persistence does not allocate
-identities. Keep field orders stable and never reuse removed orders for a new
-meaning. Version-tolerant serialization is not a schema migration system: test
-old saves against new models and keep a backup before deploying model changes.
-Register each entity type/collection once, before `InitializeAsync` begins.
-
-## Explicit writes, queries and live saves
-
-This complete `Program.cs` uses a new directory for each run and leaves it on disk
-for inspection. The live-source list belongs only to this sequential example:
-
-```csharp
-using Moongate.Core.Primitives;
-using Moongate.Persistence.Services;
-
-var root = Path.Combine(Path.GetTempPath(), $"moongate-save-guide-{Guid.NewGuid():N}");
-var storage = Path.Combine(root, "save");
-var backup = Path.Combine(root, "backup");
-var restored = Path.Combine(root, "restored");
-var id = new Serial(1);
-var live = new List<Player>();
-
-await using (var persistence = new MoongatePersistenceService(storage))
+public sealed class InventoryModule : IPersistenceModule
 {
-    var players = persistence.Register<Player>("players", () => live);
-    await persistence.InitializeAsync();
-    var player = new Player { Id = id, Name = "Mario" };
-    live.Add(player);
-    await players.UpsertAsync(player);
-
-    var detached = players.GetById(id) ?? throw new InvalidOperationException("Missing player");
-    detached.Name = "Detached edit"; // Does not alter the committed record.
-    if (players.GetById(id)?.Name != "Mario")
-    {
-        throw new InvalidOperationException("Read isolation failed");
-    }
-
-    player.Name = "Luigi";
-    await persistence.SaveAllAsync(); // Captures the registered live list.
-    var matches = await players.QueryAsync(p => p.Name.StartsWith("L", StringComparison.Ordinal));
-    if (matches.Count != 1)
-    {
-        throw new InvalidOperationException("Query failed");
-    }
-
-    live.Clear();
-    await persistence.SaveAllAsync(); // Omission is NOT deletion.
-    if (players.GetById(id) is null)
-    {
-        throw new InvalidOperationException("Unexpected deletion");
-    }
-
-    await persistence.SaveAllWithBackupAsync(
-        (capture, token) =>
-        {
-            token.ThrowIfCancellationRequested();
-            capture();
-            return Task.CompletedTask;
-        },
-        backup);
-    await players.DeleteAsync(id); // Explicit, durable deletion in live storage.
+    public string Id => "com.example.inventory";
+    public string Schema => "inventory";
+    public PersistenceDatabaseTarget DatabaseTarget => PersistenceDatabaseTarget.Realm;
+    public IReadOnlyCollection<Type> EntityTypes => [typeof(Item)];
 }
-
-await using (var reopened = new MoongatePersistenceService(storage))
-{
-    var players = reopened.Register<Player>("players");
-    await reopened.InitializeAsync();
-    if (players.GetById(id) is not null)
-    {
-        throw new InvalidOperationException("Deletion was not persisted");
-    }
-}
-
-await MoongatePersistenceBackup.RestoreAsync(backup, restored);
-await using (var recovery = new MoongatePersistenceService(restored))
-{
-    var players = recovery.Register<Player>("players");
-    await recovery.InitializeAsync();
-    if (players.GetById(id)?.Name != "Luigi")
-    {
-        throw new InvalidOperationException("Restore failed");
-    }
-}
-Console.WriteLine($"Verified save, query, deletion and recovery in {root}");
 ```
 
-`GetById`, `GetAll` and `QueryAsync` return detached objects from the committed
-view. Query takes `Func<T, bool>` and returns `Task<IReadOnlyList<T>>`; it filters
-an in-memory snapshot using ZLinq internally. There is no `IQueryable`, database
-query translator or automatic property tracking. To save an edited read result,
-call `UpsertAsync` on that instance.
+Use stable, explicit table and column names. Map `Serial` keys to PostgreSQL
+`bigint` with `MapType = typeof(long)`. Ordinary public scalar properties are
+mapped by FreeSql. Every complex property requires an explicit supported mapping,
+navigation mapping, or explicit omission such as `IsIgnore`; do not assume an
+unannotated complex object graph will be serialized or cascaded automatically.
+Persistence mapping is immutable and attribute-only for a CLR type, and it must
+be identical in every owner. A module selects ownership and database target; it
+cannot remap the type. Application and plugin code must not reconfigure a
+persistence type through another raw FreeSql instance.
 
-| Operation | What it saves |
-| --- | --- |
-| `UpsertAsync(entity)` | One serialized entity, durably journaled |
-| `DeleteAsync(id)` | Explicit deletion; returns whether the entity existed |
-| `CheckpointAsync()` | Previously committed writes into snapshots; does not capture live sources |
-| `SaveAllAsync()` | Registered live sources, then checkpoints every collection; collections without a source only checkpoint explicit writes |
-| `SaveAllWithBackupAsync(...)` | A live save/checkpoint followed by a verified backup generation |
-
-SaveAll is not a transaction across entities or collections. All live sources
-are serialized before committing captured data, but cancellation or an I/O failure
-during commit can leave earlier writes committed. Do not retry blindly after a
-storage fault; inspect the error and reopen/validate the storage as appropriate.
-
-## Container and world ownership
-
-The server registers its persistence service before plugins and initializes it at
-startup priority `-1000`. In a plugin's `Register(Container container)`, use:
+Register modules and every entity they declare before schema preparation:
 
 ```csharp
-container.AddPersistenceEntity<Player>();
+container.RegisterMoongatePersistence(options)
+         .AddPersistenceModule<InventoryModule>()
+         .AddPersistenceEntity<Item>();
 ```
 
-Import `Moongate.Persistence.Extensions`. This takes the collection name from
-`[PersistenceCollection]` and registers the same singleton as both `DataAccess<Player>`
-and `IDataAccess<Player>`. In a standalone container, first call
-`container.RegisterMoongatePersistence(storage)` and explicitly initialize the
-resolved `MoongatePersistenceService`.
+Registration performs no database I/O. Initialization validates the entire batch:
+module IDs and schemas must be unique within their scopes, and every entity must
+have exactly one declared and registered owner.
 
-For an application-owned world collection, register a live source instead:
+## Connections and schema preparation
+
+The server TOML stores environment-variable names, never connection strings:
+
+```toml
+[persistence]
+auto_sync_schema = false
+
+[persistence.accounts]
+connection_string_env = "MOONGATE_ACCOUNTS_DATABASE"
+
+[persistence.realm]
+connection_string_env = "MOONGATE_REALM_DATABASE"
+```
+
+Only targets with registered entities resolve their connection. Values use
+Npgsql `key=value;` syntax, for example
+`Host=db;Port=5432;Database=realm;Username=runtime;Password=...`. Supply them from
+your service manager or secret provider.
+
+`FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This old
+driver branch is an acknowledged provider limitation. Do not silently override
+the Npgsql major version: upgrade the FreeSql provider as a compatible set and
+run the PostgreSQL compatibility suite before deploying it.
+
+`auto_sync_schema` defaults to false. Normal startup compares the registered
+model with PostgreSQL and fails if DDL is required. Preview and apply changes with
+the same plugin bundle and database endpoint as the runtime:
+
+```sh
+Moongate.Server --root-directory /srv/moongate/realm-1 --persistence-schema preview
+Moongate.Server --root-directory /srv/moongate/realm-1 --persistence-schema apply
+```
+
+For framework-dependent output, run `dotnet Moongate.Server.dll ...`. Preview
+prints generated DDL and changes nothing. Apply previews, acquires a per-target
+PostgreSQL advisory lock, applies the DDL, and verifies that comparison is clean.
+An unchanged preview reports `No PostgreSQL schema changes required.` These
+administrative commands load real plugin registrations but do not acquire the
+normal host PID, start listeners or startup services, or generate scripts,
+certificates, and logs.
+
+Stop the relevant game or login processes before applying reviewed DDL. The
+advisory lock serializes schema operators; it does not pause runtime DML or own
+the live game world. Keep automatic synchronization as an explicit development
+opt-in for disposable databases, not the deployment default.
+
+### Separate DDL and runtime roles
+
+Give normal processes a runtime connection only. Give a one-shot schema job both
+the runtime and schema connections, pointing to the same Host, Port, and Database:
+
+```toml
+[persistence.realm]
+connection_string_env = "MOONGATE_REALM_DATABASE"
+schema_connection_string_env = "MOONGATE_REALM_SCHEMA_DATABASE"
+```
+
+The schema role owns the module schema and performs DDL. The runtime role needs
+database `CONNECT`, schema `USAGE`, and `SELECT`, `INSERT`, `UPDATE`, and `DELETE`
+on tables. Configure default table privileges for the schema owner so later plugin
+tables receive the same DML grants. Moongate does not grant privileges silently.
+The [login and realms Compose guide](docker-login-realms.md) provides a complete
+provisioning example.
+
+## Schema evolution
+
+Treat generated DDL as an operator-reviewed migration plan. FreeSql schema sync
+handles ordinary model changes, but it cannot infer business meaning. Use its
+`OldName` metadata for a supported table or column rename. Use separately reviewed,
+versioned SQL for transformations such as splitting a value, backfilling rows,
+changing units, merging tables, or enforcing a new invariant.
+
+Moongate and FreeSql keep no migration history. Schema preview compares the
+current attributed model with the current database; it is not a recorded version
+sequence or a reliable detector of the previous application model.
+
+Test every migration on production-like data. Preview first, stop the affected
+runtime, apply, verify, then start the new code. Downgrades are operator-managed: generated synchronization
+does not promise a reverse migration or recover discarded data.
+
+Disabling or uninstalling a plugin does not delete its schema. Preserve that data
+until an operator deliberately archives or removes it.
+
+## Reads, writes, and transactions
+
+Resolve `IDataAccess<T>` for independent operations:
 
 ```csharp
-container.AddPersistenceEntity<Player>(() => livePlayers.Values);
+var items = container.Resolve<IDataAccess<Item>>();
+await items.UpsertAsync(new Item { Id = new Serial(1), Name = "Bandage" });
+
+var item = await items.GetByIdAsync(new Serial(1));
+var page = await items.QueryAsync(value => value.Name.StartsWith("B"), 0, 50);
+await items.DeleteAsync(new Serial(1));
 ```
 
-Here `livePlayers` is your world's `Dictionary<Serial, Player>`. Register it before
-startup, load persisted entities into it, and keep both enumeration and property
-mutation on the game loop. Removing an entity from this dictionary does not delete
-its persisted record: issue `DeleteAsync` as well, and prevent later captures from
-reintroducing it. The host cannot discover every object implementing `IMoongateEntity`.
+`GetByIdAsync`, `GetAllAsync`, and `QueryAsync` return detached values. Queries
+are translated to SQL; an unsupported expression fails instead of switching to
+client filtering. `GetAllAsync` is intentionally unbounded and is intended for
+startup or administration. Changing a returned object does not save it.
 
-Outside the host, synchronize the entire capture, not just creation of the
-`IEnumerable`. The callback overload of `SaveAllAsync` lets you dispatch the
-supplied `Action` to the owner thread. Invoke it exactly once and await its actual
-execution before returning. Do not call persistence mutations, another save,
-checkpoint or disposal from a live source/capture; they can reenter the save gate.
-
-## Host autosave and manual save
-
-`WorldSaveService` activates after all services start and the started event has
-been published. With the [default configuration](server-configuration.md), it
-requests a save every 300 seconds, keeps five completed backup generations and
-uses `<root>/save` for live data and `<root>/world-saves` for backups.
-
-The service serializes live entities on the game loop and performs asynchronous
-persistence work outside it. Concurrent save requests join one active save.
-From an asynchronous host component **outside the loop**, inject
-`Moongate.Server.Core.Interfaces.Services.IWorldSaveService` and await:
+Upserts use last-writer-wins semantics. There is no optimistic concurrency token
+or automatic retry after an uncertain commit result. Group related writes on one
+target with `ExecuteInTransactionAsync`:
 
 ```csharp
-await worldSave.SaveAsync(cancellationToken);
+await persistence.ExecuteInTransactionAsync(
+    PersistenceDatabaseTarget.Realm,
+    async transaction =>
+    {
+        var items = transaction.GetDataAccess<Item>();
+        await items.UpsertAsync(first);
+        await items.UpsertAsync(second);
+    });
 ```
 
-Cancellation stops that caller waiting; it does not cancel the shared save.
-Do not use `.Wait()` or `.Result` from a packet handler or timer callback: the
-save needs the game loop to perform capture. Save failures are logged and reported
-to callers; an autosave is supervised rather than becoming an unobserved task.
-There is currently no built-in `save` or `restore` console command.
+The callback must complete asynchronously and must not escape its transaction
+facade. A transaction cannot span Accounts and Realm. If a workflow changes both,
+design explicit compensation or reconciliation.
 
-`world_save.enabled = false` disables periodic requests only. Normal shutdown
-after successful activation drains admitted work and captures once more before
-world owners and persistence stop. Startup failure uses cleanup only; a faulted
-loop cannot perform a successful final capture. Monitor shutdown/save errors.
+## Live world snapshots
 
-## Backups and offline restore
+For state owned by the game loop, register a source and a detached clone:
 
-A backup contains a manifest plus matching snapshot/journal files for the
-registered collections. Publication uses a new directory; a failed publication
-does not expose an incomplete generation under its final name. The live save may
-already have committed even if backup publication fails. Retention applies only
-to completed directories matching the host's `world-save-<timestamp>-<id>` naming
-scheme; arbitrary folders are not pruned.
+```csharp
+container.AddPersistenceEntity<Item>(
+    () => world.Items.Values,
+    item => new Item { Id = item.Id, Name = item.Name });
+```
 
-1. Stop the server and keep the existing root as a rollback copy. Never copy a
-   changing live save directory and assume the files form one consistent backup.
-2. Choose a completed backup containing `manifest.json`. Use
-   `MoongatePersistenceBackup.RestoreAsync(backupPath, newDestination)` from a small
-   .NET utility, as in the runnable example above. The destination must not exist
-   or overlap the backup source. Lengths, hashes and checkpoint structure are verified.
-3. Open the restored directory with the same entity registrations/models and check
-   expected records. Restore validates binary structure; application-level model
-   compatibility is checked when you initialize and read the collections.
-4. With all server processes stopped, move the old `save` directory aside and put
-   the validated restored directory at `<root>/save`. Preserve config, scripts and
-   plugins separately; they are not included in persistence generations.
-5. Restart and inspect load/save logs. Keep the old directory until recovery is
-   confirmed. A backup on the same disk is not protection against disk loss;
-   archive completed generations to your chosen independent storage.
+The clone function must copy every mutable nested value. Returning the live
+instance is rejected. `SaveAllAsync` captures sources through the supplied owner
+callback and later writes one transaction per active database target. It upserts
+the captured entities; absence from a snapshot is not deletion. Issue an explicit
+`DeleteAsync` for removed rows.
+
+Capture and any post-commit update of owner state must run on and finish through
+the owner loop. In the host, take `IPersistenceOperationBarrier` around a critical
+operation and await its database work and owner-loop application. Posting a work
+item only waits for admission; await the work item's own completion as well.
+
+If an admitted critical callback fails or is canceled, the barrier keeps the
+original cause and blocks queued/new critical operations plus later snapshots and
+the final save. This prevents stale RAM from overwriting a database commit whose
+outcome may be uncertain. Shutdown still drains and stops, but the world needs a
+fresh host/reload before further persistence. The rule is conservative even when
+the specific database transaction rolled back. Cancellation before admission and
+a save-only failure do not poison the barrier.
+
+Periodic world saves default to every 300 seconds. Concurrent requests join the
+active save; cancellation stops only that caller's wait. Eligible shutdown runs a
+final capture after accepted work drains. `world_save.enabled = false` disables
+periodic requests while keeping explicit and final saves available.
+
+## Database backups
+
+World save is an application snapshot operation, not a database backup. Moongate
+does not create, restore, retain, or coordinate PostgreSQL backups. Database
+backup policy belongs to the operator and is independent for Accounts and each
+realm.

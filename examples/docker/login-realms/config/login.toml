@@ -1,0 +1,23 @@
+# The role is configuration metadata; it does not yet select startup services.
+mode = "login"
+
+[shard]
+shard_name = "Moongate Login"
+
+[network]
+listen_address = "0.0.0.0"
+game_port = 2593
+
+[ultima]
+ultima_path = "/uo"
+
+[persistence]
+auto_sync_schema = false
+
+[persistence.accounts]
+connection_string_env = "MOONGATE_ACCOUNTS_DATABASE"
+
+[api]
+enabled = false
+listen_address = "0.0.0.0"
+port = 2594

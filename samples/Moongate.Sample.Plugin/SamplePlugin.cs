@@ -1,4 +1,7 @@
 using DryIoc;
+using Moongate.Persistence.Extensions;
+using Moongate.Sample.Plugin.Data.Persistence;
+using Moongate.Sample.Plugin.Persistence;
 using Moongate.Sample.Plugin.Commands;
 using Moongate.Sample.Plugin.Diagnostics;
 using Moongate.Sample.Plugin.Internal;
@@ -13,7 +16,7 @@ using Moongate.Server.Core.Types.Commands;
 
 namespace Moongate.Sample.Plugin;
 
-/// <summary>The sample plugin: registers a Lua module and enum, a console command and a metric provider. Registration only; nothing starts here.</summary>
+/// <summary>The sample plugin: registers a Lua module and enum, a console command, a metric provider and a persistence schema. Registration only; nothing starts here.</summary>
 public sealed class SamplePlugin : IMoongatePlugin
 {
     /// <inheritdoc />
@@ -28,6 +31,7 @@ public sealed class SamplePlugin : IMoongatePlugin
     /// <inheritdoc />
     public void Register(Container container)
     {
+        container.AddPersistenceModule<GreeterPersistenceModule>().AddPersistenceEntity<GreetingNote>();
         container.RegisterInstance(new GreetingCounter());
         container.RegisterScriptModule<GreeterModule>();
         container.RegisterScriptEnum<Tone>();

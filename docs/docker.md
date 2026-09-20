@@ -21,7 +21,7 @@ docker volume create moongate-data
 ```
 
 Replace `/absolute/path/to/ultima` with your client directory. Mount it read-only;
-server configuration, logs, plugins, scripts, and saves belong in `/data`:
+server configuration, logs, plugins, and scripts belong in `/data`:
 
 ```sh
 docker run -d --name moongate \
@@ -60,6 +60,12 @@ to resume with the same volume.
 
 ## Docker Compose
 
+For a local source build with three separate processes, use the
+[one login and two game instances example](docker-login-realms.md). It includes
+one PostgreSQL service with three databases, runtime/schema role separation,
+schema jobs, independent server storage and ports, and the current limitations of
+the login/game modes.
+
 Save this as `compose.yaml`, replacing the client directory:
 
 ```yaml
@@ -91,6 +97,16 @@ Compose creates a project-scoped named volume. Keep the same Compose project nam
 and directory when restarting the same world. `docker compose down` removes the
 containers but retains that volume; adding `--volumes` deletes the persisted data.
 
+## PostgreSQL persistence
+
+The ordinary image does not bundle PostgreSQL or the sample plugin. A server with
+registered persistence entities needs an Npgsql `key=value;` connection string in
+the environment variable named by its TOML. Keep `auto_sync_schema = false` and
+give the runtime process a DML-only role. Run reviewed schema preview/apply jobs
+with the same plugin bundle and a separate schema connection while the relevant
+runtime is stopped. See [PostgreSQL persistence](persistence.md) and the complete
+[login and realms example](docker-login-realms.md).
+
 ## Internal API port
 
 API hosting is available in builds containing this change; the pinned `0.4.0`
@@ -104,6 +120,11 @@ docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 The image declares `2593/tcp` and `2594/tcp`. `EXPOSE` does not start a listener or
 publish a host port. Enable `[api]` and configure certificates/peer permissions
 using [API host configuration](server-configuration.md#enable-the-internal-api-server).
+For automatic certificate generation, follow [API certificates](api-certificates.md#docker):
+keep the API disabled while creating identities and exchanging public PEM files,
+and use a writable persistent volume. The read-only mount below is for
+**externally provisioned** certificates.
+
 A private Compose deployment can use:
 
 ```yaml
@@ -159,7 +180,7 @@ container user; changing the mount does not change host ownership automatically.
 `MOONGATE_ROOT` and `--root-directory` can select another server root. If you change
 it, mount persistent storage at that path too. For multiple instances, use a
 separate data volume and a different published host port for each server. Do not
-share one root or save directory between running servers.
+share one root between running servers, and give each realm its own database.
 
 The `mode` setting currently defines the `login`, `game`, or `standalone`
 configuration contract. It does not yet select separate login/game service
@@ -167,8 +188,9 @@ runtimes; see the [overview](../README.md#server-mode).
 
 ## Update an instance
 
-Read the target version's [changelog](../CHANGELOG.md), stop the server, and back up
-its data volume before upgrading. Change the pinned image tag in `compose.yaml`:
+Read the target version's [changelog](../CHANGELOG.md), stop the server, and follow
+your operator data-protection policy before upgrading. Change the pinned image tag
+in `compose.yaml`:
 
 ```sh
 docker compose stop
@@ -187,8 +209,11 @@ and client mount. Removing a container does not delete its named volume.
   logs for any further configuration or client-data error.
 - **Cannot read client files:** confirm the host path exists and is mounted at
   `/uo`, with permission for the container user to read it.
-- **Cannot write config or saves:** check `/data` volume ownership, especially for
+- **Cannot write config or generated files:** check `/data` volume ownership, especially for
   bind mounts.
+- **Persistence connection/schema failure:** verify the configured environment
+  variable, Npgsql connection syntax, plugin bundle, role grants, and schema
+  preview output. Do not give the normal runtime a DDL credential.
 - **Cannot connect:** check `docker ps`, the `2593:2593` mapping, the listener
   configuration, and the host firewall.
 

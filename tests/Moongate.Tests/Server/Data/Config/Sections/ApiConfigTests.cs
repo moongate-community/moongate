@@ -41,8 +41,9 @@ public sealed class ApiConfigTests
             case "peers": config.Peers = []; break;
             case "fingerprint": config.Peers[0].CertificateSha256 = new string('Z', 64); break;
             case "identity": config.Peers[0].PeerId = " "; break;
-            case "zero_operation": config.Peers[0].AllowedOperations = [0]; break;
-            case "duplicate": config.Peers = [config.Peers[0], new ApiPeerConfig
+            case "zero_operation": config.Peers[0].AllowedOperations = new([0]); break;
+            case "duplicate":
+                config.Peers = [config.Peers[0], new ApiPeerConfig
                 { CertificateSha256 = new string('a', 64), PeerId = "second" }]; break;
             case "password_variable": config.CertificatePasswordEnvironmentVariable = null!; break;
         }
@@ -54,7 +55,7 @@ public sealed class ApiConfigTests
     {
         var config = ValidConfig();
         config.CertificatePasswordEnvironmentVariable = "";
-        config.Peers[0].AllowedOperations = [];
+        config.Peers[0].AllowedOperations = new([]);
         config.Validate();
     }
 
@@ -65,6 +66,37 @@ public sealed class ApiConfigTests
         Assert.Throws<InvalidOperationException>(config.Validate);
     }
 
+    [Theory, InlineData("missing_path"), InlineData("null_password"), InlineData("null_dns"),
+     InlineData("null_ips"), InlineData("empty_names"), InlineData("bad_dns"), InlineData("bad_ip"), InlineData("scoped_ip"), InlineData("zero_scope"), InlineData("wildcard")]
+    public void Validate_DisabledGenerationWithInvalidCertificateSettings_Rejects(string invalidity)
+    {
+        var config = new ApiConfig { AutoGenerateCertificate = true, CertificatePath = "tls/server.pfx" };
+        switch (invalidity)
+        {
+            case "missing_path": config.CertificatePath = ""; break;
+            case "null_password": config.CertificatePasswordEnvironmentVariable = null!; break;
+            case "null_dns": config.CertificateDnsNames = null!; break;
+            case "null_ips": config.CertificateIpAddresses = null!; break;
+            case "empty_names": config.CertificateDnsNames = []; config.CertificateIpAddresses = []; break;
+            case "bad_dns": config.CertificateDnsNames = ["https://realm.internal"]; break;
+            case "bad_ip": config.CertificateIpAddresses = ["realm.internal"]; break;
+            case "zero_scope": config.CertificateIpAddresses = ["fe80::1%0"]; break;
+            case "wildcard": config.CertificateDnsNames = ["*.internal"]; break;
+            case "scoped_ip": config.CertificateIpAddresses = ["fe80::1%3"]; break;
+        }
+        Assert.Throws<InvalidOperationException>(config.Validate);
+    }
+
+    [Fact]
+    public void Validate_DisabledGeneration_DoesNotRequireListenerOrTrustPolicy()
+    {
+        new ApiConfig
+        {
+            AutoGenerateCertificate = true, CertificatePath = "tls/server.pfx", Port = 0,
+            ListenAddress = "unused", CertificatePasswordEnvironmentVariable = ""
+        }.Validate();
+    }
+
     private static ApiConfig ValidConfig()
         => new()
         {
@@ -73,7 +105,7 @@ public sealed class ApiConfigTests
             TrustedRootPaths = ["root.pem"],
             Peers = [new ApiPeerConfig
             {
-                CertificateSha256 = new string('A', 64), PeerId = "peer", AllowedOperations = [100]
+                CertificateSha256 = new string('A', 64), PeerId = "peer", AllowedOperations = new([100])
             }]
         };
 }

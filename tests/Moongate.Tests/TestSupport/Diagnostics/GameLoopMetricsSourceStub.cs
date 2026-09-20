@@ -37,6 +37,12 @@ internal sealed class GameLoopMetricsSourceStub : IGameLoopService
         throw new NotSupportedException();
     }
 
+    public Task StopWithFinalWorkAsync(Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotSupportedException();
+    }
+
     public bool TryPost(IGameLoopWorkItem workItem)
     {
         throw new NotSupportedException();

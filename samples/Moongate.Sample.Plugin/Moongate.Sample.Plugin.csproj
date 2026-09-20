@@ -10,6 +10,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../../src/Moongate.Persistence/Moongate.Persistence.csproj" Private="false" ExcludeAssets="runtime" />
     <ProjectReference Include="../../src/Moongate.Server.Core/Moongate.Server.Core.csproj" Private="false" ExcludeAssets="runtime" />
     <ProjectReference Include="../../src/Moongate.Scripting/Moongate.Scripting.csproj" Private="false" ExcludeAssets="runtime" />
   </ItemGroup>

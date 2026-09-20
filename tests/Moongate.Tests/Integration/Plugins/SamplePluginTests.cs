@@ -18,6 +18,7 @@ using Moongate.Server.Services.Timing;
 using Moongate.Tests.Support.GameLoop;
 using Moongate.Tests.TestSupport.Diagnostics;
 using Moongate.Tests.TestSupport.Plugins;
+using Moongate.Tests.TestSupport.Persistence;
 
 namespace Moongate.Tests.Integration.Plugins;
 
@@ -33,7 +34,8 @@ public sealed class SamplePluginTests
         await File.WriteAllTextAsync(Path.Combine(files.Directories["scripts"], "init.lua"),
             "greeting = greeter.hello('Moongate', Tone.Warm)\n" +
             "function report() return greeting, greeter.DEFAULT_GREETING end");
-        using var container = new Container();
+        await using var persistence = await HostPersistenceFixture.CreateAsync();
+        var container = persistence.Container;
         container.RegisterMoongateEventBus();
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
         container.RegisterInstance(new TimerWheelOptions());
@@ -50,6 +52,7 @@ public sealed class SamplePluginTests
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         await bootstrap.StartAsync().WaitAsync(Timeout);
+        Assert.True(await persistence.Database.ScalarAsync<bool>("SELECT to_regclass('sample_greeter.notes') IS NOT NULL"));
 
         try
         {

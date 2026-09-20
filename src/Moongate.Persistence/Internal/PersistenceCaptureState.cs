@@ -10,6 +10,7 @@ internal sealed class PersistenceCaptureState
 
     private readonly Lock _sync = new();
     private int _state = AwaitingCapture;
+    private TaskCompletionSource? _captureExited;
 
     public void BeginCapture()
     {
@@ -31,6 +32,7 @@ internal sealed class PersistenceCaptureState
             }
 
             _state = Capturing;
+            _captureExited = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         }
     }
 
@@ -65,14 +67,28 @@ internal sealed class PersistenceCaptureState
         }
     }
 
-    public bool Close()
+    public void ExitCapture()
     {
         lock (_sync)
         {
-            var valid = _state == Captured;
-            _state = Closed;
-
-            return valid;
+            _captureExited?.TrySetResult();
         }
+    }
+
+    public async Task<bool> CloseAsync()
+    {
+        Task exited;
+        bool valid;
+        lock (_sync)
+        {
+            // Freeze the result at dispatcher exit: late success cannot repair an early return.
+            valid = _state == Captured && _captureExited?.Task.IsCompleted == true;
+            _state = Closed;
+            exited = _captureExited?.Task ?? Task.CompletedTask;
+        }
+
+        // Cancellation must not release coordination while admitted source/snapshot code is running.
+        await exited.ConfigureAwait(false);
+        return valid;
     }
 }

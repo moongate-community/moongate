@@ -26,6 +26,9 @@ enable_ping_server = true # Reserved: currently not consumed by the host.
 enabled = false
 listen_address = "0.0.0.0"
 port = 2594
+auto_generate_certificate = false
+certificate_dns_names = ["localhost"]
+certificate_ip_addresses = ["127.0.0.1", "::1"]
 certificate_path = ""
 certificate_password_environment_variable = "MOONGATE_API_CERTIFICATE_PASSWORD"
 trusted_root_paths = []
@@ -34,11 +37,18 @@ peers = []
 [ultima]
 ultima_path = "ChangeMe" # Replace with your client data directory.
 
+[persistence]
+auto_sync_schema = false
+
+[persistence.accounts]
+connection_string_env = "MOONGATE_ACCOUNTS_DATABASE"
+
+[persistence.realm]
+connection_string_env = "MOONGATE_REALM_DATABASE"
+
 [world_save]
 enabled = true # Enables periodic saves; manual/final saves remain available.
 interval_seconds = 300
-backups_enabled = true
-backup_retention_count = 5
 
 [diagnostics]
 enabled = true
@@ -63,21 +73,27 @@ max_string_length = 16777216
 | `network.game_port` | TCP listener port; use a distinct port for each local instance. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create endpoints for them, including IPv6 addresses; it is not a single wildcard listener. Use a specific IP to restrict binding. |
 | `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
-| `api.enabled` | Enables the internal MessagePack/mTLS listener; default false. Disabled APIs log a warning and do not read certificates or freeze handlers. |
+| `api.enabled` | Enables the internal MessagePack/mTLS listener; default false. Disabled APIs log a warning and leave handlers unfrozen; certificate I/O occurs only if generation is explicitly enabled. |
 | `api.listen_address` | IPv4/IPv6 literal; default `0.0.0.0` binds one IPv4 wildcard listener. Unlike the game listener, it does not enumerate interfaces. |
 | `api.port` | TCP port from 1 through 65535; default 2594. |
+| `api.auto_generate_certificate` | Default false. Creates a missing PFX and exports its public `.pem` copy, even with `enabled = false`. Existing PFX files are never replaced. |
+| `api.certificate_dns_names` | DNS SANs for generation; default `["localhost"]`. No URLs or wildcards. |
+| `api.certificate_ip_addresses` | IP SANs for generation; default `["127.0.0.1", "::1"]`. No scope identifiers; at least one DNS name or IP is required across both arrays. |
 | `api.certificate_path` | Local PKCS#12/PFX file containing the server leaf certificate and private key. |
 | `api.certificate_password_environment_variable` | Name of the environment variable containing the PFX password. If named but unset, startup fails. An empty name permits an unencrypted PFX. Never put the password itself in TOML. |
-| `api.trusted_root_paths` | Nonempty array of private CA certificate files (PEM or DER). Relative certificate/root paths resolve under `<root>/config`, independent of working directory. |
+| `api.trusted_root_paths` | When enabled, a nonempty array of trusted private CA certificates or explicitly trusted self-signed peer certificates (PEM or DER). Relative certificate/root paths resolve under `<root>/config`, independent of working directory. |
 | `api.peers` | Nonempty array of allowed certificate identities; see the example below. Each fingerprint is unique ignoring case. |
 | `api.peers.certificate_sha256` | Exactly 64 hexadecimal characters identifying the peer's leaf certificate; no colons. |
 | `api.peers.peer_id` | Nonblank local identity for this peer. Multiple certificates may map to one identity during rotation. |
-| `api.peers.allowed_operations` | Array of operation IDs from 1 through 65535. An empty list allows authentication but denies every incoming operation. |
+| `api.peers.allowed_operations` | `["*"]` grants all registered operations, including future additions. Otherwise use integer IDs from 1 through 65535. Empty or omitted denies all incoming operations; the wildcard must appear alone. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. |
+| `persistence.auto_sync_schema` | Defaults to false. When false, normal startup fails if registered entities require DDL; use the preview/apply command. Enable only as an explicit development convenience. |
+| `persistence.accounts.connection_string_env` | Environment-variable name containing the Accounts runtime connection in Npgsql `key=value;` format. Resolved only when a registered module uses Accounts. |
+| `persistence.realm.connection_string_env` | Environment-variable name containing the Realm runtime connection. Resolved only when a registered module uses Realm. |
+| `persistence.accounts.schema_connection_string_env` | Optional environment-variable name for a separately authorized Accounts schema connection. Omit from normal runtime configuration. |
+| `persistence.realm.schema_connection_string_env` | Optional environment-variable name for a separately authorized Realm schema connection. Omit from normal runtime configuration. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
-| `world_save.backups_enabled` | Writes a consistent backup generation after a save when true. |
-| `world_save.backup_retention_count` | Positive integer, even when backups are disabled; maximum completed managed generations retained. |
 | `diagnostics.enabled` | Starts the periodic diagnostic collector when true. |
 | `diagnostics.interval_seconds` | Positive integer seconds; must fit the timer range (at most 4,294,967 seconds). |
 | `diagnostics.log_metrics` | Logs periodic collected metrics when true. |
@@ -88,12 +104,13 @@ max_string_length = 16777216
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 
-API validation applies when `api.enabled` is true. Invalid API configuration,
+Full API validation applies when `api.enabled` is true. Certificate provisioning
+settings are also validated when `api.auto_generate_certificate` is true. Invalid API configuration,
 missing/unreadable certificates, a local leaf outside its validity window, an explicit
 EKU excluding server authentication, a missing private key, a wrong password or an
 occupied port fail startup;
-services already started are stopped in reverse order. When false, incomplete API
-settings are ignored. There is no plaintext fallback.
+services already started are stopped in reverse order. With both options false, incomplete API
+settings are ignored. Provisioning with the listener disabled does not require trust roots or peers. There is no plaintext fallback.
 
 Game-loop queue limits, timer-wheel resolution and packet dispatch limits use C#
 option objects rather than additional TOML sections. The hosted API uses the
@@ -106,8 +123,10 @@ library's default `ApiOptions` limits and timeouts. See
 This integration is available in builds containing the API hosting change. Older
 release images require upgrading or building the current checkout.
 
-1. Provision a server PFX, private CA certificate and client leaf certificates as
-   described in the [API certificate guide](../src/Moongate.Api/README.md#tls-identity-and-ownership).
+1. Provision certificates using the [API certificate guide](api-certificates.md).
+   It covers automatic self-signed generation with the port closed, public
+   certificate exchange, passwords, Docker and renewal. The example below uses
+   an externally issued PFX and private CA root.
    The server needs `serverAuth` usage and a DNS name matching the client's TLS
    target host; clients need `clientAuth`. Mount certificates read-only where
    possible and allow the runtime user to read them.
@@ -126,8 +145,11 @@ release images require upgrading or building the current checkout.
    [[api.peers]]
    certificate_sha256 = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
    peer_id = "admin-console"
-   allowed_operations = [100]
+   allowed_operations = ["*"]
    ```
+
+   Use `["*"]` for a fully trusted peer, or an explicit list such as `[100, 200]`
+   to restrict its operations. `[]` and omission keep all operations denied.
 
 3. Inject `MOONGATE_API_CERTIFICATE_PASSWORD` from your credential provider into
    the server environment and restart. A successful bind logs `API listener
@@ -179,6 +201,7 @@ dotnet run --project src/Moongate.Server -c Release -- \
 | `--log-to-file` | `true` | File logging is enabled; the generated parser only accepts this as a presence flag |
 | `--log-packets` | `false` | Sets the argument to true; currently no packet-tracing consumer |
 | `--show-header` | `true` | Shows the startup banner; presence flag |
+| `--persistence-schema <mode>` | `None` | `preview` prints pending PostgreSQL DDL; `apply` applies and verifies it through the administrative host path |
 | `--version` | — | Prints executable version |
 | `-h`, `--help` | — | Prints usage |
 
@@ -191,6 +214,9 @@ The chosen root expands home/environment references and becomes an absolute path
 a relative root starts from the working directory. Prefer explicit absolute paths
 in service managers and containers. Docker sets `MOONGATE_ROOT=/data` by default.
 
-See [First start](getting-started.md) for PID ownership, logs and troubleshooting,
-[world saves](persistence.md) for backup semantics and
+The schema command loads plugin persistence registrations but does not acquire the
+normal PID, start listeners/services, or generate runtime files. Stop the affected
+runtime before applying reviewed DDL. See [First start](getting-started.md) for PID
+ownership, logs and troubleshooting, [PostgreSQL persistence](persistence.md) for
+connection, schema and world-save semantics, and
 [Lua scripting](scripting.md) for budgets and sandbox boundaries.

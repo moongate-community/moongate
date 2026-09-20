@@ -16,9 +16,21 @@ hero:
       variant: secondary
 ---
 
+## Install in one line
+
+```sh
+curl -fsSL https://moongate.sh/install.sh | sh
+```
+
+Installs the latest release on Linux, x64 and arm64: the archive's contents land in
+`/opt/moongate` and the command becomes `moongate`. Start it with a root directory of its own,
+`moongate --root-directory /srv/moongate`, because upgrades replace the installation directory.
+[What it installs, how to upgrade, how to remove it](/start/install/), and how to read the
+script before running it.
+
 ## Find your starting point
 
-- **Run:** [First start](/start/getting-started/), [Docker](/server/docker/) and [configuration](/server/configuration/).
+- **Run:** [Install on Linux](/start/install/), [first start from source](/start/getting-started/), [Docker](/server/docker/) and [configuration](/server/configuration/).
 - **Keep data:** [Persistence, world saves and recovery](/server/persistence/).
 - **Build game behavior:** [Packets and handlers](/server/packets/), [game loop and timers](/server/game-loop-and-timers/), [Lua scripts](/server/scripting/).
 - **Extend or reuse:** [Plugins](/server/plugins/), [standalone TCP](/libraries/network-cookbook/) and [NuGet libraries](/reference/nuget-packaging/).

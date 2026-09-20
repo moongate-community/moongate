@@ -24,6 +24,12 @@ public sealed class StubGameLoop : IGameLoopService
     public Task StopAsync(IGameLoopWorkItem finalWorkItem) => Task.CompletedTask;
     public GameLoopMetricsSnapshot GetMetricsSnapshot() => throw new NotSupportedException();
 
+    public Task StopWithFinalWorkAsync(Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
+        CancellationToken cancellationToken = default)
+    {
+        throw new NotSupportedException();
+    }
+
     public bool TryPost(IGameLoopWorkItem workItem)
     {
         PostedWorkItems++;

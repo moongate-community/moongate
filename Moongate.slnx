@@ -8,6 +8,7 @@
         <Project Path="src/Moongate.Scripting/Moongate.Scripting.csproj" />
         <Project Path="src/Moongate.Server/Moongate.Server.csproj" />
         <Project Path="src/Moongate.Server.Core/Moongate.Server.Core.csproj" />
+        <Project Path="src/Moongate.Server.Ultima/Moongate.Server.Ultima.csproj" />
         <Project Path="src/Moongate.Ultima/Moongate.Ultima.csproj" />
     </Folder>
     <Folder Name="/samples/">
@@ -18,6 +19,7 @@
         <Project Path="tests/Moongate.Api.Tests/Moongate.Api.Tests.csproj" />
         <Project Path="tests/Moongate.Network.Packets.Tests/Moongate.Network.Packets.Tests.csproj" />
         <Project Path="tests/Moongate.Network.Tests/Moongate.Network.Tests.csproj" />
+        <Project Path="tests/Moongate.Persistence.Tests/Moongate.Persistence.Tests.csproj" />
         <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj" />
     </Folder>
 </Solution>

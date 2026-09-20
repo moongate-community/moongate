@@ -1,6 +1,7 @@
-using Moongate.Core.Directories;
+using DryIoc;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.DataAccess;
+using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Services;
 using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Data.Persistence;
@@ -9,54 +10,59 @@ using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Timing;
 using Moongate.Tests.Support.GameLoop;
-using Moongate.Tests.Support.Persistence;
+using Npgsql;
 
 namespace Moongate.Tests.TestSupport.Persistence;
 
 internal sealed class WorldSaveFixture : IAsyncDisposable
 {
-    private readonly TemporaryPersistenceDirectory _root = new();
-    private readonly DirectoriesConfig _directories;
-
-    public string SaveDirectory => Path.Combine(_root.Path, "save");
-
-    /// <summary>Where the service actually writes backups: it derives this from the root, ignoring the option.</summary>
-    public string BackupDirectory => Path.Join(_root.Path, "world-saves");
+    private readonly HostPersistenceFixture _host;
+    private NpgsqlConnection? _blocker;
+    private NpgsqlTransaction? _blockingTransaction;
+    public PostgreSqlTestDatabase Database => _host.Database;
+    public PostgreSqlTestDatabase? AccountsDatabase => _host.AccountsDatabase;
+    public PersistenceOperationBarrier Operations { get; } = new();
+    private PostgreSqlTestDatabase? _blockedDatabase;
+    private string _blockedTable = "host_test.items";
     public WorldSaveTimeProvider Clock { get; } = new();
-    public ControlledWorldSaveFileSystem FileSystem { get; } = new();
-    public MoongatePersistenceService Persistence { get; }
+    public MoongatePersistenceService Persistence => _host.Owner;
     public TimerWheelService Timers { get; }
     public GameLoopService Loop { get; }
     public WorldSaveService Saves { get; }
-    public DataAccess<TestEntity> Items { get; }
+    public DataAccess<TestEntity> Items => _host.Container.Resolve<DataAccess<TestEntity>>();
     public List<TestEntity> Entities { get; } = [new() { Id = new Serial(7), Name = "before" }];
     public int Captures { get; private set; }
     public Exception? CaptureFailure { get; set; }
+    public Action? OnCapture { get; set; }
 
-    public WorldSaveFixture(bool autosave = false, bool backups = false, int retention = 5)
+    private WorldSaveFixture(HostPersistenceFixture host, bool autosave)
     {
-        // Passing no directory names keeps Init from pre-creating the backup root, which several
-        // tests assert is absent until a backup is actually published.
-        _directories = new DirectoriesConfig(_root.Path, []);
-        Persistence = new MoongatePersistenceService(SaveDirectory);
+        _host = host;
         Timers = new TimerWheelService(new TimerWheelOptions(), Clock);
         Loop = new GameLoopService(new GameLoopOptions(), Timers, Clock);
-        Items = Persistence.Register<TestEntity>("items", () =>
+        host.Container.AddPersistenceModule<TestPersistenceModule>().AddPersistenceEntity<TestEntity>(() =>
         {
             Assert.True(Loop.IsOnLoopThread);
             Captures++;
-            if (CaptureFailure is not null)
-            {
-                throw CaptureFailure;
-            }
+            OnCapture?.Invoke();
+            if (CaptureFailure is not null) { throw CaptureFailure; }
             return Entities;
-        });
-        FileSystem.Attach(Items);
+        }, entity => new TestEntity { Id = entity.Id, Name = entity.Name });
+        if (host.AccountsDatabase is not null)
+        {
+            host.Container.AddPersistenceModule<AccountSnapshotModule>().AddPersistenceEntity<AccountSnapshotEntity>(
+                () => { Assert.True(Loop.IsOnLoopThread); Captures++; return [new AccountSnapshotEntity { Id = new Serial(8), Name = "account" }]; },
+                entity => new AccountSnapshotEntity { Id = entity.Id, Name = entity.Name });
+        }
         Saves = new WorldSaveService(Persistence, Loop, Timers, new WorldSaveOptions
         {
-            Enabled = autosave, Interval = TimeSpan.FromSeconds(2), BackupsEnabled = backups,
-            BackupRetentionCount = retention
-        }, Clock, _directories);
+            Enabled = autosave, Interval = TimeSpan.FromSeconds(2)
+        }, Clock, Operations);
+    }
+
+    public static async Task<WorldSaveFixture> CreateAsync(bool autosave = false, bool twoTargets = false)
+    {
+        return new WorldSaveFixture(await HostPersistenceFixture.CreateAsync(twoTargets: twoTargets), autosave);
     }
 
     public async Task StartAsync(bool activate = true)
@@ -64,10 +70,33 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
         await Persistence.InitializeAsync();
         await Loop.StartAsync();
         await Saves.StartAsync();
-        if (activate)
+        if (activate) { Saves.Activate(); }
+    }
+
+    public async Task BlockWritesAsync(bool accounts = false)
+    {
+        _blockedDatabase = accounts ? AccountsDatabase! : Database;
+        _blockedTable = accounts ? "host_accounts.items" : "host_test.items";
+        _blocker = new NpgsqlConnection(_blockedDatabase.ConnectionString);
+        await _blocker.OpenAsync();
+        _blockingTransaction = await _blocker.BeginTransactionAsync();
+        await using var command = new NpgsqlCommand($"LOCK TABLE {_blockedTable} IN ACCESS EXCLUSIVE MODE", _blocker, _blockingTransaction);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task WaitForBlockedWriteAsync()
+    {
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(8));
+        while (!await _blockedDatabase!.ScalarAsync<bool>($"SELECT EXISTS (SELECT 1 FROM pg_locks WHERE relation = '{_blockedTable}'::regclass AND NOT granted)"))
         {
-            Saves.Activate();
+            await Task.Delay(10, timeout.Token);
         }
+    }
+
+    public async Task ReleaseWritesAsync()
+    {
+        if (_blockingTransaction is not null) { await _blockingTransaction.RollbackAsync(); await _blockingTransaction.DisposeAsync(); _blockingTransaction = null; }
+        if (_blocker is not null) { await _blocker.DisposeAsync(); _blocker = null; }
     }
 
     public async Task OnLoopAsync(Action action)
@@ -81,23 +110,16 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
         await completion.Task.WaitAsync(TimeSpan.FromSeconds(10));
     }
 
-    public async Task<string?> ReadSavedNameAsync()
+    public Task<string?> ReadSavedNameAsync()
     {
-        await Persistence.DisposeAsync();
-        await using var reopened = new MoongatePersistenceService(SaveDirectory);
-        var items = reopened.Register<TestEntity>("items");
-        await reopened.InitializeAsync();
-        return items.GetById(new Serial(7))?.Name;
+        return Database.ScalarAsync<string>("SELECT name FROM host_test.items WHERE id = 7");
     }
 
     public async ValueTask DisposeAsync()
     {
-        FileSystem.Release();
-        FileSystem.FlushFailure = null;
+        await ReleaseWritesAsync();
         await Saves.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         Loop.Dispose();
-        await Persistence.DisposeAsync().AsTask().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-        FileSystem.Dispose();
-        _root.Dispose();
+        await _host.DisposeAsync();
     }
 }

@@ -61,6 +61,10 @@ public sealed class ApiServerService : IApiServerService, IAsyncDisposable
         _config.Validate();
         if (!_config.Enabled)
         {
+            if (_config.AutoGenerateCertificate)
+            {
+                using var certificate = new ApiCertificateStore().Load(_config, _directories, _clock);
+            }
             _logger.Warning("API server is disabled; set api.enabled = true and configure mutual TLS certificates to enable it");
             return;
         }

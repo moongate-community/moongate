@@ -21,6 +21,9 @@ public sealed class ConfigHelperTests
         var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!;
         var api = Assert.IsType<TomlTable>(document["api"]);
         Assert.Equal(false, api["enabled"]);
+        Assert.Equal(false, api["auto_generate_certificate"]);
+        Assert.Equal(new[] { "localhost" }, Assert.IsType<TomlArray>(api["certificate_dns_names"]).Cast<string>());
+        Assert.Equal(new[] { "127.0.0.1", "::1" }, Assert.IsType<TomlArray>(api["certificate_ip_addresses"]).Cast<string>());
         Assert.Equal(2594L, api["port"]);
         Assert.Equal("0.0.0.0", api["listen_address"]);
         Assert.Equal("MOONGATE_API_CERTIFICATE_PASSWORD", api["certificate_password_environment_variable"]);
@@ -47,6 +50,9 @@ public sealed class ConfigHelperTests
             enabled = true
             listen_address = "::1"
             port = 4002
+            auto_generate_certificate = true
+            certificate_dns_names = ["realm.internal"]
+            certificate_ip_addresses = ["10.0.0.12"]
             certificate_path = "certs/server.pfx"
             certificate_password_environment_variable = "TEST_API_PASSWORD"
             trusted_root_paths = ["certs/root.pem"]
@@ -59,12 +65,15 @@ public sealed class ConfigHelperTests
         Assert.True(api.Enabled);
         Assert.Equal("::1", api.ListenAddress);
         Assert.Equal(4002, api.Port);
+        Assert.True(api.AutoGenerateCertificate);
+        Assert.Equal(["realm.internal"], api.CertificateDnsNames);
+        Assert.Equal(["10.0.0.12"], api.CertificateIpAddresses);
         Assert.Equal("certs/server.pfx", api.CertificatePath);
         Assert.Equal("TEST_API_PASSWORD", api.CertificatePasswordEnvironmentVariable);
         Assert.Equal(["certs/root.pem"], api.TrustedRootPaths);
         var peer = Assert.Single(api.Peers);
         Assert.Equal("admin", peer.PeerId);
-        Assert.Equal(new ushort[] { 100, 65535 }, peer.AllowedOperations);
+        Assert.Equal(new ushort[] { 100, 65535 }, peer.AllowedOperations.OperationIds);
     }
 
     [Fact]
@@ -227,13 +236,9 @@ public sealed class ConfigHelperTests
         var worldSave = Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["world_save"]);
         Assert.Equal(true, worldSave["enabled"]);
         Assert.Equal(300L, worldSave["interval_seconds"]);
-        Assert.Equal(true, worldSave["backups_enabled"]);
-        Assert.Equal(5L, worldSave["backup_retention_count"]);
         var options = config.WorldSave.ToOptions();
         Assert.True(options.Enabled);
-        Assert.True(options.BackupsEnabled);
         Assert.Equal(TimeSpan.FromSeconds(300), options.Interval);
-        Assert.Equal(5, options.BackupRetentionCount);
     }
 
     [Fact]
@@ -244,22 +249,18 @@ public sealed class ConfigHelperTests
             [world_save]
             enabled = false
             interval_seconds = 45
-            backups_enabled = false
-            backup_retention_count = 2
             """);
         var options = ConfigHelper.Load(path).WorldSave.ToOptions();
         Assert.False(options.Enabled);
-        Assert.False(options.BackupsEnabled);
         Assert.Equal(TimeSpan.FromSeconds(45), options.Interval);
-        Assert.Equal(2, options.BackupRetentionCount);
     }
 
-    [Theory, InlineData(0, 5), InlineData(-1, 5), InlineData(300, 0), InlineData(300, -1)]
-    public void Load_NonPositiveWorldSaveSettings_RejectsBeforeServerStartup(int interval, int retention)
+    [Theory, InlineData(0), InlineData(-1)]
+    public void Load_NonPositiveWorldSaveSettings_RejectsBeforeServerStartup(int interval)
     {
         using var directory = new TemporaryDirectory();
         var path = directory.CreateFile("moongate.toml",
-            $"[world_save]\nenabled = false\ninterval_seconds = {interval}\nbackup_retention_count = {retention}\n");
+            $"[world_save]\nenabled = false\ninterval_seconds = {interval}\n");
         Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
     }
 

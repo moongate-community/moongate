@@ -2,90 +2,116 @@
 
 # Moongate.Persistence
 
-Binary snapshot and journal persistence for serial-identified entities, powered by MemoryPack.
+Asynchronous PostgreSQL persistence for serial-identified entities, powered by FreeSql.
 
 ## Installation
 
-Requires .NET 10 and a writable storage directory. Use the Moongate version available in your configured NuGet feed. Reference MemoryPack directly in applications that define serializable entities so their source-generator requirement is explicit.
+Moongate.Persistence requires .NET 10 and PostgreSQL. Use the Moongate version available in your configured NuGet feed.
 
 ```shell
 dotnet add package Moongate.Persistence
-dotnet add package MemoryPack --version 1.21.4
 ```
 
 ## Features
 
-- Typed `DataAccess<T>` collections for entities implementing `IMoongateEntity`.
-- Explicit upsert and delete operations recorded in a binary journal.
-- Snapshots, journal recovery, checkpoints, and backups.
-- Queries using ZLinq and `SaveAllAsync` support, including opt-in live entity sources.
+- Explicit module ownership, PostgreSQL schemas, and Accounts or Realm database targets.
+- Detached asynchronous reads, SQL-translated filtering, upserts, and deletes.
+- Grouped writes in one asynchronous transaction for a single database target.
+- Explicit schema preview/apply APIs with automatic synchronization disabled by default.
+- Owner-controlled `SaveAllAsync` snapshots for application-managed live entities.
 
 ## Example
 
-Define the entity in `Player.cs`. Keep MemoryPack field order stable when evolving stored data.
+Define one stable attribute mapping in `Player.cs`. The application assigns every nonzero `Serial` identity.
 
 <!-- nuget-smoke:Player.cs -->
 ```csharp
-using MemoryPack;
+using FreeSql.DataAnnotations;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
 
-[MemoryPackable(GenerateType.VersionTolerant)]
-public partial class Player : IMoongateEntity
+[Table(Name = "sample_players.players")]
+public sealed class Player : IMoongateEntity
 {
-    [MemoryPackOrder(0)]
+    [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
 
-    [MemoryPackOrder(1)]
-    public string Name { get; set; } = string.Empty;
+    [Column(Name = "name", StringLength = 100)]
+    public string Name { get; set; } = "";
 }
 ```
 
-Save and reload an entity in `Program.cs`. This example owns a temporary directory and removes it after both persistence instances are disposed.
+Declare the entity's sole module owner in `PlayerModule.cs`.
+
+<!-- nuget-smoke:PlayerModule.cs -->
+```csharp
+using Moongate.Persistence.Interfaces;
+using Moongate.Persistence.Types.Persistence;
+
+public sealed class PlayerModule : IPersistenceModule
+{
+    public string Id => "example.players";
+    public string Schema => "sample_players";
+    public PersistenceDatabaseTarget DatabaseTarget => PersistenceDatabaseTarget.Realm;
+    public IReadOnlyCollection<Type> EntityTypes => [typeof(Player)];
+}
+```
+
+`Program.cs` resolves its connection at runtime, applies the example schema explicitly, commits two writes together, and reads a detached value asynchronously. Set `MOONGATE_PERSISTENCE_DATABASE` to an Npgsql `key=value;` connection string for an empty development database before running it.
 
 <!-- nuget-smoke:Program.cs -->
 ```csharp
+using DryIoc;
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Data.Config;
+using Moongate.Persistence.Extensions;
+using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
+using Moongate.Persistence.Types.Persistence;
 
-var directory = Path.Combine(Path.GetTempPath(), $"moongate-example-{Guid.NewGuid():N}");
+var connectionString = Environment.GetEnvironmentVariable("MOONGATE_PERSISTENCE_DATABASE")
+    ?? throw new InvalidOperationException("Set MOONGATE_PERSISTENCE_DATABASE before running this example.");
+var options = new PostgreSqlPersistenceOptions(
+    [new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, connectionString)],
+    autoSynchronizeSchema: true);
 
-try
+using var container = new Container();
+container.RegisterMoongatePersistence(options)
+         .AddPersistenceModule<PlayerModule>()
+         .AddPersistenceEntity<Player>();
+
+await using var persistence = container.Resolve<MoongatePersistenceService>();
+await persistence.InitializeAsync();
+await persistence.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, async transaction =>
 {
-    await using (var persistence = new MoongatePersistenceService(directory))
-    {
-        var players = persistence.Register<Player>("players");
-        await persistence.InitializeAsync();
-        await players.UpsertAsync(new Player { Id = new Serial(1), Name = "Mario" });
-    }
+    var players = transaction.GetDataAccess<Player>();
+    await players.UpsertAsync(new Player { Id = new Serial(1), Name = "Mario" });
+    await players.UpsertAsync(new Player { Id = new Serial(2), Name = "Luigi" });
+});
 
-    await using (var persistence = new MoongatePersistenceService(directory))
-    {
-        var players = persistence.Register<Player>("players");
-        await persistence.InitializeAsync();
-        Console.WriteLine(players.GetById(new Serial(1))?.Name);
-    }
-}
-finally
-{
-    if (Directory.Exists(directory))
-    {
-        Directory.Delete(directory, recursive: true);
-    }
-}
+var player = await container.Resolve<IDataAccess<Player>>().GetByIdAsync(new Serial(1));
+Console.WriteLine(player?.Name);
 ```
 
-## Dependencies and scope
+Normal deployments should keep automatic schema synchronization disabled. Review `PreviewSchemaAsync`, then run `SynchronizeSchemaAsync` with a separately authorized schema connection during maintenance.
 
-This package depends on `Moongate.Core`, MemoryPack, and ZLinq. Entity identifiers use `Serial`.
+## Behavior and scope
 
-Property assignments are not automatically tracked. Persist changes through `UpsertAsync` or `DeleteAsync`. Read APIs return detached entities; changing a returned instance does not save it. Register a live entity source when you want `SaveAllAsync` to capture application-owned entities.
+Reads return detached entities. Changing a returned instance does not persist it; call `UpsertAsync` or `DeleteAsync`. Writes are last-writer-wins and provide no optimistic concurrency token. A transaction callback covers one Accounts or Realm target and is never retried after an uncertain commit result.
 
-Autosave scheduling belongs to the host application. This package does not provide an automatic schema-migration framework; plan format changes and backups before changing deployed entity models.
+`SaveAllAsync` captures registered live sources and commits one independent transaction per database target. Snapshot functions must deep-copy nested mutable state. An absent entity is retained; deletion is always explicit.
+
+FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported renames, and write explicit reviewed SQL for semantic data transformations. Downgrades are operator-managed. This package does not import the removed binary snapshot/journal format and does not create database backups.
+
+Map every complex property explicitly with a supported column/navigation mapping or mark it for explicit omission, such as `IsIgnore`. Do not assume an ordinary writable object graph is serialized or cascaded automatically.
+
+Mappings are immutable, attribute-only, and identical for a persistence CLR type everywhere. Modules select ownership and target; they do not remap types. Do not independently reconfigure these types through another raw FreeSql instance. Schema comparison has no migration history: it compares the current database with the current attributes and does not record the prior application model.
+
+`FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This acknowledged provider limitation must not be hidden with a silent Npgsql major override. Upgrade the provider/driver combination only after running the PostgreSQL compatibility tests.
 
 ## Further reading
 
-See the [persistence cookbook](https://moongate.sh/server/persistence/) for live entity registration, ZLinq queries, world saves, backup retention and offline restore.
+See the [persistence and operations guide](https://moongate.sh/server/persistence/) for schema review, plugin ownership, world saves, transactions, and database backup responsibility.
 
 ## License and source
 
