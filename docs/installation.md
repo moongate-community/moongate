@@ -92,8 +92,8 @@ To skip the script entirely, download the archive and its checksum from the rele
 check it yourself:
 
 ```sh
-sha256sum -c moongate-linux-x64-0.4.0.tar.gz.sha256
-tar -xzf moongate-linux-x64-0.4.0.tar.gz
+sha256sum -c moongate-linux-x64-0.4.1.tar.gz.sha256
+tar -xzf moongate-linux-x64-0.4.1.tar.gz
 ```
 
 ## When it refuses
