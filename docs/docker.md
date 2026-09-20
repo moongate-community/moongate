@@ -60,6 +60,11 @@ to resume with the same volume.
 
 ## Docker Compose
 
+For a local source build with three separate processes, use the
+[one login and two game instances example](docker-login-realms.md). It includes
+Compose and TOML files, independent storage and ports, and the current limitations
+of the login/game modes.
+
 Save this as `compose.yaml`, replacing the client directory:
 
 ```yaml
