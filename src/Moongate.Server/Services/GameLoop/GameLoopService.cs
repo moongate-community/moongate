@@ -214,8 +214,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             finally
             {
                 _insideFinalWork.Value = false;
-                try { await session.CloseAsync().ConfigureAwait(false); }
-                catch (Exception exception) { failure ??= exception; }
+                try { await session.CloseAsync(failure).ConfigureAwait(false); }
+                catch (Exception exception) { failure = exception; }
                 await stopping.ConfigureAwait(false);
             }
             if (failure is not null) { ExceptionDispatchInfo.Capture(failure).Throw(); }

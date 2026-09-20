@@ -99,6 +99,73 @@ public sealed class GameLoopFinalWorkTests
         Assert.True(loop.Completion.IsCompletedSuccessfully);
     }
 
+    [Fact]
+    public async Task StopWithFinalWorkAsync_CaughtCaptureFailuresThenSuccess_RetainsEveryFailure()
+    {
+        using var loop = Create();
+        await loop.StartAsync();
+        var first = new IOException("first capture failed");
+        var second = new InvalidOperationException("second capture failed");
+        var succeeded = false;
+        var observed = await Record.ExceptionAsync(() => loop.StopWithFinalWorkAsync(async (dispatch, _) =>
+        {
+            foreach (var failure in new Exception[] { first, second, first })
+            {
+                Assert.Same(failure, await Record.ExceptionAsync(() => dispatch(new ActionGameLoopWorkItem(() => throw failure))));
+            }
+            await dispatch(new ActionGameLoopWorkItem(() => succeeded = true));
+        }).WaitAsync(TimeSpan.FromSeconds(10)));
+        var aggregate = Assert.IsType<AggregateException>(observed);
+        Assert.Collection(aggregate.InnerExceptions, failure => Assert.Same(first, failure), failure => Assert.Same(second, failure));
+        Assert.True(succeeded);
+        Assert.True(loop.Completion.IsCompletedSuccessfully);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task StopWithFinalWorkAsync_CallbackAndCaptureFail_RetainsDistinctCausesAndJoins(bool sameFailure)
+    {
+        using var loop = Create();
+        await loop.StartAsync();
+        using var release = new ManualResetEventSlim();
+        var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackExited = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var callbackFailure = new IOException("callback failed");
+        Exception captureFailure = sameFailure ? callbackFailure : new InvalidOperationException("capture failed");
+        Task? capture = null;
+        var stopping = loop.StopWithFinalWorkAsync(async (dispatch, _) =>
+        {
+            capture = dispatch(new ActionGameLoopWorkItem(() =>
+            {
+                entered.SetResult();
+                release.Wait();
+                Assert.True(loop.IsOnLoopThread);
+                throw captureFailure;
+            }));
+            await entered.Task.WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None);
+            callbackExited.SetResult();
+            throw callbackFailure;
+        });
+        try
+        {
+            await callbackExited.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.False(stopping.IsCompleted);
+            Assert.False(loop.Completion.IsCompleted);
+        }
+        finally { release.Set(); }
+        var observed = await Record.ExceptionAsync(() => stopping.WaitAsync(TimeSpan.FromSeconds(10)));
+        if (sameFailure)
+        {
+            Assert.Same(callbackFailure, observed);
+        }
+        else
+        {
+            var aggregate = Assert.IsType<AggregateException>(observed);
+            Assert.Collection(aggregate.InnerExceptions, failure => Assert.Same(callbackFailure, failure), failure => Assert.Same(captureFailure, failure));
+        }
+        Assert.Same(captureFailure, await Record.ExceptionAsync(() => capture!));
+        Assert.True(loop.Completion.IsCompletedSuccessfully);
+    }
+
     private static GameLoopService Create()
     {
         return new GameLoopService(new GameLoopOptions(), new TimerWheelService(new TimerWheelOptions(), TimeProvider.System), TimeProvider.System);

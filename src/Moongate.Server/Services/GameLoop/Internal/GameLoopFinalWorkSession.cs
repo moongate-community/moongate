@@ -1,3 +1,4 @@
+using System.Runtime.ExceptionServices;
 using Moongate.Server.Core.Interfaces.GameLoop;
 
 namespace Moongate.Server.Services.GameLoop.Internal;
@@ -7,6 +8,7 @@ internal sealed class GameLoopFinalWorkSession
 {
     private readonly Lock _gate = new();
     private readonly Action _wake;
+    private readonly List<Exception> _failures = [];
     private readonly CancellationToken _cancellationToken;
     private IGameLoopWorkItem? _pending;
     private TaskCompletionSource? _dispatch;
@@ -48,11 +50,20 @@ internal sealed class GameLoopFinalWorkSession
             if (item is null) { return !_closed; }
         }
         try { item.Execute(); completion!.TrySetResult(); }
-        catch (Exception exception) { completion!.TrySetException(exception); }
+        catch (Exception exception)
+        {
+            lock (_gate) { _failures.Add(exception); }
+            completion!.TrySetException(exception);
+        }
         return true;
     }
 
-    public async Task CloseAsync()
+    public Task CloseAsync()
+    {
+        return CloseAsync(null);
+    }
+
+    public async Task CloseAsync(Exception? callbackFailure)
     {
         Task? active;
         bool returnedEarly;
@@ -65,8 +76,20 @@ internal sealed class GameLoopFinalWorkSession
         }
         if (active is not null)
         {
-            await active.ConfigureAwait(false);
+            try { await active.ConfigureAwait(false); }
+            catch (Exception) { /* Capture failures were retained before completing the dispatch. */ }
         }
+        List<Exception> failures = [];
+        if (callbackFailure is not null) { failures.Add(callbackFailure); }
+        lock (_gate)
+        {
+            foreach (var failure in _failures)
+            {
+                if (!failures.Any(existing => ReferenceEquals(existing, failure))) { failures.Add(failure); }
+            }
+        }
+        if (failures.Count == 1) { ExceptionDispatchInfo.Capture(failures[0]).Throw(); }
+        if (failures.Count > 1) { throw new AggregateException(failures); }
         if (returnedEarly)
         {
             throw new InvalidOperationException("The final callback returned before awaiting its admitted capture.");
@@ -78,6 +101,7 @@ internal sealed class GameLoopFinalWorkSession
         lock (_gate)
         {
             _closed = true;
+            _failures.Add(failure);
             _dispatch?.TrySetException(failure);
             Ready.TrySetException(failure);
         }
