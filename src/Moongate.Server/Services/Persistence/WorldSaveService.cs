@@ -1,9 +1,8 @@
-using System.Globalization;
 using System.Runtime.ExceptionServices;
-using Moongate.Core.Directories;
 using Moongate.Persistence.Services;
 using Moongate.Server.Core.Data.Persistence;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Interfaces.GameLoop;
 using Moongate.Server.Services.Persistence.Internal;
 using Serilog;
 
@@ -12,13 +11,15 @@ namespace Moongate.Server.Services.Persistence;
 /// <summary>Coordinates periodic and terminal captures with durable world persistence.</summary>
 public sealed class WorldSaveService : IWorldSaveService
 {
+    public const int StartupPriority = 40;
+
     private readonly Lock _gate = new();
     private readonly MoongatePersistenceService _persistence;
     private readonly IGameLoopService _gameLoop;
     private readonly ITimerService _timers;
     private readonly WorldSaveOptions _options;
     private readonly TimeProvider _timeProvider;
-    private readonly string _backupDirectory;
+    private readonly PersistenceOperationBarrier _operations;
     private readonly ILogger _logger = Log.ForContext<WorldSaveService>();
     private Task? _activeSave;
     private Task? _stopTask;
@@ -28,15 +29,13 @@ public sealed class WorldSaveService : IWorldSaveService
     private bool _stopping;
     private bool _saveFinal;
 
-    public const int StartupPriority = 40;
-
     public WorldSaveService(
         MoongatePersistenceService persistence,
         IGameLoopService gameLoop,
         ITimerService timers,
         WorldSaveOptions options,
         TimeProvider timeProvider,
-        DirectoriesConfig directoriesConfig
+        PersistenceOperationBarrier operations
     )
     {
         _persistence = persistence;
@@ -44,9 +43,8 @@ public sealed class WorldSaveService : IWorldSaveService
         _timers = timers;
         _options = options;
         _timeProvider = timeProvider;
+        _operations = operations;
 
-        // Derived from the root rather than configured: backups live beside the save data they mirror.
-        _backupDirectory = Path.Join(directoriesConfig.Root, "world-saves");
     }
 
     /// <inheritdoc />
@@ -60,14 +58,7 @@ public sealed class WorldSaveService : IWorldSaveService
             }
             _options.Validate();
             _started = true;
-            _logger.Information(
-                "World saving started: autosave {Enabled}, interval {Interval}, backups {BackupsEnabled}, retention {Retention}, directory {BackupDirectory}",
-                _options.Enabled,
-                _options.Interval,
-                _options.BackupsEnabled,
-                _options.BackupRetentionCount,
-                _backupDirectory
-            );
+            _logger.Information("World saving started: autosave {Enabled}, interval {Interval}", _options.Enabled, _options.Interval);
 
             return Task.CompletedTask;
         }
@@ -99,6 +90,7 @@ public sealed class WorldSaveService : IWorldSaveService
     /// <inheritdoc />
     public Task SaveAsync(CancellationToken cancellationToken = default)
     {
+        _operations.EnsureOutsideOperation();
         cancellationToken.ThrowIfCancellationRequested();
 
         lock (_gate)
@@ -119,6 +111,7 @@ public sealed class WorldSaveService : IWorldSaveService
     /// <inheritdoc />
     public Task StopAsync(bool saveFinal)
     {
+        _operations.EnsureOutsideOperation();
         lock (_gate)
         {
             if (_stopTask is not null)
@@ -154,7 +147,16 @@ public sealed class WorldSaveService : IWorldSaveService
         if (_activeSave is null || _activeSave.IsCompleted)
         {
             // One supervised worker per active save, never one worker per entity or timer tick.
-            _activeSave = Task.Run(() => SaveCoreAsync(finalSave: false));
+            try
+            {
+                // Reserve exclusion at admission, before the worker can race shutdown's close.
+                _activeSave = _operations.RunSaveAsync(() => Task.Run(() => SaveCoreAsync(finalSave: false)));
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "World save admission failed");
+                _activeSave = Task.FromException(exception);
+            }
             _ = ObserveSaveAsync(_activeSave);
         }
 
@@ -176,54 +178,37 @@ public sealed class WorldSaveService : IWorldSaveService
     private async Task SaveCoreAsync(bool finalSave)
     {
         var startedAt = _timeProvider.GetTimestamp();
-        string? backupDirectory = null;
 
         try
         {
             _logger.Information("Starting world save; final capture {FinalSave}", finalSave);
-
-            if (_options.BackupsEnabled)
+            if (finalSave)
             {
-                backupDirectory = CreateBackupDirectory();
-                await _persistence.SaveAllWithBackupAsync(
-                                      (capture, _) => CaptureAsync(capture, finalSave),
-                                      backupDirectory,
-                                      CancellationToken.None
-                                  )
-                                  .ConfigureAwait(false);
-                PruneBackups(backupDirectory);
+                await _gameLoop.StopWithFinalWorkAsync((dispatch, token) =>
+                    _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture, dispatch), token), CancellationToken.None).ConfigureAwait(false);
             }
             else
             {
-                await _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture, finalSave), CancellationToken.None)
-                                  .ConfigureAwait(false);
+                await _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture), CancellationToken.None).ConfigureAwait(false);
             }
-            _logger.Information(
-                "World save completed in {ElapsedMilliseconds:F2} ms; backup {BackupDirectory}",
-                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds,
-                backupDirectory
-            );
+            _logger.Information("World save completed in {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
+                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds, finalSave);
         }
         catch (Exception exception)
         {
-            _logger.Error(
-                exception,
-                "World save failed after {ElapsedMilliseconds:F2} ms; backup {BackupDirectory}",
-                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds,
-                backupDirectory
-            );
-
+            _logger.Error(exception, "World save failed after {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
+                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds, finalSave);
             throw;
         }
     }
 
-    private async Task CaptureAsync(Action capture, bool finalSave)
+    private async Task CaptureAsync(Action capture, Func<IGameLoopWorkItem, Task>? finalDispatch = null)
     {
         var item = new WorldSaveCaptureWorkItem(
             () =>
             {
                 var startedAt = _timeProvider.GetTimestamp();
-                capture();
+                _operations.Capture(capture);
                 _logger.Debug(
                     "World capture completed in {ElapsedMilliseconds:F2} ms",
                     _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds
@@ -231,9 +216,9 @@ public sealed class WorldSaveService : IWorldSaveService
             }
         );
 
-        if (finalSave)
+        if (finalDispatch is not null)
         {
-            await _gameLoop.StopAsync(item).ConfigureAwait(false);
+            await finalDispatch(item).ConfigureAwait(false);
         }
         else
         {
@@ -262,6 +247,7 @@ public sealed class WorldSaveService : IWorldSaveService
     private async Task StopCoreAsync(bool saveFinal)
     {
         List<Exception> failures = [];
+        var closingOperations = _operations.CloseAsync();
 
         try
         {
@@ -281,9 +267,11 @@ public sealed class WorldSaveService : IWorldSaveService
             await CaptureFailureAsync(() => _activeSave, failures).ConfigureAwait(false);
         }
 
-        if (saveFinal)
+        await CaptureFailureAsync(() => closingOperations, failures).ConfigureAwait(false);
+
+        if (saveFinal && closingOperations.IsCompletedSuccessfully)
         {
-            await CaptureFailureAsync(() => SaveCoreAsync(finalSave: true), failures).ConfigureAwait(false);
+            await CaptureFailureAsync(() => _operations.RunSaveAsync(() => SaveCoreAsync(finalSave: true), finalSave: true), failures).ConfigureAwait(false);
         }
 
         // Persistence may fail before calling the capture delegate. Always drain the loop before world owners stop.
@@ -315,70 +303,4 @@ public sealed class WorldSaveService : IWorldSaveService
         }
     }
 
-    private string CreateBackupDirectory()
-    {
-        var timestamp = _timeProvider.GetUtcNow();
-
-        if (Directory.Exists(_backupDirectory))
-        {
-            var latest = Directory.EnumerateDirectories(_backupDirectory)
-                                  .Where(IsCompletedBackup)
-                                  .Select(Path.GetFileName)
-                                  .OrderDescending(StringComparer.Ordinal)
-                                  .FirstOrDefault();
-
-            if (latest is not null)
-            {
-                var previous = DateTimeOffset.ParseExact(
-                    latest.AsSpan(11, 23),
-                    "yyyyMMddTHHmmssfffffffZ",
-                    CultureInfo.InvariantCulture,
-                    DateTimeStyles.AssumeUniversal
-                );
-
-                if (timestamp <= previous)
-                {
-                    // Names remain ordered by publication even after a clock rollback or a service restart.
-                    timestamp = previous.AddTicks(1);
-                }
-            }
-        }
-        var stamp = timestamp.ToString("yyyyMMddTHHmmssfffffffZ", CultureInfo.InvariantCulture);
-
-        return Path.Combine(_backupDirectory, $"world-save-{stamp}-{Guid.NewGuid():N}");
-    }
-
-    private void PruneBackups(string newestDirectory)
-    {
-        var completed = Directory.EnumerateDirectories(_backupDirectory)
-                                 .Where(IsCompletedBackup)
-                                 .Where(path => !string.Equals(path, newestDirectory, StringComparison.Ordinal))
-                                 .OrderByDescending(Path.GetFileName, StringComparer.Ordinal)
-                                 .Skip(_options.BackupRetentionCount - 1);
-
-        foreach (var directory in completed)
-        {
-            Directory.Delete(directory, recursive: true);
-        }
-    }
-
-    private static bool IsCompletedBackup(string directory)
-    {
-        var name = Path.GetFileName(directory);
-        const string prefix = "world-save-";
-        const string timestampFormat = "yyyyMMddTHHmmssfffffffZ";
-
-        return name.Length == prefix.Length + 23 + 1 + 32 &&
-               name.StartsWith(prefix, StringComparison.Ordinal) &&
-               name[prefix.Length + 23] == '-' &&
-               DateTimeOffset.TryParseExact(
-                   name.AsSpan(prefix.Length, 23),
-                   timestampFormat,
-                   CultureInfo.InvariantCulture,
-                   DateTimeStyles.AssumeUniversal,
-                   out _
-               ) &&
-               Guid.TryParseExact(name.AsSpan(prefix.Length + 24), "N", out _) &&
-               File.Exists(Path.Combine(directory, MoongatePersistenceBackup.ManifestFileName));
-    }
 }

@@ -2,13 +2,36 @@
 # Account sharing, realm discovery and login handoff are not implemented.
 name: moongate-login-realms
 
+x-required-secrets:
+  postgres-admin: ${MOONGATE_POSTGRES_ADMIN_PASSWORD:?Export MOONGATE_POSTGRES_ADMIN_PASSWORD from Bitwarden}
+  accounts-schema: ${MOONGATE_ACCOUNTS_SCHEMA_PASSWORD:?Export MOONGATE_ACCOUNTS_SCHEMA_PASSWORD from Bitwarden}
+  accounts-runtime: ${MOONGATE_ACCOUNTS_RUNTIME_PASSWORD:?Export MOONGATE_ACCOUNTS_RUNTIME_PASSWORD from Bitwarden}
+  realm-1-schema: ${MOONGATE_REALM_1_SCHEMA_PASSWORD:?Export MOONGATE_REALM_1_SCHEMA_PASSWORD from Bitwarden}
+  realm-1-runtime: ${MOONGATE_REALM_1_RUNTIME_PASSWORD:?Export MOONGATE_REALM_1_RUNTIME_PASSWORD from Bitwarden}
+  realm-2-schema: ${MOONGATE_REALM_2_SCHEMA_PASSWORD:?Export MOONGATE_REALM_2_SCHEMA_PASSWORD from Bitwarden}
+  realm-2-runtime: ${MOONGATE_REALM_2_RUNTIME_PASSWORD:?Export MOONGATE_REALM_2_RUNTIME_PASSWORD from Bitwarden}
+
 x-moongate: &moongate
   build:
     context: ../../..
     dockerfile: src/Moongate.Server/Dockerfile
+    target: final
+  entrypoint:
+    - /bin/sh
+    - /opt/moongate/container-entrypoint.sh
   stop_grace_period: 60s
+  depends_on:
+    postgres:
+      condition: service_healthy
   networks:
     - moongate
+
+x-moongate-sample: &moongate-sample
+  <<: *moongate
+  build:
+    context: ../../..
+    dockerfile: src/Moongate.Server/Dockerfile
+    target: sample-plugin
 
 x-ultima: &ultima
   type: bind
@@ -19,8 +42,50 @@ x-ultima: &ultima
     create_host_path: false
 
 services:
+  postgres:
+    image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+    environment:
+      POSTGRES_DB: ${POSTGRES_ADMIN_DATABASE:-postgres}
+      POSTGRES_PASSWORD_FILE: /run/secrets/postgres-admin-password
+      POSTGRES_USER: ${POSTGRES_ADMIN_USER:-moongate_admin}
+      MOONGATE_ACCOUNTS_DATABASE: ${ACCOUNTS_DATABASE:-moongate_accounts}
+      MOONGATE_ACCOUNTS_SCHEMA_USER: ${ACCOUNTS_SCHEMA_USER:-moongate_accounts_schema}
+      MOONGATE_ACCOUNTS_RUNTIME_USER: ${ACCOUNTS_RUNTIME_USER:-moongate_accounts_runtime}
+      MOONGATE_REALM_1_DATABASE: ${REALM_1_DATABASE:-moongate_realm_1}
+      MOONGATE_REALM_1_SCHEMA_USER: ${REALM_1_SCHEMA_USER:-moongate_realm_1_schema}
+      MOONGATE_REALM_1_RUNTIME_USER: ${REALM_1_RUNTIME_USER:-moongate_realm_1_runtime}
+      MOONGATE_REALM_2_DATABASE: ${REALM_2_DATABASE:-moongate_realm_2}
+      MOONGATE_REALM_2_SCHEMA_USER: ${REALM_2_SCHEMA_USER:-moongate_realm_2_schema}
+      MOONGATE_REALM_2_RUNTIME_USER: ${REALM_2_RUNTIME_USER:-moongate_realm_2_runtime}
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - pg_isready -h 127.0.0.1 -U "$${POSTGRES_USER}" -d "$${POSTGRES_DB}"
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    secrets:
+      - postgres-admin-password
+      - accounts-schema-password
+      - accounts-runtime-password
+      - realm-1-schema-password
+      - realm-1-runtime-password
+      - realm-2-schema-password
+      - realm-2-runtime-password
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+      - ./postgres/init.sh:/docker-entrypoint-initdb.d/10-moongate.sh:ro
+    networks:
+      - moongate
+
   login:
     <<: *moongate
+    environment:
+      MOONGATE_ACCOUNTS_DATABASE_FILE: /run/secrets/accounts-runtime-password
+      MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
+      MOONGATE_ACCOUNTS_RUNTIME_USER: ${ACCOUNTS_RUNTIME_USER:-moongate_accounts_runtime}
+    secrets:
+      - accounts-runtime-password
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${LOGIN_PORT:-2593}:2593"
     configs:
@@ -28,10 +93,17 @@ services:
         target: /data/config/moongate.toml
     volumes:
       - login-data:/data
+      - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
       - *ultima
 
   game-1:
-    <<: *moongate
+    <<: *moongate-sample
+    environment:
+      MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-1-runtime-password
+      MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
+      MOONGATE_REALM_RUNTIME_USER: ${REALM_1_RUNTIME_USER:-moongate_realm_1_runtime}
+    secrets:
+      - realm-1-runtime-password
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_1_PORT:-2595}:2593"
     configs:
@@ -39,10 +111,17 @@ services:
         target: /data/config/moongate.toml
     volumes:
       - game-1-data:/data
+      - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
       - *ultima
 
   game-2:
     <<: *moongate
+    environment:
+      MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-2-runtime-password
+      MOONGATE_REALM_DATABASE_NAME: ${REALM_2_DATABASE:-moongate_realm_2}
+      MOONGATE_REALM_RUNTIME_USER: ${REALM_2_RUNTIME_USER:-moongate_realm_2_runtime}
+    secrets:
+      - realm-2-runtime-password
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_2_PORT:-2596}:2593"
     configs:
@@ -50,7 +129,58 @@ services:
         target: /data/config/moongate.toml
     volumes:
       - game-2-data:/data
+      - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
       - *ultima
+
+  schema-preview:
+    <<: *moongate-sample
+    profiles:
+      - schema
+    command:
+      - --root-directory
+      - /data
+      - --persistence-schema
+      - preview
+    environment:
+      MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-1-runtime-password
+      MOONGATE_REALM_SCHEMA_DATABASE_FILE: /run/secrets/realm-1-schema-password
+      MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
+      MOONGATE_REALM_RUNTIME_USER: ${REALM_1_RUNTIME_USER:-moongate_realm_1_runtime}
+      MOONGATE_REALM_SCHEMA_USER: ${REALM_1_SCHEMA_USER:-moongate_realm_1_schema}
+    secrets:
+      - realm-1-runtime-password
+      - realm-1-schema-password
+    configs:
+      - source: game-1-schema-config
+        target: /data/config/moongate.toml
+    volumes:
+      - schema-job-data:/data
+      - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
+
+  schema-apply:
+    <<: *moongate-sample
+    profiles:
+      - schema
+    command:
+      - --root-directory
+      - /data
+      - --persistence-schema
+      - apply
+    environment:
+      MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-1-runtime-password
+      MOONGATE_REALM_SCHEMA_DATABASE_FILE: /run/secrets/realm-1-schema-password
+      MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
+      MOONGATE_REALM_RUNTIME_USER: ${REALM_1_RUNTIME_USER:-moongate_realm_1_runtime}
+      MOONGATE_REALM_SCHEMA_USER: ${REALM_1_SCHEMA_USER:-moongate_realm_1_schema}
+    secrets:
+      - realm-1-runtime-password
+      - realm-1-schema-password
+    configs:
+      - source: game-1-schema-config
+        target: /data/config/moongate.toml
+    volumes:
+      - schema-job-data:/data
+      - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
 
 configs:
   login-config:
@@ -59,11 +189,31 @@ configs:
     file: ./config/game-1.toml
   game-2-config:
     file: ./config/game-2.toml
+  game-1-schema-config:
+    file: ./config/game-1-schema.toml
+
+secrets:
+  postgres-admin-password:
+    environment: MOONGATE_POSTGRES_ADMIN_PASSWORD
+  accounts-schema-password:
+    environment: MOONGATE_ACCOUNTS_SCHEMA_PASSWORD
+  accounts-runtime-password:
+    environment: MOONGATE_ACCOUNTS_RUNTIME_PASSWORD
+  realm-1-schema-password:
+    environment: MOONGATE_REALM_1_SCHEMA_PASSWORD
+  realm-1-runtime-password:
+    environment: MOONGATE_REALM_1_RUNTIME_PASSWORD
+  realm-2-schema-password:
+    environment: MOONGATE_REALM_2_SCHEMA_PASSWORD
+  realm-2-runtime-password:
+    environment: MOONGATE_REALM_2_RUNTIME_PASSWORD
 
 volumes:
+  postgres-data:
   login-data:
   game-1-data:
   game-2-data:
+  schema-job-data:
 
 networks:
   moongate:

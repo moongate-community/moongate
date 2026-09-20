@@ -6,7 +6,7 @@ before the server starts; the host resolves and starts them the same way it star
 its own built-in services.
 
 **What the sample does.** [samples/Moongate.Sample.Plugin/](../samples/Moongate.Sample.Plugin/)
-registers four things: a shared `GreetingCounter` instance, the `greeter` Lua module
+registers five things: a Realm persistence module/entity, a shared `GreetingCounter` instance, the `greeter` Lua module
 (with the `Tone` enum it takes), a `greet` console command, and a `greeter` metric
 provider that reports how many greetings were produced.
 
@@ -135,6 +135,10 @@ build output — the host already loads `Moongate.Server.Core.dll` and
 [Deployment and loading](#deployment-and-loading)). A package the host does not ship
 must **not** carry that attribute, so its assembly does end up in the bundle.
 
+Plugins that register persisted entities also reference `Moongate.Persistence`
+at the same version with `ExcludeAssets="runtime"`; the host supplies and
+identity-checks its shared FreeSql and Npgsql persistence contracts.
+
 `EnableDynamicLoading` controls whether the SDK copies your NuGet package
 dependencies next to the build output (via `CopyLocalLockFileAssemblies`) and writes
 `MyShard.Plugin.runtimeconfig.json` for a plugin host; `MyShard.Plugin.deps.json` is
@@ -151,6 +155,9 @@ The sample's plugin class, quoted in full from
 
 ```csharp
 using DryIoc;
+using Moongate.Persistence.Extensions;
+using Moongate.Sample.Plugin.Data.Persistence;
+using Moongate.Sample.Plugin.Persistence;
 using Moongate.Sample.Plugin.Commands;
 using Moongate.Sample.Plugin.Diagnostics;
 using Moongate.Sample.Plugin.Internal;
@@ -165,7 +172,7 @@ using Moongate.Server.Core.Types.Commands;
 
 namespace Moongate.Sample.Plugin;
 
-/// <summary>The sample plugin: registers a Lua module and enum, a console command and a metric provider. Registration only; nothing starts here.</summary>
+/// <summary>The sample plugin: registers a Lua module and enum, a console command, a metric provider and a persistence schema. Registration only; nothing starts here.</summary>
 public sealed class SamplePlugin : IMoongatePlugin
 {
     /// <inheritdoc />
@@ -180,6 +187,7 @@ public sealed class SamplePlugin : IMoongatePlugin
     /// <inheritdoc />
     public void Register(Container container)
     {
+        container.AddPersistenceModule<GreeterPersistenceModule>().AddPersistenceEntity<GreetingNote>();
         container.RegisterInstance(new GreetingCounter());
         container.RegisterScriptModule<GreeterModule>();
         container.RegisterScriptEnum<Tone>();
@@ -193,6 +201,14 @@ public sealed class SamplePlugin : IMoongatePlugin
     }
 }
 ```
+
+`AddPersistenceModule<GreeterPersistenceModule>()` declares the stable plugin ID,
+`sample_greeter` schema, Realm target, and owned `GreetingNote` type.
+`AddPersistenceEntity<GreetingNote>()` registers its asynchronous data facade.
+Neither call connects or changes the database during plugin registration. The host
+validates every plugin registration as one batch, then checks schema readiness
+before resolving any startup service. See [PostgreSQL persistence](persistence.md)
+for attributes, schema review, transactions, and explicit complex-property mapping.
 
 `container.RegisterInstance(new GreetingCounter())` shares one counter instance
 between the Lua module and the metric provider; `GreetingCounter`
@@ -229,7 +245,7 @@ publish it in a snapshot as `greeter.hello_calls`. See
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
 | `RegisterScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Registering Lua modules](#registering-lua-modules) |
 | `AddMetricProvider<T>()` | An `IMetricProvider` contribution, singleton, added to the diagnostics collector | [Registering metric providers](#registering-metric-providers) |
-| `AddPersistenceEntity<T>()` | A typed entity collection, named by the entity's `[PersistenceCollection]` attribute (needs a reference to the `Moongate.Persistence` package) | the helper's XML doc in [ContainerPersistenceExtensions.cs](../src/Moongate.Persistence/Extensions/ContainerPersistenceExtensions.cs); the package README covers entities and data access |
+| `AddPersistenceModule<TModule>()` / `AddPersistenceEntity<T>()` | One module-owned PostgreSQL schema declaration and an asynchronous typed entity facade (needs a reference to `Moongate.Persistence`) | [PostgreSQL persistence](persistence.md) |
 
 `priority` only matters for a service that also implements `IMoongateStartupService`
 (`src/Moongate.Server.Core/Interfaces/Services/IMoongateStartupService.cs`): the
@@ -239,7 +255,6 @@ The built-in services use these priorities:
 
 | Priority | Service |
 | --- | --- |
-| -1000 | `MoongatePersistenceStartupService` |
 | -900 | `TimerWheelService` |
 | -800 | `IGameLoopService` (`GameLoopService`) |
 | -10 | `IUltimaDataService` (`UltimaDataService`) |
@@ -256,6 +271,8 @@ The built-in services use these priorities:
 A plugin registering its own startup service picks a priority relative to this
 table: after `IGameLoopService` (-800) if it needs to post work to the loop, after
 `IScriptEngine` (70) if it needs the engine already bound, and so on.
+Persistence schema preparation completes before this startup-service list is
+resolved, regardless of a plugin service's numeric priority.
 
 `RegisterPacketHandler<TPacket, THandler>()` binds one `IPacketHandler<TPacket>`
 singleton (`Handle(GameSession session, TPacket packet)`,

@@ -1,100 +1,67 @@
-using System.Reflection;
 using DryIoc;
-using Moongate.Core.Attributes.Entities;
 using Moongate.Core.Interfaces.Entities;
-using Moongate.Persistence.Data;
-using Moongate.Persistence.DataAccess;
+using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 
 namespace Moongate.Persistence.Extensions;
 
+/// <summary>Registers persistence modules and typed facades without database I/O.</summary>
 public static class ContainerPersistenceExtensions
 {
     extension(Container container)
     {
-        public Container RegisterMoongatePersistence(
-            string directory, PersistenceOptions? options = null
-        )
+        /// <summary>Registers the shared persistence owner.</summary>
+        public Container RegisterMoongatePersistence(PostgreSqlPersistenceOptions options)
         {
             ArgumentNullException.ThrowIfNull(container);
-            var persistence = new MoongatePersistenceService(directory, options);
-            container.RegisterInstance(persistence);
+            if (container.IsRegistered<MoongatePersistenceService>())
+            {
+                throw new InvalidOperationException("Persistence is already registered.");
+            }
 
+            container.RegisterInstance(new MoongatePersistenceService(options));
             return container;
         }
 
-        public Container RegisterDataAccess<T>(string collectionName)
-            where T : class, IMoongateEntity
+        /// <summary>Constructs a module through DryIoc and adds its declaration to the registration batch.</summary>
+        public Container AddPersistenceModule<TModule>() where TModule : class, IPersistenceModule
         {
             ArgumentNullException.ThrowIfNull(container);
-            var dataAccess = container.Resolve<MoongatePersistenceService>().Register<T>(collectionName);
-            var setup = Setup.With(preventDisposal: true);
-            container.RegisterInstance(dataAccess, setup: setup);
-            container.RegisterInstance<IDataAccess<T>>(dataAccess, setup: setup);
+            if (container.IsRegistered<TModule>())
+            {
+                throw new InvalidOperationException($"Persistence module '{typeof(TModule).FullName}' is already registered.");
+            }
 
+            container.Register<TModule>(Reuse.Singleton);
+            container.Resolve<MoongatePersistenceService>().RegisterModule(container.Resolve<TModule>());
             return container;
         }
 
-        /// <summary>Registers a typed collection whose live source is captured by SaveAllAsync.</summary>
-        /// <remarks>
-        /// Register before startup. The source must support synchronized enumeration; missing entities
-        /// are not deleted. The same data access instance remains available for explicit reads and writes.
-        /// </remarks>
-        public Container RegisterDataAccess<T>(string collectionName, Func<IEnumerable<T>> entitySource)
-            where T : class, IMoongateEntity
+        /// <summary>Registers a singleton typed facade whose module ownership is resolved after the full batch.</summary>
+        public Container AddPersistenceEntity<T>() where T : class, IMoongateEntity
         {
-            ArgumentNullException.ThrowIfNull(container);
-            ArgumentNullException.ThrowIfNull(entitySource);
-            var dataAccess = container.Resolve<MoongatePersistenceService>().Register(collectionName, entitySource);
-            var setup = Setup.With(preventDisposal: true);
-            container.RegisterInstance(dataAccess, setup: setup);
-            container.RegisterInstance<IDataAccess<T>>(dataAccess, setup: setup);
-
-            return container;
+            return RegisterEntity<T>(container, null, null);
         }
 
-        /// <summary>Registers a typed collection whose name the entity declares for itself.</summary>
-        /// <remarks>
-        /// Equivalent to <see cref="RegisterDataAccess{T}(string)"/> with the name taken from the entity's
-        /// <see cref="PersistenceCollectionAttribute"/>, so no call site repeats it.
-        /// </remarks>
-        /// <exception cref="InvalidOperationException">The entity declares no collection.</exception>
-        public Container AddPersistenceEntity<T>()
-            where T : class, IMoongateEntity
+        /// <summary>Registers a live source with an explicit detached snapshot function.</summary>
+        /// <remarks>The function must copy all mutable nested state. Sources are captured only inside SaveAllAsync's
+        /// owner callback; missing entities are not deleted. Registration freezes when schema preparation starts.</remarks>
+        public Container AddPersistenceEntity<T>(Func<IEnumerable<T>> source, Func<T, T> snapshot) where T : class, IMoongateEntity
         {
-            return container.RegisterDataAccess<T>(GetCollectionName<T>());
-        }
-
-        /// <summary>
-        /// Registers a typed collection the entity names for itself, together with the live source that
-        /// SaveAllAsync captures.
-        /// </summary>
-        /// <remarks>
-        /// Equivalent to <see cref="RegisterDataAccess{T}(string, Func{IEnumerable{T}})"/>, and carries the
-        /// same requirements: register before startup, and synchronize enumeration against mutation.
-        /// </remarks>
-        /// <exception cref="InvalidOperationException">The entity declares no collection.</exception>
-        public Container AddPersistenceEntity<T>(Func<IEnumerable<T>> entitySource)
-            where T : class, IMoongateEntity
-        {
-            return container.RegisterDataAccess(GetCollectionName<T>(), entitySource);
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(snapshot);
+            return RegisterEntity(container, source, snapshot);
         }
     }
 
-    private static string GetCollectionName<T>()
-        where T : class, IMoongateEntity
+    private static Container RegisterEntity<T>(Container container, Func<IEnumerable<T>>? source, Func<T, T>? snapshot) where T : class, IMoongateEntity
     {
-        var attribute = typeof(T).GetCustomAttribute<PersistenceCollectionAttribute>(inherit: false);
-
-        if (attribute is null)
-        {
-            throw new InvalidOperationException(
-                $"Entity '{typeof(T).FullName}' carries no {nameof(PersistenceCollectionAttribute)}. Declare the "
-                + "collection on the entity, or register it with an explicit name through RegisterDataAccess."
-            );
-        }
-
-        return attribute.Name;
+        ArgumentNullException.ThrowIfNull(container);
+        var facade = container.Resolve<MoongatePersistenceService>().RegisterEntity(source, snapshot);
+        var setup = Setup.With(preventDisposal: true);
+        container.RegisterInstance(facade, setup: setup);
+        container.RegisterInstance<IDataAccess<T>>(facade, setup: setup);
+        return container;
     }
 }

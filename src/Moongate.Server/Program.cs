@@ -1,4 +1,4 @@
-﻿using ConsoleAppFramework;
+using ConsoleAppFramework;
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Extensions.Directories;
@@ -20,6 +20,7 @@ using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Diagnostics;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Interfaces.Persistence;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Ultima.Handlers.General;
@@ -37,6 +38,7 @@ using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Plugins;
+using Moongate.Server.Types.Persistence;
 using Moongate.Server.Services.Ultima;
 using Serilog;
 using Serilog.Formatting.Compact;
@@ -47,12 +49,27 @@ await ConsoleApp.RunAsync(
     args,
     async (
         CancellationToken cancellationToken, LogLevelType logLevel = LogLevelType.Information, bool logToFile = true,
-        bool logPackets = false, string? rootDirectory = null, bool showHeader = true, string pidFileName = "moongate.pid"
+        bool logPackets = false, string? rootDirectory = null, bool showHeader = true, string pidFileName = "moongate.pid",
+        PersistenceSchemaMode persistenceSchema = PersistenceSchemaMode.None
     ) =>
     {
         rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory;
 
         rootDirectory = rootDirectory.ResolvePathAndEnvs();
+
+        if (persistenceSchema != PersistenceSchemaMode.None)
+        {
+            try
+            {
+                await PersistenceSchemaCommand.ExecuteAsync(rootDirectory, persistenceSchema, Console.Out, cancellationToken);
+            }
+            catch (Exception exception)
+            {
+                await Console.Error.WriteLineAsync($"Persistence schema command failed: {exception.Message}");
+                Environment.ExitCode = 1;
+            }
+            return;
+        }
 
         PidFileGuard processGuard;
 
@@ -75,7 +92,7 @@ await ConsoleApp.RunAsync(
         var isDocker = Environment.GetEnvironmentVariable("DOTNET_RUNNING_IN_CONTAINER") == "true";
         var container = new Container();
 
-        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "save", "scripts"]);
+        var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "scripts"]);
 
         var serverArgs = new MoongateServerArgs()
         {
@@ -161,10 +178,9 @@ await ConsoleApp.RunAsync(
                         Reuse.Singleton
                     );
 
-                    services.RegisterMoongatePersistence(directoriesConfig["save"])
-                            .RegisterMoongateService<MoongatePersistenceStartupService>(
-                                MoongatePersistenceStartupService.StartupPriority
-                            )
+                    services.Register<PersistenceOperationBarrier>(Reuse.Singleton);
+                    services.RegisterDelegate<IPersistenceOperationBarrier>(resolver => resolver.Resolve<PersistenceOperationBarrier>(), Reuse.Singleton);
+                    services.RegisterMoongatePersistence(serverConfig.Persistence.ToOptions())
                             .RegisterMoongateService<TimerWheelService>(priority: -900)
                             .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
                             .RegisterMoongateService<IUltimaDataService, UltimaDataService>(-10)

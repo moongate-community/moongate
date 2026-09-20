@@ -1,12 +1,15 @@
-# Login and two game instances
+# Login and realms Compose example
 
-Build and run three isolated Moongate processes from the local checkout.
-**Server modes do not yet select different startup services. Account sharing,
-realm discovery and login handoff are not implemented.**
+This example builds one login-designated process, two game-designated processes,
+and one PostgreSQL 16 service with separate Accounts, Realm 1, and Realm 2
+databases. It also includes one-shot schema preview/apply jobs and a disposable
+end-to-end smoke test.
 
-1. In this directory, copy `.env.example` to `.env`.
-2. Set `UO_DATA_PATH` to your absolute Ultima Online client directory outside the repository.
-3. Run `docker compose up --build -d`.
+The topology does not implement account sharing, realm discovery, or login
+handoff. Keep passwords out of `.env`: export the required variables from
+Bitwarden or another process secret provider, then use
+`docker compose config --quiet`.
 
-See [the full guide](../../../docs/docker-login-realms.md) for ports, storage,
-per-service lifecycle, internal APIs and troubleshooting.
+See the [full setup and operations guide](../../../docs/docker-login-realms.md)
+for credential names, schema maintenance, privilege boundaries, world saves,
+ports, volumes, and `smoke.sh`.

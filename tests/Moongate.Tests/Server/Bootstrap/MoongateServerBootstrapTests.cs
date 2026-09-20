@@ -10,7 +10,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Tests.Support.Events;
-using Moongate.Tests.Support.Persistence;
+using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.Support.Server;
 using Moongate.Tests.Support.Server.Interfaces;
 
@@ -208,58 +208,6 @@ public class MoongateServerBootstrapTests
     }
 
     [Fact]
-    public async Task StartAsync_LaterConstructorReadsPersistence_ResolvesAfterInitialization()
-    {
-        using var root = new TemporaryPersistenceDirectory();
-        var events = new List<string>();
-        var constructorReadInitializedPersistence = false;
-        var container = new Container();
-        container.RegisterMoongatePersistence(root.Path)
-            .RegisterDataAccess<TestEntity>("items")
-            .RegisterMoongateService<MoongatePersistenceStartupService>(MoongatePersistenceStartupService.StartupPriority)
-            .RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(resolver =>
-            {
-                Assert.Empty(resolver.Resolve<IDataAccess<TestEntity>>().GetAll());
-                constructorReadInitializedPersistence = true;
-
-                return new RecordingStartupService("consumer", events);
-            });
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-
-        await bootstrap.StartAsync();
-        await bootstrap.StopAsync();
-
-        Assert.True(constructorReadInitializedPersistence);
-        Assert.Equal(["start:consumer", "stop:consumer"], events);
-    }
-
-    [Fact]
-    public async Task StartAsync_LaterStartFails_StopsFailingAndStartedServicesAndReleasesPersistence()
-    {
-        using var root = new TemporaryPersistenceDirectory();
-        var events = new List<string>();
-        var startFailure = new InvalidOperationException("start failed");
-        var failing = new RecordingStartupService("failing", events, startFailure: startFailure);
-        var container = new Container();
-        container.RegisterMoongatePersistence(root.Path)
-            .RegisterDataAccess<TestEntity>("items")
-            .RegisterMoongateService<MoongatePersistenceStartupService>(MoongatePersistenceStartupService.StartupPriority)
-            .RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(failing);
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-
-        var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => bootstrap.StartAsync());
-
-        Assert.Same(startFailure, failure);
-        Assert.Equal(["start:failing", "stop:failing"], events);
-        await using (var reopened = new MoongatePersistenceService(root.Path))
-        {
-            reopened.Register<TestEntity>("items");
-            await reopened.InitializeAsync();
-        }
-        await bootstrap.StopAsync();
-    }
-
-    [Fact]
     public async Task StartAsync_StartAndCleanupFail_PreservesBothFailures()
     {
         var events = new List<string>();
@@ -361,32 +309,6 @@ public class MoongateServerBootstrapTests
         Assert.Equal(cancellation.Token, Assert.IsType<OperationCanceledException>(failure).CancellationToken);
         Assert.Same(stop, bootstrap.StopAsync());
         Assert.Equal(["start:service", "stop:service"], events);
-    }
-
-    [Fact]
-    public async Task StopAsync_StopFails_StopsEveryServiceReleasesPersistenceAndDoesNotRepeatWork()
-    {
-        using var root = new TemporaryPersistenceDirectory();
-        var events = new List<string>();
-        var stopFailure = new IOException("stop failed");
-        var failing = new RecordingStartupService("failing", events, stopFailure: stopFailure);
-        var container = new Container();
-        container.RegisterMoongatePersistence(root.Path)
-            .RegisterDataAccess<TestEntity>("items")
-            .RegisterMoongateService<MoongatePersistenceStartupService>(MoongatePersistenceStartupService.StartupPriority)
-            .RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(failing);
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        await bootstrap.StartAsync();
-
-        var firstFailure = await Assert.ThrowsAsync<IOException>(() => bootstrap.StopAsync());
-        var secondFailure = await Assert.ThrowsAsync<IOException>(() => bootstrap.StopAsync());
-
-        Assert.Same(stopFailure, firstFailure);
-        Assert.Same(firstFailure, secondFailure);
-        Assert.Equal(["start:failing", "stop:failing"], events);
-        await using var reopened = new MoongatePersistenceService(root.Path);
-        reopened.Register<TestEntity>("items");
-        await reopened.InitializeAsync();
     }
 
     [Fact]

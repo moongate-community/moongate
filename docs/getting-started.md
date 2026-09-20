@@ -47,7 +47,8 @@ default). Node.js is only needed to work on the documentation website.
 
    Use an absolute path. Relative client paths resolve from the process working
    directory, not from the server root. See the complete
-   [configuration reference](server-configuration.md) for listener and save settings.
+   [configuration reference](server-configuration.md) for listener, persistence,
+   and world-save settings.
 
 4. Run the same command again. Check the startup logs for loaded services and
    bound endpoints. A missing `scripts/init.lua` produces a warning and starts
@@ -55,9 +56,9 @@ default). Node.js is only needed to work on the documentation website.
    prevents startup. Add scripts using [Writing Lua scripts](scripting.md).
 
 5. Stop with Ctrl+C and allow shutdown to finish. After successful startup the
-   host coordinates the final world save before closing persistence. A failed
-   startup or faulted game loop cannot promise a final save. Do not terminate
-   the process while waiting for a save or backup.
+   host coordinates the final world save before closing PostgreSQL persistence.
+   A failed startup or faulted game loop cannot promise a final save. Do not terminate
+   the process while waiting for a save.
 
 ## Files and process ownership
 
@@ -69,8 +70,6 @@ All server-managed paths below are relative to `--root-directory`:
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `plugins/` | One assembly bundle per plugin directory |
 | `scripts/` | Lua source and generated editor definitions |
-| `save/` | Live persistence snapshots and journals |
-| `world-saves/` | Consistent world-save backup generations |
 | `moongate.pid` | Current process identifier |
 | `moongate.pid.lock` | Lock file used to exclude another instance |
 
@@ -82,12 +81,14 @@ Normal cleanup removes the PID file if it still belongs to this process; the
 `.lock` file may remain after its handle is released. Its presence alone does
 not mean the server is running.
 
-Use a different root and listener port for each instance. Changing only the PID
-filename does not make a shared save directory safe for multiple writers.
+Use a different root and listener port for each instance. PostgreSQL target
+connections are supplied separately through the environment-variable names in
+TOML; do not point independent worlds at the same realm database.
 
 Console logs show time, level, source and message. File logs roll daily and at
 10 MiB, keeping up to 30 files. For metrics see [Diagnostics](diagnostics.md);
-for backup and recovery see [Persistence and world saves](persistence.md).
+for database targets, schema operations and world saves see
+[PostgreSQL persistence](persistence.md).
 
 ## Common startup problems
 
@@ -98,6 +99,8 @@ for backup and recovery see [Persistence and world saves](persistence.md).
 | Port binding failure | Check `network.listen_address`, port availability and interface addresses |
 | Another instance detected | Check the PID and running process; use a separate root for another server |
 | Script startup error | Fix `scripts/init.lua`; inspect the script filename and line in the log |
+| Persistence variable missing | Export the Npgsql connection under the environment-variable name configured for the registered module's target |
+| PostgreSQL schema changes required | Stop the affected runtime, review `--persistence-schema preview`, then run the separately authorized `apply` command |
 
 The [transport ownership guide](network-game-separation.md) explains the current
 login/game separation boundary. Setting `mode = "login"` alone does not create

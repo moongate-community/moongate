@@ -23,6 +23,16 @@ public interface IGameLoopService : IMoongateStartupService
     /// <exception cref="InvalidOperationException">The caller is on the loop thread or shutdown already won admission.</exception>
     Task StopAsync(IGameLoopWorkItem finalWorkItem);
 
+    /// <summary>Closes ordinary admission and timers, drains accepted work, and runs one asynchronous terminal operation off-loop.</summary>
+    /// <remarks>The operation may dispatch sequential synchronous final captures to the owner thread. The dispatcher is
+    /// valid only inside this callback; concurrent or escaped dispatch rejects. Await every capture and database operation.
+    /// Callback cancellation/failure still drains captures and joins the loop. Cancellation cannot preempt a synchronous capture.
+    /// This method cannot be called from the loop or reentered from its terminal callback.</remarks>
+    /// <param name="finalWorkAsync">Off-loop terminal operation receiving the bounded owner-capture dispatcher and cancellation token.</param>
+    /// <param name="cancellationToken">Cooperative cancellation for terminal work; cleanup always completes.</param>
+    Task StopWithFinalWorkAsync(Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
+        CancellationToken cancellationToken = default);
+
     /// <summary>Returns queue depth/age, admission counters, command timings and fatal loop failures.</summary>
     /// <remarks>Concurrent execution can advance between queue and execution measurements; durations use monotonic time.</remarks>
     GameLoopMetricsSnapshot GetMetricsSnapshot();

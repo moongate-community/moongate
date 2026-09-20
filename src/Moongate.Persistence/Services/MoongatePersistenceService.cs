@@ -1,405 +1,352 @@
+using System.Data.Common;
+using System.Diagnostics;
 using Moongate.Core.Interfaces.Entities;
-using Moongate.Persistence.Data;
-using Moongate.Persistence.Data.Internal;
+using Moongate.Persistence.Data.Config;
+using Moongate.Persistence.Data.Schema;
 using Moongate.Persistence.DataAccess;
+using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Interfaces.Internal;
 using Moongate.Persistence.Internal;
+using Moongate.Persistence.Types.Persistence;
+using Npgsql;
+using Serilog;
 
 namespace Moongate.Persistence.Services;
 
+/// <summary>Owns registered PostgreSQL databases, schema readiness, transactions and world snapshots.</summary>
 public sealed class MoongatePersistenceService : IAsyncDisposable
 {
-    private readonly Lock _lifecycleSync = new();
-    private readonly PersistenceMutationGate _mutationGate = new();
-    private readonly string _directory;
-    private readonly PersistenceOptions _options;
-    private readonly List<IPersistenceCollection> _collections = [];
-    private readonly HashSet<string> _collectionNames = new(StringComparer.Ordinal);
-    private readonly HashSet<Type> _entityTypes = [];
-    private bool _initializationStarted;
-    private bool _initialized;
-    private bool _disposed;
-    private Exception? _fault;
-    private Task? _initializeTask;
-    private Task? _disposeTask;
-
-    public MoongatePersistenceService(string directory, PersistenceOptions? options = null)
+    private readonly ILogger _logger = Log.ForContext<MoongatePersistenceService>();
+    private readonly HashSet<PersistenceDatabaseTarget> _registeredTargets = [];
+    private readonly Lock _registrationSync = new();
+    private readonly PersistenceModuleRegistry _registry = new();
+    private readonly PersistenceSchemaCoordinator _schema;
+    private readonly PersistenceLifetime _lifetime = new();
+    private readonly Dictionary<PersistenceDatabaseTarget, PersistenceMutationGate> _gates = new()
     {
-        ArgumentException.ThrowIfNullOrWhiteSpace(directory);
-        _directory = directory;
-        _options = options ?? new PersistenceOptions();
+        [PersistenceDatabaseTarget.Accounts] = new(),
+        [PersistenceDatabaseTarget.Realm] = new()
+    };
+    private readonly List<IPersistenceEntityRegistration> _sources = [];
+    private readonly AsyncLocal<PersistenceTransaction?> _transaction = new();
+    private readonly AsyncLocal<PersistenceCaptureState?> _capture = new();
+    private bool _frozen;
+    private int _moduleCount;
+    private int _entityCount;
+
+    /// <summary>Constructs an I/O-free persistence owner. Register all entities and modules before initialization.</summary>
+    public MoongatePersistenceService(PostgreSqlPersistenceOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(options);
+        _schema = new PersistenceSchemaCoordinator(options, _registry);
     }
 
-    public DataAccess<T> Register<T>(string collectionName) where T : class, IMoongateEntity
-    {
-        return RegisterCore<T>(collectionName, null);
-    }
-
-    /// <summary>Registers a collection and a live entity source evaluated by each SaveAllAsync call.</summary>
-    /// <remarks>
-    /// The caller must synchronize source enumeration and entity mutation. Entities absent from the
-    /// source are retained; deletions remain explicit. Register before initialization begins.
-    /// </remarks>
-    public DataAccess<T> Register<T>(string collectionName, Func<IEnumerable<T>> entitySource)
-        where T : class, IMoongateEntity
-    {
-        ArgumentNullException.ThrowIfNull(entitySource);
-        return RegisterCore(collectionName, entitySource);
-    }
-
+    /// <summary>Validates the complete registration batch and prepares schemas according to the configured policy.</summary>
     public Task InitializeAsync(CancellationToken cancellationToken = default)
     {
-        lock (_lifecycleSync)
+        return RunSchemaAsync(async () =>
         {
-            ThrowIfDisposed();
-            ThrowIfFaulted();
-            if (_initialized)
-            {
-                return Task.CompletedTask;
-            }
-
-            if (_initializeTask is not null)
-            {
-                return _initializeTask;
-            }
-            _initializationStarted = true;
-            _initializeTask = InitializeCoreAsync(cancellationToken);
-
-            return _initializeTask;
-        }
+            await _schema.InitializeAsync(cancellationToken).ConfigureAwait(false);
+            _logger.Information("PostgreSQL persistence ready: {TargetCount} targets, {ModuleCount} modules, {EntityTypeCount} entity types",
+                _registeredTargets.Count, _moduleCount, _entityCount);
+        });
     }
 
-    public Task CheckpointAsync(CancellationToken cancellationToken = default)
+    /// <summary>Returns pending schema DDL without requiring normal initialization to succeed.</summary>
+    public Task<IReadOnlyList<PersistenceSchemaChange>> PreviewSchemaAsync(CancellationToken cancellationToken = default)
     {
-        lock (_lifecycleSync)
+        return RunOwnedAsync(() =>
         {
-            ThrowIfDisposed();
-            ThrowIfFaulted();
-            if (!_initialized)
-            {
-                throw new InvalidOperationException("Persistence has not been initialized.");
-            }
-            IPersistenceCollection[] collections = [.. _collections];
-
-            return _mutationGate.RunAsync(
-                token => CheckpointCollectionsAsync(collections, token),
-                cancellationToken
-            );
-        }
+            Freeze();
+            return _schema.PreviewAsync(cancellationToken);
+        });
     }
 
-    /// <summary>Persists registered live sources and checkpoints every collection.</summary>
-    /// <remarks>
-    /// Collections without a live source checkpoint their explicit upserts. Saves run sequentially;
-    /// this is not a transaction across entities or collections. Cancellation or failure can leave
-    /// earlier writes committed. Sources must not reenter persistence mutations, checkpoints,
-    /// SaveAllAsync, or disposal.
-    /// </remarks>
+    /// <summary>Explicitly applies schema changes for all registered modules.</summary>
+    public Task SynchronizeSchemaAsync(CancellationToken cancellationToken = default)
+    {
+        return RunSchemaAsync(() => _schema.SynchronizeAsync(cancellationToken));
+    }
+
+    /// <summary>Executes a sequential callback in one target's asynchronous transaction.</summary>
+    /// <remarks>Do not reenter this owner through standalone facades. Failures poison the transaction even if caught.
+    /// No callback is retried; a failed commit acknowledgement may have an unknown durable outcome.</remarks>
+    public Task ExecuteInTransactionAsync(PersistenceDatabaseTarget target, Func<IPersistenceTransaction, Task> operation, CancellationToken cancellationToken = default)
+    {
+        return RunOwnedAsync(async () =>
+        {
+            ArgumentNullException.ThrowIfNull(operation);
+            EnsureReady();
+            var database = _schema.GetDatabase(target);
+            await _gates[target].RunAsync(token => ExecuteCoreAsync(database, operation, token), cancellationToken).ConfigureAwait(false);
+            return true;
+        });
+    }
+
+    /// <summary>Saves detached snapshots, assuming the caller provides safe ownership of live sources.</summary>
     public Task SaveAllAsync(CancellationToken cancellationToken = default)
     {
-        return SaveAllAsync(
-            static (capture, _) =>
-            {
-                capture();
-                return Task.CompletedTask;
-            },
-            cancellationToken
-        );
+        return SaveAllAsync((capture, token) => { token.ThrowIfCancellationRequested(); capture(); return Task.CompletedTask; }, cancellationToken);
     }
 
-    /// <summary>Captures registered live sources in caller-controlled context, then persists them.</summary>
-    /// <remarks>
-    /// The callback must invoke its supplied action exactly once and await that invocation before
-    /// returning. All sources are serialized before any captured payload is committed. Mutations,
-    /// checkpoints, saves, and disposal are ordered around the complete capture and commit sequence.
-    /// </remarks>
-    public Task SaveAllAsync(
-        Func<Action, CancellationToken, Task> captureAsync,
-        CancellationToken cancellationToken = default
-    )
+    /// <summary>Captures sources on their owner loop and commits one independent transaction per target.</summary>
+    /// <remarks>Invoke the capture action exactly once during each callback. Snapshot functions must deep-copy
+    /// nested mutable values. Absence is not deletion. All captures for a target validate before its first write.
+    /// The mutation gate spans capture through commit, including draining any already-started capture when
+    /// its dispatcher returns early or fails. Targets do not share a distributed transaction.</remarks>
+    public Task SaveAllAsync(Func<Action, CancellationToken, Task> captureAsync, CancellationToken cancellationToken = default)
     {
-        ArgumentNullException.ThrowIfNull(captureAsync);
-        lock (_lifecycleSync)
+        return RunOwnedAsync(async () =>
         {
-            ThrowIfDisposed();
-            ThrowIfFaulted();
-            if (!_initialized)
+            ArgumentNullException.ThrowIfNull(captureAsync);
+            EnsureReady();
+            var started = Stopwatch.GetTimestamp();
+            var savedCount = 0;
+            foreach (var group in _sources.GroupBy(source => GetTarget(source.EntityType)).OrderBy(group => group.Key))
             {
-                throw new InvalidOperationException("Persistence has not been initialized.");
-            }
-            IPersistenceCollection[] collections = [.. _collections];
-
-            return _mutationGate.RunAsync(
-                token => SaveAllCoreAsync(collections, captureAsync, token),
-                cancellationToken
-            );
-        }
-    }
-
-    /// <summary>Captures and checkpoints every collection, then publishes a verified backup generation.</summary>
-    /// <remarks>
-    /// The target must not exist or overlap the persistence directory. Mutation and disposal remain
-    /// ordered until publication completes. Failure can leave live persistence writes committed,
-    /// but never exposes an incomplete backup at the target directory.
-    /// </remarks>
-    public Task SaveAllWithBackupAsync(
-        Func<Action, CancellationToken, Task> captureAsync,
-        string backupDirectory,
-        CancellationToken cancellationToken = default
-    )
-    {
-        ArgumentNullException.ThrowIfNull(captureAsync);
-        var destination = PersistenceBackupFiles.ValidateDestination(_directory, backupDirectory);
-        lock (_lifecycleSync)
-        {
-            ThrowIfDisposed();
-            ThrowIfFaulted();
-            if (!_initialized)
-            {
-                throw new InvalidOperationException("Persistence has not been initialized.");
-            }
-            IPersistenceCollection[] collections = [.. _collections];
-            string[] collectionNames = [.. _collectionNames.Order(StringComparer.Ordinal)];
-
-            return _mutationGate.RunAsync(
-                token => PersistenceBackupFiles.PublishDirectoryAsync(destination, async (staging, stageToken) =>
+                await _gates[group.Key].RunAsync(async token =>
                 {
-                    await SaveAllCoreAsync(collections, captureAsync, stageToken).ConfigureAwait(false);
-                    await MoongatePersistenceBackup.WriteAsync(_directory, staging, collectionNames, stageToken)
-                        .ConfigureAwait(false);
-                }, token),
-                cancellationToken
-            );
-        }
-    }
+                    var targetStarted = Stopwatch.GetTimestamp();
+                    var targetCount = 0;
+                    var state = new PersistenceCaptureState();
+                    var writes = new List<Func<PersistenceTransaction, CancellationToken, Task>>();
+                    _capture.Value = state;
+                    try
+                    {
+                        await captureAsync(() =>
+                        {
+                            state.BeginCapture();
+                            var previousCapture = _capture.Value;
+                            _capture.Value = state;
+                            try
+                            {
+                                token.ThrowIfCancellationRequested();
+                                foreach (var source in group)
+                                {
+                                    writes.Add(source.Capture(out var count));
+                                    targetCount += count;
+                                }
+                                state.CompleteCapture();
+                            }
+                            catch
+                            {
+                                state.FailCapture();
+                                throw;
+                            }
+                            finally
+                            {
+                                _capture.Value = previousCapture;
+                                state.ExitCapture();
+                            }
+                        }, token).ConfigureAwait(false);
+                        if (!await state.CloseAsync().ConfigureAwait(false))
+                        {
+                            throw new InvalidOperationException("Persistence capture must complete exactly once without reentry.");
+                        }
+                    }
+                    finally
+                    {
+                        await state.CloseAsync().ConfigureAwait(false);
+                        _capture.Value = null;
+                    }
 
-    private async Task SaveAllCoreAsync(
-        IPersistenceCollection[] collections,
-        Func<Action, CancellationToken, Task> captureAsync,
-        CancellationToken cancellationToken
-    )
-    {
-        CapturedPersistenceCollection[]? capturedCollections = null;
-        var captureState = new PersistenceCaptureState();
-        Action capture = () =>
-        {
-            captureState.BeginCapture();
-
-            try
-            {
-                _mutationGate.RunCapture(
-                    () => capturedCollections = CaptureAllCollections(collections, cancellationToken)
-                );
-                captureState.CompleteCapture();
-            }
-            catch
-            {
-                captureState.FailCapture();
-                throw;
-            }
-        };
-
-        bool captureCompleted;
-        try
-        {
-            await captureAsync(capture, cancellationToken).ConfigureAwait(false);
-        }
-        finally
-        {
-            captureCompleted = captureState.Close();
-        }
-
-        if (!captureCompleted || capturedCollections is null)
-        {
-            throw new InvalidOperationException(
-                "The persistence capture action must be invoked exactly once before its callback returns."
-            );
-        }
-
-        cancellationToken.ThrowIfCancellationRequested();
-        foreach (var snapshot in capturedCollections)
-        {
-            await snapshot.Collection.CommitAsync(snapshot.Payloads, cancellationToken).ConfigureAwait(false);
-        }
-
-        cancellationToken.ThrowIfCancellationRequested();
-        await CheckpointCollectionsAsync(collections, cancellationToken).ConfigureAwait(false);
-    }
-
-    private DataAccess<T> RegisterCore<T>(string collectionName, Func<IEnumerable<T>>? entitySource)
-        where T : class, IMoongateEntity
-    {
-        lock (_lifecycleSync)
-        {
-            ThrowIfDisposed();
-            if (_initializationStarted)
-            {
-                throw new InvalidOperationException("Collections cannot be registered after initialization begins.");
-            }
-            PersistencePaths.ValidateCollectionName(collectionName);
-            if (!_collectionNames.Add(collectionName))
-            {
-                throw new InvalidOperationException($"Collection name '{collectionName}' is already registered.");
+                    token.ThrowIfCancellationRequested();
+                    await ExecuteCoreAsync(_schema.GetDatabase(group.Key), async transaction =>
+                    {
+                        foreach (var write in writes)
+                        {
+                            await write(transaction, token).ConfigureAwait(false);
+                        }
+                    }, token).ConfigureAwait(false);
+                    savedCount += targetCount;
+                    _logger.Information("PostgreSQL snapshot committed for {Target}: {EntityCount} entities in {ElapsedMilliseconds} ms",
+                        group.Key, targetCount, Stopwatch.GetElapsedTime(targetStarted).TotalMilliseconds);
+                }, cancellationToken).ConfigureAwait(false);
             }
 
-            if (!_entityTypes.Add(typeof(T)))
-            {
-                _collectionNames.Remove(collectionName);
-                throw new InvalidOperationException($"Entity type '{typeof(T).FullName}' is already registered.");
-            }
-
-            var store = new BinaryCollectionStore(_directory, collectionName, _options);
-            var dataAccess = new DataAccess<T>(store, _mutationGate, entitySource);
-            _collections.Add(dataAccess);
-
-            return dataAccess;
-        }
-    }
-
-    private static async Task CheckpointCollectionsAsync(
-        IPersistenceCollection[] collections, CancellationToken cancellationToken)
-    {
-        cancellationToken.ThrowIfCancellationRequested();
-        List<Exception>? failures = null;
-        foreach (var collection in collections)
-        {
-            try { await collection.CheckpointAsync(cancellationToken).ConfigureAwait(false); }
-            catch (OperationCanceledException exception) when (cancellationToken.IsCancellationRequested)
-            {
-                if (failures is null)
-                {
-                    throw;
-                }
-                failures.Add(exception);
-                break;
-            }
-            catch (Exception exception) { (failures ??= []).Add(exception); }
-        }
-        ThrowFailures(failures);
-    }
-
-    private static CapturedPersistenceCollection[] CaptureAllCollections(
-        IPersistenceCollection[] collections,
-        CancellationToken cancellationToken
-    )
-    {
-        var captured = new CapturedPersistenceCollection[collections.Length];
-        for (var index = 0; index < collections.Length; index++)
-        {
             cancellationToken.ThrowIfCancellationRequested();
-            var collection = collections[index];
-            captured[index] = new CapturedPersistenceCollection(
-                collection,
-                collection.Capture(cancellationToken)
-            );
-        }
-
-        cancellationToken.ThrowIfCancellationRequested();
-
-        return captured;
+            _logger.Information("PostgreSQL world save completed: {EntityCount} entities in {ElapsedMilliseconds} ms",
+                savedCount, Stopwatch.GetElapsedTime(started).TotalMilliseconds);
+            return true;
+        });
     }
 
-    private async Task InitializeCoreAsync(CancellationToken cancellationToken)
+    internal void RegisterModule(IPersistenceModule module)
     {
+        lock (_registrationSync)
+        {
+            ThrowIfFrozen();
+            _registry.RegisterModule(module);
+            _moduleCount++;
+            _registeredTargets.Add(module.DatabaseTarget);
+        }
+    }
+
+    internal DataAccess<T> RegisterEntity<T>(Func<IEnumerable<T>>? source = null, Func<T, T>? snapshot = null) where T : class, IMoongateEntity
+    {
+        lock (_registrationSync)
+        {
+            ThrowIfFrozen();
+            if ((source is null) != (snapshot is null))
+            {
+                throw new ArgumentException("A live source requires an explicit snapshot function.");
+            }
+
+            _registry.RegisterEntity(typeof(T));
+            _entityCount++;
+            if (source is not null)
+            {
+                _sources.Add(new PersistenceEntityRegistration<T>(source, snapshot!));
+            }
+
+            return new DataAccess<T>(this);
+        }
+    }
+
+    internal PersistenceDatabaseTarget GetTarget(Type type)
+    {
+        return _schema.GetOwner(type).DatabaseTarget;
+    }
+    internal bool IsCurrentTransaction(PersistenceTransaction transaction)
+    {
+        return ReferenceEquals(_transaction.Value, transaction);
+    }
+
+    internal Task<TResult> RunOperationAsync<T, TResult>(bool mutation, Func<IFreeSql, DbTransaction?, CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken) where T : class, IMoongateEntity
+    {
+        return RunOwnedAsync(async () =>
+        {
+            EnsureReady();
+            cancellationToken.ThrowIfCancellationRequested();
+            var target = GetTarget(typeof(T));
+            var database = _schema.GetDatabase(target);
+            return mutation
+                ? await _gates[target].RunAsync(token => operation(database.Orm, null, token), cancellationToken).ConfigureAwait(false)
+                : await operation(database.Orm, null, cancellationToken).ConfigureAwait(false);
+        });
+    }
+
+    private Task RunSchemaAsync(Func<Task> operation)
+    {
+        return RunOwnedAsync(async () =>
+        {
+            Freeze();
+            await operation().ConfigureAwait(false);
+            return true;
+        });
+    }
+
+    private async Task ExecuteCoreAsync(PostgreSqlDatabase database, Func<PersistenceTransaction, Task> operation, CancellationToken cancellationToken)
+    {
+        var connection = new NpgsqlConnection(database.RuntimeConnectionString);
+        NpgsqlTransaction? native = null;
+        PersistenceTransaction? scope = null;
+        Exception? failure = null;
         try
         {
-            foreach (var collection in _collections)
-            {
-                await collection.InitializeAsync(cancellationToken).ConfigureAwait(false);
-            }
-            lock (_lifecycleSync)
-            {
-                _initialized = true;
-            }
+            await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+            native = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
+            scope = new PersistenceTransaction(this, database, native, cancellationToken);
+            _transaction.Value = scope;
+            await operation(scope).ConfigureAwait(false);
+            await scope.CompleteCallbackAsync().ConfigureAwait(false);
+
+            cancellationToken.ThrowIfCancellationRequested();
+            await native.CommitAsync(cancellationToken).ConfigureAwait(false);
         }
         catch (Exception exception)
         {
-            var failures = new List<Exception> { exception };
-            failures.AddRange(await CloseEveryCollectionAsync(abort: true).ConfigureAwait(false));
-            var failure = failures.Count == 1 ? exception : new AggregateException(failures);
-            lock (_lifecycleSync)
+            failure = exception;
+            if (scope is not null)
             {
-                _fault = failure;
+                scope.Fail(exception);
+                try { await scope.CompleteCallbackAsync().ConfigureAwait(false); } catch { /* Preserve the original error. */ }
             }
-
-            throw failure;
+            if (native is not null)
+            {
+                try { await native.RollbackAsync(CancellationToken.None).ConfigureAwait(false); } catch { /* Preserve the original error. */ }
+            }
+            throw;
         }
-    }
-
-    private async Task<List<Exception>> CloseEveryCollectionAsync(bool abort)
-    {
-        List<Exception> failures = [];
-        foreach (var collection in _collections)
+        finally
         {
+            _transaction.Value = null;
             try
             {
-                if (abort)
+                if (native is not null)
                 {
-                    await collection.AbortAsync().ConfigureAwait(false);
-                }
-                else
-                {
-                    await collection.CloseFromOwnerAsync().ConfigureAwait(false);
+                    await native.DisposeAsync().ConfigureAwait(false);
                 }
             }
-            catch (Exception exception) { failures.Add(exception); }
+            catch when (failure is not null)
+            {
+                /* Preserve the original error. */
+            }
+            finally
+            {
+                try
+                {
+                    await connection.DisposeAsync().ConfigureAwait(false);
+                }
+                catch when (failure is not null)
+                {
+                    /* Preserve the original error. */
+                }
+            }
         }
-
-        return failures;
     }
 
-    private static void ThrowFailures(List<Exception>? failures)
+    private async Task<TResult> RunOwnedAsync<TResult>(Func<Task<TResult>> operation)
     {
-        if (failures is null || failures.Count == 0)
-        {
-            return;
-        }
-
-        if (failures.Count == 1)
-        {
-            throw failures[0];
-        }
-
-        throw new AggregateException(failures);
+        RejectReentry();
+        return await _lifetime.RunAsync(operation).ConfigureAwait(false);
     }
 
-    private void ThrowIfDisposed()
+    private void RejectReentry()
     {
-        ObjectDisposedException.ThrowIf(_disposed, this);
-    }
-
-    private void ThrowIfFaulted()
-    {
-        if (_fault is not null)
+        if (_transaction.Value is { } transaction)
         {
-            throw new InvalidOperationException("Persistence initialization failed.", _fault);
+            var error = new InvalidOperationException("A transaction callback cannot reenter its persistence owner through standalone APIs.");
+            transaction.Fail(error);
+            throw error;
+        }
+        if (_capture.Value is { } capture)
+        {
+            capture.FailCapture();
+            throw new InvalidOperationException("A capture callback cannot reenter persistence.");
         }
     }
 
-    private async Task DisposeCoreAsync(Task? initialization)
+    private void EnsureReady()
     {
-        if (initialization is not null)
+        if (!_schema.IsReady)
         {
-            await initialization.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+            throw new InvalidOperationException("Initialize persistence successfully before using its facades.");
         }
-
-        var failures = await CloseEveryCollectionAsync(abort: false).ConfigureAwait(false);
-        ThrowFailures(failures);
     }
 
+    private void Freeze() { lock (_registrationSync) { _frozen = true; } }
+    private void ThrowIfFrozen()
+    {
+        if (_frozen)
+        {
+            throw new InvalidOperationException("Persistence registration is frozen.");
+        }
+    }
+
+    /// <summary>Rejects new work, drains admitted operations and then disposes shared database resources.</summary>
     public ValueTask DisposeAsync()
     {
-        if (_mutationGate.IsInsideCapture)
+        RejectReentry();
+        Freeze();
+        return new ValueTask(_lifetime.CloseAsync(async () =>
         {
-            throw new InvalidOperationException("A live entity source cannot dispose its persistence service.");
-        }
+            foreach (var gate in _gates.Values)
+            {
+                await gate.CloseAsync(() => Task.CompletedTask).ConfigureAwait(false);
+            }
 
-        lock (_lifecycleSync)
-        {
-            _disposed = true;
-            _disposeTask ??= _mutationGate.CloseAsync(() => DisposeCoreAsync(_initializeTask));
-
-            return new ValueTask(_disposeTask);
-        }
+            await _schema.DisposeAsync().ConfigureAwait(false);
+        }));
     }
 }
