@@ -49,20 +49,6 @@ internal sealed partial class PersistenceModuleRegistry
                 throw new InvalidOperationException($"Persistence target '{targetGroup.Key}' is required by a module but is not configured.");
             }
 
-            foreach (var module in targetGroup)
-            {
-                try
-                {
-                    module.Configure(database.Orm);
-                }
-                catch (Exception exception)
-                {
-                    throw new InvalidOperationException(
-                        $"Persistence module '{module.Id}' failed while configuring its FreeSql mappings.",
-                        exception);
-                }
-            }
-
             ValidateFinalMappings(database, targetGroup, owners);
         }
 
@@ -262,6 +248,15 @@ internal sealed partial class PersistenceModuleRegistry
         {
             throw new InvalidOperationException(
                 $"Persistence module '{module.Id}' entity '{entityType.FullName}' must map Serial Id through CLR long storage.");
+        }
+
+        var databaseType = idColumn.Attribute.DbType.Trim();
+        if (!string.Equals(databaseType, "int8", StringComparison.OrdinalIgnoreCase) &&
+            !string.Equals(databaseType, "bigint", StringComparison.OrdinalIgnoreCase))
+        {
+            throw new InvalidOperationException(
+                $"Persistence module '{module.Id}' entity '{entityType.FullName}' must map Serial Id to PostgreSQL bigint/int8 storage, " +
+                $"but the effective database type is '{databaseType}'.");
         }
     }
 

@@ -60,13 +60,13 @@ public sealed class PersistenceSchemaCoordinatorTests
         await using var database = await _fixture.CreateDatabaseAsync();
         await using var coordinator = CreateCoordinator(
             database,
-            PersistenceTestModules.Character(tableName: "entities"),
-            PersistenceTestModules.Inventory(tableName: "entities"));
+            PersistenceTestModules.CharacterShared(),
+            PersistenceTestModules.InventoryShared());
 
         await coordinator.SynchronizeAsync();
         var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
-        await orm.Insert(new CharacterEntity { Id = new Serial(7), Name = "character" }).ExecuteAffrowsAsync();
-        await orm.Insert(new InventoryEntity { Id = new Serial(7), Balance = 42 }).ExecuteAffrowsAsync();
+        await orm.Insert(new CharacterSharedEntity { Id = new Serial(7), Name = "character" }).ExecuteAffrowsAsync();
+        await orm.Insert(new InventorySharedEntity { Id = new Serial(7), Balance = 42 }).ExecuteAffrowsAsync();
 
         Assert.Equal("character", await database.ScalarAsync<string>(
             "SELECT name FROM plugin_characters.entities WHERE id = 7"));
@@ -113,25 +113,23 @@ public sealed class PersistenceSchemaCoordinatorTests
     }
 
     [Fact]
-    public async Task SynchronizeAsync_InvalidLaterModule_RejectsBatchBeforeAnyDdl()
+    public async Task SynchronizeAsync_IntegerSerialStorageInLaterModule_RejectsBatchBeforeAnyDdl()
     {
         await using var database = await _fixture.CreateDatabaseAsync();
         var invalid = new TestPersistenceModule(
             "plugin.invalid",
             "plugin_invalid",
             PersistenceDatabaseTarget.Realm,
-            [typeof(WrongSerialMapEntity)],
-            orm => orm.CodeFirst.ConfigEntity<WrongSerialMapEntity>(table =>
-            {
-                table.Name("plugin_invalid.entities");
-                table.Property(entity => entity.Id).Name("id").IsPrimary(true).MapType(typeof(int));
-            }));
+            [typeof(NarrowSqlIdEntity)]);
         await using var coordinator = CreateCoordinator(database, PersistenceTestModules.Character(), invalid);
 
-        await Assert.ThrowsAsync<InvalidOperationException>(() => coordinator.SynchronizeAsync());
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => coordinator.SynchronizeAsync());
 
+        Assert.Contains("integer", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.Equal(0L, await database.ScalarAsync<long>(
             "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'plugin_characters'"));
+        Assert.Equal(0L, await database.ScalarAsync<long>(
+            "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'plugin_invalid'"));
         Assert.False(coordinator.IsReady);
     }
 

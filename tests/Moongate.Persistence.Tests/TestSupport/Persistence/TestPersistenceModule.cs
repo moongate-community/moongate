@@ -1,4 +1,3 @@
-using FreeSql;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Types.Persistence;
 
@@ -6,8 +5,6 @@ namespace Moongate.Persistence.Tests.TestSupport.Persistence;
 
 internal sealed class TestPersistenceModule : IPersistenceModule
 {
-    private readonly Action<IFreeSql> _configure;
-
     public string Id { get; }
 
     public string Schema { get; }
@@ -20,19 +17,12 @@ internal sealed class TestPersistenceModule : IPersistenceModule
         string id,
         string schema,
         PersistenceDatabaseTarget databaseTarget,
-        IReadOnlyCollection<Type> entityTypes,
-        Action<IFreeSql> configure
+        IReadOnlyCollection<Type> entityTypes
     )
     {
         Id = id;
         Schema = schema;
         DatabaseTarget = databaseTarget;
         EntityTypes = entityTypes;
-        _configure = configure;
-    }
-
-    public void Configure(IFreeSql orm)
-    {
-        _configure(orm);
     }
 }
