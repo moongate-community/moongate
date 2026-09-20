@@ -106,7 +106,7 @@ public sealed class ApiServerServiceTests
         File.Delete(Path.Combine(fixture.Directories["config"], fixture.Config.CertificatePath));
         fixture.Config.TrustedRootPaths = policy == "untrusted_root" ? ["tls/root.pem"] : ["tls/client.pfx.pem"];
         fixture.Config.Peers[0].CertificateSha256 = policy == "unlisted_peer" ? new string('A', 64) : clientCertificate.GetCertHashString(HashAlgorithmName.SHA256);
-        if (policy == "forbidden") { fixture.Config.Peers[0].AllowedOperations = []; }
+        if (policy == "forbidden") { fixture.Config.Peers[0].AllowedOperations = new([]); }
         await using var service = fixture.CreateService();
         await service.StartAsync();
         using var serverCertificate = X509CertificateLoader.LoadCertificateFromFile(
@@ -142,11 +142,36 @@ public sealed class ApiServerServiceTests
         }
     }
 
+    [Theory, InlineData("[\"*\"]", true), InlineData("[100]", true), InlineData("[101]", false), InlineData("[]", false), InlineData(null, false)]
+    public async Task StartAsync_OperationPolicyFromToml_EnforcesExplicitPermissions(string? operations, bool allowed)
+    {
+        using var fixture = new ApiHostFixture();
+        var entry = fixture.Config.Peers[0];
+        var toml = $"peer_id = \"{entry.PeerId}\"\ncertificate_sha256 = \"{entry.CertificateSha256}\"\n";
+        if (operations is not null) { toml += $"allowed_operations = {operations}\n"; }
+        fixture.Config.Peers[0] = TomlUtils.Deserialize<ApiPeerConfig>(toml)!;
+        await using var service = fixture.CreateService();
+        await service.StartAsync();
+        await using var client = fixture.CreateClient();
+        await using var connection = await client.ConnectAsync(service.Endpoint!, "localhost", "server");
+        if (allowed)
+        {
+            var response = await connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 });
+            Assert.Equal(42, response.Value);
+        }
+        else
+        {
+            var exception = await Assert.ThrowsAsync<ApiRemoteException>(() =>
+                connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 }));
+            Assert.Equal(ApiErrorCode.Forbidden, exception.Code);
+        }
+    }
+
     [Fact]
     public async Task StartAsync_PeerWithoutPermission_RejectsOperation()
     {
         using var fixture = new ApiHostFixture();
-        fixture.Config.Peers[0].AllowedOperations = [];
+        fixture.Config.Peers[0].AllowedOperations = new([]);
         await using var service = fixture.CreateService();
         await service.StartAsync();
         await using var client = fixture.CreateClient();
@@ -156,10 +181,11 @@ public sealed class ApiServerServiceTests
         Assert.Equal(ApiErrorCode.Forbidden, exception.Code);
     }
 
-    [Fact]
-    public async Task StartAsync_UnlistedPeer_RejectsConnectionOrCall()
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task StartAsync_UnlistedPeer_RejectsConnectionOrCall(bool allowAllOperations)
     {
         using var fixture = new ApiHostFixture();
+        if (allowAllOperations) { fixture.Config.Peers[0].AllowedOperations = new([], allowsAll: true); }
         fixture.Config.Peers[0].CertificateSha256 = new string('B', 64);
         await using var service = fixture.CreateService();
         await service.StartAsync();

@@ -41,7 +41,7 @@ public sealed class ApiConfigTests
             case "peers": config.Peers = []; break;
             case "fingerprint": config.Peers[0].CertificateSha256 = new string('Z', 64); break;
             case "identity": config.Peers[0].PeerId = " "; break;
-            case "zero_operation": config.Peers[0].AllowedOperations = [0]; break;
+            case "zero_operation": config.Peers[0].AllowedOperations = new([0]); break;
             case "duplicate":
                 config.Peers = [config.Peers[0], new ApiPeerConfig
                 { CertificateSha256 = new string('a', 64), PeerId = "second" }]; break;
@@ -55,7 +55,7 @@ public sealed class ApiConfigTests
     {
         var config = ValidConfig();
         config.CertificatePasswordEnvironmentVariable = "";
-        config.Peers[0].AllowedOperations = [];
+        config.Peers[0].AllowedOperations = new([]);
         config.Validate();
     }
 
@@ -105,7 +105,7 @@ public sealed class ApiConfigTests
             TrustedRootPaths = ["root.pem"],
             Peers = [new ApiPeerConfig
             {
-                CertificateSha256 = new string('A', 64), PeerId = "peer", AllowedOperations = [100]
+                CertificateSha256 = new string('A', 64), PeerId = "peer", AllowedOperations = new([100])
             }]
         };
 }

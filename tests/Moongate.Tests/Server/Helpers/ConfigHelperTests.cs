@@ -73,7 +73,7 @@ public sealed class ConfigHelperTests
         Assert.Equal(["certs/root.pem"], api.TrustedRootPaths);
         var peer = Assert.Single(api.Peers);
         Assert.Equal("admin", peer.PeerId);
-        Assert.Equal(new ushort[] { 100, 65535 }, peer.AllowedOperations);
+        Assert.Equal(new ushort[] { 100, 65535 }, peer.AllowedOperations.OperationIds);
     }
 
     [Fact]

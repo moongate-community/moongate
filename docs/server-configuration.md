@@ -78,7 +78,7 @@ max_string_length = 16777216
 | `api.peers` | Nonempty array of allowed certificate identities; see the example below. Each fingerprint is unique ignoring case. |
 | `api.peers.certificate_sha256` | Exactly 64 hexadecimal characters identifying the peer's leaf certificate; no colons. |
 | `api.peers.peer_id` | Nonblank local identity for this peer. Multiple certificates may map to one identity during rotation. |
-| `api.peers.allowed_operations` | Array of operation IDs from 1 through 65535. An empty list allows authentication but denies every incoming operation. |
+| `api.peers.allowed_operations` | `["*"]` grants all registered operations, including future additions. Otherwise use integer IDs from 1 through 65535. Empty or omitted denies all incoming operations; the wildcard must appear alone. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
@@ -135,8 +135,11 @@ release images require upgrading or building the current checkout.
    [[api.peers]]
    certificate_sha256 = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
    peer_id = "admin-console"
-   allowed_operations = [100]
+   allowed_operations = ["*"]
    ```
+
+   Use `["*"]` for a fully trusted peer, or an explicit list such as `[100, 200]`
+   to restrict its operations. `[]` and omission keep all operations denied.
 
 3. Inject `MOONGATE_API_CERTIFICATE_PASSWORD` from your credential provider into
    the server environment and restart. A successful bind logs `API listener

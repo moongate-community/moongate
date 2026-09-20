@@ -102,7 +102,7 @@ trusted_root_paths = ["tls/realm-1.pem"]
 # Replace with the actual SHA-256 fingerprint of realm-1's public certificate.
 certificate_sha256 = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
 peer_id = "realm-1"
-allowed_operations = [100]
+allowed_operations = ["*"]
 ```
 
 On **realm-1**, use the same structure with its own DNS name `realm-1`,
@@ -110,16 +110,28 @@ On **realm-1**, use the same structure with its own DNS name `realm-1`,
 and `peer_id = "login"`. Remove the earlier `peers = []` line when adding
 `[[api.peers]]` tables. Restart each instance to load the policy and bind the port.
 
-Operation `100` is illustrative: grant the IDs implemented by your registered
-handlers. `allowed_operations = []` permits authentication but denies all
-incoming operations. A trusted certificate still needs a fingerprint entry;
-a fingerprint entry still needs a valid trusted certificate. Private-network
-placement does not bypass these checks.
+`allowed_operations = ["*"]` grants this authenticated peer every registered
+operation, including operations added later. Use it for a fully trusted login,
+realm or administration process. The wildcard grants permissions; it does not
+register handlers or make unknown operations callable.
+
+| Value | Permission |
+| --- | --- |
+| `["*"]` | All operations, including future registrations. |
+| `[100, 200]` | Only the listed operation IDs. |
+| `[]` or omitted | Authentication is allowed, but every incoming operation is denied. |
+
+The `*` must be quoted inside the array. Mixed lists such as `["*", 100]`,
+unknown strings and operation IDs outside 1–65535 are rejected. A trusted
+certificate still needs a fingerprint entry; a fingerprint entry still needs
+a valid trusted certificate. Private-network placement and wildcard operation
+permissions do not bypass these checks.
 
 For an outbound `ApiClient`, configure `ApiTlsOptions` with the local PFX as
 `Certificate`, the destination's public PEM as a `TrustedRoots` entry, and its
 SHA-256 fingerprint mapped to the expected `ApiPeerIdentity` in
-`PeersByCertificateSha256`. Connecting to realm-1 uses target host `realm-1`
+`PeersByCertificateSha256`. For all operations in C#, use
+`new ApiPeerIdentity("realm-1", [], allowAllOperations: true)`. Connecting to realm-1 uses target host `realm-1`
 and expected peer ID `realm-1`. The host's `[api]` section configures its
 **listener**, not an outbound client or realm discovery.
 

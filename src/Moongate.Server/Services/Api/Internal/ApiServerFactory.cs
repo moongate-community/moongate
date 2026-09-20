@@ -24,7 +24,7 @@ internal static class ApiServerFactory
             }
             var peers = config.Peers.ToDictionary(
                 peer => peer.CertificateSha256,
-                peer => new ApiPeerIdentity(peer.PeerId, peer.AllowedOperations),
+                peer => new ApiPeerIdentity(peer.PeerId, peer.AllowedOperations.OperationIds, peer.AllowedOperations.AllowsAll),
                 StringComparer.OrdinalIgnoreCase);
             return new ApiServer(new IPEndPoint(IPAddress.Parse(config.ListenAddress), config.Port), registry,
                 new ApiOptions(), new ApiTlsOptions

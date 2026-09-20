@@ -1,3 +1,6 @@
+using Moongate.Server.Serialization.Config.Internal;
+using Tomlyn.Serialization;
+
 namespace Moongate.Server.Data.Config.Sections;
 
 /// <summary>Maps a trusted client certificate to a local process identity and operation permissions.</summary>
@@ -5,7 +8,8 @@ public sealed class ApiPeerConfig
 {
     public string CertificateSha256 { get; set; } = "";
     public string PeerId { get; set; } = "";
-    public ushort[] AllowedOperations { get; set; } = [];
+    [TomlConverter(typeof(ApiOperationPermissionsTomlConverter))]
+    public ApiOperationPermissionsConfig AllowedOperations { get; set; } = new([]);
 
     /// <summary>Rejects malformed identities, fingerprints and reserved operation identifiers.</summary>
     public void Validate()
@@ -18,9 +22,10 @@ public sealed class ApiPeerConfig
         {
             throw new InvalidOperationException("api.peers.peer_id cannot be blank.");
         }
-        if (AllowedOperations is null || AllowedOperations.Contains((ushort)0))
+        if (AllowedOperations is null)
         {
-            throw new InvalidOperationException("api.peers.allowed_operations cannot be null or contain operation zero.");
+            throw new InvalidOperationException("api.peers.allowed_operations cannot be null.");
         }
+        AllowedOperations.Validate();
     }
 }
