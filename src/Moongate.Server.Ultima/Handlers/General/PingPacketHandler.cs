@@ -3,7 +3,7 @@ using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
 
-namespace Moongate.Server.Handlers.General;
+namespace Moongate.Server.Ultima.Handlers.General;
 
 public sealed class PingPacketHandler : IPacketHandler<PingPacket>
 {

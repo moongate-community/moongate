@@ -2,7 +2,7 @@ using DryIoc;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Packets;
-using Moongate.Server.Handlers.Login;
+using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
 using Moongate.Tests.Support.GameLoop;
