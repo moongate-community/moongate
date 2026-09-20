@@ -1,6 +1,7 @@
 # Start a Moongate server
 
-This guide runs the server from source. For the released container, use
+This guide runs the server from source. To install the released binary on Linux, use
+[Install on Linux](installation.md); for the released container, use
 [Run with Docker](docker.md). Moongate is under active development: the transport,
 packet pipeline, scripting and persistence infrastructure are available, but a
 complete account login and playable world are not implemented yet.

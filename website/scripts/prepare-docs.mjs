@@ -44,6 +44,7 @@ export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'de
     const markdown = await readFile(repositoryFile(repositoryRoot, entry.source), 'utf8');
     pages.push({ entry, markdown: compileDocument(entry, markdown, { repositoryRoot, sourceRef, entries, assets }) });
   }
+  const installer = await readFile(repositoryFile(repositoryRoot, 'scripts/install.sh'));
   await mkdir(websiteRoot, { recursive: true });
   websiteRoot = await realpath(websiteRoot);
   const destinations = [path.join(websiteRoot, 'src/content/docs/generated'), path.join(websiteRoot, 'public/generated')];
@@ -79,6 +80,13 @@ export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'de
       for (const i of backedUp.reverse()) await rename(backups[i], destinations[i]);
       throw error;
     }
+    // The site serves this at https://moongate.sh/install.sh, so it lands at the web root
+    // rather than inside the generated trees. Written last: a failure above must not leave
+    // a new installer beside an old site.
+    const installerFile = path.join(websiteRoot, 'public/install.sh');
+    const installerStage = path.join(stage, 'install.sh');
+    await writeFile(installerStage, installer);
+    await rename(installerStage, installerFile);
   } finally {
     await rm(stage, { recursive: true, force: true });
   }
