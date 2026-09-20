@@ -92,7 +92,8 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     /// <summary>Captures sources on their owner loop and commits one independent transaction per target.</summary>
     /// <remarks>Invoke the capture action exactly once during each callback. Snapshot functions must deep-copy
     /// nested mutable values. Absence is not deletion. All captures for a target validate before its first write.
-    /// The mutation gate spans capture through commit; targets do not share a distributed transaction.</remarks>
+    /// The mutation gate spans capture through commit, including draining any already-started capture when
+    /// its dispatcher returns early or fails. Targets do not share a distributed transaction.</remarks>
     public Task SaveAllAsync(Func<Action, CancellationToken, Task> captureAsync, CancellationToken cancellationToken = default)
     {
         return RunOwnedAsync(async () =>
@@ -135,16 +136,17 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                             finally
                             {
                                 _capture.Value = previousCapture;
+                                state.ExitCapture();
                             }
                         }, token).ConfigureAwait(false);
-                        if (!state.Close())
+                        if (!await state.CloseAsync().ConfigureAwait(false))
                         {
                             throw new InvalidOperationException("Persistence capture must complete exactly once without reentry.");
                         }
                     }
                     finally
                     {
-                        state.Close();
+                        await state.CloseAsync().ConfigureAwait(false);
                         _capture.Value = null;
                     }
 

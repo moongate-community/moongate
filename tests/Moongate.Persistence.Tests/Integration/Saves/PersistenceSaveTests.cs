@@ -280,4 +280,133 @@ public sealed class PersistenceSaveTests
         Assert.Equal("new", (await store.GetByIdAsync(live.Id))!.Name);
         Assert.Equal(1, captures);
     }
+
+    [Theory]
+    [InlineData("success", false)]
+    [InlineData("cancellation", false)]
+    [InlineData("failure", true)]
+    public async Task SaveAllAsync_DispatcherExitsDuringActiveCapture_DrainsBeforeMutationAndDisposal(string outcome, bool blockSnapshot)
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        using var releaseCapture = new ManualResetEventSlim();
+        using var cancellation = new CancellationTokenSource();
+        var captureStarted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        // Inline completion on a pool thread makes the save's dispatcher-exit path run before SetResult returns.
+        var dispatcher = new TaskCompletionSource();
+        var live = new CharacterEntity { Id = new Serial(1), Name = "must not be saved" };
+        var store = owner.RegisterEntity<CharacterEntity>(() =>
+        {
+            if (!blockSnapshot)
+            {
+                captureStarted.SetResult();
+                releaseCapture.Wait();
+            }
+            return [live];
+        }, entity =>
+        {
+            if (blockSnapshot)
+            {
+                captureStarted.SetResult();
+                releaseCapture.Wait();
+                throw new InvalidOperationException("late snapshot failure");
+            }
+            return new CharacterEntity { Id = entity.Id, Name = entity.Name };
+        });
+        owner.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+        Task? captureTask = null;
+        var save = owner.SaveAllAsync((capture, _) =>
+        {
+            using (ExecutionContext.SuppressFlow())
+            {
+                captureTask = Task.Run(capture, CancellationToken.None);
+            }
+            return dispatcher.Task;
+        }, cancellation.Token);
+        Task? mutation = null;
+        Task? close = null;
+        Exception? original = outcome switch
+        {
+            "cancellation" => new OperationCanceledException("dispatcher cancelled", cancellation.Token),
+            "failure" => new ApplicationException("dispatcher failed"),
+            _ => null
+        };
+        try
+        {
+            await captureStarted.Task.WaitAsync(TimeSpan.FromSeconds(10));
+            mutation = store.UpsertAsync(new CharacterEntity { Id = new Serial(2), Name = "independent" });
+            close = owner.DisposeAsync().AsTask();
+            await Task.Run(() =>
+            {
+                if (outcome == "cancellation")
+                {
+                    cancellation.Cancel();
+                }
+                if (original is null)
+                {
+                    dispatcher.SetResult();
+                }
+                else
+                {
+                    dispatcher.SetException(original);
+                }
+            }, CancellationToken.None);
+            Assert.False(save.IsCompleted);
+            Assert.False(mutation.IsCompleted);
+            Assert.False(close.IsCompleted);
+        }
+        finally
+        {
+            releaseCapture.Set();
+            dispatcher.TrySetResult();
+            if (captureTask is not null)
+            {
+                await captureTask.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            }
+            if (mutation is not null)
+            {
+                await mutation;
+            }
+            if (close is not null)
+            {
+                await close;
+            }
+        }
+        var failure = await Record.ExceptionAsync(() => save);
+        if (original is null)
+        {
+            Assert.IsType<InvalidOperationException>(failure);
+        }
+        else
+        {
+            Assert.Same(original, failure);
+        }
+        Assert.Equal(0L, await database.ScalarAsync<long>("SELECT count(*) FROM plugin_characters.characters WHERE id = 1"));
+        Assert.Equal("independent", await database.ScalarAsync<string>("SELECT name FROM plugin_characters.characters WHERE id = 2"));
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_DispatcherNeverStartsCapture_ClosesWithoutWaitingAndRejectsDeferredAction()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        var calls = 0;
+        var store = owner.RegisterEntity<CharacterEntity>(() =>
+        {
+            calls++;
+            return [new CharacterEntity { Id = new Serial(1) }];
+        }, entity => new CharacterEntity { Id = entity.Id });
+        owner.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+        Action? deferred = null;
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.SaveAllAsync((capture, _) =>
+        {
+            deferred = capture;
+            return Task.CompletedTask;
+        }).WaitAsync(TimeSpan.FromSeconds(10)));
+        Assert.Throws<InvalidOperationException>(() => deferred!());
+        Assert.Equal(0, calls);
+        Assert.Empty(await store.GetAllAsync());
+    }
 }
