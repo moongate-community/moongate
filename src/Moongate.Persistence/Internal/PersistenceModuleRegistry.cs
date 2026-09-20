@@ -1,4 +1,6 @@
+using System.Reflection;
 using System.Text.RegularExpressions;
+using FreeSql.DataAnnotations;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Persistence.Data.Internal;
 using Moongate.Persistence.Interfaces;
@@ -207,6 +209,21 @@ internal sealed partial class PersistenceModuleRegistry
                         throw new InvalidOperationException(
                             $"Persistence entity '{entityType.FullName}' column '{columnName}' must use a lowercase snake_case name.");
                     }
+                }
+
+                foreach (var property in entityType.GetProperties(BindingFlags.Public | BindingFlags.Instance))
+                {
+                    if (property.SetMethod?.IsPublic != true || property.GetIndexParameters().Length != 0 ||
+                        table.ColumnsByCs.ContainsKey(property.Name) ||
+                        table.ColumnsByCsIgnore.ContainsKey(property.Name) ||
+                        property.IsDefined(typeof(NavigateAttribute), inherit: true))
+                    {
+                        continue;
+                    }
+
+                    throw new InvalidOperationException(
+                        $"Persistence module '{module.Id}' entity '{entityType.FullName}' property '{property.Name}' " +
+                        "is not mapped by FreeSql. Use a supported column mapping, explicit Column(IsIgnore = true), or Navigate declaration.");
                 }
 
                 if (!ReferenceEquals(owners[entityType], module))

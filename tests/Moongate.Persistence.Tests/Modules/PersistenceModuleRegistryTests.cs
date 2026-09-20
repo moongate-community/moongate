@@ -305,6 +305,18 @@ public sealed class PersistenceModuleRegistryTests
         Assert.Equal(before, firstDatabase.Orm.Select<CharacterEntity>().ToSql());
     }
 
+    [Fact]
+    public void ValidateAndFreeze_UnmappedWritableProperty_RejectsNamedModuleEntityAndProperty()
+    {
+        var registry = Registry(Module("plugin.mapping", "plugin_mapping", typeof(UnmappedPropertyEntity)));
+
+        var exception = Assert.Throws<InvalidOperationException>(() => Validate(registry));
+
+        Assert.Contains("plugin.mapping", exception.Message, StringComparison.Ordinal);
+        Assert.Contains(typeof(UnmappedPropertyEntity).FullName!, exception.Message, StringComparison.Ordinal);
+        Assert.Contains(nameof(UnmappedPropertyEntity.Position), exception.Message, StringComparison.Ordinal);
+    }
+
     private static PersistenceModuleRegistrySnapshot Validate(PersistenceModuleRegistry registry)
     {
         using var database = CreateDatabase();

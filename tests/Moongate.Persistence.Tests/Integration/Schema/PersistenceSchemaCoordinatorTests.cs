@@ -134,6 +134,61 @@ public sealed class PersistenceSchemaCoordinatorTests
     }
 
     [Fact]
+    public async Task SynchronizeAsync_UnmappedPropertyInLaterModule_RejectsBatchBeforeAnyDdl()
+    {
+        await using var database = await _fixture.CreateDatabaseAsync();
+        var invalid = new TestPersistenceModule(
+            "plugin.mapping",
+            "plugin_mapping",
+            PersistenceDatabaseTarget.Realm,
+            [typeof(UnmappedPropertyEntity)]);
+        await using var coordinator = CreateCoordinator(database, PersistenceTestModules.Character(), invalid);
+
+        var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => coordinator.SynchronizeAsync());
+
+        Assert.Contains("plugin.mapping", exception.Message, StringComparison.Ordinal);
+        Assert.Contains(typeof(UnmappedPropertyEntity).FullName!, exception.Message, StringComparison.Ordinal);
+        Assert.Contains(nameof(UnmappedPropertyEntity.Position), exception.Message, StringComparison.Ordinal);
+        Assert.Equal(0L, await database.ScalarAsync<long>(
+            "SELECT count(*) FROM information_schema.schemata " +
+            "WHERE schema_name IN ('plugin_characters', 'plugin_mapping')"));
+        Assert.False(coordinator.IsReady);
+    }
+
+    [Fact]
+    public async Task SynchronizeAsync_SupportedMappingWithExplicitIgnoreAndNavigation_PersistsMappedValues()
+    {
+        await using var database = await _fixture.CreateDatabaseAsync();
+        var mapped = new TestPersistenceModule(
+            "plugin.mapping",
+            "plugin_mapping",
+            PersistenceDatabaseTarget.Realm,
+            [typeof(SupportedMappingEntity)]);
+        await using var coordinator = CreateCoordinator(database, PersistenceTestModules.Character(), mapped);
+
+        await coordinator.SynchronizeAsync();
+        var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
+        await orm.Insert(new CharacterEntity { Id = new Serial(7), Name = "linked character" }).ExecuteAffrowsAsync();
+        await orm.Insert(new SupportedMappingEntity
+        {
+            Id = new Serial(1),
+            Scores = [12, 34],
+            Position = new MappingPosition { X = 123, Y = 456 },
+            CharacterId = new Serial(7)
+        }).ExecuteAffrowsAsync();
+
+        var saved = await orm.Select<SupportedMappingEntity>().Include(entity => entity.Character).FirstAsync();
+
+        Assert.Equal(new[] { 12, 34 }, saved.Scores);
+        Assert.Equal("linked character", saved.Character?.Name);
+        Assert.Equal(0L, await database.ScalarAsync<long>(
+            "SELECT count(*) FROM information_schema.columns " +
+            "WHERE table_schema = 'plugin_mapping' AND table_name = 'supported_entities' " +
+            "AND column_name IN ('Position', 'position', 'Character', 'character')"));
+        Assert.True(coordinator.IsReady);
+    }
+
+    [Fact]
     public async Task SynchronizeAsync_TwoCoordinatorsRace_RecompareUnderAdvisoryLock()
     {
         await using var database = await _fixture.CreateDatabaseAsync();
