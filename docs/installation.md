@@ -65,7 +65,7 @@ The script reads five environment variables:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `MOONGATE_VERSION` | the latest release | Install a specific version, such as `0.4.0`; a leading `v` is accepted |
+| `MOONGATE_VERSION` | the latest release | Install a specific version, such as `0.4.1`; a leading `v` is accepted |
 | `MOONGATE_RID` | detected from `uname -m` | `linux-x64` or `linux-arm64` |
 | `MOONGATE_BASE_URL` | the GitHub release downloads | A mirror holding the same file names |
 | `MOONGATE_INSTALL_DIR` | `/opt/moongate` | Where the archive's contents go |
@@ -109,7 +109,7 @@ nothing was installed; the two link messages come after the files are already in
 | `curl or wget is required`, `tar is required`, `sha256sum or shasum is required` | Install the named tool |
 | `root privileges are required` | Re-run with `sudo`, or set `MOONGATE_INSTALL_DIR` and `MOONGATE_BIN_DIR` |
 | `could not resolve the latest release; set MOONGATE_VERSION` | The releases page did not redirect to a version tag; pin one with `MOONGATE_VERSION` |
-| `release v... has no asset for ...`, `release v... has no checksum for ...` | That version has no archive, or no checksum file, for this architecture, or the download itself failed; `linux-arm64` exists from 0.5.0 onwards |
+| `release v... has no asset for ...`, `release v... has no checksum for ...` | That version has no archive, or no checksum file, for this architecture, or the download itself failed; `linux-arm64` exists from 0.4.1 onwards |
 | `checksum mismatch for ...` | The download does not match the published checksum; nothing was installed |
 | `the archive could not be extracted`, `the archive does not contain moongate-.../Moongate.Server` | The downloaded archive is damaged or has an unexpected layout |
 | `could not clear a leftover staging directory beside ...`, `could not create ...`, `could not stage the new files in ...`, `could not make ... executable`, `could not move the current installation aside; ... is untouched`, `could not install into ...` | The filesystem refused a step of the installation, for instance a full disk. Nothing new is installed, an upgrade keeps the previous installation, and the message says where it is |
