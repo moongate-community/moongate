@@ -1,0 +1,19 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+    </PropertyGroup>
+
+    <!-- The shard's own behaviour: what Moongate does when a packet arrives, as opposed to
+         Moongate.Ultima, which only reads the client's files, and Moongate.Server, which hosts.
+         Not published to nuget.org yet: it ships nothing a plugin author would consume until the
+         game services move here. -->
+
+    <ItemGroup>
+      <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj" />
+      <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj" />
+    </ItemGroup>
+
+</Project>
