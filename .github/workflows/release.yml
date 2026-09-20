@@ -42,7 +42,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        rid: [linux-x64, win-x64, osx-arm64]
+        rid: [linux-x64, linux-arm64, win-x64, osx-arm64]
     steps:
       - name: Checkout
         uses: actions/checkout@v7
