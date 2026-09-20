@@ -104,6 +104,11 @@ docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 The image declares `2593/tcp` and `2594/tcp`. `EXPOSE` does not start a listener or
 publish a host port. Enable `[api]` and configure certificates/peer permissions
 using [API host configuration](server-configuration.md#enable-the-internal-api-server).
+For automatic certificate generation, follow [API certificates](api-certificates.md#docker):
+keep the API disabled while creating identities and exchanging public PEM files,
+and use a writable persistent volume. The read-only mount below is for
+**externally provisioned** certificates.
+
 A private Compose deployment can use:
 
 ```yaml

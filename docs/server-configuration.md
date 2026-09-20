@@ -26,6 +26,9 @@ enable_ping_server = true # Reserved: currently not consumed by the host.
 enabled = false
 listen_address = "0.0.0.0"
 port = 2594
+auto_generate_certificate = false
+certificate_dns_names = ["localhost"]
+certificate_ip_addresses = ["127.0.0.1", "::1"]
 certificate_path = ""
 certificate_password_environment_variable = "MOONGATE_API_CERTIFICATE_PASSWORD"
 trusted_root_paths = []
@@ -63,12 +66,15 @@ max_string_length = 16777216
 | `network.game_port` | TCP listener port; use a distinct port for each local instance. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create endpoints for them, including IPv6 addresses; it is not a single wildcard listener. Use a specific IP to restrict binding. |
 | `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
-| `api.enabled` | Enables the internal MessagePack/mTLS listener; default false. Disabled APIs log a warning and do not read certificates or freeze handlers. |
+| `api.enabled` | Enables the internal MessagePack/mTLS listener; default false. Disabled APIs log a warning and leave handlers unfrozen; certificate I/O occurs only if generation is explicitly enabled. |
 | `api.listen_address` | IPv4/IPv6 literal; default `0.0.0.0` binds one IPv4 wildcard listener. Unlike the game listener, it does not enumerate interfaces. |
 | `api.port` | TCP port from 1 through 65535; default 2594. |
+| `api.auto_generate_certificate` | Default false. Creates a missing PFX and exports its public `.pem` copy, even with `enabled = false`. Existing PFX files are never replaced. |
+| `api.certificate_dns_names` | DNS SANs for generation; default `["localhost"]`. No URLs or wildcards. |
+| `api.certificate_ip_addresses` | IP SANs for generation; default `["127.0.0.1", "::1"]`. No scope identifiers; at least one DNS name or IP is required across both arrays. |
 | `api.certificate_path` | Local PKCS#12/PFX file containing the server leaf certificate and private key. |
 | `api.certificate_password_environment_variable` | Name of the environment variable containing the PFX password. If named but unset, startup fails. An empty name permits an unencrypted PFX. Never put the password itself in TOML. |
-| `api.trusted_root_paths` | Nonempty array of private CA certificate files (PEM or DER). Relative certificate/root paths resolve under `<root>/config`, independent of working directory. |
+| `api.trusted_root_paths` | When enabled, a nonempty array of trusted private CA certificates or explicitly trusted self-signed peer certificates (PEM or DER). Relative certificate/root paths resolve under `<root>/config`, independent of working directory. |
 | `api.peers` | Nonempty array of allowed certificate identities; see the example below. Each fingerprint is unique ignoring case. |
 | `api.peers.certificate_sha256` | Exactly 64 hexadecimal characters identifying the peer's leaf certificate; no colons. |
 | `api.peers.peer_id` | Nonblank local identity for this peer. Multiple certificates may map to one identity during rotation. |
@@ -88,12 +94,13 @@ max_string_length = 16777216
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 
-API validation applies when `api.enabled` is true. Invalid API configuration,
+Full API validation applies when `api.enabled` is true. Certificate provisioning
+settings are also validated when `api.auto_generate_certificate` is true. Invalid API configuration,
 missing/unreadable certificates, a local leaf outside its validity window, an explicit
 EKU excluding server authentication, a missing private key, a wrong password or an
 occupied port fail startup;
-services already started are stopped in reverse order. When false, incomplete API
-settings are ignored. There is no plaintext fallback.
+services already started are stopped in reverse order. With both options false, incomplete API
+settings are ignored. Provisioning with the listener disabled does not require trust roots or peers. There is no plaintext fallback.
 
 Game-loop queue limits, timer-wheel resolution and packet dispatch limits use C#
 option objects rather than additional TOML sections. The hosted API uses the
@@ -106,8 +113,10 @@ library's default `ApiOptions` limits and timeouts. See
 This integration is available in builds containing the API hosting change. Older
 release images require upgrading or building the current checkout.
 
-1. Provision a server PFX, private CA certificate and client leaf certificates as
-   described in the [API certificate guide](../src/Moongate.Api/README.md#tls-identity-and-ownership).
+1. Provision certificates using the [API certificate guide](api-certificates.md).
+   It covers automatic self-signed generation with the port closed, public
+   certificate exchange, passwords, Docker and renewal. The example below uses
+   an externally issued PFX and private CA root.
    The server needs `serverAuth` usage and a DNS name matching the client's TLS
    target host; clients need `clientAuth`. Mount certificates read-only where
    possible and allow the runtime user to read them.

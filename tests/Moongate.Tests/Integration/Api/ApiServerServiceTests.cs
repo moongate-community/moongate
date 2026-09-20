@@ -1,11 +1,18 @@
 using System.Net;
 using System.Net.Sockets;
+using System.Security.Cryptography;
+using System.Security.Cryptography.X509Certificates;
+using Moongate.Api.Client;
+using Moongate.Api.Data.Config;
+using Moongate.Api.Data.Security;
 using Moongate.Api.Exceptions;
 using Moongate.Api.Registry;
 using Moongate.Api.Types.Protocol;
 using Moongate.Core.Directories;
+using Moongate.Core.Utils;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Api;
+using Moongate.Server.Services.Api.Internal;
 using Moongate.Tests.TestSupport.Api;
 using Moongate.Tests.TestSupport.Directories;
 using Moongate.Tests.TestSupport.Environment;
@@ -40,6 +47,26 @@ public sealed class ApiServerServiceTests
         finally { Log.Logger = previous; }
     }
 
+    [Fact]
+    public async Task StartAsync_DisabledWithGeneration_ProvisionsIdentityWithoutOpeningPortOrFreezingRegistry()
+    {
+        using var directory = new TemporaryDirectory();
+        var config = TomlUtils.Deserialize<ApiConfig>("""
+            enabled = false
+            auto_generate_certificate = true
+            certificate_path = "tls/server.pfx"
+            certificate_password_environment_variable = ""
+            """);
+        var directories = new DirectoriesConfig(directory.Path, ["config"]);
+        var registry = new ApiRegistry();
+        await using var service = new ApiServerService(config, directories, registry, TimeProvider.System);
+        await service.StartAsync();
+        Assert.True(File.Exists(Path.Combine(directories["config"], "tls/server.pfx")));
+        Assert.True(File.Exists(Path.Combine(directories["config"], "tls/server.pfx.pem")));
+        Assert.Null(service.Endpoint);
+        Assert.False(registry.IsFrozen);
+    }
+
     [Theory, InlineData(false), InlineData(true)]
     public async Task StartAsync_ConfiguredEndpoint_AcceptsAuthenticatedCallsAndReleasesPort(bool unencrypted)
     {
@@ -62,6 +89,57 @@ public sealed class ApiServerServiceTests
         Assert.Null(service.Endpoint);
         fixture.AssertPortReleased();
         await Assert.ThrowsAsync<InvalidOperationException>(() => service.StartAsync());
+    }
+
+    [Theory, InlineData("allowed"), InlineData("hostname"), InlineData("unlisted_peer"), InlineData("untrusted_root"), InlineData("forbidden")]
+    public async Task StartAsync_GeneratedIdentities_RequireMutualTrustNamesAndPermissions(string policy)
+    {
+        using var fixture = new ApiHostFixture();
+        var clientConfig = new ApiConfig
+        {
+            AutoGenerateCertificate = true, CertificatePath = "tls/client.pfx",
+            CertificatePasswordEnvironmentVariable = ""
+        };
+        using var clientCertificate = new ApiCertificateStore().Load(clientConfig, fixture.Directories, TimeProvider.System);
+        fixture.Config.AutoGenerateCertificate = true;
+        fixture.Config.CertificatePasswordEnvironmentVariable = "";
+        File.Delete(Path.Combine(fixture.Directories["config"], fixture.Config.CertificatePath));
+        fixture.Config.TrustedRootPaths = policy == "untrusted_root" ? ["tls/root.pem"] : ["tls/client.pfx.pem"];
+        fixture.Config.Peers[0].CertificateSha256 = policy == "unlisted_peer" ? new string('A', 64) : clientCertificate.GetCertHashString(HashAlgorithmName.SHA256);
+        if (policy == "forbidden") { fixture.Config.Peers[0].AllowedOperations = []; }
+        await using var service = fixture.CreateService();
+        await service.StartAsync();
+        using var serverCertificate = X509CertificateLoader.LoadCertificateFromFile(
+            Path.Combine(fixture.Directories["config"], fixture.Config.CertificatePath) + ".pem");
+        var registry = new ApiRegistry();
+        registry.RegisterContract<IncrementRequest, IncrementResponse>();
+        await using var client = new ApiClient(registry, new ApiOptions(), new ApiTlsOptions
+        {
+            Certificate = clientCertificate, TrustedRoots = [serverCertificate],
+            PeersByCertificateSha256 = new Dictionary<string, ApiPeerIdentity>
+            {
+                [serverCertificate.GetCertHashString(HashAlgorithmName.SHA256)] = new("server", [100])
+            }
+        }, TimeProvider.System);
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+        async Task CallAsync()
+        {
+            await using var connection = await client.ConnectAsync(service.Endpoint!,
+                policy == "hostname" ? "wrong.internal" : "localhost", "server", timeout.Token);
+            var response = await connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 }, cancellationToken: timeout.Token);
+            Assert.Equal(42, response.Value);
+        }
+        if (policy == "allowed") { await CallAsync(); }
+        else if (policy == "forbidden")
+        {
+            var exception = await Assert.ThrowsAsync<ApiRemoteException>(CallAsync);
+            Assert.Equal(ApiErrorCode.Forbidden, exception.Code);
+        }
+        else
+        {
+            var exception = await Assert.ThrowsAnyAsync<Exception>(CallAsync);
+            Assert.False(timeout.IsCancellationRequested, exception.ToString());
+        }
     }
 
     [Fact]

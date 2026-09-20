@@ -21,6 +21,9 @@ public sealed class ConfigHelperTests
         var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!;
         var api = Assert.IsType<TomlTable>(document["api"]);
         Assert.Equal(false, api["enabled"]);
+        Assert.Equal(false, api["auto_generate_certificate"]);
+        Assert.Equal(new[] { "localhost" }, Assert.IsType<TomlArray>(api["certificate_dns_names"]).Cast<string>());
+        Assert.Equal(new[] { "127.0.0.1", "::1" }, Assert.IsType<TomlArray>(api["certificate_ip_addresses"]).Cast<string>());
         Assert.Equal(2594L, api["port"]);
         Assert.Equal("0.0.0.0", api["listen_address"]);
         Assert.Equal("MOONGATE_API_CERTIFICATE_PASSWORD", api["certificate_password_environment_variable"]);
@@ -47,6 +50,9 @@ public sealed class ConfigHelperTests
             enabled = true
             listen_address = "::1"
             port = 4002
+            auto_generate_certificate = true
+            certificate_dns_names = ["realm.internal"]
+            certificate_ip_addresses = ["10.0.0.12"]
             certificate_path = "certs/server.pfx"
             certificate_password_environment_variable = "TEST_API_PASSWORD"
             trusted_root_paths = ["certs/root.pem"]
@@ -59,6 +65,9 @@ public sealed class ConfigHelperTests
         Assert.True(api.Enabled);
         Assert.Equal("::1", api.ListenAddress);
         Assert.Equal(4002, api.Port);
+        Assert.True(api.AutoGenerateCertificate);
+        Assert.Equal(["realm.internal"], api.CertificateDnsNames);
+        Assert.Equal(["10.0.0.12"], api.CertificateIpAddresses);
         Assert.Equal("certs/server.pfx", api.CertificatePath);
         Assert.Equal("TEST_API_PASSWORD", api.CertificatePasswordEnvironmentVariable);
         Assert.Equal(["certs/root.pem"], api.TrustedRootPaths);

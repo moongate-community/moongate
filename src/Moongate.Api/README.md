@@ -115,7 +115,7 @@ corresponding peer permission. `ApiServer.Connections` returns an immutable snap
 `container.RegisterApiHandler<IncrementHandler>()` infers the contract and owns a singleton handler. Registration alone
 starts no listener. Moongate.Server now hosts the listener through `IApiServerService` when `[api].enabled = true`, with
 port 2594 by default and certificates/peer permissions configured in TOML. APIs remain disabled by default and log an
-activation warning. See [API host configuration](../../docs/server-configuration.md#enable-the-internal-api-server)
+activation warning. See [API host configuration](../../docs/server-configuration.md#enable-the-internal-api-server), the [certificate setup guide](../../docs/api-certificates.md)
 and [Docker](../../docs/docker.md#internal-api-port). The standalone example above still works without Moongate.Server.
 
 ## TLS identity and ownership
@@ -123,7 +123,7 @@ and [Docker](../../docs/docker.md#internal-api-port). The standalone example abo
 Each `ApiTlsOptions` supplies:
 
 - `Certificate`: the local leaf certificate with its private key.
-- `TrustedRoots`: the private CA roots trusted exclusively by this endpoint.
+- `TrustedRoots`: the private CA roots or self-signed peer certificates trusted exclusively by this endpoint.
 - `PeersByCertificateSha256`: hexadecimal SHA-256 leaf fingerprints mapped to immutable `ApiPeerIdentity` objects and
   explicit operation allowlists.
 
