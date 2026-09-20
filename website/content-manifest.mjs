@@ -1,0 +1,32 @@
+// Authoritative source paths, public routes, and navigation placement.
+export const contentEntries = [
+  { source: 'README.md', slug: 'start/overview', title: 'Overview', group: 'Start here' },
+  { source: 'docs/installation.md', slug: 'start/install', title: 'Install on Linux', group: 'Start here' },
+  { source: 'docs/getting-started.md', slug: 'start/getting-started', title: 'First start', group: 'Start here' },
+  { source: 'CHANGELOG.md', slug: 'start/changelog', title: 'Changelog', group: 'Start here' },
+  { source: 'docs/docker.md', slug: 'server/docker', title: 'Run with Docker', group: 'Server guides' },
+  { source: 'docs/server-configuration.md', slug: 'server/configuration', title: 'Configuration', group: 'Server guides' },
+  { source: 'docs/packets.md', slug: 'server/packets', title: 'Packets and handlers', group: 'Server guides' },
+  { source: 'docs/game-loop-and-timers.md', slug: 'server/game-loop-and-timers', title: 'Game loop and timers', group: 'Server guides' },
+  { source: 'docs/plugins.md', slug: 'server/plugins', title: 'Writing a plugin', group: 'Server guides' },
+  { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Server guides' },
+  { source: 'docs/network.md', slug: 'libraries/network-cookbook', title: 'Standalone TCP cookbook', group: 'Libraries' },
+  { source: 'docs/lua-modules.md', slug: 'server/lua-modules', title: 'Writing a Lua module', group: 'Server guides' },
+  { source: 'docs/metric-providers.md', slug: 'server/metric-providers', title: 'Registering a metric provider', group: 'Server guides' },
+  { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Server guides' },
+  { source: 'docs/network-game-separation.md', slug: 'server/network-game-separation', title: 'Transport and game ownership', group: 'Server guides' },
+  { source: 'docs/persistence.md', slug: 'server/persistence', title: 'Persistence and world saves', group: 'Server guides' },
+  { source: 'docs/persistence-format.md', slug: 'reference/persistence-format', title: 'Persistence format', group: 'Reference' },
+  { source: 'docs/nuget-packaging.md', slug: 'reference/nuget-packaging', title: 'NuGet packages', group: 'Reference' },
+  { source: 'CONTRIBUTING.md', slug: 'contributing/getting-started', title: 'Contribute to Moongate', group: 'Contributing' },
+  { source: 'docs/security-audit.md', slug: 'contributing/security-audit', title: 'Dependency security', group: 'Contributing' },
+  { source: 'docs/documentation.md', slug: 'contributing/documentation', title: 'Writing documentation', group: 'Contributing' },
+  ...[
+    ['Core', 'core'], ['Network', 'network'], ['Network.Packets', 'network-packets'],
+    ['Persistence', 'persistence'], ['Server.Core', 'server-core'], ['Api', 'api'],
+    ['Scripting', 'scripting'], ['Ultima', 'ultima'],
+  ].map(([name, slug]) => ({
+    source: `src/Moongate.${name}/README.md`, slug: `libraries/${slug}`,
+    title: `Moongate.${name}`, group: 'Libraries',
+  })),
+];

@@ -1,0 +1,110 @@
+# Writing documentation
+
+Moongate uses [Astro Starlight](https://starlight.astro.build/) for its English
+documentation. The public site uses the GitHub Pages custom domain at
+[moongate.sh](https://moongate.sh/).
+Releases publish the site automatically, and the same workflow can be run by hand to publish
+documentation between releases.
+
+## Run locally
+
+Use Node **24.21.0** (also recorded in `website/.nvmrc`). From the repository root:
+
+```sh
+npm --prefix website ci
+npm --prefix website run dev
+```
+
+Open the `/` URL printed by Astro. Development search is unavailable;
+use the production preview to check the search index.
+
+```sh
+npm --prefix website test
+npm --prefix website run build
+npm --prefix website run preview -- --host 127.0.0.1 --port 4321
+```
+
+Open `http://127.0.0.1:4321/`. The build imports the source documents,
+builds the site and search index, and validates local links, images, and fragments.
+External links are not fetched by the validator.
+
+## Edit a page
+
+Keep the source text in its existing location:
+
+- `docs/*.md` contains server, reference, and contributor guides.
+- `src/*/README.md` contains library documentation and NuGet examples.
+- The root `README.md` supplies the overview.
+- `website/src/content/docs/index.md` is the authored landing page.
+
+Do not edit or commit `website/src/content/docs/generated/` or
+`website/public/generated/`. The importer replaces these directories.
+It preserves the original files, including NuGet smoke-test markers and code examples.
+
+The importer also copies `scripts/install.sh` to `website/public/install.sh`, which the site
+serves at `https://moongate.sh/install.sh`. Edit the script, never the copy.
+
+After editing an imported source while the dev server is running, run this in a
+second terminal:
+
+```sh
+npm --prefix website run prepare:docs
+```
+
+Astro watches the generated pages; there is no separate watcher for source files
+outside `website/`. The dev and production build commands also prepare pages first.
+
+## Add a guide or library
+
+1. Write the English Markdown source in `docs/` or the library's `README.md`.
+2. Add an entry to `website/content-manifest.mjs` with its repository-relative
+   source path, unique slug, title, and navigation group.
+3. Run the tests and production build above.
+
+Slugs use lowercase letters, digits, hyphens, and slash-separated segments.
+Use relative links to other repository documents or source files, and preserve
+heading fragments. Imported documents become site links, local images are copied,
+and other repository files and directories become GitHub links at the published release tag.
+The first top-level title is removed from imported content because Starlight
+renders the title from the manifest; its original Markdown anchor or explicit HTML ID is retained. Existing absolute GitHub links to imported
+documents on `develop` or `main` are also converted.
+
+Missing source files, duplicate slugs, unresolved local links, and broken links
+in the built output fail the build. A failed import keeps the previous generated
+content and the authored homepage intact.
+
+## Release publication
+
+After the initial documentation-only publication, automatic documentation builds
+and deployments run **when the existing release workflow creates a release**. Commits to `develop`, ordinary `main` pushes, and pull
+requests do not build or publish the website.
+
+The `docs` job in `.github/workflows/release.yml` calls the reusable
+`.github/workflows/docs.yml`, passing the released SHA and tag. It checks out
+that SHA and displays the tag in the site title. This direct call also works
+when release-please creates the release using `GITHUB_TOKEN`.
+
+The jobs run on GitHub-hosted Ubuntu runners. GitHub Pages must use **GitHub
+Actions** as its source, and the `github-pages` environment must permit `main`.
+The custom domain is `moongate.sh`; the build and link checker share its root base
+path through `website/site-config.mjs`. Pages deployments are serialized. A failed deployment can be retried from its
+release workflow run without publishing a new release.
+
+Each release replaces the current website; historical versions are not hosted.
+Local builds use `develop` for source links and read the current version from
+`.release-please-manifest.json` for the site title. To
+preview a release label and source ref, set `MOONGATE_DOCS_VERSION` and
+`MOONGATE_DOCS_REF` before running the build.
+
+## Publish between releases
+
+`.github/workflows/docs.yml` also runs from **Actions → Documentation → Run workflow**. Choose
+the branch to publish and leave both inputs empty: the site is built from that branch, source
+links point at `develop`, and the title shows the version in `.release-please-manifest.json`.
+To reproduce exactly what a release publishes, set `release_sha` to the released commit and
+`release_tag` to its tag.
+
+The `github-pages` environment must permit the branch the run starts from, and deployments are
+serialized, so a manual run and a release run cannot publish at the same time. Each publication
+replaces the whole site; historical versions are not hosted. After a manual publication, check
+the pages you changed, the search index and the source links on the public URL.

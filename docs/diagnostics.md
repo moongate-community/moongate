@@ -96,13 +96,7 @@ Handlers run on the diagnostics worker. A handler that needs to change entities 
 
 ## Plugin providers
 
-Plugins can add singleton providers during `IMoongatePlugin.Register`. The host loads plugins before it resolves the diagnostic collector, so providers registered on the host container join the same collection and event bus:
+Providers implement `IMetricProvider` and are registered with `AddMetricProvider<T>()` from a plugin's `Register` method or from `Program.cs`. See [`metric-providers.md`](metric-providers.md) for the contract, threading and testing.
 
-```csharp
-public void Register(Container container)
-{
-    container.RegisterInstance<IMetricProvider>(new MyMetricProvider());
-}
-```
-
-Provider names and local metric names must match `[a-z][a-z0-9_]*`. Values must be finite, units must be non-empty, counter values cannot be negative, and local names must be unique within one provider result. An invalid payload fails that provider for the current snapshot.
+See [Game loop and timers](game-loop-and-timers.md) for the queue, batch and timer
+settings behind the runtime metrics.

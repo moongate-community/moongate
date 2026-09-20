@@ -12,49 +12,35 @@
   <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
 </p>
 
+## Install on Linux
+
+```sh
+curl -fsSL https://moongate.sh/install.sh | sh
+```
+
+Installs the latest release into `/opt/moongate` and links it as `moongate`. See
+[Install on Linux](docs/installation.md) for the options, upgrades and removal.
+
+## Getting started
+
+Use [First start](docs/getting-started.md) to build and configure the server, or
+follow the Docker guide below. The [configuration reference](docs/server-configuration.md)
+lists all TOML settings, CLI options and current implementation limits.
+
 ## Docker
 
-Every release publishes a `linux/amd64` image to the GitHub Container Registry,
-tagged with the version and with `latest`.
+Every release publishes a `linux/amd64` image to
+[GitHub Container Registry](https://github.com/moongate-community/moongate/pkgs/container/moongate).
+See [Run with Docker](docs/docker.md) for first-start configuration, persistent
+storage, Docker Compose, logs, and upgrades.
 
-```bash
-docker pull ghcr.io/moongate-community/moongate:latest
-```
+## Server guides
 
-The server listens on port 2593 and keeps its configuration, logs, plugins and
-saves under `/data`. Mount a volume there so that state outlives the container.
-
-```bash
-docker run -d --name moongate \
-  -v moongate-data:/data \
-  -p 2593:2593 \
-  ghcr.io/moongate-community/moongate:latest
-```
-
-The first start writes `/data/config/moongate.toml` and then exits, because
-`ultima_path` still holds its placeholder. Mount your Ultima Online client files
-and point that setting at them:
-
-```toml
-[ultima]
-ultima_path = "/uo"
-```
-
-```bash
-docker run -d --name moongate \
-  -v moongate-data:/data \
-  -v /path/to/ultima:/uo:ro \
-  -p 2593:2593 \
-  ghcr.io/moongate-community/moongate:latest
-```
-
-`MOONGATE_ROOT` and `--root-directory` move that root elsewhere. Run several
-shards from the same image by giving each container its own volume and its own
-published port; a root is meant for one server at a time.
-
-[Diagnostics](docs/diagnostics.md)
-
-[Dependency security audit](docs/security-audit.md)
+- [Persistence and world saves](docs/persistence.md): entity registration, queries, autosave, backups and recovery.
+- [Packets and handlers](docs/packets.md): wire formats, default opcodes and typed game handlers.
+- [Game loop and timers](docs/game-loop-and-timers.md): thread ownership, bounded queues, scheduling and shutdown.
+- [Writing Lua scripts](docs/scripting.md): bootstrap, modules, timers, reload and editor support.
+- [Diagnostics](docs/diagnostics.md): metrics and events; [dependency security](docs/security-audit.md) covers package auditing.
 
 ## Server mode
 
@@ -96,8 +82,7 @@ end)
   `RegisterScriptModule<T>()` in `Program.cs`.
 - **Budget:** a deterministic instruction count, not a wall clock. A coroutine resume
   may run 150,000 instructions and a top-level chunk 10,000,000 before it is aborted
-  with a script error; `string.rep` refuses results longer than 16,777,216 characters. Nothing a script does
-  can block or fault the loop.
+  with a script error; `string.rep` refuses results longer than 16,777,216 characters. The budget bounds VM execution; C# bindings must avoid blocking, and total memory is not capped.
 - **Sandbox:** base, `string`, `table`, `math`, `coroutine` and `package` only; no `io`,
   `os`, `debug`, `dofile`, `loadfile`, `rawset` or script-created coroutines.
 - **Errors:** every failure is logged with file and line and published as
@@ -117,11 +102,31 @@ write_definitions = true
 max_string_length = 16777216
 ```
 
-The package README, [src/Moongate.Scripting/README.md](src/Moongate.Scripting/README.md),
-documents the binding model and the sandbox in full.
+Start with [Writing Lua scripts](docs/scripting.md). The
+[package README](src/Moongate.Scripting/README.md) documents the binding model and sandbox.
+
+## Extending Moongate
+
+- [Writing a plugin](docs/plugins.md): an assembly under `plugins/` that registers services, commands, Lua modules and metric providers before the server starts.
+- [Writing a Lua module](docs/lua-modules.md): a C# class with `[ScriptModule]` and `[ScriptFunction]` that scripts call as a read-only table.
+- [Registering a metric provider](docs/metric-providers.md): an `IMetricProvider` whose samples join the diagnostics snapshot.
+
+All three are shown by one compiled sample, [samples/Moongate.Sample.Plugin](samples/Moongate.Sample.Plugin/), which the test suite loads through the real plugin loader.
 
 ## Libraries
 
 The eight library packages have their own English READMEs and runnable examples.
 See [NuGet libraries and package verification](docs/nuget-packaging.md) for the
 package list, dependencies, and the local verification command.
+
+## Documentation
+
+The [documentation website](https://moongate.sh/)
+includes the [changelog](CHANGELOG.md), server guides, and library documentation.
+Releases publish the site automatically, and the same workflow can be run by hand between releases. See [Writing documentation](docs/documentation.md)
+for local preview commands and how to contribute a page.
+
+## Contributing
+
+Read [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding conventions,
+validation commands, and the pull request workflow. Contributions target `develop`.
