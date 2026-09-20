@@ -115,7 +115,7 @@ corresponding peer permission. `ApiServer.Connections` returns an immutable snap
 `container.RegisterApiHandler<IncrementHandler>()` infers the contract and owns a singleton handler. Registration alone
 starts no listener. Moongate.Server now hosts the listener through `IApiServerService` when `[api].enabled = true`, with
 port 2594 by default and certificates/peer permissions configured in TOML. APIs remain disabled by default and log an
-activation warning. See [API host configuration](../../docs/server-configuration.md#enable-the-internal-api-server)
+activation warning. See [API host configuration](../../docs/server-configuration.md#enable-the-internal-api-server), the [certificate setup guide](../../docs/api-certificates.md)
 and [Docker](../../docs/docker.md#internal-api-port). The standalone example above still works without Moongate.Server.
 
 ## TLS identity and ownership
@@ -123,9 +123,15 @@ and [Docker](../../docs/docker.md#internal-api-port). The standalone example abo
 Each `ApiTlsOptions` supplies:
 
 - `Certificate`: the local leaf certificate with its private key.
-- `TrustedRoots`: the private CA roots trusted exclusively by this endpoint.
+- `TrustedRoots`: the private CA roots or self-signed peer certificates trusted exclusively by this endpoint.
 - `PeersByCertificateSha256`: hexadecimal SHA-256 leaf fingerprints mapped to immutable `ApiPeerIdentity` objects and
-  explicit operation allowlists.
+  explicit operation permissions.
+
+For a fully trusted peer, construct `new ApiPeerIdentity("login", [], allowAllOperations: true)`
+to grant every nonzero operation, including future registrations. The existing two-argument constructor
+keeps explicit-list semantics: an empty list denies everything. In Moongate.Server TOML the equivalent
+is `allowed_operations = ["*"]`; numeric lists such as `[100, 200]` remain supported, and empty or omitted
+lists deny every operation. Wildcards do not register handlers or authorize unknown certificates.
 
 Both sides validate trust, certificate validity and usage, require an allowed leaf, and reject missing certificates. Clients
 also validate the server hostname and expected peer ID. TLS versions and cipher selection follow the operating system.

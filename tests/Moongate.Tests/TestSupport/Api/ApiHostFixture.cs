@@ -50,7 +50,7 @@ internal sealed class ApiHostFixture : IDisposable
             Peers = [new ApiPeerConfig
             {
                 CertificateSha256 = _client.GetCertHashString(HashAlgorithmName.SHA256),
-                PeerId = "client", AllowedOperations = [100]
+                PeerId = "client", AllowedOperations = new([100])
             }]
         };
         Registry.RegisterHandler(() => new IncrementHandler());

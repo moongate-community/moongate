@@ -8,14 +8,19 @@ public sealed class ApiConfig
     public bool Enabled { get; set; }
     public string ListenAddress { get; set; } = "0.0.0.0";
     public int Port { get; set; } = 2594;
+    public bool AutoGenerateCertificate { get; set; }
+    public string[] CertificateDnsNames { get; set; } = ["localhost"];
+    public string[] CertificateIpAddresses { get; set; } = ["127.0.0.1", "::1"];
     public string CertificatePath { get; set; } = "";
     public string CertificatePasswordEnvironmentVariable { get; set; } = "MOONGATE_API_CERTIFICATE_PASSWORD";
     public string[] TrustedRootPaths { get; set; } = [];
     public ApiPeerConfig[] Peers { get; set; } = [];
 
-    /// <summary>Validates enabled listeners without reading certificate files or secrets.</summary>
+    /// <summary>Validates certificate provisioning and enabled listeners without reading files or secrets.</summary>
     public void Validate()
     {
+        if (!Enabled && !AutoGenerateCertificate) { return; }
+        ValidateCertificate();
         if (!Enabled) { return; }
         if (!IPAddress.TryParse(ListenAddress, out _))
         {
@@ -24,14 +29,6 @@ public sealed class ApiConfig
         if (Port is < 1 or > 65535)
         {
             throw new InvalidOperationException("api.port must be between 1 and 65535.");
-        }
-        if (string.IsNullOrWhiteSpace(CertificatePath))
-        {
-            throw new InvalidOperationException("api.certificate_path must name a PFX certificate with a private key.");
-        }
-        if (CertificatePasswordEnvironmentVariable is null)
-        {
-            throw new InvalidOperationException("api.certificate_password_environment_variable cannot be null.");
         }
         if (TrustedRootPaths is null || TrustedRootPaths.Length == 0 ||
             TrustedRootPaths.Any(string.IsNullOrWhiteSpace))
@@ -51,6 +48,32 @@ public sealed class ApiConfig
             {
                 throw new InvalidOperationException("api.peers contains duplicate certificate fingerprints.");
             }
+        }
+    }
+
+    internal void ValidateCertificate()
+    {
+        if (string.IsNullOrWhiteSpace(CertificatePath))
+        {
+            throw new InvalidOperationException("api.certificate_path must name a PFX certificate with a private key.");
+        }
+        if (CertificatePasswordEnvironmentVariable is null)
+        {
+            throw new InvalidOperationException("api.certificate_password_environment_variable cannot be null.");
+        }
+        if (!AutoGenerateCertificate) { return; }
+        if (CertificateDnsNames is null || CertificateIpAddresses is null ||
+            CertificateDnsNames.Length + CertificateIpAddresses.Length == 0)
+        {
+            throw new InvalidOperationException("API certificate generation requires at least one DNS name or IP address.");
+        }
+        if (CertificateDnsNames.Any(name => string.IsNullOrWhiteSpace(name) || Uri.CheckHostName(name) != UriHostNameType.Dns))
+        {
+            throw new InvalidOperationException("api.certificate_dns_names must contain valid DNS names.");
+        }
+        if (CertificateIpAddresses.Any(value => !IPAddress.TryParse(value, out _) || value.Contains('%')))
+        {
+            throw new InvalidOperationException("api.certificate_ip_addresses must contain IP literals without scope identifiers.");
         }
     }
 }
