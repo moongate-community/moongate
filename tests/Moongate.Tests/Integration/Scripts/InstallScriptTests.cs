@@ -1,7 +1,11 @@
+using System.Runtime.Versioning;
 using Moongate.Tests.TestSupport.Scripts;
 
 namespace Moongate.Tests.Integration.Scripts;
 
+// Every fact here is a [ShellFact], which skips unless this is Linux with the tools the script
+// needs. Saying so out loud keeps the platform analyser from flagging the Unix-only file checks.
+[SupportedOSPlatform("linux")]
 public class InstallScriptTests
 {
     [ShellFact]

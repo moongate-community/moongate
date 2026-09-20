@@ -1,13 +1,13 @@
 using Moongate.Server.Services.Network;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Network.Packets.General;
-using Moongate.Server.Handlers.General;
+using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 
-namespace Moongate.Tests.Server.Handlers.General;
+namespace Moongate.Tests.Server.Ultima.Handlers.General;
 
 public sealed class PingPacketHandlerTests
 {

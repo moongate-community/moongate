@@ -55,6 +55,7 @@
       <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj" />
       <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj" />
       <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj" />
+      <ProjectReference Include="..\Moongate.Server.Ultima\Moongate.Server.Ultima.csproj" />
       <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj" />
     </ItemGroup>
 
