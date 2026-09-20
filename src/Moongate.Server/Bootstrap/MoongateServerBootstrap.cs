@@ -89,10 +89,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     {
         try
         {
-            if (_container.IsRegistered<IPluginLoaderService>())
-            {
-                _container.Resolve<IPluginLoaderService>().LoadPlugins();
-            }
+            await PersistencePreparation.InitializeAsync(_container, _cancellationToken).ConfigureAwait(false);
 
             await _services.StartAsync(service =>
             {
@@ -183,6 +180,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             () => _eventBus.Value.PublishAsync(new MoongateStoppedEvent(), CancellationToken.None), failures
         ).ConfigureAwait(false);
 
+        await CaptureFailureAsync(() => PersistencePreparation.DisposePersistenceAsync(_container), failures).ConfigureAwait(false);
         CaptureFailure(_container.Dispose, failures);
         _logger.Information("Moongate Server stopped.");
         await CaptureFailureAsync(

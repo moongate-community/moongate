@@ -1,4 +1,4 @@
-namespace Moongate.Tests.Support.Persistence;
+namespace Moongate.Tests.TestSupport.Persistence;
 
 public sealed class TemporaryPersistenceDirectory : IDisposable
 {

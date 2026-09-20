@@ -236,13 +236,9 @@ public sealed class ConfigHelperTests
         var worldSave = Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["world_save"]);
         Assert.Equal(true, worldSave["enabled"]);
         Assert.Equal(300L, worldSave["interval_seconds"]);
-        Assert.Equal(true, worldSave["backups_enabled"]);
-        Assert.Equal(5L, worldSave["backup_retention_count"]);
         var options = config.WorldSave.ToOptions();
         Assert.True(options.Enabled);
-        Assert.True(options.BackupsEnabled);
         Assert.Equal(TimeSpan.FromSeconds(300), options.Interval);
-        Assert.Equal(5, options.BackupRetentionCount);
     }
 
     [Fact]
@@ -253,22 +249,18 @@ public sealed class ConfigHelperTests
             [world_save]
             enabled = false
             interval_seconds = 45
-            backups_enabled = false
-            backup_retention_count = 2
             """);
         var options = ConfigHelper.Load(path).WorldSave.ToOptions();
         Assert.False(options.Enabled);
-        Assert.False(options.BackupsEnabled);
         Assert.Equal(TimeSpan.FromSeconds(45), options.Interval);
-        Assert.Equal(2, options.BackupRetentionCount);
     }
 
-    [Theory, InlineData(0, 5), InlineData(-1, 5), InlineData(300, 0), InlineData(300, -1)]
-    public void Load_NonPositiveWorldSaveSettings_RejectsBeforeServerStartup(int interval, int retention)
+    [Theory, InlineData(0), InlineData(-1)]
+    public void Load_NonPositiveWorldSaveSettings_RejectsBeforeServerStartup(int interval)
     {
         using var directory = new TemporaryDirectory();
         var path = directory.CreateFile("moongate.toml",
-            $"[world_save]\nenabled = false\ninterval_seconds = {interval}\nbackup_retention_count = {retention}\n");
+            $"[world_save]\nenabled = false\ninterval_seconds = {interval}\n");
         Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
     }
 

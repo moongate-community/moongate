@@ -20,7 +20,7 @@ public sealed class WorldSaveBootstrapTests
     [Fact]
     public async Task StartAsync_StartedSubscribersFinishBeforeActivationAndAutosave()
     {
-        await using var fixture = new WorldSaveFixture(autosave: true);
+        await using var fixture = await WorldSaveFixture.CreateAsync(autosave: true);
         using var container = CreateContainer(fixture);
         container.OnEvent<MoongateStartedEvent>(async (_, _) =>
         {
@@ -39,7 +39,7 @@ public sealed class WorldSaveBootstrapTests
     [Fact]
     public async Task StartAsync_ThrowingObserverStaysIsolated_ActivatesAfterRemainingObservers()
     {
-        await using var fixture = new WorldSaveFixture(autosave: true);
+        await using var fixture = await WorldSaveFixture.CreateAsync(autosave: true);
         using var container = CreateContainer(fixture);
         container.OnEvent<MoongateStartedEvent>((_, _) => throw new ApplicationException("isolated observer"));
         var lastRan = false;
@@ -61,7 +61,7 @@ public sealed class WorldSaveBootstrapTests
     [Fact]
     public async Task StartAsync_StartedPublicationCanceled_NeverSavesPartialWorldAndDrainsRollback()
     {
-        await using var fixture = new WorldSaveFixture(autosave: true, backups: true);
+        await using var fixture = await WorldSaveFixture.CreateAsync(autosave: true);
         using var container = CreateContainer(fixture);
         using var cancellation = new CancellationTokenSource();
         var firstRan = false;
@@ -81,7 +81,6 @@ public sealed class WorldSaveBootstrapTests
         Assert.True(firstRan);
         Assert.Equal(0, fixture.Captures);
         Assert.Equal(0, fixture.Timers.GetMetricsSnapshot().RegisteredTimers);
-        Assert.False(Directory.Exists(fixture.BackupDirectory));
         Assert.True(fixture.Loop.Completion.IsCompletedSuccessfully);
         Assert.True(container.IsDisposed);
         Assert.Null(await fixture.ReadSavedNameAsync());
@@ -90,16 +89,15 @@ public sealed class WorldSaveBootstrapTests
     [Fact]
     public async Task StopAsync_FinalSaveCompletesBeforeWorldOwnerClearsItsLiveState()
     {
-        await using var fixture = new WorldSaveFixture();
+        await using var fixture = await WorldSaveFixture.CreateAsync();
         using var container = CreateContainer(fixture);
         var ownerStopped = false;
-        container.RegisterMoongateService(new CallbackStartupService(() => Task.CompletedTask, () =>
+        container.RegisterMoongateService(new CallbackStartupService(() => Task.CompletedTask, async () =>
         {
             Assert.True(fixture.Loop.Completion.IsCompletedSuccessfully);
-            Assert.Equal("last queued mutation", fixture.Items.GetById(new Serial(7))?.Name);
+            Assert.Equal("last queued mutation", await fixture.ReadSavedNameAsync());
             ownerStopped = true;
             fixture.Entities.Clear();
-            return Task.CompletedTask;
         }));
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         await bootstrap.StartAsync();
@@ -107,54 +105,24 @@ public sealed class WorldSaveBootstrapTests
         await fixture.Loop.PostAsync(blocker);
         await blocker.Entered.WaitAsync(Timeout);
         await fixture.Loop.PostAsync(new ActionGameLoopWorkItem(() => fixture.Entities[0].Name = "last queued mutation"));
-        fixture.FileSystem.BlockFlush = true;
+        await fixture.BlockWritesAsync();
         var stopping = bootstrap.StopAsync();
         Assert.False(stopping.IsCompleted);
         Assert.False(ownerStopped);
         blocker.Release();
-        await fixture.FileSystem.FlushEntered.Task.WaitAsync(Timeout);
+        await fixture.WaitForBlockedWriteAsync();
         Assert.False(ownerStopped);
-        fixture.FileSystem.Release();
+        await fixture.ReleaseWritesAsync();
         await stopping.WaitAsync(Timeout);
         Assert.True(ownerStopped);
         Assert.Equal("last queued mutation", await fixture.ReadSavedNameAsync());
-    }
-
-    [Fact]
-    public async Task StopAsync_BackupFailsBeforeCapture_StillDrainsLoopBeforeWorldOwnerCleanup()
-    {
-        await using var fixture = new WorldSaveFixture(backups: true);
-        using var container = CreateContainer(fixture);
-        var ownerStopped = false;
-        var queuedRan = false;
-        container.RegisterMoongateService(new CallbackStartupService(() => Task.CompletedTask, () =>
-        {
-            Assert.True(fixture.Loop.Completion.IsCompletedSuccessfully);
-            Assert.True(queuedRan);
-            ownerStopped = true;
-            fixture.Entities.Clear();
-            return Task.CompletedTask;
-        }));
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        await bootstrap.StartAsync();
-        File.WriteAllText(fixture.BackupDirectory, "file blocks backup root");
-        using var blocker = new BlockingGameLoopWorkItem();
-        await fixture.Loop.PostAsync(blocker);
-        await blocker.Entered.WaitAsync(Timeout);
-        await fixture.Loop.PostAsync(new ActionGameLoopWorkItem(() => queuedRan = true));
-        var stopping = bootstrap.StopAsync();
-        blocker.Release();
-        Assert.NotNull(await Record.ExceptionAsync(() => stopping.WaitAsync(Timeout)));
-        Assert.True(ownerStopped);
-        Assert.True(container.IsDisposed);
-        Assert.Equal(0, fixture.Captures);
     }
 
     [Theory, InlineData(false, false), InlineData(true, false), InlineData(false, true), InlineData(true, true)]
     public async Task StopAsync_FatalLoopCommand_ReportsOriginalOnceAndKeepsDistinctCleanupFailure(
         bool failCleanup, bool aggregateLoopFailure)
     {
-        await using var fixture = new WorldSaveFixture();
+        await using var fixture = await WorldSaveFixture.CreateAsync();
         using var container = CreateContainer(fixture);
         Exception failure = aggregateLoopFailure
             ? new AggregateException(new ApplicationException("fatal command"))
@@ -184,14 +152,13 @@ public sealed class WorldSaveBootstrapTests
     [Fact]
     public async Task StartAsync_ActivationFails_RollsBackWithoutSaving()
     {
-        await using var fixture = new WorldSaveFixture(autosave: true, backups: true);
+        await using var fixture = await WorldSaveFixture.CreateAsync(autosave: true);
         using var container = CreateContainer(fixture);
         container.OnEvent<MoongateStartedEvent>((_, _) => fixture.Timers.StopAsync());
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         await Assert.ThrowsAsync<InvalidOperationException>(() => bootstrap.StartAsync().WaitAsync(Timeout));
         await bootstrap.StopAsync();
         Assert.Equal(0, fixture.Captures);
-        Assert.False(Directory.Exists(fixture.BackupDirectory));
         Assert.True(fixture.Loop.Completion.IsCompletedSuccessfully);
         Assert.True(container.IsDisposed);
     }
@@ -199,7 +166,7 @@ public sealed class WorldSaveBootstrapTests
     [Fact]
     public async Task StartAsync_NonAutostartWorldSaveRegistration_IsNotActivatedOrStopped()
     {
-        await using var fixture = new WorldSaveFixture(autosave: true);
+        await using var fixture = await WorldSaveFixture.CreateAsync(autosave: true);
         using var container = CreateContainer(fixture, registerSave: false);
         container.RegisterInstance<IWorldSaveService>(fixture.Saves);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
@@ -215,9 +182,10 @@ public sealed class WorldSaveBootstrapTests
         using var container = new Container();
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
         container.RegisterInstance(new WorldSaveOptions());
+        container.RegisterInstance(new PersistenceOperationBarrier());
         // The concrete constructor dependencies are shared by the same registration path used by the host.
-        using var fixture = new Moongate.Tests.Support.Persistence.TemporaryPersistenceDirectory();
-        var persistence = new Moongate.Persistence.Services.MoongatePersistenceService(fixture.Path);
+        using var fixture = new Moongate.Tests.TestSupport.Persistence.TemporaryPersistenceDirectory();
+        var persistence = new Moongate.Persistence.Services.MoongatePersistenceService(new Moongate.Persistence.Data.Config.PostgreSqlPersistenceOptions());
         container.RegisterInstance(persistence);
         container.RegisterInstance(new Moongate.Core.Directories.DirectoriesConfig(fixture.Path, []));
         var timers = new Moongate.Server.Services.Timing.TimerWheelService(new Moongate.Server.Core.Data.Timing.TimerWheelOptions(), TimeProvider.System);
@@ -231,7 +199,7 @@ public sealed class WorldSaveBootstrapTests
     private static Container CreateContainer(WorldSaveFixture fixture, bool registerSave = true)
     {
         var container = new Container();
-        container.RegisterMoongateService(new MoongatePersistenceStartupService(fixture.Persistence), -1000);
+        container.RegisterInstance(fixture.Persistence, setup: Setup.With(preventDisposal: true));
         container.RegisterMoongateService<ITimerService>(fixture.Timers, -900);
         container.RegisterMoongateService<IGameLoopService>(fixture.Loop, -800);
         if (registerSave)

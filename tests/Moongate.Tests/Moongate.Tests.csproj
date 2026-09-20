@@ -42,6 +42,9 @@
   </ItemGroup>
 
   <ItemGroup>
+    <ProjectReference Include="../Fixtures/Plugins/PersistencePlugin/PersistencePlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
+    <ProjectReference Include="../Fixtures/Plugins/CollisionPlugin/CollisionPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
+    <ProjectReference Include="../Fixtures/Plugins/IncompatiblePersistencePlugin/IncompatiblePersistencePlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
     <ProjectReference Include="../Fixtures/Plugins/FoundationPlugin/FoundationPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
     <ProjectReference Include="../Fixtures/Plugins/DependentPlugin/DependentPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
     <ProjectReference Include="../Fixtures/Plugins/FailingPlugin/FailingPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
@@ -73,6 +76,12 @@
     <Copy SourceFiles="@(_SamplePluginFiles)"
           DestinationFiles="@(_SamplePluginFiles->'$(OutDir)PluginFixtures/SamplePlugin/%(RecursiveDir)%(Filename)%(Extension)')"
           SkipUnchangedFiles="true" />
+    <ItemGroup><_PersistencePluginFiles Include="../Fixtures/Plugins/PersistencePlugin/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(_PersistencePluginFiles)" DestinationFiles="@(_PersistencePluginFiles->'$(OutDir)PluginFixtures/PersistencePlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><_CollisionPluginFiles Include="../Fixtures/Plugins/CollisionPlugin/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(_CollisionPluginFiles)" DestinationFiles="@(_CollisionPluginFiles->'$(OutDir)PluginFixtures/CollisionPlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
+    <ItemGroup><_IncompatiblePersistencePluginFiles Include="../Fixtures/Plugins/IncompatiblePersistencePlugin/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
+    <Copy SourceFiles="@(_IncompatiblePersistencePluginFiles)" DestinationFiles="@(_IncompatiblePersistencePluginFiles->'$(OutDir)PluginFixtures/IncompatiblePersistencePlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
   </Target>
 
 </Project>

@@ -50,4 +50,18 @@ public sealed class PostgreSqlPersistenceOptionsTests
 
         Assert.Equal(PersistenceDatabaseTarget.Realm, database.Target);
     }
+    [Theory, InlineData(false), InlineData(true)]
+    public void CreateDatabase_MalformedConnection_DoesNotRetainSecretInException(bool separateSchema)
+    {
+        const string marker = "synthetic_marker";
+        var malformed = $"postgres://user:{marker}@localhost/database?sslmode=require";
+        var options = new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm,
+            separateSchema ? "Host=localhost;Database=realm;Username=runtime" : malformed,
+            separateSchema ? malformed : null);
+        var error = Assert.Throws<InvalidOperationException>(() => PostgreSqlDatabase.Create(options));
+        Assert.DoesNotContain(marker, error.ToString(), StringComparison.Ordinal);
+        Assert.Contains(separateSchema ? "schema" : "runtime", error.Message);
+        Assert.Contains("Npgsql", error.Message);
+    }
+
 }

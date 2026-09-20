@@ -18,6 +18,28 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
 
     protected override Assembly? Load(AssemblyName assemblyName)
     {
+        if (assemblyName.Name is "Moongate.Core" or "Moongate.Server.Core" or "Moongate.Persistence" or
+            "FreeSql" or "FreeSql.Provider.PostgreSQL" or "Npgsql")
+        {
+            Assembly host;
+            try
+            {
+                host = Default.LoadFromAssemblyName(new AssemblyName(assemblyName.Name));
+            }
+            catch (Exception exception) when (exception is FileNotFoundException or FileLoadException)
+            {
+                throw new FileLoadException($"Required host persistence contract '{assemblyName}' is unavailable; private copies are not supported.", exception);
+            }
+            var identity = host.GetName();
+            if (assemblyName.Version != identity.Version ||
+                !string.Equals(assemblyName.CultureName ?? "", identity.CultureName ?? "", StringComparison.OrdinalIgnoreCase) ||
+                !(assemblyName.GetPublicKeyToken() ?? []).SequenceEqual(identity.GetPublicKeyToken() ?? []))
+            {
+                throw new FileLoadException($"Incompatible host persistence contract '{assemblyName}'; host provides '{identity}'. Private copies are not supported.");
+            }
+            return host;
+        }
+
         try
         {
             // Host contracts and their dependencies must retain the host's type identity.

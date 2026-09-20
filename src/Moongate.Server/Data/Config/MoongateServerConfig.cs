@@ -20,6 +20,8 @@ public class MoongateServerConfig
 
     public UltimaConfig Ultima { get; set; } = new UltimaConfig();
 
+    public PersistenceConfig Persistence { get; set; } = new();
+
     public WorldSaveConfig WorldSave { get; set; } = new();
 
     public DiagnosticConfig Diagnostics { get; set; } = new();
@@ -39,6 +41,12 @@ public class MoongateServerConfig
             throw new InvalidOperationException("The api configuration section cannot be null.");
         }
         Api.Validate();
+
+        if (Persistence is null)
+        {
+            throw new InvalidOperationException("The persistence configuration section cannot be null.");
+        }
+        Persistence.Validate();
 
         if (WorldSave is null)
         {

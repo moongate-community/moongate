@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup><TargetFramework>net10.0</TargetFramework><IsPackable>false</IsPackable><ShouldUnsetParentConfigurationAndPlatform>false</ShouldUnsetParentConfigurationAndPlatform><EnableDynamicLoading>true</EnableDynamicLoading></PropertyGroup>
+  <ItemGroup>
+    <ProjectReference Include="../../../../src/Moongate.Server.Core/Moongate.Server.Core.csproj" />
+    <ProjectReference Include="../../../../src/Moongate.Persistence/Moongate.Persistence.csproj" />
+  </ItemGroup>
+</Project>

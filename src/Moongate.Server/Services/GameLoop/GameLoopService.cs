@@ -1,3 +1,4 @@
+using System.Runtime.ExceptionServices;
 using System.Threading.Channels;
 using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Interfaces.GameLoop;
@@ -14,6 +15,7 @@ namespace Moongate.Server.Services.GameLoop;
 public sealed class GameLoopService : IGameLoopService, IDisposable
 {
     private readonly Lock _gate = new();
+    private readonly AsyncLocal<bool> _insideFinalWork = new();
     private readonly Channel<QueuedGameLoopWorkItem> _inbox;
     private readonly AutoResetEvent _wake;
     private readonly GameLoopPump _pump;
@@ -29,6 +31,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     private Thread? _thread;
     private Task? _stopTask;
     private Task? _finalStopTask;
+    private GameLoopFinalWorkSession? _finalSession;
     private IGameLoopWorkItem? _finalWorkItem;
     private int _loopThreadId;
     private bool _disposed;
@@ -177,6 +180,49 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         }
     }
 
+    /// <inheritdoc />
+    public Task StopWithFinalWorkAsync(
+        Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
+        CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(finalWorkAsync);
+        RejectLoopThreadWait();
+        cancellationToken.ThrowIfCancellationRequested();
+        GameLoopFinalWorkSession session;
+        Task stopping;
+        lock (_gate)
+        {
+            if (_stopTask is not null || _state is not (GameLoopState.Starting or GameLoopState.Running))
+            {
+                return CompleteFinalStopAsync(StopAsync(), captureAccepted: false);
+            }
+            session = _finalSession = new GameLoopFinalWorkSession(() => _wake.Set(), cancellationToken);
+            stopping = StopAsync();
+        }
+        return CompleteSequenceAsync();
+
+        async Task CompleteSequenceAsync()
+        {
+            Exception? failure = null;
+            try
+            {
+                await session.Ready.Task.ConfigureAwait(false);
+                _insideFinalWork.Value = true;
+                await finalWorkAsync(session.DispatchAsync, cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception) { failure = exception; }
+            finally
+            {
+                _insideFinalWork.Value = false;
+                try { await session.CloseAsync().ConfigureAwait(false); }
+                catch (Exception exception) { failure ??= exception; }
+                await stopping.ConfigureAwait(false);
+            }
+            if (failure is not null) { ExceptionDispatchInfo.Capture(failure).Throw(); }
+            await Completion.ConfigureAwait(false);
+        }
+    }
+
     private async Task CompleteFinalStopAsync(Task stopping, bool captureAccepted)
     {
         await stopping.ConfigureAwait(false);
@@ -287,7 +333,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
 
     private void RejectLoopThreadWait()
     {
-        if (IsOnLoopThread)
+        if (IsOnLoopThread || _insideFinalWork.Value)
         {
             throw new InvalidOperationException("This operation cannot wait on the game loop's own thread.");
         }
@@ -346,10 +392,19 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             // Admission and timers are closed, and every accepted command has finished.
             // Keep the loop identity until this final synchronous capture completes.
             _finalWorkItem?.Execute();
+            if (_finalSession is not null)
+            {
+                _finalSession.Ready.TrySetResult();
+                while (_finalSession.ExecutePending())
+                {
+                    _wake.WaitOne();
+                }
+            }
         }
         catch (Exception exception)
         {
             failure = exception;
+            _finalSession?.Fail(exception);
 
             lock (_gate)
             {

@@ -107,8 +107,8 @@ public sealed class PersistenceDatabaseOptions
         catch (Exception exception) when (exception is ArgumentException or FormatException)
         {
             throw new InvalidOperationException(
-                $"Persistence target '{Target}' has an invalid {purpose} PostgreSQL connection string.",
-                exception);
+                $"Persistence target '{Target}' has an invalid {purpose} PostgreSQL connection string. " +
+                "Use Npgsql key=value; connection-string format with Host and Database; PostgreSQL URIs are not supported.");
         }
     }
 }

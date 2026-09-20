@@ -1,0 +1,7 @@
+<Project Sdk="Microsoft.NET.Sdk">
+<PropertyGroup><IsPackable>false</IsPackable><ShouldUnsetParentConfigurationAndPlatform>false</ShouldUnsetParentConfigurationAndPlatform><EnableDynamicLoading>true</EnableDynamicLoading></PropertyGroup>
+<ItemGroup>
+<ProjectReference Include="../../../../src/Moongate.Server.Core/Moongate.Server.Core.csproj" />
+<ProjectReference Include="../IncompatiblePersistenceContract/IncompatiblePersistenceContract.csproj" />
+</ItemGroup>
+</Project>
