@@ -599,4 +599,5 @@ website/.astro/
 website/dist/
 website/src/content/docs/generated/
 website/public/generated/
+website/public/install.sh
 website/.docs-stage-*/
