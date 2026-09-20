@@ -4,13 +4,10 @@ internal sealed class PersistenceMutationGate : IDisposable
 {
     private readonly Lock _lifecycleSync = new();
     private readonly SemaphoreSlim _semaphore = new(1, 1);
-    private readonly AsyncLocal<bool> _insideCapture = new();
     private int _acceptedOperations;
     private bool _closing;
     private Task? _closeTask;
     private TaskCompletionSource? _drained;
-
-    public bool IsInsideCapture => _insideCapture.Value;
 
     public Task RunAsync(
         Func<CancellationToken, Task> operation,
@@ -18,7 +15,6 @@ internal sealed class PersistenceMutationGate : IDisposable
     )
     {
         ArgumentNullException.ThrowIfNull(operation);
-        ThrowIfCaptureReentry();
         Task wait;
         lock (_lifecycleSync)
         {
@@ -36,7 +32,6 @@ internal sealed class PersistenceMutationGate : IDisposable
     )
     {
         ArgumentNullException.ThrowIfNull(operation);
-        ThrowIfCaptureReentry();
         Task wait;
         lock (_lifecycleSync)
         {
@@ -48,25 +43,9 @@ internal sealed class PersistenceMutationGate : IDisposable
         return RunCoreAsync(wait, operation, cancellationToken);
     }
 
-    public void RunCapture(Action capture)
-    {
-        ArgumentNullException.ThrowIfNull(capture);
-        ThrowIfCaptureReentry();
-        _insideCapture.Value = true;
-        try
-        {
-            capture();
-        }
-        finally
-        {
-            _insideCapture.Value = false;
-        }
-    }
-
     public Task CloseAsync(Func<Task> close)
     {
         ArgumentNullException.ThrowIfNull(close);
-        ThrowIfCaptureReentry();
         lock (_lifecycleSync)
         {
             if (_closeTask is not null)
@@ -81,37 +60,6 @@ internal sealed class PersistenceMutationGate : IDisposable
             _closeTask = CloseCoreAsync(drained, close);
 
             return _closeTask;
-        }
-    }
-
-    public Task CloseCollectionAsync(Func<Task> close)
-    {
-        ArgumentNullException.ThrowIfNull(close);
-        ThrowIfCaptureReentry();
-        lock (_lifecycleSync)
-        {
-            if (_closeTask is not null)
-            {
-                return ObserveCollectionCloseAsync(_closeTask, close);
-            }
-
-            return RunAsync(_ => close());
-        }
-    }
-
-    private static async Task ObserveCollectionCloseAsync(Task ownerClose, Func<Task> close)
-    {
-        // The owner drains accepted work and closes every collection before completing.
-        // Observe this collection's cached result, not failures from other collections.
-        await ownerClose.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-        await close().ConfigureAwait(false);
-    }
-
-    private void ThrowIfCaptureReentry()
-    {
-        if (_insideCapture.Value)
-        {
-            throw new InvalidOperationException("A live entity source cannot reenter persistence mutation or disposal.");
         }
     }
 
