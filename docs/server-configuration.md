@@ -37,11 +37,18 @@ peers = []
 [ultima]
 ultima_path = "ChangeMe" # Replace with your client data directory.
 
+[persistence]
+auto_sync_schema = false
+
+[persistence.accounts]
+connection_string_env = "MOONGATE_ACCOUNTS_DATABASE"
+
+[persistence.realm]
+connection_string_env = "MOONGATE_REALM_DATABASE"
+
 [world_save]
 enabled = true # Enables periodic saves; manual/final saves remain available.
 interval_seconds = 300
-backups_enabled = true
-backup_retention_count = 5
 
 [diagnostics]
 enabled = true
@@ -80,10 +87,13 @@ max_string_length = 16777216
 | `api.peers.peer_id` | Nonblank local identity for this peer. Multiple certificates may map to one identity during rotation. |
 | `api.peers.allowed_operations` | `["*"]` grants all registered operations, including future additions. Otherwise use integer IDs from 1 through 65535. Empty or omitted denies all incoming operations; the wildcard must appear alone. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. |
+| `persistence.auto_sync_schema` | Defaults to false. When false, normal startup fails if registered entities require DDL; use the preview/apply command. Enable only as an explicit development convenience. |
+| `persistence.accounts.connection_string_env` | Environment-variable name containing the Accounts runtime connection in Npgsql `key=value;` format. Resolved only when a registered module uses Accounts. |
+| `persistence.realm.connection_string_env` | Environment-variable name containing the Realm runtime connection. Resolved only when a registered module uses Realm. |
+| `persistence.accounts.schema_connection_string_env` | Optional environment-variable name for a separately authorized Accounts schema connection. Omit from normal runtime configuration. |
+| `persistence.realm.schema_connection_string_env` | Optional environment-variable name for a separately authorized Realm schema connection. Omit from normal runtime configuration. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
-| `world_save.backups_enabled` | Writes a consistent backup generation after a save when true. |
-| `world_save.backup_retention_count` | Positive integer, even when backups are disabled; maximum completed managed generations retained. |
 | `diagnostics.enabled` | Starts the periodic diagnostic collector when true. |
 | `diagnostics.interval_seconds` | Positive integer seconds; must fit the timer range (at most 4,294,967 seconds). |
 | `diagnostics.log_metrics` | Logs periodic collected metrics when true. |
@@ -191,6 +201,7 @@ dotnet run --project src/Moongate.Server -c Release -- \
 | `--log-to-file` | `true` | File logging is enabled; the generated parser only accepts this as a presence flag |
 | `--log-packets` | `false` | Sets the argument to true; currently no packet-tracing consumer |
 | `--show-header` | `true` | Shows the startup banner; presence flag |
+| `--persistence-schema <mode>` | `None` | `preview` prints pending PostgreSQL DDL; `apply` applies and verifies it through the administrative host path |
 | `--version` | — | Prints executable version |
 | `-h`, `--help` | — | Prints usage |
 
@@ -203,6 +214,9 @@ The chosen root expands home/environment references and becomes an absolute path
 a relative root starts from the working directory. Prefer explicit absolute paths
 in service managers and containers. Docker sets `MOONGATE_ROOT=/data` by default.
 
-See [First start](getting-started.md) for PID ownership, logs and troubleshooting,
-[world saves](persistence.md) for backup semantics and
+The schema command loads plugin persistence registrations but does not acquire the
+normal PID, start listeners/services, or generate runtime files. Stop the affected
+runtime before applying reviewed DDL. See [First start](getting-started.md) for PID
+ownership, logs and troubleshooting, [PostgreSQL persistence](persistence.md) for
+connection, schema and world-save semantics, and
 [Lua scripting](scripting.md) for budgets and sandbox boundaries.

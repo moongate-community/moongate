@@ -36,9 +36,10 @@ moongate --root-directory /srv/moongate
 ```
 
 Always pass `--root-directory`. Without it the server uses the directory the binary sits in,
-which is the installation directory, and writes its configuration, logs, saves and world saves
-into it. Upgrading replaces that whole directory, so a shard kept there loses its world the next
-time the install line is run. Run as an ordinary user, the attempt fails instead, with
+which is the installation directory, and writes its configuration and logs
+into it. Upgrading replaces that whole directory, so configuration, plugins, and
+generated files kept there are lost the next time the install line runs. Run as
+an ordinary user, the attempt fails instead, with
 `Access to the path '/opt/moongate/moongate.pid.lock' is denied`.
 
 On a fresh root the server writes `config/moongate.toml` and exits, because the default client
@@ -52,7 +53,8 @@ ultima_path = "/absolute/path/to/your/ultima-client"
 
 [First start](getting-started.md) covers what the server writes under the root, how it guards
 against a second instance, and how to shut it down without interrupting a world save. The
-[configuration reference](server-configuration.md) lists every setting.
+[configuration reference](server-configuration.md) lists every setting; the
+[persistence guide](persistence.md) explains PostgreSQL connections and schema preparation.
 
 ## Upgrade
 

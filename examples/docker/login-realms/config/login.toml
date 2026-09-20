@@ -11,6 +11,12 @@ game_port = 2593
 [ultima]
 ultima_path = "/uo"
 
+[persistence]
+auto_sync_schema = false
+
+[persistence.accounts]
+connection_string_env = "MOONGATE_ACCOUNTS_DATABASE"
+
 [api]
 enabled = false
 listen_address = "0.0.0.0"

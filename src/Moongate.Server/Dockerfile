@@ -34,6 +34,17 @@ FROM build AS publish
 ARG BUILD_CONFIGURATION=Release
 RUN dotnet publish "./Moongate.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish
 
+FROM build AS sample-plugin-publish
+ARG BUILD_CONFIGURATION=Release
+WORKDIR "/src/samples/Moongate.Sample.Plugin"
+RUN dotnet publish "./Moongate.Sample.Plugin.csproj" -c $BUILD_CONFIGURATION -o /app/sample-plugin
+
+FROM base AS sample-plugin
+WORKDIR /app
+COPY --from=publish /app/publish .
+COPY --from=sample-plugin-publish /app/sample-plugin /opt/moongate/sample-plugin
+ENTRYPOINT ["./Moongate.Server"]
+
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .

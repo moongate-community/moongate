@@ -23,10 +23,24 @@ jobs:
     container:
       image: mcr.microsoft.com/dotnet/sdk:10.0
 
+    services:
+      postgres:
+        image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
+        env:
+          POSTGRES_DB: postgres
+          POSTGRES_HOST_AUTH_METHOD: trust
+          POSTGRES_USER: postgres
+        options: >-
+          --health-cmd "pg_isready -U postgres -d postgres"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 30
+
     env:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      MOONGATE_TEST_POSTGRES_CONNECTION_STRING: Host=postgres;Port=5432;Database=postgres;Username=postgres;Pooling=false
 
     steps:
       - name: Checkout

@@ -23,7 +23,7 @@ original Moongate logo, XML documentation, and a companion symbol package.
 | [Moongate.Core](../src/Moongate.Core/README.md) | Shared primitives, geometry, configuration, and utilities | None |
 | [Moongate.Network](../src/Moongate.Network/README.md) | Standalone TCP transport, framing, and pipelines | None |
 | [Moongate.Network.Packets](../src/Moongate.Network.Packets/README.md) | UO packet definitions and span-based serialization | Core |
-| [Moongate.Persistence](../src/Moongate.Persistence/README.md) | MemoryPack snapshots, journals, and typed entity access | Core |
+| [Moongate.Persistence](../src/Moongate.Persistence/README.md) | Asynchronous PostgreSQL modules, transactions, schema operations, and typed entity access | Core |
 | [Moongate.Scripting](../src/Moongate.Scripting/README.md) | Embedded Lua 5.2 runtime, attribute-bound modules, coroutine scheduling and editor definitions | Core, Server.Core |
 | [Moongate.Server.Core](../src/Moongate.Server.Core/README.md) | Server and plugin contracts, events, and registrations | Api, Core, Network, Network.Packets |
 | [Moongate.Ultima](../src/Moongate.Ultima/README.md) | UO client data readers and rendering utilities | None |
@@ -40,16 +40,34 @@ are also excluded from packing.
    SourceLink pointing to the repository commit recorded in the package.
 3. Extracts the marked C# examples from each README into eight temporary console apps
    outside the repository. Each app references one Moongate package directly;
-   the persistence example also references MemoryPack, and the API example references MessagePack, to generate their serializers.
+   the persistence verifier references Npgsql to provision its isolated database,
+   and the API example references MessagePack to generate its serializers.
 4. Restores, builds, and runs those apps, checking their output. This exercises
-   geometry, TCP lifecycle, packet encoding/decoding, persistence after reopening,
+   geometry, TCP lifecycle, packet encoding/decoding, PostgreSQL persistence,
    the event bus, typed API registration, and native SkiaSharp loading. Separate solution tests also start independent .NET processes to verify mutual TLS, local authorization, direct game access with login offline, and no replay after a lost response.
+
+The persistence consumer requires `MOONGATE_TEST_POSTGRES_CONNECTION_STRING` as
+an administrative Npgsql connection. It creates a unique
+`moongate_test_nuget_<uuid>` database, runs the README example there, and drops
+only that generated database. Missing configuration fails with an actionable
+message; it never silently skips.
+
+The solution's PostgreSQL fixtures use the same contract. Point it only at an
+isolated test server whose admin role may create/drop databases:
+
+```sh
+MOONGATE_TEST_POSTGRES_CONNECTION_STRING='Host=127.0.0.1;Port=5432;Database=postgres;Username=postgres;Password=...;Pooling=false' \
+  dotnet test Moongate.slnx -c Release
+```
+
+Each fixture creates a unique `moongate_test_<uuid>` database and drops only that
+database. Never use an operator Accounts or Realm connection for this variable.
 
 Consumer apps use a new temporary NuGet cache for each invocation. Package source
 mapping restricts `Moongate.*` to the generated local feed and resolves external
 dependencies from nuget.org. Existing global packages cannot make a broken local
-package appear to work. No UO client files, external game servers, credentials, or
-fixed listening ports are needed.
+package appear to work. No UO client files, external game servers, or fixed
+listening ports are needed.
 
 ## Output and troubleshooting
 
