@@ -66,6 +66,15 @@ internal sealed class ApiHostFixture : IDisposable
         return new ApiClient(registry, new ApiOptions(), _authority.Options(_client, _server, "server"), TimeProvider.System);
     }
 
+    public void UseInvalidServerCertificate(string invalidity)
+    {
+        using var certificate = _authority.Issue(expired: invalidity == "expired",
+            clientOnly: invalidity == "client_only", notYetValid: invalidity == "future");
+        using var publicCertificate = X509CertificateLoader.LoadCertificate(certificate.Export(X509ContentType.Cert));
+        var exported = invalidity == "no_private_key" ? publicCertificate : certificate;
+        File.WriteAllBytes(Path.Combine(Directories["config"], Config.CertificatePath), exported.Export(X509ContentType.Pfx, Password));
+    }
+
     public void UseUnencryptedCertificate()
     {
         File.WriteAllBytes(Path.Combine(Directories["config"], Config.CertificatePath), _server.Export(X509ContentType.Pfx));

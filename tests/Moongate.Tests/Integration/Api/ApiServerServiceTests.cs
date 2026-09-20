@@ -112,6 +112,18 @@ public sealed class ApiServerServiceTests
         fixture.AssertPortReleased();
     }
 
+    [Theory, InlineData("expired"), InlineData("future"), InlineData("client_only"), InlineData("no_private_key")]
+    public async Task StartAsync_InvalidServerCertificate_RejectsBeforeBindingOrResolvingHandlers(string invalidity)
+    {
+        using var fixture = new ApiHostFixture();
+        fixture.UseInvalidServerCertificate(invalidity);
+        await using var service = fixture.CreateService();
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.StartAsync());
+        Assert.Null(service.Endpoint);
+        Assert.False(fixture.Registry.IsFrozen);
+        fixture.AssertPortReleased();
+    }
+
     [Fact]
     public async Task StartAsync_OccupiedPort_FailsAndCanBeStopped()
     {

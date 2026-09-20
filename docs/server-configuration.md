@@ -89,7 +89,9 @@ max_string_length = 16777216
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 
 API validation applies when `api.enabled` is true. Invalid API configuration,
-missing/unreadable certificates, a wrong password or an occupied port fail startup;
+missing/unreadable certificates, a local leaf outside its validity window, an explicit
+EKU excluding server authentication, a missing private key, a wrong password or an
+occupied port fail startup;
 services already started are stopped in reverse order. When false, incomplete API
 settings are ignored. There is no plaintext fallback.
 

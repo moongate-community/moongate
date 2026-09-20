@@ -18,7 +18,7 @@ internal sealed class ApiTestCertificateAuthority : IDisposable
         Root = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-30), DateTimeOffset.UtcNow.AddDays(30));
     }
 
-    public X509Certificate2 Issue(string name = "localhost", bool expired = false, bool clientOnly = false)
+    public X509Certificate2 Issue(string name = "localhost", bool expired = false, bool clientOnly = false, bool notYetValid = false)
     {
         using var key = RSA.Create(2048);
         var request = new CertificateRequest($"CN={name}", key, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
@@ -30,7 +30,7 @@ internal sealed class ApiTestCertificateAuthority : IDisposable
         var san = new SubjectAlternativeNameBuilder();
         san.AddDnsName(name);
         request.CertificateExtensions.Add(san.Build());
-        using var certificate = request.Create(Root, DateTimeOffset.UtcNow.AddDays(-2), DateTimeOffset.UtcNow.AddDays(expired ? -1 : 2), RandomNumberGenerator.GetBytes(16));
+        using var certificate = request.Create(Root, DateTimeOffset.UtcNow.AddDays(notYetValid ? 1 : -2), DateTimeOffset.UtcNow.AddDays(expired ? -1 : 2), RandomNumberGenerator.GetBytes(16));
         return certificate.CopyWithPrivateKey(key);
     }
 
