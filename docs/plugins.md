@@ -224,6 +224,7 @@ publish it in a snapshot as `greeter.hello_calls`. See
 | --- | --- | --- |
 | `RegisterMoongateService<TService, TImpl>(priority)` / `RegisterMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order (`src/Moongate.Server.Core/Extensions/ContainerExtensions.cs` has further overloads for factories and runtime types) | this page |
 | `RegisterCommand<TExecutor>(name, description, source, minimumAccountType)` | One console/in-game command executor, as a singleton | [Console commands](#console-commands) |
+| `RegisterApiHandler<THandler>()` | One typed API handler singleton in the host registry; the opt-in listener freezes it after plugin loading | [API host configuration](server-configuration.md#enable-the-internal-api-server) |
 | `RegisterPacketHandler<TPacket, THandler>()` | One packet handler singleton bound to an incoming packet type | this page |
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
 | `RegisterScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Registering Lua modules](#registering-lua-modules) |
@@ -248,6 +249,7 @@ The built-in services use these priorities:
 | 60 | `IPacketDispatchService` |
 | 70 | `IScriptEngine` (`LuaScriptEngineService`) |
 | 100 | `IGameServerService` |
+| 110 | `IApiServerService` (`ApiServerService`; listener disabled by default) |
 | 900 | `IDiagnosticService` (`DiagnosticService`) |
 | 1000 | `IConsoleInputService` (`ConsoleInputService`) |
 

@@ -22,6 +22,15 @@ game_port = 2593
 listen_address = "0.0.0.0"
 enable_ping_server = true # Reserved: currently not consumed by the host.
 
+[api]
+enabled = false
+listen_address = "0.0.0.0"
+port = 2594
+certificate_path = ""
+certificate_password_environment_variable = "MOONGATE_API_CERTIFICATE_PASSWORD"
+trusted_root_paths = []
+peers = []
+
 [ultima]
 ultima_path = "ChangeMe" # Replace with your client data directory.
 
@@ -54,6 +63,16 @@ max_string_length = 16777216
 | `network.game_port` | TCP listener port; use a distinct port for each local instance. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create endpoints for them, including IPv6 addresses; it is not a single wildcard listener. Use a specific IP to restrict binding. |
 | `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
+| `api.enabled` | Enables the internal MessagePack/mTLS listener; default false. Disabled APIs log a warning and do not read certificates or freeze handlers. |
+| `api.listen_address` | IPv4/IPv6 literal; default `0.0.0.0` binds one IPv4 wildcard listener. Unlike the game listener, it does not enumerate interfaces. |
+| `api.port` | TCP port from 1 through 65535; default 2594. |
+| `api.certificate_path` | Local PKCS#12/PFX file containing the server leaf certificate and private key. |
+| `api.certificate_password_environment_variable` | Name of the environment variable containing the PFX password. If named but unset, startup fails. An empty name permits an unencrypted PFX. Never put the password itself in TOML. |
+| `api.trusted_root_paths` | Nonempty array of private CA certificate files (PEM or DER). Relative certificate/root paths resolve under `<root>/config`, independent of working directory. |
+| `api.peers` | Nonempty array of allowed certificate identities; see the example below. Each fingerprint is unique ignoring case. |
+| `api.peers.certificate_sha256` | Exactly 64 hexadecimal characters identifying the peer's leaf certificate; no colons. |
+| `api.peers.peer_id` | Nonblank local identity for this peer. Multiple certificates may map to one identity during rotation. |
+| `api.peers.allowed_operations` | Array of operation IDs from 1 through 65535. An empty list allows authentication but denies every incoming operation. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
@@ -69,11 +88,76 @@ max_string_length = 16777216
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 
-Game-loop queue limits, timer-wheel resolution, packet dispatch limits and
-internal API options are configured through their C# option objects in the host;
-they are not additional sections of this TOML file. See
+API validation applies when `api.enabled` is true. Invalid API configuration,
+missing/unreadable certificates, a wrong password or an occupied port fail startup;
+services already started are stopped in reverse order. When false, incomplete API
+settings are ignored. There is no plaintext fallback.
+
+Game-loop queue limits, timer-wheel resolution and packet dispatch limits use C#
+option objects rather than additional TOML sections. The hosted API uses the
+library's default `ApiOptions` limits and timeouts. See
 [Game loop and timers](game-loop-and-timers.md), [Packets](packets.md) and the
 [internal API library](../src/Moongate.Api/README.md).
+
+## Enable the internal API server
+
+This integration is available in builds containing the API hosting change. Older
+release images require upgrading or building the current checkout.
+
+1. Provision a server PFX, private CA certificate and client leaf certificates as
+   described in the [API certificate guide](../src/Moongate.Api/README.md#tls-identity-and-ownership).
+   The server needs `serverAuth` usage and a DNS name matching the client's TLS
+   target host; clients need `clientAuth`. Mount certificates read-only where
+   possible and allow the runtime user to read them.
+2. Replace the generated `[api]` section with this example. Substitute the
+   client leaf's SHA-256 fingerprint for the illustrative value:
+
+   ```toml
+   [api]
+   enabled = true
+   listen_address = "0.0.0.0"
+   port = 2594
+   certificate_path = "tls/server.pfx"
+   certificate_password_environment_variable = "MOONGATE_API_CERTIFICATE_PASSWORD"
+   trusted_root_paths = ["tls/root.pem"]
+
+   [[api.peers]]
+   certificate_sha256 = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
+   peer_id = "admin-console"
+   allowed_operations = [100]
+   ```
+
+3. Inject `MOONGATE_API_CERTIFICATE_PASSWORD` from your credential provider into
+   the server environment and restart. A successful bind logs `API listener
+   started at ...` with the actual endpoint and contract/handler counts. The
+   default disabled state logs `API server is disabled` with activation guidance.
+
+The host registers `IApiServerService` as a singleton. It starts at priority 110,
+after game packet services, and drains/disposes the listener before they stop.
+`Endpoint` is the actual bound endpoint while accepting connections, otherwise
+null. A stopped host service is terminal: start a new host to reload configuration
+or certificate permissions.
+
+Register typed handlers in `Program.cs`'s `RegisterServices` callback or a plugin's
+`Register(Container)` method, before startup:
+
+```csharp
+// using Moongate.Server.Extensions;
+// IncrementHandler implements IApiHandler<IncrementRequest, IncrementResponse>.
+container.RegisterApiHandler<IncrementHandler>();
+```
+
+The [complete typed handler example](../src/Moongate.Api/README.md#handle-requests-and-open-a-channel)
+shows these request/response types. Plugin registration runs before the API registry
+freezes at startup; the same registry is used regardless of registration order.
+Handler service dependencies that require startup must start before priority 110.
+API handlers execute outside the game loop; explicitly marshal world changes to
+`IGameLoopService` as described in [Game loop and timers](game-loop-and-timers.md).
+
+The listener speaks **MessagePack over mutual TLS/TCP**, not HTTP. No built-in
+login, realm discovery or administration operations are registered yet. A listener
+with zero handlers can authenticate configured peers but cannot serve application
+requests. See [Docker](docker.md#internal-api-port) for private-network deployment.
 
 ## Command line and root directory
 
