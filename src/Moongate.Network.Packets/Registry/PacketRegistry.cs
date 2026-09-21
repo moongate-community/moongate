@@ -64,19 +64,6 @@ public sealed class PacketRegistry
         Register(descriptor, null);
     }
 
-    /// <summary>
-    /// Registers a packet using the direction inferred from its incoming and outgoing interfaces.
-    /// Bidirectional packets are registered for both directions in one operation.
-    /// </summary>
-    /// <typeparam name="TPacket">The concrete packet type with packet metadata.</typeparam>
-    public void RegisterPacket<TPacket>()
-        where TPacket : class, IPacket
-    {
-        EnsureMutable();
-        var descriptor = PacketMetadataCache<TPacket>.Descriptor;
-        Register(descriptor, PacketParserCache<TPacket>.Parser);
-    }
-
     /// <summary>Tries to decode one complete incoming packet, including its opcode and header.</summary>
     public bool TryDecode(ReadOnlySpan<byte> data, [NotNullWhen(true)] out IPacket? packet)
         => TryDecode(data, out packet, out _);
