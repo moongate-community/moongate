@@ -37,6 +37,11 @@
     </ItemGroup>
 
     <ItemGroup>
+        <Content Include="../../migrations/auth/*.sql"
+                 Link="AccountMigrations/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <EmbeddedResource Include="TestSupport/Resources/Fixtures/Nested/sample.txt"
                           LogicalName="Moongate.Tests.TestSupport.Resources.Nested.sample.txt"/>
     </ItemGroup>

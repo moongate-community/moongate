@@ -296,15 +296,17 @@ migrations_directory = "${MOONGATE_ROOT}/migrations"
 ```
 
 Set `MOONGATE_ROOT` to your server data root, or use an absolute source directory.
-For an entity registered with `AddPersistenceAuth<AccountEntity>()`:
+For a new custom entity registered with `AddPersistenceAuth<CustomAuthEntity>()`
+(after applying the shipped core auth migrations):
 
-1. Start with an empty development auth database. Startup writes
-   `migrations/auth/0001_auto_schema.sql`, applies it and records its checksum.
+1. Start the server with the new entity registered. Startup writes
+   `migrations/auth/0003_auto_schema.sql`, applies it and records its checksum.
 2. Stop the server and add `public DateTime? LastLoginAt { get; set; }` to the entity.
-3. Start again. Startup writes and applies `0002_auto_schema.sql`; existing rows
+3. Start again. Startup writes and applies `0004_auto_schema.sql`; existing rows
    receive a null `last_login_at` value.
 4. Restart without changing the entity: no new migration is generated.
-5. Commit both SQL files and the entity code.
+5. Commit both generated SQL files and the entity code. Numbers always continue
+   after the highest existing migration in the component.
 
 A change that needs review leaves a marked SQL draft and stops startup. Review the
 unapplied file and remove `-- moongate:review-required` before restarting. Existing

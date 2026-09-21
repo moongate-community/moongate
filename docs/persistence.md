@@ -239,7 +239,8 @@ plugins/MyPlugin/migrations/
   world/0001_create_guilds.sql
 ```
 
-The stock core directories are empty until core entities need tables. The sample
+The core auth catalog ships the account ID sequence and accounts table migrations;
+the core world catalog is currently empty. The sample
 plugin already ships `world/0001_create_notes.sql`. A plugin manifest declares a
 stable migration component ID, independent of its bundle folder or CLR name:
 
@@ -454,3 +455,44 @@ World save is an application snapshot operation, not a database backup. Moongate
 does not create, restore, retain, or coordinate PostgreSQL backups. Database
 backup policy belongs to the operator and is independent for Accounts and each
 realm.
+
+
+## Account IDs and registration
+
+The built-in Ultima plugin registers `AccountEntity` in the auth database and
+`IAccountService` in the container. `CreateAccountAsync` reserves an ID from
+`auth.account_id_seq` before saving. The persisted key is still a `Serial`, mapped
+to `bigint`; do not mark it as `IsIdentity`. Accounts use their own sequence,
+independently of the UO mobile/item ranges.
+
+The runtime database role needs `USAGE` on `auth.account_id_seq` in addition to
+the table privileges; the schema role owns and creates it.
+
+The sequence starts at 1, is shared by all login processes using the auth database,
+and stops at `4294967295` without wrapping. Reservations are not reclaimed when a
+save fails, so gaps are expected. The migration advances the sequence beyond any
+existing account IDs without resetting it backwards. Stop account writers while
+applying migrations; imported IDs must be followed by a controlled sequence
+realignment before writers resume.
+
+Ship and apply both core auth files, `0001_account_id_sequence.sql` and
+`0002_accounts.sql`, using `Moongate.MigrationRunner apply --target auth` with the
+appropriate root/source directory. With automatic development migrations enabled,
+put these files in the configured `migrations_directory/auth` before starting.
+Custom source directories are not populated from the packaged files automatically.
+If your development catalog already uses those numbers, preserve applied SQL and
+add this SQL using the next unused numbers instead of replacing existing files.
+
+The username index is case-sensitive, matching the service's existing lookup
+behavior. Concurrent attempts to register the same username return one success
+and `UsernameAlreadyExists` for the other attempts. Existing duplicate usernames
+or null usernames/password hashes must be resolved before the constraint migration
+can apply; no account is silently deleted. Email is optional because creation does
+not require one. Locked accounts cannot log in; canceled requests propagate
+`OperationCanceledException`.
+
+Custom services can reserve an ID from an explicitly migration-managed sequence
+through `MoongatePersistenceService.ReserveSerialAsync<TEntity>("schema.sequence",
+cancellationToken)`. It uses the entity's registered database, requires the same
+schema as that entity, and validates the nonzero 32-bit range. It does not create
+sequences or allocate gameplay serial ranges.

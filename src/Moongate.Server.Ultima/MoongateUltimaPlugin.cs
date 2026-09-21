@@ -1,8 +1,11 @@
 using DryIoc;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Core.Data.Plugins;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Plugins;
 using Moongate.Server.Ultima.Entities.Auth;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services;
 
 namespace Moongate.Server.Ultima;
 
@@ -19,6 +22,9 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
     public void Register(Container container)
     {
-        container.AddPersistenceAuth<AccountEntity>();
+        container
+            .AddPersistenceAuth<AccountEntity>();
+
+        container.RegisterMoongateService<IAccountService, AccountService>();
     }
 }

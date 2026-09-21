@@ -1,6 +1,7 @@
 using System.Data.Common;
 using System.Diagnostics;
 using Moongate.Core.Interfaces.Entities;
+using Moongate.Core.Primitives;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Data.Schema;
 using Moongate.Persistence.DataAccess;
@@ -41,6 +42,46 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         ArgumentNullException.ThrowIfNull(options);
         _schema = new(options, _registry, _logger);
     }
+
+    /// <summary>Reserves a nonzero Serial from a migration-managed sequence in the entity owner's schema.</summary>
+    /// <remarks>Reservations are durable and are not reclaimed after failed saves. This does not allocate UO mobile/item ranges.</remarks>
+    public Task<Serial> ReserveSerialAsync<T>(string sequenceName, CancellationToken cancellationToken = default)
+        where T : class, IMoongateEntity
+        => RunOperationAsync<T, Serial>(
+            true,
+            async (orm, _, token) =>
+            {
+                ArgumentException.ThrowIfNullOrWhiteSpace(sequenceName);
+                var parts = sequenceName.Split('.');
+                if (parts.Length != 2 || parts[0] != _schema.GetOwner(typeof(T)).Schema ||
+                    parts[1].Length == 0 || !parts[1]
+                        .All(character => char.IsAsciiLetterLower(character) ||
+                                          char.IsAsciiDigit(character) || character == '_'
+                        ))
+                {
+                    throw new ArgumentException(
+                        "Use a lowercase schema-qualified sequence in the entity owner's schema.",
+                        nameof(sequenceName)
+                    );
+                }
+
+                var value = Convert.ToInt64(
+                    await orm.Ado.ExecuteScalarAsync(
+                            "SELECT nextval(CAST(@sequence AS regclass))",
+                            new { sequence = sequenceName },
+                            token
+                        )
+                        .ConfigureAwait(false)
+                );
+                if (value <= 0 || value > uint.MaxValue)
+                {
+                    throw new InvalidOperationException("The sequence returned a value outside the nonzero Serial range.");
+                }
+
+                return new Serial((uint)value);
+            },
+            cancellationToken
+        );
 
     /// <summary>Executes a sequential callback in one target's asynchronous transaction.</summary>
     /// <remarks>
