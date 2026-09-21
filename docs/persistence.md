@@ -549,3 +549,10 @@ The advanced `MoongatePersistenceService.ReserveSerialAsync<TEntity>("schema.seq
 cancellationToken)` API remains available for explicitly migration-managed sequences.
 It is no longer required by account services or ordinary new entities. It does not
 create sequences or allocate gameplay serial ranges.
+
+## Concurrent load testing
+
+The [persistence stress scenario](persistence-stress.md) runs virtual sessions
+through `DataAccess<T>` against an isolated PostgreSQL container, reports latency
+and throughput, and verifies committed data after reopening persistence. It is
+opt-in and needs no Ultima Online implementation or client files.

@@ -22,6 +22,7 @@ export const contentEntries = [
   { source: 'docs/persistence-entity-tutorial.md', slug: 'server/persistence-entity-tutorial', title: 'Create a persistent entity', group: 'Server guides' },
   { source: 'docs/nuget-packaging.md', slug: 'reference/nuget-packaging', title: 'NuGet packages', group: 'Reference' },
   { source: 'CONTRIBUTING.md', slug: 'contributing/getting-started', title: 'Contribute to Moongate', group: 'Contributing' },
+  { source: 'docs/persistence-stress.md', slug: 'contributing/persistence-stress', title: 'Stress-test persistence', group: 'Contributing' },
   { source: 'docs/security-audit.md', slug: 'contributing/security-audit', title: 'Dependency security', group: 'Contributing' },
   { source: 'docs/documentation.md', slug: 'contributing/documentation', title: 'Writing documentation', group: 'Contributing' },
   ...[
