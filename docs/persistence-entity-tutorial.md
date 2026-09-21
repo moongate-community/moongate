@@ -282,3 +282,35 @@ also enrolls them in `SaveAllAsync` and host world saves. Follow
 [Live world snapshots](persistence.md#live-world-snapshots) to register a detached
 clone and capture it through the owning loop. Removing an object from memory does
 not delete its row; deletion remains explicit.
+
+## Generate migrations automatically while developing
+
+Once your entity is registered with `AddPersistenceAuth<TEntity>()` or
+`AddPersistenceWorld<TEntity>()`, enable the development workflow:
+
+```toml
+[persistence]
+auto_sync_schema = false
+auto_generate_migrations = true
+migrations_directory = "${MOONGATE_ROOT}/migrations"
+```
+
+Set `MOONGATE_ROOT` to your server data root, or use an absolute source directory.
+For an entity registered with `AddPersistenceAuth<AccountEntity>()`:
+
+1. Start with an empty development auth database. Startup writes
+   `migrations/auth/0001_auto_schema.sql`, applies it and records its checksum.
+2. Stop the server and add `public DateTime? LastLoginAt { get; set; }` to the entity.
+3. Start again. Startup writes and applies `0002_auto_schema.sql`; existing rows
+   receive a null `last_login_at` value.
+4. Restart without changing the entity: no new migration is generated.
+5. Commit both SQL files and the entity code.
+
+A change that needs review leaves a marked SQL draft and stops startup. Review the
+unapplied file and remove `-- moongate:review-required` before restarting. Existing
+applied files are immutable. Leave the development flags off in deployment and use
+the standalone migration runner for the reviewed files.
+
+See [automatic development migrations](persistence.md#automatic-development-migrations)
+for plugin directories, required-column defaults, existing database baselines and
+failure recovery.

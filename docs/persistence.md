@@ -151,6 +151,83 @@ PostgreSQL. Pending, changed, or missing applied files prevent services from
 starting. Keep automatic schema synchronization only for disposable development
 databases; it does not record versioned migrations.
 
+### Automatic development migrations
+
+To save and apply SQL migrations when the server starts, opt in explicitly:
+
+```toml
+[persistence]
+auto_sync_schema = false
+auto_generate_migrations = true
+migrations_directory = "${MOONGATE_ROOT}/migrations"
+```
+
+Set `MOONGATE_ROOT` before starting the server, or use an absolute directory.
+`migrations_directory` supports environment variables and `~`. The example saves
+core SQL under `$MOONGATE_ROOT/migrations/auth/` and `world/`. You can instead point
+it at your repository's `migrations/` directory so the generated files are ready
+to commit. The directory is created if missing. Generation requires this explicit
+path; it never silently writes to the build output directory.
+
+Keep `auto_generate_migrations` disabled in deployment. It conflicts with
+`auto_sync_schema`, which applies unversioned schema changes. With generation
+turned off, startup still validates SQL history and the entity schema without
+applying pending migrations. The standalone runner honors the configured
+`migrations_directory`; its `--migrations-directory` argument takes precedence.
+
+The development startup sequence is:
+
+1. Check configured PostgreSQL connections and validate migration checksums.
+2. Apply pending, reviewed SQL through the isolated migration runner.
+3. Compare registered entities, saving changes as `NNNN_auto_schema.sql` per target
+   and component, without overwriting previous files.
+4. Apply additive changes, recheck the database and then publish `PersistenceReady`.
+
+A new entity creates the initial migration. Adding a nullable property creates the
+next migration. An unchanged restart creates no file. Supported required additions
+need an explicit literal database default, for example
+`[Column(IsNullable = false, DbType = "int4 NOT NULL DEFAULT 7")]` with an initial
+property value of `7`. Unsupported types, expressions and backfill shapes require
+review. Generated null initialization and recognized constant backfills are folded
+into the new-column DDL, avoiding unnecessary row updates and UPDATE triggers.
+
+Renames, removals, existing-column alterations and unrecognized SQL produce drafts
+marked with `-- moongate:review-required` and stop startup. The whole generated batch
+for that target remains blocked, including on the next restart and in the standalone
+runner. Review and edit the **unapplied** SQL, then remove that marker explicitly.
+Restart to apply it. Do not edit any already-applied migration. Table/entity renames
+need explicit manual migrations: unrelated tables are retained, not automatically
+deleted. Commit the SQL files with their matching entity changes.
+
+Disk plugins keep SQL in `plugins/<Bundle>/migrations/auth/` or `world/` and must
+provide their stable `migrations/manifest.json` ID. Internal application entities,
+including `Moongate.Server.Ultima` entities, use the core migrations directory.
+For plugin development, link or mount the source migration folder into the plugin
+bundle. Component ownership follows the loaded plugin bundle, not its C# namespace
+or PostgreSQL schema.
+
+Generation uses cooperative source-directory locks and the runner's PostgreSQL
+advisory lock. Lock files named `.moongate-generation.lock` are retained and should
+be ignored by version control. Failed execution leaves the SQL file pending for a
+retry. Canceled startup waits for the child process to exit and never announces
+readiness; PostgreSQL may still be completing rollback, or a commit may already have
+happened. On retry, migration history determines what remains to apply.
+
+Core and plugin batches are transactional **within one target**. Auth and world are
+independent databases; there is no transaction spanning both.
+
+If a database already has entity tables from unversioned synchronization but no SQL
+history for their component, create and review a baseline before enabling generation.
+An ALTER-only first file would not recreate that database elsewhere. For a disposable
+local database, starting with an empty database avoids this baseline step. Verify
+that the committed files replay successfully on an empty database before deployment.
+
+The development source build copies the runner and its dependencies into a separate
+`migration-runner/` output folder. Release bundles already ship an isolated runner.
+The host never loads the runner's PostgreSQL driver into FreeSql's dependency graph.
+A missing runner or unwritable migration directory prevents startup before generation
+can be reported successful.
+
 ### Versioned SQL files
 
 ```text
