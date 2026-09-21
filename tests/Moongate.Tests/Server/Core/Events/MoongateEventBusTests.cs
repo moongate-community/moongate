@@ -345,6 +345,38 @@ public sealed class MoongateEventBusTests
     }
 
     [Fact]
+    public async Task PublishAsync_CatchAllObserverThrows_ContinuesToOtherCatchAllAndTypedObservers()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+        var typedCalls = 0;
+        var laterCatchAllCalls = 0;
+        bus.Subscribe<MoongateStartedEvent>(
+            (_, _) =>
+            {
+                typedCalls++;
+
+                return Task.CompletedTask;
+            }
+        );
+        bus.SubscribeAll((_, _) => throw new IOException("catch-all observer failed"));
+        bus.SubscribeAll(
+            (_, _) =>
+            {
+                laterCatchAllCalls++;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        await bus.PublishAsync(new MoongateStartedEvent());
+
+        Assert.Equal(1, typedCalls);
+        Assert.Equal(1, laterCatchAllCalls);
+    }
+
+    [Fact]
     public async Task Subscription_Dispose_RemovesOnlyItsHandlerAndIsIdempotent()
     {
         using var container = new Container();
