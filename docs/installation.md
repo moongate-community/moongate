@@ -83,7 +83,7 @@ want to keep belongs in there, which is why the server root goes somewhere else.
 ## Remove
 
 ```sh
-sudo rm -rf /opt/moongate /usr/local/bin/moongate
+sudo rm -rf /opt/moongate /usr/local/bin/moongate /usr/local/bin/mgboot
 ```
 
 Your server root is untouched by both the installer and this line.
@@ -128,7 +128,7 @@ tar -xzf moongate-linux-x64-0.4.1.tar.gz
 ## When it refuses
 
 Every refusal prints one line starting with `moongate:`. Up to `could not install into`,
-nothing was installed; the two link messages come after the files are already in place.
+nothing was installed; the symlink messages below it come after the files are already in place.
 
 | Message | Meaning |
 | --- | --- |
@@ -143,3 +143,4 @@ nothing was installed; the two link messages come after the files are already in
 | `the archive could not be extracted`, `the archive does not contain moongate-.../Moongate.Server` | The downloaded archive is damaged or has an unexpected layout |
 | `could not clear a leftover staging directory beside ...`, `could not create ...`, `could not stage the new files in ...`, `could not make ... executable`, `could not move the current installation aside; ... is untouched`, `could not install into ...` | The filesystem refused a step of the installation, for instance a full disk. Nothing new is installed, an upgrade keeps the previous installation, and the message says where it is |
 | `could not replace .../moongate`, `could not link .../moongate` | The new files are in place under `/opt/moongate`, but the `moongate` symlink could not be replaced. Fix the bin directory and run the line again, or make the link yourself with `sudo ln -sfn /opt/moongate/Moongate.Server /usr/local/bin/moongate` |
+| `could not replace .../mgboot`, `could not link .../mgboot`, `could not remove obsolete .../mgboot link` | The server files are in place; only the `mgboot` symlink could not be updated or removed. Fix the bin directory and run the line again, or link it yourself with `sudo ln -sfn /opt/moongate/mgboot /usr/local/bin/mgboot` |

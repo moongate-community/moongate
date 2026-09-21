@@ -119,14 +119,14 @@ needs one and a real plugin usually does not) — it looks like this:
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Moongate.Server.Core" Version="0.4.0" ExcludeAssets="runtime" />
-    <PackageReference Include="Moongate.Scripting" Version="0.4.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Moongate.Server.Core" Version="0.6.0" ExcludeAssets="runtime" />
+    <PackageReference Include="Moongate.Scripting" Version="0.6.0" ExcludeAssets="runtime" />
   </ItemGroup>
 
 </Project>
 ```
 
-`0.4.0` is the current released version; pin the version shown on
+`0.6.0` is the current released version; pin the version shown on
 [nuget.org/packages/Moongate.Server.Core](https://www.nuget.org/packages/Moongate.Server.Core)
 or the repository's GitHub releases page.
 `ExcludeAssets="runtime"` keeps each package's own `.dll` out of your
@@ -541,6 +541,42 @@ assembly the bundle references comes from:
 ```csharp
 protected override Assembly? Load(AssemblyName assemblyName)
 {
+    if (assemblyName.Name is "Moongate.Core" or
+        "Moongate.Server.Core" or
+        "Moongate.Persistence" or
+        "Moongate.Persistence.Migrations" or
+        "FreeSql" or
+        "FreeSql.Provider.PostgreSQL" or
+        "Npgsql")
+    {
+        Assembly host;
+
+        try
+        {
+            host = Default.LoadFromAssemblyName(new(assemblyName.Name));
+        }
+        catch (Exception exception) when (exception is FileNotFoundException or FileLoadException)
+        {
+            throw new FileLoadException(
+                $"Required host persistence contract '{assemblyName}' is unavailable; private copies are not supported.",
+                exception
+            );
+        }
+
+        var identity = host.GetName();
+
+        if (assemblyName.Version != identity.Version ||
+            !string.Equals(assemblyName.CultureName ?? "", identity.CultureName ?? "", StringComparison.OrdinalIgnoreCase) ||
+            !(assemblyName.GetPublicKeyToken() ?? []).SequenceEqual(identity.GetPublicKeyToken() ?? []))
+        {
+            throw new FileLoadException(
+                $"Incompatible host persistence contract '{assemblyName}'; host provides '{identity}'. Private copies are not supported."
+            );
+        }
+
+        return host;
+    }
+
     try
     {
         // Host contracts and their dependencies must retain the host's type identity.
@@ -565,8 +601,22 @@ protected override Assembly? Load(AssemblyName assemblyName)
 }
 ```
 
-It always tries `AssemblyLoadContext.Default` — the host's own load context — first.
-Every assembly the host ships (every `Moongate.*` assembly, Serilog,
+`Moongate.Core`, `Moongate.Server.Core`, `Moongate.Persistence`,
+`Moongate.Persistence.Migrations`, `FreeSql`, `FreeSql.Provider.PostgreSQL` and
+`Npgsql` are checked first and held to a stricter rule than every other host
+assembly: they always resolve from `AssemblyLoadContext.Default`, then the version,
+culture and public key token the plugin referenced must match the host's copy
+exactly — an *older* reference is rejected too, not only a newer one. A missing or
+mismatched contract fails the bundle load immediately with a `FileLoadException`
+naming the assembly (`"Required host persistence contract '{assemblyName}' is
+unavailable; private copies are not supported."` or `"Incompatible host persistence
+contract '{assemblyName}'; host provides '{identity}'. Private copies are not
+supported."`), itself wrapped as `Failed to load plugin bundle '{path}'.` the same
+way as every other loader failure (see below). Build a plugin that references
+`Moongate.Persistence` against the exact package version the target host ships.
+
+Every other assembly first tries `AssemblyLoadContext.Default` — the host's own load
+context. Every assembly the host ships (every other `Moongate.*` assembly, Serilog,
 DryIoc, LuaCSharp, and so on) resolves there, so a copy of that same assembly
 sitting in the bundle is not touched as long as the version the plugin references is
 no newer than the host's; only `FileNotFoundException` falls through to the bundle's
@@ -584,29 +634,41 @@ Consequences of that rule:
   ship: each bundle's `PluginLoadContext` resolves that dependency independently, so
   two bundles carrying their own copies of the same third-party library get two
   separate instances of its static state, not one.
-- A dependency the host *does* ship must be compiled against a package version no
-  newer than the host you deploy to. An older reference binds cleanly to the host's
-  copy. A *newer* reference is treated as not found by the host context, so the
-  loader falls through to the bundle: with `ExcludeAssets="runtime"` there is no copy
-  there and the bundle fails to load (`Failed to load plugin bundle '{path}'.` with an
-  inner `FileNotFoundException`); if the newer `Moongate.Server.Core.dll` *is* in the
-  bundle, it loads privately, the plugin's `IMoongatePlugin` is no longer the host's
-  type, and the loader reports
-  `The assembly contains no public concrete IMoongatePlugin types.`
+- A dependency the host *does* ship, and does not identity-check as above, must be
+  compiled against a package version no newer than the host you deploy to. An older
+  reference binds cleanly to the host's copy. A *newer* reference is treated as not
+  found by the host context, so the loader falls through to the bundle: with
+  `ExcludeAssets="runtime"` there is no copy there and the bundle fails to load
+  (`Failed to load plugin bundle '{path}'.` with an inner `FileNotFoundException`);
+  if a newer `Moongate.Network.dll` *is* in the bundle, it loads privately instead.
+  `Moongate.Server.Core` itself is one of the identity-checked assemblies above, so a
+  version mismatch there fails fast with the `FileLoadException` wording quoted above
+  rather than loading a private copy.
 
-`PluginLoaderService.LoadPlugins()` is called from `MoongateServerBootstrap.StartCoreAsync`
-(`src/Moongate.Server/Bootstrap/MoongateServerBootstrap.cs`) as the very first step,
-before `StartupServiceLifecycle.StartAsync` resolves and starts any autostart
-service — but after the host's own registrations, since `RegisterServices` runs its
-callback synchronously through `BootstrapLifecycleTasks.Configure` when it is
-called, and `StartAsync` (and therefore `StartCoreAsync`) only runs later:
+`PluginLoaderService.LoadPlugins()` is called from `PersistencePreparation.LoadPlugins`
+(`src/Moongate.Server/Bootstrap/Internal/PersistencePreparation.cs`), which
+`PersistencePreparation.InitializeAsync` calls as its own first line, before it
+touches persistence at all:
 
 ```csharp
-if (_container.IsRegistered<IPluginLoaderService>())
+public static void LoadPlugins(Container container)
 {
-    _container.Resolve<IPluginLoaderService>().LoadPlugins();
+    if (container.IsRegistered<IPluginLoaderService>())
+    {
+        container.Resolve<IPluginLoaderService>().LoadPlugins();
+    }
 }
 ```
+
+`MoongateServerBootstrap.StartCoreAsync`
+(`src/Moongate.Server/Bootstrap/MoongateServerBootstrap.cs`) awaits
+`PersistencePreparation.InitializeAsync` as its own first step, before it resolves
+and starts any `StartupServiceLifecycle`-managed autostart service — but after the
+host's own registrations, since `RegisterServices` runs its callback synchronously
+through `BootstrapLifecycleTasks.Configure` when it is called, and `StartAsync` (and
+therefore `StartCoreAsync`) only runs later. Plugin loading therefore always
+completes before persistence schema checks and before `PersistenceReadyEvent`, whether
+or not the host has any persistence registration.
 
 Every failure refuses the start with a named `InvalidOperationException`. Loading a
 bundle wraps any failure — including the three below — as:

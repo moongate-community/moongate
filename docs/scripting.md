@@ -51,6 +51,7 @@ exists but fails compilation/execution aborts server startup.
 | --- | --- |
 | `engine.name`, `.version`, `.codename`, `.platform` | Read-only engine metadata |
 | `log.debug/info/warning/error(template, ...)` | Structured Serilog events; extra arguments fill template properties |
+| `log.LEVEL_DEBUG/.LEVEL_INFO/.LEVEL_WARNING/.LEVEL_ERROR` | Numeric constants for the matching Serilog level |
 | `print(...)` | Tab-separated values written to the server log at Information level |
 | `timer.after(seconds, fn)` | One callback after a positive delay; returns a cancellation handle |
 | `timer.every(seconds, fn)` | Repeating callbacks with a positive interval; returns a handle |
