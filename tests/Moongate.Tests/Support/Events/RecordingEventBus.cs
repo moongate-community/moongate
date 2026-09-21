@@ -11,4 +11,7 @@ public sealed class RecordingEventBus : IMoongateEventBus
     public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
         where TEvent : class, IMoongateEvent
         => throw new NotSupportedException();
+
+    public IDisposable SubscribeAll(Func<IMoongateEvent, CancellationToken, Task> handler)
+        => throw new NotSupportedException();
 }

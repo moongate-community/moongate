@@ -294,6 +294,144 @@ public sealed class MoongateEventBusTests
     }
 
     [Fact]
+    public async Task SubscribeAll_ReceivesEventsOfAnyType_InPublicationOrder()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+        var seen = new List<Type>();
+        bus.SubscribeAll(
+            (message, _) =>
+            {
+                seen.Add(message.GetType());
+
+                return Task.CompletedTask;
+            }
+        );
+
+        await bus.PublishAsync(new MoongateStartedEvent());
+        await bus.PublishAsync(new MoongateStoppingEvent());
+
+        Assert.Equal([typeof(MoongateStartedEvent), typeof(MoongateStoppingEvent)], seen);
+    }
+
+    [Fact]
+    public async Task PublishAsync_TypedAndCatchAllSubscribers_InvokesTypedFirst()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+        var calls = new List<string>();
+        bus.SubscribeAll(
+            (_, _) =>
+            {
+                calls.Add("catch-all");
+
+                return Task.CompletedTask;
+            }
+        );
+        bus.Subscribe<MoongateStartedEvent>(
+            (_, _) =>
+            {
+                calls.Add("typed");
+
+                return Task.CompletedTask;
+            }
+        );
+
+        await bus.PublishAsync(new MoongateStartedEvent());
+
+        Assert.Equal(["typed", "catch-all"], calls);
+    }
+
+    [Fact]
+    public async Task PublishAsync_CatchAllObserverThrows_ContinuesToOtherCatchAllAndTypedObservers()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+        var typedCalls = 0;
+        var laterCatchAllCalls = 0;
+        bus.Subscribe<MoongateStartedEvent>(
+            (_, _) =>
+            {
+                typedCalls++;
+
+                return Task.CompletedTask;
+            }
+        );
+        bus.SubscribeAll((_, _) => throw new IOException("catch-all observer failed"));
+        bus.SubscribeAll(
+            (_, _) =>
+            {
+                laterCatchAllCalls++;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        await bus.PublishAsync(new MoongateStartedEvent());
+
+        Assert.Equal(1, typedCalls);
+        Assert.Equal(1, laterCatchAllCalls);
+    }
+
+    [Fact]
+    public async Task CatchAllSubscription_Dispose_RemovesOnlyItsHandlerAndIsIdempotent()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+        var removedCalls = 0;
+        var retainedCalls = 0;
+        var removed = bus.SubscribeAll(
+            (_, _) =>
+            {
+                removedCalls++;
+
+                return Task.CompletedTask;
+            }
+        );
+        bus.SubscribeAll(
+            (_, _) =>
+            {
+                retainedCalls++;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        removed.Dispose();
+        removed.Dispose();
+        await bus.PublishAsync(new MoongateStartedEvent());
+
+        Assert.Equal(0, removedCalls);
+        Assert.Equal(1, retainedCalls);
+    }
+
+    [Fact]
+    public void SubscribeAll_BusDisposed_Throws()
+    {
+        var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+
+        container.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(() => bus.SubscribeAll((_, _) => Task.CompletedTask));
+    }
+
+    [Fact]
+    public void SubscribeAll_NullHandler_Throws()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+
+        Assert.Throws<ArgumentNullException>(() => bus.SubscribeAll(null!));
+    }
+
+    [Fact]
     public async Task Subscription_Dispose_RemovesOnlyItsHandlerAndIsIdempotent()
     {
         using var container = new Container();
