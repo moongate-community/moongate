@@ -327,7 +327,7 @@ public sealed class PersistenceSchemaCoordinatorTests
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => coordinator.InitializeAsync());
 
-        Assert.Contains("schema preview/apply", exception.Message, StringComparison.OrdinalIgnoreCase);
+        Assert.Contains("Moongate.MigrationRunner", exception.Message, StringComparison.OrdinalIgnoreCase);
         Assert.False(coordinator.IsReady);
         Assert.Single(await coordinator.PreviewAsync());
         Assert.Equal(0L, await TableCountAsync(database, "plugin_characters", "characters"));

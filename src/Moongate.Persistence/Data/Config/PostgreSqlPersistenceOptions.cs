@@ -1,10 +1,14 @@
 using Moongate.Persistence.Types.Persistence;
+using Moongate.Persistence.Migrations.Services;
 
 namespace Moongate.Persistence.Data.Config;
 
 /// <summary>Configures PostgreSQL targets and explicit schema synchronization policy.</summary>
 public sealed class PostgreSqlPersistenceOptions
 {
+    /// <summary>Gets the optional versioned migration catalog factory, resolved at preparation time.</summary>
+    public Func<PersistenceDatabaseTarget, MigrationCatalog?>? MigrationCatalogFactory { get; }
+
     private readonly IReadOnlyDictionary<PersistenceDatabaseTarget, PersistenceDatabaseOptions> _databases;
 
     /// <summary>Gets whether normal initialization may apply schema changes.</summary>
@@ -23,7 +27,8 @@ public sealed class PostgreSqlPersistenceOptions
     /// <param name="autoSynchronizeSchema">Whether normal initialization may apply generated schema DDL.</param>
     public PostgreSqlPersistenceOptions(
         IEnumerable<PersistenceDatabaseOptions> databases,
-        bool autoSynchronizeSchema = false
+        bool autoSynchronizeSchema = false,
+        Func<PersistenceDatabaseTarget, MigrationCatalog?>? migrationCatalogFactory = null
     )
     {
         ArgumentNullException.ThrowIfNull(databases);
@@ -42,6 +47,7 @@ public sealed class PostgreSqlPersistenceOptions
 
         _databases = configured;
         AutoSynchronizeSchema = autoSynchronizeSchema;
+        MigrationCatalogFactory = migrationCatalogFactory;
     }
 
     internal PersistenceDatabaseOptions GetRequiredDatabase(PersistenceDatabaseTarget target)

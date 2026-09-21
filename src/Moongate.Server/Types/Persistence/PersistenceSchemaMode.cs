@@ -5,5 +5,6 @@ public enum PersistenceSchemaMode
 {
     None,
     Preview,
+    Generate,
     Apply
 }

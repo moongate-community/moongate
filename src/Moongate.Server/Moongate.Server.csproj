@@ -22,6 +22,11 @@
       <InternalsVisibleTo Include="Moongate.Tests" />
     </ItemGroup>
 
+    <ItemGroup>
+      <Content Include="../../migrations/**/*" Link="migrations/%(RecursiveDir)%(Filename)%(Extension)"
+               CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+    </ItemGroup>
+
     <!-- These travel with the binaries: the AGPL asks for the licence to be conveyed
          alongside them, and the notices carry the attributions the bundled packages
          require. Publishing here covers both the release archives and the image. -->

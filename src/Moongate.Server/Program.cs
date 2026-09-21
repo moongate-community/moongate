@@ -48,7 +48,8 @@ await ConsoleApp.RunAsync(
     async (
         CancellationToken cancellationToken, LogLevelType logLevel = LogLevelType.Information, bool logToFile = true,
         bool logPackets = false, string? rootDirectory = null, bool showHeader = true, string pidFileName = "moongate.pid",
-        PersistenceSchemaMode persistenceSchema = PersistenceSchemaMode.None
+        PersistenceSchemaMode persistenceSchema = PersistenceSchemaMode.None,
+        string? migrationOutput = null, string? migrationTarget = null
     ) =>
     {
         rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory;
@@ -63,7 +64,9 @@ await ConsoleApp.RunAsync(
                     rootDirectory,
                     persistenceSchema,
                     Console.Out,
-                    cancellationToken
+                    cancellationToken,
+                    migrationOutput,
+                    migrationTarget
                 );
             }
             catch (Exception exception)
@@ -188,7 +191,7 @@ await ConsoleApp.RunAsync(
                         resolver => resolver.Resolve<PersistenceOperationBarrier>(),
                         Reuse.Singleton
                     );
-                    services.RegisterMoongatePersistence(serverConfig.Persistence.ToOptions())
+                    services.RegisterMoongatePersistence(serverConfig.Persistence.ToOptions(Path.Combine(AppContext.BaseDirectory, "migrations"), directoriesConfig["plugins"], serverConfig.Mode))
                             .RegisterMoongateService<TimerWheelService>(priority: -900)
                             .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
                             .RegisterMoongateService<IUltimaDataService, UltimaDataService>(-10)

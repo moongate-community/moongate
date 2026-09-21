@@ -12,7 +12,7 @@ public sealed class PersistenceSchemaCliTests
 {
     [Theory, InlineData(false, "PersistencePlugin"), InlineData(true, "PersistencePlugin"),
      InlineData(false, "SamplePlugin")]
-    public async Task PreviewThenApply_ActualCliLoadsDiskPlugin_WithoutNormalHostComposition(
+    public async Task PreviewThenGenerate_ActualCliLoadsDiskPlugin_WithoutNormalHostComposition(
         bool autoGenerateCertificate, string bundle
     )
     {
@@ -47,9 +47,11 @@ public sealed class PersistenceSchemaCliTests
         Assert.Contains("CREATE TABLE", preview.Output, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("Moongate Server starting", preview.Output);
         Assert.False(await database.ScalarAsync<bool>($"SELECT to_regclass('{table}') IS NOT NULL"));
-        var apply = await RunAsync(files.Directories.Root, "apply", database.ConnectionString);
-        Assert.True(apply.ExitCode == 0, apply.Output);
-        Assert.True(await database.ScalarAsync<bool>($"SELECT to_regclass('{table}') IS NOT NULL"));
+        var path = Path.Combine(files.Directories.Root, "migrations", "world", "0001_create.sql");
+        var generate = await RunAsync(files.Directories.Root, "generate", database.ConnectionString, migrationOutput: path);
+        Assert.True(generate.ExitCode == 0, generate.Output);
+        Assert.False(await database.ScalarAsync<bool>($"SELECT to_regclass('{table}') IS NOT NULL"));
+        await database.ExecuteAsync(await File.ReadAllTextAsync(path));
         var unchanged = await RunAsync(files.Directories.Root, "preview", database.ConnectionString);
         Assert.Equal(0, unchanged.ExitCode);
         Assert.Contains("No PostgreSQL schema changes", unchanged.Output);
@@ -91,7 +93,7 @@ public sealed class PersistenceSchemaCliTests
     }
 
     private static async Task<(int ExitCode, string Output)> RunAsync(
-        string root, string mode, string? connection, bool help = false
+        string root, string mode, string? connection, bool help = false, string? migrationOutput = null
     )
     {
         var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet")
@@ -100,6 +102,13 @@ public sealed class PersistenceSchemaCliTests
             ArgumentList =
                 { typeof(MoongateServerBootstrap).Assembly.Location, "--root-directory", root, "--persistence-schema", mode }
         };
+        if (migrationOutput is not null)
+        {
+            start.ArgumentList.Add("--migration-output");
+            start.ArgumentList.Add(migrationOutput);
+            start.ArgumentList.Add("--migration-target");
+            start.ArgumentList.Add("world");
+        }
         if (help)
         {
             start.ArgumentList.Clear();
