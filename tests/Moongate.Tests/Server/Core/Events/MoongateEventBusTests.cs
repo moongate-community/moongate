@@ -316,6 +316,35 @@ public sealed class MoongateEventBusTests
     }
 
     [Fact]
+    public async Task PublishAsync_TypedAndCatchAllSubscribers_InvokesTypedFirst()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+        var calls = new List<string>();
+        bus.SubscribeAll(
+            (_, _) =>
+            {
+                calls.Add("catch-all");
+
+                return Task.CompletedTask;
+            }
+        );
+        bus.Subscribe<MoongateStartedEvent>(
+            (_, _) =>
+            {
+                calls.Add("typed");
+
+                return Task.CompletedTask;
+            }
+        );
+
+        await bus.PublishAsync(new MoongateStartedEvent());
+
+        Assert.Equal(["typed", "catch-all"], calls);
+    }
+
+    [Fact]
     public async Task Subscription_Dispose_RemovesOnlyItsHandlerAndIsIdempotent()
     {
         using var container = new Container();
