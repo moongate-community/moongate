@@ -9,6 +9,30 @@ public sealed class PersistenceModuleRegistryTests
 {
     private const string UnitConnectionString = "Host=localhost;Database=unit;Username=postgres;Pooling=false";
 
+    [Theory, InlineData(PersistenceDatabaseTarget.Accounts), InlineData(PersistenceDatabaseTarget.Realm)]
+    public void ValidateAndFreeze_DefaultColumnNames_UseSnakeCaseAndPreserveExplicitMappings(
+        PersistenceDatabaseTarget target
+    )
+    {
+        using var database = CreateDatabase(target);
+        var registry = new PersistenceModuleRegistry();
+        registry.RegisterEntity(typeof(ConventionNamedEntity), target);
+
+        registry.ValidateAndFreeze([database]);
+
+        var table = database.Orm.CodeFirst.GetTableByEntity(typeof(ConventionNamedEntity));
+        Assert.Equal("auth.convention_entities", table.DbName);
+        Assert.Equal(
+            ["created_at", "display_label", "hash_password", "id", "username"],
+            table.ColumnsByCs.Values.Select(column => column.Attribute.Name).Order(StringComparer.Ordinal)
+        );
+        var sql = database.Orm.Select<ConventionNamedEntity>()
+                          .Where(entity => entity.HashPassword == "test")
+                          .ToSql();
+        Assert.Contains("\"hash_password\"", sql, StringComparison.Ordinal);
+        Assert.Contains("\"display_label\"", sql, StringComparison.Ordinal);
+    }
+
     [Fact]
     public void PersistenceModuleContract_DoesNotExposeMappingMutationCallback()
         => Assert.DoesNotContain(

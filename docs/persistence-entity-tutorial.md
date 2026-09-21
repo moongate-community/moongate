@@ -65,6 +65,12 @@ and PostgreSQL does not generate these IDs. The example uses `new Serial(1)` onl
 for its empty tutorial database; a real application must allocate unique IDs and
 reuse an entity's ID when updating it.
 
+Column names default to lowercase snake_case: `Username` maps to `username`,
+`HashPassword` to `hash_password`, and `CreatedAt` to `created_at`. Explicit
+`[Column(Name = "...")]` mappings take precedence and must also use lowercase
+snake_case. Keep the schema-qualified `[Table(Name = "...")]` and identity
+mapping explicit.
+
 Keep the initial model scalar. For a property that must stay in memory, use
 `[Column(IsIgnore = true)]`. Complex properties need an explicit supported mapping
 or omission; an arbitrary object graph is not automatically serialized.

@@ -38,12 +38,19 @@ public sealed class Item : IMoongateEntity
 }
 ```
 
-Use stable, explicit table and column names. Map `Serial` keys to PostgreSQL
+Use explicit table names and stable column names. Map `Serial` keys to PostgreSQL
 `bigint` with `MapType = typeof(long)`. Ordinary public scalar properties are
 mapped by FreeSql. Every complex property requires an explicit supported mapping,
 navigation mapping, or explicit omission such as `IsIgnore`; do not assume an
 unannotated complex object graph will be serialized or cascaded automatically.
-Persistence mapping is immutable and attribute-only for a CLR type, and it must
+
+Column names default to lowercase snake_case: `Username` maps to `username`,
+`HashPassword` to `hash_password`, and `CreatedAt` to `created_at`. Explicit
+`[Column(Name = "...")]` mappings take precedence and must also use lowercase
+snake_case. Keep the schema-qualified `[Table(Name = "...")]` and identity
+mapping explicit.
+
+Persistence mapping uses this fixed convention and attributes for a CLR type, and it must
 be identical in every owner. A module selects ownership and database target; it
 cannot remap the type. Application and plugin code must not reconfigure a
 persistence type through another raw FreeSql instance.
