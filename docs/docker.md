@@ -103,7 +103,7 @@ The ordinary image does not bundle PostgreSQL or the sample plugin. A server wit
 registered persistence entities uses a `postgres://user:password@host/database`
 URI in its `connection_string` setting. Use a `$NAME` environment reference to
 supply the URI from a secret provider. Keep `auto_sync_schema = false` and
-give the runtime process a DML-only role. Run reviewed schema preview/apply jobs
+give the runtime process a DML-only role. Run reviewed versioned SQL migration jobs
 with the same plugin bundle and a separate schema connection while the relevant
 runtime is stopped. See [PostgreSQL persistence](persistence.md) and the complete
 [login and realms example](docker-login-realms.md).

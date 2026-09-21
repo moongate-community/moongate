@@ -36,7 +36,7 @@ internal static class TransactionalSql
             sql = sql.TrimStart();
             if (sql.StartsWith("--", StringComparison.Ordinal))
             {
-                var newline = sql.IndexOf('\n');
+                var newline = sql.IndexOfAny('\r', '\n');
                 sql = newline < 0 ? [] : sql[(newline + 1)..];
             }
             else if (sql.StartsWith("/*", StringComparison.Ordinal))

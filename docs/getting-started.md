@@ -100,7 +100,7 @@ for database targets, schema operations and world saves see
 | Another instance detected | Check the PID and running process; use a separate root for another server |
 | Script startup error | Fix `scripts/init.lua`; inspect the script filename and line in the log |
 | Persistence variable missing | Export the PostgreSQL URI referenced by the target's `connection_string` |
-| PostgreSQL schema changes required | Stop the affected runtime, review `--persistence-schema preview`, then run the separately authorized `apply` command |
+| PostgreSQL schema changes required | Generate and review a versioned SQL file with `--persistence-schema generate`; stop the affected runtime and run `Moongate.MigrationRunner apply --target auth` or `--target world` with schema-role credentials |
 
 The [transport ownership guide](network-game-separation.md) explains the current
 login/game separation boundary. Setting `mode = "login"` alone does not create

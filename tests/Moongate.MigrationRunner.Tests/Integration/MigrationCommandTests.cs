@@ -1,4 +1,5 @@
 using Moongate.Core.Utils;
+using System.Diagnostics;
 using Moongate.MigrationRunner.Internal;
 using Moongate.MigrationRunner.Tests.TestSupport;
 using Npgsql;
@@ -69,5 +70,48 @@ public sealed class MigrationCommandTests : IClassFixture<PostgreSqlFixture>
             1,
             await MigrationCommand.ExecuteAsync(arguments.Split(' ', StringSplitOptions.RemoveEmptyEntries), output, error)
         );
+    }
+
+    [Fact]
+    public async Task ReleasedLayout_DefaultRootUsesServerConfigurationAndPlugins()
+    {
+        await using var db = await _postgres.CreateDatabaseAsync();
+        using var files = new MigrationFiles();
+        files.Write("config/moongate.toml", "[persistence.realm]\nconnection_string = '" + db.ConnectionString + "'\n");
+        files.Write("plugins/p/migrations/manifest.json", "{\"id\":\"sample\"}");
+        files.Write("plugins/p/migrations/world/0001_data.sql", "SELECT 1;");
+        var runnerDirectory = Path.Combine(files.Root, "migration-runner");
+        Directory.CreateDirectory(runnerDirectory);
+        foreach (var file in Directory.EnumerateFiles(AppContext.BaseDirectory))
+        {
+            if (Path.GetExtension(file) is ".dll" or ".json")
+            {
+                File.Copy(file, Path.Combine(runnerDirectory, Path.GetFileName(file)));
+            }
+        }
+
+        var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet")
+        {
+            UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true,
+            ArgumentList = { Path.Combine(runnerDirectory, "Moongate.MigrationRunner.dll"), "status", "--target", "world" }
+        };
+        start.Environment.Remove("MOONGATE_ROOT");
+        using var process = Process.Start(start)!;
+        var stdout = process.StandardOutput.ReadToEndAsync();
+        var stderr = process.StandardError.ReadToEndAsync();
+        try
+        {
+            await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30));
+            Assert.True(process.ExitCode == 0, await stderr);
+            Assert.Contains("sample/0001_data.sql", await stdout);
+        }
+        finally
+        {
+            if (!process.HasExited)
+            {
+                process.Kill(true);
+                await process.WaitForExitAsync();
+            }
+        }
     }
 }

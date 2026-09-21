@@ -115,4 +115,23 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
         );
         Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('sample') IS NOT NULL"));
     }
+
+    [Theory, InlineData("\r"), InlineData("\n"), InlineData("\r\n")]
+    public async Task Apply_CommentLineEndingsCannotHideCommit(string lineEnding)
+    {
+        await using var db = await _postgres.CreateDatabaseAsync();
+        using var files = new MigrationFiles();
+        files.Write(
+            "migrations/world/0001_commit.sql",
+            "CREATE TABLE sample(value integer); -- comment" + lineEnding +
+            "COMMIT; INSERT INTO nonexistent VALUES (1);"
+        );
+        Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
+                db.ConnectionString,
+                MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
+            )
+        );
+        Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('sample') IS NOT NULL"));
+        Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('moongate_migrations.history') IS NOT NULL"));
+    }
 }

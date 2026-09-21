@@ -107,7 +107,10 @@ strings are also accepted for direct library integrations.
 filesystem path or re-expanding characters in the substituted value. If a URI
 contains individual placeholders, supply URI-encoded component values. Undefined
 variables fail only when their database target is activated. Targets without registered entities or installed SQL do not resolve a connection
-or contact PostgreSQL. SQL-only targets follow the configured login/game mode. A registered entity
+or contact PostgreSQL. Use an explicit runner `status --target ...` during deployment to check history
+even when a target has become completely empty; an inactive host target cannot
+detect removal of its last data-only file without connecting. SQL-only targets
+follow the configured login/game mode. A registered entity
 always activates its target and migration checks, even when it uses the other role.
 
 `FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This old
@@ -187,7 +190,8 @@ database. Stop its runtime processes and use the separate runner:
 The runner reads that root's existing `config/moongate.toml` and `plugins/`.
 `--target auth` selects `[persistence.accounts]`; `--target world` selects
 `[persistence.realm]`. Only the selected connection is resolved. `MOONGATE_ROOT`
-is an alternative to `--root-directory`. Released binaries and Docker images
+is an alternative to `--root-directory`. Without either override, the shipped
+runner uses its parent server directory as the data root. Released binaries and Docker images
 include the runner in `migration-runner/`, isolated from FreeSql's Npgsql driver.
 It never loads plugin DLLs. Both commands return exit code 0 on success and 1 on
 failure; status reports pending files without applying them.

@@ -48,7 +48,8 @@ internal static class MigrationCommand
                 _       => throw new InvalidOperationException(usage)
             };
             var root = (options.GetValueOrDefault("--root-directory") ??
-                        Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory)
+                        Environment.GetEnvironmentVariable("MOONGATE_ROOT") ??
+                        Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..")))
                 .ResolvePathAndEnvs();
             var migrations =
                 (options.GetValueOrDefault("--migrations-directory") ??

@@ -196,7 +196,7 @@ environment; no plaintext credential file is created.
   Apply the intended role/database change administratively or start a deliberately
   new empty test volume.
 - **Normal startup reports schema changes:** stop the affected runtime and run the
-  schema preview/apply profile with the same plugin image.
+  migration status/apply profile with the same plugin image.
 - **Runtime permission denied:** verify database `CONNECT`, schema `USAGE`, table
   DML, and the schema owner's default table privileges.
 - **Login does not list realms:** realm discovery and login handoff are not

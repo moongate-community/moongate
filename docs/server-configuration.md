@@ -87,7 +87,7 @@ max_string_length = 16777216
 | `api.peers.peer_id` | Nonblank local identity for this peer. Multiple certificates may map to one identity during rotation. |
 | `api.peers.allowed_operations` | `["*"]` grants all registered operations, including future additions. Otherwise use integer IDs from 1 through 65535. Empty or omitted denies all incoming operations; the wildcard must appear alone. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. |
-| `persistence.auto_sync_schema` | Defaults to false. When false, normal startup fails if registered entities require DDL; use the preview/apply command. Enable only as an explicit development convenience. |
+| `persistence.auto_sync_schema` | Defaults to false. Normal startup checks versioned SQL history; when false it also fails if registered entities require DDL. Generate and review SQL, then apply it with the separate migration runner. Enable only as an explicit development convenience. |
 | `persistence.accounts.connection_string` | Accounts/login PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Accounts. |
 | `persistence.realm.connection_string` | This realm's PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Realm. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
@@ -199,7 +199,9 @@ dotnet run --project src/Moongate.Server -c Release -- \
 | `--log-to-file` | `true` | File logging is enabled; the generated parser only accepts this as a presence flag |
 | `--log-packets` | `false` | Sets the argument to true; currently no packet-tracing consumer |
 | `--show-header` | `true` | Shows the startup banner; presence flag |
-| `--persistence-schema <mode>` | `None` | `preview` prints pending PostgreSQL DDL; `apply` applies and verifies it through the administrative host path |
+| `--persistence-schema <mode>` | `None` | `preview` prints draft PostgreSQL DDL; `generate` writes a draft file. The old `apply` mode directs you to `Moongate.MigrationRunner` |
+| `--migration-target <target>` | Unset | Required by `generate`: `auth` or `world` |
+| `--migration-output <path>` | Unset | Required by `generate`: new `NNNN_description.sql` file; refuses overwrite |
 | `--version` | — | Prints executable version |
 | `-h`, `--help` | — | Prints usage |
 
@@ -218,3 +220,8 @@ runtime before applying reviewed DDL. See [First start](getting-started.md) for 
 ownership, logs and troubleshooting, [PostgreSQL persistence](persistence.md) for
 connection, schema and world-save semantics, and
 [Lua scripting](scripting.md) for budgets and sandbox boundaries.
+
+Versioned SQL is applied by the isolated `migration-runner/Moongate.MigrationRunner`
+executable using `status|apply --target auth|world`. In released artifacts its default
+root is the parent server directory; `--root-directory` and `MOONGATE_ROOT` override
+it. See [Generate, review and apply](persistence.md#generate-review-and-apply).
