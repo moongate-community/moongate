@@ -9,6 +9,7 @@ internal static class SchemaSqlReader
     {
         statements = [];
         List<string> tokens = [];
+        List<int> offsets = [];
         var start = 0;
         for (var i = 0; i < sql.Length;)
         {
@@ -62,14 +63,16 @@ internal static class SchemaSqlReader
             {
                 if (tokens.Count > 0)
                 {
-                    statements.Add(new(sql[start..(i + 1)], tokens.ToArray()));
+                    statements.Add(new(sql[start..(i + 1)], tokens.ToArray(), offsets.ToArray()));
                 }
 
                 tokens.Clear();
+                offsets.Clear();
                 start = ++i;
                 continue;
             }
 
+            offsets.Add(i - start);
             if (sql[i] is '\'' or '"')
             {
                 var begin = i;
@@ -129,7 +132,7 @@ internal static class SchemaSqlReader
 
         if (tokens.Count > 0)
         {
-            statements.Add(new(sql[start..], tokens.ToArray()));
+            statements.Add(new(sql[start..], tokens.ToArray(), offsets.ToArray()));
         }
 
         return true;

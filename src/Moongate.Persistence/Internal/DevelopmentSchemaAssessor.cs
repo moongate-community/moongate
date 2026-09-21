@@ -18,6 +18,7 @@ internal static class DevelopmentSchemaAssessor
             )
             .ConfigureAwait(false) ?? "";
         cancellationToken.ThrowIfCancellationRequested();
+        var parsed = SchemaSqlReader.TryRead(ddl, out var statements);
         var hasExistingTables = false;
         var newTables = new HashSet<string>(StringComparer.Ordinal);
         var nullableAdditions = new HashSet<string>(StringComparer.Ordinal);
@@ -31,17 +32,17 @@ internal static class DevelopmentSchemaAssessor
             var parts = table.DbName.Split('.', 2);
             var name = Quote(parts[0]) + "." + Quote(parts[1]);
             await using var command = new NpgsqlCommand(
-                "SELECT column_name FROM information_schema.columns WHERE table_schema = @schema AND table_name = @table",
+                "SELECT column_name, column_default FROM information_schema.columns WHERE table_schema = @schema AND table_name = @table",
                 connection
             );
             command.Parameters.AddWithValue("schema", parts[0]);
             command.Parameters.AddWithValue("table", parts[1]);
-            var existing = new HashSet<string>(StringComparer.Ordinal);
+            var existing = new Dictionary<string, string?>(StringComparer.Ordinal);
             await using (var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false))
             {
                 while (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
                 {
-                    existing.Add(reader.GetString(0));
+                    existing.Add(reader.GetString(0), reader.IsDBNull(1) ? null : reader.GetString(1));
                 }
             }
 
@@ -56,13 +57,13 @@ internal static class DevelopmentSchemaAssessor
 
             var columns = table.ColumnsByCs.Values.ToArray();
             foreach (var column in columns.Where(column =>
-                         column.Attribute.IsNullable && !existing.Contains(column.Attribute.Name)
+                         column.Attribute.IsNullable && !existing.ContainsKey(column.Attribute.Name)
                      ))
             {
                 nullableAdditions.Add(name + "." + Quote(column.Attribute.Name));
             }
 
-            foreach (var column in columns.Where(column => !existing.Contains(column.Attribute.Name)))
+            foreach (var column in columns.Where(column => !existing.ContainsKey(column.Attribute.Name)))
             {
                 var value = GetLiteralDefault(column.Attribute.DbType);
                 if (value is not null)
@@ -71,14 +72,53 @@ internal static class DevelopmentSchemaAssessor
                 }
             }
 
-            foreach (var column in existing.Except(columns.Select(column => column.Attribute.Name), StringComparer.Ordinal))
+            var renamed = new HashSet<string>(StringComparer.Ordinal);
+            foreach (var column in columns)
+            {
+                var attribute = column.Attribute;
+                var oldName = attribute.OldName;
+                var isRename = parsed && !string.IsNullOrEmpty(oldName) && statements.Any(statement =>
+                    statement.Tokens.SequenceEqual(
+                        new[]
+                        {
+                            "ALTER", "TABLE", Quote(parts[0]), ".", Quote(parts[1]), "RENAME", "COLUMN",
+                            Quote(oldName), "TO", Quote(attribute.Name)
+                        }
+                    )
+                );
+                if (isRename)
+                {
+                    renamed.Add(oldName!);
+                }
+
+                if (!attribute.IsIdentity && existing.TryGetValue(
+                        isRename ? oldName! : attribute.Name,
+                        out var actualDefault
+                    ))
+                {
+                    var declaredDefault = GetDefaultExpression(attribute.DbType);
+                    if (!DefaultsMatch(declaredDefault, actualDefault))
+                    {
+                        removed.AppendLine(
+                            $"ALTER TABLE {name} ALTER COLUMN {Quote(attribute.Name)} " +
+                            (declaredDefault is null ? "DROP DEFAULT;" : $"SET DEFAULT {declaredDefault};")
+                        );
+                    }
+                }
+            }
+
+            foreach (var column in existing.Keys.Except(
+                             columns.Select(column => column.Attribute.Name),
+                             StringComparer.Ordinal
+                         )
+                         .Except(renamed))
             {
                 // FreeSql retains unmapped database columns; make the removal explicit and review-required.
                 removed.AppendLine($"ALTER TABLE {name} DROP COLUMN {Quote(column)};");
             }
         }
 
-        if (!SchemaSqlReader.TryRead(ddl, out var statements))
+        if (!parsed)
         {
             return new(ddl + removed, true, hasExistingTables);
         }
@@ -162,6 +202,69 @@ internal static class DevelopmentSchemaAssessor
 
         accepted.Append(removed);
         return new(accepted.ToString(), requiresReview, hasExistingTables);
+    }
+
+    private static string? GetDefaultExpression(string? dbType)
+    {
+        if (string.IsNullOrWhiteSpace(dbType))
+        {
+            return null;
+        }
+
+        if (!SchemaSqlReader.TryRead(dbType, out var statements) || statements.Count != 1)
+        {
+            throw new InvalidOperationException(
+                $"Cannot assess column default in DbType '{dbType}'. Use a reviewed SQL migration."
+            );
+        }
+
+        var statement = statements[0];
+        var index = statement.Tokens.ToList().IndexOf("DEFAULT");
+        if (index < 0)
+        {
+            return null;
+        }
+
+        if (index + 1 == statement.Tokens.Count)
+        {
+            throw new InvalidOperationException("A column DEFAULT must include an expression.");
+        }
+
+        var end = statement.Sql.TrimEnd().TrimEnd(';').Length;
+        if (statement.Tokens.Count > index + 3 && statement.Tokens[^2] == "NOT" && statement.Tokens[^1] == "NULL")
+        {
+            end = statement.TokenOffsets[^2];
+        }
+
+        return statement.Sql[statement.TokenOffsets[index + 1]..end].Trim();
+    }
+
+    private static bool DefaultsMatch(string? declared, string? actual)
+    {
+        return NormalizeDefault(declared).SequenceEqual(NormalizeDefault(actual));
+    }
+
+    private static string[] NormalizeDefault(string? value)
+    {
+        if (value is null)
+        {
+            return [];
+        }
+
+        if (!SchemaSqlReader.TryRead(value, out var statements) || statements.Count != 1)
+        {
+            return [value];
+        }
+
+        var tokens = statements[0].Tokens.ToList();
+        // PostgreSQL renders a string constant with its inferred type cast.
+        if (tokens.Count > 3 && tokens[0].StartsWith('\'') && tokens[1] == ":" && tokens[2] == ":" &&
+            tokens.Skip(3).All(token => token is "CHARACTER" or "VARYING" or "TEXT" or "VARCHAR" or "BPCHAR"))
+        {
+            tokens.RemoveRange(1, tokens.Count - 1);
+        }
+
+        return tokens.ToArray();
     }
 
     private static string? GetLiteralDefault(string? dbType)
