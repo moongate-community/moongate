@@ -1,9 +1,11 @@
 using Moongate.Core.Extensions.Directories;
+using Moongate.Core.Extensions.Env;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Migrations.Services;
 using Moongate.Persistence.Migrations.Types.Migrations;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Types.Hosting;
+using Moongate.Server.Bootstrap.Internal;
 
 namespace Moongate.Server.Data.Config.Sections;
 
@@ -26,11 +28,25 @@ public sealed class PersistenceConfig
     public PostgreSqlPersistenceOptions ToOptions(
         string? migrationsDirectory = null,
         string? pluginsDirectory = null,
-        ServerMode mode = ServerMode.Standalone
+        ServerMode mode = ServerMode.Standalone,
+        string? rootDirectory = null
     )
     {
         Validate();
         migrationsDirectory = ResolveMigrationsDirectory(migrationsDirectory);
+
+        var development = AutoGenerateMigrations
+            ? new DevelopmentMigrationOptions(
+                migrationsDirectory!,
+                pluginsDirectory,
+                new DevelopmentMigrationRunner(
+                    rootDirectory ?? Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory,
+                    migrationsDirectory!,
+                    pluginsDirectory
+                ),
+                MigrationComponentResolver.Resolve
+            )
+            : null;
 
         return new(
             [
@@ -41,18 +57,19 @@ public sealed class PersistenceConfig
             migrationsDirectory is null
                 ? null
                 : target => MigrationCatalog.Load(
-                      migrationsDirectory,
-                      pluginsDirectory,
-                      target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World
-                  ),
-            target => (mode & (target == PersistenceDatabaseTarget.Accounts ? ServerMode.Login : ServerMode.Game)) != 0
+                    migrationsDirectory,
+                    pluginsDirectory,
+                    target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World
+                ),
+            target => (mode & (target == PersistenceDatabaseTarget.Accounts ? ServerMode.Login : ServerMode.Game)) != 0,
+            development
         );
     }
 
     public string? ResolveMigrationsDirectory(string? fallback = null)
         => string.IsNullOrWhiteSpace(MigrationsDirectory)
-               ? fallback
-               : MigrationsDirectory.ResolvePathAndEnvs();
+            ? fallback
+            : MigrationsDirectory.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
 
     public void Validate()
     {
@@ -63,7 +80,9 @@ public sealed class PersistenceConfig
 
         if (AutoGenerateMigrations && string.IsNullOrWhiteSpace(MigrationsDirectory))
         {
-            throw new InvalidOperationException("auto_generate_migrations requires an explicit source migrations_directory.");
+            throw new InvalidOperationException(
+                "auto_generate_migrations requires an explicit source migrations_directory."
+            );
         }
 
         if (Accounts is null || Realm is null)

@@ -23,8 +23,10 @@ public sealed partial class MigrationCatalog
     /// <summary>Gets the absolute migrations root for each installed component.</summary>
     public IReadOnlyDictionary<string, string> SourceDirectories { get; }
 
-    private MigrationCatalog(MigrationTarget target, List<MigrationScript> scripts, HashSet<string> components,
-        IReadOnlyDictionary<string, string> sources)
+    private MigrationCatalog(
+        MigrationTarget target, List<MigrationScript> scripts, HashSet<string> components,
+        IReadOnlyDictionary<string, string> sources
+    )
     {
         SourceDirectories = sources.ToFrozenDictionary(StringComparer.Ordinal);
         Target = target;
@@ -69,8 +71,8 @@ public sealed partial class MigrationCatalog
                 using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
                 var id = manifest.RootElement.TryGetProperty("id", out var property) &&
                          property.ValueKind == JsonValueKind.String
-                             ? property.GetString()
-                             : null;
+                    ? property.GetString()
+                    : null;
 
                 if (id is null || !ComponentPattern().IsMatch(id) || !components.Add(id))
                 {
@@ -137,8 +139,8 @@ public sealed partial class MigrationCatalog
             }
 
             var sql = new UTF8Encoding(false, true).GetString(File.ReadAllBytes(file))
-                                                   .TrimStart('\uFEFF')
-                                                   .Replace("\r\n", "\n", StringComparison.Ordinal);
+                .TrimStart('\uFEFF')
+                .Replace("\r\n", "\n", StringComparison.Ordinal);
 
             if (string.IsNullOrWhiteSpace(sql))
             {

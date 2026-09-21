@@ -25,16 +25,19 @@ internal static class PersistencePreparation
         {
             var autoSync = container.IsRegistered<MoongateServerConfig>() &&
                            container.Resolve<MoongateServerConfig>().Persistence.AutoSyncSchema;
+            var autoGenerate = container.IsRegistered<MoongateServerConfig>() &&
+                               container.Resolve<MoongateServerConfig>().Persistence.AutoGenerateMigrations;
             Log.Information(
                 "Preparing PostgreSQL persistence; schema mode {SchemaMode}",
+                autoGenerate ? "generate-migrations" :
                 autoSync ? "synchronize" : "validate"
             );
 
             try
             {
                 await container.Resolve<MoongatePersistenceService>()
-                               .InitializeAsync(cancellationToken)
-                               .ConfigureAwait(false);
+                    .InitializeAsync(cancellationToken)
+                    .ConfigureAwait(false);
             }
             catch (InvalidOperationException exception) when (exception.Message.StartsWith(
                                                                   "PostgreSQL schema changes are required",

@@ -9,6 +9,8 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
     private readonly AssemblyDependencyResolver _resolver;
     private readonly string _directory;
 
+    internal string BundleDirectory => _directory;
+
     public PluginLoadContext(string pluginPath)
         : base($"Moongate.Plugin:{Path.GetFileNameWithoutExtension(pluginPath)}", true)
     {
@@ -19,12 +21,12 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
     protected override Assembly? Load(AssemblyName assemblyName)
     {
         if (assemblyName.Name is "Moongate.Core" or
-                                 "Moongate.Server.Core" or
-                                 "Moongate.Persistence" or
-                                 "Moongate.Persistence.Migrations" or
-                                 "FreeSql" or
-                                 "FreeSql.Provider.PostgreSQL" or
-                                 "Npgsql")
+            "Moongate.Server.Core" or
+            "Moongate.Persistence" or
+            "Moongate.Persistence.Migrations" or
+            "FreeSql" or
+            "FreeSql.Provider.PostgreSQL" or
+            "Npgsql")
         {
             Assembly host;
 

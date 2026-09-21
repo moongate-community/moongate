@@ -28,6 +28,12 @@ public sealed class DevelopmentMigrationOptions
     }
 
     public MigrationCatalog Load(PersistenceDatabaseTarget target)
-        => MigrationCatalog.Load(Directory, PluginsDirectory,
-            target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World);
+    {
+        System.IO.Directory.CreateDirectory(Directory);
+        return MigrationCatalog.Load(
+            Directory,
+            PluginsDirectory,
+            target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World
+        );
+    }
 }

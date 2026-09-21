@@ -55,6 +55,7 @@
     </ItemGroup>
 
     <ItemGroup>
+        <ProjectReference Include="../Moongate.MigrationRunner/Moongate.MigrationRunner.csproj" ReferenceOutputAssembly="false" Private="false"/>
         <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
         <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
         <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj"/>
@@ -69,4 +70,13 @@
         <EmbeddedResource Include="Assets\**\*.*"/>
     </ItemGroup>
 
+    <!-- Keep the runner's PostgreSQL driver in a separate process and output directory. -->
+    <Target Name="CopyDevelopmentMigrationRunner" AfterTargets="Build">
+        <ItemGroup>
+            <_MigrationRunnerFiles Include="../Moongate.MigrationRunner/bin/$(Configuration)/$(TargetFramework)/*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(_MigrationRunnerFiles)"
+              DestinationFiles="@(_MigrationRunnerFiles->'$(OutDir)migration-runner/%(Filename)%(Extension)')"
+              SkipUnchangedFiles="true"/>
+    </Target>
 </Project>

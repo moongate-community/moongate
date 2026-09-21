@@ -43,8 +43,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         Prepare();
 
         return _databases.TryGetValue(target, out var database)
-                   ? database
-                   : throw new InvalidOperationException($"Persistence target '{target}' is not active.");
+            ? database
+            : throw new InvalidOperationException($"Persistence target '{target}' is not active.");
     }
 
     public IPersistenceModule GetOwner(Type entityType)
@@ -65,6 +65,15 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             IsReady = false;
             Prepare();
             await CheckConnectionsAsync(cancellationToken).ConfigureAwait(false);
+            if (_options.DevelopmentMigrations is not null)
+            {
+                await new DevelopmentMigrationCoordinator(_options.DevelopmentMigrations, _logger)
+                    .RunAsync(_databases, _snapshot!, cancellationToken)
+                    .ConfigureAwait(false);
+                IsReady = true;
+                return;
+            }
+
             await ValidateMigrationsAsync(cancellationToken).ConfigureAwait(false);
 
             if (_options.AutoSynchronizeSchema)
@@ -234,8 +243,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
                     }
 
                     var expected = target == PersistenceDatabaseTarget.Accounts
-                                       ? MigrationTarget.Auth
-                                       : MigrationTarget.World;
+                        ? MigrationTarget.Auth
+                        : MigrationTarget.World;
 
                     if (catalog.Target != expected)
                     {
@@ -305,11 +314,11 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         {
             var database = _databases[targetGroup.Key];
             await using var schemaLock = await PostgreSqlSchemaLock.AcquireAsync(
-                                                                       database.SchemaConnectionString,
-                                                                       targetGroup.Key,
-                                                                       cancellationToken
-                                                                   )
-                                                                   .ConfigureAwait(false);
+                    database.SchemaConnectionString,
+                    targetGroup.Key,
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
 
             foreach (var module in targetGroup)
             {
@@ -350,8 +359,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             await using var connection = new NpgsqlConnection(database.RuntimeConnectionString);
             await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
             var applied = await MigrationHistory
-                                .ReadAsync(() => connection.CreateCommand(), catalog.Target, cancellationToken)
-                                .ConfigureAwait(false);
+                .ReadAsync(() => connection.CreateCommand(), catalog.Target, cancellationToken)
+                .ConfigureAwait(false);
             var pending = MigrationHistory.Validate(catalog, applied);
 
             if (pending.Count > 0)

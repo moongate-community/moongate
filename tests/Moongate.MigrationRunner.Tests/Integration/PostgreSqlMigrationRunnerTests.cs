@@ -24,12 +24,21 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
         for (var attempt = 0; attempt < 2; attempt++)
         {
             Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
-                db.ConnectionString, MigrationCatalog.Load(files.Core, null, MigrationTarget.World)));
+                    db.ConnectionString,
+                    MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
+                )
+            );
             Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('reviewed') IS NOT NULL"));
         }
+
         files.Write("migrations/world/0001_draft.sql", "CREATE TABLE reviewed(value integer);");
-        Assert.Equal(1, PostgreSqlMigrationRunner.Apply(db.ConnectionString,
-            MigrationCatalog.Load(files.Core, null, MigrationTarget.World)));
+        Assert.Equal(
+            1,
+            PostgreSqlMigrationRunner.Apply(
+                db.ConnectionString,
+                MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
+            )
+        );
     }
 
     [Fact]
@@ -41,8 +50,7 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
         PostgreSqlMigrationRunner.Apply(db.ConnectionString, MigrationCatalog.Load(files.Core, null, MigrationTarget.World));
         files.Write("migrations/world/0001_create.sql", "SELECT 1;");
         files.Write("migrations/world/0002_next.sql", "CREATE TABLE later (value integer);");
-        Assert.Throws<InvalidOperationException>(
-            () => PostgreSqlMigrationRunner.Apply(
+        Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
                 db.ConnectionString,
                 MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
             )
@@ -61,8 +69,7 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
             lineEnding +
             "COMMIT; INSERT INTO nonexistent VALUES (1);"
         );
-        Assert.Throws<InvalidOperationException>(
-            () => PostgreSqlMigrationRunner.Apply(
+        Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
                 db.ConnectionString,
                 MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
             )
@@ -82,9 +89,9 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
         );
         var catalog = MigrationCatalog.Load(files.Core, null, MigrationTarget.World);
         var results = await Task.WhenAll(
-                          Task.Run(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog)),
-                          Task.Run(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog))
-                      );
+            Task.Run(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog)),
+            Task.Run(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog))
+        );
         Assert.Equal(new[] { 0, 1 }, results.Order().ToArray());
         Assert.Equal(1L, await db.ScalarAsync<long>("SELECT count(*) FROM sample"));
     }
@@ -129,8 +136,7 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
         await using var db = await _postgres.CreateDatabaseAsync();
         using var files = new MigrationFiles();
         files.Write("migrations/world/0001_create.sql", "CREATE TABLE sample (value integer); " + sql);
-        Assert.Throws<InvalidOperationException>(
-            () => PostgreSqlMigrationRunner.Apply(
+        Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
                 db.ConnectionString,
                 MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
             )
@@ -145,8 +151,7 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
         using var files = new MigrationFiles();
         files.Write("migrations/world/0001_create.sql", "CREATE TABLE sample (value integer);");
         files.Write("migrations/world/0002_fail.sql", "INSERT INTO nonexistent VALUES (1);");
-        var error = Assert.Throws<InvalidOperationException>(
-            () => PostgreSqlMigrationRunner.Apply(
+        var error = Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
                 db.ConnectionString,
                 MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
             )

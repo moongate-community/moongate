@@ -25,6 +25,7 @@ own targets in `PostgreSqlPersistenceOptions`.
 - Detached asynchronous reads, SQL-translated filtering, upserts, and deletes.
 - Grouped writes in one asynchronous transaction for a single database target.
 - Versioned SQL readiness checks, draft schema preview, and explicit development synchronization.
+- Opt-in development SQL generation with immutable files, isolated execution and persistent review gates.
 - Owner-controlled `SaveAllAsync` snapshots for application-managed live entities.
 
 ## Example
@@ -134,3 +135,15 @@ world saves, transactions, and database backup responsibility.
 ## License and source
 
 Licensed under AGPL-3.0-or-later. See the [source repository and license](https://github.com/moongate-community/moongate).
+
+## Development migrations
+
+The server supports `persistence.auto_generate_migrations = true` together with an
+explicit `persistence.migrations_directory`. It writes and applies additive SQL at
+startup; unsafe or unsupported changes remain marked for review. This mode is off
+by default and cannot be combined with `auto_sync_schema`.
+
+Standalone library integrations can supply `DevelopmentMigrationOptions` with an
+`IDevelopmentMigrationRunner` implementation and an explicit component resolver.
+Keep migration execution isolated from FreeSql's PostgreSQL driver. See the
+[development migration guide](https://moongate.sh/guides/persistence/#automatic-development-migrations).

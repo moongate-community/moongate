@@ -19,7 +19,7 @@ internal static class MigrationCommand
     )
     {
         const string usage =
-            "Usage: Moongate.MigrationRunner status|apply --target auth|world [--root-directory PATH] [--migrations-directory PATH]";
+            "Usage: Moongate.MigrationRunner status|apply --target auth|world [--root-directory PATH] [--migrations-directory PATH] [--plugins-directory PATH]";
 
         if (args is ["--help"] or ["-h"])
         {
@@ -40,7 +40,8 @@ internal static class MigrationCommand
             for (var index = 1; index < args.Length; index += 2)
             {
                 if (index + 1 >= args.Length ||
-                    args[index] is not ("--target" or "--root-directory" or "--migrations-directory") ||
+                    args[index] is not ("--target" or "--root-directory" or "--migrations-directory"
+                        or "--plugins-directory") ||
                     !options.TryAdd(args[index], args[index + 1]))
                 {
                     throw new InvalidOperationException(usage);
@@ -57,21 +58,22 @@ internal static class MigrationCommand
                         Environment.GetEnvironmentVariable("MOONGATE_ROOT") ??
                         Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..")))
                 .ResolvePathAndEnvs();
+            string? configuredMigrations = null;
             var migrations =
                 (options.GetValueOrDefault("--migrations-directory") ??
                  Path.Combine(AppContext.BaseDirectory, "..", "migrations")).ResolvePathAndEnvs();
-            var catalog = MigrationCatalog.Load(migrations, Path.Combine(root, "plugins"), target);
             string connectionString;
 
             try
             {
                 var config = await TomlUtils.DeserializeFromFileAsync<RunnerConfiguration>(
-                                 Path.Combine(root, "config", "moongate.toml"),
-                                 cancellationToken: cancellationToken
-                             );
+                    Path.Combine(root, "config", "moongate.toml"),
+                    cancellationToken: cancellationToken
+                );
+                configuredMigrations = config?.Persistence.MigrationsDirectory;
                 var template = target == MigrationTarget.Auth
-                                   ? config?.Persistence.Accounts.ConnectionString
-                                   : config?.Persistence.Realm.ConnectionString;
+                    ? config?.Persistence.Accounts.ConnectionString
+                    : config?.Persistence.Realm.ConnectionString;
 
                 if (string.IsNullOrWhiteSpace(template))
                 {
@@ -89,6 +91,14 @@ internal static class MigrationCommand
                 );
             }
 
+            if (!options.ContainsKey("--migrations-directory") && !string.IsNullOrWhiteSpace(configuredMigrations))
+            {
+                migrations = configuredMigrations.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
+            }
+
+            var plugins = (options.GetValueOrDefault("--plugins-directory") ?? Path.Combine(root, "plugins"))
+                .ResolvePathAndEnvs();
+            var catalog = MigrationCatalog.Load(migrations, plugins, target);
             cancellationToken.ThrowIfCancellationRequested();
 
             if (args[0] == "apply")

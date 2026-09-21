@@ -13,7 +13,9 @@ public static class MigrationDraftWriter
         ArgumentException.ThrowIfNullOrWhiteSpace(sql);
         var root = catalog.SourceDirectories[component];
         var sequence = catalog.Scripts.Where(script => script.Component == component)
-                              .Select(script => script.Sequence).DefaultIfEmpty().Max() + 1;
+            .Select(script => script.Sequence)
+            .DefaultIfEmpty()
+            .Max() + 1;
         if (sequence > 9999)
         {
             throw new InvalidOperationException($"Migration sequence exhausted for '{component}'.");
@@ -27,7 +29,7 @@ public static class MigrationDraftWriter
         try
         {
             await File.WriteAllTextAsync(temporary, header + sql + "\n", new UTF8Encoding(false), cancellationToken)
-                      .ConfigureAwait(false);
+                .ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             File.Move(temporary, path, false);
             return path;

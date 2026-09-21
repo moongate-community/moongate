@@ -11,6 +11,16 @@ namespace Moongate.Tests.Server.Data.Config.Sections;
 public sealed class PersistenceConfigTests
 {
     [Fact]
+    public void ResolveMigrationsDirectory_ExpandsEnvironmentAndRejectsMissingVariables()
+    {
+        var name = "MOONGATE_SOURCE_" + Guid.NewGuid().ToString("N");
+        var config = new PersistenceConfig { MigrationsDirectory = "${" + name + "}/migrations" };
+        Assert.Throws<InvalidOperationException>(() => config.ResolveMigrationsDirectory());
+        using var scope = new EnvironmentVariableScope(name, Path.GetTempPath());
+        Assert.Equal(Path.Combine(Path.GetTempPath(), "migrations"), config.ResolveMigrationsDirectory());
+    }
+
+    [Fact]
     public void Validate_AutomaticPoliciesConflict_RejectsBeforeDatabaseAccess()
     {
         var config = new PersistenceConfig
@@ -107,7 +117,7 @@ public sealed class PersistenceConfigTests
 
         var parsed = new NpgsqlConnectionStringBuilder(
             options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-                   .ResolveRuntimeConnectionString()
+                .ResolveRuntimeConnectionString()
         );
 
         Assert.Equal("localhost", parsed.Host);
@@ -125,11 +135,11 @@ public sealed class PersistenceConfigTests
         Assert.Contains(
             "Database=accounts",
             options.GetRequiredDatabase(PersistenceDatabaseTarget.Accounts)
-                   .ResolveRuntimeConnectionString()
+                .ResolveRuntimeConnectionString()
         );
         var error = Assert.Throws<InvalidOperationException>(() =>
-                options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-                       .ResolveRuntimeConnectionString()
+            options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
+                .ResolveRuntimeConnectionString()
         );
         Assert.Contains("is not defined", error.Message);
     }

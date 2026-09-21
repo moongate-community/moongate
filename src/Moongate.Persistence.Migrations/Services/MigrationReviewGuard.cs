@@ -14,7 +14,8 @@ public static class MigrationReviewGuard
             if (script.Sql.Contains(Marker, StringComparison.OrdinalIgnoreCase))
             {
                 throw new InvalidOperationException(
-                    $"Migration '{script.Name}' requires review. Review the SQL and remove '{Marker}' before applying it.");
+                    $"Migration '{script.Name}' requires review. Review the SQL and remove '{Marker}' before applying it."
+                );
             }
         }
     }

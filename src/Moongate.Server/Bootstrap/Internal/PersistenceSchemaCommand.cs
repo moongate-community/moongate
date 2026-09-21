@@ -31,7 +31,9 @@ internal static class PersistenceSchemaCommand
         container.RegisterInstance(directories);
         container.RegisterInstance(config);
         container.RegisterMoongateEventBus();
-        container.RegisterMoongatePersistence(config.Persistence.ToOptions());
+        container.RegisterMoongatePersistence(
+            config.Persistence.ToOptions(pluginsDirectory: directories["plugins"], rootDirectory: rootDirectory)
+        );
         container.RegisterInstance<IPluginLoaderService>(new PluginLoaderService(container, directories));
         await using var persistence = container.Resolve<MoongatePersistenceService>();
         await RunAsync(container, mode, output, cancellationToken, migrationOutput, migrationTarget).ConfigureAwait(false);
@@ -112,7 +114,7 @@ internal static class PersistenceSchemaCommand
             try
             {
                 await File.WriteAllTextAsync(temporary, sql, new UTF8Encoding(false), cancellationToken)
-                          .ConfigureAwait(false);
+                    .ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
                 File.Move(temporary, path, false);
             }

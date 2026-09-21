@@ -601,3 +601,6 @@ website/src/content/docs/generated/
 website/public/generated/
 website/public/install.sh
 website/.docs-stage-*/
+
+# Cooperative development migration generation locks
+**/.moongate-generation.lock

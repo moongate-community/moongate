@@ -24,7 +24,9 @@ public sealed class PostgreSqlPersistenceOptions
     public IReadOnlyCollection<PersistenceDatabaseTarget> ConfiguredTargets => _databases.Keys.ToArray();
 
     /// <summary>Creates empty options with schema synchronization disabled.</summary>
-    public PostgreSqlPersistenceOptions() : this([]) { }
+    public PostgreSqlPersistenceOptions() : this([])
+    {
+    }
 
     /// <summary>Creates persistence options.</summary>
     /// <param name="databases">Independently configured database targets.</param>
@@ -72,7 +74,8 @@ public sealed class PostgreSqlPersistenceOptions
 
     /// <inheritdoc />
     public override string ToString()
-        => $"PostgreSqlPersistenceOptions {{ AutoSynchronizeSchema = {AutoSynchronizeSchema}, ConfiguredTargets = {_databases.Count} }}";
+        =>
+            $"PostgreSqlPersistenceOptions {{ AutoSynchronizeSchema = {AutoSynchronizeSchema}, ConfiguredTargets = {_databases.Count} }}";
 
     internal PersistenceDatabaseOptions GetRequiredDatabase(PersistenceDatabaseTarget target)
     {
