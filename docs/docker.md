@@ -11,6 +11,12 @@ You need Docker and your own Ultima Online client files. The image does not
 include those files. TCP port **2593** is the default game listener. Current source
 builds also declare **2594/tcp** for the optional internal API; it is disabled by default.
 
+## Prepare a root offline
+
+Images containing mgboot support `--entrypoint /app/mgboot` with the root directory
+as its argument. See the [mgboot Docker example](mgboot.md#docker) to populate a
+volume with config and base migrations without starting the server.
+
 ## First start
 
 Pull the image and create persistent storage:

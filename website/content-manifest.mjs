@@ -2,6 +2,7 @@
 export const contentEntries = [
   { source: 'README.md', slug: 'start/overview', title: 'Overview', group: 'Start here' },
   { source: 'docs/installation.md', slug: 'start/install', title: 'Install on Linux', group: 'Start here' },
+  { source: 'docs/mgboot.md', slug: 'start/mgboot', title: 'Prepare a root with mgboot', group: 'Start here' },
   { source: 'docs/getting-started.md', slug: 'start/getting-started', title: 'First start', group: 'Start here' },
   { source: 'CHANGELOG.md', slug: 'start/changelog', title: 'Changelog', group: 'Start here' },
   { source: 'docs/docker.md', slug: 'server/docker', title: 'Run with Docker', group: 'Server guides' },

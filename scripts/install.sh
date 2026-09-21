@@ -235,6 +235,10 @@ main() {
         fail "could not make ${STAGING_DIR}/Moongate.Server executable"
     fi
 
+    if [ -f "${STAGING_DIR}/mgboot" ] && ! $SUDO chmod 0755 "${STAGING_DIR}/mgboot"; then
+        fail "could not make ${STAGING_DIR}/mgboot executable"
+    fi
+
     if [ -e "$INSTALL_DIR" ] && ! $SUDO mv "$INSTALL_DIR" "$old_dir"; then
         fail "could not move the current installation aside; ${INSTALL_DIR} is untouched"
     fi
@@ -266,6 +270,15 @@ main() {
     fi
 
     echo "  link       ${BIN_DIR}/moongate"
+
+    if [ -f "${INSTALL_DIR}/mgboot" ]; then
+        $SUDO rm -f "${BIN_DIR}/mgboot" || fail "could not replace ${BIN_DIR}/mgboot"
+        $SUDO ln -s "${INSTALL_DIR}/mgboot" "${BIN_DIR}/mgboot" || fail "could not link ${BIN_DIR}/mgboot"
+        echo "  link       ${BIN_DIR}/mgboot"
+        echo "  prepare    mgboot /srv/moongate"
+    elif [ -L "${BIN_DIR}/mgboot" ] && [ "$(readlink "${BIN_DIR}/mgboot")" = "${INSTALL_DIR}/mgboot" ]; then
+        $SUDO rm -f "${BIN_DIR}/mgboot" || fail "could not remove obsolete ${BIN_DIR}/mgboot link"
+    fi
 
     cat <<'NEXT'
 

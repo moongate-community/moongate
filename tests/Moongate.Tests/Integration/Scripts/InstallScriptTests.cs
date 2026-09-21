@@ -9,6 +9,31 @@ namespace Moongate.Tests.Integration.Scripts;
 public class InstallScriptTests
 {
     [ShellFact]
+    public async Task Install_WithMgboot_LinksExecutableBesideServer()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.6.0", "linux-x64", "server", includeMgboot: true);
+        var result = await install.RunAsync("0.6.0", "linux-x64");
+        Assert.True(result.ExitCode == 0, result.Output);
+        var command = Path.Combine(install.BinDirectory, "mgboot");
+        Assert.Equal(Path.Combine(install.InstallDirectory, "mgboot"), File.ResolveLinkTarget(command, true)!.FullName);
+        Assert.True(File.GetUnixFileMode(command).HasFlag(UnixFileMode.UserExecute));
+        Assert.Equal("boot payload", await File.ReadAllTextAsync(command));
+    }
+
+    [ShellFact]
+    public async Task Install_DowngradeWithoutMgboot_RemovesOwnedSymlink()
+    {
+        using var install = new ScriptedInstall();
+        install.Publish("0.6.0", "linux-x64", "new server", includeMgboot: true);
+        install.Publish("0.5.0", "linux-x64", "old server");
+        Assert.Equal(0, (await install.RunAsync("0.6.0", "linux-x64")).ExitCode);
+        var result = await install.RunAsync("0.5.0", "linux-x64");
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Null(new FileInfo(Path.Combine(install.BinDirectory, "mgboot")).LinkTarget);
+    }
+
+    [ShellFact]
     public async Task ACleanInstall_PlacesTheArchiveContents_AndLinksTheCommand()
     {
         using var install = new ScriptedInstall();

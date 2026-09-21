@@ -13,6 +13,7 @@ using Moongate.Scripting.Modules;
 using Moongate.Scripting.Services;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Bootstrap.Internal.Setup;
 using Moongate.Server.Commands;
 using Moongate.Server.Core.Data.Args;
 using Moongate.Server.Core.Data.GameLoop;
@@ -50,12 +51,27 @@ await ConsoleApp.RunAsync(
         CancellationToken cancellationToken, LogLevelType logLevel = LogLevelType.Information, bool logToFile = true,
         bool logPackets = false, string? rootDirectory = null, bool showHeader = true, string pidFileName = "moongate.pid",
         PersistenceSchemaMode persistenceSchema = PersistenceSchemaMode.None,
-        string? migrationOutput = null, string? migrationTarget = null
+        string? migrationOutput = null, string? migrationTarget = null, bool initializeRoot = false
     ) =>
     {
         rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory;
 
         rootDirectory = rootDirectory.ResolvePathAndEnvs();
+
+        if (initializeRoot)
+        {
+            try
+            {
+                RootDirectoryInitializer.Initialize(rootDirectory, Path.Combine(AppContext.BaseDirectory, "migrations"), Console.Out);
+            }
+            catch (Exception exception)
+            {
+                await Console.Error.WriteLineAsync($"Root initialization failed: {exception.Message}");
+                Environment.ExitCode = 1;
+            }
+
+            return;
+        }
 
         if (persistenceSchema != PersistenceSchemaMode.None)
         {

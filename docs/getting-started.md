@@ -6,6 +6,10 @@ This guide runs the server from source. To install the released binary on Linux,
 packet pipeline, scripting and persistence infrastructure are available, but a
 complete account login and playable world are not implemented yet.
 
+For offline root preparation with the current source or a release containing the
+utility, use [`mgboot <root-directory>`](mgboot.md). It creates the default config
+and base migration files without requiring a database connection.
+
 ## Requirements
 
 Install the .NET 10 SDK selected by `global.json` and Git. Supply your own Ultima

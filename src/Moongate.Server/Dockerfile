@@ -15,6 +15,7 @@ FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release
 WORKDIR /src
 COPY ["Directory.Build.props", "./"]
+COPY ["src/Moongate.Boot/Moongate.Boot.csproj", "src/Moongate.Boot/"]
 COPY ["src/Moongate.Core/Moongate.Core.csproj", "src/Moongate.Core/"]
 COPY ["src/Moongate.Api/Moongate.Api.csproj", "src/Moongate.Api/"]
 COPY ["src/Moongate.Persistence/Moongate.Persistence.csproj", "src/Moongate.Persistence/"]
@@ -28,6 +29,7 @@ COPY ["src/Moongate.Ultima/Moongate.Ultima.csproj", "src/Moongate.Ultima/"]
 COPY ["src/Moongate.Scripting/Moongate.Scripting.csproj", "src/Moongate.Scripting/"]
 COPY ["src/Moongate.Server/Moongate.Server.csproj", "src/Moongate.Server/"]
 RUN dotnet restore "src/Moongate.Server/Moongate.Server.csproj"
+RUN dotnet restore "src/Moongate.Boot/Moongate.Boot.csproj"
 RUN dotnet restore "src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj"
 COPY . .
 WORKDIR "/src/src/Moongate.Server"
@@ -42,6 +44,11 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR "/src/src/Moongate.MigrationRunner"
 RUN dotnet publish "./Moongate.MigrationRunner.csproj" -c $BUILD_CONFIGURATION -o /app/migration-runner
 
+FROM build AS mgboot-publish
+ARG BUILD_CONFIGURATION=Release
+WORKDIR "/src/src/Moongate.Boot"
+RUN dotnet publish "./Moongate.Boot.csproj" -c $BUILD_CONFIGURATION -o /app/mgboot
+
 FROM build AS sample-plugin-publish
 ARG BUILD_CONFIGURATION=Release
 WORKDIR "/src/samples/Moongate.Sample.Plugin"
@@ -50,6 +57,7 @@ RUN dotnet publish "./Moongate.Sample.Plugin.csproj" -c $BUILD_CONFIGURATION -o 
 FROM base AS sample-plugin
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=mgboot-publish /app/mgboot/mgboot ./mgboot
 COPY --from=migration-runner-publish /app/migration-runner ./migration-runner
 COPY --from=sample-plugin-publish /app/sample-plugin /opt/moongate/sample-plugin
 ENTRYPOINT ["./Moongate.Server"]
@@ -57,5 +65,6 @@ ENTRYPOINT ["./Moongate.Server"]
 FROM base AS final
 WORKDIR /app
 COPY --from=publish /app/publish .
+COPY --from=mgboot-publish /app/mgboot/mgboot ./mgboot
 COPY --from=migration-runner-publish /app/migration-runner ./migration-runner
 ENTRYPOINT ["./Moongate.Server"]

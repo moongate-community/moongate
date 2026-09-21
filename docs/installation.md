@@ -16,6 +16,7 @@ against the checksum published beside it, and puts it in place:
 | --- | --- |
 | `/opt/moongate/` | The archive's contents: the server binary, `LICENSE`, `THIRD-PARTY-NOTICES.md` and the debug symbols |
 | `/usr/local/bin/moongate` | A symlink to `/opt/moongate/Moongate.Server` |
+| `/usr/local/bin/mgboot` | Root initialization command, when included in the installed release |
 
 Those two locations need root. Run the line as root, or leave it to `sudo`, which the script
 uses itself when it is not running as root. Nothing else is created: no service, no system user
@@ -25,6 +26,20 @@ Releases ship `linux-x64` and `linux-arm64`. Both binaries are self-contained, s
 needs no .NET runtime. Systems using musl, Alpine among them, are refused: the binary is built
 against glibc. On macOS and Windows, take the archive for your platform from the
 [releases page](https://github.com/moongate-community/moongate/releases), or use Docker.
+
+## Prepare the root
+
+Releases containing `mgboot` can prepare the data root without a server startup:
+
+```sh
+sudo mkdir -p /srv/moongate && sudo chown "$USER" /srv/moongate
+mgboot /srv/moongate
+```
+
+This writes the default config and copies the release's base SQL migrations.
+Configure the client path and databases, then apply the migrations before starting.
+See [Prepare a root with mgboot](mgboot.md) for the complete sequence and rerun behavior.
+The first-start behavior below also applies to older releases without the utility.
 
 ## First start
 

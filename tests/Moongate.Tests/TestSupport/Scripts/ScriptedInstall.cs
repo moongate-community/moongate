@@ -58,11 +58,16 @@ internal sealed class ScriptedInstall : IDisposable
     }
 
     /// <summary>Writes a release archive and its checksum, with the given text standing in for the server binary.</summary>
-    public void Publish(string version, string rid, string binaryContent)
+    public void Publish(string version, string rid, string binaryContent, bool includeMgboot = false)
     {
         var bundle = Path.Combine(_root, "staging-" + Guid.NewGuid().ToString("N"), "moongate-" + rid);
         Directory.CreateDirectory(bundle);
         File.WriteAllText(Path.Combine(bundle, "Moongate.Server"), binaryContent);
+        if (includeMgboot)
+        {
+            File.WriteAllText(Path.Combine(bundle, "mgboot"), "boot payload");
+        }
+
         File.WriteAllText(Path.Combine(bundle, "LICENSE"), "GNU AFFERO GENERAL PUBLIC LICENSE");
         var directory = Path.Combine(ReleaseDirectory, "v" + version);
         Directory.CreateDirectory(directory);

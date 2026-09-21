@@ -8,6 +8,9 @@ atomic commit.
 For a complete first example, follow [Create a persistent entity](persistence-entity-tutorial.md).
 It covers the entity class, registration, schema setup, and asynchronous reads and writes.
 
+To prepare a new server root and copy the bundled base migrations, run
+[`mgboot <root-directory>`](mgboot.md). It does not connect to PostgreSQL or apply SQL.
+
 ## Register entities
 
 Every persisted type implements `IMoongateEntity` and has a stable, nonzero `Serial`.

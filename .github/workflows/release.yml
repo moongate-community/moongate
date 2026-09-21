@@ -61,6 +61,12 @@ jobs:
           -c Release -r ${{ matrix.rid }}
           -o dist/moongate-${{ matrix.rid }}/migration-runner
 
+      - name: Publish mgboot ${{ matrix.rid }}
+        run: >
+          dotnet publish src/Moongate.Boot/Moongate.Boot.csproj
+          -c Release -r ${{ matrix.rid }}
+          -o dist/moongate-${{ matrix.rid }}
+
       - name: Package
         run: >
           tar -C dist -czf
