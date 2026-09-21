@@ -58,6 +58,13 @@ container.RegisterMoongatePersistence(options)
 Registration performs no database I/O. Initialization validates the entire batch,
 including duplicate registrations, table mappings and schema ownership.
 
+The server publishes `PersistenceReadyEvent` after initialization and before startup
+services begin. It publishes `PersistenceStoppedEvent` after the initialized owner
+is disposed, before container disposal. Subscribe during plugin registration using
+`container.OnEvent<TEvent>(...)`; see [persistence lifecycle events](plugins.md#persistence-lifecycle-events)
+for timing, failure behavior, and examples. The standalone persistence library
+does not publish these server events.
+
 ### Optional explicit plugin modules
 
 A plugin can still implement `IPersistenceModule` and register it through

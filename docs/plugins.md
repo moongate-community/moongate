@@ -330,6 +330,51 @@ It resolves (registering, if needed) the one container-owned `IMoongateEventBus`
 calls its `Subscribe`, so the handler is awaited for every published `TEvent` for as
 long as the container lives.
 
+### Persistence lifecycle events
+
+Subscribe during `Register` to events from `Moongate.Server.Core.Data.Events`:
+
+```csharp
+container.OnEvent<PersistenceReadyEvent>(async (_, cancellationToken) =>
+{
+    var items = await container.Resolve<IDataAccess<Item>>()
+        .GetAllAsync(cancellationToken);
+    // Load plugin state before startup services begin.
+});
+
+container.OnEvent<PersistenceStoppedEvent>((_, _) =>
+{
+    // Persistence is disposed. Release plugin bookkeeping; do not query or save.
+    return Task.CompletedTask;
+});
+```
+
+`Item` stands for your registered persistence entity. Import
+`Moongate.Persistence.Interfaces` for `IDataAccess<T>` and
+`Moongate.Server.Core.Extensions` for `OnEvent<TEvent>`.
+
+Both events are payload-free host lifecycle notifications published through the
+same singleton event bus used by `IEventBusService`. They are awaited and emitted
+at most once per bootstrap lifecycle:
+
+| Event | Timing and guarantees |
+| --- | --- |
+| `PersistenceReadyEvent` | Plugin registration and persistence initialization have completed successfully, including connection, migration, and schema checks. Persistence is usable; startup services and `MoongateStartedEvent` follow. |
+| `PersistenceStoppedEvent` | An initialized persistence owner has been disposed successfully, after service shutdown and `MoongateStoppedEvent`, but before container disposal. It uses a non-cancelable token so shutdown observers can finish. |
+
+No persistence events are published when the host has no persistence registration
+or initialization fails. If persistence initializes but a later startup stage
+fails, cleanup still publishes `PersistenceStoppedEvent`. These events belong to
+the server bootstrap; directly constructing or disposing a library persistence
+owner does not publish host events. `PersistenceStoppedEvent` is a closure signal,
+not confirmation that a final world save succeeded.
+
+Handlers run as part of the lifecycle operation, not on the game loop. Do not
+await the bootstrap's `StartAsync` or `StopAsync` from one of these handlers: that
+operation can be waiting for the handler itself. The default event bus logs and
+isolates observer exceptions; critical startup validation belongs in a startup
+service. A canceled startup token still aborts startup.
+
 ### Registering Lua modules
 
 `RegisterScriptModule<T>()` registers `T` as a container singleton and records its

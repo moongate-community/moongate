@@ -17,7 +17,7 @@ internal static class PersistencePreparation
         }
     }
 
-    public static async Task InitializeAsync(Container container, CancellationToken cancellationToken)
+    public static async Task<bool> InitializeAsync(Container container, CancellationToken cancellationToken)
     {
         LoadPlugins(container);
 
@@ -47,7 +47,11 @@ internal static class PersistencePreparation
                     exception
                 );
             }
+
+            return true;
         }
+
+        return false;
     }
 
     public static void LoadPlugins(Container container)

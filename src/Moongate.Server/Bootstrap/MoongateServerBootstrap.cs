@@ -20,6 +20,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     private readonly StartupServiceLifecycle _services;
     private Task? _gameLoopCompletion;
     private bool _startupSucceeded;
+    private bool _persistenceInitialized;
 
     public MoongateServerBootstrap(Container container, CancellationToken cancellationToken)
     {
@@ -148,7 +149,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             )
             .ConfigureAwait(false);
 
-        await CaptureFailureAsync(() => PersistencePreparation.DisposePersistenceAsync(_container), failures)
+        await CaptureFailureAsync(StopPersistenceAsync, failures)
             .ConfigureAwait(false);
         CaptureFailure(_container.Dispose, failures);
         _logger.Information("Moongate Server stopped.");
@@ -165,7 +166,13 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     {
         try
         {
-            await PersistencePreparation.InitializeAsync(_container, _cancellationToken).ConfigureAwait(false);
+            _persistenceInitialized = await PersistencePreparation.InitializeAsync(_container, _cancellationToken)
+                                                                 .ConfigureAwait(false);
+
+            if (_persistenceInitialized)
+            {
+                await _eventBus.Value.PublishAsync(new PersistenceReadyEvent(), _cancellationToken).ConfigureAwait(false);
+            }
 
             await _services.StartAsync(
                                service =>
@@ -202,6 +209,17 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             cleanupFailures.Insert(0, exception);
 
             throw new AggregateException(cleanupFailures);
+        }
+    }
+
+    private async Task StopPersistenceAsync()
+    {
+        await PersistencePreparation.DisposePersistenceAsync(_container).ConfigureAwait(false);
+
+        if (_persistenceInitialized)
+        {
+            _persistenceInitialized = false;
+            await _eventBus.Value.PublishAsync(new PersistenceStoppedEvent(), CancellationToken.None).ConfigureAwait(false);
         }
     }
 
