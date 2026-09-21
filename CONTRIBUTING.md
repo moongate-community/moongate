@@ -67,6 +67,8 @@ dotnet build Moongate.slnx -c Release --no-restore
 dotnet test Moongate.slnx -c Release --no-build
 ```
 
+For opt-in concurrent database load tests, see [Stress-test PostgreSQL persistence](docs/persistence-stress.md).
+
 Add or update tests for changed behavior. For bug fixes, include a regression test
 that demonstrates the failure. Follow the test layout in `CODE_CONVENTION.md` and
 keep assertions focused on observable behavior. Prose-only corrections do not
