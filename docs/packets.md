@@ -89,9 +89,11 @@ public sealed class ExamplePacket : BaseFixedPacket<ExamplePacket>,
 ```
 
 The metadata attribute is named `PacketHandler`, but describes the **wire packet**;
-it does not register the game handler class. `RegisterPacket<T>()` infers incoming,
-outgoing or both from the implemented interfaces. Duplicate types or conflicting
-opcode/direction pairs fail registration. Freeze only after composing the table.
+it does not register the game handler class. Call `RegisterIncoming<T>()` for a
+packet that implements `IIncomingPacket<T>` (a bidirectional packet covers both
+directions in one call), or `RegisterOutgoing<T>()` for one that implements only
+`IOutgoingPacket`. Duplicate types or conflicting opcode/direction pairs fail
+registration. Freeze only after composing the table.
 
 Run this `Program.cs` as a byte-level smoke test without a server or client:
 
@@ -101,7 +103,7 @@ using Moongate.Network.Packets.Serialization;
 
 var registry = new PacketRegistry();
 PacketTable.Register(registry); // Optional: include the built-in formats.
-registry.RegisterPacket<ExamplePacket>();
+registry.RegisterIncoming<ExamplePacket>();
 registry.Freeze();
 
 var bytes = PacketCodec.Encode(new ExamplePacket(0x1234));
@@ -178,36 +180,3 @@ decodable does not imply it has login/game behavior. See
 [Transport and game ownership](network-game-separation.md) for connection lifecycle,
 queue limits and overload policy, and [Game loop and timers](game-loop-and-timers.md)
 for thread ownership and completion.
-
-## Standalone span helpers
-
-`SpanReader`, `SpanWriter` and `SpanOwner` were added on `develop` **after 0.4.0**;
-use a source reference or a release containing that addition. Existing packet
-contracts still use `PacketReader`/`PacketWriter`.
-
-```csharp
-using Moongate.Network.Packets.Spans;
-
-var writer = new SpanWriter(16, resize: true);
-try
-{
-    writer.WriteByte(0x73);
-    writer.WriteUInt16BigEndian(0x1234);
-    using var owner = writer.ToSpan();
-    var reader = new SpanReader(owner.Span);
-    if (reader.ReadByte() != 0x73 || reader.ReadUInt16() != 0x1234)
-    {
-        throw new InvalidOperationException("Span round trip failed");
-    }
-}
-finally
-{
-    writer.Dispose();
-}
-```
-
-`ToSpan()` transfers a pooled buffer into an owner, or copies a caller-owned
-buffer; the writer resets. Dispose that owner after all reads finish. `ToArray()`
-returns an independent copy. Pass pooled writers by `ref`, never copy ownership,
-and do not retain spans across growth, transfer or disposal. For string widths,
-endianness and capacity semantics see the [package README](../src/Moongate.Network.Packets/README.md).
