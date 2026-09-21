@@ -146,4 +146,4 @@ by default and cannot be combined with `auto_sync_schema`.
 Standalone library integrations can supply `DevelopmentMigrationOptions` with an
 `IDevelopmentMigrationRunner` implementation and an explicit component resolver.
 Keep migration execution isolated from FreeSql's PostgreSQL driver. See the
-[development migration guide](https://moongate.sh/guides/persistence/#automatic-development-migrations).
+[development migration guide](https://moongate.sh/server/persistence/#automatic-development-migrations).
