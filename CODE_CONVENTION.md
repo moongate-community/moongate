@@ -137,6 +137,8 @@ private readonly ILogger _logger = Log.ForContext<MyService>();
 - Handlers run sequentially in registration order and the publisher awaits each. One failing handler is
   logged and does not skip the handlers after it. Events are routed by exact type, and a late subscriber
   never receives an earlier event.
+- `SubscribeAll` receives every published event regardless of type, dispatched after that event's typed
+  subscribers, and follows the same sequential-await, idempotent-disposal, fault-isolated rules.
 
 - A service subscribes in `StartAsync` and disposes the token in `StopAsync`, never in the constructor:
   a singleton's constructor runs only when something resolves it, so a constructor subscription is

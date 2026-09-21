@@ -3,7 +3,7 @@ namespace Moongate.Server.Core.Interfaces.Events;
 /// <summary>Provides ordered, awaited publication of transient Moongate events.</summary>
 public interface IMoongateEventBus
 {
-    /// <summary>Publishes an event to handlers registered for its exact type.</summary>
+    /// <summary>Publishes an event to handlers registered for its exact type, then to every catch-all handler.</summary>
     Task PublishAsync<TEvent>(TEvent message, CancellationToken cancellationToken = default)
         where TEvent : class, IMoongateEvent;
 

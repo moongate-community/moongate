@@ -26,20 +26,19 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
             registrations = _registrations.TryGetValue(typeof(TEvent), out var registered)
                                 ? registered.ToArray()
                                 : [];
-            catchAllRegistrations = _catchAllRegistrations.ToArray();
+            catchAllRegistrations = _catchAllRegistrations.Count == 0 ? [] : _catchAllRegistrations.ToArray();
         }
 
         foreach (var registration in registrations)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await InvokeHandlerAsync(registration, message, typeof(TEvent).FullName, cancellationToken).ConfigureAwait(false);
+            await InvokeHandlerAsync(registration, message, cancellationToken).ConfigureAwait(false);
         }
 
         foreach (var registration in catchAllRegistrations)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            await InvokeHandlerAsync<IMoongateEvent>(registration, message, message.GetType().FullName, cancellationToken)
-                .ConfigureAwait(false);
+            await InvokeHandlerAsync<IMoongateEvent>(registration, message, cancellationToken).ConfigureAwait(false);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -83,24 +82,27 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
     }
 
     internal void Unsubscribe(Type eventType, MoongateEventRegistration registration)
-    {
-        lock (_sync)
-        {
-            if (_isDisposed || !_registrations.TryGetValue(eventType, out var registrations))
+        => RemoveUnderLock(
+            () =>
             {
-                return;
-            }
+                if (!_registrations.TryGetValue(eventType, out var registrations))
+                {
+                    return;
+                }
 
-            registrations.Remove(registration);
+                registrations.Remove(registration);
 
-            if (registrations.Count == 0)
-            {
-                _registrations.Remove(eventType);
+                if (registrations.Count == 0)
+                {
+                    _registrations.Remove(eventType);
+                }
             }
-        }
-    }
+        );
 
     internal void UnsubscribeCatchAll(MoongateEventRegistration registration)
+        => RemoveUnderLock(() => _catchAllRegistrations.Remove(registration));
+
+    private void RemoveUnderLock(Action remove)
     {
         lock (_sync)
         {
@@ -109,14 +111,13 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
                 return;
             }
 
-            _catchAllRegistrations.Remove(registration);
+            remove();
         }
     }
 
     private async Task InvokeHandlerAsync<TMessage>(
         MoongateEventRegistration registration,
         TMessage message,
-        string? eventTypeName,
         CancellationToken cancellationToken
     )
     {
@@ -139,7 +140,7 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
                 "Moongate event observer {HandlerType}.{HandlerMethod} failed for {EventType}.",
                 handler.Method.DeclaringType?.FullName ?? "<unknown>",
                 handler.Method.Name,
-                eventTypeName
+                message?.GetType().FullName
             );
         }
     }
