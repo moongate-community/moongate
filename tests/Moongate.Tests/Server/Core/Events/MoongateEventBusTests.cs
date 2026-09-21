@@ -294,6 +294,28 @@ public sealed class MoongateEventBusTests
     }
 
     [Fact]
+    public async Task SubscribeAll_ReceivesEventsOfAnyType_InPublicationOrder()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+        var seen = new List<Type>();
+        bus.SubscribeAll(
+            (message, _) =>
+            {
+                seen.Add(message.GetType());
+
+                return Task.CompletedTask;
+            }
+        );
+
+        await bus.PublishAsync(new MoongateStartedEvent());
+        await bus.PublishAsync(new MoongateStoppingEvent());
+
+        Assert.Equal([typeof(MoongateStartedEvent), typeof(MoongateStoppingEvent)], seen);
+    }
+
+    [Fact]
     public async Task Subscription_Dispose_RemovesOnlyItsHandlerAndIsIdempotent()
     {
         using var container = new Container();

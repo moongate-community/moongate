@@ -7,6 +7,7 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
 {
     private readonly Lock _sync = new();
     private readonly Dictionary<Type, List<MoongateEventRegistration>> _registrations = new();
+    private readonly List<MoongateEventRegistration> _catchAllRegistrations = new();
     private readonly ILogger _logger = Log.ForContext<MoongateEventBus>();
     private bool _isDisposed;
 
@@ -17,6 +18,7 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
         cancellationToken.ThrowIfCancellationRequested();
 
         MoongateEventRegistration[] registrations;
+        MoongateEventRegistration[] catchAllRegistrations;
 
         lock (_sync)
         {
@@ -24,33 +26,20 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
             registrations = _registrations.TryGetValue(typeof(TEvent), out var registered)
                                 ? registered.ToArray()
                                 : [];
+            catchAllRegistrations = _catchAllRegistrations.ToArray();
         }
 
         foreach (var registration in registrations)
         {
             cancellationToken.ThrowIfCancellationRequested();
-            var handler = (Func<TEvent, CancellationToken, Task>)registration.Handler;
+            await InvokeHandlerAsync(registration, message, typeof(TEvent).FullName, cancellationToken).ConfigureAwait(false);
+        }
 
-            try
-            {
-                await handler(message, cancellationToken).ConfigureAwait(false);
-            }
-            catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-
-                throw;
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(
-                    exception,
-                    "Moongate event observer {HandlerType}.{HandlerMethod} failed for {EventType}.",
-                    handler.Method.DeclaringType?.FullName ?? "<unknown>",
-                    handler.Method.Name,
-                    typeof(TEvent).FullName
-                );
-            }
+        foreach (var registration in catchAllRegistrations)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            await InvokeHandlerAsync<IMoongateEvent>(registration, message, message.GetType().FullName, cancellationToken)
+                .ConfigureAwait(false);
         }
 
         cancellationToken.ThrowIfCancellationRequested();
@@ -76,7 +65,21 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
             registrations.Add(registration);
         }
 
-        return new MoongateEventSubscription(this, eventType, registration);
+        return new MoongateEventSubscription(target => Unsubscribe(eventType, target), registration);
+    }
+
+    public IDisposable SubscribeAll(Func<IMoongateEvent, CancellationToken, Task> handler)
+    {
+        ArgumentNullException.ThrowIfNull(handler);
+        var registration = new MoongateEventRegistration(handler);
+
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+            _catchAllRegistrations.Add(registration);
+        }
+
+        return new MoongateEventSubscription(UnsubscribeCatchAll, registration);
     }
 
     internal void Unsubscribe(Type eventType, MoongateEventRegistration registration)
@@ -97,6 +100,50 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
         }
     }
 
+    internal void UnsubscribeCatchAll(MoongateEventRegistration registration)
+    {
+        lock (_sync)
+        {
+            if (_isDisposed)
+            {
+                return;
+            }
+
+            _catchAllRegistrations.Remove(registration);
+        }
+    }
+
+    private async Task InvokeHandlerAsync<TMessage>(
+        MoongateEventRegistration registration,
+        TMessage message,
+        string? eventTypeName,
+        CancellationToken cancellationToken
+    )
+    {
+        var handler = (Func<TMessage, CancellationToken, Task>)registration.Handler;
+
+        try
+        {
+            await handler(message, cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+
+            throw;
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(
+                exception,
+                "Moongate event observer {HandlerType}.{HandlerMethod} failed for {EventType}.",
+                handler.Method.DeclaringType?.FullName ?? "<unknown>",
+                handler.Method.Name,
+                eventTypeName
+            );
+        }
+    }
+
     private void ThrowIfDisposed()
         => ObjectDisposedException.ThrowIf(_isDisposed, this);
 
@@ -111,6 +158,7 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
 
             _isDisposed = true;
             _registrations.Clear();
+            _catchAllRegistrations.Clear();
         }
     }
 }

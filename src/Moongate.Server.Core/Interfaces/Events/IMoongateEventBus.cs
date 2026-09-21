@@ -11,4 +11,8 @@ public interface IMoongateEventBus
     /// <returns>An idempotent token that removes this registration when disposed.</returns>
     IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
         where TEvent : class, IMoongateEvent;
+
+    /// <summary>Registers a handler invoked for every published event, regardless of its type.</summary>
+    /// <returns>An idempotent token that removes this registration when disposed.</returns>
+    IDisposable SubscribeAll(Func<IMoongateEvent, CancellationToken, Task> handler);
 }
