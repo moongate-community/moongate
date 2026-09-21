@@ -13,6 +13,7 @@
 
     <ItemGroup>
         <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
+        <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj" />
         <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj"/>
     </ItemGroup>
 

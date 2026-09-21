@@ -36,6 +36,7 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Ultima;
 using Moongate.Server.Types.Persistence;
+using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Handlers.Login;
 using Serilog;
@@ -166,6 +167,7 @@ await ConsoleApp.RunAsync(
         Log.Logger = loggingConfiguration.CreateLogger();
 
         var serverConfig = ConfigHelper.Load(Path.Combine(directoriesConfig["config"], "moongate.toml"));
+        Log.Information("Server mode: {ServerMode}", serverConfig.Mode);
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
             .RegisterServices(services =>
@@ -233,6 +235,8 @@ await ConsoleApp.RunAsync(
                         )
                         .RegisterMoongateService<IConsolePromptService>(consolePrompt)
                         .RegisterMoongateService<IConsoleInputService, ConsoleInputService>(1000);
+
+                    container.RegisterPlugin<MoongateUltimaPlugin>();
 
                     PacketPipelineRegistration.Register(services);
                     ApiServerRegistration.Register(services);

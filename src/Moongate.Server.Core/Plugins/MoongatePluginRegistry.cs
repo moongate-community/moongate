@@ -1,6 +1,8 @@
+using System.Diagnostics;
 using DryIoc;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Interfaces.Plugins;
+using Serilog;
 
 namespace Moongate.Server.Core.Plugins;
 
@@ -8,6 +10,7 @@ namespace Moongate.Server.Core.Plugins;
 public sealed class MoongatePluginRegistry
 {
     private readonly Container _container;
+    private readonly ILogger _logger = Log.ForContext<MoongatePluginRegistry>();
     private readonly List<MoongatePluginData> _plugins = new();
     private bool _isRegistering;
     private bool _isFaulted;
@@ -71,7 +74,13 @@ public sealed class MoongatePluginRegistry
             {
                 try
                 {
+                    var startWatch = Stopwatch.GetTimestamp();
                     instances[metadata.Id].Register(_container);
+                    _logger.Information(
+                        "Plugin '{PluginId}' registered in {Elapsed:F6} seconds.",
+                        metadata.Id,
+                        Stopwatch.GetElapsedTime(startWatch)
+                    );
                 }
                 catch (Exception exception)
                 {
