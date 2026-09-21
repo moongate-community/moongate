@@ -62,11 +62,11 @@ public sealed class DiagnosticBootstrapTests
             .RegisterServices(
                 services =>
                 {
-                    services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
+                    services.AddMoongateService<IRecordingStartupService, RecordingStartupService>(
                         new RecordingStartupService("timer", events),
                         -900
                     );
-                    services.RegisterMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(
+                    services.AddMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(
                         new RecordingStartupService("game_loop", events),
                         -800
                     );
@@ -153,7 +153,7 @@ public sealed class DiagnosticBootstrapTests
                                 }
                             );
 
-                    return services.RegisterMoongateService(
+                    return services.AddMoongateService(
                         new CallbackStartupService(
                             async () =>
                             {
@@ -256,14 +256,14 @@ public sealed class DiagnosticBootstrapTests
     {
         services.RegisterInstance(options ?? new DiagnosticOptions());
         services.RegisterInstance<TimeProvider>(time);
-        services.RegisterMoongateService<IEventBusService, EventBusService>();
+        services.AddMoongateService<IEventBusService, EventBusService>();
 
         foreach (var provider in providers)
         {
             services.RegisterInstance(provider);
         }
 
-        return services.RegisterMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority);
+        return services.AddMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority);
     }
 
     private static Container RegisterDiagnosticHost(
@@ -278,12 +278,12 @@ public sealed class DiagnosticBootstrapTests
         services.RegisterInstance<IGameLoopService>(new GameLoopMetricsSourceStub(new()));
         services.RegisterInstance<ITimerService>(new TimerMetricsSourceStub(new()));
         services.RegisterInstance<ISessionService>(new SessionCountSourceStub(0));
-        services.RegisterMoongateService<IEventBusService, EventBusService>();
+        services.AddMoongateService<IEventBusService, EventBusService>();
         services.AddMetricProvider<SystemMetricsProvider>()
                 .AddMetricProvider<GameLoopMetricsProvider>()
                 .AddMetricProvider<TimerMetricsProvider>()
                 .AddMetricProvider<SessionMetricsProvider>();
-        services.RegisterMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority);
+        services.AddMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority);
 
         return services;
     }

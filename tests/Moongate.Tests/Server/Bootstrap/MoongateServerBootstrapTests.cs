@@ -69,7 +69,7 @@ public class MoongateServerBootstrapTests
             () => bootstrap.RegisterServices(
                 services =>
                 {
-                    services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
+                    services.AddMoongateService<IRecordingStartupService, RecordingStartupService>(
                         new RecordingStartupService("custom", events)
                     );
 
@@ -99,7 +99,7 @@ public class MoongateServerBootstrapTests
                 calls++;
                 events.Add("register");
 
-                return services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
+                return services.AddMoongateService<IRecordingStartupService, RecordingStartupService>(
                     () =>
                     {
                         events.Add("construct");
@@ -206,7 +206,7 @@ public class MoongateServerBootstrapTests
                     }
                 );
 
-                return services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
+                return services.AddMoongateService<IRecordingStartupService, RecordingStartupService>(
                     new RecordingStartupService("custom", events)
                 );
             }
@@ -225,7 +225,7 @@ public class MoongateServerBootstrapTests
         var events = new List<string>();
         var service = new RecordingStartupService("service", events);
         var container = new Container();
-        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
+        container.AddMoongateService<IRecordingStartupService, RecordingStartupService>(service);
         var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
 
         var runTask = MoongateServerRunner.RunAsync(bootstrap);
@@ -266,7 +266,7 @@ public class MoongateServerBootstrapTests
         var late = new RecordingStartupService("late", events);
         var resolvedNonAutostart = false;
         var container = new Container();
-        container.RegisterMoongateService(
+        container.AddMoongateService(
             () =>
             {
                 resolvedNonAutostart = true;
@@ -275,9 +275,9 @@ public class MoongateServerBootstrapTests
             },
             -20
         );
-        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(early, -10);
-        container.RegisterMoongateService(early, 5);
-        container.RegisterMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(late, 10);
+        container.AddMoongateService<IRecordingStartupService, RecordingStartupService>(early, -10);
+        container.AddMoongateService(early, 5);
+        container.AddMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(late, 10);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         await bootstrap.StartAsync();
@@ -328,7 +328,7 @@ public class MoongateServerBootstrapTests
             cleanupFails ? cleanupFailure : null
         );
         var container = new Container();
-        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
+        container.AddMoongateService<IRecordingStartupService, RecordingStartupService>(service);
         var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
 
         var start = bootstrap.StartAsync();
@@ -361,8 +361,8 @@ public class MoongateServerBootstrapTests
         var early = new RecordingStartupService("early", events, stopFailure: cleanupFailure);
         var failing = new RecordingStartupService("failing", events, startFailure);
         var container = new Container();
-        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(early, -1)
-                 .RegisterMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(failing);
+        container.AddMoongateService<IRecordingStartupService, RecordingStartupService>(early, -1)
+                 .AddMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(failing);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         var failure = await Assert.ThrowsAsync<AggregateException>(() => bootstrap.StartAsync());
@@ -381,7 +381,7 @@ public class MoongateServerBootstrapTests
         var events = new List<string>();
         var service = new RecordingStartupService("service", events, stopFailure: stopFailure);
         var container = new Container();
-        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
+        container.AddMoongateService<IRecordingStartupService, RecordingStartupService>(service);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         await bootstrap.StartAsync();
 

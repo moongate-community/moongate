@@ -23,10 +23,10 @@ public class ContainerExtensionsTests
 
         var returned = overload switch
         {
-            "generic-mapping" => container.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(7),
-            "generic-self"    => container.RegisterMoongateService<StartupRegistrationService>(7),
-            "runtime-mapping" => container.RegisterMoongateService(contractType, implementationType, 7),
-            "runtime-self"    => container.RegisterMoongateService(implementationType, 7),
+            "generic-mapping" => container.AddMoongateService<IRegistrationService, StartupRegistrationService>(7),
+            "generic-self"    => container.AddMoongateService<StartupRegistrationService>(7),
+            "runtime-mapping" => container.AddMoongateService(contractType, implementationType, 7),
+            "runtime-self"    => container.AddMoongateService(implementationType, 7),
             _                 => throw new ArgumentOutOfRangeException(nameof(overload))
         };
 
@@ -48,7 +48,7 @@ public class ContainerExtensionsTests
 
         Assert.Throws<ArgumentException>(
             () =>
-                container.RegisterMoongateService(typeof(object), implementationType, () => new())
+                container.AddMoongateService(typeof(object), implementationType, () => new())
         );
 
         Assert.False(container.IsRegistered<object>());
@@ -62,7 +62,7 @@ public class ContainerExtensionsTests
         var calls = 0;
 
         Assert.Throws<ArgumentException>(
-            () => container.RegisterMoongateService<IRegistrationService>(
+            () => container.AddMoongateService<IRegistrationService>(
                 () =>
                 {
                     calls++;
@@ -104,46 +104,46 @@ public class ContainerExtensionsTests
 
         var returned = overload switch
         {
-            "generic-mapping-context" => container.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(
+            "generic-mapping-context" => container.AddMoongateService<IRegistrationService, StartupRegistrationService>(
                 resolver => Create(resolver.Resolve<RegistrationDependency>()),
                 3
             ),
             "generic-mapping-parameterless" => container
-                .RegisterMoongateService<IRegistrationService, StartupRegistrationService>(
+                .AddMoongateService<IRegistrationService, StartupRegistrationService>(
                     () => Create(dependency),
                     3
                 ),
-            "generic-self-context" => container.RegisterMoongateService<StartupRegistrationService>(
+            "generic-self-context" => container.AddMoongateService<StartupRegistrationService>(
                 resolver => Create(resolver.Resolve<RegistrationDependency>()),
                 3
             ),
-            "generic-self-parameterless" => container.RegisterMoongateService(
+            "generic-self-parameterless" => container.AddMoongateService(
                 () => Create(dependency),
                 3
             ),
-            "inferred-self-context" => container.RegisterMoongateService(
+            "inferred-self-context" => container.AddMoongateService(
                 resolver => Create(resolver.Resolve<RegistrationDependency>()),
                 3
             ),
-            "inferred-self-parameterless" => container.RegisterMoongateService(() => Create(dependency), 3),
-            "runtime-mapping-context" => container.RegisterMoongateService(
+            "inferred-self-parameterless" => container.AddMoongateService(() => Create(dependency), 3),
+            "runtime-mapping-context" => container.AddMoongateService(
                 typeof(IRegistrationService),
                 typeof(StartupRegistrationService),
                 resolver => Create(resolver.Resolve<RegistrationDependency>()),
                 3
             ),
-            "runtime-mapping-parameterless" => container.RegisterMoongateService(
+            "runtime-mapping-parameterless" => container.AddMoongateService(
                 typeof(IRegistrationService),
                 typeof(StartupRegistrationService),
                 () => Create(dependency),
                 3
             ),
-            "runtime-self-context" => container.RegisterMoongateService(
+            "runtime-self-context" => container.AddMoongateService(
                 typeof(StartupRegistrationService),
                 resolver => Create(resolver.Resolve<RegistrationDependency>()),
                 3
             ),
-            "runtime-self-parameterless" => container.RegisterMoongateService(
+            "runtime-self-parameterless" => container.AddMoongateService(
                 typeof(StartupRegistrationService),
                 () => Create(dependency),
                 3
@@ -180,15 +180,15 @@ public class ContainerExtensionsTests
                 switch (overload)
                 {
                     case "type":
-                        container.RegisterMoongateService(typeof(IRegistrationService), typeof(RegistrationDependency));
+                        container.AddMoongateService(typeof(IRegistrationService), typeof(RegistrationDependency));
 
                         break;
                     case "instance":
-                        container.RegisterMoongateService(typeof(IRegistrationService), new RegistrationDependency());
+                        container.AddMoongateService(typeof(IRegistrationService), new RegistrationDependency());
 
                         break;
                     case "factory":
-                        container.RegisterMoongateService(
+                        container.AddMoongateService(
                             typeof(IRegistrationService),
                             typeof(RegistrationDependency),
                             () => new RegistrationDependency()
@@ -217,13 +217,13 @@ public class ContainerExtensionsTests
 
         var returned = overload switch
         {
-            "generic-service" => container.RegisterMoongateService(service, -2),
-            "generic-mapping" => container.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(
+            "generic-service" => container.AddMoongateService(service, -2),
+            "generic-mapping" => container.AddMoongateService<IRegistrationService, StartupRegistrationService>(
                 instance,
                 -2
             ),
-            "inferred-self"   => container.RegisterMoongateService(instance, -2),
-            "runtime-service" => container.RegisterMoongateService(contractType, instance, -2),
+            "inferred-self"   => container.AddMoongateService(instance, -2),
+            "runtime-service" => container.AddMoongateService(contractType, instance, -2),
             _                 => throw new ArgumentOutOfRangeException(nameof(overload))
         };
 
@@ -243,8 +243,8 @@ public class ContainerExtensionsTests
         using var container = new Container();
         container.RegisterInstance(new RegistrationDependency());
 
-        container.RegisterMoongateService<RegistrationService>()
-                 .RegisterMoongateService<StartupRegistrationService>(10);
+        container.AddMoongateService<RegistrationService>()
+                 .AddMoongateService<StartupRegistrationService>(10);
 
         Assert.Collection(
             container.Resolve<List<ServiceRegistrationData>>(),
@@ -273,15 +273,15 @@ public class ContainerExtensionsTests
 
         Assert.Throws<ArgumentNullException>(
             () =>
-                container.RegisterMoongateService((RegistrationService)null!)
+                container.AddMoongateService((RegistrationService)null!)
         );
         Assert.Throws<ArgumentNullException>(
             () =>
-                container.RegisterMoongateService((Func<RegistrationService>)null!)
+                container.AddMoongateService((Func<RegistrationService>)null!)
         );
         Assert.Throws<ArgumentNullException>(
             () =>
-                container.RegisterMoongateService((Func<IResolverContext, RegistrationService>)null!)
+                container.AddMoongateService((Func<IResolverContext, RegistrationService>)null!)
         );
         Assert.False(container.IsRegistered<RegistrationService>());
         Assert.False(container.IsRegistered<List<ServiceRegistrationData>>());
@@ -292,7 +292,7 @@ public class ContainerExtensionsTests
     {
         using var container = new Container();
 
-        container.RegisterMoongateService(typeof(IGenericRegistrationService<>), typeof(GenericRegistrationService<>));
+        container.AddMoongateService(typeof(IGenericRegistrationService<>), typeof(GenericRegistrationService<>));
 
         var integers = container.Resolve<IGenericRegistrationService<int>>();
         Assert.Same(integers, container.Resolve<IGenericRegistrationService<int>>());
@@ -307,7 +307,7 @@ public class ContainerExtensionsTests
     public void Resolve_FactoryReturnsWrongImplementationOrNull_Throws(bool returnsNull)
     {
         using var container = new Container();
-        container.RegisterMoongateService(
+        container.AddMoongateService(
             typeof(IRegistrationService),
             typeof(StartupRegistrationService),
             () => returnsNull ? null! : new RegistrationService(new())

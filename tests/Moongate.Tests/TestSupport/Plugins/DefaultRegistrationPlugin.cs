@@ -19,6 +19,6 @@ public sealed class DefaultRegistrationPlugin : IMoongatePlugin
     public void Register(Container container)
     {
         container.RegisterInstance(new RegistrationDependency());
-        container.RegisterMoongateService<IRegistrationService, RegistrationService>();
+        container.AddMoongateService<IRegistrationService, RegistrationService>();
     }
 }

@@ -154,6 +154,20 @@ PostgreSQL. Pending, changed, or missing applied files prevent services from
 starting. Keep automatic schema synchronization only for disposable development
 databases; it does not record versioned migrations.
 
+### Migration directory
+
+Normal server startup reads core SQL from `<root>/migrations` unless
+`persistence.migrations_directory` explicitly selects another directory. The root
+is selected by `--root-directory`, then `MOONGATE_ROOT`, then the executable's
+directory. Run [`mgboot <root-directory>`](mgboot.md) to copy the bundled base SQL
+into a new root before applying migrations and starting the server.
+
+The standalone migration runner still defaults to the distribution's `migrations`
+directory when neither its `--migrations-directory` option nor the config supplies
+a path. Set `persistence.migrations_directory` explicitly to make the server and
+runner use the same catalog; `mgboot` already writes this absolute path for a new
+config. Existing configs are preserved.
+
 ### Automatic development migrations
 
 To save and apply SQL migrations when the server starts, opt in explicitly:

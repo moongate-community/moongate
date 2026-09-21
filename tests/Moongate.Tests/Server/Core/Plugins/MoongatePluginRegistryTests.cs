@@ -159,7 +159,7 @@ public sealed class MoongatePluginRegistryTests
         var factoryCalls = 0;
         var plugin = Create(
             "services",
-            current => current.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(
+            current => current.AddMoongateService<IRegistrationService, StartupRegistrationService>(
                 resolver =>
                 {
                     factoryCalls++;

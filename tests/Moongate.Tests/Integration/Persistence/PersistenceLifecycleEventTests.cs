@@ -31,7 +31,7 @@ public sealed class PersistenceLifecycleEventTests
                 return Task.CompletedTask;
             }
         );
-        fixture.Container.RegisterMoongateService(
+        fixture.Container.AddMoongateService(
             new CallbackStartupService(
                 () =>
                 {
@@ -90,7 +90,7 @@ public sealed class PersistenceLifecycleEventTests
                 events.Add("persistence:stopped");
             }
         );
-        container.RegisterMoongateService(
+        container.AddMoongateService(
             new CallbackStartupService(
                 async () =>
                 {
@@ -194,7 +194,7 @@ public sealed class PersistenceLifecycleEventTests
                 return Task.CompletedTask;
             }
         );
-        fixture.Container.RegisterMoongateService(
+        fixture.Container.AddMoongateService(
             new CallbackStartupService(
                 () => failOnStart ? Task.FromException(failure) : Task.CompletedTask,
                 () => failOnStart ? Task.CompletedTask : Task.FromException(failure)

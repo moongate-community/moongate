@@ -62,7 +62,11 @@ await ConsoleApp.RunAsync(
         {
             try
             {
-                RootDirectoryInitializer.Initialize(rootDirectory, Path.Combine(AppContext.BaseDirectory, "migrations"), Console.Out);
+                RootDirectoryInitializer.Initialize(
+                    rootDirectory,
+                    Path.Combine(AppContext.BaseDirectory, "migrations"),
+                    Console.Out
+                );
             }
             catch (Exception exception)
             {
@@ -211,49 +215,47 @@ await ConsoleApp.RunAsync(
                     );
                     services.RegisterMoongatePersistence(
                                 serverConfig.Persistence.ToOptions(
-                                    Path.Combine(AppContext.BaseDirectory, "migrations"),
+                                    Path.Combine(directoriesConfig.Root, "migrations"),
                                     directoriesConfig["plugins"],
                                     serverConfig.Mode,
                                     rootDirectory
                                 )
                             )
-                            .RegisterMoongateService<TimerWheelService>(-900)
-                            .RegisterMoongateService<IGameLoopService, GameLoopService>(-800)
-                            .RegisterMoongateService<IUltimaDataService, UltimaDataService>(-10)
-                            .RegisterMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
-                            .RegisterMoongateService<ISessionService, SessionService>()
-                            .RegisterMoongateService<IEventBusService, EventBusService>();
+                            .AddMoongateService<ITimerService, TimerWheelService>(-900)
+                            .AddMoongateService<IGameLoopService, GameLoopService>(-800)
+                            .AddMoongateService<IUltimaDataService, UltimaDataService>(-10)
+                            .AddMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
+                            .AddMoongateService<ISessionService, SessionService>()
+                            .AddMoongateService<IEventBusService, EventBusService>();
 
                     services.AddMetricProvider<SystemMetricsProvider>()
                             .AddMetricProvider<GameLoopMetricsProvider>()
                             .AddMetricProvider<TimerMetricsProvider>()
                             .AddMetricProvider<SessionMetricsProvider>();
-                    services.RegisterMoongateService<IDiagnosticService, DiagnosticService>(
-                                DiagnosticService.StartupPriority
-                            )
-                            .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+                    services.AddMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority)
+                            .AddMoongateService<IPluginLoaderService, PluginLoaderService>(
                                 () =>
                                     new(services, directoriesConfig)
                             )
                             .RegisterPacketHandler<PingPacket, PingPacketHandler>()
                             .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>()
-                            .RegisterMoongateService<ICommandSystemService, CommandSystemService>()
+                            .AddMoongateService<ICommandSystemService, CommandSystemService>()
                             .RegisterCommand<EchoCommand>(
                                 "echo|e",
                                 "Echoes back its arguments.",
                                 CommandSourceType.Console | CommandSourceType.InGame,
                                 AccountType.Regular
                             )
-                            .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(
+                            .AddMoongateService<IScriptEngine, LuaScriptEngineService>(
                                 LuaScriptEngineService.StartupPriority
                             )
-                            .RegisterScriptModule<LogModule>()
+                            .AddScriptModule<LogModule>()
                             .RegisterCommand<ScriptCommand>(
                                 "script",
                                 "Reloads a script file or prints the engine's counters: script reload <file> | script metrics."
                             )
-                            .RegisterMoongateService<IConsolePromptService>(consolePrompt)
-                            .RegisterMoongateService<IConsoleInputService, ConsoleInputService>(1000);
+                            .AddMoongateService<IConsolePromptService>(consolePrompt)
+                            .AddMoongateService<IConsoleInputService, ConsoleInputService>(1000);
 
                     container.RegisterPlugin<MoongateUltimaPlugin>();
 

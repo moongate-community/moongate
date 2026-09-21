@@ -119,7 +119,7 @@ public sealed class PluginLifecycleEventTests
                     events.Add("persistence:stopped");
                     return Task.CompletedTask;
                 });
-                pluginContainer.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
+                pluginContainer.AddMoongateService<IRecordingStartupService, RecordingStartupService>(service);
                 pluginContainer.OnEvent<MoongateStartedEvent>(
                     async (_, _) =>
                     {
@@ -173,7 +173,7 @@ public sealed class PluginLifecycleEventTests
         var startFailure = new InvalidOperationException("start failed");
         var service = new RecordingStartupService("service", events, startFailure);
         var container = new Container();
-        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
+        container.AddMoongateService<IRecordingStartupService, RecordingStartupService>(service);
         container.RegisterInstance(new RecordingDisposable(events, "container:dispose"));
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         Task? requestedStop = null;
@@ -238,7 +238,7 @@ public sealed class PluginLifecycleEventTests
             pluginContainer =>
             {
                 events.Add("plugin:register");
-                pluginContainer.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
+                pluginContainer.AddMoongateService<IRecordingStartupService, RecordingStartupService>(service);
                 pluginContainer.OnEvent<MoongateStartedEvent>(
                     (_, _) =>
                     {
@@ -318,8 +318,8 @@ public sealed class PluginLifecycleEventTests
         var early = new RecordingStartupService("early", events);
         var late = new RecordingStartupService("late", events, stopFailure: stopFailure);
         var container = new Container();
-        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(early, -1)
-                 .RegisterMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(late, 1)
+        container.AddMoongateService<IRecordingStartupService, RecordingStartupService>(early, -1)
+                 .AddMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(late, 1)
                  .OnEvent<MoongateStoppingEvent>(
                      (_, _) =>
                      {
@@ -410,7 +410,7 @@ public sealed class PluginLifecycleEventTests
         var releaseObserver = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var service = new RecordingStartupService("service", events);
         var container = new Container();
-        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service)
+        container.AddMoongateService<IRecordingStartupService, RecordingStartupService>(service)
                  .OnEvent<MoongateStartedEvent>(
                      async (_, _) =>
                      {
@@ -472,7 +472,7 @@ public sealed class PluginLifecycleEventTests
             }
         );
         var container = new Container();
-        container.RegisterMoongateService(service)
+        container.AddMoongateService(service)
                  .OnEvent<MoongateStoppingEvent>(
                      (_, _) =>
                      {

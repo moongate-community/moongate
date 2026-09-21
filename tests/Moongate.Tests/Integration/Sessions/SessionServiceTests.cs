@@ -124,7 +124,7 @@ public sealed class SessionServiceTests
             {
                 services.RegisterInstance<IGameLoopService>(fixture.Loop);
 
-                return services.RegisterMoongateService<ISessionService, SessionService>();
+                return services.AddMoongateService<ISessionService, SessionService>();
             }
         );
 

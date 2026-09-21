@@ -35,7 +35,7 @@ public sealed class SamplePlugin : IMoongatePlugin
     {
         container.AddPersistenceWorld<GreetingNote>();
         container.RegisterInstance(new GreetingCounter());
-        container.RegisterScriptModule<GreeterModule>();
+        container.AddScriptModule<GreeterModule>();
         container.RegisterScriptEnum<Tone>();
         container.RegisterCommand<GreetCommand>(
             "greet",

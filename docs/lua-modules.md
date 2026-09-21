@@ -9,7 +9,7 @@ A Lua module is a plain C# class marked with `[ScriptModule("name", "help text")
 - every `[ScriptConstant]`-marked static member becomes a read-only value field;
 - every enum a bound signature or constant mentions — or that is registered explicitly — is published as its own read-only global table mapping member names to numbers.
 
-A module is registered from a plugin's `Register(Container container)` method, or, for a module the host itself owns, directly in `Program.cs` (`src/Moongate.Server/Program.cs` registers the built-in `log` module the same way, with `.RegisterScriptModule<LogModule>()`). Registration only records the type; nothing is reflected and no Lua table exists until the script engine starts and binds it.
+A module is registered from a plugin's `Register(Container container)` method, or, for a module the host itself owns, directly in `Program.cs` (`src/Moongate.Server/Program.cs` registers the built-in `log` module the same way, with `.AddScriptModule<LogModule>()`). Registration only records the type; nothing is reflected and no Lua table exists until the script engine starts and binds it.
 
 Scripts run inside a sandbox: `io`, `os` and `debug` are never opened, `dofile`, `loadfile` and `rawset` are removed, and `print` is redirected to the server log instead of the console. `string.rep` also refuses to build a result past a configured cap. See the [package README's "Sandbox" section](../src/Moongate.Scripting/README.md#sandbox) for the full list.
 
@@ -158,11 +158,11 @@ The published table's name is exactly the C# enum's own type name, with no domai
 The sample plugin registers the module and its enum with these two lines from `samples/Moongate.Sample.Plugin/SamplePlugin.cs`:
 
 ```csharp
-container.RegisterScriptModule<GreeterModule>();
+container.AddScriptModule<GreeterModule>();
 container.RegisterScriptEnum<Tone>();
 ```
 
-`RegisterScriptModule<TModule>()` (`src/Moongate.Scripting/Extensions/Scripts/ContainerScriptingExtensions.cs`) does two things: it registers `TModule` in the container as a `Reuse.Singleton`, and it records the type in the `IScriptModuleRegistry` the engine reads at startup. Neither action touches Lua — the engine resolves each registered type from the container and binds it only when it starts. Because the module is a container singleton, any other class that takes it as a constructor dependency resolves the very same instance: the sample's `GreetCommand(GreeterModule greeter)` (`samples/Moongate.Sample.Plugin/Commands/GreetCommand.cs`) is handed the identical `GreeterModule` the script engine binds, so the console command and Lua scripts share its state. A module's own constructor dependencies — here, `GreetingCounter` — must already be registered in the container by the time the engine starts, since resolution happens then, not at `RegisterScriptModule` time; the sample registers it first with `container.RegisterInstance(new GreetingCounter())`.
+`AddScriptModule<TModule>()` (`src/Moongate.Scripting/Extensions/Scripts/ContainerScriptingExtensions.cs`) does two things: it registers `TModule` in the container as a `Reuse.Singleton`, and it records the type in the `IScriptModuleRegistry` the engine reads at startup. Neither action touches Lua — the engine resolves each registered type from the container and binds it only when it starts. Because the module is a container singleton, any other class that takes it as a constructor dependency resolves the very same instance: the sample's `GreetCommand(GreeterModule greeter)` (`samples/Moongate.Sample.Plugin/Commands/GreetCommand.cs`) is handed the identical `GreeterModule` the script engine binds, so the console command and Lua scripts share its state. A module's own constructor dependencies — here, `GreetingCounter` — must already be registered in the container by the time the engine starts, since resolution happens then, not at `AddScriptModule` time; the sample registers it first with `container.RegisterInstance(new GreetingCounter())`.
 
 `RegisterScriptEnum<TEnum>()` only adds the registry entry; there is no DI singleton to create, since an enum is reflected, not resolved.
 

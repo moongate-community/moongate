@@ -27,7 +27,7 @@ public static class ContainerScriptingExtensions
         /// <summary>Publishes a module class to Lua and registers it as a singleton so it can take dependencies.</summary>
         /// <typeparam name="TModule">A class carrying <see cref="Moongate.Scripting.Attributes.Scripts.ScriptModuleAttribute" />.</typeparam>
         /// <returns>The same container, for chaining.</returns>
-        public Container RegisterScriptModule<TModule>()
+        public Container AddScriptModule<TModule>()
             where TModule : class
         {
             ArgumentNullException.ThrowIfNull(container);

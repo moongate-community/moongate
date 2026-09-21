@@ -79,7 +79,7 @@ end)
   `error`, Serilog templates), `timer` (`after`, `every`, `cancel`) and the global
   `wait(seconds)`; `print` goes to the server log. Host modules are C# classes marked
   `[ScriptModule]` / `[ScriptFunction]` / `[ScriptConstant]`, registered with
-  `RegisterScriptModule<T>()` in `Program.cs`.
+  `AddScriptModule<T>()` in `Program.cs`.
 - **Budget:** a deterministic instruction count, not a wall clock. A coroutine resume
   may run 150,000 instructions and a top-level chunk 10,000,000 before it is aborted
   with a script error; `string.rep` refuses results longer than 16,777,216 characters. The budget bounds VM execution; C# bindings must avoid blocking, and total memory is not capped.

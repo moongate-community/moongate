@@ -15,7 +15,7 @@ public sealed class EventBusServiceTests
         using var container = new Container();
         MoongateStartedEvent? received = null;
         container.RegisterMoongateEventBus()
-                 .RegisterMoongateService<IEventBusService, EventBusService>();
+                 .AddMoongateService<IEventBusService, EventBusService>();
         container.OnEvent<MoongateStartedEvent>(
             (message, _) =>
             {
@@ -38,7 +38,7 @@ public sealed class EventBusServiceTests
         using var cancellationSource = new CancellationTokenSource();
         CancellationToken receivedToken = default;
         container.RegisterMoongateEventBus()
-                 .RegisterMoongateService<IEventBusService, EventBusService>();
+                 .AddMoongateService<IEventBusService, EventBusService>();
         var first = container.Resolve<IEventBusService>();
         var second = container.Resolve<IEventBusService>();
         first.Subscribe<MoongateStoppedEvent>(
@@ -62,7 +62,7 @@ public sealed class EventBusServiceTests
         using var container = new Container();
         var received = 0;
         container.RegisterMoongateEventBus()
-                 .RegisterMoongateService<IEventBusService, EventBusService>();
+                 .AddMoongateService<IEventBusService, EventBusService>();
         var service = container.Resolve<IEventBusService>();
         var subscription = service.Subscribe<MoongateStoppingEvent>(
             (_, _) =>

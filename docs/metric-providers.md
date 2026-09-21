@@ -77,7 +77,7 @@ It is registered from `samples/Moongate.Sample.Plugin/SamplePlugin.cs`:
 public void Register(Container container)
 {
     container.RegisterInstance(new GreetingCounter());
-    container.RegisterScriptModule<GreeterModule>();
+    container.AddScriptModule<GreeterModule>();
     container.RegisterScriptEnum<Tone>();
     container.RegisterCommand<GreetCommand>(
         "greet",

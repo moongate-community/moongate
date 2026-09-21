@@ -32,7 +32,9 @@ Keep `mgboot` and `Moongate.Server` from the same release together.
 | `.mgboot.lock` | Retained file used to prevent simultaneous initialization |
 
 The new config sets `persistence.migrations_directory` to the absolute `migrations`
-path inside this root. Other values remain the server defaults: automatic migration
+path inside this root. Normal server startup also defaults to `<root>/migrations`
+when that setting is absent; keeping the explicit path makes the standalone
+migration runner use the same catalog. Other values remain the server defaults: automatic migration
 generation, automatic schema synchronization and the API listener are disabled.
 The root does not need database access or Ultima Online client files to be prepared.
 

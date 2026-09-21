@@ -45,14 +45,14 @@ public sealed class SamplePluginTests
         container.RegisterInstance(files.Directories);
         container.RegisterInstance(new ScriptEngineOptions { ScriptsDirectory = files.Directories["scripts"] });
         container.RegisterDelegate<ITimerService>(resolver => resolver.Resolve<TimerWheelService>(), Reuse.Singleton);
-        container.RegisterMoongateService<TimerWheelService>(-900)
-                 .RegisterMoongateService<IGameLoopService, GameLoopService>(-800)
-                 .RegisterMoongateService<IEventBusService, EventBusService>()
-                 .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+        container.AddMoongateService<TimerWheelService>(-900)
+                 .AddMoongateService<IGameLoopService, GameLoopService>(-800)
+                 .AddMoongateService<IEventBusService, EventBusService>()
+                 .AddMoongateService<IPluginLoaderService, PluginLoaderService>(
                      () =>
                          new(container, files.Directories)
                  )
-                 .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority);
+                 .AddMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         await bootstrap.StartAsync().WaitAsync(Timeout);

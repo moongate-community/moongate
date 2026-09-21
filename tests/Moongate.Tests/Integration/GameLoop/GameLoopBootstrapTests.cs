@@ -24,7 +24,7 @@ public sealed class GameLoopBootstrapTests
         using var release = new ManualResetEventSlim();
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var shutdown = new SignalingShutdownService();
-        container.RegisterMoongateService(shutdown);
+        container.AddMoongateService(shutdown);
         var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
         var loop = container.Resolve<IGameLoopService>();
         var failure = new InvalidOperationException("game command failed while draining");
@@ -85,7 +85,7 @@ public sealed class GameLoopBootstrapTests
 
         if (failOtherService)
         {
-            container.RegisterMoongateService(new RecordingStartupService("consumer", [], stopFailure: cleanupFailure));
+            container.AddMoongateService(new RecordingStartupService("consumer", [], stopFailure: cleanupFailure));
         }
 
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
@@ -194,7 +194,7 @@ public sealed class GameLoopBootstrapTests
         using var cancellation = new CancellationTokenSource();
         var loopFailure = new InvalidOperationException("game command failed");
         var stopFailure = new IOException("another service failed to stop");
-        container.RegisterMoongateService(new RecordingStartupService("consumer", [], stopFailure: stopFailure));
+        container.AddMoongateService(new RecordingStartupService("consumer", [], stopFailure: stopFailure));
         var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
         var loop = container.Resolve<IGameLoopService>();
         await bootstrap.StartAsync();
@@ -285,7 +285,7 @@ public sealed class GameLoopBootstrapTests
         var loop = container.Resolve<IGameLoopService>();
         var startupFailure = new IOException("later service failed to start");
         var loopFailure = new InvalidOperationException("game command failed during rollback");
-        container.RegisterMoongateService(
+        container.AddMoongateService(
             new CallbackStartupService(
                 async () =>
                 {
@@ -328,7 +328,7 @@ public sealed class GameLoopBootstrapTests
         using var container = CreateContainer();
         var loop = container.Resolve<IGameLoopService>();
         var failure = new InvalidOperationException("game command failed during startup");
-        container.RegisterMoongateService(
+        container.AddMoongateService(
             new CallbackStartupService(
                 async () =>
                 {
@@ -368,10 +368,10 @@ public sealed class GameLoopBootstrapTests
         var container = new Container();
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
         container.RegisterInstance(new TimerWheelOptions());
-        container.RegisterMoongateService<TimerWheelService>(-900);
+        container.AddMoongateService<TimerWheelService>(-900);
         container.RegisterDelegate<ITimerService>(services => services.Resolve<TimerWheelService>(), Reuse.Singleton);
         container.RegisterInstance(new GameLoopOptions { QueueCapacity = 4, MaxWorkItemsPerBatch = 2 });
-        container.RegisterMoongateService<IGameLoopService, GameLoopService>(-800);
+        container.AddMoongateService<IGameLoopService, GameLoopService>(-800);
 
         return container;
     }

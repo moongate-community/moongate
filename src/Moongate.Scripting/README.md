@@ -76,7 +76,7 @@ for bootstrap/module examples, timer ownership, reload and editor support.
 
 This package depends on `Moongate.Core`, `Moongate.Server.Core`, `LuaCSharp` and `Serilog`. It does not start a game loop or
 timers; the host provides them and registers the engine with
-`RegisterMoongateService<IScriptEngine, LuaScriptEngineService>`.
+`AddMoongateService<IScriptEngine, LuaScriptEngineService>`.
 
 ## License and source
 

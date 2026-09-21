@@ -82,7 +82,7 @@ public sealed class DevelopmentMigrationTests
                 }
             }
         );
-        container.RegisterMoongateService(
+        container.AddMoongateService(
             new Moongate.Tests.Support.Server.CallbackStartupService(
                 () =>
                 {

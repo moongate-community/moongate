@@ -44,7 +44,7 @@ public sealed class WorldSaveBootstrapTests
                 TimeProvider.System
             )
         );
-        container.RegisterMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority);
+        container.AddMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority);
         Assert.Same(container.Resolve<IWorldSaveService>(), container.Resolve<IWorldSaveService>());
     }
 
@@ -168,7 +168,7 @@ public sealed class WorldSaveBootstrapTests
 
         if (failCleanup)
         {
-            container.RegisterMoongateService(
+            container.AddMoongateService(
                 new CallbackStartupService(() => Task.CompletedTask, () => throw cleanupFailure)
             );
         }
@@ -198,7 +198,7 @@ public sealed class WorldSaveBootstrapTests
         await using var fixture = await WorldSaveFixture.CreateAsync();
         using var container = CreateContainer(fixture);
         var ownerStopped = false;
-        container.RegisterMoongateService(
+        container.AddMoongateService(
             new CallbackStartupService(
                 () => Task.CompletedTask,
                 async () =>
@@ -233,12 +233,12 @@ public sealed class WorldSaveBootstrapTests
     {
         var container = new Container();
         container.RegisterInstance(fixture.Persistence, setup: Setup.With(preventDisposal: true));
-        container.RegisterMoongateService<ITimerService>(fixture.Timers, -900);
-        container.RegisterMoongateService<IGameLoopService>(fixture.Loop, -800);
+        container.AddMoongateService<ITimerService>(fixture.Timers, -900);
+        container.AddMoongateService<IGameLoopService>(fixture.Loop, -800);
 
         if (registerSave)
         {
-            container.RegisterMoongateService<IWorldSaveService>(fixture.Saves, WorldSaveService.StartupPriority);
+            container.AddMoongateService<IWorldSaveService>(fixture.Saves, WorldSaveService.StartupPriority);
         }
 
         return container;

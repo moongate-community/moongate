@@ -25,6 +25,6 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         container
             .AddPersistenceAuth<AccountEntity>();
 
-        container.RegisterMoongateService<IAccountService, AccountService>();
+        container.AddMoongateService<IAccountService, AccountService>();
     }
 }

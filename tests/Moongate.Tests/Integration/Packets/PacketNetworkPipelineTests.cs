@@ -53,9 +53,9 @@ public sealed class PacketNetworkPipelineTests
         container.RegisterInstance(
             new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } }
         );
-        container.RegisterMoongateService<TimerWheelService>(-900);
-        container.RegisterMoongateService<IGameLoopService, GameLoopService>(-800);
-        container.RegisterMoongateService<ISessionService, SessionService>();
+        container.AddMoongateService<TimerWheelService>(-900);
+        container.AddMoongateService<IGameLoopService, GameLoopService>(-800);
+        container.AddMoongateService<ISessionService, SessionService>();
         container.RegisterInstance<IPluginLoaderService>(new DeferredPacketPluginLoader(container));
         container.RegisterPacketHandler<PingPacket, PingPacketHandler>()
                  .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();

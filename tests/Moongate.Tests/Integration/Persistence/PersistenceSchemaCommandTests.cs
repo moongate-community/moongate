@@ -80,7 +80,7 @@ public sealed class PersistenceSchemaCommandTests
         await using var fixture = await HostPersistenceFixture.CreateAsync(false);
         var loader = new PersistencePluginLoader(fixture.Container);
         fixture.Container.RegisterInstance<IPluginLoaderService>(loader);
-        fixture.Container.RegisterMoongateService<CallbackStartupService>(
+        fixture.Container.AddMoongateService<CallbackStartupService>(
             () => throw new IOException("service must not resolve"),
             -2000
         );

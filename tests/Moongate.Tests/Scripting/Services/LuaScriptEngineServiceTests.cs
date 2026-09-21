@@ -28,8 +28,8 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         _container.RegisterMoongateEventBus();
         _container.RegisterInstance<IGameLoopService>(_loop);
         _container.RegisterInstance<ITimerService>(_timers);
-        _container.RegisterScriptModule<ProbeModule>();
-        _container.RegisterScriptModule<LogModule>();
+        _container.AddScriptModule<ProbeModule>();
+        _container.AddScriptModule<LogModule>();
         _container.Resolve<IMoongateEventBus>()
                   .Subscribe<ScriptErrorEvent>(
                       (evt, _) =>

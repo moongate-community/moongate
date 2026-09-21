@@ -26,7 +26,7 @@ public sealed class PluginLoaderServiceTests
                     services.RegisterInstance(events);
                     services.RegisterInstance(files.Directories);
 
-                    return services.RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+                    return services.AddMoongateService<IPluginLoaderService, PluginLoaderService>(
                         () =>
                             new(services, files.Directories)
                     );
@@ -55,7 +55,7 @@ public sealed class PluginLoaderServiceTests
         List<string> events = [];
         container.RegisterInstance(events);
         container.RegisterInstance(files.Directories);
-        container.RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+        container.AddMoongateService<IPluginLoaderService, PluginLoaderService>(
             () =>
                 new(container, files.Directories)
         );

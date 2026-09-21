@@ -44,7 +44,7 @@ public sealed class PersistenceBootstrapTests
         using var container = new Container();
         container.RegisterMoongatePersistence(config.ToOptions(mode: mode));
         var started = false;
-        container.RegisterMoongateService(
+        container.AddMoongateService(
             new CallbackStartupService(
                 () =>
                 {
@@ -87,7 +87,7 @@ public sealed class PersistenceBootstrapTests
         await using var fixture = await HostPersistenceFixture.CreateAsync();
         var started = false;
         fixture.Container.RegisterInstance<IPluginLoaderService>(new PersistencePluginLoader(fixture.Container));
-        fixture.Container.RegisterMoongateService(
+        fixture.Container.AddMoongateService(
             new CallbackStartupService(
                 async () =>
                 {
@@ -136,7 +136,7 @@ public sealed class PersistenceBootstrapTests
         await using var fixture = await HostPersistenceFixture.CreateAsync(false);
         fixture.RegisterEntity();
         var started = false;
-        fixture.Container.RegisterMoongateService(
+        fixture.Container.AddMoongateService(
             new CallbackStartupService(
                 () =>
                 {
@@ -165,7 +165,7 @@ public sealed class PersistenceBootstrapTests
         fixture.RegisterEntity();
         var failure = new IOException("startup failed");
         var stopped = false;
-        fixture.Container.RegisterMoongateService(
+        fixture.Container.AddMoongateService(
             new CallbackStartupService(
                 () => throw failure,
                 () =>
@@ -189,7 +189,7 @@ public sealed class PersistenceBootstrapTests
         await using var fixture = await HostPersistenceFixture.CreateAsync();
         fixture.RegisterEntity();
         var failure = new IOException("cleanup failed");
-        fixture.Container.RegisterMoongateService(new CallbackStartupService(() => Task.CompletedTask, () => throw failure));
+        fixture.Container.AddMoongateService(new CallbackStartupService(() => Task.CompletedTask, () => throw failure));
         var owner = fixture.Owner;
         var bootstrap = new MoongateServerBootstrap(fixture.Container, CancellationToken.None);
         await bootstrap.StartAsync();

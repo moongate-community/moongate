@@ -22,7 +22,7 @@ public sealed class ContainerScriptingExtensionsTests
     {
         using var container = new Container();
 
-        var result = container.RegisterScriptModule<FirstRegistryModule>().RegisterScriptModule<SecondRegistryModule>();
+        var result = container.AddScriptModule<FirstRegistryModule>().AddScriptModule<SecondRegistryModule>();
 
         Assert.Same(container, result);
         Assert.Equal(
@@ -36,9 +36,9 @@ public sealed class ContainerScriptingExtensionsTests
     public void RegisterScriptModule_TwiceForTheSameType_Throws()
     {
         using var container = new Container();
-        container.RegisterScriptModule<FirstRegistryModule>();
+        container.AddScriptModule<FirstRegistryModule>();
 
-        Assert.Throws<InvalidOperationException>(() => container.RegisterScriptModule<FirstRegistryModule>());
+        Assert.Throws<InvalidOperationException>(() => container.AddScriptModule<FirstRegistryModule>());
     }
 
     [Fact]
@@ -46,6 +46,6 @@ public sealed class ContainerScriptingExtensionsTests
     {
         using var container = new Container();
 
-        Assert.Throws<ArgumentException>(() => container.RegisterScriptModule<UnmarkedModule>());
+        Assert.Throws<ArgumentException>(() => container.AddScriptModule<UnmarkedModule>());
     }
 }

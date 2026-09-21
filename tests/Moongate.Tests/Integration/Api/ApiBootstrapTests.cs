@@ -87,7 +87,7 @@ public sealed class ApiBootstrapTests
             services =>
             {
                 RegisterInputs(services, fixture);
-                services.RegisterMoongateService(
+                services.AddMoongateService(
                     new CallbackStartupService(
                         () => Task.CompletedTask,
                         () =>
@@ -105,7 +105,7 @@ public sealed class ApiBootstrapTests
                 ApiServerRegistration.Register(services);
 
                 // A distinct contract avoids replacing the earlier callback's registration.
-                services.RegisterMoongateService<IMoongateStartupService, CallbackStartupService>(
+                services.AddMoongateService<IMoongateStartupService, CallbackStartupService>(
                     new CallbackStartupService(
                         () =>
                         {
@@ -140,7 +140,7 @@ public sealed class ApiBootstrapTests
             services =>
             {
                 RegisterInputs(services, fixture);
-                services.RegisterMoongateService(
+                services.AddMoongateService(
                     new CallbackStartupService(
                         () => Task.CompletedTask,
                         () =>

@@ -188,7 +188,7 @@ public sealed class SamplePlugin : IMoongatePlugin
     {
         container.AddPersistenceWorld<GreetingNote>();
         container.RegisterInstance(new GreetingCounter());
-        container.RegisterScriptModule<GreeterModule>();
+        container.AddScriptModule<GreeterModule>();
         container.RegisterScriptEnum<Tone>();
         container.RegisterCommand<GreetCommand>(
             "greet",
@@ -217,7 +217,7 @@ between the Lua module and the metric provider; `GreetingCounter`
 `Interlocked` because it is touched from the game loop (through the Lua module) and
 from whatever thread runs the console command.
 
-`container.RegisterScriptModule<GreeterModule>()` and
+`container.AddScriptModule<GreeterModule>()` and
 `container.RegisterScriptEnum<Tone>()` publish `GreeterModule`
 (`samples/Moongate.Sample.Plugin/Modules/GreeterModule.cs`) as the `greeter` Lua
 table and `Tone` (`samples/Moongate.Sample.Plugin/Types/Tone.cs`) as a read-only
@@ -273,12 +273,12 @@ Follow [Generate, review and apply](persistence.md#generate-review-and-apply).
 
 | Registration helper | What it registers | Documented in |
 | --- | --- | --- |
-| `RegisterMoongateService<TService, TImpl>(priority)` / `RegisterMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order (`src/Moongate.Server.Core/Extensions/ContainerExtensions.cs` has further overloads for factories and runtime types) | this page |
+| `AddMoongateService<TService, TImpl>(priority)` / `AddMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order (`src/Moongate.Server.Core/Extensions/ContainerExtensions.cs` has further overloads for factories and runtime types) | this page |
 | `RegisterCommand<TExecutor>(name, description, source, minimumAccountType)` | One console/in-game command executor, as a singleton | [Console commands](#console-commands) |
 | `RegisterApiHandler<THandler>()` | One typed API handler singleton in the host registry; the opt-in listener freezes it after plugin loading | [API host configuration](server-configuration.md#enable-the-internal-api-server) |
 | `RegisterPacketHandler<TPacket, THandler>()` | One packet handler singleton bound to an incoming packet type | this page |
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
-| `RegisterScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Registering Lua modules](#registering-lua-modules) |
+| `AddScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Registering Lua modules](#registering-lua-modules) |
 | `AddMetricProvider<T>()` | An `IMetricProvider` contribution, singleton, added to the diagnostics collector | [Registering metric providers](#registering-metric-providers) |
 | `AddPersistenceAuth<T>()` / `AddPersistenceWorld<T>()` | A typed entity facade for Accounts or Realm, with modules managed internally (needs `Moongate.Persistence`) | [PostgreSQL persistence](persistence.md) |
 
@@ -379,7 +379,7 @@ service. A canceled startup token still aborts startup.
 
 ### Registering Lua modules
 
-`RegisterScriptModule<T>()` registers `T` as a container singleton and records its
+`AddScriptModule<T>()` registers `T` as a container singleton and records its
 type for the script engine to bind when it starts, which is why `GreetCommand` can
 take `GreeterModule` in its own constructor and call the exact instance the engine
 publishes to Lua; `RegisterScriptEnum<T>()` publishes an enum the same way without
@@ -758,12 +758,12 @@ public sealed class SamplePluginTests
         container.RegisterInstance(files.Directories);
         container.RegisterInstance(new ScriptEngineOptions { ScriptsDirectory = files.Directories["scripts"] });
         container.RegisterDelegate<ITimerService>(resolver => resolver.Resolve<TimerWheelService>(), Reuse.Singleton);
-        container.RegisterMoongateService<TimerWheelService>(priority: -900)
-                 .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
-                 .RegisterMoongateService<IEventBusService, EventBusService>()
-                 .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+        container.AddMoongateService<TimerWheelService>(priority: -900)
+                 .AddMoongateService<IGameLoopService, GameLoopService>(priority: -800)
+                 .AddMoongateService<IEventBusService, EventBusService>()
+                 .AddMoongateService<IPluginLoaderService, PluginLoaderService>(
                      () => new PluginLoaderService(container, files.Directories))
-                 .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority);
+                 .AddMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         await bootstrap.StartAsync().WaitAsync(Timeout);
@@ -843,7 +843,7 @@ This test proves three things:
   `Hello` calls (one from Lua, one from the command), proving the shared
   `GreetingCounter` is genuinely shared. Asserting `definitions.lua` contains
   `---@class greeter` and `---@enum Tone` proves
-  `RegisterScriptModule`/`RegisterScriptEnum` fed the editor tooling the plugin
+  `AddScriptModule`/`RegisterScriptEnum` fed the editor tooling the plugin
   asked for.
 
 The unit approach skips the disk and the loader and exercises the registry
@@ -853,7 +853,7 @@ construct `new MoongatePluginRegistry(container)`, call `.Register(plugin)` with
 in-memory `IMoongatePlugin`, then resolve what `Register` added from the same
 container. `Register_PreservesLazySingletonServiceAndRegistrationMetadata` is the
 clearest example: it registers a plugin whose `Register` calls
-`RegisterMoongateService<TService, TImpl>(factory, priority: 42)`, then resolves
+`AddMoongateService<TService, TImpl>(factory, priority: 42)`, then resolves
 `List<ServiceRegistrationData>` to assert the recorded priority and autostart flag,
 and resolves the service itself to assert the factory ran lazily exactly once.
 

@@ -18,7 +18,6 @@ public sealed class PersistenceConfig
 
     public string? MigrationsDirectory { get; set; }
 
-
     public PersistenceDatabaseConfig Accounts { get; set; } =
         new() { ConnectionString = "postgres://moongate:moongate@localhost:5432/auth" };
 
@@ -36,17 +35,18 @@ public sealed class PersistenceConfig
         migrationsDirectory = ResolveMigrationsDirectory(migrationsDirectory);
 
         var development = AutoGenerateMigrations
-            ? new DevelopmentMigrationOptions(
-                migrationsDirectory!,
-                pluginsDirectory,
-                new DevelopmentMigrationRunner(
-                    rootDirectory ?? Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory,
-                    migrationsDirectory!,
-                    pluginsDirectory
-                ),
-                MigrationComponentResolver.Resolve
-            )
-            : null;
+                              ? new DevelopmentMigrationOptions(
+                                  migrationsDirectory!,
+                                  pluginsDirectory,
+                                  new DevelopmentMigrationRunner(
+                                      rootDirectory ??
+                                      Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory,
+                                      migrationsDirectory!,
+                                      pluginsDirectory
+                                  ),
+                                  MigrationComponentResolver.Resolve
+                              )
+                              : null;
 
         return new(
             [
@@ -57,10 +57,10 @@ public sealed class PersistenceConfig
             migrationsDirectory is null
                 ? null
                 : target => MigrationCatalog.Load(
-                    migrationsDirectory,
-                    pluginsDirectory,
-                    target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World
-                ),
+                      migrationsDirectory,
+                      pluginsDirectory,
+                      target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World
+                  ),
             target => (mode & (target == PersistenceDatabaseTarget.Accounts ? ServerMode.Login : ServerMode.Game)) != 0,
             development
         );
@@ -68,8 +68,8 @@ public sealed class PersistenceConfig
 
     public string? ResolveMigrationsDirectory(string? fallback = null)
         => string.IsNullOrWhiteSpace(MigrationsDirectory)
-            ? fallback
-            : MigrationsDirectory.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
+               ? fallback
+               : MigrationsDirectory.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
 
     public void Validate()
     {

@@ -223,8 +223,8 @@ public sealed class GameLoopTimingTests
         using var container = new Container();
         using var cancellation = new CancellationTokenSource();
         var loop = CreateLoop(timers, clock);
-        container.RegisterMoongateService<ITimerService, TimerWheelService>(timers, -900);
-        container.RegisterMoongateService<IGameLoopService, GameLoopService>(loop, -800);
+        container.AddMoongateService<ITimerService, TimerWheelService>(timers, -900);
+        container.AddMoongateService<IGameLoopService, GameLoopService>(loop, -800);
         var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
         var failure = new InvalidOperationException("timer failed");
         await bootstrap.StartAsync();

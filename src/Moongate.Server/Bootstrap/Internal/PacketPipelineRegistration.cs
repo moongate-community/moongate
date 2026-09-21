@@ -21,9 +21,9 @@ internal static class PacketPipelineRegistration
 
         // Default-priority plugin dependencies start before handler binding and remain alive
         // until listeners, connection cleanup, and both packet services have stopped.
-        return container.RegisterMoongateService<IConnectionService, ConnectionService>(40)
-                        .RegisterMoongateService<IPacketSendService, PacketSendService>(50)
-                        .RegisterMoongateService<IPacketDispatchService, PacketDispatchService>(60)
-                        .RegisterMoongateService<IGameServerService, GameServerService>(100);
+        return container.AddMoongateService<IConnectionService, ConnectionService>(40)
+                        .AddMoongateService<IPacketSendService, PacketSendService>(50)
+                        .AddMoongateService<IPacketDispatchService, PacketDispatchService>(60)
+                        .AddMoongateService<IGameServerService, GameServerService>(100);
     }
 }
