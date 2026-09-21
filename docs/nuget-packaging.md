@@ -29,8 +29,8 @@ original Moongate logo, XML documentation, and a companion symbol package.
 | [Moongate.Server.Core](../src/Moongate.Server.Core/README.md) | Server and plugin contracts, events, and registrations | Api, Core, Network, Network.Packets |
 | [Moongate.Ultima](../src/Moongate.Ultima/README.md) | UO client data readers and rendering utilities | None |
 
-`Moongate.Server` and `Moongate.MigrationRunner` are executables distributed through release artifacts and
-container images. They do not produce library packages. Tests and plugin fixtures
+`Moongate.Server`, `Moongate.Boot`, and `Moongate.MigrationRunner` are executables distributed through
+release artifacts and container images. They do not produce library packages. Tests and plugin fixtures
 are also excluded from packing.
 
 ## What the command checks
@@ -45,7 +45,8 @@ are also excluded from packing.
    and the API example references MessagePack to generate its serializers.
 4. Restores, builds, and runs those apps, checking their output. This exercises
    geometry, TCP lifecycle, packet encoding/decoding, PostgreSQL persistence,
-   the event bus, typed API registration, and native SkiaSharp loading. Separate solution tests also start independent .NET processes to verify mutual TLS, local authorization, direct game access with login offline, and no replay after a lost response.
+   the event bus, typed API registration, embedded Lua module execution, and
+   native SkiaSharp loading. Separate solution tests also start independent .NET processes to verify mutual TLS, local authorization, direct game access with login offline, and no replay after a lost response.
 
 The persistence consumer requires `MOONGATE_TEST_POSTGRES_CONNECTION_STRING` as
 an administrative Npgsql connection. It creates a unique

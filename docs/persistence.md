@@ -474,6 +474,9 @@ realm.
 The built-in Ultima plugin registers `AccountEntity` in the auth database and
 `IAccountService` in the container. `CreateAccountAsync` uses `IDataAccess<AccountEntity>`
 without allocating IDs itself. `UpsertAsync` fills in the new account's `Id`.
+`ListAccountsAsync` wraps the same `IDataAccess<AccountEntity>.GetAllAsync`: an
+unbounded, detached snapshot of every account, for administration rather than
+per-request lookups.
 
 The core auth catalog contains `0001_account_id_sequence.sql`, `0002_accounts.sql`
 and `0003_account_serial_ownership.sql`. The third migration attaches the existing

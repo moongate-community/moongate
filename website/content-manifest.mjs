@@ -26,8 +26,8 @@ export const contentEntries = [
   { source: 'docs/documentation.md', slug: 'contributing/documentation', title: 'Writing documentation', group: 'Contributing' },
   ...[
     ['Core', 'core'], ['Network', 'network'], ['Network.Packets', 'network-packets'],
-    ['Persistence', 'persistence'], ['Server.Core', 'server-core'], ['Api', 'api'],
-    ['Scripting', 'scripting'], ['Ultima', 'ultima'],
+    ['Persistence', 'persistence'], ['Persistence.Migrations', 'persistence-migrations'],
+    ['Server.Core', 'server-core'], ['Api', 'api'], ['Scripting', 'scripting'], ['Ultima', 'ultima'],
   ].map(([name, slug]) => ({
     source: `src/Moongate.${name}/README.md`, slug: `libraries/${slug}`,
     title: `Moongate.${name}`, group: 'Libraries',
