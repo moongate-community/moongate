@@ -377,6 +377,39 @@ public sealed class MoongateEventBusTests
     }
 
     [Fact]
+    public async Task CatchAllSubscription_Dispose_RemovesOnlyItsHandlerAndIsIdempotent()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+        var removedCalls = 0;
+        var retainedCalls = 0;
+        var removed = bus.SubscribeAll(
+            (_, _) =>
+            {
+                removedCalls++;
+
+                return Task.CompletedTask;
+            }
+        );
+        bus.SubscribeAll(
+            (_, _) =>
+            {
+                retainedCalls++;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        removed.Dispose();
+        removed.Dispose();
+        await bus.PublishAsync(new MoongateStartedEvent());
+
+        Assert.Equal(0, removedCalls);
+        Assert.Equal(1, retainedCalls);
+    }
+
+    [Fact]
     public async Task Subscription_Dispose_RemovesOnlyItsHandlerAndIsIdempotent()
     {
         using var container = new Container();
