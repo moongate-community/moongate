@@ -11,7 +11,7 @@ Moongate plugin.
 ## 1. Create the example project
 
 You need the .NET 10 SDK, a Moongate checkout, and an empty PostgreSQL database.
-The example's database role must be allowed to create schemas and tables.
+The example's database role must be allowed to create schemas, tables and sequences.
 Create the database first: Moongate creates the entity schema and table, not the
 database itself.
 
@@ -56,14 +56,15 @@ public sealed class CharacterProfile : IMoongateEntity
 | --- | --- |
 | `IMoongateEntity` | Gives persistence a common `Serial Id` identity. |
 | `Table(Name = "tutorial_entities.character_profiles")` | Selects the PostgreSQL schema and table. Use explicit lowercase names. |
-| `IsPrimary = true, MapType = typeof(long)` | Stores the application-assigned `Serial` as a PostgreSQL `bigint` primary key. |
+| `IsPrimary = true, MapType = typeof(long)` | Stores the `Serial` as a PostgreSQL `bigint` primary key. |
 | `Column(Name = ...)` | Keeps database column names stable when C# names change. |
 | `StringLength = 100` | Declares the maximum stored name length. |
 
-Assign a stable, nonzero ID before saving. `Serial.Zero` is invalid for persistence,
-and PostgreSQL does not generate these IDs. The example uses `new Serial(1)` only
-for its empty tutorial database; a real application must allocate unique IDs and
-reuse an entity's ID when updating it.
+Leave `Id` at its default (`Serial.Zero`) for a new entity. `UpsertAsync` reserves
+an ID from the table's PostgreSQL sequence, inserts the entity and writes the ID
+back to the same object. No sequence name or extra service dependency is needed.
+Keep a public `Id` setter and do not use `IsIdentity = true`. An explicitly supplied
+nonzero ID is preserved and uses the normal insert-or-update behavior.
 
 Column names default to lowercase snake_case: `Username` maps to `username`,
 `HashPassword` to `hash_password`, and `CreatedAt` to `created_at`. Explicit
@@ -106,12 +107,11 @@ await persistence.InitializeAsync();
 var profiles = container.Resolve<IDataAccess<CharacterProfile>>();
 var profile = new CharacterProfile
 {
-    Id = new Serial(1),
     Name = "Mario",
     Level = 1
 };
 
-await profiles.UpsertAsync(profile);
+await profiles.UpsertAsync(profile); // profile.Id is now assigned.
 
 var loaded = await profiles.GetByIdAsync(profile.Id)
     ?? throw new InvalidOperationException("The saved profile was not found.");
@@ -300,9 +300,9 @@ For a new custom entity registered with `AddPersistenceAuth<CustomAuthEntity>()`
 (after applying the shipped core auth migrations):
 
 1. Start the server with the new entity registered. Startup writes
-   `migrations/auth/0003_auto_schema.sql`, applies it and records its checksum.
+   `migrations/auth/0004_auto_schema.sql`, applies it and records its checksum.
 2. Stop the server and add `public DateTime? LastLoginAt { get; set; }` to the entity.
-3. Start again. Startup writes and applies `0004_auto_schema.sql`; existing rows
+3. Start again. Startup writes and applies `0005_auto_schema.sql`; existing rows
    receive a null `last_login_at` value.
 4. Restart without changing the entity: no new migration is generated.
 5. Commit both generated SQL files and the entity code. Numbers always continue

@@ -84,15 +84,45 @@ public sealed class DataAccess<T> : IDataAccess<T> where T : class, IMoongateEnt
     public async Task UpsertAsync(T entity, CancellationToken cancellationToken = default)
         => await RunAsync(
                    true,
-                   (orm, transaction, token) =>
+                   async (orm, transaction, token) =>
                    {
                        ArgumentNullException.ThrowIfNull(entity);
-                       ValidateId(entity.Id);
+                       if (entity.Id == Serial.Zero)
+                       {
+                           var idProperty = typeof(T).GetProperty(nameof(IMoongateEntity.Id));
+                           if (idProperty?.SetMethod?.IsPublic != true)
+                           {
+                               throw new InvalidOperationException("Automatic Serial assignment requires a public Id setter.");
+                           }
 
-                       return orm.InsertOrUpdate<T>()
+                           Serial id;
+                           do
+                           {
+                               token.ThrowIfCancellationRequested();
+                               id = await PersistenceSerialSequence.ReserveAsync<T>(orm, transaction, token)
+                                   .ConfigureAwait(false);
+                           }
+                           while (await orm.Select<T>().WithTransaction(transaction).Where(value => value.Id == id)
+                                      .AnyAsync(token).ConfigureAwait(false));
+
+                           idProperty.SetValue(entity, id);
+                           try
+                           {
+                               // An allocated identity must never turn a concurrent explicit insert into an update.
+                               return await orm.Insert(entity).WithTransaction(transaction).ExecuteAffrowsAsync(token)
+                                   .ConfigureAwait(false);
+                           }
+                           catch
+                           {
+                               idProperty.SetValue(entity, Serial.Zero);
+                               throw;
+                           }
+                       }
+
+                       return await orm.InsertOrUpdate<T>()
                                  .WithTransaction(transaction)
                                  .SetSource(entity)
-                                 .ExecuteAffrowsAsync(token);
+                                 .ExecuteAffrowsAsync(token).ConfigureAwait(false);
                    },
                    cancellationToken
                )

@@ -6,6 +6,27 @@ namespace Moongate.Tests.Integration.Server.Ultima.Accounts;
 public sealed class AccountSerialTests
 {
     [Fact]
+    public async Task Migration_AlreadyAttachedDevelopmentSequence_IsPreserved()
+    {
+        await using var fixture = await AccountServiceFixture.CreateAsync();
+        await fixture.Database.ExecuteAsync(
+            "ALTER SEQUENCE auth.account_id_seq OWNED BY NONE; " +
+            "CREATE SEQUENCE auth.accounts_id_seq AS bigint MINVALUE 1 MAXVALUE 4294967295 START WITH 100 NO CYCLE; " +
+            "ALTER SEQUENCE auth.accounts_id_seq OWNED BY auth.accounts.id;"
+        );
+        var migration = await File.ReadAllTextAsync(
+            Path.Combine(AppContext.BaseDirectory, "AccountMigrations", "0003_account_serial_ownership.sql")
+        );
+        await fixture.Database.ExecuteAsync(migration);
+        var created = await fixture.Service.CreateAccountAsync("development", fixture.Password);
+        Assert.True(created.Success, created.Exception?.ToString());
+        Assert.Equal(100U, created.Account!.Id.Value);
+        Assert.Equal("auth.accounts_id_seq", await fixture.Database.ScalarAsync<string>(
+            "SELECT pg_get_serial_sequence('auth.accounts', 'id')"
+        ));
+    }
+
+    [Fact]
     public async Task Migration_ExistingAccounts_ContinuesAboveTheirHighestIdWithoutResettingSequence()
     {
         await using var fixture = await AccountServiceFixture.CreateAsync();

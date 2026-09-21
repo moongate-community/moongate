@@ -10,8 +10,8 @@ It covers the entity class, registration, schema setup, and asynchronous reads a
 
 ## Register entities
 
-Every persisted type implements `IMoongateEntity` and has an application-assigned,
-nonzero `Serial`. Select the database when registering it:
+Every persisted type implements `IMoongateEntity` and has a stable, nonzero `Serial`.
+For a new entity, leave `Id` at zero: `UpsertAsync` assigns it automatically. Select the database when registering it:
 
 ```csharp
 container.AddPersistenceAuth<Account>();     // Shared Accounts/login database.
@@ -183,7 +183,9 @@ The development startup sequence is:
    and component, without overwriting previous files.
 4. Apply additive changes, recheck the database and then publish `PersistenceReady`.
 
-A new entity creates the initial migration. Adding a nullable property creates the
+A new entity creates the initial migration, including its column-owned Serial
+sequence. Existing tables without a sequence receive an additive migration that
+initializes it above their highest stored ID. Previously applied SQL remains unchanged. Adding a nullable property creates the
 next migration. An unchanged restart creates no file. Supported required additions
 need an explicit literal database default, for example
 `[Column(IsNullable = false, DbType = "int4 NOT NULL DEFAULT 7")]` with an initial
@@ -390,11 +392,12 @@ Resolve `IDataAccess<T>` for independent operations:
 
 ```csharp
 var items = container.Resolve<IDataAccess<Item>>();
-await items.UpsertAsync(new Item { Id = new Serial(1), Name = "Bandage" });
+var item = new Item { Name = "Bandage" };
+await items.UpsertAsync(item); // item.Id is assigned automatically.
 
-var item = await items.GetByIdAsync(new Serial(1));
+var loaded = await items.GetByIdAsync(item.Id);
 var page = await items.QueryAsync(value => value.Name.StartsWith("B"), 0, 50);
-await items.DeleteAsync(new Serial(1));
+await items.DeleteAsync(item.Id);
 ```
 
 `GetByIdAsync`, `GetAllAsync`, and `QueryAsync` return detached values. Queries
@@ -466,28 +469,21 @@ realm.
 ## Account IDs and registration
 
 The built-in Ultima plugin registers `AccountEntity` in the auth database and
-`IAccountService` in the container. `CreateAccountAsync` reserves an ID from
-`auth.account_id_seq` before saving. The persisted key is still a `Serial`, mapped
-to `bigint`; do not mark it as `IsIdentity`. Accounts use their own sequence,
-independently of the UO mobile/item ranges.
+`IAccountService` in the container. `CreateAccountAsync` uses `IDataAccess<AccountEntity>`
+without allocating IDs itself. `UpsertAsync` fills in the new account's `Id`.
 
-The runtime database role needs `USAGE` on `auth.account_id_seq` in addition to
-the table privileges; the schema role owns and creates it.
+The core auth catalog contains `0001_account_id_sequence.sql`, `0002_accounts.sql`
+and `0003_account_serial_ownership.sql`. The third migration attaches the existing
+`auth.account_id_seq` to `auth.accounts.id` without resetting its value. If a
+development-generated sequence is already attached, it is retained. Apply the
+catalog with `Moongate.MigrationRunner apply --target auth` before running the new
+server version. Stop writers while applying schema changes.
 
-The sequence starts at 1, is shared by all login processes using the auth database,
-and stops at `4294967295` without wrapping. Reservations are not reclaimed when a
-save fails, so gaps are expected. The migration advances the sequence beyond any
-existing account IDs without resetting it backwards. Stop account writers while
-applying migrations; imported IDs must be followed by a controlled sequence
-realignment before writers resume.
-
-Ship and apply both core auth files, `0001_account_id_sequence.sql` and
-`0002_accounts.sql`, using `Moongate.MigrationRunner apply --target auth` with the
-appropriate root/source directory. With automatic development migrations enabled,
-put these files in the configured `migrations_directory/auth` before starting.
-Custom source directories are not populated from the packaged files automatically.
-If your development catalog already uses those numbers, preserve applied SQL and
-add this SQL using the next unused numbers instead of replacing existing files.
+With automatic development migrations enabled, a fresh custom source directory
+can generate the account table, index and sequence directly from the registered
+entity. Custom directories are not populated from packaged SQL automatically.
+To use the shipped auth catalog instead, copy all its files before first startup.
+Never overwrite already-applied files or reuse their numbers in an existing catalog.
 
 The username index is case-sensitive, matching the service's existing lookup
 behavior. Concurrent attempts to register the same username return one success
@@ -497,8 +493,39 @@ can apply; no account is silently deleted. Email is optional because creation do
 not require one. Locked accounts cannot log in; canceled requests propagate
 `OperationCanceledException`.
 
-Custom services can reserve an ID from an explicitly migration-managed sequence
-through `MoongatePersistenceService.ReserveSerialAsync<TEntity>("schema.sequence",
-cancellationToken)`. It uses the entity's registered database, requires the same
-schema as that entity, and validates the nonzero 32-bit range. It does not create
-sequences or allocate gameplay serial ranges.
+## Automatic Serial assignment
+
+```csharp
+var account = new AccountEntity { Username = "Mario", HashPassword = passwordHash };
+await accounts.UpsertAsync(account);
+Console.WriteLine(account.Id); // Assigned on this same instance.
+```
+
+- `Id == Serial.Zero` reserves a unique nonzero ID and performs an insert, never an
+  update of an existing row. IDs already stored explicitly are skipped.
+- A nonzero `Id` is preserved and uses the existing insert-or-update behavior.
+- Automatic assignment requires a public `Id` setter. Keep the `bigint` mapping;
+  do not mark it as `IsIdentity`. `IMoongateEntity` itself still exposes only a getter.
+- Each table has its own sequence in its schema. Sequences use the range
+  `1..4294967295`, never cycle, and are shared across processes using that database.
+  These are persistence IDs, not a UO mobile/item range allocator. Supply gameplay
+  serials explicitly when domain rules require particular ranges or shared identity.
+- Sequence creation belongs to schema migrations (or explicit development schema
+  synchronization), never to `UpsertAsync`. The runtime role needs `USAGE` on the
+  sequences as well as the normal table permissions. The migration role creates
+  the sequence and must be able to attach it to the table it owns.
+
+A failed insert restores the entity's ID to zero. After a successful insert inside
+a transaction, a later rollback retains the assigned ID on the object; retrying
+with that ID is an explicit upsert. Reservations are not rolled back or recycled,
+so gaps are expected. Commit acknowledgement failures still have an unknown durable
+outcome: operations are not automatically retried. Do not share/mutate an entity
+while its persistence operation is running.
+
+`SaveAllAsync` still requires stable nonzero IDs on captured live entities. Persist
+a new entity with `UpsertAsync` before adding it to the live save collection.
+
+The advanced `MoongatePersistenceService.ReserveSerialAsync<TEntity>("schema.sequence",
+cancellationToken)` API remains available for explicitly migration-managed sequences.
+It is no longer required by account services or ordinary new entities. It does not
+create sequences or allocate gameplay serial ranges.

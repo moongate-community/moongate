@@ -28,7 +28,12 @@ public interface IDataAccess<T> where T : class, IMoongateEntity
         CancellationToken cancellationToken = default
     );
 
-    /// <summary>Inserts or updates a stable detached value using last-writer-wins semantics.</summary>
-    /// <remarks>The caller must not mutate the input during execution. No version conflict detection is implied.</remarks>
+    /// <summary>Assigns an identity and inserts an entity with a zero ID, or upserts an explicitly identified entity.</summary>
+    /// <remarks>
+    /// Automatic assignment requires a public Id setter and a migration-managed, column-owned sequence.
+    /// The assigned ID is written back to the entity. A failed insert restores zero; a later transaction rollback
+    /// retains the assigned ID, and sequence reservations are never reclaimed. Nonzero IDs use last-writer-wins semantics.
+    /// The caller must not mutate the input during execution. No version conflict detection is implied.
+    /// </remarks>
     Task UpsertAsync(T entity, CancellationToken cancellationToken = default);
 }

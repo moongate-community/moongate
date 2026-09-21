@@ -209,6 +209,8 @@ internal static class DevelopmentSchemaAssessor
         }
 
         accepted.Append(removed);
+        accepted.Append(await PersistenceSerialSequence.CompareAsync(database, entityTypes, cancellationToken)
+            .ConfigureAwait(false));
         return new(accepted.ToString(), requiresReview, hasExistingTables);
     }
 

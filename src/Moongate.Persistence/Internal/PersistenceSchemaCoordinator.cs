@@ -186,7 +186,10 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
 
         try
         {
-            return await comparison.WaitAsync(cancellationToken).ConfigureAwait(false);
+            var ddl = await comparison.WaitAsync(cancellationToken).ConfigureAwait(false);
+            var sequences = await PersistenceSerialSequence.CompareAsync(database, module.EntityTypes, cancellationToken)
+                .ConfigureAwait(false);
+            return ddl + sequences;
         }
         catch (OperationCanceledException)
         {

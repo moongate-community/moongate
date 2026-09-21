@@ -30,7 +30,7 @@ own targets in `PostgreSqlPersistenceOptions`.
 
 ## Example
 
-Define one stable attribute mapping in `Player.cs`. The application assigns every nonzero `Serial` identity.
+Define one stable attribute mapping in `Player.cs`. Leave `Id` at zero for automatic assignment on the first `UpsertAsync`.
 
 <!-- nuget-smoke:Player.cs -->
 
@@ -77,14 +77,15 @@ container.RegisterMoongatePersistence(options)
 
 await using var persistence = container.Resolve<MoongatePersistenceService>();
 await persistence.InitializeAsync();
+var mario = new Player { Name = "Mario" };
 await persistence.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, async transaction =>
 {
     var players = transaction.GetDataAccess<Player>();
-    await players.UpsertAsync(new Player { Id = new Serial(1), Name = "Mario" });
-    await players.UpsertAsync(new Player { Id = new Serial(2), Name = "Luigi" });
+    await players.UpsertAsync(mario);
+    await players.UpsertAsync(new Player { Name = "Luigi" });
 });
 
-var player = await container.Resolve<IDataAccess<Player>>().GetByIdAsync(new Serial(1));
+var player = await container.Resolve<IDataAccess<Player>>().GetByIdAsync(mario.Id);
 Console.WriteLine(player?.Name);
 ```
 
@@ -109,7 +110,15 @@ Reads return detached entities. Changing a returned instance does not persist it
 are last-writer-wins and provide no optimistic concurrency token. A transaction callback covers one Accounts or Realm target
 and is never retried after an uncertain commit result.
 
-`SaveAllAsync` captures registered live sources and commits one independent transaction per database target. Snapshot
+A zero `Id` on `UpsertAsync` is assigned from a migration-managed PostgreSQL sequence
+and written back through the entity's public `Id` setter. Nonzero IDs are preserved.
+Sequences are per table, shared by processes, and bounded to the nonzero `uint` range;
+they do not allocate UO mobile/item ranges. The runtime role needs sequence `USAGE`.
+Failed inserts restore zero; a later transaction rollback retains an assigned ID.
+Reservations are never reclaimed. New entities need no sequence names in their services.
+
+`SaveAllAsync` requires already-assigned nonzero IDs; first persist new entities with
+`UpsertAsync`. It captures registered live sources and commits one independent transaction per database target. Snapshot
 functions must deep-copy nested mutable state. An absent entity is retained; deletion is always explicit.
 
 FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported renames, and write explicit reviewed SQL for

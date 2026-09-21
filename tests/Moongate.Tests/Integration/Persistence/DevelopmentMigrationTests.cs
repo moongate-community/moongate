@@ -11,6 +11,24 @@ namespace Moongate.Tests.Integration.Persistence;
 public sealed class DevelopmentMigrationTests
 {
     [Fact]
+    public async Task SamplePlugin_Migrations_AttachSerialSequenceAboveExistingIds()
+    {
+        await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
+        var migrations = Path.Combine(AppContext.BaseDirectory, "PluginFixtures/SamplePlugin/migrations/world");
+        await db.ExecuteAsync(await File.ReadAllTextAsync(Path.Combine(migrations, "0001_create_notes.sql")));
+        await db.ExecuteAsync("INSERT INTO sample_greeter.notes VALUES (42, 'existing')");
+        var sequence = await File.ReadAllTextAsync(Path.Combine(migrations, "0002_note_serial_sequence.sql"));
+        await db.ExecuteAsync(sequence);
+        Assert.Equal(43L, await db.ScalarAsync<long>(
+            "SELECT nextval(pg_get_serial_sequence('sample_greeter.notes', 'id'))"
+        ));
+        await db.ExecuteAsync(sequence);
+        Assert.Equal(44L, await db.ScalarAsync<long>(
+            "SELECT nextval(pg_get_serial_sequence('sample_greeter.notes', 'id'))"
+        ));
+    }
+
+    [Fact]
     public async Task InitializeAsync_NewAccountEntityWithUniqueIndex_AppliesOnceWithoutReview()
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
@@ -28,6 +46,9 @@ public sealed class DevelopmentMigrationTests
         var sqlFile = Assert.Single(Directory.GetFiles(Path.Combine(fixture.Migrations, "auth"), "*.sql"));
         Assert.DoesNotContain(MigrationReviewGuard.Marker, await File.ReadAllTextAsync(sqlFile));
         Assert.Equal(1L, await db.ScalarAsync<long>("SELECT count(*) FROM moongate_migrations.history"));
+        Assert.Equal("auth.accounts_id_seq", await db.ScalarAsync<string>(
+            "SELECT pg_get_serial_sequence('auth.accounts', 'id')"
+        ));
         Assert.True(await db.ScalarAsync<bool>(
             "SELECT indisunique FROM pg_index WHERE indexrelid = 'auth.ux_accounts_username'::regclass"
         ));

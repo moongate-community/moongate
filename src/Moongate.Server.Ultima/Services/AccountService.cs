@@ -1,6 +1,5 @@
 using Moongate.Core.Utils;
 using Moongate.Persistence.Interfaces;
-using Moongate.Persistence.Services;
 using Npgsql;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Account;
@@ -17,12 +16,9 @@ public class AccountService : IAccountService
 
     private readonly IDataAccess<AccountEntity> _accountDataAccess;
 
-    private readonly MoongatePersistenceService _persistence;
-
-    public AccountService(IDataAccess<AccountEntity> accountDataAccess, MoongatePersistenceService persistence)
+    public AccountService(IDataAccess<AccountEntity> accountDataAccess)
     {
         _accountDataAccess = accountDataAccess;
-        _persistence = persistence;
     }
 
     public async Task<AccountCreateResult> CreateAccountAsync(
@@ -50,7 +46,6 @@ public class AccountService : IAccountService
 
             var newAccount = new AccountEntity
             {
-                Id = await _persistence.ReserveSerialAsync<AccountEntity>("auth.account_id_seq", cancellationToken),
                 Username = username,
                 HashPassword = hashedPassword,
                 AccountType = accountType,

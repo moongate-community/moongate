@@ -264,7 +264,9 @@ The separate runner discovers SQL and manifests without loading assemblies.
 Core runs first, then plugin component IDs in ordinal order and their numbered
 scripts. Include required earlier migrations when publishing a new plugin version.
 Applied files cannot change. Removing a plugin retains its schema and history.
-The sample plugin includes a complete manifest and initial World migration.
+The sample plugin includes a complete manifest, an initial World migration and
+an additive migration for its column-owned Serial sequence. New notes can be
+saved with a zero `Id`; `UpsertAsync` assigns the ID automatically.
 Follow [Generate, review and apply](persistence.md#generate-review-and-apply).
 
 ## What Register may do
