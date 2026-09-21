@@ -15,7 +15,7 @@ ultima_path = "/uo"
 auto_sync_schema = false
 
 [persistence.accounts]
-connection_string_env = "MOONGATE_ACCOUNTS_DATABASE"
+connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
 
 [api]
 enabled = false

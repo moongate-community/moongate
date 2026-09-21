@@ -24,13 +24,13 @@ then
 fi
 
 # Disposable values exist only in this process environment. The Realm 1 values
-# contain literal PostgreSQL text-COPY escapes to prove exact password handling.
+# contain literal backslash escapes and URI delimiters to prove exact password handling.
 export UO_DATA_PATH="$temporary_directory/uo"
 export MOONGATE_POSTGRES_ADMIN_PASSWORD="smoke-admin-$project"
 export MOONGATE_ACCOUNTS_SCHEMA_PASSWORD="smoke-accounts-schema-$project"
 export MOONGATE_ACCOUNTS_RUNTIME_PASSWORD="smoke-accounts-runtime-$project"
-export MOONGATE_REALM_1_SCHEMA_PASSWORD='smoke-schema-\t-\N-\\-'"$project"
-export MOONGATE_REALM_1_RUNTIME_PASSWORD='smoke-runtime-\n-\x41-\\-'"$project"
+export MOONGATE_REALM_1_SCHEMA_PASSWORD='smoke-schema-\t-\N-\\-@:%$?#-'"$project"
+export MOONGATE_REALM_1_RUNTIME_PASSWORD='smoke-runtime-\n-\x41-\\-@:%$?#-'"$project"
 export MOONGATE_REALM_2_SCHEMA_PASSWORD="smoke-realm-2-schema-$project"
 export MOONGATE_REALM_2_RUNTIME_PASSWORD="smoke-realm-2-runtime-$project"
 

@@ -17,7 +17,7 @@ public sealed class PersistenceSchemaCliTests
         using var files = new PluginDirectoryFixture("plugins", "config");
         files.Deploy(bundle);
         var table = bundle == "SamplePlugin" ? "sample_greeter.notes" : "fixture_data.items";
-        var module = bundle == "SamplePlugin" ? "com.github.moongate-community.moongate.plugins.greeter" : "fixture.persistenceplugin";
+        var module = bundle == "SamplePlugin" ? "moongate.auto.realm." : "fixture.persistenceplugin";
         // Normal startup would fail immediately on this guard and require a certificate/Ultima data later.
         using var pid = PidFileGuard.Acquire(files.Directories.Root);
         using var listener = new TcpListener(IPAddress.Loopback, 0);

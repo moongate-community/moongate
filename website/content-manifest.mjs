@@ -18,7 +18,6 @@ export const contentEntries = [
   { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Server guides' },
   { source: 'docs/network-game-separation.md', slug: 'server/network-game-separation', title: 'Transport and game ownership', group: 'Server guides' },
   { source: 'docs/persistence.md', slug: 'server/persistence', title: 'PostgreSQL persistence and world saves', group: 'Server guides' },
-  { source: 'docs/persistence-format.md', slug: 'reference/persistence-format', title: 'Migrating from binary persistence', group: 'Reference' },
   { source: 'docs/nuget-packaging.md', slug: 'reference/nuget-packaging', title: 'NuGet packages', group: 'Reference' },
   { source: 'CONTRIBUTING.md', slug: 'contributing/getting-started', title: 'Contribute to Moongate', group: 'Contributing' },
   { source: 'docs/security-audit.md', slug: 'contributing/security-audit', title: 'Dependency security', group: 'Contributing' },

@@ -11,6 +11,35 @@ public sealed class PersistenceModuleRegistryTests
     private const string UnitConnectionString = "Host=localhost;Database=unit;Username=postgres;Pooling=false";
 
     [Fact]
+    public void ValidateAndFreeze_AutomaticModules_AcceptValidUnderscoreSchemasWithStableDistinctIds()
+    {
+        Type[] entities = [typeof(CharacterEntity), typeof(ConsecutiveUnderscoreSchemaEntity),
+            typeof(TrailingUnderscoreSchemaEntity), typeof(MaximumLengthSchemaEntity)];
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var target in Enum.GetValues<PersistenceDatabaseTarget>())
+        {
+            using var database = CreateDatabase(target);
+            var first = new PersistenceModuleRegistry();
+            var second = new PersistenceModuleRegistry();
+            foreach (var entity in entities)
+            {
+                first.RegisterEntity(entity, target);
+                second.RegisterEntity(entity, target);
+            }
+
+            var modules = first.ValidateAndFreeze([database]).Modules;
+            var repeatedModules = second.ValidateAndFreeze([database]).Modules;
+
+            Assert.Equal(entities.Length, modules.Count);
+            Assert.Equal(modules.Select(item => item.Module.Id), repeatedModules.Select(item => item.Module.Id));
+            foreach (var item in modules)
+            {
+                Assert.True(ids.Add(item.Module.Id));
+            }
+        }
+    }
+
+    [Fact]
     public void PersistenceModuleContract_DoesNotExposeMappingMutationCallback()
     {
         Assert.DoesNotContain(

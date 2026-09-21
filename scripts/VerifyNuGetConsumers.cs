@@ -106,7 +106,6 @@ internal static class VerifyNuGetConsumers
         if (id == "Moongate.Persistence")
         {
             expected.Add("Player.cs");
-            expected.Add("PlayerModule.cs");
         }
         if (id == "Moongate.Api")
         {

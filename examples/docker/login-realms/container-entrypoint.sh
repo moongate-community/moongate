@@ -1,14 +1,9 @@
 #!/usr/bin/env sh
 set -eu
 
-read_quoted_password_with_sentinel()
+percent_encode()
 {
-    secret_file=$1
-    if [ ! -r "$secret_file" ]; then
-        echo "Required database secret is not readable: $secret_file" >&2
-        exit 1
-    fi
-    { cat -- "$secret_file"; printf x; } | sed 's/"/""/g'
+    od -An -v -tx1 | tr -d ' \n' | sed 's/../%&/g'
 }
 
 export_connection()
@@ -17,13 +12,20 @@ export_connection()
     database_name=$2
     user_name=$3
     secret_file=$4
-    password=$(read_quoted_password_with_sentinel "$secret_file")
-    password=${password%x}
-    host=$(printf '%s' "${MOONGATE_DATABASE_HOST:-postgres}" | sed 's/"/""/g')
-    database=$(printf '%s' "$database_name" | sed 's/"/""/g')
-    user=$(printf '%s' "$user_name" | sed 's/"/""/g')
+    if [ ! -r "$secret_file" ]; then
+        echo "Required database secret is not readable: $secret_file" >&2
+        exit 1
+    fi
+    password=$(percent_encode < "$secret_file")
+    database=$(printf '%s' "$database_name" | percent_encode)
+    user=$(printf '%s' "$user_name" | percent_encode)
+    host=${MOONGATE_DATABASE_HOST:-postgres}
+    case "$host" in
+        \[*\]) ;;
+        *:*) host="[$host]" ;;
+    esac
     port=${MOONGATE_DATABASE_PORT:-5432}
-    export "$variable_name=Host=\"$host\";Port=$port;Database=\"$database\";Username=\"$user\";Password=\"$password\";Pooling=true"
+    export "$variable_name=postgres://$user:$password@$host:$port/$database?pooling=true"
 }
 
 if [ -n "${MOONGATE_ACCOUNTS_DATABASE_FILE:-}" ]; then

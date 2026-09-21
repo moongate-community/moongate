@@ -14,7 +14,7 @@ dotnet add package Moongate.Persistence
 
 ## Features
 
-- Explicit module ownership, PostgreSQL schemas, and Accounts or Realm database targets.
+- Auth/World entity registration with automatic internal modules and PostgreSQL schemas.
 - Detached asynchronous reads, SQL-translated filtering, upserts, and deletes.
 - Grouped writes in one asynchronous transaction for a single database target.
 - Explicit schema preview/apply APIs with automatic synchronization disabled by default.
@@ -41,23 +41,7 @@ public sealed class Player : IMoongateEntity
 }
 ```
 
-Declare the entity's sole module owner in `PlayerModule.cs`.
-
-<!-- nuget-smoke:PlayerModule.cs -->
-```csharp
-using Moongate.Persistence.Interfaces;
-using Moongate.Persistence.Types.Persistence;
-
-public sealed class PlayerModule : IPersistenceModule
-{
-    public string Id => "example.players";
-    public string Schema => "sample_players";
-    public PersistenceDatabaseTarget DatabaseTarget => PersistenceDatabaseTarget.Realm;
-    public IReadOnlyCollection<Type> EntityTypes => [typeof(Player)];
-}
-```
-
-`Program.cs` resolves its connection at runtime, applies the example schema explicitly, commits two writes together, and reads a detached value asynchronously. Set `MOONGATE_PERSISTENCE_DATABASE` to an Npgsql `key=value;` connection string for an empty development database before running it.
+`Program.cs` resolves its connection at runtime, applies the example schema explicitly, commits two writes together, and reads a detached value asynchronously. Set `MOONGATE_PERSISTENCE_DATABASE` to a `postgres://user:password@host:5432/database` connection URI for an empty development database before running it.
 
 <!-- nuget-smoke:Program.cs -->
 ```csharp
@@ -77,8 +61,7 @@ var options = new PostgreSqlPersistenceOptions(
 
 using var container = new Container();
 container.RegisterMoongatePersistence(options)
-         .AddPersistenceModule<PlayerModule>()
-         .AddPersistenceEntity<Player>();
+         .AddPersistenceWorld<Player>();
 
 await using var persistence = container.Resolve<MoongatePersistenceService>();
 await persistence.InitializeAsync();
@@ -93,6 +76,16 @@ var player = await container.Resolve<IDataAccess<Player>>().GetByIdAsync(new Ser
 Console.WriteLine(player?.Name);
 ```
 
+`AddPersistenceWorld<T>()` selects the Realm database; `AddPersistenceAuth<T>()`
+selects the shared Accounts database. Moongate creates internal modules from the
+schema-qualified table attributes, so no module class is required. Both helpers
+also accept a live source and an explicit detached snapshot function. Explicit
+`IPersistenceModule` declarations remain available for plugins that need them.
+
+Connection options accept `postgres://` and `postgresql://` URIs, including
+percent-encoded credentials, IPv6 hosts and query options such as `sslmode` and
+`connect_timeout`. Native Npgsql connection strings are also supported.
+
 Normal deployments should keep automatic schema synchronization disabled. Review `PreviewSchemaAsync`, then run `SynchronizeSchemaAsync` with a separately authorized schema connection during maintenance.
 
 ## Behavior and scope
@@ -101,7 +94,7 @@ Reads return detached entities. Changing a returned instance does not persist it
 
 `SaveAllAsync` captures registered live sources and commits one independent transaction per database target. Snapshot functions must deep-copy nested mutable state. An absent entity is retained; deletion is always explicit.
 
-FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported renames, and write explicit reviewed SQL for semantic data transformations. Downgrades are operator-managed. This package does not import the removed binary snapshot/journal format and does not create database backups.
+FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported renames, and write explicit reviewed SQL for semantic data transformations. Downgrades are operator-managed. This package does not create database backups.
 
 Map every complex property explicitly with a supported column/navigation mapping or mark it for explicit omission, such as `IsIgnore`. Do not assume an ordinary writable object graph is serialized or cascaded automatically.
 

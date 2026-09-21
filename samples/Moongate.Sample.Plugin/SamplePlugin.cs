@@ -1,7 +1,6 @@
 using DryIoc;
 using Moongate.Persistence.Extensions;
 using Moongate.Sample.Plugin.Data.Persistence;
-using Moongate.Sample.Plugin.Persistence;
 using Moongate.Sample.Plugin.Commands;
 using Moongate.Sample.Plugin.Diagnostics;
 using Moongate.Sample.Plugin.Internal;
@@ -31,7 +30,7 @@ public sealed class SamplePlugin : IMoongatePlugin
     /// <inheritdoc />
     public void Register(Container container)
     {
-        container.AddPersistenceModule<GreeterPersistenceModule>().AddPersistenceEntity<GreetingNote>();
+        container.AddPersistenceWorld<GreetingNote>();
         container.RegisterInstance(new GreetingCounter());
         container.RegisterScriptModule<GreeterModule>();
         container.RegisterScriptEnum<Tone>();

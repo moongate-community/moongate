@@ -54,7 +54,7 @@ public sealed class PostgreSqlPersistenceOptionsTests
     public void CreateDatabase_MalformedConnection_DoesNotRetainSecretInException(bool separateSchema)
     {
         const string marker = "synthetic_marker";
-        var malformed = $"postgres://user:{marker}@localhost/database?sslmode=require";
+        var malformed = $"postgres://user:{marker}@localhost/database?unknown_option=true";
         var options = new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm,
             separateSchema ? "Host=localhost;Database=realm;Username=runtime" : malformed,
             separateSchema ? malformed : null);

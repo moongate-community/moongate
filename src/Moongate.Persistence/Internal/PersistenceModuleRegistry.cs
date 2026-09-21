@@ -12,8 +12,10 @@ internal sealed partial class PersistenceModuleRegistry
 {
     private const int MaximumModuleIdLength = 128;
     private readonly List<IPersistenceModule> _modules = [];
-    private readonly HashSet<Type> _entities = [];
+    private readonly Dictionary<Type, PersistenceDatabaseTarget?> _entities = [];
     private bool _frozen;
+
+    public int ModuleCount => _modules.Count;
 
     public void RegisterModule(IPersistenceModule module)
     {
@@ -22,11 +24,11 @@ internal sealed partial class PersistenceModuleRegistry
         _modules.Add(module);
     }
 
-    public void RegisterEntity(Type entityType)
+    public void RegisterEntity(Type entityType, PersistenceDatabaseTarget? target = null)
     {
         ArgumentNullException.ThrowIfNull(entityType);
         ThrowIfFrozen();
-        if (!_entities.Add(entityType))
+        if (!_entities.TryAdd(entityType, target))
         {
             throw new InvalidOperationException($"Persistence entity '{entityType.FullName}' is registered more than once.");
         }
@@ -38,12 +40,14 @@ internal sealed partial class PersistenceModuleRegistry
         ThrowIfFrozen();
         _frozen = true;
 
+        ValidateModuleDeclarations(_modules);
+        var databaseByTarget = databases.ToDictionary(database => database.Target);
+        _modules.AddRange(CreateAutomaticModules(databaseByTarget));
         var orderedModules = _modules
             .OrderBy(module => module.DatabaseTarget)
             .ToArray();
         ValidateModuleDeclarations(orderedModules);
         var owners = ValidateOwnership(orderedModules);
-        var databaseByTarget = databases.ToDictionary(database => database.Target);
         foreach (var targetGroup in orderedModules.GroupBy(module => module.DatabaseTarget))
         {
             if (!databaseByTarget.TryGetValue(targetGroup.Key, out var database))
@@ -68,9 +72,35 @@ internal sealed partial class PersistenceModuleRegistry
         ThrowIfFrozen();
         return _modules
             .Select(module => module.DatabaseTarget)
+            .Concat(_entities.Values.OfType<PersistenceDatabaseTarget>())
             .Distinct()
             .Order()
             .ToArray();
+    }
+
+    private AutomaticPersistenceModule[] CreateAutomaticModules(IReadOnlyDictionary<PersistenceDatabaseTarget, PostgreSqlDatabase> databases)
+    {
+        var explicitlyOwned = _modules.SelectMany(module => module.EntityTypes).ToHashSet();
+        var groups = _entities
+            .Where(entity => entity.Value.HasValue && !explicitlyOwned.Contains(entity.Key))
+            .GroupBy(entity =>
+            {
+                var target = entity.Value!.Value;
+                if (!databases.TryGetValue(target, out var database))
+                {
+                    throw new InvalidOperationException($"Persistence target '{target}' is required but is not configured.");
+                }
+                var tableName = database.Orm.CodeFirst.GetTableByEntity(entity.Key).DbName;
+                var separator = tableName.IndexOf('.');
+                if (separator <= 0)
+                {
+                    throw new InvalidOperationException(
+                        $"Persistence entity '{entity.Key.FullName}' must declare a schema-qualified table, for example [Table(Name = \"world.characters\")].");
+                }
+                return (Target: target, Schema: tableName[..separator]);
+            });
+        return groups.Select(group => new AutomaticPersistenceModule(group.Key.Schema, group.Key.Target,
+            group.Select(entity => entity.Key).OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray())).ToArray();
     }
 
     private static void ValidateModuleDeclarations(IReadOnlyList<IPersistenceModule> modules)
@@ -140,10 +170,16 @@ internal sealed partial class PersistenceModuleRegistry
         {
             foreach (var entityType in module.EntityTypes)
             {
-                if (!_entities.Contains(entityType))
+                if (!_entities.TryGetValue(entityType, out var target))
                 {
                     throw new InvalidOperationException(
                         $"Persistence module '{module.Id}' owns entity '{entityType.FullName}', but that entity was not registered.");
+                }
+
+                if (target.HasValue && target.Value != module.DatabaseTarget)
+                {
+                    throw new InvalidOperationException(
+                        $"Persistence entity '{entityType.FullName}' was registered for '{target}', but module '{module.Id}' targets '{module.DatabaseTarget}'.");
                 }
 
                 if (!owners.TryAdd(entityType, module))
@@ -154,7 +190,7 @@ internal sealed partial class PersistenceModuleRegistry
             }
         }
 
-        foreach (var entityType in _entities.OrderBy(type => type.FullName, StringComparer.Ordinal))
+        foreach (var entityType in _entities.Keys.OrderBy(type => type.FullName, StringComparer.Ordinal))
         {
             if (!owners.ContainsKey(entityType))
             {

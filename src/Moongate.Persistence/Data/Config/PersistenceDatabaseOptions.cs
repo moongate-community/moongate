@@ -1,3 +1,4 @@
+using Moongate.Persistence.Internal;
 using Moongate.Persistence.Types.Persistence;
 using Npgsql;
 
@@ -87,16 +88,14 @@ public sealed class PersistenceDatabaseOptions
                 $"Persistence target '{Target}' requires a nonempty {purpose} PostgreSQL connection string.");
         }
 
-        Parse(connectionString, purpose);
-
-        return connectionString;
+        return Parse(connectionString, purpose).ConnectionString;
     }
 
     private NpgsqlConnectionStringBuilder Parse(string connectionString, string purpose)
     {
         try
         {
-            var parsed = new NpgsqlConnectionStringBuilder(connectionString);
+            var parsed = PostgreSqlConnectionString.Parse(connectionString);
             if (string.IsNullOrWhiteSpace(parsed.Host) || string.IsNullOrWhiteSpace(parsed.Database))
             {
                 throw new ArgumentException("Host and Database are required.");
@@ -104,11 +103,11 @@ public sealed class PersistenceDatabaseOptions
 
             return parsed;
         }
-        catch (Exception exception) when (exception is ArgumentException or FormatException)
+        catch (Exception exception) when (exception is ArgumentException or FormatException or OverflowException)
         {
             throw new InvalidOperationException(
                 $"Persistence target '{Target}' has an invalid {purpose} PostgreSQL connection string. " +
-                "Use Npgsql key=value; connection-string format with Host and Database; PostgreSQL URIs are not supported.");
+                "Use postgres://user:password@host:5432/database or Npgsql key=value; format with Host and Database.");
         }
     }
 }

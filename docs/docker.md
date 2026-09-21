@@ -100,8 +100,9 @@ containers but retains that volume; adding `--volumes` deletes the persisted dat
 ## PostgreSQL persistence
 
 The ordinary image does not bundle PostgreSQL or the sample plugin. A server with
-registered persistence entities needs an Npgsql `key=value;` connection string in
-the environment variable named by its TOML. Keep `auto_sync_schema = false` and
+registered persistence entities uses a `postgres://user:password@host/database`
+URI in its `connection_string` setting. Use a `$NAME` environment reference to
+supply the URI from a secret provider. Keep `auto_sync_schema = false` and
 give the runtime process a DML-only role. Run reviewed schema preview/apply jobs
 with the same plugin bundle and a separate schema connection while the relevant
 runtime is stopped. See [PostgreSQL persistence](persistence.md) and the complete
@@ -212,7 +213,7 @@ and client mount. Removing a container does not delete its named volume.
 - **Cannot write config or generated files:** check `/data` volume ownership, especially for
   bind mounts.
 - **Persistence connection/schema failure:** verify the configured environment
-  variable, Npgsql connection syntax, plugin bundle, role grants, and schema
+  variable, PostgreSQL URI encoding, plugin bundle, role grants, and schema
   preview output. Do not give the normal runtime a DDL credential.
 - **Cannot connect:** check `docker ps`, the `2593:2593` mapping, the listener
   configuration, and the host firewall.

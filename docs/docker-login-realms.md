@@ -30,7 +30,7 @@ port is published.
 
 `game-1` and the schema jobs use the Dockerfile's explicit sample-plugin stage.
 The entrypoint copies the bundled `SamplePlugin` into that container's plugin
-directory. Its `GreeterPersistenceModule` owns `sample_greeter.notes` in Realm 1,
+directory. It calls `AddPersistenceWorld<GreetingNote>()` for `sample_greeter.notes` in Realm 1,
 so the schema commands exercise a real plugin registration. The ordinary final
 image stays the Dockerfile default and does not contain the sample bundle.
 
@@ -65,7 +65,7 @@ export MOONGATE_REALM_2_RUNTIME_PASSWORD="$(bw get password moongate-realm-2-run
 ```
 
 Do not put these values in `.env`, TOML, command history, or checked-in files.
-Compose secrets mount each value as a file. The entrypoint constructs the Npgsql
+Compose secrets mount each value as a file. The entrypoint percent-encodes the PostgreSQL URI components and constructs the
 connection environment variable in memory for the process that needs it.
 
 Validate without printing the rendered model, then build:
@@ -93,10 +93,11 @@ PostgreSQL administration change; recreating an application container does not
 rerun database initialization. Never use `docker compose down --volumes` on data
 you intend to retain.
 
-The runtime TOMLs keep `auto_sync_schema = false` and omit
-`schema_connection_string_env`. The dedicated `game-1-schema.toml` names both
-Realm environment variables. Only the schema jobs receive both matching Realm 1
-connections, so normal startup never sees DDL credentials.
+All TOMLs keep `auto_sync_schema = false` and use one `connection_string` per
+database. Runtime TOMLs reference `$MOONGATE_REALM_DATABASE` (or the Accounts
+variable); `game-1-schema.toml` references `$MOONGATE_REALM_SCHEMA_DATABASE`.
+Schema jobs receive only the schema-role secret; normal hosts receive only the
+runtime-role secret. Each process builds its PostgreSQL URI in memory.
 
 ## Review and apply schema changes
 

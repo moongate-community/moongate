@@ -36,7 +36,7 @@ storage, Docker Compose, logs, and upgrades.
 
 ## Server guides
 
-- [PostgreSQL persistence and world saves](docs/persistence.md): module ownership, async queries, transactions, schema operations and autosave.
+- [PostgreSQL persistence and world saves](docs/persistence.md): Auth/World registration, async queries, transactions, schema operations and autosave.
 - [Packets and handlers](docs/packets.md): wire formats, default opcodes and typed game handlers.
 - [Game loop and timers](docs/game-loop-and-timers.md): thread ownership, bounded queues, scheduling and shutdown.
 - [Writing Lua scripts](docs/scripting.md): bootstrap, modules, timers, reload and editor support.

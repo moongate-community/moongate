@@ -5,22 +5,24 @@ uses one Accounts database and one database for each realm. Transactions and
 world saves are independent across those targets; there is no cross-database
 atomic commit.
 
-The old snapshot/journal backend is no longer a runtime option. See
-[Migrating from binary persistence](persistence-format.md) before upgrading an
-existing installation.
+## Register entities
 
-## Entities and module ownership
+Every persisted type implements `IMoongateEntity` and has an application-assigned,
+nonzero `Serial`. Select the database when registering it:
 
-Every persisted type implements `IMoongateEntity`, has an application-assigned,
-nonzero `Serial`, and belongs to exactly one `IPersistenceModule`. A module owns
-one unique PostgreSQL schema in either the Accounts or Realm target.
+```csharp
+container.AddPersistenceAuth<Account>();     // Shared Accounts/login database.
+container.AddPersistenceWorld<Character>();  // This realm's world database.
+```
+
+Moongate creates internal modules automatically, grouping entities by database
+and PostgreSQL schema. A separate module class is not required. Declare a stable,
+schema-qualified table name in the entity's attributes:
 
 ```csharp
 using FreeSql.DataAnnotations;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
-using Moongate.Persistence.Interfaces;
-using Moongate.Persistence.Types.Persistence;
 
 [Table(Name = "inventory.items")]
 public sealed class Item : IMoongateEntity
@@ -30,14 +32,6 @@ public sealed class Item : IMoongateEntity
 
     [Column(Name = "name", StringLength = 100)]
     public string Name { get; set; } = "";
-}
-
-public sealed class InventoryModule : IPersistenceModule
-{
-    public string Id => "com.example.inventory";
-    public string Schema => "inventory";
-    public PersistenceDatabaseTarget DatabaseTarget => PersistenceDatabaseTarget.Realm;
-    public IReadOnlyCollection<Type> EntityTypes => [typeof(Item)];
 }
 ```
 
@@ -51,37 +45,66 @@ be identical in every owner. A module selects ownership and database target; it
 cannot remap the type. Application and plugin code must not reconfigure a
 persistence type through another raw FreeSql instance.
 
-Register modules and every entity they declare before schema preparation:
+Register before schema preparation:
 
 ```csharp
 container.RegisterMoongatePersistence(options)
-         .AddPersistenceModule<InventoryModule>()
-         .AddPersistenceEntity<Item>();
+         .AddPersistenceWorld<Item>();
 ```
 
-Registration performs no database I/O. Initialization validates the entire batch:
-module IDs and schemas must be unique within their scopes, and every entity must
-have exactly one declared and registered owner.
+Registration performs no database I/O. Initialization validates the entire batch,
+including duplicate registrations, table mappings and schema ownership.
+
+### Optional explicit plugin modules
+
+A plugin can still implement `IPersistenceModule` and register it through
+`AddPersistenceModule<TModule>()` when it needs a stable module identifier and
+an explicit list of owned entity types. It declares `Id`, `Schema`,
+`DatabaseTarget`, and `EntityTypes`. Register its entities with the matching
+Auth/World helper; the helper's target must agree with the module. Registration
+order does not matter. `AddPersistenceEntity<T>()` is available for this explicit
+module pattern, where the module supplies the target.
+
+An explicit module owns its complete schema: include every registered entity in
+that schema in its declaration. All other Auth/World registrations get automatic
+internal modules. Every type has exactly one owner, and one CLR type cannot be
+registered in both databases in the same container.
 
 ## Connections and schema preparation
 
-The server TOML stores environment-variable names, never connection strings:
+Each database has one `connection_string`. It can contain a PostgreSQL URI or a
+reference to an environment variable:
 
 ```toml
 [persistence]
 auto_sync_schema = false
 
 [persistence.accounts]
-connection_string_env = "MOONGATE_ACCOUNTS_DATABASE"
+connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
 
 [persistence.realm]
-connection_string_env = "MOONGATE_REALM_DATABASE"
+connection_string = "${MOONGATE_REALM_DATABASE}"
 ```
 
-Only targets with registered entities resolve their connection. Values use
-Npgsql `key=value;` syntax, for example
-`Host=db;Port=5432;Database=realm;Username=runtime;Password=...`. Supply them from
-your service manager or secret provider.
+Set each variable to a URI such as
+`postgres://runtime:password@db:5432/moongate_realm?sslmode=require` through your
+service manager or secret provider. A literal URI is also supported by
+`connection_string`; keep real credentials in your secret provider. Both
+`postgres://` and `postgresql://` are accepted. The port defaults to 5432; bracket
+IPv6 hosts, for example `postgres://runtime@[::1]/moongate_realm`.
+
+Percent-encode reserved characters in URI usernames, passwords and database names:
+`@` becomes `%40`, `#` becomes `%23`, and a literal `$` becomes `%24`. URI query
+options include `sslmode`, `connect_timeout`, `application_name`, `search_path`,
+and Npgsql option names. Values are decoded once; a `+` remains a literal plus.
+Unsupported options or SSL modes fail validation. Native Npgsql `key=value;`
+strings are also accepted for direct library integrations.
+
+`$NAME` and `${NAME}` references expand once, without treating the result as a
+filesystem path or re-expanding characters in the substituted value. If a URI
+contains individual placeholders, supply URI-encoded component values. Undefined
+variables fail only when their database target is activated. Targets without
+registered entities do not resolve a connection or contact PostgreSQL.
 
 `FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This old
 driver branch is an acknowledged provider limitation. Do not silently override
@@ -112,14 +135,18 @@ opt-in for disposable databases, not the deployment default.
 
 ### Separate DDL and runtime roles
 
-Give normal processes a runtime connection only. Give a one-shot schema job both
-the runtime and schema connections, pointing to the same Host, Port, and Database:
+Give normal processes a runtime connection. A one-shot schema job uses the same
+`connection_string` setting with a schema-role URI for the same database. Its
+separate TOML can reference a schema-only environment variable:
 
 ```toml
 [persistence.realm]
-connection_string_env = "MOONGATE_REALM_DATABASE"
-schema_connection_string_env = "MOONGATE_REALM_SCHEMA_DATABASE"
+connection_string = "$MOONGATE_REALM_SCHEMA_DATABASE"
 ```
+
+Only that administrative process receives the schema credential; normal hosts
+receive the runtime credential. There is no separate schema-connection setting
+in server configuration.
 
 The schema role owns the module schema and performs DDL. The runtime role needs
 database `CONNECT`, schema `USAGE`, and `SELECT`, `INSERT`, `UPDATE`, and `DELETE`
@@ -189,7 +216,7 @@ design explicit compensation or reconciliation.
 For state owned by the game loop, register a source and a detached clone:
 
 ```csharp
-container.AddPersistenceEntity<Item>(
+container.AddPersistenceWorld<Item>(
     () => world.Items.Values,
     item => new Item { Id = item.Id, Name = item.Name });
 ```

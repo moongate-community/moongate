@@ -5,5 +5,4 @@ mode = "game"
 auto_sync_schema = false
 
 [persistence.realm]
-connection_string_env = "MOONGATE_REALM_DATABASE"
-schema_connection_string_env = "MOONGATE_REALM_SCHEMA_DATABASE"
+connection_string = "$MOONGATE_REALM_SCHEMA_DATABASE"

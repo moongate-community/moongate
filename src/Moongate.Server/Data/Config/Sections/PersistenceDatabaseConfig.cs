@@ -1,39 +1,38 @@
+using Moongate.Core.Extensions.Env;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Types.Persistence;
 
 namespace Moongate.Server.Data.Config.Sections;
 
-/// <summary>Names environment variables holding a target's runtime and optional schema connection.</summary>
+/// <summary>Configures a PostgreSQL connection, optionally containing environment variable references.</summary>
 public sealed class PersistenceDatabaseConfig
 {
-    public string ConnectionStringEnv { get; set; } = "";
-    public string? SchemaConnectionStringEnv { get; set; }
+    public string ConnectionString { get; set; } = "";
 
     public void Validate()
     {
-        if (string.IsNullOrWhiteSpace(ConnectionStringEnv) ||
-            SchemaConnectionStringEnv is not null && string.IsNullOrWhiteSpace(SchemaConnectionStringEnv))
+        if (string.IsNullOrWhiteSpace(ConnectionString))
         {
-            throw new InvalidOperationException("Persistence connection environment variable names must not be blank.");
+            throw new InvalidOperationException("Persistence connection strings must not be blank.");
         }
     }
 
     public PersistenceDatabaseOptions ToOptions(PersistenceDatabaseTarget target)
     {
         Validate();
-        var runtimeName = ConnectionStringEnv;
-        var schemaName = SchemaConnectionStringEnv;
-        return new PersistenceDatabaseOptions(target, () => Resolve(runtimeName, target),
-            schemaName is null ? null : () => Resolve(schemaName, target));
+        var template = ConnectionString;
+        return new PersistenceDatabaseOptions(target, () => Resolve(template, target));
     }
 
-    private static string Resolve(string name, PersistenceDatabaseTarget target)
+    private static string Resolve(string template, PersistenceDatabaseTarget target)
     {
-        var value = Environment.GetEnvironmentVariable(name);
-        if (string.IsNullOrWhiteSpace(value))
+        try
         {
-            throw new InvalidOperationException($"Persistence target '{target}' requires environment variable '{name}'.");
+            return template.ExpandEnvironmentVariables(requireDefined: true);
         }
-        return value;
+        catch (InvalidOperationException exception)
+        {
+            throw new InvalidOperationException($"Persistence target '{target}' connection_string: {exception.Message}");
+        }
     }
 }

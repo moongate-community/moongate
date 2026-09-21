@@ -7,8 +7,8 @@ namespace Moongate.Server.Data.Config.Sections;
 public sealed class PersistenceConfig
 {
     public bool AutoSyncSchema { get; set; }
-    public PersistenceDatabaseConfig Accounts { get; set; } = new() { ConnectionStringEnv = "MOONGATE_ACCOUNTS_DATABASE" };
-    public PersistenceDatabaseConfig Realm { get; set; } = new() { ConnectionStringEnv = "MOONGATE_REALM_DATABASE" };
+    public PersistenceDatabaseConfig Accounts { get; set; } = new() { ConnectionString = "$MOONGATE_ACCOUNTS_DATABASE" };
+    public PersistenceDatabaseConfig Realm { get; set; } = new() { ConnectionString = "$MOONGATE_REALM_DATABASE" };
 
     public void Validate()
     {

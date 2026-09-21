@@ -41,10 +41,10 @@ ultima_path = "ChangeMe" # Replace with your client data directory.
 auto_sync_schema = false
 
 [persistence.accounts]
-connection_string_env = "MOONGATE_ACCOUNTS_DATABASE"
+connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
 
 [persistence.realm]
-connection_string_env = "MOONGATE_REALM_DATABASE"
+connection_string = "$MOONGATE_REALM_DATABASE"
 
 [world_save]
 enabled = true # Enables periodic saves; manual/final saves remain available.
@@ -88,10 +88,8 @@ max_string_length = 16777216
 | `api.peers.allowed_operations` | `["*"]` grants all registered operations, including future additions. Otherwise use integer IDs from 1 through 65535. Empty or omitted denies all incoming operations; the wildcard must appear alone. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. |
 | `persistence.auto_sync_schema` | Defaults to false. When false, normal startup fails if registered entities require DDL; use the preview/apply command. Enable only as an explicit development convenience. |
-| `persistence.accounts.connection_string_env` | Environment-variable name containing the Accounts runtime connection in Npgsql `key=value;` format. Resolved only when a registered module uses Accounts. |
-| `persistence.realm.connection_string_env` | Environment-variable name containing the Realm runtime connection. Resolved only when a registered module uses Realm. |
-| `persistence.accounts.schema_connection_string_env` | Optional environment-variable name for a separately authorized Accounts schema connection. Omit from normal runtime configuration. |
-| `persistence.realm.schema_connection_string_env` | Optional environment-variable name for a separately authorized Realm schema connection. Omit from normal runtime configuration. |
+| `persistence.accounts.connection_string` | Accounts/login PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Accounts. |
+| `persistence.realm.connection_string` | This realm's PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Realm. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
 | `diagnostics.enabled` | Starts the periodic diagnostic collector when true. |

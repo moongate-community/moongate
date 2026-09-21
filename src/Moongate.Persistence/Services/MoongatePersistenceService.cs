@@ -31,7 +31,6 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     private readonly AsyncLocal<PersistenceTransaction?> _transaction = new();
     private readonly AsyncLocal<PersistenceCaptureState?> _capture = new();
     private bool _frozen;
-    private int _moduleCount;
     private int _entityCount;
 
     /// <summary>Constructs an I/O-free persistence owner. Register all entities and modules before initialization.</summary>
@@ -48,7 +47,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         {
             await _schema.InitializeAsync(cancellationToken).ConfigureAwait(false);
             _logger.Information("PostgreSQL persistence ready: {TargetCount} targets, {ModuleCount} modules, {EntityTypeCount} entity types",
-                _registeredTargets.Count, _moduleCount, _entityCount);
+                _registeredTargets.Count, _registry.ModuleCount, _entityCount);
         });
     }
 
@@ -177,12 +176,11 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         {
             ThrowIfFrozen();
             _registry.RegisterModule(module);
-            _moduleCount++;
             _registeredTargets.Add(module.DatabaseTarget);
         }
     }
 
-    internal DataAccess<T> RegisterEntity<T>(Func<IEnumerable<T>>? source = null, Func<T, T>? snapshot = null) where T : class, IMoongateEntity
+    internal DataAccess<T> RegisterEntity<T>(Func<IEnumerable<T>>? source = null, Func<T, T>? snapshot = null, PersistenceDatabaseTarget? target = null) where T : class, IMoongateEntity
     {
         lock (_registrationSync)
         {
@@ -192,7 +190,11 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                 throw new ArgumentException("A live source requires an explicit snapshot function.");
             }
 
-            _registry.RegisterEntity(typeof(T));
+            _registry.RegisterEntity(typeof(T), target);
+            if (target.HasValue)
+            {
+                _registeredTargets.Add(target.Value);
+            }
             _entityCount++;
             if (source is not null)
             {
