@@ -109,6 +109,7 @@ public sealed class PersistenceSchemaCliTests
             start.ArgumentList.Add("--migration-target");
             start.ArgumentList.Add("world");
         }
+
         if (help)
         {
             start.ArgumentList.Clear();

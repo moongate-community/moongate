@@ -24,7 +24,9 @@ public sealed class PersistenceConfig
         Realm.Validate();
     }
 
-    public PostgreSqlPersistenceOptions ToOptions(string? migrationsDirectory = null, string? pluginsDirectory = null, ServerMode mode = ServerMode.Standalone)
+    public PostgreSqlPersistenceOptions ToOptions(
+        string? migrationsDirectory = null, string? pluginsDirectory = null, ServerMode mode = ServerMode.Standalone
+    )
     {
         Validate();
         return new PostgreSqlPersistenceOptions(
@@ -33,12 +35,14 @@ public sealed class PersistenceConfig
                 Realm.ToOptions(PersistenceDatabaseTarget.Realm)
             ],
             AutoSyncSchema,
-            migrationsDirectory is null ? null : target =>
-            {
-                var selected = target == PersistenceDatabaseTarget.Accounts ? ServerMode.Login : ServerMode.Game;
-                return (mode & selected) == 0 ? null : MigrationCatalog.Load(migrationsDirectory, pluginsDirectory,
-                    target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World);
-            }
+            migrationsDirectory is null
+                ? null
+                : target => MigrationCatalog.Load(
+                    migrationsDirectory,
+                    pluginsDirectory,
+                    target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World
+                ),
+            target => (mode & (target == PersistenceDatabaseTarget.Accounts ? ServerMode.Login : ServerMode.Game)) != 0
         );
     }
 }

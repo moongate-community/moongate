@@ -16,6 +16,7 @@ internal static class VerifyNuGetConsumers
         ["Moongate.Network"] = "TCP listener started and stopped.",
         ["Moongate.Network.Packets"] = "73:42",
         ["Moongate.Persistence"] = "Mario",
+        ["Moongate.Persistence.Migrations"] = "World",
         ["Moongate.Scripting"] = "Hello, Moongate!",
         ["Moongate.Server.Core"] = "Started",
         ["Moongate.Ultima"] = "2x2"

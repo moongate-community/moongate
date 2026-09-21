@@ -44,3 +44,12 @@ ship beside the binaries always describe what those binaries contain.
 | System.IO.Hashing                           | 10.0.12  | Expression                 | MIT                | https://licenses.nuget.org/MIT          | © Microsoft Corporation. All rights reserved.                                                                                                           | Microsoft                                                                                                             | https://dot.net/                                         |
 | Tomlyn                                      | 2.10.1   | Expression                 | BSD-2-Clause       | https://licenses.nuget.org/BSD-2-Clause | Alexandre Mutel                                                                                                                                         | Alexandre Mutel                                                                                                       | https://xoofx.github.io/Tomlyn/                          |
 | ZLinq                                       | 1.5.6    | Expression                 | MIT                | https://licenses.nuget.org/MIT          | © Cysharp, Inc.                                                                                                                                         | Cysharp                                                                                                               | https://github.com/Cysharp/ZLinq                         |
+
+## Separate migration runner
+
+The `migration-runner/` executable has its own dependency closure. It includes
+[dbup-postgresql 7.0.1](https://www.nuget.org/packages/dbup-postgresql/7.0.1) and
+[dbup-core 6.1.1](https://www.nuget.org/packages/dbup-core/6.1.1), copyright DbUp
+contributors, licensed under MIT. Its Npgsql 10.0.1 driver is licensed under the
+[PostgreSQL license](https://github.com/npgsql/npgsql/blob/v10.0.1/LICENSE).
+The server continues to use the FreeSql-compatible Npgsql version listed above.

@@ -2,7 +2,7 @@
 
 This example builds one login-designated process, two game-designated processes,
 and one PostgreSQL 16 service with separate Accounts, Realm 1, and Realm 2
-databases. It also includes one-shot schema preview/apply jobs and a disposable
+databases. It also includes one-shot schema preview and versioned SQL status/apply jobs and a disposable
 end-to-end smoke test.
 
 The topology does not implement account sharing, realm discovery, or login

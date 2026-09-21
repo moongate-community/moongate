@@ -40,7 +40,8 @@ internal static class PersistencePreparation
                                                               ))
             {
                 throw new InvalidOperationException(
-                    exception.Message + " Use --persistence-schema generate to write a draft, review it, then run Moongate.MigrationRunner apply.",
+                    exception.Message +
+                    " Use --persistence-schema generate to write a draft, review it, then run Moongate.MigrationRunner apply.",
                     exception
                 );
             }

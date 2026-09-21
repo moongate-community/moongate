@@ -61,4 +61,9 @@ if [ -d /opt/moongate/sample-plugin ]; then
     cp -a /opt/moongate/sample-plugin/. /data/plugins/SamplePlugin/
 fi
 
+if [ "${1:-}" = "migrations" ]; then
+    shift
+    exec /app/migration-runner/Moongate.MigrationRunner "$@"
+fi
+
 exec /app/Moongate.Server "$@"

@@ -35,7 +35,7 @@ export MOONGATE_REALM_2_SCHEMA_PASSWORD="smoke-realm-2-schema-$project"
 export MOONGATE_REALM_2_RUNTIME_PASSWORD="smoke-realm-2-runtime-$project"
 
 $compose config --quiet
-$compose build login game-1 game-2 schema-preview schema-apply
+$compose build login game-1 game-2 schema-preview schema-apply migration-status
 $compose up -d --wait postgres
 
 $compose exec -T -e PGPASSWORD="$MOONGATE_REALM_1_SCHEMA_PASSWORD" postgres \
@@ -50,7 +50,11 @@ preview=$($compose run --rm schema-preview)
 printf '%s\n' "$preview" | grep -F 'sample_greeter' >/dev/null
 printf '%s\n' "$preview" | grep -F 'notes' >/dev/null
 
+status=$($compose run --rm migration-status)
+printf '%s\n' "$status" | grep -F 'sample-greeter/0001_create_notes.sql' >/dev/null
 $compose run --rm schema-apply
+repeat=$($compose run --rm schema-apply)
+printf '%s\n' "$repeat" | grep -F 'Applied 0 migration(s)' >/dev/null
 second_preview=$($compose run --rm schema-preview)
 printf '%s\n' "$second_preview"
 printf '%s\n' "$second_preview" | grep -F 'No PostgreSQL schema changes required.' >/dev/null
@@ -78,6 +82,16 @@ then
     exit 1
 fi
 echo "PASS: runtime role cannot perform DDL"
+history=$($postgres_exec psql -At -v ON_ERROR_STOP=1 -U moongate_realm_1_runtime -d moongate_realm_1 \
+    -c "SELECT count(*) FROM moongate_migrations.history WHERE target = 'world';")
+[ "$history" = "1" ] || { echo "Expected one readable migration history row." >&2; exit 1; }
+if $postgres_exec psql -v ON_ERROR_STOP=1 -U moongate_realm_1_runtime -d moongate_realm_1 \
+    -c "DELETE FROM moongate_migrations.history;" >/dev/null 2>&1
+then
+    echo "Runtime role unexpectedly modified migration history." >&2
+    exit 1
+fi
+echo "PASS: runtime role can read but cannot change migration history"
 
 $compose up -d login game-1 game-2
 for service in login game-1 game-2

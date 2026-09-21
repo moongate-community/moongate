@@ -17,7 +17,7 @@ dotnet add package Moongate.Persistence
 - Auth/World entity registration with automatic internal modules and PostgreSQL schemas.
 - Detached asynchronous reads, SQL-translated filtering, upserts, and deletes.
 - Grouped writes in one asynchronous transaction for a single database target.
-- Explicit schema preview/apply APIs with automatic synchronization disabled by default.
+- Versioned SQL readiness checks, draft schema preview, and explicit development synchronization.
 - Owner-controlled `SaveAllAsync` snapshots for application-managed live entities.
 
 ## Example
@@ -86,7 +86,7 @@ Connection options accept `postgres://` and `postgresql://` URIs, including
 percent-encoded credentials, IPv6 hosts and query options such as `sslmode` and
 `connect_timeout`. Native Npgsql connection strings are also supported.
 
-Normal deployments should keep automatic schema synchronization disabled. Review `PreviewSchemaAsync`, then run `SynchronizeSchemaAsync` with a separately authorized schema connection during maintenance.
+Normal deployments keep automatic synchronization disabled. Generate and review versioned SQL, then apply it with the separate `Moongate.MigrationRunner` executable. Configure `PostgreSqlPersistenceOptions.MigrationCatalogFactory` for migration readiness checks in a custom host; Moongate.Server wires this automatically. `SynchronizeSchemaAsync` remains a development-only convenience and does not record history.
 
 ## Behavior and scope
 
@@ -98,7 +98,7 @@ FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported r
 
 Map every complex property explicitly with a supported column/navigation mapping or mark it for explicit omission, such as `IsIgnore`. Do not assume an ordinary writable object graph is serialized or cascaded automatically.
 
-Mappings are immutable, attribute-only, and identical for a persistence CLR type everywhere. Modules select ownership and target; they do not remap types. Do not independently reconfigure these types through another raw FreeSql instance. Schema comparison has no migration history: it compares the current database with the current attributes and does not record the prior application model.
+Mappings are immutable, attribute-only, and identical for a persistence CLR type everywhere. Modules select ownership and target; they do not remap types. Do not independently reconfigure these types through another raw FreeSql instance. FreeSql schema comparison compares the current database with current attributes. Versioned SQL and the checksum journal live in `Moongate.Persistence.Migrations`; the separate runner applies them atomically.
 
 `FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This acknowledged provider limitation must not be hidden with a silent Npgsql major override. Upgrade the provider/driver combination only after running the PostgreSQL compatibility tests.
 

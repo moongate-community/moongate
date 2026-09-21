@@ -3,21 +3,27 @@ using Moongate.MigrationRunner.Tests.TestSupport;
 using Moongate.Persistence.Migrations.Services;
 using Moongate.Persistence.Migrations.Types.Migrations;
 using Npgsql;
+
 namespace Moongate.MigrationRunner.Tests.Integration;
 
 public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFixture>
 {
     private readonly PostgreSqlFixture _postgres;
+
     public PostgreSqlMigrationRunnerTests(PostgreSqlFixture postgres)
     {
         _postgres = postgres;
     }
+
     [Fact]
     public async Task Apply_RecordsSqlOnceAndReadsHistoryForTarget()
     {
         await using var db = await _postgres.CreateDatabaseAsync();
         using var files = new MigrationFiles();
-        files.Write("migrations/world/0001_create.sql", "CREATE TABLE sample (value integer); INSERT INTO sample VALUES (7);");
+        files.Write(
+            "migrations/world/0001_create.sql",
+            "CREATE TABLE sample (value integer); INSERT INTO sample VALUES (7);"
+        );
         var catalog = MigrationCatalog.Load(files.Core, null, MigrationTarget.World);
         Assert.Equal(1, PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog));
         Assert.Equal(0, PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog));
@@ -28,6 +34,7 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
         Assert.Empty(MigrationHistory.Validate(catalog, history));
         Assert.Empty(await MigrationHistory.ReadAsync(() => connection.CreateCommand(), MigrationTarget.Auth));
     }
+
     [Fact]
     public async Task Apply_RollsBackAllPendingScriptsAndHistoryOnFailure()
     {
@@ -35,19 +42,30 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
         using var files = new MigrationFiles();
         files.Write("migrations/world/0001_create.sql", "CREATE TABLE sample (value integer);");
         files.Write("migrations/world/0002_fail.sql", "INSERT INTO nonexistent VALUES (1);");
-        Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, MigrationCatalog.Load(files.Core, null, MigrationTarget.World)));
+        var error = Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
+                db.ConnectionString,
+                MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
+            )
+        );
+        Assert.Contains("core/0002_fail.sql", error.Message);
+        Assert.Contains("42P01", error.Message);
         Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('sample') IS NOT NULL"));
         Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('moongate_migrations.history') IS NOT NULL"));
     }
+
     [Fact]
     public async Task Apply_ExecutesDollarQuotedBlocksAndSqlLiterals()
     {
         await using var db = await _postgres.CreateDatabaseAsync();
         using var files = new MigrationFiles();
-        files.Write("migrations/world/0001_block.sql", "CREATE TABLE sample(value text); DO $body$ BEGIN INSERT INTO sample VALUES ('COMMIT; -- $literal$'); END $body$;");
+        files.Write(
+            "migrations/world/0001_block.sql",
+            "CREATE TABLE sample(value text); DO $body$ BEGIN INSERT INTO sample VALUES ('COMMIT; -- $literal$'); END $body$;"
+        );
         PostgreSqlMigrationRunner.Apply(db.ConnectionString, MigrationCatalog.Load(files.Core, null, MigrationTarget.World));
         Assert.Equal("COMMIT; -- $literal$", await db.ScalarAsync<string>("SELECT value FROM sample"));
     }
+
     [Fact]
     public async Task Apply_BlocksChangedHistoryBeforeAnyNewDdl()
     {
@@ -57,27 +75,44 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
         PostgreSqlMigrationRunner.Apply(db.ConnectionString, MigrationCatalog.Load(files.Core, null, MigrationTarget.World));
         files.Write("migrations/world/0001_create.sql", "SELECT 1;");
         files.Write("migrations/world/0002_next.sql", "CREATE TABLE later (value integer);");
-        Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, MigrationCatalog.Load(files.Core, null, MigrationTarget.World)));
+        Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
+                db.ConnectionString,
+                MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
+            )
+        );
         Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('later') IS NOT NULL"));
     }
+
     [Fact]
     public async Task Apply_ConcurrentRunsSerializeAndDoNotRepeatDml()
     {
         await using var db = await _postgres.CreateDatabaseAsync();
         using var files = new MigrationFiles();
-        files.Write("migrations/world/0001_create.sql", "CREATE TABLE sample (value integer); SELECT pg_sleep(0.2); INSERT INTO sample VALUES (1);");
+        files.Write(
+            "migrations/world/0001_create.sql",
+            "CREATE TABLE sample (value integer); SELECT pg_sleep(0.2); INSERT INTO sample VALUES (1);"
+        );
         var catalog = MigrationCatalog.Load(files.Core, null, MigrationTarget.World);
-        var results = await Task.WhenAll(Task.Run(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog)), Task.Run(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog)));
+        var results = await Task.WhenAll(
+            Task.Run(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog)),
+            Task.Run(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, catalog))
+        );
         Assert.Equal(new[] { 0, 1 }, results.Order().ToArray());
         Assert.Equal(1L, await db.ScalarAsync<long>("SELECT count(*) FROM sample"));
     }
-    [Theory, InlineData("COMMIT;"), InlineData("/* nested /* x */ comment */ END;"), InlineData("-- comment\nSTART TRANSACTION;"), InlineData("ROLLBACK;"), InlineData("PREPARE TRANSACTION 'name';")]
+
+    [Theory, InlineData("COMMIT;"), InlineData("/* nested /* x */ comment */ END;"),
+     InlineData("-- comment\nSTART TRANSACTION;"), InlineData("ROLLBACK;"), InlineData("PREPARE TRANSACTION 'name';")]
     public async Task Apply_RejectsTransactionControlBeforeAnyDdl(string sql)
     {
         await using var db = await _postgres.CreateDatabaseAsync();
         using var files = new MigrationFiles();
         files.Write("migrations/world/0001_create.sql", "CREATE TABLE sample (value integer); " + sql);
-        Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(db.ConnectionString, MigrationCatalog.Load(files.Core, null, MigrationTarget.World)));
+        Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
+                db.ConnectionString,
+                MigrationCatalog.Load(files.Core, null, MigrationTarget.World)
+            )
+        );
         Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('sample') IS NOT NULL"));
     }
 }

@@ -18,7 +18,8 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
 
     protected override Assembly? Load(AssemblyName assemblyName)
     {
-        if (assemblyName.Name is "Moongate.Core" or "Moongate.Server.Core" or "Moongate.Persistence" or
+        if (assemblyName.Name is "Moongate.Core" or "Moongate.Server.Core" or "Moongate.Persistence"
+            or "Moongate.Persistence.Migrations" or
             "FreeSql" or "FreeSql.Provider.PostgreSQL" or "Npgsql")
         {
             Assembly host;

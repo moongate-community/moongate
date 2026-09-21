@@ -235,6 +235,38 @@ counter; the diagnostics service combines that with `ProviderName` ("greeter") t
 publish it in a snapshot as `greeter.hello_calls`. See
 [Registering metric providers](#registering-metric-providers).
 
+### Ship versioned SQL with a persistence plugin
+
+Keep entity registration in `Register` with `AddPersistenceAuth<T>()` or
+`AddPersistenceWorld<T>()`. Ship reviewed SQL alongside the plugin DLL:
+
+```text
+MyPlugin/
+  MyPlugin.dll
+  migrations/
+    manifest.json
+    world/0001_create_characters.sql
+```
+
+`manifest.json` contains a stable migration component ID, for example
+`{ "id": "my-plugin" }`. It need not equal the plugin metadata ID; it must remain
+unique and unchanged across releases and folder renames. Add to the plugin project:
+
+```xml
+<ItemGroup>
+  <Content Include="migrations/**/*"
+           CopyToOutputDirectory="PreserveNewest"
+           CopyToPublishDirectory="PreserveNewest" />
+</ItemGroup>
+```
+
+The separate runner discovers SQL and manifests without loading assemblies.
+Core runs first, then plugin component IDs in ordinal order and their numbered
+scripts. Include required earlier migrations when publishing a new plugin version.
+Applied files cannot change. Removing a plugin retains its schema and history.
+The sample plugin includes a complete manifest and initial World migration.
+Follow [Generate, review and apply](persistence.md#generate-review-and-apply).
+
 ## What Register may do
 
 | Registration helper | What it registers | Documented in |

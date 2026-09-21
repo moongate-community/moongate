@@ -221,3 +221,13 @@ and client mount. Removing a container does not delete its named volume.
 See [Configuration](server-configuration.md) for all TOML settings and CLI limits,
 [First start](getting-started.md#files-and-process-ownership) for PID ownership,
 and [Diagnostics](diagnostics.md) for process metrics and diagnostic events.
+
+## Database migration job
+
+Images built from this source include the isolated runner at
+`/app/migration-runner/Moongate.MigrationRunner` and core SQL at `/app/migrations`.
+Run it as a one-shot job with the same SQL/plugin bundle as the server, a selected
+`--target auth|world`, and a root containing a TOML with schema-role credentials.
+Normal server startup validates migrations but does not apply them by default.
+See the [Compose maintenance example](docker-login-realms.md#review-and-apply-schema-changes)
+and [versioned SQL workflow](persistence.md#generate-review-and-apply).

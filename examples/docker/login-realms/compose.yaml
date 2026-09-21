@@ -159,10 +159,36 @@ services:
     profiles:
       - schema
     command:
+      - migrations
+      - apply
       - --root-directory
       - /data
-      - --persistence-schema
-      - apply
+      - --target
+      - world
+    environment:
+      MOONGATE_REALM_SCHEMA_DATABASE_FILE: /run/secrets/realm-1-schema-password
+      MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
+      MOONGATE_REALM_SCHEMA_USER: ${REALM_1_SCHEMA_USER:-moongate_realm_1_schema}
+    secrets:
+      - realm-1-schema-password
+    configs:
+      - source: game-1-schema-config
+        target: /data/config/moongate.toml
+    volumes:
+      - schema-job-data:/data
+      - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
+
+  migration-status:
+    <<: *moongate-sample
+    profiles:
+      - schema
+    command:
+      - migrations
+      - status
+      - --root-directory
+      - /data
+      - --target
+      - world
     environment:
       MOONGATE_REALM_SCHEMA_DATABASE_FILE: /run/secrets/realm-1-schema-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}

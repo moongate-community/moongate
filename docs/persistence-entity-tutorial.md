@@ -225,26 +225,47 @@ auto_sync_schema = false
 connection_string = "$MOONGATE_REALM_DATABASE"
 ```
 
-Set that environment variable to the realm's PostgreSQL URI. Auth entities use
-`connection_string` under `[persistence.accounts]` instead. Deploy the plugin, preview its
-schema, then apply reviewed changes while the affected server is stopped:
+Set that variable to the realm's PostgreSQL URI. Auth entities use
+`[persistence.accounts]`. In deployment, keep auto-sync disabled and ship a
+versioned SQL migration with the plugin.
 
-```sh
-Moongate.Server --root-directory /srv/moongate/realm-1 --persistence-schema preview
-Moongate.Server --root-directory /srv/moongate/realm-1 --persistence-schema apply
-```
+1. Deploy the plugin to a reference root whose database has the previous schema.
+2. Generate a draft for World, choosing the next component sequence:
 
-The schema command must receive a connection with DDL privileges for the same
-database. Start the server afterward with its runtime connection. The
-[schema preparation guide](persistence.md#separate-ddl-and-runtime-roles) explains
-the separate roles and configurations.
+   ```sh
+   Moongate.Server --root-directory /srv/moongate/reference \
+     --persistence-schema generate --migration-target world \
+     --migration-output ./MyPlugin/migrations/world/0001_create_characters.sql
+   ```
 
-**Where are the SQL migrations?** Moongate does not generate a migrations
-directory or numbered SQL files. `preview` compares the current entity mappings
-with PostgreSQL and prints the required DDL to the console; `apply` generates and
-executes the changes. There is no recorded migration history. Write and version
-explicit SQL separately for data transformations that schema comparison cannot
-infer, as described in [Schema evolution](persistence.md#schema-evolution).
+3. Review the SQL and add `MyPlugin/migrations/manifest.json`:
+
+   ```json
+   { "id": "my-plugin" }
+   ```
+
+4. Include `migrations/**/*` in the plugin's published output and commit it with
+   the entity. Stop the target realm and apply using a schema-role connection:
+
+   ```sh
+   ./migration-runner/Moongate.MigrationRunner apply \
+     --root-directory /srv/moongate/realm-1 --target world
+   ```
+
+5. Start the server with its runtime connection. It verifies both migration
+   history and the mapped schema before starting services.
+
+**Where are the files?** Core SQL is in `migrations/auth` and `migrations/world`
+beside the server. Plugin SQL is in each bundle's `migrations/` directory. The
+runner records successful files and checksums in `moongate_migrations.history`.
+Never edit an applied file: add a new numbered migration. Generate against the
+previous schema, not an already updated database. The draft includes all registered
+modules for the target, so use an isolated plugin reference root and review ownership.
+
+The earlier console example deliberately uses automatic synchronization for a
+throwaway database. That convenience does not create SQL files or version history.
+Use the [schema operations guide](persistence.md#generate-review-and-apply) for
+production-style deployment, reference databases, roles and failure handling.
 
 Simple entity registration enables explicit reads and writes. For live objects
 kept by the game loop, the source-and-snapshot overload of `AddPersistenceWorld`

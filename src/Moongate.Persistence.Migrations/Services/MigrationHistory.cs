@@ -20,35 +20,48 @@ public static class MigrationHistory
             {
                 throw new InvalidOperationException("Invalid or duplicate migration history identity.");
             }
+
             var component = entry.Name[..separator];
             if (!catalog.Components.Contains(component))
             {
                 continue;
             }
+
             if (!known.TryGetValue(entry.Name, out var script))
             {
-                throw new InvalidOperationException($"Applied migration '{entry.Name}' is missing. Restore the original SQL file.");
+                throw new InvalidOperationException(
+                    $"Applied migration '{entry.Name}' is missing. Restore the original SQL file."
+                );
             }
+
             if (!string.Equals(script.Checksum, entry.Checksum, StringComparison.Ordinal))
             {
-                throw new InvalidOperationException($"Applied migration '{entry.Name}' has changed. Restore it and add a new migration.");
+                throw new InvalidOperationException(
+                    $"Applied migration '{entry.Name}' has changed. Restore it and add a new migration."
+                );
             }
+
             lastSequences[component] = Math.Max(lastSequences.GetValueOrDefault(component), script.Sequence);
         }
+
         var pending = catalog.Scripts.Where(script => !executed.Contains(script.Name)).ToArray();
         foreach (var script in pending)
         {
             if (script.Sequence <= lastSequences.GetValueOrDefault(script.Component))
             {
-                throw new InvalidOperationException($"Migration '{script.Name}' precedes an applied migration. Use a new sequence.");
+                throw new InvalidOperationException(
+                    $"Migration '{script.Name}' precedes an applied migration. Use a new sequence."
+                );
             }
         }
+
         return pending;
     }
 
     /// <summary>Reads history through the caller's connection and transaction without creating schema objects.</summary>
     public static async Task<IReadOnlyList<AppliedMigration>> ReadAsync(
-        Func<DbCommand> createCommand, MigrationTarget target, CancellationToken cancellationToken = default)
+        Func<DbCommand> createCommand, MigrationTarget target, CancellationToken cancellationToken = default
+    )
     {
         await using var exists = createCommand();
         exists.CommandText = "SELECT to_regclass('moongate_migrations.history') IS NOT NULL";
@@ -56,8 +69,10 @@ public static class MigrationHistory
         {
             return [];
         }
+
         await using var command = createCommand();
-        command.CommandText = "SELECT component || '/' || script, checksum FROM moongate_migrations.history WHERE target = @target ORDER BY component, script";
+        command.CommandText =
+            "SELECT component || '/' || script, checksum FROM moongate_migrations.history WHERE target = @target ORDER BY component, script";
         var parameter = command.CreateParameter();
         parameter.ParameterName = "target";
         parameter.Value = target == MigrationTarget.Auth ? "auth" : "world";
@@ -68,6 +83,7 @@ public static class MigrationHistory
         {
             result.Add(new AppliedMigration(reader.GetString(0), reader.GetString(1)));
         }
+
         return result;
     }
 }

@@ -1,4 +1,5 @@
 using DbUp;
+using Npgsql;
 using DbUp.Engine;
 using Moongate.MigrationRunner.Internal;
 using Moongate.Persistence.Migrations.Services;
@@ -15,9 +16,13 @@ public static class PostgreSqlMigrationRunner
         {
             TransactionalSql.Validate(script);
         }
+
         var engine = DeployChanges.To.PostgresqlDatabase(connectionString)
-            .WithScripts(catalog.Scripts.Select((script, index) =>
-                new SqlScript(script.Name, script.Sql, new SqlScriptOptions { RunGroupOrder = index })))
+            .WithScripts(
+                catalog.Scripts.Select((script, index) =>
+                    new SqlScript(script.Name, script.Sql, new SqlScriptOptions { RunGroupOrder = index })
+                )
+            )
             .JournalTo((manager, _) => new MigrationJournal(manager, catalog))
             .WithTransaction()
             .WithVariablesDisabled()
@@ -28,9 +33,19 @@ public static class PostgreSqlMigrationRunner
         if (!result.Successful)
         {
             // Keep provider details available to a debugger, out of normal command output.
-            var detail = result.Error is InvalidOperationException ? result.Error.Message : "PostgreSQL rejected the operation.";
-            throw new InvalidOperationException($"Migration failed; inspect history before retrying. {detail}", result.Error);
+            var detail = result.Error switch
+            {
+                PostgresException postgres        => $"PostgreSQL SQLSTATE {postgres.SqlState}.",
+                InvalidOperationException invalid => invalid.Message,
+                _                                 => "Check PostgreSQL connectivity and permissions."
+            };
+            var failedScript = result.ErrorScript is null ? "" : $" Script: '{result.ErrorScript.Name}'.";
+            throw new InvalidOperationException(
+                $"Migration failed; inspect history before retrying.{failedScript} {detail}",
+                result.Error
+            );
         }
+
         return result.Scripts.Count();
     }
 }

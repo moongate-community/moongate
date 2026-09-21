@@ -21,12 +21,18 @@ public sealed class PersistenceSchemaCommandTests
             -2000
         );
         using var output = new StringWriter();
-        await PersistenceSchemaCommand.RunAsync(fixture.Container, PersistenceSchemaMode.Preview, output, CancellationToken.None);
+        await PersistenceSchemaCommand.RunAsync(
+            fixture.Container,
+            PersistenceSchemaMode.Preview,
+            output,
+            CancellationToken.None
+        );
         Assert.Equal(1, loader.Loads);
         Assert.Contains("host.test", output.ToString());
         var exists = await fixture.Database.ScalarAsync<bool>("SELECT to_regclass('host_test.items') IS NOT NULL");
         Assert.False(exists);
     }
+
     [Fact]
     public async Task Generate_WritesReviewableSqlWithoutExecutingOrOverwriting()
     {
@@ -37,27 +43,48 @@ public sealed class PersistenceSchemaCommandTests
         try
         {
             using var output = new StringWriter();
-            await PersistenceSchemaCommand.RunAsync(fixture.Container, PersistenceSchemaMode.Generate, output, CancellationToken.None, path, "world");
+            await PersistenceSchemaCommand.RunAsync(
+                fixture.Container,
+                PersistenceSchemaMode.Generate,
+                output,
+                CancellationToken.None,
+                path,
+                "world"
+            );
             var sql = await File.ReadAllTextAsync(path);
             Assert.Contains("CREATE TABLE", sql, StringComparison.OrdinalIgnoreCase);
             Assert.False(await fixture.Database.ScalarAsync<bool>("SELECT to_regclass('host_test.items') IS NOT NULL"));
-            await Assert.ThrowsAsync<IOException>(() => PersistenceSchemaCommand.RunAsync(fixture.Container, PersistenceSchemaMode.Generate, output, CancellationToken.None, path, "world"));
+            await Assert.ThrowsAsync<IOException>(() => PersistenceSchemaCommand.RunAsync(
+                    fixture.Container,
+                    PersistenceSchemaMode.Generate,
+                    output,
+                    CancellationToken.None,
+                    path,
+                    "world"
+                )
+            );
             Assert.Equal(sql, await File.ReadAllTextAsync(path));
             await fixture.Database.ExecuteAsync(sql);
             Assert.True(await fixture.Database.ScalarAsync<bool>("SELECT to_regclass('host_test.items') IS NOT NULL"));
         }
         finally
         {
-            if (Directory.Exists(directory)) { Directory.Delete(directory, true); }
+            if (Directory.Exists(directory))
+            {
+                Directory.Delete(directory, true);
+            }
         }
     }
+
     [Fact]
     public async Task Apply_RejectsDirectSchemaSynchronization()
     {
         await using var fixture = await HostPersistenceFixture.CreateAsync(autoSync: false);
         fixture.RegisterEntity();
         using var output = new StringWriter();
-        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => PersistenceSchemaCommand.RunAsync(fixture.Container, PersistenceSchemaMode.Apply, output, CancellationToken.None));
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            PersistenceSchemaCommand.RunAsync(fixture.Container, PersistenceSchemaMode.Apply, output, CancellationToken.None)
+        );
         Assert.Contains("Moongate.MigrationRunner", error.Message);
         Assert.False(await fixture.Database.ScalarAsync<bool>("SELECT to_regclass('host_test.items') IS NOT NULL"));
     }

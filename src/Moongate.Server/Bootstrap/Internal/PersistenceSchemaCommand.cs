@@ -40,26 +40,37 @@ internal static class PersistenceSchemaCommand
     {
         if (mode == PersistenceSchemaMode.Apply)
         {
-            throw new InvalidOperationException("Direct schema apply has been replaced. Review versioned SQL and run Moongate.MigrationRunner apply --target auth|world.");
+            throw new InvalidOperationException(
+                "Direct schema apply has been replaced. Review versioned SQL and run Moongate.MigrationRunner apply --target auth|world."
+            );
         }
+
         if (mode is not (PersistenceSchemaMode.Preview or PersistenceSchemaMode.Generate))
         {
             throw new ArgumentOutOfRangeException(nameof(mode), "Choose --persistence-schema preview or generate.");
         }
+
         PersistenceDatabaseTarget? selectedTarget = null;
         if (mode == PersistenceSchemaMode.Generate)
         {
             selectedTarget = migrationTarget switch
             {
-                "auth" => PersistenceDatabaseTarget.Accounts,
+                "auth"  => PersistenceDatabaseTarget.Accounts,
                 "world" => PersistenceDatabaseTarget.Realm,
-                _ => throw new InvalidOperationException("Generate requires --migration-target auth|world.")
+                _       => throw new InvalidOperationException("Generate requires --migration-target auth|world.")
             };
-            if (migrationOutput is null || !Regex.IsMatch(Path.GetFileName(migrationOutput), @"^[0-9]{4}_[a-z][a-z0-9_]*\.sql$", RegexOptions.CultureInvariant) ||
+            if (migrationOutput is null || !Regex.IsMatch(
+                    Path.GetFileName(migrationOutput),
+                    @"^[0-9]{4}_[a-z][a-z0-9_]*\.sql$",
+                    RegexOptions.CultureInvariant
+                ) ||
                 Path.GetFileName(migrationOutput).StartsWith("0000_", StringComparison.Ordinal))
             {
-                throw new InvalidOperationException("Generate requires --migration-output PATH/NNNN_description.sql with a positive sequence.");
+                throw new InvalidOperationException(
+                    "Generate requires --migration-output PATH/NNNN_description.sql with a positive sequence."
+                );
             }
+
             if (File.Exists(migrationOutput))
             {
                 throw new IOException("The migration output already exists. Existing migrations cannot be overwritten.");
@@ -74,16 +85,20 @@ internal static class PersistenceSchemaCommand
             var selected = changes.Where(change => change.Target == selectedTarget).ToArray();
             if (selected.Length == 0)
             {
-                throw new InvalidOperationException("No schema changes found for the selected target; no migration was written.");
+                throw new InvalidOperationException(
+                    "No schema changes found for the selected target; no migration was written."
+                );
             }
+
             var sql = "-- Draft generated against the current reference database. Review before applying.\n" +
-                string.Join("\n", selected.Select(change => $"-- {change.ModuleId}\n{change.Ddl}"));
+                      string.Join("\n", selected.Select(change => $"-- {change.ModuleId}\n{change.Ddl}"));
             var path = Path.GetFullPath(migrationOutput!);
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             var temporary = path + $".{Guid.NewGuid():N}.tmp";
             try
             {
-                await File.WriteAllTextAsync(temporary, sql, new UTF8Encoding(false), cancellationToken).ConfigureAwait(false);
+                await File.WriteAllTextAsync(temporary, sql, new UTF8Encoding(false), cancellationToken)
+                    .ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
                 File.Move(temporary, path, overwrite: false);
             }
@@ -91,9 +106,13 @@ internal static class PersistenceSchemaCommand
             {
                 File.Delete(temporary);
             }
-            await output.WriteLineAsync($"Draft written to {path}. Review and commit it before running Moongate.MigrationRunner apply.");
+
+            await output.WriteLineAsync(
+                $"Draft written to {path}. Review and commit it before running Moongate.MigrationRunner apply."
+            );
             return;
         }
+
         foreach (var change in changes)
         {
             await output.WriteLineAsync($"-- {change.Target}: {change.ModuleId}");

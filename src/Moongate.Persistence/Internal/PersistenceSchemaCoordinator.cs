@@ -147,18 +147,25 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
                     {
                         continue;
                     }
-                    var expected = target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World;
+
+                    var expected = target == PersistenceDatabaseTarget.Accounts
+                        ? MigrationTarget.Auth
+                        : MigrationTarget.World;
                     if (catalog.Target != expected)
                     {
-                        throw new InvalidOperationException("The migration catalog belongs to a different persistence target.");
+                        throw new InvalidOperationException(
+                            "The migration catalog belongs to a different persistence target."
+                        );
                     }
+
                     _catalogs.Add(target, catalog);
-                    if (catalog.Scripts.Count > 0)
+                    if (catalog.Scripts.Count > 0 && (_options.ActivateMigrationTarget?.Invoke(target) ?? true))
                     {
                         targets.Add(target);
                     }
                 }
             }
+
             foreach (var target in targets)
             {
                 var database = PostgreSqlDatabase.Create(_options.GetRequiredDatabase(target));
@@ -188,13 +195,18 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             {
                 continue;
             }
+
             await using var connection = new NpgsqlConnection(database.RuntimeConnectionString);
             await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
-            var applied = await MigrationHistory.ReadAsync(() => connection.CreateCommand(), catalog.Target, cancellationToken).ConfigureAwait(false);
+            var applied = await MigrationHistory
+                .ReadAsync(() => connection.CreateCommand(), catalog.Target, cancellationToken)
+                .ConfigureAwait(false);
             var pending = MigrationHistory.Validate(catalog, applied);
             if (pending.Count > 0)
             {
-                throw new InvalidOperationException($"Pending PostgreSQL migrations for {target}: {string.Join(", ", pending.Select(script => script.Name))}. Run Moongate.MigrationRunner apply before starting the server.");
+                throw new InvalidOperationException(
+                    $"Pending PostgreSQL migrations for {target}: {string.Join(", ", pending.Select(script => script.Name))}. Run Moongate.MigrationRunner apply before starting the server."
+                );
             }
         }
     }

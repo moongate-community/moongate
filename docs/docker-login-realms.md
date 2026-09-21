@@ -17,7 +17,7 @@ implemented.
 | `login` | Accounts runtime only | `127.0.0.1:2593` | ordinary `final` |
 | `game-1` | Realm 1 runtime only | `127.0.0.1:2595` | optional `sample-plugin` |
 | `game-2` | Realm 2 runtime only | `127.0.0.1:2596` | ordinary `final` |
-| `schema-preview` / `schema-apply` | Realm 1 runtime and schema | none; one-shot profile | optional `sample-plugin` |
+| `schema-preview` / `schema-apply` / `migration-status` | Realm 1 runtime and schema | none; one-shot profile | optional `sample-plugin` |
 
 A game container does not receive Accounts credentials. Future login/account APIs
 will own shared-account access. A standalone deployment may separately configure
@@ -72,7 +72,7 @@ Validate without printing the rendered model, then build:
 
 ```sh
 docker compose config --quiet
-docker compose build login game-1 game-2 schema-preview schema-apply
+docker compose build login game-1 game-2 schema-preview schema-apply migration-status
 ```
 
 Missing secret variables fail validation with their names. Use `--quiet` as shown:
@@ -101,27 +101,43 @@ runtime-role secret. Each process builds its PostgreSQL URI in memory.
 
 ## Review and apply schema changes
 
-Start PostgreSQL, preview the plugin schema, and capture the output for review:
+The sample plugin ships its reviewed SQL and manifest in the image. Start
+PostgreSQL and inspect the pending files:
 
 ```sh
 docker compose up -d postgres
-docker compose --profile schema run --rm schema-preview
+docker compose --profile schema run --rm migration-status
 ```
 
-Preview does not modify PostgreSQL. Before apply, stop the affected game runtime.
-Then run:
+Stop the affected runtime before applying the files:
 
 ```sh
 docker compose stop game-1
 docker compose --profile schema run --rm schema-apply
+docker compose --profile schema run --rm migration-status
 docker compose --profile schema run --rm schema-preview
 ```
 
-The last command should report no required changes. The schema advisory lock
-serializes other Moongate schema jobs, but it does not stop runtime queries or
-coordinate game-world ownership. Apply while relevant runtime processes are
-stopped. Semantic data transformations still require reviewed, versioned SQL;
-generated synchronization cannot infer them.
+`schema-apply` invokes the separate DbUp runner for World. Status should report
+zero pending migrations; FreeSql preview should report no schema changes. A repeat
+apply executes nothing. The PostgreSQL initialization script grants the runtime
+role SELECT on migration history, with no ability to change it.
+
+The job currently targets Realm 1. For Auth or another realm, use its own schema
+configuration, credential, target (`auth` or `world`) and plugin bundle. Never point
+a realm job at another realm's database. No migration transaction spans databases.
+For an ordinary image, override the entrypoint directly:
+
+```sh
+docker run --rm --entrypoint /app/migration-runner/Moongate.MigrationRunner \
+  -v /srv/moongate/schema-job:/data --env MOONGATE_REALM_DATABASE \
+  moongate:local apply --target world --root-directory /data
+```
+
+Build `moongate:local` from a revision containing the migration runner. The source Compose example builds that image
+locally. Its wrapper constructs the schema URI from Compose secrets in memory.
+For authoring new SQL, see [Generate, review and apply](persistence.md#generate-review-and-apply).
+The advisory lock serializes migration jobs; it does not stop runtime queries.
 
 ## Start and operate the servers
 

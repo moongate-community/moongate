@@ -62,13 +62,13 @@ public static class PostgreSqlConnectionString
             {
                 builder["SSL Mode"] = option.Replace("-", "", StringComparison.Ordinal).ToLowerInvariant() switch
                 {
-                    "disable" => "Disable",
-                    "allow" => "Allow",
-                    "prefer" => "Prefer",
-                    "require" => "Require",
-                    "verifyca" => "VerifyCA",
+                    "disable"    => "Disable",
+                    "allow"      => "Allow",
+                    "prefer"     => "Prefer",
+                    "require"    => "Require",
+                    "verifyca"   => "VerifyCA",
                     "verifyfull" => "VerifyFull",
-                    _ => throw new FormatException("Unsupported SSL mode.")
+                    _            => throw new FormatException("Unsupported SSL mode.")
                 };
             }
             else
