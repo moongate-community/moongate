@@ -410,6 +410,28 @@ public sealed class MoongateEventBusTests
     }
 
     [Fact]
+    public void SubscribeAll_BusDisposed_Throws()
+    {
+        var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+
+        container.Dispose();
+
+        Assert.Throws<ObjectDisposedException>(() => bus.SubscribeAll((_, _) => Task.CompletedTask));
+    }
+
+    [Fact]
+    public void SubscribeAll_NullHandler_Throws()
+    {
+        using var container = new Container();
+        container.RegisterMoongateEventBus();
+        var bus = container.Resolve<IMoongateEventBus>();
+
+        Assert.Throws<ArgumentNullException>(() => bus.SubscribeAll(null!));
+    }
+
+    [Fact]
     public async Task Subscription_Dispose_RemovesOnlyItsHandlerAndIsIdempotent()
     {
         using var container = new Container();
