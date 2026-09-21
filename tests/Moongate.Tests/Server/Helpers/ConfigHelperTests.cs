@@ -45,7 +45,9 @@ public sealed class ConfigHelperTests
     public void Load_ApiOverrides_ReadsEndpointTlsAndPeerPermissions()
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("moongate.toml", """
+        var path = directory.CreateFile(
+            "moongate.toml",
+            """
             [api]
             enabled = true
             listen_address = "::1"
@@ -60,7 +62,8 @@ public sealed class ConfigHelperTests
             certificate_sha256 = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
             peer_id = "admin"
             allowed_operations = [100, 65535]
-            """);
+            """
+        );
         var api = ConfigHelper.Load(path).Api;
         Assert.True(api.Enabled);
         Assert.Equal("::1", api.ListenAddress);
@@ -114,15 +117,15 @@ public sealed class ConfigHelperTests
     {
         using var directory = new TemporaryDirectory();
         const string toml = """
-            # Keep this operator comment.
-            [shard]
-            shard_name = "Città di Luna"
+                            # Keep this operator comment.
+                            [shard]
+                            shard_name = "Città di Luna"
 
-            [network]
-            game_port = 4000
-            listen_address = "127.0.0.1"
-            enable_ping_server = false
-            """;
+                            [network]
+                            game_port = 4000
+                            listen_address = "127.0.0.1"
+                            enable_ping_server = false
+                            """;
         var path = directory.CreateFile("moongate.toml", toml);
 
         var config = ConfigHelper.Load(path);
@@ -233,7 +236,8 @@ public sealed class ConfigHelperTests
         using var directory = new TemporaryDirectory();
         var path = Path.Combine(directory.Path, "moongate.toml");
         var config = ConfigHelper.Load(path);
-        var worldSave = Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["world_save"]);
+        var worldSave =
+            Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["world_save"]);
         Assert.Equal(true, worldSave["enabled"]);
         Assert.Equal(300L, worldSave["interval_seconds"]);
         var options = config.WorldSave.ToOptions();
@@ -245,11 +249,14 @@ public sealed class ConfigHelperTests
     public void Load_WorldSaveOverrides_MapsConfiguredValues()
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("moongate.toml", """
+        var path = directory.CreateFile(
+            "moongate.toml",
+            """
             [world_save]
             enabled = false
             interval_seconds = 45
-            """);
+            """
+        );
         var options = ConfigHelper.Load(path).WorldSave.ToOptions();
         Assert.False(options.Enabled);
         Assert.Equal(TimeSpan.FromSeconds(45), options.Interval);
@@ -259,8 +266,10 @@ public sealed class ConfigHelperTests
     public void Load_NonPositiveWorldSaveSettings_RejectsBeforeServerStartup(int interval)
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("moongate.toml",
-            $"[world_save]\nenabled = false\ninterval_seconds = {interval}\n");
+        var path = directory.CreateFile(
+            "moongate.toml",
+            $"[world_save]\nenabled = false\ninterval_seconds = {interval}\n"
+        );
         Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
     }
 
@@ -277,7 +286,8 @@ public sealed class ConfigHelperTests
         using var directory = new TemporaryDirectory();
         var path = Path.Combine(directory.Path, "moongate.toml");
         var config = ConfigHelper.Load(path);
-        var scripting = Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["scripting"]);
+        var scripting =
+            Assert.IsType<TomlTable>(TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!["scripting"]);
         Assert.Equal("init.lua", scripting["bootstrap_file"]);
         Assert.Equal(150_000L, scripting["max_instructions_per_resume"]);
         Assert.Equal(10_000_000L, scripting["max_instructions_per_chunk"]);
@@ -297,7 +307,9 @@ public sealed class ConfigHelperTests
     public void Load_ScriptingOverrides_MapsConfiguredValues()
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("moongate.toml", """
+        var path = directory.CreateFile(
+            "moongate.toml",
+            """
             [scripting]
             bootstrap_file = "boot.lua"
             max_instructions_per_resume = 20000
@@ -305,7 +317,8 @@ public sealed class ConfigHelperTests
             hook_interval = 500
             write_definitions = false
             max_string_length = 1024
-            """);
+            """
+        );
         var options = ConfigHelper.Load(path).Scripting.ToOptions(directory.Path);
         Assert.Equal("boot.lua", options.BootstrapFile);
         Assert.Equal(20_000, options.MaxInstructionsPerResume);
@@ -327,8 +340,10 @@ public sealed class ConfigHelperTests
     public void Load_InvalidScriptingBudget_RejectsBeforeServerStartup(int resumeBudget, int hookInterval)
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("moongate.toml",
-            $"[scripting]\nmax_instructions_per_resume = {resumeBudget}\nhook_interval = {hookInterval}\n");
+        var path = directory.CreateFile(
+            "moongate.toml",
+            $"[scripting]\nmax_instructions_per_resume = {resumeBudget}\nhook_interval = {hookInterval}\n"
+        );
         Assert.Throws<ArgumentOutOfRangeException>(() => ConfigHelper.Load(path));
     }
 

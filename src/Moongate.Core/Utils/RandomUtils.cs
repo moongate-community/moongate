@@ -15,8 +15,8 @@ public static class RandomUtils
         {
             // Range is 2^amount exclusively, maximum of 62 bits can be used
             var num = amount >= 62
-                          ? (ulong)BuiltInRng.Next(1L << 62)
-                          : (ulong)BuiltInRng.Next(1L << amount);
+                ? (ulong)BuiltInRng.Next(1L << 62)
+                : (ulong)BuiltInRng.Next(1L << amount);
 
             heads += BitOperations.PopCount(num);
 
@@ -40,8 +40,8 @@ public static class RandomUtils
         {
             // Range is 2^amount exclusively, maximum of 62 bits can be used
             var num = amount >= 62
-                          ? (ulong)BuiltInRng.Next(1L << 62)
-                          : (ulong)BuiltInRng.Next(1L << amount);
+                ? (ulong)BuiltInRng.Next(1L << 62)
+                : (ulong)BuiltInRng.Next(1L << amount);
 
             heads += BitOperations.PopCount(num);
 

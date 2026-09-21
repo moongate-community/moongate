@@ -197,15 +197,29 @@ internal sealed class CoroutineScheduler : IScriptScheduler
 
                 if (!double.IsFinite(seconds) || seconds <= 0 || seconds > MaxWaitSeconds)
                 {
-                    return Fail(entry, new ScriptErrorInfo(entry.Owner, 0,
-                        $"wait(seconds) needs a positive number of seconds, got {seconds}", null));
+                    return Fail(
+                        entry,
+                        new ScriptErrorInfo(
+                            entry.Owner,
+                            0,
+                            $"wait(seconds) needs a positive number of seconds, got {seconds}",
+                            null
+                        )
+                    );
                 }
 
                 return Park(entry, seconds);
             }
 
-            return Fail(entry, new ScriptErrorInfo(entry.Owner, 0,
-                "unsupported yield: coroutines may only yield through wait(seconds)", null));
+            return Fail(
+                entry,
+                new ScriptErrorInfo(
+                    entry.Owner,
+                    0,
+                    "unsupported yield: coroutines may only yield through wait(seconds)",
+                    null
+                )
+            );
         }
         finally
         {
@@ -220,32 +234,43 @@ internal sealed class CoroutineScheduler : IScriptScheduler
 
         try
         {
-            timerId = _timers.RegisterTimer("lua-wait:" + entry.Owner, TimeSpan.FromSeconds(seconds), () =>
-            {
-                if (timerId is not null)
+            timerId = _timers.RegisterTimer(
+                "lua-wait:" + entry.Owner,
+                TimeSpan.FromSeconds(seconds),
+                () =>
                 {
-                    _ownership.ForgetTimer(timerId);
+                    if (timerId is not null)
+                    {
+                        _ownership.ForgetTimer(timerId);
+                    }
+
+                    entry.PendingTimer = null;
+
+                    if (!_active.ContainsKey(entry.Id))
+                    {
+                        return;
+                    }
+
+                    _stack.Clear();
+                    _stack.Push(new LuaValue(seconds));
+                    Resume(entry);
                 }
-
-                entry.PendingTimer = null;
-
-                if (!_active.ContainsKey(entry.Id))
-                {
-                    return;
-                }
-
-                _stack.Clear();
-                _stack.Push(new LuaValue(seconds));
-                Resume(entry);
-            });
+            );
         }
         catch (Exception exception)
         {
             // The wheel refuses a registration at capacity, and it closes on a callback that throws.
             // A 'wait' that cannot be scheduled fails its own coroutine rather than the caller: this
             // runs inside a timer callback whenever the coroutine was resumed by one.
-            return Fail(entry, new ScriptErrorInfo(entry.Owner, 0,
-                $"'wait' could not schedule the timer: {exception.Message}", null));
+            return Fail(
+                entry,
+                new ScriptErrorInfo(
+                    entry.Owner,
+                    0,
+                    $"'wait' could not schedule the timer: {exception.Message}",
+                    null
+                )
+            );
         }
 
         entry.PendingTimer = timerId;
@@ -283,7 +308,8 @@ internal sealed class CoroutineScheduler : IScriptScheduler
         if (_resuming)
         {
             throw new InvalidOperationException(
-                "Coroutine resumes cannot nest: start or resume a coroutine from a timer callback, not from inside running Lua.");
+                "Coroutine resumes cannot nest: start or resume a coroutine from a timer callback, not from inside running Lua."
+            );
         }
     }
 

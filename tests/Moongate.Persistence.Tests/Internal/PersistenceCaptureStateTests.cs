@@ -40,6 +40,7 @@ public sealed class PersistenceCaptureStateTests
         {
             state.CompleteCapture();
         }
+
         var close = state.CloseAsync();
         Assert.False(close.IsCompleted);
         Assert.Throws<InvalidOperationException>(state.BeginCapture);

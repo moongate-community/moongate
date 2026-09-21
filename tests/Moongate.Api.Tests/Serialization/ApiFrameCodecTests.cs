@@ -55,6 +55,8 @@ public sealed class ApiFrameCodecTests
     public void Encode_EnvelopeExceedsLimit_Rejects()
     {
         Assert.Throws<ApiProtocolException>(() => new ApiFrameCodec(8).Encode(
-            new ApiEnvelope(ApiMessageKind.Request, 42, 100, new byte[] { 0x91, 0x07 })));
+                new ApiEnvelope(ApiMessageKind.Request, 42, 100, new byte[] { 0x91, 0x07 })
+            )
+        );
     }
 }

@@ -1,7 +1,6 @@
 using System.Runtime.ExceptionServices;
 using DryIoc;
 using Serilog;
-
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Data.Events;
 using Moongate.Server.Core.Extensions;
@@ -41,12 +40,13 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     {
         ArgumentNullException.ThrowIfNull(registerServices);
         _lifecycle.Configure(() =>
-        {
-            if (!ReferenceEquals(registerServices(_container), _container))
             {
-                throw new InvalidOperationException("Service registration must return the supplied container.");
+                if (!ReferenceEquals(registerServices(_container), _container))
+                {
+                    throw new InvalidOperationException("Service registration must return the supplied container.");
+                }
             }
-        });
+        );
 
         return this;
     }
@@ -65,7 +65,9 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     {
         var shutdownRequested = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         using var registration = _cancellationToken.Register(
-            static state => ((TaskCompletionSource)state!).TrySetResult(), shutdownRequested);
+            static state => ((TaskCompletionSource)state!).TrySetResult(),
+            shutdownRequested
+        );
 
         if (_gameLoopCompletion is null)
         {
@@ -92,13 +94,15 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             await PersistencePreparation.InitializeAsync(_container, _cancellationToken).ConfigureAwait(false);
 
             await _services.StartAsync(service =>
-            {
-                if (service is IGameLoopService gameLoop)
-                {
-                    // Capture after priority-ordered resolution, even if a later startup step fails.
-                    _gameLoopCompletion = gameLoop.Completion;
-                }
-            }).ConfigureAwait(false);
+                    {
+                        if (service is IGameLoopService gameLoop)
+                        {
+                            // Capture after priority-ordered resolution, even if a later startup step fails.
+                            _gameLoopCompletion = gameLoop.Completion;
+                        }
+                    }
+                )
+                .ConfigureAwait(false);
 
             if (_gameLoopCompletion is { IsCompleted: true })
             {
@@ -155,8 +159,10 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         List<Exception> failures = [];
 
         await CaptureFailureAsync(
-            () => _eventBus.Value.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None), failures
-        ).ConfigureAwait(false);
+                () => _eventBus.Value.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None),
+                failures
+            )
+            .ConfigureAwait(false);
 
         failures.AddRange(await _services.StopAsync(_startupSucceeded).ConfigureAwait(false));
 
@@ -177,15 +183,20 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         }
 
         await CaptureFailureAsync(
-            () => _eventBus.Value.PublishAsync(new MoongateStoppedEvent(), CancellationToken.None), failures
-        ).ConfigureAwait(false);
+                () => _eventBus.Value.PublishAsync(new MoongateStoppedEvent(), CancellationToken.None),
+                failures
+            )
+            .ConfigureAwait(false);
 
-        await CaptureFailureAsync(() => PersistencePreparation.DisposePersistenceAsync(_container), failures).ConfigureAwait(false);
+        await CaptureFailureAsync(() => PersistencePreparation.DisposePersistenceAsync(_container), failures)
+            .ConfigureAwait(false);
         CaptureFailure(_container.Dispose, failures);
         _logger.Information("Moongate Server stopped.");
         await CaptureFailureAsync(
-            async () => await Log.CloseAndFlushAsync().ConfigureAwait(false), failures
-        ).ConfigureAwait(false);
+                async () => await Log.CloseAndFlushAsync().ConfigureAwait(false),
+                failures
+            )
+            .ConfigureAwait(false);
 
         return failures;
     }

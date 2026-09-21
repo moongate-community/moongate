@@ -725,9 +725,9 @@ public sealed class MultiComponentList
     public void ExportToCsvFile(string fileName)
     {
         using var tex = new StreamWriter(
-                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         tex.WriteLine("TileID,OffsetX,OffsetY,OffsetZ,Flag,Cliloc");
 
         for (var i = 0; i < SortedTiles.Length; ++i)
@@ -741,9 +741,9 @@ public sealed class MultiComponentList
     public void ExportToTextFile(string fileName)
     {
         using var tex = new StreamWriter(
-                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         for (var i = 0; i < SortedTiles.Length; ++i)
         {
             tex.WriteLine(
@@ -755,9 +755,9 @@ public sealed class MultiComponentList
     public void ExportToUOAFile(string fileName)
     {
         using var tex = new StreamWriter(
-                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         tex.WriteLine("6 version");
         tex.WriteLine("1 template id");
         tex.WriteLine("-1 item version");
@@ -774,9 +774,9 @@ public sealed class MultiComponentList
     public void ExportToUox3File(string fileName)
     {
         using var tex = new StreamWriter(
-                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         for (var i = 0; i < SortedTiles.Length; ++i)
         {
             tex.WriteLine($"[HOUSE ITEM {i}]");
@@ -793,9 +793,9 @@ public sealed class MultiComponentList
     public void ExportToWscFile(string fileName)
     {
         using var tex = new StreamWriter(
-                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         for (var i = 0; i < SortedTiles.Length; ++i)
         {
             tex.WriteLine($"SECTION WORLDITEM {i}");

@@ -74,10 +74,10 @@ internal sealed class ScriptedInstall : IDisposable
         var archive = ArchivePath(version, rid);
 
         using (var file = File.Create(archive))
-        using (var gzip = new GZipStream(file, CompressionLevel.Optimal))
-        {
-            TarFile.CreateFromDirectory(Path.GetDirectoryName(bundle)!, gzip, includeBaseDirectory: false);
-        }
+            using (var gzip = new GZipStream(file, CompressionLevel.Optimal))
+            {
+                TarFile.CreateFromDirectory(Path.GetDirectoryName(bundle)!, gzip, includeBaseDirectory: false);
+            }
 
         using var stream = File.OpenRead(archive);
         var hash = Convert.ToHexStringLower(SHA256.HashData(stream));
@@ -103,7 +103,8 @@ internal sealed class ScriptedInstall : IDisposable
         start.ArgumentList.Add(ScriptPath());
         start.Environment["MOONGATE_VERSION"] = version;
         start.Environment["MOONGATE_RID"] = rid;
-        start.Environment["MOONGATE_BASE_URL"] = new Uri(ReleaseDirectory + Path.DirectorySeparatorChar).AbsoluteUri.TrimEnd('/');
+        start.Environment["MOONGATE_BASE_URL"] =
+            new Uri(ReleaseDirectory + Path.DirectorySeparatorChar).AbsoluteUri.TrimEnd('/');
         start.Environment["MOONGATE_INSTALL_DIR"] = InstallDirectory;
         start.Environment["MOONGATE_BIN_DIR"] = BinDirectory;
         using var process = Process.Start(start) ?? throw new InvalidOperationException("sh did not start");

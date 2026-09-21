@@ -1,5 +1,6 @@
 using DryIoc;
 using Moongate.Api.Registry;
+
 namespace Moongate.Server.Extensions;
 
 /// <summary>Registers container-owned API handlers during single-threaded server composition.</summary>
@@ -17,9 +18,14 @@ public static class ApiContainerExtensions
         {
             throw new InvalidOperationException("The handler already has a container registration.");
         }
+
         container.Register<THandler>(Reuse.Singleton);
         registry.RegisterHandler(() => container.Resolve<THandler>());
-        if (!registered) { container.RegisterInstance(registry); }
+        if (!registered)
+        {
+            container.RegisterInstance(registry);
+        }
+
         return container;
     }
 }

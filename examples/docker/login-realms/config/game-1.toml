@@ -15,7 +15,7 @@ ultima_path = "/uo"
 auto_sync_schema = false
 
 [persistence.realm]
-connection_string_env = "MOONGATE_REALM_DATABASE"
+connection_string = "$MOONGATE_REALM_DATABASE"
 
 [api]
 enabled = false

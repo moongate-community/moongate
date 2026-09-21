@@ -27,11 +27,14 @@ public sealed class MoongatePluginRegistryTests
 
         Assert.Equal(new[] { "root", "middle", "leaf", "other" }, calls);
         Assert.Equal(calls, registry.Plugins.Select(plugin => plugin.Id));
-        Assert.All(new[] { root, middle, leaf, other }, plugin =>
-        {
-            Assert.Equal(1, plugin.RegisterCalls);
-            Assert.Equal(1, plugin.MetadataReads);
-        });
+        Assert.All(
+            new[] { root, middle, leaf, other },
+            plugin =>
+            {
+                Assert.Equal(1, plugin.RegisterCalls);
+                Assert.Equal(1, plugin.MetadataReads);
+            }
+        );
     }
 
     [Fact]
@@ -42,7 +45,10 @@ public sealed class MoongatePluginRegistryTests
         var shared = Create("shared");
         var left = Create("left", dependencies: [new MoongatePluginDependencyData("shared")]);
         var right = Create("right", dependencies: [new MoongatePluginDependencyData("shared")]);
-        var app = Create("app", dependencies: [new MoongatePluginDependencyData("left"), new MoongatePluginDependencyData("right")]);
+        var app = Create(
+            "app",
+            dependencies: [new MoongatePluginDependencyData("left"), new MoongatePluginDependencyData("right")]
+        );
 
         registry.Register([app, right, shared, left]);
 
@@ -163,7 +169,14 @@ public sealed class MoongatePluginRegistryTests
         var registry = new MoongatePluginRegistry(container);
         var cause = new ApplicationException("Registration failed.");
         var first = Create("first");
-        var broken = Create("broken", current => { current.RegisterInstance(new RegistrationDependency()); throw cause; });
+        var broken = Create(
+            "broken",
+            current =>
+            {
+                current.RegisterInstance(new RegistrationDependency());
+                throw cause;
+            }
+        );
         var last = Create("last");
         var error = Assert.Throws<InvalidOperationException>(() => registry.Register([first, broken, last]));
         Assert.Contains("broken", error.Message);
@@ -214,11 +227,17 @@ public sealed class MoongatePluginRegistryTests
         var dependency = new RegistrationDependency();
         container.RegisterInstance(dependency);
         var factoryCalls = 0;
-        var plugin = Create("services", current => current.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(resolver =>
-        {
-            factoryCalls++;
-            return new StartupRegistrationService(resolver.Resolve<RegistrationDependency>());
-        }, priority: 42));
+        var plugin = Create(
+            "services",
+            current => current.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(
+                resolver =>
+                {
+                    factoryCalls++;
+                    return new StartupRegistrationService(resolver.Resolve<RegistrationDependency>());
+                },
+                priority: 42
+            )
+        );
         registry.Register(plugin);
         Assert.Equal(0, factoryCalls);
         var metadata = Assert.Single(container.Resolve<List<ServiceRegistrationData>>());
@@ -256,8 +275,14 @@ public sealed class MoongatePluginRegistryTests
         Assert.Single(registry.Plugins);
     }
 
-    private static RecordingPlugin Create(string id, Action<Container>? register = null, IEnumerable<MoongatePluginDependencyData>? dependencies = null, Version? version = null)
+    private static RecordingPlugin Create(
+        string id, Action<Container>? register = null, IEnumerable<MoongatePluginDependencyData>? dependencies = null,
+        Version? version = null
+    )
     {
-        return new RecordingPlugin(new MoongatePluginData(id, id, version ?? new Version(1, 0, 0), dependencies: dependencies), register);
+        return new RecordingPlugin(
+            new MoongatePluginData(id, id, version ?? new Version(1, 0, 0), dependencies: dependencies),
+            register
+        );
     }
 }

@@ -156,12 +156,18 @@ public static class ContainerExtensions
 
             if (!implementationType.IsClass || implementationType.IsAbstract || implementationType.ContainsGenericParameters)
             {
-                throw new ArgumentException("Factory implementation type must be a closed, concrete class.", nameof(implementationType));
+                throw new ArgumentException(
+                    "Factory implementation type must be a closed, concrete class.",
+                    nameof(implementationType)
+                );
             }
 
             if (!serviceType.IsAssignableFrom(implementationType))
             {
-                throw new ArgumentException("Implementation type must be assignable to the service type.", nameof(implementationType));
+                throw new ArgumentException(
+                    "Implementation type must be assignable to the service type.",
+                    nameof(implementationType)
+                );
             }
 
             container.RegisterDelegate(

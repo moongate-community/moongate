@@ -23,10 +23,15 @@ public sealed class GameLoopTimingTests
         var timers = CreateTimers(clock);
         using var loop = CreateLoop(timers, clock);
         var commandThread = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var timerThread = new TaskCompletionSource<(int Id, bool OnLoop)>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var timerThread =
+            new TaskCompletionSource<(int Id, bool OnLoop)>(TaskCreationOptions.RunContinuationsAsynchronously);
         await loop.StartAsync();
-        timers.RegisterTimer("tick", TimeSpan.FromMilliseconds(10), () =>
-            timerThread.SetResult((Environment.CurrentManagedThreadId, loop.IsOnLoopThread)));
+        timers.RegisterTimer(
+            "tick",
+            TimeSpan.FromMilliseconds(10),
+            () =>
+                timerThread.SetResult((Environment.CurrentManagedThreadId, loop.IsOnLoopThread))
+        );
         clock.Advance(TimeSpan.FromMilliseconds(10));
         await loop.PostAsync(new ActionGameLoopWorkItem(() => commandThread.SetResult(Environment.CurrentManagedThreadId)));
 
@@ -48,8 +53,12 @@ public sealed class GameLoopTimingTests
         timers.RegisterTimer("far", TimeSpan.FromDays(100), () => throw new InvalidOperationException("Early far timer"));
         await loop.PostAsync(new ActionGameLoopWorkItem(() => threadObserved.SetResult(Thread.CurrentThread)));
         var thread = await threadObserved.Task.WaitAsync(TestTimeout);
-        Assert.True(SpinWait.SpinUntil(
-            () => (thread.ThreadState & ThreadState.WaitSleepJoin) != 0, TestTimeout));
+        Assert.True(
+            SpinWait.SpinUntil(
+                () => (thread.ThreadState & ThreadState.WaitSleepJoin) != 0,
+                TestTimeout
+            )
+        );
         timers.RegisterTimer("near", TimeSpan.FromMilliseconds(20), () => fired.SetResult());
 
         await fired.Task.WaitAsync(TestTimeout);
@@ -88,11 +97,16 @@ public sealed class GameLoopTimingTests
         timers.RegisterTimer("due", TimeSpan.FromMilliseconds(1), () => observed.SetResult(commands));
         for (var i = 0; i < 8; i++)
         {
-            Assert.True(loop.TryPost(new ActionGameLoopWorkItem(() =>
-            {
-                commands++;
-                clock.Advance(TimeSpan.FromMilliseconds(1));
-            })));
+            Assert.True(
+                loop.TryPost(
+                    new ActionGameLoopWorkItem(() =>
+                        {
+                            commands++;
+                            clock.Advance(TimeSpan.FromMilliseconds(1));
+                        }
+                    )
+                )
+            );
         }
 
         blocker.Release();
@@ -118,19 +132,25 @@ public sealed class GameLoopTimingTests
         await blocker.Entered.WaitAsync(TestTimeout);
         for (var i = 0; i < 8; i++)
         {
-            timers.RegisterTimer("due", TimeSpan.FromMilliseconds(1), () =>
-            {
-                callbacks++;
-                if (callbacks == 1)
+            timers.RegisterTimer(
+                "due",
+                TimeSpan.FromMilliseconds(1),
+                () =>
                 {
-                    Assert.True(loop.TryPost(new ActionGameLoopWorkItem(() => commandObserved.SetResult(callbacks))));
+                    callbacks++;
+                    if (callbacks == 1)
+                    {
+                        Assert.True(loop.TryPost(new ActionGameLoopWorkItem(() => commandObserved.SetResult(callbacks))));
+                    }
+
+                    if (callbacks == 8)
+                    {
+                        allTimers.SetResult();
+                    }
                 }
-                if (callbacks == 8)
-                {
-                    allTimers.SetResult();
-                }
-            });
+            );
         }
+
         clock.Advance(TimeSpan.FromMilliseconds(1));
 
         blocker.Release();
@@ -221,22 +241,31 @@ public sealed class GameLoopTimingTests
         finally
         {
             cancellation.Cancel();
-            await run.WaitAsync(TestTimeout).ConfigureAwait(
-                ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await run.WaitAsync(TestTimeout)
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
     private static TimerWheelService CreateTimers(TimeProvider clock, int timerBatch = 4)
     {
-        return new TimerWheelService(new TimerWheelOptions
-        {
-            TickDuration = TimeSpan.FromMilliseconds(1), WheelSize = 8,
-            MaxCallbacksPerBatch = timerBatch, CallbackBudget = TimeSpan.FromMilliseconds(5)
-        }, clock);
+        return new TimerWheelService(
+            new TimerWheelOptions
+            {
+                TickDuration = TimeSpan.FromMilliseconds(1), WheelSize = 8,
+                MaxCallbacksPerBatch = timerBatch, CallbackBudget = TimeSpan.FromMilliseconds(5)
+            },
+            clock
+        );
     }
 
     private static GameLoopService CreateLoop(TimerWheelService timers, TimeProvider clock, int commandBatch = 4)
     {
-        return new GameLoopService(new GameLoopOptions { QueueCapacity = 8, MaxWorkItemsPerBatch = commandBatch }, timers, clock);
+        return new GameLoopService(
+            new GameLoopOptions { QueueCapacity = 8, MaxWorkItemsPerBatch = commandBatch },
+            timers,
+            clock
+        );
     }
 }

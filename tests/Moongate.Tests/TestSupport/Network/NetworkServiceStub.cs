@@ -16,6 +16,7 @@ internal sealed class NetworkServiceStub : INetworkService
 
     public Func<Task> OnStart { get; set; } = () => Task.CompletedTask;
     public Func<Task> OnStop { get; set; } = () => Task.CompletedTask;
+
     public int SubscriberCount => (ConnectionAccepted?.GetInvocationList().Length ?? 0) +
                                   (ConnectionClosed?.GetInvocationList().Length ?? 0) +
                                   (DataReceived?.GetInvocationList().Length ?? 0);
@@ -31,15 +32,31 @@ internal sealed class NetworkServiceStub : INetworkService
     {
         await OnStop();
         ControlledNetworkConnection[] clients;
-        lock (_gate) { clients = _clients.ToArray(); }
-        foreach (var client in clients) { Close(client); }
+        lock (_gate)
+        {
+            clients = _clients.ToArray();
+        }
+
+        foreach (var client in clients)
+        {
+            Close(client);
+        }
+
         await Task.WhenAll(clients.Select(client => _connections.DisconnectAsync(client.SessionId)));
     }
 
     public void Accept(ControlledNetworkConnection connection)
     {
-        if (!_connections.TryRegister(connection)) { throw new InvalidOperationException("Registration failed."); }
-        lock (_gate) { _clients.Add(connection); }
+        if (!_connections.TryRegister(connection))
+        {
+            throw new InvalidOperationException("Registration failed.");
+        }
+
+        lock (_gate)
+        {
+            _clients.Add(connection);
+        }
+
         ConnectionAccepted?.Invoke(this, new NetworkConnectionEventArgs(connection));
     }
 
@@ -50,7 +67,14 @@ internal sealed class NetworkServiceStub : INetworkService
 
     public void Close(ControlledNetworkConnection connection)
     {
-        lock (_gate) { if (!_clients.Remove(connection)) { return; } }
+        lock (_gate)
+        {
+            if (!_clients.Remove(connection))
+            {
+                return;
+            }
+        }
+
         ConnectionClosed?.Invoke(this, new NetworkConnectionEventArgs(connection));
         // Completion deliberately follows the callback, as it does in the real transport.
         connection.Complete();

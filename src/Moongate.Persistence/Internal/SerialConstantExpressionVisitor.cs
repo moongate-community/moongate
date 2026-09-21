@@ -15,7 +15,9 @@ internal sealed class SerialConstantExpressionVisitor : ExpressionVisitor
 
         if (node.Arguments.Count != 1 || !TryReadClosedValue(node.Arguments[0], out var value) || value is not uint serial)
         {
-            throw new NotSupportedException("Serial constructors in predicates require a constant or captured uint argument.");
+            throw new NotSupportedException(
+                "Serial constructors in predicates require a constant or captured uint argument."
+            );
         }
 
         return Expression.Constant(new Serial(serial));

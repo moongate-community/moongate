@@ -11,11 +11,44 @@ public sealed class PersistenceModuleRegistryTests
     private const string UnitConnectionString = "Host=localhost;Database=unit;Username=postgres;Pooling=false";
 
     [Fact]
+    public void ValidateAndFreeze_AutomaticModules_AcceptValidUnderscoreSchemasWithStableDistinctIds()
+    {
+        Type[] entities =
+        [
+            typeof(CharacterEntity), typeof(ConsecutiveUnderscoreSchemaEntity),
+            typeof(TrailingUnderscoreSchemaEntity), typeof(MaximumLengthSchemaEntity)
+        ];
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        foreach (var target in Enum.GetValues<PersistenceDatabaseTarget>())
+        {
+            using var database = CreateDatabase(target);
+            var first = new PersistenceModuleRegistry();
+            var second = new PersistenceModuleRegistry();
+            foreach (var entity in entities)
+            {
+                first.RegisterEntity(entity, target);
+                second.RegisterEntity(entity, target);
+            }
+
+            var modules = first.ValidateAndFreeze([database]).Modules;
+            var repeatedModules = second.ValidateAndFreeze([database]).Modules;
+
+            Assert.Equal(entities.Length, modules.Count);
+            Assert.Equal(modules.Select(item => item.Module.Id), repeatedModules.Select(item => item.Module.Id));
+            foreach (var item in modules)
+            {
+                Assert.True(ids.Add(item.Module.Id));
+            }
+        }
+    }
+
+    [Fact]
     public void PersistenceModuleContract_DoesNotExposeMappingMutationCallback()
     {
         Assert.DoesNotContain(
             typeof(IPersistenceModule).GetMethods(),
-            method => string.Equals(method.Name, "Configure", StringComparison.Ordinal));
+            method => string.Equals(method.Name, "Configure", StringComparison.Ordinal)
+        );
     }
 
     [Fact]
@@ -91,11 +124,14 @@ public sealed class PersistenceModuleRegistryTests
     public void ValidateAndFreeze_TwoTypesMappedToSameTable_RejectsCollision()
     {
         var registry = new PersistenceModuleRegistry();
-        registry.RegisterModule(new TestPersistenceModule(
-            "plugin.colliding",
-            "plugin_colliding",
-            PersistenceDatabaseTarget.Realm,
-            [typeof(FirstCollidingEntity), typeof(SecondCollidingEntity)]));
+        registry.RegisterModule(
+            new TestPersistenceModule(
+                "plugin.colliding",
+                "plugin_colliding",
+                PersistenceDatabaseTarget.Realm,
+                [typeof(FirstCollidingEntity), typeof(SecondCollidingEntity)]
+            )
+        );
         registry.RegisterEntity(typeof(FirstCollidingEntity));
         registry.RegisterEntity(typeof(SecondCollidingEntity));
 
@@ -166,23 +202,30 @@ public sealed class PersistenceModuleRegistryTests
 
         Assert.Equal(
             ["plugin.z_dependency", "plugin.a_dependent"],
-            snapshot.Modules.Select(module => module.Module.Id));
+            snapshot.Modules.Select(module => module.Module.Id)
+        );
     }
 
     [Fact]
     public void ValidateAndFreeze_SameSchemaAcrossIndependentTargets_IsAllowed()
     {
         var registry = new PersistenceModuleRegistry();
-        registry.RegisterModule(Module(
-            "plugin.accounts",
-            "plugin_shared",
-            typeof(AccountsSharedEntity),
-            PersistenceDatabaseTarget.Accounts));
-        registry.RegisterModule(Module(
-            "plugin.realm",
-            "plugin_shared",
-            typeof(RealmSharedEntity),
-            PersistenceDatabaseTarget.Realm));
+        registry.RegisterModule(
+            Module(
+                "plugin.accounts",
+                "plugin_shared",
+                typeof(AccountsSharedEntity),
+                PersistenceDatabaseTarget.Accounts
+            )
+        );
+        registry.RegisterModule(
+            Module(
+                "plugin.realm",
+                "plugin_shared",
+                typeof(RealmSharedEntity),
+                PersistenceDatabaseTarget.Realm
+            )
+        );
         registry.RegisterEntity(typeof(AccountsSharedEntity));
         registry.RegisterEntity(typeof(RealmSharedEntity));
         using var accounts = CreateDatabase(PersistenceDatabaseTarget.Accounts);
@@ -281,7 +324,8 @@ public sealed class PersistenceModuleRegistryTests
         var invalidRegistry = Registry(Module("plugin.characters", "plugin_wrong", typeof(CharacterEntity)));
 
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            invalidRegistry.ValidateAndFreeze([invalidDatabase]));
+            invalidRegistry.ValidateAndFreeze([invalidDatabase])
+        );
 
         Assert.Contains("plugin_wrong", exception.Message, StringComparison.Ordinal);
         Assert.Contains("plugin_characters", exception.Message, StringComparison.Ordinal);
@@ -298,7 +342,8 @@ public sealed class PersistenceModuleRegistryTests
         var before = firstDatabase.Orm.Select<CharacterEntity>().ToSql();
         var invalidRegistry = Registry(
             PersistenceTestModules.Character(),
-            Module("plugin.invalid", "plugin_invalid", typeof(NarrowSqlIdEntity)));
+            Module("plugin.invalid", "plugin_invalid", typeof(NarrowSqlIdEntity))
+        );
 
         Assert.Throws<InvalidOperationException>(() => invalidRegistry.ValidateAndFreeze([invalidDatabase]));
 

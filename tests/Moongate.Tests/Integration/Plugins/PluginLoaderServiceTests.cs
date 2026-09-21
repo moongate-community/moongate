@@ -1,5 +1,4 @@
 using System.Runtime.Loader;
-
 using DryIoc;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Core.Data.Plugins;
@@ -60,8 +59,15 @@ public sealed class PluginLoaderServiceTests
         using var container = new Container();
         List<string> events = [];
         container.RegisterInstance(events);
-        container.RegisterMoongatePlugin(new RecordingPlugin(new MoongatePluginData(
-            "loader.foundation", "Internal foundation", new Version(1, 0))));
+        container.RegisterMoongatePlugin(
+            new RecordingPlugin(
+                new MoongatePluginData(
+                    "loader.foundation",
+                    "Internal foundation",
+                    new Version(1, 0)
+                )
+            )
+        );
         var registry = container.Resolve<MoongatePluginRegistry>();
         using var loader = new PluginLoaderService(container, files.Directories);
 
@@ -148,8 +154,15 @@ public sealed class PluginLoaderServiceTests
         using var container = new Container();
         List<string> events = [];
         container.RegisterInstance(events);
-        container.RegisterMoongatePlugin(new RecordingPlugin(new MoongatePluginData(
-            "loader.foundation", "Internal foundation", new Version(1, 0))));
+        container.RegisterMoongatePlugin(
+            new RecordingPlugin(
+                new MoongatePluginData(
+                    "loader.foundation",
+                    "Internal foundation",
+                    new Version(1, 0)
+                )
+            )
+        );
         using var loader = new PluginLoaderService(container, files.Directories);
 
         Assert.Throws<InvalidOperationException>(loader.LoadPlugins);
@@ -252,21 +265,26 @@ public sealed class PluginLoaderServiceTests
         List<string> events = [];
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
             .RegisterServices(services =>
-            {
-                services.RegisterInstance(events);
-                services.RegisterInstance(files.Directories);
-                return services.RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
-                    () => new PluginLoaderService(services, files.Directories));
-            });
+                {
+                    services.RegisterInstance(events);
+                    services.RegisterInstance(files.Directories);
+                    return services.RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(() =>
+                        new PluginLoaderService(services, files.Directories)
+                    );
+                }
+            );
 
         await bootstrap.StartAsync();
         await bootstrap.StopAsync();
 
-        Assert.Equal(new[]
-        {
-            "foundation:register", "dependent:register:private dependency loaded", "dependent:start",
-            "dependent:started", "dependent:stopping", "dependent:stop", "dependent:stopped", "dependent:dispose"
-        }, events);
+        Assert.Equal(
+            new[]
+            {
+                "foundation:register", "dependent:register:private dependency loaded", "dependent:start",
+                "dependent:started", "dependent:stopping", "dependent:stop", "dependent:stopped", "dependent:dispose"
+            },
+            events
+        );
     }
 
     [Fact]
@@ -278,8 +296,9 @@ public sealed class PluginLoaderServiceTests
         List<string> events = [];
         container.RegisterInstance(events);
         container.RegisterInstance(files.Directories);
-        container.RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
-            () => new PluginLoaderService(container, files.Directories));
+        container.RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(() =>
+            new PluginLoaderService(container, files.Directories)
+        );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         await Assert.ThrowsAsync<InvalidOperationException>(bootstrap.StartAsync);

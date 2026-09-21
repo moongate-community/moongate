@@ -129,7 +129,8 @@ public sealed class MultiMap
         var width = sourceBitmap.Width;
         var height = sourceBitmap.Height;
 
-        using var writer = new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite));
+        using var writer =
+            new BinaryWriter(new FileStream(path, FileMode.Create, FileAccess.ReadWrite, FileShare.ReadWrite));
         writer.Write((short)width);
         writer.Write((short)height);
         var line = (ushort*)sourceBitmap.Scan0;

@@ -59,18 +59,20 @@ public sealed class ProgramTests
 
     private static async Task<(int ExitCode, string Output)> RunServerAsync(string root)
     {
-        using var process = Process.Start(new ProcessStartInfo
-        {
-            FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
-            ArgumentList =
+        using var process = Process.Start(
+            new ProcessStartInfo
             {
-                typeof(MoongateServerBootstrap).Assembly.Location,
-                "--root-directory", root
-            },
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
-        })!;
+                FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
+                ArgumentList =
+                {
+                    typeof(MoongateServerBootstrap).Assembly.Location,
+                    "--root-directory", root
+                },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false
+            }
+        )!;
         var stdout = process.StandardOutput.ReadToEndAsync();
         var stderr = process.StandardError.ReadToEndAsync();
 

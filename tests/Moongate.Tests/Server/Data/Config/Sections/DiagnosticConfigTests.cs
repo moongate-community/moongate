@@ -10,7 +10,8 @@ public sealed class DiagnosticConfigTests
     public void ToOptions_MapsTomlValuesToIndependentOptions()
     {
         var config = TomlUtils.Deserialize<MoongateServerConfig>(
-            "[diagnostics]\nenabled = false\ninterval_seconds = 12\nlog_metrics = true\n")!;
+            "[diagnostics]\nenabled = false\ninterval_seconds = 12\nlog_metrics = true\n"
+        )!;
 
         var options = config.Diagnostics.ToOptions();
         config.Diagnostics.Enabled = true;

@@ -9,8 +9,9 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
     public PostgreSqlFixture()
     {
         _adminConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_POSTGRES_CONNECTION_STRING")
-            ?? throw new InvalidOperationException(
-                "MOONGATE_TEST_POSTGRES_CONNECTION_STRING is required for PostgreSQL integration tests.");
+                                 ?? throw new InvalidOperationException(
+                                     "MOONGATE_TEST_POSTGRES_CONNECTION_STRING is required for PostgreSQL integration tests."
+                                 );
     }
 
     public async Task InitializeAsync()
@@ -28,7 +29,8 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
             await connection.OpenAsync();
             await using var command = new NpgsqlCommand(
                 $"CREATE DATABASE {quotedDatabaseName}",
-                connection);
+                connection
+            );
             await command.ExecuteNonQueryAsync();
         }
 

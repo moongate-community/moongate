@@ -137,7 +137,9 @@ public class ApiCertificatesScriptTests
         Assert.True(result.ExitCode == 0, result.Output);
     }
 
-    private static async Task<(ApiPeerIdentity Server, ApiPeerIdentity Client)> HandshakeAsync(ApiTlsPolicy serverPolicy, ApiTlsPolicy clientPolicy)
+    private static async Task<(ApiPeerIdentity Server, ApiPeerIdentity Client)> HandshakeAsync(
+        ApiTlsPolicy serverPolicy, ApiTlsPolicy clientPolicy
+    )
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         using var listener = new TcpListener(IPAddress.Loopback, 0);
@@ -147,8 +149,16 @@ public class ApiCertificatesScriptTests
         using var server = await listener.AcceptTcpClientAsync(timeout.Token);
         ApiPeerIdentity? serverPeer = null;
         ApiPeerIdentity? clientPeer = null;
-        var serverTask = serverPolicy.PrepareServerAsync(server.GetStream(), peer => serverPeer = peer, timeout.Token).AsTask();
-        var clientTask = clientPolicy.PrepareClientAsync(client.GetStream(), "localhost", "game", peer => clientPeer = peer, timeout.Token).AsTask();
+        var serverTask = serverPolicy.PrepareServerAsync(server.GetStream(), peer => serverPeer = peer, timeout.Token)
+            .AsTask();
+        var clientTask = clientPolicy.PrepareClientAsync(
+                client.GetStream(),
+                "localhost",
+                "game",
+                peer => clientPeer = peer,
+                timeout.Token
+            )
+            .AsTask();
 
         try
         {

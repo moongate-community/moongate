@@ -12,7 +12,9 @@ public sealed class SessionPacketOutboxTests
     public async Task TransportCompletesBeforeSendContinuation_PreservesOriginalFailure(bool canceled)
     {
         await using var registry = await ConnectionRegistryFixture.CreateAsync();
-        Exception failure = canceled ? new OperationCanceledException("independent cancellation") : new IOException("send failure");
+        Exception failure = canceled
+            ? new OperationCanceledException("independent cancellation")
+            : new IOException("send failure");
         var releaseFailure = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         using var connection = new ControlledNetworkConnection(17)
         {
@@ -38,6 +40,7 @@ public sealed class SessionPacketOutboxTests
                 Assert.True(++queued < capacity);
                 await Task.Delay(1, deadline.Token);
             }
+
             Assert.False(outbox.Completion.IsCompleted);
             Assert.False(releaseFailure.Task.IsCompleted);
             releaseFailure.TrySetResult();
@@ -48,7 +51,9 @@ public sealed class SessionPacketOutboxTests
         finally
         {
             releaseFailure.TrySetResult();
-            await outbox.Completion.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await outbox.Completion.ConfigureAwait(
+                ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+            );
         }
     }
 
@@ -67,11 +72,16 @@ public sealed class SessionPacketOutboxTests
         };
         Assert.True(connections.TryRegister(connection));
         Assert.True(connections.TryGet(77, out _, out var disconnectRequested));
-        var outbox = new SessionPacketOutbox(connection, disconnectRequested, 1, id =>
-        {
-            outboxClosure.TrySetResult();
-            return connections.DisconnectAsync(id);
-        });
+        var outbox = new SessionPacketOutbox(
+            connection,
+            disconnectRequested,
+            1,
+            id =>
+            {
+                outboxClosure.TrySetResult();
+                return connections.DisconnectAsync(id);
+            }
+        );
         outbox.Start();
         Assert.True(outbox.TryWrite(new byte[] { 0x73, 1 }));
         try

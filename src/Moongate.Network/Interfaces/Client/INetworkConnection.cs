@@ -1,5 +1,4 @@
 using System.Net;
-
 using Moongate.Network.Interfaces.Framing;
 
 namespace Moongate.Network.Interfaces.Client;

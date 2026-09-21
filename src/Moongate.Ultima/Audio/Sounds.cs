@@ -353,9 +353,9 @@ public static class Sounds
     public static void SaveSoundListToCsv(string fileName, int soundIdOffset = 0)
     {
         using var tex = new StreamWriter(
-                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         tex.WriteLine("ID;Name;Length");
 
         for (var i = 0; i < 0xFFF; ++i)

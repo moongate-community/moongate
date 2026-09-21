@@ -1,5 +1,4 @@
 using System.Net;
-
 using Moongate.Network.Packets.Data.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Serialization;
@@ -18,7 +17,8 @@ public class ServerListPacketTests
             "A8002E5D000101025368617264"
             + "00000000000000000000000000000000"
             + "0000000000000000000000"
-            + "32FECE00A8C0");
+            + "32FECE00A8C0"
+        );
 
         Assert.Equal(46, packet.Length);
         Assert.Single(packet.Servers);
@@ -31,10 +31,12 @@ public class ServerListPacketTests
     [Fact]
     public void Encode_MultipleEntries_MatchesCompleteIndependentFixture()
     {
-        var packet = new ServerListPacket([
-            new GameServerEntry(1, "A", 0, 1, IPAddress.Parse("1.2.3.4")),
-            new GameServerEntry(2, "12345678901234567890123456789012", 100, -8, IPAddress.Parse("10.20.30.40"))
-        ]);
+        var packet = new ServerListPacket(
+            [
+                new GameServerEntry(1, "A", 0, 1, IPAddress.Parse("1.2.3.4")),
+                new GameServerEntry(2, "12345678901234567890123456789012", 100, -8, IPAddress.Parse("10.20.30.40"))
+            ]
+        );
         var expected = Convert.FromHexString(
             "A800565D0002"
             + "000141"
@@ -46,7 +48,8 @@ public class ServerListPacketTests
             + "31323334353637383930"
             + "31323334353637383930"
             + "3132"
-            + "64F8281E140A");
+            + "64F8281E140A"
+        );
 
         var bytes = PacketCodec.Encode(packet);
 

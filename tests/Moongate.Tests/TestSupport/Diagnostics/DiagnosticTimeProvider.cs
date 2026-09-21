@@ -43,6 +43,7 @@ internal sealed class DiagnosticTimeProvider : TimeProvider, IDisposable
             _timestamp += elapsed.Ticks;
             timer = _timer;
         }
+
         timer?.Tick();
     }
 

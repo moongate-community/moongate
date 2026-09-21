@@ -8,6 +8,7 @@ public sealed class ApiPeerConfig
 {
     public string CertificateSha256 { get; set; } = "";
     public string PeerId { get; set; } = "";
+
     [TomlConverter(typeof(ApiOperationPermissionsTomlConverter))]
     public ApiOperationPermissionsConfig AllowedOperations { get; set; } = new([]);
 
@@ -16,16 +17,21 @@ public sealed class ApiPeerConfig
     {
         if (CertificateSha256 is null || CertificateSha256.Length != 64 || !CertificateSha256.All(Uri.IsHexDigit))
         {
-            throw new InvalidOperationException("api.peers.certificate_sha256 must contain exactly 64 hexadecimal characters.");
+            throw new InvalidOperationException(
+                "api.peers.certificate_sha256 must contain exactly 64 hexadecimal characters."
+            );
         }
+
         if (string.IsNullOrWhiteSpace(PeerId))
         {
             throw new InvalidOperationException("api.peers.peer_id cannot be blank.");
         }
+
         if (AllowedOperations is null)
         {
             throw new InvalidOperationException("api.peers.allowed_operations cannot be null.");
         }
+
         AllowedOperations.Validate();
     }
 }

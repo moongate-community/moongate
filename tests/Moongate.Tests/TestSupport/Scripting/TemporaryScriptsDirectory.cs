@@ -2,7 +2,10 @@ namespace Moongate.Tests.TestSupport.Scripting;
 
 public sealed class TemporaryScriptsDirectory : IDisposable
 {
-    public string Path { get; } = System.IO.Path.Combine(System.IO.Path.GetTempPath(), "moongate-scripts-" + Guid.NewGuid().ToString("N"));
+    public string Path { get; } = System.IO.Path.Combine(
+        System.IO.Path.GetTempPath(),
+        "moongate-scripts-" + Guid.NewGuid().ToString("N")
+    );
 
     public TemporaryScriptsDirectory()
     {

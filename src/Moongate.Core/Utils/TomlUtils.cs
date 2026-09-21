@@ -71,8 +71,10 @@ public static class TomlUtils
     /// A pre-canceled token prevents file-system changes. Writes are not atomic; cancellation or an I/O failure
     /// during writing can leave a partial file.
     /// </remarks>
-    public static async Task SerializeToFileAsync<T>(T value, string filePath, TomlSerializerOptions? options = null,
-        CancellationToken cancellationToken = default)
+    public static async Task SerializeToFileAsync<T>(
+        T value, string filePath, TomlSerializerOptions? options = null,
+        CancellationToken cancellationToken = default
+    )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
         cancellationToken.ThrowIfCancellationRequested();
@@ -90,8 +92,10 @@ public static class TomlUtils
     /// <remarks>
     /// Deserialization is synchronous. Cancellation is checked before reading and before deserialization.
     /// </remarks>
-    public static async Task<T?> DeserializeFromFileAsync<T>(string filePath, TomlSerializerOptions? options = null,
-        CancellationToken cancellationToken = default)
+    public static async Task<T?> DeserializeFromFileAsync<T>(
+        string filePath, TomlSerializerOptions? options = null,
+        CancellationToken cancellationToken = default
+    )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
         cancellationToken.ThrowIfCancellationRequested();

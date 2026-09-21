@@ -43,7 +43,9 @@ internal sealed class PersistenceLifetime
             }
 
             _closing = true;
-            var drained = _active == 0 ? Task.CompletedTask : (_drained = new(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
+            var drained = _active == 0
+                ? Task.CompletedTask
+                : (_drained = new(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
             _close = CloseCoreAsync(drained, close);
             return _close;
         }

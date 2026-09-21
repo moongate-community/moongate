@@ -1,7 +1,9 @@
 using MessagePack;
 using Moongate.Api.Attributes;
 using Moongate.Api.Interfaces.Contracts;
+
 namespace Moongate.Api.TestHost.Data;
+
 [ApiOperation(100), MessagePackObject]
 public sealed partial class IncrementRequest : IApiRequest<IncrementResponse>
 {

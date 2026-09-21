@@ -50,11 +50,14 @@ public sealed class GameLoopMetricsTests
         using var loop = new GameLoopService(new GameLoopOptions(), timers, clock);
         var failure = new InvalidOperationException("fatal command");
         await loop.StartAsync();
-        await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-        {
-            clock.Advance(TimeSpan.FromMilliseconds(4));
-            throw failure;
-        }));
+        await loop.PostAsync(
+            new ActionGameLoopWorkItem(() =>
+                {
+                    clock.Advance(TimeSpan.FromMilliseconds(4));
+                    throw failure;
+                }
+            )
+        );
         Assert.Same(failure, await Record.ExceptionAsync(() => loop.Completion.WaitAsync(TestTimeout)));
         await loop.StopAsync();
 
@@ -76,11 +79,14 @@ public sealed class GameLoopMetricsTests
         using var loop = new GameLoopService(new GameLoopOptions(), timers, clock);
         var failure = new ApplicationException("original command fault");
         await loop.StartAsync();
-        await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-        {
-            clock.FailTimestampReads = true;
-            throw failure;
-        }));
+        await loop.PostAsync(
+            new ActionGameLoopWorkItem(() =>
+                {
+                    clock.FailTimestampReads = true;
+                    throw failure;
+                }
+            )
+        );
 
         var actual = await Record.ExceptionAsync(() => loop.Completion.WaitAsync(TestTimeout));
         await loop.StopAsync();

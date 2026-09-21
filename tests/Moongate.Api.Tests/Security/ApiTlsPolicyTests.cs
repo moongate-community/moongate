@@ -21,8 +21,11 @@ public class ApiTlsPolicyTests
     {
         using var ca = new TestCertificateAuthority();
         using var certificate = ca.Issue();
-        using var publicOnly = System.Security.Cryptography.X509Certificates.X509CertificateLoader.LoadCertificate(certificate.RawData);
+        using var publicOnly =
+            System.Security.Cryptography.X509Certificates.X509CertificateLoader.LoadCertificate(certificate.RawData);
         Assert.Throws<ArgumentException>(() => new ApiTlsPolicy(ca.Options(publicOnly, certificate, "peer")));
-        Assert.Throws<ArgumentException>(() => new ApiTlsPolicy(ca.Options(certificate, certificate, "peer") with { TrustedRoots = [] }));
+        Assert.Throws<ArgumentException>(() =>
+            new ApiTlsPolicy(ca.Options(certificate, certificate, "peer") with { TrustedRoots = [] })
+        );
     }
 }

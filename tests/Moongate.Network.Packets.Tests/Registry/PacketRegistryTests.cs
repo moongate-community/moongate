@@ -1,5 +1,4 @@
 using System.Collections;
-
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
@@ -96,7 +95,8 @@ public class PacketRegistryTests
         Assert.True(registry.TryGetDescriptor(0xE1, PacketDirection.Outgoing, out var outgoing));
         Assert.Equal(
             bidirectionalFirst ? typeof(BidirectionalCollisionPacket) : typeof(OutgoingCollisionPacket),
-            outgoing.PacketType);
+            outgoing.PacketType
+        );
         Assert.Single(registry.RegisteredPackets);
     }
 
@@ -183,26 +183,30 @@ public class PacketRegistryTests
     [Fact]
     public void Default_Inventory_HasExpectedMetadata()
     {
-        var expected = new (byte OpCode, Type Type, PacketSizing Sizing, int? Fixed, int Minimum, PacketDirection Direction)[]
-        {
-            (0x55, typeof(LoginCompletePacket), PacketSizing.Fixed, 1, 1, PacketDirection.Outgoing),
-            (0x73, typeof(PingPacket), PacketSizing.Fixed, 2, 2, PacketDirection.Both),
-            (0x80, typeof(AccountLoginPacket), PacketSizing.Fixed, 62, 62, PacketDirection.Incoming),
-            (0x82, typeof(LoginDeniedPacket), PacketSizing.Fixed, 2, 2, PacketDirection.Outgoing),
-            (0x8C, typeof(ServerRedirectPacket), PacketSizing.Fixed, 11, 11, PacketDirection.Outgoing),
-            (0x91, typeof(GameLoginPacket), PacketSizing.Fixed, 65, 65, PacketDirection.Incoming),
-            (0xA0, typeof(ServerSelectPacket), PacketSizing.Fixed, 3, 3, PacketDirection.Incoming),
-            (0xA8, typeof(ServerListPacket), PacketSizing.Variable, null, 6, PacketDirection.Outgoing),
-            (0xB9, typeof(SupportFeaturesPacket), PacketSizing.Fixed, 5, 5, PacketDirection.Outgoing),
-            (0xBD, typeof(ClientVersionRequestPacket), PacketSizing.Fixed, 3, 3, PacketDirection.Outgoing),
-            (0xBD, typeof(ClientVersionPacket), PacketSizing.Variable, null, 4, PacketDirection.Incoming),
-            (0xEF, typeof(LoginSeedPacket), PacketSizing.Fixed, 21, 21, PacketDirection.Incoming)
-        };
+        var expected =
+            new (byte OpCode, Type Type, PacketSizing Sizing, int? Fixed, int Minimum, PacketDirection Direction)[]
+            {
+                (0x55, typeof(LoginCompletePacket), PacketSizing.Fixed, 1, 1, PacketDirection.Outgoing),
+                (0x73, typeof(PingPacket), PacketSizing.Fixed, 2, 2, PacketDirection.Both),
+                (0x80, typeof(AccountLoginPacket), PacketSizing.Fixed, 62, 62, PacketDirection.Incoming),
+                (0x82, typeof(LoginDeniedPacket), PacketSizing.Fixed, 2, 2, PacketDirection.Outgoing),
+                (0x8C, typeof(ServerRedirectPacket), PacketSizing.Fixed, 11, 11, PacketDirection.Outgoing),
+                (0x91, typeof(GameLoginPacket), PacketSizing.Fixed, 65, 65, PacketDirection.Incoming),
+                (0xA0, typeof(ServerSelectPacket), PacketSizing.Fixed, 3, 3, PacketDirection.Incoming),
+                (0xA8, typeof(ServerListPacket), PacketSizing.Variable, null, 6, PacketDirection.Outgoing),
+                (0xB9, typeof(SupportFeaturesPacket), PacketSizing.Fixed, 5, 5, PacketDirection.Outgoing),
+                (0xBD, typeof(ClientVersionRequestPacket), PacketSizing.Fixed, 3, 3, PacketDirection.Outgoing),
+                (0xBD, typeof(ClientVersionPacket), PacketSizing.Variable, null, 4, PacketDirection.Incoming),
+                (0xEF, typeof(LoginSeedPacket), PacketSizing.Fixed, 21, 21, PacketDirection.Incoming)
+            };
 
         Assert.Equal(expected.Length, PacketRegistry.Default.RegisteredPackets.Count);
         foreach (var item in expected)
         {
-            var descriptor = Assert.Single(PacketRegistry.Default.RegisteredPackets, candidate => candidate.PacketType == item.Type);
+            var descriptor = Assert.Single(
+                PacketRegistry.Default.RegisteredPackets,
+                candidate => candidate.PacketType == item.Type
+            );
             Assert.Equal(item.OpCode, descriptor.OpCode);
             Assert.Equal(item.Sizing, descriptor.Sizing);
             Assert.Equal(item.Fixed, descriptor.FixedLength);
@@ -259,7 +263,12 @@ public class PacketRegistryTests
         Assert.True(PacketRegistry.Default.TryDecode([0x73, 0x2A], out var pingPacket));
         Assert.Equal((byte)42, Assert.IsType<PingPacket>(pingPacket).Sequence);
 
-        Assert.True(PacketRegistry.Default.TryDecode(Convert.FromHexString("EF1234567800000007000000000000006D00000000"), out var seedPacket));
+        Assert.True(
+            PacketRegistry.Default.TryDecode(
+                Convert.FromHexString("EF1234567800000007000000000000006D00000000"),
+                out var seedPacket
+            )
+        );
         var seed = Assert.IsType<LoginSeedPacket>(seedPacket);
         Assert.Equal(0x12345678u, seed.Seed);
         Assert.Equal(7u, seed.Major);
@@ -291,11 +300,15 @@ public class PacketRegistryTests
         Assert.True(PacketRegistry.Default.TryDecode(Convert.FromHexString("A01234"), out var selectPacket));
         Assert.Equal((ushort)0x1234, Assert.IsType<ServerSelectPacket>(selectPacket).ServerIndex);
 
-        Assert.True(PacketRegistry.Default.TryDecode(Convert.FromHexString("BD000C372E302E3130392E30"), out var versionPacket));
+        Assert.True(
+            PacketRegistry.Default.TryDecode(Convert.FromHexString("BD000C372E302E3130392E30"), out var versionPacket)
+        );
         var version = Assert.IsType<ClientVersionPacket>(versionPacket);
         Assert.Equal("7.0.109.0", version.Version);
         Assert.Equal(12, version.Length);
-        Assert.True(PacketRegistry.Default.TryDecode(Convert.FromHexString("BD000D372E302E3130392E3000"), out versionPacket));
+        Assert.True(
+            PacketRegistry.Default.TryDecode(Convert.FromHexString("BD000D372E302E3130392E3000"), out versionPacket)
+        );
         Assert.Equal(13, Assert.IsType<ClientVersionPacket>(versionPacket).Length);
     }
 
@@ -362,15 +375,19 @@ public class PacketRegistryTests
     {
         var failures = 0;
 
-        Parallel.For(0, 100, iteration =>
-        {
-            if (!PacketRegistry.Default.TryGetDescriptor(0x73, PacketDirection.Incoming, out _)
-                || !PacketRegistry.Default.TryDecode([0x73, 0x2A], out var packet)
-                || packet is not PingPacket { Sequence: 42 })
+        Parallel.For(
+            0,
+            100,
+            iteration =>
             {
-                Interlocked.Increment(ref failures);
+                if (!PacketRegistry.Default.TryGetDescriptor(0x73, PacketDirection.Incoming, out _)
+                    || !PacketRegistry.Default.TryDecode([0x73, 0x2A], out var packet)
+                    || packet is not PingPacket { Sequence: 42 })
+                {
+                    Interlocked.Increment(ref failures);
+                }
             }
-        });
+        );
 
         Assert.Equal(0, failures);
     }

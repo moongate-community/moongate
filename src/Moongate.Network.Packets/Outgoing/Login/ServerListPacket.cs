@@ -1,5 +1,4 @@
 using System.Collections.ObjectModel;
-
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Data.Login;
@@ -14,6 +13,7 @@ namespace Moongate.Network.Packets.Outgoing.Login;
 public sealed class ServerListPacket : BasePacket<ServerListPacket>, IOutgoingPacket
 {
     private const byte SystemInfoFlag = 0x5D;
+
     private static readonly int MaximumServerCount =
         (ushort.MaxValue - Descriptor.MinimumLength) / LoginProtocolConstants.ServerEntryLength;
 
@@ -31,7 +31,10 @@ public sealed class ServerListPacket : BasePacket<ServerListPacket>, IOutgoingPa
 
         if (snapshot.Length > MaximumServerCount)
         {
-            throw new ArgumentException($"The server list cannot contain more than {MaximumServerCount} entries.", nameof(servers));
+            throw new ArgumentException(
+                $"The server list cannot contain more than {MaximumServerCount} entries.",
+                nameof(servers)
+            );
         }
 
         Length = Descriptor.MinimumLength + LoginProtocolConstants.ServerEntryLength * snapshot.Length;

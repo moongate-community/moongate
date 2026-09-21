@@ -1,5 +1,4 @@
 using System.Globalization;
-
 using Moongate.Core.Geometry;
 
 namespace Moongate.Tests.Core.Geometry;

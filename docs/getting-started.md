@@ -82,8 +82,8 @@ Normal cleanup removes the PID file if it still belongs to this process; the
 not mean the server is running.
 
 Use a different root and listener port for each instance. PostgreSQL target
-connections are supplied separately through the environment-variable names in
-TOML; do not point independent worlds at the same realm database.
+connections use each target's `connection_string`, with a PostgreSQL URI or
+`$NAME` / `${NAME}` environment reference; do not point independent worlds at the same realm database.
 
 Console logs show time, level, source and message. File logs roll daily and at
 10 MiB, keeping up to 30 files. For metrics see [Diagnostics](diagnostics.md);
@@ -99,8 +99,8 @@ for database targets, schema operations and world saves see
 | Port binding failure | Check `network.listen_address`, port availability and interface addresses |
 | Another instance detected | Check the PID and running process; use a separate root for another server |
 | Script startup error | Fix `scripts/init.lua`; inspect the script filename and line in the log |
-| Persistence variable missing | Export the Npgsql connection under the environment-variable name configured for the registered module's target |
-| PostgreSQL schema changes required | Stop the affected runtime, review `--persistence-schema preview`, then run the separately authorized `apply` command |
+| Persistence variable missing | Export the PostgreSQL URI referenced by the target's `connection_string` |
+| PostgreSQL schema changes required | Generate and review a versioned SQL file with `--persistence-schema generate`; stop the affected runtime and run `Moongate.MigrationRunner apply --target auth` or `--target world` with schema-role credentials |
 
 The [transport ownership guide](network-game-separation.md) explains the current
 login/game separation boundary. Setting `mode = "login"` alone does not create

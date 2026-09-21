@@ -141,7 +141,7 @@ public sealed class Gumps
                         var pPixelEnd = pPixel + width;
 
                         ushort color,
-                               count;
+                            count;
 
                         if (onlyHueGrayPixels)
                         {

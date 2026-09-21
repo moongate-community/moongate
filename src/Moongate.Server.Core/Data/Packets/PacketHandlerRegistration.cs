@@ -11,7 +11,9 @@ public sealed class PacketHandlerRegistration
     public Type HandlerType { get; }
     public Func<IResolverContext, Action<GameSession, IPacket>> Bind { get; }
 
-    public PacketHandlerRegistration(Type packetType, Type handlerType, Func<IResolverContext, Action<GameSession, IPacket>> bind)
+    public PacketHandlerRegistration(
+        Type packetType, Type handlerType, Func<IResolverContext, Action<GameSession, IPacket>> bind
+    )
     {
         PacketType = packetType;
         HandlerType = handlerType;

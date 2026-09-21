@@ -22,12 +22,16 @@ public sealed class PacketDispatchService : IPacketDispatchService
     private readonly Dictionary<long, Task> _disconnects = new();
     private readonly ILogger _logger = Log.ForContext<PacketDispatchService>();
 
-    private FrozenDictionary<Type, Action<GameSession, IPacket>> _handlers = FrozenDictionary<Type, Action<GameSession, IPacket>>.Empty;
+    private FrozenDictionary<Type, Action<GameSession, IPacket>> _handlers =
+        FrozenDictionary<Type, Action<GameSession, IPacket>>.Empty;
+
     private bool _everStarted;
     private bool _running;
     private bool _stopped;
 
-    public PacketDispatchService(IGameLoopService gameLoop, ISessionService sessions, PacketHandlerRegistry registry, IResolverContext resolver)
+    public PacketDispatchService(
+        IGameLoopService gameLoop, ISessionService sessions, PacketHandlerRegistry registry, IResolverContext resolver
+    )
     {
         _gameLoop = gameLoop;
         _sessions = sessions;
@@ -38,8 +42,6 @@ public sealed class PacketDispatchService : IPacketDispatchService
     /// <inheritdoc />
     public Task StartAsync()
     {
-
-
         lock (_gate)
         {
             if (_stopped)
@@ -103,7 +105,11 @@ public sealed class PacketDispatchService : IPacketDispatchService
                 return true;
             }
 
-            _logger.Warning("Game loop inbox rejected {PacketType} for session {SessionId}: full or unavailable", packet.GetType().Name, sessionId);
+            _logger.Warning(
+                "Game loop inbox rejected {PacketType} for session {SessionId}: full or unavailable",
+                packet.GetType().Name,
+                sessionId
+            );
             return false;
         }
     }

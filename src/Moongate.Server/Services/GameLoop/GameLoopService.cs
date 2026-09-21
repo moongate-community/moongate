@@ -48,7 +48,6 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     /// <summary>Creates a stopped inbox; StartAsync must complete before producers can post work.</summary>
     public GameLoopService(GameLoopOptions options, TimerWheelService timers, TimeProvider timeProvider)
     {
-
         _inbox = Channel.CreateBounded<QueuedGameLoopWorkItem>(
             new BoundedChannelOptions(options.QueueCapacity)
             {
@@ -183,7 +182,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     /// <inheritdoc />
     public Task StopWithFinalWorkAsync(
         Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
-        CancellationToken cancellationToken = default)
+        CancellationToken cancellationToken = default
+    )
     {
         ArgumentNullException.ThrowIfNull(finalWorkAsync);
         RejectLoopThreadWait();
@@ -196,9 +196,11 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             {
                 return CompleteFinalStopAsync(StopAsync(), captureAccepted: false);
             }
+
             session = _finalSession = new GameLoopFinalWorkSession(() => _wake.Set(), cancellationToken);
             stopping = StopAsync();
         }
+
         return CompleteSequenceAsync();
 
         async Task CompleteSequenceAsync()
@@ -210,15 +212,30 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                 _insideFinalWork.Value = true;
                 await finalWorkAsync(session.DispatchAsync, cancellationToken).ConfigureAwait(false);
             }
-            catch (Exception exception) { failure = exception; }
+            catch (Exception exception)
+            {
+                failure = exception;
+            }
             finally
             {
                 _insideFinalWork.Value = false;
-                try { await session.CloseAsync(failure).ConfigureAwait(false); }
-                catch (Exception exception) { failure = exception; }
+                try
+                {
+                    await session.CloseAsync(failure).ConfigureAwait(false);
+                }
+                catch (Exception exception)
+                {
+                    failure = exception;
+                }
+
                 await stopping.ConfigureAwait(false);
             }
-            if (failure is not null) { ExceptionDispatchInfo.Capture(failure).Throw(); }
+
+            if (failure is not null)
+            {
+                ExceptionDispatchInfo.Capture(failure).Throw();
+            }
+
             await Completion.ConfigureAwait(false);
         }
     }
@@ -280,8 +297,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         {
             var depth = _inbox.Reader.Count;
             var age = depth > 0 && _inbox.Reader.TryPeek(out var oldest)
-                          ? _timeProvider.GetElapsedTime(oldest.EnqueuedAt)
-                          : TimeSpan.Zero;
+                ? _timeProvider.GetElapsedTime(oldest.EnqueuedAt)
+                : TimeSpan.Zero;
 
             return _pump.GetMetricsSnapshot() with
             {
@@ -369,6 +386,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                     {
                         break;
                     }
+
                     runTimers = _state == GameLoopState.Running;
                 }
 
@@ -383,8 +401,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                     // Ceil the wait: truncating a sub-millisecond remainder would busy-spin.
                     var delay = _timers.GetNextDelay();
                     var waitMilliseconds = delay is null
-                                               ? Timeout.Infinite
-                                               : (int)Math.Min(int.MaxValue, Math.Ceiling(delay.Value.TotalMilliseconds));
+                        ? Timeout.Infinite
+                        : (int)Math.Min(int.MaxValue, Math.Ceiling(delay.Value.TotalMilliseconds));
                     _wake.WaitOne(waitMilliseconds);
                 }
             }

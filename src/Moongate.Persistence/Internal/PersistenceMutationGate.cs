@@ -83,6 +83,7 @@ internal sealed class PersistenceMutationGate : IDisposable
             {
                 _semaphore.Release();
             }
+
             CompleteOperation();
         }
     }
@@ -107,6 +108,7 @@ internal sealed class PersistenceMutationGate : IDisposable
             {
                 _semaphore.Release();
             }
+
             CompleteOperation();
         }
     }

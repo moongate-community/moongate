@@ -800,6 +800,7 @@ public class SpanWriterTests
         {
             threw = true;
         }
+
         Assert.True(threw);
         Assert.Equal(length, writer.Position);
         Assert.All(backing, value => Assert.Equal((byte)0xCC, value));
@@ -824,6 +825,7 @@ public class SpanWriterTests
         {
             threw = true;
         }
+
         Assert.True(threw);
         Assert.Equal(0, writer.Position);
         Assert.Equal(new byte[] { 0xCC, 0xCC }, backing);
@@ -843,6 +845,7 @@ public class SpanWriterTests
         {
             threw = true;
         }
+
         Assert.True(threw);
         Assert.Equal(1, writer.Position);
         Assert.Equal(new byte[] { 0xAB }, writer.Span.ToArray());
@@ -878,6 +881,7 @@ public class SpanWriterTests
             {
                 threw = true;
             }
+
             Assert.True(threw);
             Assert.Equal(capacity, writer.Capacity);
             Assert.Equal(1, writer.Position);
@@ -906,6 +910,7 @@ public class SpanWriterTests
             {
                 threw = true;
             }
+
             Assert.True(threw);
             Assert.Equal(1, writer.Position);
             Assert.Equal(new byte[] { 0xAB }, writer.Span.ToArray());
@@ -930,6 +935,7 @@ public class SpanWriterTests
         {
             threw = true;
         }
+
         Assert.True(threw);
         Assert.Equal(0, writer.Position);
         Assert.All(backing, value => Assert.Equal((byte)0xCC, value));
@@ -950,6 +956,7 @@ public class SpanWriterTests
         {
             threw = true;
         }
+
         Assert.True(threw);
         Assert.Equal(2, writer.Capacity);
         Assert.Equal(new byte[] { 0xAB }, writer.Span.ToArray());
@@ -969,6 +976,7 @@ public class SpanWriterTests
         {
             threw = true;
         }
+
         Assert.True(threw);
         Assert.Equal(1, writer.Position);
     }
@@ -1012,7 +1020,10 @@ public class SpanWriterTests
             writer.Write(original);
             writer.Write(MemoryMarshal.Cast<byte, char>(writer.RawBuffer), Encoding.ASCII);
             Assert.Equal(original, writer.Span[..original.Length].ToArray());
-            Assert.Equal(Enumerable.Repeat((byte)0x41, characters.Length).ToArray(), writer.Span[original.Length..].ToArray());
+            Assert.Equal(
+                Enumerable.Repeat((byte)0x41, characters.Length).ToArray(),
+                writer.Span[original.Length..].ToArray()
+            );
         }
         finally
         {

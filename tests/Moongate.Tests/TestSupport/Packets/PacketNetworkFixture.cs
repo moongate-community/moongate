@@ -35,21 +35,31 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
     public GameServerService Game { get; }
     public IReadOnlyList<MoongateTcpServer> Listeners => Network.Listeners;
 
-    public PacketNetworkFixture(IReadOnlyList<MoongateTcpServer>? listeners = null, Func<long, Task>? disconnectSender = null)
+    public PacketNetworkFixture(
+        IReadOnlyList<MoongateTcpServer>? listeners = null, Func<long, Task>? disconnectSender = null
+    )
     {
-        Loop = new GameLoopService(new GameLoopOptions(), new TimerWheelService(new TimerWheelOptions(), TimeProvider.System), TimeProvider.System);
+        Loop = new GameLoopService(
+            new GameLoopOptions(),
+            new TimerWheelService(new TimerWheelOptions(), TimeProvider.System),
+            TimeProvider.System
+        );
         Sessions = new SessionService(Loop);
         Connections = new ConnectionService();
         Sender = new PacketSendService(Connections);
         _container.RegisterInstance<IConnectionService>(Connections);
         _container.RegisterInstance<ISessionService>(Sessions);
-        var networkSender = disconnectSender is null ? (IPacketSendService)Sender : new CallbackPacketSender(Sender, disconnectSender);
+        var networkSender = disconnectSender is null
+            ? (IPacketSendService)Sender
+            : new CallbackPacketSender(Sender, disconnectSender);
         _container.RegisterInstance<IPacketSendService>(networkSender);
         _container.RegisterPacketHandler<PingPacket, PingPacketHandler>();
         _container.RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
         Dispatcher = new PacketDispatchService(Loop, Sessions, _container.Resolve<PacketHandlerRegistry>(), _container);
         _container.RegisterInstance<IPacketDispatchService>(Dispatcher);
-        _container.RegisterInstance(new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } });
+        _container.RegisterInstance(
+            new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } }
+        );
         Network = listeners is null
             ? new NetworkService(GameNetworkOptionsFactory.Create(_container.Resolve<MoongateServerConfig>()), Connections)
             : new NetworkService(listeners, Connections);
@@ -77,11 +87,21 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         List<Exception> failures = [];
         foreach (var service in new IMoongateStartupService[] { Game, Dispatcher, Sender, Connections, Loop })
         {
-            try { await service.StopAsync().WaitAsync(TimeSpan.FromSeconds(5)); }
-            catch (Exception exception) { failures.Add(exception); }
+            try
+            {
+                await service.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));
+            }
+            catch (Exception exception)
+            {
+                failures.Add(exception);
+            }
         }
+
         Loop.Dispose();
         _container.Dispose();
-        if (!AllowCleanupFailure && failures.Count > 0) { throw new AggregateException(failures); }
+        if (!AllowCleanupFailure && failures.Count > 0)
+        {
+            throw new AggregateException(failures);
+        }
     }
 }

@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Types.Packets;
@@ -19,7 +18,8 @@ public sealed class ExplicitIncomingPacket : IIncomingPacket<ExplicitIncomingPac
     }
 
     static bool IIncomingPacket<ExplicitIncomingPacket>.TryParse(
-        ReadOnlySpan<byte> data, [NotNullWhen(true)] out ExplicitIncomingPacket? packet)
+        ReadOnlySpan<byte> data, [NotNullWhen(true)] out ExplicitIncomingPacket? packet
+    )
     {
         packet = data.Length == 2 && data[0] == 0xD1 && data[1] != 0
             ? new ExplicitIncomingPacket(data[1])

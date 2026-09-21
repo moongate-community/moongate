@@ -1,4 +1,7 @@
 using System.Runtime.ExceptionServices;
+using Moongate.Persistence.Migrations.Services;
+using Moongate.Persistence.Migrations.Types.Migrations;
+using Npgsql;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Data.Internal;
 using Moongate.Persistence.Data.Schema;
@@ -13,6 +16,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
     private readonly PersistenceModuleRegistry _registry;
     private readonly SemaphoreSlim _operationGate = new(1, 1);
     private readonly Dictionary<PersistenceDatabaseTarget, PostgreSqlDatabase> _databases = [];
+    private readonly Dictionary<PersistenceDatabaseTarget, MigrationCatalog> _catalogs = [];
     private PersistenceModuleRegistrySnapshot? _snapshot;
     private ExceptionDispatchInfo? _preparationFailure;
     private bool _preparationAttempted;
@@ -37,6 +41,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             ThrowIfDisposed();
             IsReady = false;
             Prepare();
+            await ValidateMigrationsAsync(cancellationToken).ConfigureAwait(false);
             if (_options.AutoSynchronizeSchema)
             {
                 await SynchronizeCoreAsync(cancellationToken).ConfigureAwait(false);
@@ -49,7 +54,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
                     var modules = string.Join(", ", changes.Select(change => change.ModuleId));
                     throw new InvalidOperationException(
                         $"PostgreSQL schema changes are required for persistence modules: {modules}. " +
-                        "Run the schema preview/apply command or explicitly enable automatic schema synchronization.");
+                        "Generate and review a SQL migration, then apply it with Moongate.MigrationRunner."
+                    );
                 }
             }
 
@@ -131,7 +137,36 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         _preparationAttempted = true;
         try
         {
-            foreach (var target in _registry.GetDatabaseTargets())
+            var targets = _registry.GetDatabaseTargets().ToHashSet();
+            if (_options.MigrationCatalogFactory is not null)
+            {
+                foreach (var target in _options.ConfiguredTargets)
+                {
+                    var catalog = _options.MigrationCatalogFactory(target);
+                    if (catalog is null)
+                    {
+                        continue;
+                    }
+
+                    var expected = target == PersistenceDatabaseTarget.Accounts
+                        ? MigrationTarget.Auth
+                        : MigrationTarget.World;
+                    if (catalog.Target != expected)
+                    {
+                        throw new InvalidOperationException(
+                            "The migration catalog belongs to a different persistence target."
+                        );
+                    }
+
+                    _catalogs.Add(target, catalog);
+                    if (catalog.Scripts.Count > 0 && (_options.ActivateMigrationTarget?.Invoke(target) ?? true))
+                    {
+                        targets.Add(target);
+                    }
+                }
+            }
+
+            foreach (var target in targets)
             {
                 var database = PostgreSqlDatabase.Create(_options.GetRequiredDatabase(target));
                 _databases.Add(target, database);
@@ -152,6 +187,30 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         }
     }
 
+    private async Task ValidateMigrationsAsync(CancellationToken cancellationToken)
+    {
+        foreach (var (target, catalog) in _catalogs)
+        {
+            if (!_databases.TryGetValue(target, out var database))
+            {
+                continue;
+            }
+
+            await using var connection = new NpgsqlConnection(database.RuntimeConnectionString);
+            await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+            var applied = await MigrationHistory
+                .ReadAsync(() => connection.CreateCommand(), catalog.Target, cancellationToken)
+                .ConfigureAwait(false);
+            var pending = MigrationHistory.Validate(catalog, applied);
+            if (pending.Count > 0)
+            {
+                throw new InvalidOperationException(
+                    $"Pending PostgreSQL migrations for {target}: {string.Join(", ", pending.Select(script => script.Name))}. Run Moongate.MigrationRunner apply before starting the server."
+                );
+            }
+        }
+    }
+
     private async Task<IReadOnlyList<PersistenceSchemaChange>> PreviewCoreAsync(
         CancellationToken cancellationToken
     )
@@ -163,10 +222,13 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             var ddl = await CompareAsync(database, module, cancellationToken).ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(ddl))
             {
-                changes.Add(new PersistenceSchemaChange(
-                    module.Module.DatabaseTarget,
-                    module.Module.Id,
-                    ddl));
+                changes.Add(
+                    new PersistenceSchemaChange(
+                        module.Module.DatabaseTarget,
+                        module.Module.Id,
+                        ddl
+                    )
+                );
             }
         }
 
@@ -179,9 +241,11 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         {
             var database = _databases[targetGroup.Key];
             await using var schemaLock = await PostgreSqlSchemaLock.AcquireAsync(
-                database.SchemaConnectionString,
-                targetGroup.Key,
-                cancellationToken).ConfigureAwait(false);
+                    database.SchemaConnectionString,
+                    targetGroup.Key,
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
             foreach (var module in targetGroup)
             {
                 var ddl = await CompareAsync(database, module, cancellationToken).ConfigureAwait(false);
@@ -197,7 +261,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
                 if (!string.IsNullOrWhiteSpace(remaining))
                 {
                     throw new InvalidOperationException(
-                        $"Persistence module '{module.Module.Id}' still requires schema changes after synchronization.");
+                        $"Persistence module '{module.Module.Id}' still requires schema changes after synchronization."
+                    );
                 }
             }
         }
@@ -212,7 +277,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         cancellationToken.ThrowIfCancellationRequested();
         var comparison = Task.Run(
             () => database.Orm.CodeFirst.GetComparisonDDLStatements(module.EntityTypes.ToArray()),
-            CancellationToken.None);
+            CancellationToken.None
+        );
         try
         {
             return await comparison.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -227,7 +293,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             {
                 throw new InvalidOperationException(
                     $"Persistence module '{module.Module.Id}' schema comparison failed after cancellation was requested.",
-                    comparisonFailure);
+                    comparisonFailure
+                );
             }
 
             cancellationToken.ThrowIfCancellationRequested();

@@ -3,6 +3,7 @@ using Moongate.Core.Interfaces.Entities;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
+using Moongate.Persistence.Types.Persistence;
 
 namespace Moongate.Persistence.Extensions;
 
@@ -30,7 +31,9 @@ public static class ContainerPersistenceExtensions
             ArgumentNullException.ThrowIfNull(container);
             if (container.IsRegistered<TModule>())
             {
-                throw new InvalidOperationException($"Persistence module '{typeof(TModule).FullName}' is already registered.");
+                throw new InvalidOperationException(
+                    $"Persistence module '{typeof(TModule).FullName}' is already registered."
+                );
             }
 
             container.Register<TModule>(Reuse.Singleton);
@@ -44,10 +47,41 @@ public static class ContainerPersistenceExtensions
             return RegisterEntity<T>(container, null, null);
         }
 
+        /// <summary>Registers an entity in the shared authentication database.</summary>
+        public Container AddPersistenceAuth<T>() where T : class, IMoongateEntity
+        {
+            return RegisterEntity<T>(container, null, null, PersistenceDatabaseTarget.Accounts);
+        }
+
+        /// <summary>Registers an entity in this world's database.</summary>
+        public Container AddPersistenceWorld<T>() where T : class, IMoongateEntity
+        {
+            return RegisterEntity<T>(container, null, null, PersistenceDatabaseTarget.Realm);
+        }
+
+        /// <summary>Registers authentication entities with an explicit detached snapshot function.</summary>
+        public Container AddPersistenceAuth<T>(Func<IEnumerable<T>> source, Func<T, T> snapshot)
+            where T : class, IMoongateEntity
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(snapshot);
+            return RegisterEntity(container, source, snapshot, PersistenceDatabaseTarget.Accounts);
+        }
+
+        /// <summary>Registers world entities with an explicit detached snapshot function.</summary>
+        public Container AddPersistenceWorld<T>(Func<IEnumerable<T>> source, Func<T, T> snapshot)
+            where T : class, IMoongateEntity
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(snapshot);
+            return RegisterEntity(container, source, snapshot, PersistenceDatabaseTarget.Realm);
+        }
+
         /// <summary>Registers a live source with an explicit detached snapshot function.</summary>
         /// <remarks>The function must copy all mutable nested state. Sources are captured only inside SaveAllAsync's
         /// owner callback; missing entities are not deleted. Registration freezes when schema preparation starts.</remarks>
-        public Container AddPersistenceEntity<T>(Func<IEnumerable<T>> source, Func<T, T> snapshot) where T : class, IMoongateEntity
+        public Container AddPersistenceEntity<T>(Func<IEnumerable<T>> source, Func<T, T> snapshot)
+            where T : class, IMoongateEntity
         {
             ArgumentNullException.ThrowIfNull(source);
             ArgumentNullException.ThrowIfNull(snapshot);
@@ -55,10 +89,12 @@ public static class ContainerPersistenceExtensions
         }
     }
 
-    private static Container RegisterEntity<T>(Container container, Func<IEnumerable<T>>? source, Func<T, T>? snapshot) where T : class, IMoongateEntity
+    private static Container RegisterEntity<T>(
+        Container container, Func<IEnumerable<T>>? source, Func<T, T>? snapshot, PersistenceDatabaseTarget? target = null
+    ) where T : class, IMoongateEntity
     {
         ArgumentNullException.ThrowIfNull(container);
-        var facade = container.Resolve<MoongatePersistenceService>().RegisterEntity(source, snapshot);
+        var facade = container.Resolve<MoongatePersistenceService>().RegisterEntity(source, snapshot, target);
         var setup = Setup.With(preventDisposal: true);
         container.RegisterInstance(facade, setup: setup);
         container.RegisterInstance<IDataAccess<T>>(facade, setup: setup);

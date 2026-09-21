@@ -5,6 +5,7 @@ using Moongate.Api.Streams.Internal;
 using Moongate.Network.Client;
 using Moongate.Network.Data;
 using Moongate.Network.Data.Config;
+
 namespace Moongate.Api.Tests.Integration.Hosting;
 
 public class ApiAdmissionSetupTests
@@ -25,7 +26,8 @@ public class ApiAdmissionSetupTests
             }
         };
         var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            MoongateTcpClient.ConnectConfiguredAsync((IPEndPoint)listener.LocalEndpoint, options));
+            MoongateTcpClient.ConnectConfiguredAsync((IPEndPoint)listener.LocalEndpoint, options)
+        );
         Assert.Equal("Configuration failed.", error.Message);
         Assert.Equal(1, releases);
         Assert.Throws<IOException>(admission.TransferToConnection);

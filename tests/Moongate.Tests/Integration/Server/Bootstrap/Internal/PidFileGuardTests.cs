@@ -28,14 +28,16 @@ public sealed class PidFileGuardTests
     public async Task Acquire_ExitedProcess_ReplacesStalePid()
     {
         using var directory = new TemporaryDirectory();
-        using var process = Process.Start(new ProcessStartInfo
-        {
-            FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
-            ArgumentList = { "--version" },
-            RedirectStandardOutput = true,
-            RedirectStandardError = true,
-            UseShellExecute = false
-        })!;
+        using var process = Process.Start(
+            new ProcessStartInfo
+            {
+                FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
+                ArgumentList = { "--version" },
+                RedirectStandardOutput = true,
+                RedirectStandardError = true,
+                UseShellExecute = false
+            }
+        )!;
         await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30));
         var pidPath = directory.CreateFile("moongate.pid", process.Id.ToString(CultureInfo.InvariantCulture));
 
@@ -131,7 +133,9 @@ public sealed class PidFileGuardTests
 
         previous.Dispose();
 
-        Assert.Equal(Environment.ProcessId.ToString(CultureInfo.InvariantCulture),
-            File.ReadAllText(Path.Combine(directory.Path, "moongate.pid")));
+        Assert.Equal(
+            Environment.ProcessId.ToString(CultureInfo.InvariantCulture),
+            File.ReadAllText(Path.Combine(directory.Path, "moongate.pid"))
+        );
     }
 }

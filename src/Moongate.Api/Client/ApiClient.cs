@@ -17,7 +17,7 @@ namespace Moongate.Api.Client;
 public sealed class ApiClient : IApiClient
 {
     private static readonly ILogger Logger = Log.ForContext<ApiClient>();
-    private readonly object _gate = new();
+    private readonly Lock _gate = new();
     private readonly ApiRegistry _registry;
     private readonly ApiOptions _options;
     private readonly ApiTlsPolicy _tls;
@@ -66,9 +66,11 @@ public sealed class ApiClient : IApiClient
             {
                 throw new ApiBusyException();
             }
+
             _admitted++;
             _setups.Add(setup);
         }
+
         ApiConnection? connection = null;
 
         try
@@ -81,35 +83,41 @@ public sealed class ApiClient : IApiClient
                 {
                     lock (_gate)
                     {
-                        if (_closing) { throw new IOException("The API client is stopping."); }
+                        if (_closing)
+                        {
+                            throw new IOException("The API client is stopping.");
+                        }
+
                         connection = new(transport, peer, _registry, _options, _slots, _clock);
                         var configured = connection;
                         transport.OnDataReceived += (_, args) => configured.Receive(args.Data);
                         transport.OnDisconnected += (_, _) => _ = configured.CloseAsync();
                         _connections.Add(connection);
                     }
+
                     _ = RemoveCompletedAsync(connection);
                 },
                 targetHost,
                 expectedPeerId
             ).Pipeline;
             var transport = await MoongateTcpClient.ConnectConfiguredAsync(
-                                                       endpoint,
-                                                       new()
-                                                       {
-                                                           Pipeline = pipeline,
-                                                           MaxFrameLength = _options.MaxFrameLength + 4,
-                                                           PreparationTimeout = _options.HandshakeTimeout,
-                                                           TimeProvider = _clock
-                                                       },
-                                                       cancellation.Token
-                                                   )
-                                                   .ConfigureAwait(false);
+                    endpoint,
+                    new()
+                    {
+                        Pipeline = pipeline,
+                        MaxFrameLength = _options.MaxFrameLength + 4,
+                        PreparationTimeout = _options.HandshakeTimeout,
+                        TimeProvider = _clock
+                    },
+                    cancellation.Token
+                )
+                .ConfigureAwait(false);
 
             if (connection is null || !transport.IsConnected || connection.Completion.IsCompleted)
             {
                 throw new IOException("The API connection closed during startup.");
             }
+
             Logger.Information(
                 "API connected to {Endpoint} as peer {PeerId}: {ContractCount} contracts, {HandlerCount} handlers",
                 endpoint,
@@ -126,7 +134,11 @@ public sealed class ApiClient : IApiClient
             {
                 _setups.Remove(setup);
 
-                if (connection is null) { _admitted--; }
+                if (connection is null)
+                {
+                    _admitted--;
+                }
+
                 setup.TrySetResult();
             }
         }
@@ -138,13 +150,23 @@ public sealed class ApiClient : IApiClient
         await _shutdown.CancelAsync().ConfigureAwait(false);
         Task[] setups;
 
-        lock (_gate) { setups = _setups.Select(setup => setup.Task).ToArray(); }
+        lock (_gate)
+        {
+            setups = _setups.Select(setup => setup.Task).ToArray();
+        }
+
         await Task.WhenAll(setups).ConfigureAwait(false);
         ApiConnection[] connections;
 
-        lock (_gate) { connections = _connections.ToArray(); }
+        lock (_gate)
+        {
+            connections = _connections.ToArray();
+        }
 
-        try { await Task.WhenAll(connections.Select(connection => connection.DrainAsync())).ConfigureAwait(false); }
+        try
+        {
+            await Task.WhenAll(connections.Select(connection => connection.DrainAsync())).ConfigureAwait(false);
+        }
         finally
         {
             _tls.Dispose();
@@ -157,14 +179,23 @@ public sealed class ApiClient : IApiClient
     {
         ApiConnection[] connections;
 
-        lock (_gate) { connections = _connections.ToArray(); }
+        lock (_gate)
+        {
+            connections = _connections.ToArray();
+        }
 
-        foreach (var connection in connections) { _ = connection.CloseAsync(); }
+        foreach (var connection in connections)
+        {
+            _ = connection.CloseAsync();
+        }
     }
 
     private int Remaining()
     {
-        lock (_gate) { return _admitted; }
+        lock (_gate)
+        {
+            return _admitted;
+        }
     }
 
     private async Task RemoveCompletedAsync(ApiConnection connection)
@@ -173,7 +204,10 @@ public sealed class ApiClient : IApiClient
 
         lock (_gate)
         {
-            if (_connections.Remove(connection)) { _admitted--; }
+            if (_connections.Remove(connection))
+            {
+                _admitted--;
+            }
         }
     }
 
@@ -198,6 +232,7 @@ public sealed class ApiClient : IApiClient
                 _ = ApiShutdown.ObserveAsync(_disposeCompletion);
                 _ = ApiShutdown.ObserveAsync(_disposeResult);
             }
+
             result = _disposeCompletion.IsCompleted ? _disposeCompletion : _disposeResult!;
         }
 

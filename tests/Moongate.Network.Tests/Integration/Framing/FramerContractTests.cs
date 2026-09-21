@@ -76,5 +76,4 @@ public sealed class FramerContractTests
 
         return condition();
     }
-
 }

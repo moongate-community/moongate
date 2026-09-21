@@ -44,7 +44,6 @@ public sealed class WorldSaveService : IWorldSaveService
         _options = options;
         _timeProvider = timeProvider;
         _operations = operations;
-
     }
 
     /// <inheritdoc />
@@ -56,9 +55,14 @@ public sealed class WorldSaveService : IWorldSaveService
             {
                 throw new InvalidOperationException("World saving cannot restart after shutdown.");
             }
+
             _options.Validate();
             _started = true;
-            _logger.Information("World saving started: autosave {Enabled}, interval {Interval}", _options.Enabled, _options.Interval);
+            _logger.Information(
+                "World saving started: autosave {Enabled}, interval {Interval}",
+                _options.Enabled,
+                _options.Interval
+            );
 
             return Task.CompletedTask;
         }
@@ -83,6 +87,7 @@ public sealed class WorldSaveService : IWorldSaveService
             {
                 _timerId = _timers.RegisterTimer("world-save", _options.Interval, RequestAutosave, repeat: true);
             }
+
             _activated = true;
         }
     }
@@ -123,6 +128,7 @@ public sealed class WorldSaveService : IWorldSaveService
 
                 return _stopTask;
             }
+
             _stopping = true;
             _saveFinal = saveFinal;
             _stopTask = StopCoreAsync(saveFinal && _activated);
@@ -157,6 +163,7 @@ public sealed class WorldSaveService : IWorldSaveService
                 _logger.Error(exception, "World save admission failed");
                 _activeSave = Task.FromException(exception);
             }
+
             _ = ObserveSaveAsync(_activeSave);
         }
 
@@ -184,28 +191,40 @@ public sealed class WorldSaveService : IWorldSaveService
             _logger.Information("Starting world save; final capture {FinalSave}", finalSave);
             if (finalSave)
             {
-                await _gameLoop.StopWithFinalWorkAsync((dispatch, token) =>
-                    _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture, dispatch), token), CancellationToken.None).ConfigureAwait(false);
+                await _gameLoop.StopWithFinalWorkAsync(
+                        (dispatch, token) =>
+                            _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture, dispatch), token),
+                        CancellationToken.None
+                    )
+                    .ConfigureAwait(false);
             }
             else
             {
-                await _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture), CancellationToken.None).ConfigureAwait(false);
+                await _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture), CancellationToken.None)
+                    .ConfigureAwait(false);
             }
-            _logger.Information("World save completed in {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
-                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds, finalSave);
+
+            _logger.Information(
+                "World save completed in {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
+                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds,
+                finalSave
+            );
         }
         catch (Exception exception)
         {
-            _logger.Error(exception, "World save failed after {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
-                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds, finalSave);
+            _logger.Error(
+                exception,
+                "World save failed after {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
+                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds,
+                finalSave
+            );
             throw;
         }
     }
 
     private async Task CaptureAsync(Action capture, Func<IGameLoopWorkItem, Task>? finalDispatch = null)
     {
-        var item = new WorldSaveCaptureWorkItem(
-            () =>
+        var item = new WorldSaveCaptureWorkItem(() =>
             {
                 var startedAt = _timeProvider.GetTimestamp();
                 _operations.Capture(capture);
@@ -232,6 +251,7 @@ public sealed class WorldSaveService : IWorldSaveService
 
                 throw;
             }
+
             await Task.WhenAny(item.Completion, _gameLoop.Completion).ConfigureAwait(false);
 
             if (!item.Completion.IsCompleted)
@@ -241,6 +261,7 @@ public sealed class WorldSaveService : IWorldSaveService
                 throw new InvalidOperationException("The game loop stopped before the world capture executed.");
             }
         }
+
         await item.Completion.ConfigureAwait(false);
     }
 
@@ -271,7 +292,11 @@ public sealed class WorldSaveService : IWorldSaveService
 
         if (saveFinal && closingOperations.IsCompletedSuccessfully)
         {
-            await CaptureFailureAsync(() => _operations.RunSaveAsync(() => SaveCoreAsync(finalSave: true), finalSave: true), failures).ConfigureAwait(false);
+            await CaptureFailureAsync(
+                    () => _operations.RunSaveAsync(() => SaveCoreAsync(finalSave: true), finalSave: true),
+                    failures
+                )
+                .ConfigureAwait(false);
         }
 
         // Persistence may fail before calling the capture delegate. Always drain the loop before world owners stop.
@@ -302,5 +327,4 @@ public sealed class WorldSaveService : IWorldSaveService
             }
         }
     }
-
 }

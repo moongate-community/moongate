@@ -26,7 +26,7 @@ public sealed class DiagnosticContainerExtensionsTests
         using var container = CreateContainer();
 
         container.AddMetricProvider<TimerMetricsProvider>()
-                 .AddMetricProvider<SessionMetricsProvider>();
+            .AddMetricProvider<SessionMetricsProvider>();
 
         var providers = container.Resolve<IEnumerable<IMetricProvider>>().ToArray();
 

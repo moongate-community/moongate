@@ -51,20 +51,27 @@ internal sealed class InstructionBudget
     /// <summary>Installs the hook on a coroutine, which has its own hook slot.</summary>
     public void Install(LuaState coroutine)
     {
-        coroutine.SetHook(new LuaFunction("moongate.budget", (context, _) =>
-        {
-            _instructionsThisUnit += _hookInterval;
+        coroutine.SetHook(
+            new LuaFunction(
+                "moongate.budget",
+                (context, _) =>
+                {
+                    _instructionsThisUnit += _hookInterval;
 
-            // Outside any unit the hook only counts; there is nothing to cancel. The abort is built here
-            // because the state's position is only readable while the hook frame is on the stack.
-            if (_unit is not null && _abort is null && _instructionsThisUnit > _limit)
-            {
-                _abort = new ScriptBudgetExceededException(context.State, _instructionsThisUnit);
-                _unit.Cancel();
-            }
+                    // Outside any unit the hook only counts; there is nothing to cancel. The abort is built here
+                    // because the state's position is only readable while the hook frame is on the stack.
+                    if (_unit is not null && _abort is null && _instructionsThisUnit > _limit)
+                    {
+                        _abort = new ScriptBudgetExceededException(context.State, _instructionsThisUnit);
+                        _unit.Cancel();
+                    }
 
-            return new ValueTask<int>(context.Return());
-        }), "", _hookInterval);
+                    return new ValueTask<int>(context.Return());
+                }
+            ),
+            "",
+            _hookInterval
+        );
     }
 
     /// <summary>

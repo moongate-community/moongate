@@ -32,7 +32,8 @@ public sealed class MoongatePluginRegistry
         if (_isFaulted)
         {
             throw new InvalidOperationException(
-                "Plugin registration previously failed. Discard this container and abort startup.");
+                "Plugin registration previously failed. Discard this container and abort startup."
+            );
         }
 
         if (_isRegistering)
@@ -44,15 +45,21 @@ public sealed class MoongatePluginRegistry
         try
         {
             var candidates = plugins.Select(plugin =>
-            {
-                ArgumentNullException.ThrowIfNull(plugin);
-                var metadata = plugin.Metadata ?? throw new InvalidOperationException(
-                    $"Plugin '{plugin.GetType().FullName}' returned null metadata.");
-                return (Plugin: plugin, Metadata: metadata);
-            }).ToArray();
+                    {
+                        ArgumentNullException.ThrowIfNull(plugin);
+                        var metadata = plugin.Metadata ?? throw new InvalidOperationException(
+                            $"Plugin '{plugin.GetType().FullName}' returned null metadata."
+                        );
+                        return (Plugin: plugin, Metadata: metadata);
+                    }
+                )
+                .ToArray();
             var ordered = ValidateAndOrder(candidates.Select(entry => entry.Metadata).ToArray());
             var instances = candidates.ToDictionary(
-                entry => entry.Metadata.Id, entry => entry.Plugin, StringComparer.OrdinalIgnoreCase);
+                entry => entry.Metadata.Id,
+                entry => entry.Plugin,
+                StringComparer.OrdinalIgnoreCase
+            );
 
             foreach (var metadata in ordered)
             {
@@ -64,7 +71,9 @@ public sealed class MoongatePluginRegistry
                 {
                     _isFaulted = true;
                     throw new InvalidOperationException(
-                        $"Plugin '{metadata.Id}' failed during registration.", exception);
+                        $"Plugin '{metadata.Id}' failed during registration.",
+                        exception
+                    );
                 }
 
                 _plugins.Add(metadata);
@@ -97,7 +106,8 @@ public sealed class MoongatePluginRegistry
                 if (!available.TryGetValue(dependency.Id, out var required))
                 {
                     throw new InvalidOperationException(
-                        $"Plugin '{candidate.Id}' requires missing plugin '{dependency.Id}'.");
+                        $"Plugin '{candidate.Id}' requires missing plugin '{dependency.Id}'."
+                    );
                 }
 
                 if (dependency.MinimumVersion is not null &&
@@ -105,7 +115,8 @@ public sealed class MoongatePluginRegistry
                 {
                     throw new InvalidOperationException(
                         $"Plugin '{candidate.Id}' requires '{dependency.Id}' >= {dependency.MinimumVersion}; " +
-                        $"found {required.Version}.");
+                        $"found {required.Version}."
+                    );
                 }
             }
         }
@@ -131,7 +142,8 @@ public sealed class MoongatePluginRegistry
             if (!visiting.Add(candidate.Id))
             {
                 throw new InvalidOperationException(
-                    $"Plugin dependency cycle: {string.Join(" -> ", path.Append(candidate.Id))}.");
+                    $"Plugin dependency cycle: {string.Join(" -> ", path.Append(candidate.Id))}."
+                );
             }
 
             path.Add(candidate.Id);

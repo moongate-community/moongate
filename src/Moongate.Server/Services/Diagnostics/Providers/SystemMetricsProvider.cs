@@ -49,7 +49,9 @@ public sealed class SystemMetricsProvider : IMetricProvider, IDisposable
                 {
                     cpuUsagePercent = Math.Clamp(
                         100d * processorDelta.TotalSeconds / (elapsed.TotalSeconds * reading.ProcessorCount),
-                        0d, 100d);
+                        0d,
+                        100d
+                    );
                 }
             }
         }
@@ -86,8 +88,14 @@ public sealed class SystemMetricsProvider : IMetricProvider, IDisposable
 
         if (cpuUsagePercent.HasValue)
         {
-            metrics.Add(new MetricSample("cpu_usage_percent", cpuUsagePercent.Value, "percent",
-                DiagnosticMetricType.Gauge));
+            metrics.Add(
+                new MetricSample(
+                    "cpu_usage_percent",
+                    cpuUsagePercent.Value,
+                    "percent",
+                    DiagnosticMetricType.Gauge
+                )
+            );
         }
 
         return metrics.ToArray();

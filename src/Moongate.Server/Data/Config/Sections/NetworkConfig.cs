@@ -7,5 +7,4 @@ public class NetworkConfig
     public string ListenAddress { get; set; } = "0.0.0.0";
 
     public bool EnablePingServer { get; set; } = true;
-
 }

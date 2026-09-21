@@ -10,8 +10,16 @@ public class UltimaBitmapTests
     public void ToImage_Argb1555Pixels_PreservesColorsTransparencyAndRows()
     {
         using var bitmap = new UltimaBitmap(3, 2);
-        Marshal.Copy(new short[] { unchecked((short)0xFC00), unchecked((short)0x83E0), unchecked((short)0x801F),
-                                  0, unchecked((short)0x8000), unchecked((short)0xFFFF) }, 0, bitmap.Scan0, 6);
+        Marshal.Copy(
+            new short[]
+            {
+                unchecked((short)0xFC00), unchecked((short)0x83E0), unchecked((short)0x801F),
+                0, unchecked((short)0x8000), unchecked((short)0xFFFF)
+            },
+            0,
+            bitmap.Scan0,
+            6
+        );
 
         using var image = bitmap.ToImage();
 
@@ -84,8 +92,14 @@ public class UltimaBitmapTests
 
         var actual = new short[6];
         Marshal.Copy(bitmap.Scan0, actual, 0, actual.Length);
-        Assert.Equal(new short[] { 0, unchecked((short)0x83E0), unchecked((short)0x801F),
-                                  unchecked((short)0x8443), 0, unchecked((short)0x8000) }, actual);
+        Assert.Equal(
+            new short[]
+            {
+                0, unchecked((short)0x83E0), unchecked((short)0x801F),
+                unchecked((short)0x8443), 0, unchecked((short)0x8000)
+            },
+            actual
+        );
     }
 
     [Fact]
@@ -118,8 +132,12 @@ public class UltimaBitmapTests
         try
         {
             // Independently encoded 1x1 RGBA PNG: (7, 15, 23, 128).
-            File.WriteAllBytes(path, Convert.FromBase64String(
-                "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNg5xdvAAAA/ACuC2M2gAAAAABJRU5ErkJggg=="));
+            File.WriteAllBytes(
+                path,
+                Convert.FromBase64String(
+                    "iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR4nGNg5xdvAAAA/ACuC2M2gAAAAABJRU5ErkJggg=="
+                )
+            );
 
             using var bitmap = UltimaBitmap.FromFile(path);
 

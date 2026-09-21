@@ -1,5 +1,4 @@
 using System.Runtime.ExceptionServices;
-
 using Moongate.Server.Core.Interfaces.Bootstrap;
 
 namespace Moongate.Server.Bootstrap.Internal;

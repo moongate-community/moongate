@@ -39,8 +39,13 @@ public sealed class LuaCSharpBehaviourTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenCoroutineLibrary();
-        Sync(state.DoStringAsync(
-            "function job() local got = coroutine.yield('wait', 2) return 'done:' .. tostring(got) end", "probe", default));
+        Sync(
+            state.DoStringAsync(
+                "function job() local got = coroutine.yield('wait', 2) return 'done:' .. tostring(got) end",
+                "probe",
+                default
+            )
+        );
         var coroutine = state.CreateCoroutine(state.Environment["job"].Read<LuaFunction>(), isProtectedMode: true);
         var stack = new LuaStack(16);
 
@@ -101,22 +106,26 @@ public sealed class LuaCSharpBehaviourTests
         state.OpenBasicLibrary();
         var hits = 0;
         state.SetHook(
-            new LuaFunction("budget", (context, _) =>
-            {
-                hits++;
-
-                if (hits >= 3)
+            new LuaFunction(
+                "budget",
+                (context, _) =>
                 {
-                    throw new LuaRuntimeException(context.State, new LuaValue("budget exceeded"), 1);
-                }
+                    hits++;
 
-                return new ValueTask<int>(context.Return());
-            }),
+                    if (hits >= 3)
+                    {
+                        throw new LuaRuntimeException(context.State, new LuaValue("budget exceeded"), 1);
+                    }
+
+                    return new ValueTask<int>(context.Return());
+                }
+            ),
             "",
             1000
         );
 
-        var exception = Assert.Throws<LuaRuntimeException>(() => Sync(state.DoStringAsync("while true do end", "probe", default)));
+        var exception =
+            Assert.Throws<LuaRuntimeException>(() => Sync(state.DoStringAsync("while true do end", "probe", default)));
 
         Assert.Contains("budget exceeded", exception.Message, StringComparison.Ordinal);
         Assert.Equal(3, hits);
@@ -128,20 +137,24 @@ public sealed class LuaCSharpBehaviourTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         var hits = 0;
+
         void InstallThrowingHook()
         {
             state.SetHook(
-                new LuaFunction("budget", (context, _) =>
-                {
-                    hits++;
-
-                    if (hits % 3 == 0)
+                new LuaFunction(
+                    "budget",
+                    (context, _) =>
                     {
-                        throw new LuaRuntimeException(context.State, new LuaValue("budget exceeded"), 1);
-                    }
+                        hits++;
 
-                    return new ValueTask<int>(context.Return());
-                }),
+                        if (hits % 3 == 0)
+                        {
+                            throw new LuaRuntimeException(context.State, new LuaValue("budget exceeded"), 1);
+                        }
+
+                        return new ValueTask<int>(context.Return());
+                    }
+                ),
                 "",
                 1000
             );
@@ -172,23 +185,31 @@ public sealed class LuaCSharpBehaviourTests
         state.OpenBasicLibrary();
         var hits = 0;
         state.SetHook(
-            new LuaFunction("budget", (context, _) =>
-            {
-                hits++;
-
-                if (hits >= 3)
+            new LuaFunction(
+                "budget",
+                (context, _) =>
                 {
-                    throw new LuaRuntimeException(context.State, new LuaValue("budget exceeded"), 1);
-                }
+                    hits++;
 
-                return new ValueTask<int>(context.Return());
-            }),
+                    if (hits >= 3)
+                    {
+                        throw new LuaRuntimeException(context.State, new LuaValue("budget exceeded"), 1);
+                    }
+
+                    return new ValueTask<int>(context.Return());
+                }
+            ),
             "",
             1000
         );
 
-        var result = Sync(state.DoStringAsync(
-            "local ok, err = pcall(function() while true do end end) return ok, tostring(err)", "probe", default));
+        var result = Sync(
+            state.DoStringAsync(
+                "local ok, err = pcall(function() while true do end end) return ok, tostring(err)",
+                "probe",
+                default
+            )
+        );
 
         Assert.False(result[0].Read<bool>());
         Assert.Contains("budget exceeded", result[1].Read<string>(), StringComparison.Ordinal);
@@ -202,17 +223,20 @@ public sealed class LuaCSharpBehaviourTests
         using var source = new CancellationTokenSource();
         var instructions = 0;
         state.SetHook(
-            new LuaFunction("budget", (context, _) =>
-            {
-                instructions += 1000;
-
-                if (instructions > 5000)
+            new LuaFunction(
+                "budget",
+                (context, _) =>
                 {
-                    source.Cancel();
-                }
+                    instructions += 1000;
 
-                return new ValueTask<int>(context.Return());
-            }),
+                    if (instructions > 5000)
+                    {
+                        source.Cancel();
+                    }
+
+                    return new ValueTask<int>(context.Return());
+                }
+            ),
             "",
             1000
         );
@@ -231,22 +255,28 @@ public sealed class LuaCSharpBehaviourTests
         using var source = new CancellationTokenSource();
         var instructions = 0;
         state.SetHook(
-            new LuaFunction("budget", (context, _) =>
-            {
-                instructions += 1000;
-
-                if (instructions > 5000)
+            new LuaFunction(
+                "budget",
+                (context, _) =>
                 {
-                    source.Cancel();
-                }
+                    instructions += 1000;
 
-                return new ValueTask<int>(context.Return());
-            }),
+                    if (instructions > 5000)
+                    {
+                        source.Cancel();
+                    }
+
+                    return new ValueTask<int>(context.Return());
+                }
+            ),
             "",
             1000
         );
         var closure = state.Load(
-            "local ok = pcall(function() while true do end end) escaped = true return ok".AsSpan(), "probe", state.Environment);
+            "local ok = pcall(function() while true do end end) escaped = true return ok".AsSpan(),
+            "probe",
+            state.Environment
+        );
 
         Assert.Throws<LuaCanceledException>(() => Sync(state.ExecuteAsync(closure, source.Token)));
 
@@ -260,7 +290,12 @@ public sealed class LuaCSharpBehaviourTests
         state.OpenBasicLibrary();
         state.OpenModuleLibrary();
         var loads = 0;
-        state.ModuleLoader = new CountingModuleLoader(() => { loads++; return $"return {{ n = {loads} }}"; });
+        state.ModuleLoader = new CountingModuleLoader(() =>
+            {
+                loads++;
+                return $"return {{ n = {loads} }}";
+            }
+        );
 
         var first = Sync(state.DoStringAsync("return require('m').n", "probe", default))[0].Read<double>();
         var cached = Sync(state.DoStringAsync("return require('m').n", "probe", default))[0].Read<double>();
@@ -311,8 +346,13 @@ public sealed class LuaCSharpBehaviourTests
 
         Assert.Equal(2, Sync(state.DoStringAsync("return #package.searchers", "probe", default))[0].Read<double>());
 
-        var result = Sync(state.DoStringAsync(
-            $"package.path = [[{outside.Path.Replace('\\', '/')}/?.lua]] return require('intruder')", "probe", default));
+        var result = Sync(
+            state.DoStringAsync(
+                $"package.path = [[{outside.Path.Replace('\\', '/')}/?.lua]] return require('intruder')",
+                "probe",
+                default
+            )
+        );
 
         Assert.Equal("loaded from package.path", result[0].Read<string>());
     }
@@ -323,25 +363,30 @@ public sealed class LuaCSharpBehaviourTests
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         state.OpenCoroutineLibrary();
-        Sync(state.DoStringAsync(
-            "function job() coroutine.yield('wait', 1) local n = 0 for i = 1, 5000 do n = n + i end return n end",
-            "probe",
-            default
-        ));
+        Sync(
+            state.DoStringAsync(
+                "function job() coroutine.yield('wait', 1) local n = 0 for i = 1, 5000 do n = n + i end return n end",
+                "probe",
+                default
+            )
+        );
         var job = state.Environment["job"].Read<LuaFunction>();
         CancellationTokenSource? target = null;
         var instructions = 0;
-        var hook = new LuaFunction("budget", (context, _) =>
-        {
-            instructions += 500;
-
-            if (instructions > 1000)
+        var hook = new LuaFunction(
+            "budget",
+            (context, _) =>
             {
-                target?.Cancel();
-            }
+                instructions += 500;
 
-            return new ValueTask<int>(context.Return());
-        });
+                if (instructions > 1000)
+                {
+                    target?.Cancel();
+                }
+
+                return new ValueTask<int>(context.Return());
+            }
+        );
 
         // Cancelling the token of the *second* resume does not stop the coroutine: the ~10,000-instruction
         // loop runs to its end even though the token it was resumed with is cancelled.
@@ -389,12 +434,19 @@ public sealed class LuaCSharpBehaviourTests
         state.OpenBasicLibrary();
         state.OpenCoroutineLibrary();
         var hits = 0;
-        state.SetHook(new LuaFunction("count", (context, _) =>
-        {
-            hits++;
+        state.SetHook(
+            new LuaFunction(
+                "count",
+                (context, _) =>
+                {
+                    hits++;
 
-            return new ValueTask<int>(context.Return());
-        }), "", 1000);
+                    return new ValueTask<int>(context.Return());
+                }
+            ),
+            "",
+            1000
+        );
         const string Loop = "local n = 0 for i = 1, 5000 do n = n + i end return n";
 
         Sync(state.DoStringAsync(Loop, "inline", default));
@@ -415,8 +467,11 @@ public sealed class LuaCSharpBehaviourTests
         hidden["LIMIT"] = new LuaValue(42);
         var meta = new LuaTable();
         meta["__index"] = new LuaValue(hidden);
-        meta["__newindex"] = new LuaFunction("ro", (context, _) =>
-            throw new LuaRuntimeException(context.State, new LuaValue("read-only"), 1));
+        meta["__newindex"] = new LuaFunction(
+            "ro",
+            (context, _) =>
+                throw new LuaRuntimeException(context.State, new LuaValue("read-only"), 1)
+        );
         meta["__metatable"] = new LuaValue("locked");
         var proxy = new LuaTable { Metatable = meta };
         state.Environment["m"] = proxy;

@@ -36,27 +36,39 @@ public sealed class ApiServerServiceTests
         Log.Logger = logger;
         try
         {
-            await using var service = new ApiServerService(new ApiConfig(),
-                new DirectoriesConfig(directory.Path, ["config"]), registry, TimeProvider.System);
+            await using var service = new ApiServerService(
+                new ApiConfig(),
+                new DirectoriesConfig(directory.Path, ["config"]),
+                registry,
+                TimeProvider.System
+            );
             await service.StartAsync();
             Assert.Null(service.Endpoint);
             Assert.False(registry.IsFrozen);
-            Assert.Contains(sink.Events, entry => entry.Level == LogEventLevel.Warning &&
-                entry.RenderMessage().Contains("api.enabled"));
+            Assert.Contains(
+                sink.Events,
+                entry => entry.Level == LogEventLevel.Warning &&
+                         entry.RenderMessage().Contains("api.enabled")
+            );
         }
-        finally { Log.Logger = previous; }
+        finally
+        {
+            Log.Logger = previous;
+        }
     }
 
     [Fact]
     public async Task StartAsync_DisabledWithGeneration_ProvisionsIdentityWithoutOpeningPortOrFreezingRegistry()
     {
         using var directory = new TemporaryDirectory();
-        var config = TomlUtils.Deserialize<ApiConfig>("""
+        var config = TomlUtils.Deserialize<ApiConfig>(
+            """
             enabled = false
             auto_generate_certificate = true
             certificate_path = "tls/server.pfx"
             certificate_password_environment_variable = ""
-            """);
+            """
+        );
         var directories = new DirectoriesConfig(directory.Path, ["config"]);
         var registry = new ApiRegistry();
         await using var service = new ApiServerService(config, directories, registry, TimeProvider.System);
@@ -71,7 +83,11 @@ public sealed class ApiServerServiceTests
     public async Task StartAsync_ConfiguredEndpoint_AcceptsAuthenticatedCallsAndReleasesPort(bool unencrypted)
     {
         using var fixture = new ApiHostFixture();
-        if (unencrypted) { fixture.UseUnencryptedCertificate(); }
+        if (unencrypted)
+        {
+            fixture.UseUnencryptedCertificate();
+        }
+
         await using var service = fixture.CreateService();
         var first = service.StartAsync();
         Assert.Same(first, service.StartAsync());
@@ -91,7 +107,8 @@ public sealed class ApiServerServiceTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => service.StartAsync());
     }
 
-    [Theory, InlineData("allowed"), InlineData("hostname"), InlineData("unlisted_peer"), InlineData("untrusted_root"), InlineData("forbidden")]
+    [Theory, InlineData("allowed"), InlineData("hostname"), InlineData("unlisted_peer"), InlineData("untrusted_root"),
+     InlineData("forbidden")]
     public async Task StartAsync_GeneratedIdentities_RequireMutualTrustNamesAndPermissions(string policy)
     {
         using var fixture = new ApiHostFixture();
@@ -105,31 +122,55 @@ public sealed class ApiServerServiceTests
         fixture.Config.CertificatePasswordEnvironmentVariable = "";
         File.Delete(Path.Combine(fixture.Directories["config"], fixture.Config.CertificatePath));
         fixture.Config.TrustedRootPaths = policy == "untrusted_root" ? ["tls/root.pem"] : ["tls/client.pfx.pem"];
-        fixture.Config.Peers[0].CertificateSha256 = policy == "unlisted_peer" ? new string('A', 64) : clientCertificate.GetCertHashString(HashAlgorithmName.SHA256);
-        if (policy == "forbidden") { fixture.Config.Peers[0].AllowedOperations = new([]); }
+        fixture.Config.Peers[0].CertificateSha256 = policy == "unlisted_peer"
+            ? new string('A', 64)
+            : clientCertificate.GetCertHashString(HashAlgorithmName.SHA256);
+        if (policy == "forbidden")
+        {
+            fixture.Config.Peers[0].AllowedOperations = new([]);
+        }
+
         await using var service = fixture.CreateService();
         await service.StartAsync();
         using var serverCertificate = X509CertificateLoader.LoadCertificateFromFile(
-            Path.Combine(fixture.Directories["config"], fixture.Config.CertificatePath) + ".pem");
+            Path.Combine(fixture.Directories["config"], fixture.Config.CertificatePath) + ".pem"
+        );
         var registry = new ApiRegistry();
         registry.RegisterContract<IncrementRequest, IncrementResponse>();
-        await using var client = new ApiClient(registry, new ApiOptions(), new ApiTlsOptions
-        {
-            Certificate = clientCertificate, TrustedRoots = [serverCertificate],
-            PeersByCertificateSha256 = new Dictionary<string, ApiPeerIdentity>
+        await using var client = new ApiClient(
+            registry,
+            new ApiOptions(),
+            new ApiTlsOptions
             {
-                [serverCertificate.GetCertHashString(HashAlgorithmName.SHA256)] = new("server", [100])
-            }
-        }, TimeProvider.System);
+                Certificate = clientCertificate, TrustedRoots = [serverCertificate],
+                PeersByCertificateSha256 = new Dictionary<string, ApiPeerIdentity>
+                {
+                    [serverCertificate.GetCertHashString(HashAlgorithmName.SHA256)] = new("server", [100])
+                }
+            },
+            TimeProvider.System
+        );
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
         async Task CallAsync()
         {
-            await using var connection = await client.ConnectAsync(service.Endpoint!,
-                policy == "hostname" ? "wrong.internal" : "localhost", "server", timeout.Token);
-            var response = await connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 }, cancellationToken: timeout.Token);
+            await using var connection = await client.ConnectAsync(
+                service.Endpoint!,
+                policy == "hostname" ? "wrong.internal" : "localhost",
+                "server",
+                timeout.Token
+            );
+            var response = await connection.RequestAsync<IncrementRequest, IncrementResponse>(
+                new() { Value = 41 },
+                cancellationToken: timeout.Token
+            );
             Assert.Equal(42, response.Value);
         }
-        if (policy == "allowed") { await CallAsync(); }
+
+        if (policy == "allowed")
+        {
+            await CallAsync();
+        }
         else if (policy == "forbidden")
         {
             var exception = await Assert.ThrowsAsync<ApiRemoteException>(CallAsync);
@@ -142,13 +183,18 @@ public sealed class ApiServerServiceTests
         }
     }
 
-    [Theory, InlineData("[\"*\"]", true), InlineData("[100]", true), InlineData("[101]", false), InlineData("[]", false), InlineData(null, false)]
+    [Theory, InlineData("[\"*\"]", true), InlineData("[100]", true), InlineData("[101]", false), InlineData("[]", false),
+     InlineData(null, false)]
     public async Task StartAsync_OperationPolicyFromToml_EnforcesExplicitPermissions(string? operations, bool allowed)
     {
         using var fixture = new ApiHostFixture();
         var entry = fixture.Config.Peers[0];
         var toml = $"peer_id = \"{entry.PeerId}\"\ncertificate_sha256 = \"{entry.CertificateSha256}\"\n";
-        if (operations is not null) { toml += $"allowed_operations = {operations}\n"; }
+        if (operations is not null)
+        {
+            toml += $"allowed_operations = {operations}\n";
+        }
+
         fixture.Config.Peers[0] = TomlUtils.Deserialize<ApiPeerConfig>(toml)!;
         await using var service = fixture.CreateService();
         await service.StartAsync();
@@ -162,7 +208,8 @@ public sealed class ApiServerServiceTests
         else
         {
             var exception = await Assert.ThrowsAsync<ApiRemoteException>(() =>
-                connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 }));
+                connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 })
+            );
             Assert.Equal(ApiErrorCode.Forbidden, exception.Code);
         }
     }
@@ -177,7 +224,8 @@ public sealed class ApiServerServiceTests
         await using var client = fixture.CreateClient();
         await using var connection = await client.ConnectAsync(service.Endpoint!, "localhost", "server");
         var exception = await Assert.ThrowsAsync<ApiRemoteException>(() =>
-            connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 }));
+            connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 })
+        );
         Assert.Equal(ApiErrorCode.Forbidden, exception.Code);
     }
 
@@ -185,19 +233,25 @@ public sealed class ApiServerServiceTests
     public async Task StartAsync_UnlistedPeer_RejectsConnectionOrCall(bool allowAllOperations)
     {
         using var fixture = new ApiHostFixture();
-        if (allowAllOperations) { fixture.Config.Peers[0].AllowedOperations = new([], allowsAll: true); }
+        if (allowAllOperations)
+        {
+            fixture.Config.Peers[0].AllowedOperations = new([], allowsAll: true);
+        }
+
         fixture.Config.Peers[0].CertificateSha256 = new string('B', 64);
         await using var service = fixture.CreateService();
         await service.StartAsync();
         await using var client = fixture.CreateClient();
         await Assert.ThrowsAnyAsync<Exception>(async () =>
-        {
-            await using var connection = await client.ConnectAsync(service.Endpoint!, "localhost", "server");
-            await connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 });
-        });
+            {
+                await using var connection = await client.ConnectAsync(service.Endpoint!, "localhost", "server");
+                await connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = 41 });
+            }
+        );
     }
 
-    [Theory, InlineData("missing_leaf"), InlineData("missing_root"), InlineData("wrong_password"), InlineData("missing_password")]
+    [Theory, InlineData("missing_leaf"), InlineData("missing_root"), InlineData("wrong_password"),
+     InlineData("missing_password")]
     public async Task StartAsync_InvalidTls_FailsWithoutBindingAndDoesNotExposePassword(string failure)
     {
         using var fixture = new ApiHostFixture();
@@ -205,9 +259,15 @@ public sealed class ApiServerServiceTests
         {
             case "missing_leaf": fixture.Config.CertificatePath = "missing.pfx"; break;
             case "missing_root": fixture.Config.TrustedRootPaths = ["tls/root.pem", "missing.pem"]; break;
-            case "wrong_password": Environment.SetEnvironmentVariable(fixture.Config.CertificatePasswordEnvironmentVariable, "wrong-test-password"); break;
-            case "missing_password": Environment.SetEnvironmentVariable(fixture.Config.CertificatePasswordEnvironmentVariable, null); break;
+            case "wrong_password":
+                Environment.SetEnvironmentVariable(
+                    fixture.Config.CertificatePasswordEnvironmentVariable,
+                    "wrong-test-password"
+                ); break;
+            case "missing_password":
+                Environment.SetEnvironmentVariable(fixture.Config.CertificatePasswordEnvironmentVariable, null); break;
         }
+
         await using var service = fixture.CreateService();
         var exception = await Assert.ThrowsAnyAsync<Exception>(() => service.StartAsync());
         Assert.DoesNotContain(fixture.Password, exception.ToString());

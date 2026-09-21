@@ -23,19 +23,43 @@ public sealed class TimerMetricsProvider : IMetricProvider
         IReadOnlyList<MetricSample> samples =
         [
             new MetricSample("active_timers", snapshot.ActiveTimers, "count", DiagnosticMetricType.Gauge),
-            new MetricSample("registered_timers_total", snapshot.RegisteredTimers, "count",
-                DiagnosticMetricType.Counter),
-            new MetricSample("executed_callbacks_total", snapshot.ExecutedCallbacks, "count",
-                DiagnosticMetricType.Counter),
+            new MetricSample(
+                "registered_timers_total",
+                snapshot.RegisteredTimers,
+                "count",
+                DiagnosticMetricType.Counter
+            ),
+            new MetricSample(
+                "executed_callbacks_total",
+                snapshot.ExecutedCallbacks,
+                "count",
+                DiagnosticMetricType.Counter
+            ),
             new MetricSample("callback_faults_total", snapshot.CallbackFaults, "count", DiagnosticMetricType.Counter),
-            new MetricSample("coalesced_occurrences_total", snapshot.CoalescedOccurrences, "count",
-                DiagnosticMetricType.Counter),
-            new MetricSample("max_lateness_seconds", snapshot.MaxLateness.TotalSeconds, "seconds",
-                DiagnosticMetricType.Gauge),
-            new MetricSample("max_callback_duration_seconds", snapshot.MaxCallbackDuration.TotalSeconds, "seconds",
-                DiagnosticMetricType.Gauge),
-            new MetricSample("last_batch_duration_seconds", snapshot.LastBatchDuration.TotalSeconds, "seconds",
-                DiagnosticMetricType.Gauge)
+            new MetricSample(
+                "coalesced_occurrences_total",
+                snapshot.CoalescedOccurrences,
+                "count",
+                DiagnosticMetricType.Counter
+            ),
+            new MetricSample(
+                "max_lateness_seconds",
+                snapshot.MaxLateness.TotalSeconds,
+                "seconds",
+                DiagnosticMetricType.Gauge
+            ),
+            new MetricSample(
+                "max_callback_duration_seconds",
+                snapshot.MaxCallbackDuration.TotalSeconds,
+                "seconds",
+                DiagnosticMetricType.Gauge
+            ),
+            new MetricSample(
+                "last_batch_duration_seconds",
+                snapshot.LastBatchDuration.TotalSeconds,
+                "seconds",
+                DiagnosticMetricType.Gauge
+            )
         ];
         return ValueTask.FromResult(samples);
     }

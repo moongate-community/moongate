@@ -47,11 +47,14 @@ internal sealed class ApiHostFixture : IDisposable
             CertificatePath = "tls/server.pfx",
             CertificatePasswordEnvironmentVariable = _passwordVariable,
             TrustedRootPaths = ["tls/root.pem"],
-            Peers = [new ApiPeerConfig
-            {
-                CertificateSha256 = _client.GetCertHashString(HashAlgorithmName.SHA256),
-                PeerId = "client", AllowedOperations = new([100])
-            }]
+            Peers =
+            [
+                new ApiPeerConfig
+                {
+                    CertificateSha256 = _client.GetCertHashString(HashAlgorithmName.SHA256),
+                    PeerId = "client", AllowedOperations = new([100])
+                }
+            ]
         };
         Registry.RegisterHandler(() => new IncrementHandler());
     }
@@ -63,16 +66,27 @@ internal sealed class ApiHostFixture : IDisposable
     {
         var registry = new ApiRegistry();
         registry.RegisterContract<IncrementRequest, IncrementResponse>();
-        return new ApiClient(registry, new ApiOptions(), _authority.Options(_client, _server, "server"), TimeProvider.System);
+        return new ApiClient(
+            registry,
+            new ApiOptions(),
+            _authority.Options(_client, _server, "server"),
+            TimeProvider.System
+        );
     }
 
     public void UseInvalidServerCertificate(string invalidity)
     {
-        using var certificate = _authority.Issue(expired: invalidity == "expired",
-            clientOnly: invalidity == "client_only", notYetValid: invalidity == "future");
+        using var certificate = _authority.Issue(
+            expired: invalidity == "expired",
+            clientOnly: invalidity == "client_only",
+            notYetValid: invalidity == "future"
+        );
         using var publicCertificate = X509CertificateLoader.LoadCertificate(certificate.Export(X509ContentType.Cert));
         var exported = invalidity == "no_private_key" ? publicCertificate : certificate;
-        File.WriteAllBytes(Path.Combine(Directories["config"], Config.CertificatePath), exported.Export(X509ContentType.Pfx, Password));
+        File.WriteAllBytes(
+            Path.Combine(Directories["config"], Config.CertificatePath),
+            exported.Export(X509ContentType.Pfx, Password)
+        );
     }
 
     public void UseUnencryptedCertificate()
@@ -84,8 +98,14 @@ internal sealed class ApiHostFixture : IDisposable
     public void AssertPortReleased()
     {
         var listener = new TcpListener(IPAddress.Loopback, Config.Port);
-        try { listener.Start(); }
-        finally { listener.Stop(); }
+        try
+        {
+            listener.Start();
+        }
+        finally
+        {
+            listener.Stop();
+        }
     }
 
     public void Dispose()

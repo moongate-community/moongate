@@ -44,4 +44,17 @@ public sealed class EnvExtensionsTests
 
         Assert.Equal("original", $"${key}".ExpandEnvironmentVariables());
     }
+
+    [Fact]
+    public void ExpandEnvironmentVariables_BracesAndPrefixNames_ExpandExactlyOnce()
+    {
+        var key = $"MOONGATE_TEST_{Guid.NewGuid():N}";
+        using var shortName = new EnvironmentVariableScope(key, "short");
+        using var longName = new EnvironmentVariableScope(key + "_LONG", "$" + key);
+
+        Assert.Equal(
+            $"short/${key}/tail",
+            ($"${{{key}}}/${key}_LONG/tail").ExpandEnvironmentVariables()
+        );
+    }
 }

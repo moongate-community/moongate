@@ -11,6 +11,8 @@ using Moongate.Tests.Support.Server;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Plugins;
 using Moongate.Server.Core.Data.Plugins;
+using Moongate.Server.Data.Config.Sections;
+using Moongate.Server.Core.Types.Hosting;
 
 namespace Moongate.Tests.Integration.Persistence;
 
@@ -22,11 +24,17 @@ public sealed class PersistenceBootstrapTests
         await using var fixture = await HostPersistenceFixture.CreateAsync();
         var started = false;
         fixture.Container.RegisterInstance<IPluginLoaderService>(new PersistencePluginLoader(fixture.Container));
-        fixture.Container.RegisterMoongateService(new CallbackStartupService(async () =>
-        {
-            Assert.Empty(await fixture.Container.Resolve<IDataAccess<TestEntity>>().GetAllAsync());
-            started = true;
-        }, () => Task.CompletedTask), -2000);
+        fixture.Container.RegisterMoongateService(
+            new CallbackStartupService(
+                async () =>
+                {
+                    Assert.Empty(await fixture.Container.Resolve<IDataAccess<TestEntity>>().GetAllAsync());
+                    started = true;
+                },
+                () => Task.CompletedTask
+            ),
+            -2000
+        );
         var owner = fixture.Owner;
         var bootstrap = new MoongateServerBootstrap(fixture.Container, CancellationToken.None);
         await bootstrap.StartAsync();
@@ -41,7 +49,17 @@ public sealed class PersistenceBootstrapTests
         await using var fixture = await HostPersistenceFixture.CreateAsync(autoSync: false);
         fixture.RegisterEntity();
         var started = false;
-        fixture.Container.RegisterMoongateService(new CallbackStartupService(() => { started = true; return Task.CompletedTask; }, () => Task.CompletedTask), -2000);
+        fixture.Container.RegisterMoongateService(
+            new CallbackStartupService(
+                () =>
+                {
+                    started = true;
+                    return Task.CompletedTask;
+                },
+                () => Task.CompletedTask
+            ),
+            -2000
+        );
         var owner = fixture.Owner;
         var bootstrap = new MoongateServerBootstrap(fixture.Container, CancellationToken.None);
         var error = await Assert.ThrowsAsync<InvalidOperationException>(bootstrap.StartAsync);
@@ -70,13 +88,23 @@ public sealed class PersistenceBootstrapTests
         fixture.RegisterEntity();
         var failure = new IOException("startup failed");
         var stopped = false;
-        fixture.Container.RegisterMoongateService(new CallbackStartupService(() => throw failure, () => { stopped = true; return Task.CompletedTask; }));
+        fixture.Container.RegisterMoongateService(
+            new CallbackStartupService(
+                () => throw failure,
+                () =>
+                {
+                    stopped = true;
+                    return Task.CompletedTask;
+                }
+            )
+        );
         var owner = fixture.Owner;
         var bootstrap = new MoongateServerBootstrap(fixture.Container, CancellationToken.None);
         Assert.Same(failure, await Record.ExceptionAsync(bootstrap.StartAsync));
         Assert.True(stopped);
         await Assert.ThrowsAsync<ObjectDisposedException>(() => owner.SaveAllAsync());
     }
+
     [Fact]
     public async Task StopAsync_ServiceFails_DisposesOwnerAndRetainsFailureOnRepeatedStop()
     {
@@ -92,4 +120,27 @@ public sealed class PersistenceBootstrapTests
         await Assert.ThrowsAsync<ObjectDisposedException>(() => owner.SaveAllAsync());
     }
 
+    [Fact]
+    public async Task StartAsync_RegisteredAuthEntityInGameMode_StillRequiresAuthDataMigrations()
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var files = new PluginDirectoryFixture("migrations", "plugins");
+        var auth = Path.Combine(files.Directories["migrations"], "auth");
+        Directory.CreateDirectory(auth);
+        await File.WriteAllTextAsync(Path.Combine(auth, "0001_data.sql"), "SELECT 1;");
+        var config = new PersistenceConfig
+        {
+            Accounts = new PersistenceDatabaseConfig { ConnectionString = database.ConnectionString },
+            Realm = new PersistenceDatabaseConfig { ConnectionString = "$UNUSED_WORLD_DATABASE" }
+        };
+        using var container = new Container();
+        container.RegisterMoongatePersistence(
+                config.ToOptions(files.Directories["migrations"], files.Directories["plugins"], ServerMode.Game)
+            )
+            .AddPersistenceAuth<TestEntity>();
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(bootstrap.StartAsync);
+        Assert.Contains("0001_data.sql", error.Message);
+        Assert.True(container.IsDisposed);
+    }
 }

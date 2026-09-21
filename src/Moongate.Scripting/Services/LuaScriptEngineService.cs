@@ -153,11 +153,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             state.Environment["print"] = new LuaValue(CreatePrint(scheduler));
             WriteDefinitions();
             budget.Chunk(token =>
-            {
-                RunPrelude(state, token);
+                {
+                    RunPrelude(state, token);
 
-                return true;
-            });
+                    return true;
+                }
+            );
         }
         catch
         {
@@ -174,8 +175,11 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _budget = budget;
 
         RunBootstrap();
-        _logger.Information("Script engine started with {ModuleCount} modules from {ScriptsDirectory}",
-            _boundModules.Count, _options.ScriptsDirectory);
+        _logger.Information(
+            "Script engine started with {ModuleCount} modules from {ScriptsDirectory}",
+            _boundModules.Count,
+            _options.ScriptsDirectory
+        );
         // Module count includes the two built-ins, engine and timer.
     }
 
@@ -341,40 +345,50 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         }
 
         var cap = _options.MaxStringLength;
-        stringLibrary["rep"] = new LuaValue(new LuaFunction("string.rep", (context, _) =>
-        {
-            var text = ReadStringArgument(context, 0);
-            var requested = context.GetArgument<double>(1);
+        stringLibrary["rep"] = new LuaValue(
+            new LuaFunction(
+                "string.rep",
+                (context, _) =>
+                {
+                    var text = ReadStringArgument(context, 0);
+                    var requested = context.GetArgument<double>(1);
 
-            if (double.IsNaN(requested) || double.IsInfinity(requested) || requested != Math.Floor(requested))
-            {
-                throw new LuaRuntimeException(context.State, "bad argument #2 to 'rep' (number has no integer representation)");
-            }
+                    if (double.IsNaN(requested) || double.IsInfinity(requested) || requested != Math.Floor(requested))
+                    {
+                        throw new LuaRuntimeException(
+                            context.State,
+                            "bad argument #2 to 'rep' (number has no integer representation)"
+                        );
+                    }
 
-            var separator = context.ArgumentCount > 2 && context.GetArgument(2).Type != LuaValueType.Nil ? ReadStringArgument(context, 2) : "";
+                    var separator = context.ArgumentCount > 2 && context.GetArgument(2).Type != LuaValueType.Nil
+                        ? ReadStringArgument(context, 2)
+                        : "";
 
-            if (requested <= 0)
-            {
-                return new ValueTask<int>(context.Return(""));
-            }
+                    if (requested <= 0)
+                    {
+                        return new ValueTask<int>(context.Return(""));
+                    }
 
-            // A count above the cap can only produce an over-cap result (or an empty one for empty
-            // inputs), so it is refused before any arithmetic that could wrap.
-            if (requested > cap)
-            {
-                throw Refuse(context, requested, cap);
-            }
+                    // A count above the cap can only produce an over-cap result (or an empty one for empty
+                    // inputs), so it is refused before any arithmetic that could wrap.
+                    if (requested > cap)
+                    {
+                        throw Refuse(context, requested, cap);
+                    }
 
-            var count = (int)requested;
-            var size = (long)text.Length * count + (long)separator.Length * (count - 1);
+                    var count = (int)requested;
+                    var size = (long)text.Length * count + (long)separator.Length * (count - 1);
 
-            if (size > cap)
-            {
-                throw Refuse(context, size, cap);
-            }
+                    if (size > cap)
+                    {
+                        throw Refuse(context, size, cap);
+                    }
 
-            return new ValueTask<int>(context.Return(string.Join(separator, Enumerable.Repeat(text, count))));
-        }));
+                    return new ValueTask<int>(context.Return(string.Join(separator, Enumerable.Repeat(text, count))));
+                }
+            )
+        );
     }
 
     /// <summary>Counts a refused <c>string.rep</c> and builds the script error that names the size and the cap.</summary>
@@ -387,8 +401,10 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             ? ((long)size).ToString(System.Globalization.CultureInfo.InvariantCulture)
             : size.ToString("0", System.Globalization.CultureInfo.InvariantCulture);
 
-        return new LuaRuntimeException(context.State,
-            $"string.rep: a result of {shown} characters exceeds the script string cap of {cap} characters");
+        return new LuaRuntimeException(
+            context.State,
+            $"string.rep: a result of {shown} characters exceeds the script string cap of {cap} characters"
+        );
     }
 
     /// <summary>Reads a string argument the way the string library does: strings as they are, numbers converted, anything else a bad-argument error.</summary>
@@ -400,8 +416,10 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         {
             LuaValueType.String => value.Read<string>(),
             LuaValueType.Number => value.ToString(),
-            _ => throw new LuaRuntimeException(context.State,
-                $"bad argument #{index + 1} to 'rep' (string expected, got {value.TypeToString()})")
+            _ => throw new LuaRuntimeException(
+                context.State,
+                $"bad argument #{index + 1} to 'rep' (string expected, got {value.TypeToString()})"
+            )
         };
     }
 
@@ -413,14 +431,17 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     /// </summary>
     private LuaFunction CreatePrint(IScriptScheduler scheduler)
     {
-        return new LuaFunction("print", (context, _) =>
-        {
-            _guard.EnsureScriptThread("print");
-            var line = context.ArgumentCount == 0 ? "" : context.GetArgument<string>(0);
-            _scriptOutput.Information("{ScriptFile}: {Output}", scheduler.CurrentOwner ?? _options.BootstrapFile, line);
+        return new LuaFunction(
+            "print",
+            (context, _) =>
+            {
+                _guard.EnsureScriptThread("print");
+                var line = context.ArgumentCount == 0 ? "" : context.GetArgument<string>(0);
+                _scriptOutput.Information("{ScriptFile}: {Output}", scheduler.CurrentOwner ?? _options.BootstrapFile, line);
 
-            return new ValueTask<int>(context.Return());
-        });
+                return new ValueTask<int>(context.Return());
+            }
+        );
     }
 
     /// <summary>
@@ -479,8 +500,11 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
 
         if (!File.Exists(full))
         {
-            _logger.Warning("No {BootstrapFile} under {ScriptsDirectory}; the engine starts empty",
-                _options.BootstrapFile, _options.ScriptsDirectory);
+            _logger.Warning(
+                "No {BootstrapFile} under {ScriptsDirectory}; the engine starts empty",
+                _options.BootstrapFile,
+                _options.ScriptsDirectory
+            );
 
             return;
         }
@@ -500,7 +524,9 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             ReportError(error);
 
             throw new InvalidOperationException(
-                $"Script bootstrap failed at {error.File}:{error.Line}: {error.Message}", exception);
+                $"Script bootstrap failed at {error.File}:{error.Line}: {error.Message}",
+                exception
+            );
         }
     }
 
@@ -530,7 +556,8 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private T Ready<T>(T? component) where T : class
     {
         return component ?? throw new InvalidOperationException(
-            _disposed ? "The script engine has been disposed." : "The script engine has not started.");
+            _disposed ? "The script engine has been disposed." : "The script engine has not started."
+        );
     }
 
     /// <summary>Disposes the LuaState and releases every component created at startup.</summary>

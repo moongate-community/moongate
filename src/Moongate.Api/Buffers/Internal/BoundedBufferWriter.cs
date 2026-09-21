@@ -24,6 +24,7 @@ internal sealed class BoundedBufferWriter : IBufferWriter<byte>
         {
             throw new ApiProtocolException("Payload limit exceeded.");
         }
+
         _written += count;
     }
 
@@ -46,7 +47,11 @@ internal sealed class BoundedBufferWriter : IBufferWriter<byte>
         ArgumentOutOfRangeException.ThrowIfNegative(sizeHint);
         sizeHint = Math.Max(1, sizeHint);
 
-        if (sizeHint > _scratchLimit - _written) { throw new ApiProtocolException("Payload reservation limit exceeded."); }
+        if (sizeHint > _scratchLimit - _written)
+        {
+            throw new ApiProtocolException("Payload reservation limit exceeded.");
+        }
+
         var required = _written + sizeHint;
 
         if (required > _buffer.Length)

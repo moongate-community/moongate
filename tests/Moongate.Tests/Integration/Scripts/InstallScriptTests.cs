@@ -36,7 +36,10 @@ public class InstallScriptTests
         var result = await install.RunAsync("0.5.0", "linux-x64");
 
         Assert.True(result.ExitCode == 0, result.Output);
-        Assert.Equal("second payload", await File.ReadAllTextAsync(Path.Combine(install.InstallDirectory, "Moongate.Server")));
+        Assert.Equal(
+            "second payload",
+            await File.ReadAllTextAsync(Path.Combine(install.InstallDirectory, "Moongate.Server"))
+        );
         var siblings = Directory.GetDirectories(Path.GetDirectoryName(install.InstallDirectory)!);
         Assert.DoesNotContain(siblings, directory => directory.Contains(".new.") || directory.Contains(".old."));
     }

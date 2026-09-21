@@ -32,9 +32,12 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
 
             var identity = live.Id;
             var value = _snapshot(live);
-            if (value is null || ReferenceEquals(live, value) || value.Id != identity || live.Id != identity || !value.Id.IsValid || !ids.Add(value.Id))
+            if (value is null || ReferenceEquals(live, value) || value.Id != identity || live.Id != identity ||
+                !value.Id.IsValid || !ids.Add(value.Id))
             {
-                throw new InvalidOperationException($"Snapshot for '{typeof(T).FullName}' must be detached with an unchanged, unique, nonzero identity.");
+                throw new InvalidOperationException(
+                    $"Snapshot for '{typeof(T).FullName}' must be detached with an unchanged, unique, nonzero identity."
+                );
             }
 
             values.Add(value);

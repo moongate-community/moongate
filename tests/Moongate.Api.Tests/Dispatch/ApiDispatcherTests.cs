@@ -11,21 +11,42 @@ using Moongate.Api.Tests.TestSupport.Connections;
 using Moongate.Api.Tests.TestSupport.Contracts;
 using Moongate.Api.Tests.TestSupport.Handlers;
 using Moongate.Api.Types.Protocol;
+
 namespace Moongate.Api.Tests.Dispatch;
+
 public class ApiDispatcherTests
 {
-    [Theory, InlineData(101, true, true, ApiErrorCode.UnsupportedOperation), InlineData(100, false, true, ApiErrorCode.UnsupportedOperation), InlineData(100, true, false, ApiErrorCode.Forbidden), InlineData(100, true, true, ApiErrorCode.InvalidRequest)]
-    public async Task Admission_RejectsUnknownMissingUnauthorizedOrMalformedRequests(ushort operation, bool hasHandler, bool allowed, ApiErrorCode expected)
+    [Theory, InlineData(101, true, true, ApiErrorCode.UnsupportedOperation),
+     InlineData(100, false, true, ApiErrorCode.UnsupportedOperation), InlineData(100, true, false, ApiErrorCode.Forbidden),
+     InlineData(100, true, true, ApiErrorCode.InvalidRequest)]
+    public async Task Admission_RejectsUnknownMissingUnauthorizedOrMalformedRequests(
+        ushort operation, bool hasHandler, bool allowed, ApiErrorCode expected
+    )
     {
         var registry = new ApiRegistry();
         var handler = new GatedHandler();
-        if (hasHandler) { registry.RegisterHandler(() => handler); }
-        else { registry.RegisterContract<IncrementRequest, IncrementResponse>(); }
+        if (hasHandler)
+        {
+            registry.RegisterHandler(() => handler);
+        }
+        else
+        {
+            registry.RegisterContract<IncrementRequest, IncrementResponse>();
+        }
+
         registry.Freeze();
         var transport = new RecordingConnection();
         await using var outbox = Outbox(transport);
         using var slots = new SemaphoreSlim(1);
-        var dispatcher = new ApiDispatcher(new StubApiConnection(allowed ? [100] : []), registry, new ApiOptions(), outbox, slots, TimeProvider.System, error => Assert.Fail(error.Message));
+        var dispatcher = new ApiDispatcher(
+            new StubApiConnection(allowed ? [100] : []),
+            registry,
+            new ApiOptions(),
+            outbox,
+            slots,
+            TimeProvider.System,
+            error => Assert.Fail(error.Message)
+        );
         var payload = allowed ? new byte[] { 0x91, 0xc2 } : new byte[] { 0xc1 };
         dispatcher.TryDispatch(new ApiEnvelope(ApiMessageKind.Request, 1, operation, payload));
         Assert.Equal(expected, ApiPayloadSerializer.Deserialize<ApiError>((await ReadAsync(transport)).Payload).Code);
@@ -43,7 +64,15 @@ public class ApiDispatcherTests
         var transport = new RecordingConnection();
         await using var outbox = Outbox(transport);
         using var slots = new SemaphoreSlim(1);
-        var dispatcher = new ApiDispatcher(new StubApiConnection(100), registry, new ApiOptions(), outbox, slots, clock, error => Assert.Fail(error.Message));
+        var dispatcher = new ApiDispatcher(
+            new StubApiConnection(100),
+            registry,
+            new ApiOptions(),
+            outbox,
+            slots,
+            clock,
+            error => Assert.Fail(error.Message)
+        );
         Assert.True(dispatcher.TryDispatch(Request(1)));
         Assert.Equal(1, await handler.Entered.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5)));
         clock.Advance(TimeSpan.FromSeconds(5));
@@ -70,10 +99,21 @@ public class ApiDispatcherTests
         var transport = new RecordingConnection();
         await using var outbox = Outbox(transport);
         using var slots = new SemaphoreSlim(0, 1);
-        var dispatcher = new ApiDispatcher(new StubApiConnection(100), Registry(handler), new ApiOptions(), outbox, slots, clock, error => Assert.Fail(error.Message));
+        var dispatcher = new ApiDispatcher(
+            new StubApiConnection(100),
+            Registry(handler),
+            new ApiOptions(),
+            outbox,
+            slots,
+            clock,
+            error => Assert.Fail(error.Message)
+        );
         dispatcher.TryDispatch(Request(1));
         clock.Advance(TimeSpan.FromSeconds(5));
-        Assert.Equal(ApiErrorCode.DeadlineExceeded, ApiPayloadSerializer.Deserialize<ApiError>((await ReadAsync(transport)).Payload).Code);
+        Assert.Equal(
+            ApiErrorCode.DeadlineExceeded,
+            ApiPayloadSerializer.Deserialize<ApiError>((await ReadAsync(transport)).Payload).Code
+        );
         dispatcher.StopAdmission();
         await dispatcher.Completion.WaitAsync(TimeSpan.FromSeconds(5));
         Assert.Equal(0, handler.Count);
@@ -88,12 +128,23 @@ public class ApiDispatcherTests
         var transport = new RecordingConnection();
         await using var outbox = Outbox(transport);
         using var slots = new SemaphoreSlim(1);
-        var dispatcher = new ApiDispatcher(new StubApiConnection(100), Registry(handler), new ApiOptions { IncomingQueueCapacity = 1 }, outbox, slots, clock, error => Assert.Fail(error.Message));
+        var dispatcher = new ApiDispatcher(
+            new StubApiConnection(100),
+            Registry(handler),
+            new ApiOptions { IncomingQueueCapacity = 1 },
+            outbox,
+            slots,
+            clock,
+            error => Assert.Fail(error.Message)
+        );
         dispatcher.TryDispatch(Request(1));
         await handler.Entered.Reader.ReadAsync();
         Assert.True(dispatcher.TryDispatch(Request(2)));
         Assert.False(dispatcher.TryDispatch(Request(3)));
-        Assert.Equal(ApiErrorCode.Busy, ApiPayloadSerializer.Deserialize<ApiError>((await ReadAsync(transport)).Payload).Code);
+        Assert.Equal(
+            ApiErrorCode.Busy,
+            ApiPayloadSerializer.Deserialize<ApiError>((await ReadAsync(transport)).Payload).Code
+        );
         clock.Advance(TimeSpan.FromSeconds(5));
         await ReadAsync(transport);
         await ReadAsync(transport);
@@ -111,7 +162,15 @@ public class ApiDispatcherTests
         using var slots = new SemaphoreSlim(1);
         var handler = new GatedHandler();
         handler.Release.SetResult();
-        var dispatcher = new ApiDispatcher(new StubApiConnection(100), Registry(handler), new ApiOptions(), outbox, slots, TimeProvider.System, _ => { });
+        var dispatcher = new ApiDispatcher(
+            new StubApiConnection(100),
+            Registry(handler),
+            new ApiOptions(),
+            outbox,
+            slots,
+            TimeProvider.System,
+            _ => { }
+        );
         dispatcher.TryDispatch(Request(1));
         Assert.Throws<ApiProtocolException>(() => dispatcher.TryDispatch(Request(1)));
         dispatcher.StopAdmission();
@@ -128,8 +187,24 @@ public class ApiDispatcherTests
         await using var firstOutbox = Outbox(firstTransport);
         await using var secondOutbox = Outbox(secondTransport);
         using var slots = new SemaphoreSlim(1);
-        var first = new ApiDispatcher(new StubApiConnection(100), registry, new ApiOptions(), firstOutbox, slots, TimeProvider.System, error => Assert.Fail(error.Message));
-        var second = new ApiDispatcher(new StubApiConnection(100), registry, new ApiOptions(), secondOutbox, slots, TimeProvider.System, error => Assert.Fail(error.Message));
+        var first = new ApiDispatcher(
+            new StubApiConnection(100),
+            registry,
+            new ApiOptions(),
+            firstOutbox,
+            slots,
+            TimeProvider.System,
+            error => Assert.Fail(error.Message)
+        );
+        var second = new ApiDispatcher(
+            new StubApiConnection(100),
+            registry,
+            new ApiOptions(),
+            secondOutbox,
+            slots,
+            TimeProvider.System,
+            error => Assert.Fail(error.Message)
+        );
         first.TryDispatch(Request(1));
         await handler.Entered.Reader.ReadAsync();
         second.TryDispatch(Request(1));
@@ -155,7 +230,15 @@ public class ApiDispatcherTests
         outbox.TryEnqueue(new Moongate.Api.Data.Internal.Requests.ApiOutboundFrame([2], null));
         var aborted = new TaskCompletionSource<Exception>(TaskCreationOptions.RunContinuationsAsynchronously);
         using var slots = new SemaphoreSlim(1);
-        var dispatcher = new ApiDispatcher(new StubApiConnection(), Registry(new GatedHandler()), new ApiOptions(), outbox, slots, TimeProvider.System, error => aborted.TrySetResult(error));
+        var dispatcher = new ApiDispatcher(
+            new StubApiConnection(),
+            Registry(new GatedHandler()),
+            new ApiOptions(),
+            outbox,
+            slots,
+            TimeProvider.System,
+            error => aborted.TrySetResult(error)
+        );
         dispatcher.TryDispatch(Request(1));
         Assert.IsType<IOException>(await aborted.Task.WaitAsync(TimeSpan.FromSeconds(5)));
         await dispatcher.Completion;
@@ -170,8 +253,18 @@ public class ApiDispatcherTests
         var handler = new GatedHandler();
         var aborted = new TaskCompletionSource<Exception>(TaskCreationOptions.RunContinuationsAsynchronously);
         using var slots = new SemaphoreSlim(1);
-        var dispatcher = new ApiDispatcher(new StubApiConnection(100), Registry(handler), new ApiOptions(), outbox, slots, TimeProvider.System, error => aborted.TrySetResult(error));
-        dispatcher.TryDispatch(new ApiEnvelope(ApiMessageKind.Request, 1, 100, Enumerable.Repeat((byte)0x91, 65).Append((byte)0xc0).ToArray()));
+        var dispatcher = new ApiDispatcher(
+            new StubApiConnection(100),
+            Registry(handler),
+            new ApiOptions(),
+            outbox,
+            slots,
+            TimeProvider.System,
+            error => aborted.TrySetResult(error)
+        );
+        dispatcher.TryDispatch(
+            new ApiEnvelope(ApiMessageKind.Request, 1, 100, Enumerable.Repeat((byte)0x91, 65).Append((byte)0xc0).ToArray())
+        );
         Assert.IsType<ApiProtocolException>(await aborted.Task.WaitAsync(TimeSpan.FromSeconds(5)));
         await dispatcher.Completion;
         Assert.Equal(0, handler.Count);
@@ -179,9 +272,19 @@ public class ApiDispatcherTests
     }
 
     private static ApiEnvelope Request(uint id) => new(ApiMessageKind.Request, id, 100, new byte[] { 0x91, 41 });
-    private static ApiOutbox Outbox(RecordingConnection transport) => new(transport, 32, TimeSpan.FromSeconds(5), TimeProvider.System);
+
+    private static ApiOutbox Outbox(RecordingConnection transport) => new(
+        transport,
+        32,
+        TimeSpan.FromSeconds(5),
+        TimeProvider.System
+    );
+
     private static async Task<ApiEnvelope> ReadAsync(RecordingConnection transport)
-        => new ApiFrameCodec(65536).Decode(await transport.Written.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5)));
+        => new ApiFrameCodec(65536).Decode(
+            await transport.Written.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5))
+        );
+
     private static ApiRegistry Registry(GatedHandler handler)
     {
         var registry = new ApiRegistry();

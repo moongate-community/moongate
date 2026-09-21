@@ -17,8 +17,15 @@ public sealed class ConnectionServiceTests
         Assert.True(service.TryGet(1, out var found, out var requested));
         Assert.Same(connection, found);
         Assert.False(requested.IsCompleted);
-        if (stop) { await service.StopAsync().WaitAsync(Timeout); }
-        else { await service.DisconnectAsync(1).WaitAsync(Timeout); }
+        if (stop)
+        {
+            await service.StopAsync().WaitAsync(Timeout);
+        }
+        else
+        {
+            await service.DisconnectAsync(1).WaitAsync(Timeout);
+        }
+
         Assert.Equal(0, service.Count);
         Assert.True(requested.IsCompletedSuccessfully);
         await service.StopAsync();
@@ -33,7 +40,11 @@ public sealed class ConnectionServiceTests
         service.TryRegister(connection);
         Assert.True(service.TryGet(1, out _, out var requested));
         connection.Complete();
-        if (redundantDisconnect) { await service.DisconnectAsync(1).WaitAsync(Timeout); }
+        if (redundantDisconnect)
+        {
+            await service.DisconnectAsync(1).WaitAsync(Timeout);
+        }
+
         await service.StopAsync().WaitAsync(Timeout);
         Assert.False(requested.IsCompleted);
     }
@@ -91,7 +102,11 @@ public sealed class ConnectionServiceTests
             await connection.CloseRequested.WaitAsync(Timeout);
             Assert.Equal(1, connection.CloseCalls);
         }
-        finally { connection.Complete(); }
+        finally
+        {
+            connection.Complete();
+        }
+
         await closing.WaitAsync(Timeout);
         Assert.Equal(0, service.Count);
         await service.StopAsync();
@@ -113,7 +128,11 @@ public sealed class ConnectionServiceTests
             Assert.False(closing.IsCompleted);
             Assert.Equal(1, service.Count);
         }
-        finally { gate.TrySetResult(); }
+        finally
+        {
+            gate.TrySetResult();
+        }
+
         await closing.WaitAsync(Timeout);
         Assert.Equal(0, service.Count);
         await service.StopAsync();

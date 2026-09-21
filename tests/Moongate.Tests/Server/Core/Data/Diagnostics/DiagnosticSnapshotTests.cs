@@ -12,8 +12,13 @@ public sealed class DiagnosticSnapshotTests
         var metrics = new Dictionary<string, MetricSample> { ["system.cpu"] = originalMetric };
         var failedProviders = new List<string> { "timer" };
 
-        var snapshot = new DiagnosticSnapshot(7, DateTimeOffset.UnixEpoch,
-            TimeSpan.FromMilliseconds(12), metrics, failedProviders);
+        var snapshot = new DiagnosticSnapshot(
+            7,
+            DateTimeOffset.UnixEpoch,
+            TimeSpan.FromMilliseconds(12),
+            metrics,
+            failedProviders
+        );
         metrics["system.cpu"] = new MetricSample("cpu", 99d, "percent", DiagnosticMetricType.Gauge);
         metrics["system.memory"] = new MetricSample("memory", 512d, "bytes", DiagnosticMetricType.Gauge);
         failedProviders.Clear();

@@ -53,7 +53,8 @@ public sealed class PostgreSqlTestDatabase : IAsyncDisposable
         await connection.OpenAsync();
         await using var command = new NpgsqlCommand(
             $"DROP DATABASE {quotedDatabaseName} WITH (FORCE)",
-            connection);
+            connection
+        );
         await command.ExecuteNonQueryAsync();
     }
 }

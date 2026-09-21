@@ -33,16 +33,24 @@ internal sealed class GameCoordinatorFixture : IAsyncDisposable
 
     public GameCoordinatorFixture(int capacity = 16, Func<long, Task>? disconnect = null)
     {
-        Loop = new GameLoopService(new GameLoopOptions { QueueCapacity = capacity },
-            new TimerWheelService(new TimerWheelOptions(), TimeProvider.System), TimeProvider.System);
+        Loop = new GameLoopService(
+            new GameLoopOptions { QueueCapacity = capacity },
+            new TimerWheelService(new TimerWheelOptions(), TimeProvider.System),
+            TimeProvider.System
+        );
         Network = new NetworkServiceStub(Connections);
         Sessions = new SessionService(Loop);
         Sender = new PacketSendService(Connections);
         _container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>();
         _container.RegisterPacketHandler<ClientVersionPacket, RecordingPacketHandler>();
         Dispatcher = new PacketDispatchService(Loop, Sessions, _container.Resolve<PacketHandlerRegistry>(), _container);
-        Game = new GameServerService(Network, Connections, Sessions, Dispatcher,
-            disconnect is null ? Sender : new CallbackPacketSender(Sender, disconnect));
+        Game = new GameServerService(
+            Network,
+            Connections,
+            Sessions,
+            Dispatcher,
+            disconnect is null ? Sender : new CallbackPacketSender(Sender, disconnect)
+        );
     }
 
     public async Task StartDependenciesAsync()
@@ -64,11 +72,21 @@ internal sealed class GameCoordinatorFixture : IAsyncDisposable
         List<Exception> failures = [];
         foreach (var service in new IMoongateStartupService[] { Game, Dispatcher, Sender, Connections, Loop })
         {
-            try { await service.StopAsync().WaitAsync(TimeSpan.FromSeconds(5)); }
-            catch (Exception exception) { failures.Add(exception); }
+            try
+            {
+                await service.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));
+            }
+            catch (Exception exception)
+            {
+                failures.Add(exception);
+            }
         }
+
         Loop.Dispose();
         _container.Dispose();
-        if (!AllowCleanupFailure && failures.Count > 0) { throw new AggregateException(failures); }
+        if (!AllowCleanupFailure && failures.Count > 0)
+        {
+            throw new AggregateException(failures);
+        }
     }
 }

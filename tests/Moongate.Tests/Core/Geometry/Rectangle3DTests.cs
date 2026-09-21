@@ -1,5 +1,4 @@
 using System.Globalization;
-
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Geometry;
 

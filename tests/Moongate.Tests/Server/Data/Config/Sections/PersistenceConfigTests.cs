@@ -1,10 +1,14 @@
 using Moongate.Core.Utils;
+using Moongate.Persistence.Types.Persistence;
+using Moongate.Tests.TestSupport.Environment;
+using Npgsql;
 using Moongate.Persistence.Services;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
 
 namespace Moongate.Tests.Server.Data.Config.Sections;
 
+[Collection(EnvironmentTestsCollection.Name)]
 public sealed class PersistenceConfigTests
 {
     [Fact]
@@ -12,43 +16,86 @@ public sealed class PersistenceConfigTests
     {
         var config = new MoongateServerConfig();
         Assert.False(config.Persistence.AutoSyncSchema);
-        Assert.Equal("MOONGATE_ACCOUNTS_DATABASE", config.Persistence.Accounts.ConnectionStringEnv);
-        Assert.Equal("MOONGATE_REALM_DATABASE", config.Persistence.Realm.ConnectionStringEnv);
-        config.Persistence.Accounts.ConnectionStringEnv = "MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
-        config.Persistence.Realm.ConnectionStringEnv = "MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
+        Assert.Equal("$MOONGATE_ACCOUNTS_DATABASE", config.Persistence.Accounts.ConnectionString);
+        Assert.Equal("$MOONGATE_REALM_DATABASE", config.Persistence.Realm.ConnectionString);
+        config.Persistence.Accounts.ConnectionString = "$MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
+        config.Persistence.Realm.ConnectionString = "$MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
         await using var owner = new MoongatePersistenceService(config.Persistence.ToOptions());
         await owner.InitializeAsync();
     }
 
     [Fact]
-    public void Validate_BlankEnvironmentName_RejectsWithoutReadingEnvironment()
+    public void Validate_BlankConnectionString_RejectsWithoutReadingEnvironment()
     {
         var config = new PersistenceConfig();
-        config.Realm.ConnectionStringEnv = " ";
-        Assert.Throws<InvalidOperationException>(config.Validate);
-        config.Realm.ConnectionStringEnv = "REALM";
-        config.Realm.SchemaConnectionStringEnv = " ";
+        config.Realm.ConnectionString = " ";
         Assert.Throws<InvalidOperationException>(config.Validate);
     }
 
     [Fact]
-    public void RoundTrip_PersistenceSettings_PreservesNamesAndPolicy()
+    public void RoundTrip_PersistenceSettings_PreservesConnectionTemplateAndPolicy()
     {
         var path = Path.Combine(Path.GetTempPath(), $"moongate-config-{Guid.NewGuid():N}.toml");
         try
         {
             var config = new MoongateServerConfig();
             config.Persistence.AutoSyncSchema = true;
-            config.Persistence.Realm.SchemaConnectionStringEnv = "REALM_SCHEMA";
+            config.Persistence.Realm.ConnectionString = "${REALM_DATABASE}";
             TomlUtils.SerializeToFile(config, path);
             var text = File.ReadAllText(path);
             Assert.Contains("auto_sync_schema = true", text);
             Assert.Contains("[persistence.realm]", text);
-            Assert.DoesNotContain("backup_retention", text);
+            Assert.Contains("connection_string = \"${REALM_DATABASE}\"", text);
+            Assert.DoesNotContain("connection_string_env", text);
+            Assert.DoesNotContain("schema_connection", text);
             var restored = TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!;
             Assert.True(restored.Persistence.AutoSyncSchema);
-            Assert.Equal("REALM_SCHEMA", restored.Persistence.Realm.SchemaConnectionStringEnv);
+            Assert.Equal("${REALM_DATABASE}", restored.Persistence.Realm.ConnectionString);
         }
-        finally { File.Delete(path); }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Fact]
+    public void ToOptions_ExpandsEnvironmentLazilyWithoutResolvingAFilePath()
+    {
+        var key = $"MOONGATE_TEST_URI_{Guid.NewGuid():N}";
+        var config = new PersistenceConfig();
+        config.Realm.ConnectionString = "${" + key + "}";
+        var options = config.ToOptions();
+        using var environment = new EnvironmentVariableScope(
+            key,
+            "postgres://runtime:synthetic$UNEXPANDED@localhost/realm?application_name=Moongate"
+        );
+
+        var parsed = new NpgsqlConnectionStringBuilder(
+            options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
+                .ResolveRuntimeConnectionString()
+        );
+
+        Assert.Equal("localhost", parsed.Host);
+        Assert.Equal("realm", parsed.Database);
+        Assert.Equal("synthetic$UNEXPANDED", parsed.Password);
+    }
+
+    [Fact]
+    public void ToOptions_LiteralUriAndMissingEnvironment_HaveClearBehavior()
+    {
+        var config = new PersistenceConfig();
+        config.Accounts.ConnectionString = "postgres://runtime@localhost/accounts";
+        config.Realm.ConnectionString = "$MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
+        var options = config.ToOptions();
+        Assert.Contains(
+            "Database=accounts",
+            options.GetRequiredDatabase(PersistenceDatabaseTarget.Accounts)
+                .ResolveRuntimeConnectionString()
+        );
+        var error = Assert.Throws<InvalidOperationException>(() =>
+            options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
+                .ResolveRuntimeConnectionString()
+        );
+        Assert.Contains("is not defined", error.Message);
     }
 }

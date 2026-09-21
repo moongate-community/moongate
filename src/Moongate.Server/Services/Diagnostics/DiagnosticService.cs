@@ -62,6 +62,7 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
                 throw new ArgumentException($"Duplicate diagnostic provider name '{name}'.", nameof(providers));
             }
         }
+
         _lifetime = new CancellationTokenSource();
     }
 
@@ -183,6 +184,7 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
                         throw new InvalidOperationException($"Provider '{name}' returned duplicate metric '{sample.Name}'.");
                     }
                 }
+
                 foreach (var metric in providerMetrics)
                     metrics.Add(metric.Key, metric.Value);
             }
@@ -216,8 +218,9 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
                 snapshot.FailedProviders
             );
         }
+
         await _eventBus.PublishAsync(new DiagnosticSnapshotCollectedEvent(snapshot), cancellationToken)
-                       .ConfigureAwait(false);
+            .ConfigureAwait(false);
     }
 
     private async Task StopCoreAsync(Task? startup)

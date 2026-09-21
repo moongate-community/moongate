@@ -30,6 +30,7 @@ internal sealed class ApiTlsPolicy : IDisposable
         {
             throw new ArgumentException("At least one private trust root is required.", nameof(options));
         }
+
         var peers = new Dictionary<string, ApiPeerIdentity>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var (fingerprint, peer) in options.PeersByCertificateSha256)
@@ -38,8 +39,10 @@ internal sealed class ApiTlsPolicy : IDisposable
             {
                 throw new ArgumentException("Peer entries require a SHA-256 hex fingerprint and identity.", nameof(options));
             }
+
             peers.Add(fingerprint, peer);
         }
+
         _peers = peers.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);
         var copies = new List<X509Certificate2>();
 
@@ -48,12 +51,19 @@ internal sealed class ApiTlsPolicy : IDisposable
             _certificate = new(options.Certificate);
             copies.Add(_certificate);
 
-            foreach (var root in options.TrustedRoots) { copies.Add(new(root)); }
+            foreach (var root in options.TrustedRoots)
+            {
+                copies.Add(new(root));
+            }
+
             _roots = copies.Skip(1).ToArray();
         }
         catch
         {
-            foreach (var copy in copies) { copy.Dispose(); }
+            foreach (var copy in copies)
+            {
+                copy.Dispose();
+            }
 
             throw;
         }
@@ -75,30 +85,31 @@ internal sealed class ApiTlsPolicy : IDisposable
         try
         {
             await ssl.AuthenticateAsClientAsync(
-                         new()
-                         {
-                             TargetHost = targetHost,
-                             ClientCertificates = new() { _certificate },
-                             CertificateChainPolicy = CreateChainPolicy("1.3.6.1.5.5.7.3.1"),
-                             EnabledSslProtocols = SslProtocols.None,
-                             AllowRenegotiation = false,
-                             AllowTlsResume = false,
-                             RemoteCertificateValidationCallback = (_, certificate, _, errors)
-                                                                       => TryAuthenticate(
-                                                                           certificate,
-                                                                           errors,
-                                                                           expectedPeerId,
-                                                                           out identity
-                                                                       )
-                         },
-                         token
-                     )
-                     .ConfigureAwait(false);
+                    new()
+                    {
+                        TargetHost = targetHost,
+                        ClientCertificates = new() { _certificate },
+                        CertificateChainPolicy = CreateChainPolicy("1.3.6.1.5.5.7.3.1"),
+                        EnabledSslProtocols = SslProtocols.None,
+                        AllowRenegotiation = false,
+                        AllowTlsResume = false,
+                        RemoteCertificateValidationCallback = (_, certificate, _, errors)
+                            => TryAuthenticate(
+                                certificate,
+                                errors,
+                                expectedPeerId,
+                                out identity
+                            )
+                    },
+                    token
+                )
+                .ConfigureAwait(false);
 
             if (identity is null)
             {
                 throw new AuthenticationException("The remote certificate did not identify the expected peer.");
             }
+
             token.ThrowIfCancellationRequested();
             authenticated(identity);
 
@@ -124,30 +135,31 @@ internal sealed class ApiTlsPolicy : IDisposable
         try
         {
             await ssl.AuthenticateAsServerAsync(
-                         new()
-                         {
-                             ServerCertificate = _certificate,
-                             ClientCertificateRequired = true,
-                             CertificateChainPolicy = CreateChainPolicy("1.3.6.1.5.5.7.3.2"),
-                             EnabledSslProtocols = SslProtocols.None,
-                             AllowRenegotiation = false,
-                             AllowTlsResume = false,
-                             RemoteCertificateValidationCallback = (_, certificate, _, errors)
-                                                                       => TryAuthenticate(
-                                                                           certificate,
-                                                                           errors,
-                                                                           null,
-                                                                           out identity
-                                                                       )
-                         },
-                         token
-                     )
-                     .ConfigureAwait(false);
+                    new()
+                    {
+                        ServerCertificate = _certificate,
+                        ClientCertificateRequired = true,
+                        CertificateChainPolicy = CreateChainPolicy("1.3.6.1.5.5.7.3.2"),
+                        EnabledSslProtocols = SslProtocols.None,
+                        AllowRenegotiation = false,
+                        AllowTlsResume = false,
+                        RemoteCertificateValidationCallback = (_, certificate, _, errors)
+                            => TryAuthenticate(
+                                certificate,
+                                errors,
+                                null,
+                                out identity
+                            )
+                    },
+                    token
+                )
+                .ConfigureAwait(false);
 
             if (identity is null)
             {
                 throw new AuthenticationException("The remote certificate did not identify an allowed peer.");
             }
+
             token.ThrowIfCancellationRequested();
             authenticated(identity);
 
@@ -185,14 +197,21 @@ internal sealed class ApiTlsPolicy : IDisposable
     {
         identity = null;
 
-        if (errors != SslPolicyErrors.None || certificate is null) { return false; }
+        if (errors != SslPolicyErrors.None || certificate is null)
+        {
+            return false;
+        }
 
-        if (!_peers.TryGetValue(certificate.GetCertHashString(HashAlgorithmName.SHA256), out var peer)) { return false; }
+        if (!_peers.TryGetValue(certificate.GetCertHashString(HashAlgorithmName.SHA256), out var peer))
+        {
+            return false;
+        }
 
         if (expectedPeerId is not null && !string.Equals(expectedPeerId, peer.PeerId, StringComparison.Ordinal))
         {
             return false;
         }
+
         identity = peer;
 
         return true;
@@ -202,6 +221,9 @@ internal sealed class ApiTlsPolicy : IDisposable
     {
         _certificate.Dispose();
 
-        foreach (var root in _roots) { root.Dispose(); }
+        foreach (var root in _roots)
+        {
+            root.Dispose();
+        }
     }
 }

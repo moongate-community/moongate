@@ -6,7 +6,9 @@ using Moongate.Api.Registry;
 using Moongate.Api.Serialization.Internal;
 using Moongate.Api.Tests.TestSupport.Connections;
 using Moongate.Api.Tests.TestSupport.Contracts;
+
 namespace Moongate.Api.Tests.Connections;
+
 public class ApiPendingCallsTests
 {
     [Fact]
@@ -16,11 +18,23 @@ public class ApiPendingCallsTests
         var outbox = new ApiOutbox(transport, 32, TimeSpan.FromSeconds(5), TimeProvider.System);
         var pending = new ApiPendingCalls(outbox, new ApiOptions(), TimeProvider.System);
         var operation = Registry().Get<IncrementRequest, IncrementResponse>();
-        var calls = Enumerable.Range(0, 16).Select(_ => pending.RequestAsync(operation, new IncrementRequest(), null, default)).ToArray();
+        var calls = Enumerable.Range(0, 16)
+            .Select(_ => pending.RequestAsync(operation, new IncrementRequest(), null, default))
+            .ToArray();
         Assert.Equal(16, pending.Count);
-        await Assert.ThrowsAsync<ApiBusyException>(() => pending.RequestAsync(operation, new IncrementRequest(), null, default));
+        await Assert.ThrowsAsync<ApiBusyException>(() => pending.RequestAsync(
+                operation,
+                new IncrementRequest(),
+                null,
+                default
+            )
+        );
         pending.FailAll(new IOException("Disconnected."));
-        foreach (var call in calls) { await Assert.ThrowsAsync<IOException>(() => call); }
+        foreach (var call in calls)
+        {
+            await Assert.ThrowsAsync<IOException>(() => call);
+        }
+
         Assert.Equal(0, pending.Count);
         outbox.Complete();
         await outbox.Completion;
@@ -32,7 +46,12 @@ public class ApiPendingCallsTests
         var transport = new RecordingConnection();
         var outbox = new ApiOutbox(transport, 2, TimeSpan.FromSeconds(5), TimeProvider.System);
         var pending = new ApiPendingCalls(outbox, new ApiOptions(), TimeProvider.System);
-        var call = pending.RequestAsync(Registry().Get<IncrementRequest, IncrementResponse>(), new IncrementRequest(), null, default);
+        var call = pending.RequestAsync(
+            Registry().Get<IncrementRequest, IncrementResponse>(),
+            new IncrementRequest(),
+            null,
+            default
+        );
         var response = ApiPayloadSerializer.Serialize(new IncrementResponse { Value = 42 }, 100);
         Assert.Throws<ApiProtocolException>(() => pending.TryComplete(2, 100, response, null));
         Assert.Throws<ApiProtocolException>(() => pending.TryComplete(1, 101, response, null));
@@ -86,7 +105,13 @@ public class ApiPendingCallsTests
     {
         var outbox = new ApiOutbox(new RecordingConnection(), 1, TimeSpan.FromSeconds(5), TimeProvider.System);
         var pending = new ApiPendingCalls(outbox, new ApiOptions(), TimeProvider.System);
-        await Assert.ThrowsAsync<InvalidCastException>(() => pending.RequestAsync(Registry().Get<IncrementRequest, IncrementResponse>(), new object(), null, default));
+        await Assert.ThrowsAsync<InvalidCastException>(() => pending.RequestAsync(
+                Registry().Get<IncrementRequest, IncrementResponse>(),
+                new object(),
+                null,
+                default
+            )
+        );
         Assert.Equal(0, pending.Count);
         Assert.Equal(0u, pending.LastAssignedId);
         outbox.Complete();
@@ -101,13 +126,28 @@ public class ApiPendingCallsTests
         var pending = new ApiPendingCalls(outbox, new ApiOptions { MaxPendingCalls = 128 }, TimeProvider.System);
         var operation = Registry().Get<IncrementRequest, IncrementResponse>();
         var calls = new System.Collections.Concurrent.ConcurrentBag<Task<object>>();
-        await Task.WhenAll(Enumerable.Range(0, 100).Select(_ => Task.Run(() => { calls.Add(pending.RequestAsync(operation, new IncrementRequest(), null, default)); })));
+        await Task.WhenAll(
+            Enumerable.Range(0, 100)
+                .Select(_ => Task.Run(() =>
+                        {
+                            calls.Add(pending.RequestAsync(operation, new IncrementRequest(), null, default));
+                        }
+                    )
+                )
+        );
         outbox.Complete();
         transport.SendGate.SetResult();
         await outbox.Completion;
-        foreach (var call in calls) { await Assert.ThrowsAsync<IOException>(() => call); }
+        foreach (var call in calls)
+        {
+            await Assert.ThrowsAsync<IOException>(() => call);
+        }
+
         var codec = new ApiFrameCodec(65536);
-        Assert.Equal(Enumerable.Range(1, 100).Select(id => (uint)id), transport.Sent.Select(frame => codec.Decode(frame).RequestId));
+        Assert.Equal(
+            Enumerable.Range(1, 100).Select(id => (uint)id),
+            transport.Sent.Select(frame => codec.Decode(frame).RequestId)
+        );
     }
 
     [Fact]
@@ -123,10 +163,18 @@ public class ApiPendingCallsTests
             var call = pending.RequestAsync(operation, new IncrementRequest(), null, cancellation.Token);
             var id = pending.LastAssignedId;
             await Task.WhenAll(Task.Run(cancellation.Cancel), Task.Run(() => pending.TryComplete(id, 100, response, null)));
-            try { Assert.Equal(42, Assert.IsType<IncrementResponse>(await call).Value); }
-            catch (OperationCanceledException) { Assert.True(cancellation.IsCancellationRequested); }
+            try
+            {
+                Assert.Equal(42, Assert.IsType<IncrementResponse>(await call).Value);
+            }
+            catch (OperationCanceledException)
+            {
+                Assert.True(cancellation.IsCancellationRequested);
+            }
+
             Assert.Equal(0, pending.Count);
         }
+
         outbox.Complete();
         await outbox.Completion;
     }

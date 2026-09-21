@@ -29,6 +29,11 @@ SQL
 SELECT format('REVOKE ALL ON DATABASE %I FROM PUBLIC', :'database_name') \gexec
 SELECT format('GRANT CONNECT ON DATABASE %I TO %I', :'database_name', :'runtime_role') \gexec
 REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+SELECT format('CREATE SCHEMA IF NOT EXISTS moongate_migrations AUTHORIZATION %I', :'schema_role') \gexec
+REVOKE ALL ON SCHEMA moongate_migrations FROM PUBLIC;
+SELECT format('GRANT USAGE ON SCHEMA moongate_migrations TO %I', :'runtime_role') \gexec
+SELECT format('GRANT SELECT ON ALL TABLES IN SCHEMA moongate_migrations TO %I', :'runtime_role') \gexec
+SELECT format('ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA moongate_migrations GRANT SELECT ON TABLES TO %I', :'schema_role', :'runtime_role') \gexec
 SQL
 }
 

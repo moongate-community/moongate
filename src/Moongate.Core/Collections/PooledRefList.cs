@@ -27,10 +27,10 @@ public ref struct PooledRefList<T>
         _items = capacity switch
         {
             < 0 => throw new ArgumentOutOfRangeException(
-                       nameof(capacity),
-                       capacity,
-                       CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum
-                   ),
+                nameof(capacity),
+                capacity,
+                CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum
+            ),
             0 => Array.Empty<T>(),
             _ => ArrayPool<T>.Shared.Rent(capacity)
         };

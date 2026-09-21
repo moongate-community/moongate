@@ -22,7 +22,9 @@ internal sealed class ScriptedCertificates : IDisposable
         var directories = (Environment.GetEnvironmentVariable("PATH") ?? "").Split(Path.PathSeparator);
 
         return new[] { "openssl", "bash" }.All(tool => directories.Any(directory =>
-            File.Exists(Path.Combine(directory, tool)) || File.Exists(Path.Combine(directory, tool + ".exe"))));
+                File.Exists(Path.Combine(directory, tool)) || File.Exists(Path.Combine(directory, tool + ".exe"))
+            )
+        );
     }
 
     /// <summary>Locates the script by walking up from the test output directory to the repository root.</summary>

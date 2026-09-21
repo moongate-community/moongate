@@ -7,9 +7,7 @@ namespace Moongate.Api.Data.Errors;
 [MessagePackObject]
 public sealed class ApiError
 {
-    [Key(0)]
-    public ApiErrorCode Code { get; init; }
+    [Key(0)] public ApiErrorCode Code { get; init; }
 
-    [Key(1)]
-    public string Message { get; set; } = "";
+    [Key(1)] public string Message { get; set; } = "";
 }

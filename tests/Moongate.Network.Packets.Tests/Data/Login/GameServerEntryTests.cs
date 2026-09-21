@@ -1,5 +1,4 @@
 using System.Net;
-
 using Moongate.Network.Packets.Data.Login;
 
 namespace Moongate.Network.Packets.Tests.Data.Login;

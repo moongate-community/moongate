@@ -6,7 +6,8 @@ namespace Moongate.Network.Packets.Tests.Incoming.Login;
 public class LoginSeedPacketTests
 {
     private static readonly byte[] Fixture = Convert.FromHexString(
-        "EF1234567800000007000000000000006D00000000");
+        "EF1234567800000007000000000000006D00000000"
+    );
 
     [Fact]
     public void TryDecode_KnownFixture_ReadsAllUnsignedFields()

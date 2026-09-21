@@ -17,9 +17,9 @@ public sealed class RadarCol
     public static void ExportToCSV(string fileName)
     {
         using var tex = new StreamWriter(
-                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         tex.WriteLine("ID;Color");
 
         for (var i = 0; i < Colors.Length; ++i)

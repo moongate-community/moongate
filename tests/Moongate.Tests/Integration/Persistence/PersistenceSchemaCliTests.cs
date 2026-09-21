@@ -10,40 +10,48 @@ namespace Moongate.Tests.Integration.Persistence;
 
 public sealed class PersistenceSchemaCliTests
 {
-    [Theory, InlineData(false, "PersistencePlugin"), InlineData(true, "PersistencePlugin"), InlineData(false, "SamplePlugin")]
-    public async Task PreviewThenApply_ActualCliLoadsDiskPlugin_WithoutNormalHostComposition(bool autoGenerateCertificate, string bundle)
+    [Theory, InlineData(false, "PersistencePlugin"), InlineData(true, "PersistencePlugin"),
+     InlineData(false, "SamplePlugin")]
+    public async Task PreviewThenGenerate_ActualCliLoadsDiskPlugin_WithoutNormalHostComposition(
+        bool autoGenerateCertificate, string bundle
+    )
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var files = new PluginDirectoryFixture("plugins", "config");
         files.Deploy(bundle);
         var table = bundle == "SamplePlugin" ? "sample_greeter.notes" : "fixture_data.items";
-        var module = bundle == "SamplePlugin" ? "com.github.moongate-community.moongate.plugins.greeter" : "fixture.persistenceplugin";
+        var module = bundle == "SamplePlugin" ? "moongate.auto.realm." : "fixture.persistenceplugin";
         // Normal startup would fail immediately on this guard and require a certificate/Ultima data later.
         using var pid = PidFileGuard.Acquire(files.Directories.Root);
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
         var port = ((IPEndPoint)listener.LocalEndpoint).Port;
-        await File.WriteAllTextAsync(Path.Combine(files.Directories["config"], "moongate.toml"), $"""
-            [api]
-            enabled = true
-            listen_address = "127.0.0.1"
-            port = {port}
-            auto_generate_certificate = {autoGenerateCertificate.ToString().ToLowerInvariant()}
-            certificate_path = "certificates/schema-must-not-create.pfx"
-            trusted_root_paths = ["missing-root.crt"]
-            [[api.peers]]
-            certificate_sha256 = "{new string('A', 64)}"
-            peer_id = "schema-test"
-            """);
+        await File.WriteAllTextAsync(
+            Path.Combine(files.Directories["config"], "moongate.toml"),
+            $"""
+             [api]
+             enabled = true
+             listen_address = "127.0.0.1"
+             port = {port}
+             auto_generate_certificate = {autoGenerateCertificate.ToString().ToLowerInvariant()}
+             certificate_path = "certificates/schema-must-not-create.pfx"
+             trusted_root_paths = ["missing-root.crt"]
+             [[api.peers]]
+             certificate_sha256 = "{new string('A', 64)}"
+             peer_id = "schema-test"
+             """
+        );
         var preview = await RunAsync(files.Directories.Root, "preview", database.ConnectionString);
         Assert.True(preview.ExitCode == 0, preview.Output);
         Assert.Contains(module, preview.Output);
         Assert.Contains("CREATE TABLE", preview.Output, StringComparison.OrdinalIgnoreCase);
         Assert.DoesNotContain("Moongate Server starting", preview.Output);
         Assert.False(await database.ScalarAsync<bool>($"SELECT to_regclass('{table}') IS NOT NULL"));
-        var apply = await RunAsync(files.Directories.Root, "apply", database.ConnectionString);
-        Assert.True(apply.ExitCode == 0, apply.Output);
-        Assert.True(await database.ScalarAsync<bool>($"SELECT to_regclass('{table}') IS NOT NULL"));
+        var path = Path.Combine(files.Directories.Root, "migrations", "world", "0001_create.sql");
+        var generate = await RunAsync(files.Directories.Root, "generate", database.ConnectionString, migrationOutput: path);
+        Assert.True(generate.ExitCode == 0, generate.Output);
+        Assert.False(await database.ScalarAsync<bool>($"SELECT to_regclass('{table}') IS NOT NULL"));
+        await database.ExecuteAsync(await File.ReadAllTextAsync(path));
         var unchanged = await RunAsync(files.Directories.Root, "preview", database.ConnectionString);
         Assert.Equal(0, unchanged.ExitCode);
         Assert.Contains("No PostgreSQL schema changes", unchanged.Output);
@@ -84,22 +92,38 @@ public sealed class PersistenceSchemaCliTests
         Assert.False(Directory.Exists(Path.Combine(files.Directories.Root, "config")));
     }
 
-    private static async Task<(int ExitCode, string Output)> RunAsync(string root, string mode, string? connection, bool help = false)
+    private static async Task<(int ExitCode, string Output)> RunAsync(
+        string root, string mode, string? connection, bool help = false, string? migrationOutput = null
+    )
     {
         var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet")
         {
             RedirectStandardOutput = true, RedirectStandardError = true, UseShellExecute = false,
-            ArgumentList = { typeof(MoongateServerBootstrap).Assembly.Location, "--root-directory", root, "--persistence-schema", mode }
+            ArgumentList =
+                { typeof(MoongateServerBootstrap).Assembly.Location, "--root-directory", root, "--persistence-schema", mode }
         };
+        if (migrationOutput is not null)
+        {
+            start.ArgumentList.Add("--migration-output");
+            start.ArgumentList.Add(migrationOutput);
+            start.ArgumentList.Add("--migration-target");
+            start.ArgumentList.Add("world");
+        }
+
         if (help)
         {
             start.ArgumentList.Clear();
             start.ArgumentList.Add(typeof(MoongateServerBootstrap).Assembly.Location);
             start.ArgumentList.Add("--help");
         }
+
         start.Environment.Remove("MOONGATE_REALM_DATABASE");
         start.Environment.Remove("MOONGATE_ACCOUNTS_DATABASE");
-        if (connection is not null) { start.Environment["MOONGATE_REALM_DATABASE"] = connection; }
+        if (connection is not null)
+        {
+            start.Environment["MOONGATE_REALM_DATABASE"] = connection;
+        }
+
         using var process = Process.Start(start)!;
         var stdout = process.StandardOutput.ReadToEndAsync();
         var stderr = process.StandardError.ReadToEndAsync();
@@ -110,7 +134,11 @@ public sealed class PersistenceSchemaCliTests
         }
         finally
         {
-            if (!process.HasExited) { process.Kill(true); await process.WaitForExitAsync(); }
+            if (!process.HasExited)
+            {
+                process.Kill(true);
+                await process.WaitForExitAsync();
+            }
         }
     }
 }

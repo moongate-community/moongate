@@ -80,7 +80,11 @@ internal sealed class ApiConnection : IApiConnection
     {
         lock (_gate)
         {
-            if (_drain is not null) { return _drain; }
+            if (_drain is not null)
+            {
+                return _drain;
+            }
+
             _dispatcher.StopAdmission();
             _drain = DrainCoreAsync(_pending.StopAdmission());
 
@@ -90,16 +94,28 @@ internal sealed class ApiConnection : IApiConnection
 
     public void Receive(ReadOnlyMemory<byte> frame)
     {
-        if (Volatile.Read(ref _closing) != 0) { return; }
+        if (Volatile.Read(ref _closing) != 0)
+        {
+            return;
+        }
 
         try
         {
             var envelope = _codec.Decode(frame);
 
-            if (envelope.Kind == ApiMessageKind.Request) { _dispatcher.TryDispatch(envelope); }
-            else { CompletePending(envelope); }
+            if (envelope.Kind == ApiMessageKind.Request)
+            {
+                _dispatcher.TryDispatch(envelope);
+            }
+            else
+            {
+                CompletePending(envelope);
+            }
         }
-        catch (Exception exception) { Abort(exception); }
+        catch (Exception exception)
+        {
+            Abort(exception);
+        }
     }
 
     public async Task<TResponse> RequestAsync<TRequest, TResponse>(
@@ -133,13 +149,18 @@ internal sealed class ApiConnection : IApiConnection
 
             return;
         }
+
         ApiError? error = null;
 
         if (envelope.Kind == ApiMessageKind.Error)
         {
             var reader = new MessagePackReader(envelope.Payload);
 
-            if (reader.ReadArrayHeader() != 2) { throw new ApiProtocolException("Invalid error payload shape."); }
+            if (reader.ReadArrayHeader() != 2)
+            {
+                throw new ApiProtocolException("Invalid error payload shape.");
+            }
+
             error = ApiPayloadSerializer.Deserialize<ApiError>(envelope.Payload);
 
             if (error.Code is < ApiErrorCode.UnsupportedOperation or > ApiErrorCode.InternalError ||
@@ -166,7 +187,11 @@ internal sealed class ApiConnection : IApiConnection
             _outbox.Complete();
             await _outbox.Completion.ConfigureAwait(false);
         }
-        catch (Exception exception) { Abort(exception); }
+        catch (Exception exception)
+        {
+            Abort(exception);
+        }
+
         await CloseAsync().ConfigureAwait(false);
         await Completion.ConfigureAwait(false);
     }
@@ -175,7 +200,10 @@ internal sealed class ApiConnection : IApiConnection
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
 
-        try { await _transport.Completion.ConfigureAwait(false); }
+        try
+        {
+            await _transport.Completion.ConfigureAwait(false);
+        }
         finally
         {
             try
@@ -184,7 +212,10 @@ internal sealed class ApiConnection : IApiConnection
                 await _dispatcher.Completion.ConfigureAwait(false);
                 await _pending.Completion.ConfigureAwait(false);
 
-                try { await _outbox.DisposeAsync().ConfigureAwait(false); }
+                try
+                {
+                    await _outbox.DisposeAsync().ConfigureAwait(false);
+                }
                 catch (Exception exception)
                 {
                     Logger.Debug(
@@ -194,7 +225,10 @@ internal sealed class ApiConnection : IApiConnection
                     );
                 }
             }
-            finally { _admission?.Dispose(); }
+            finally
+            {
+                _admission?.Dispose();
+            }
         }
     }
 

@@ -5,22 +5,27 @@ uses one Accounts database and one database for each realm. Transactions and
 world saves are independent across those targets; there is no cross-database
 atomic commit.
 
-The old snapshot/journal backend is no longer a runtime option. See
-[Migrating from binary persistence](persistence-format.md) before upgrading an
-existing installation.
+For a complete first example, follow [Create a persistent entity](persistence-entity-tutorial.md).
+It covers the entity class, registration, schema setup, and asynchronous reads and writes.
 
-## Entities and module ownership
+## Register entities
 
-Every persisted type implements `IMoongateEntity`, has an application-assigned,
-nonzero `Serial`, and belongs to exactly one `IPersistenceModule`. A module owns
-one unique PostgreSQL schema in either the Accounts or Realm target.
+Every persisted type implements `IMoongateEntity` and has an application-assigned,
+nonzero `Serial`. Select the database when registering it:
+
+```csharp
+container.AddPersistenceAuth<Account>();     // Shared Accounts/login database.
+container.AddPersistenceWorld<Character>();  // This realm's world database.
+```
+
+Moongate creates internal modules automatically, grouping entities by database
+and PostgreSQL schema. A separate module class is not required. Declare a stable,
+schema-qualified table name in the entity's attributes:
 
 ```csharp
 using FreeSql.DataAnnotations;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
-using Moongate.Persistence.Interfaces;
-using Moongate.Persistence.Types.Persistence;
 
 [Table(Name = "inventory.items")]
 public sealed class Item : IMoongateEntity
@@ -30,14 +35,6 @@ public sealed class Item : IMoongateEntity
 
     [Column(Name = "name", StringLength = 100)]
     public string Name { get; set; } = "";
-}
-
-public sealed class InventoryModule : IPersistenceModule
-{
-    public string Id => "com.example.inventory";
-    public string Schema => "inventory";
-    public PersistenceDatabaseTarget DatabaseTarget => PersistenceDatabaseTarget.Realm;
-    public IReadOnlyCollection<Type> EntityTypes => [typeof(Item)];
 }
 ```
 
@@ -51,101 +48,230 @@ be identical in every owner. A module selects ownership and database target; it
 cannot remap the type. Application and plugin code must not reconfigure a
 persistence type through another raw FreeSql instance.
 
-Register modules and every entity they declare before schema preparation:
+Register before schema preparation:
 
 ```csharp
 container.RegisterMoongatePersistence(options)
-         .AddPersistenceModule<InventoryModule>()
-         .AddPersistenceEntity<Item>();
+         .AddPersistenceWorld<Item>();
 ```
 
-Registration performs no database I/O. Initialization validates the entire batch:
-module IDs and schemas must be unique within their scopes, and every entity must
-have exactly one declared and registered owner.
+Registration performs no database I/O. Initialization validates the entire batch,
+including duplicate registrations, table mappings and schema ownership.
+
+### Optional explicit plugin modules
+
+A plugin can still implement `IPersistenceModule` and register it through
+`AddPersistenceModule<TModule>()` when it needs a stable module identifier and
+an explicit list of owned entity types. It declares `Id`, `Schema`,
+`DatabaseTarget`, and `EntityTypes`. Register its entities with the matching
+Auth/World helper; the helper's target must agree with the module. Registration
+order does not matter. `AddPersistenceEntity<T>()` is available for this explicit
+module pattern, where the module supplies the target.
+
+An explicit module owns its complete schema: include every registered entity in
+that schema in its declaration. All other Auth/World registrations get automatic
+internal modules. Every type has exactly one owner, and one CLR type cannot be
+registered in both databases in the same container.
 
 ## Connections and schema preparation
 
-The server TOML stores environment-variable names, never connection strings:
+Each database has one `connection_string`. It can contain a PostgreSQL URI or a
+reference to an environment variable:
 
 ```toml
 [persistence]
 auto_sync_schema = false
 
 [persistence.accounts]
-connection_string_env = "MOONGATE_ACCOUNTS_DATABASE"
+connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
 
 [persistence.realm]
-connection_string_env = "MOONGATE_REALM_DATABASE"
+connection_string = "${MOONGATE_REALM_DATABASE}"
 ```
 
-Only targets with registered entities resolve their connection. Values use
-Npgsql `key=value;` syntax, for example
-`Host=db;Port=5432;Database=realm;Username=runtime;Password=...`. Supply them from
-your service manager or secret provider.
+Set each variable to a URI such as
+`postgres://runtime:password@db:5432/moongate_realm?sslmode=require` through your
+service manager or secret provider. A literal URI is also supported by
+`connection_string`; keep real credentials in your secret provider. Both
+`postgres://` and `postgresql://` are accepted. The port defaults to 5432; bracket
+IPv6 hosts, for example `postgres://runtime@[::1]/moongate_realm`.
+
+Percent-encode reserved characters in URI usernames, passwords and database names:
+`@` becomes `%40`, `#` becomes `%23`, and a literal `$` becomes `%24`. URI query
+options include `sslmode`, `connect_timeout`, `application_name`, `search_path`,
+and Npgsql option names. Values are decoded once; a `+` remains a literal plus.
+Unsupported options or SSL modes fail validation. Native Npgsql `key=value;`
+strings are also accepted for direct library integrations.
+
+`$NAME` and `${NAME}` references expand once, without treating the result as a
+filesystem path or re-expanding characters in the substituted value. If a URI
+contains individual placeholders, supply URI-encoded component values. Undefined
+variables fail only when their database target is activated. Targets without registered entities or installed SQL do not resolve a connection
+or contact PostgreSQL. Use an explicit runner `status --target ...` during deployment to check history
+even when a target has become completely empty; an inactive host target cannot
+detect removal of its last data-only file without connecting. SQL-only targets
+follow the configured login/game mode. A registered entity
+always activates its target and migration checks, even when it uses the other role.
 
 `FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This old
 driver branch is an acknowledged provider limitation. Do not silently override
 the Npgsql major version: upgrade the FreeSql provider as a compatible set and
 run the PostgreSQL compatibility suite before deploying it.
 
-`auto_sync_schema` defaults to false. Normal startup compares the registered
-model with PostgreSQL and fails if DDL is required. Preview and apply changes with
-the same plugin bundle and database endpoint as the runtime:
+`auto_sync_schema` defaults to false. Normal startup checks the versioned SQL
+history, including data-only migrations, before comparing entity mappings with
+PostgreSQL. Pending, changed, or missing applied files prevent services from
+starting. Keep automatic schema synchronization only for disposable development
+databases; it does not record versioned migrations.
 
-```sh
-Moongate.Server --root-directory /srv/moongate/realm-1 --persistence-schema preview
-Moongate.Server --root-directory /srv/moongate/realm-1 --persistence-schema apply
+### Versioned SQL files
+
+```text
+migrations/
+  auth/0001_create_accounts.sql
+  world/0001_create_characters.sql
+plugins/MyPlugin/migrations/
+  manifest.json
+  world/0001_create_guilds.sql
 ```
 
-For framework-dependent output, run `dotnet Moongate.Server.dll ...`. Preview
-prints generated DDL and changes nothing. Apply previews, acquires a per-target
-PostgreSQL advisory lock, applies the DDL, and verifies that comparison is clean.
-An unchanged preview reports `No PostgreSQL schema changes required.` These
-administrative commands load real plugin registrations but do not acquire the
-normal host PID, start listeners or startup services, or generate scripts,
-certificates, and logs.
+The stock core directories are empty until core entities need tables. The sample
+plugin already ships `world/0001_create_notes.sql`. A plugin manifest declares a
+stable migration component ID, independent of its bundle folder or CLR name:
 
-Stop the relevant game or login processes before applying reviewed DDL. The
-advisory lock serializes schema operators; it does not pause runtime DML or own
-the live game world. Keep automatic synchronization as an explicit development
-opt-in for disposable databases, not the deployment default.
+```json
+{ "id": "my-plugin" }
+```
+
+Use a unique lowercase ID of up to 63 letters, digits or hyphens, starting with a
+letter; `core` is reserved. Never rename a component after applying its SQL.
+Files use `NNNN_description.sql`: sequences `0001` through `9999`, lowercase
+letters, digits and underscores in the description, no subdirectories. A sequence
+is unique within one component and target.
+
+Execution order is core first, plugins by ordinal component ID, then each
+component's ascending sequence. There is no dependency solver: design cross-plugin
+SQL around that order, or move shared changes into core. Auth and World have
+independent catalogs and histories, even when configured on the same database.
+Normally Auth uses one shared database and each realm uses its own World database.
+
+### Generate, review and apply
+
+Generate against a **reference database at the previous application version**.
+A fresh empty database produces initial table creation, not an incremental change.
+Load the same entity/plugin registrations as the version being developed:
+
+```sh
+Moongate.Server --root-directory /srv/moongate/reference --persistence-schema preview
+Moongate.Server --root-directory /srv/moongate/reference \
+  --persistence-schema generate --migration-target world \
+  --migration-output ./migrations/world/0001_create_characters.sql
+```
+
+`preview` prints FreeSql's draft DDL. `generate` saves the selected target's draft
+and refuses an existing file or an empty diff. Neither executes SQL or starts
+host services, sockets, PID guards or certificates. Generation includes **all
+registered modules for the selected target**. For plugin-specific SQL, use a
+reference root containing only that plugin and required dependencies, and review
+that the resulting file touches only schemas it owns. Registered modules in
+other targets still need resolvable reference connections for schema comparison.
+
+Review the SQL, add deliberate data transformations, test it, then commit the
+file with the entity change. Deploy the same reviewed files to every affected
+database. Stop its runtime processes and use the separate runner:
+
+```sh
+./migration-runner/Moongate.MigrationRunner status \
+  --root-directory /srv/moongate/realm-1 --target world
+./migration-runner/Moongate.MigrationRunner apply \
+  --root-directory /srv/moongate/realm-1 --target world
+```
+
+The runner reads that root's existing `config/moongate.toml` and `plugins/`.
+`--target auth` selects `[persistence.accounts]`; `--target world` selects
+`[persistence.realm]`. Only the selected connection is resolved. `MOONGATE_ROOT`
+is an alternative to `--root-directory`. Without either override, the shipped
+runner uses its parent server directory as the data root. Released binaries and Docker images
+include the runner in `migration-runner/`, isolated from FreeSql's Npgsql driver.
+It never loads plugin DLLs. Both commands return exit code 0 on success and 1 on
+failure; status reports pending files without applying them.
+
+Core SQL defaults to the `migrations/` directory beside the server executable.
+From a source checkout, provide its path explicitly:
+
+```sh
+dotnet run --project src/Moongate.MigrationRunner -- status \
+  --root-directory /srv/moongate/reference --target world \
+  --migrations-directory ./migrations
+```
+
+The server uses its shipped catalog; the runner's optional directory override is
+for authoring and maintenance. Deploy identical SQL to the server before restart.
+`Moongate.Server --persistence-schema apply` is no longer supported: it directs
+you to the versioned runner. For framework-dependent server output use
+`dotnet Moongate.Server.dll ...`.
 
 ### Separate DDL and runtime roles
 
-Give normal processes a runtime connection only. Give a one-shot schema job both
-the runtime and schema connections, pointing to the same Host, Port, and Database:
+Give normal processes a runtime connection. A one-shot schema job uses the same
+`connection_string` setting with a schema-role URI for the same database. Its
+separate TOML can reference a schema-only environment variable:
 
 ```toml
 [persistence.realm]
-connection_string_env = "MOONGATE_REALM_DATABASE"
-schema_connection_string_env = "MOONGATE_REALM_SCHEMA_DATABASE"
+connection_string = "$MOONGATE_REALM_SCHEMA_DATABASE"
 ```
 
-The schema role owns the module schema and performs DDL. The runtime role needs
-database `CONNECT`, schema `USAGE`, and `SELECT`, `INSERT`, `UPDATE`, and `DELETE`
-on tables. Configure default table privileges for the schema owner so later plugin
-tables receive the same DML grants. Moongate does not grant privileges silently.
-The [login and realms Compose guide](docker-login-realms.md) provides a complete
-provisioning example.
+Only that administrative process receives the schema credential; normal hosts
+receive the runtime credential. There is no separate schema-connection setting
+in server configuration.
+
+The schema role owns the entity schemas and performs DDL. The runtime role needs
+database `CONNECT`, entity-schema `USAGE`, and `SELECT`, `INSERT`, `UPDATE`, and
+`DELETE` on entity tables. Configure default privileges for later plugin tables.
+For `moongate_migrations`, runtime needs only schema `USAGE` and `SELECT` on
+`moongate_migrations.history`; never grant it history writes. Set these grants as
+the owner after the first apply, or pre-provision the schema and default SELECT
+privileges before apply. Moongate does not grant privileges silently. The
+[Compose guide](docker-login-realms.md) demonstrates separate roles and grants.
 
 ## Schema evolution
 
-Treat generated DDL as an operator-reviewed migration plan. FreeSql schema sync
-handles ordinary model changes, but it cannot infer business meaning. Use its
-`OldName` metadata for a supported table or column rename. Use separately reviewed,
-versioned SQL for transformations such as splitting a value, backfilling rows,
-changing units, merging tables, or enforcing a new invariant.
+[DbUp](https://dbup.readthedocs.io/en/latest/) executes the reviewed files. Moongate
+adds a checksum journal in `moongate_migrations.history`, recording target,
+component, filename, SHA-256 and application time. Checksums normalize CRLF to LF
+and ignore a UTF-8 BOM, so a Windows checkout does not change a migration's identity.
+Otherwise, **applied files are immutable**: never edit, rename or remove them.
+Add a higher sequence for corrections. An installed component with a missing
+applied file, a checksum mismatch or an inserted earlier sequence stops the runner
+before new SQL executes. A removed plugin's history and data remain untouched.
 
-Moongate and FreeSql keep no migration history. Schema preview compares the
-current attributed model with the current database; it is not a recorded version
-sequence or a reliable detector of the previous application model.
+Each apply acquires a database-wide PostgreSQL advisory lock on its execution
+transaction, validates history, then applies **all pending scripts and journal
+rows in one transaction**. SQL failure rolls the batch back. Concurrent runners
+serialize, and a second apply becomes a no-op. Commands have a 60-second execution
+timeout. A connection failure around commit can leave the result uncertain: inspect
+`status`/history before retrying. There is no transaction across Auth and World or
+across realms. The advisory lock does not pause gameplay: stop affected runtimes
+before a maintenance job.
 
-Test every migration on production-like data. Preview first, stop the affected
-runtime, apply, verify, then start the new code. Downgrades are operator-managed: generated synchronization
-does not promise a reverse migration or recover discarded data.
+Scripts must be transactional PostgreSQL SQL. Dollar-quoted `DO` blocks work;
+DbUp variable substitution is disabled. Do not put `BEGIN`, `COMMIT`, `ROLLBACK`,
+`SAVEPOINT`, `PREPARE`, `SET`, `RESET`, or other transaction/session control at the
+top level. Use schema-qualified names instead of `SET search_path`. Commands such
+as `CREATE INDEX CONCURRENTLY`, `VACUUM`, and psql meta-commands require separate
+operator-managed procedures; the runner does not relax its transaction guarantee.
 
-Disabling or uninstalling a plugin does not delete its schema. Preserve that data
-until an operator deliberately archives or removes it.
+FreeSql still compares the current attributed model with the current database;
+it cannot infer business meaning or the previous application model. Use `OldName`
+for supported renames and review its DDL. Write explicit SQL for backfills, value
+splits, unit conversions, data merges and new invariants. Data-only files follow
+the same numbering and history rules, and block normal startup until applied.
+
+Test against representative data. Apply the reviewed files, confirm `status`
+reports no pending changes and schema `preview` reports no changes, then start the
+new server. Downgrades and nontransactional maintenance are operator-managed.
+There is no automatic reverse migration or database backup facility.
 
 ## Reads, writes, and transactions
 
@@ -189,7 +315,7 @@ design explicit compensation or reconciliation.
 For state owned by the game loop, register a source and a detached clone:
 
 ```csharp
-container.AddPersistenceEntity<Item>(
+container.AddPersistenceWorld<Item>(
     () => world.Items.Values,
     item => new Item { Id = item.Id, Name = item.Name });
 ```

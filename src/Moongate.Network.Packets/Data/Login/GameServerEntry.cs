@@ -1,5 +1,4 @@
 using System.Net;
-
 using Moongate.Network.Packets.Internal;
 using Moongate.Network.Packets.Internal.Login;
 
@@ -20,7 +19,8 @@ public sealed class GameServerEntry
         string name,
         byte fullPercent,
         sbyte timeZone,
-        IPAddress address)
+        IPAddress address
+    )
     {
         PacketValidation.ValidateFixedAscii(name, LoginProtocolConstants.ServerNameLength, nameof(name));
         _addressBytes = PacketValidation.SnapshotIPv4(address, nameof(address));

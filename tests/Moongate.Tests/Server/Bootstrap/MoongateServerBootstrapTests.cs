@@ -27,16 +27,18 @@ public class MoongateServerBootstrapTests
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         var result = bootstrap.RegisterServices(services =>
-        {
-            Assert.Same(container, services);
-            calls++;
-            events.Add("register");
-            return services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(() =>
             {
-                events.Add("construct");
-                return new RecordingStartupService("custom", events);
-            });
-        });
+                Assert.Same(container, services);
+                calls++;
+                events.Add("register");
+                return services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(() =>
+                    {
+                        events.Add("construct");
+                        return new RecordingStartupService("custom", events);
+                    }
+                );
+            }
+        );
 
         Assert.Same(bootstrap, result);
         Assert.Equal(["register"], events);
@@ -57,21 +59,24 @@ public class MoongateServerBootstrapTests
         var eventBus = busContainer.Resolve<IMoongateEventBus>();
         var events = new List<string>();
         eventBus.Subscribe<MoongateStartedEvent>((_, _) =>
-        {
-            events.Add("started");
-            return Task.CompletedTask;
-        });
+            {
+                events.Add("started");
+                return Task.CompletedTask;
+            }
+        );
         eventBus.Subscribe<MoongateStoppedEvent>((_, _) =>
-        {
-            events.Add("stopped");
-            return Task.CompletedTask;
-        });
+            {
+                events.Add("stopped");
+                return Task.CompletedTask;
+            }
+        );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         bootstrap.RegisterServices(services =>
-        {
-            services.RegisterInstance(eventBus, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-            return services;
-        });
+            {
+                services.RegisterInstance(eventBus, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+                return services;
+            }
+        );
 
         await bootstrap.StartAsync();
         await bootstrap.StopAsync();
@@ -111,10 +116,12 @@ public class MoongateServerBootstrapTests
 
         var invoked = false;
         Assert.Throws<InvalidOperationException>(() => bootstrap.RegisterServices(services =>
-        {
-            invoked = true;
-            return services;
-        }));
+                {
+                    invoked = true;
+                    return services;
+                }
+            )
+        );
         Assert.False(invoked);
         await bootstrap.StopAsync();
     }
@@ -126,19 +133,22 @@ public class MoongateServerBootstrapTests
         var events = new List<string>();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         bootstrap.RegisterServices(services =>
-        {
-            Assert.Throws<InvalidOperationException>(() =>
             {
-                switch (operation)
-                {
-                    case "register": bootstrap.RegisterServices(value => value); break;
-                    case "start": bootstrap.StartAsync().GetAwaiter().GetResult(); break;
-                    case "stop": bootstrap.StopAsync().GetAwaiter().GetResult(); break;
-                }
-            });
-            return services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
-                new RecordingStartupService("custom", events));
-        });
+                Assert.Throws<InvalidOperationException>(() =>
+                    {
+                        switch (operation)
+                        {
+                            case "register": bootstrap.RegisterServices(value => value); break;
+                            case "start":    bootstrap.StartAsync().GetAwaiter().GetResult(); break;
+                            case "stop":     bootstrap.StopAsync().GetAwaiter().GetResult(); break;
+                        }
+                    }
+                );
+                return services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
+                    new RecordingStartupService("custom", events)
+                );
+            }
+        );
 
         Assert.Empty(events);
         await bootstrap.StartAsync();
@@ -155,11 +165,14 @@ public class MoongateServerBootstrapTests
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         var actual = Assert.Throws<InvalidOperationException>(() => bootstrap.RegisterServices(services =>
-        {
-            services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
-                new RecordingStartupService("custom", events));
-            throw failure;
-        }));
+                {
+                    services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
+                        new RecordingStartupService("custom", events)
+                    );
+                    throw failure;
+                }
+            )
+        );
 
         Assert.Same(failure, actual);
         await bootstrap.StopAsync();
@@ -189,12 +202,15 @@ public class MoongateServerBootstrapTests
         var late = new RecordingStartupService("late", events);
         var resolvedNonAutostart = false;
         var container = new Container();
-        container.RegisterMoongateService<object>(() =>
-        {
-            resolvedNonAutostart = true;
+        container.RegisterMoongateService<object>(
+            () =>
+            {
+                resolvedNonAutostart = true;
 
-            return new object();
-        }, -20);
+                return new object();
+            },
+            -20
+        );
         container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(early, -10);
         container.RegisterMoongateService<RecordingStartupService>(early, 5);
         container.RegisterMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(late, 10);
@@ -262,7 +278,10 @@ public class MoongateServerBootstrapTests
         var cleanupFailure = new IOException("cleanup failed");
         var events = new List<string>();
         var service = new RecordingStartupService(
-            "service", events, startFailure: startFailure, stopFailure: cleanupFails ? cleanupFailure : null
+            "service",
+            events,
+            startFailure: startFailure,
+            stopFailure: cleanupFails ? cleanupFailure : null
         );
         var container = new Container();
         container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
@@ -284,6 +303,7 @@ public class MoongateServerBootstrapTests
             Assert.True(start.IsCanceled);
             Assert.Equal(cancellation.Token, Assert.IsType<OperationCanceledException>(failure).CancellationToken);
         }
+
         Assert.Same(start, bootstrap.StartAsync());
         Assert.Equal(["start:service", "stop:service"], events);
     }

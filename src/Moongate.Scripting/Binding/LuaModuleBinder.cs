@@ -46,7 +46,9 @@ public sealed class LuaModuleBinder
         var functions = new List<BoundFunction>();
         var seen = new HashSet<string>(StringComparer.Ordinal);
 
-        foreach (var method in moduleType.GetMethods(BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly))
+        foreach (var method in moduleType.GetMethods(
+                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly
+                 ))
         {
             var attribute = method.GetCustomAttribute<ScriptFunctionAttribute>(inherit: false);
 
@@ -60,7 +62,8 @@ public sealed class LuaModuleBinder
             if (!seen.Add(luaName))
             {
                 throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{method.Name}: Lua name '{luaName}' is already used in module '{moduleAttribute.Name}'.");
+                    $"{moduleType.FullName}.{method.Name}: Lua name '{luaName}' is already used in module '{moduleAttribute.Name}'."
+                );
             }
 
             ValidateSignature(moduleType, method);
@@ -110,7 +113,8 @@ public sealed class LuaModuleBinder
     private List<BoundConstant> BindConstants(Type moduleType, string moduleName, LuaTable hidden, HashSet<string> seen)
     {
         var constants = new List<BoundConstant>();
-        const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
+        const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static |
+                                   BindingFlags.Instance | BindingFlags.DeclaredOnly;
 
         foreach (var member in moduleType.GetMembers(flags))
         {
@@ -124,20 +128,24 @@ public sealed class LuaModuleBinder
             var (type, isStaticReadOnly) = member switch
             {
                 FieldInfo field => (field.FieldType, field.IsStatic && field.IsInitOnly && field.IsPublic),
-                PropertyInfo property => (property.PropertyType, property.GetMethod is { IsStatic: true, IsPublic: true } && property.SetMethod is null),
+                PropertyInfo property => (property.PropertyType,
+                    property.GetMethod is { IsStatic: true, IsPublic: true } && property.SetMethod is null),
                 _ => (typeof(void), false)
             };
 
             if (!isStaticReadOnly)
             {
                 throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{member.Name}: a [ScriptConstant] must be a public static readonly field or a public static get-only property.");
+                    $"{moduleType.FullName}.{member.Name}: a [ScriptConstant] must be a public static readonly field or a public static get-only property."
+                );
             }
 
-            if (type == typeof(LuaTable) || type == typeof(LuaValue) || type == typeof(object) || !LuaValueConverter.IsSupported(type))
+            if (type == typeof(LuaTable) || type == typeof(LuaValue) || type == typeof(object) ||
+                !LuaValueConverter.IsSupported(type))
             {
                 throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{member.Name}: constants of type {type.Name} are not supported; use int, long, double, bool, string or an enum.");
+                    $"{moduleType.FullName}.{member.Name}: constants of type {type.Name} are not supported; use int, long, double, bool, string or an enum."
+                );
             }
 
             var luaName = attribute.Name ?? member.Name;
@@ -145,7 +153,8 @@ public sealed class LuaModuleBinder
             if (!seen.Add(luaName))
             {
                 throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{member.Name}: Lua name '{luaName}' is already used in module '{moduleName}'.");
+                    $"{moduleType.FullName}.{member.Name}: Lua name '{luaName}' is already used in module '{moduleName}'."
+                );
             }
 
             var value = ReadConstant(moduleType, member);
@@ -171,7 +180,8 @@ public sealed class LuaModuleBinder
             if (!LuaValueConverter.IsSupported(type) || type == typeof(void))
             {
                 throw new InvalidOperationException(
-                    $"{moduleType.FullName}.{method.Name}: parameter '{parameter.Name}' of type {parameter.ParameterType.Name} cannot be bound.");
+                    $"{moduleType.FullName}.{method.Name}: parameter '{parameter.Name}' of type {parameter.ParameterType.Name} cannot be bound."
+                );
             }
 
             NoteEnum(type);
@@ -182,7 +192,8 @@ public sealed class LuaModuleBinder
         if (!LuaValueConverter.IsSupported(returnType))
         {
             throw new InvalidOperationException(
-                $"{moduleType.FullName}.{method.Name}: return type {method.ReturnType.Name} cannot be bound.");
+                $"{moduleType.FullName}.{method.Name}: return type {method.ReturnType.Name} cannot be bound."
+            );
         }
 
         NoteEnum(returnType);
@@ -203,16 +214,17 @@ public sealed class LuaModuleBinder
         {
             return member switch
             {
-                FieldInfo field => field.GetValue(null),
+                FieldInfo field       => field.GetValue(null),
                 PropertyInfo property => property.GetValue(null),
-                _ => null
+                _                     => null
             };
         }
         catch (TargetInvocationException exception) when (exception.InnerException is not null)
         {
             throw new InvalidOperationException(
                 $"{moduleType.FullName}.{member.Name}: the constant's getter threw {exception.InnerException.GetType().Name}: {exception.InnerException.Message}",
-                exception.InnerException);
+                exception.InnerException
+            );
         }
     }
 
@@ -224,76 +236,91 @@ public sealed class LuaModuleBinder
         var fixedCount = hasParams ? parameters.Length - 1 : parameters.Length;
         var returnsVoid = method.ReturnType == typeof(void);
 
-        return new LuaFunction(qualified, (context, _) =>
-        {
-            _guard.EnsureScriptThread(qualified);
-            var arguments = new object?[parameters.Length];
-
-            for (var i = 0; i < fixedCount; i++)
+        return new LuaFunction(
+            qualified,
+            (context, _) =>
             {
-                var parameter = parameters[i];
+                _guard.EnsureScriptThread(qualified);
+                var arguments = new object?[parameters.Length];
 
-                if (!context.HasArgument(i))
+                for (var i = 0; i < fixedCount; i++)
                 {
-                    if (!parameter.HasDefaultValue)
+                    var parameter = parameters[i];
+
+                    if (!context.HasArgument(i))
                     {
-                        throw new LuaRuntimeException(context.State,
-                            new LuaValue($"bad argument #{i + 1} to '{qualified}' ({parameter.Name} is required)"), 1);
+                        if (!parameter.HasDefaultValue)
+                        {
+                            throw new LuaRuntimeException(
+                                context.State,
+                                new LuaValue($"bad argument #{i + 1} to '{qualified}' ({parameter.Name} is required)"),
+                                1
+                            );
+                        }
+
+                        arguments[i] = parameter.DefaultValue;
+                        continue;
                     }
 
-                    arguments[i] = parameter.DefaultValue;
-                    continue;
-                }
-
-                try
-                {
-                    arguments[i] = LuaValueConverter.FromLua(context.GetArgument(i), parameter.ParameterType);
-                }
-                catch (InvalidCastException exception)
-                {
-                    throw new LuaRuntimeException(context.State,
-                        new LuaValue($"bad argument #{i + 1} to '{qualified}' ({exception.Message})"), 1);
-                }
-            }
-
-            if (hasParams)
-            {
-                var elementType = parameters[^1].ParameterType.GetElementType()!;
-                var extra = Math.Max(0, context.ArgumentCount - fixedCount);
-                var rest = Array.CreateInstance(elementType, extra);
-
-                for (var i = 0; i < extra; i++)
-                {
                     try
                     {
-                        rest.SetValue(LuaValueConverter.FromLua(context.GetArgument(fixedCount + i), elementType), i);
+                        arguments[i] = LuaValueConverter.FromLua(context.GetArgument(i), parameter.ParameterType);
                     }
                     catch (InvalidCastException exception)
                     {
-                        throw new LuaRuntimeException(context.State,
-                            new LuaValue($"bad argument #{fixedCount + i + 1} to '{qualified}' ({exception.Message})"), 1);
+                        throw new LuaRuntimeException(
+                            context.State,
+                            new LuaValue($"bad argument #{i + 1} to '{qualified}' ({exception.Message})"),
+                            1
+                        );
                     }
                 }
 
-                arguments[^1] = rest;
-            }
+                if (hasParams)
+                {
+                    var elementType = parameters[^1].ParameterType.GetElementType()!;
+                    var extra = Math.Max(0, context.ArgumentCount - fixedCount);
+                    var rest = Array.CreateInstance(elementType, extra);
 
-            object? result;
+                    for (var i = 0; i < extra; i++)
+                    {
+                        try
+                        {
+                            rest.SetValue(LuaValueConverter.FromLua(context.GetArgument(fixedCount + i), elementType), i);
+                        }
+                        catch (InvalidCastException exception)
+                        {
+                            throw new LuaRuntimeException(
+                                context.State,
+                                new LuaValue($"bad argument #{fixedCount + i + 1} to '{qualified}' ({exception.Message})"),
+                                1
+                            );
+                        }
+                    }
 
-            try
-            {
-                result = method.Invoke(instance, arguments);
-            }
-            catch (TargetInvocationException exception) when (exception.InnerException is not null)
-            {
-                throw new LuaRuntimeException(context.State,
-                    new LuaValue($"'{qualified}' failed: {exception.InnerException.Message}"), 1);
-            }
+                    arguments[^1] = rest;
+                }
 
-            return returnsVoid
-                ? new ValueTask<int>(context.Return())
-                : new ValueTask<int>(context.Return(LuaValueConverter.ToLua(result, method.ReturnType)));
-        });
+                object? result;
+
+                try
+                {
+                    result = method.Invoke(instance, arguments);
+                }
+                catch (TargetInvocationException exception) when (exception.InnerException is not null)
+                {
+                    throw new LuaRuntimeException(
+                        context.State,
+                        new LuaValue($"'{qualified}' failed: {exception.InnerException.Message}"),
+                        1
+                    );
+                }
+
+                return returnsVoid
+                    ? new ValueTask<int>(context.Return())
+                    : new ValueTask<int>(context.Return(LuaValueConverter.ToLua(result, method.ReturnType)));
+            }
+        );
     }
 
     internal static string ToSnakeCase(string name)

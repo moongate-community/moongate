@@ -19,8 +19,16 @@ public sealed class PersistencePluginTests
         var bundle = files.Deploy("PersistencePlugin");
         Assert.True(File.Exists(Path.Combine(bundle, "Moongate.Persistence.dll")));
         using var container = new Container();
-        container.RegisterMoongatePersistence(new PostgreSqlPersistenceOptions([
-            new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, () => throw new IOException("unexpected database resolution"))]));
+        container.RegisterMoongatePersistence(
+            new PostgreSqlPersistenceOptions(
+                [
+                    new PersistenceDatabaseOptions(
+                        PersistenceDatabaseTarget.Realm,
+                        () => throw new IOException("unexpected database resolution")
+                    )
+                ]
+            )
+        );
         await using var owner = container.Resolve<MoongatePersistenceService>();
         using var loader = new PluginLoaderService(container, files.Directories);
         loader.LoadPlugins();
@@ -30,7 +38,10 @@ public sealed class PersistencePluginTests
         Assert.Same(typeof(FreeSql.DataAnnotations.TableAttribute), types[2]);
         Assert.Same(typeof(Npgsql.NpgsqlConnection), types[3]);
         Assert.NotSame(AssemblyLoadContext.Default, AssemblyLoadContext.GetLoadContext(types[4].Assembly));
-        Assert.Contains("unexpected database resolution", (await Assert.ThrowsAsync<IOException>(() => owner.InitializeAsync())).Message);
+        Assert.Contains(
+            "unexpected database resolution",
+            (await Assert.ThrowsAsync<IOException>(() => owner.InitializeAsync())).Message
+        );
     }
 
     [Fact]
@@ -57,6 +68,10 @@ public sealed class PersistencePluginTests
         using var loader = new PluginLoaderService(fixture.Container, files.Directories);
         loader.LoadPlugins();
         await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Owner.InitializeAsync());
-        Assert.False(await fixture.Database.ScalarAsync<bool>("SELECT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'fixture_data')"));
+        Assert.False(
+            await fixture.Database.ScalarAsync<bool>(
+                "SELECT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'fixture_data')"
+            )
+        );
     }
 }

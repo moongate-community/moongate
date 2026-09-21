@@ -103,5 +103,4 @@ public sealed class TcpMaxFrameLengthTests
 
         return condition();
     }
-
 }

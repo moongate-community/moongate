@@ -16,8 +16,12 @@ public sealed class DirectoriesExtensionTests
     [Fact]
     public void ResolvePathAndEnvs_TildePath_UsesUserProfileAndReturnsAbsolutePath()
     {
-        var expected = Path.GetFullPath(Path.Combine(
-            System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile), "moongate"));
+        var expected = Path.GetFullPath(
+            Path.Combine(
+                System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile),
+                "moongate"
+            )
+        );
 
         Assert.Equal(expected, "~/moongate".ResolvePathAndEnvs());
     }

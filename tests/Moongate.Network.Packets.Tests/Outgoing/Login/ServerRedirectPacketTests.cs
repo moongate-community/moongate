@@ -1,5 +1,4 @@
 using System.Net;
-
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Serialization;
 using Moongate.Network.Packets.Tests.Support;

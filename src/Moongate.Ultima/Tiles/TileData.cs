@@ -44,9 +44,9 @@ public static class TileData
     public static void ExportItemDataToCsv(string fileName)
     {
         using var tex = new StreamWriter(
-                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         tex.Write(
             "ID;Name;Weight/Quantity;Layer/Quality;Gump/AnimID;Height;Hue;Class/Quantity;StackingOffset;miscData;Unknown2;Unknown3"
         );

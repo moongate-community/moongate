@@ -144,6 +144,7 @@ public ref struct ValueStringBuilder
         {
             dst[i] = c;
         }
+
         Length += count;
     }
 
@@ -163,6 +164,7 @@ public ref struct ValueStringBuilder
         {
             dst[i] = *value++;
         }
+
         Length += length;
     }
 

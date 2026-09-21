@@ -1,5 +1,6 @@
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Types.Persistence;
+
 namespace Moongate.Tests.TestSupport.Persistence;
 
 public sealed class AccountSnapshotModule : IPersistenceModule

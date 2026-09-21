@@ -27,7 +27,10 @@ public sealed class PluginDirectoryFixture : IDisposable
         if (directoryName != name)
         {
             File.Copy(Path.Combine(destination, name + ".dll"), Path.Combine(destination, directoryName + ".dll"));
-            File.Copy(Path.Combine(destination, name + ".deps.json"), Path.Combine(destination, directoryName + ".deps.json"));
+            File.Copy(
+                Path.Combine(destination, name + ".deps.json"),
+                Path.Combine(destination, directoryName + ".deps.json")
+            );
         }
 
         return destination;

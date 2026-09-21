@@ -20,11 +20,12 @@ public sealed class DiagnosticServiceTests
         using var fixture = new DiagnosticServiceFixture([provider]);
         var received = new TaskCompletionSource<DiagnosticSnapshot>(TaskCreationOptions.RunContinuationsAsynchronously);
         using var subscription = fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>((message, _) =>
-        {
-            Assert.Same(message.Snapshot, fixture.Service.GetSnapshot());
-            received.TrySetResult(message.Snapshot);
-            return Task.CompletedTask;
-        });
+            {
+                Assert.Same(message.Snapshot, fixture.Service.GetSnapshot());
+                received.TrySetResult(message.Snapshot);
+                return Task.CompletedTask;
+            }
+        );
         Assert.Null(fixture.Service.GetSnapshot());
         await fixture.Service.StartAsync();
         provider.Release();
@@ -42,8 +43,13 @@ public sealed class DiagnosticServiceTests
     {
         var provider = new ControlledMetricProvider();
         using var fixture = new DiagnosticServiceFixture([provider]);
-        var starts = await Task.WhenAll(Enumerable.Range(0, 20).Select(_ => Task.Run(() =>
-            new[] { fixture.Service.StartAsync() })));
+        var starts = await Task.WhenAll(
+            Enumerable.Range(0, 20)
+                .Select(_ => Task.Run(() =>
+                        new[] { fixture.Service.StartAsync() }
+                    )
+                )
+        );
         Assert.All(starts, start => Assert.Same(starts[0][0], start[0]));
         await Task.WhenAll(starts.Select(start => start[0]));
         await provider.WaitForEntryAsync();
@@ -69,7 +75,10 @@ public sealed class DiagnosticServiceTests
     [Fact]
     public async Task StartAsync_InvalidOptionsEvenWhenDisabled_FaultsSharedStartup()
     {
-        using var fixture = new DiagnosticServiceFixture([], new DiagnosticOptions { Enabled = false, Interval = TimeSpan.Zero });
+        using var fixture = new DiagnosticServiceFixture(
+            [],
+            new DiagnosticOptions { Enabled = false, Interval = TimeSpan.Zero }
+        );
         var start = fixture.Service.StartAsync();
         Assert.Same(start, fixture.Service.StartAsync());
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => start);
@@ -89,8 +98,13 @@ public sealed class DiagnosticServiceTests
         using var container = new DryIoc.Container();
         container.RegisterMoongateEventBus();
         var provider = new ControlledMetricProvider(name);
-        Assert.Throws<ArgumentException>(() => new DiagnosticService([provider], new DiagnosticOptions(),
-            new EventBusService(container.Resolve<IMoongateEventBus>()), new DiagnosticTimeProvider()));
+        Assert.Throws<ArgumentException>(() => new DiagnosticService(
+                [provider],
+                new DiagnosticOptions(),
+                new EventBusService(container.Resolve<IMoongateEventBus>()),
+                new DiagnosticTimeProvider()
+            )
+        );
         Assert.Equal(0, provider.Calls);
     }
 
@@ -101,15 +115,23 @@ public sealed class DiagnosticServiceTests
         container.RegisterMoongateEventBus();
         var first = new ControlledMetricProvider();
         var second = new ControlledMetricProvider();
-        Assert.Throws<ArgumentException>(() => new DiagnosticService([first, second], new DiagnosticOptions(),
-            new EventBusService(container.Resolve<IMoongateEventBus>()), new DiagnosticTimeProvider()));
+        Assert.Throws<ArgumentException>(() => new DiagnosticService(
+                [first, second],
+                new DiagnosticOptions(),
+                new EventBusService(container.Resolve<IMoongateEventBus>()),
+                new DiagnosticTimeProvider()
+            )
+        );
         Assert.Equal(0, first.Calls + second.Calls);
     }
 
     [Fact]
     public async Task Constructor_FreezesProviderListAndNames()
     {
-        var provider = new DelegateMetricProvider("original", _ => ValueTask.FromResult<IReadOnlyList<MetricSample>>([Sample()]));
+        var provider = new DelegateMetricProvider(
+            "original",
+            _ => ValueTask.FromResult<IReadOnlyList<MetricSample>>([Sample()])
+        );
         var providers = new List<IMetricProvider> { provider };
         using var fixture = new DiagnosticServiceFixture(providers);
         providers.Clear();
@@ -126,12 +148,15 @@ public sealed class DiagnosticServiceTests
     public async Task CollectAsync_ProviderFailureIsIsolatedAndPreviousMetricsAreRemoved(bool cancellation)
     {
         var calls = 0;
-        var faulty = new DelegateMetricProvider("faulty", _ =>
-        {
-            if (++calls == 1) return ValueTask.FromResult<IReadOnlyList<MetricSample>>([Sample()]);
-            if (cancellation) throw new OperationCanceledException();
-            throw new InvalidOperationException("provider failed");
-        });
+        var faulty = new DelegateMetricProvider(
+            "faulty",
+            _ =>
+            {
+                if (++calls == 1) return ValueTask.FromResult<IReadOnlyList<MetricSample>>([Sample()]);
+                if (cancellation) throw new OperationCanceledException();
+                throw new InvalidOperationException("provider failed");
+            }
+        );
         var good = new ControlledMetricProvider();
         good.Release();
         using var fixture = new DiagnosticServiceFixture([faulty, good]);
@@ -224,7 +249,10 @@ public sealed class DiagnosticServiceTests
         var provider = new ControlledMetricProvider();
         provider.Release();
         using var fixture = new DiagnosticServiceFixture([provider]);
-        using var failing = fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>((_, _) => throw new InvalidOperationException("observer failed"));
+        using var failing =
+            fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>((_, _) =>
+                throw new InvalidOperationException("observer failed")
+            );
         await fixture.Service.StartAsync();
         Assert.Equal(1, (await fixture.NextAsync()).Sequence);
         fixture.Time.Tick(TimeSpan.FromSeconds(5));
@@ -240,17 +268,24 @@ public sealed class DiagnosticServiceTests
         var entered = Signal();
         var cancelled = Signal();
         var finish = Signal();
-        var provider = new DelegateMetricProvider("waiting", async token =>
-        {
-            entered.SetResult();
-            try { await Task.Delay(Timeout.InfiniteTimeSpan, token); }
-            finally
+        var provider = new DelegateMetricProvider(
+            "waiting",
+            async token =>
             {
-                cancelled.SetResult();
-                await finish.Task;
+                entered.SetResult();
+                try
+                {
+                    await Task.Delay(Timeout.InfiniteTimeSpan, token);
+                }
+                finally
+                {
+                    cancelled.SetResult();
+                    await finish.Task;
+                }
+
+                return [Sample()];
             }
-            return [Sample()];
-        });
+        );
         using var fixture = new DiagnosticServiceFixture([provider]);
         await fixture.Service.StartAsync();
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -261,7 +296,11 @@ public sealed class DiagnosticServiceTests
             Assert.False(stop.IsCompleted);
             Assert.Same(stop, fixture.Service.StopAsync());
         }
-        finally { finish.TrySetResult(); }
+        finally
+        {
+            finish.TrySetResult();
+        }
+
         await stop.WaitAsync(TimeSpan.FromSeconds(5));
         Assert.Null(fixture.Service.GetSnapshot());
         Assert.False(provider.IsDisposed);
@@ -304,13 +343,16 @@ public sealed class DiagnosticServiceTests
     {
         DiagnosticService? service = null;
         var rejection = Signal();
-        var provider = new DelegateMetricProvider("reentrant", async _ =>
-        {
-            if (dispose) Assert.Throws<InvalidOperationException>(() => service!.Dispose());
-            else await Assert.ThrowsAsync<InvalidOperationException>(() => service!.StopAsync());
-            rejection.TrySetResult();
-            return [Sample()];
-        });
+        var provider = new DelegateMetricProvider(
+            "reentrant",
+            async _ =>
+            {
+                if (dispose) Assert.Throws<InvalidOperationException>(() => service!.Dispose());
+                else await Assert.ThrowsAsync<InvalidOperationException>(() => service!.StopAsync());
+                rejection.TrySetResult();
+                return [Sample()];
+            }
+        );
         using var fixture = new DiagnosticServiceFixture([provider]);
         service = fixture.Service;
         await service.StartAsync();
@@ -329,10 +371,11 @@ public sealed class DiagnosticServiceTests
         using var fixture = new DiagnosticServiceFixture([provider]);
         var rejected = Signal();
         using var subscription = fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>(async (_, _) =>
-        {
-            await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Service.StopAsync());
-            rejected.TrySetResult();
-        });
+            {
+                await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Service.StopAsync());
+                rejected.TrySetResult();
+            }
+        );
         await fixture.Service.StartAsync();
         await rejected.Task.WaitAsync(TimeSpan.FromSeconds(5));
         await fixture.NextAsync();
@@ -360,19 +403,26 @@ public sealed class DiagnosticServiceTests
         var cancelled = Signal();
         var finish = Signal();
         var lifetimeAlive = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var provider = new DelegateMetricProvider("waiting", async token =>
-        {
-            entered.TrySetResult();
-            try { await Task.Delay(Timeout.InfiniteTimeSpan, token); }
-            finally
+        var provider = new DelegateMetricProvider(
+            "waiting",
+            async token =>
             {
-                cancelled.TrySetResult();
-                await finish.Task;
-                // The lifetime source must remain usable until worker cleanup finishes.
-                lifetimeAlive.TrySetResult(token.WaitHandle.WaitOne(0));
+                entered.TrySetResult();
+                try
+                {
+                    await Task.Delay(Timeout.InfiniteTimeSpan, token);
+                }
+                finally
+                {
+                    cancelled.TrySetResult();
+                    await finish.Task;
+                    // The lifetime source must remain usable until worker cleanup finishes.
+                    lifetimeAlive.TrySetResult(token.WaitHandle.WaitOne(0));
+                }
+
+                return [Sample()];
             }
-            return [Sample()];
-        });
+        );
         using var fixture = new DiagnosticServiceFixture([provider]);
         await fixture.Service.StartAsync();
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
@@ -382,7 +432,11 @@ public sealed class DiagnosticServiceTests
             await cancelled.Task.WaitAsync(TimeSpan.FromSeconds(5));
             Assert.False(disposal.IsCompleted);
         }
-        finally { finish.TrySetResult(); }
+        finally
+        {
+            finish.TrySetResult();
+        }
+
         await disposal.WaitAsync(TimeSpan.FromSeconds(5));
         Assert.True(await lifetimeAlive.Task.WaitAsync(TimeSpan.FromSeconds(5)));
         Assert.Null(fixture.Service.GetSnapshot());
@@ -391,5 +445,7 @@ public sealed class DiagnosticServiceTests
     }
 
     private static TaskCompletionSource Signal() => new(TaskCreationOptions.RunContinuationsAsynchronously);
-    private static MetricSample Sample(string name = "value", double value = 42) => new(name, value, "count", DiagnosticMetricType.Gauge);
+
+    private static MetricSample Sample(string name = "value", double value = 42) =>
+        new(name, value, "count", DiagnosticMetricType.Gauge);
 }

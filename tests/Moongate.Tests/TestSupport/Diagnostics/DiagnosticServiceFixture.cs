@@ -29,10 +29,11 @@ internal sealed class DiagnosticServiceFixture : IDisposable
         Service = new DiagnosticService(providers, options ?? new DiagnosticOptions(), Bus, Time);
         _snapshots = Channel.CreateUnbounded<DiagnosticSnapshot>();
         _subscription = Bus.Subscribe<DiagnosticSnapshotCollectedEvent>((message, _) =>
-        {
-            _snapshots.Writer.TryWrite(message.Snapshot);
-            return Task.CompletedTask;
-        });
+            {
+                _snapshots.Writer.TryWrite(message.Snapshot);
+                return Task.CompletedTask;
+            }
+        );
     }
 
     public Task<DiagnosticSnapshot> NextAsync() => _snapshots.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
@@ -40,7 +41,10 @@ internal sealed class DiagnosticServiceFixture : IDisposable
 
     public void Dispose()
     {
-        try { Service.Dispose(); }
+        try
+        {
+            Service.Dispose();
+        }
         finally
         {
             Time.Dispose();

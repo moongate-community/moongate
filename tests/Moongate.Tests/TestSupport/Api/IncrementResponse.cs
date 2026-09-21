@@ -1,5 +1,7 @@
 using MessagePack;
+
 namespace Moongate.Tests.TestSupport.Api;
+
 [MessagePackObject]
 public sealed partial class IncrementResponse
 {

@@ -121,10 +121,10 @@ public ref struct SpanWriter : IDisposable
     {
         var offsetBase = origin switch
         {
-            SeekOrigin.Begin => 0L,
+            SeekOrigin.Begin   => 0L,
             SeekOrigin.Current => (long)_position,
-            SeekOrigin.End => (long)BytesWritten,
-            _ => throw new ArgumentOutOfRangeException(nameof(origin))
+            SeekOrigin.End     => (long)BytesWritten,
+            _                  => throw new ArgumentOutOfRangeException(nameof(origin))
         };
         var requested = Math.Max(0L, offsetBase + offset);
         if (requested > int.MaxValue || (requested > Capacity && !_resize))
@@ -571,8 +571,8 @@ public ref struct SpanWriter : IDisposable
         return encoding switch
         {
             UnicodeEncoding => 2,
-            UTF32Encoding => 4,
-            _ => 1
+            UTF32Encoding   => 4,
+            _               => 1
         };
     }
 

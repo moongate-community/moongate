@@ -1,6 +1,5 @@
 using System.Buffers.Binary;
 using System.Text;
-
 using Moongate.Core.Primitives;
 
 namespace Moongate.Network.Packets.Spans;

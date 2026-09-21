@@ -34,10 +34,11 @@ public sealed class DiagnosticBootstrapTests
         var bus = container.Resolve<IEventBusService>();
         var observed = new TaskCompletionSource<DiagnosticSnapshot>(TaskCreationOptions.RunContinuationsAsynchronously);
         using var subscription = bus.Subscribe<DiagnosticSnapshotCollectedEvent>((message, _) =>
-        {
-            observed.TrySetResult(message.Snapshot);
-            return Task.CompletedTask;
-        });
+            {
+                observed.TrySetResult(message.Snapshot);
+                return Task.CompletedTask;
+            }
+        );
 
         await bootstrap.StartAsync();
         var snapshot = await observed.Task.WaitAsync(Timeout);
@@ -48,8 +49,10 @@ public sealed class DiagnosticBootstrapTests
 
         Assert.Same(first, second);
         Assert.Equal(5, providers.Length);
-        Assert.Equal(providers.Select(provider => provider.ProviderName),
-            providersAgain.Select(provider => provider.ProviderName));
+        Assert.Equal(
+            providers.Select(provider => provider.ProviderName),
+            providersAgain.Select(provider => provider.ProviderName)
+        );
         Assert.All(providers.Zip(providersAgain), pair => Assert.Same(pair.First, pair.Second));
         Assert.Same(snapshot, first.GetSnapshot());
         Assert.Equal(42, snapshot.Metrics["plugin_test.value"].Value);
@@ -66,46 +69,56 @@ public sealed class DiagnosticBootstrapTests
         var secondCollectionEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var firstSnapshot = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var calls = 0;
-        var provider = new DelegateMetricProvider("ordered", async token =>
-        {
-            var call = Interlocked.Increment(ref calls);
-            if (call == 1)
+        var provider = new DelegateMetricProvider(
+            "ordered",
+            async token =>
             {
-                Assert.Equal(["start:timer", "start:game_loop"], events);
-                events.Add("start:diagnostics");
-            }
-            else
-            {
-                secondCollectionEntered.TrySetResult();
-                try
+                var call = Interlocked.Increment(ref calls);
+                if (call == 1)
                 {
-                    await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                    Assert.Equal(["start:timer", "start:game_loop"], events);
+                    events.Add("start:diagnostics");
                 }
-                finally
+                else
                 {
-                    events.Add("stop:diagnostics");
+                    secondCollectionEntered.TrySetResult();
+                    try
+                    {
+                        await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                    }
+                    finally
+                    {
+                        events.Add("stop:diagnostics");
+                    }
                 }
-            }
 
-            return [];
-        });
+                return [];
+            }
+        );
         var time = new DiagnosticTimeProvider();
         var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
             .RegisterServices(services =>
-            {
-                services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
-                    new RecordingStartupService("timer", events), -900);
-                services.RegisterMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(
-                    new RecordingStartupService("game_loop", events), -800);
-                RegisterCollector(services, time, [provider]);
-                services.Resolve<IEventBusService>().Subscribe<DiagnosticSnapshotCollectedEvent>((_, _) =>
                 {
-                    firstSnapshot.TrySetResult();
-                    return Task.CompletedTask;
-                });
-                return services;
-            });
+                    services.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(
+                        new RecordingStartupService("timer", events),
+                        -900
+                    );
+                    services.RegisterMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(
+                        new RecordingStartupService("game_loop", events),
+                        -800
+                    );
+                    RegisterCollector(services, time, [provider]);
+                    services.Resolve<IEventBusService>()
+                        .Subscribe<DiagnosticSnapshotCollectedEvent>((_, _) =>
+                            {
+                                firstSnapshot.TrySetResult();
+                                return Task.CompletedTask;
+                            }
+                        );
+                    return services;
+                }
+            );
 
         await bootstrap.StartAsync();
         await firstSnapshot.Task.WaitAsync(Timeout);
@@ -116,7 +129,8 @@ public sealed class DiagnosticBootstrapTests
 
         Assert.Equal(
             ["start:timer", "start:game_loop", "start:diagnostics", "stop:diagnostics", "stop:game_loop", "stop:timer"],
-            events);
+            events
+        );
         time.Dispose();
     }
 
@@ -132,26 +146,29 @@ public sealed class DiagnosticBootstrapTests
         var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
             .RegisterServices(services =>
-            {
-                RegisterCollector(services, time, [provider]);
-                services.Resolve<IEventBusService>().Subscribe<DiagnosticSnapshotCollectedEvent>((_, _) =>
                 {
-                    Interlocked.Increment(ref events);
-                    snapshotCollected.TrySetResult();
-                    return Task.CompletedTask;
-                });
-                return services.RegisterMoongateService(
-                    new CallbackStartupService(
-                        async () =>
-                        {
-                            await snapshotCollected.Task.WaitAsync(Timeout);
-                            throw failure;
-                        },
-                        () => Task.CompletedTask
-                    ),
-                    950
-                );
-            });
+                    RegisterCollector(services, time, [provider]);
+                    services.Resolve<IEventBusService>()
+                        .Subscribe<DiagnosticSnapshotCollectedEvent>((_, _) =>
+                            {
+                                Interlocked.Increment(ref events);
+                                snapshotCollected.TrySetResult();
+                                return Task.CompletedTask;
+                            }
+                        );
+                    return services.RegisterMoongateService(
+                        new CallbackStartupService(
+                            async () =>
+                            {
+                                await snapshotCollected.Task.WaitAsync(Timeout);
+                                throw failure;
+                            },
+                            () => Task.CompletedTask
+                        ),
+                        950
+                    );
+                }
+            );
 
         var observed = await Assert.ThrowsAsync<InvalidOperationException>(() => bootstrap.StartAsync());
         var countAfterRollback = Volatile.Read(ref events);
@@ -174,11 +191,12 @@ public sealed class DiagnosticBootstrapTests
         var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
             .RegisterServices(services => RegisterCollector(
-                services,
-                time,
-                [provider],
-                new DiagnosticOptions { Enabled = false }
-            ));
+                    services,
+                    time,
+                    [provider],
+                    new DiagnosticOptions { Enabled = false }
+                )
+            );
 
         await bootstrap.StartAsync();
         time.Tick(TimeSpan.FromSeconds(5));
@@ -202,11 +220,12 @@ public sealed class DiagnosticBootstrapTests
         var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
             .RegisterServices(services => RegisterCollector(
-                services,
-                time,
-                [],
-                new DiagnosticOptions { Enabled = false }
-            ));
+                    services,
+                    time,
+                    [],
+                    new DiagnosticOptions { Enabled = false }
+                )
+            );
 
         await bootstrap.StartAsync();
         await bootstrap.StopAsync();
@@ -218,7 +237,8 @@ public sealed class DiagnosticBootstrapTests
     private static Container RegisterDiagnosticHost(
         Container services,
         DiagnosticTimeProvider time,
-        DiagnosticTestPlugin plugin)
+        DiagnosticTestPlugin plugin
+    )
     {
         services.RegisterInstance<IPluginLoaderService>(plugin);
         services.RegisterInstance(new DiagnosticOptions());
@@ -228,9 +248,9 @@ public sealed class DiagnosticBootstrapTests
         services.RegisterInstance<ISessionService>(new SessionCountSourceStub(0));
         services.RegisterMoongateService<IEventBusService, EventBusService>();
         services.AddMetricProvider<SystemMetricsProvider>()
-                .AddMetricProvider<GameLoopMetricsProvider>()
-                .AddMetricProvider<TimerMetricsProvider>()
-                .AddMetricProvider<SessionMetricsProvider>();
+            .AddMetricProvider<GameLoopMetricsProvider>()
+            .AddMetricProvider<TimerMetricsProvider>()
+            .AddMetricProvider<SessionMetricsProvider>();
         services.RegisterMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority);
         return services;
     }
@@ -239,7 +259,8 @@ public sealed class DiagnosticBootstrapTests
         Container services,
         DiagnosticTimeProvider time,
         IEnumerable<IMetricProvider> providers,
-        DiagnosticOptions? options = null)
+        DiagnosticOptions? options = null
+    )
     {
         services.RegisterInstance(options ?? new DiagnosticOptions());
         services.RegisterInstance<TimeProvider>(time);
@@ -248,6 +269,7 @@ public sealed class DiagnosticBootstrapTests
         {
             services.RegisterInstance<IMetricProvider>(provider);
         }
+
         return services.RegisterMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority);
     }
 }

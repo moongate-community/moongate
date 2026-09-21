@@ -30,8 +30,10 @@ public interface IGameLoopService : IMoongateStartupService
     /// This method cannot be called from the loop or reentered from its terminal callback.</remarks>
     /// <param name="finalWorkAsync">Off-loop terminal operation receiving the bounded owner-capture dispatcher and cancellation token.</param>
     /// <param name="cancellationToken">Cooperative cancellation for terminal work; cleanup always completes.</param>
-    Task StopWithFinalWorkAsync(Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
-        CancellationToken cancellationToken = default);
+    Task StopWithFinalWorkAsync(
+        Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>Returns queue depth/age, admission counters, command timings and fatal loop failures.</summary>
     /// <remarks>Concurrent execution can advance between queue and execution measurements; durations use monotonic time.</remarks>

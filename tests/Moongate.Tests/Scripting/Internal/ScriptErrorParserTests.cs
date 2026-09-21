@@ -7,7 +7,10 @@ public sealed class ScriptErrorParserTests
     [Fact]
     public void Parse_ExtractsFileLineAndMessageFromTheLuaPrefix()
     {
-        var info = ScriptErrorParser.Parse("Lua-CSharp: [string \"ai/guard.lua\"]:12: attempt to index a nil value (local 'y')", "stack traceback:\n\t...");
+        var info = ScriptErrorParser.Parse(
+            "Lua-CSharp: [string \"ai/guard.lua\"]:12: attempt to index a nil value (local 'y')",
+            "stack traceback:\n\t..."
+        );
 
         Assert.Equal("ai/guard.lua", info.File);
         Assert.Equal(12, info.Line);

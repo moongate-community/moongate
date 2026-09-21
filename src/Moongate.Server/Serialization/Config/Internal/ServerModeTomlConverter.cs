@@ -19,10 +19,10 @@ internal sealed class ServerModeTomlConverter : TomlConverter<ServerMode>
 
         var mode = reader.GetString().ToLowerInvariant() switch
         {
-            "login" => ServerMode.Login,
-            "game" => ServerMode.Game,
+            "login"      => ServerMode.Login,
+            "game"       => ServerMode.Game,
             "standalone" => ServerMode.Standalone,
-            _ => throw reader.CreateException("Server mode must be login, game, or standalone.")
+            _            => throw reader.CreateException("Server mode must be login, game, or standalone.")
         };
 
         reader.Read();
@@ -33,10 +33,10 @@ internal sealed class ServerModeTomlConverter : TomlConverter<ServerMode>
     {
         var name = value switch
         {
-            ServerMode.Login => "login",
-            ServerMode.Game => "game",
+            ServerMode.Login      => "login",
+            ServerMode.Game       => "game",
             ServerMode.Standalone => "standalone",
-            _ => throw new TomlException("Server mode must be login, game, or standalone.")
+            _                     => throw new TomlException("Server mode must be login, game, or standalone.")
         };
 
         writer.WriteStringValue(name);

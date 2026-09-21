@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;

@@ -24,11 +24,12 @@ public sealed class MoongateTcpClientTests
         using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new MoongateTcpClient(
-            socket,
-            Stream.Null,
-            receiveBufferSize: receiveBufferSize,
-            maxFrameLength: maxFrameLength
-        ));
+                socket,
+                Stream.Null,
+                receiveBufferSize: receiveBufferSize,
+                maxFrameLength: maxFrameLength
+            )
+        );
 
         Assert.Equal(parameterName, exception.ParamName);
     }
@@ -152,7 +153,11 @@ public sealed class MoongateTcpClientTests
         await using var pair = await LoopbackPair.CreateAsync();
         await pair.Receiver.CloseAsync();
         await Assert.ThrowsAsync<IOException>(() => pair.Receiver.SendAsync(new byte[] { 0x42 }, CancellationToken.None));
-        await Assert.ThrowsAsync<IOException>(() => pair.Receiver.SendAsync(ReadOnlyMemory<byte>.Empty, CancellationToken.None));
+        await Assert.ThrowsAsync<IOException>(() => pair.Receiver.SendAsync(
+                ReadOnlyMemory<byte>.Empty,
+                CancellationToken.None
+            )
+        );
     }
 
     [Fact]
@@ -177,8 +182,10 @@ public sealed class MoongateTcpClientTests
         middleware.Release();
         pair.Sender.AddMiddleware(middleware);
         var cleanup = new CleanupExecutionContextGate();
-        var first = cleanup.CaptureSend(pair.Sender,
-            () => pair.Sender.SendAsync(new byte[] { 1 }, CancellationToken.None));
+        var first = cleanup.CaptureSend(
+            pair.Sender,
+            () => pair.Sender.SendAsync(new byte[] { 1 }, CancellationToken.None)
+        );
         Task? second = null;
         try
         {
@@ -199,6 +206,7 @@ public sealed class MoongateTcpClientTests
             {
                 await Record.ExceptionAsync(() => second.WaitAsync(Timeout));
             }
+
             await pair.Sender.Completion.WaitAsync(Timeout);
         }
     }
@@ -245,7 +253,9 @@ public sealed class MoongateTcpClientTests
         var send = pair.Sender.SendAsync(new byte[] { 1 }, CancellationToken.None);
         await stream.WriteEntered.Task.WaitAsync(Timeout);
         using var waiterCancellation = new CancellationTokenSource();
-        var waiters = Enumerable.Range(0, 20).Select(_ => pair.Sender.SendAsync(new byte[] { 2 }, waiterCancellation.Token)).ToArray();
+        var waiters = Enumerable.Range(0, 20)
+            .Select(_ => pair.Sender.SendAsync(new byte[] { 2 }, waiterCancellation.Token))
+            .ToArray();
         var firstDispose = pair.Sender.DisposeAsync().AsTask();
         var secondDispose = pair.Sender.DisposeAsync().AsTask();
         try
@@ -261,7 +271,9 @@ public sealed class MoongateTcpClientTests
         {
             stream.ReleaseWrite.TrySetResult();
             waiterCancellation.Cancel();
-            await Task.WhenAll(waiters.Append(send).Select(async task => await Record.ExceptionAsync(() => task.WaitAsync(Timeout))));
+            await Task.WhenAll(
+                waiters.Append(send).Select(async task => await Record.ExceptionAsync(() => task.WaitAsync(Timeout)))
+            );
             await pair.Receiver.DisposeAsync();
         }
     }
@@ -312,8 +324,14 @@ public sealed class MoongateTcpClientTests
         var failure = new IOException("dispose failed");
         var stream = new GatedWriteStream { DisposeFailure = failure };
         var pair = await LoopbackPair.CreateAsync(stream);
-        Assert.Same(failure, await Assert.ThrowsAsync<IOException>(() => pair.Sender.DisposeAsync().AsTask().WaitAsync(Timeout)));
-        Assert.Same(failure, await Assert.ThrowsAsync<IOException>(() => pair.Sender.DisposeAsync().AsTask().WaitAsync(Timeout)));
+        Assert.Same(
+            failure,
+            await Assert.ThrowsAsync<IOException>(() => pair.Sender.DisposeAsync().AsTask().WaitAsync(Timeout))
+        );
+        Assert.Same(
+            failure,
+            await Assert.ThrowsAsync<IOException>(() => pair.Sender.DisposeAsync().AsTask().WaitAsync(Timeout))
+        );
         Assert.Same(failure, await Assert.ThrowsAsync<IOException>(() => pair.Sender.Completion.WaitAsync(Timeout)));
         Assert.Equal(1, stream.DisposeCount);
         Assert.Null(pair.Sender.LocalEndPoint);
@@ -401,6 +419,7 @@ public sealed class MoongateTcpClientTests
                 failed.TrySetResult(args.Client);
                 throw new InvalidOperationException("data callback");
             }
+
             received.TrySetResult(args.Data.ToArray());
         };
         await server.StartAsync(CancellationToken.None);
@@ -449,6 +468,7 @@ public sealed class MoongateTcpClientTests
         {
             middleware.Release();
         }
+
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => first.WaitAsync(Timeout));
         await dispose.WaitAsync(Timeout);
     }
@@ -475,7 +495,8 @@ public sealed class MoongateTcpClientTests
         var stream = new GatedWriteStream { CancellationFailure = cancellationFailure, DisposeFailure = releaseFailure };
         var pair = await LoopbackPair.CreateAsync(stream);
         await stream.ReadEntered.Task.WaitAsync(Timeout);
-        var failures = await Assert.ThrowsAsync<AggregateException>(() => pair.Sender.DisposeAsync().AsTask().WaitAsync(Timeout));
+        var failures =
+            await Assert.ThrowsAsync<AggregateException>(() => pair.Sender.DisposeAsync().AsTask().WaitAsync(Timeout));
         Assert.Contains(cancellationFailure, failures.Flatten().InnerExceptions);
         Assert.Contains(releaseFailure, failures.Flatten().InnerExceptions);
         Assert.Equal(1, stream.DisposeCount);

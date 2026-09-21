@@ -29,9 +29,9 @@ public sealed class GreeterModule
 
         return tone switch
         {
-            Tone.Warm => $"Hello there, {name}!",
+            Tone.Warm   => $"Hello there, {name}!",
             Tone.Formal => $"Good day, {name}.",
-            _ => $"{DefaultGreeting}, {name}!"
+            _           => $"{DefaultGreeting}, {name}!"
         };
     }
 }

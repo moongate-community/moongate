@@ -21,7 +21,9 @@ public sealed partial class ScriptModuleAttribute : Attribute
         if (!LuaIdentifier().IsMatch(name))
         {
             throw new ArgumentException(
-                $"'{name}' is not a valid module name: use a lower-case Lua identifier such as 'log'.", nameof(name));
+                $"'{name}' is not a valid module name: use a lower-case Lua identifier such as 'log'.",
+                nameof(name)
+            );
         }
 
         Name = name;

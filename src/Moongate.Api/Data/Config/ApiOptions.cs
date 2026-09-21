@@ -23,6 +23,7 @@ public sealed record ApiOptions
         {
             throw new ArgumentOutOfRangeException(nameof(MaxFrameLength));
         }
+
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(MaxPendingCalls);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(IncomingQueueCapacity);
         ArgumentOutOfRangeException.ThrowIfNegativeOrZero(OutgoingQueueCapacity);

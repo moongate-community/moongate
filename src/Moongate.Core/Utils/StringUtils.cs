@@ -44,9 +44,11 @@ public static partial class StringUtils
                 continue;
             }
 
-            result.Append(result.Length == 0
-                              ? word.ToLowerInvariant()
-                              : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(word.ToLowerInvariant()));
+            result.Append(
+                result.Length == 0
+                    ? word.ToLowerInvariant()
+                    : CultureInfo.InvariantCulture.TextInfo.ToTitleCase(word.ToLowerInvariant())
+            );
         }
 
         return result.ToString();

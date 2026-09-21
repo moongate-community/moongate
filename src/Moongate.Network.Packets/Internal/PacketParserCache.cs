@@ -1,5 +1,4 @@
 using System.Reflection;
-
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Types.Packets;
 

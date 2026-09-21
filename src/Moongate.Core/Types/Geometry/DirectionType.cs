@@ -16,5 +16,4 @@ public enum DirectionType : byte
     NorthWest = 0x7,
 
     Running = 0x80
-
 }

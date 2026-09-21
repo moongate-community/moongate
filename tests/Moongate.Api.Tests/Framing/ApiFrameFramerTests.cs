@@ -21,6 +21,7 @@ public sealed class ApiFrameFramerTests
         {
             Assert.False(framer.TryReadFrame(bytes.AsSpan(0, size), out _));
         }
+
         Assert.True(framer.TryReadFrame(bytes, out var consumed));
         Assert.Equal(13, consumed);
     }

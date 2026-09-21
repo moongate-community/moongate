@@ -16,13 +16,17 @@ public sealed class ConfiguredConnectionTests
     {
         using var listener = Listen();
         var received = new TaskCompletionSource<byte>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var connecting = MoongateTcpClient.ConnectConfiguredAsync((IPEndPoint)listener.LocalEndPoint!, new TcpClientOptions
-        {
-            Pipeline = new ConnectionPipeline
+        var connecting = MoongateTcpClient.ConnectConfiguredAsync(
+            (IPEndPoint)listener.LocalEndPoint!,
+            new TcpClientOptions
             {
-                ConfigureClient = client => client.OnDataReceived += (_, args) => received.TrySetResult(args.Data.Span[0])
+                Pipeline = new ConnectionPipeline
+                {
+                    ConfigureClient = client =>
+                        client.OnDataReceived += (_, args) => received.TrySetResult(args.Data.Span[0])
+                }
             }
-        });
+        );
         using var peer = await listener.AcceptAsync();
         await peer.SendAsync(new byte[] { 42 }, SocketFlags.None);
         await using var client = await connecting.WaitAsync(Timeout);
@@ -34,17 +38,20 @@ public sealed class ConfiguredConnectionTests
     {
         using var listener = Listen();
         Stream? input = null;
-        var connecting = MoongateTcpClient.ConnectConfiguredAsync((IPEndPoint)listener.LocalEndPoint!, new TcpClientOptions
-        {
-            Pipeline = new ConnectionPipeline
+        var connecting = MoongateTcpClient.ConnectConfiguredAsync(
+            (IPEndPoint)listener.LocalEndPoint!,
+            new TcpClientOptions
             {
-                PrepareStreamAsync = (stream, _) =>
+                Pipeline = new ConnectionPipeline
                 {
-                    input = stream;
-                    return ValueTask.FromException<Stream>(new IOException("preparation failed"));
+                    PrepareStreamAsync = (stream, _) =>
+                    {
+                        input = stream;
+                        return ValueTask.FromException<Stream>(new IOException("preparation failed"));
+                    }
                 }
             }
-        });
+        );
         using var peer = await listener.AcceptAsync();
         await Assert.ThrowsAsync<IOException>(() => connecting.WaitAsync(Timeout));
         Assert.NotNull(input);
@@ -57,17 +64,23 @@ public sealed class ConfiguredConnectionTests
     {
         using var listener = Listen();
         TrackingStream? wrapper = null;
-        var connecting = MoongateTcpClient.ConnectConfiguredAsync((IPEndPoint)listener.LocalEndPoint!, new TcpClientOptions
-        {
-            Pipeline = new ConnectionPipeline
+        var connecting = MoongateTcpClient.ConnectConfiguredAsync(
+            (IPEndPoint)listener.LocalEndPoint!,
+            new TcpClientOptions
             {
-                PrepareStreamAsync = (stream, _) => ValueTask.FromResult<Stream>(wrapper = new TrackingStream(stream)),
-                ConfigureClient = _ =>
+                Pipeline = new ConnectionPipeline
                 {
-                    if (configurationThrows) { throw new IOException("configuration failed"); }
+                    PrepareStreamAsync = (stream, _) => ValueTask.FromResult<Stream>(wrapper = new TrackingStream(stream)),
+                    ConfigureClient = _ =>
+                    {
+                        if (configurationThrows)
+                        {
+                            throw new IOException("configuration failed");
+                        }
+                    }
                 }
             }
-        });
+        );
         using var peer = await listener.AcceptAsync();
         if (configurationThrows)
         {
@@ -82,6 +95,7 @@ public sealed class ConfiguredConnectionTests
             Assert.Equal((byte)7, buffer[0]);
             await client.DisposeAsync();
         }
+
         Assert.NotNull(wrapper);
         Assert.Equal(1, wrapper.DisposeCount);
     }
@@ -92,18 +106,22 @@ public sealed class ConfiguredConnectionTests
         using var listener = Listen();
         using var cancellation = new CancellationTokenSource();
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var connecting = MoongateTcpClient.ConnectConfiguredAsync((IPEndPoint)listener.LocalEndPoint!, new TcpClientOptions
-        {
-            Pipeline = new ConnectionPipeline
+        var connecting = MoongateTcpClient.ConnectConfiguredAsync(
+            (IPEndPoint)listener.LocalEndPoint!,
+            new TcpClientOptions
             {
-                PrepareStreamAsync = async (stream, token) =>
+                Pipeline = new ConnectionPipeline
                 {
-                    entered.TrySetResult();
-                    await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
-                    return stream;
+                    PrepareStreamAsync = async (stream, token) =>
+                    {
+                        entered.TrySetResult();
+                        await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                        return stream;
+                    }
                 }
-            }
-        }, cancellation.Token);
+            },
+            cancellation.Token
+        );
         using var peer = await listener.AcceptAsync();
         await entered.Task.WaitAsync(Timeout);
         await cancellation.CancelAsync();
@@ -116,19 +134,22 @@ public sealed class ConfiguredConnectionTests
     {
         using var listener = Listen();
         var configured = false;
-        var connecting = MoongateTcpClient.ConnectConfiguredAsync((IPEndPoint)listener.LocalEndPoint!, new TcpClientOptions
-        {
-            PreparationTimeout = TimeSpan.FromMilliseconds(50),
-            Pipeline = new ConnectionPipeline
+        var connecting = MoongateTcpClient.ConnectConfiguredAsync(
+            (IPEndPoint)listener.LocalEndPoint!,
+            new TcpClientOptions
             {
-                PrepareStreamAsync = async (stream, token) =>
+                PreparationTimeout = TimeSpan.FromMilliseconds(50),
+                Pipeline = new ConnectionPipeline
                 {
-                    await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
-                    return stream;
-                },
-                ConfigureClient = _ => configured = true
+                    PrepareStreamAsync = async (stream, token) =>
+                    {
+                        await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                        return stream;
+                    },
+                    ConfigureClient = _ => configured = true
+                }
             }
-        });
+        );
         using var peer = await listener.AcceptAsync();
         await Assert.ThrowsAsync<TimeoutException>(() => connecting.WaitAsync(Timeout));
         Assert.False(configured);

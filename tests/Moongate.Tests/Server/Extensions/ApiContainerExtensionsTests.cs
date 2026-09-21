@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Api.Registry;
 using Moongate.Server.Extensions;
 using Moongate.Tests.TestSupport.Api;
+
 namespace Moongate.Tests.Server.Extensions;
 
 public class ApiContainerExtensionsTests

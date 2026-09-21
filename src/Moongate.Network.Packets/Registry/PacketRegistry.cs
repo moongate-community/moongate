@@ -18,7 +18,9 @@ public sealed class PacketRegistry
     public bool IsFrozen { get; private set; }
     public IReadOnlyList<PacketDescriptor> RegisteredPackets => IsFrozen ? _snapshot : CreateSnapshot();
 
-    public PacketRegistry() { }
+    public PacketRegistry()
+    {
+    }
 
     /// <summary>
     /// Registers a packet using the direction inferred from its incoming and outgoing interfaces.
@@ -135,11 +137,11 @@ public sealed class PacketRegistry
     private void Register(PacketDescriptor descriptor, PacketParser? parser)
     {
         var keys = descriptor.Direction == PacketDirection.Both
-                       ? new[]
-                       {
-                           (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing)
-                       }
-                       : new[] { (descriptor.OpCode, descriptor.Direction) };
+            ? new[]
+            {
+                (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing)
+            }
+            : new[] { (descriptor.OpCode, descriptor.Direction) };
         EnsureAvailable(descriptor, keys);
 
         foreach (var key in keys)

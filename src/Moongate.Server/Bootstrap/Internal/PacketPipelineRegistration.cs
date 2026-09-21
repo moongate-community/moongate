@@ -13,14 +13,17 @@ internal static class PacketPipelineRegistration
 {
     internal static Container Register(Container container)
     {
-        container.RegisterDelegate<NetworkListenerOptions>(resolver => GameNetworkOptionsFactory.Create(resolver.Resolve<MoongateServerConfig>()), Reuse.Singleton);
+        container.RegisterDelegate<NetworkListenerOptions>(
+            resolver => GameNetworkOptionsFactory.Create(resolver.Resolve<MoongateServerConfig>()),
+            Reuse.Singleton
+        );
         container.Register<INetworkService, NetworkService>(Reuse.Singleton);
 
         // Default-priority plugin dependencies start before handler binding and remain alive
         // until listeners, connection cleanup, and both packet services have stopped.
         return container.RegisterMoongateService<IConnectionService, ConnectionService>(40)
-                        .RegisterMoongateService<IPacketSendService, PacketSendService>(50)
-                        .RegisterMoongateService<IPacketDispatchService, PacketDispatchService>(60)
-                        .RegisterMoongateService<IGameServerService, GameServerService>(100);
+            .RegisterMoongateService<IPacketSendService, PacketSendService>(50)
+            .RegisterMoongateService<IPacketDispatchService, PacketDispatchService>(60)
+            .RegisterMoongateService<IGameServerService, GameServerService>(100);
     }
 }

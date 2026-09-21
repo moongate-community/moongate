@@ -20,7 +20,13 @@ public sealed class ConnectionService : IConnectionService
     /// <inheritdoc />
     public int Count
     {
-        get { lock (_gate) { return _entries.Count; } }
+        get
+        {
+            lock (_gate)
+            {
+                return _entries.Count;
+            }
+        }
     }
 
     /// <inheritdoc />
@@ -28,9 +34,14 @@ public sealed class ConnectionService : IConnectionService
     {
         lock (_gate)
         {
-            if (_stopped) { throw new InvalidOperationException("The connection registry cannot restart after shutdown."); }
+            if (_stopped)
+            {
+                throw new InvalidOperationException("The connection registry cannot restart after shutdown.");
+            }
+
             _running = true;
         }
+
         return Task.CompletedTask;
     }
 
@@ -48,7 +59,10 @@ public sealed class ConnectionService : IConnectionService
     /// <inheritdoc />
     public IReadOnlyCollection<INetworkConnection> GetAll()
     {
-        lock (_gate) { return _entries.Values.Select(entry => entry.Connection).ToArray(); }
+        lock (_gate)
+        {
+            return _entries.Values.Select(entry => entry.Connection).ToArray();
+        }
     }
 
     /// <inheritdoc />
@@ -58,14 +72,20 @@ public sealed class ConnectionService : IConnectionService
         ConnectionEntry entry;
         lock (_gate)
         {
-            if (!_running || !connection.IsConnected) { return false; }
+            if (!_running || !connection.IsConnected)
+            {
+                return false;
+            }
+
             if (_entries.TryGetValue(connection.SessionId, out var existing))
             {
                 return !existing.IsClosing && ReferenceEquals(existing.Connection, connection);
             }
+
             entry = new ConnectionEntry(connection);
             _entries.Add(connection.SessionId, entry);
         }
+
         _ = ObserveAsync(entry);
         return true;
     }
@@ -77,8 +97,10 @@ public sealed class ConnectionService : IConnectionService
     }
 
     /// <inheritdoc />
-    public bool TryGet(long sessionId, [NotNullWhen(true)] out INetworkConnection? connection,
-        [NotNullWhen(true)] out Task? disconnectRequested)
+    public bool TryGet(
+        long sessionId, [NotNullWhen(true)] out INetworkConnection? connection,
+        [NotNullWhen(true)] out Task? disconnectRequested
+    )
     {
         lock (_gate)
         {
@@ -89,6 +111,7 @@ public sealed class ConnectionService : IConnectionService
                 disconnectRequested = entry.DisconnectRequested.Task;
                 return true;
             }
+
             connection = null;
             disconnectRequested = null;
             return false;
@@ -100,7 +123,11 @@ public sealed class ConnectionService : IConnectionService
     {
         lock (_gate)
         {
-            if (!_entries.TryGetValue(sessionId, out var entry)) { return Task.CompletedTask; }
+            if (!_entries.TryGetValue(sessionId, out var entry))
+            {
+                return Task.CompletedTask;
+            }
+
             RequestClose(entry, ownerRequested: true);
             return entry.Cleanup.Task;
         }
@@ -110,13 +137,18 @@ public sealed class ConnectionService : IConnectionService
     {
         lock (_gate)
         {
-            if (entry.IsClosing) { return; }
+            if (entry.IsClosing)
+            {
+                return;
+            }
+
             entry.IsClosing = true;
             if (ownerRequested && entry.Connection.IsConnected)
             {
                 entry.DisconnectRequested.TrySetResult();
             }
         }
+
         _ = CloseCoreAsync(entry);
     }
 
@@ -139,12 +171,24 @@ public sealed class ConnectionService : IConnectionService
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
         List<Exception> failures = [];
-        try { await entry.Connection.Completion.ConfigureAwait(false); }
-        catch (Exception exception) { failures.Add(exception); }
+        try
+        {
+            await entry.Connection.Completion.ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
 
         RequestClose(entry, ownerRequested: false);
-        try { await entry.CloseRequest.Task.ConfigureAwait(false); }
-        catch (Exception exception) { failures.Add(exception); }
+        try
+        {
+            await entry.CloseRequest.Task.ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
 
         lock (_gate)
         {
@@ -152,8 +196,12 @@ public sealed class ConnectionService : IConnectionService
             {
                 _entries.Remove(entry.Connection.SessionId);
             }
+
             _failures.AddRange(failures);
-            if (failures.Count == 0) { entry.Cleanup.TrySetResult(); }
+            if (failures.Count == 0)
+            {
+                entry.Cleanup.TrySetResult();
+            }
             else
             {
                 entry.Cleanup.TrySetException(new AggregateException(failures));
@@ -161,6 +209,7 @@ public sealed class ConnectionService : IConnectionService
                 _ = entry.Cleanup.Task.Exception;
             }
         }
+
         foreach (var failure in failures)
         {
             _logger.Error(failure, "Connection cleanup failed for session {SessionId}", entry.Connection.SessionId);
@@ -170,11 +219,22 @@ public sealed class ConnectionService : IConnectionService
     private async Task StopCoreAsync(ConnectionEntry[] entries)
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
-        foreach (var entry in entries) { RequestClose(entry, ownerRequested: true); }
+        foreach (var entry in entries)
+        {
+            RequestClose(entry, ownerRequested: true);
+        }
+
         await Task.WhenAll(entries.Select(entry => entry.Cleanup.Task))
-                  .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+            .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         Exception[] failures;
-        lock (_gate) { failures = _failures.ToArray(); }
-        if (failures.Length > 0) { throw new AggregateException(failures); }
+        lock (_gate)
+        {
+            failures = _failures.ToArray();
+        }
+
+        if (failures.Length > 0)
+        {
+            throw new AggregateException(failures);
+        }
     }
 }

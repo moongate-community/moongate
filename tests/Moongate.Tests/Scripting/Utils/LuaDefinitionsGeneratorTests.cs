@@ -49,9 +49,21 @@ public sealed class LuaDefinitionsGeneratorTests
 
         var text = LuaDefinitionsGenerator.Render([module], [typeof(ProbeColour)]);
 
-        Assert.Contains("---@param colour? ProbeColour|string\n---@return integer\nfunction palette.paint(colour) end", text, StringComparison.Ordinal);
-        Assert.Contains("---@param ... ProbeColour|string\n---@return integer\nfunction palette.mix(...) end", text, StringComparison.Ordinal);
-        Assert.Contains("---@param colour? ProbeColour|string\n---@return integer\nfunction palette.tint(colour) end", text, StringComparison.Ordinal);
+        Assert.Contains(
+            "---@param colour? ProbeColour|string\n---@return integer\nfunction palette.paint(colour) end",
+            text,
+            StringComparison.Ordinal
+        );
+        Assert.Contains(
+            "---@param ... ProbeColour|string\n---@return integer\nfunction palette.mix(...) end",
+            text,
+            StringComparison.Ordinal
+        );
+        Assert.Contains(
+            "---@param colour? ProbeColour|string\n---@return integer\nfunction palette.tint(colour) end",
+            text,
+            StringComparison.Ordinal
+        );
     }
 
     [Fact]
@@ -103,7 +115,11 @@ public sealed class LuaDefinitionsGeneratorTests
     {
         var (modules, enums) = BindProbeAndLog();
 
-        Assert.Contains("function wait(seconds) end", LuaDefinitionsGenerator.Render(modules, enums), StringComparison.Ordinal);
+        Assert.Contains(
+            "function wait(seconds) end",
+            LuaDefinitionsGenerator.Render(modules, enums),
+            StringComparison.Ordinal
+        );
     }
 
     [Fact]
@@ -117,12 +133,18 @@ public sealed class LuaDefinitionsGeneratorTests
         Assert.True(File.Exists(Path.Combine(scripts.Path, "definitions.lua")));
         using var luarc = JsonDocument.Parse(File.ReadAllText(Path.Combine(scripts.Path, ".luarc.json")));
         Assert.Equal("Lua 5.2", luarc.RootElement.GetProperty("runtime.version").GetString());
-        var globals = luarc.RootElement.GetProperty("diagnostics.globals").EnumerateArray().Select(element => element.GetString()).ToList();
+        var globals = luarc.RootElement.GetProperty("diagnostics.globals")
+            .EnumerateArray()
+            .Select(element => element.GetString())
+            .ToList();
         Assert.Contains("probe", globals);
         Assert.Contains("log", globals);
         Assert.Contains("ProbeColour", globals);
         Assert.Contains("wait", globals);
-        Assert.Contains("definitions.lua", luarc.RootElement.GetProperty("workspace.library").EnumerateArray().Select(element => element.GetString()!));
+        Assert.Contains(
+            "definitions.lua",
+            luarc.RootElement.GetProperty("workspace.library").EnumerateArray().Select(element => element.GetString()!)
+        );
     }
 
     [Fact]
@@ -144,7 +166,10 @@ public sealed class LuaDefinitionsGeneratorTests
         var modules = Modules();
         var enums = new List<Type> { typeof(ProbeColour) };
         var forward = LuaDefinitionsGenerator.Render(modules, enums);
-        var backward = LuaDefinitionsGenerator.Render(modules.AsEnumerable().Reverse().ToList(), enums.AsEnumerable().Reverse().ToList());
+        var backward = LuaDefinitionsGenerator.Render(
+            modules.AsEnumerable().Reverse().ToList(),
+            enums.AsEnumerable().Reverse().ToList()
+        );
         Assert.Equal(forward, backward);
     }
 

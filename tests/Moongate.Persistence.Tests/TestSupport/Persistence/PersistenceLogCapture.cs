@@ -19,7 +19,10 @@ internal sealed class PersistenceLogCapture : ILogEventSink, IDisposable
         Log.Logger = _logger;
     }
 
-    public void Emit(LogEvent logEvent) { Events.Enqueue(logEvent); }
+    public void Emit(LogEvent logEvent)
+    {
+        Events.Enqueue(logEvent);
+    }
 
     public void Dispose()
     {

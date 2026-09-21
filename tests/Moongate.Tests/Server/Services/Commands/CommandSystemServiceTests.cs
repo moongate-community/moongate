@@ -216,8 +216,12 @@ public sealed class CommandSystemServiceTests
         using var cancellation = new CancellationTokenSource();
         await cancellation.CancelAsync();
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => service.ExecuteAsync("echo hi", CommandSourceType.Console, null, cancellation.Token)
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => service.ExecuteAsync(
+                "echo hi",
+                CommandSourceType.Console,
+                null,
+                cancellation.Token
+            )
         );
 
         Assert.Empty(container.Resolve<RecordingCommandExecutor>().Invocations);

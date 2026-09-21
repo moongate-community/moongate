@@ -15,10 +15,11 @@ public sealed class ContainerEventExtensionsTests
         var received = 0;
 
         var result = container.OnEvent<MoongateStartedEvent>((message, token) =>
-        {
-            received++;
-            return Task.CompletedTask;
-        });
+            {
+                received++;
+                return Task.CompletedTask;
+            }
+        );
 
         Assert.Same(container, result);
         Assert.Equal(0, received);
@@ -59,11 +60,14 @@ public sealed class ContainerEventExtensionsTests
     {
         using var container = new Container();
         var unrelatedResolved = false;
-        container.RegisterDelegate(() =>
-        {
-            unrelatedResolved = true;
-            return new object();
-        }, Reuse.Singleton);
+        container.RegisterDelegate(
+            () =>
+            {
+                unrelatedResolved = true;
+                return new object();
+            },
+            Reuse.Singleton
+        );
 
         container.OnEvent<MoongateStartedEvent>((_, _) => Task.CompletedTask);
 

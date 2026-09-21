@@ -123,10 +123,14 @@ public sealed class PacketDispatchServiceTests
         {
             for (var i = 1; i < 16; i++) Assert.True(fixture.Loop.TryPost(new ActionGameLoopWorkItem(() => { })));
         }
+
         var cleanup = dispatcher.DisconnectAsync(session.SessionId);
         Assert.False(cleanup.IsCompleted);
         blocker.Release();
-        Assert.Same(failure, await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Loop.Completion.WaitAsync(Timeout)));
+        Assert.Same(
+            failure,
+            await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Loop.Completion.WaitAsync(Timeout))
+        );
         await cleanup.WaitAsync(Timeout);
         Assert.Equal(0, sessions.Count);
         Assert.Null(session.NetworkSession.Client);
@@ -138,12 +142,20 @@ public sealed class PacketDispatchServiceTests
     public async Task Disconnect_BeforeDispatcherAndLoopStartCompletesWithoutWaitingForLoop()
     {
         await using var fixture = await SessionFixture.CreateAsync();
-        using var neverStartedLoop = new GameLoopService(new GameLoopOptions(),
-            new TimerWheelService(new TimerWheelOptions(), TimeProvider.System), TimeProvider.System);
+        using var neverStartedLoop = new GameLoopService(
+            new GameLoopOptions(),
+            new TimerWheelService(new TimerWheelOptions(), TimeProvider.System),
+            TimeProvider.System
+        );
         using var container = CreateContainer();
         var sessions = new SessionService(neverStartedLoop);
         var session = sessions.GetOrCreate(fixture.Client);
-        var dispatcher = new PacketDispatchService(neverStartedLoop, sessions, container.Resolve<PacketHandlerRegistry>(), container);
+        var dispatcher = new PacketDispatchService(
+            neverStartedLoop,
+            sessions,
+            container.Resolve<PacketHandlerRegistry>(),
+            container
+        );
         await dispatcher.DisconnectAsync(session.SessionId).WaitAsync(Timeout);
         Assert.False(neverStartedLoop.Completion.IsCompleted);
         Assert.False(sessions.TryGet(session.SessionId, out _));
@@ -206,7 +218,9 @@ public sealed class PacketDispatchServiceTests
         var session = sessions.GetOrCreate(fixture.Client);
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         await dispatcher.StartAsync();
-        await fixture.ExecuteOnLoopAsync(() => Assert.True(dispatcher.DisconnectAsync(session.SessionId).IsCompletedSuccessfully));
+        await fixture.ExecuteOnLoopAsync(() =>
+            Assert.True(dispatcher.DisconnectAsync(session.SessionId).IsCompletedSuccessfully)
+        );
         Assert.False(sessions.TryGet(session.SessionId, out _));
     }
 
@@ -217,7 +231,9 @@ public sealed class PacketDispatchServiceTests
         return container;
     }
 
-    private static PacketDispatchService CreateDispatcher(SessionFixture fixture, SessionService sessions, Container container)
+    private static PacketDispatchService CreateDispatcher(
+        SessionFixture fixture, SessionService sessions, Container container
+    )
     {
         return new PacketDispatchService(fixture.Loop, sessions, container.Resolve<PacketHandlerRegistry>(), container);
     }

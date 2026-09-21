@@ -6,7 +6,7 @@ before the server starts; the host resolves and starts them the same way it star
 its own built-in services.
 
 **What the sample does.** [samples/Moongate.Sample.Plugin/](../samples/Moongate.Sample.Plugin/)
-registers five things: a Realm persistence module/entity, a shared `GreetingCounter` instance, the `greeter` Lua module
+registers five things: a world persistence entity, a shared `GreetingCounter` instance, the `greeter` Lua module
 (with the `Tone` enum it takes), a `greet` console command, and a `greeter` metric
 provider that reports how many greetings were produced.
 
@@ -157,7 +157,6 @@ The sample's plugin class, quoted in full from
 using DryIoc;
 using Moongate.Persistence.Extensions;
 using Moongate.Sample.Plugin.Data.Persistence;
-using Moongate.Sample.Plugin.Persistence;
 using Moongate.Sample.Plugin.Commands;
 using Moongate.Sample.Plugin.Diagnostics;
 using Moongate.Sample.Plugin.Internal;
@@ -187,7 +186,7 @@ public sealed class SamplePlugin : IMoongatePlugin
     /// <inheritdoc />
     public void Register(Container container)
     {
-        container.AddPersistenceModule<GreeterPersistenceModule>().AddPersistenceEntity<GreetingNote>();
+        container.AddPersistenceWorld<GreetingNote>();
         container.RegisterInstance(new GreetingCounter());
         container.RegisterScriptModule<GreeterModule>();
         container.RegisterScriptEnum<Tone>();
@@ -202,13 +201,15 @@ public sealed class SamplePlugin : IMoongatePlugin
 }
 ```
 
-`AddPersistenceModule<GreeterPersistenceModule>()` declares the stable plugin ID,
-`sample_greeter` schema, Realm target, and owned `GreetingNote` type.
-`AddPersistenceEntity<GreetingNote>()` registers its asynchronous data facade.
-Neither call connects or changes the database during plugin registration. The host
+`AddPersistenceWorld<GreetingNote>()` selects the Realm database and registers its
+asynchronous data facade. Moongate creates the internal module for the
+`sample_greeter` schema from the entity's table attribute. No module class is
+required, and registration does not connect or change the database. The host
 validates every plugin registration as one batch, then checks schema readiness
 before resolving any startup service. See [PostgreSQL persistence](persistence.md)
 for attributes, schema review, transactions, and explicit complex-property mapping.
+For a runnable example from the entity class through CRUD operations, follow
+[Create a persistent entity](persistence-entity-tutorial.md).
 
 `container.RegisterInstance(new GreetingCounter())` shares one counter instance
 between the Lua module and the metric provider; `GreetingCounter`
@@ -234,6 +235,38 @@ counter; the diagnostics service combines that with `ProviderName` ("greeter") t
 publish it in a snapshot as `greeter.hello_calls`. See
 [Registering metric providers](#registering-metric-providers).
 
+### Ship versioned SQL with a persistence plugin
+
+Keep entity registration in `Register` with `AddPersistenceAuth<T>()` or
+`AddPersistenceWorld<T>()`. Ship reviewed SQL alongside the plugin DLL:
+
+```text
+MyPlugin/
+  MyPlugin.dll
+  migrations/
+    manifest.json
+    world/0001_create_characters.sql
+```
+
+`manifest.json` contains a stable migration component ID, for example
+`{ "id": "my-plugin" }`. It need not equal the plugin metadata ID; it must remain
+unique and unchanged across releases and folder renames. Add to the plugin project:
+
+```xml
+<ItemGroup>
+  <Content Include="migrations/**/*"
+           CopyToOutputDirectory="PreserveNewest"
+           CopyToPublishDirectory="PreserveNewest" />
+</ItemGroup>
+```
+
+The separate runner discovers SQL and manifests without loading assemblies.
+Core runs first, then plugin component IDs in ordinal order and their numbered
+scripts. Include required earlier migrations when publishing a new plugin version.
+Applied files cannot change. Removing a plugin retains its schema and history.
+The sample plugin includes a complete manifest and initial World migration.
+Follow [Generate, review and apply](persistence.md#generate-review-and-apply).
+
 ## What Register may do
 
 | Registration helper | What it registers | Documented in |
@@ -245,7 +278,7 @@ publish it in a snapshot as `greeter.hello_calls`. See
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
 | `RegisterScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Registering Lua modules](#registering-lua-modules) |
 | `AddMetricProvider<T>()` | An `IMetricProvider` contribution, singleton, added to the diagnostics collector | [Registering metric providers](#registering-metric-providers) |
-| `AddPersistenceModule<TModule>()` / `AddPersistenceEntity<T>()` | One module-owned PostgreSQL schema declaration and an asynchronous typed entity facade (needs a reference to `Moongate.Persistence`) | [PostgreSQL persistence](persistence.md) |
+| `AddPersistenceAuth<T>()` / `AddPersistenceWorld<T>()` | A typed entity facade for Accounts or Realm, with modules managed internally (needs `Moongate.Persistence`) | [PostgreSQL persistence](persistence.md) |
 
 `priority` only matters for a service that also implements `IMoongateStartupService`
 (`src/Moongate.Server.Core/Interfaces/Services/IMoongateStartupService.cs`): the

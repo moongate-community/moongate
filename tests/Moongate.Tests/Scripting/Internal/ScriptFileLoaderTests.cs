@@ -40,7 +40,14 @@ public sealed class ScriptFileLoaderTests
         using var state = NewState();
         var loader = new ScriptFileLoader(state, scripts.Path);
         string? seen = null;
-        state.Environment["probe"] = new LuaFunction("probe", (context, _) => { seen = loader.CurrentFile; return new ValueTask<int>(context.Return()); });
+        state.Environment["probe"] = new LuaFunction(
+            "probe",
+            (context, _) =>
+            {
+                seen = loader.CurrentFile;
+                return new ValueTask<int>(context.Return());
+            }
+        );
 
         loader.Load("ai/guard.lua", default);
 
@@ -142,7 +149,8 @@ public sealed class ScriptFileLoaderTests
         scripts.Write("bad.lua", "this is not lua");
         using var state = NewState();
 
-        var exception = Assert.Throws<LuaCompileException>(() => new ScriptFileLoader(state, scripts.Path).Load("bad.lua", default));
+        var exception =
+            Assert.Throws<LuaCompileException>(() => new ScriptFileLoader(state, scripts.Path).Load("bad.lua", default));
 
         Assert.Contains("bad.lua", exception.Message, StringComparison.Ordinal);
     }

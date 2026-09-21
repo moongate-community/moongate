@@ -22,7 +22,10 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
 
     public PersistenceDatabaseTarget Target => _database.Target;
 
-    public PersistenceTransaction(MoongatePersistenceService owner, PostgreSqlDatabase database, NpgsqlTransaction transaction, CancellationToken cancellationToken)
+    public PersistenceTransaction(
+        MoongatePersistenceService owner, PostgreSqlDatabase database, NpgsqlTransaction transaction,
+        CancellationToken cancellationToken
+    )
     {
         _owner = owner;
         _database = database;
@@ -52,7 +55,9 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         }
     }
 
-    public async Task<TResult> RunAsync<TResult>(Func<IFreeSql, DbTransaction?, CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken)
+    public async Task<TResult> RunAsync<TResult>(
+        Func<IFreeSql, DbTransaction?, CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken
+    )
     {
         var admitted = false;
         try
@@ -69,7 +74,8 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
                 admitted = true;
             }
 
-            using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
+            using var linkedCancellation =
+                CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
             linkedCancellation.Token.ThrowIfCancellationRequested();
             return await operation(_database.Orm, _transaction, linkedCancellation.Token).ConfigureAwait(false);
         }
@@ -91,17 +97,21 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         }
     }
 
-    public Task<int> UpsertSnapshotsAsync<T>(T[] snapshots, CancellationToken cancellationToken) where T : class, IMoongateEntity
+    public Task<int> UpsertSnapshotsAsync<T>(T[] snapshots, CancellationToken cancellationToken)
+        where T : class, IMoongateEntity
     {
-        return RunAsync((orm, transaction, token) =>
-        {
-            if (_owner.GetTarget(typeof(T)) != Target)
+        return RunAsync(
+            (orm, transaction, token) =>
             {
-                throw new InvalidOperationException("Snapshots cannot cross database targets.");
-            }
+                if (_owner.GetTarget(typeof(T)) != Target)
+                {
+                    throw new InvalidOperationException("Snapshots cannot cross database targets.");
+                }
 
-            return orm.InsertOrUpdate<T>().WithTransaction(transaction).SetSource(snapshots).ExecuteAffrowsAsync(token);
-        }, cancellationToken);
+                return orm.InsertOrUpdate<T>().WithTransaction(transaction).SetSource(snapshots).ExecuteAffrowsAsync(token);
+            },
+            cancellationToken
+        );
     }
 
     public void Fail(Exception exception)

@@ -110,9 +110,9 @@ public sealed class CommandRegistry
         }
 
         var aliases = commandName
-                      .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                      .Select(alias => alias.ToLowerInvariant())
-                      .ToArray();
+            .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(alias => alias.ToLowerInvariant())
+            .ToArray();
 
         if (aliases.Length == 0)
         {

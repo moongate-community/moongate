@@ -52,10 +52,11 @@ public sealed class MoongateTcpServerTests
     )
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new MoongateTcpServer(
-            new IPEndPoint(IPAddress.Loopback, 0),
-            receiveBufferSize: receiveBufferSize,
-            maxFrameLength: maxFrameLength
-        ));
+                new IPEndPoint(IPAddress.Loopback, 0),
+                receiveBufferSize: receiveBufferSize,
+                maxFrameLength: maxFrameLength
+            )
+        );
 
         Assert.Equal(parameterName, exception.ParamName);
     }
@@ -82,7 +83,9 @@ public sealed class MoongateTcpServerTests
     {
         var received = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
         await using var server = new MoongateTcpServer(
-            new IPEndPoint(IPAddress.Loopback, 0), framer: new LengthPrefixFramer());
+            new IPEndPoint(IPAddress.Loopback, 0),
+            framer: new LengthPrefixFramer()
+        );
         server.OnDataReceived += (_, args) => received.TrySetResult(args.Data.ToArray());
         await server.StartAsync(CancellationToken.None);
         Assert.True(server.IsRunning);
@@ -112,6 +115,7 @@ public sealed class MoongateTcpServerTests
         {
             occupied.Stop();
         }
+
         await server.StartAsync(CancellationToken.None).WaitAsync(Timeout);
         Assert.True(server.IsRunning);
         Assert.Equal(endpoint.Port, server.Port);
@@ -134,11 +138,15 @@ public sealed class MoongateTcpServerTests
     public async Task StartAsync_ConcurrentCalls_ShareOneListener()
     {
         await using var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
-        var starts = Enumerable.Range(0, 16).Select(_ => Task.Run(async () =>
-        {
-            await server.StartAsync(CancellationToken.None);
-            return server.Port;
-        })).ToArray();
+        var starts = Enumerable.Range(0, 16)
+            .Select(_ => Task.Run(async () =>
+                    {
+                        await server.StartAsync(CancellationToken.None);
+                        return server.Port;
+                    }
+                )
+            )
+            .ToArray();
         var ports = await Task.WhenAll(starts).WaitAsync(Timeout);
         Assert.InRange(ports[0], 1, 65535);
         Assert.All(ports, port => Assert.Equal(ports[0], port));
@@ -164,6 +172,7 @@ public sealed class MoongateTcpServerTests
             handler.Release.Set();
             await Task.WhenAll(stops).WaitAsync(Timeout);
         }
+
         Assert.Equal(0, server.Port);
         Assert.Equal(0, await peer.GetStream().ReadAsync(new byte[1]).AsTask().WaitAsync(Timeout));
     }
@@ -190,6 +199,7 @@ public sealed class MoongateTcpServerTests
             await stop.WaitAsync(Timeout);
             await restart.WaitAsync(Timeout);
         }
+
         Assert.True(server.IsRunning);
         Assert.Equal(0, await peer.GetStream().ReadAsync(new byte[1]).AsTask().WaitAsync(Timeout));
     }
@@ -216,6 +226,7 @@ public sealed class MoongateTcpServerTests
             handler.Release.Set();
             await server.StopAsync(CancellationToken.None).WaitAsync(Timeout);
         }
+
         Assert.Equal(0, server.Port);
         Assert.Equal(0, await peer.GetStream().ReadAsync(new byte[1]).AsTask().WaitAsync(Timeout));
     }
@@ -226,10 +237,12 @@ public sealed class MoongateTcpServerTests
         var attempts = 0;
         var failed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        await using var server = new MoongateTcpServer(new(IPAddress.Loopback, 0),
+        await using var server = new MoongateTcpServer(
+            new(IPAddress.Loopback, 0),
             connectionPipelineFactory: () => failFactory && Interlocked.Increment(ref attempts) == 1
                 ? throw new SocketException((int)SocketError.InvalidArgument)
-                : new ConnectionPipeline());
+                : new ConnectionPipeline()
+        );
         server.OnException += (_, _) => throw new InvalidOperationException("diagnostic failure");
         server.OnException += (_, _) => failed.TrySetResult();
         server.OnClientConnect += (_, _) =>
@@ -238,6 +251,7 @@ public sealed class MoongateTcpServerTests
             {
                 throw new InvalidOperationException("connect failure");
             }
+
             connected.TrySetResult();
         };
         await server.StartAsync(CancellationToken.None);
@@ -320,6 +334,7 @@ public sealed class MoongateTcpServerTests
         {
             await server.DisposeAsync().AsTask().WaitAsync(Timeout);
         }
+
         await Assert.ThrowsAsync<ObjectDisposedException>(() => server.StartAsync(CancellationToken.None));
     }
 
@@ -354,6 +369,7 @@ public sealed class MoongateTcpServerTests
         {
             release.Set();
         }
+
         Assert.Equal(0, server.Port);
     }
 

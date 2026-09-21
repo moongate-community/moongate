@@ -41,24 +41,56 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
     {
         Interlocked.Increment(ref _closeCalls);
         _closeRequested.TrySetResult();
-        if (!DelayDisconnectionState) { Interlocked.Exchange(ref _connected, 0); }
-        if (CloseGate is not null) { await CloseGate.WaitAsync(cancellationToken); }
-        if (CloseFailure is not null) { throw CloseFailure; }
-        if (!DelayCompletion) { Complete(); }
+        if (!DelayDisconnectionState)
+        {
+            Interlocked.Exchange(ref _connected, 0);
+        }
+
+        if (CloseGate is not null)
+        {
+            await CloseGate.WaitAsync(cancellationToken);
+        }
+
+        if (CloseFailure is not null)
+        {
+            throw CloseFailure;
+        }
+
+        if (!DelayCompletion)
+        {
+            Complete();
+        }
     }
 
     public async Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        if (!IsConnected) { throw new IOException("Connection is closed."); }
+        if (!IsConnected)
+        {
+            throw new IOException("Connection is closed.");
+        }
+
         _sendStarted.TrySetResult();
-        if (SendGate is not null) { await SendGate.WaitAsync(cancellationToken); }
+        if (SendGate is not null)
+        {
+            await SendGate.WaitAsync(cancellationToken);
+        }
+
         if (SendFailure is not null)
         {
-            if (CompleteOnSendFailure) { Complete(); }
-            if (SendFailureDeliveryGate is not null) { await SendFailureDeliveryGate; }
+            if (CompleteOnSendFailure)
+            {
+                Complete();
+            }
+
+            if (SendFailureDeliveryGate is not null)
+            {
+                await SendFailureDeliveryGate;
+            }
+
             throw SendFailure;
         }
+
         _sent.Writer.TryWrite(payload.ToArray());
     }
 
@@ -70,8 +102,14 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
     public void Complete(Exception? failure = null)
     {
         Interlocked.Exchange(ref _connected, 0);
-        if (failure is null) { _completion.TrySetResult(); }
-        else { _completion.TrySetException(failure); }
+        if (failure is null)
+        {
+            _completion.TrySetResult();
+        }
+        else
+        {
+            _completion.TrySetException(failure);
+        }
     }
 
     public void Dispose()

@@ -10,8 +10,10 @@ public sealed class DiagnosticSnapshot
     public IReadOnlyDictionary<string, MetricSample> Metrics { get; }
     public IReadOnlyCollection<string> FailedProviders { get; }
 
-    public DiagnosticSnapshot(long sequence, DateTimeOffset collectedAt, TimeSpan collectionDuration,
-        IReadOnlyDictionary<string, MetricSample> metrics, IReadOnlyCollection<string> failedProviders)
+    public DiagnosticSnapshot(
+        long sequence, DateTimeOffset collectedAt, TimeSpan collectionDuration,
+        IReadOnlyDictionary<string, MetricSample> metrics, IReadOnlyCollection<string> failedProviders
+    )
     {
         Sequence = sequence;
         CollectedAt = collectedAt;

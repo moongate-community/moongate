@@ -31,7 +31,9 @@ public sealed class ScriptDirectoryModuleLoaderTests
         state.OpenModuleLibrary();
         state.ModuleLoader = new ScriptDirectoryModuleLoader(scripts.Path);
 
-        Assert.Throws<LuaRuntimeException>(() => SyncValueTask.Run(state.DoStringAsync("return require('nope')", "t", default)));
+        Assert.Throws<LuaRuntimeException>(() =>
+            SyncValueTask.Run(state.DoStringAsync("return require('nope')", "t", default))
+        );
     }
 
     [Theory, InlineData("../secret"), InlineData("/etc/passwd"), InlineData("a/../../b")]
@@ -77,7 +79,9 @@ public sealed class ScriptDirectoryModuleLoaderTests
             return;
         }
 
-        var exception = Assert.Throws<InvalidOperationException>(() => ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "leak.lua"));
+        var exception =
+            Assert.Throws<InvalidOperationException>(() => ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "leak.lua")
+            );
 
         Assert.Contains("through a link", exception.Message, StringComparison.Ordinal);
     }
@@ -94,7 +98,9 @@ public sealed class ScriptDirectoryModuleLoaderTests
             return;
         }
 
-        Assert.Throws<InvalidOperationException>(() => ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "shared/util.lua"));
+        Assert.Throws<InvalidOperationException>(() =>
+            ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "shared/util.lua")
+        );
     }
 
     [Fact]
@@ -128,7 +134,8 @@ public sealed class ScriptDirectoryModuleLoaderTests
 
             return true;
         }
-        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException or PlatformNotSupportedException)
+        catch (Exception exception) when (exception is IOException or UnauthorizedAccessException
+                                              or PlatformNotSupportedException)
         {
             // Creating links needs a privilege on some platforms; the containment check is then untestable here.
             return false;

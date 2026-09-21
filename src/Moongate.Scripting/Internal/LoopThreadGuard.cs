@@ -17,7 +17,8 @@ internal sealed class LoopThreadGuard : IScriptThreadGuard
         if (!_gameLoop.IsOnLoopThread)
         {
             throw new InvalidOperationException(
-                $"{member} must be called on the game loop thread. Post a work item to the loop instead.");
+                $"{member} must be called on the game loop thread. Post a work item to the loop instead."
+            );
         }
     }
 }

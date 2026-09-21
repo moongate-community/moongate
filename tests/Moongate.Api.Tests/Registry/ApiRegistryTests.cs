@@ -1,7 +1,9 @@
 using Moongate.Api.Attributes;
 using Moongate.Api.Registry;
 using Moongate.Api.Tests.TestSupport.Contracts;
+
 namespace Moongate.Api.Tests.Registry;
+
 public sealed class ApiRegistryTests
 {
     [Fact]
@@ -10,7 +12,12 @@ public sealed class ApiRegistryTests
         var registry = new ApiRegistry();
         var resolutions = 0;
         registry.RegisterContract<IncrementRequest, IncrementResponse>();
-        registry.RegisterHandler(() => { resolutions++; return new IncrementHandler(); });
+        registry.RegisterHandler(() =>
+            {
+                resolutions++;
+                return new IncrementHandler();
+            }
+        );
         Assert.Equal(0, resolutions);
         Assert.Equal(1, registry.ContractCount);
         Assert.Equal(1, registry.HandlerCount);
@@ -36,7 +43,13 @@ public sealed class ApiRegistryTests
         var registry = new ApiRegistry();
         registry.Freeze();
         var invoked = false;
-        Assert.Throws<InvalidOperationException>(() => registry.RegisterHandler(() => { invoked = true; return new IncrementHandler(); }));
+        Assert.Throws<InvalidOperationException>(() => registry.RegisterHandler(() =>
+                {
+                    invoked = true;
+                    return new IncrementHandler();
+                }
+            )
+        );
         Assert.False(invoked);
         Assert.Equal(0, registry.HandlerCount);
     }

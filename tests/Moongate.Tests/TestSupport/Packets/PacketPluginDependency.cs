@@ -13,7 +13,10 @@ public sealed class PacketPluginDependency : IMoongateStartupService
     public bool Started { get; private set; }
     public bool Stopped { get; private set; }
 
-    public PacketPluginDependency(IGameLoopService loop, ISessionService sessions, IPacketDispatchService dispatcher, IPacketSendService sender, IConnectionService connections)
+    public PacketPluginDependency(
+        IGameLoopService loop, ISessionService sessions, IPacketDispatchService dispatcher, IPacketSendService sender,
+        IConnectionService connections
+    )
     {
         _connections = connections;
         _loop = loop;

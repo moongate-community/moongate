@@ -62,18 +62,19 @@ public class ValueStringBuilderTests
     public void Append_SpanFormatterReportsInvalidCount_ThrowsWithoutAdvancingLength(bool negativeCount)
     {
         Assert.Throws<FormatException>(() =>
-        {
-            using var builder = new ValueStringBuilder(new char[16].AsSpan());
-            builder.Append("prefix");
-            try
             {
-                builder.Append(new InvalidSpanFormattable(negativeCount));
+                using var builder = new ValueStringBuilder(new char[16].AsSpan());
+                builder.Append("prefix");
+                try
+                {
+                    builder.Append(new InvalidSpanFormattable(negativeCount));
+                }
+                finally
+                {
+                    Assert.Equal("prefix", builder.ToString());
+                }
             }
-            finally
-            {
-                Assert.Equal("prefix", builder.ToString());
-            }
-        });
+        );
     }
 
     [Fact]
@@ -275,18 +276,19 @@ public class ValueStringBuilderTests
     public void Remove_InvalidRange_ThrowsWithoutChangingText(int start, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var builder = new ValueStringBuilder(new char[8].AsSpan());
-            builder.Append("abcdef");
-            try
             {
-                builder.Remove(start, count);
+                using var builder = new ValueStringBuilder(new char[8].AsSpan());
+                builder.Append("abcdef");
+                try
+                {
+                    builder.Remove(start, count);
+                }
+                finally
+                {
+                    Assert.Equal("abcdef", builder.ToString());
+                }
             }
-            finally
-            {
-                Assert.Equal("abcdef", builder.ToString());
-            }
-        });
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -321,18 +323,19 @@ public class ValueStringBuilderTests
     public void Replace_InvalidRange_ThrowsWithoutChangingText(int start, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var builder = new ValueStringBuilder(new char[8].AsSpan());
-            builder.Append("abcdef");
-            try
             {
-                builder.Replace('a', 'X', start, count);
+                using var builder = new ValueStringBuilder(new char[8].AsSpan());
+                builder.Append("abcdef");
+                try
+                {
+                    builder.Replace('a', 'X', start, count);
+                }
+                finally
+                {
+                    Assert.Equal("abcdef", builder.ToString());
+                }
             }
-            finally
-            {
-                Assert.Equal("abcdef", builder.ToString());
-            }
-        });
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -345,18 +348,19 @@ public class ValueStringBuilderTests
     public void ReplaceAny_InvalidRange_ThrowsWithoutChangingText(int start, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var builder = new ValueStringBuilder(new char[8].AsSpan());
-            builder.Append("abcdef");
-            try
             {
-                builder.ReplaceAny("ab", "XY", start, count);
+                using var builder = new ValueStringBuilder(new char[8].AsSpan());
+                builder.Append("abcdef");
+                try
+                {
+                    builder.ReplaceAny("ab", "XY", start, count);
+                }
+                finally
+                {
+                    Assert.Equal("abcdef", builder.ToString());
+                }
             }
-            finally
-            {
-                Assert.Equal("abcdef", builder.ToString());
-            }
-        });
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }

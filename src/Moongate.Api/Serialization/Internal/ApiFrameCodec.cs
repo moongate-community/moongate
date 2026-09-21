@@ -31,12 +31,14 @@ internal sealed class ApiFrameCodec
             {
                 throw new ApiProtocolException("Invalid frame length.");
             }
+
             var reader = new MessagePackReader(frame[sizeof(uint)..]);
 
             if (reader.ReadArrayHeader() != FieldCount || reader.ReadByte() != ProtocolVersion)
             {
                 throw new ApiProtocolException("Unsupported envelope or protocol version.");
             }
+
             var kind = (ApiMessageKind)reader.ReadByte();
             var requestId = reader.ReadUInt32();
             var operationId = reader.ReadUInt16();
@@ -50,8 +52,8 @@ internal sealed class ApiFrameCodec
             return new(kind, requestId, operationId, payload.ToArray());
         }
         catch (Exception exception) when (exception is MessagePackSerializationException or
-                                                       EndOfStreamException or
-                                                       OverflowException)
+                                              EndOfStreamException or
+                                              OverflowException)
         {
             throw new ApiProtocolException("Malformed API envelope.", exception);
         }
@@ -65,6 +67,7 @@ internal sealed class ApiFrameCodec
         {
             throw new ApiProtocolException("Frame limit exceeded.");
         }
+
         var buffer = new ArrayBufferWriter<byte>(
             Math.Max(
                 MaximumHeaderLength,
@@ -85,6 +88,7 @@ internal sealed class ApiFrameCodec
         {
             throw new ApiProtocolException("Frame limit exceeded.");
         }
+
         var frame = new byte[length + sizeof(uint)];
         BinaryPrimitives.WriteUInt32BigEndian(frame, (uint)length);
         buffer.WrittenSpan.CopyTo(frame.AsSpan(sizeof(uint)));

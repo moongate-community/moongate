@@ -15,6 +15,8 @@ internal sealed class DelegateMetricProvider : IMetricProvider, IDisposable
         _collect = collect;
     }
 
-    public ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default) => _collect(cancellationToken);
+    public ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default) =>
+        _collect(cancellationToken);
+
     public void Dispose() => IsDisposed = true;
 }

@@ -1,0 +1,8 @@
+<Project Sdk="Microsoft.NET.Sdk">
+  <PropertyGroup>
+    <IsPackable>true</IsPackable>
+    <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+    <Description>Versioned SQL migration catalogs and immutable PostgreSQL migration history validation.</Description>
+    <PackageTags>moongate;persistence;postgresql;migrations</PackageTags>
+  </PropertyGroup>
+</Project>

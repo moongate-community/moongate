@@ -127,8 +127,7 @@ public sealed class SystemMetricsProviderTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => provider.CollectAsync(cancellation.Token).AsTask());
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => provider.CollectAsync(cancellation.Token).AsTask());
 
         Assert.Equal(0, reader.ReadCount);
     }
@@ -179,8 +178,10 @@ public sealed class SystemMetricsProviderTests
         };
     }
 
-    private static void AssertMetric(IReadOnlyDictionary<string, MetricSample> metrics,
-        string name, double value, string unit, DiagnosticMetricType type)
+    private static void AssertMetric(
+        IReadOnlyDictionary<string, MetricSample> metrics,
+        string name, double value, string unit, DiagnosticMetricType type
+    )
     {
         var metric = metrics[name];
         Assert.Equal(value, metric.Value);
