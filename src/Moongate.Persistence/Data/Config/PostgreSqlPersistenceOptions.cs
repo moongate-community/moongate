@@ -14,6 +14,9 @@ public sealed class PostgreSqlPersistenceOptions
     /// <summary>Gets the optional versioned migration catalog factory, resolved at preparation time.</summary>
     public Func<PersistenceDatabaseTarget, MigrationCatalog?>? MigrationCatalogFactory { get; }
 
+    /// <summary>Gets the optional explicit development migration policy.</summary>
+    public DevelopmentMigrationOptions? DevelopmentMigrations { get; }
+
     /// <summary>Gets whether normal initialization may apply schema changes.</summary>
     public bool AutoSynchronizeSchema { get; }
 
@@ -35,10 +38,17 @@ public sealed class PostgreSqlPersistenceOptions
         IEnumerable<PersistenceDatabaseOptions> databases,
         bool autoSynchronizeSchema = false,
         Func<PersistenceDatabaseTarget, MigrationCatalog?>? migrationCatalogFactory = null,
-        Func<PersistenceDatabaseTarget, bool>? activateMigrationTarget = null
+        Func<PersistenceDatabaseTarget, bool>? activateMigrationTarget = null,
+        DevelopmentMigrationOptions? developmentMigrations = null
     )
     {
         ArgumentNullException.ThrowIfNull(databases);
+        if (autoSynchronizeSchema && developmentMigrations is not null)
+        {
+            throw new ArgumentException("Automatic schema synchronization and migration generation are mutually exclusive.");
+        }
+
+        DevelopmentMigrations = developmentMigrations;
         var configured = new Dictionary<PersistenceDatabaseTarget, PersistenceDatabaseOptions>();
 
         foreach (var database in databases)
@@ -56,7 +66,7 @@ public sealed class PostgreSqlPersistenceOptions
 
         _databases = configured;
         AutoSynchronizeSchema = autoSynchronizeSchema;
-        MigrationCatalogFactory = migrationCatalogFactory;
+        MigrationCatalogFactory = developmentMigrations is null ? migrationCatalogFactory : developmentMigrations.Load;
         ActivateMigrationTarget = activateMigrationTarget;
     }
 

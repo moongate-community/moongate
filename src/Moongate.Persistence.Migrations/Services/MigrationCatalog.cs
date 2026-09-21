@@ -20,8 +20,13 @@ public sealed partial class MigrationCatalog
     /// <summary>Gets installed components, including those with no SQL for this target.</summary>
     public IReadOnlySet<string> Components { get; }
 
-    private MigrationCatalog(MigrationTarget target, List<MigrationScript> scripts, HashSet<string> components)
+    /// <summary>Gets the absolute migrations root for each installed component.</summary>
+    public IReadOnlyDictionary<string, string> SourceDirectories { get; }
+
+    private MigrationCatalog(MigrationTarget target, List<MigrationScript> scripts, HashSet<string> components,
+        IReadOnlyDictionary<string, string> sources)
     {
+        SourceDirectories = sources.ToFrozenDictionary(StringComparer.Ordinal);
         Target = target;
         Scripts = scripts.AsReadOnly();
         Components = components.ToFrozenSet(StringComparer.Ordinal);
@@ -74,7 +79,7 @@ public sealed partial class MigrationCatalog
                     );
                 }
 
-                sources.Add(id, migrations);
+                sources.Add(id, Path.GetFullPath(migrations));
             }
         }
 
@@ -85,7 +90,8 @@ public sealed partial class MigrationCatalog
             scripts.AddRange(ReadComponent(path, id, target));
         }
 
-        return new(target, scripts, components);
+        sources.Add("core", Path.GetFullPath(directory));
+        return new(target, scripts, components, sources);
     }
 
     [GeneratedRegex("^[a-z][a-z0-9-]{0,62}$", RegexOptions.CultureInvariant)]

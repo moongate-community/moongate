@@ -10,6 +10,47 @@ namespace Moongate.Tests.Server.Data.Config.Sections;
 [Collection(EnvironmentTestsCollection.Name)]
 public sealed class PersistenceConfigTests
 {
+    [Fact]
+    public void Validate_AutomaticPoliciesConflict_RejectsBeforeDatabaseAccess()
+    {
+        var config = new PersistenceConfig
+        {
+            AutoSyncSchema = true,
+            AutoGenerateMigrations = true,
+            MigrationsDirectory = "/tmp/moongate-source/migrations"
+        };
+        Assert.Throws<InvalidOperationException>(config.Validate);
+    }
+
+    [Fact]
+    public void Validate_AutomaticGenerationRequiresExplicitSourceDirectory()
+    {
+        var config = new PersistenceConfig { AutoGenerateMigrations = true };
+        Assert.Throws<InvalidOperationException>(config.Validate);
+        Assert.False(new PersistenceConfig().AutoGenerateMigrations);
+    }
+
+    [Fact]
+    public void RoundTrip_DevelopmentMigrations_PreservesSourceDirectory()
+    {
+        var config = new MoongateServerConfig();
+        config.Persistence.AutoGenerateMigrations = true;
+        config.Persistence.MigrationsDirectory = "${MOONGATE_SOURCE}/migrations";
+        var path = Path.Combine(Path.GetTempPath(), $"moongate-{Guid.NewGuid():N}.toml");
+        try
+        {
+            TomlUtils.SerializeToFile(config, path);
+            Assert.Contains("auto_generate_migrations = true", File.ReadAllText(path));
+            var restored = TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!;
+            Assert.True(restored.Persistence.AutoGenerateMigrations);
+            Assert.Equal(config.Persistence.MigrationsDirectory, restored.Persistence.MigrationsDirectory);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
     [Theory, InlineData(PersistenceDatabaseTarget.Accounts, "auth"), InlineData(PersistenceDatabaseTarget.Realm, "world")]
     public void Defaults_ResolveLocalDatabaseWithoutEnvironment(PersistenceDatabaseTarget target, string database)
     {

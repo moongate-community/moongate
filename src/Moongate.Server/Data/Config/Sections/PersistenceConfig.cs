@@ -1,3 +1,4 @@
+using Moongate.Core.Extensions.Directories;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Migrations.Services;
 using Moongate.Persistence.Migrations.Types.Migrations;
@@ -10,6 +11,11 @@ namespace Moongate.Server.Data.Config.Sections;
 public sealed class PersistenceConfig
 {
     public bool AutoSyncSchema { get; set; }
+
+    public bool AutoGenerateMigrations { get; set; }
+
+    public string? MigrationsDirectory { get; set; }
+
 
     public PersistenceDatabaseConfig Accounts { get; set; } =
         new() { ConnectionString = "postgres://moongate:moongate@localhost:5432/auth" };
@@ -24,6 +30,7 @@ public sealed class PersistenceConfig
     )
     {
         Validate();
+        migrationsDirectory = ResolveMigrationsDirectory(migrationsDirectory);
 
         return new(
             [
@@ -42,8 +49,23 @@ public sealed class PersistenceConfig
         );
     }
 
+    public string? ResolveMigrationsDirectory(string? fallback = null)
+        => string.IsNullOrWhiteSpace(MigrationsDirectory)
+               ? fallback
+               : MigrationsDirectory.ResolvePathAndEnvs();
+
     public void Validate()
     {
+        if (AutoGenerateMigrations && AutoSyncSchema)
+        {
+            throw new InvalidOperationException("auto_generate_migrations and auto_sync_schema are mutually exclusive.");
+        }
+
+        if (AutoGenerateMigrations && string.IsNullOrWhiteSpace(MigrationsDirectory))
+        {
+            throw new InvalidOperationException("auto_generate_migrations requires an explicit source migrations_directory.");
+        }
+
         if (Accounts is null || Realm is null)
         {
             throw new InvalidOperationException("Persistence accounts and realm configuration sections cannot be null.");

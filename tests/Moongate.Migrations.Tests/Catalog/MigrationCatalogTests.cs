@@ -8,6 +8,20 @@ namespace Moongate.Migrations.Tests.Catalog;
 public sealed class MigrationCatalogTests
 {
     [Fact]
+    public void Load_ExposesStableComponentSourceDirectories()
+    {
+        using var files = new Moongate.Migrations.Tests.TestSupport.MigrationFiles();
+        files.Write("plugins/MyPlugin/migrations/manifest.json", "{\"id\":\"my-plugin\"}");
+        var catalog = MigrationCatalog.Load(files.Core, files.Plugins, MigrationTarget.Auth);
+        Assert.Equal(Path.GetFullPath(files.Core), catalog.SourceDirectories["core"]);
+        Assert.Equal(
+            Path.Combine(files.Plugins, "MyPlugin", "migrations"),
+            catalog.SourceDirectories["my-plugin"]
+        );
+        Assert.Throws<KeyNotFoundException>(() => catalog.SourceDirectories["unknown"]);
+    }
+
+    [Fact]
     public void Load_NormalizesLineEndingsForPortableChecksums()
     {
         using var files = new MigrationFiles();
