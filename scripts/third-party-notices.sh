@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
-# Regenerates THIRD-PARTY-NOTICES.md from the dependency graph of the shard host,
-# which transitively covers every package this repository ships.
+# Regenerates THIRD-PARTY-NOTICES.md from the separate dependency graphs of the
+# shard host and migration runner, preserving both versions of shared packages.
 #
 # Build-only packages such as analyzers and source generators appear in the list
 # too. Naming a package that is never distributed costs nothing, while leaving one
@@ -11,7 +11,8 @@ cd "$(dirname "$0")/.."
 
 output=THIRD-PARTY-NOTICES.md
 table=$(mktemp)
-trap 'rm -f "$table"' EXIT
+runner_table=$(mktemp)
+trap 'rm -f "$table" "$runner_table"' EXIT
 
 dotnet tool restore >/dev/null
 dotnet nuget-license \
@@ -19,6 +20,11 @@ dotnet nuget-license \
     --include-transitive \
     --output Markdown \
     --file-output "$table"
+dotnet nuget-license \
+    --input src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj \
+    --include-transitive \
+    --output Markdown \
+    --file-output "$runner_table"
 
 {
     echo "# Third-party notices"
@@ -31,7 +37,16 @@ dotnet nuget-license \
     echo "fails when the result differs from the copy committed here, so the notices that"
     echo "ship beside the binaries always describe what those binaries contain."
     echo
+    echo "## Server"
+    echo
     cat "$table"
+    echo
+    echo "## Separate migration runner"
+    echo
+    echo "The \`migration-runner/\` executable has its own dependency graph. Versions"
+    echo "listed here belong to that executable and do not replace server dependencies."
+    echo
+    cat "$runner_table"
 } >"$output"
 
 echo "Wrote $output"
