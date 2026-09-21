@@ -133,8 +133,8 @@ public sealed class StringList
 
         public int Compare(StringEntry x, StringEntry y)
             => _sortDescending
-                ? string.CompareOrdinal(y.Text, x.Text)
-                : string.CompareOrdinal(x.Text, y.Text);
+                   ? string.CompareOrdinal(y.Text, x.Text)
+                   : string.CompareOrdinal(x.Text, y.Text);
     }
 
     public StringEntry GetEntry(int number)
@@ -150,6 +150,7 @@ public sealed class StringList
     public void SaveStringList(string fileName)
     {
         using var memoryStream = new MemoryStream();
+
         using (var bin = new BinaryWriter(memoryStream))
         {
             // Sort entries by number
@@ -202,6 +203,7 @@ public sealed class StringList
             // Write the final output to the file
             using var fileStream = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.None);
             using var bin = new BinaryWriter(fileStream);
+
             // Write the headers at the beginning
             bin.Write(_header1);
             bin.Write(_header2);

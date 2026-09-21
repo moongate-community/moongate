@@ -22,45 +22,46 @@ public sealed class TimerMetricsProvider : IMetricProvider
         var snapshot = _timers.GetMetricsSnapshot();
         IReadOnlyList<MetricSample> samples =
         [
-            new MetricSample("active_timers", snapshot.ActiveTimers, "count", DiagnosticMetricType.Gauge),
-            new MetricSample(
+            new("active_timers", snapshot.ActiveTimers, "count", DiagnosticMetricType.Gauge),
+            new(
                 "registered_timers_total",
                 snapshot.RegisteredTimers,
                 "count",
                 DiagnosticMetricType.Counter
             ),
-            new MetricSample(
+            new(
                 "executed_callbacks_total",
                 snapshot.ExecutedCallbacks,
                 "count",
                 DiagnosticMetricType.Counter
             ),
-            new MetricSample("callback_faults_total", snapshot.CallbackFaults, "count", DiagnosticMetricType.Counter),
-            new MetricSample(
+            new("callback_faults_total", snapshot.CallbackFaults, "count", DiagnosticMetricType.Counter),
+            new(
                 "coalesced_occurrences_total",
                 snapshot.CoalescedOccurrences,
                 "count",
                 DiagnosticMetricType.Counter
             ),
-            new MetricSample(
+            new(
                 "max_lateness_seconds",
                 snapshot.MaxLateness.TotalSeconds,
                 "seconds",
                 DiagnosticMetricType.Gauge
             ),
-            new MetricSample(
+            new(
                 "max_callback_duration_seconds",
                 snapshot.MaxCallbackDuration.TotalSeconds,
                 "seconds",
                 DiagnosticMetricType.Gauge
             ),
-            new MetricSample(
+            new(
                 "last_batch_duration_seconds",
                 snapshot.LastBatchDuration.TotalSeconds,
                 "seconds",
                 DiagnosticMetricType.Gauge
             )
         ];
+
         return ValueTask.FromResult(samples);
     }
 }

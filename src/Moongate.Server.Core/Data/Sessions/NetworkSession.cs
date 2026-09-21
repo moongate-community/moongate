@@ -82,37 +82,11 @@ public sealed class NetworkSession
         _state = NetworkSessionState.AwaitingSeed;
     }
 
-    public void SetState(NetworkSessionState state)
+    public void DetachClient()
     {
         lock (_sync)
         {
-            if (_state == NetworkSessionState.Disconnected && state == NetworkSessionState.Disconnected)
-            {
-                return;
-            }
-
-            ThrowIfDisconnected();
-            if (!Enum.IsDefined(state))
-            {
-                throw new ArgumentOutOfRangeException(nameof(state));
-            }
-
-            if (state == NetworkSessionState.Disconnected)
-            {
-                DetachClientUnsafe();
-                return;
-            }
-
-            _state = state;
-        }
-    }
-
-    public void SetSeed(uint seed)
-    {
-        lock (_sync)
-        {
-            ThrowIfDisconnected();
-            _seed = seed;
+            DetachClientUnsafe();
         }
     }
 
@@ -126,11 +100,39 @@ public sealed class NetworkSession
         }
     }
 
-    public void DetachClient()
+    public void SetSeed(uint seed)
     {
         lock (_sync)
         {
-            DetachClientUnsafe();
+            ThrowIfDisconnected();
+            _seed = seed;
+        }
+    }
+
+    public void SetState(NetworkSessionState state)
+    {
+        lock (_sync)
+        {
+            if (_state == NetworkSessionState.Disconnected && state == NetworkSessionState.Disconnected)
+            {
+                return;
+            }
+
+            ThrowIfDisconnected();
+
+            if (!Enum.IsDefined(state))
+            {
+                throw new ArgumentOutOfRangeException(nameof(state));
+            }
+
+            if (state == NetworkSessionState.Disconnected)
+            {
+                DetachClientUnsafe();
+
+                return;
+            }
+
+            _state = state;
         }
     }
 

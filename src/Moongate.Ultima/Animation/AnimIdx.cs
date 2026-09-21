@@ -30,6 +30,7 @@ public sealed class AnimIdx
         // BinaryReader must not close it, or the next FileIndex.Seek pays a
         // full re-open.
         using var bin = new BinaryReader(stream, Encoding.UTF8, true);
+
         for (var i = 0; i < PaletteCapacity; ++i)
         {
             Palette[i] = (ushort)(bin.ReadUInt16() ^ 0x8000);

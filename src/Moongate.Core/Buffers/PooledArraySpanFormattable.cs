@@ -23,9 +23,6 @@ public struct PooledArraySpanFormattable : ISpanFormattable, IDisposable
 
     public ReadOnlySpan<char> Chars => _arrayToReturnToPool.AsSpan(.._pos);
 
-    public static implicit operator string(PooledArraySpanFormattable f)
-        => f.ToString();
-
     public string ToString(string? format = null, IFormatProvider formatProvider = null)
     {
         _value ??= new(_arrayToReturnToPool.AsSpan(0, _pos));
@@ -62,6 +59,9 @@ public struct PooledArraySpanFormattable : ISpanFormattable, IDisposable
 
         return true;
     }
+
+    public static implicit operator string(PooledArraySpanFormattable f)
+        => f.ToString();
 
     public void Dispose()
     {

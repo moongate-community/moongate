@@ -15,6 +15,7 @@ public sealed class PostgreSqlPersistenceOptionsTests
             () =>
             {
                 resolutions++;
+
                 return "Host=localhost;Database=realm;Username=runtime";
             }
         );
@@ -23,21 +24,6 @@ public sealed class PostgreSqlPersistenceOptionsTests
 
         Assert.False(options.AutoSynchronizeSchema);
         Assert.Equal(0, resolutions);
-    }
-
-    [Fact]
-    public void ToString_DoesNotExposeConnectionStrings()
-    {
-        const string connectionMarker = "must-not-appear";
-        var database = new PersistenceDatabaseOptions(
-            PersistenceDatabaseTarget.Realm,
-            $"Host=localhost;Database=realm;Username=runtime;ApplicationName={connectionMarker}",
-            $"Host=localhost;Database=realm;Username=schema;ApplicationName={connectionMarker}"
-        );
-        var options = new PostgreSqlPersistenceOptions([database]);
-
-        Assert.DoesNotContain(connectionMarker, database.ToString(), StringComparison.Ordinal);
-        Assert.DoesNotContain(connectionMarker, options.ToString(), StringComparison.Ordinal);
     }
 
     [Fact]
@@ -68,5 +54,20 @@ public sealed class PostgreSqlPersistenceOptionsTests
         Assert.DoesNotContain(marker, error.ToString(), StringComparison.Ordinal);
         Assert.Contains(separateSchema ? "schema" : "runtime", error.Message);
         Assert.Contains("Npgsql", error.Message);
+    }
+
+    [Fact]
+    public void ToString_DoesNotExposeConnectionStrings()
+    {
+        const string connectionMarker = "must-not-appear";
+        var database = new PersistenceDatabaseOptions(
+            PersistenceDatabaseTarget.Realm,
+            $"Host=localhost;Database=realm;Username=runtime;ApplicationName={connectionMarker}",
+            $"Host=localhost;Database=realm;Username=schema;ApplicationName={connectionMarker}"
+        );
+        var options = new PostgreSqlPersistenceOptions([database]);
+
+        Assert.DoesNotContain(connectionMarker, database.ToString(), StringComparison.Ordinal);
+        Assert.DoesNotContain(connectionMarker, options.ToString(), StringComparison.Ordinal);
     }
 }

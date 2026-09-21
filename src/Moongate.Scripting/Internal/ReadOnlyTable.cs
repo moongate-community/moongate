@@ -12,13 +12,13 @@ internal static class ReadOnlyTable
     public static LuaTable Wrap(LuaTable hidden, string name)
     {
         var metatable = new LuaTable();
-        metatable["__index"] = new LuaValue(hidden);
+        metatable["__index"] = new(hidden);
         metatable["__newindex"] = new LuaFunction(
             "__newindex",
-            (context, _) => throw new LuaRuntimeException(context.State, new LuaValue($"'{name}' is read-only"), 1)
+            (context, _) => throw new LuaRuntimeException(context.State, new LuaValue($"'{name}' is read-only"))
         );
-        metatable["__metatable"] = new LuaValue("locked");
+        metatable["__metatable"] = new("locked");
 
-        return new LuaTable { Metatable = metatable };
+        return new() { Metatable = metatable };
     }
 }

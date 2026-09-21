@@ -6,6 +6,16 @@ namespace Moongate.Tests.Core.Geometry;
 
 public class Rectangle3DTests
 {
+    [Fact]
+    public void Contains_TwoDimensionalPoint_IgnoresElevation()
+    {
+        var rectangle = new Rectangle3D(10, 20, -5, 4, 5, 6);
+        Assert.True(rectangle.Contains(new Point2D(10, 20)));
+        Assert.True(rectangle.Contains((IPoint2D)new Point3D(10, 20, 500)));
+        Assert.False(rectangle.Contains((IPoint2D)new Point2D(14, 20)));
+        Assert.False(default(Rectangle3D).Contains(Point3D.Zero));
+    }
+
     [Theory,
      InlineData(10, 20, -5, true),
      InlineData(13, 24, 0, true),
@@ -22,19 +32,38 @@ public class Rectangle3DTests
     }
 
     [Fact]
-    public void Contains_TwoDimensionalPoint_IgnoresElevation()
+    public void Formatting_UsesProviderAndRejectsSmallDestination()
+    {
+        var rectangle = new Rectangle3D(-1, 2, 3, 4, 5, 6);
+        var provider = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
+        provider.NegativeSign = "minus";
+        Assert.Equal("(minus1, 2, 3)+(4, 5, 6)", rectangle.ToString(null, provider));
+        Span<char> destination = stackalloc char[32];
+        Assert.True(rectangle.TryFormat(destination, out var written, default, provider));
+        Assert.Equal("(minus1, 2, 3)+(4, 5, 6)", destination[..written].ToString());
+        Assert.False(rectangle.TryFormat(destination[..2], out written, default, provider));
+        Assert.Equal(0, written);
+    }
+
+    [Fact]
+    public void MakeHold_ExpandsAllDimensionsAndMaintainsValueEquality()
     {
         var rectangle = new Rectangle3D(10, 20, -5, 4, 5, 6);
-        Assert.True(rectangle.Contains(new Point2D(10, 20)));
-        Assert.True(rectangle.Contains((IPoint2D)new Point3D(10, 20, 500)));
-        Assert.False(rectangle.Contains((IPoint2D)new Point2D(14, 20)));
-        Assert.False(default(Rectangle3D).Contains(Point3D.Zero));
+        rectangle.MakeHold(new(8, 22, -10, 10, 10, 20));
+        var expected = new Rectangle3D(8, 20, -10, 10, 12, 20);
+        Assert.Equal(expected, rectangle);
+        Assert.True(rectangle == expected);
+        Assert.False(rectangle != expected);
+        Assert.True(rectangle.Equals((object)expected));
+        Assert.Equal(expected.GetHashCode(), rectangle.GetHashCode());
+        Assert.Equal(new(18, 32, 10), rectangle.End);
+        Assert.Equal(20, rectangle.Depth);
     }
 
     [Theory, InlineData("(10, 20, -5)+(4, 5, 6)"), InlineData(" (+10, +20, -5) + (+4, +5, +6) ")]
     public void Parse_PositionAndSize_ProducesExpectedBounds(string text)
     {
-        var expected = new Rectangle3D(new Point3D(10, 20, -5), new Point3D(14, 25, 1));
+        var expected = new Rectangle3D(new(10, 20, -5), new(14, 25, 1));
         Assert.Equal(expected, Rectangle3D.Parse(text));
         Assert.True(Rectangle3D.TryParse(text, null, out var actual));
         Assert.Equal(expected, actual);
@@ -52,34 +81,5 @@ public class Rectangle3DTests
         Assert.False(Rectangle3D.TryParse(text, null, out var result));
         Assert.Equal(default, result);
         Assert.Throws<FormatException>(() => Rectangle3D.Parse(text!));
-    }
-
-    [Fact]
-    public void MakeHold_ExpandsAllDimensionsAndMaintainsValueEquality()
-    {
-        var rectangle = new Rectangle3D(10, 20, -5, 4, 5, 6);
-        rectangle.MakeHold(new Rectangle3D(8, 22, -10, 10, 10, 20));
-        var expected = new Rectangle3D(8, 20, -10, 10, 12, 20);
-        Assert.Equal(expected, rectangle);
-        Assert.True(rectangle == expected);
-        Assert.False(rectangle != expected);
-        Assert.True(rectangle.Equals((object)expected));
-        Assert.Equal(expected.GetHashCode(), rectangle.GetHashCode());
-        Assert.Equal(new Point3D(18, 32, 10), rectangle.End);
-        Assert.Equal(20, rectangle.Depth);
-    }
-
-    [Fact]
-    public void Formatting_UsesProviderAndRejectsSmallDestination()
-    {
-        var rectangle = new Rectangle3D(-1, 2, 3, 4, 5, 6);
-        var provider = (NumberFormatInfo)CultureInfo.InvariantCulture.NumberFormat.Clone();
-        provider.NegativeSign = "minus";
-        Assert.Equal("(minus1, 2, 3)+(4, 5, 6)", rectangle.ToString(null, provider));
-        Span<char> destination = stackalloc char[32];
-        Assert.True(rectangle.TryFormat(destination, out var written, default, provider));
-        Assert.Equal("(minus1, 2, 3)+(4, 5, 6)", destination[..written].ToString());
-        Assert.False(rectangle.TryFormat(destination[..2], out written, default, provider));
-        Assert.Equal(0, written);
     }
 }

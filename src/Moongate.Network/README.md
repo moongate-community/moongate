@@ -42,6 +42,7 @@ dotnet add package Moongate.Network
 Start a loopback listener on an available port and stop it cleanly:
 
 <!-- nuget-smoke:Program.cs -->
+
 ```csharp
 using System.Net;
 using Moongate.Network.Server;
@@ -65,7 +66,9 @@ for a runnable framed client/server exchange, per-connection middleware and clea
 
 This package depends on Serilog and has no dependency on other Moongate packages.
 
-TCP is a byte stream. Configure framing for your application protocol; transport reads do not define game-packet boundaries. This library does not automatically decode Ultima Online packets or dispatch work into a game loop. Use `Moongate.Network.Packets` for UO packet definitions and serialization.
+TCP is a byte stream. Configure framing for your application protocol; transport reads do not define game-packet boundaries.
+This library does not automatically decode Ultima Online packets or dispatch work into a game loop. Use
+`Moongate.Network.Packets` for UO packet definitions and serialization.
 
 ## Abstract connection metadata
 
@@ -91,4 +94,7 @@ and `INetworkService` contracts live in `Moongate.Server.Core`, not in this tran
 
 Licensed under AGPL-3.0-or-later. See the [source repository and license](https://github.com/moongate-community/moongate).
 
-For graceful application shutdown, `StopAcceptingAsync()` closes the listener and cancels unfinished stream preparation while established connections remain usable. `IsRunning` becomes false during this drain, while `Endpoint` retains a safe snapshot of the bound address and port. Drain application work, then call `StopAsync()` or `DisposeAsync()`. A new listener generation requires a complete stop before restart.
+For graceful application shutdown, `StopAcceptingAsync()` closes the listener and cancels unfinished stream preparation while
+established connections remain usable. `IsRunning` becomes false during this drain, while `Endpoint` retains a safe snapshot
+of the bound address and port. Drain application work, then call `StopAsync()` or `DisposeAsync()`. A new listener generation
+requires a complete stop before restart.

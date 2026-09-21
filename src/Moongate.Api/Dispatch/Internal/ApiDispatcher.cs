@@ -185,9 +185,7 @@ internal sealed class ApiDispatcher
                     await ExecuteAsync(call).ConfigureAwait(false);
                 }
             }
-            catch (OperationCanceledException) when (call.Token.IsCancellationRequested)
-            {
-            }
+            catch (OperationCanceledException) when (call.Token.IsCancellationRequested) { }
             catch (Exception exception)
             {
                 Fail(exception);
@@ -255,8 +253,8 @@ internal sealed class ApiDispatcher
         {
             var context = new ApiRequestContext(_connection, call.Envelope.RequestId, call.Envelope.OperationId);
             var response = await call.Operation
-                .InvokeAsync(context, request, _options.MaxFrameLength, call.Token)
-                .ConfigureAwait(false);
+                                     .InvokeAsync(context, request, _options.MaxFrameLength, call.Token)
+                                     .ConfigureAwait(false);
 
             if (call.IsTerminal)
             {

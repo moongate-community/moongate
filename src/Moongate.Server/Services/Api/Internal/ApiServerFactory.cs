@@ -1,6 +1,5 @@
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
-using Moongate.Api.Data.Config;
 using Moongate.Api.Data.Security;
 using Moongate.Api.Registry;
 using Moongate.Api.Server;
@@ -16,6 +15,7 @@ internal static class ApiServerFactory
         using var certificate = new ApiCertificateStore().Load(config, directories, clock);
         var configDirectory = directories["config"];
         var roots = new List<X509Certificate2>();
+
         try
         {
             foreach (var path in config.TrustedRootPaths)
@@ -32,11 +32,12 @@ internal static class ApiServerFactory
                 ),
                 StringComparer.OrdinalIgnoreCase
             );
-            return new ApiServer(
-                new IPEndPoint(IPAddress.Parse(config.ListenAddress), config.Port),
+
+            return new(
+                new(IPAddress.Parse(config.ListenAddress), config.Port),
                 registry,
-                new ApiOptions(),
-                new ApiTlsOptions
+                new(),
+                new()
                 {
                     Certificate = certificate,
                     TrustedRoots = roots,

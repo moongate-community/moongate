@@ -48,7 +48,7 @@ public class DirectoriesConfig
         var directoryTypes = _directories.ToList();
 
         foreach (var path in directoryTypes.Select(GetPath)
-                     .Where(path => !Directory.Exists(path)))
+                                           .Where(path => !Directory.Exists(path)))
         {
             Directory.CreateDirectory(path);
         }

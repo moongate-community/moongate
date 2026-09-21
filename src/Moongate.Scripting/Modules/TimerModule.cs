@@ -27,21 +27,11 @@ internal sealed class TimerModule
         _ownership = ownership;
     }
 
-    /// <summary>Runs <paramref name="fn"/> once, <paramref name="seconds"/> from now, as a coroutine.</summary>
-    /// <returns>A handle for <see cref="Cancel"/>.</returns>
+    /// <summary>Runs <paramref name="fn" /> once, <paramref name="seconds" /> from now, as a coroutine.</summary>
+    /// <returns>A handle for <see cref="Cancel" />.</returns>
     [ScriptFunction(helpText: "Runs fn once after the given seconds. Returns a handle for cancel.")]
     public string After(double seconds, LuaValue fn)
-    {
-        return Schedule(seconds, fn, repeat: false);
-    }
-
-    /// <summary>Runs <paramref name="fn"/> every <paramref name="seconds"/> until cancelled, each run as a coroutine.</summary>
-    /// <returns>A handle for <see cref="Cancel"/>.</returns>
-    [ScriptFunction(helpText: "Runs fn every given seconds until cancelled. Returns a handle for cancel.")]
-    public string Every(double seconds, LuaValue fn)
-    {
-        return Schedule(seconds, fn, repeat: true);
-    }
+        => Schedule(seconds, fn, false);
 
     /// <summary>Cancels a pending timer by handle.</summary>
     /// <returns>False when no timer with that handle is pending.</returns>
@@ -52,6 +42,12 @@ internal sealed class TimerModule
 
         return _timers.UnregisterTimer(handle);
     }
+
+    /// <summary>Runs <paramref name="fn" /> every <paramref name="seconds" /> until cancelled, each run as a coroutine.</summary>
+    /// <returns>A handle for <see cref="Cancel" />.</returns>
+    [ScriptFunction(helpText: "Runs fn every given seconds until cancelled. Returns a handle for cancel.")]
+    public string Every(double seconds, LuaValue fn)
+        => Schedule(seconds, fn, true);
 
     private string Schedule(double seconds, LuaValue fn, bool repeat)
     {
@@ -83,8 +79,8 @@ internal sealed class TimerModule
 
                 _scheduler.Start(function, owner);
             },
-            delay: null,
-            repeat: repeat
+            null,
+            repeat
         );
         _ownership.TrackTimer(owner, handle);
 

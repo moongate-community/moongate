@@ -13,21 +13,15 @@ public static class ContainerExtensions
         public Container RegisterMoongateService<TService, TImplementation>(int priority = 0)
             where TService : class
             where TImplementation : class, TService
-        {
-            return container.RegisterMoongateService(typeof(TService), typeof(TImplementation), priority);
-        }
+            => container.RegisterMoongateService(typeof(TService), typeof(TImplementation), priority);
 
         /// <summary>Registers a concrete singleton service as itself.</summary>
         public Container RegisterMoongateService<TImplementation>(int priority = 0)
             where TImplementation : class
-        {
-            return container.RegisterMoongateService(typeof(TImplementation), priority);
-        }
+            => container.RegisterMoongateService(typeof(TImplementation), priority);
 
         /// <summary>Registers a singleton service using types known at runtime.</summary>
-        public Container RegisterMoongateService(
-            Type serviceType, Type implementationType, int priority = 0
-        )
+        public Container RegisterMoongateService(Type serviceType, Type implementationType, int priority = 0)
         {
             ArgumentNullException.ThrowIfNull(container);
             ArgumentNullException.ThrowIfNull(serviceType);
@@ -40,26 +34,18 @@ public static class ContainerExtensions
 
         /// <summary>Registers a concrete singleton service as itself using its runtime type.</summary>
         public Container RegisterMoongateService(Type implementationType, int priority = 0)
-        {
-            return container.RegisterMoongateService(implementationType, implementationType, priority);
-        }
+            => container.RegisterMoongateService(implementationType, implementationType, priority);
 
         /// <summary>Registers an existing instance and records its actual implementation type.</summary>
         public Container RegisterMoongateService<TService>(TService instance, int priority = 0)
             where TService : class
-        {
-            return container.RegisterMoongateService(typeof(TService), (object)instance, priority);
-        }
+            => container.RegisterMoongateService(typeof(TService), instance, priority);
 
         /// <summary>Registers an existing implementation under a service contract.</summary>
-        public Container RegisterMoongateService<TService, TImplementation>(
-            TImplementation instance, int priority = 0
-        )
+        public Container RegisterMoongateService<TService, TImplementation>(TImplementation instance, int priority = 0)
             where TService : class
             where TImplementation : class, TService
-        {
-            return container.RegisterMoongateService(typeof(TService), (object)instance, priority);
-        }
+            => container.RegisterMoongateService(typeof(TService), instance, priority);
 
         /// <summary>Registers an existing instance under a service type known at runtime.</summary>
         public Container RegisterMoongateService(Type serviceType, object instance, int priority = 0)
@@ -76,62 +62,51 @@ public static class ContainerExtensions
         /// <summary>Registers a lazy singleton factory with access to the dependency resolver.</summary>
         /// <remarks>The concrete implementation type determines startup metadata before the factory runs.</remarks>
         public Container RegisterMoongateService<TService, TImplementation>(
-            Func<IResolverContext, TImplementation> factory, int priority = 0
+            Func<IResolverContext, TImplementation> factory,
+            int priority = 0
         )
             where TService : class
             where TImplementation : class, TService
-        {
-            return container.RegisterMoongateService(typeof(TService), typeof(TImplementation), factory, priority);
-        }
+            => container.RegisterMoongateService(typeof(TService), typeof(TImplementation), factory, priority);
 
         /// <summary>Registers a concrete service as itself using a lazy factory with access to the dependency resolver.</summary>
         public Container RegisterMoongateService<TImplementation>(
-            Func<IResolverContext, TImplementation> factory, int priority = 0
+            Func<IResolverContext, TImplementation> factory,
+            int priority = 0
         )
             where TImplementation : class
-        {
-            return container.RegisterMoongateService<TImplementation, TImplementation>(factory, priority);
-        }
+            => container.RegisterMoongateService<TImplementation, TImplementation>(factory, priority);
 
         /// <summary>Registers a lazy singleton factory without resolver parameters.</summary>
         /// <remarks>The concrete implementation type determines startup metadata before the factory runs.</remarks>
-        public Container RegisterMoongateService<TService, TImplementation>(
-            Func<TImplementation> factory, int priority = 0
-        )
+        public Container RegisterMoongateService<TService, TImplementation>(Func<TImplementation> factory, int priority = 0)
             where TService : class
             where TImplementation : class, TService
-        {
-            return container.RegisterMoongateService(typeof(TService), typeof(TImplementation), factory, priority);
-        }
+            => container.RegisterMoongateService(typeof(TService), typeof(TImplementation), factory, priority);
 
         /// <summary>Registers a concrete service as itself using a lazy factory without resolver parameters.</summary>
-        public Container RegisterMoongateService<TImplementation>(
-            Func<TImplementation> factory, int priority = 0
-        )
+        public Container RegisterMoongateService<TImplementation>(Func<TImplementation> factory, int priority = 0)
             where TImplementation : class
-        {
-            return container.RegisterMoongateService<TImplementation, TImplementation>(factory, priority);
-        }
+            => container.RegisterMoongateService<TImplementation, TImplementation>(factory, priority);
 
         /// <summary>Registers a concrete runtime type as itself using a lazy factory with access to the dependency resolver.</summary>
         public Container RegisterMoongateService(
-            Type implementationType, Func<IResolverContext, object> factory, int priority = 0
+            Type implementationType,
+            Func<IResolverContext, object> factory,
+            int priority = 0
         )
-        {
-            return container.RegisterMoongateService(implementationType, implementationType, factory, priority);
-        }
+            => container.RegisterMoongateService(implementationType, implementationType, factory, priority);
 
         /// <summary>Registers a concrete runtime type as itself using a lazy factory without resolver parameters.</summary>
-        public Container RegisterMoongateService(
-            Type implementationType, Func<object> factory, int priority = 0
-        )
-        {
-            return container.RegisterMoongateService(implementationType, implementationType, factory, priority);
-        }
+        public Container RegisterMoongateService(Type implementationType, Func<object> factory, int priority = 0)
+            => container.RegisterMoongateService(implementationType, implementationType, factory, priority);
 
         /// <summary>Registers a lazy singleton factory using explicit runtime service and implementation types.</summary>
         public Container RegisterMoongateService(
-            Type serviceType, Type implementationType, Func<object> factory, int priority = 0
+            Type serviceType,
+            Type implementationType,
+            Func<object> factory,
+            int priority = 0
         )
         {
             ArgumentNullException.ThrowIfNull(factory);
@@ -145,8 +120,10 @@ public static class ContainerExtensions
         /// The factory must return an instance compatible with that implementation type.
         /// </remarks>
         public Container RegisterMoongateService(
-            Type serviceType, Type implementationType,
-            Func<IResolverContext, object> factory, int priority = 0
+            Type serviceType,
+            Type implementationType,
+            Func<IResolverContext, object> factory,
+            int priority = 0
         )
         {
             ArgumentNullException.ThrowIfNull(container);

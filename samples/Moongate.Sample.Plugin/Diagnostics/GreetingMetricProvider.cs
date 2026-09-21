@@ -13,7 +13,7 @@ public sealed class GreetingMetricProvider : IMetricProvider
     /// <inheritdoc />
     public string ProviderName => "greeter";
 
-    /// <summary>Initializes a new instance of the <see cref="GreetingMetricProvider"/> class.</summary>
+    /// <summary>Initializes a new instance of the <see cref="GreetingMetricProvider" /> class.</summary>
     /// <param name="counter">The counter the module increments.</param>
     public GreetingMetricProvider(GreetingCounter counter)
     {
@@ -25,8 +25,8 @@ public sealed class GreetingMetricProvider : IMetricProvider
     {
         cancellationToken.ThrowIfCancellationRequested();
         IReadOnlyList<MetricSample> samples =
-            [new MetricSample("hello_calls", _counter.Count, "calls", DiagnosticMetricType.Counter)];
+            [new("hello_calls", _counter.Count, "calls", DiagnosticMetricType.Counter)];
 
-        return new ValueTask<IReadOnlyList<MetricSample>>(samples);
+        return new(samples);
     }
 }

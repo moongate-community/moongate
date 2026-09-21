@@ -60,7 +60,7 @@ internal sealed class ApiConnectionSetup
         }
 
         return targetHost is null
-            ? _policy.PrepareServerAsync(stream, peer => _peer = peer, token)
-            : _policy.PrepareClientAsync(stream, targetHost, expectedPeerId!, peer => _peer = peer, token);
+                   ? _policy.PrepareServerAsync(stream, peer => _peer = peer, token)
+                   : _policy.PrepareClientAsync(stream, targetHost, expectedPeerId!, peer => _peer = peer, token);
     }
 }

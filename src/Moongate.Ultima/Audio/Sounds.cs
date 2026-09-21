@@ -192,6 +192,7 @@ public static class Sounds
         }
 
         using var reader = new StreamReader(path);
+
         while (reader.ReadLine() is { } line)
         {
             line = line.Trim();
@@ -290,6 +291,7 @@ public static class Sounds
         using var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var binidx = new BinaryWriter(fsidx);
         using var binmul = new BinaryWriter(fsmul);
+
         for (var i = 0; i < _cache.Length; ++i)
         {
             var sound = _cache[i];
@@ -386,6 +388,7 @@ public static class Sounds
             using var output = new BinaryWriter(outputMemoryStream);
             using var inputMemoryStream = new MemoryStream(inputBuffer);
             using var input = new BinaryReader(inputMemoryStream);
+
             // RIFF HEADER
             if (input.ReadString(4) != "RIFF")
             {
@@ -427,9 +430,7 @@ public static class Sounds
 
                     if (waveFormat != WaveFormatType.PCM)
                     {
-                        throw new WaveFormatException(
-                            "Format not supported: PCM expected but " + waveFormat + " given!"
-                        );
+                        throw new WaveFormatException("Format not supported: PCM expected but " + waveFormat + " given!");
                     }
 
                     output.Write((short)waveFormat);
@@ -438,9 +439,7 @@ public static class Sounds
 
                     if (channels != 1)
                     {
-                        throw new WaveFormatException(
-                            "Only Mono supported, but " + channels + " channels given!"
-                        );
+                        throw new WaveFormatException("Only Mono supported, but " + channels + " channels given!");
                     }
 
                     output.Write(channels);
@@ -449,9 +448,7 @@ public static class Sounds
 
                     if (frequency != 22050)
                     {
-                        throw new WaveFormatException(
-                            "Only 22050Hz supported, but " + frequency + "Hz given!"
-                        );
+                        throw new WaveFormatException("Only 22050Hz supported, but " + frequency + "Hz given!");
                     }
 
                     output.Write(frequency);
@@ -467,9 +464,7 @@ public static class Sounds
 
                     if (depth != 16)
                     {
-                        throw new WaveFormatException(
-                            "Only 16 bits supported, but " + depth + " bits given!"
-                        );
+                        throw new WaveFormatException("Only 16 bits supported, but " + depth + " bits given!");
                     }
 
                     output.Write(depth);

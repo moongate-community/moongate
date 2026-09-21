@@ -30,13 +30,47 @@ public sealed class PacketDispatchService : IPacketDispatchService
     private bool _stopped;
 
     public PacketDispatchService(
-        IGameLoopService gameLoop, ISessionService sessions, PacketHandlerRegistry registry, IResolverContext resolver
+        IGameLoopService gameLoop,
+        ISessionService sessions,
+        PacketHandlerRegistry registry,
+        IResolverContext resolver
     )
     {
         _gameLoop = gameLoop;
         _sessions = sessions;
         _registry = registry;
         _resolver = resolver;
+    }
+
+    /// <inheritdoc />
+    public Task DisconnectAsync(long sessionId)
+    {
+        lock (_gate)
+        {
+            if (!_everStarted || _gameLoop.IsOnLoopThread || _gameLoop.Completion.IsCompleted)
+            {
+                var retirement = new SessionRetirementWorkItem(_sessions, sessionId);
+                retirement.Execute();
+
+                return retirement.Completion;
+            }
+
+            if (_disconnects.TryGetValue(sessionId, out var pending))
+            {
+                return pending;
+            }
+
+            if (!_sessions.TryGet(sessionId, out _))
+            {
+                return Task.CompletedTask;
+            }
+
+            var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            _disconnects.Add(sessionId, completion.Task);
+            _ = RetireAsync(sessionId, completion);
+
+            return completion.Task;
+        }
     }
 
     /// <inheritdoc />
@@ -90,6 +124,7 @@ public sealed class PacketDispatchService : IPacketDispatchService
             if (!_handlers.TryGetValue(packet.GetType(), out var handler))
             {
                 _logger.Debug("No packet handler for {PacketType} on session {SessionId}", packet.GetType().Name, sessionId);
+
                 return false;
             }
 
@@ -110,36 +145,8 @@ public sealed class PacketDispatchService : IPacketDispatchService
                 packet.GetType().Name,
                 sessionId
             );
+
             return false;
-        }
-    }
-
-    /// <inheritdoc />
-    public Task DisconnectAsync(long sessionId)
-    {
-        lock (_gate)
-        {
-            if (!_everStarted || _gameLoop.IsOnLoopThread || _gameLoop.Completion.IsCompleted)
-            {
-                var retirement = new SessionRetirementWorkItem(_sessions, sessionId);
-                retirement.Execute();
-                return retirement.Completion;
-            }
-
-            if (_disconnects.TryGetValue(sessionId, out var pending))
-            {
-                return pending;
-            }
-
-            if (!_sessions.TryGet(sessionId, out _))
-            {
-                return Task.CompletedTask;
-            }
-
-            var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            _disconnects.Add(sessionId, completion.Task);
-            _ = RetireAsync(sessionId, completion);
-            return completion.Task;
         }
     }
 
@@ -149,10 +156,12 @@ public sealed class PacketDispatchService : IPacketDispatchService
         {
             var retirement = new SessionRetirementWorkItem(_sessions, sessionId);
             using var cancellation = new CancellationTokenSource();
+
             try
             {
                 // Exactly one admission waiter per disconnect, never one per incoming packet.
                 var admission = _gameLoop.PostAsync(retirement, cancellation.Token).AsTask();
+
                 if (await Task.WhenAny(admission, _gameLoop.Completion).ConfigureAwait(false) == _gameLoop.Completion)
                 {
                     await cancellation.CancelAsync().ConfigureAwait(false);
@@ -167,6 +176,7 @@ public sealed class PacketDispatchService : IPacketDispatchService
             }
 
             await Task.WhenAny(retirement.Completion, _gameLoop.Completion).ConfigureAwait(false);
+
             if (!retirement.Completion.IsCompleted)
             {
                 // Terminal completion guarantees there is no concurrent game work to race with retirement.

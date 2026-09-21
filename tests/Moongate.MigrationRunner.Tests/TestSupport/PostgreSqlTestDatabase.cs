@@ -22,24 +22,6 @@ public sealed class PostgreSqlTestDatabase : IAsyncDisposable
         ConnectionString = connectionString;
     }
 
-    public async Task ExecuteAsync(string sql)
-    {
-        await using var connection = new NpgsqlConnection(ConnectionString);
-        await connection.OpenAsync();
-        await using var command = new NpgsqlCommand(sql, connection);
-        await command.ExecuteNonQueryAsync();
-    }
-
-    public async Task<T?> ScalarAsync<T>(string sql)
-    {
-        await using var connection = new NpgsqlConnection(ConnectionString);
-        await connection.OpenAsync();
-        await using var command = new NpgsqlCommand(sql, connection);
-        var result = await command.ExecuteScalarAsync();
-
-        return result is null or DBNull ? default : (T)result;
-    }
-
     public async ValueTask DisposeAsync()
     {
         if (_disposed)
@@ -56,5 +38,23 @@ public sealed class PostgreSqlTestDatabase : IAsyncDisposable
             connection
         );
         await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task ExecuteAsync(string sql)
+    {
+        await using var connection = new NpgsqlConnection(ConnectionString);
+        await connection.OpenAsync();
+        await using var command = new NpgsqlCommand(sql, connection);
+        await command.ExecuteNonQueryAsync();
+    }
+
+    public async Task<T?> ScalarAsync<T>(string sql)
+    {
+        await using var connection = new NpgsqlConnection(ConnectionString);
+        await connection.OpenAsync();
+        await using var command = new NpgsqlCommand(sql, connection);
+        var result = await command.ExecuteScalarAsync();
+
+        return result is null or DBNull ? default : (T)result;
     }
 }

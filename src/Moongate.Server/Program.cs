@@ -85,8 +85,8 @@ await ConsoleApp.RunAsync(
             processGuard = PidFileGuard.Acquire(rootDirectory, pidFileName);
         }
         catch (Exception exception) when (exception is InvalidOperationException or
-                                              IOException or
-                                              UnauthorizedAccessException)
+                                                       IOException or
+                                                       UnauthorizedAccessException)
         {
             await Console.Error.WriteLineAsync($"Moongate startup aborted: {exception.Message}");
             Environment.ExitCode = 1;
@@ -101,7 +101,7 @@ await ConsoleApp.RunAsync(
 
         var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "scripts"]);
 
-        var serverArgs = new MoongateServerArgs()
+        var serverArgs = new MoongateServerArgs
         {
             LogLevel = logLevel,
             LogPackets = logPackets,
@@ -127,23 +127,23 @@ await ConsoleApp.RunAsync(
 
         var consoleLogger = new LoggerConfiguration()
 
-            // pass-through: the outer logger owns level policy
-            .MinimumLevel
-            .Verbose()
-            .WriteTo
-            .Console(
-                new ExpressionTemplate(
-                    "{@t:HH:mm:ss.fff} {@l:u3} " +
-                    "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
-                    " | {@m}\n{@x}",
-                    theme: TemplateTheme.Code
-                )
-            )
-            .CreateLogger();
+                            // pass-through: the outer logger owns level policy
+                            .MinimumLevel
+                            .Verbose()
+                            .WriteTo
+                            .Console(
+                                new ExpressionTemplate(
+                                    "{@t:HH:mm:ss.fff} {@l:u3} " +
+                                    "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
+                                    " | {@m}\n{@x}",
+                                    theme: TemplateTheme.Code
+                                )
+                            )
+                            .CreateLogger();
 
         var loggingConfiguration = new LoggerConfiguration()
-            .WriteTo
-            .Sink(new PromptAwareConsoleSink(consolePrompt, consoleLogger));
+                                   .WriteTo
+                                   .Sink(new PromptAwareConsoleSink(consolePrompt, consoleLogger));
 
         if (logToFile)
         {
@@ -152,6 +152,7 @@ await ConsoleApp.RunAsync(
             var logFilePath = Path.Combine(directoriesConfig["logs"], "moongate-.clef");
 
             loggingConfiguration = loggingConfiguration.WriteTo.File(
+
                 // One JSON object per line, keeping the message template and its
                 // properties separate so a log reader can group events by template.
                 new CompactJsonFormatter(),
@@ -168,7 +169,8 @@ await ConsoleApp.RunAsync(
         var serverConfig = ConfigHelper.Load(Path.Combine(directoriesConfig["config"], "moongate.toml"));
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
-            .RegisterServices(services =>
+            .RegisterServices(
+                services =>
                 {
                     services.RegisterInstance(directoriesConfig);
                     services.RegisterInstance(serverArgs);
@@ -177,7 +179,7 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(serverConfig.Scripting.ToOptions(directoriesConfig["scripts"]));
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
                     services.RegisterInstance(new GameLoopOptions());
-                    services.RegisterInstance<TimeProvider>(TimeProvider.System);
+                    services.RegisterInstance(TimeProvider.System);
                     services.RegisterInstance(new TimerWheelOptions());
                     services.RegisterDelegate<ITimerService>(
                         resolver => resolver.Resolve<TimerWheelService>(),
@@ -190,50 +192,49 @@ await ConsoleApp.RunAsync(
                         Reuse.Singleton
                     );
                     services.RegisterMoongatePersistence(
-                            serverConfig.Persistence.ToOptions(
-                                Path.Combine(AppContext.BaseDirectory, "migrations"),
-                                directoriesConfig["plugins"],
-                                serverConfig.Mode
+                                serverConfig.Persistence.ToOptions(
+                                    Path.Combine(AppContext.BaseDirectory, "migrations"),
+                                    directoriesConfig["plugins"],
+                                    serverConfig.Mode
+                                )
                             )
-                        )
-                        .RegisterMoongateService<TimerWheelService>(priority: -900)
-                        .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
-                        .RegisterMoongateService<IUltimaDataService, UltimaDataService>(-10)
-                        .RegisterMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
-                        .RegisterMoongateService<ISessionService, SessionService>()
-                        .RegisterMoongateService<IEventBusService, EventBusService>();
+                            .RegisterMoongateService<TimerWheelService>(-900)
+                            .RegisterMoongateService<IGameLoopService, GameLoopService>(-800)
+                            .RegisterMoongateService<IUltimaDataService, UltimaDataService>(-10)
+                            .RegisterMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
+                            .RegisterMoongateService<ISessionService, SessionService>()
+                            .RegisterMoongateService<IEventBusService, EventBusService>();
 
                     services.AddMetricProvider<SystemMetricsProvider>()
-                        .AddMetricProvider<GameLoopMetricsProvider>()
-                        .AddMetricProvider<TimerMetricsProvider>()
-                        .AddMetricProvider<SessionMetricsProvider>();
+                            .AddMetricProvider<GameLoopMetricsProvider>()
+                            .AddMetricProvider<TimerMetricsProvider>()
+                            .AddMetricProvider<SessionMetricsProvider>();
                     services.RegisterMoongateService<IDiagnosticService, DiagnosticService>(
-                            DiagnosticService.StartupPriority
-                        )
-                        .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(() =>
-                            new PluginLoaderService(services, directoriesConfig)
-                        )
-                        .RegisterPacketHandler<PingPacket, PingPacketHandler>()
-                        .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>()
-                        .RegisterMoongateService<ICommandSystemService, CommandSystemService>()
-                        .RegisterCommand<EchoCommand>(
-                            "echo|e",
-                            "Echoes back its arguments.",
-                            CommandSourceType.Console | CommandSourceType.InGame,
-                            AccountType.Regular
-                        )
-                        .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(
-                            LuaScriptEngineService.StartupPriority
-                        )
-                        .RegisterScriptModule<LogModule>()
-                        .RegisterCommand<ScriptCommand>(
-                            "script",
-                            "Reloads a script file or prints the engine's counters: script reload <file> | script metrics.",
-                            CommandSourceType.Console,
-                            AccountType.Administrator
-                        )
-                        .RegisterMoongateService<IConsolePromptService>(consolePrompt)
-                        .RegisterMoongateService<IConsoleInputService, ConsoleInputService>(priority: 1000);
+                                DiagnosticService.StartupPriority
+                            )
+                            .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
+                                () =>
+                                    new(services, directoriesConfig)
+                            )
+                            .RegisterPacketHandler<PingPacket, PingPacketHandler>()
+                            .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>()
+                            .RegisterMoongateService<ICommandSystemService, CommandSystemService>()
+                            .RegisterCommand<EchoCommand>(
+                                "echo|e",
+                                "Echoes back its arguments.",
+                                CommandSourceType.Console | CommandSourceType.InGame,
+                                AccountType.Regular
+                            )
+                            .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(
+                                LuaScriptEngineService.StartupPriority
+                            )
+                            .RegisterScriptModule<LogModule>()
+                            .RegisterCommand<ScriptCommand>(
+                                "script",
+                                "Reloads a script file or prints the engine's counters: script reload <file> | script metrics."
+                            )
+                            .RegisterMoongateService<IConsolePromptService>(consolePrompt)
+                            .RegisterMoongateService<IConsoleInputService, ConsoleInputService>(1000);
 
                     PacketPipelineRegistration.Register(services);
                     ApiServerRegistration.Register(services);

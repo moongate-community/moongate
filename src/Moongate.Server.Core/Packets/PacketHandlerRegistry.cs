@@ -64,12 +64,13 @@ public sealed class PacketHandlerRegistry
 
             _registrations.Add(
                 typeof(TPacket),
-                new PacketHandlerRegistration(
+                new(
                     typeof(TPacket),
                     typeof(THandler),
                     resolver =>
                     {
                         var handler = resolver.Resolve<THandler>();
+
                         return (session, packet) => handler.Handle(session, (TPacket)packet);
                     }
                 )

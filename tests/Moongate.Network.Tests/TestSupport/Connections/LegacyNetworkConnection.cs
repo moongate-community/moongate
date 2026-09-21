@@ -13,12 +13,8 @@ internal sealed class LegacyNetworkConnection : INetworkConnection
     public Task Completion => Task.CompletedTask;
 
     public Task CloseAsync(CancellationToken cancellationToken = default)
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 
     public Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 }

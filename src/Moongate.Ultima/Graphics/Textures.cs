@@ -158,6 +158,7 @@ public sealed class Textures
         using (var binIdx = new BinaryWriter(memIdx))
         {
             using var binMul = new BinaryWriter(memMul);
+
             for (var index = 0; index < GetIdxLength(); ++index)
             {
                 if (_cache[index] == null)

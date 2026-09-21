@@ -95,6 +95,7 @@ public sealed class SpeechList
         }
 
         using var sr = new StreamReader(fileName);
+
         while (sr.ReadLine() is { } line)
         {
             line = line.Trim();
@@ -184,6 +185,7 @@ public sealed class SpeechList
 
         using var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var bin = new BinaryWriter(fs);
+
         foreach (var entry in Entries)
         {
             bin.Write(BinaryPrimitives.ReverseEndianness(entry.Id));

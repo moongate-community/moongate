@@ -70,11 +70,11 @@ public static class UopUtils
     public static ulong HashFileName(string s)
     {
         uint eax,
-            ecx,
-            edx,
-            ebx,
-            esi,
-            edi;
+             ecx,
+             edx,
+             ebx,
+             esi,
+             edi;
 
         eax = ecx = edx = ebx = esi = edi = 0;
         ebx = edi = esi = (uint)s.Length + 0xDEADBEEF;

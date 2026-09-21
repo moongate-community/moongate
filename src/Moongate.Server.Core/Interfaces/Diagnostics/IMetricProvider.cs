@@ -10,7 +10,7 @@ public interface IMetricProvider
 
     /// <summary>
     /// Collects a fresh metric list. Implementations observe cancellation before accessing their source and may
-    /// throw <see cref="OperationCanceledException"/>; the diagnostic service does not invoke an instance concurrently.
+    /// throw <see cref="OperationCanceledException" />; the diagnostic service does not invoke an instance concurrently.
     /// </summary>
     ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default);
 }

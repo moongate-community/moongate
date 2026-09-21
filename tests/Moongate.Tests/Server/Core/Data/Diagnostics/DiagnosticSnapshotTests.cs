@@ -19,8 +19,8 @@ public sealed class DiagnosticSnapshotTests
             metrics,
             failedProviders
         );
-        metrics["system.cpu"] = new MetricSample("cpu", 99d, "percent", DiagnosticMetricType.Gauge);
-        metrics["system.memory"] = new MetricSample("memory", 512d, "bytes", DiagnosticMetricType.Gauge);
+        metrics["system.cpu"] = new("cpu", 99d, "percent", DiagnosticMetricType.Gauge);
+        metrics["system.memory"] = new("memory", 512d, "bytes", DiagnosticMetricType.Gauge);
         failedProviders.Clear();
 
         Assert.Equal(7, snapshot.Sequence);

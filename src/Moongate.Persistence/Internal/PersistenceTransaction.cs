@@ -23,7 +23,9 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
     public PersistenceDatabaseTarget Target => _database.Target;
 
     public PersistenceTransaction(
-        MoongatePersistenceService owner, PostgreSqlDatabase database, NpgsqlTransaction transaction,
+        MoongatePersistenceService owner,
+        PostgreSqlDatabase database,
+        NpgsqlTransaction transaction,
         CancellationToken cancellationToken
     )
     {
@@ -33,6 +35,44 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         _cancellationToken = cancellationToken;
     }
 
+    public async Task CompleteCallbackAsync()
+    {
+        Task drain;
+
+        lock (_sync)
+        {
+            _accepting = false;
+
+            if (_active)
+            {
+                _failure ??= new InvalidOperationException("The callback returned with an operation still running.");
+                drain = (_drained = new(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
+            }
+            else
+            {
+                drain = Task.CompletedTask;
+            }
+        }
+
+        await drain.ConfigureAwait(false);
+
+        lock (_sync)
+        {
+            if (_failure is not null)
+            {
+                throw new InvalidOperationException("The persistence transaction failed and cannot commit.", _failure);
+            }
+        }
+    }
+
+    public void Fail(Exception exception)
+    {
+        lock (_sync)
+        {
+            _failure ??= exception;
+        }
+    }
+
     public IDataAccess<T> GetDataAccess<T>() where T : class, IMoongateEntity
     {
         try
@@ -40,6 +80,7 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
             lock (_sync)
             {
                 EnsureUsable();
+
                 if (_owner.GetTarget(typeof(T)) != Target)
                 {
                     throw new InvalidOperationException("Transactions cannot cross database targets.");
@@ -51,20 +92,24 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         catch (Exception exception)
         {
             Fail(exception);
+
             throw;
         }
     }
 
     public async Task<TResult> RunAsync<TResult>(
-        Func<IFreeSql, DbTransaction?, CancellationToken, Task<TResult>> operation, CancellationToken cancellationToken
+        Func<IFreeSql, DbTransaction?, CancellationToken, Task<TResult>> operation,
+        CancellationToken cancellationToken
     )
     {
         var admitted = false;
+
         try
         {
             lock (_sync)
             {
                 EnsureUsable();
+
                 if (_active)
                 {
                     throw new InvalidOperationException("Concurrent operations on a persistence transaction are forbidden.");
@@ -77,11 +122,13 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
             using var linkedCancellation =
                 CancellationTokenSource.CreateLinkedTokenSource(_cancellationToken, cancellationToken);
             linkedCancellation.Token.ThrowIfCancellationRequested();
+
             return await operation(_database.Orm, _transaction, linkedCancellation.Token).ConfigureAwait(false);
         }
         catch (Exception exception)
         {
             Fail(exception);
+
             throw;
         }
         finally
@@ -99,8 +146,7 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
 
     public Task<int> UpsertSnapshotsAsync<T>(T[] snapshots, CancellationToken cancellationToken)
         where T : class, IMoongateEntity
-    {
-        return RunAsync(
+        => RunAsync(
             (orm, transaction, token) =>
             {
                 if (_owner.GetTarget(typeof(T)) != Target)
@@ -112,42 +158,6 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
             },
             cancellationToken
         );
-    }
-
-    public void Fail(Exception exception)
-    {
-        lock (_sync)
-        {
-            _failure ??= exception;
-        }
-    }
-
-    public async Task CompleteCallbackAsync()
-    {
-        Task drain;
-        lock (_sync)
-        {
-            _accepting = false;
-            if (_active)
-            {
-                _failure ??= new InvalidOperationException("The callback returned with an operation still running.");
-                drain = (_drained = new(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
-            }
-            else
-            {
-                drain = Task.CompletedTask;
-            }
-        }
-
-        await drain.ConfigureAwait(false);
-        lock (_sync)
-        {
-            if (_failure is not null)
-            {
-                throw new InvalidOperationException("The persistence transaction failed and cannot commit.", _failure);
-            }
-        }
-    }
 
     private void EnsureUsable()
     {

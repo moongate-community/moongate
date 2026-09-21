@@ -21,10 +21,13 @@ internal sealed class GatedHandler : IApiHandler<IncrementRequest, IncrementResp
     }
 
     public async ValueTask<IncrementResponse> HandleAsync(
-        ApiRequestContext context, IncrementRequest request, CancellationToken cancellationToken
+        ApiRequestContext context,
+        IncrementRequest request,
+        CancellationToken cancellationToken
     )
     {
         Entered.Writer.TryWrite(Interlocked.Increment(ref _count));
+
         if (_cooperative)
         {
             await Release.Task.WaitAsync(cancellationToken);
@@ -39,6 +42,6 @@ internal sealed class GatedHandler : IApiHandler<IncrementRequest, IncrementResp
             throw new InvalidOperationException("Private handler details must not reach the wire.");
         }
 
-        return new IncrementResponse { Value = request.Value + 1 };
+        return new() { Value = request.Value + 1 };
     }
 }

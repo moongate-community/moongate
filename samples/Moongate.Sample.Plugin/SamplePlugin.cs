@@ -1,7 +1,7 @@
 using DryIoc;
 using Moongate.Persistence.Extensions;
-using Moongate.Sample.Plugin.Data.Persistence;
 using Moongate.Sample.Plugin.Commands;
+using Moongate.Sample.Plugin.Data.Persistence;
 using Moongate.Sample.Plugin.Diagnostics;
 using Moongate.Sample.Plugin.Internal;
 using Moongate.Sample.Plugin.Modules;
@@ -15,16 +15,19 @@ using Moongate.Server.Core.Types.Commands;
 
 namespace Moongate.Sample.Plugin;
 
-/// <summary>The sample plugin: registers a Lua module and enum, a console command, a metric provider and a persistence schema. Registration only; nothing starts here.</summary>
+/// <summary>
+/// The sample plugin: registers a Lua module and enum, a console command, a metric provider and a persistence schema.
+/// Registration only; nothing starts here.
+/// </summary>
 public sealed class SamplePlugin : IMoongatePlugin
 {
     /// <inheritdoc />
     public MoongatePluginData Metadata { get; } = new(
         "com.github.moongate-community.moongate.plugins.greeter",
         "Greeter sample",
-        new Version(1, 0),
-        author: "Moongate",
-        description: "Adds a greeter Lua module, a greet console command and a greeting counter metric."
+        new(1, 0),
+        "Moongate",
+        "Adds a greeter Lua module, a greet console command and a greeting counter metric."
     );
 
     /// <inheritdoc />

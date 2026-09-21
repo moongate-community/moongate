@@ -16,13 +16,6 @@ public sealed class GatedKeystreamMiddleware : INetMiddleware
 
     public TaskCompletionSource KeystreamTaken { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
-    public GatedKeystreamMiddleware()
-    {
-    }
-
-    public void Release()
-        => _gate.TrySetResult();
-
     public ValueTask<ReadOnlyMemory<byte>> ProcessAsync(
         MoongateTcpClient? client,
         ReadOnlyMemory<byte> data,
@@ -56,6 +49,9 @@ public sealed class GatedKeystreamMiddleware : INetMiddleware
 
         return frame;
     }
+
+    public void Release()
+        => _gate.TrySetResult();
 
     private static byte[] BuildKeystreamFrame(ReadOnlySpan<byte> payload, ref int position)
     {

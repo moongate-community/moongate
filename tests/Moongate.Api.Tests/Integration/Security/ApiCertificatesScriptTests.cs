@@ -12,25 +12,6 @@ namespace Moongate.Api.Tests.Integration.Security;
 public class ApiCertificatesScriptTests
 {
     [OpenSslFact]
-    public async Task IssuedCertificates_PassTheApiTlsPolicy_InBothDirections()
-    {
-        using var certificates = new ScriptedCertificates();
-        AssertSucceeds(await certificates.RunAsync("init"));
-        AssertSucceeds(await certificates.RunAsync("issue", "server", "localhost"));
-        AssertSucceeds(await certificates.RunAsync("issue", "client", "admin-console"));
-        using var root = certificates.LoadRoot();
-        using var server = certificates.LoadLeaf("localhost");
-        using var client = certificates.LoadLeaf("admin-console");
-        using var serverPolicy = new ApiTlsPolicy(TestCertificateAuthority.Options(root, server, client, "admin"));
-        using var clientPolicy = new ApiTlsPolicy(TestCertificateAuthority.Options(root, client, server, "game"));
-
-        var identities = await HandshakeAsync(serverPolicy, clientPolicy);
-
-        Assert.Equal("admin", identities.Server.PeerId);
-        Assert.Equal("game", identities.Client.PeerId);
-    }
-
-    [OpenSslFact]
     public async Task ClientCertificate_IsRejectedAsAServer()
     {
         using var certificates = new ScriptedCertificates();
@@ -114,6 +95,25 @@ public class ApiCertificatesScriptTests
     }
 
     [OpenSslFact]
+    public async Task IssuedCertificates_PassTheApiTlsPolicy_InBothDirections()
+    {
+        using var certificates = new ScriptedCertificates();
+        AssertSucceeds(await certificates.RunAsync("init"));
+        AssertSucceeds(await certificates.RunAsync("issue", "server", "localhost"));
+        AssertSucceeds(await certificates.RunAsync("issue", "client", "admin-console"));
+        using var root = certificates.LoadRoot();
+        using var server = certificates.LoadLeaf("localhost");
+        using var client = certificates.LoadLeaf("admin-console");
+        using var serverPolicy = new ApiTlsPolicy(TestCertificateAuthority.Options(root, server, client, "admin"));
+        using var clientPolicy = new ApiTlsPolicy(TestCertificateAuthority.Options(root, client, server, "game"));
+
+        var identities = await HandshakeAsync(serverPolicy, clientPolicy);
+
+        Assert.Equal("admin", identities.Server.PeerId);
+        Assert.Equal("game", identities.Client.PeerId);
+    }
+
+    [OpenSslFact]
     public async Task PrivateKeys_AreOwnerReadableOnly()
     {
         if (OperatingSystem.IsWindows())
@@ -133,12 +133,11 @@ public class ApiCertificatesScriptTests
     }
 
     private static void AssertSucceeds((int ExitCode, string Output) result)
-    {
-        Assert.True(result.ExitCode == 0, result.Output);
-    }
+        => Assert.True(result.ExitCode == 0, result.Output);
 
     private static async Task<(ApiPeerIdentity Server, ApiPeerIdentity Client)> HandshakeAsync(
-        ApiTlsPolicy serverPolicy, ApiTlsPolicy clientPolicy
+        ApiTlsPolicy serverPolicy,
+        ApiTlsPolicy clientPolicy
     )
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
@@ -150,15 +149,15 @@ public class ApiCertificatesScriptTests
         ApiPeerIdentity? serverPeer = null;
         ApiPeerIdentity? clientPeer = null;
         var serverTask = serverPolicy.PrepareServerAsync(server.GetStream(), peer => serverPeer = peer, timeout.Token)
-            .AsTask();
+                                     .AsTask();
         var clientTask = clientPolicy.PrepareClientAsync(
-                client.GetStream(),
-                "localhost",
-                "game",
-                peer => clientPeer = peer,
-                timeout.Token
-            )
-            .AsTask();
+                                         client.GetStream(),
+                                         "localhost",
+                                         "game",
+                                         peer => clientPeer = peer,
+                                         timeout.Token
+                                     )
+                                     .AsTask();
 
         try
         {

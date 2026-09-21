@@ -28,20 +28,23 @@ public sealed class GameLoginPacket : BaseFixedPacket<GameLoginPacket>, IIncomin
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out GameLoginPacket? packet)
     {
         packet = null;
+
         if (!HasValidHeader(data))
         {
             return false;
         }
 
         var reader = new PacketReader(data[1..]);
-        if (!reader.TryReadUInt32BigEndian(out var authKey)
-            || !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var account)
-            || !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var password))
+
+        if (!reader.TryReadUInt32BigEndian(out var authKey) ||
+            !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var account) ||
+            !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var password))
         {
             return false;
         }
 
-        packet = new GameLoginPacket(authKey, account!, password!);
+        packet = new(authKey, account!, password!);
+
         return true;
     }
 }

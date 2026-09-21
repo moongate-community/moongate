@@ -11,7 +11,7 @@ public sealed class ApiPeerConfigTests
     public void Serialize_AllowedOperations_RoundTripsWithoutChangingTheirMeaning(string operations)
     {
         var toml =
-            $"allowed_operations = {operations}\npeer_id = \"realm\"\ncertificate_sha256 = \"{new string('A', 64)}\"\n";
+            $"allowed_operations = {operations}\npeer_id = \"realm\"\ncertificate_sha256 = \"{new('A', 64)}\"\n";
         var peer = TomlUtils.Deserialize<ApiPeerConfig>(toml)!;
         peer.Validate();
         Assert.Equal("realm", peer.PeerId);
@@ -29,7 +29,7 @@ public sealed class ApiPeerConfigTests
     public void Validate_InvalidOperationPolicy_RejectsInsteadOfGrantingAll(string operations)
     {
         var toml =
-            $"peer_id = \"realm\"\ncertificate_sha256 = \"{new string('A', 64)}\"\nallowed_operations = {operations}\n";
+            $"peer_id = \"realm\"\ncertificate_sha256 = \"{new('A', 64)}\"\nallowed_operations = {operations}\n";
         var exception = Record.Exception(() => TomlUtils.Deserialize<ApiPeerConfig>(toml)!.Validate());
         Assert.True(
             exception is TomlException or InvalidOperationException,

@@ -1,5 +1,5 @@
-using Moongate.Persistence.Types.Persistence;
 using Moongate.Persistence.Migrations.Services;
+using Moongate.Persistence.Types.Persistence;
 
 namespace Moongate.Persistence.Data.Config;
 
@@ -21,15 +21,16 @@ public sealed class PostgreSqlPersistenceOptions
     public IReadOnlyCollection<PersistenceDatabaseTarget> ConfiguredTargets => _databases.Keys.ToArray();
 
     /// <summary>Creates empty options with schema synchronization disabled.</summary>
-    public PostgreSqlPersistenceOptions() : this([], false)
-    {
-    }
+    public PostgreSqlPersistenceOptions() : this([]) { }
 
     /// <summary>Creates persistence options.</summary>
     /// <param name="databases">Independently configured database targets.</param>
     /// <param name="autoSynchronizeSchema">Whether normal initialization may apply generated schema DDL.</param>
     /// <param name="migrationCatalogFactory">Optional immutable SQL catalog provider used for startup readiness checks.</param>
-    /// <param name="activateMigrationTarget">Optional role filter for SQL-only targets. Registered entity targets bypass this filter.</param>
+    /// <param name="activateMigrationTarget">
+    /// Optional role filter for SQL-only targets. Registered entity targets bypass this
+    /// filter.
+    /// </param>
     public PostgreSqlPersistenceOptions(
         IEnumerable<PersistenceDatabaseOptions> databases,
         bool autoSynchronizeSchema = false,
@@ -39,9 +40,11 @@ public sealed class PostgreSqlPersistenceOptions
     {
         ArgumentNullException.ThrowIfNull(databases);
         var configured = new Dictionary<PersistenceDatabaseTarget, PersistenceDatabaseOptions>();
+
         foreach (var database in databases)
         {
             ArgumentNullException.ThrowIfNull(database);
+
             if (!configured.TryAdd(database.Target, database))
             {
                 throw new ArgumentException(
@@ -57,6 +60,10 @@ public sealed class PostgreSqlPersistenceOptions
         ActivateMigrationTarget = activateMigrationTarget;
     }
 
+    /// <inheritdoc />
+    public override string ToString()
+        => $"PostgreSqlPersistenceOptions {{ AutoSynchronizeSchema = {AutoSynchronizeSchema}, ConfiguredTargets = {_databases.Count} }}";
+
     internal PersistenceDatabaseOptions GetRequiredDatabase(PersistenceDatabaseTarget target)
     {
         if (!_databases.TryGetValue(target, out var database))
@@ -67,12 +74,5 @@ public sealed class PostgreSqlPersistenceOptions
         }
 
         return database;
-    }
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return
-            $"PostgreSqlPersistenceOptions {{ AutoSynchronizeSchema = {AutoSynchronizeSchema}, ConfiguredTargets = {_databases.Count} }}";
     }
 }

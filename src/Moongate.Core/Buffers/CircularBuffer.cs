@@ -33,9 +33,7 @@ public class CircularBuffer<T> : IEnumerable<T>
     /// Buffer capacity. Must be positive.
     /// </param>
     public CircularBuffer(int capacity)
-        : this(capacity, [])
-    {
-    }
+        : this(capacity, []) { }
 
     /// <summary>
     /// Initializes a new instance of the <see cref="CircularBuffer{T}" /> class.
@@ -178,7 +176,7 @@ public class CircularBuffer<T> : IEnumerable<T>
         return _buffer[_start];
     }
 
-    #region IEnumerable<T> implementation
+#region IEnumerable<T> implementation
 
     /// <summary>
     /// Returns an enumerator that iterates through this buffer.
@@ -197,7 +195,7 @@ public class CircularBuffer<T> : IEnumerable<T>
         }
     }
 
-    #endregion
+#endregion
 
     /// <summary>
     /// Removes the element at the back of the buffer. Decreasing the
@@ -318,12 +316,12 @@ public class CircularBuffer<T> : IEnumerable<T>
         index--;
     }
 
-    #region IEnumerable implementation
+#region IEnumerable implementation
 
     IEnumerator IEnumerable.GetEnumerator()
         => GetEnumerator();
 
-    #endregion
+#endregion
 
     /// <summary>
     /// Increments the provided index variable by one, wrapping
@@ -363,7 +361,7 @@ public class CircularBuffer<T> : IEnumerable<T>
     // http://www.boost.org/doc/libs/1_37_0/libs/circular_buffer/doc/circular_buffer.html#classboost_1_1circular__buffer_1f5081a54afbc2dfc1a7fb20329df7d5b
     // should help a lot with the code.
 
-    #region Array items easy access.
+#region Array items easy access.
 
     // The array is composed by at most two non-contiguous segments,
     // the next two methods allow easy access to those.
@@ -398,5 +396,5 @@ public class CircularBuffer<T> : IEnumerable<T>
         return new(_buffer, 0, _end);
     }
 
-    #endregion
+#endregion
 }

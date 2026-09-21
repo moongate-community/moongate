@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Net;
+using System.Threading.Channels;
 using Moongate.Network.Interfaces.Client;
 using Moongate.Network.Interfaces.Framing;
 
@@ -10,8 +11,8 @@ internal sealed class RecordingConnection : INetworkConnection
     private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public ConcurrentQueue<byte[]> Sent { get; } = new();
 
-    public System.Threading.Channels.Channel<byte[]> Written { get; } =
-        System.Threading.Channels.Channel.CreateUnbounded<byte[]>();
+    public Channel<byte[]> Written { get; } =
+        Channel.CreateUnbounded<byte[]>();
 
     public TaskCompletionSource SendEntered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public TaskCompletionSource? SendGate { get; set; }
@@ -21,9 +22,17 @@ internal sealed class RecordingConnection : INetworkConnection
     public INetFramer? Framer => null;
     public Task Completion => _completion.Task;
 
+    public Task CloseAsync(CancellationToken cancellationToken = default)
+    {
+        _completion.TrySetResult();
+
+        return Task.CompletedTask;
+    }
+
     public async Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
     {
         SendEntered.TrySetResult();
+
         if (SendGate is { } gate)
         {
             await gate.Task.WaitAsync(cancellationToken);
@@ -33,11 +42,5 @@ internal sealed class RecordingConnection : INetworkConnection
         var copy = payload.ToArray();
         Sent.Enqueue(copy);
         Written.Writer.TryWrite(copy);
-    }
-
-    public Task CloseAsync(CancellationToken cancellationToken = default)
-    {
-        _completion.TrySetResult();
-        return Task.CompletedTask;
     }
 }

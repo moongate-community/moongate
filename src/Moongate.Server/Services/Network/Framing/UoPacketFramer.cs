@@ -31,12 +31,14 @@ public sealed class UoPacketFramer : INetFramer
     public bool TryReadFrame(Span<byte> buffer, out int frameLength)
     {
         frameLength = 0;
+
         if (buffer.IsEmpty)
         {
             return false;
         }
 
         var opCode = buffer[0];
+
         if (!_registry.TryGetDescriptor(opCode, PacketDirection.Incoming, out var descriptor))
         {
             throw new InvalidDataException($"Opcode 0x{opCode:X2} is not registered as an incoming packet.");
@@ -53,17 +55,18 @@ public sealed class UoPacketFramer : INetFramer
     private bool TryReadFixedFrame(Span<byte> buffer, PacketDescriptor descriptor, out int frameLength)
     {
         var declaredLength = descriptor.FixedLength ??
-                             throw new InvalidDataException(
-                                 $"Opcode 0x{descriptor.OpCode:X2} has no fixed packet length."
-                             );
+                             throw new InvalidDataException($"Opcode 0x{descriptor.OpCode:X2} has no fixed packet length.");
         ValidateDeclaredLength(descriptor, declaredLength);
+
         if (buffer.Length < declaredLength)
         {
             frameLength = 0;
+
             return false;
         }
 
         frameLength = declaredLength;
+
         return true;
     }
 
@@ -72,18 +75,22 @@ public sealed class UoPacketFramer : INetFramer
         if (buffer.Length < VariableHeaderLength)
         {
             frameLength = 0;
+
             return false;
         }
 
         var declaredLength = BinaryPrimitives.ReadUInt16BigEndian(buffer[1..VariableHeaderLength]);
         ValidateDeclaredLength(descriptor, declaredLength);
+
         if (buffer.Length < declaredLength)
         {
             frameLength = 0;
+
             return false;
         }
 
         frameLength = declaredLength;
+
         return true;
     }
 

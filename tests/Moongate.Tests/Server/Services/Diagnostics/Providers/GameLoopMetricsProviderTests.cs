@@ -1,5 +1,4 @@
 using Moongate.Server.Core.Data.Diagnostics;
-using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Types.Diagnostics;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Tests.TestSupport.Diagnostics;
@@ -12,7 +11,7 @@ public sealed class GameLoopMetricsProviderTests
     public async Task CollectAsync_MapsOneSnapshotToGameLoopMetrics()
     {
         var source = new GameLoopMetricsSourceStub(
-            new GameLoopMetricsSnapshot
+            new()
             {
                 QueueDepth = 3,
                 OldestQueuedItemAge = TimeSpan.FromMilliseconds(450),
@@ -46,10 +45,10 @@ public sealed class GameLoopMetricsProviderTests
     [Fact]
     public async Task CollectAsync_PreservesPreviouslyReturnedSnapshot()
     {
-        var source = new GameLoopMetricsSourceStub(new GameLoopMetricsSnapshot { QueueDepth = 3 });
+        var source = new GameLoopMetricsSourceStub(new() { QueueDepth = 3 });
         var provider = new GameLoopMetricsProvider(source);
         var first = await provider.CollectAsync();
-        source.Snapshot = new GameLoopMetricsSnapshot { QueueDepth = 9 };
+        source.Snapshot = new() { QueueDepth = 9 };
 
         var second = await provider.CollectAsync();
 
@@ -60,7 +59,7 @@ public sealed class GameLoopMetricsProviderTests
     [Fact]
     public async Task CollectAsync_ThrowsForPreCanceledTokenBeforeReadingSnapshot()
     {
-        var source = new GameLoopMetricsSourceStub(new GameLoopMetricsSnapshot());
+        var source = new GameLoopMetricsSourceStub(new());
         var provider = new GameLoopMetricsProvider(source);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
@@ -71,7 +70,10 @@ public sealed class GameLoopMetricsProviderTests
     }
 
     private static void AssertMetric(
-        MetricSample metric, string name, double value, string unit,
+        MetricSample metric,
+        string name,
+        double value,
+        string unit,
         DiagnosticMetricType type
     )
     {

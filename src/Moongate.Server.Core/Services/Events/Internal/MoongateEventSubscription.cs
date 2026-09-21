@@ -6,9 +6,7 @@ internal sealed class MoongateEventSubscription : IDisposable
     private readonly MoongateEventRegistration _registration;
     private MoongateEventBus? _eventBus;
 
-    public MoongateEventSubscription(
-        MoongateEventBus eventBus, Type eventType, MoongateEventRegistration registration
-    )
+    public MoongateEventSubscription(MoongateEventBus eventBus, Type eventType, MoongateEventRegistration registration)
     {
         _eventBus = eventBus;
         _eventType = eventType;

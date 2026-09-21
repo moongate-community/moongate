@@ -11,7 +11,9 @@ public sealed class FailingHandler : IApiHandler<IncrementRequest, IncrementResp
     }
 
     public ValueTask<IncrementResponse> HandleAsync(
-        ApiRequestContext context, IncrementRequest request, CancellationToken cancellationToken
+        ApiRequestContext context,
+        IncrementRequest request,
+        CancellationToken cancellationToken
     )
         => throw new NotSupportedException();
 }

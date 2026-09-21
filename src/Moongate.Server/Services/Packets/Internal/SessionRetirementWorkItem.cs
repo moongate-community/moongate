@@ -32,6 +32,7 @@ internal sealed class SessionRetirementWorkItem : IGameLoopWorkItem
         catch (Exception exception)
         {
             _completion.TrySetException(exception);
+
             throw;
         }
     }

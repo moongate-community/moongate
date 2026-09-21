@@ -9,18 +9,31 @@ internal static class TransactionalSql
     {
         // Use the same PostgreSQL parser as execution, including dollar quotes and escaped strings.
         var parser = new PostgresqlConnectionManager(string.Empty);
+
         foreach (var statement in parser.SplitScriptIntoCommands(script.Sql))
         {
             var sql = SkipComments(statement.AsSpan());
             var end = 0;
+
             while (end < sql.Length && char.IsAsciiLetter(sql[end]))
             {
                 end++;
             }
 
             var keyword = sql[..end].ToString().ToUpperInvariant();
-            if (keyword is "BEGIN" or "START" or "COMMIT" or "END" or "ROLLBACK" or "ABORT" or
-                "SAVEPOINT" or "RELEASE" or "PREPARE" or "SET" or "RESET" or "DISCARD")
+
+            if (keyword is "BEGIN" or
+                           "START" or
+                           "COMMIT" or
+                           "END" or
+                           "ROLLBACK" or
+                           "ABORT" or
+                           "SAVEPOINT" or
+                           "RELEASE" or
+                           "PREPARE" or
+                           "SET" or
+                           "RESET" or
+                           "DISCARD")
             {
                 throw new InvalidOperationException(
                     $"Migration '{script.Name}' contains transaction or session control. Migrations must run inside the runner transaction."
@@ -34,6 +47,7 @@ internal static class TransactionalSql
         while (true)
         {
             sql = sql.TrimStart();
+
             if (sql.StartsWith("--", StringComparison.Ordinal))
             {
                 var newline = sql.IndexOfAny('\r', '\n');
@@ -43,6 +57,7 @@ internal static class TransactionalSql
             {
                 var depth = 1;
                 var index = 2;
+
                 while (index + 1 < sql.Length && depth > 0)
                 {
                     if (sql[index..].StartsWith("/*", StringComparison.Ordinal))

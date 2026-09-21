@@ -20,18 +20,21 @@ public sealed class ServerSelectPacket : BaseFixedPacket<ServerSelectPacket>, II
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out ServerSelectPacket? packet)
     {
         packet = null;
+
         if (!HasValidHeader(data))
         {
             return false;
         }
 
         var reader = new PacketReader(data[1..]);
+
         if (!reader.TryReadUInt16BigEndian(out var serverIndex))
         {
             return false;
         }
 
-        packet = new ServerSelectPacket(serverIndex);
+        packet = new(serverIndex);
+
         return true;
     }
 }

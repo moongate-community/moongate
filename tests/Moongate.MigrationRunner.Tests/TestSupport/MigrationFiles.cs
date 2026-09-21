@@ -13,15 +13,13 @@ public sealed class MigrationFiles : IDisposable
         Directory.CreateDirectory(Plugins);
     }
 
+    public void Dispose()
+        => Directory.Delete(Root, true);
+
     public void Write(string relative, string content)
     {
         var path = Path.Combine(Root, relative);
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         File.WriteAllText(path, content);
-    }
-
-    public void Dispose()
-    {
-        Directory.Delete(Root, true);
     }
 }

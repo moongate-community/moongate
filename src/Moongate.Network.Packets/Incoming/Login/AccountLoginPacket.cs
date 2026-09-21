@@ -28,20 +28,23 @@ public sealed class AccountLoginPacket : BaseFixedPacket<AccountLoginPacket>, II
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out AccountLoginPacket? packet)
     {
         packet = null;
+
         if (!HasValidHeader(data))
         {
             return false;
         }
 
         var reader = new PacketReader(data[1..]);
-        if (!reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var account)
-            || !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var password)
-            || !reader.TryReadByte(out var nextLoginKey))
+
+        if (!reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var account) ||
+            !reader.TryReadFixedAscii(LoginProtocolConstants.CredentialLength, out var password) ||
+            !reader.TryReadByte(out var nextLoginKey))
         {
             return false;
         }
 
-        packet = new AccountLoginPacket(account!, password!, nextLoginKey);
+        packet = new(account!, password!, nextLoginKey);
+
         return true;
     }
 }

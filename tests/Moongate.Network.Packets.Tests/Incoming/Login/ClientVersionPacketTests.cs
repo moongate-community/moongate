@@ -5,19 +5,12 @@ namespace Moongate.Network.Packets.Tests.Incoming.Login;
 
 public class ClientVersionPacketTests
 {
-    [Fact]
-    public void TryDecode_WithOrWithoutFinalTerminator_PreservesActualFrameLength()
-    {
-        var withoutNull = Convert.FromHexString("BD000C372E302E3130392E30");
-        var withNull = Convert.FromHexString("BD000D372E302E3130392E3000");
-
-        Assert.True(PacketCodec.TryDecode<ClientVersionPacket>(withoutNull, out var canonical));
-        Assert.Equal("7.0.109.0", canonical.Version);
-        Assert.Equal(12, canonical.Length);
-        Assert.True(PacketCodec.TryDecode<ClientVersionPacket>(withNull, out var compatible));
-        Assert.Equal("7.0.109.0", compatible.Version);
-        Assert.Equal(13, compatible.Length);
-    }
+    [Theory,
+     InlineData(""), InlineData("é"), InlineData("7\0.0"),
+     InlineData(" "), InlineData("\t"), InlineData("\n"), InlineData("\v"), InlineData("\f"), InlineData("\r"),
+     InlineData(" \t\n\v\f\r")]
+    public void Constructor_InvalidVersion_ThrowsArgumentException(string version)
+        => Assert.Throws<ArgumentException>(() => new ClientVersionPacket(version));
 
     [Fact]
     public void TryDecode_EveryProperPrefixOfValidFrames_ReturnsFalse()
@@ -50,9 +43,7 @@ public class ClientVersionPacketTests
      InlineData("BD000480"),
      InlineData("BC000441")]
     public void TryDecode_InvalidHeaderOrText_ReturnsFalse(string hex)
-    {
-        Assert.False(PacketCodec.TryDecode<ClientVersionPacket>(Convert.FromHexString(hex), out _));
-    }
+        => Assert.False(PacketCodec.TryDecode<ClientVersionPacket>(Convert.FromHexString(hex), out _));
 
     [Theory,
      InlineData("BD000420"), InlineData("BD00052000"),
@@ -68,12 +59,17 @@ public class ClientVersionPacketTests
         Assert.Null(packet);
     }
 
-    [Theory,
-     InlineData(""), InlineData("é"), InlineData("7\0.0"),
-     InlineData(" "), InlineData("\t"), InlineData("\n"), InlineData("\v"), InlineData("\f"), InlineData("\r"),
-     InlineData(" \t\n\v\f\r")]
-    public void Constructor_InvalidVersion_ThrowsArgumentException(string version)
+    [Fact]
+    public void TryDecode_WithOrWithoutFinalTerminator_PreservesActualFrameLength()
     {
-        Assert.Throws<ArgumentException>(() => new ClientVersionPacket(version));
+        var withoutNull = Convert.FromHexString("BD000C372E302E3130392E30");
+        var withNull = Convert.FromHexString("BD000D372E302E3130392E3000");
+
+        Assert.True(PacketCodec.TryDecode<ClientVersionPacket>(withoutNull, out var canonical));
+        Assert.Equal("7.0.109.0", canonical.Version);
+        Assert.Equal(12, canonical.Length);
+        Assert.True(PacketCodec.TryDecode<ClientVersionPacket>(withNull, out var compatible));
+        Assert.Equal("7.0.109.0", compatible.Version);
+        Assert.Equal(13, compatible.Length);
     }
 }

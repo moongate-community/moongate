@@ -6,9 +6,7 @@ public sealed class SyncValueTaskTests
 {
     [Fact]
     public void Run_CompletedTask_ReturnsItsResult()
-    {
-        Assert.Equal(7, SyncValueTask.Run(new ValueTask<int>(7)));
-    }
+        => Assert.Equal(7, SyncValueTask.Run(new ValueTask<int>(7)));
 
     [Fact]
     public void Run_FaultedTask_RethrowsTheOriginalException()
@@ -18,17 +16,6 @@ public sealed class SyncValueTaskTests
         var exception = Assert.Throws<InvalidDataException>(() => SyncValueTask.Run(task));
 
         Assert.Equal("boom", exception.Message);
-    }
-
-    [Fact]
-    public void Run_TaskFaultedWithSeveralExceptions_RethrowsTheFirstOneUnwrapped()
-    {
-        var source = new TaskCompletionSource<int>();
-        source.SetException([new InvalidDataException("first"), new TimeoutException("second")]);
-
-        var exception = Assert.Throws<InvalidDataException>(() => SyncValueTask.Run(new ValueTask<int>(source.Task)));
-
-        Assert.Equal("first", exception.Message);
     }
 
     [Fact]
@@ -44,7 +31,16 @@ public sealed class SyncValueTaskTests
 
     [Fact]
     public void Run_NonGenericCompleted_Passes()
+        => SyncValueTask.Run(ValueTask.CompletedTask);
+
+    [Fact]
+    public void Run_TaskFaultedWithSeveralExceptions_RethrowsTheFirstOneUnwrapped()
     {
-        SyncValueTask.Run(ValueTask.CompletedTask);
+        var source = new TaskCompletionSource<int>();
+        source.SetException([new InvalidDataException("first"), new TimeoutException("second")]);
+
+        var exception = Assert.Throws<InvalidDataException>(() => SyncValueTask.Run(new ValueTask<int>(source.Task)));
+
+        Assert.Equal("first", exception.Message);
     }
 }

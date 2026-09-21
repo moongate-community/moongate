@@ -10,7 +10,5 @@ namespace Moongate.Network.Packets.Tests.Support.Registry;
 public sealed class OutgoingCollisionPacket : BaseFixedPacket<OutgoingCollisionPacket>, IOutgoingPacket
 {
     public void Write(ref PacketWriter writer)
-    {
-        writer.WriteByte(OpCode);
-    }
+        => writer.WriteByte(OpCode);
 }

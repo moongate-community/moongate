@@ -24,6 +24,7 @@ public sealed record MoongatePluginData
         ArgumentNullException.ThrowIfNull(version);
         var snapshot = dependencies?.ToArray() ?? [];
         var ids = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         foreach (var dependency in snapshot)
         {
             if (dependency is null || !ids.Add(dependency.Id))

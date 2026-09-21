@@ -1,8 +1,8 @@
 using System.Runtime.ExceptionServices;
 using Moongate.Persistence.Services;
 using Moongate.Server.Core.Data.Persistence;
-using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.GameLoop;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Services.Persistence.Internal;
 using Serilog;
 
@@ -47,28 +47,6 @@ public sealed class WorldSaveService : IWorldSaveService
     }
 
     /// <inheritdoc />
-    public Task StartAsync()
-    {
-        lock (_gate)
-        {
-            if (_stopping)
-            {
-                throw new InvalidOperationException("World saving cannot restart after shutdown.");
-            }
-
-            _options.Validate();
-            _started = true;
-            _logger.Information(
-                "World saving started: autosave {Enabled}, interval {Interval}",
-                _options.Enabled,
-                _options.Interval
-            );
-
-            return Task.CompletedTask;
-        }
-    }
-
-    /// <inheritdoc />
     public void Activate()
     {
         lock (_gate)
@@ -109,14 +87,37 @@ public sealed class WorldSaveService : IWorldSaveService
         }
     }
 
+    /// <inheritdoc />
+    public Task StartAsync()
+    {
+        lock (_gate)
+        {
+            if (_stopping)
+            {
+                throw new InvalidOperationException("World saving cannot restart after shutdown.");
+            }
+
+            _options.Validate();
+            _started = true;
+            _logger.Information(
+                "World saving started: autosave {Enabled}, interval {Interval}",
+                _options.Enabled,
+                _options.Interval
+            );
+
+            return Task.CompletedTask;
+        }
+    }
+
     /// <summary>Drains active saving and the loop without publishing a final capture.</summary>
     public Task StopAsync()
-        => StopAsync(saveFinal: false);
+        => StopAsync(false);
 
     /// <inheritdoc />
     public Task StopAsync(bool saveFinal)
     {
         _operations.EnsureOutsideOperation();
+
         lock (_gate)
         {
             if (_stopTask is not null)
@@ -137,94 +138,10 @@ public sealed class WorldSaveService : IWorldSaveService
         }
     }
 
-    private void RequestAutosave()
-    {
-        lock (_gate)
-        {
-            if (_activated && !_stopping)
-            {
-                RequestSaveLocked();
-            }
-        }
-    }
-
-    private Task RequestSaveLocked()
-    {
-        if (_activeSave is null || _activeSave.IsCompleted)
-        {
-            // One supervised worker per active save, never one worker per entity or timer tick.
-            try
-            {
-                // Reserve exclusion at admission, before the worker can race shutdown's close.
-                _activeSave = _operations.RunSaveAsync(() => Task.Run(() => SaveCoreAsync(finalSave: false)));
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "World save admission failed");
-                _activeSave = Task.FromException(exception);
-            }
-
-            _ = ObserveSaveAsync(_activeSave);
-        }
-
-        return _activeSave;
-    }
-
-    private static async Task ObserveSaveAsync(Task saving)
-    {
-        try
-        {
-            await saving.ConfigureAwait(false);
-        }
-        catch (Exception)
-        {
-            // SaveCoreAsync logs the failure. Keep the original faulted task for callers and shutdown.
-        }
-    }
-
-    private async Task SaveCoreAsync(bool finalSave)
-    {
-        var startedAt = _timeProvider.GetTimestamp();
-
-        try
-        {
-            _logger.Information("Starting world save; final capture {FinalSave}", finalSave);
-            if (finalSave)
-            {
-                await _gameLoop.StopWithFinalWorkAsync(
-                        (dispatch, token) =>
-                            _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture, dispatch), token),
-                        CancellationToken.None
-                    )
-                    .ConfigureAwait(false);
-            }
-            else
-            {
-                await _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture), CancellationToken.None)
-                    .ConfigureAwait(false);
-            }
-
-            _logger.Information(
-                "World save completed in {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
-                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds,
-                finalSave
-            );
-        }
-        catch (Exception exception)
-        {
-            _logger.Error(
-                exception,
-                "World save failed after {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
-                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds,
-                finalSave
-            );
-            throw;
-        }
-    }
-
     private async Task CaptureAsync(Action capture, Func<IGameLoopWorkItem, Task>? finalDispatch = null)
     {
-        var item = new WorldSaveCaptureWorkItem(() =>
+        var item = new WorldSaveCaptureWorkItem(
+            () =>
             {
                 var startedAt = _timeProvider.GetTimestamp();
                 _operations.Capture(capture);
@@ -265,6 +182,108 @@ public sealed class WorldSaveService : IWorldSaveService
         await item.Completion.ConfigureAwait(false);
     }
 
+    private static async Task CaptureFailureAsync(Func<Task> operation, List<Exception> failures)
+    {
+        try
+        {
+            await operation().ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            if (!failures.Any(failure => ReferenceEquals(failure, exception)))
+            {
+                failures.Add(exception);
+            }
+        }
+    }
+
+    private static async Task ObserveSaveAsync(Task saving)
+    {
+        try
+        {
+            await saving.ConfigureAwait(false);
+        }
+        catch (Exception)
+        {
+            // SaveCoreAsync logs the failure. Keep the original faulted task for callers and shutdown.
+        }
+    }
+
+    private void RequestAutosave()
+    {
+        lock (_gate)
+        {
+            if (_activated && !_stopping)
+            {
+                RequestSaveLocked();
+            }
+        }
+    }
+
+    private Task RequestSaveLocked()
+    {
+        if (_activeSave is null || _activeSave.IsCompleted)
+        {
+            // One supervised worker per active save, never one worker per entity or timer tick.
+            try
+            {
+                // Reserve exclusion at admission, before the worker can race shutdown's close.
+                _activeSave = _operations.RunSaveAsync(() => Task.Run(() => SaveCoreAsync(false)));
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "World save admission failed");
+                _activeSave = Task.FromException(exception);
+            }
+
+            _ = ObserveSaveAsync(_activeSave);
+        }
+
+        return _activeSave;
+    }
+
+    private async Task SaveCoreAsync(bool finalSave)
+    {
+        var startedAt = _timeProvider.GetTimestamp();
+
+        try
+        {
+            _logger.Information("Starting world save; final capture {FinalSave}", finalSave);
+
+            if (finalSave)
+            {
+                await _gameLoop.StopWithFinalWorkAsync(
+                                   (dispatch, token) =>
+                                       _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture, dispatch), token),
+                                   CancellationToken.None
+                               )
+                               .ConfigureAwait(false);
+            }
+            else
+            {
+                await _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture), CancellationToken.None)
+                                  .ConfigureAwait(false);
+            }
+
+            _logger.Information(
+                "World save completed in {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
+                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds,
+                finalSave
+            );
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(
+                exception,
+                "World save failed after {ElapsedMilliseconds:F2} ms; final capture {FinalSave}",
+                _timeProvider.GetElapsedTime(startedAt).TotalMilliseconds,
+                finalSave
+            );
+
+            throw;
+        }
+    }
+
     private async Task StopCoreAsync(bool saveFinal)
     {
         List<Exception> failures = [];
@@ -293,7 +312,7 @@ public sealed class WorldSaveService : IWorldSaveService
         if (saveFinal && closingOperations.IsCompletedSuccessfully)
         {
             await CaptureFailureAsync(
-                    () => _operations.RunSaveAsync(() => SaveCoreAsync(finalSave: true), finalSave: true),
+                    () => _operations.RunSaveAsync(() => SaveCoreAsync(true), true),
                     failures
                 )
                 .ConfigureAwait(false);
@@ -310,21 +329,6 @@ public sealed class WorldSaveService : IWorldSaveService
         if (failures.Count > 1)
         {
             throw new AggregateException(failures);
-        }
-    }
-
-    private static async Task CaptureFailureAsync(Func<Task> operation, List<Exception> failures)
-    {
-        try
-        {
-            await operation().ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            if (!failures.Any(failure => ReferenceEquals(failure, exception)))
-            {
-                failures.Add(exception);
-            }
         }
     }
 }

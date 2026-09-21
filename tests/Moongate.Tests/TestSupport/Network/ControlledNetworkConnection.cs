@@ -41,6 +41,7 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
     {
         Interlocked.Increment(ref _closeCalls);
         _closeRequested.TrySetResult();
+
         if (!DelayDisconnectionState)
         {
             Interlocked.Exchange(ref _connected, 0);
@@ -62,15 +63,40 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
         }
     }
 
+    public void Complete(Exception? failure = null)
+    {
+        Interlocked.Exchange(ref _connected, 0);
+
+        if (failure is null)
+        {
+            _completion.TrySetResult();
+        }
+        else
+        {
+            _completion.TrySetException(failure);
+        }
+    }
+
+    public void Dispose()
+    {
+        Complete();
+        _sent.Writer.TryComplete();
+    }
+
+    public Task<byte[]> ReadSentAsync(CancellationToken token)
+        => _sent.Reader.ReadAsync(token).AsTask();
+
     public async Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
         if (!IsConnected)
         {
             throw new IOException("Connection is closed.");
         }
 
         _sendStarted.TrySetResult();
+
         if (SendGate is not null)
         {
             await SendGate.WaitAsync(cancellationToken);
@@ -92,29 +118,5 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
         }
 
         _sent.Writer.TryWrite(payload.ToArray());
-    }
-
-    public Task<byte[]> ReadSentAsync(CancellationToken token)
-    {
-        return _sent.Reader.ReadAsync(token).AsTask();
-    }
-
-    public void Complete(Exception? failure = null)
-    {
-        Interlocked.Exchange(ref _connected, 0);
-        if (failure is null)
-        {
-            _completion.TrySetResult();
-        }
-        else
-        {
-            _completion.TrySetException(failure);
-        }
-    }
-
-    public void Dispose()
-    {
-        Complete();
-        _sent.Writer.TryComplete();
     }
 }

@@ -23,6 +23,7 @@ public sealed class BodyTable
         }
 
         using var def = new StreamReader(filePath);
+
         while (def.ReadLine() is { } line)
         {
             line = line.Trim();

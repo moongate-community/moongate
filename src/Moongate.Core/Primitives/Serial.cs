@@ -85,8 +85,8 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
         var span = text.AsSpan().Trim();
 
         var parsed = span.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
-            ? uint.TryParse(span[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var value)
-            : uint.TryParse(span, NumberStyles.None, CultureInfo.InvariantCulture, out value);
+                         ? uint.TryParse(span[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var value)
+                         : uint.TryParse(span, NumberStyles.None, CultureInfo.InvariantCulture, out value);
 
         if (!parsed)
         {

@@ -15,12 +15,13 @@ public sealed class CleanupExecutionContextGate
 
     public CleanupExecutionContextGate()
     {
-        _context = new AsyncLocal<MoongateTcpClient?>(OnContextChanged);
+        _context = new(OnContextChanged);
     }
 
     public Task CaptureSend(MoongateTcpClient client, Func<Task> send)
     {
         _context.Value = client;
+
         try
         {
             return send();
@@ -33,9 +34,7 @@ public sealed class CleanupExecutionContextGate
     }
 
     public void Release()
-    {
-        _release.TrySetResult();
-    }
+        => _release.TrySetResult();
 
     private void OnContextChanged(AsyncLocalValueChangedArgs<MoongateTcpClient?> change)
     {

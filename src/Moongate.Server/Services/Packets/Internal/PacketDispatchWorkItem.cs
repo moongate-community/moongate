@@ -14,7 +14,10 @@ internal sealed class PacketDispatchWorkItem : IGameLoopWorkItem
     private readonly Action<GameSession, IPacket> _handler;
 
     public PacketDispatchWorkItem(
-        ISessionService sessions, long sessionId, IPacket packet, Action<GameSession, IPacket> handler
+        ISessionService sessions,
+        long sessionId,
+        IPacket packet,
+        Action<GameSession, IPacket> handler
     )
     {
         _sessions = sessions;

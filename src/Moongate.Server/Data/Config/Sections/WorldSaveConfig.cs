@@ -18,12 +18,11 @@ public sealed class WorldSaveConfig
             Interval = TimeSpan.FromSeconds(IntervalSeconds)
         };
         options.Validate();
+
         return options;
     }
 
     /// <summary>Rejects invalid intervals even when automatic saving is disabled.</summary>
     public void Validate()
-    {
-        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(IntervalSeconds);
-    }
+        => ArgumentOutOfRangeException.ThrowIfNegativeOrZero(IntervalSeconds);
 }

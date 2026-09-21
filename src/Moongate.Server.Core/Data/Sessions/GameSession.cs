@@ -62,27 +62,30 @@ public sealed class GameSession
     public void SetAccountId(Serial accountId)
     {
         EnsureLoopThread();
+
         lock (_sync)
         {
             _accountId = accountId;
         }
     }
 
-    public void SetCharacterId(Serial characterId)
-    {
-        EnsureLoopThread();
-        lock (_sync)
-        {
-            _characterId = characterId;
-        }
-    }
-
     public void SetAccountType(AccountType accountType)
     {
         EnsureLoopThread();
+
         lock (_sync)
         {
             _accountType = accountType;
+        }
+    }
+
+    public void SetCharacterId(Serial characterId)
+    {
+        EnsureLoopThread();
+
+        lock (_sync)
+        {
+            _characterId = characterId;
         }
     }
 

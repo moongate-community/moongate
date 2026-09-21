@@ -13,17 +13,6 @@ namespace Moongate.Tests.Server.Core.Packets;
 public sealed class PacketHandlerRegistryTests
 {
     [Fact]
-    public void Register_DuplicateRejectsBeforeContainerMutation()
-    {
-        using var container = new Container();
-        container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>();
-        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
-        );
-        Assert.Single(container.Resolve<PacketHandlerRegistry>().Registrations);
-        Assert.False(container.IsRegistered<DependentPacketHandler>());
-    }
-
-    [Fact]
     public async Task Freeze_DistinctPacketTypesBindToSameSingletonWithTypedDelegates()
     {
         await using var fixture = await SessionFixture.CreateAsync();
@@ -49,9 +38,22 @@ public sealed class PacketHandlerRegistryTests
         using var container = new Container();
         container.RegisterInstance(new PacketHandlerRegistry());
         var frozen = container.Resolve<PacketHandlerRegistry>().Freeze();
-        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
+        Assert.Throws<InvalidOperationException>(
+            () => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
         );
         Assert.Empty(frozen);
+        Assert.False(container.IsRegistered<DependentPacketHandler>());
+    }
+
+    [Fact]
+    public void Register_DuplicateRejectsBeforeContainerMutation()
+    {
+        using var container = new Container();
+        container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>();
+        Assert.Throws<InvalidOperationException>(
+            () => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
+        );
+        Assert.Single(container.Resolve<PacketHandlerRegistry>().Registrations);
         Assert.False(container.IsRegistered<DependentPacketHandler>());
     }
 
@@ -72,10 +74,26 @@ public sealed class PacketHandlerRegistryTests
     {
         using var container = new Container();
         container.Register<RecordingPacketHandler>(Reuse.Transient);
-        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>()
+        Assert.Throws<InvalidOperationException>(
+            () => container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>()
         );
         Assert.Empty(container.Resolve<PacketHandlerRegistry>().Registrations);
         Assert.NotSame(container.Resolve<RecordingPacketHandler>(), container.Resolve<RecordingPacketHandler>());
+    }
+
+    [Fact]
+    public async Task Start_MissingHandlerDependencyFailsStartup()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        using var container = new Container();
+        container.RegisterPacketHandler<PingPacket, DependentPacketHandler>();
+        var dispatcher = new PacketDispatchService(
+            fixture.Loop,
+            new SessionService(fixture.Loop),
+            container.Resolve<PacketHandlerRegistry>(),
+            container
+        );
+        await Assert.ThrowsAnyAsync<Exception>(() => dispatcher.StartAsync());
     }
 
     [Fact]
@@ -94,20 +112,5 @@ public sealed class PacketHandlerRegistryTests
         await dispatcher.StartAsync();
         Assert.Same(container.Resolve<DependentPacketHandler>(), container.Resolve<DependentPacketHandler>());
         await dispatcher.StopAsync();
-    }
-
-    [Fact]
-    public async Task Start_MissingHandlerDependencyFailsStartup()
-    {
-        await using var fixture = await SessionFixture.CreateAsync();
-        using var container = new Container();
-        container.RegisterPacketHandler<PingPacket, DependentPacketHandler>();
-        var dispatcher = new PacketDispatchService(
-            fixture.Loop,
-            new SessionService(fixture.Loop),
-            container.Resolve<PacketHandlerRegistry>(),
-            container
-        );
-        await Assert.ThrowsAnyAsync<Exception>(() => dispatcher.StartAsync());
     }
 }

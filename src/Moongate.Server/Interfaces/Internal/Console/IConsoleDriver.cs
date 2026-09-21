@@ -13,11 +13,11 @@ internal interface IConsoleDriver
 
     ConsoleColor ForegroundColor { get; set; }
 
+    void ResetColor();
+
     void SetCursorPosition(int left, int top);
 
     void Write(string value);
 
     void WriteLine(string value);
-
-    void ResetColor();
 }

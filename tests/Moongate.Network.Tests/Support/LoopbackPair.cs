@@ -35,16 +35,17 @@ public sealed class LoopbackPair : IAsyncDisposable
         Socket? receiverSocket = null;
         MoongateTcpClient? sender = null;
         MoongateTcpClient? receiver = null;
+
         try
         {
             var connect = senderSocket.ConnectAsync(listener.LocalEndPoint!);
             receiverSocket = await listener.AcceptAsync();
             await connect;
             sender = senderStream is null
-                ? new MoongateTcpClient(senderSocket, codec: codec)
-                : new MoongateTcpClient(senderSocket, senderStream, codec: codec);
+                         ? new(senderSocket, codec: codec)
+                         : new MoongateTcpClient(senderSocket, senderStream, codec: codec);
             senderSocket = null;
-            receiver = new MoongateTcpClient(
+            receiver = new(
                 receiverSocket,
                 receiverMiddlewares,
                 receiverFramer,
@@ -52,13 +53,15 @@ public sealed class LoopbackPair : IAsyncDisposable
                 maxFrameLength: receiverMaxFrameLength
             );
             receiverSocket = null;
+
             if (startSender)
             {
                 await sender.StartAsync(CancellationToken.None);
             }
 
             await receiver.StartAsync(CancellationToken.None);
-            return new LoopbackPair(sender, receiver);
+
+            return new(sender, receiver);
         }
         catch
         {
@@ -90,6 +93,7 @@ public sealed class LoopbackPair : IAsyncDisposable
     {
         await Sender.CloseAsync();
         await Receiver.CloseAsync();
+
         try
         {
             await Sender.DisposeAsync();

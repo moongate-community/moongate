@@ -11,6 +11,17 @@ namespace Moongate.Tests.Server.Commands;
 public sealed class EchoCommandTests
 {
     [Fact]
+    public async Task ExecuteAsync_IsReachableThroughItsAlias()
+    {
+        var service = await CreateStartedServiceAsync();
+
+        var line = Assert.Single(await service.ExecuteAsync("e alias works"));
+
+        Assert.Equal("alias works", line.Text);
+        await service.StopAsync();
+    }
+
+    [Fact]
     public async Task ExecuteAsync_JoinsArgumentsWithSingleSpaces()
     {
         var service = await CreateStartedServiceAsync();
@@ -30,17 +41,6 @@ public sealed class EchoCommandTests
         var line = Assert.Single(await service.ExecuteAsync("echo"));
 
         Assert.Equal("", line.Text);
-        await service.StopAsync();
-    }
-
-    [Fact]
-    public async Task ExecuteAsync_IsReachableThroughItsAlias()
-    {
-        var service = await CreateStartedServiceAsync();
-
-        var line = Assert.Single(await service.ExecuteAsync("e alias works"));
-
-        Assert.Equal("alias works", line.Text);
         await service.StopAsync();
     }
 

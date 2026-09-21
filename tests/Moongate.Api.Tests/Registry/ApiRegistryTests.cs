@@ -7,14 +7,25 @@ namespace Moongate.Api.Tests.Registry;
 public sealed class ApiRegistryTests
 {
     [Fact]
+    public void Freeze_FactoryFailure_RemainsFailedOnRetry()
+    {
+        var registry = new ApiRegistry();
+        registry.RegisterHandler<IncrementHandler>(() => null!);
+        Assert.Throws<InvalidOperationException>(() => registry.Freeze());
+        Assert.Throws<InvalidOperationException>(() => registry.Freeze());
+    }
+
+    [Fact]
     public void Freeze_ResolvesHandlerOnceAndPreventsFurtherRegistration()
     {
         var registry = new ApiRegistry();
         var resolutions = 0;
         registry.RegisterContract<IncrementRequest, IncrementResponse>();
-        registry.RegisterHandler(() =>
+        registry.RegisterHandler(
+            () =>
             {
                 resolutions++;
+
                 return new IncrementHandler();
             }
         );
@@ -43,9 +54,12 @@ public sealed class ApiRegistryTests
         var registry = new ApiRegistry();
         registry.Freeze();
         var invoked = false;
-        Assert.Throws<InvalidOperationException>(() => registry.RegisterHandler(() =>
+        Assert.Throws<InvalidOperationException>(
+            () => registry.RegisterHandler(
+                () =>
                 {
                     invoked = true;
+
                     return new IncrementHandler();
                 }
             )
@@ -63,14 +77,5 @@ public sealed class ApiRegistryTests
         Assert.Throws<InvalidOperationException>(() => registry.RegisterContract<UnannotatedRequest, IncrementResponse>());
         Assert.Throws<ArgumentOutOfRangeException>(() => new ApiOperationAttribute(0));
         Assert.Equal(0, registry.ContractCount);
-    }
-
-    [Fact]
-    public void Freeze_FactoryFailure_RemainsFailedOnRetry()
-    {
-        var registry = new ApiRegistry();
-        registry.RegisterHandler<IncrementHandler>(() => null!);
-        Assert.Throws<InvalidOperationException>(() => registry.Freeze());
-        Assert.Throws<InvalidOperationException>(() => registry.Freeze());
     }
 }

@@ -44,57 +44,39 @@ public ref struct SpanReader : IDisposable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadAscii(int fixedLength)
-    {
-        return ReadString(Encoding.ASCII, fixedLength: fixedLength);
-    }
+        => ReadString(Encoding.ASCII, fixedLength: fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadAscii()
-    {
-        return ReadString(Encoding.ASCII);
-    }
+        => ReadString(Encoding.ASCII);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadAsciiSafe(int fixedLength)
-    {
-        return ReadString(Encoding.ASCII, true, fixedLength);
-    }
+        => ReadString(Encoding.ASCII, true, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadAsciiSafe()
-    {
-        return ReadString(Encoding.ASCII, true);
-    }
+        => ReadString(Encoding.ASCII, true);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadBigUni(int fixedLength)
-    {
-        return ReadString(Encoding.BigEndianUnicode, fixedLength: fixedLength);
-    }
+        => ReadString(Encoding.BigEndianUnicode, fixedLength: fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadBigUni()
-    {
-        return ReadString(Encoding.BigEndianUnicode);
-    }
+        => ReadString(Encoding.BigEndianUnicode);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadBigUniSafe(int fixedLength)
-    {
-        return ReadString(Encoding.BigEndianUnicode, true, fixedLength);
-    }
+        => ReadString(Encoding.BigEndianUnicode, true, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadBigUniSafe()
-    {
-        return ReadString(Encoding.BigEndianUnicode, true);
-    }
+        => ReadString(Encoding.BigEndianUnicode, true);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool ReadBoolean()
-    {
-        return ReadByte() > 0;
-    }
+        => ReadByte() > 0;
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public byte ReadByte()
@@ -201,33 +183,23 @@ public ref struct SpanReader : IDisposable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadLittleUni(int fixedLength)
-    {
-        return ReadString(Encoding.Unicode, fixedLength: fixedLength);
-    }
+        => ReadString(Encoding.Unicode, fixedLength: fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadLittleUni()
-    {
-        return ReadString(Encoding.Unicode);
-    }
+        => ReadString(Encoding.Unicode);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadLittleUniSafe(int fixedLength)
-    {
-        return ReadString(Encoding.Unicode, true, fixedLength);
-    }
+        => ReadString(Encoding.Unicode, true, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadLittleUniSafe()
-    {
-        return ReadString(Encoding.Unicode, true);
-    }
+        => ReadString(Encoding.Unicode, true);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public sbyte ReadSByte()
-    {
-        return (sbyte)ReadByte();
-    }
+        => (sbyte)ReadByte();
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadString(Encoding encoding, bool safeString = false, int fixedLength = -1)
@@ -353,21 +325,15 @@ public ref struct SpanReader : IDisposable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadUTF8()
-    {
-        return ReadString(Encoding.UTF8);
-    }
+        => ReadString(Encoding.UTF8);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadUTF8Safe(int fixedLength)
-    {
-        return ReadString(Encoding.UTF8, true, fixedLength);
-    }
+        => ReadString(Encoding.UTF8, true, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public string ReadUTF8Safe()
-    {
-        return ReadString(Encoding.UTF8, true);
-    }
+        => ReadString(Encoding.UTF8, true);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public int Seek(int offset, SeekOrigin origin)
@@ -393,67 +359,33 @@ public ref struct SpanReader : IDisposable
         return Position;
     }
 
+    public bool TryReadAscii(int byteCount, out string? value)
+    {
+        value = null;
+
+        if (!TryGetBytes(byteCount, out var bytes) || bytes.Contains((byte)0) || !IsAscii(bytes))
+        {
+            return false;
+        }
+
+        value = Encoding.ASCII.GetString(bytes);
+        Position += byteCount;
+
+        return true;
+    }
+
     public bool TryReadByte(out byte value)
     {
         if (Remaining < 1)
         {
             value = default;
+
             return false;
         }
 
         value = _buffer[Position];
         Position++;
-        return true;
-    }
 
-    public bool TryReadUInt16BigEndian(out ushort value)
-    {
-        if (Remaining < sizeof(ushort))
-        {
-            value = default;
-            return false;
-        }
-
-        value = BinaryPrimitives.ReadUInt16BigEndian(_buffer[Position..]);
-        Position += sizeof(ushort);
-        return true;
-    }
-
-    public bool TryReadUInt32BigEndian(out uint value)
-    {
-        if (Remaining < sizeof(uint))
-        {
-            value = default;
-            return false;
-        }
-
-        value = BinaryPrimitives.ReadUInt32BigEndian(_buffer[Position..]);
-        Position += sizeof(uint);
-        return true;
-    }
-
-    public bool TryReadUInt32LittleEndian(out uint value)
-    {
-        if (Remaining < sizeof(uint))
-        {
-            value = default;
-            return false;
-        }
-
-        value = BinaryPrimitives.ReadUInt32LittleEndian(_buffer[Position..]);
-        Position += sizeof(uint);
-        return true;
-    }
-
-    public bool TryReadSerial(out Serial value)
-    {
-        if (!TryReadUInt32BigEndian(out var rawValue))
-        {
-            value = default;
-            return false;
-        }
-
-        value = new Serial(rawValue);
         return true;
     }
 
@@ -462,17 +394,20 @@ public ref struct SpanReader : IDisposable
         if (length < 0 || Remaining < length)
         {
             value = default;
+
             return false;
         }
 
         value = _buffer.Slice(Position, length);
         Position += length;
+
         return true;
     }
 
     public bool TryReadFixedAscii(int byteCount, out string? value)
     {
         value = null;
+
         if (!TryGetBytes(byteCount, out var bytes))
         {
             return false;
@@ -480,6 +415,7 @@ public ref struct SpanReader : IDisposable
 
         var terminator = bytes.IndexOf((byte)0);
         var textBytes = terminator < 0 ? bytes : bytes[..terminator];
+
         if (!IsAscii(textBytes))
         {
             return false;
@@ -487,31 +423,21 @@ public ref struct SpanReader : IDisposable
 
         value = Encoding.ASCII.GetString(textBytes);
         Position += byteCount;
-        return true;
-    }
 
-    public bool TryReadAscii(int byteCount, out string? value)
-    {
-        value = null;
-        if (!TryGetBytes(byteCount, out var bytes) || bytes.Contains((byte)0) || !IsAscii(bytes))
-        {
-            return false;
-        }
-
-        value = Encoding.ASCII.GetString(bytes);
-        Position += byteCount;
         return true;
     }
 
     public bool TryReadNullTerminatedAscii(int byteCount, out string? value)
     {
         value = null;
+
         if (!TryGetBytes(byteCount, out var bytes) || bytes.IsEmpty || bytes[^1] != 0)
         {
             return false;
         }
 
         var textBytes = bytes[..^1];
+
         if (textBytes.Contains((byte)0) || !IsAscii(textBytes))
         {
             return false;
@@ -519,43 +445,76 @@ public ref struct SpanReader : IDisposable
 
         value = Encoding.ASCII.GetString(textBytes);
         Position += byteCount;
+
         return true;
     }
 
-    private bool TryGetBytes(int length, out ReadOnlySpan<byte> value)
+    public bool TryReadSerial(out Serial value)
     {
-        if (length < 0 || Remaining < length)
+        if (!TryReadUInt32BigEndian(out var rawValue))
         {
             value = default;
+
             return false;
         }
 
-        value = _buffer.Slice(Position, length);
+        value = new(rawValue);
+
         return true;
     }
 
-    private static bool IsAscii(ReadOnlySpan<byte> bytes)
+    public bool TryReadUInt16BigEndian(out ushort value)
     {
-        foreach (var value in bytes)
+        if (Remaining < sizeof(ushort))
         {
-            if (value > 0x7F)
-            {
-                return false;
-            }
+            value = default;
+
+            return false;
         }
+
+        value = BinaryPrimitives.ReadUInt16BigEndian(_buffer[Position..]);
+        Position += sizeof(ushort);
+
+        return true;
+    }
+
+    public bool TryReadUInt32BigEndian(out uint value)
+    {
+        if (Remaining < sizeof(uint))
+        {
+            value = default;
+
+            return false;
+        }
+
+        value = BinaryPrimitives.ReadUInt32BigEndian(_buffer[Position..]);
+        Position += sizeof(uint);
+
+        return true;
+    }
+
+    public bool TryReadUInt32LittleEndian(out uint value)
+    {
+        if (Remaining < sizeof(uint))
+        {
+            value = default;
+
+            return false;
+        }
+
+        value = BinaryPrimitives.ReadUInt32LittleEndian(_buffer[Position..]);
+        Position += sizeof(uint);
 
         return true;
     }
 
     private static int GetTerminatorWidth(Encoding encoding)
-    {
-        return encoding switch
+        => encoding switch
         {
             UnicodeEncoding => 2,
             UTF32Encoding   => 4,
             _               => 1
         };
-    }
 
     private static int IndexOfTerminator(ReadOnlySpan<byte> span, int terminatorWidth)
     {
@@ -587,10 +546,35 @@ public ref struct SpanReader : IDisposable
         return -1;
     }
 
+    private static bool IsAscii(ReadOnlySpan<byte> bytes)
+    {
+        foreach (var value in bytes)
+        {
+            if (value > 0x7F)
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
     [DoesNotReturn]
     private static void ThrowInsufficientData()
+        => throw new InvalidOperationException("Insufficient data in buffer.");
+
+    private bool TryGetBytes(int length, out ReadOnlySpan<byte> value)
     {
-        throw new InvalidOperationException("Insufficient data in buffer.");
+        if (length < 0 || Remaining < length)
+        {
+            value = default;
+
+            return false;
+        }
+
+        value = _buffer.Slice(Position, length);
+
+        return true;
     }
 
     public void Dispose()

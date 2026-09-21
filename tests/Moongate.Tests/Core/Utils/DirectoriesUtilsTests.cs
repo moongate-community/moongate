@@ -1,5 +1,4 @@
 using Moongate.Core.Directories;
-using Moongate.Core.Utils;
 using Moongate.Tests.TestSupport.Directories;
 
 namespace Moongate.Tests.Core.Utils;
@@ -17,6 +16,17 @@ public sealed class DirectoriesUtilsTests
         Assert.Contains(Path.Combine(directory.Path, "root.txt"), files);
         Assert.Contains(Path.Combine(directory.Path, "nested", "child.txt"), files);
         Assert.Contains(Path.Combine(directory.Path, "nested", "data.json"), files);
+    }
+
+    [Fact]
+    public void GetFiles_MissingDirectoryOrFilePath_ReturnsEmptyArray()
+    {
+        using var directory = new TemporaryDirectory();
+        var file = directory.CreateFile("file.txt");
+
+        Assert.Empty(DirectoriesUtils.GetFiles(null!));
+        Assert.Empty(DirectoriesUtils.GetFiles(Path.Combine(directory.Path, "missing")));
+        Assert.Empty(DirectoriesUtils.GetFiles(file));
     }
 
     [Fact]
@@ -39,17 +49,6 @@ public sealed class DirectoriesUtilsTests
         Assert.Equal(4, files.Length);
     }
 
-    [Fact]
-    public void GetFiles_MissingDirectoryOrFilePath_ReturnsEmptyArray()
-    {
-        using var directory = new TemporaryDirectory();
-        var file = directory.CreateFile("file.txt");
-
-        Assert.Empty(DirectoriesUtils.GetFiles(null!));
-        Assert.Empty(DirectoriesUtils.GetFiles(Path.Combine(directory.Path, "missing")));
-        Assert.Empty(DirectoriesUtils.GetFiles(file));
-    }
-
     private static TemporaryDirectory CreateFileTree()
     {
         var directory = new TemporaryDirectory();
@@ -57,6 +56,7 @@ public sealed class DirectoriesUtilsTests
         directory.CreateFile(Path.Combine("nested", "child.txt"));
         directory.CreateFile(Path.Combine("nested", "data.json"));
         directory.CreateFile(Path.Combine("nested", "ignored.bin"));
+
         return directory;
     }
 }

@@ -25,6 +25,7 @@ public sealed class ApiConfig
         }
 
         ValidateCertificate();
+
         if (!Enabled)
         {
             return;
@@ -40,7 +41,8 @@ public sealed class ApiConfig
             throw new InvalidOperationException("api.port must be between 1 and 65535.");
         }
 
-        if (TrustedRootPaths is null || TrustedRootPaths.Length == 0 ||
+        if (TrustedRootPaths is null ||
+            TrustedRootPaths.Length == 0 ||
             TrustedRootPaths.Any(string.IsNullOrWhiteSpace))
         {
             throw new InvalidOperationException("api.trusted_root_paths must contain at least one certificate path.");
@@ -52,6 +54,7 @@ public sealed class ApiConfig
         }
 
         var fingerprints = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
         foreach (var peer in Peers)
         {
             if (peer is null)
@@ -60,6 +63,7 @@ public sealed class ApiConfig
             }
 
             peer.Validate();
+
             if (!fingerprints.Add(peer.CertificateSha256))
             {
                 throw new InvalidOperationException("api.peers contains duplicate certificate fingerprints.");
@@ -84,13 +88,15 @@ public sealed class ApiConfig
             return;
         }
 
-        if (CertificateDnsNames is null || CertificateIpAddresses is null ||
+        if (CertificateDnsNames is null ||
+            CertificateIpAddresses is null ||
             CertificateDnsNames.Length + CertificateIpAddresses.Length == 0)
         {
             throw new InvalidOperationException("API certificate generation requires at least one DNS name or IP address.");
         }
 
-        if (CertificateDnsNames.Any(name => string.IsNullOrWhiteSpace(name) || Uri.CheckHostName(name) != UriHostNameType.Dns
+        if (CertificateDnsNames.Any(
+                name => string.IsNullOrWhiteSpace(name) || Uri.CheckHostName(name) != UriHostNameType.Dns
             ))
         {
             throw new InvalidOperationException("api.certificate_dns_names must contain valid DNS names.");

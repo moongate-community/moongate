@@ -9,6 +9,14 @@ public sealed class PersistenceDatabaseConfig
 {
     public string ConnectionString { get; set; } = "";
 
+    public PersistenceDatabaseOptions ToOptions(PersistenceDatabaseTarget target)
+    {
+        Validate();
+        var template = ConnectionString;
+
+        return new(target, () => Resolve(template, target));
+    }
+
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(ConnectionString))
@@ -17,18 +25,11 @@ public sealed class PersistenceDatabaseConfig
         }
     }
 
-    public PersistenceDatabaseOptions ToOptions(PersistenceDatabaseTarget target)
-    {
-        Validate();
-        var template = ConnectionString;
-        return new PersistenceDatabaseOptions(target, () => Resolve(template, target));
-    }
-
     private static string Resolve(string template, PersistenceDatabaseTarget target)
     {
         try
         {
-            return template.ExpandEnvironmentVariables(requireDefined: true);
+            return template.ExpandEnvironmentVariables(true);
         }
         catch (InvalidOperationException exception)
         {

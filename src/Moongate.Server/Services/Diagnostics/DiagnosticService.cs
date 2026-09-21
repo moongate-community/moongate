@@ -36,7 +36,7 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         TimeProvider timeProvider
     )
     {
-        _options = new DiagnosticOptions
+        _options = new()
         {
             Enabled = options.Enabled,
             Interval = options.Interval,
@@ -63,7 +63,7 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
             }
         }
 
-        _lifetime = new CancellationTokenSource();
+        _lifetime = new();
     }
 
     /// <inheritdoc />
@@ -97,61 +97,6 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         }
     }
 
-    private Task StartCoreAsync()
-    {
-        try
-        {
-            _options.Validate();
-
-            if (_options.Enabled)
-            {
-                _logger.Information(
-                    "Starting diagnostics with {ProviderCount} providers at interval {Interval}",
-                    _providers.Length,
-                    _options.Interval
-                );
-                _worker = Task.Run(() => RunAsync(_lifetime.Token));
-            }
-
-            return Task.CompletedTask;
-        }
-        catch (Exception exception)
-        {
-            // BootstrapLifecycleTasks must receive a task even for synchronous startup failures.
-            return Task.FromException(exception);
-        }
-    }
-
-    private async Task RunAsync(CancellationToken cancellationToken)
-    {
-        _workerContext.Value = true;
-
-        try
-        {
-            // Create before the immediate collection so ticks during it coalesce deterministically.
-            using var timer = new PeriodicTimer(_options.Interval, _timeProvider);
-
-            do
-            {
-                await CollectOnceAsync(cancellationToken).ConfigureAwait(false);
-            } while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false));
-        }
-        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
-        {
-            // Expected shutdown; StopAsync joins this worker.
-        }
-        catch (Exception exception)
-        {
-            _logger.Error(exception, "Diagnostic worker failed");
-
-            throw;
-        }
-        finally
-        {
-            _workerContext.Value = false;
-        }
-    }
-
     private async Task CollectOnceAsync(CancellationToken cancellationToken)
     {
         var started = _timeProvider.GetTimestamp();
@@ -174,7 +119,7 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
                         string.IsNullOrWhiteSpace(sample.Unit) ||
                         !double.IsFinite(sample.Value) ||
                         sample.Type is not (DiagnosticMetricType.Gauge or DiagnosticMetricType.Counter) ||
-                        (sample.Type == DiagnosticMetricType.Counter && sample.Value < 0))
+                        sample.Type == DiagnosticMetricType.Counter && sample.Value < 0)
                     {
                         throw new InvalidOperationException($"Provider '{name}' returned an invalid diagnostic sample.");
                     }
@@ -186,7 +131,9 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
                 }
 
                 foreach (var metric in providerMetrics)
+                {
                     metrics.Add(metric.Key, metric.Value);
+                }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -220,7 +167,80 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         }
 
         await _eventBus.PublishAsync(new DiagnosticSnapshotCollectedEvent(snapshot), cancellationToken)
-            .ConfigureAwait(false);
+                       .ConfigureAwait(false);
+    }
+
+    private static bool IsValidName(string? name)
+    {
+        if (string.IsNullOrEmpty(name) || name[0] is < 'a' or > 'z')
+        {
+            return false;
+        }
+
+        foreach (var character in name)
+        {
+            if (character is not (>= 'a' and <= 'z') and not (>= '0' and <= '9') and not '_')
+            {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    private async Task RunAsync(CancellationToken cancellationToken)
+    {
+        _workerContext.Value = true;
+
+        try
+        {
+            // Create before the immediate collection so ticks during it coalesce deterministically.
+            using var timer = new PeriodicTimer(_options.Interval, _timeProvider);
+
+            do
+            {
+                await CollectOnceAsync(cancellationToken).ConfigureAwait(false);
+            } while (await timer.WaitForNextTickAsync(cancellationToken).ConfigureAwait(false));
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            // Expected shutdown; StopAsync joins this worker.
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception, "Diagnostic worker failed");
+
+            throw;
+        }
+        finally
+        {
+            _workerContext.Value = false;
+        }
+    }
+
+    private Task StartCoreAsync()
+    {
+        try
+        {
+            _options.Validate();
+
+            if (_options.Enabled)
+            {
+                _logger.Information(
+                    "Starting diagnostics with {ProviderCount} providers at interval {Interval}",
+                    _providers.Length,
+                    _options.Interval
+                );
+                _worker = Task.Run(() => RunAsync(_lifetime.Token));
+            }
+
+            return Task.CompletedTask;
+        }
+        catch (Exception exception)
+        {
+            // BootstrapLifecycleTasks must receive a task even for synchronous startup failures.
+            return Task.FromException(exception);
+        }
     }
 
     private async Task StopCoreAsync(Task? startup)
@@ -248,20 +268,6 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         {
             _logger.Information("Diagnostics stopped");
         }
-    }
-
-    private static bool IsValidName(string? name)
-    {
-        if (string.IsNullOrEmpty(name) || name[0] is < 'a' or > 'z')
-            return false;
-
-        foreach (var character in name)
-        {
-            if (character is not (>= 'a' and <= 'z') and not (>= '0' and <= '9') and not '_')
-                return false;
-        }
-
-        return true;
     }
 
     private void ThrowIfWorkerContext()

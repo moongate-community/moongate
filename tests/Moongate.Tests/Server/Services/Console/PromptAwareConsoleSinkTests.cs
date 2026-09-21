@@ -13,7 +13,7 @@ public sealed class PromptAwareConsoleSinkTests
     public void Emit_DeliversTheEventInsideTheHiddenPromptWindow()
     {
         var driver = new RecordingConsoleDriver { WindowWidth = 20, WindowHeight = 10, BufferHeight = 10 };
-        var prompt = new ConsolePromptService(driver, interactive: true);
+        var prompt = new ConsolePromptService(driver, true);
         prompt.ShowPrompt();
         var inner = new RecordingLogEventSink(driver);
         var sink = new PromptAwareConsoleSink(prompt, new LoggerConfiguration().WriteTo.Sink(inner).CreateLogger());
@@ -33,7 +33,7 @@ public sealed class PromptAwareConsoleSinkTests
     public void Emit_NonInteractiveStillReachesTheInnerLogger()
     {
         var driver = new RecordingConsoleDriver();
-        var prompt = new ConsolePromptService(driver, interactive: false);
+        var prompt = new ConsolePromptService(driver, false);
         var inner = new RecordingLogEventSink(driver);
         var sink = new PromptAwareConsoleSink(prompt, new LoggerConfiguration().WriteTo.Sink(inner).CreateLogger());
 
@@ -43,13 +43,11 @@ public sealed class PromptAwareConsoleSinkTests
     }
 
     private static LogEvent CreateEvent(string message)
-    {
-        return new LogEvent(
+        => new(
             DateTimeOffset.UtcNow,
             LogEventLevel.Information,
             null,
-            new MessageTemplate(message, [new TextToken(message)]),
+            new(message, [new TextToken(message)]),
             []
         );
-    }
 }

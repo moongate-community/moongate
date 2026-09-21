@@ -1,87 +1,93 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
-    <ImplicitUsings>enable</ImplicitUsings>
-    <Nullable>enable</Nullable>
-    <IsPackable>false</IsPackable>
-    <!--
-      The plugin fixtures below are deliberately outside the solution. When this
-      project is built through the solution, MSBuild strips Configuration from
-      the properties passed to references it cannot find in the solution, so the
-      fixtures would build as Debug while CopyPluginFixtures looks for them under
-      the current configuration. Keep the configuration flowing instead.
-    -->
-    <ShouldUnsetParentConfigurationAndPlatform>false</ShouldUnsetParentConfigurationAndPlatform>
-  </PropertyGroup>
+    <PropertyGroup>
+        <TargetFramework>net10.0</TargetFramework>
+        <ImplicitUsings>enable</ImplicitUsings>
+        <Nullable>enable</Nullable>
+        <IsPackable>false</IsPackable>
+        <!--
+          The plugin fixtures below are deliberately outside the solution. When this
+          project is built through the solution, MSBuild strips Configuration from
+          the properties passed to references it cannot find in the solution, so the
+          fixtures would build as Debug while CopyPluginFixtures looks for them under
+          the current configuration. Keep the configuration flowing instead.
+        -->
+        <ShouldUnsetParentConfigurationAndPlatform>false</ShouldUnsetParentConfigurationAndPlatform>
+    </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="coverlet.collector" Version="10.0.1" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1" />
-    <PackageReference Include="xunit" Version="2.9.3" />
-    <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <Using Include="Xunit" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../../src/Moongate.Persistence/Moongate.Persistence.csproj" />
-    <ProjectReference Include="..\..\src\Moongate.Scripting\Moongate.Scripting.csproj" />
-    <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj" />
-    <ProjectReference Include="..\..\src\Moongate.Server\Moongate.Server.csproj" />
-    <ProjectReference Include="..\..\src\Moongate.Server.Core\Moongate.Server.Core.csproj" />
-    <ProjectReference Include="..\..\src\Moongate.Server.Ultima\Moongate.Server.Ultima.csproj" />
-    <ProjectReference Include="..\..\src\Moongate.Ultima\Moongate.Ultima.csproj" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <EmbeddedResource Include="TestSupport/Resources/Fixtures/Nested/sample.txt"
-                      LogicalName="Moongate.Tests.TestSupport.Resources.Nested.sample.txt" />
-  </ItemGroup>
-
-  <ItemGroup>
-    <ProjectReference Include="../Fixtures/Plugins/PersistencePlugin/PersistencePlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
-    <ProjectReference Include="../Fixtures/Plugins/CollisionPlugin/CollisionPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
-    <ProjectReference Include="../Fixtures/Plugins/IncompatiblePersistencePlugin/IncompatiblePersistencePlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
-    <ProjectReference Include="../Fixtures/Plugins/FoundationPlugin/FoundationPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
-    <ProjectReference Include="../Fixtures/Plugins/DependentPlugin/DependentPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
-    <ProjectReference Include="../Fixtures/Plugins/FailingPlugin/FailingPlugin.csproj" ReferenceOutputAssembly="false" Private="false" />
-    <ProjectReference Include="../../samples/Moongate.Sample.Plugin/Moongate.Sample.Plugin.csproj" ReferenceOutputAssembly="false" Private="false" />
-  </ItemGroup>
-
-  <Target Name="CopyPluginFixtures" AfterTargets="Build">
     <ItemGroup>
-      <_FoundationPluginFiles Include="../Fixtures/Plugins/FoundationPlugin/bin/$(Configuration)/net10.0/**/*" />
+        <PackageReference Include="coverlet.collector" Version="10.0.1"/>
+        <PackageReference Include="Microsoft.NET.Test.Sdk" Version="18.10.1"/>
+        <PackageReference Include="xunit" Version="2.9.3"/>
+        <PackageReference Include="xunit.runner.visualstudio" Version="4.0.0"/>
     </ItemGroup>
-    <Copy SourceFiles="@(_FoundationPluginFiles)"
-          DestinationFiles="@(_FoundationPluginFiles->'$(OutDir)PluginFixtures/FoundationPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
-          SkipUnchangedFiles="true" />
+
     <ItemGroup>
-      <_DependentPluginFiles Include="../Fixtures/Plugins/DependentPlugin/bin/$(Configuration)/net10.0/**/*" />
+        <Using Include="Xunit"/>
     </ItemGroup>
-    <Copy SourceFiles="@(_DependentPluginFiles)"
-          DestinationFiles="@(_DependentPluginFiles->'$(OutDir)PluginFixtures/DependentPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
-          SkipUnchangedFiles="true" />
+
     <ItemGroup>
-      <_FailingPluginFiles Include="../Fixtures/Plugins/FailingPlugin/bin/$(Configuration)/net10.0/**/*" />
+        <ProjectReference Include="../../src/Moongate.Persistence/Moongate.Persistence.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Scripting\Moongate.Scripting.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Server\Moongate.Server.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Server.Core\Moongate.Server.Core.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Server.Ultima\Moongate.Server.Ultima.csproj"/>
+        <ProjectReference Include="..\..\src\Moongate.Ultima\Moongate.Ultima.csproj"/>
     </ItemGroup>
-    <Copy SourceFiles="@(_FailingPluginFiles)"
-          DestinationFiles="@(_FailingPluginFiles->'$(OutDir)PluginFixtures/FailingPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
-          SkipUnchangedFiles="true" />
+
     <ItemGroup>
-      <_SamplePluginFiles Include="../../samples/Moongate.Sample.Plugin/bin/$(Configuration)/net10.0/**/*" />
+        <EmbeddedResource Include="TestSupport/Resources/Fixtures/Nested/sample.txt"
+                          LogicalName="Moongate.Tests.TestSupport.Resources.Nested.sample.txt"/>
     </ItemGroup>
-    <Copy SourceFiles="@(_SamplePluginFiles)"
-          DestinationFiles="@(_SamplePluginFiles->'$(OutDir)PluginFixtures/SamplePlugin/%(RecursiveDir)%(Filename)%(Extension)')"
-          SkipUnchangedFiles="true" />
-    <ItemGroup><_PersistencePluginFiles Include="../Fixtures/Plugins/PersistencePlugin/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
-    <Copy SourceFiles="@(_PersistencePluginFiles)" DestinationFiles="@(_PersistencePluginFiles->'$(OutDir)PluginFixtures/PersistencePlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
-    <ItemGroup><_CollisionPluginFiles Include="../Fixtures/Plugins/CollisionPlugin/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
-    <Copy SourceFiles="@(_CollisionPluginFiles)" DestinationFiles="@(_CollisionPluginFiles->'$(OutDir)PluginFixtures/CollisionPlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
-    <ItemGroup><_IncompatiblePersistencePluginFiles Include="../Fixtures/Plugins/IncompatiblePersistencePlugin/bin/$(Configuration)/net10.0/**/*" /></ItemGroup>
-    <Copy SourceFiles="@(_IncompatiblePersistencePluginFiles)" DestinationFiles="@(_IncompatiblePersistencePluginFiles->'$(OutDir)PluginFixtures/IncompatiblePersistencePlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true" />
-  </Target>
+
+    <ItemGroup>
+        <ProjectReference Include="../Fixtures/Plugins/PersistencePlugin/PersistencePlugin.csproj" ReferenceOutputAssembly="false" Private="false"/>
+        <ProjectReference Include="../Fixtures/Plugins/CollisionPlugin/CollisionPlugin.csproj" ReferenceOutputAssembly="false" Private="false"/>
+        <ProjectReference Include="../Fixtures/Plugins/IncompatiblePersistencePlugin/IncompatiblePersistencePlugin.csproj" ReferenceOutputAssembly="false" Private="false"/>
+        <ProjectReference Include="../Fixtures/Plugins/FoundationPlugin/FoundationPlugin.csproj" ReferenceOutputAssembly="false" Private="false"/>
+        <ProjectReference Include="../Fixtures/Plugins/DependentPlugin/DependentPlugin.csproj" ReferenceOutputAssembly="false" Private="false"/>
+        <ProjectReference Include="../Fixtures/Plugins/FailingPlugin/FailingPlugin.csproj" ReferenceOutputAssembly="false" Private="false"/>
+        <ProjectReference Include="../../samples/Moongate.Sample.Plugin/Moongate.Sample.Plugin.csproj" ReferenceOutputAssembly="false" Private="false"/>
+    </ItemGroup>
+
+    <Target Name="CopyPluginFixtures" AfterTargets="Build">
+        <ItemGroup>
+            <_FoundationPluginFiles Include="../Fixtures/Plugins/FoundationPlugin/bin/$(Configuration)/net10.0/**/*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(_FoundationPluginFiles)"
+              DestinationFiles="@(_FoundationPluginFiles->'$(OutDir)PluginFixtures/FoundationPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
+              SkipUnchangedFiles="true"/>
+        <ItemGroup>
+            <_DependentPluginFiles Include="../Fixtures/Plugins/DependentPlugin/bin/$(Configuration)/net10.0/**/*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(_DependentPluginFiles)"
+              DestinationFiles="@(_DependentPluginFiles->'$(OutDir)PluginFixtures/DependentPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
+              SkipUnchangedFiles="true"/>
+        <ItemGroup>
+            <_FailingPluginFiles Include="../Fixtures/Plugins/FailingPlugin/bin/$(Configuration)/net10.0/**/*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(_FailingPluginFiles)"
+              DestinationFiles="@(_FailingPluginFiles->'$(OutDir)PluginFixtures/FailingPlugin/%(RecursiveDir)%(Filename)%(Extension)')"
+              SkipUnchangedFiles="true"/>
+        <ItemGroup>
+            <_SamplePluginFiles Include="../../samples/Moongate.Sample.Plugin/bin/$(Configuration)/net10.0/**/*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(_SamplePluginFiles)"
+              DestinationFiles="@(_SamplePluginFiles->'$(OutDir)PluginFixtures/SamplePlugin/%(RecursiveDir)%(Filename)%(Extension)')"
+              SkipUnchangedFiles="true"/>
+        <ItemGroup>
+            <_PersistencePluginFiles Include="../Fixtures/Plugins/PersistencePlugin/bin/$(Configuration)/net10.0/**/*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(_PersistencePluginFiles)" DestinationFiles="@(_PersistencePluginFiles->'$(OutDir)PluginFixtures/PersistencePlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true"/>
+        <ItemGroup>
+            <_CollisionPluginFiles Include="../Fixtures/Plugins/CollisionPlugin/bin/$(Configuration)/net10.0/**/*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(_CollisionPluginFiles)" DestinationFiles="@(_CollisionPluginFiles->'$(OutDir)PluginFixtures/CollisionPlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true"/>
+        <ItemGroup>
+            <_IncompatiblePersistencePluginFiles Include="../Fixtures/Plugins/IncompatiblePersistencePlugin/bin/$(Configuration)/net10.0/**/*"/>
+        </ItemGroup>
+        <Copy SourceFiles="@(_IncompatiblePersistencePluginFiles)" DestinationFiles="@(_IncompatiblePersistencePluginFiles->'$(OutDir)PluginFixtures/IncompatiblePersistencePlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true"/>
+    </Target>
 
 </Project>

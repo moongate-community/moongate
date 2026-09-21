@@ -9,18 +9,6 @@ public static class ContainerEventExtensions
 {
     extension(Container container)
     {
-        /// <summary>Ensures the container has one singleton Moongate event bus.</summary>
-        public Container RegisterMoongateEventBus()
-        {
-            ArgumentNullException.ThrowIfNull(container);
-            if (!container.IsRegistered<IMoongateEventBus>())
-            {
-                container.Register<IMoongateEventBus, MoongateEventBus>(Reuse.Singleton);
-            }
-
-            return container;
-        }
-
         /// <summary>Registers an awaited handler for the exact event type for the container lifetime.</summary>
         public Container OnEvent<TEvent>(Func<TEvent, CancellationToken, Task> handler)
             where TEvent : class, IMoongateEvent
@@ -30,6 +18,19 @@ public static class ContainerEventExtensions
 
             container.RegisterMoongateEventBus();
             container.Resolve<IMoongateEventBus>().Subscribe(handler);
+
+            return container;
+        }
+
+        /// <summary>Ensures the container has one singleton Moongate event bus.</summary>
+        public Container RegisterMoongateEventBus()
+        {
+            ArgumentNullException.ThrowIfNull(container);
+
+            if (!container.IsRegistered<IMoongateEventBus>())
+            {
+                container.Register<IMoongateEventBus, MoongateEventBus>(Reuse.Singleton);
+            }
 
             return container;
         }

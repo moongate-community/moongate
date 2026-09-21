@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
 using Moongate.Api.Client;
-using Moongate.Api.Data.Config;
 using Moongate.Api.Registry;
 using Moongate.Core.Directories;
 using Moongate.Server.Data.Config.Sections;
@@ -29,7 +28,7 @@ internal sealed class ApiHostFixture : IDisposable
     {
         _server = _authority.Issue();
         _client = _authority.Issue();
-        Directories = new DirectoriesConfig(_directory.Path, ["config"]);
+        Directories = new(_directory.Path, ["config"]);
         var certificateDirectory = Path.Combine(Directories["config"], "tls");
         Directory.CreateDirectory(certificateDirectory);
         File.WriteAllBytes(Path.Combine(certificateDirectory, "server.pfx"), _server.Export(X509ContentType.Pfx, Password));
@@ -39,7 +38,7 @@ internal sealed class ApiHostFixture : IDisposable
         reservation.Start();
         var port = ((IPEndPoint)reservation.LocalEndpoint).Port;
         reservation.Stop();
-        Config = new ApiConfig
+        Config = new()
         {
             Enabled = true,
             ListenAddress = "127.0.0.1",
@@ -49,7 +48,7 @@ internal sealed class ApiHostFixture : IDisposable
             TrustedRootPaths = ["tls/root.pem"],
             Peers =
             [
-                new ApiPeerConfig
+                new()
                 {
                     CertificateSha256 = _client.GetCertHashString(HashAlgorithmName.SHA256),
                     PeerId = "client", AllowedOperations = new([100])
@@ -59,19 +58,43 @@ internal sealed class ApiHostFixture : IDisposable
         Registry.RegisterHandler(() => new IncrementHandler());
     }
 
-    public ApiServerService CreateService()
-        => new(Config, Directories, Registry, TimeProvider.System);
+    public void AssertPortReleased()
+    {
+        var listener = new TcpListener(IPAddress.Loopback, Config.Port);
+
+        try
+        {
+            listener.Start();
+        }
+        finally
+        {
+            listener.Stop();
+        }
+    }
 
     public ApiClient CreateClient()
     {
         var registry = new ApiRegistry();
         registry.RegisterContract<IncrementRequest, IncrementResponse>();
-        return new ApiClient(
+
+        return new(
             registry,
-            new ApiOptions(),
+            new(),
             _authority.Options(_client, _server, "server"),
             TimeProvider.System
         );
+    }
+
+    public ApiServerService CreateService()
+        => new(Config, Directories, Registry, TimeProvider.System);
+
+    public void Dispose()
+    {
+        System.Environment.SetEnvironmentVariable(_passwordVariable, null);
+        _client.Dispose();
+        _server.Dispose();
+        _authority.Dispose();
+        _directory.Dispose();
     }
 
     public void UseInvalidServerCertificate(string invalidity)
@@ -93,27 +116,5 @@ internal sealed class ApiHostFixture : IDisposable
     {
         File.WriteAllBytes(Path.Combine(Directories["config"], Config.CertificatePath), _server.Export(X509ContentType.Pfx));
         Config.CertificatePasswordEnvironmentVariable = "";
-    }
-
-    public void AssertPortReleased()
-    {
-        var listener = new TcpListener(IPAddress.Loopback, Config.Port);
-        try
-        {
-            listener.Start();
-        }
-        finally
-        {
-            listener.Stop();
-        }
-    }
-
-    public void Dispose()
-    {
-        System.Environment.SetEnvironmentVariable(_passwordVariable, null);
-        _client.Dispose();
-        _server.Dispose();
-        _authority.Dispose();
-        _directory.Dispose();
     }
 }

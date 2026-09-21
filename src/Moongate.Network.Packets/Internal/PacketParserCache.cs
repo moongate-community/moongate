@@ -21,16 +21,14 @@ internal static class PacketParserCache<TPacket>
         }
 
         var factory = typeof(PacketParserCache<TPacket>)
-            .GetMethod(nameof(CreateIncomingParser), BindingFlags.NonPublic | BindingFlags.Static)!
-            .MakeGenericMethod(typeof(TPacket))
-            .CreateDelegate<Func<PacketParser>>();
+                      .GetMethod(nameof(CreateIncomingParser), BindingFlags.NonPublic | BindingFlags.Static)!
+                      .MakeGenericMethod(typeof(TPacket))
+                      .CreateDelegate<Func<PacketParser>>();
 
         return factory();
     }
 
     private static PacketParser CreateIncomingParser<TIncoming>()
         where TIncoming : class, IIncomingPacket<TIncoming>
-    {
-        return PacketParserAdapter<TIncoming>.TryParse;
-    }
+        => PacketParserAdapter<TIncoming>.TryParse;
 }

@@ -23,9 +23,7 @@ public sealed class Animdata
         public byte FrameStart { get; set; }
 
         // Empty constructor needed for deserialization.
-        public AnimdataEntry()
-        {
-        }
+        public AnimdataEntry() { }
 
         public AnimdataEntry(sbyte[] frame, byte unk, byte frameCount, byte frameInterval, byte frameStart)
         {
@@ -60,6 +58,7 @@ public sealed class Animdata
 
         using var fs = new FileStream(path, FileMode.Open, FileAccess.Read, FileShare.Read);
         using var bin = new BinaryReader(fs);
+
         unsafe
         {
             var id = 0;

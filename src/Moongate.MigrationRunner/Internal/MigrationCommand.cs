@@ -12,14 +12,19 @@ namespace Moongate.MigrationRunner.Internal;
 internal static class MigrationCommand
 {
     public static async Task<int> ExecuteAsync(
-        string[] args, TextWriter output, TextWriter error, CancellationToken cancellationToken = default
+        string[] args,
+        TextWriter output,
+        TextWriter error,
+        CancellationToken cancellationToken = default
     )
     {
         const string usage =
             "Usage: Moongate.MigrationRunner status|apply --target auth|world [--root-directory PATH] [--migrations-directory PATH]";
+
         if (args is ["--help"] or ["-h"])
         {
             await output.WriteLineAsync(usage);
+
             return 0;
         }
 
@@ -31,6 +36,7 @@ internal static class MigrationCommand
             }
 
             var options = new Dictionary<string, string>(StringComparer.Ordinal);
+
             for (var index = 1; index < args.Length; index += 2)
             {
                 if (index + 1 >= args.Length ||
@@ -56,22 +62,24 @@ internal static class MigrationCommand
                  Path.Combine(AppContext.BaseDirectory, "..", "migrations")).ResolvePathAndEnvs();
             var catalog = MigrationCatalog.Load(migrations, Path.Combine(root, "plugins"), target);
             string connectionString;
+
             try
             {
                 var config = await TomlUtils.DeserializeFromFileAsync<RunnerConfiguration>(
-                    Path.Combine(root, "config", "moongate.toml"),
-                    cancellationToken: cancellationToken
-                );
+                                 Path.Combine(root, "config", "moongate.toml"),
+                                 cancellationToken: cancellationToken
+                             );
                 var template = target == MigrationTarget.Auth
-                    ? config?.Persistence.Accounts.ConnectionString
-                    : config?.Persistence.Realm.ConnectionString;
+                                   ? config?.Persistence.Accounts.ConnectionString
+                                   : config?.Persistence.Realm.ConnectionString;
+
                 if (string.IsNullOrWhiteSpace(template))
                 {
                     throw new InvalidOperationException();
                 }
 
                 connectionString = new NpgsqlConnectionStringBuilder(
-                    PostgreSqlConnectionString.Normalize(template.ExpandEnvironmentVariables(requireDefined: true))
+                    PostgreSqlConnectionString.Normalize(template.ExpandEnvironmentVariables(true))
                 ).ConnectionString;
             }
             catch (Exception exception) when (exception is not OperationCanceledException)
@@ -82,6 +90,7 @@ internal static class MigrationCommand
             }
 
             cancellationToken.ThrowIfCancellationRequested();
+
             if (args[0] == "apply")
             {
                 var count = PostgreSqlMigrationRunner.Apply(connectionString, catalog);
@@ -93,6 +102,7 @@ internal static class MigrationCommand
                 await connection.OpenAsync(cancellationToken);
                 var applied = await MigrationHistory.ReadAsync(() => connection.CreateCommand(), target, cancellationToken);
                 var pending = MigrationHistory.Validate(catalog, applied);
+
                 foreach (var script in pending)
                 {
                     await output.WriteLineAsync($"Pending {target}: {script.Name}");

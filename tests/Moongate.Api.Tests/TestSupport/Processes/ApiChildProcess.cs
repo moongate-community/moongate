@@ -19,30 +19,56 @@ internal sealed class ApiChildProcess : IAsyncDisposable
         _stderr = process.StandardError.ReadToEndAsync();
     }
 
-    public static async Task<ApiChildProcess> StartAsync(string role, object configuration)
+    public async ValueTask DisposeAsync()
     {
-        var start = new ProcessStartInfo("dotnet")
+        if (_disposed)
         {
-            UseShellExecute = false,
-            RedirectStandardInput = true,
-            RedirectStandardOutput = true,
-            RedirectStandardError = true
-        };
-        start.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "TestHost", "Moongate.Api.TestHost.dll"));
-        start.ArgumentList.Add(role);
-        var child = new ApiChildProcess(
-            Process.Start(start) ?? throw new InvalidOperationException("Could not start test host.")
-        );
+            return;
+        }
+
+        _disposed = true;
+
         try
         {
-            await child._process.StandardInput.WriteLineAsync(JsonSerializer.Serialize(configuration));
-            await child._process.StandardInput.FlushAsync();
-            return child;
+            if (!_process.HasExited)
+            {
+                try
+                {
+                    await SendAsync("STOP");
+                    _process.StandardInput.Close();
+                }
+                catch (IOException) { }
+
+                try
+                {
+                    await _process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(5));
+                }
+                catch (TimeoutException)
+                {
+                    if (!_process.HasExited)
+                    {
+                        _process.Kill(true);
+                    }
+
+                    await _process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(5));
+                }
+            }
+
+            await Task.WhenAll(_stdout, _stderr);
         }
-        catch
+        finally
         {
-            await child.DisposeAsync();
-            throw;
+            _process.Dispose();
+        }
+    }
+
+    public async Task ExpectExitAsync()
+    {
+        await _process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(15));
+
+        if (_process.ExitCode != 0)
+        {
+            throw new InvalidOperationException($"Test host failed: {await _stderr}");
         }
     }
 
@@ -64,12 +90,33 @@ internal sealed class ApiChildProcess : IAsyncDisposable
         await _process.StandardInput.FlushAsync();
     }
 
-    public async Task ExpectExitAsync()
+    public static async Task<ApiChildProcess> StartAsync(string role, object configuration)
     {
-        await _process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(15));
-        if (_process.ExitCode != 0)
+        var start = new ProcessStartInfo("dotnet")
         {
-            throw new InvalidOperationException($"Test host failed: {await _stderr}");
+            UseShellExecute = false,
+            RedirectStandardInput = true,
+            RedirectStandardOutput = true,
+            RedirectStandardError = true
+        };
+        start.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "TestHost", "Moongate.Api.TestHost.dll"));
+        start.ArgumentList.Add(role);
+        var child = new ApiChildProcess(
+            Process.Start(start) ?? throw new InvalidOperationException("Could not start test host.")
+        );
+
+        try
+        {
+            await child._process.StandardInput.WriteLineAsync(JsonSerializer.Serialize(configuration));
+            await child._process.StandardInput.FlushAsync();
+
+            return child;
+        }
+        catch
+        {
+            await child.DisposeAsync();
+
+            throw;
         }
     }
 
@@ -85,50 +132,6 @@ internal sealed class ApiChildProcess : IAsyncDisposable
         finally
         {
             _lines.Writer.TryComplete();
-        }
-    }
-
-    public async ValueTask DisposeAsync()
-    {
-        if (_disposed)
-        {
-            return;
-        }
-
-        _disposed = true;
-        try
-        {
-            if (!_process.HasExited)
-            {
-                try
-                {
-                    await SendAsync("STOP");
-                    _process.StandardInput.Close();
-                }
-                catch (IOException)
-                {
-                }
-
-                try
-                {
-                    await _process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(5));
-                }
-                catch (TimeoutException)
-                {
-                    if (!_process.HasExited)
-                    {
-                        _process.Kill(entireProcessTree: true);
-                    }
-
-                    await _process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(5));
-                }
-            }
-
-            await Task.WhenAll(_stdout, _stderr);
-        }
-        finally
-        {
-            _process.Dispose();
         }
     }
 }

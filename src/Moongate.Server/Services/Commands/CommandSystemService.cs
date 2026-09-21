@@ -30,59 +30,6 @@ public sealed class CommandSystemService : ICommandSystemService
     }
 
     /// <inheritdoc />
-    public Task StartAsync()
-    {
-        lock (_gate)
-        {
-            if (_stopped)
-            {
-                throw new InvalidOperationException("The command system cannot restart after shutdown.");
-            }
-
-            if (!_running)
-            {
-                _commands = BindCommands();
-                _running = true;
-                _logger.Information(
-                    "Command system started with {AliasCount} command aliases.",
-                    _commands.Count
-                );
-            }
-        }
-
-        return Task.CompletedTask;
-    }
-
-    /// <inheritdoc />
-    public Task StopAsync()
-    {
-        lock (_gate)
-        {
-            _running = false;
-            _stopped = true;
-        }
-
-        return Task.CompletedTask;
-    }
-
-    /// <inheritdoc />
-    public IReadOnlyList<CommandDefinition> GetRegisteredCommands()
-    {
-        FrozenDictionary<string, BoundCommand> commands;
-
-        lock (_gate)
-        {
-            commands = _commands;
-        }
-
-        return commands.Values
-            .Select(command => command.Definition)
-            .Distinct()
-            .OrderBy(definition => definition.Name, StringComparer.OrdinalIgnoreCase)
-            .ToArray();
-    }
-
-    /// <inheritdoc />
     public async Task<IReadOnlyList<CommandOutputLine>> ExecuteAsync(
         string commandLine,
         CommandSourceType source = CommandSourceType.Console,
@@ -152,6 +99,59 @@ public sealed class CommandSystemService : ICommandSystemService
         return context.Output;
     }
 
+    /// <inheritdoc />
+    public IReadOnlyList<CommandDefinition> GetRegisteredCommands()
+    {
+        FrozenDictionary<string, BoundCommand> commands;
+
+        lock (_gate)
+        {
+            commands = _commands;
+        }
+
+        return commands.Values
+                       .Select(command => command.Definition)
+                       .Distinct()
+                       .OrderBy(definition => definition.Name, StringComparer.OrdinalIgnoreCase)
+                       .ToArray();
+    }
+
+    /// <inheritdoc />
+    public Task StartAsync()
+    {
+        lock (_gate)
+        {
+            if (_stopped)
+            {
+                throw new InvalidOperationException("The command system cannot restart after shutdown.");
+            }
+
+            if (!_running)
+            {
+                _commands = BindCommands();
+                _running = true;
+                _logger.Information(
+                    "Command system started with {AliasCount} command aliases.",
+                    _commands.Count
+                );
+            }
+        }
+
+        return Task.CompletedTask;
+    }
+
+    /// <inheritdoc />
+    public Task StopAsync()
+    {
+        lock (_gate)
+        {
+            _running = false;
+            _stopped = true;
+        }
+
+        return Task.CompletedTask;
+    }
+
     private FrozenDictionary<string, BoundCommand> BindCommands()
     {
         var handlers = new Dictionary<CommandRegistration, Func<CommandContext, Task>>();
@@ -165,7 +165,7 @@ public sealed class CommandSystemService : ICommandSystemService
                 handlers.Add(registration, handler);
             }
 
-            commands.Add(alias, new BoundCommand(registration.Definition, handler));
+            commands.Add(alias, new(registration.Definition, handler));
         }
 
         return commands.ToFrozenDictionary(StringComparer.OrdinalIgnoreCase);

@@ -37,12 +37,12 @@ internal sealed class PostgreSqlDatabase : IDisposable
         options.ValidateSameDatabaseEndpoint(runtimeConnectionString, schemaConnectionString);
         SerialTypeHandler.EnsureRegistered();
         var orm = new FreeSqlBuilder()
-            .UseConnectionString(DataType.PostgreSQL, runtimeConnectionString)
-            .UseAutoSyncStructure(false)
-            .UseNoneCommandParameter(false)
-            .Build();
+                  .UseConnectionString(DataType.PostgreSQL, runtimeConnectionString)
+                  .UseAutoSyncStructure(false)
+                  .UseNoneCommandParameter(false)
+                  .Build();
 
-        return new PostgreSqlDatabase(options.Target, runtimeConnectionString, schemaConnectionString, orm);
+        return new(options.Target, runtimeConnectionString, schemaConnectionString, orm);
     }
 
     public void Dispose()

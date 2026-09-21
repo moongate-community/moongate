@@ -18,12 +18,14 @@ internal sealed class BootstrapLifecycleTasks
         lock (_lifecycleSync)
         {
             ThrowIfConfiguring();
+
             if (_startTask is not null || _stopTask is not null)
             {
                 throw new InvalidOperationException("Services cannot be registered after startup or shutdown begins.");
             }
 
             _configuring = true;
+
             try
             {
                 configure();
@@ -35,6 +37,27 @@ internal sealed class BootstrapLifecycleTasks
         }
     }
 
+    public Task<List<Exception>> ShutdownAsync(Func<Task<List<Exception>>> shutdown)
+    {
+        TaskCompletionSource<Task<List<Exception>>> completion;
+        Task<List<Exception>> shutdownTask;
+
+        lock (_lifecycleSync)
+        {
+            if (_shutdownTask is not null)
+            {
+                return _shutdownTask;
+            }
+
+            completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            shutdownTask = _shutdownTask = completion.Task.Unwrap();
+        }
+
+        completion.SetResult(shutdown());
+
+        return shutdownTask;
+    }
+
     public Task StartAsync(Func<Task> start)
     {
         TaskCompletionSource<Task> completion;
@@ -43,13 +66,14 @@ internal sealed class BootstrapLifecycleTasks
         lock (_lifecycleSync)
         {
             ThrowIfConfiguring();
+
             if (_startTask is not null)
             {
                 return _startTask;
             }
 
             // Publish the shared identity before invoking callbacks; Unwrap preserves faults and cancellation.
-            completion = new TaskCompletionSource<Task>(TaskCreationOptions.RunContinuationsAsynchronously);
+            completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
             startTask = _startTask = completion.Task.Unwrap();
         }
 
@@ -67,12 +91,13 @@ internal sealed class BootstrapLifecycleTasks
         lock (_lifecycleSync)
         {
             ThrowIfConfiguring();
+
             if (_stopTask is not null)
             {
                 return _stopTask;
             }
 
-            completion = new TaskCompletionSource<Task>(TaskCreationOptions.RunContinuationsAsynchronously);
+            completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
             startupTask = _startTask;
             stopTask = _stopTask = completion.Task.Unwrap();
         }
@@ -80,27 +105,6 @@ internal sealed class BootstrapLifecycleTasks
         completion.SetResult(stop(startupTask));
 
         return stopTask;
-    }
-
-    public Task<List<Exception>> ShutdownAsync(Func<Task<List<Exception>>> shutdown)
-    {
-        TaskCompletionSource<Task<List<Exception>>> completion;
-        Task<List<Exception>> shutdownTask;
-
-        lock (_lifecycleSync)
-        {
-            if (_shutdownTask is not null)
-            {
-                return _shutdownTask;
-            }
-
-            completion = new TaskCompletionSource<Task<List<Exception>>>(TaskCreationOptions.RunContinuationsAsynchronously);
-            shutdownTask = _shutdownTask = completion.Task.Unwrap();
-        }
-
-        completion.SetResult(shutdown());
-
-        return shutdownTask;
     }
 
     private void ThrowIfConfiguring()

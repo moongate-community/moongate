@@ -8,6 +8,15 @@ namespace Moongate.Server.Core.Interfaces.Bootstrap;
 /// </remarks>
 public interface IMoongateServerBootstrap
 {
+    /// <summary>Waits until the host is asked to shut down or the game loop ends on its own.</summary>
+    /// <returns>A task that completes on cancellation, or faults with the game loop's failure.</returns>
+    /// <remarks>
+    /// This method does not start or stop anything. It blocks the running phase between
+    /// <see cref="StartAsync" /> and <see cref="StopAsync" />, and a game loop that faulted surfaces its
+    /// exception here so the host can report it before shutting down.
+    /// </remarks>
+    Task RunAsync();
+
     /// <summary>Starts every registered startup service in priority order.</summary>
     /// <returns>A task that completes when every service has started.</returns>
     /// <remarks>
@@ -23,13 +32,4 @@ public interface IMoongateServerBootstrap
     /// services are collected so every service still gets its stop call.
     /// </remarks>
     Task StopAsync();
-
-    /// <summary>Waits until the host is asked to shut down or the game loop ends on its own.</summary>
-    /// <returns>A task that completes on cancellation, or faults with the game loop's failure.</returns>
-    /// <remarks>
-    /// This method does not start or stop anything. It blocks the running phase between
-    /// <see cref="StartAsync"/> and <see cref="StopAsync"/>, and a game loop that faulted surfaces its
-    /// exception here so the host can report it before shutting down.
-    /// </remarks>
-    Task RunAsync();
 }

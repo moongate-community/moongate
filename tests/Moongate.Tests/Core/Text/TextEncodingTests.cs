@@ -5,44 +5,6 @@ namespace Moongate.Tests.Core.Text;
 
 public class TextEncodingTests
 {
-    [Theory, InlineData(false), InlineData(true)]
-    public void GetByteLengthForEncoding_Utf32_UsesFourByteCodeUnits(bool bigEndian)
-    {
-        var encoding = new UTF32Encoding(bigEndian, false);
-
-        Assert.Equal(4, encoding.GetByteLengthForEncoding());
-    }
-
-    [Theory, InlineData("hello\u0001", "hello"), InlineData("\u0001", "")]
-    public void GetString_TrailingControlCharacter_IsRemovedFromSafeText(string input, string expected)
-    {
-        var bytes = Encoding.UTF8.GetBytes(input);
-
-        Assert.Equal(expected, TextEncoding.GetString(bytes, Encoding.UTF8, true));
-    }
-
-    [Theory, InlineData(false), InlineData(true)]
-    public void GetBytes_MultibyteText_AllocatesExactlyTheEncodedLength(bool useSpan)
-    {
-        const string input = "Aé😀";
-
-        var bytes = useSpan
-            ? TextEncoding.GetBytes(input.AsSpan(), TextEncoding.UTF8)
-            : TextEncoding.GetBytes(input, TextEncoding.UTF8);
-
-        Assert.Equal(new byte[] { 0x41, 0xC3, 0xA9, 0xF0, 0x9F, 0x98, 0x80 }, bytes);
-    }
-
-    [Theory, InlineData(false), InlineData(true)]
-    public void GetBytes_EmptyText_ProducesNoBytes(bool useSpan)
-    {
-        var bytes = useSpan
-            ? TextEncoding.GetBytes(ReadOnlySpan<char>.Empty, TextEncoding.Unicode)
-            : TextEncoding.GetBytes("", TextEncoding.Unicode);
-
-        Assert.Empty(bytes);
-    }
-
     [Fact]
     public void GetByteLengthForEncoding_AsciiUtf8AndUtf16_ReportsCodeUnitWidths()
     {
@@ -52,12 +14,12 @@ public class TextEncodingTests
         Assert.Equal(2, TextEncoding.UnicodeLE.GetByteLengthForEncoding());
     }
 
-    [Fact]
-    public void UnicodeEncodings_DoNotEmitByteOrderMarks()
+    [Theory, InlineData(false), InlineData(true)]
+    public void GetByteLengthForEncoding_Utf32_UsesFourByteCodeUnits(bool bigEndian)
     {
-        Assert.Empty(TextEncoding.UTF8.GetPreamble());
-        Assert.Empty(TextEncoding.Unicode.GetPreamble());
-        Assert.Empty(TextEncoding.UnicodeLE.GetPreamble());
+        var encoding = new UTF32Encoding(bigEndian, false);
+
+        Assert.Equal(4, encoding.GetByteLengthForEncoding());
     }
 
     [Fact]
@@ -66,14 +28,6 @@ public class TextEncodingTests
         var bytes = "café".AsSpan().GetBytesAscii();
 
         Assert.Equal(new byte[] { 0x63, 0x61, 0x66, 0x3F }, bytes);
-    }
-
-    [Fact]
-    public void GetBytesUtf8_UnpairedSurrogate_UsesReplacementCharacter()
-    {
-        var bytes = "A\uD800B".GetBytesUtf8();
-
-        Assert.Equal(new byte[] { 0x41, 0xEF, 0xBF, 0xBD, 0x42 }, bytes);
     }
 
     [Fact]
@@ -106,19 +60,34 @@ public class TextEncodingTests
         Assert.Throws<ArgumentException>(() => "é".GetBytesUtf8(buffer));
     }
 
-    [Theory,
-     InlineData("", ""),
-     InlineData("Caffè 😀", "Caffè 😀"),
-     InlineData("\u001fA \uFFFD\uFFFEB\uFFFF", "A \uFFFDB"),
-     InlineData("\0\tA\r\nB", "AB")]
-    public void GetString_SafeText_KeepsPrintableCharactersAndRemovesForbiddenCharacters(
-        string input,
-        string expected
-    )
+    [Fact]
+    public void GetBytesUtf8_UnpairedSurrogate_UsesReplacementCharacter()
     {
-        var bytes = Encoding.UTF8.GetBytes(input);
+        var bytes = "A\uD800B".GetBytesUtf8();
 
-        Assert.Equal(expected, TextEncoding.GetString(bytes, Encoding.UTF8, true));
+        Assert.Equal(new byte[] { 0x41, 0xEF, 0xBF, 0xBD, 0x42 }, bytes);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public void GetBytes_EmptyText_ProducesNoBytes(bool useSpan)
+    {
+        var bytes = useSpan
+                        ? TextEncoding.GetBytes(ReadOnlySpan<char>.Empty, TextEncoding.Unicode)
+                        : TextEncoding.GetBytes("", TextEncoding.Unicode);
+
+        Assert.Empty(bytes);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public void GetBytes_MultibyteText_AllocatesExactlyTheEncodedLength(bool useSpan)
+    {
+        const string input = "Aé😀";
+
+        var bytes = useSpan
+                        ? TextEncoding.GetBytes(input.AsSpan(), TextEncoding.UTF8)
+                        : TextEncoding.GetBytes(input, TextEncoding.UTF8);
+
+        Assert.Equal(new byte[] { 0x41, 0xC3, 0xA9, 0xF0, 0x9F, 0x98, 0x80 }, bytes);
     }
 
     [Fact]
@@ -147,6 +116,21 @@ public class TextEncodingTests
         Assert.Equal("A\uFFFDB", TextEncoding.GetString(bytes, TextEncoding.UTF8));
     }
 
+    [Theory,
+     InlineData("", ""),
+     InlineData("Caffè 😀", "Caffè 😀"),
+     InlineData("\u001fA \uFFFD\uFFFEB\uFFFF", "A \uFFFDB"),
+     InlineData("\0\tA\r\nB", "AB")]
+    public void GetString_SafeText_KeepsPrintableCharactersAndRemovesForbiddenCharacters(
+        string input,
+        string expected
+    )
+    {
+        var bytes = Encoding.UTF8.GetBytes(input);
+
+        Assert.Equal(expected, TextEncoding.GetString(bytes, Encoding.UTF8, true));
+    }
+
     [Theory, InlineData(16, false), InlineData(16, true), InlineData(512, false), InlineData(512, true)]
     public void GetString_StackAndPooledPaths_PreserveSafeFiltering(int prefixLength, bool safeString)
     {
@@ -157,5 +141,21 @@ public class TextEncodingTests
         var result = TextEncoding.GetString(bytes, Encoding.UTF8, safeString);
 
         Assert.Equal(safeString ? prefix + "caffè" : input, result);
+    }
+
+    [Theory, InlineData("hello\u0001", "hello"), InlineData("\u0001", "")]
+    public void GetString_TrailingControlCharacter_IsRemovedFromSafeText(string input, string expected)
+    {
+        var bytes = Encoding.UTF8.GetBytes(input);
+
+        Assert.Equal(expected, TextEncoding.GetString(bytes, Encoding.UTF8, true));
+    }
+
+    [Fact]
+    public void UnicodeEncodings_DoNotEmitByteOrderMarks()
+    {
+        Assert.Empty(TextEncoding.UTF8.GetPreamble());
+        Assert.Empty(TextEncoding.Unicode.GetPreamble());
+        Assert.Empty(TextEncoding.UnicodeLE.GetPreamble());
     }
 }

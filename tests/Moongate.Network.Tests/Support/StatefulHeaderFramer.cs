@@ -32,10 +32,10 @@ public sealed class StatefulHeaderFramer : INetFramer
     /// <returns>The encoded frame: obfuscated header followed by the payload.</returns>
     public static byte[] Encode(ReadOnlySpan<byte> payload, ref byte key)
     {
-        byte[] frame = new byte[HeaderLength + payload.Length];
+        var frame = new byte[HeaderLength + payload.Length];
         BinaryPrimitives.WriteInt32BigEndian(frame, payload.Length);
 
-        for (int i = 0; i < HeaderLength; i++)
+        for (var i = 0; i < HeaderLength; i++)
         {
             frame[i] ^= key++;
         }
@@ -56,7 +56,7 @@ public sealed class StatefulHeaderFramer : INetFramer
                 return false;
             }
 
-            for (int i = 0; i < HeaderLength; i++)
+            for (var i = 0; i < HeaderLength; i++)
             {
                 buffer[i] ^= _key++;
             }

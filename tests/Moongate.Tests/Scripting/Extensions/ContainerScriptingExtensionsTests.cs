@@ -8,6 +8,16 @@ namespace Moongate.Tests.Scripting.Extensions;
 public sealed class ContainerScriptingExtensionsTests
 {
     [Fact]
+    public void RegisterScriptEnum_IsIdempotent()
+    {
+        using var container = new Container();
+
+        container.RegisterScriptEnum<RegistryColour>().RegisterScriptEnum<RegistryColour>();
+
+        Assert.Equal([typeof(RegistryColour)], container.Resolve<IScriptModuleRegistry>().EnumTypes);
+    }
+
+    [Fact]
     public void RegisterScriptModule_AppendsInOrderAndRegistersASingleton()
     {
         using var container = new Container();
@@ -37,15 +47,5 @@ public sealed class ContainerScriptingExtensionsTests
         using var container = new Container();
 
         Assert.Throws<ArgumentException>(() => container.RegisterScriptModule<UnmarkedModule>());
-    }
-
-    [Fact]
-    public void RegisterScriptEnum_IsIdempotent()
-    {
-        using var container = new Container();
-
-        container.RegisterScriptEnum<RegistryColour>().RegisterScriptEnum<RegistryColour>();
-
-        Assert.Equal([typeof(RegistryColour)], container.Resolve<IScriptModuleRegistry>().EnumTypes);
     }
 }

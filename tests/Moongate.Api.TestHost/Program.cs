@@ -13,8 +13,9 @@ using Moongate.Api.TestHost.Handlers;
 try
 {
     var config = JsonSerializer.Deserialize<HostConfiguration>(
-        await Console.In.ReadLineAsync() ?? throw new InvalidDataException()
-    ) ?? throw new InvalidDataException();
+                     await Console.In.ReadLineAsync() ?? throw new InvalidDataException()
+                 ) ??
+                 throw new InvalidDataException();
     using var certificate = X509CertificateLoader.LoadPkcs12(
         Convert.FromBase64String(config.Certificate),
         null,
@@ -31,19 +32,21 @@ try
         )
     };
     var registry = new ApiRegistry();
+
     if (args.Single() is "login" or "game")
     {
         var handler = new IncrementHandler();
         registry.RegisterHandler(() => handler);
         await using var server = new ApiServer(
-            new IPEndPoint(IPAddress.Loopback, 0),
+            new(IPAddress.Loopback, 0),
             registry,
-            new ApiOptions(),
+            new(),
             tls,
             TimeProvider.System
         );
         await server.StartAsync();
         Console.WriteLine($"READY {server.Endpoint!.Port}");
+
         while (await Console.In.ReadLineAsync() is { } command && command != "STOP")
         {
             if (command == "COUNT")
@@ -57,13 +60,12 @@ try
     else if (args[0] == "client")
     {
         registry.RegisterContract<IncrementRequest, IncrementResponse>();
-        await using var client = new ApiClient(registry, new ApiOptions(), tls, TimeProvider.System);
-        var connection = await client.ConnectAsync(new IPEndPoint(IPAddress.Loopback, config.Port), "localhost", "target");
+        await using var client = new ApiClient(registry, new(), tls, TimeProvider.System);
+        var connection = await client.ConnectAsync(new(IPAddress.Loopback, config.Port), "localhost", "target");
+
         try
         {
-            var result = await connection.RequestAsync<IncrementRequest, IncrementResponse>(
-                new IncrementRequest { Value = config.Value }
-            );
+            var result = await connection.RequestAsync<IncrementRequest, IncrementResponse>(new() { Value = config.Value });
             Console.WriteLine(result.Value);
         }
         catch (ApiRemoteException error)
@@ -74,10 +76,10 @@ try
         {
             await connection.Completion;
             await using var replacement = await client.ConnectAsync(
-                new IPEndPoint(IPAddress.Loopback, config.Port),
-                "localhost",
-                "target"
-            );
+                                              new(IPAddress.Loopback, config.Port),
+                                              "localhost",
+                                              "target"
+                                          );
             Console.WriteLine("DISCONNECTED RECONNECTED");
         }
     }
@@ -92,5 +94,6 @@ catch (Exception exception)
 {
     // Synthetic certificate material must never be copied to process diagnostics.
     Console.Error.WriteLine(exception.GetType().Name);
+
     return 1;
 }

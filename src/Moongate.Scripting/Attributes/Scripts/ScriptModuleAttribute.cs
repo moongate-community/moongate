@@ -12,10 +12,10 @@ public sealed partial class ScriptModuleAttribute : Attribute
     /// <summary>Gets the description written to the editor definitions, if any.</summary>
     public string? HelpText { get; }
 
-    /// <summary>Initializes a new instance of the <see cref="ScriptModuleAttribute"/> class.</summary>
+    /// <summary>Initializes a new instance of the <see cref="ScriptModuleAttribute" /> class.</summary>
     /// <param name="name">Lua global under which the module table is published, such as <c>log</c>.</param>
     /// <param name="helpText">One line describing the module, written to the editor definitions.</param>
-    /// <exception cref="ArgumentException"><paramref name="name"/> is not a lower-case Lua identifier.</exception>
+    /// <exception cref="ArgumentException"><paramref name="name" /> is not a lower-case Lua identifier.</exception>
     public ScriptModuleAttribute(string name, string? helpText = null)
     {
         if (!LuaIdentifier().IsMatch(name))

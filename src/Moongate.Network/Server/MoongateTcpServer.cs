@@ -73,8 +73,8 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
             lock (_lifecycleSync)
             {
                 var endpoint = _state == TcpServerState.Running && _boundEndPoint is { } boundEndPoint
-                    ? boundEndPoint
-                    : _endPoint;
+                                   ? boundEndPoint
+                                   : _endPoint;
 
                 return (IPEndPoint)endpoint.Create(endpoint.Serialize());
             }
@@ -136,15 +136,6 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         _noDelay = noDelay;
     }
 
-    /// <summary>Creates a listener with bounded, asynchronous stream preparation.</summary>
-    public static MoongateTcpServer CreateConfigured(IPEndPoint endpoint, TcpServerOptions options)
-    {
-        ArgumentNullException.ThrowIfNull(endpoint);
-        ArgumentNullException.ThrowIfNull(options);
-        options.Validate();
-        return new MoongateTcpServer(endpoint, options);
-    }
-
     private MoongateTcpServer(IPEndPoint endpoint, TcpServerOptions options)
         : this(
             endpoint,
@@ -156,6 +147,27 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         )
     {
         _configuredOptions = options;
+    }
+
+    /// <summary>Registers middleware in execution order.</summary>
+    public MoongateTcpServer AddMiddleware(INetMiddleware middleware)
+    {
+        lock (_middlewareSync)
+        {
+            _middlewares = [.. _middlewares, middleware];
+        }
+
+        return this;
+    }
+
+    /// <summary>Creates a listener with bounded, asynchronous stream preparation.</summary>
+    public static MoongateTcpServer CreateConfigured(IPEndPoint endpoint, TcpServerOptions options)
+    {
+        ArgumentNullException.ThrowIfNull(endpoint);
+        ArgumentNullException.ThrowIfNull(options);
+        options.Validate();
+
+        return new(endpoint, options);
     }
 
     /// <inheritdoc />
@@ -204,19 +216,12 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         }
     }
 
-    /// <inheritdoc />
-    public Task StopAsync(CancellationToken cancellationToken)
-    {
-        var cleanup = GetOrStartStopTask();
-
-        return cancellationToken.CanBeCanceled ? cleanup.WaitAsync(cancellationToken) : cleanup;
-    }
-
     /// <summary>Closes the listener and cancels pending preparation while keeping established clients usable.</summary>
     /// <remarks>Call StopAsync before restarting. Caller cancellation only cancels the wait.</remarks>
     public Task StopAcceptingAsync(CancellationToken cancellationToken = default)
     {
         Task stop;
+
         lock (_lifecycleSync)
         {
             if (_state is TcpServerState.Stopped or TcpServerState.Disposed)
@@ -230,48 +235,409 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         return cancellationToken.CanBeCanceled ? stop.WaitAsync(cancellationToken) : stop;
     }
 
-    private async Task StopAcceptingCoreAsync()
+    /// <inheritdoc />
+    public Task StopAsync(CancellationToken cancellationToken)
+    {
+        var cleanup = GetOrStartStopTask();
+
+        return cancellationToken.CanBeCanceled ? cleanup.WaitAsync(cancellationToken) : cleanup;
+    }
+
+    private async Task AcceptLoopAsync(Socket socket, CancellationToken cancellationToken)
+    {
+        while (!cancellationToken.IsCancellationRequested)
+        {
+            Socket accepted;
+
+            try
+            {
+                accepted = await socket.AcceptAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (Exception exception) when (cancellationToken.IsCancellationRequested ||
+                                              exception is ObjectDisposedException)
+            {
+                break;
+            }
+            catch (SocketException exception)
+            {
+                ReportException(new(exception));
+
+                try
+                {
+                    await Task.Delay(AcceptRetryDelayMilliseconds, cancellationToken).ConfigureAwait(false);
+                }
+                catch (OperationCanceledException)
+                {
+                    break;
+                }
+
+                continue;
+            }
+
+            if (_configuredOptions is not null)
+            {
+                AdmitPreparation(accepted, cancellationToken);
+
+                continue;
+            }
+
+            MoongateTcpClient? client = null;
+            TaskCompletionSource? started = null;
+
+            try
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                var pipeline = _connectionPipelineFactory?.Invoke();
+                client = new(
+                    accepted,
+                    pipeline?.Middlewares ?? Volatile.Read(ref _middlewares),
+                    pipeline?.Framer ?? _framer,
+                    pipeline?.Codec,
+                    _receiveBufferSize,
+                    _maxFrameLength,
+                    _noDelay
+                );
+                WireClientEvents(client);
+                started = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+                lock (_lifecycleSync)
+                {
+                    _clients.Add(client.SessionId, client);
+                    _clientStarts.Add(client.SessionId, started);
+                }
+
+                // The server owns generation shutdown: drain accept before requesting client closes.
+                await client.StartAsync(CancellationToken.None).ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                if (client is null)
+                {
+                    accepted.Dispose();
+                }
+                else
+                {
+                    _ = GetOrStartClientCleanup(client);
+                }
+
+                if (!cancellationToken.IsCancellationRequested)
+                {
+                    ReportException(new(exception, client));
+                }
+            }
+            finally
+            {
+                started?.TrySetResult();
+            }
+        }
+    }
+
+    private void AdmitPreparation(Socket socket, CancellationToken generationToken)
+    {
+        AcceptedConnectionSetup? setup = null;
+
+        lock (_lifecycleSync)
+        {
+            if (_state == TcpServerState.Running &&
+                !generationToken.IsCancellationRequested &&
+                _admittedConnections < _configuredOptions!.MaxConnections &&
+                _preparingConnections < _configuredOptions.MaxConcurrentPreparations)
+            {
+                setup = new(socket);
+                _admittedConnections++;
+                _preparingConnections++;
+                _setups.Add(setup);
+            }
+        }
+
+        if (setup is null)
+        {
+            socket.Dispose();
+
+            return;
+        }
+
+        _ = PrepareAcceptedAsync(setup, generationToken);
+    }
+
+    private async Task CleanupClientAsync(MoongateTcpClient client, Task start, TaskCompletionSource completion)
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+
         try
         {
-            await _startTask.ConfigureAwait(false);
+            await start.ConfigureAwait(false);
+            await client.DisposeAsync().ConfigureAwait(false);
         }
-        catch
+        catch (Exception exception)
+        {
+            lock (_lifecycleSync)
+            {
+                _cleanupErrors.Add(exception);
+            }
+
+            _logger.Error(exception, "Connection cleanup failed for {SessionId}", client.SessionId);
+        }
+        finally
+        {
+            lock (_lifecycleSync)
+            {
+                if (_clients.Remove(client.SessionId) && _configuredOptions is not null)
+                {
+                    _admittedConnections--;
+                }
+
+                _clientStarts.Remove(client.SessionId);
+                _clientCleanups.Remove(client.SessionId);
+                completion.TrySetResult();
+            }
+        }
+    }
+
+    private Task GetOrStartClientCleanup(MoongateTcpClient client)
+    {
+        TaskCompletionSource completion;
+        Task start;
+
+        lock (_lifecycleSync)
+        {
+            if (_clientCleanups.TryGetValue(client.SessionId, out var cleanup))
+            {
+                return cleanup;
+            }
+
+            if (!_clientStarts.TryGetValue(client.SessionId, out var started))
+            {
+                return Task.CompletedTask;
+            }
+
+            start = started.Task;
+            completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            _clientCleanups.Add(client.SessionId, completion.Task);
+        }
+
+        _ = CleanupClientAsync(client, start, completion);
+
+        return completion.Task;
+    }
+
+    private Task GetOrStartStopTask(bool dispose = false)
+    {
+        TaskCompletionSource? completion = null;
+        Task result;
+
+        lock (_lifecycleSync)
+        {
+            _disposeRequested |= dispose;
+
+            if (_state is TcpServerState.Stopped or TcpServerState.Disposed)
+            {
+                if (_disposeRequested)
+                {
+                    _state = TcpServerState.Disposed;
+                }
+
+                return _stopTask;
+            }
+
+            if (_state != TcpServerState.Stopping)
+            {
+                completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
+                _stopTask = completion.Task;
+                _state = TcpServerState.Stopping;
+                _port = 0;
+            }
+
+            result = _stopTask;
+        }
+
+        if (completion is not null)
+        {
+            _ = StopCoreAsync(completion);
+
+            // Cancellation and synchronous Dispose may be the only callers. Observe failure even
+            // then; the shared task still carries it to subsequent Stop/DisposeAsync callers.
+            _ = result.ContinueWith(
+                task => _logger.Error(task.Exception, "TCP cleanup failed"),
+                CancellationToken.None,
+                TaskContinuationOptions.OnlyOnFaulted,
+                TaskScheduler.Default
+            );
+        }
+
+        return result;
+    }
+
+    private void InvokeSafely<T>(EventHandler<T>? handlers, T args) where T : EventArgs
+    {
+        if (handlers is null)
         {
             return;
         }
 
-        _serverSocket?.Dispose();
-        if (_listenerCancellationTokenSource is { } lifetime)
+        foreach (EventHandler<T> handler in handlers.GetInvocationList())
         {
-            await lifetime.CancelAsync().ConfigureAwait(false);
+            try
+            {
+                handler(this, args);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "TCP diagnostic or disconnect handler failed");
+            }
         }
-
-        await _acceptLoopTask.ConfigureAwait(false);
-        AcceptedConnectionSetup[] setups;
-        lock (_lifecycleSync)
-        {
-            setups = _setups.ToArray();
-        }
-
-        foreach (var setup in setups)
-        {
-            setup.Socket.Dispose();
-        }
-
-        await Task.WhenAll(setups.Select(setup => setup.Completion.Task)).ConfigureAwait(false);
     }
 
-    /// <summary>Registers middleware in execution order.</summary>
-    public MoongateTcpServer AddMiddleware(INetMiddleware middleware)
+    private async Task PrepareAcceptedAsync(AcceptedConnectionSetup setup, CancellationToken generationToken)
     {
-        lock (_middlewareSync)
-        {
-            _middlewares = [.. _middlewares, middleware];
-        }
+        // Start asynchronously so even a synchronously completing preparer cannot block accept.
+        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+        Stream? stream = null;
+        MoongateTcpClient? client = null;
+        TaskCompletionSource? started = null;
+        var promoted = false;
+        var options = _configuredOptions!;
+        using var deadline = new CancellationTokenSource(options.PreparationTimeout, options.TimeProvider);
+        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(generationToken, deadline.Token);
 
-        return this;
+        try
+        {
+            lifetime.Token.ThrowIfCancellationRequested();
+            var pipeline = _connectionPipelineFactory?.Invoke() ?? new ConnectionPipeline();
+            stream = new NetworkStream(setup.Socket, false);
+
+            if (pipeline.PrepareStreamAsync is { } prepare)
+            {
+                var prepared = await prepare(stream, lifetime.Token).ConfigureAwait(false);
+                stream = prepared ?? throw new InvalidOperationException("Preparation returned no stream.");
+            }
+
+            lifetime.Token.ThrowIfCancellationRequested();
+
+            if (!stream.CanRead || !stream.CanWrite)
+            {
+                throw new InvalidOperationException("Preparation must return a readable and writable stream.");
+            }
+
+            client = new(
+                setup.Socket,
+                stream,
+                pipeline.Middlewares ?? Volatile.Read(ref _middlewares),
+                pipeline.Framer ?? _framer,
+                pipeline.Codec,
+                _receiveBufferSize,
+                _maxFrameLength,
+                _noDelay
+            );
+            started = new(TaskCreationOptions.RunContinuationsAsynchronously);
+
+            lock (_lifecycleSync)
+            {
+                generationToken.ThrowIfCancellationRequested();
+
+                if (_state != TcpServerState.Running)
+                {
+                    throw new OperationCanceledException(generationToken);
+                }
+
+                _clients.Add(client.SessionId, client);
+                _clientStarts.Add(client.SessionId, started);
+                _preparingConnections--;
+                promoted = true;
+            }
+
+            WireClientEvents(client);
+            pipeline.ConfigureClient?.Invoke(client);
+            await client.StartAsync(CancellationToken.None).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            if (promoted)
+            {
+                _ = GetOrStartClientCleanup(client!);
+            }
+
+            if (!generationToken.IsCancellationRequested)
+            {
+                ReportException(new(exception, client));
+            }
+        }
+        finally
+        {
+            started?.TrySetResult();
+
+            if (!promoted)
+            {
+                try
+                {
+                    if (client is not null)
+                    {
+                        await client.DisposeAsync().ConfigureAwait(false);
+                    }
+                    else
+                    {
+                        try
+                        {
+                            if (stream is not null)
+                            {
+                                await stream.DisposeAsync().ConfigureAwait(false);
+                            }
+                        }
+                        finally
+                        {
+                            setup.Socket.Dispose();
+                        }
+                    }
+                }
+                catch (Exception exception)
+                {
+                    lock (_lifecycleSync)
+                    {
+                        _cleanupErrors.Add(exception);
+                    }
+                }
+            }
+
+            lock (_lifecycleSync)
+            {
+                if (!promoted)
+                {
+                    _admittedConnections--;
+                    _preparingConnections--;
+                }
+
+                _setups.Remove(setup);
+                setup.Completion.TrySetResult();
+            }
+        }
+    }
+
+    private void ReportException(TcpExceptionEventArgs args)
+    {
+        _logger.Error(args.Exception, "TCP transport failure");
+        InvokeSafely(OnException, args);
+    }
+
+    private async Task RunAcceptLoopAsync(
+        Socket socket,
+        TaskCompletionSource completion,
+        CancellationToken cancellationToken
+    )
+    {
+        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+
+        try
+        {
+            await AcceptLoopAsync(socket, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            ReportException(new(exception));
+        }
+        finally
+        {
+            completion.TrySetResult();
+        }
     }
 
     private void StartCore(TaskCompletionSource completion, CancellationToken cancellationToken)
@@ -337,51 +703,40 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         }
     }
 
-    private Task GetOrStartStopTask(bool dispose = false)
+    private async Task StopAcceptingCoreAsync()
     {
-        TaskCompletionSource? completion = null;
-        Task result;
+        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+
+        try
+        {
+            await _startTask.ConfigureAwait(false);
+        }
+        catch
+        {
+            return;
+        }
+
+        _serverSocket?.Dispose();
+
+        if (_listenerCancellationTokenSource is { } lifetime)
+        {
+            await lifetime.CancelAsync().ConfigureAwait(false);
+        }
+
+        await _acceptLoopTask.ConfigureAwait(false);
+        AcceptedConnectionSetup[] setups;
 
         lock (_lifecycleSync)
         {
-            _disposeRequested |= dispose;
-
-            if (_state is TcpServerState.Stopped or TcpServerState.Disposed)
-            {
-                if (_disposeRequested)
-                {
-                    _state = TcpServerState.Disposed;
-                }
-
-                return _stopTask;
-            }
-
-            if (_state != TcpServerState.Stopping)
-            {
-                completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
-                _stopTask = completion.Task;
-                _state = TcpServerState.Stopping;
-                _port = 0;
-            }
-
-            result = _stopTask;
+            setups = _setups.ToArray();
         }
 
-        if (completion is not null)
+        foreach (var setup in setups)
         {
-            _ = StopCoreAsync(completion);
-
-            // Cancellation and synchronous Dispose may be the only callers. Observe failure even
-            // then; the shared task still carries it to subsequent Stop/DisposeAsync callers.
-            _ = result.ContinueWith(
-                task => _logger.Error(task.Exception, "TCP cleanup failed"),
-                CancellationToken.None,
-                TaskContinuationOptions.OnlyOnFaulted,
-                TaskScheduler.Default
-            );
+            setup.Socket.Dispose();
         }
 
-        return result;
+        await Task.WhenAll(setups.Select(setup => setup.Completion.Task)).ConfigureAwait(false);
     }
 
     private async Task StopCoreAsync(TaskCompletionSource completion)
@@ -402,6 +757,7 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
             }
 
             var lifetime = _listenerCancellationTokenSource;
+
             try
             {
                 await StopAcceptingAsync().ConfigureAwait(false);
@@ -481,367 +837,23 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         }
     }
 
-    private async Task RunAcceptLoopAsync(
-        Socket socket,
-        TaskCompletionSource completion,
-        CancellationToken cancellationToken
-    )
-    {
-        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
-
-        try
-        {
-            await AcceptLoopAsync(socket, cancellationToken).ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            ReportException(new(exception));
-        }
-        finally
-        {
-            completion.TrySetResult();
-        }
-    }
-
-    private async Task AcceptLoopAsync(Socket socket, CancellationToken cancellationToken)
-    {
-        while (!cancellationToken.IsCancellationRequested)
-        {
-            Socket accepted;
-
-            try
-            {
-                accepted = await socket.AcceptAsync(cancellationToken).ConfigureAwait(false);
-            }
-            catch (Exception exception) when (cancellationToken.IsCancellationRequested ||
-                                              exception is ObjectDisposedException)
-            {
-                break;
-            }
-            catch (SocketException exception)
-            {
-                ReportException(new(exception));
-
-                try
-                {
-                    await Task.Delay(AcceptRetryDelayMilliseconds, cancellationToken).ConfigureAwait(false);
-                }
-                catch (OperationCanceledException)
-                {
-                    break;
-                }
-
-                continue;
-            }
-
-            if (_configuredOptions is not null)
-            {
-                AdmitPreparation(accepted, cancellationToken);
-                continue;
-            }
-
-            MoongateTcpClient? client = null;
-            TaskCompletionSource? started = null;
-
-            try
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                var pipeline = _connectionPipelineFactory?.Invoke();
-                client = new MoongateTcpClient(
-                    accepted,
-                    middlewares: pipeline?.Middlewares ?? Volatile.Read(ref _middlewares),
-                    framer: pipeline?.Framer ?? _framer,
-                    codec: pipeline?.Codec,
-                    receiveBufferSize: _receiveBufferSize,
-                    maxFrameLength: _maxFrameLength,
-                    noDelay: _noDelay
-                );
-                WireClientEvents(client);
-                started = new(TaskCreationOptions.RunContinuationsAsynchronously);
-
-                lock (_lifecycleSync)
-                {
-                    _clients.Add(client.SessionId, client);
-                    _clientStarts.Add(client.SessionId, started);
-                }
-
-                // The server owns generation shutdown: drain accept before requesting client closes.
-                await client.StartAsync(CancellationToken.None).ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                if (client is null)
-                {
-                    accepted.Dispose();
-                }
-                else
-                {
-                    _ = GetOrStartClientCleanup(client);
-                }
-
-                if (!cancellationToken.IsCancellationRequested)
-                {
-                    ReportException(new(exception, client));
-                }
-            }
-            finally
-            {
-                started?.TrySetResult();
-            }
-        }
-    }
-
-    private void AdmitPreparation(Socket socket, CancellationToken generationToken)
-    {
-        AcceptedConnectionSetup? setup = null;
-        lock (_lifecycleSync)
-        {
-            if (_state == TcpServerState.Running && !generationToken.IsCancellationRequested &&
-                _admittedConnections < _configuredOptions!.MaxConnections &&
-                _preparingConnections < _configuredOptions.MaxConcurrentPreparations)
-            {
-                setup = new AcceptedConnectionSetup(socket);
-                _admittedConnections++;
-                _preparingConnections++;
-                _setups.Add(setup);
-            }
-        }
-
-        if (setup is null)
-        {
-            socket.Dispose();
-            return;
-        }
-
-        _ = PrepareAcceptedAsync(setup, generationToken);
-    }
-
-    private async Task PrepareAcceptedAsync(AcceptedConnectionSetup setup, CancellationToken generationToken)
-    {
-        // Start asynchronously so even a synchronously completing preparer cannot block accept.
-        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
-        Stream? stream = null;
-        MoongateTcpClient? client = null;
-        TaskCompletionSource? started = null;
-        var promoted = false;
-        var options = _configuredOptions!;
-        using var deadline = new CancellationTokenSource(options.PreparationTimeout, options.TimeProvider);
-        using var lifetime = CancellationTokenSource.CreateLinkedTokenSource(generationToken, deadline.Token);
-        try
-        {
-            lifetime.Token.ThrowIfCancellationRequested();
-            var pipeline = _connectionPipelineFactory?.Invoke() ?? new ConnectionPipeline();
-            stream = new NetworkStream(setup.Socket, ownsSocket: false);
-            if (pipeline.PrepareStreamAsync is { } prepare)
-            {
-                var prepared = await prepare(stream, lifetime.Token).ConfigureAwait(false);
-                stream = prepared ?? throw new InvalidOperationException("Preparation returned no stream.");
-            }
-
-            lifetime.Token.ThrowIfCancellationRequested();
-            if (!stream.CanRead || !stream.CanWrite)
-            {
-                throw new InvalidOperationException("Preparation must return a readable and writable stream.");
-            }
-
-            client = new MoongateTcpClient(
-                setup.Socket,
-                stream,
-                pipeline.Middlewares ?? Volatile.Read(ref _middlewares),
-                pipeline.Framer ?? _framer,
-                pipeline.Codec,
-                _receiveBufferSize,
-                _maxFrameLength,
-                _noDelay
-            );
-            started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            lock (_lifecycleSync)
-            {
-                generationToken.ThrowIfCancellationRequested();
-                if (_state != TcpServerState.Running)
-                {
-                    throw new OperationCanceledException(generationToken);
-                }
-
-                _clients.Add(client.SessionId, client);
-                _clientStarts.Add(client.SessionId, started);
-                _preparingConnections--;
-                promoted = true;
-            }
-
-            WireClientEvents(client);
-            pipeline.ConfigureClient?.Invoke(client);
-            await client.StartAsync(CancellationToken.None).ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            if (promoted)
-            {
-                _ = GetOrStartClientCleanup(client!);
-            }
-
-            if (!generationToken.IsCancellationRequested)
-            {
-                ReportException(new(exception, client));
-            }
-        }
-        finally
-        {
-            started?.TrySetResult();
-            if (!promoted)
-            {
-                try
-                {
-                    if (client is not null)
-                    {
-                        await client.DisposeAsync().ConfigureAwait(false);
-                    }
-                    else
-                    {
-                        try
-                        {
-                            if (stream is not null)
-                            {
-                                await stream.DisposeAsync().ConfigureAwait(false);
-                            }
-                        }
-                        finally
-                        {
-                            setup.Socket.Dispose();
-                        }
-                    }
-                }
-                catch (Exception exception)
-                {
-                    lock (_lifecycleSync)
-                    {
-                        _cleanupErrors.Add(exception);
-                    }
-                }
-            }
-
-            lock (_lifecycleSync)
-            {
-                if (!promoted)
-                {
-                    _admittedConnections--;
-                    _preparingConnections--;
-                }
-
-                _setups.Remove(setup);
-                setup.Completion.TrySetResult();
-            }
-        }
-    }
-
-    private Task GetOrStartClientCleanup(MoongateTcpClient client)
-    {
-        TaskCompletionSource completion;
-        Task start;
-
-        lock (_lifecycleSync)
-        {
-            if (_clientCleanups.TryGetValue(client.SessionId, out var cleanup))
-            {
-                return cleanup;
-            }
-
-            if (!_clientStarts.TryGetValue(client.SessionId, out var started))
-            {
-                return Task.CompletedTask;
-            }
-
-            start = started.Task;
-            completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
-            _clientCleanups.Add(client.SessionId, completion.Task);
-        }
-
-        _ = CleanupClientAsync(client, start, completion);
-
-        return completion.Task;
-    }
-
-    private async Task CleanupClientAsync(MoongateTcpClient client, Task start, TaskCompletionSource completion)
-    {
-        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
-
-        try
-        {
-            await start.ConfigureAwait(false);
-            await client.DisposeAsync().ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            lock (_lifecycleSync)
-            {
-                _cleanupErrors.Add(exception);
-            }
-
-            _logger.Error(exception, "Connection cleanup failed for {SessionId}", client.SessionId);
-        }
-        finally
-        {
-            lock (_lifecycleSync)
-            {
-                if (_clients.Remove(client.SessionId) && _configuredOptions is not null)
-                {
-                    _admittedConnections--;
-                }
-
-                _clientStarts.Remove(client.SessionId);
-                _clientCleanups.Remove(client.SessionId);
-                completion.TrySetResult();
-            }
-        }
-    }
-
     private void WireClientEvents(MoongateTcpClient client)
     {
         client.OnConnected += (_, args) => OnClientConnect?.Invoke(this, args);
         client.OnDataReceived += (_, args) => OnDataReceived?.Invoke(this, args);
         client.OnException += (_, args) => ReportException(args);
         client.OnDisconnected += (_, args) =>
-        {
-            _ = GetOrStartClientCleanup(client);
-            InvokeSafely(OnClientDisconnect, args);
-        };
-    }
-
-    private void ReportException(TcpExceptionEventArgs args)
-    {
-        _logger.Error(args.Exception, "TCP transport failure");
-        InvokeSafely(OnException, args);
-    }
-
-    private void InvokeSafely<T>(EventHandler<T>? handlers, T args) where T : EventArgs
-    {
-        if (handlers is null)
-        {
-            return;
-        }
-
-        foreach (EventHandler<T> handler in handlers.GetInvocationList())
-        {
-            try
-            {
-                handler(this, args);
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "TCP diagnostic or disconnect handler failed");
-            }
-        }
-    }
-
-    /// <summary>Requests terminal shutdown and waits for all owned resources.</summary>
-    public async ValueTask DisposeAsync()
-    {
-        await GetOrStartStopTask(dispose: true).ConfigureAwait(false);
+                                 {
+                                     _ = GetOrStartClientCleanup(client);
+                                     InvokeSafely(OnClientDisconnect, args);
+                                 };
     }
 
     /// <summary>Requests terminal shutdown without blocking the current callback.</summary>
     public void Dispose()
-    {
-        _ = GetOrStartStopTask(dispose: true);
-    }
+        => _ = GetOrStartStopTask(true);
+
+    /// <summary>Requests terminal shutdown and waits for all owned resources.</summary>
+    public async ValueTask DisposeAsync()
+        => await GetOrStartStopTask(true).ConfigureAwait(false);
 }

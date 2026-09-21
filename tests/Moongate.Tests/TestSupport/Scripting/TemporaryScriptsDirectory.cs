@@ -12,7 +12,13 @@ public sealed class TemporaryScriptsDirectory : IDisposable
         Directory.CreateDirectory(Path);
     }
 
-    /// <summary>Writes a file under the directory, creating parent folders. Uses forward slashes in <paramref name="relativePath"/>.</summary>
+    public void Dispose()
+        => Directory.Delete(Path, true);
+
+    /// <summary>
+    /// Writes a file under the directory, creating parent folders. Uses forward slashes in
+    /// <paramref name="relativePath" />.
+    /// </summary>
     public string Write(string relativePath, string content)
     {
         var full = System.IO.Path.Combine(Path, relativePath.Replace('/', System.IO.Path.DirectorySeparatorChar));
@@ -20,10 +26,5 @@ public sealed class TemporaryScriptsDirectory : IDisposable
         File.WriteAllText(full, content);
 
         return full;
-    }
-
-    public void Dispose()
-    {
-        Directory.Delete(Path, recursive: true);
     }
 }

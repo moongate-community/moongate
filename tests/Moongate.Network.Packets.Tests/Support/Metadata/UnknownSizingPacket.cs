@@ -11,7 +11,5 @@ public sealed class UnknownSizingPacket : BasePacket<UnknownSizingPacket>, IOutg
 {
     public override int Length => 3;
 
-    public void Write(ref PacketWriter writer)
-    {
-    }
+    public void Write(ref PacketWriter writer) { }
 }

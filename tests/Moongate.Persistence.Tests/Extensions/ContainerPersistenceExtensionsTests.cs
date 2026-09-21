@@ -1,5 +1,4 @@
 using DryIoc;
-using Moongate.Core.Primitives;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.DataAccess;
 using Moongate.Persistence.Extensions;
@@ -26,8 +25,8 @@ public sealed class ContainerPersistenceExtensionsTests
         await using var database = await _postgres.CreateDatabaseAsync();
         using var container = new Container();
         container.RegisterMoongatePersistence(
-            new PostgreSqlPersistenceOptions(
-                [new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, database.ConnectionString)],
+            new(
+                [new(PersistenceDatabaseTarget.Realm, database.ConnectionString)],
                 true
             )
         );
@@ -42,35 +41,13 @@ public sealed class ContainerPersistenceExtensionsTests
     }
 
     [Fact]
-    public async Task Registration_DuplicatesAndMissingOwnership_FailClearlyBeforeDdl()
-    {
-        await using var database = await _postgres.CreateDatabaseAsync();
-        using var container = new Container();
-        var options = new PostgreSqlPersistenceOptions(
-            [new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, database.ConnectionString)],
-            true
-        );
-        container.RegisterMoongatePersistence(options);
-        container.AddPersistenceEntity<CharacterEntity>();
-        Assert.Throws<InvalidOperationException>(() => container.AddPersistenceEntity<CharacterEntity>());
-        Assert.Throws<InvalidOperationException>(() => container.RegisterMoongatePersistence(options));
-        await using var owner = container.Resolve<MoongatePersistenceService>();
-        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.InitializeAsync());
-        Assert.False(
-            await database.ScalarAsync<bool>(
-                "SELECT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'plugin_characters')"
-            )
-        );
-    }
-
-    [Fact]
     public async Task AuthAndWorld_WithoutModules_RouteToSeparateDatabasesAndCaptureSnapshots()
     {
         await using var auth = await _postgres.CreateDatabaseAsync();
         await using var world = await _postgres.CreateDatabaseAsync();
         using var container = new Container();
         container.RegisterMoongatePersistence(
-            new PostgreSqlPersistenceOptions(
+            new(
                 [
                     new(PersistenceDatabaseTarget.Accounts, auth.ConnectionString),
                     new(PersistenceDatabaseTarget.Realm, world.ConnectionString)
@@ -78,17 +55,17 @@ public sealed class ContainerPersistenceExtensionsTests
                 true
             )
         );
-        var source = new CharacterEntity { Id = new Serial(7), Name = "Mario" };
+        var source = new CharacterEntity { Id = new(7), Name = "Mario" };
         container.AddPersistenceAuth<AccountsSharedEntity>();
         container.AddPersistenceWorld<CharacterEntity>(
             () => [source],
-            value => new CharacterEntity { Id = value.Id, Name = value.Name }
+            value => new() { Id = value.Id, Name = value.Name }
         );
         await using var owner = container.Resolve<MoongatePersistenceService>();
 
         await owner.InitializeAsync();
         await container.Resolve<IDataAccess<AccountsSharedEntity>>()
-            .UpsertAsync(new AccountsSharedEntity { Id = new Serial(1) });
+                       .UpsertAsync(new() { Id = new(1) });
         await owner.SaveAllAsync();
 
         Assert.Same(container.Resolve<DataAccess<CharacterEntity>>(), container.Resolve<IDataAccess<CharacterEntity>>());
@@ -104,25 +81,31 @@ public sealed class ContainerPersistenceExtensionsTests
     }
 
     [Fact]
-    public async Task World_EntitiesSharingSchema_UseOneAutomaticModule()
+    public async Task AuthSnapshot_DoesNotActivateWorldAndRejectsDuplicateTargetRegistration()
     {
         await using var database = await _postgres.CreateDatabaseAsync();
         using var container = new Container();
         container.RegisterMoongatePersistence(
-            new PostgreSqlPersistenceOptions(
+            new(
                 [
-                    new(PersistenceDatabaseTarget.Realm, database.ConnectionString)
+                    new(PersistenceDatabaseTarget.Accounts, database.ConnectionString),
+                    new(
+                        PersistenceDatabaseTarget.Realm,
+                        () => throw new InvalidOperationException("World must stay inactive.")
+                    )
                 ],
                 true
             )
         );
-        container.AddPersistenceWorld<AccountsSharedEntity>().AddPersistenceWorld<RealmSharedEntity>();
+        container.AddPersistenceAuth<AccountsSharedEntity>(
+            () => [new() { Id = new(1) }],
+            value => new() { Id = value.Id }
+        );
+        Assert.Throws<InvalidOperationException>(() => container.AddPersistenceWorld<AccountsSharedEntity>());
         await using var owner = container.Resolve<MoongatePersistenceService>();
-        var preview = await owner.PreviewSchemaAsync();
-        Assert.Single(preview);
         await owner.InitializeAsync();
-        Assert.Empty(await container.Resolve<IDataAccess<AccountsSharedEntity>>().GetAllAsync());
-        Assert.Empty(await container.Resolve<IDataAccess<RealmSharedEntity>>().GetAllAsync());
+        await owner.SaveAllAsync();
+        Assert.Single(await container.Resolve<IDataAccess<AccountsSharedEntity>>().GetAllAsync());
     }
 
     [Fact]
@@ -131,7 +114,7 @@ public sealed class ContainerPersistenceExtensionsTests
         await using var database = await _postgres.CreateDatabaseAsync();
         using var container = new Container();
         container.RegisterMoongatePersistence(
-            new PostgreSqlPersistenceOptions(
+            new(
                 [
                     new(PersistenceDatabaseTarget.Accounts, database.ConnectionString),
                     new(PersistenceDatabaseTarget.Realm, database.ConnectionString)
@@ -152,30 +135,46 @@ public sealed class ContainerPersistenceExtensionsTests
     }
 
     [Fact]
-    public async Task AuthSnapshot_DoesNotActivateWorldAndRejectsDuplicateTargetRegistration()
+    public async Task Registration_DuplicatesAndMissingOwnership_FailClearlyBeforeDdl()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        using var container = new Container();
+        var options = new PostgreSqlPersistenceOptions(
+            [new(PersistenceDatabaseTarget.Realm, database.ConnectionString)],
+            true
+        );
+        container.RegisterMoongatePersistence(options);
+        container.AddPersistenceEntity<CharacterEntity>();
+        Assert.Throws<InvalidOperationException>(() => container.AddPersistenceEntity<CharacterEntity>());
+        Assert.Throws<InvalidOperationException>(() => container.RegisterMoongatePersistence(options));
+        await using var owner = container.Resolve<MoongatePersistenceService>();
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.InitializeAsync());
+        Assert.False(
+            await database.ScalarAsync<bool>(
+                "SELECT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'plugin_characters')"
+            )
+        );
+    }
+
+    [Fact]
+    public async Task World_EntitiesSharingSchema_UseOneAutomaticModule()
     {
         await using var database = await _postgres.CreateDatabaseAsync();
         using var container = new Container();
         container.RegisterMoongatePersistence(
-            new PostgreSqlPersistenceOptions(
+            new(
                 [
-                    new(PersistenceDatabaseTarget.Accounts, database.ConnectionString),
-                    new(
-                        PersistenceDatabaseTarget.Realm,
-                        () => throw new InvalidOperationException("World must stay inactive.")
-                    )
+                    new(PersistenceDatabaseTarget.Realm, database.ConnectionString)
                 ],
                 true
             )
         );
-        container.AddPersistenceAuth<AccountsSharedEntity>(
-            () => [new AccountsSharedEntity { Id = new Serial(1) }],
-            value => new AccountsSharedEntity { Id = value.Id }
-        );
-        Assert.Throws<InvalidOperationException>(() => container.AddPersistenceWorld<AccountsSharedEntity>());
+        container.AddPersistenceWorld<AccountsSharedEntity>().AddPersistenceWorld<RealmSharedEntity>();
         await using var owner = container.Resolve<MoongatePersistenceService>();
+        var preview = await owner.PreviewSchemaAsync();
+        Assert.Single(preview);
         await owner.InitializeAsync();
-        await owner.SaveAllAsync();
-        Assert.Single(await container.Resolve<IDataAccess<AccountsSharedEntity>>().GetAllAsync());
+        Assert.Empty(await container.Resolve<IDataAccess<AccountsSharedEntity>>().GetAllAsync());
+        Assert.Empty(await container.Resolve<IDataAccess<RealmSharedEntity>>().GetAllAsync());
     }
 }

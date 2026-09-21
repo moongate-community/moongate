@@ -14,7 +14,5 @@ internal sealed class InvalidLengthPacket : IOutgoingPacket
     }
 
     public void Write(ref PacketWriter writer)
-    {
-        throw new InvalidOperationException("An invalid declared length must be rejected before writing.");
-    }
+        => throw new InvalidOperationException("An invalid declared length must be rejected before writing.");
 }

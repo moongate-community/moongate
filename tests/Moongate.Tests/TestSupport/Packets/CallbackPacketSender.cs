@@ -14,8 +14,15 @@ internal sealed class CallbackPacketSender : IPacketSendService
         _disconnect = disconnect;
     }
 
-    public Task StartAsync() => _inner.StartAsync();
-    public Task StopAsync() => _inner.StopAsync();
-    public bool TrySend(long sessionId, IOutgoingPacket packet) => _inner.TrySend(sessionId, packet);
-    public Task DisconnectAsync(long sessionId) => _disconnect(sessionId);
+    public Task DisconnectAsync(long sessionId)
+        => _disconnect(sessionId);
+
+    public Task StartAsync()
+        => _inner.StartAsync();
+
+    public Task StopAsync()
+        => _inner.StopAsync();
+
+    public bool TrySend(long sessionId, IOutgoingPacket packet)
+        => _inner.TrySend(sessionId, packet);
 }

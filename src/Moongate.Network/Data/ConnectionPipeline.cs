@@ -11,8 +11,10 @@ namespace Moongate.Network.Data;
 public sealed record ConnectionPipeline
 {
     /// <summary>Prepares an owned readable/writable stream before callbacks or receive start.</summary>
-    /// <remarks>The returned stream must own its input. On failure dispose any wrapper created;
-    /// the transport owns the input stream and socket. Observe the supplied cancellation token.</remarks>
+    /// <remarks>
+    /// The returned stream must own its input. On failure dispose any wrapper created;
+    /// the transport owns the input stream and socket. Observe the supplied cancellation token.
+    /// </remarks>
     public Func<Stream, CancellationToken, ValueTask<Stream>>? PrepareStreamAsync { get; init; }
 
     /// <summary>Installs per-client callbacks after preparation and before receive starts.</summary>

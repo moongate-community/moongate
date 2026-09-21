@@ -33,7 +33,7 @@ public sealed class AnimationEdit
         bin.Write((short)6);
         var animLength = Animations.GetAnimLength(body, fileType);
         var currType = animLength == 22 ? 0 :
-            animLength == 13 ? 1 : 2;
+                       animLength == 13 ? 1 : 2;
         bin.Write((short)currType);
         var indexPos = bin.BaseStream.Position;
         var animPos = bin.BaseStream.Position + 12 * animLength * 5;
@@ -201,6 +201,7 @@ public sealed class AnimationEdit
         using var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var binidx = new BinaryWriter(fsidx);
         using var binmul = new BinaryWriter(fsmul);
+
         for (var idxc = 0; idxc < cache.Length; ++idxc)
         {
             AnimIdx anim;

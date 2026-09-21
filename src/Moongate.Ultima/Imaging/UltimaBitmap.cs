@@ -57,14 +57,6 @@ public sealed unsafe class UltimaBitmap : IDisposable
         _scan0 = (nint)NativeMemory.AllocZeroed((nuint)(Stride * height));
     }
 
-    ~UltimaBitmap()
-    {
-        if (!_disposed)
-        {
-            NativeMemory.Free((void*)_scan0);
-        }
-    }
-
     /// <summary>Creates a deep copy of this surface.</summary>
     public UltimaBitmap Clone()
     {
@@ -121,8 +113,8 @@ public sealed unsafe class UltimaBitmap : IDisposable
     public static UltimaBitmap FromFile(string fileName)
     {
         using var stream = File.OpenRead(fileName);
-        using var codec = SKCodec.Create(stream)
-                          ?? throw new InvalidDataException("The image format is invalid or unsupported.");
+        using var codec = SKCodec.Create(stream) ??
+                          throw new InvalidDataException("The image format is invalid or unsupported.");
         var info = new SKImageInfo(codec.Info.Width, codec.Info.Height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
         using var decoded = new SKBitmap(info);
 
@@ -144,8 +136,8 @@ public sealed unsafe class UltimaBitmap : IDisposable
         ArgumentNullException.ThrowIfNull(source);
         ObjectDisposedException.ThrowIf(source.Handle == 0, source);
 
-        using var pixels = source.PeekPixels()
-                           ?? throw new ArgumentException("The bitmap has no readable pixels.", nameof(source));
+        using var pixels = source.PeekPixels() ??
+                           throw new ArgumentException("The bitmap has no readable pixels.", nameof(source));
         var info = new SKImageInfo(source.Width, source.Height, SKColorType.Bgra8888, SKAlphaType.Unpremul);
         using var converted = new SKBitmap(info);
 
@@ -192,8 +184,8 @@ public sealed unsafe class UltimaBitmap : IDisposable
         };
 
         using var image = ToImage(opaque);
-        using var encoded = image.Encode(format, quality: 100)
-                            ?? throw new InvalidOperationException("The image could not be encoded.");
+        using var encoded = image.Encode(format, 100) ??
+                            throw new InvalidOperationException("The image could not be encoded.");
         using var stream = File.Create(fileName);
         encoded.SaveTo(stream);
     }
@@ -207,7 +199,7 @@ public sealed unsafe class UltimaBitmap : IDisposable
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
 
-        var image = new SKBitmap(new SKImageInfo(Width, Height, SKColorType.Bgra8888, SKAlphaType.Unpremul));
+        var image = new SKBitmap(new(Width, Height, SKColorType.Bgra8888, SKAlphaType.Unpremul));
         var imagePixels = (byte*)image.GetPixels();
 
         for (var y = 0; y < Height; y++)
@@ -264,6 +256,14 @@ public sealed unsafe class UltimaBitmap : IDisposable
         var b = pixel & 0xFF;
 
         return (ushort)(AlphaBit | ((r >> 3) << 10) | ((g >> 3) << 5) | (b >> 3));
+    }
+
+    ~UltimaBitmap()
+    {
+        if (!_disposed)
+        {
+            NativeMemory.Free((void*)_scan0);
+        }
     }
 
     public void Dispose()

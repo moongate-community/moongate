@@ -2,7 +2,7 @@ using Moongate.Server.Interfaces.Internal.Console;
 
 namespace Moongate.Server.Services.Console.Internal;
 
-/// <summary>Drives the real terminal through <see cref="System.Console"/>.</summary>
+/// <summary>Drives the real terminal through <see cref="System.Console" />.</summary>
 internal sealed class SystemConsoleDriver : IConsoleDriver
 {
     public int WindowWidth => Math.Max(1, System.Console.WindowWidth);
@@ -19,23 +19,15 @@ internal sealed class SystemConsoleDriver : IConsoleDriver
         set => System.Console.ForegroundColor = value;
     }
 
+    public void ResetColor()
+        => System.Console.ResetColor();
+
     public void SetCursorPosition(int left, int top)
-    {
-        System.Console.SetCursorPosition(left, top);
-    }
+        => System.Console.SetCursorPosition(left, top);
 
     public void Write(string value)
-    {
-        System.Console.Write(value);
-    }
+        => System.Console.Write(value);
 
     public void WriteLine(string value)
-    {
-        System.Console.WriteLine(value);
-    }
-
-    public void ResetColor()
-    {
-        System.Console.ResetColor();
-    }
+        => System.Console.WriteLine(value);
 }

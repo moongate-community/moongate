@@ -101,17 +101,17 @@ public sealed class ApiClient : IApiClient
                 expectedPeerId
             ).Pipeline;
             var transport = await MoongateTcpClient.ConnectConfiguredAsync(
-                    endpoint,
-                    new()
-                    {
-                        Pipeline = pipeline,
-                        MaxFrameLength = _options.MaxFrameLength + 4,
-                        PreparationTimeout = _options.HandshakeTimeout,
-                        TimeProvider = _clock
-                    },
-                    cancellation.Token
-                )
-                .ConfigureAwait(false);
+                                                       endpoint,
+                                                       new()
+                                                       {
+                                                           Pipeline = pipeline,
+                                                           MaxFrameLength = _options.MaxFrameLength + 4,
+                                                           PreparationTimeout = _options.HandshakeTimeout,
+                                                           TimeProvider = _clock
+                                                       },
+                                                       cancellation.Token
+                                                   )
+                                                   .ConfigureAwait(false);
 
             if (connection is null || !transport.IsConnected || connection.Completion.IsCompleted)
             {

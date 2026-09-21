@@ -16,34 +16,41 @@ internal sealed class ScriptedCertificates : IDisposable
         OutputDirectory = Path.Combine(Path.GetTempPath(), "moongate-api-certs-" + Guid.NewGuid().ToString("N"));
     }
 
+    public void Dispose()
+    {
+        if (Directory.Exists(OutputDirectory))
+        {
+            Directory.Delete(OutputDirectory, true);
+        }
+    }
+
     /// <summary>Returns whether both bash and openssl can be found on the PATH, which the script needs.</summary>
     public static bool IsOpenSslAvailable()
     {
         var directories = (Environment.GetEnvironmentVariable("PATH") ?? "").Split(Path.PathSeparator);
 
-        return new[] { "openssl", "bash" }.All(tool => directories.Any(directory =>
-                File.Exists(Path.Combine(directory, tool)) || File.Exists(Path.Combine(directory, tool + ".exe"))
+        return new[] { "openssl", "bash" }.All(
+            tool => directories.Any(
+                directory =>
+                    File.Exists(Path.Combine(directory, tool)) || File.Exists(Path.Combine(directory, tool + ".exe"))
             )
         );
     }
 
-    /// <summary>Locates the script by walking up from the test output directory to the repository root.</summary>
-    public static string ScriptPath()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+    /// <summary>Loads a leaf from its PEM certificate and key files.</summary>
+    public X509Certificate2 LoadLeaf(string name)
+        => X509Certificate2.CreateFromPemFile(
+            Path.Combine(OutputDirectory, name + ".crt"),
+            Path.Combine(OutputDirectory, name + ".key")
+        );
 
-        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Moongate.slnx")))
-        {
-            directory = directory.Parent;
-        }
+    /// <summary>Loads a leaf from its PKCS#12 file with the password the script was given.</summary>
+    public X509Certificate2 LoadPfx(string name)
+        => X509CertificateLoader.LoadPkcs12FromFile(Path.Combine(OutputDirectory, name + ".pfx"), PfxPassword);
 
-        if (directory is null)
-        {
-            throw new InvalidOperationException("The repository root was not found above " + AppContext.BaseDirectory);
-        }
-
-        return Path.Combine(directory.FullName, "scripts", "api-certificates.sh");
-    }
+    /// <summary>Loads ca.crt.</summary>
+    public X509Certificate2 LoadRoot()
+        => X509CertificateLoader.LoadCertificateFromFile(Path.Combine(OutputDirectory, "ca.crt"));
 
     /// <summary>Runs the script with the given arguments plus the output directory, returning its exit code and combined output.</summary>
     public async Task<(int ExitCode, string Output)> RunAsync(params string[] arguments)
@@ -74,32 +81,21 @@ internal sealed class ScriptedCertificates : IDisposable
         return (process.ExitCode, await standardOutput + await standardError);
     }
 
-    /// <summary>Loads ca.crt.</summary>
-    public X509Certificate2 LoadRoot()
+    /// <summary>Locates the script by walking up from the test output directory to the repository root.</summary>
+    public static string ScriptPath()
     {
-        return X509CertificateLoader.LoadCertificateFromFile(Path.Combine(OutputDirectory, "ca.crt"));
-    }
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
 
-    /// <summary>Loads a leaf from its PEM certificate and key files.</summary>
-    public X509Certificate2 LoadLeaf(string name)
-    {
-        return X509Certificate2.CreateFromPemFile(
-            Path.Combine(OutputDirectory, name + ".crt"),
-            Path.Combine(OutputDirectory, name + ".key")
-        );
-    }
-
-    /// <summary>Loads a leaf from its PKCS#12 file with the password the script was given.</summary>
-    public X509Certificate2 LoadPfx(string name)
-    {
-        return X509CertificateLoader.LoadPkcs12FromFile(Path.Combine(OutputDirectory, name + ".pfx"), PfxPassword);
-    }
-
-    public void Dispose()
-    {
-        if (Directory.Exists(OutputDirectory))
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Moongate.slnx")))
         {
-            Directory.Delete(OutputDirectory, true);
+            directory = directory.Parent;
         }
+
+        if (directory is null)
+        {
+            throw new InvalidOperationException("The repository root was not found above " + AppContext.BaseDirectory);
+        }
+
+        return Path.Combine(directory.FullName, "scripts", "api-certificates.sh");
     }
 }

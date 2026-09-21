@@ -6,6 +6,17 @@ namespace Moongate.Tests.Server.Services.GameLoop.Internal;
 public sealed class GameLoopFinalWorkSessionTests
 {
     [Fact]
+    public async Task CloseAsync_AlreadyFaultedCapture_DoesNotHideFailure()
+    {
+        var session = new GameLoopFinalWorkSession(() => { }, CancellationToken.None);
+        var failure = new IOException("capture failed");
+        var capture = session.DispatchAsync(new ActionGameLoopWorkItem(() => throw failure));
+        session.ExecutePending();
+        Assert.Same(failure, await Record.ExceptionAsync(() => capture));
+        Assert.Same(failure, await Record.ExceptionAsync(session.CloseAsync));
+    }
+
+    [Fact]
     public async Task CloseAsync_PendingCapture_DrainsItAndRejectsEarlyReturn()
     {
         var session = new GameLoopFinalWorkSession(() => { }, CancellationToken.None);
@@ -19,16 +30,5 @@ public sealed class GameLoopFinalWorkSessionTests
         await capture;
         Assert.True(ran);
         Assert.False(session.ExecutePending());
-    }
-
-    [Fact]
-    public async Task CloseAsync_AlreadyFaultedCapture_DoesNotHideFailure()
-    {
-        var session = new GameLoopFinalWorkSession(() => { }, CancellationToken.None);
-        var failure = new IOException("capture failed");
-        var capture = session.DispatchAsync(new ActionGameLoopWorkItem(() => throw failure));
-        session.ExecutePending();
-        Assert.Same(failure, await Record.ExceptionAsync(() => capture));
-        Assert.Same(failure, await Record.ExceptionAsync(session.CloseAsync));
     }
 }

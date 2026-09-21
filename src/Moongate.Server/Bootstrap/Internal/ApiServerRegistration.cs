@@ -18,6 +18,7 @@ internal static class ApiServerRegistration
         }
 
         container.RegisterDelegate<ApiConfig>(resolver => resolver.Resolve<MoongateServerConfig>().Api, Reuse.Singleton);
+
         return container.RegisterMoongateService<IApiServerService, ApiServerService>(ApiServerService.StartupPriority);
     }
 }

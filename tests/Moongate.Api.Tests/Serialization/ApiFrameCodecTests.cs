@@ -9,14 +9,6 @@ namespace Moongate.Api.Tests.Serialization;
 public sealed class ApiFrameCodecTests
 {
     [Fact]
-    public void Encode_Request_ProducesDocumentedBytes()
-    {
-        var codec = new ApiFrameCodec(65536);
-        var envelope = new ApiEnvelope(ApiMessageKind.Request, 42, 100, new byte[] { 0x91, 0x07 });
-        Assert.Equal(Convert.FromHexString("000000099501012A64C4029107"), codec.Encode(envelope));
-    }
-
-    [Fact]
     public void Decode_GoldenFrame_CopiesPayloadAndReadsFields()
     {
         var bytes = Convert.FromHexString("000000099501012A64C4029107");
@@ -47,16 +39,19 @@ public sealed class ApiFrameCodecTests
 
     [Theory, InlineData(""), InlineData("00000009"), InlineData("000000099501012A64C402910700")]
     public void Decode_LengthMismatch_Rejects(string hex)
-    {
-        Assert.Throws<ApiProtocolException>(() => new ApiFrameCodec(65536).Decode(Convert.FromHexString(hex)));
-    }
+        => Assert.Throws<ApiProtocolException>(() => new ApiFrameCodec(65536).Decode(Convert.FromHexString(hex)));
 
     [Fact]
     public void Encode_EnvelopeExceedsLimit_Rejects()
-    {
-        Assert.Throws<ApiProtocolException>(() => new ApiFrameCodec(8).Encode(
-                new ApiEnvelope(ApiMessageKind.Request, 42, 100, new byte[] { 0x91, 0x07 })
-            )
+        => Assert.Throws<ApiProtocolException>(
+            () => new ApiFrameCodec(8).Encode(new(ApiMessageKind.Request, 42, 100, new byte[] { 0x91, 0x07 }))
         );
+
+    [Fact]
+    public void Encode_Request_ProducesDocumentedBytes()
+    {
+        var codec = new ApiFrameCodec(65536);
+        var envelope = new ApiEnvelope(ApiMessageKind.Request, 42, 100, new byte[] { 0x91, 0x07 });
+        Assert.Equal(Convert.FromHexString("000000099501012A64C4029107"), codec.Encode(envelope));
     }
 }

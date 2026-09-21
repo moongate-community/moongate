@@ -9,7 +9,5 @@ public sealed class DuplicateNameModule
 
     [ScriptFunction("same")]
     public int B()
-    {
-        return 2;
-    }
+        => 2;
 }

@@ -1,23 +1,30 @@
 using DryIoc;
-using Moongate.Core.Primitives;
-using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
-using Moongate.Persistence.Services;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Types.Hosting;
+using Moongate.Server.Data.Config.Sections;
 using Moongate.Tests.Support.Server;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Plugins;
-using Moongate.Server.Core.Data.Plugins;
-using Moongate.Server.Data.Config.Sections;
-using Moongate.Server.Core.Types.Hosting;
 
 namespace Moongate.Tests.Integration.Persistence;
 
 public sealed class PersistenceBootstrapTests
 {
+    [Fact]
+    public async Task StartAndStopAsync_NoEntities_NeverResolvesEnvironmentFactories()
+    {
+        var container = new Container();
+        container.RegisterMoongatePersistence(new());
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        await bootstrap.StartAsync();
+        await bootstrap.StopAsync();
+        Assert.True(container.IsDisposed);
+    }
+
     [Fact]
     public async Task StartAsync_NegativePrioritySentinel_SeesSchemaAfterPluginRegistration()
     {
@@ -44,9 +51,33 @@ public sealed class PersistenceBootstrapTests
     }
 
     [Fact]
+    public async Task StartAsync_RegisteredAuthEntityInGameMode_StillRequiresAuthDataMigrations()
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var files = new PluginDirectoryFixture("migrations", "plugins");
+        var auth = Path.Combine(files.Directories["migrations"], "auth");
+        Directory.CreateDirectory(auth);
+        await File.WriteAllTextAsync(Path.Combine(auth, "0001_data.sql"), "SELECT 1;");
+        var config = new PersistenceConfig
+        {
+            Accounts = new() { ConnectionString = database.ConnectionString },
+            Realm = new() { ConnectionString = "$UNUSED_WORLD_DATABASE" }
+        };
+        using var container = new Container();
+        container.RegisterMoongatePersistence(
+                     config.ToOptions(files.Directories["migrations"], files.Directories["plugins"], ServerMode.Game)
+                 )
+                 .AddPersistenceAuth<TestEntity>();
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(bootstrap.StartAsync);
+        Assert.Contains("0001_data.sql", error.Message);
+        Assert.True(container.IsDisposed);
+    }
+
+    [Fact]
     public async Task StartAsync_SchemaMissing_StartsNoServicesAndDisposesOwner()
     {
-        await using var fixture = await HostPersistenceFixture.CreateAsync(autoSync: false);
+        await using var fixture = await HostPersistenceFixture.CreateAsync(false);
         fixture.RegisterEntity();
         var started = false;
         fixture.Container.RegisterMoongateService(
@@ -54,6 +85,7 @@ public sealed class PersistenceBootstrapTests
                 () =>
                 {
                     started = true;
+
                     return Task.CompletedTask;
                 },
                 () => Task.CompletedTask
@@ -71,17 +103,6 @@ public sealed class PersistenceBootstrapTests
     }
 
     [Fact]
-    public async Task StartAndStopAsync_NoEntities_NeverResolvesEnvironmentFactories()
-    {
-        var container = new Container();
-        container.RegisterMoongatePersistence(new PostgreSqlPersistenceOptions());
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        await bootstrap.StartAsync();
-        await bootstrap.StopAsync();
-        Assert.True(container.IsDisposed);
-    }
-
-    [Fact]
     public async Task StartAsync_ServiceFails_RetainsFailureAndDisposesInitializedOwner()
     {
         await using var fixture = await HostPersistenceFixture.CreateAsync();
@@ -94,6 +115,7 @@ public sealed class PersistenceBootstrapTests
                 () =>
                 {
                     stopped = true;
+
                     return Task.CompletedTask;
                 }
             )
@@ -118,29 +140,5 @@ public sealed class PersistenceBootstrapTests
         Assert.Same(failure, await Record.ExceptionAsync(bootstrap.StopAsync));
         Assert.Same(failure, await Record.ExceptionAsync(bootstrap.StopAsync));
         await Assert.ThrowsAsync<ObjectDisposedException>(() => owner.SaveAllAsync());
-    }
-
-    [Fact]
-    public async Task StartAsync_RegisteredAuthEntityInGameMode_StillRequiresAuthDataMigrations()
-    {
-        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
-        using var files = new PluginDirectoryFixture("migrations", "plugins");
-        var auth = Path.Combine(files.Directories["migrations"], "auth");
-        Directory.CreateDirectory(auth);
-        await File.WriteAllTextAsync(Path.Combine(auth, "0001_data.sql"), "SELECT 1;");
-        var config = new PersistenceConfig
-        {
-            Accounts = new PersistenceDatabaseConfig { ConnectionString = database.ConnectionString },
-            Realm = new PersistenceDatabaseConfig { ConnectionString = "$UNUSED_WORLD_DATABASE" }
-        };
-        using var container = new Container();
-        container.RegisterMoongatePersistence(
-                config.ToOptions(files.Directories["migrations"], files.Directories["plugins"], ServerMode.Game)
-            )
-            .AddPersistenceAuth<TestEntity>();
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        var error = await Assert.ThrowsAsync<InvalidOperationException>(bootstrap.StartAsync);
-        Assert.Contains("0001_data.sql", error.Message);
-        Assert.True(container.IsDisposed);
     }
 }

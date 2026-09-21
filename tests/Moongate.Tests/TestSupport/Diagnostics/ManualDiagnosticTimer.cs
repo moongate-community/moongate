@@ -22,29 +22,40 @@ internal sealed class ManualDiagnosticTimer : ITimer
     {
         lock (_gate)
         {
-            if (_disposed) return false;
+            if (_disposed)
+            {
+                return false;
+            }
             DueTime = dueTime;
             Period = period;
+
             return true;
         }
+    }
+
+    public void Dispose()
+    {
+        lock (_gate)
+        {
+            _disposed = true;
+        }
+    }
+
+    public ValueTask DisposeAsync()
+    {
+        Dispose();
+
+        return ValueTask.CompletedTask;
     }
 
     public void Tick()
     {
         lock (_gate)
         {
-            if (!_disposed && DueTime != Timeout.InfiniteTimeSpan) _callback(_state);
+            if (!_disposed && DueTime != Timeout.InfiniteTimeSpan)
+            {
+                _callback(_state);
+            }
         }
-    }
-
-    public void Dispose()
-    {
-        lock (_gate) _disposed = true;
-    }
-
-    public ValueTask DisposeAsync()
-    {
-        Dispose();
-        return ValueTask.CompletedTask;
     }
 }

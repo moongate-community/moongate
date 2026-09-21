@@ -1,31 +1,31 @@
 <Solution>
     <Folder Name="/src/">
-        <Project Path="src/Moongate.Api/Moongate.Api.csproj" />
-        <Project Path="src/Moongate.Core/Moongate.Core.csproj" />
-        <Project Path="src/Moongate.Network/Moongate.Network.csproj" />
-        <Project Path="src/Moongate.Network.Packets/Moongate.Network.Packets.csproj" />
-        <Project Path="src/Moongate.Persistence.Migrations/Moongate.Persistence.Migrations.csproj" />
-        <Project Path="src/Moongate.Persistence/Moongate.Persistence.csproj" />
-        <Project Path="src/Moongate.Scripting/Moongate.Scripting.csproj" />
-        <Project Path="src/Moongate.Server/Moongate.Server.csproj" />
-        <Project Path="src/Moongate.Server.Core/Moongate.Server.Core.csproj" />
-        <Project Path="src/Moongate.Server.Ultima/Moongate.Server.Ultima.csproj" />
-        <Project Path="src/Moongate.Ultima/Moongate.Ultima.csproj" />
+        <Project Path="src/Moongate.Api/Moongate.Api.csproj"/>
+        <Project Path="src/Moongate.Core/Moongate.Core.csproj"/>
+        <Project Path="src/Moongate.Network/Moongate.Network.csproj"/>
+        <Project Path="src/Moongate.Network.Packets/Moongate.Network.Packets.csproj"/>
+        <Project Path="src/Moongate.Persistence.Migrations/Moongate.Persistence.Migrations.csproj"/>
+        <Project Path="src/Moongate.Persistence/Moongate.Persistence.csproj"/>
+        <Project Path="src/Moongate.Scripting/Moongate.Scripting.csproj"/>
+        <Project Path="src/Moongate.Server/Moongate.Server.csproj"/>
+        <Project Path="src/Moongate.Server.Core/Moongate.Server.Core.csproj"/>
+        <Project Path="src/Moongate.Server.Ultima/Moongate.Server.Ultima.csproj"/>
+        <Project Path="src/Moongate.Ultima/Moongate.Ultima.csproj"/>
     </Folder>
     <Folder Name="/samples/">
-        <Project Path="samples/Moongate.Sample.Plugin/Moongate.Sample.Plugin.csproj" />
+        <Project Path="samples/Moongate.Sample.Plugin/Moongate.Sample.Plugin.csproj"/>
     </Folder>
     <Folder Name="/tests/">
-        <Project Path="tests/Moongate.Api.TestHost/Moongate.Api.TestHost.csproj" />
-        <Project Path="tests/Moongate.Api.Tests/Moongate.Api.Tests.csproj" />
-        <Project Path="tests/Moongate.MigrationRunner.Tests/Moongate.MigrationRunner.Tests.csproj" />
-        <Project Path="tests/Moongate.Migrations.Tests/Moongate.Migrations.Tests.csproj" />
-        <Project Path="tests/Moongate.Network.Packets.Tests/Moongate.Network.Packets.Tests.csproj" />
-        <Project Path="tests/Moongate.Network.Tests/Moongate.Network.Tests.csproj" />
-        <Project Path="tests/Moongate.Persistence.Tests/Moongate.Persistence.Tests.csproj" />
-        <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj" />
+        <Project Path="tests/Moongate.Api.TestHost/Moongate.Api.TestHost.csproj"/>
+        <Project Path="tests/Moongate.Api.Tests/Moongate.Api.Tests.csproj"/>
+        <Project Path="tests/Moongate.MigrationRunner.Tests/Moongate.MigrationRunner.Tests.csproj"/>
+        <Project Path="tests/Moongate.Migrations.Tests/Moongate.Migrations.Tests.csproj"/>
+        <Project Path="tests/Moongate.Network.Packets.Tests/Moongate.Network.Packets.Tests.csproj"/>
+        <Project Path="tests/Moongate.Network.Tests/Moongate.Network.Tests.csproj"/>
+        <Project Path="tests/Moongate.Persistence.Tests/Moongate.Persistence.Tests.csproj"/>
+        <Project Path="tests/Moongate.Tests/Moongate.Tests.csproj"/>
     </Folder>
     <Folder Name="/tools/">
-        <Project Path="src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj" />
+        <Project Path="src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj"/>
     </Folder>
 </Solution>

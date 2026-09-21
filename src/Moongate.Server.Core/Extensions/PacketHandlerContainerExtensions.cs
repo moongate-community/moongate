@@ -19,6 +19,7 @@ public static class PacketHandlerContainerExtensions
         }
 
         container.Resolve<PacketHandlerRegistry>().Register<TPacket, THandler>(container);
+
         return container;
     }
 }

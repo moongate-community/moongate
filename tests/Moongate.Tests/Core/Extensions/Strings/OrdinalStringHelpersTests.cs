@@ -13,19 +13,13 @@ public class OrdinalStringHelpersTests
      InlineData(null, "", -1),
      InlineData("", null, 1)]
     public void CompareOrdinal_TextAndNulls_OrdersValuesByCodeUnit(string? left, string? right, int expected)
-    {
-        Assert.Equal(expected, Math.Sign(left!.CompareOrdinal(right!)));
-    }
+        => Assert.Equal(expected, Math.Sign(left!.CompareOrdinal(right!)));
 
-    [Fact]
-    public void OrdinalComparisons_GermanCulture_DoNotUseLinguisticSortingOrNormalization()
+    [Theory, InlineData("Door", true), InlineData("door", false), InlineData("", true)]
+    public void ContainsOrdinal_Substring_RequiresExactCase(string search, bool expected)
     {
-        using var culture = new CultureScope("de-DE");
-
-        Assert.True("ä".AsSpan().CompareOrdinal("z".AsSpan()) > 0);
-        Assert.False("é".AsSpan().EqualsOrdinal("e\u0301"));
-        Assert.False("I".EqualsOrdinal("i"));
-        Assert.True("é".EqualsOrdinal("é"));
+        Assert.Equal(expected, "Open Door".ContainsOrdinal(search));
+        Assert.Equal(expected, "Open Door".AsSpan().ContainsOrdinal(search.AsSpan()));
     }
 
     [Fact]
@@ -37,13 +31,6 @@ public class OrdinalStringHelpersTests
         Assert.Equal(10, text.IndexOfOrdinal("door", 1));
         Assert.Equal(5, text.IndexOfOrdinal('D'));
         Assert.Equal(-1, text.AsSpan().IndexOfOrdinal("DOOR".AsSpan()));
-    }
-
-    [Theory, InlineData("Door", true), InlineData("door", false), InlineData("", true)]
-    public void ContainsOrdinal_Substring_RequiresExactCase(string search, bool expected)
-    {
-        Assert.Equal(expected, "Open Door".ContainsOrdinal(search));
-        Assert.Equal(expected, "Open Door".AsSpan().ContainsOrdinal(search.AsSpan()));
     }
 
     [Fact]
@@ -73,27 +60,14 @@ public class OrdinalStringHelpersTests
     }
 
     [Fact]
-    public void ReplaceOrdinal_MixedCaseMatches_ReplacesOnlyExactMatches()
+    public void OrdinalComparisons_GermanCulture_DoNotUseLinguisticSortingOrNormalization()
     {
-        Assert.Equal("gate DOOR gate", "door DOOR door".ReplaceOrdinal("door", "gate"));
-    }
+        using var culture = new CultureScope("de-DE");
 
-    [Fact]
-    public void RemoveOrdinal_MultipleCharacterMatches_PreservesOtherCasing()
-    {
-        Assert.Equal("aXXbc", "aXXbxxc".RemoveOrdinal("xx"));
-        Assert.Equal("aXXbc", "aXXbxxc".AsSpan().RemoveOrdinal("xx".AsSpan()));
-    }
-
-    [Fact]
-    public void RemoveOrdinal_Destination_WritesOnlyTheRemainingCharacters()
-    {
-        var buffer = new[] { '?', '?', '?', '?' };
-
-        "a--b--c".AsSpan().RemoveOrdinal("--".AsSpan(), buffer, out var size);
-
-        Assert.Equal(3, size);
-        Assert.Equal("abc?", new string(buffer));
+        Assert.True("ä".AsSpan().CompareOrdinal("z".AsSpan()) > 0);
+        Assert.False("é".AsSpan().EqualsOrdinal("e\u0301"));
+        Assert.False("I".EqualsOrdinal("i"));
+        Assert.True("é".EqualsOrdinal("é"));
     }
 
     [Fact]
@@ -113,4 +87,26 @@ public class OrdinalStringHelpersTests
         Assert.Null(missing.RemoveOrdinal("x"));
         Assert.Null(missing.ReplaceOrdinal("x", "y"));
     }
+
+    [Fact]
+    public void RemoveOrdinal_Destination_WritesOnlyTheRemainingCharacters()
+    {
+        var buffer = new[] { '?', '?', '?', '?' };
+
+        "a--b--c".AsSpan().RemoveOrdinal("--".AsSpan(), buffer, out var size);
+
+        Assert.Equal(3, size);
+        Assert.Equal("abc?", new(buffer));
+    }
+
+    [Fact]
+    public void RemoveOrdinal_MultipleCharacterMatches_PreservesOtherCasing()
+    {
+        Assert.Equal("aXXbc", "aXXbxxc".RemoveOrdinal("xx"));
+        Assert.Equal("aXXbc", "aXXbxxc".AsSpan().RemoveOrdinal("xx".AsSpan()));
+    }
+
+    [Fact]
+    public void ReplaceOrdinal_MixedCaseMatches_ReplacesOnlyExactMatches()
+        => Assert.Equal("gate DOOR gate", "door DOOR door".ReplaceOrdinal("door", "gate"));
 }

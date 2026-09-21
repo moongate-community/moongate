@@ -29,6 +29,7 @@ public sealed class MoongatePluginRegistry
     public void Register(IEnumerable<IMoongatePlugin> plugins)
     {
         ArgumentNullException.ThrowIfNull(plugins);
+
         if (_isFaulted)
         {
             throw new InvalidOperationException(
@@ -42,18 +43,23 @@ public sealed class MoongatePluginRegistry
         }
 
         _isRegistering = true;
+
         try
         {
-            var candidates = plugins.Select(plugin =>
-                    {
-                        ArgumentNullException.ThrowIfNull(plugin);
-                        var metadata = plugin.Metadata ?? throw new InvalidOperationException(
-                            $"Plugin '{plugin.GetType().FullName}' returned null metadata."
-                        );
-                        return (Plugin: plugin, Metadata: metadata);
-                    }
-                )
-                .ToArray();
+            var candidates = plugins.Select(
+                                        plugin =>
+                                        {
+                                            ArgumentNullException.ThrowIfNull(plugin);
+                                            var metadata =
+                                                plugin.Metadata ??
+                                                throw new InvalidOperationException(
+                                                    $"Plugin '{plugin.GetType().FullName}' returned null metadata."
+                                                );
+
+                                            return (Plugin: plugin, Metadata: metadata);
+                                        }
+                                    )
+                                    .ToArray();
             var ordered = ValidateAndOrder(candidates.Select(entry => entry.Metadata).ToArray());
             var instances = candidates.ToDictionary(
                 entry => entry.Metadata.Id,
@@ -70,6 +76,7 @@ public sealed class MoongatePluginRegistry
                 catch (Exception exception)
                 {
                     _isFaulted = true;
+
                     throw new InvalidOperationException(
                         $"Plugin '{metadata.Id}' failed during registration.",
                         exception
@@ -89,6 +96,7 @@ public sealed class MoongatePluginRegistry
     {
         var available = _plugins.ToDictionary(plugin => plugin.Id, StringComparer.OrdinalIgnoreCase);
         var pending = new Dictionary<string, MoongatePluginData>(StringComparer.OrdinalIgnoreCase);
+
         foreach (var candidate in candidates)
         {
             if (!available.TryAdd(candidate.Id, candidate))
@@ -125,6 +133,7 @@ public sealed class MoongatePluginRegistry
         var visited = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         var path = new List<string>();
         var ordered = new List<MoongatePluginData>();
+
         foreach (var candidate in candidates)
         {
             Visit(candidate);
@@ -147,6 +156,7 @@ public sealed class MoongatePluginRegistry
             }
 
             path.Add(candidate.Id);
+
             foreach (var dependency in candidate.Dependencies)
             {
                 if (pending.TryGetValue(dependency.Id, out var required))

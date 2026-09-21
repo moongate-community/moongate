@@ -24,9 +24,7 @@ public sealed class PersistenceDatabaseOptions
         PersistenceDatabaseTarget target,
         string runtimeConnectionString,
         string? schemaConnectionString = null
-    ) : this(target, () => runtimeConnectionString, schemaConnectionString is null ? null : () => schemaConnectionString)
-    {
-    }
+    ) : this(target, () => runtimeConnectionString, schemaConnectionString is null ? null : () => schemaConnectionString) { }
 
     /// <summary>
     /// Creates options whose connection strings are resolved only when the target is activated.
@@ -57,8 +55,8 @@ public sealed class PersistenceDatabaseOptions
 
     internal string ResolveSchemaConnectionString(string runtimeConnectionString)
         => _hasSeparateSchemaConnection
-            ? ResolveConnectionString(_schemaConnectionStringFactory, "schema")
-            : runtimeConnectionString;
+               ? ResolveConnectionString(_schemaConnectionStringFactory, "schema")
+               : runtimeConnectionString;
 
     internal void ValidateSameDatabaseEndpoint(string runtimeConnectionString, string schemaConnectionString)
     {

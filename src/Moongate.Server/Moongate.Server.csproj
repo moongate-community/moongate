@@ -18,55 +18,55 @@
     </PropertyGroup>
 
     <ItemGroup>
-      <AssemblyMetadata Include="Codename" Value="$(Codename)" />
-      <InternalsVisibleTo Include="Moongate.Tests" />
+        <AssemblyMetadata Include="Codename" Value="$(Codename)"/>
+        <InternalsVisibleTo Include="Moongate.Tests"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="../../migrations/**/*" Link="migrations/%(RecursiveDir)%(Filename)%(Extension)"
-               CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <Content Include="../../migrations/**/*" Link="migrations/%(RecursiveDir)%(Filename)%(Extension)"
+                 CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"/>
     </ItemGroup>
 
     <!-- These travel with the binaries: the AGPL asks for the licence to be conveyed
          alongside them, and the notices carry the attributions the bundled packages
          require. Publishing here covers both the release archives and the image. -->
     <ItemGroup>
-      <Content Include="..\..\LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest"
-               CopyToPublishDirectory="PreserveNewest" />
-      <Content Include="..\..\THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md"
-               CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest" />
+        <Content Include="..\..\LICENSE" Link="LICENSE" CopyToOutputDirectory="PreserveNewest"
+                 CopyToPublishDirectory="PreserveNewest"/>
+        <Content Include="..\..\THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md"
+                 CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"/>
     </ItemGroup>
 
     <ItemGroup>
-      <Content Include="..\..\.dockerignore">
-        <Link>.dockerignore</Link>
-      </Content>
+        <Content Include="..\..\.dockerignore">
+            <Link>.dockerignore</Link>
+        </Content>
     </ItemGroup>
 
     <ItemGroup>
-      <PackageReference Include="ConsoleAppFramework" Version="5.7.13">
-        <PrivateAssets>all</PrivateAssets>
-        <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
-      </PackageReference>
-      <PackageReference Include="Serilog.Expressions" Version="5.0.0" />
-      <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0" />
-      <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1" />
-      <PackageReference Include="Serilog.Sinks.File" Version="7.0.0" />
+        <PackageReference Include="ConsoleAppFramework" Version="5.7.13">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
+        <PackageReference Include="Serilog.Expressions" Version="5.0.0"/>
+        <PackageReference Include="Serilog.Formatting.Compact" Version="3.0.0"/>
+        <PackageReference Include="Serilog.Sinks.Console" Version="6.1.1"/>
+        <PackageReference Include="Serilog.Sinks.File" Version="7.0.0"/>
     </ItemGroup>
 
     <ItemGroup>
-      <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj" />
-      <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj" />
-      <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj" />
-      <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj" />
-      <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj" />
-      <ProjectReference Include="..\Moongate.Server.Ultima\Moongate.Server.Ultima.csproj" />
-      <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj" />
+        <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
+        <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
+        <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj"/>
+        <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj"/>
+        <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj"/>
+        <ProjectReference Include="..\Moongate.Server.Ultima\Moongate.Server.Ultima.csproj"/>
+        <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj"/>
     </ItemGroup>
 
     <ItemGroup>
-      <None Remove="Assets\**\*.*" />
-      <EmbeddedResource Include="Assets\**\*.*" />
+        <None Remove="Assets\**\*.*"/>
+        <EmbeddedResource Include="Assets\**\*.*"/>
     </ItemGroup>
 
 </Project>

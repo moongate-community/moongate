@@ -8,6 +8,10 @@ namespace Moongate.Network.Packets.Tests.Outgoing.Login;
 public class ServerRedirectPacketTests
 {
     [Fact]
+    public void Constructor_IPv6Address_ThrowsArgumentException()
+        => Assert.Throws<ArgumentException>(() => new ServerRedirectPacket(IPAddress.IPv6Loopback, 2593, 1));
+
+    [Fact]
     public void Encode_KnownAddressPortAndKey_MatchesNormalIpOrderFixture()
     {
         var addressBytes = new byte[] { 192, 168, 0, 206 };
@@ -23,11 +27,5 @@ public class ServerRedirectPacketTests
         Assert.Equal(expected, PacketCodec.Encode(packet));
         PacketWriteAssertions.AssertAtomicFailure(packet);
         PacketWriteAssertions.AssertExactAndOversized(packet, expected);
-    }
-
-    [Fact]
-    public void Constructor_IPv6Address_ThrowsArgumentException()
-    {
-        Assert.Throws<ArgumentException>(() => new ServerRedirectPacket(IPAddress.IPv6Loopback, 2593, 1));
     }
 }

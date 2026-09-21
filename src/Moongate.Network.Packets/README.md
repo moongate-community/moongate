@@ -24,6 +24,7 @@ dotnet add package Moongate.Network.Packets
 Register the ping packet, freeze the registry, and decode an encoded frame:
 
 <!-- nuget-smoke:Program.cs -->
+
 ```csharp
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Registry;
@@ -82,7 +83,8 @@ helpers when writing binary data outside those packet contracts.
 
 This package depends on `Moongate.Core`. It does not require `Moongate.Network` to encode or decode packets.
 
-The packet set is a subset of the UO protocol. Decoding expects a complete packet frame; buffering and framing a TCP stream belong to the transport integration. Packet handlers and game-loop dispatch belong to the server integration.
+The packet set is a subset of the UO protocol. Decoding expects a complete packet frame; buffering and framing a TCP stream
+belong to the transport integration. Packet handlers and game-loop dispatch belong to the server integration.
 
 ## License and source
 

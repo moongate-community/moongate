@@ -12,7 +12,9 @@ public sealed class PacketHandlerRegistration
     public Func<IResolverContext, Action<GameSession, IPacket>> Bind { get; }
 
     public PacketHandlerRegistration(
-        Type packetType, Type handlerType, Func<IResolverContext, Action<GameSession, IPacket>> bind
+        Type packetType,
+        Type handlerType,
+        Func<IResolverContext, Action<GameSession, IPacket>> bind
     )
     {
         PacketType = packetType;

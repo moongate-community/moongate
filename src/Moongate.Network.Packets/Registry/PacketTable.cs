@@ -7,6 +7,19 @@ namespace Moongate.Network.Packets.Registry;
 public static class PacketTable
 {
     /// <summary>
+    /// Creates and freezes a registry containing all built-in packet types.
+    /// </summary>
+    /// <returns>A ready-to-use frozen registry.</returns>
+    public static PacketRegistry CreateRegistry()
+    {
+        var registry = new PacketRegistry();
+        Register(registry);
+        registry.Freeze();
+
+        return registry;
+    }
+
+    /// <summary>
     /// Registers the built-in packet types in an empty mutable registry.
     /// </summary>
     /// <param name="registry">The registry to configure before use.</param>
@@ -25,17 +38,5 @@ public static class PacketTable
         registry.RegisterPacket<ServerListPacket>();
         registry.RegisterPacket<ServerRedirectPacket>();
         registry.RegisterPacket<SupportFeaturesPacket>();
-    }
-
-    /// <summary>
-    /// Creates and freezes a registry containing all built-in packet types.
-    /// </summary>
-    /// <returns>A ready-to-use frozen registry.</returns>
-    public static PacketRegistry CreateRegistry()
-    {
-        var registry = new PacketRegistry();
-        Register(registry);
-        registry.Freeze();
-        return registry;
     }
 }

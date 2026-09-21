@@ -12,16 +12,19 @@ internal sealed class StubApiConnection : IApiConnection
 
     public StubApiConnection(params ushort[] permissions)
     {
-        Peer = new ApiPeerIdentity("test-peer", permissions);
+        Peer = new("test-peer", permissions);
     }
+
+    public Task CloseAsync(CancellationToken cancellationToken = default)
+        => Task.CompletedTask;
+
+    public ValueTask DisposeAsync()
+        => ValueTask.CompletedTask;
 
     public Task<TResponse> RequestAsync<TRequest, TResponse>(
-        TRequest request, TimeSpan? timeout = null, CancellationToken cancellationToken = default
+        TRequest request,
+        TimeSpan? timeout = null,
+        CancellationToken cancellationToken = default
     ) where TRequest : IApiRequest<TResponse>
-    {
-        throw new NotSupportedException();
-    }
-
-    public Task CloseAsync(CancellationToken cancellationToken = default) => Task.CompletedTask;
-    public ValueTask DisposeAsync() => ValueTask.CompletedTask;
+        => throw new NotSupportedException();
 }

@@ -60,8 +60,44 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         _gameLoopOptions = options;
         _timeProvider = timeProvider;
         _timers = timers;
-        _pump = new GameLoopPump(_inbox.Reader, options.MaxWorkItemsPerBatch, _timeProvider, options.WorkItemBudget);
-        _wake = new AutoResetEvent(false);
+        _pump = new(_inbox.Reader, options.MaxWorkItemsPerBatch, _timeProvider, options.WorkItemBudget);
+        _wake = new(false);
+    }
+
+    /// <inheritdoc />
+    public GameLoopMetricsSnapshot GetMetricsSnapshot()
+    {
+        lock (_gate)
+        {
+            var depth = _inbox.Reader.Count;
+            var age = depth > 0 && _inbox.Reader.TryPeek(out var oldest)
+                          ? _timeProvider.GetElapsedTime(oldest.EnqueuedAt)
+                          : TimeSpan.Zero;
+
+            return _pump.GetMetricsSnapshot() with
+            {
+                QueueDepth = depth,
+                OldestQueuedItemAge = age,
+                AcceptedWorkItems = _acceptedWorkItems,
+                RejectedWorkItems = _rejectedWorkItems,
+                Faults = _faults
+            };
+        }
+    }
+
+    /// <inheritdoc />
+    public ValueTask PostAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken = default)
+    {
+        ArgumentNullException.ThrowIfNull(workItem);
+        RejectLoopThreadWait();
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (_gate)
+        {
+            EnsureRunning();
+        }
+
+        return WaitForAdmissionAsync(workItem, cancellationToken);
     }
 
     /// <summary>Starts the dedicated thread and completes only after its identity is established.</summary>
@@ -170,11 +206,12 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
 
             if (_stopTask is not null || _state is not (GameLoopState.Starting or GameLoopState.Running))
             {
-                return CompleteFinalStopAsync(StopAsync(), captureAccepted: false);
+                return CompleteFinalStopAsync(StopAsync(), false);
             }
 
             _finalWorkItem = finalWorkItem;
-            _finalStopTask = CompleteFinalStopAsync(StopAsync(), captureAccepted: true);
+            _finalStopTask = CompleteFinalStopAsync(StopAsync(), true);
+
             return _finalStopTask;
         }
     }
@@ -190,14 +227,15 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         cancellationToken.ThrowIfCancellationRequested();
         GameLoopFinalWorkSession session;
         Task stopping;
+
         lock (_gate)
         {
             if (_stopTask is not null || _state is not (GameLoopState.Starting or GameLoopState.Running))
             {
-                return CompleteFinalStopAsync(StopAsync(), captureAccepted: false);
+                return CompleteFinalStopAsync(StopAsync(), false);
             }
 
-            session = _finalSession = new GameLoopFinalWorkSession(() => _wake.Set(), cancellationToken);
+            session = _finalSession = new(() => _wake.Set(), cancellationToken);
             stopping = StopAsync();
         }
 
@@ -206,6 +244,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         async Task CompleteSequenceAsync()
         {
             Exception? failure = null;
+
             try
             {
                 await session.Ready.Task.ConfigureAwait(false);
@@ -219,6 +258,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             finally
             {
                 _insideFinalWork.Value = false;
+
                 try
                 {
                     await session.CloseAsync(failure).ConfigureAwait(false);
@@ -240,16 +280,6 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         }
     }
 
-    private async Task CompleteFinalStopAsync(Task stopping, bool captureAccepted)
-    {
-        await stopping.ConfigureAwait(false);
-        await Completion.ConfigureAwait(false);
-        if (!captureAccepted)
-        {
-            throw new InvalidOperationException("The game loop already stopped without this terminal work item.");
-        }
-    }
-
     /// <inheritdoc />
     public bool TryPost(IGameLoopWorkItem workItem)
     {
@@ -258,7 +288,7 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         lock (_gate)
         {
             if (_state != GameLoopState.Running ||
-                !_inbox.Writer.TryWrite(new QueuedGameLoopWorkItem(workItem, _timeProvider.GetTimestamp())))
+                !_inbox.Writer.TryWrite(new(workItem, _timeProvider.GetTimestamp())))
             {
                 _rejectedWorkItems++;
 
@@ -275,67 +305,15 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         }
     }
 
-    /// <inheritdoc />
-    public ValueTask PostAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken = default)
+    private async Task CompleteFinalStopAsync(Task stopping, bool captureAccepted)
     {
-        ArgumentNullException.ThrowIfNull(workItem);
-        RejectLoopThreadWait();
-        cancellationToken.ThrowIfCancellationRequested();
+        await stopping.ConfigureAwait(false);
+        await Completion.ConfigureAwait(false);
 
-        lock (_gate)
+        if (!captureAccepted)
         {
-            EnsureRunning();
+            throw new InvalidOperationException("The game loop already stopped without this terminal work item.");
         }
-
-        return WaitForAdmissionAsync(workItem, cancellationToken);
-    }
-
-    /// <inheritdoc />
-    public GameLoopMetricsSnapshot GetMetricsSnapshot()
-    {
-        lock (_gate)
-        {
-            var depth = _inbox.Reader.Count;
-            var age = depth > 0 && _inbox.Reader.TryPeek(out var oldest)
-                ? _timeProvider.GetElapsedTime(oldest.EnqueuedAt)
-                : TimeSpan.Zero;
-
-            return _pump.GetMetricsSnapshot() with
-            {
-                QueueDepth = depth,
-                OldestQueuedItemAge = age,
-                AcceptedWorkItems = _acceptedWorkItems,
-                RejectedWorkItems = _rejectedWorkItems,
-                Faults = _faults
-            };
-        }
-    }
-
-    private async ValueTask WaitForAdmissionAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken)
-    {
-        while (await _inbox.Writer.WaitToWriteAsync(cancellationToken).ConfigureAwait(false))
-        {
-            lock (_gate)
-            {
-                cancellationToken.ThrowIfCancellationRequested();
-                EnsureRunning();
-
-                if (_inbox.Writer.TryWrite(new QueuedGameLoopWorkItem(workItem, _timeProvider.GetTimestamp())))
-                {
-                    _acceptedWorkItems++;
-                    _wake.Set();
-
-                    return;
-                }
-            }
-        }
-
-        lock (_gate)
-        {
-            _rejectedWorkItems++;
-        }
-
-        throw new InvalidOperationException("The game loop is not accepting work.");
     }
 
     private void EnsureRunning()
@@ -401,8 +379,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                     // Ceil the wait: truncating a sub-millisecond remainder would busy-spin.
                     var delay = _timers.GetNextDelay();
                     var waitMilliseconds = delay is null
-                        ? Timeout.Infinite
-                        : (int)Math.Min(int.MaxValue, Math.Ceiling(delay.Value.TotalMilliseconds));
+                                               ? Timeout.Infinite
+                                               : (int)Math.Min(int.MaxValue, Math.Ceiling(delay.Value.TotalMilliseconds));
                     _wake.WaitOne(waitMilliseconds);
                 }
             }
@@ -410,9 +388,11 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
             // Admission and timers are closed, and every accepted command has finished.
             // Keep the loop identity until this final synchronous capture completes.
             _finalWorkItem?.Execute();
+
             if (_finalSession is not null)
             {
                 _finalSession.Ready.TrySetResult();
+
                 while (_finalSession.ExecutePending())
                 {
                     _wake.WaitOne();
@@ -469,6 +449,42 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         }
     }
 
+    private async ValueTask WaitForAdmissionAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken)
+    {
+        while (await _inbox.Writer.WaitToWriteAsync(cancellationToken).ConfigureAwait(false))
+        {
+            lock (_gate)
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                EnsureRunning();
+
+                if (_inbox.Writer.TryWrite(new(workItem, _timeProvider.GetTimestamp())))
+                {
+                    _acceptedWorkItems++;
+                    _wake.Set();
+
+                    return;
+                }
+            }
+        }
+
+        lock (_gate)
+        {
+            _rejectedWorkItems++;
+        }
+
+        throw new InvalidOperationException("The game loop is not accepting work.");
+    }
+
+    private async Task WaitForThreadExitAsync(Thread? thread)
+    {
+        // The host observes the primary failure through Completion. Cleanup does not report it a second time.
+        await Completion.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+
+        // Completion is signalled in the worker's finally; join also covers the last instructions after that signal.
+        thread?.Join();
+    }
+
     private void Wake()
     {
         lock (_gate)
@@ -479,15 +495,6 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                 _wake.Set();
             }
         }
-    }
-
-    private async Task WaitForThreadExitAsync(Thread? thread)
-    {
-        // The host observes the primary failure through Completion. Cleanup does not report it a second time.
-        await Completion.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-
-        // Completion is signalled in the worker's finally; join also covers the last instructions after that signal.
-        thread?.Join();
     }
 
     /// <summary>Drains the loop and releases its wake handle. Calls on the loop thread are rejected.</summary>

@@ -16,22 +16,6 @@ public sealed class ApiPayloadSerializerTests
         Assert.Equal(7, other.Value);
     }
 
-    [Theory, InlineData("910700"), InlineData("91A178"), InlineData("C0"), InlineData("81A17801"), InlineData("D40000")]
-    public void Deserialize_MalformedOrUnsupportedValue_Rejects(string hex)
-    {
-        Assert.ThrowsAny<MessagePackSerializationException>(() =>
-            ApiPayloadSerializer.Deserialize<IncrementRequest>(Convert.FromHexString(hex))
-        );
-    }
-
-    [Theory, InlineData("DDFFFFFFFF"), InlineData("DBFFFFFFFF"), InlineData("C6FFFFFFFF")]
-    public void Deserialize_HostileLength_RejectsBeforeAllocation(string hex)
-    {
-        Assert.Throws<ApiProtocolException>(() =>
-            ApiPayloadSerializer.Deserialize<IncrementRequest>(Convert.FromHexString(hex))
-        );
-    }
-
     [Fact]
     public void Deserialize_ExcessiveDepth_Rejects()
     {
@@ -39,11 +23,19 @@ public sealed class ApiPayloadSerializerTests
         Assert.Throws<ApiProtocolException>(() => ApiPayloadSerializer.Deserialize<IncrementRequest>(input));
     }
 
-    [Fact]
-    public void Serialize_OversizedValue_Rejects()
-    {
-        Assert.Throws<ApiProtocolException>(() => ApiPayloadSerializer.Serialize(new byte[1000000], 65536));
-    }
+    [Theory, InlineData("DDFFFFFFFF"), InlineData("DBFFFFFFFF"), InlineData("C6FFFFFFFF")]
+    public void Deserialize_HostileLength_RejectsBeforeAllocation(string hex)
+        => Assert.Throws<ApiProtocolException>(
+            () =>
+                ApiPayloadSerializer.Deserialize<IncrementRequest>(Convert.FromHexString(hex))
+        );
+
+    [Theory, InlineData("910700"), InlineData("91A178"), InlineData("C0"), InlineData("81A17801"), InlineData("D40000")]
+    public void Deserialize_MalformedOrUnsupportedValue_Rejects(string hex)
+        => Assert.ThrowsAny<MessagePackSerializationException>(
+            () =>
+                ApiPayloadSerializer.Deserialize<IncrementRequest>(Convert.FromHexString(hex))
+        );
 
     [Fact]
     public void Serialize_LargeValidAscii_AllowsEncodedSizeWithinLimit()
@@ -53,4 +45,8 @@ public sealed class ApiPayloadSerializerTests
         Assert.Equal(60003, encoded.Length);
         Assert.Equal(value, ApiPayloadSerializer.Deserialize<string>(encoded));
     }
+
+    [Fact]
+    public void Serialize_OversizedValue_Rejects()
+        => Assert.Throws<ApiProtocolException>(() => ApiPayloadSerializer.Serialize(new byte[1000000], 65536));
 }

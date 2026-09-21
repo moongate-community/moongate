@@ -16,12 +16,28 @@ public sealed class SerialTypeHandlerTests
         _fixture = fixture;
     }
 
-    [Theory]
-    [InlineData(1L)]
-    [InlineData(1073741824L)]
-    [InlineData(2147483647L)]
-    [InlineData(2147483648L)]
-    [InlineData(4294967295L)]
+    [Fact]
+    public async Task Serial_DatabaseValueAboveUIntRange_RejectsCheckedConversion()
+    {
+        await using var database = await _fixture.CreateDatabaseAsync();
+        await using var coordinator = CreateCoordinator(database);
+        await coordinator.SynchronizeAsync();
+        await database.ExecuteAsync("INSERT INTO plugin_characters.characters (id, name) VALUES (4294967296, 'invalid')");
+
+        var exception = await Record.ExceptionAsync(
+                            () =>
+                                coordinator.GetDatabase(PersistenceDatabaseTarget.Realm)
+                                           .Orm
+                                           .Select<CharacterEntity>()
+                                           .ToListAsync()
+                        );
+
+        Assert.NotNull(exception);
+        Assert.IsType<OverflowException>(exception.GetBaseException());
+    }
+
+    [Theory, InlineData(1L), InlineData(1073741824L), InlineData(2147483647L), InlineData(2147483648L),
+     InlineData(4294967295L)]
     public async Task Serial_FullUnsignedRange_RoundTripsAsBigint(long value)
     {
         await using var database = await _fixture.CreateDatabaseAsync();
@@ -37,9 +53,7 @@ public sealed class SerialTypeHandlerTests
         Assert.Equal(id, loaded.Id);
         Assert.Equal(
             value,
-            await database.ScalarAsync<long>(
-                "SELECT id FROM plugin_characters.characters"
-            )
+            await database.ScalarAsync<long>("SELECT id FROM plugin_characters.characters")
         );
         Assert.Equal(
             "bigint",
@@ -50,24 +64,6 @@ public sealed class SerialTypeHandlerTests
         );
     }
 
-    [Fact]
-    public async Task Serial_DatabaseValueAboveUIntRange_RejectsCheckedConversion()
-    {
-        await using var database = await _fixture.CreateDatabaseAsync();
-        await using var coordinator = CreateCoordinator(database);
-        await coordinator.SynchronizeAsync();
-        await database.ExecuteAsync(
-            "INSERT INTO plugin_characters.characters (id, name) VALUES (4294967296, 'invalid')"
-        );
-
-        var exception = await Record.ExceptionAsync(() =>
-            coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm.Select<CharacterEntity>().ToListAsync()
-        );
-
-        Assert.NotNull(exception);
-        Assert.IsType<OverflowException>(exception.GetBaseException());
-    }
-
     private static PersistenceSchemaCoordinator CreateCoordinator(PostgreSqlTestDatabase database)
     {
         var module = PersistenceTestModules.Character();
@@ -76,10 +72,10 @@ public sealed class SerialTypeHandlerTests
         registry.RegisterEntity(typeof(CharacterEntity));
         var options = new PostgreSqlPersistenceOptions(
             [
-                new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, database.ConnectionString)
+                new(PersistenceDatabaseTarget.Realm, database.ConnectionString)
             ]
         );
 
-        return new PersistenceSchemaCoordinator(options, registry);
+        return new(options, registry);
     }
 }

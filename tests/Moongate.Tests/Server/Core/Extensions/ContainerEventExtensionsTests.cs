@@ -9,14 +9,27 @@ namespace Moongate.Tests.Server.Core.Extensions;
 public sealed class ContainerEventExtensionsTests
 {
     [Fact]
+    public void Extensions_NullArguments_Throw()
+    {
+        using var container = new Container();
+        Container missing = null!;
+
+        Assert.Throws<ArgumentNullException>(() => missing.RegisterMoongateEventBus());
+        Assert.Throws<ArgumentNullException>(() => missing.OnEvent<MoongateStartedEvent>((_, _) => Task.CompletedTask));
+        Assert.Throws<ArgumentNullException>(() => container.OnEvent<MoongateStartedEvent>(null!));
+    }
+
+    [Fact]
     public async Task OnEvent_Registration_DoesNotInvokeHandlerBeforePublication()
     {
         using var container = new Container();
         var received = 0;
 
-        var result = container.OnEvent<MoongateStartedEvent>((message, token) =>
+        var result = container.OnEvent<MoongateStartedEvent>(
+            (message, token) =>
             {
                 received++;
+
                 return Task.CompletedTask;
             }
         );
@@ -30,17 +43,23 @@ public sealed class ContainerEventExtensionsTests
     }
 
     [Fact]
-    public void RegisterMoongateEventBus_RepeatedRegistration_PreservesSingleton()
+    public void OnEvent_Registration_DoesNotResolveUnrelatedServices()
     {
         using var container = new Container();
+        var unrelatedResolved = false;
+        container.RegisterDelegate(
+            () =>
+            {
+                unrelatedResolved = true;
 
-        container.RegisterMoongateEventBus();
-        var first = container.Resolve<IMoongateEventBus>();
+                return new object();
+            },
+            Reuse.Singleton
+        );
 
-        var result = container.RegisterMoongateEventBus();
+        container.OnEvent<MoongateStartedEvent>((_, _) => Task.CompletedTask);
 
-        Assert.Same(container, result);
-        Assert.Same(first, container.Resolve<IMoongateEventBus>());
+        Assert.False(unrelatedResolved);
     }
 
     [Fact]
@@ -56,32 +75,16 @@ public sealed class ContainerEventExtensionsTests
     }
 
     [Fact]
-    public void OnEvent_Registration_DoesNotResolveUnrelatedServices()
+    public void RegisterMoongateEventBus_RepeatedRegistration_PreservesSingleton()
     {
         using var container = new Container();
-        var unrelatedResolved = false;
-        container.RegisterDelegate(
-            () =>
-            {
-                unrelatedResolved = true;
-                return new object();
-            },
-            Reuse.Singleton
-        );
 
-        container.OnEvent<MoongateStartedEvent>((_, _) => Task.CompletedTask);
+        container.RegisterMoongateEventBus();
+        var first = container.Resolve<IMoongateEventBus>();
 
-        Assert.False(unrelatedResolved);
-    }
+        var result = container.RegisterMoongateEventBus();
 
-    [Fact]
-    public void Extensions_NullArguments_Throw()
-    {
-        using var container = new Container();
-        Container missing = null!;
-
-        Assert.Throws<ArgumentNullException>(() => missing.RegisterMoongateEventBus());
-        Assert.Throws<ArgumentNullException>(() => missing.OnEvent<MoongateStartedEvent>((_, _) => Task.CompletedTask));
-        Assert.Throws<ArgumentNullException>(() => container.OnEvent<MoongateStartedEvent>(null!));
+        Assert.Same(container, result);
+        Assert.Same(first, container.Resolve<IMoongateEventBus>());
     }
 }

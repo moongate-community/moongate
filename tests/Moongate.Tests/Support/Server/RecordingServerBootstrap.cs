@@ -10,14 +10,23 @@ public sealed class RecordingServerBootstrap : IMoongateServerBootstrap
     private readonly Exception? _stopFailure;
 
     public RecordingServerBootstrap(
-        List<string> events, Exception? startFailure = null,
-        Exception? runFailure = null, Exception? stopFailure = null
+        List<string> events,
+        Exception? startFailure = null,
+        Exception? runFailure = null,
+        Exception? stopFailure = null
     )
     {
         _events = events;
         _startFailure = startFailure;
         _runFailure = runFailure;
         _stopFailure = stopFailure;
+    }
+
+    public Task RunAsync()
+    {
+        _events.Add("run");
+
+        return _runFailure is null ? Task.CompletedTask : Task.FromException(_runFailure);
     }
 
     public Task StartAsync()
@@ -32,12 +41,5 @@ public sealed class RecordingServerBootstrap : IMoongateServerBootstrap
         _events.Add("stop");
 
         return _stopFailure is null ? Task.CompletedTask : Task.FromException(_stopFailure);
-    }
-
-    public Task RunAsync()
-    {
-        _events.Add("run");
-
-        return _runFailure is null ? Task.CompletedTask : Task.FromException(_runFailure);
     }
 }

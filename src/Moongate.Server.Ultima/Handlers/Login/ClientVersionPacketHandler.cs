@@ -8,7 +8,5 @@ public sealed class ClientVersionPacketHandler : IPacketHandler<ClientVersionPac
 {
     /// <inheritdoc />
     public void Handle(GameSession session, ClientVersionPacket packet)
-    {
-        session.NetworkSession.SetClientVersion(packet.Version);
-    }
+        => session.NetworkSession.SetClientVersion(packet.Version);
 }

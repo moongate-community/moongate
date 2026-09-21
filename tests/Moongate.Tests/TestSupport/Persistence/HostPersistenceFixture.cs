@@ -18,27 +18,21 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
         Database = database;
         AccountsDatabase = accountsDatabase;
         List<PersistenceDatabaseOptions> targets = [new(PersistenceDatabaseTarget.Realm, database.ConnectionString)];
+
         if (accountsDatabase is not null)
         {
             targets.Add(new(PersistenceDatabaseTarget.Accounts, accountsDatabase.ConnectionString));
         }
 
-        Container.RegisterMoongatePersistence(new PostgreSqlPersistenceOptions(targets, autoSync));
+        Container.RegisterMoongatePersistence(new(targets, autoSync));
     }
 
     public static async Task<HostPersistenceFixture> CreateAsync(bool autoSync = true, bool twoTargets = false)
-    {
-        return new HostPersistenceFixture(
+        => new(
             await new PostgreSqlFixture().CreateDatabaseAsync(),
             twoTargets ? await new PostgreSqlFixture().CreateDatabaseAsync() : null,
             autoSync
         );
-    }
-
-    public void RegisterEntity()
-    {
-        Container.AddPersistenceModule<TestPersistenceModule>().AddPersistenceEntity<TestEntity>();
-    }
 
     public async ValueTask DisposeAsync()
     {
@@ -49,9 +43,13 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
         }
 
         await Database.DisposeAsync();
+
         if (AccountsDatabase is not null)
         {
             await AccountsDatabase.DisposeAsync();
         }
     }
+
+    public void RegisterEntity()
+        => Container.AddPersistenceModule<TestPersistenceModule>().AddPersistenceEntity<TestEntity>();
 }

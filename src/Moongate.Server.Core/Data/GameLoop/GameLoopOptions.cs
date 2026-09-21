@@ -3,10 +3,10 @@ namespace Moongate.Server.Core.Data.GameLoop;
 /// <summary>Bounds inbox memory, attempted handlers and cooperative elapsed time per command batch.</summary>
 public sealed class GameLoopOptions
 {
-    private int _queueCapacity = 4096;
-    private int _maxWorkItemsPerBatch = 256;
+    private readonly int _queueCapacity = 4096;
+    private readonly int _maxWorkItemsPerBatch = 256;
 
-    private TimeSpan _workItemBudget = TimeSpan.FromMilliseconds(5);
+    private readonly TimeSpan _workItemBudget = TimeSpan.FromMilliseconds(5);
 
     /// <summary>Cooperative duration limit per command batch; an active handler is never interrupted.</summary>
     public TimeSpan WorkItemBudget

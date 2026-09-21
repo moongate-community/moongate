@@ -78,7 +78,7 @@ public sealed class ApiRegistry
         var method =
             typeof(ApiRegistry).GetMethod(nameof(CreateRegistration), BindingFlags.NonPublic | BindingFlags.Static)!;
         var entry = (IApiOperationRegistration)method.MakeGenericMethod(types[0], types[1], typeof(THandler))
-            .Invoke(null, [id, factory])!;
+                                                     .Invoke(null, [id, factory])!;
         _operations[id] = entry;
         _requests[types[0]] = entry;
     }
@@ -146,10 +146,11 @@ public sealed class ApiRegistry
     {
         ArgumentNullException.ThrowIfNull(handlerType);
         var contracts = handlerType.GetInterfaces()
-            .Where(type => type.IsGenericType &&
-                           type.GetGenericTypeDefinition() == typeof(IApiHandler<,>)
-            )
-            .ToArray();
+                                   .Where(
+                                       type => type.IsGenericType &&
+                                               type.GetGenericTypeDefinition() == typeof(IApiHandler<,>)
+                                   )
+                                   .ToArray();
 
         if (!handlerType.IsClass || handlerType.IsAbstract || handlerType.ContainsGenericParameters || contracts.Length != 1)
         {
@@ -164,9 +165,10 @@ public sealed class ApiRegistry
         var attribute = requestType.GetCustomAttribute<ApiOperationAttribute>() ??
                         throw new InvalidOperationException("The request needs an explicit operation identifier.");
         var contracts = requestType.GetInterfaces()
-            .Where(type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IApiRequest<>)
-            )
-            .ToArray();
+                                   .Where(
+                                       type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IApiRequest<>)
+                                   )
+                                   .ToArray();
 
         if (contracts.Length != 1 || contracts[0].GetGenericArguments()[0] != responseType)
         {

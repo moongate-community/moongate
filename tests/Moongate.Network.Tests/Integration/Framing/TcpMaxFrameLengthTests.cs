@@ -9,30 +9,6 @@ namespace Moongate.Network.Tests.Integration.Framing;
 public sealed class TcpMaxFrameLengthTests
 {
     [Fact]
-    public async Task OversizedDeclaredFrame_ClosesConnection()
-    {
-        var (server, client) = await ConnectedPairAsync(1024);
-
-        try
-        {
-            // Declare a 10 MiB payload (way over the 1 KiB cap) then dribble bytes; the receiver must
-            // close instead of growing its pending buffer toward 10 MiB.
-            var header = new byte[4];
-            BinaryPrimitives.WriteInt32BigEndian(header, 10 * 1024 * 1024);
-            await server.SendAsync(header, CancellationToken.None);
-            await server.SendAsync(new byte[4096], CancellationToken.None);
-
-            var closed = await WaitUntilAsync(() => !client.IsConnected, TimeSpan.FromSeconds(5));
-            Assert.True(closed);
-        }
-        finally
-        {
-            await client.DisposeAsync();
-            await server.DisposeAsync();
-        }
-    }
-
-    [Fact]
     public async Task FrameAtTheLimit_IsDelivered()
     {
         var (server, client) = await ConnectedPairAsync(1024);
@@ -58,6 +34,30 @@ public sealed class TcpMaxFrameLengthTests
         }
     }
 
+    [Fact]
+    public async Task OversizedDeclaredFrame_ClosesConnection()
+    {
+        var (server, client) = await ConnectedPairAsync(1024);
+
+        try
+        {
+            // Declare a 10 MiB payload (way over the 1 KiB cap) then dribble bytes; the receiver must
+            // close instead of growing its pending buffer toward 10 MiB.
+            var header = new byte[4];
+            BinaryPrimitives.WriteInt32BigEndian(header, 10 * 1024 * 1024);
+            await server.SendAsync(header, CancellationToken.None);
+            await server.SendAsync(new byte[4096], CancellationToken.None);
+
+            var closed = await WaitUntilAsync(() => !client.IsConnected, TimeSpan.FromSeconds(5));
+            Assert.True(closed);
+        }
+        finally
+        {
+            await client.DisposeAsync();
+            await server.DisposeAsync();
+        }
+    }
+
     private static async Task<(MoongateTcpClient Server, MoongateTcpClient Client)> ConnectedPairAsync(int maxFrameLength)
     {
         var listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -75,9 +75,8 @@ public sealed class TcpMaxFrameLengthTests
         var server = new MoongateTcpClient(serverSocket);
         var client = new MoongateTcpClient(
             clientSocket,
-            middlewares: null,
-            new FourByteLengthPrefixFramer(),
             null,
+            new FourByteLengthPrefixFramer(),
             maxFrameLength: maxFrameLength
         );
 

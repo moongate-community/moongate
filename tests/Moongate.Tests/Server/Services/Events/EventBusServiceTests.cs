@@ -15,10 +15,12 @@ public sealed class EventBusServiceTests
         using var container = new Container();
         MoongateStartedEvent? received = null;
         container.RegisterMoongateEventBus()
-            .RegisterMoongateService<IEventBusService, EventBusService>();
-        container.OnEvent<MoongateStartedEvent>((message, _) =>
+                 .RegisterMoongateService<IEventBusService, EventBusService>();
+        container.OnEvent<MoongateStartedEvent>(
+            (message, _) =>
             {
                 received = message;
+
                 return Task.CompletedTask;
             }
         );
@@ -30,16 +32,43 @@ public sealed class EventBusServiceTests
     }
 
     [Fact]
+    public async Task Resolve_MultipleConsumers_ReturnsSingletonAndForwardsCancellationToken()
+    {
+        using var container = new Container();
+        using var cancellationSource = new CancellationTokenSource();
+        CancellationToken receivedToken = default;
+        container.RegisterMoongateEventBus()
+                 .RegisterMoongateService<IEventBusService, EventBusService>();
+        var first = container.Resolve<IEventBusService>();
+        var second = container.Resolve<IEventBusService>();
+        first.Subscribe<MoongateStoppedEvent>(
+            (_, cancellationToken) =>
+            {
+                receivedToken = cancellationToken;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        await second.PublishAsync(new MoongateStoppedEvent(), cancellationSource.Token);
+
+        Assert.Same(first, second);
+        Assert.Equal(cancellationSource.Token, receivedToken);
+    }
+
+    [Fact]
     public async Task Subscribe_RawBusPublicationAndDisposedToken_ForwardsSharedBusBehavior()
     {
         using var container = new Container();
         var received = 0;
         container.RegisterMoongateEventBus()
-            .RegisterMoongateService<IEventBusService, EventBusService>();
+                 .RegisterMoongateService<IEventBusService, EventBusService>();
         var service = container.Resolve<IEventBusService>();
-        var subscription = service.Subscribe<MoongateStoppingEvent>((_, _) =>
+        var subscription = service.Subscribe<MoongateStoppingEvent>(
+            (_, _) =>
             {
                 received++;
+
                 return Task.CompletedTask;
             }
         );
@@ -50,28 +79,5 @@ public sealed class EventBusServiceTests
         await eventBus.PublishAsync(new MoongateStoppingEvent());
 
         Assert.Equal(1, received);
-    }
-
-    [Fact]
-    public async Task Resolve_MultipleConsumers_ReturnsSingletonAndForwardsCancellationToken()
-    {
-        using var container = new Container();
-        using var cancellationSource = new CancellationTokenSource();
-        CancellationToken receivedToken = default;
-        container.RegisterMoongateEventBus()
-            .RegisterMoongateService<IEventBusService, EventBusService>();
-        var first = container.Resolve<IEventBusService>();
-        var second = container.Resolve<IEventBusService>();
-        first.Subscribe<MoongateStoppedEvent>((_, cancellationToken) =>
-            {
-                receivedToken = cancellationToken;
-                return Task.CompletedTask;
-            }
-        );
-
-        await second.PublishAsync(new MoongateStoppedEvent(), cancellationSource.Token);
-
-        Assert.Same(first, second);
-        Assert.Equal(cancellationSource.Token, receivedToken);
     }
 }

@@ -85,25 +85,25 @@ internal sealed class ApiTlsPolicy : IDisposable
         try
         {
             await ssl.AuthenticateAsClientAsync(
-                    new()
-                    {
-                        TargetHost = targetHost,
-                        ClientCertificates = new() { _certificate },
-                        CertificateChainPolicy = CreateChainPolicy("1.3.6.1.5.5.7.3.1"),
-                        EnabledSslProtocols = SslProtocols.None,
-                        AllowRenegotiation = false,
-                        AllowTlsResume = false,
-                        RemoteCertificateValidationCallback = (_, certificate, _, errors)
-                            => TryAuthenticate(
-                                certificate,
-                                errors,
-                                expectedPeerId,
-                                out identity
-                            )
-                    },
-                    token
-                )
-                .ConfigureAwait(false);
+                         new()
+                         {
+                             TargetHost = targetHost,
+                             ClientCertificates = new() { _certificate },
+                             CertificateChainPolicy = CreateChainPolicy("1.3.6.1.5.5.7.3.1"),
+                             EnabledSslProtocols = SslProtocols.None,
+                             AllowRenegotiation = false,
+                             AllowTlsResume = false,
+                             RemoteCertificateValidationCallback = (_, certificate, _, errors)
+                                                                       => TryAuthenticate(
+                                                                           certificate,
+                                                                           errors,
+                                                                           expectedPeerId,
+                                                                           out identity
+                                                                       )
+                         },
+                         token
+                     )
+                     .ConfigureAwait(false);
 
             if (identity is null)
             {
@@ -135,25 +135,25 @@ internal sealed class ApiTlsPolicy : IDisposable
         try
         {
             await ssl.AuthenticateAsServerAsync(
-                    new()
-                    {
-                        ServerCertificate = _certificate,
-                        ClientCertificateRequired = true,
-                        CertificateChainPolicy = CreateChainPolicy("1.3.6.1.5.5.7.3.2"),
-                        EnabledSslProtocols = SslProtocols.None,
-                        AllowRenegotiation = false,
-                        AllowTlsResume = false,
-                        RemoteCertificateValidationCallback = (_, certificate, _, errors)
-                            => TryAuthenticate(
-                                certificate,
-                                errors,
-                                null,
-                                out identity
-                            )
-                    },
-                    token
-                )
-                .ConfigureAwait(false);
+                         new()
+                         {
+                             ServerCertificate = _certificate,
+                             ClientCertificateRequired = true,
+                             CertificateChainPolicy = CreateChainPolicy("1.3.6.1.5.5.7.3.2"),
+                             EnabledSslProtocols = SslProtocols.None,
+                             AllowRenegotiation = false,
+                             AllowTlsResume = false,
+                             RemoteCertificateValidationCallback = (_, certificate, _, errors)
+                                                                       => TryAuthenticate(
+                                                                           certificate,
+                                                                           errors,
+                                                                           null,
+                                                                           out identity
+                                                                       )
+                         },
+                         token
+                     )
+                     .ConfigureAwait(false);
 
             if (identity is null)
             {

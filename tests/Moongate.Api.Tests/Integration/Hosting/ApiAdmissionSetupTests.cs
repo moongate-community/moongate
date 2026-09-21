@@ -3,7 +3,6 @@ using System.Net.Sockets;
 using Moongate.Api.Hosting.Internal;
 using Moongate.Api.Streams.Internal;
 using Moongate.Network.Client;
-using Moongate.Network.Data;
 using Moongate.Network.Data.Config;
 
 namespace Moongate.Api.Tests.Integration.Hosting;
@@ -19,15 +18,16 @@ public class ApiAdmissionSetupTests
         using var admission = new ApiConnectionAdmission(() => Interlocked.Increment(ref releases));
         var options = new TcpClientOptions
         {
-            Pipeline = new ConnectionPipeline
+            Pipeline = new()
             {
                 PrepareStreamAsync = (stream, _) => ValueTask.FromResult<Stream>(new ApiAdmissionStream(stream, admission)),
                 ConfigureClient = _ => throw new InvalidOperationException("Configuration failed.")
             }
         };
-        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            MoongateTcpClient.ConnectConfiguredAsync((IPEndPoint)listener.LocalEndpoint, options)
-        );
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(
+                        () =>
+                            MoongateTcpClient.ConnectConfiguredAsync((IPEndPoint)listener.LocalEndpoint, options)
+                    );
         Assert.Equal("Configuration failed.", error.Message);
         Assert.Equal(1, releases);
         Assert.Throws<IOException>(admission.TransferToConnection);

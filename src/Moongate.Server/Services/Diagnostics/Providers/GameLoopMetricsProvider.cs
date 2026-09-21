@@ -22,45 +22,46 @@ public sealed class GameLoopMetricsProvider : IMetricProvider
         var snapshot = _gameLoop.GetMetricsSnapshot();
         IReadOnlyList<MetricSample> samples =
         [
-            new MetricSample("queue_depth", snapshot.QueueDepth, "count", DiagnosticMetricType.Gauge),
-            new MetricSample(
+            new("queue_depth", snapshot.QueueDepth, "count", DiagnosticMetricType.Gauge),
+            new(
                 "oldest_queued_item_age_seconds",
                 snapshot.OldestQueuedItemAge.TotalSeconds,
                 "seconds",
                 DiagnosticMetricType.Gauge
             ),
-            new MetricSample(
+            new(
                 "accepted_work_items_total",
                 snapshot.AcceptedWorkItems,
                 "count",
                 DiagnosticMetricType.Counter
             ),
-            new MetricSample(
+            new(
                 "rejected_work_items_total",
                 snapshot.RejectedWorkItems,
                 "count",
                 DiagnosticMetricType.Counter
             ),
-            new MetricSample(
+            new(
                 "executed_work_items_total",
                 snapshot.ExecutedWorkItems,
                 "count",
                 DiagnosticMetricType.Counter
             ),
-            new MetricSample("faults_total", snapshot.Faults, "count", DiagnosticMetricType.Counter),
-            new MetricSample(
+            new("faults_total", snapshot.Faults, "count", DiagnosticMetricType.Counter),
+            new(
                 "last_batch_duration_seconds",
                 snapshot.LastBatchDuration.TotalSeconds,
                 "seconds",
                 DiagnosticMetricType.Gauge
             ),
-            new MetricSample(
+            new(
                 "max_handler_duration_seconds",
                 snapshot.MaxHandlerDuration.TotalSeconds,
                 "seconds",
                 DiagnosticMetricType.Gauge
             )
         ];
+
         return ValueTask.FromResult(samples);
     }
 }

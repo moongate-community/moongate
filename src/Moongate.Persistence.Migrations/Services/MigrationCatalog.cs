@@ -42,17 +42,20 @@ public sealed partial class MigrationCatalog
 
         var components = new HashSet<string>(StringComparer.Ordinal) { "core" };
         var sources = new SortedDictionary<string, string>(StringComparer.Ordinal);
+
         if (pluginsDirectory is not null && Directory.Exists(pluginsDirectory))
         {
             foreach (var bundle in Directory.EnumerateDirectories(pluginsDirectory))
             {
                 var migrations = Path.Combine(bundle, "migrations");
+
                 if (!Directory.Exists(migrations))
                 {
                     continue;
                 }
 
                 var manifestPath = Path.Combine(migrations, "manifest.json");
+
                 if (!File.Exists(manifestPath))
                 {
                     throw new InvalidOperationException("Plugin migrations require a manifest.json with a stable id.");
@@ -61,8 +64,9 @@ public sealed partial class MigrationCatalog
                 using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
                 var id = manifest.RootElement.TryGetProperty("id", out var property) &&
                          property.ValueKind == JsonValueKind.String
-                    ? property.GetString()
-                    : null;
+                             ? property.GetString()
+                             : null;
+
                 if (id is null || !ComponentPattern().IsMatch(id) || !components.Add(id))
                 {
                     throw new InvalidOperationException(
@@ -75,18 +79,26 @@ public sealed partial class MigrationCatalog
         }
 
         var scripts = ReadComponent(directory, "core", target);
+
         foreach (var (id, path) in sources)
         {
             scripts.AddRange(ReadComponent(path, id, target));
         }
 
-        return new MigrationCatalog(target, scripts, components);
+        return new(target, scripts, components);
     }
+
+    [GeneratedRegex("^[a-z][a-z0-9-]{0,62}$", RegexOptions.CultureInvariant)]
+    private static partial Regex ComponentPattern();
+
+    [GeneratedRegex("^[0-9]{4}_[a-z][a-z0-9_]*\\.sql$", RegexOptions.CultureInvariant)]
+    private static partial Regex FilePattern();
 
     private static List<MigrationScript> ReadComponent(string root, string component, MigrationTarget target)
     {
         var directory = Path.Combine(root, target == MigrationTarget.Auth ? "auth" : "world");
         List<MigrationScript> scripts = [];
+
         if (!Directory.Exists(directory))
         {
             return scripts;
@@ -98,16 +110,20 @@ public sealed partial class MigrationCatalog
         }
 
         var sequences = new HashSet<int>();
+
         foreach (var file in Directory.EnumerateFiles(directory).Order(StringComparer.Ordinal))
         {
             var name = Path.GetFileName(file);
+
             if (!name.EndsWith(".sql", StringComparison.OrdinalIgnoreCase))
             {
                 continue;
             }
 
-            if (!FilePattern().IsMatch(name) || !int.TryParse(name.AsSpan(0, 4), out var sequence) ||
-                sequence == 0 || !sequences.Add(sequence))
+            if (!FilePattern().IsMatch(name) ||
+                !int.TryParse(name.AsSpan(0, 4), out var sequence) ||
+                sequence == 0 ||
+                !sequences.Add(sequence))
             {
                 throw new InvalidOperationException(
                     $"Migration '{component}/{name}' needs a unique positive NNNN_lowercase_name.sql sequence."
@@ -115,23 +131,18 @@ public sealed partial class MigrationCatalog
             }
 
             var sql = new UTF8Encoding(false, true).GetString(File.ReadAllBytes(file))
-                .TrimStart('\uFEFF')
-                .Replace("\r\n", "\n", StringComparison.Ordinal);
+                                                   .TrimStart('\uFEFF')
+                                                   .Replace("\r\n", "\n", StringComparison.Ordinal);
+
             if (string.IsNullOrWhiteSpace(sql))
             {
                 throw new InvalidOperationException($"Migration '{component}/{name}' is empty.");
             }
 
             var checksum = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(sql)));
-            scripts.Add(new MigrationScript(target, component, name, sequence, sql, checksum));
+            scripts.Add(new(target, component, name, sequence, sql, checksum));
         }
 
         return scripts;
     }
-
-    [GeneratedRegex("^[a-z][a-z0-9-]{0,62}$", RegexOptions.CultureInvariant)]
-    private static partial Regex ComponentPattern();
-
-    [GeneratedRegex("^[0-9]{4}_[a-z][a-z0-9_]*\\.sql$", RegexOptions.CultureInvariant)]
-    private static partial Regex FilePattern();
 }

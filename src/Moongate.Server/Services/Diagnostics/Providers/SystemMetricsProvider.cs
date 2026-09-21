@@ -42,9 +42,11 @@ public sealed class SystemMetricsProvider : IMetricProvider, IDisposable
         {
             var elapsed = _timeProvider.GetElapsedTime(_previousTimestamp, timestamp);
             var processorDelta = reading.TotalProcessorTime - _previousProcessorTime;
+
             if (elapsed > TimeSpan.Zero)
             {
                 _uptime += elapsed;
+
                 if (processorDelta >= TimeSpan.Zero && reading.ProcessorCount > 0)
                 {
                     cpuUsagePercent = Math.Clamp(
@@ -66,6 +68,7 @@ public sealed class SystemMetricsProvider : IMetricProvider, IDisposable
         _previousProcessorTime = reading.TotalProcessorTime;
 
         var metrics = CreateMetrics(reading, cpuUsagePercent);
+
         return ValueTask.FromResult<IReadOnlyList<MetricSample>>(Array.AsReadOnly(metrics));
     }
 
@@ -89,7 +92,7 @@ public sealed class SystemMetricsProvider : IMetricProvider, IDisposable
         if (cpuUsagePercent.HasValue)
         {
             metrics.Add(
-                new MetricSample(
+                new(
                     "cpu_usage_percent",
                     cpuUsagePercent.Value,
                     "percent",
@@ -102,7 +105,5 @@ public sealed class SystemMetricsProvider : IMetricProvider, IDisposable
     }
 
     public void Dispose()
-    {
-        _reader.Dispose();
-    }
+        => _reader.Dispose();
 }

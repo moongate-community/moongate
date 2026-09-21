@@ -56,6 +56,7 @@ public sealed class ApiServerService : IApiServerService, IAsyncDisposable
         lock (_lifecycleGate)
         {
             _stopping = true;
+
             return _lifecycle.StopAsync(StopCoreAsync);
         }
     }
@@ -63,6 +64,7 @@ public sealed class ApiServerService : IApiServerService, IAsyncDisposable
     private async Task StartCoreAsync()
     {
         _config.Validate();
+
         if (!_config.Enabled)
         {
             if (_config.AutoGenerateCertificate)
@@ -73,6 +75,7 @@ public sealed class ApiServerService : IApiServerService, IAsyncDisposable
             _logger.Warning(
                 "API server is disabled; set api.enabled = true and configure mutual TLS certificates to enable it"
             );
+
             return;
         }
 

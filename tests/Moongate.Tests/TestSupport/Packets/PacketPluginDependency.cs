@@ -14,7 +14,10 @@ public sealed class PacketPluginDependency : IMoongateStartupService
     public bool Stopped { get; private set; }
 
     public PacketPluginDependency(
-        IGameLoopService loop, ISessionService sessions, IPacketDispatchService dispatcher, IPacketSendService sender,
+        IGameLoopService loop,
+        ISessionService sessions,
+        IPacketDispatchService dispatcher,
+        IPacketSendService sender,
         IConnectionService connections
     )
     {
@@ -29,6 +32,7 @@ public sealed class PacketPluginDependency : IMoongateStartupService
     {
         Assert.True(_loop.TryPost(new ActionGameLoopWorkItem(() => { })));
         Started = true;
+
         return Task.CompletedTask;
     }
 

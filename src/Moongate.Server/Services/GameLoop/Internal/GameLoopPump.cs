@@ -17,8 +17,10 @@ internal sealed class GameLoopPump
     private TimeSpan _maxHandlerDuration;
 
     internal GameLoopPump(
-        ChannelReader<QueuedGameLoopWorkItem> reader, int maxWorkItemsPerBatch,
-        TimeProvider timeProvider, TimeSpan workItemBudget
+        ChannelReader<QueuedGameLoopWorkItem> reader,
+        int maxWorkItemsPerBatch,
+        TimeProvider timeProvider,
+        TimeSpan workItemBudget
     )
     {
         _reader = reader;
@@ -27,11 +29,25 @@ internal sealed class GameLoopPump
         _workItemBudget = workItemBudget;
     }
 
+    internal GameLoopMetricsSnapshot GetMetricsSnapshot()
+    {
+        lock (_metricsGate)
+        {
+            return new()
+            {
+                ExecutedWorkItems = _executedWorkItems,
+                LastBatchDuration = _lastBatchDuration,
+                MaxHandlerDuration = _maxHandlerDuration
+            };
+        }
+    }
+
     internal int RunBatch()
     {
         var attempted = 0;
         var batchStarted = _timeProvider.GetTimestamp();
         var handlerFaulted = false;
+
         try
         {
             // Both budgets are checked before dequeue: the next batch retains every queued item.
@@ -41,6 +57,7 @@ internal sealed class GameLoopPump
             {
                 attempted++;
                 var handlerStarted = _timeProvider.GetTimestamp();
+
                 lock (_metricsGate)
                 {
                     _executedWorkItems++;
@@ -53,11 +70,13 @@ internal sealed class GameLoopPump
                 catch
                 {
                     handlerFaulted = true;
+
                     throw;
                 }
                 finally
                 {
                     var duration = GetDiagnosticElapsedTime(handlerStarted, handlerFaulted);
+
                     lock (_metricsGate)
                     {
                         if (duration > _maxHandlerDuration)
@@ -75,24 +94,12 @@ internal sealed class GameLoopPump
             if (attempted > 0)
             {
                 var duration = GetDiagnosticElapsedTime(batchStarted, handlerFaulted);
+
                 lock (_metricsGate)
                 {
                     _lastBatchDuration = duration;
                 }
             }
-        }
-    }
-
-    internal GameLoopMetricsSnapshot GetMetricsSnapshot()
-    {
-        lock (_metricsGate)
-        {
-            return new GameLoopMetricsSnapshot
-            {
-                ExecutedWorkItems = _executedWorkItems,
-                LastBatchDuration = _lastBatchDuration,
-                MaxHandlerDuration = _maxHandlerDuration
-            };
         }
     }
 

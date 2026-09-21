@@ -20,9 +20,11 @@ public sealed class ApiBootstrapTests
     {
         using var fixture = new ApiHostFixture();
         using var container = new Container();
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None).RegisterServices(services =>
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None).RegisterServices(
+            services =>
             {
                 RegisterInputs(services, fixture);
+
                 if (registration == "before")
                 {
                     services.RegisterApiHandler<IncrementHandler>();
@@ -30,6 +32,7 @@ public sealed class ApiBootstrapTests
 
                 var existing = services.IsRegistered<ApiRegistry>() ? services.Resolve<ApiRegistry>() : null;
                 ApiServerRegistration.Register(services);
+
                 if (existing is not null)
                 {
                     Assert.Same(existing, services.Resolve<ApiRegistry>());
@@ -51,6 +54,7 @@ public sealed class ApiBootstrapTests
         var service = container.Resolve<IApiServerService>();
         Assert.Same(service, container.Resolve<IApiServerService>());
         Assert.False(container.Resolve<ApiRegistry>().IsFrozen);
+
         try
         {
             await bootstrap.StartAsync();
@@ -79,7 +83,8 @@ public sealed class ApiBootstrapTests
         IApiServerService? api = null;
         var dependencyStopped = false;
         var failure = new InvalidOperationException("Later startup failure");
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None).RegisterServices(services =>
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None).RegisterServices(
+            services =>
             {
                 RegisterInputs(services, fixture);
                 services.RegisterMoongateService(
@@ -90,6 +95,7 @@ public sealed class ApiBootstrapTests
                             Assert.Null(api!.Endpoint);
                             fixture.AssertPortReleased();
                             dependencyStopped = true;
+
                             return Task.CompletedTask;
                         }
                     ),
@@ -97,18 +103,21 @@ public sealed class ApiBootstrapTests
                 );
                 services.RegisterApiHandler<IncrementHandler>();
                 ApiServerRegistration.Register(services);
+
                 // A distinct contract avoids replacing the earlier callback's registration.
                 services.RegisterMoongateService<IMoongateStartupService, CallbackStartupService>(
                     new CallbackStartupService(
                         () =>
                         {
                             Assert.NotNull(api!.Endpoint);
+
                             throw failure;
                         },
                         () => Task.CompletedTask
                     ),
                     120
                 );
+
                 return services;
             }
         );
@@ -127,7 +136,8 @@ public sealed class ApiBootstrapTests
         fixture.Config.CertificatePath = "missing.pfx";
         using var container = new Container();
         var stopped = false;
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None).RegisterServices(services =>
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None).RegisterServices(
+            services =>
             {
                 RegisterInputs(services, fixture);
                 services.RegisterMoongateService(
@@ -136,11 +146,13 @@ public sealed class ApiBootstrapTests
                         () =>
                         {
                             stopped = true;
+
                             return Task.CompletedTask;
                         }
                     ),
                     100
                 );
+
                 return ApiServerRegistration.Register(services);
             }
         );

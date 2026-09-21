@@ -58,7 +58,5 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
         Current = default;
     }
 
-    public void Dispose()
-    {
-    }
+    public void Dispose() { }
 }

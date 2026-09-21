@@ -199,6 +199,7 @@ public static class StringHelpers
         }
 
         var chrs = ArrayPool<char>.Shared.Rent(a.Length);
+
         try
         {
             var span = chrs.AsSpan(0, a.Length);

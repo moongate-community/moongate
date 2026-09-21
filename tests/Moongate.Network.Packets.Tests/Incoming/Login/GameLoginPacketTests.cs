@@ -7,16 +7,9 @@ public class GameLoginPacketTests
 {
     private static readonly byte[] Fixture = CreateFixture();
 
-    [Fact]
-    public void TryDecode_KnownFixture_ReadsKeyAndCredentials()
-    {
-        Assert.True(PacketCodec.TryDecode<GameLoginPacket>(Fixture, out var packet));
-        Assert.Equal(0x91, packet.OpCode);
-        Assert.Equal(65, packet.Length);
-        Assert.Equal(0x12345678u, packet.AuthKey);
-        Assert.Equal("a", packet.Account);
-        Assert.Equal("b", packet.Password);
-    }
+    [Theory, InlineData("1234567890123456789012345678901", "b"), InlineData("a", "é")]
+    public void Constructor_InvalidCredential_ThrowsArgumentException(string account, string password)
+        => Assert.Throws<ArgumentException>(() => new GameLoginPacket(1, account, password));
 
     [Fact]
     public void TryDecode_IncompleteWrongAppendedOrNonAsciiFrame_ReturnsFalse()
@@ -35,10 +28,15 @@ public class GameLoginPacketTests
         Assert.False(PacketCodec.TryDecode<GameLoginPacket>([.. Fixture, 0x00], out _));
     }
 
-    [Theory, InlineData("1234567890123456789012345678901", "b"), InlineData("a", "é")]
-    public void Constructor_InvalidCredential_ThrowsArgumentException(string account, string password)
+    [Fact]
+    public void TryDecode_KnownFixture_ReadsKeyAndCredentials()
     {
-        Assert.Throws<ArgumentException>(() => new GameLoginPacket(1, account, password));
+        Assert.True(PacketCodec.TryDecode<GameLoginPacket>(Fixture, out var packet));
+        Assert.Equal(0x91, packet.OpCode);
+        Assert.Equal(65, packet.Length);
+        Assert.Equal(0x12345678u, packet.AuthKey);
+        Assert.Equal("a", packet.Account);
+        Assert.Equal("b", packet.Password);
     }
 
     private static byte[] CreateFixture()
@@ -47,6 +45,7 @@ public class GameLoginPacketTests
         Convert.FromHexString("9112345678").CopyTo(fixture, 0);
         fixture[5] = (byte)'a';
         fixture[35] = (byte)'b';
+
         return fixture;
     }
 }

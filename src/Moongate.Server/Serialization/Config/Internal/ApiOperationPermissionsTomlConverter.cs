@@ -5,10 +5,6 @@ namespace Moongate.Server.Serialization.Config.Internal;
 
 internal sealed class ApiOperationPermissionsTomlConverter : TomlConverter<ApiOperationPermissionsConfig>
 {
-    public ApiOperationPermissionsTomlConverter()
-    {
-    }
-
     public override ApiOperationPermissionsConfig Read(TomlReader reader)
     {
         if (reader.TokenType != TomlTokenType.StartArray)
@@ -19,6 +15,7 @@ internal sealed class ApiOperationPermissionsTomlConverter : TomlConverter<ApiOp
         reader.Read();
         var operations = new List<ushort>();
         var allowsAll = false;
+
         while (reader.TokenType != TomlTokenType.EndArray)
         {
             if (allowsAll)
@@ -43,13 +40,15 @@ internal sealed class ApiOperationPermissionsTomlConverter : TomlConverter<ApiOp
         }
 
         reader.Read();
-        return new ApiOperationPermissionsConfig(operations, allowsAll);
+
+        return new(operations, allowsAll);
     }
 
     public override void Write(TomlWriter writer, ApiOperationPermissionsConfig value)
     {
         value.Validate();
         writer.WriteStartArray();
+
         if (value.AllowsAll)
         {
             writer.WriteStringValue("*");

@@ -19,28 +19,32 @@ public sealed class SessionService : ISessionService
         _gameLoop = gameLoop;
     }
 
+    public void Clear()
+        => _sessions.Clear();
+
     public IReadOnlyCollection<GameSession> GetAll()
-    {
-        return _sessions.Values.ToArray();
-    }
+        => _sessions.Values.ToArray();
 
     public GameSession GetOrCreate(INetworkConnection client)
     {
         ArgumentNullException.ThrowIfNull(client);
+
         return _sessions.GetOrAdd(
             client.SessionId,
-            _ => new GameSession(new NetworkSession(client), _gameLoop)
+            _ => new(new(client), _gameLoop)
         );
     }
 
+    public bool Remove(long sessionId)
+        => _sessions.TryRemove(sessionId, out _);
+
     public bool TryGet(long sessionId, [NotNullWhen(true)] out GameSession? session)
-    {
-        return _sessions.TryGetValue(sessionId, out session);
-    }
+        => _sessions.TryGetValue(sessionId, out session);
 
     public bool TryGetByCharacterId(Serial characterId, [NotNullWhen(true)] out GameSession? session)
     {
         session = null;
+
         if (characterId == Serial.Zero)
         {
             return false;
@@ -51,20 +55,11 @@ public sealed class SessionService : ISessionService
             if (candidate.CharacterId == characterId)
             {
                 session = candidate;
+
                 return true;
             }
         }
 
         return false;
-    }
-
-    public bool Remove(long sessionId)
-    {
-        return _sessions.TryRemove(sessionId, out _);
-    }
-
-    public void Clear()
-    {
-        _sessions.Clear();
     }
 }

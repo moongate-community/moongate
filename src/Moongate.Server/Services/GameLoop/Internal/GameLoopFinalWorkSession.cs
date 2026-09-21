@@ -21,66 +21,14 @@ internal sealed class GameLoopFinalWorkSession
         _cancellationToken = cancellationToken;
     }
 
-    public Task DispatchAsync(IGameLoopWorkItem item)
-    {
-        ArgumentNullException.ThrowIfNull(item);
-        lock (_gate)
-        {
-            if (_closed || _dispatch is { Task.IsCompleted: false })
-            {
-                throw new InvalidOperationException("Final capture dispatch is closed or already has an active capture.");
-            }
-
-            _cancellationToken.ThrowIfCancellationRequested();
-            _dispatch = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            _pending = item;
-            _wake();
-            return _dispatch.Task;
-        }
-    }
-
-    public bool ExecutePending()
-    {
-        IGameLoopWorkItem? item;
-        TaskCompletionSource? completion;
-        lock (_gate)
-        {
-            item = _pending;
-            completion = _dispatch;
-            _pending = null;
-            if (item is null)
-            {
-                return !_closed;
-            }
-        }
-
-        try
-        {
-            item.Execute();
-            completion!.TrySetResult();
-        }
-        catch (Exception exception)
-        {
-            lock (_gate)
-            {
-                _failures.Add(exception);
-            }
-
-            completion!.TrySetException(exception);
-        }
-
-        return true;
-    }
-
     public Task CloseAsync()
-    {
-        return CloseAsync(null);
-    }
+        => CloseAsync(null);
 
     public async Task CloseAsync(Exception? callbackFailure)
     {
         Task? active;
         bool returnedEarly;
+
         lock (_gate)
         {
             _closed = true;
@@ -102,6 +50,7 @@ internal sealed class GameLoopFinalWorkSession
         }
 
         List<Exception> failures = [];
+
         if (callbackFailure is not null)
         {
             failures.Add(callbackFailure);
@@ -132,6 +81,61 @@ internal sealed class GameLoopFinalWorkSession
         {
             throw new InvalidOperationException("The final callback returned before awaiting its admitted capture.");
         }
+    }
+
+    public Task DispatchAsync(IGameLoopWorkItem item)
+    {
+        ArgumentNullException.ThrowIfNull(item);
+
+        lock (_gate)
+        {
+            if (_closed || _dispatch is { Task.IsCompleted: false })
+            {
+                throw new InvalidOperationException("Final capture dispatch is closed or already has an active capture.");
+            }
+
+            _cancellationToken.ThrowIfCancellationRequested();
+            _dispatch = new(TaskCreationOptions.RunContinuationsAsynchronously);
+            _pending = item;
+            _wake();
+
+            return _dispatch.Task;
+        }
+    }
+
+    public bool ExecutePending()
+    {
+        IGameLoopWorkItem? item;
+        TaskCompletionSource? completion;
+
+        lock (_gate)
+        {
+            item = _pending;
+            completion = _dispatch;
+            _pending = null;
+
+            if (item is null)
+            {
+                return !_closed;
+            }
+        }
+
+        try
+        {
+            item.Execute();
+            completion!.TrySetResult();
+        }
+        catch (Exception exception)
+        {
+            lock (_gate)
+            {
+                _failures.Add(exception);
+            }
+
+            completion!.TrySetException(exception);
+        }
+
+        return true;
     }
 
     public void Fail(Exception failure)

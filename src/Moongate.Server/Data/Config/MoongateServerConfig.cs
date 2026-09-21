@@ -12,13 +12,13 @@ public class MoongateServerConfig
     [TomlConverter(typeof(ServerModeTomlConverter))]
     public ServerMode Mode { get; set; } = ServerMode.Standalone;
 
-    public ShardConfig Shard { get; set; } = new ShardConfig();
+    public ShardConfig Shard { get; set; } = new();
 
-    public NetworkConfig Network { get; set; } = new NetworkConfig();
+    public NetworkConfig Network { get; set; } = new();
 
     public ApiConfig Api { get; set; } = new();
 
-    public UltimaConfig Ultima { get; set; } = new UltimaConfig();
+    public UltimaConfig Ultima { get; set; } = new();
 
     public PersistenceConfig Persistence { get; set; } = new();
 

@@ -258,6 +258,7 @@ public sealed class MultiComponentList
                 {
                     using var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                     using var reader = new BinaryReader(fs);
+
                     if (reader.ReadInt16() != 1) // Version check
                     {
                         return;
@@ -744,6 +745,7 @@ public sealed class MultiComponentList
             new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
             Encoding.GetEncoding(1252)
         );
+
         for (var i = 0; i < SortedTiles.Length; ++i)
         {
             tex.WriteLine(
@@ -777,6 +779,7 @@ public sealed class MultiComponentList
             new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
             Encoding.GetEncoding(1252)
         );
+
         for (var i = 0; i < SortedTiles.Length; ++i)
         {
             tex.WriteLine($"[HOUSE ITEM {i}]");
@@ -796,6 +799,7 @@ public sealed class MultiComponentList
             new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
             Encoding.GetEncoding(1252)
         );
+
         for (var i = 0; i < SortedTiles.Length; ++i)
         {
             tex.WriteLine($"SECTION WORLDITEM {i}");

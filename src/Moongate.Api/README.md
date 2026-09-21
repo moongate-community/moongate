@@ -115,7 +115,8 @@ corresponding peer permission. `ApiServer.Connections` returns an immutable snap
 `container.RegisterApiHandler<IncrementHandler>()` infers the contract and owns a singleton handler. Registration alone
 starts no listener. Moongate.Server now hosts the listener through `IApiServerService` when `[api].enabled = true`, with
 port 2594 by default and certificates/peer permissions configured in TOML. APIs remain disabled by default and log an
-activation warning. See [API host configuration](../../docs/server-configuration.md#enable-the-internal-api-server), the [certificate setup guide](../../docs/api-certificates.md)
+activation warning. See [API host configuration](../../docs/server-configuration.md#enable-the-internal-api-server),
+the [certificate setup guide](../../docs/api-certificates.md)
 and [Docker](../../docs/docker.md#internal-api-port). The standalone example above still works without Moongate.Server.
 
 ## TLS identity and ownership

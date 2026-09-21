@@ -24,14 +24,14 @@ public sealed class MapHelper
         if (Files.GetFilePath("map1.mul") != null || Files.GetFilePath("map1legacymul.uop") != null)
         {
             Map.Trammel = Map.Trammel.Width == 7168
-                ? new(1, 1, 7168, 4096)
-                : new Map(1, 1, 6144, 4096);
+                              ? new(1, 1, 7168, 4096)
+                              : new Map(1, 1, 6144, 4096);
         }
         else
         {
             Map.Trammel = Map.Trammel.Width == 7168
-                ? new(0, 1, 7168, 4096)
-                : new Map(0, 1, 6144, 4096);
+                              ? new(0, 1, 7168, 4096)
+                              : new Map(0, 1, 6144, 4096);
         }
     }
 }

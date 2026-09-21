@@ -30,22 +30,23 @@ public sealed class TcpThroughputTests
         var count = 0;
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         await using var server = new MoongateTcpServer(
-            new IPEndPoint(IPAddress.Loopback, 0),
-            framer: new LengthPrefixFramer()
+            new(IPAddress.Loopback, 0),
+            new LengthPrefixFramer()
         );
         server.OnDataReceived += (_, args) =>
-        {
-            if (!args.Data.Span.SequenceEqual(frame))
-            {
-                received.TrySetException(new InvalidDataException("Corrupted load-test frame."));
-                return;
-            }
+                                 {
+                                     if (!args.Data.Span.SequenceEqual(frame))
+                                     {
+                                         received.TrySetException(new InvalidDataException("Corrupted load-test frame."));
 
-            if (Interlocked.Increment(ref count) == expectedCount)
-            {
-                received.TrySetResult();
-            }
-        };
+                                         return;
+                                     }
+
+                                     if (Interlocked.Increment(ref count) == expectedCount)
+                                     {
+                                         received.TrySetResult();
+                                     }
+                                 };
         var peers = new List<TcpClient>();
         await server.StartAsync(deadline.Token);
 
@@ -58,10 +59,11 @@ public sealed class TcpThroughputTests
                 await peer.ConnectAsync(IPAddress.Loopback, server.Port, deadline.Token);
             }
 
-            var before = GC.GetTotalAllocatedBytes(precise: true);
+            var before = GC.GetTotalAllocatedBytes(true);
             var startedAt = Stopwatch.GetTimestamp();
             await Task.WhenAll(
-                peers.Select(async peer =>
+                peers.Select(
+                    async peer =>
                     {
                         for (var index = 0; index < messagesPerClient; index++)
                         {
@@ -72,7 +74,7 @@ public sealed class TcpThroughputTests
             );
             await received.Task.WaitAsync(deadline.Token);
             var elapsed = Stopwatch.GetElapsedTime(startedAt);
-            var allocated = GC.GetTotalAllocatedBytes(precise: true) - before;
+            var allocated = GC.GetTotalAllocatedBytes(true) - before;
             Assert.Equal(expectedCount, Volatile.Read(ref count));
             _output.WriteLine(
                 JsonSerializer.Serialize(

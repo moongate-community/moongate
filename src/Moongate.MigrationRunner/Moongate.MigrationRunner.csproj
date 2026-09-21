@@ -1,19 +1,19 @@
 <Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <OutputType>Exe</OutputType>
-    <PublishSingleFile>true</PublishSingleFile>
-    <PublishSelfContained>true</PublishSelfContained>
-    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
-    <PublishDocumentationFile>false</PublishDocumentationFile>
-  </PropertyGroup>
-  <ItemGroup>
-    <Content Include="../../LICENSE" Link="LICENSE" CopyToPublishDirectory="PreserveNewest" />
-    <Content Include="../../THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToPublishDirectory="PreserveNewest" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="dbup-postgresql" Version="7.0.1" />
-    <ProjectReference Include="../Moongate.Persistence.Migrations/Moongate.Persistence.Migrations.csproj" />
-    <ProjectReference Include="../Moongate.Core/Moongate.Core.csproj" />
-    <InternalsVisibleTo Include="Moongate.MigrationRunner.Tests" />
-  </ItemGroup>
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+        <PublishSingleFile>true</PublishSingleFile>
+        <PublishSelfContained>true</PublishSelfContained>
+        <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+        <PublishDocumentationFile>false</PublishDocumentationFile>
+    </PropertyGroup>
+    <ItemGroup>
+        <Content Include="../../LICENSE" Link="LICENSE" CopyToPublishDirectory="PreserveNewest"/>
+        <Content Include="../../THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToPublishDirectory="PreserveNewest"/>
+    </ItemGroup>
+    <ItemGroup>
+        <PackageReference Include="dbup-postgresql" Version="7.0.1"/>
+        <ProjectReference Include="../Moongate.Persistence.Migrations/Moongate.Persistence.Migrations.csproj"/>
+        <ProjectReference Include="../Moongate.Core/Moongate.Core.csproj"/>
+        <InternalsVisibleTo Include="Moongate.MigrationRunner.Tests"/>
+    </ItemGroup>
 </Project>

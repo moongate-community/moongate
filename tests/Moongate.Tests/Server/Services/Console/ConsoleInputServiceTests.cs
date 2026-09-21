@@ -15,80 +15,6 @@ public sealed class ConsoleInputServiceTests
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     [Fact]
-    public async Task StartAsync_NonInteractiveDoesNotShowThePrompt()
-    {
-        var prompt = new RecordingPromptService { IsInteractive = false };
-        var keys = new ScriptedConsoleKeySource();
-        using var container = CreateContainer();
-        var commands = await CreateCommandsAsync(container);
-        using var service = new ConsoleInputService(prompt, commands, keys);
-
-        await service.StartAsync();
-
-        Assert.False(prompt.PromptVisible);
-        await service.StopAsync();
-        await commands.StopAsync();
-    }
-
-    [Fact]
-    public async Task StartAsync_LocksInputAndShowsThePrompt()
-    {
-        var prompt = new RecordingPromptService();
-        var keys = new ScriptedConsoleKeySource();
-        using var container = CreateContainer();
-        var commands = await CreateCommandsAsync(container);
-        using var service = new ConsoleInputService(prompt, commands, keys);
-
-        await service.StartAsync();
-
-        Assert.True(prompt.PromptVisible);
-        Assert.True(prompt.IsInputLocked);
-        await service.StopAsync();
-        await commands.StopAsync();
-    }
-
-    [Fact]
-    public async Task LockedInput_IgnoresKeysUntilTheUnlockCharacter()
-    {
-        var prompt = new RecordingPromptService();
-        var keys = new ScriptedConsoleKeySource();
-        keys.EnqueueText("abc");
-        keys.Enqueue('*');
-        using var container = CreateContainer();
-        var commands = await CreateCommandsAsync(container);
-        using var service = new ConsoleInputService(prompt, commands, keys);
-        await service.StartAsync();
-
-        await WaitForAsync(() => !prompt.IsInputLocked);
-
-        Assert.Equal("", prompt.CurrentInput);
-        await service.StopAsync();
-        await commands.StopAsync();
-    }
-
-    [Fact]
-    public async Task UnlockedInput_AccumulatesCharactersAndEditsWithBackspaceAndEscape()
-    {
-        var prompt = new RecordingPromptService();
-        var keys = new ScriptedConsoleKeySource();
-        keys.Enqueue('*');
-        keys.EnqueueText("echo");
-        keys.Enqueue(ConsoleKey.Backspace);
-        using var container = CreateContainer();
-        var commands = await CreateCommandsAsync(container);
-        using var service = new ConsoleInputService(prompt, commands, keys);
-        await service.StartAsync();
-
-        await WaitForAsync(() => prompt.CurrentInput == "ech");
-
-        keys.Enqueue(ConsoleKey.Escape);
-        await WaitForAsync(() => prompt.CurrentInput == "");
-
-        await service.StopAsync();
-        await commands.StopAsync();
-    }
-
-    [Fact]
     public async Task Enter_DispatchesTheTypedLineAndRendersTheOutput()
     {
         var prompt = new RecordingPromptService();
@@ -157,6 +83,25 @@ public sealed class ConsoleInputServiceTests
     }
 
     [Fact]
+    public async Task LockedInput_IgnoresKeysUntilTheUnlockCharacter()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.EnqueueText("abc");
+        keys.Enqueue('*');
+        using var container = CreateContainer();
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+
+        await WaitForAsync(() => !prompt.IsInputLocked);
+
+        Assert.Equal("", prompt.CurrentInput);
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
     public async Task RunAsync_KeySourceFailureStopsTheLoopAndHidesThePrompt()
     {
         var prompt = new RecordingPromptService();
@@ -178,6 +123,39 @@ public sealed class ConsoleInputServiceTests
     }
 
     [Fact]
+    public async Task StartAsync_LocksInputAndShowsThePrompt()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        using var container = CreateContainer();
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+
+        await service.StartAsync();
+
+        Assert.True(prompt.PromptVisible);
+        Assert.True(prompt.IsInputLocked);
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
+    public async Task StartAsync_NonInteractiveDoesNotShowThePrompt()
+    {
+        var prompt = new RecordingPromptService { IsInteractive = false };
+        var keys = new ScriptedConsoleKeySource();
+        using var container = CreateContainer();
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+
+        await service.StartAsync();
+
+        Assert.False(prompt.PromptVisible);
+        await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
     public async Task StopAsync_EndsTheLoopAndHidesThePrompt()
     {
         var prompt = new RecordingPromptService();
@@ -194,12 +172,26 @@ public sealed class ConsoleInputServiceTests
         await commands.StopAsync();
     }
 
-    private static Container CreateContainer()
+    [Fact]
+    public async Task UnlockedInput_AccumulatesCharactersAndEditsWithBackspaceAndEscape()
     {
-        var container = new Container();
-        container.RegisterCommand<EchoCommand>("echo", minimumAccountType: AccountType.Regular);
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("echo");
+        keys.Enqueue(ConsoleKey.Backspace);
+        using var container = CreateContainer();
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
 
-        return container;
+        await WaitForAsync(() => prompt.CurrentInput == "ech");
+
+        keys.Enqueue(ConsoleKey.Escape);
+        await WaitForAsync(() => prompt.CurrentInput == "");
+
+        await service.StopAsync();
+        await commands.StopAsync();
     }
 
     private static async Task<CommandSystemService> CreateCommandsAsync(Container container)
@@ -208,6 +200,14 @@ public sealed class ConsoleInputServiceTests
         await service.StartAsync();
 
         return service;
+    }
+
+    private static Container CreateContainer()
+    {
+        var container = new Container();
+        container.RegisterCommand<EchoCommand>("echo", minimumAccountType: AccountType.Regular);
+
+        return container;
     }
 
     private static async Task WaitForAsync(Func<bool> condition)

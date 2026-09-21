@@ -28,7 +28,12 @@ public sealed record MigrationScript
 
     /// <summary>Creates an immutable migration description.</summary>
     public MigrationScript(
-        MigrationTarget target, string component, string fileName, int sequence, string sql, string checksum
+        MigrationTarget target,
+        string component,
+        string fileName,
+        int sequence,
+        string sql,
+        string checksum
     )
     {
         Target = target;

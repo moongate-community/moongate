@@ -1,19 +1,15 @@
 using DryIoc;
 using Moongate.Core.Primitives;
-using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
-using Moongate.Persistence.Services;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Data.Events;
-using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Extensions;
-using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Tests.Support.Events;
-using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.Support.Server;
 using Moongate.Tests.Support.Server.Interfaces;
+using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Plugins;
 
 namespace Moongate.Tests.Integration.Plugins;
@@ -21,28 +17,69 @@ namespace Moongate.Tests.Integration.Plugins;
 public sealed class PluginLifecycleEventTests
 {
     [Fact]
+    public async Task RunAsync_RunCancellation_ShutdownObserversReceiveUsableTokenAndComplete()
+    {
+        using var cancellation = new CancellationTokenSource();
+        var events = new List<string>();
+        var container = new Container();
+        container.OnEvent<MoongateStoppingEvent>(
+            async (_, token) =>
+            {
+                Assert.False(token.IsCancellationRequested);
+                Assert.False(token.CanBeCanceled);
+                await Task.Delay(1, token);
+                events.Add("stopping");
+            }
+        );
+        container.OnEvent<MoongateStoppedEvent>(
+            async (_, token) =>
+            {
+                Assert.False(token.IsCancellationRequested);
+                Assert.False(token.CanBeCanceled);
+                await Task.Delay(1, token);
+                events.Add("stopped");
+            }
+        );
+        var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
+
+        var run = MoongateServerRunner.RunAsync(bootstrap);
+        await Task.Yield();
+        cancellation.Cancel();
+        await run;
+
+        Assert.Equal(["stopping", "stopped"], events);
+    }
+
+    [Fact]
     public async Task StartAndStopAsync_EventOnlyPlugin_ReceivesLifecycleWithoutServiceMetadata()
     {
         var events = new List<string>();
         var container = new Container();
-        var plugin = CreatePlugin(container =>
+        var plugin = CreatePlugin(
+            container =>
             {
                 events.Add("plugin:register");
-                container.OnEvent<MoongateStartedEvent>((_, _) =>
+                container.OnEvent<MoongateStartedEvent>(
+                    (_, _) =>
                     {
                         events.Add("started");
+
                         return Task.CompletedTask;
                     }
                 );
-                container.OnEvent<MoongateStoppingEvent>((_, _) =>
+                container.OnEvent<MoongateStoppingEvent>(
+                    (_, _) =>
                     {
                         events.Add("stopping");
+
                         return Task.CompletedTask;
                     }
                 );
-                container.OnEvent<MoongateStoppedEvent>((_, _) =>
+                container.OnEvent<MoongateStoppedEvent>(
+                    (_, _) =>
                     {
                         events.Add("stopped");
+
                         return Task.CompletedTask;
                     }
                 );
@@ -68,11 +105,13 @@ public sealed class PluginLifecycleEventTests
         var container = fixture.Container;
         fixture.RegisterEntity();
         container.RegisterInstance(new RecordingDisposable(events, "container:dispose"));
-        var plugin = CreatePlugin(pluginContainer =>
+        var plugin = CreatePlugin(
+            pluginContainer =>
             {
                 events.Add("plugin:register");
                 pluginContainer.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
-                pluginContainer.OnEvent<MoongateStartedEvent>(async (_, _) =>
+                pluginContainer.OnEvent<MoongateStartedEvent>(
+                    async (_, _) =>
                     {
                         Assert.Empty(
                             await pluginContainer.Resolve<IDataAccess<TestEntity>>().GetAllAsync(CancellationToken.None)
@@ -80,17 +119,19 @@ public sealed class PluginLifecycleEventTests
                         events.Add("started");
                     }
                 );
-                pluginContainer.OnEvent<MoongateStoppingEvent>(async (_, token) =>
+                pluginContainer.OnEvent<MoongateStoppingEvent>(
+                    async (_, token) =>
                     {
                         events.Add("stopping");
                         await pluginContainer.Resolve<IDataAccess<TestEntity>>()
-                            .UpsertAsync(
-                                new TestEntity { Id = serial, Name = "saved while stopping" },
-                                token
-                            );
+                                             .UpsertAsync(
+                                                 new() { Id = serial, Name = "saved while stopping" },
+                                                 token
+                                             );
                     }
                 );
-                pluginContainer.OnEvent<MoongateStoppedEvent>(async (_, token) =>
+                pluginContainer.OnEvent<MoongateStoppedEvent>(
+                    async (_, token) =>
                     {
                         Assert.NotNull(pluginContainer.Resolve<RecordingDisposable>());
                         Assert.Equal(
@@ -115,31 +156,100 @@ public sealed class PluginLifecycleEventTests
     }
 
     [Fact]
+    public async Task StartAsync_FailedStartStoppingCallbackRequestsStop_SharesCleanupWithoutDeadlock()
+    {
+        var events = new List<string>();
+        var releaseObserver = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var startFailure = new InvalidOperationException("start failed");
+        var service = new RecordingStartupService("service", events, startFailure);
+        var container = new Container();
+        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
+        container.RegisterInstance(new RecordingDisposable(events, "container:dispose"));
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        Task? requestedStop = null;
+        var stoppingCount = 0;
+        container.OnEvent<MoongateStartedEvent>(
+                     (_, _) =>
+                     {
+                         events.Add("started");
+
+                         return Task.CompletedTask;
+                     }
+                 )
+                 .OnEvent<MoongateStoppingEvent>(
+                     async (_, _) =>
+                     {
+                         events.Add("stopping:enter");
+
+                         if (++stoppingCount == 1)
+                         {
+                             requestedStop = bootstrap.StopAsync();
+                             await releaseObserver.Task;
+                         }
+
+                         events.Add("stopping:exit");
+                     }
+                 )
+                 .OnEvent<MoongateStoppedEvent>(
+                     (_, _) =>
+                     {
+                         events.Add("stopped");
+
+                         return Task.CompletedTask;
+                     }
+                 );
+
+        var start = bootstrap.StartAsync();
+        var eventsWhileStopping = events.ToArray();
+        var stopCompletedWhileStopping = requestedStop?.IsCompleted;
+        releaseObserver.SetResult();
+        var failure = await Record.ExceptionAsync(() => start.WaitAsync(TimeSpan.FromSeconds(5)));
+        Assert.NotNull(requestedStop);
+        await requestedStop.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Same(startFailure, failure);
+        Assert.False(stopCompletedWhileStopping);
+        Assert.Same(requestedStop, bootstrap.StopAsync());
+        Assert.Equal(["start:service", "stopping:enter"], eventsWhileStopping);
+        Assert.Equal(
+            ["start:service", "stopping:enter", "stopping:exit", "stop:service", "stopped", "container:dispose"],
+            events
+        );
+    }
+
+    [Fact]
     public async Task StartAsync_ServiceFails_PublishesShutdownOnceWithoutStarted()
     {
         var events = new List<string>();
         var startFailure = new InvalidOperationException("start failed");
-        var service = new RecordingStartupService("failing", events, startFailure: startFailure);
+        var service = new RecordingStartupService("failing", events, startFailure);
         var container = new Container();
-        var plugin = CreatePlugin(pluginContainer =>
+        var plugin = CreatePlugin(
+            pluginContainer =>
             {
                 events.Add("plugin:register");
                 pluginContainer.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
-                pluginContainer.OnEvent<MoongateStartedEvent>((_, _) =>
+                pluginContainer.OnEvent<MoongateStartedEvent>(
+                    (_, _) =>
                     {
                         events.Add("started");
+
                         return Task.CompletedTask;
                     }
                 );
-                pluginContainer.OnEvent<MoongateStoppingEvent>((_, _) =>
+                pluginContainer.OnEvent<MoongateStoppingEvent>(
+                    (_, _) =>
                     {
                         events.Add("stopping");
+
                         return Task.CompletedTask;
                     }
                 );
-                pluginContainer.OnEvent<MoongateStoppedEvent>((_, _) =>
+                pluginContainer.OnEvent<MoongateStoppedEvent>(
+                    (_, _) =>
                     {
                         events.Add("stopped");
+
                         return Task.CompletedTask;
                     }
                 );
@@ -159,6 +269,38 @@ public sealed class PluginLifecycleEventTests
     }
 
     [Fact]
+    public async Task StartAsync_StartedCallbackRequestsStart_ReturnsSameTaskAndPublishesOnce()
+    {
+        var releaseObserver = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var container = new Container();
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        Task? requestedStart = null;
+        var startedCount = 0;
+        container.OnEvent<MoongateStartedEvent>(
+            async (_, _) =>
+            {
+                if (++startedCount == 1)
+                {
+                    requestedStart = bootstrap.StartAsync();
+                    await releaseObserver.Task;
+                }
+            }
+        );
+
+        var start = bootstrap.StartAsync();
+        var requestedStartCompletedInCallback = requestedStart?.IsCompleted;
+        releaseObserver.SetResult();
+        await start.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.NotNull(requestedStart);
+        await requestedStart.WaitAsync(TimeSpan.FromSeconds(5));
+        await bootstrap.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Same(start, requestedStart);
+        Assert.False(requestedStartCompletedInCallback);
+        Assert.Equal(1, startedCount);
+    }
+
+    [Fact]
     public async Task StopAsync_ServiceStopFails_PublishesStoppedAfterEveryStopAttempt()
     {
         var events = new List<string>();
@@ -167,19 +309,23 @@ public sealed class PluginLifecycleEventTests
         var late = new RecordingStartupService("late", events, stopFailure: stopFailure);
         var container = new Container();
         container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(early, -1)
-            .RegisterMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(late, 1)
-            .OnEvent<MoongateStoppingEvent>((_, _) =>
-                {
-                    events.Add("stopping");
-                    return Task.CompletedTask;
-                }
-            )
-            .OnEvent<MoongateStoppedEvent>((_, _) =>
-                {
-                    events.Add("stopped");
-                    return Task.CompletedTask;
-                }
-            );
+                 .RegisterMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(late, 1)
+                 .OnEvent<MoongateStoppingEvent>(
+                     (_, _) =>
+                     {
+                         events.Add("stopping");
+
+                         return Task.CompletedTask;
+                     }
+                 )
+                 .OnEvent<MoongateStoppedEvent>(
+                     (_, _) =>
+                     {
+                         events.Add("stopped");
+
+                         return Task.CompletedTask;
+                     }
+                 );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         await bootstrap.StartAsync();
 
@@ -193,35 +339,57 @@ public sealed class PluginLifecycleEventTests
     }
 
     [Fact]
-    public async Task RunAsync_RunCancellation_ShutdownObserversReceiveUsableTokenAndComplete()
+    public async Task StopAsync_StartedCallbackRequestsStop_WaitsForCallbackBeforeShutdown()
     {
-        using var cancellation = new CancellationTokenSource();
         var events = new List<string>();
+        var releaseObserver = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var container = new Container();
-        container.OnEvent<MoongateStoppingEvent>(async (_, token) =>
-            {
-                Assert.False(token.IsCancellationRequested);
-                Assert.False(token.CanBeCanceled);
-                await Task.Delay(1, token);
-                events.Add("stopping");
-            }
-        );
-        container.OnEvent<MoongateStoppedEvent>(async (_, token) =>
-            {
-                Assert.False(token.IsCancellationRequested);
-                Assert.False(token.CanBeCanceled);
-                await Task.Delay(1, token);
-                events.Add("stopped");
-            }
-        );
-        var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
+        container.RegisterInstance(new RecordingDisposable(events, "container:dispose"));
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+        Task? requestedStop = null;
+        container.RegisterMoongatePlugin(
+            CreatePlugin(
+                pluginContainer => pluginContainer
+                                   .OnEvent<MoongateStartedEvent>(
+                                       async (_, _) =>
+                                       {
+                                           events.Add("started:enter");
+                                           requestedStop = bootstrap.StopAsync();
+                                           await releaseObserver.Task;
+                                           events.Add("started:exit");
+                                       }
+                                   )
+                                   .OnEvent<MoongateStoppingEvent>(
+                                       (_, _) =>
+                                       {
+                                           events.Add("stopping");
 
-        var run = MoongateServerRunner.RunAsync(bootstrap);
-        await Task.Yield();
-        cancellation.Cancel();
-        await run;
+                                           return Task.CompletedTask;
+                                       }
+                                   )
+                                   .OnEvent<MoongateStoppedEvent>(
+                                       (_, _) =>
+                                       {
+                                           events.Add("stopped");
 
-        Assert.Equal(["stopping", "stopped"], events);
+                                           return Task.CompletedTask;
+                                       }
+                                   )
+            )
+        );
+
+        var start = bootstrap.StartAsync();
+        var eventsWhileStarted = events.ToArray();
+        var stopCompletedWhileStarted = requestedStop?.IsCompleted;
+        releaseObserver.SetResult();
+        await start.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.NotNull(requestedStop);
+        await requestedStop.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.False(stopCompletedWhileStarted);
+        Assert.Equal(["started:enter"], eventsWhileStarted);
+        Assert.Same(requestedStop, bootstrap.StopAsync());
+        Assert.Equal(["started:enter", "started:exit", "stopping", "stopped", "container:dispose"], events);
     }
 
     [Fact]
@@ -233,20 +401,23 @@ public sealed class PluginLifecycleEventTests
         var service = new RecordingStartupService("service", events);
         var container = new Container();
         container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service)
-            .OnEvent<MoongateStartedEvent>(async (_, _) =>
-                {
-                    events.Add("started:enter");
-                    observerEntered.SetResult();
-                    await releaseObserver.Task;
-                    events.Add("started:exit");
-                }
-            )
-            .OnEvent<MoongateStoppingEvent>((_, _) =>
-                {
-                    events.Add("stopping");
-                    return Task.CompletedTask;
-                }
-            );
+                 .OnEvent<MoongateStartedEvent>(
+                     async (_, _) =>
+                     {
+                         events.Add("started:enter");
+                         observerEntered.SetResult();
+                         await releaseObserver.Task;
+                         events.Add("started:exit");
+                     }
+                 )
+                 .OnEvent<MoongateStoppingEvent>(
+                     (_, _) =>
+                     {
+                         events.Add("stopping");
+
+                         return Task.CompletedTask;
+                     }
+                 );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         var start = bootstrap.StartAsync();
@@ -280,28 +451,34 @@ public sealed class PluginLifecycleEventTests
                 events.Add("start:enter");
                 startEntered.SetResult();
                 await releaseStart.Task;
+
                 throw startFailure;
             },
             () =>
             {
                 events.Add("stop:service");
+
                 return Task.CompletedTask;
             }
         );
         var container = new Container();
         container.RegisterMoongateService(service)
-            .OnEvent<MoongateStoppingEvent>((_, _) =>
-                {
-                    events.Add("stopping");
-                    return Task.CompletedTask;
-                }
-            )
-            .OnEvent<MoongateStoppedEvent>((_, _) =>
-                {
-                    events.Add("stopped");
-                    return Task.CompletedTask;
-                }
-            );
+                 .OnEvent<MoongateStoppingEvent>(
+                     (_, _) =>
+                     {
+                         events.Add("stopping");
+
+                         return Task.CompletedTask;
+                     }
+                 )
+                 .OnEvent<MoongateStoppedEvent>(
+                     (_, _) =>
+                     {
+                         events.Add("stopped");
+
+                         return Task.CompletedTask;
+                     }
+                 );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         var start = bootstrap.StartAsync();
@@ -309,60 +486,11 @@ public sealed class PluginLifecycleEventTests
         var stop = bootstrap.StopAsync();
         releaseStart.SetResult();
 
-        var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => start.WaitAsync(TimeSpan.FromSeconds(5))
-        );
+        var failure = await Assert.ThrowsAsync<InvalidOperationException>(() => start.WaitAsync(TimeSpan.FromSeconds(5)));
         await stop.WaitAsync(TimeSpan.FromSeconds(5));
 
         Assert.Same(startFailure, failure);
         Assert.Equal(["start:enter", "stopping", "stop:service", "stopped"], events);
-    }
-
-    [Fact]
-    public async Task StopAsync_StartedCallbackRequestsStop_WaitsForCallbackBeforeShutdown()
-    {
-        var events = new List<string>();
-        var releaseObserver = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var container = new Container();
-        container.RegisterInstance(new RecordingDisposable(events, "container:dispose"));
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        Task? requestedStop = null;
-        container.RegisterMoongatePlugin(
-            CreatePlugin(pluginContainer => pluginContainer
-                .OnEvent<MoongateStartedEvent>(async (_, _) =>
-                    {
-                        events.Add("started:enter");
-                        requestedStop = bootstrap.StopAsync();
-                        await releaseObserver.Task;
-                        events.Add("started:exit");
-                    }
-                )
-                .OnEvent<MoongateStoppingEvent>((_, _) =>
-                    {
-                        events.Add("stopping");
-                        return Task.CompletedTask;
-                    }
-                )
-                .OnEvent<MoongateStoppedEvent>((_, _) =>
-                    {
-                        events.Add("stopped");
-                        return Task.CompletedTask;
-                    }
-                )
-            )
-        );
-
-        var start = bootstrap.StartAsync();
-        var eventsWhileStarted = events.ToArray();
-        var stopCompletedWhileStarted = requestedStop?.IsCompleted;
-        releaseObserver.SetResult();
-        await start.WaitAsync(TimeSpan.FromSeconds(5));
-        Assert.NotNull(requestedStop);
-        await requestedStop.WaitAsync(TimeSpan.FromSeconds(5));
-
-        Assert.False(stopCompletedWhileStarted);
-        Assert.Equal(["started:enter"], eventsWhileStarted);
-        Assert.Same(requestedStop, bootstrap.StopAsync());
-        Assert.Equal(["started:enter", "started:exit", "stopping", "stopped", "container:dispose"], events);
     }
 
     [Fact]
@@ -375,24 +503,28 @@ public sealed class PluginLifecycleEventTests
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         Task? requestedStop = null;
         var stoppingCount = 0;
-        container.OnEvent<MoongateStoppingEvent>(async (_, _) =>
-                {
-                    events.Add("stopping:enter");
-                    if (++stoppingCount == 1)
-                    {
-                        requestedStop = bootstrap.StopAsync();
-                        await releaseObserver.Task;
-                    }
+        container.OnEvent<MoongateStoppingEvent>(
+                     async (_, _) =>
+                     {
+                         events.Add("stopping:enter");
 
-                    events.Add("stopping:exit");
-                }
-            )
-            .OnEvent<MoongateStoppedEvent>((_, _) =>
-                {
-                    events.Add("stopped");
-                    return Task.CompletedTask;
-                }
-            );
+                         if (++stoppingCount == 1)
+                         {
+                             requestedStop = bootstrap.StopAsync();
+                             await releaseObserver.Task;
+                         }
+
+                         events.Add("stopping:exit");
+                     }
+                 )
+                 .OnEvent<MoongateStoppedEvent>(
+                     (_, _) =>
+                     {
+                         events.Add("stopped");
+
+                         return Task.CompletedTask;
+                     }
+                 );
         await bootstrap.StartAsync();
 
         var stop = bootstrap.StopAsync();
@@ -408,102 +540,13 @@ public sealed class PluginLifecycleEventTests
         Assert.Equal(["stopping:enter", "stopping:exit", "stopped", "container:dispose"], events);
     }
 
-    [Fact]
-    public async Task StartAsync_FailedStartStoppingCallbackRequestsStop_SharesCleanupWithoutDeadlock()
-    {
-        var events = new List<string>();
-        var releaseObserver = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var startFailure = new InvalidOperationException("start failed");
-        var service = new RecordingStartupService("service", events, startFailure: startFailure);
-        var container = new Container();
-        container.RegisterMoongateService<IRecordingStartupService, RecordingStartupService>(service);
-        container.RegisterInstance(new RecordingDisposable(events, "container:dispose"));
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        Task? requestedStop = null;
-        var stoppingCount = 0;
-        container.OnEvent<MoongateStartedEvent>((_, _) =>
-                {
-                    events.Add("started");
-                    return Task.CompletedTask;
-                }
-            )
-            .OnEvent<MoongateStoppingEvent>(async (_, _) =>
-                {
-                    events.Add("stopping:enter");
-                    if (++stoppingCount == 1)
-                    {
-                        requestedStop = bootstrap.StopAsync();
-                        await releaseObserver.Task;
-                    }
-
-                    events.Add("stopping:exit");
-                }
-            )
-            .OnEvent<MoongateStoppedEvent>((_, _) =>
-                {
-                    events.Add("stopped");
-                    return Task.CompletedTask;
-                }
-            );
-
-        var start = bootstrap.StartAsync();
-        var eventsWhileStopping = events.ToArray();
-        var stopCompletedWhileStopping = requestedStop?.IsCompleted;
-        releaseObserver.SetResult();
-        var failure = await Record.ExceptionAsync(() => start.WaitAsync(TimeSpan.FromSeconds(5)));
-        Assert.NotNull(requestedStop);
-        await requestedStop.WaitAsync(TimeSpan.FromSeconds(5));
-
-        Assert.Same(startFailure, failure);
-        Assert.False(stopCompletedWhileStopping);
-        Assert.Same(requestedStop, bootstrap.StopAsync());
-        Assert.Equal(["start:service", "stopping:enter"], eventsWhileStopping);
-        Assert.Equal(
-            ["start:service", "stopping:enter", "stopping:exit", "stop:service", "stopped", "container:dispose"],
-            events
-        );
-    }
-
-    [Fact]
-    public async Task StartAsync_StartedCallbackRequestsStart_ReturnsSameTaskAndPublishesOnce()
-    {
-        var releaseObserver = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var container = new Container();
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        Task? requestedStart = null;
-        var startedCount = 0;
-        container.OnEvent<MoongateStartedEvent>(async (_, _) =>
-            {
-                if (++startedCount == 1)
-                {
-                    requestedStart = bootstrap.StartAsync();
-                    await releaseObserver.Task;
-                }
-            }
-        );
-
-        var start = bootstrap.StartAsync();
-        var requestedStartCompletedInCallback = requestedStart?.IsCompleted;
-        releaseObserver.SetResult();
-        await start.WaitAsync(TimeSpan.FromSeconds(5));
-        Assert.NotNull(requestedStart);
-        await requestedStart.WaitAsync(TimeSpan.FromSeconds(5));
-        await bootstrap.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));
-
-        Assert.Same(start, requestedStart);
-        Assert.False(requestedStartCompletedInCallback);
-        Assert.Equal(1, startedCount);
-    }
-
     private static RecordingPlugin CreatePlugin(Action<Container> register)
-    {
-        return new RecordingPlugin(
-            new MoongatePluginData(
+        => new(
+            new(
                 "com.github.moongate.tests.lifecycle",
                 "Lifecycle test",
-                new Version(1, 0, 0)
+                new(1, 0, 0)
             ),
             register
         );
-    }
 }

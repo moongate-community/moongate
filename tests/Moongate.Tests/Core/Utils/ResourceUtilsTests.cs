@@ -1,4 +1,5 @@
 using System.Reflection;
+using System.Text;
 using Moongate.Core.Utils;
 using Moongate.Tests.TestSupport.Directories;
 
@@ -10,99 +11,16 @@ public sealed class ResourceUtilsTests
     private const string ResourcePath = "TestSupport/Resources/Nested/sample.txt";
     private static readonly Assembly _assembly = typeof(ResourceUtilsTests).Assembly;
 
+    [Theory, InlineData("Other.Root.file.txt", "Moongate.Tests"), InlineData("Moongate.Tests.NoExtension", "Moongate.Tests")]
+    public void ConvertResourceNameToPath_InvalidName_ThrowsArgumentException(string resourceName, string prefix)
+        => Assert.Throws<ArgumentException>(() => ResourceUtils.ConvertResourceNameToPath(resourceName, prefix));
+
     [Fact]
     public void ConvertResourceNameToPath_ValidName_PreservesFileExtension()
     {
         var result = ResourceUtils.ConvertResourceNameToPath(FullResourceName, "Moongate.Tests");
 
         Assert.Equal(Path.Combine("TestSupport", "Resources", "Nested", "sample.txt"), result);
-    }
-
-    [Theory, InlineData("Other.Root.file.txt", "Moongate.Tests"), InlineData("Moongate.Tests.NoExtension", "Moongate.Tests")]
-    public void ConvertResourceNameToPath_InvalidName_ThrowsArgumentException(string resourceName, string prefix)
-    {
-        Assert.Throws<ArgumentException>(() => ResourceUtils.ConvertResourceNameToPath(resourceName, prefix));
-    }
-
-    [Fact]
-    public void EmbeddedNameAndComponents_AreConvertedUsingDocumentedSeparators()
-    {
-        Assert.Equal(
-            "Nested/sample/txt",
-            ResourceUtils.EmbeddedNameToPath(FullResourceName, "Moongate.Tests.TestSupport.Resources")
-        );
-        Assert.Equal(
-            Path.Combine("TestSupport", "Resources", "Nested"),
-            ResourceUtils.GetDirectoryPathFromResourceName(FullResourceName, "Moongate.Tests")
-        );
-        Assert.Equal("sample.txt", ResourceUtils.GetFileNameFromResourceName(FullResourceName));
-        Assert.Equal("sample.txt", ResourceUtils.GetFileNameFromResourcePath(FullResourceName));
-    }
-
-    [Theory, InlineData("file.txt"), InlineData("extensionless")]
-    public void ResourceComponentHelpers_NamesWithoutDirectory_ReturnEmptyDirectoryAndOriginalFileName(string name)
-    {
-        Assert.Equal("", ResourceUtils.GetDirectoryPathFromResourceName(name));
-        Assert.Equal(name, ResourceUtils.GetFileNameFromResourceName(name));
-    }
-
-    [Fact]
-    public void EmbeddedResourceReaders_FullAndPartialNames_ReturnFixtureContent()
-    {
-        var expected = "Moongate embedded fixture.\n";
-
-        Assert.Equal(expected, ResourceUtils.GetEmbeddedResourceString(_assembly, FullResourceName));
-        Assert.Equal(expected, ResourceUtils.ReadEmbeddedResource(ResourcePath, _assembly));
-        Assert.Equal(
-            expected,
-            System.Text.Encoding.UTF8.GetString(
-                ResourceUtils.GetEmbeddedResourceByteArray(_assembly, ResourcePath).Span
-            )
-        );
-        Assert.Equal(
-            expected,
-            System.Text.Encoding.UTF8.GetString(
-                ResourceUtils.GetEmbeddedResourceContent(ResourcePath, _assembly)
-            )
-        );
-
-        using var stream = ResourceUtils.GetEmbeddedResourceStream(_assembly, ResourcePath);
-        using var reader = new StreamReader(stream);
-        Assert.Equal(expected, reader.ReadToEnd());
-    }
-
-    [Theory, InlineData("Nested/sample.txt"), InlineData("Nested\\sample.txt")]
-    public void GetEmbeddedResourceContent_PartialPath_ResolvesSuffixWithEitherSeparator(string path)
-    {
-        var bytes = ResourceUtils.GetEmbeddedResourceContent(path, _assembly);
-
-        Assert.Equal("Moongate embedded fixture.\n", System.Text.Encoding.UTF8.GetString(bytes));
-    }
-
-    [Fact]
-    public void EmbeddedResourceQueries_FilterByDirectoryAndReturnFileNameWithExtension()
-    {
-        Assert.Contains(FullResourceName, ResourceUtils.GetEmbeddedResourceNames(_assembly));
-        Assert.Equal(
-            [FullResourceName],
-            ResourceUtils.GetEmbeddedResourceNames(_assembly, "TestSupport/Resources/Nested")
-        );
-        Assert.Equal(
-            ["sample.txt"],
-            ResourceUtils.GetEmbeddedResourceFileNames(_assembly, "TestSupport/Resources/Nested")
-        );
-    }
-
-    [Theory,
-     InlineData("sample.txt", "sample.txt"),
-     InlineData("README", "README"),
-     InlineData("Moongate.Tests.Resources.Nested.sample.txt", "sample.txt")]
-    public void GetFileNameFromResourcePath_CommonResourceNames_ReturnFileNameWithExtension(
-        string resourceName,
-        string expected
-    )
-    {
-        Assert.Equal(expected, ResourceUtils.GetFileNameFromResourcePath(resourceName));
     }
 
     [Fact]
@@ -129,6 +47,56 @@ public sealed class ResourceUtilsTests
     }
 
     [Fact]
+    public void EmbeddedNameAndComponents_AreConvertedUsingDocumentedSeparators()
+    {
+        Assert.Equal(
+            "Nested/sample/txt",
+            ResourceUtils.EmbeddedNameToPath(FullResourceName, "Moongate.Tests.TestSupport.Resources")
+        );
+        Assert.Equal(
+            Path.Combine("TestSupport", "Resources", "Nested"),
+            ResourceUtils.GetDirectoryPathFromResourceName(FullResourceName, "Moongate.Tests")
+        );
+        Assert.Equal("sample.txt", ResourceUtils.GetFileNameFromResourceName(FullResourceName));
+        Assert.Equal("sample.txt", ResourceUtils.GetFileNameFromResourcePath(FullResourceName));
+    }
+
+    [Fact]
+    public void EmbeddedResourceQueries_FilterByDirectoryAndReturnFileNameWithExtension()
+    {
+        Assert.Contains(FullResourceName, ResourceUtils.GetEmbeddedResourceNames(_assembly));
+        Assert.Equal(
+            [FullResourceName],
+            ResourceUtils.GetEmbeddedResourceNames(_assembly, "TestSupport/Resources/Nested")
+        );
+        Assert.Equal(
+            ["sample.txt"],
+            ResourceUtils.GetEmbeddedResourceFileNames(_assembly, "TestSupport/Resources/Nested")
+        );
+    }
+
+    [Fact]
+    public void EmbeddedResourceReaders_FullAndPartialNames_ReturnFixtureContent()
+    {
+        var expected = "Moongate embedded fixture.\n";
+
+        Assert.Equal(expected, ResourceUtils.GetEmbeddedResourceString(_assembly, FullResourceName));
+        Assert.Equal(expected, ResourceUtils.ReadEmbeddedResource(ResourcePath, _assembly));
+        Assert.Equal(
+            expected,
+            Encoding.UTF8.GetString(ResourceUtils.GetEmbeddedResourceByteArray(_assembly, ResourcePath).Span)
+        );
+        Assert.Equal(
+            expected,
+            Encoding.UTF8.GetString(ResourceUtils.GetEmbeddedResourceContent(ResourcePath, _assembly))
+        );
+
+        using var stream = ResourceUtils.GetEmbeddedResourceStream(_assembly, ResourcePath);
+        using var reader = new StreamReader(stream);
+        Assert.Equal(expected, reader.ReadToEnd());
+    }
+
+    [Fact]
     public void EmbeddedResourceReaders_MissingResource_ThrowFileNotFoundException()
     {
         Assert.Throws<FileNotFoundException>(() => ResourceUtils.GetEmbeddedResourceByteArray(_assembly, "missing.txt"));
@@ -146,5 +114,30 @@ public sealed class ResourceUtilsTests
         Assert.Throws<ArgumentNullException>(() => ResourceUtils.GetEmbeddedResourceStream(_assembly, null!));
         Assert.Throws<ArgumentNullException>(() => ResourceUtils.GetDirectoryPathFromResourceName(null!));
         Assert.Throws<ArgumentNullException>(() => ResourceUtils.GetFileNameFromResourceName(null!));
+    }
+
+    [Theory, InlineData("Nested/sample.txt"), InlineData("Nested\\sample.txt")]
+    public void GetEmbeddedResourceContent_PartialPath_ResolvesSuffixWithEitherSeparator(string path)
+    {
+        var bytes = ResourceUtils.GetEmbeddedResourceContent(path, _assembly);
+
+        Assert.Equal("Moongate embedded fixture.\n", Encoding.UTF8.GetString(bytes));
+    }
+
+    [Theory,
+     InlineData("sample.txt", "sample.txt"),
+     InlineData("README", "README"),
+     InlineData("Moongate.Tests.Resources.Nested.sample.txt", "sample.txt")]
+    public void GetFileNameFromResourcePath_CommonResourceNames_ReturnFileNameWithExtension(
+        string resourceName,
+        string expected
+    )
+        => Assert.Equal(expected, ResourceUtils.GetFileNameFromResourcePath(resourceName));
+
+    [Theory, InlineData("file.txt"), InlineData("extensionless")]
+    public void ResourceComponentHelpers_NamesWithoutDirectory_ReturnEmptyDirectoryAndOriginalFileName(string name)
+    {
+        Assert.Equal("", ResourceUtils.GetDirectoryPathFromResourceName(name));
+        Assert.Equal(name, ResourceUtils.GetFileNameFromResourceName(name));
     }
 }

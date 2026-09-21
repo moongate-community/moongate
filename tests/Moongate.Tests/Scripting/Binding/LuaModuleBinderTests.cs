@@ -18,32 +18,18 @@ public sealed class LuaModuleBinderTests : IDisposable
         _binder.Bind(_state, _module);
     }
 
-    private LuaValue[] Run(string source)
-    {
-        return SyncValueTask.Run(_state.DoStringAsync(source, "test", default));
-    }
-
     [Fact]
-    public void Bind_PublishesTheModuleUnderItsName_WithSnakeCaseFunctionNames()
+    public void Bind_CallsTheThreadGuardOnEveryFunctionCall()
     {
-        var result = Run("return probe.add(2, 3), probe.next_colour(1), probe.greet('Lua')");
+        var guard = new CountingThreadGuard();
+        var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        new LuaModuleBinder(guard).Bind(state, new ProbeModule());
 
-        Assert.Equal(5, result[0].Read<double>());
-        Assert.Equal(2, result[1].Read<double>());
-        Assert.Equal("Hello, Lua", result[2].Read<string>());
-    }
+        SyncValueTask.Run(state.DoStringAsync("probe.add(1, 1) probe.add(2, 2)", "test"));
 
-    [Fact]
-    public void Bind_HonoursTheNameOverride()
-    {
-        Assert.Equal(6, Run("return probe.scale(3)")[0].Read<double>());
-        Assert.Equal(9, Run("return probe.scale(3, 3)")[0].Read<double>());
-    }
-
-    [Fact]
-    public void Bind_DoesNotExposeMethodsWithoutTheAttribute()
-    {
-        Assert.Equal(LuaValueType.Nil, Run("return probe.not_exposed")[0].Type);
+        Assert.Equal(2, guard.Calls);
+        Assert.Equal("probe.add", guard.LastMember);
     }
 
     [Fact]
@@ -58,33 +44,14 @@ public sealed class LuaModuleBinderTests : IDisposable
     }
 
     [Fact]
+    public void Bind_DoesNotExposeMethodsWithoutTheAttribute()
+        => Assert.Equal(LuaValueType.Nil, Run("return probe.not_exposed")[0].Type);
+
+    [Fact]
     public void Bind_EnumArgumentsAcceptNumberOrName_AndReturnAsNumber()
     {
         Assert.Equal(1, Run("return probe.next_colour(0)")[0].Read<double>());
         Assert.Equal(0, Run("return probe.next_colour('Blue')")[0].Read<double>());
-    }
-
-    [Fact]
-    public void Bind_ParamsCollectsTheRemainingArguments()
-    {
-        Run("probe.record('a') probe.record('b', 1, nil, 'two', true)");
-
-        Assert.Equal(["a:", "b:1,nil,two,True"], _module.Calls);
-    }
-
-    [Fact]
-    public void Bind_WrongArgumentType_RaisesALuaErrorNamingTheFunction()
-    {
-        var exception = Assert.Throws<LuaRuntimeException>(() => Run("return probe.add('x', 1)"));
-
-        Assert.Contains("probe.add", exception.Message, StringComparison.Ordinal);
-        Assert.Contains("argument #1", exception.Message, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void Bind_MissingRequiredArgument_RaisesALuaError()
-    {
-        Assert.Throws<LuaRuntimeException>(() => Run("return probe.greet()"));
     }
 
     [Fact]
@@ -99,23 +66,10 @@ public sealed class LuaModuleBinderTests : IDisposable
     }
 
     [Fact]
-    public void Bind_CallsTheThreadGuardOnEveryFunctionCall()
+    public void Bind_HonoursTheNameOverride()
     {
-        var guard = new CountingThreadGuard();
-        var state = LuaState.Create();
-        state.OpenBasicLibrary();
-        new LuaModuleBinder(guard).Bind(state, new ProbeModule());
-
-        SyncValueTask.Run(state.DoStringAsync("probe.add(1, 1) probe.add(2, 2)", "test", default));
-
-        Assert.Equal(2, guard.Calls);
-        Assert.Equal("probe.add", guard.LastMember);
-    }
-
-    [Fact]
-    public void Bind_ReportsTheDiscoveredEnums()
-    {
-        Assert.Contains(typeof(ProbeColour), _binder.DiscoveredEnums);
+        Assert.Equal(6, Run("return probe.scale(3)")[0].Read<double>());
+        Assert.Equal(9, Run("return probe.scale(3, 3)")[0].Read<double>());
     }
 
     [Fact]
@@ -140,6 +94,10 @@ public sealed class LuaModuleBinderTests : IDisposable
     }
 
     [Fact]
+    public void Bind_MissingRequiredArgument_RaisesALuaError()
+        => Assert.Throws<LuaRuntimeException>(() => Run("return probe.greet()"));
+
+    [Fact]
     public void Bind_ModuleTable_RejectsWritesAndMetatableChanges()
     {
         // rawset bypasses the proxy's __newindex and would shadow a bound function; the binder cannot stop
@@ -150,8 +108,40 @@ public sealed class LuaModuleBinderTests : IDisposable
         Assert.Throws<LuaRuntimeException>(() => Run("setmetatable(probe, {})"));
     }
 
-    public void Dispose()
+    [Fact]
+    public void Bind_ParamsCollectsTheRemainingArguments()
     {
-        _state.Dispose();
+        Run("probe.record('a') probe.record('b', 1, nil, 'two', true)");
+
+        Assert.Equal(["a:", "b:1,nil,two,True"], _module.Calls);
     }
+
+    [Fact]
+    public void Bind_PublishesTheModuleUnderItsName_WithSnakeCaseFunctionNames()
+    {
+        var result = Run("return probe.add(2, 3), probe.next_colour(1), probe.greet('Lua')");
+
+        Assert.Equal(5, result[0].Read<double>());
+        Assert.Equal(2, result[1].Read<double>());
+        Assert.Equal("Hello, Lua", result[2].Read<string>());
+    }
+
+    [Fact]
+    public void Bind_ReportsTheDiscoveredEnums()
+        => Assert.Contains(typeof(ProbeColour), _binder.DiscoveredEnums);
+
+    [Fact]
+    public void Bind_WrongArgumentType_RaisesALuaErrorNamingTheFunction()
+    {
+        var exception = Assert.Throws<LuaRuntimeException>(() => Run("return probe.add('x', 1)"));
+
+        Assert.Contains("probe.add", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("argument #1", exception.Message, StringComparison.Ordinal);
+    }
+
+    public void Dispose()
+        => _state.Dispose();
+
+    private LuaValue[] Run(string source)
+        => SyncValueTask.Run(_state.DoStringAsync(source, "test"));
 }

@@ -12,8 +12,8 @@
          game services move here. -->
 
     <ItemGroup>
-      <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj" />
-      <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj" />
+        <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
+        <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj"/>
     </ItemGroup>
 
 </Project>

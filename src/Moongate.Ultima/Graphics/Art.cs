@@ -482,6 +482,7 @@ public static class Art
 
         using var binidx = new BinaryWriter(memidx);
         using var binmul = new BinaryWriter(memmul);
+
         for (var index = 0; index < GetIdxLength(); index++)
         {
             Files.FireFileSaveEvent();
@@ -489,8 +490,8 @@ public static class Art
             // GetLand / GetStatic transparently check _replaced
             // first, then the LRU cache, then decode from disk.
             var bmp = index < 0x4000
-                ? GetLand(index)
-                : GetStatic(index - 0x4000, false);
+                          ? GetLand(index)
+                          : GetStatic(index - 0x4000, false);
 
             if (bmp == null || _removed[index])
             {

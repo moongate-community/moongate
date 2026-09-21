@@ -1,10 +1,10 @@
 using Moongate.Core.Utils;
-using Moongate.Persistence.Types.Persistence;
-using Moongate.Tests.TestSupport.Environment;
-using Npgsql;
 using Moongate.Persistence.Services;
+using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
+using Moongate.Tests.TestSupport.Environment;
+using Npgsql;
 
 namespace Moongate.Tests.Server.Data.Config.Sections;
 
@@ -25,17 +25,10 @@ public sealed class PersistenceConfigTests
     }
 
     [Fact]
-    public void Validate_BlankConnectionString_RejectsWithoutReadingEnvironment()
-    {
-        var config = new PersistenceConfig();
-        config.Realm.ConnectionString = " ";
-        Assert.Throws<InvalidOperationException>(config.Validate);
-    }
-
-    [Fact]
     public void RoundTrip_PersistenceSettings_PreservesConnectionTemplateAndPolicy()
     {
         var path = Path.Combine(Path.GetTempPath(), $"moongate-config-{Guid.NewGuid():N}.toml");
+
         try
         {
             var config = new MoongateServerConfig();
@@ -72,7 +65,7 @@ public sealed class PersistenceConfigTests
 
         var parsed = new NpgsqlConnectionStringBuilder(
             options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-                .ResolveRuntimeConnectionString()
+                   .ResolveRuntimeConnectionString()
         );
 
         Assert.Equal("localhost", parsed.Host);
@@ -90,12 +83,21 @@ public sealed class PersistenceConfigTests
         Assert.Contains(
             "Database=accounts",
             options.GetRequiredDatabase(PersistenceDatabaseTarget.Accounts)
-                .ResolveRuntimeConnectionString()
+                   .ResolveRuntimeConnectionString()
         );
-        var error = Assert.Throws<InvalidOperationException>(() =>
-            options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-                .ResolveRuntimeConnectionString()
+        var error = Assert.Throws<InvalidOperationException>(
+            () =>
+                options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
+                       .ResolveRuntimeConnectionString()
         );
         Assert.Contains("is not defined", error.Message);
+    }
+
+    [Fact]
+    public void Validate_BlankConnectionString_RejectsWithoutReadingEnvironment()
+    {
+        var config = new PersistenceConfig();
+        config.Realm.ConnectionString = " ";
+        Assert.Throws<InvalidOperationException>(config.Validate);
     }
 }

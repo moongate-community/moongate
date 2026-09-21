@@ -17,26 +17,39 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
     {
         ArgumentNullException.ThrowIfNull(operation);
         cancellationToken.ThrowIfCancellationRequested();
+
         return AdmitAsync(
             () =>
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 return operation(cancellationToken);
             },
-            critical: true,
-            allowClosed: false
+            true,
+            false
         );
     }
 
-    internal Task RunSaveAsync(Func<Task> save, bool finalSave = false)
+    internal void Capture(Action capture)
     {
-        return AdmitAsync(save, critical: false, allowClosed: finalSave);
+        var previous = _inside.Value;
+        _inside.Value = true;
+
+        try
+        {
+            capture();
+        }
+        finally
+        {
+            _inside.Value = previous;
+        }
     }
 
     internal async Task CloseAsync()
     {
         EnsureOutsideOperation();
         Task drain;
+
         lock (_gate)
         {
             _closed = true;
@@ -44,20 +57,34 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
         }
 
         await drain.ConfigureAwait(false);
+
         lock (_gate)
         {
             _failure?.Throw();
         }
     }
 
+    internal void EnsureOutsideOperation()
+    {
+        if (_inside.Value)
+        {
+            throw new InvalidOperationException("Persistence owner coordination cannot be reentered from its callback.");
+        }
+    }
+
+    internal Task RunSaveAsync(Func<Task> save, bool finalSave = false)
+        => AdmitAsync(save, false, finalSave);
+
     private Task AdmitAsync(Func<Task> operation, bool critical, bool allowClosed)
     {
         EnsureOutsideOperation();
         Task previous;
         var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
         lock (_gate)
         {
             _failure?.Throw();
+
             if (_closed && !allowClosed)
             {
                 throw new InvalidOperationException("Persistence owner operations are closed for shutdown.");
@@ -74,6 +101,7 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
             try
             {
                 await previous.ConfigureAwait(false);
+
                 lock (_gate)
                 {
                     _failure?.Throw();
@@ -99,28 +127,6 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
                 _inside.Value = false;
                 finished.TrySetResult();
             }
-        }
-    }
-
-    internal void Capture(Action capture)
-    {
-        var previous = _inside.Value;
-        _inside.Value = true;
-        try
-        {
-            capture();
-        }
-        finally
-        {
-            _inside.Value = previous;
-        }
-    }
-
-    internal void EnsureOutsideOperation()
-    {
-        if (_inside.Value)
-        {
-            throw new InvalidOperationException("Persistence owner coordination cannot be reentered from its callback.");
         }
     }
 }

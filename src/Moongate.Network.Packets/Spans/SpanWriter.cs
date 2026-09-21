@@ -10,7 +10,7 @@ namespace Moongate.Network.Packets.Spans;
 /// <summary>
 /// Writes binary packet data into an external or pooled span. Pass pooled writers
 /// by reference rather than copying them, and dispose them or transfer ownership
-/// with <see cref="ToSpan"/> before leaving their scope.
+/// with <see cref="ToSpan" /> before leaving their scope.
 /// </summary>
 public ref struct SpanWriter : IDisposable
 {
@@ -78,6 +78,7 @@ public ref struct SpanWriter : IDisposable
     public void EnsureCapacity(int capacity)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(capacity);
+
         if (capacity > _buffer.Length)
         {
             if (!_resize)
@@ -89,16 +90,24 @@ public ref struct SpanWriter : IDisposable
         }
     }
 
-    public ref byte GetPinnableReference()
+    /// <summary>
+    /// Ensures room for a complete write at the current cursor before any bytes are changed.
+    /// </summary>
+    public void EnsureRemainingCapacity(int count)
     {
-        return ref MemoryMarshal.GetReference(_buffer);
+        ArgumentOutOfRangeException.ThrowIfNegative(count);
+        EnsureCapacity(checked(_position + count));
     }
+
+    public ref byte GetPinnableReference()
+        => ref MemoryMarshal.GetReference(_buffer);
 
     [MethodImpl(MethodImplOptions.NoInlining)]
     public void Grow(int additionalCapacity)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(additionalCapacity);
         var requiredCapacity = checked(BytesWritten + additionalCapacity);
+
         if (!_resize)
         {
             throw new InvalidOperationException("Insufficient capacity and resizing is disabled.");
@@ -110,9 +119,10 @@ public ref struct SpanWriter : IDisposable
 
         var toReturn = _arrayToReturnToPool;
         _buffer = _arrayToReturnToPool = poolArray;
+
         if (toReturn is not null)
         {
-            ArrayPool<byte>.Shared.Return(toReturn, clearArray: true);
+            ArrayPool<byte>.Shared.Return(toReturn, true);
         }
     }
 
@@ -122,24 +132,27 @@ public ref struct SpanWriter : IDisposable
         var offsetBase = origin switch
         {
             SeekOrigin.Begin   => 0L,
-            SeekOrigin.Current => (long)_position,
-            SeekOrigin.End     => (long)BytesWritten,
+            SeekOrigin.Current => _position,
+            SeekOrigin.End     => BytesWritten,
             _                  => throw new ArgumentOutOfRangeException(nameof(origin))
         };
         var requested = Math.Max(0L, offsetBase + offset);
-        if (requested > int.MaxValue || (requested > Capacity && !_resize))
+
+        if (requested > int.MaxValue || requested > Capacity && !_resize)
         {
             throw new IOException("Attempted to seek beyond the available capacity.");
         }
 
         var newPosition = (int)requested;
         EnsureCapacity(newPosition);
+
         if (newPosition > BytesWritten)
         {
             _buffer.Slice(BytesWritten, newPosition - BytesWritten).Clear();
         }
 
         Position = newPosition;
+
         return Position;
     }
 
@@ -170,10 +183,10 @@ public ref struct SpanWriter : IDisposable
 
             if (toReturn is not null)
             {
-                ArrayPool<byte>.Shared.Return(toReturn, clearArray: true);
+                ArrayPool<byte>.Shared.Return(toReturn, true);
             }
 
-            return new SpanOwner(0, null);
+            return new(0, null);
         }
 
         // Capture the length BEFORE `this = default`, otherwise the reset zeroes
@@ -185,14 +198,14 @@ public ref struct SpanWriter : IDisposable
         {
             this = default;
 
-            return new SpanOwner(length, currentPoolBuffer);
+            return new(length, currentPoolBuffer);
         }
 
         var ownedBuffer = ArrayPool<byte>.Shared.Rent(length);
         _buffer[..length].CopyTo(ownedBuffer);
         this = default;
 
-        return new SpanOwner(length, ownedBuffer);
+        return new(length, ownedBuffer);
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -269,9 +282,9 @@ public ref struct SpanWriter : IDisposable
     {
         var count = buffer.Length;
         var sourceOffset = 0;
-        var aliasesBuffer = _arrayToReturnToPool is not null
-                            && ((ReadOnlySpan<byte>)_buffer).Overlaps(buffer, out sourceOffset);
+        var aliasesBuffer = _arrayToReturnToPool is not null && _buffer.Overlaps(buffer, out sourceOffset);
         GrowIfNeeded(count);
+
         if (aliasesBuffer)
         {
             buffer = _buffer.Slice(sourceOffset, count);
@@ -282,7 +295,7 @@ public ref struct SpanWriter : IDisposable
     }
 
     /// <summary>
-    /// Writes encoded text, optionally truncating the input to <paramref name="fixedLength"/>
+    /// Writes encoded text, optionally truncating the input to <paramref name="fixedLength" />
     /// UTF-16 code units and padding a fixed field. The field width is fixedLength bytes
     /// for ASCII/UTF-8, twice that for UTF-16, and four times that for UTF-32.
     /// An encoded prefix exceeding the field width is rejected before writing.
@@ -313,6 +326,7 @@ public ref struct SpanWriter : IDisposable
         }
 
         char[]? snapshot = null;
+
         try
         {
             // Growth may return the original array; transcoding can also overwrite
@@ -327,6 +341,7 @@ public ref struct SpanWriter : IDisposable
             GrowIfNeeded(byteCount);
             var bytesWritten = encoding.GetBytes(source, _buffer[_position..]);
             Position += bytesWritten;
+
             if (fixedByteCount > bytesWritten)
             {
                 Clear(fixedByteCount - bytesWritten);
@@ -336,39 +351,32 @@ public ref struct SpanWriter : IDisposable
         {
             if (snapshot is not null)
             {
-                ArrayPool<char>.Shared.Return(snapshot, clearArray: true);
+                ArrayPool<char>.Shared.Return(snapshot, true);
             }
         }
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteAscii(char chr)
-    {
-        Write((byte)chr);
-    }
+        => Write((byte)chr);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteAscii(string value)
-    {
-        Write(value.AsSpan(), Encoding.ASCII);
-    }
+        => Write(value.AsSpan(), Encoding.ASCII);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteAscii(string value, int fixedLength)
-    {
-        Write(value.AsSpan(), Encoding.ASCII, fixedLength);
-    }
+        => Write(value.AsSpan(), Encoding.ASCII, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteAsciiNull(string value)
-    {
-        WriteTerminated(value, Encoding.ASCII);
-    }
+        => WriteTerminated(value, Encoding.ASCII);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteAttribute(int max, int cur, bool normalize = false, bool reverse = false)
     {
         EnsureRemainingCapacity(2 * sizeof(short));
+
         if (normalize && max != 0)
         {
             if (reverse)
@@ -399,20 +407,38 @@ public ref struct SpanWriter : IDisposable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteBigUni(string value)
-    {
-        Write(value.AsSpan(), Encoding.BigEndianUnicode);
-    }
+        => Write(value.AsSpan(), Encoding.BigEndianUnicode);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteBigUni(string value, int fixedLength)
-    {
-        Write(value.AsSpan(), Encoding.BigEndianUnicode, fixedLength);
-    }
+        => Write(value.AsSpan(), Encoding.BigEndianUnicode, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteBigUniNull(string value)
+        => WriteTerminated(value, Encoding.BigEndianUnicode);
+
+    public void WriteByte(byte value)
+        => Write(value);
+
+    public void WriteBytes(scoped ReadOnlySpan<byte> value)
+        => Write(value);
+
+    public void WriteFixedAscii(string value, int byteCount)
     {
-        WriteTerminated(value, Encoding.BigEndianUnicode);
+        ArgumentNullException.ThrowIfNull(value);
+        ArgumentOutOfRangeException.ThrowIfNegative(byteCount);
+        ValidateAscii(value);
+
+        if (value.Length > byteCount)
+        {
+            throw new ArgumentException("The value exceeds the fixed ASCII field width.", nameof(value));
+        }
+
+        EnsureRemainingCapacity(byteCount);
+        var field = _buffer.Slice(Position, byteCount);
+        field.Clear();
+        Encoding.ASCII.GetBytes(value, field);
+        Position += byteCount;
     }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
@@ -449,20 +475,24 @@ public ref struct SpanWriter : IDisposable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteLittleUni(string value)
-    {
-        Write(value.AsSpan(), Encoding.Unicode);
-    }
+        => Write(value.AsSpan(), Encoding.Unicode);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteLittleUni(string value, int fixedLength)
-    {
-        Write(value.AsSpan(), Encoding.Unicode, fixedLength);
-    }
+        => Write(value.AsSpan(), Encoding.Unicode, fixedLength);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteLittleUniNull(string value)
+        => WriteTerminated(value, Encoding.Unicode);
+
+    public void WriteNullTerminatedAscii(string value)
     {
-        WriteTerminated(value, Encoding.Unicode);
+        ArgumentNullException.ThrowIfNull(value);
+        ValidateAscii(value);
+        EnsureRemainingCapacity(checked(value.Length + 1));
+        Encoding.ASCII.GetBytes(value, _buffer[Position..]);
+        _buffer[Position + value.Length] = 0;
+        Position += value.Length + 1;
     }
 
     /// <summary>
@@ -479,108 +509,37 @@ public ref struct SpanWriter : IDisposable
         BinaryPrimitives.WriteUInt16BigEndian(_buffer[1..], (ushort)BytesWritten);
     }
 
+    public void WriteSerial(Serial value)
+        => WriteUInt32BigEndian(value.Value);
+
+    public void WriteUInt16BigEndian(ushort value)
+        => Write(value);
+
+    public void WriteUInt32BigEndian(uint value)
+        => Write(value);
+
+    public void WriteUInt32LittleEndian(uint value)
+        => WriteLE(value);
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteUTF8(string value)
-    {
-        Write(value.AsSpan(), Encoding.UTF8);
-    }
+        => Write(value.AsSpan(), Encoding.UTF8);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void WriteUTF8Null(string value)
-    {
-        WriteTerminated(value, Encoding.UTF8);
-    }
-
-    /// <summary>
-    /// Ensures room for a complete write at the current cursor before any bytes are changed.
-    /// </summary>
-    public void EnsureRemainingCapacity(int count)
-    {
-        ArgumentOutOfRangeException.ThrowIfNegative(count);
-        EnsureCapacity(checked(_position + count));
-    }
-
-    public void WriteByte(byte value)
-    {
-        Write(value);
-    }
-
-    public void WriteUInt16BigEndian(ushort value)
-    {
-        Write(value);
-    }
-
-    public void WriteUInt32BigEndian(uint value)
-    {
-        Write(value);
-    }
-
-    public void WriteUInt32LittleEndian(uint value)
-    {
-        WriteLE(value);
-    }
-
-    public void WriteSerial(Serial value)
-    {
-        WriteUInt32BigEndian(value.Value);
-    }
-
-    public void WriteBytes(scoped ReadOnlySpan<byte> value)
-    {
-        Write(value);
-    }
-
-    public void WriteFixedAscii(string value, int byteCount)
-    {
-        ArgumentNullException.ThrowIfNull(value);
-        ArgumentOutOfRangeException.ThrowIfNegative(byteCount);
-        ValidateAscii(value);
-        if (value.Length > byteCount)
-        {
-            throw new ArgumentException("The value exceeds the fixed ASCII field width.", nameof(value));
-        }
-
-        EnsureRemainingCapacity(byteCount);
-        var field = _buffer.Slice(Position, byteCount);
-        field.Clear();
-        Encoding.ASCII.GetBytes(value, field);
-        Position += byteCount;
-    }
-
-    public void WriteNullTerminatedAscii(string value)
-    {
-        ArgumentNullException.ThrowIfNull(value);
-        ValidateAscii(value);
-        EnsureRemainingCapacity(checked(value.Length + 1));
-        Encoding.ASCII.GetBytes(value, _buffer[Position..]);
-        _buffer[Position + value.Length] = 0;
-        Position += value.Length + 1;
-    }
-
-    private void WriteTerminated(string value, Encoding encoding)
-    {
-        ArgumentNullException.ThrowIfNull(value);
-        var terminatorWidth = GetTerminatorWidth(encoding);
-        EnsureRemainingCapacity(checked(encoding.GetByteCount(value) + terminatorWidth));
-        Write(value.AsSpan(), encoding);
-        Clear(terminatorWidth);
-    }
+        => WriteTerminated(value, Encoding.UTF8);
 
     private static int GetTerminatorWidth(Encoding encoding)
-    {
-        return encoding switch
+        => encoding switch
         {
             UnicodeEncoding => 2,
             UTF32Encoding   => 4,
             _               => 1
         };
-    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     private void GrowIfNeeded(int count)
-    {
-        EnsureRemainingCapacity(count);
-    }
+        => EnsureRemainingCapacity(count);
 
     private static void ValidateAscii(string value)
     {
@@ -593,6 +552,15 @@ public ref struct SpanWriter : IDisposable
         }
     }
 
+    private void WriteTerminated(string value, Encoding encoding)
+    {
+        ArgumentNullException.ThrowIfNull(value);
+        var terminatorWidth = GetTerminatorWidth(encoding);
+        EnsureRemainingCapacity(checked(encoding.GetByteCount(value) + terminatorWidth));
+        Write(value.AsSpan(), encoding);
+        Clear(terminatorWidth);
+    }
+
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Dispose()
     {
@@ -601,7 +569,7 @@ public ref struct SpanWriter : IDisposable
 
         if (toReturn is not null)
         {
-            ArrayPool<byte>.Shared.Return(toReturn, clearArray: true);
+            ArrayPool<byte>.Shared.Return(toReturn, true);
         }
     }
 }

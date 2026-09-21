@@ -9,7 +9,5 @@ namespace Moongate.Network.Packets.Tests.Support.Metadata;
 [PacketHandler(0xF0, PacketSizing.Fixed, Length = 0)]
 public sealed class InvalidFixedLengthPacket : BaseFixedPacket<InvalidFixedLengthPacket>, IOutgoingPacket
 {
-    public void Write(ref PacketWriter writer)
-    {
-    }
+    public void Write(ref PacketWriter writer) { }
 }

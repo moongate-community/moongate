@@ -27,10 +27,10 @@ public ref struct PooledRefList<T>
         _items = capacity switch
         {
             < 0 => throw new ArgumentOutOfRangeException(
-                nameof(capacity),
-                capacity,
-                CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum
-            ),
+                       nameof(capacity),
+                       capacity,
+                       CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum
+                   ),
             0 => Array.Empty<T>(),
             _ => ArrayPool<T>.Shared.Rent(capacity)
         };
@@ -186,12 +186,6 @@ public ref struct PooledRefList<T>
             }
         }
 
-        public void Dispose()
-        {
-            _index = -2;
-            _current = default;
-        }
-
         public bool MoveNext()
         {
             var localList = _list;
@@ -240,6 +234,12 @@ public ref struct PooledRefList<T>
                     ? CollectionThrowStrings.InvalidOperation_EnumNotStarted
                     : CollectionThrowStrings.InvalidOperation_EnumEnded
             );
+        }
+
+        public void Dispose()
+        {
+            _index = -2;
+            _current = default;
         }
     }
 

@@ -12,7 +12,5 @@ public sealed class ActionGameLoopWorkItem : IGameLoopWorkItem
     }
 
     public void Execute()
-    {
-        _action();
-    }
+        => _action();
 }

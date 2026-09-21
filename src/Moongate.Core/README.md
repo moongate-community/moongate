@@ -24,6 +24,7 @@ dotnet add package Moongate.Core
 Create a position and a persistent entity identifier:
 
 <!-- nuget-smoke:Program.cs -->
+
 ```csharp
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -108,9 +109,11 @@ OS socket table to discover actual listeners.
 
 ## Dependencies and scope
 
-This package has no dependency on another Moongate package. Its external dependencies include DryIoc, Humanizer, Serilog, ShaiRandom, Tomlyn, and ZLinq; NuGet resolves them automatically.
+This package has no dependency on another Moongate package. Its external dependencies include DryIoc, Humanizer, Serilog,
+ShaiRandom, Tomlyn, and ZLinq; NuGet resolves them automatically.
 
-It provides shared building blocks. Asynchronous PostgreSQL entity storage is provided by `Moongate.Persistence`; TCP transport is provided by `Moongate.Network`.
+It provides shared building blocks. Asynchronous PostgreSQL entity storage is provided by `Moongate.Persistence`; TCP
+transport is provided by `Moongate.Network`.
 
 ## License and source
 

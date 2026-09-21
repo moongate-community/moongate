@@ -22,9 +22,21 @@ internal sealed class ScriptFileLoader
         _root = Path.GetFullPath(scriptsDirectory);
     }
 
+    /// <summary>Forgets the file and evicts its require() entry. Returns false when the file was not loaded.</summary>
+    public bool Invalidate(string relativePath)
+    {
+        var key = Normalize(relativePath);
+        _state.LoadedModules[ScriptDirectoryModuleLoader.ToModuleName(key)] = LuaValue.Nil;
+
+        return _loaded.Remove(key);
+    }
+
     /// <summary>Runs the file, or returns the values of the previous run when it is already loaded.</summary>
     /// <param name="relativePath">Path relative to the scripts directory.</param>
-    /// <param name="cancellationToken">The budget's token for the chunk: the VM checks it per instruction, so a runaway file stops. A <c>require</c> inside the chunk runs in the same unit and goes through the same token.</param>
+    /// <param name="cancellationToken">
+    /// The budget's token for the chunk: the VM checks it per instruction, so a runaway file stops.
+    /// A <c>require</c> inside the chunk runs in the same unit and goes through the same token.
+    /// </param>
     public LuaValue[] Load(string relativePath, CancellationToken cancellationToken)
     {
         var key = Normalize(relativePath);
@@ -58,15 +70,6 @@ internal sealed class ScriptFileLoader
         {
             CurrentFile = previousFile;
         }
-    }
-
-    /// <summary>Forgets the file and evicts its require() entry. Returns false when the file was not loaded.</summary>
-    public bool Invalidate(string relativePath)
-    {
-        var key = Normalize(relativePath);
-        _state.LoadedModules[ScriptDirectoryModuleLoader.ToModuleName(key)] = LuaValue.Nil;
-
-        return _loaded.Remove(key);
     }
 
     /// <summary>

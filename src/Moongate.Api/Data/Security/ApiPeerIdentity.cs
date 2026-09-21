@@ -15,9 +15,7 @@ public sealed class ApiPeerIdentity
 
     /// <summary>Creates an identity with a snapshot of its allowed operation identifiers. An empty list denies all operations.</summary>
     public ApiPeerIdentity(string peerId, IEnumerable<ushort> operations)
-        : this(peerId, operations, false)
-    {
-    }
+        : this(peerId, operations, false) { }
 
     /// <summary>Creates an identity with explicit permissions or access to every nonzero operation.</summary>
     /// <param name="peerId">The locally configured process identity.</param>

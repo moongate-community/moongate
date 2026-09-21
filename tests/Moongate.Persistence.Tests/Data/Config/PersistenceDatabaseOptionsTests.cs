@@ -6,6 +6,35 @@ namespace Moongate.Persistence.Tests.Data.Config;
 
 public sealed class PersistenceDatabaseOptionsTests
 {
+    [Theory,
+     InlineData("postgres://user:synthetic_marker@localhost/"),
+     InlineData("postgres://user:synthetic_marker@localhost/realm#fragment"),
+     InlineData("postgres://user:synthetic_marker%XX@localhost/realm"),
+     InlineData("postgres://user:synthetic_marker@localhost/realm?unknown_option=true"),
+     InlineData("postgres://user:synthetic_marker@localhost/realm?port=not-a-number"),
+     InlineData("https://user:synthetic_marker@localhost/realm")]
+    public void ResolveRuntimeConnectionString_InvalidUri_ReportsNoCredentials(string uri)
+    {
+        var options = new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, uri);
+        var error = Assert.Throws<InvalidOperationException>(options.ResolveRuntimeConnectionString);
+        Assert.DoesNotContain("synthetic_marker", error.ToString());
+        Assert.Contains("runtime", error.Message);
+        Assert.Contains("postgres://", error.Message);
+    }
+
+    [Fact]
+    public void ResolveRuntimeConnectionString_Ipv6AndDefaultPort_AreSupported()
+    {
+        var options = new PersistenceDatabaseOptions(
+            PersistenceDatabaseTarget.Accounts,
+            "postgres://user@[::1]/accounts"
+        );
+        var parsed = new NpgsqlConnectionStringBuilder(options.ResolveRuntimeConnectionString());
+        Assert.Equal("::1", parsed.Host);
+        Assert.Equal(5432, parsed.Port);
+        Assert.Equal("accounts", parsed.Database);
+    }
+
     [Theory, InlineData("postgres"), InlineData("postgresql")]
     public void ResolveRuntimeConnectionString_Uri_PreservesDecodedComponentsAndOptions(string scheme)
     {
@@ -25,35 +54,6 @@ public sealed class PersistenceDatabaseOptionsTests
         Assert.Equal(7, parsed.Timeout);
         Assert.Equal("Moongate Test", parsed.ApplicationName);
         Assert.False(parsed.Pooling);
-    }
-
-    [Fact]
-    public void ResolveRuntimeConnectionString_Ipv6AndDefaultPort_AreSupported()
-    {
-        var options = new PersistenceDatabaseOptions(
-            PersistenceDatabaseTarget.Accounts,
-            "postgres://user@[::1]/accounts"
-        );
-        var parsed = new NpgsqlConnectionStringBuilder(options.ResolveRuntimeConnectionString());
-        Assert.Equal("::1", parsed.Host);
-        Assert.Equal(5432, parsed.Port);
-        Assert.Equal("accounts", parsed.Database);
-    }
-
-    [Theory,
-     InlineData("postgres://user:synthetic_marker@localhost/"),
-     InlineData("postgres://user:synthetic_marker@localhost/realm#fragment"),
-     InlineData("postgres://user:synthetic_marker%XX@localhost/realm"),
-     InlineData("postgres://user:synthetic_marker@localhost/realm?unknown_option=true"),
-     InlineData("postgres://user:synthetic_marker@localhost/realm?port=not-a-number"),
-     InlineData("https://user:synthetic_marker@localhost/realm")]
-    public void ResolveRuntimeConnectionString_InvalidUri_ReportsNoCredentials(string uri)
-    {
-        var options = new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, uri);
-        var error = Assert.Throws<InvalidOperationException>(options.ResolveRuntimeConnectionString);
-        Assert.DoesNotContain("synthetic_marker", error.ToString());
-        Assert.Contains("runtime", error.Message);
-        Assert.Contains("postgres://", error.Message);
     }
 
     [Fact]

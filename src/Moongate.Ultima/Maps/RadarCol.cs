@@ -123,6 +123,7 @@ public sealed class RadarCol
     {
         using var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var bin = new BinaryWriter(fs);
+
         foreach (var colorValue in Colors)
         {
             bin.Write(colorValue);

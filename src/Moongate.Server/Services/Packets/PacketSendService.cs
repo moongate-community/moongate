@@ -39,6 +39,29 @@ public sealed class PacketSendService : IPacketSendService
     }
 
     /// <inheritdoc />
+    public Task DisconnectAsync(long sessionId)
+    {
+        lock (_gate)
+        {
+            if (_outboxes.TryGetValue(sessionId, out var outbox))
+            {
+                outbox.Close();
+
+                return outbox.Completion;
+            }
+
+            var cleanup = _connections.DisconnectAsync(sessionId);
+
+            if (!_cleanups.ContainsKey(sessionId) && !cleanup.IsCompletedSuccessfully)
+            {
+                _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, cleanup, null));
+            }
+
+            return cleanup;
+        }
+    }
+
+    /// <inheritdoc />
     public Task StartAsync()
     {
         lock (_gate)
@@ -61,6 +84,7 @@ public sealed class PacketSendService : IPacketSendService
         {
             _running = false;
             _stopped = true;
+
             foreach (var outbox in _outboxes.Values)
             {
                 outbox.Close();
@@ -82,7 +106,7 @@ public sealed class PacketSendService : IPacketSendService
 
             if (!_outboxes.TryGetValue(sessionId, out var outbox))
             {
-                outbox = new SessionPacketOutbox(connection, disconnectRequested, _capacity, _connections.DisconnectAsync);
+                outbox = new(connection, disconnectRequested, _capacity, _connections.DisconnectAsync);
                 _outboxes.Add(sessionId, outbox);
                 outbox.Start();
                 _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));
@@ -107,34 +131,15 @@ public sealed class PacketSendService : IPacketSendService
             }
 
             outbox.Close();
+
             return false;
-        }
-    }
-
-    /// <inheritdoc />
-    public Task DisconnectAsync(long sessionId)
-    {
-        lock (_gate)
-        {
-            if (_outboxes.TryGetValue(sessionId, out var outbox))
-            {
-                outbox.Close();
-                return outbox.Completion;
-            }
-
-            var cleanup = _connections.DisconnectAsync(sessionId);
-            if (!_cleanups.ContainsKey(sessionId) && !cleanup.IsCompletedSuccessfully)
-            {
-                _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, cleanup, null));
-            }
-
-            return cleanup;
         }
     }
 
     private async Task ObserveCleanupAsync(long sessionId, Task cleanup, SessionPacketOutbox? outbox)
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+
         try
         {
             await cleanup.ConfigureAwait(false);
@@ -152,7 +157,8 @@ public sealed class PacketSendService : IPacketSendService
         {
             lock (_gate)
             {
-                if (outbox is not null && _outboxes.TryGetValue(sessionId, out var current) &&
+                if (outbox is not null &&
+                    _outboxes.TryGetValue(sessionId, out var current) &&
                     ReferenceEquals(current, outbox))
                 {
                     _outboxes.Remove(sessionId);
@@ -166,12 +172,15 @@ public sealed class PacketSendService : IPacketSendService
     private async Task StopCoreAsync()
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+
         while (true)
         {
             Task[] pending;
+
             lock (_gate)
             {
                 pending = _cleanups.Values.ToArray();
+
                 if (pending.Length == 0)
                 {
                     if (_failures.Count > 0)

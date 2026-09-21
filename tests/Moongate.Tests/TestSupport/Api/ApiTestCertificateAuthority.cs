@@ -23,8 +23,14 @@ internal sealed class ApiTestCertificateAuthority : IDisposable
         Root = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-30), DateTimeOffset.UtcNow.AddDays(30));
     }
 
+    public void Dispose()
+        => Root.Dispose();
+
     public X509Certificate2 Issue(
-        string name = "localhost", bool expired = false, bool clientOnly = false, bool notYetValid = false
+        string name = "localhost",
+        bool expired = false,
+        bool clientOnly = false,
+        bool notYetValid = false
     )
     {
         using var key = RSA.Create(2048);
@@ -32,9 +38,10 @@ internal sealed class ApiTestCertificateAuthority : IDisposable
         request.CertificateExtensions.Add(new X509BasicConstraintsExtension(false, false, 0, true));
         request.CertificateExtensions.Add(new X509KeyUsageExtension(X509KeyUsageFlags.DigitalSignature, true));
         var usages = new OidCollection { new("1.3.6.1.5.5.7.3.2") };
+
         if (!clientOnly)
         {
-            usages.Add(new Oid("1.3.6.1.5.5.7.3.1"));
+            usages.Add(new("1.3.6.1.5.5.7.3.1"));
         }
 
         request.CertificateExtensions.Add(new X509EnhancedKeyUsageExtension(usages, true));
@@ -47,19 +54,20 @@ internal sealed class ApiTestCertificateAuthority : IDisposable
             DateTimeOffset.UtcNow.AddDays(expired ? -1 : 2),
             RandomNumberGenerator.GetBytes(16)
         );
+
         return certificate.CopyWithPrivateKey(key);
     }
 
     public ApiTlsOptions Options(X509Certificate2 local, X509Certificate2 remote, string remoteId)
-    {
-        return Options(Root, local, remote, remoteId);
-    }
+        => Options(Root, local, remote, remoteId);
 
     public static ApiTlsOptions Options(
-        X509Certificate2 root, X509Certificate2 local, X509Certificate2 remote, string remoteId
+        X509Certificate2 root,
+        X509Certificate2 local,
+        X509Certificate2 remote,
+        string remoteId
     )
-    {
-        return new ApiTlsOptions
+        => new()
         {
             Certificate = local,
             TrustedRoots = new[] { root },
@@ -68,10 +76,4 @@ internal sealed class ApiTestCertificateAuthority : IDisposable
                 [remote.GetCertHashString(HashAlgorithmName.SHA256)] = new(remoteId, new ushort[] { 100 })
             }
         };
-    }
-
-    public void Dispose()
-    {
-        Root.Dispose();
-    }
 }

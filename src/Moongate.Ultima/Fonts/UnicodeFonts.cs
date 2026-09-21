@@ -47,6 +47,7 @@ public static class UnicodeFonts
 
             using var fs = new FileStream(filePath, FileMode.Open, FileAccess.Read, FileShare.Read);
             using var bin = new BinaryReader(fs);
+
             for (var c = 0; c < 0x10000; ++c)
             {
                 Fonts[i].Chars[c] = new();

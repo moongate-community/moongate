@@ -22,21 +22,22 @@ internal sealed class DiagnosticServiceFixture : IDisposable
 
     public DiagnosticServiceFixture(IEnumerable<IMetricProvider> providers, DiagnosticOptions? options = null)
     {
-        _container = new Container();
+        _container = new();
         _container.RegisterMoongateEventBus();
-        Bus = new EventBusService(_container.Resolve<IMoongateEventBus>());
-        Time = new DiagnosticTimeProvider();
-        Service = new DiagnosticService(providers, options ?? new DiagnosticOptions(), Bus, Time);
+        Bus = new(_container.Resolve<IMoongateEventBus>());
+        Time = new();
+        Service = new(providers, options ?? new DiagnosticOptions(), Bus, Time);
         _snapshots = Channel.CreateUnbounded<DiagnosticSnapshot>();
-        _subscription = Bus.Subscribe<DiagnosticSnapshotCollectedEvent>((message, _) =>
+        _subscription = Bus.Subscribe<DiagnosticSnapshotCollectedEvent>(
+            (message, _) =>
             {
                 _snapshots.Writer.TryWrite(message.Snapshot);
+
                 return Task.CompletedTask;
             }
         );
     }
 
-    public Task<DiagnosticSnapshot> NextAsync() => _snapshots.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
     public bool HasPendingSnapshot => _snapshots.Reader.TryPeek(out _);
 
     public void Dispose()
@@ -52,4 +53,7 @@ internal sealed class DiagnosticServiceFixture : IDisposable
             _container.Dispose();
         }
     }
+
+    public Task<DiagnosticSnapshot> NextAsync()
+        => _snapshots.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
 }

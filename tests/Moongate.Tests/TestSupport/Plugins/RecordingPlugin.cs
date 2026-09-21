@@ -17,6 +17,7 @@ public sealed class RecordingPlugin : IMoongatePlugin
         get
         {
             MetadataReads++;
+
             return _metadata;
         }
     }

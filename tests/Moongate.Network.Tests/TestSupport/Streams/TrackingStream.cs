@@ -21,15 +21,23 @@ internal sealed class TrackingStream : Stream
         _inner = inner;
     }
 
-    public override void Flush() => _inner.Flush();
-    public override int Read(byte[] buffer, int offset, int count) => _inner.Read(buffer, offset, count);
+    public override void Flush()
+        => _inner.Flush();
+
+    public override int Read(byte[] buffer, int offset, int count)
+        => _inner.Read(buffer, offset, count);
 
     public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
         => _inner.ReadAsync(buffer, cancellationToken);
 
-    public override long Seek(long offset, SeekOrigin origin) => _inner.Seek(offset, origin);
-    public override void SetLength(long value) => _inner.SetLength(value);
-    public override void Write(byte[] buffer, int offset, int count) => _inner.Write(buffer, offset, count);
+    public override long Seek(long offset, SeekOrigin origin)
+        => _inner.Seek(offset, origin);
+
+    public override void SetLength(long value)
+        => _inner.SetLength(value);
+
+    public override void Write(byte[] buffer, int offset, int count)
+        => _inner.Write(buffer, offset, count);
 
     public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
         => _inner.WriteAsync(buffer, cancellationToken);

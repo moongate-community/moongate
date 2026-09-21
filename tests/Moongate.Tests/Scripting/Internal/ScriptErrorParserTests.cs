@@ -5,6 +5,15 @@ namespace Moongate.Tests.Scripting.Internal;
 public sealed class ScriptErrorParserTests
 {
     [Fact]
+    public void FromException_UsesTheFallbackFileWhenTheMessageHasNone()
+    {
+        var info = ScriptErrorParser.FromException(new InvalidOperationException("engine went asynchronous"), "init.lua");
+
+        Assert.Equal("init.lua", info.File);
+        Assert.Equal("engine went asynchronous", info.Message);
+    }
+
+    [Fact]
     public void Parse_ExtractsFileLineAndMessageFromTheLuaPrefix()
     {
         var info = ScriptErrorParser.Parse(
@@ -27,14 +36,5 @@ public sealed class ScriptErrorParserTests
         Assert.Equal(0, info.Line);
         Assert.Equal("budget exceeded", info.Message);
         Assert.Null(info.Traceback);
-    }
-
-    [Fact]
-    public void FromException_UsesTheFallbackFileWhenTheMessageHasNone()
-    {
-        var info = ScriptErrorParser.FromException(new InvalidOperationException("engine went asynchronous"), "init.lua");
-
-        Assert.Equal("init.lua", info.File);
-        Assert.Equal("engine went asynchronous", info.Message);
     }
 }

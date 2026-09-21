@@ -52,7 +52,7 @@ public sealed class FramerContractTests
         listener.Dispose();
 
         var sender = new MoongateTcpClient(senderSocket);
-        var receiver = new MoongateTcpClient(receiverSocket, middlewares: null, framer, null);
+        var receiver = new MoongateTcpClient(receiverSocket, null, framer);
 
         await sender.StartAsync(CancellationToken.None);
         await receiver.StartAsync(CancellationToken.None);

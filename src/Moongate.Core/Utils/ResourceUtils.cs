@@ -145,7 +145,8 @@ public static class ResourceUtils
         {
             // Try to find a partial match
             var resourceNames = assembly.GetManifestResourceNames();
-            var matchingResource = resourceNames.FirstOrDefault(n => n.EndsWith(
+            var matchingResource = resourceNames.FirstOrDefault(
+                n => n.EndsWith(
                     resourceName.Replace('/', '.').Replace('\\', '.'),
                     StringComparison.Ordinal
                 )
@@ -304,7 +305,8 @@ public static class ResourceUtils
         {
             // Try to find a partial match
             var resourceNames = assembly.GetManifestResourceNames();
-            var matchingResource = resourceNames.FirstOrDefault(n => n.EndsWith(
+            var matchingResource = resourceNames.FirstOrDefault(
+                n => n.EndsWith(
                     resourceName.Replace('/', '.').Replace('\\', '.'),
                     StringComparison.Ordinal
                 )
@@ -372,9 +374,7 @@ public static class ResourceUtils
     /// <param name="resourceName">Full resource name</param>
     /// <returns>File name without path</returns>
     public static string GetFileNameFromResourcePath(string resourceName)
-    {
-        return GetFileNameFromResourceName(resourceName);
-    }
+        => GetFileNameFromResourceName(resourceName);
 
     /// <summary>
     /// Reads the content of an embedded resource as a string.
@@ -393,7 +393,7 @@ public static class ResourceUtils
         var resourcePath = resourceName.Replace('/', '.').Replace('\\', '.');
 
         var fullResourceName = assembly.GetManifestResourceNames()
-            .FirstOrDefault(name => name.EndsWith(resourcePath, StringComparison.Ordinal));
+                                       .FirstOrDefault(name => name.EndsWith(resourcePath, StringComparison.Ordinal));
 
         if (fullResourceName == null)
         {

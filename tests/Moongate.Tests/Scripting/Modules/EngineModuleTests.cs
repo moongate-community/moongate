@@ -18,7 +18,7 @@ public sealed class EngineModuleTests
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new EngineModule());
 
         var result = SyncValueTask.Run(
-            state.DoStringAsync("return engine.name, engine.version, engine.codename, engine.platform", "t", default)
+            state.DoStringAsync("return engine.name, engine.version, engine.codename, engine.platform", "t")
         );
 
         Assert.Equal("Moongate", result[0].Read<string>());
@@ -40,8 +40,7 @@ public sealed class EngineModuleTests
         var result = SyncValueTask.Run(
             state.DoStringAsync(
                 "log.info('hello {Name}', 'x') log.warning('w') log.error('e') log.debug('d') return log.LEVEL_INFO, type(log.info)",
-                "t",
-                default
+                "t"
             )
         );
 

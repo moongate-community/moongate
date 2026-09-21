@@ -9,6 +9,27 @@ internal sealed class PersistenceMutationGate : IDisposable
     private Task? _closeTask;
     private TaskCompletionSource? _drained;
 
+    public Task CloseAsync(Func<Task> close)
+    {
+        ArgumentNullException.ThrowIfNull(close);
+
+        lock (_lifecycleSync)
+        {
+            if (_closeTask is not null)
+            {
+                return _closeTask;
+            }
+
+            _closing = true;
+            var drained = _acceptedOperations == 0
+                              ? Task.CompletedTask
+                              : (_drained = new(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
+            _closeTask = CloseCoreAsync(drained, close);
+
+            return _closeTask;
+        }
+    }
+
     public Task RunAsync(
         Func<CancellationToken, Task> operation,
         CancellationToken cancellationToken = default
@@ -16,6 +37,7 @@ internal sealed class PersistenceMutationGate : IDisposable
     {
         ArgumentNullException.ThrowIfNull(operation);
         Task wait;
+
         lock (_lifecycleSync)
         {
             ObjectDisposedException.ThrowIf(_closing, this);
@@ -33,6 +55,7 @@ internal sealed class PersistenceMutationGate : IDisposable
     {
         ArgumentNullException.ThrowIfNull(operation);
         Task wait;
+
         lock (_lifecycleSync)
         {
             ObjectDisposedException.ThrowIf(_closing, this);
@@ -43,24 +66,36 @@ internal sealed class PersistenceMutationGate : IDisposable
         return RunCoreAsync(wait, operation, cancellationToken);
     }
 
-    public Task CloseAsync(Func<Task> close)
+    private async Task CloseCoreAsync(Task drained, Func<Task> close)
     {
-        ArgumentNullException.ThrowIfNull(close);
+        await Task.Yield();
+        await drained.ConfigureAwait(false);
+
+        try
+        {
+            await close().ConfigureAwait(false);
+        }
+        finally
+        {
+            Dispose();
+        }
+    }
+
+    private void CompleteOperation()
+    {
+        TaskCompletionSource? drained = null;
+
         lock (_lifecycleSync)
         {
-            if (_closeTask is not null)
+            _acceptedOperations--;
+
+            if (_closing && _acceptedOperations == 0)
             {
-                return _closeTask;
+                drained = _drained;
             }
-
-            _closing = true;
-            var drained = _acceptedOperations == 0
-                ? Task.CompletedTask
-                : (_drained = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
-            _closeTask = CloseCoreAsync(drained, close);
-
-            return _closeTask;
         }
+
+        drained?.TrySetResult();
     }
 
     private async Task RunCoreAsync(
@@ -71,6 +106,7 @@ internal sealed class PersistenceMutationGate : IDisposable
     {
         await Task.Yield();
         var acquired = false;
+
         try
         {
             await wait.ConfigureAwait(false);
@@ -96,10 +132,12 @@ internal sealed class PersistenceMutationGate : IDisposable
     {
         await Task.Yield();
         var acquired = false;
+
         try
         {
             await wait.ConfigureAwait(false);
             acquired = true;
+
             return await operation(cancellationToken).ConfigureAwait(false);
         }
         finally
@@ -113,37 +151,6 @@ internal sealed class PersistenceMutationGate : IDisposable
         }
     }
 
-    private void CompleteOperation()
-    {
-        TaskCompletionSource? drained = null;
-        lock (_lifecycleSync)
-        {
-            _acceptedOperations--;
-            if (_closing && _acceptedOperations == 0)
-            {
-                drained = _drained;
-            }
-        }
-
-        drained?.TrySetResult();
-    }
-
-    private async Task CloseCoreAsync(Task drained, Func<Task> close)
-    {
-        await Task.Yield();
-        await drained.ConfigureAwait(false);
-        try
-        {
-            await close().ConfigureAwait(false);
-        }
-        finally
-        {
-            Dispose();
-        }
-    }
-
     public void Dispose()
-    {
-        _semaphore.Dispose();
-    }
+        => _semaphore.Dispose();
 }

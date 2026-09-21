@@ -49,7 +49,10 @@ public sealed class SessionMetricsProviderTests
     }
 
     private static void AssertMetric(
-        MetricSample metric, string name, double value, string unit,
+        MetricSample metric,
+        string name,
+        double value,
+        string unit,
         DiagnosticMetricType type
     )
     {

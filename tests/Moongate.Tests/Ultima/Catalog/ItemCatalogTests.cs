@@ -1,7 +1,7 @@
 using System.Runtime.InteropServices;
-using SkiaSharp;
 using Moongate.Ultima.Catalog;
 using Moongate.Ultima.Imaging;
+using SkiaSharp;
 
 namespace Moongate.Tests.Ultima.Catalog;
 
@@ -21,8 +21,8 @@ public class ItemCatalogTests
             Assert.NotNull(decoded);
             Assert.Equal(2, decoded.Width);
             Assert.Equal(1, decoded.Height);
-            Assert.Equal(new SKColor(0, 0, 255), decoded.GetPixel(0, 0));
-            Assert.Equal(new SKColor(0, 0, 0, 0), decoded.GetPixel(1, 0));
+            Assert.Equal(new(0, 0, 255), decoded.GetPixel(0, 0));
+            Assert.Equal(new(0, 0, 0, 0), decoded.GetPixel(1, 0));
         }
 
         Assert.Equal(unchecked((short)0x801F), Marshal.ReadInt16(bitmap.Scan0));

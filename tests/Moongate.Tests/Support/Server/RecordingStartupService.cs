@@ -10,7 +10,9 @@ public sealed class RecordingStartupService : IRecordingStartupService, ISeconda
     private readonly Exception? _stopFailure;
 
     public RecordingStartupService(
-        string name, List<string> events, Exception? startFailure = null,
+        string name,
+        List<string> events,
+        Exception? startFailure = null,
         Exception? stopFailure = null
     )
     {

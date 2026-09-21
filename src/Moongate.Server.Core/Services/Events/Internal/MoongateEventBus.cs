@@ -10,28 +10,6 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
     private readonly ILogger _logger = Log.ForContext<MoongateEventBus>();
     private bool _isDisposed;
 
-    public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
-        where TEvent : class, IMoongateEvent
-    {
-        ArgumentNullException.ThrowIfNull(handler);
-        var eventType = typeof(TEvent);
-        var registration = new MoongateEventRegistration(handler);
-
-        lock (_sync)
-        {
-            ThrowIfDisposed();
-            if (!_registrations.TryGetValue(eventType, out var registrations))
-            {
-                registrations = [];
-                _registrations.Add(eventType, registrations);
-            }
-
-            registrations.Add(registration);
-        }
-
-        return new MoongateEventSubscription(this, eventType, registration);
-    }
-
     public async Task PublishAsync<TEvent>(TEvent message, CancellationToken cancellationToken = default)
         where TEvent : class, IMoongateEvent
     {
@@ -39,18 +17,20 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
         cancellationToken.ThrowIfCancellationRequested();
 
         MoongateEventRegistration[] registrations;
+
         lock (_sync)
         {
             ThrowIfDisposed();
             registrations = _registrations.TryGetValue(typeof(TEvent), out var registered)
-                ? registered.ToArray()
-                : [];
+                                ? registered.ToArray()
+                                : [];
         }
 
         foreach (var registration in registrations)
         {
             cancellationToken.ThrowIfCancellationRequested();
             var handler = (Func<TEvent, CancellationToken, Task>)registration.Handler;
+
             try
             {
                 await handler(message, cancellationToken).ConfigureAwait(false);
@@ -58,6 +38,7 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
                 cancellationToken.ThrowIfCancellationRequested();
+
                 throw;
             }
             catch (Exception exception)
@@ -75,6 +56,29 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
         cancellationToken.ThrowIfCancellationRequested();
     }
 
+    public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
+        where TEvent : class, IMoongateEvent
+    {
+        ArgumentNullException.ThrowIfNull(handler);
+        var eventType = typeof(TEvent);
+        var registration = new MoongateEventRegistration(handler);
+
+        lock (_sync)
+        {
+            ThrowIfDisposed();
+
+            if (!_registrations.TryGetValue(eventType, out var registrations))
+            {
+                registrations = [];
+                _registrations.Add(eventType, registrations);
+            }
+
+            registrations.Add(registration);
+        }
+
+        return new MoongateEventSubscription(this, eventType, registration);
+    }
+
     internal void Unsubscribe(Type eventType, MoongateEventRegistration registration)
     {
         lock (_sync)
@@ -85,6 +89,7 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
             }
 
             registrations.Remove(registration);
+
             if (registrations.Count == 0)
             {
                 _registrations.Remove(eventType);
@@ -93,9 +98,7 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
     }
 
     private void ThrowIfDisposed()
-    {
-        ObjectDisposedException.ThrowIf(_isDisposed, this);
-    }
+        => ObjectDisposedException.ThrowIf(_isDisposed, this);
 
     public void Dispose()
     {

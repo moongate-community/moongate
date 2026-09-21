@@ -2,7 +2,10 @@ using Moongate.Server.Core.Interfaces.GameLoop;
 
 namespace Moongate.Scripting.Internal;
 
-/// <summary>Runs one engine lifecycle step on the game loop thread and reports its outcome to the caller instead of faulting the loop.</summary>
+/// <summary>
+/// Runs one engine lifecycle step on the game loop thread and reports its outcome to the caller instead of faulting
+/// the loop.
+/// </summary>
 internal sealed class ScriptLifecycleWorkItem : IGameLoopWorkItem
 {
     private readonly Action _step;

@@ -91,6 +91,7 @@ public sealed class SkillGroups
 
         using var fs = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var bin = new BinaryWriter(fs);
+
         if (_unicode)
         {
             bin.Write(-1);

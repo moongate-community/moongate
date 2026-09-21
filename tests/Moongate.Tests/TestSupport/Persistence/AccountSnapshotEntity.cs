@@ -10,5 +10,6 @@ public sealed class AccountSnapshotEntity : IMoongateEntity
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
 
-    [Column(Name = "name")] public string Name { get; set; } = "";
+    [Column(Name = "name")]
+    public string Name { get; set; } = "";
 }

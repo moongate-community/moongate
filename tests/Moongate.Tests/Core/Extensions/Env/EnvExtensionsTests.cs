@@ -6,31 +6,6 @@ namespace Moongate.Tests.Core.Extensions.Env;
 [Collection(EnvironmentTestsCollection.Name)]
 public sealed class EnvExtensionsTests
 {
-    [Theory, InlineData(null), InlineData("")]
-    public void ExpandEnvironmentVariables_NullOrEmpty_ReturnsInput(string? input)
-    {
-        Assert.Equal(input, input!.ExpandEnvironmentVariables());
-    }
-
-    [Fact]
-    public void ExpandEnvironmentVariables_KnownVariable_ReplacesEveryOccurrence()
-    {
-        var key = $"MOONGATE_TEST_ENV_{Guid.NewGuid():N}";
-        using var environment = new EnvironmentVariableScope(key, "resolved-value");
-
-        var result = $"${key}/$${key}".ExpandEnvironmentVariables();
-
-        Assert.Equal("resolved-value/$resolved-value", result);
-    }
-
-    [Fact]
-    public void ExpandEnvironmentVariables_UnknownVariable_RemainsUnchanged()
-    {
-        var key = $"MOONGATE_TEST_MISSING_{Guid.NewGuid():N}";
-
-        Assert.Equal($"before-${key}-after", $"before-${key}-after".ExpandEnvironmentVariables());
-    }
-
     [Fact]
     public void ExpandEnvironmentVariables_AfterScopedChange_UsesRestoredValue()
     {
@@ -54,7 +29,30 @@ public sealed class EnvExtensionsTests
 
         Assert.Equal(
             $"short/${key}/tail",
-            ($"${{{key}}}/${key}_LONG/tail").ExpandEnvironmentVariables()
+            $"${{{key}}}/${key}_LONG/tail".ExpandEnvironmentVariables()
         );
+    }
+
+    [Fact]
+    public void ExpandEnvironmentVariables_KnownVariable_ReplacesEveryOccurrence()
+    {
+        var key = $"MOONGATE_TEST_ENV_{Guid.NewGuid():N}";
+        using var environment = new EnvironmentVariableScope(key, "resolved-value");
+
+        var result = $"${key}/$${key}".ExpandEnvironmentVariables();
+
+        Assert.Equal("resolved-value/$resolved-value", result);
+    }
+
+    [Theory, InlineData(null), InlineData("")]
+    public void ExpandEnvironmentVariables_NullOrEmpty_ReturnsInput(string? input)
+        => Assert.Equal(input, input!.ExpandEnvironmentVariables());
+
+    [Fact]
+    public void ExpandEnvironmentVariables_UnknownVariable_RemainsUnchanged()
+    {
+        var key = $"MOONGATE_TEST_MISSING_{Guid.NewGuid():N}";
+
+        Assert.Equal($"before-${key}-after", $"before-${key}-after".ExpandEnvironmentVariables());
     }
 }

@@ -10,6 +10,13 @@ namespace Moongate.Network.Packets.Tests.Outgoing.Login;
 
 public class SupportFeaturesPacketTests
 {
+    [Fact]
+    public void Encode_ExpansionPreset_CombinesLegacyFeatureBits()
+    {
+        var packet = new SupportFeaturesPacket(FeatureFlags.ExpansionEj);
+        Assert.Equal(Convert.FromHexString("B900FF82D8"), PacketCodec.Encode(packet));
+    }
+
     [Theory,
      InlineData(FeatureFlags.None, "B900000000"),
      InlineData(FeatureFlags.T2A | FeatureFlags.Aos | FeatureFlags.Sa | FeatureFlags.Ej, "B900810011"),
@@ -26,10 +33,15 @@ public class SupportFeaturesPacketTests
     }
 
     [Fact]
-    public void Encode_ExpansionPreset_CombinesLegacyFeatureBits()
+    public void Registry_BuiltInPacket_IsFixedLengthAndOutgoingOnly()
     {
-        var packet = new SupportFeaturesPacket(FeatureFlags.ExpansionEj);
-        Assert.Equal(Convert.FromHexString("B900FF82D8"), PacketCodec.Encode(packet));
+        var registry = PacketRegistry.Default;
+        Assert.True(registry.TryGetDescriptor(0xB9, PacketDirection.Outgoing, out var descriptor));
+        Assert.Equal(typeof(SupportFeaturesPacket), descriptor.PacketType);
+        Assert.Equal(PacketSizing.Fixed, descriptor.Sizing);
+        Assert.Equal(5, descriptor.FixedLength);
+        Assert.False(registry.TryGetDescriptor(0xB9, PacketDirection.Incoming, out _));
+        Assert.False(registry.TryDecode(Convert.FromHexString("B900000000"), out _));
     }
 
     [Fact]
@@ -42,17 +54,5 @@ public class SupportFeaturesPacketTests
 
         Assert.Equal(Convert.FromHexString("CCB900010000"), writer.WrittenSpan.ToArray());
         Assert.Equal(6, writer.WrittenCount);
-    }
-
-    [Fact]
-    public void Registry_BuiltInPacket_IsFixedLengthAndOutgoingOnly()
-    {
-        var registry = PacketRegistry.Default;
-        Assert.True(registry.TryGetDescriptor(0xB9, PacketDirection.Outgoing, out var descriptor));
-        Assert.Equal(typeof(SupportFeaturesPacket), descriptor.PacketType);
-        Assert.Equal(PacketSizing.Fixed, descriptor.Sizing);
-        Assert.Equal(5, descriptor.FixedLength);
-        Assert.False(registry.TryGetDescriptor(0xB9, PacketDirection.Incoming, out _));
-        Assert.False(registry.TryDecode(Convert.FromHexString("B900000000"), out _));
     }
 }

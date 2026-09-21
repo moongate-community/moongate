@@ -13,9 +13,8 @@ internal sealed class PendingFrameBuffer : IDisposable
     private readonly int _receiveBufferSize;
     private byte[]? _buffer;
     private int _disposed;
-    private int _length;
 
-    public int Length => _length;
+    public int Length { get; private set; }
 
     public PendingFrameBuffer(
         INetFramer framer,
@@ -52,15 +51,15 @@ internal sealed class PendingFrameBuffer : IDisposable
             return;
         }
 
-        if (data.Length > _budget - _length)
+        if (data.Length > _budget - Length)
         {
             throw new InvalidDataException("Pending TCP data exceeds the configured buffer budget.");
         }
 
-        var required = checked(_length + data.Length);
+        var required = checked(Length + data.Length);
         EnsureCapacity(required);
-        data.CopyTo(_buffer.AsSpan(_length, data.Length));
-        _length = required;
+        data.CopyTo(_buffer.AsSpan(Length, data.Length));
+        Length = required;
     }
 
     public bool TryRead([NotNullWhen(true)] out byte[]? frame)
@@ -68,29 +67,27 @@ internal sealed class PendingFrameBuffer : IDisposable
         ThrowIfDisposed();
         frame = null;
 
-        if (_length == 0)
+        if (Length == 0)
         {
             return false;
         }
 
-        var view = _buffer.AsSpan(0, _length);
+        var view = _buffer.AsSpan(0, Length);
 
         if (!_framer.TryReadFrame(view, out var frameLength))
         {
-            if (_length > _maxFrameLength)
+            if (Length > _maxFrameLength)
             {
-                throw new InvalidDataException(
-                    $"Incoming frame exceeds the maximum of {_maxFrameLength} bytes."
-                );
+                throw new InvalidDataException($"Incoming frame exceeds the maximum of {_maxFrameLength} bytes.");
             }
 
             return false;
         }
 
-        if (frameLength <= 0 || frameLength > _length)
+        if (frameLength <= 0 || frameLength > Length)
         {
             throw new InvalidDataException(
-                $"Framer reported an invalid frame length of {frameLength} bytes for {_length} pending bytes."
+                $"Framer reported an invalid frame length of {frameLength} bytes for {Length} pending bytes."
             );
         }
 
@@ -103,19 +100,20 @@ internal sealed class PendingFrameBuffer : IDisposable
 
         frame = view[..frameLength].ToArray();
         Consume(frameLength);
+
         return true;
     }
 
     private void Consume(int count)
     {
-        var remaining = _length - count;
+        var remaining = Length - count;
 
         if (remaining > 0)
         {
             _buffer.AsSpan(count, remaining).CopyTo(_buffer);
         }
 
-        _length = remaining;
+        Length = remaining;
     }
 
     private void EnsureCapacity(int required)
@@ -124,6 +122,7 @@ internal sealed class PendingFrameBuffer : IDisposable
         {
             var initialCapacity = Math.Min(_budget, Math.Max(_receiveBufferSize, required));
             _buffer = _pool.Rent(initialCapacity);
+
             return;
         }
 
@@ -135,15 +134,13 @@ internal sealed class PendingFrameBuffer : IDisposable
         var doubledCapacity = _buffer.Length > _budget / 2 ? _budget : _buffer.Length * 2;
         var requestedCapacity = Math.Min(_budget, Math.Max(required, doubledCapacity));
         var expanded = _pool.Rent(requestedCapacity);
-        _buffer.AsSpan(0, _length).CopyTo(expanded);
+        _buffer.AsSpan(0, Length).CopyTo(expanded);
         _pool.Return(_buffer);
         _buffer = expanded;
     }
 
     private void ThrowIfDisposed()
-    {
-        ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposed) != 0, this);
-    }
+        => ObjectDisposedException.ThrowIf(Volatile.Read(ref _disposed) != 0, this);
 
     public void Dispose()
     {
@@ -154,7 +151,7 @@ internal sealed class PendingFrameBuffer : IDisposable
 
         var buffer = _buffer;
         _buffer = null;
-        _length = 0;
+        Length = 0;
 
         if (buffer is not null)
         {

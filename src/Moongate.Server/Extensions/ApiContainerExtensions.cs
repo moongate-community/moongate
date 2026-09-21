@@ -12,8 +12,9 @@ public static class ApiContainerExtensions
     {
         ArgumentNullException.ThrowIfNull(container);
         var registered = container.IsRegistered<ApiRegistry>();
-        var registry = registered ? container.Resolve<ApiRegistry>() : new ApiRegistry();
+        var registry = registered ? container.Resolve<ApiRegistry>() : new();
         registry.ValidateHandler(typeof(THandler));
+
         if (container.IsRegistered<THandler>())
         {
             throw new InvalidOperationException("The handler already has a container registration.");
@@ -21,6 +22,7 @@ public static class ApiContainerExtensions
 
         container.Register<THandler>(Reuse.Singleton);
         registry.RegisterHandler(() => container.Resolve<THandler>());
+
         if (!registered)
         {
             container.RegisterInstance(registry);

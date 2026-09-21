@@ -16,7 +16,10 @@ internal sealed class SessionPacketOutbox
     public Task Completion { get; private set; } = Task.CompletedTask;
 
     public SessionPacketOutbox(
-        INetworkConnection connection, Task disconnectRequested, int capacity, Func<long, Task> disconnect
+        INetworkConnection connection,
+        Task disconnectRequested,
+        int capacity,
+        Func<long, Task> disconnect
     )
     {
         Connection = connection;
@@ -33,31 +36,23 @@ internal sealed class SessionPacketOutbox
         );
     }
 
-    public void Start()
-    {
-        // Middleware can block synchronously: one worker per connection, never per packet.
-        Completion = Task.Run(RunAsync);
-    }
-
-    public bool TryWrite(byte[] frame)
-    {
-        return Volatile.Read(ref _closed) == 0 && _queue.Writer.TryWrite(frame);
-    }
-
     public void Close()
     {
         CloseQueue();
+
         if (Interlocked.Exchange(ref _closeRequested, 1) == 0)
         {
             _ = CloseConnectionAsync();
         }
     }
 
-    private void CloseQueue()
-    {
-        Interlocked.Exchange(ref _closed, 1);
-        _queue.Writer.TryComplete();
-    }
+    public void Start()
+
+        // Middleware can block synchronously: one worker per connection, never per packet.
+        => Completion = Task.Run(RunAsync);
+
+    public bool TryWrite(byte[] frame)
+        => Volatile.Read(ref _closed) == 0 && _queue.Writer.TryWrite(frame);
 
     private async Task CloseConnectionAsync()
     {
@@ -73,40 +68,10 @@ internal sealed class SessionPacketOutbox
         }
     }
 
-    private async Task RunAsync()
+    private void CloseQueue()
     {
-        List<Exception> failures = [];
-        var drain = DrainAsync();
-        await Task.WhenAny(drain, Connection.Completion).ConfigureAwait(false);
-        CloseQueue();
-        try
-        {
-            await drain.ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            failures.Add(exception);
-        }
-
-        // Classify the send result before automatic failure cleanup can publish a close request.
-        Close();
-        try
-        {
-            await _closure.Task.ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            failures.Add(exception);
-        }
-
-        while (_queue.Reader.TryRead(out _))
-        {
-        }
-
-        if (failures.Count > 0)
-        {
-            throw new AggregateException(failures);
-        }
+        Interlocked.Exchange(ref _closed, 1);
+        _queue.Writer.TryComplete();
     }
 
     private async Task DrainAsync()
@@ -123,13 +88,50 @@ internal sealed class SessionPacketOutbox
                 await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false);
             }
             catch (Exception exception) when (_disconnectRequested.IsCompletedSuccessfully &&
-                                              exception is IOException or ObjectDisposedException
-                                                  or OperationCanceledException)
+                                              exception is IOException or
+                                                           ObjectDisposedException or
+                                                           OperationCanceledException)
             {
                 // Only the captured owner request identifies an intentionally interrupted write.
                 // A send failure may close the transport itself, so its current state is not a cause.
                 break;
             }
+        }
+    }
+
+    private async Task RunAsync()
+    {
+        List<Exception> failures = [];
+        var drain = DrainAsync();
+        await Task.WhenAny(drain, Connection.Completion).ConfigureAwait(false);
+        CloseQueue();
+
+        try
+        {
+            await drain.ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
+
+        // Classify the send result before automatic failure cleanup can publish a close request.
+        Close();
+
+        try
+        {
+            await _closure.Task.ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
+
+        while (_queue.Reader.TryRead(out _)) { }
+
+        if (failures.Count > 0)
+        {
+            throw new AggregateException(failures);
         }
     }
 }

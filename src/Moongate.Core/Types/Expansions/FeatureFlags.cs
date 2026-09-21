@@ -1,7 +1,7 @@
 namespace Moongate.Core.Types.Expansions;
 
 /// <summary>
-///     Defines feature flags sent to unlock client capabilities.
+/// Defines feature flags sent to unlock client capabilities.
 /// </summary>
 [Flags]
 public enum FeatureFlags : uint

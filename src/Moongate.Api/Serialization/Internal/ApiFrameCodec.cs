@@ -52,8 +52,8 @@ internal sealed class ApiFrameCodec
             return new(kind, requestId, operationId, payload.ToArray());
         }
         catch (Exception exception) when (exception is MessagePackSerializationException or
-                                              EndOfStreamException or
-                                              OverflowException)
+                                                       EndOfStreamException or
+                                                       OverflowException)
         {
             throw new ApiProtocolException("Malformed API envelope.", exception);
         }

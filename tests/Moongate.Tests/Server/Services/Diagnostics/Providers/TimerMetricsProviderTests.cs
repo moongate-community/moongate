@@ -1,5 +1,4 @@
 using Moongate.Server.Core.Data.Diagnostics;
-using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Types.Diagnostics;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Tests.TestSupport.Diagnostics;
@@ -12,7 +11,7 @@ public sealed class TimerMetricsProviderTests
     public async Task CollectAsync_MapsOneSnapshotToTimerMetrics()
     {
         var source = new TimerMetricsSourceStub(
-            new TimerMetricsSnapshot
+            new()
             {
                 ActiveTimers = 4,
                 RegisteredTimers = 15,
@@ -46,10 +45,10 @@ public sealed class TimerMetricsProviderTests
     [Fact]
     public async Task CollectAsync_PreservesPreviouslyReturnedSnapshot()
     {
-        var source = new TimerMetricsSourceStub(new TimerMetricsSnapshot { ActiveTimers = 4 });
+        var source = new TimerMetricsSourceStub(new() { ActiveTimers = 4 });
         var provider = new TimerMetricsProvider(source);
         var first = await provider.CollectAsync();
-        source.Snapshot = new TimerMetricsSnapshot { ActiveTimers = 10 };
+        source.Snapshot = new() { ActiveTimers = 10 };
 
         var second = await provider.CollectAsync();
 
@@ -60,7 +59,7 @@ public sealed class TimerMetricsProviderTests
     [Fact]
     public async Task CollectAsync_ThrowsForPreCanceledTokenBeforeReadingSnapshot()
     {
-        var source = new TimerMetricsSourceStub(new TimerMetricsSnapshot());
+        var source = new TimerMetricsSourceStub(new());
         var provider = new TimerMetricsProvider(source);
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
@@ -71,7 +70,10 @@ public sealed class TimerMetricsProviderTests
     }
 
     private static void AssertMetric(
-        MetricSample metric, string name, double value, string unit,
+        MetricSample metric,
+        string name,
+        double value,
+        string unit,
         DiagnosticMetricType type
     )
     {

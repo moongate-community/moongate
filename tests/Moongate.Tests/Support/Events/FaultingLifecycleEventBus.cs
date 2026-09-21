@@ -9,19 +9,11 @@ public sealed class FaultingLifecycleEventBus : IMoongateEventBus
     private readonly Exception _stoppingFailure;
     private readonly Exception _stoppedFailure;
 
-    public FaultingLifecycleEventBus(
-        List<string> events, Exception stoppingFailure, Exception stoppedFailure
-    )
+    public FaultingLifecycleEventBus(List<string> events, Exception stoppingFailure, Exception stoppedFailure)
     {
         _events = events;
         _stoppingFailure = stoppingFailure;
         _stoppedFailure = stoppedFailure;
-    }
-
-    public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
-        where TEvent : class, IMoongateEvent
-    {
-        throw new NotSupportedException();
     }
 
     public Task PublishAsync<TEvent>(TEvent message, CancellationToken cancellationToken = default)
@@ -30,15 +22,21 @@ public sealed class FaultingLifecycleEventBus : IMoongateEventBus
         if (typeof(TEvent) == typeof(MoongateStoppingEvent))
         {
             _events.Add("stopping");
+
             return Task.FromException(_stoppingFailure);
         }
 
         if (typeof(TEvent) == typeof(MoongateStoppedEvent))
         {
             _events.Add("stopped");
+
             return Task.FromException(_stoppedFailure);
         }
 
         return Task.CompletedTask;
     }
+
+    public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
+        where TEvent : class, IMoongateEvent
+        => throw new NotSupportedException();
 }

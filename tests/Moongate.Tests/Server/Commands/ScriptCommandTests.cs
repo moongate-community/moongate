@@ -1,11 +1,9 @@
 using DryIoc;
-using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Commands;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
-using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
 using Moongate.Tests.TestSupport.Scripting;
@@ -17,17 +15,29 @@ public sealed class ScriptCommandTests
     private readonly FakeScriptEngine _engine = new();
     private readonly StubGameLoop _loop = new();
 
-    [Theory, InlineData("script"), InlineData("script reload"), InlineData("script metrics extra"),
-     InlineData("script frobnicate")]
-    public async Task ExecuteAsync_WithoutAKnownSubcommand_PrintsTheUsageLine(string input)
+    [Fact]
+    public async Task ExecuteAsync_Metrics_PrintsOneLinePerCounter()
     {
+        _engine.Metrics = new(3, 12, 40, 7, 2, 1, 5, 4);
         var service = await CreateStartedServiceAsync();
 
-        var line = Assert.Single(await service.ExecuteAsync(input));
+        var lines = await service.ExecuteAsync("script metrics");
 
-        Assert.Equal("Usage: script reload <file relative to scripts/> | script metrics", line.Text);
-        Assert.Equal(CommandOutputLevel.Error, line.Level);
-        Assert.Empty(_engine.Loaded);
+        Assert.Equal(
+            [
+                "Files loaded: 3",
+                "Calls started: 12",
+                "Coroutines resumed: 40",
+                "Coroutines finished: 7",
+                "Coroutine errors: 2",
+                "Budget aborts: 1",
+                "Active coroutines: 5",
+                "String cap hits: 4"
+            ],
+            lines.Select(line => line.Text).ToArray()
+        );
+        Assert.All(lines, line => Assert.Equal(CommandOutputLevel.Information, line.Level));
+        Assert.Equal(0, _loop.PostedWorkItems);
         await service.StopAsync();
     }
 
@@ -71,29 +81,17 @@ public sealed class ScriptCommandTests
         await service.StopAsync();
     }
 
-    [Fact]
-    public async Task ExecuteAsync_Metrics_PrintsOneLinePerCounter()
+    [Theory, InlineData("script"), InlineData("script reload"), InlineData("script metrics extra"),
+     InlineData("script frobnicate")]
+    public async Task ExecuteAsync_WithoutAKnownSubcommand_PrintsTheUsageLine(string input)
     {
-        _engine.Metrics = new ScriptExecutionMetrics(3, 12, 40, 7, 2, 1, 5, 4);
         var service = await CreateStartedServiceAsync();
 
-        var lines = await service.ExecuteAsync("script metrics");
+        var line = Assert.Single(await service.ExecuteAsync(input));
 
-        Assert.Equal(
-            [
-                "Files loaded: 3",
-                "Calls started: 12",
-                "Coroutines resumed: 40",
-                "Coroutines finished: 7",
-                "Coroutine errors: 2",
-                "Budget aborts: 1",
-                "Active coroutines: 5",
-                "String cap hits: 4"
-            ],
-            lines.Select(line => line.Text).ToArray()
-        );
-        Assert.All(lines, line => Assert.Equal(CommandOutputLevel.Information, line.Level));
-        Assert.Equal(0, _loop.PostedWorkItems);
+        Assert.Equal("Usage: script reload <file relative to scripts/> | script metrics", line.Text);
+        Assert.Equal(CommandOutputLevel.Error, line.Level);
+        Assert.Empty(_engine.Loaded);
         await service.StopAsync();
     }
 
@@ -104,9 +102,7 @@ public sealed class ScriptCommandTests
         container.RegisterInstance<IGameLoopService>(_loop);
         container.RegisterCommand<ScriptCommand>(
             "script",
-            "Reloads a script file or prints the engine's counters: script reload <file> | script metrics.",
-            CommandSourceType.Console,
-            AccountType.Administrator
+            "Reloads a script file or prints the engine's counters: script reload <file> | script metrics."
         );
         var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
         await service.StartAsync();

@@ -19,39 +19,28 @@ internal sealed class GameLoopMetricsSourceStub : IGameLoopService
     public GameLoopMetricsSnapshot GetMetricsSnapshot()
     {
         SnapshotReadCount++;
+
         return Snapshot;
     }
 
+    public ValueTask PostAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken = default)
+        => throw new NotSupportedException();
+
     public Task StartAsync()
-    {
-        throw new NotSupportedException();
-    }
+        => throw new NotSupportedException();
 
     public Task StopAsync()
-    {
-        throw new NotSupportedException();
-    }
+        => throw new NotSupportedException();
 
     public Task StopAsync(IGameLoopWorkItem finalWorkItem)
-    {
-        throw new NotSupportedException();
-    }
+        => throw new NotSupportedException();
 
     public Task StopWithFinalWorkAsync(
         Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
         CancellationToken cancellationToken = default
     )
-    {
-        throw new NotSupportedException();
-    }
+        => throw new NotSupportedException();
 
     public bool TryPost(IGameLoopWorkItem workItem)
-    {
-        throw new NotSupportedException();
-    }
-
-    public ValueTask PostAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken = default)
-    {
-        throw new NotSupportedException();
-    }
+        => throw new NotSupportedException();
 }

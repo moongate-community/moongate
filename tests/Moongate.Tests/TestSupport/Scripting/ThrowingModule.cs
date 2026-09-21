@@ -8,7 +8,5 @@ public sealed class ThrowingModule
 {
     [ScriptFunction]
     public int Fail()
-    {
-        throw new InvalidOperationException("deliberate");
-    }
+        => throw new InvalidOperationException("deliberate");
 }

@@ -25,6 +25,7 @@ dotnet add package Moongate.Persistence
 Define one stable attribute mapping in `Player.cs`. The application assigns every nonzero `Serial` identity.
 
 <!-- nuget-smoke:Player.cs -->
+
 ```csharp
 using FreeSql.DataAnnotations;
 using Moongate.Core.Interfaces.Entities;
@@ -41,9 +42,12 @@ public sealed class Player : IMoongateEntity
 }
 ```
 
-`Program.cs` resolves its connection at runtime, applies the example schema explicitly, commits two writes together, and reads a detached value asynchronously. Set `MOONGATE_PERSISTENCE_DATABASE` to a `postgres://user:password@host:5432/database` connection URI for an empty development database before running it.
+`Program.cs` resolves its connection at runtime, applies the example schema explicitly, commits two writes together, and
+reads a detached value asynchronously. Set `MOONGATE_PERSISTENCE_DATABASE` to a `postgres://user:password@host:5432/database`
+connection URI for an empty development database before running it.
 
 <!-- nuget-smoke:Program.cs -->
+
 ```csharp
 using DryIoc;
 using Moongate.Core.Primitives;
@@ -86,25 +90,39 @@ Connection options accept `postgres://` and `postgresql://` URIs, including
 percent-encoded credentials, IPv6 hosts and query options such as `sslmode` and
 `connect_timeout`. Native Npgsql connection strings are also supported.
 
-Normal deployments keep automatic synchronization disabled. Generate and review versioned SQL, then apply it with the separate `Moongate.MigrationRunner` executable. Configure `PostgreSqlPersistenceOptions.MigrationCatalogFactory` for migration readiness checks in a custom host; Moongate.Server wires this automatically. `SynchronizeSchemaAsync` remains a development-only convenience and does not record history.
+Normal deployments keep automatic synchronization disabled. Generate and review versioned SQL, then apply it with the
+separate `Moongate.MigrationRunner` executable. Configure `PostgreSqlPersistenceOptions.MigrationCatalogFactory` for
+migration readiness checks in a custom host; Moongate.Server wires this automatically. `SynchronizeSchemaAsync` remains a
+development-only convenience and does not record history.
 
 ## Behavior and scope
 
-Reads return detached entities. Changing a returned instance does not persist it; call `UpsertAsync` or `DeleteAsync`. Writes are last-writer-wins and provide no optimistic concurrency token. A transaction callback covers one Accounts or Realm target and is never retried after an uncertain commit result.
+Reads return detached entities. Changing a returned instance does not persist it; call `UpsertAsync` or `DeleteAsync`. Writes
+are last-writer-wins and provide no optimistic concurrency token. A transaction callback covers one Accounts or Realm target
+and is never retried after an uncertain commit result.
 
-`SaveAllAsync` captures registered live sources and commits one independent transaction per database target. Snapshot functions must deep-copy nested mutable state. An absent entity is retained; deletion is always explicit.
+`SaveAllAsync` captures registered live sources and commits one independent transaction per database target. Snapshot
+functions must deep-copy nested mutable state. An absent entity is retained; deletion is always explicit.
 
-FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported renames, and write explicit reviewed SQL for semantic data transformations. Downgrades are operator-managed. This package does not create database backups.
+FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported renames, and write explicit reviewed SQL for
+semantic data transformations. Downgrades are operator-managed. This package does not create database backups.
 
-Map every complex property explicitly with a supported column/navigation mapping or mark it for explicit omission, such as `IsIgnore`. Do not assume an ordinary writable object graph is serialized or cascaded automatically.
+Map every complex property explicitly with a supported column/navigation mapping or mark it for explicit omission, such as
+`IsIgnore`. Do not assume an ordinary writable object graph is serialized or cascaded automatically.
 
-Mappings are immutable, attribute-only, and identical for a persistence CLR type everywhere. Modules select ownership and target; they do not remap types. Do not independently reconfigure these types through another raw FreeSql instance. FreeSql schema comparison compares the current database with current attributes. Versioned SQL and the checksum journal live in `Moongate.Persistence.Migrations`; the separate runner applies them atomically.
+Mappings are immutable, attribute-only, and identical for a persistence CLR type everywhere. Modules select ownership and
+target; they do not remap types. Do not independently reconfigure these types through another raw FreeSql instance. FreeSql
+schema comparison compares the current database with current attributes. Versioned SQL and the checksum journal live in
+`Moongate.Persistence.Migrations`; the separate runner applies them atomically.
 
-`FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This acknowledged provider limitation must not be hidden with a silent Npgsql major override. Upgrade the provider/driver combination only after running the PostgreSQL compatibility tests.
+`FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This acknowledged provider limitation must not be
+hidden with a silent Npgsql major override. Upgrade the provider/driver combination only after running the PostgreSQL
+compatibility tests.
 
 ## Further reading
 
-See the [persistence and operations guide](https://moongate.sh/server/persistence/) for schema review, plugin ownership, world saves, transactions, and database backup responsibility.
+See the [persistence and operations guide](https://moongate.sh/server/persistence/) for schema review, plugin ownership,
+world saves, transactions, and database backup responsibility.
 
 ## License and source
 

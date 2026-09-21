@@ -121,6 +121,7 @@ public static class TileData
         }
 
         using var sr = new StreamReader(fileName);
+
         while (sr.ReadLine() is { } line)
         {
             line = line.Trim();
@@ -168,6 +169,7 @@ public static class TileData
         }
 
         using var sr = new StreamReader(fileName);
+
         while (sr.ReadLine() is { } line)
         {
             line = line.Trim();

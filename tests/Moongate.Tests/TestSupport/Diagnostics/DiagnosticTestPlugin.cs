@@ -14,7 +14,7 @@ public sealed class DiagnosticTestPlugin : IMoongatePlugin, IPluginLoaderService
     public MoongatePluginData Metadata { get; } = new(
         "diagnostic-test",
         "Diagnostic Test",
-        new Version(1, 0, 0)
+        new(1, 0, 0)
     );
 
     public IReadOnlyList<MoongatePluginData> Plugins => [Metadata];

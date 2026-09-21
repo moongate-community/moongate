@@ -1,5 +1,4 @@
 using System.Text;
-using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Interfaces.Internal.Console;
@@ -22,9 +21,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     private Task _loop = Task.CompletedTask;
 
     public ConsoleInputService(IConsolePromptService prompt, ICommandSystemService commands)
-        : this(prompt, commands, new SystemConsoleKeySource())
-    {
-    }
+        : this(prompt, commands, new SystemConsoleKeySource()) { }
 
     internal ConsoleInputService(
         IConsolePromptService prompt,
@@ -74,6 +71,9 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
 
         _prompt.HidePrompt();
     }
+
+    private static bool IsNoKey(ConsoleKeyInfo key)
+        => key.KeyChar == '\0' && key.Key == default && key.Modifiers == 0;
 
     private async Task RunAsync(CancellationToken cancellationToken)
     {
@@ -173,11 +173,6 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         }
     }
 
-    private static bool IsNoKey(ConsoleKeyInfo key)
-    {
-        return key.KeyChar == '\0' && key.Key == default(ConsoleKey) && key.Modifiers == 0;
-    }
-
     private async Task SubmitAsync(string commandLine, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(commandLine))
@@ -188,11 +183,11 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         try
         {
             var output = await _commands.ExecuteAsync(
-                commandLine,
-                CommandSourceType.Console,
-                null,
-                cancellationToken
-            );
+                             commandLine,
+                             CommandSourceType.Console,
+                             null,
+                             cancellationToken
+                         );
 
             foreach (var line in output)
             {
@@ -211,7 +206,5 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     }
 
     public void Dispose()
-    {
-        _lifetime.Dispose();
-    }
+        => _lifetime.Dispose();
 }

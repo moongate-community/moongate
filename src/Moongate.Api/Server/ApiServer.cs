@@ -191,21 +191,21 @@ public sealed class ApiServer : IApiServer
         return setup.Pipeline with
         {
             PrepareStreamAsync = async (stream, token) =>
-            {
-                admission = ReserveAdmission();
-                var owned = new ApiAdmissionStream(stream, admission);
+                                 {
+                                     admission = ReserveAdmission();
+                                     var owned = new ApiAdmissionStream(stream, admission);
 
-                try
-                {
-                    return await setup.Pipeline.PrepareStreamAsync!(owned, token).ConfigureAwait(false);
-                }
-                catch
-                {
-                    await owned.DisposeAsync().ConfigureAwait(false);
+                                     try
+                                     {
+                                         return await setup.Pipeline.PrepareStreamAsync!(owned, token).ConfigureAwait(false);
+                                     }
+                                     catch
+                                     {
+                                         await owned.DisposeAsync().ConfigureAwait(false);
 
-                    throw;
-                }
-            }
+                                         throw;
+                                     }
+                                 }
         };
     }
 
@@ -281,7 +281,8 @@ public sealed class ApiServer : IApiServer
             _admitted++;
         }
 
-        return new(() =>
+        return new(
+            () =>
             {
                 lock (_gate)
                 {
@@ -353,9 +354,7 @@ public sealed class ApiServer : IApiServer
             await _start.ConfigureAwait(false);
         }
 
-        catch
-        {
-        }
+        catch { }
 
         MoongateTcpServer? tcp;
 

@@ -3,11 +3,11 @@ namespace Moongate.Server.Core.Data.Timing;
 /// <summary>Bounds timer retention, wheel precision and cooperative callback batches.</summary>
 public sealed class TimerWheelOptions
 {
-    private TimeSpan _tickDuration = TimeSpan.FromMilliseconds(8);
-    private int _wheelSize = 512;
-    private int _maxPendingTimers = 65536;
-    private int _maxCallbacksPerBatch = 256;
-    private TimeSpan _callbackBudget = TimeSpan.FromMilliseconds(5);
+    private readonly TimeSpan _tickDuration = TimeSpan.FromMilliseconds(8);
+    private readonly int _wheelSize = 512;
+    private readonly int _maxPendingTimers = 65536;
+    private readonly int _maxCallbacksPerBatch = 256;
+    private readonly TimeSpan _callbackBudget = TimeSpan.FromMilliseconds(5);
 
     /// <summary>Wheel resolution; deadlines round upward to this positive duration.</summary>
     public TimeSpan TickDuration

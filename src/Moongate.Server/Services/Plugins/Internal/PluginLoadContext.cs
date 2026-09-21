@@ -10,22 +10,27 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
     private readonly string _directory;
 
     public PluginLoadContext(string pluginPath)
-        : base($"Moongate.Plugin:{Path.GetFileNameWithoutExtension(pluginPath)}", isCollectible: true)
+        : base($"Moongate.Plugin:{Path.GetFileNameWithoutExtension(pluginPath)}", true)
     {
-        _resolver = new AssemblyDependencyResolver(pluginPath);
+        _resolver = new(pluginPath);
         _directory = Path.GetDirectoryName(pluginPath)!;
     }
 
     protected override Assembly? Load(AssemblyName assemblyName)
     {
-        if (assemblyName.Name is "Moongate.Core" or "Moongate.Server.Core" or "Moongate.Persistence"
-            or "Moongate.Persistence.Migrations" or
-            "FreeSql" or "FreeSql.Provider.PostgreSQL" or "Npgsql")
+        if (assemblyName.Name is "Moongate.Core" or
+                                 "Moongate.Server.Core" or
+                                 "Moongate.Persistence" or
+                                 "Moongate.Persistence.Migrations" or
+                                 "FreeSql" or
+                                 "FreeSql.Provider.PostgreSQL" or
+                                 "Npgsql")
         {
             Assembly host;
+
             try
             {
-                host = Default.LoadFromAssemblyName(new AssemblyName(assemblyName.Name));
+                host = Default.LoadFromAssemblyName(new(assemblyName.Name));
             }
             catch (Exception exception) when (exception is FileNotFoundException or FileLoadException)
             {
@@ -36,6 +41,7 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
             }
 
             var identity = host.GetName();
+
             if (assemblyName.Version != identity.Version ||
                 !string.Equals(
                     assemblyName.CultureName ?? "",
@@ -63,9 +69,11 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
         }
 
         var path = _resolver.ResolveAssemblyToPath(assemblyName);
+
         if (path is null && assemblyName.Name is not null)
         {
             var adjacentPath = Path.Combine(_directory, assemblyName.Name + ".dll");
+
             if (File.Exists(adjacentPath))
             {
                 path = adjacentPath;
@@ -78,6 +86,7 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
     protected override nint LoadUnmanagedDll(string unmanagedDllName)
     {
         var path = _resolver.ResolveUnmanagedDllToPath(unmanagedDllName);
+
         return path is null ? 0 : LoadUnmanagedDllFromPath(path);
     }
 }

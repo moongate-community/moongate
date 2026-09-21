@@ -16,7 +16,7 @@ public sealed class ApiOperationPermissionsConfig
     /// <summary>Rejects reserved identifiers and ambiguous wildcard/list combinations.</summary>
     public void Validate()
     {
-        if (OperationIds.Contains((ushort)0) || (AllowsAll && OperationIds.Count != 0))
+        if (OperationIds.Contains((ushort)0) || AllowsAll && OperationIds.Count != 0)
         {
             throw new InvalidOperationException(
                 "api.peers.allowed_operations must be a list of IDs from 1 to 65535 or [\"*\"] alone."

@@ -16,9 +16,84 @@ public sealed class LuaModuleBinderConstantsTests : IDisposable
         _state.OpenBasicLibrary();
     }
 
-    private LuaValue[] Run(string source)
+    [Fact]
+    public void BindEnum_OnATypeThatIsNotAnEnum_IsRefusedByName()
     {
-        return SyncValueTask.Run(_state.DoStringAsync(source, "test", default));
+        var exception = Assert.Throws<ArgumentException>(() => _binder.BindEnum(_state, typeof(int)));
+
+        Assert.Contains("System.Int32 is not an enum", exception.Message, StringComparison.Ordinal);
+        Assert.True(_state.Environment["Int32"].Type == LuaValueType.Nil);
+    }
+
+    [Fact]
+    public void BindEnum_PublishesAReadOnlyTableOfMembers()
+    {
+        _binder.BindEnum(_state, typeof(ProbeColour));
+
+        var result = Run("return ProbeColour.Red, ProbeColour.Green, ProbeColour.Blue");
+
+        Assert.Equal(0, result[0].Read<double>());
+        Assert.Equal(1, result[1].Read<double>());
+        Assert.Equal(2, result[2].Read<double>());
+        Assert.Throws<LuaRuntimeException>(() => Run("ProbeColour.Red = 5"));
+    }
+
+    [Fact]
+    public void Bind_AssigningAConstantFromLua_Raises()
+    {
+        _binder.Bind(_state, new LimitsModule());
+
+        var exception = Assert.Throws<LuaRuntimeException>(() => Run("limits.MAX_PLAYERS = 1"));
+
+        Assert.Contains("read-only", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_ConstantAndFunctionSharingAName_IsABindingError()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new DuplicateNameModule()));
+
+        Assert.Contains("'same'", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_ConstantOfAnEnumType_IsDiscoveredForEnumPublication()
+    {
+        _binder.Bind(_state, new LimitsModule());
+
+        Assert.Contains(typeof(ProbeColour), _binder.DiscoveredEnums);
+    }
+
+    [Fact]
+    public void Bind_ConstantOfAnUnsupportedType_IsABindingError()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new BrokenConstantModule()));
+
+        Assert.Contains("NOW", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("DateTime", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_ConstantThatIsNotStatic_IsABindingError()
+        => Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new InstanceConstantModule()));
+
+    [Fact]
+    public void Bind_ConstantWhoseGetterThrows_NamesTheMemberAndKeepsTheCause()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new ThrowingConstantModule()));
+
+        Assert.Contains("ThrowingConstantModule.Broken", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("the value is not available yet", exception.Message, StringComparison.Ordinal);
+        Assert.IsType<InvalidDataException>(exception.InnerException);
+    }
+
+    [Fact]
+    public void Bind_ConstantWithASetter_IsABindingError()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new SettableConstantModule()));
+
+        Assert.Contains("SettableConstantModule.Mutable", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("get-only", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -37,90 +112,9 @@ public sealed class LuaModuleBinderConstantsTests : IDisposable
         Assert.Contains(bound.Constants, constant => constant.LuaName == "version" && (string?)constant.Value == "1.2.3");
     }
 
-    [Fact]
-    public void Bind_ConstantOfAnUnsupportedType_IsABindingError()
-    {
-        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new BrokenConstantModule()));
-
-        Assert.Contains("NOW", exception.Message, StringComparison.Ordinal);
-        Assert.Contains("DateTime", exception.Message, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void Bind_ConstantThatIsNotStatic_IsABindingError()
-    {
-        Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new InstanceConstantModule()));
-    }
-
-    [Fact]
-    public void Bind_ConstantWithASetter_IsABindingError()
-    {
-        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new SettableConstantModule()));
-
-        Assert.Contains("SettableConstantModule.Mutable", exception.Message, StringComparison.Ordinal);
-        Assert.Contains("get-only", exception.Message, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void Bind_ConstantWhoseGetterThrows_NamesTheMemberAndKeepsTheCause()
-    {
-        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new ThrowingConstantModule()));
-
-        Assert.Contains("ThrowingConstantModule.Broken", exception.Message, StringComparison.Ordinal);
-        Assert.Contains("the value is not available yet", exception.Message, StringComparison.Ordinal);
-        Assert.IsType<InvalidDataException>(exception.InnerException);
-    }
-
-    [Fact]
-    public void BindEnum_OnATypeThatIsNotAnEnum_IsRefusedByName()
-    {
-        var exception = Assert.Throws<ArgumentException>(() => _binder.BindEnum(_state, typeof(int)));
-
-        Assert.Contains("System.Int32 is not an enum", exception.Message, StringComparison.Ordinal);
-        Assert.True(_state.Environment["Int32"].Type == LuaValueType.Nil);
-    }
-
-    [Fact]
-    public void Bind_ConstantAndFunctionSharingAName_IsABindingError()
-    {
-        var exception = Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new DuplicateNameModule()));
-
-        Assert.Contains("'same'", exception.Message, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void Bind_AssigningAConstantFromLua_Raises()
-    {
-        _binder.Bind(_state, new LimitsModule());
-
-        var exception = Assert.Throws<LuaRuntimeException>(() => Run("limits.MAX_PLAYERS = 1"));
-
-        Assert.Contains("read-only", exception.Message, StringComparison.Ordinal);
-    }
-
-    [Fact]
-    public void BindEnum_PublishesAReadOnlyTableOfMembers()
-    {
-        _binder.BindEnum(_state, typeof(ProbeColour));
-
-        var result = Run("return ProbeColour.Red, ProbeColour.Green, ProbeColour.Blue");
-
-        Assert.Equal(0, result[0].Read<double>());
-        Assert.Equal(1, result[1].Read<double>());
-        Assert.Equal(2, result[2].Read<double>());
-        Assert.Throws<LuaRuntimeException>(() => Run("ProbeColour.Red = 5"));
-    }
-
-    [Fact]
-    public void Bind_ConstantOfAnEnumType_IsDiscoveredForEnumPublication()
-    {
-        _binder.Bind(_state, new LimitsModule());
-
-        Assert.Contains(typeof(ProbeColour), _binder.DiscoveredEnums);
-    }
-
     public void Dispose()
-    {
-        _state.Dispose();
-    }
+        => _state.Dispose();
+
+    private LuaValue[] Run(string source)
+        => SyncValueTask.Run(_state.DoStringAsync(source, "test"));
 }

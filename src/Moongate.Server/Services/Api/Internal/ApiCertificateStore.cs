@@ -1,6 +1,7 @@
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
+using System.Text;
 using Moongate.Core.Directories;
 using Moongate.Server.Data.Config.Sections;
 using Serilog;
@@ -23,6 +24,7 @@ internal sealed class ApiCertificateStore
         config.ValidateCertificate();
         var passwordVariable = config.CertificatePasswordEnvironmentVariable;
         var password = passwordVariable.Length == 0 ? null : Environment.GetEnvironmentVariable(passwordVariable);
+
         if (passwordVariable.Length > 0 && password is null)
         {
             throw new InvalidOperationException(
@@ -32,23 +34,27 @@ internal sealed class ApiCertificateStore
 
         var path = Path.GetFullPath(config.CertificatePath, directories["config"]);
         var generated = false;
+
         if (!File.Exists(path) && config.AutoGenerateCertificate)
         {
             generated = Generate(config, path, password, clock);
         }
 
         var certificate = X509CertificateLoader.LoadPkcs12FromFile(path, password, X509KeyStorageFlags.EphemeralKeySet);
+
         try
         {
             ValidateServerCertificate(certificate, clock);
+
             if (config.AutoGenerateCertificate)
             {
                 // Appending also supports a configured PFX path that already ends in .pem.
                 var publicPath = path + ".pem";
                 var pem = certificate.ExportCertificatePem();
+
                 if (!PublicCopyMatches(publicPath, pem))
                 {
-                    Publish(publicPath, System.Text.Encoding.ASCII.GetBytes(pem), overwrite: true);
+                    Publish(publicPath, Encoding.ASCII.GetBytes(pem), true);
                 }
 
                 _logger.Information("API certificate public copy available at {PublicCertificatePath}", publicPath);
@@ -61,11 +67,13 @@ internal sealed class ApiCertificateStore
                 certificate.GetCertHashString(HashAlgorithmName.SHA256),
                 certificate.NotAfter.ToUniversalTime()
             );
+
             return certificate;
         }
         catch
         {
             certificate.Dispose();
+
             throw;
         }
     }
@@ -73,6 +81,7 @@ internal sealed class ApiCertificateStore
     private static bool Generate(ApiConfig config, string path, string? password, TimeProvider clock)
     {
         var directory = Path.GetDirectoryName(path)!;
+
         if (OperatingSystem.IsWindows())
         {
             Directory.CreateDirectory(directory);
@@ -93,6 +102,7 @@ internal sealed class ApiCertificateStore
             )
         );
         var names = new SubjectAlternativeNameBuilder();
+
         foreach (var name in config.CertificateDnsNames)
         {
             names.AddDnsName(name);
@@ -107,9 +117,10 @@ internal sealed class ApiCertificateStore
         var now = clock.GetUtcNow();
         using var certificate = request.CreateSelfSigned(now.AddMinutes(-ClockSkewMinutes), now.AddDays(ValidityDays));
         var bytes = certificate.Export(X509ContentType.Pfx, password);
+
         try
         {
-            return Publish(path, bytes, overwrite: false);
+            return Publish(path, bytes, false);
         }
         finally
         {
@@ -132,16 +143,19 @@ internal sealed class ApiCertificateStore
                 Mode = FileMode.Open, Access = FileAccess.Read, Share = FileShare.Read | FileShare.Delete
             }
         );
+
         return reader.ReadToEnd() == pem;
     }
 
     private static bool Publish(string path, byte[] bytes, bool overwrite)
     {
         var temporaryPath = path + $".{Guid.NewGuid():N}.tmp";
+
         try
         {
             var options = new FileStreamOptions
                 { Mode = FileMode.CreateNew, Access = FileAccess.Write, Share = FileShare.None };
+
             if (!OperatingSystem.IsWindows())
             {
                 options.UnixCreateMode = UnixFileMode.UserRead | UnixFileMode.UserWrite;
@@ -150,7 +164,7 @@ internal sealed class ApiCertificateStore
             using (var stream = new FileStream(temporaryPath, options))
             {
                 stream.Write(bytes);
-                stream.Flush(flushToDisk: true);
+                stream.Flush(true);
             }
 
             try
@@ -179,6 +193,7 @@ internal sealed class ApiCertificateStore
         }
 
         var now = clock.GetUtcNow().UtcDateTime;
+
         if (now < certificate.NotBefore.ToUniversalTime() || now > certificate.NotAfter.ToUniversalTime())
         {
             throw new InvalidOperationException("The API server certificate is not valid at the current time.");
@@ -187,8 +202,9 @@ internal sealed class ApiCertificateStore
         // No EKU extension means unrestricted usage. Client trust roots need not issue the server's leaf.
         foreach (var usage in certificate.Extensions.OfType<X509EnhancedKeyUsageExtension>())
         {
-            if (!usage.EnhancedKeyUsages.Cast<Oid>()
-                    .Any(oid => oid.Value is ServerAuthenticationOid or AnyExtendedKeyUsageOid))
+            if (!usage.EnhancedKeyUsages
+                      .Cast<Oid>()
+                      .Any(oid => oid.Value is ServerAuthenticationOid or AnyExtendedKeyUsageOid))
             {
                 throw new InvalidOperationException("The API server certificate must allow TLS server authentication.");
             }

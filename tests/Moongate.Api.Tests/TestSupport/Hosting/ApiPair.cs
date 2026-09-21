@@ -23,14 +23,29 @@ internal sealed class ApiPair : IAsyncDisposable
         Client = client;
     }
 
+    public async ValueTask DisposeAsync()
+    {
+        try
+        {
+            await Client.DisposeAsync();
+        }
+        finally
+        {
+            await Server.DisposeAsync();
+        }
+    }
+
     public static async Task<ApiPair> StartAsync(
-        GatedHandler? handler = null, ApiOptions? options = null, TimeProvider? clock = null
+        GatedHandler? handler = null,
+        ApiOptions? options = null,
+        TimeProvider? clock = null
     )
     {
         using var ca = new TestCertificateAuthority();
         using var serverCert = ca.Issue();
         using var clientCert = ca.Issue();
         var serverRegistry = new ApiRegistry();
+
         if (handler is null)
         {
             serverRegistry.RegisterHandler(() => new IncrementHandler());
@@ -43,7 +58,7 @@ internal sealed class ApiPair : IAsyncDisposable
         var clientRegistry = new ApiRegistry();
         clientRegistry.RegisterHandler(() => new IncrementHandler());
         var server = new ApiServer(
-            new IPEndPoint(IPAddress.Loopback, 0),
+            new(IPAddress.Loopback, 0),
             serverRegistry,
             options ?? new ApiOptions(),
             ca.Options(serverCert, clientCert, "admin"),
@@ -56,35 +71,27 @@ internal sealed class ApiPair : IAsyncDisposable
             clock ?? TimeProvider.System
         );
         var pair = new ApiPair(server, client);
+
         try
         {
             await server.StartAsync();
             pair.ClientConnection = await client.ConnectAsync(server.Endpoint!, "localhost", "game");
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
             while (server.Connections.Count != 1)
             {
                 await Task.Delay(1, timeout.Token);
             }
 
             pair.ServerConnection = server.Connections[0];
+
             return pair;
         }
         catch
         {
             await pair.DisposeAsync();
-            throw;
-        }
-    }
 
-    public async ValueTask DisposeAsync()
-    {
-        try
-        {
-            await Client.DisposeAsync();
-        }
-        finally
-        {
-            await Server.DisposeAsync();
+            throw;
         }
     }
 }

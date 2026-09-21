@@ -141,7 +141,7 @@ public sealed class Gumps
                         var pPixelEnd = pPixel + width;
 
                         ushort color,
-                            count;
+                               count;
 
                         if (onlyHueGrayPixels)
                         {
@@ -753,6 +753,7 @@ public sealed class Gumps
         using var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var binidx = new BinaryWriter(fsidx);
         using var binmul = new BinaryWriter(fsmul);
+
         for (var index = 0; index < _indexLength; index++)
         {
             Files.FireFileSaveEvent();

@@ -11,32 +11,52 @@ internal sealed class DiagnosticTimeProvider : TimeProvider, IDisposable
     public int TimerCount { get; private set; }
     public override long TimestampFrequency => TimeSpan.TicksPerSecond;
 
-    public override DateTimeOffset GetUtcNow()
+    public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
     {
-        lock (_gate) return _utcNow;
+        lock (_gate)
+        {
+            TimerCount++;
+
+            return _timer = new(callback, state, dueTime, period);
+        }
+    }
+
+    public void Dispose()
+    {
+        ManualDiagnosticTimer? timer;
+
+        lock (_gate)
+        {
+            timer = _timer;
+        }
+        timer?.Dispose();
     }
 
     public override long GetTimestamp()
     {
         lock (_gate)
         {
-            if (TimestampFailure is not null) throw TimestampFailure;
+            if (TimestampFailure is not null)
+            {
+                throw TimestampFailure;
+            }
+
             return _timestamp;
         }
     }
 
-    public override ITimer CreateTimer(TimerCallback callback, object? state, TimeSpan dueTime, TimeSpan period)
+    public override DateTimeOffset GetUtcNow()
     {
         lock (_gate)
         {
-            TimerCount++;
-            return _timer = new ManualDiagnosticTimer(callback, state, dueTime, period);
+            return _utcNow;
         }
     }
 
     public void Tick(TimeSpan elapsed)
     {
         ManualDiagnosticTimer? timer;
+
         lock (_gate)
         {
             _utcNow += elapsed;
@@ -45,12 +65,5 @@ internal sealed class DiagnosticTimeProvider : TimeProvider, IDisposable
         }
 
         timer?.Tick();
-    }
-
-    public void Dispose()
-    {
-        ManualDiagnosticTimer? timer;
-        lock (_gate) timer = _timer;
-        timer?.Dispose();
     }
 }
