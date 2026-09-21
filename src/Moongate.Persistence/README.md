@@ -141,7 +141,10 @@ Licensed under AGPL-3.0-or-later. See the [source repository and license](https:
 The server supports `persistence.auto_generate_migrations = true` together with an
 explicit `persistence.migrations_directory`. It writes and applies additive SQL at
 startup; unsafe or unsupported changes remain marked for review. This mode is off
-by default and cannot be combined with `auto_sync_schema`.
+by default and cannot be combined with `auto_sync_schema`. Plain column indexes,
+including unique and composite indexes, are automatic only on tables created in
+the same migration. Indexes on existing tables and unsupported index expressions
+or options require review.
 
 Standalone library integrations can supply `DevelopmentMigrationOptions` with an
 `IDevelopmentMigrationRunner` implementation and an explicit component resolver.

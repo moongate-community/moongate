@@ -15,6 +15,48 @@ public sealed class DevelopmentSchemaAssessmentTests
     }
 
     [Fact]
+    public async Task AssessAsync_NewTableIndexes_ApplyAutomaticallyAndRemainStable()
+    {
+        await using var db = await _fixture.CreateDatabaseAsync();
+        using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
+        Type[] entities = [typeof(DevelopmentIndexedAccountEntity)];
+        var created = await DevelopmentSchemaAssessor.AssessAsync(database, entities, CancellationToken.None);
+        Assert.False(created.RequiresReview, created.Ddl);
+        await db.ExecuteAsync(created.Ddl);
+        Assert.Equal(3L, await db.ScalarAsync<long>(
+            "SELECT count(*) FROM pg_indexes WHERE schemaname = 'auth' AND indexname IN " +
+            "('ux_development_indexed_username', 'ix_development_indexed_lookup', 'ix_development_indexed_id')"
+        ));
+        await db.ExecuteAsync("INSERT INTO auth.development_indexed_accounts VALUES (1, 'same');");
+        var duplicate = await Assert.ThrowsAsync<Npgsql.PostgresException>(() => db.ExecuteAsync(
+            "INSERT INTO auth.development_indexed_accounts VALUES (2, 'same');"
+        ));
+        Assert.Equal(Npgsql.PostgresErrorCodes.UniqueViolation, duplicate.SqlState);
+        var unchanged = await DevelopmentSchemaAssessor.AssessAsync(database, entities, CancellationToken.None);
+        Assert.False(unchanged.RequiresReview, unchanged.Ddl);
+        Assert.True(string.IsNullOrWhiteSpace(unchanged.Ddl), unchanged.Ddl);
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task AssessAsync_ExistingTableIndexes_RequireReviewEvenAlongsideNewTable(bool includeNewTable)
+    {
+        await using var db = await _fixture.CreateDatabaseAsync();
+        await db.ExecuteAsync(
+            "CREATE SCHEMA auth; CREATE TABLE auth.development_indexed_accounts " +
+            "(id bigint NOT NULL PRIMARY KEY, username varchar(255) NOT NULL); " +
+            "INSERT INTO auth.development_indexed_accounts VALUES (1, 'same'), (2, 'same');"
+        );
+        using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
+        Type[] entities = includeNewTable
+            ? [typeof(DevelopmentIndexedAccountEntity), typeof(DevelopmentAccountEntity)]
+            : [typeof(DevelopmentIndexedAccountEntity)];
+        var result = await DevelopmentSchemaAssessor.AssessAsync(database, entities, CancellationToken.None);
+        Assert.Contains("CREATE UNIQUE INDEX", result.Ddl);
+        Assert.True(result.RequiresReview, result.Ddl);
+        Assert.Equal(2L, await db.ScalarAsync<long>("SELECT count(*) FROM auth.development_indexed_accounts"));
+    }
+
+    [Fact]
     public async Task AssessAsync_StringDefault_PostgreSqlCastDoesNotGenerateRepeatedMigration()
     {
         await using var db = await _fixture.CreateDatabaseAsync();

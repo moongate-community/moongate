@@ -308,6 +308,10 @@ For a new custom entity registered with `AddPersistenceAuth<CustomAuthEntity>()`
 5. Commit both generated SQL files and the entity code. Numbers always continue
    after the highest existing migration in the component.
 
+Indexes declared with `[Index(...)]` are automatic for a newly created table when
+they use plain columns, including unique and composite indexes. Adding an index
+to an existing table requires review: existing data may violate a unique index.
+
 A change that needs review leaves a marked SQL draft and stops startup. Review the
 unapplied file and remove `-- moongate:review-required` before restarting. Existing
 applied files are immutable. Leave the development flags off in deployment and use

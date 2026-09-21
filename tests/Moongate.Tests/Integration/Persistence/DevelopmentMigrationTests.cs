@@ -10,6 +10,29 @@ namespace Moongate.Tests.Integration.Persistence;
 
 public sealed class DevelopmentMigrationTests
 {
+    [Fact]
+    public async Task InitializeAsync_NewAccountEntityWithUniqueIndex_AppliesOnceWithoutReview()
+    {
+        await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
+        for (var startup = 0; startup < 2; startup++)
+        {
+            await using var coordinator = fixture.Create(
+                typeof(Moongate.Server.Ultima.Entities.Auth.AccountEntity),
+                Moongate.Persistence.Types.Persistence.PersistenceDatabaseTarget.Accounts
+            );
+            await coordinator.InitializeAsync();
+            Assert.True(coordinator.IsReady);
+        }
+
+        var sqlFile = Assert.Single(Directory.GetFiles(Path.Combine(fixture.Migrations, "auth"), "*.sql"));
+        Assert.DoesNotContain(MigrationReviewGuard.Marker, await File.ReadAllTextAsync(sqlFile));
+        Assert.Equal(1L, await db.ScalarAsync<long>("SELECT count(*) FROM moongate_migrations.history"));
+        Assert.True(await db.ScalarAsync<bool>(
+            "SELECT indisunique FROM pg_index WHERE indexrelid = 'auth.ux_accounts_username'::regclass"
+        ));
+    }
+
     [Theory, InlineData(false), InlineData(true)]
     public async Task Bootstrap_ReadinessAndServiceStartFollowSuccessfulMigration(bool blocked)
     {

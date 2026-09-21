@@ -124,6 +124,7 @@ internal static class DevelopmentSchemaAssessor
         }
 
         var accepted = new StringBuilder();
+        var createdTables = new HashSet<string>(StringComparer.Ordinal);
         var requiresReview = removed.Length > 0;
         var added = new HashSet<string>(StringComparer.Ordinal);
         for (var index = 0; index < statements.Count; index++)
@@ -140,6 +141,13 @@ internal static class DevelopmentSchemaAssessor
             if (tokens.Count > 10 && tokens.Take(5).SequenceEqual(new[] { "CREATE", "TABLE", "IF", "NOT", "EXISTS" }) &&
                 newTables.Contains(string.Concat(tokens.Skip(5).Take(3))) && tokens[8] == "(" &&
                 !tokens.Any(token => token is "SELECT" or "INSERT" or "UPDATE" or "DELETE" or "DROP" or "ALTER"))
+            {
+                createdTables.Add(string.Concat(tokens.Skip(5).Take(3)));
+                accepted.AppendLine(statement.Sql);
+                continue;
+            }
+
+            if (IsPlainIndexOnCreatedTable(tokens, createdTables))
             {
                 accepted.AppendLine(statement.Sql);
                 continue;
@@ -202,6 +210,50 @@ internal static class DevelopmentSchemaAssessor
 
         accepted.Append(removed);
         return new(accepted.ToString(), requiresReview, hasExistingTables);
+    }
+
+    private static bool IsPlainIndexOnCreatedTable(IReadOnlyList<string> tokens, HashSet<string> createdTables)
+    {
+        if (tokens.Count < 13 || tokens[0] != "CREATE")
+        {
+            return false;
+        }
+
+        var start = tokens[1] == "UNIQUE" ? 2 : 1;
+        if (!tokens.Skip(start).Take(4).SequenceEqual(new[] { "INDEX", "IF", "NOT", "EXISTS" }) ||
+            !tokens[start + 4].StartsWith('"') || tokens[start + 5] != "ON" ||
+            !createdTables.Contains(string.Concat(tokens.Skip(start + 6).Take(3))) ||
+            tokens[start + 9] != "(")
+        {
+            return false;
+        }
+
+        // Only plain columns are automatic. Expressions, predicates and provider-specific options need review.
+        var position = start + 10;
+        while (position < tokens.Count)
+        {
+            if (!tokens[position++].StartsWith('"'))
+            {
+                return false;
+            }
+
+            if (position < tokens.Count && tokens[position] is "ASC" or "DESC")
+            {
+                position++;
+            }
+
+            if (position == tokens.Count - 1 && tokens[position] == ")")
+            {
+                return true;
+            }
+
+            if (position >= tokens.Count || tokens[position++] != ",")
+            {
+                return false;
+            }
+        }
+
+        return false;
     }
 
     private static string? GetDefaultExpression(string? dbType)

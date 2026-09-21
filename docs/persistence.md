@@ -191,6 +191,12 @@ property value of `7`. Unsupported types, expressions and backfill shapes requir
 review. Generated null initialization and recognized constant backfills are folded
 into the new-column DDL, avoiding unnecessary row updates and UPDATE triggers.
 
+Plain column indexes (including unique and composite indexes, with optional
+`ASC`/`DESC` ordering) are applied automatically when their table is created in the
+same generated migration. Adding an index to an existing table still requires
+review, even if the table is empty. Index expressions, predicates and other
+unsupported index options also require review.
+
 Renames, removals, existing-column alterations and unrecognized SQL produce drafts
 marked with `-- moongate:review-required` and stop startup. The whole generated batch
 for that target remains blocked, including on the next restart and in the standalone
