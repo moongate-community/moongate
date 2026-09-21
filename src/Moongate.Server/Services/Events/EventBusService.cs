@@ -23,4 +23,8 @@ public sealed class EventBusService : IEventBusService
     public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
         where TEvent : class, IMoongateEvent
         => _eventBus.Subscribe(handler);
+
+    /// <inheritdoc />
+    public IDisposable SubscribeAll(Func<IMoongateEvent, CancellationToken, Task> handler)
+        => _eventBus.SubscribeAll(handler);
 }

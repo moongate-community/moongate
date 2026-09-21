@@ -45,6 +45,11 @@ using var subscription = bus.Subscribe<MoongateStartedEvent>((_, cancellationTok
 await bus.PublishAsync(new MoongateStartedEvent());
 ```
 
+`SubscribeAll` registers a handler invoked for every published event, independent of
+type — dispatched after that event's own typed subscribers, in subscription order.
+Each catch-all subscription is independent and returns its own disposable token,
+exactly like `Subscribe<TEvent>`; disposing one never affects another.
+
 ## Dependencies and scope
 
 This package depends on `Moongate.Core`, `Moongate.Api`, `Moongate.Network`, and `Moongate.Network.Packets`. DryIoc is
