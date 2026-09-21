@@ -12,6 +12,8 @@ public static class PostgreSqlMigrationRunner
     /// <summary>Applies all pending files atomically and returns their count. No database is created.</summary>
     public static int Apply(string connectionString, MigrationCatalog catalog)
     {
+        MigrationReviewGuard.Validate(catalog.Scripts);
+
         foreach (var script in catalog.Scripts)
         {
             TransactionalSql.Validate(script);

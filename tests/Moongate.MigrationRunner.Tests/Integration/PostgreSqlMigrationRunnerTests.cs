@@ -16,6 +16,23 @@ public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFix
     }
 
     [Fact]
+    public async Task Apply_ReviewRequiredDraftStaysBlockedUntilExplicitReview()
+    {
+        await using var db = await _postgres.CreateDatabaseAsync();
+        using var files = new MigrationFiles();
+        files.Write("migrations/world/0001_draft.sql", "-- moongate:review-required\nCREATE TABLE reviewed(value integer);");
+        for (var attempt = 0; attempt < 2; attempt++)
+        {
+            Assert.Throws<InvalidOperationException>(() => PostgreSqlMigrationRunner.Apply(
+                db.ConnectionString, MigrationCatalog.Load(files.Core, null, MigrationTarget.World)));
+            Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('reviewed') IS NOT NULL"));
+        }
+        files.Write("migrations/world/0001_draft.sql", "CREATE TABLE reviewed(value integer);");
+        Assert.Equal(1, PostgreSqlMigrationRunner.Apply(db.ConnectionString,
+            MigrationCatalog.Load(files.Core, null, MigrationTarget.World)));
+    }
+
+    [Fact]
     public async Task Apply_BlocksChangedHistoryBeforeAnyNewDdl()
     {
         await using var db = await _postgres.CreateDatabaseAsync();
