@@ -18,13 +18,10 @@ using Moongate.Server.Core.Data.Args;
 using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
-using Moongate.Server.Core.Interfaces.Diagnostics;
-using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Persistence;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
-using Moongate.Server.Ultima.Handlers.General;
-using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Helpers;
 using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Console;
@@ -33,13 +30,14 @@ using Moongate.Server.Services.Diagnostics;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Server.Services.Events;
 using Moongate.Server.Services.GameLoop;
-using Moongate.Server.Services.Sessions;
-using Moongate.Server.Services.Timing;
-using Moongate.Server.Services.Persistence.Internal;
 using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Plugins;
-using Moongate.Server.Types.Persistence;
+using Moongate.Server.Services.Sessions;
+using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Ultima;
+using Moongate.Server.Types.Persistence;
+using Moongate.Server.Ultima.Handlers.General;
+using Moongate.Server.Ultima.Handlers.Login;
 using Serilog;
 using Serilog.Formatting.Compact;
 using Serilog.Templates;
@@ -61,13 +59,19 @@ await ConsoleApp.RunAsync(
         {
             try
             {
-                await PersistenceSchemaCommand.ExecuteAsync(rootDirectory, persistenceSchema, Console.Out, cancellationToken);
+                await PersistenceSchemaCommand.ExecuteAsync(
+                    rootDirectory,
+                    persistenceSchema,
+                    Console.Out,
+                    cancellationToken
+                );
             }
             catch (Exception exception)
             {
                 await Console.Error.WriteLineAsync($"Persistence schema command failed: {exception.Message}");
                 Environment.ExitCode = 1;
             }
+
             return;
         }
 
@@ -145,6 +149,7 @@ await ConsoleApp.RunAsync(
             var logFilePath = Path.Combine(directoriesConfig["logs"], "moongate-.clef");
 
             loggingConfiguration = loggingConfiguration.WriteTo.File(
+
                 // One JSON object per line, keeping the message template and its
                 // properties separate so a log reader can group events by template.
                 new CompactJsonFormatter(),
@@ -179,7 +184,10 @@ await ConsoleApp.RunAsync(
                     );
 
                     services.Register<PersistenceOperationBarrier>(Reuse.Singleton);
-                    services.RegisterDelegate<IPersistenceOperationBarrier>(resolver => resolver.Resolve<PersistenceOperationBarrier>(), Reuse.Singleton);
+                    services.RegisterDelegate<IPersistenceOperationBarrier>(
+                        resolver => resolver.Resolve<PersistenceOperationBarrier>(),
+                        Reuse.Singleton
+                    );
                     services.RegisterMoongatePersistence(serverConfig.Persistence.ToOptions())
                             .RegisterMoongateService<TimerWheelService>(priority: -900)
                             .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
@@ -196,7 +204,8 @@ await ConsoleApp.RunAsync(
                                 DiagnosticService.StartupPriority
                             )
                             .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
-                                () => new PluginLoaderService(services, directoriesConfig)
+                                () =>
+                                    new PluginLoaderService(services, directoriesConfig)
                             )
                             .RegisterPacketHandler<PingPacket, PingPacketHandler>()
                             .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>()
@@ -207,7 +216,9 @@ await ConsoleApp.RunAsync(
                                 CommandSourceType.Console | CommandSourceType.InGame,
                                 AccountType.Regular
                             )
-                            .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority)
+                            .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(
+                                LuaScriptEngineService.StartupPriority
+                            )
                             .RegisterScriptModule<LogModule>()
                             .RegisterCommand<ScriptCommand>(
                                 "script",

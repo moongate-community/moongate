@@ -181,9 +181,9 @@ public sealed class Hue
     public void Export(string fileName)
     {
         using var tex = new StreamWriter(
-                   new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         tex.WriteLine(Name);
         tex.WriteLine(TableStart.ToString());
         tex.WriteLine(TableEnd.ToString());

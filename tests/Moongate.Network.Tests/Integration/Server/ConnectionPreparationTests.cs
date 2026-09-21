@@ -15,17 +15,20 @@ public sealed class ConnectionPreparationTests
     {
         var received = new TaskCompletionSource<byte>(TaskCreationOptions.RunContinuationsAsynchronously);
         var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        await using var server = MoongateTcpServer.CreateConfigured(new IPEndPoint(IPAddress.Loopback, 0), new TcpServerOptions
-        {
-            ConnectionPipelineFactory = () => new ConnectionPipeline
+        await using var server = MoongateTcpServer.CreateConfigured(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            new TcpServerOptions
             {
-                ConfigureClient = client =>
+                ConnectionPipelineFactory = () => new ConnectionPipeline
                 {
-                    client.OnConnected += (_, _) => connected.TrySetResult();
-                    client.OnDataReceived += (_, args) => received.TrySetResult(args.Data.Span[0]);
+                    ConfigureClient = client =>
+                    {
+                        client.OnConnected += (_, _) => connected.TrySetResult();
+                        client.OnDataReceived += (_, args) => received.TrySetResult(args.Data.Span[0]);
+                    }
                 }
             }
-        });
+        );
         await server.StartAsync(CancellationToken.None);
         using var client = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         await client.ConnectAsync(server.Endpoint);
@@ -51,26 +54,30 @@ public sealed class ConnectionPreparationTests
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var connected = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
         var next = 0;
-        await using var server = MoongateTcpServer.CreateConfigured(new IPEndPoint(IPAddress.Loopback, 0), new TcpServerOptions
-        {
-            ConnectionPipelineFactory = () =>
+        await using var server = MoongateTcpServer.CreateConfigured(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            new TcpServerOptions
             {
-                var number = Interlocked.Increment(ref next);
-                return new ConnectionPipeline
+                ConnectionPipelineFactory = () =>
                 {
-                    PrepareStreamAsync = async (stream, token) =>
+                    var number = Interlocked.Increment(ref next);
+                    return new ConnectionPipeline
                     {
-                        if (number == 1)
+                        PrepareStreamAsync = async (stream, token) =>
                         {
-                            entered.TrySetResult();
-                            await release.Task.WaitAsync(token);
-                        }
-                        return stream;
-                    },
-                    ConfigureClient = client => client.OnConnected += (_, _) => connected.TrySetResult(number)
-                };
+                            if (number == 1)
+                            {
+                                entered.TrySetResult();
+                                await release.Task.WaitAsync(token);
+                            }
+
+                            return stream;
+                        },
+                        ConfigureClient = client => client.OnConnected += (_, _) => connected.TrySetResult(number)
+                    };
+                }
             }
-        });
+        );
         await server.StartAsync(CancellationToken.None);
         using var first = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         using var second = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -81,7 +88,10 @@ public sealed class ConnectionPreparationTests
             await second.ConnectAsync(server.Endpoint);
             Assert.Equal(2, await connected.Task.WaitAsync(Timeout));
         }
-        finally { release.TrySetResult(); }
+        finally
+        {
+            release.TrySetResult();
+        }
     }
 
     [Theory, InlineData(true), InlineData(false)]
@@ -89,25 +99,29 @@ public sealed class ConnectionPreparationTests
     {
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var calls = 0;
-        await using var server = MoongateTcpServer.CreateConfigured(new IPEndPoint(IPAddress.Loopback, 0), new TcpServerOptions
-        {
-            MaxConnections = preparing ? 2 : 1,
-            MaxConcurrentPreparations = 1,
-            ConnectionPipelineFactory = () => new ConnectionPipeline
+        await using var server = MoongateTcpServer.CreateConfigured(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            new TcpServerOptions
             {
-                PrepareStreamAsync = async (stream, token) =>
+                MaxConnections = preparing ? 2 : 1,
+                MaxConcurrentPreparations = 1,
+                ConnectionPipelineFactory = () => new ConnectionPipeline
                 {
-                    Interlocked.Increment(ref calls);
-                    if (preparing)
+                    PrepareStreamAsync = async (stream, token) =>
                     {
-                        entered.TrySetResult();
-                        await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
-                    }
-                    return stream;
-                },
-                ConfigureClient = client => client.OnConnected += (_, _) => entered.TrySetResult()
+                        Interlocked.Increment(ref calls);
+                        if (preparing)
+                        {
+                            entered.TrySetResult();
+                            await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                        }
+
+                        return stream;
+                    },
+                    ConfigureClient = client => client.OnConnected += (_, _) => entered.TrySetResult()
+                }
             }
-        });
+        );
         await server.StartAsync(CancellationToken.None);
         using var first = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         await first.ConnectAsync(server.Endpoint);
@@ -125,19 +139,29 @@ public sealed class ConnectionPreparationTests
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var cancelled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var connected = 0;
-        await using var server = MoongateTcpServer.CreateConfigured(new IPEndPoint(IPAddress.Loopback, 0), new TcpServerOptions
-        {
-            ConnectionPipelineFactory = () => new ConnectionPipeline
+        await using var server = MoongateTcpServer.CreateConfigured(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            new TcpServerOptions
             {
-                PrepareStreamAsync = async (stream, token) =>
+                ConnectionPipelineFactory = () => new ConnectionPipeline
                 {
-                    entered.TrySetResult();
-                    try { await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token); }
-                    finally { cancelled.TrySetResult(); }
-                    return stream;
+                    PrepareStreamAsync = async (stream, token) =>
+                    {
+                        entered.TrySetResult();
+                        try
+                        {
+                            await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                        }
+                        finally
+                        {
+                            cancelled.TrySetResult();
+                        }
+
+                        return stream;
+                    }
                 }
             }
-        });
+        );
         server.OnClientConnect += (_, _) => Interlocked.Increment(ref connected);
         await server.StartAsync(CancellationToken.None);
         using var peer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
@@ -159,22 +183,30 @@ public sealed class ConnectionPreparationTests
         var connected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var attempts = 0;
         var connectionCount = 0;
-        await using var server = MoongateTcpServer.CreateConfigured(new IPEndPoint(IPAddress.Loopback, 0), new TcpServerOptions
-        {
-            ConnectionPipelineFactory = () => new ConnectionPipeline
+        await using var server = MoongateTcpServer.CreateConfigured(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            new TcpServerOptions
             {
-                PrepareStreamAsync = async (stream, _) =>
+                ConnectionPipelineFactory = () => new ConnectionPipeline
                 {
-                    if (Interlocked.Increment(ref attempts) == 1)
+                    PrepareStreamAsync = async (stream, _) =>
                     {
-                        entered.TrySetResult();
-                        await release.Task;
+                        if (Interlocked.Increment(ref attempts) == 1)
+                        {
+                            entered.TrySetResult();
+                            await release.Task;
+                        }
+
+                        return stream;
                     }
-                    return stream;
                 }
             }
-        });
-        server.OnClientConnect += (_, _) => { Interlocked.Increment(ref connectionCount); connected.TrySetResult(); };
+        );
+        server.OnClientConnect += (_, _) =>
+        {
+            Interlocked.Increment(ref connectionCount);
+            connected.TrySetResult();
+        };
         await server.StartAsync(CancellationToken.None);
         using var first = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         await first.ConnectAsync(server.Endpoint);
@@ -194,16 +226,19 @@ public sealed class ConnectionPreparationTests
     public async Task Setup_FailsOrClosesBeforeStart_DoesNotPublishConnected(bool throws)
     {
         var connected = 0;
-        await using var server = MoongateTcpServer.CreateConfigured(new IPEndPoint(IPAddress.Loopback, 0), new TcpServerOptions
-        {
-            ConnectionPipelineFactory = () => new ConnectionPipeline
+        await using var server = MoongateTcpServer.CreateConfigured(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            new TcpServerOptions
             {
-                PrepareStreamAsync = (stream, _) => throws
-                    ? ValueTask.FromException<Stream>(new IOException("setup failed"))
-                    : ValueTask.FromResult(stream),
-                ConfigureClient = client => client.Dispose()
+                ConnectionPipelineFactory = () => new ConnectionPipeline
+                {
+                    PrepareStreamAsync = (stream, _) => throws
+                        ? ValueTask.FromException<Stream>(new IOException("setup failed"))
+                        : ValueTask.FromResult(stream),
+                    ConfigureClient = client => client.Dispose()
+                }
             }
-        });
+        );
         server.OnClientConnect += (_, _) => Interlocked.Increment(ref connected);
         await server.StartAsync(CancellationToken.None);
         using var peer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);

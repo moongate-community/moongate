@@ -20,7 +20,12 @@ public sealed class ClientVersionPacketHandlerTests
         container.RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
         var sessions = new SessionService(fixture.Loop);
         var session = sessions.GetOrCreate(fixture.Client);
-        var dispatcher = new PacketDispatchService(fixture.Loop, sessions, container.Resolve<PacketHandlerRegistry>(), container);
+        var dispatcher = new PacketDispatchService(
+            fixture.Loop,
+            sessions,
+            container.Resolve<PacketHandlerRegistry>(),
+            container
+        );
         await dispatcher.StartAsync();
         using var blocker = new BlockingGameLoopWorkItem();
         Assert.True(fixture.Loop.TryPost(blocker));

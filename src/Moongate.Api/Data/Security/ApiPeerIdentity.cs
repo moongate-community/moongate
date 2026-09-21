@@ -31,7 +31,10 @@ public sealed class ApiPeerIdentity
         AllowsAllOperations = allowAllOperations;
         _operations = operations.ToFrozenSet();
 
-        if (_operations.Contains(0)) { throw new ArgumentException("Operation zero is invalid.", nameof(operations)); }
+        if (_operations.Contains(0))
+        {
+            throw new ArgumentException("Operation zero is invalid.", nameof(operations));
+        }
     }
 
     /// <summary>Determines whether this process may call the specified operation.</summary>

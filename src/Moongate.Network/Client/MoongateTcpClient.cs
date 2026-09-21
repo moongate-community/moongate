@@ -212,7 +212,9 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         try
         {
             using var linkedCancellation = CancellationTokenSource.CreateLinkedTokenSource(
-                cancellationToken, _internalCancellationTokenSource.Token);
+                cancellationToken,
+                _internalCancellationTokenSource.Token
+            );
             var sendToken = linkedCancellation.Token;
             await _sendLock.WaitAsync(sendToken).ConfigureAwait(false);
             try
@@ -227,6 +229,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
                         throw new IOException("The connection is closed.");
                     }
                 }
+
                 try
                 {
                     var processed = await _middlewarePipeline.ExecuteSendAsync(this, payload, sendToken)
@@ -263,6 +266,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
                     {
                         RaiseExceptionSafely(exception);
                     }
+
                     RequestClose();
                     throw;
                 }
@@ -298,7 +302,11 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     /// <summary>
     /// Creates an outbound client and connects to the specified endpoint.
     /// </summary>
-    [SuppressMessage("Design", "CA1068:CancellationToken parameters must come last", Justification = "Signature follows the transport API specification.")]
+    [SuppressMessage(
+        "Design",
+        "CA1068:CancellationToken parameters must come last",
+        Justification = "Signature follows the transport API specification."
+    )]
     public static async Task<MoongateTcpClient> ConnectAsync(
         IPEndPoint endPoint,
         IEnumerable<INetMiddleware>? middlewares = null,
@@ -327,6 +335,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
             {
                 await client.DisposeAsync().ConfigureAwait(false);
             }
+
             throw;
         }
     }
@@ -334,7 +343,8 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
 
     /// <summary>Connects and installs a prepared stream and callbacks before receiving any data.</summary>
     public static async Task<MoongateTcpClient> ConnectConfiguredAsync(
-        IPEndPoint endpoint, TcpClientOptions options, CancellationToken cancellationToken = default)
+        IPEndPoint endpoint, TcpClientOptions options, CancellationToken cancellationToken = default
+    )
     {
         ArgumentNullException.ThrowIfNull(endpoint);
         ArgumentNullException.ThrowIfNull(options);
@@ -353,23 +363,34 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
                 var prepared = await prepare(stream, preparation.Token).ConfigureAwait(false);
                 stream = prepared ?? throw new InvalidOperationException("Preparation returned no stream.");
             }
+
             preparation.Token.ThrowIfCancellationRequested();
             if (!stream.CanRead || !stream.CanWrite)
             {
                 throw new InvalidOperationException("Preparation must return a readable and writable stream.");
             }
-            client = new MoongateTcpClient(socket, stream,
-                options.Pipeline.Middlewares, options.Pipeline.Framer, options.Pipeline.Codec,
-                options.ReceiveBufferSize, options.MaxFrameLength, options.NoDelay);
+
+            client = new MoongateTcpClient(
+                socket,
+                stream,
+                options.Pipeline.Middlewares,
+                options.Pipeline.Framer,
+                options.Pipeline.Codec,
+                options.ReceiveBufferSize,
+                options.MaxFrameLength,
+                options.NoDelay
+            );
             options.Pipeline.ConfigureClient?.Invoke(client);
             await client.StartAsync(cancellationToken).ConfigureAwait(false);
             if (!client.IsConnected)
             {
                 throw new IOException("The connection closed during configuration.");
             }
+
             return client;
         }
-        catch (OperationCanceledException exception) when (deadline.IsCancellationRequested && !cancellationToken.IsCancellationRequested)
+        catch (OperationCanceledException exception) when (deadline.IsCancellationRequested &&
+                                                           !cancellationToken.IsCancellationRequested)
         {
             await ReleaseAsync().ConfigureAwait(false);
             throw new TimeoutException("Connection preparation timed out.", exception);
@@ -390,9 +411,15 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
             {
                 try
                 {
-                    if (stream is not null) { await stream.DisposeAsync().ConfigureAwait(false); }
+                    if (stream is not null)
+                    {
+                        await stream.DisposeAsync().ConfigureAwait(false);
+                    }
                 }
-                finally { socket.Dispose(); }
+                finally
+                {
+                    socket.Dispose();
+                }
             }
         }
     }
@@ -432,10 +459,12 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
             {
                 return Task.CompletedTask;
             }
+
             if (_state != TcpClientState.Created)
             {
                 return Task.FromException(new InvalidOperationException("A closed connection cannot be restarted."));
             }
+
             if (cancellationToken.IsCancellationRequested)
             {
                 return Task.FromCanceled(cancellationToken);
@@ -454,6 +483,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
             {
                 RaiseConnected();
             }
+
             _ = Task.Run(() => RunReceiveAsync(receiveFinished), CancellationToken.None);
         }
         catch (Exception exception)
@@ -462,6 +492,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
             RequestClose();
             receiveFinished.TrySetResult();
         }
+
         return Task.CompletedTask;
     }
 
@@ -498,6 +529,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         {
             return;
         }
+
         foreach (EventHandler<TcpClientEventArgs> subscriber in subscribers.GetInvocationList())
         {
             try
@@ -518,6 +550,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         {
             return;
         }
+
         foreach (EventHandler<TcpExceptionEventArgs> subscriber in subscribers.GetInvocationList())
         {
             try
@@ -536,7 +569,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         lock (_lifecycleLock)
         {
             return _state is not (TcpClientState.Created or TcpClientState.Running)
-                && exception is OperationCanceledException or ObjectDisposedException or IOException or SocketException;
+                   && exception is OperationCanceledException or ObjectDisposedException or IOException or SocketException;
         }
     }
 
@@ -559,10 +592,11 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
 
                 Volatile.Read(ref _codec)?.Decode(buffer.AsSpan(0, received));
                 var processed = await _middlewarePipeline.ExecuteAsync(
-                    this,
-                    buffer.AsMemory(0, received),
-                    receiveToken
-                ).ConfigureAwait(false);
+                        this,
+                        buffer.AsMemory(0, received),
+                        receiveToken
+                    )
+                    .ConfigureAwait(false);
 
                 if (processed.IsEmpty)
                 {
@@ -612,6 +646,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
             {
                 return;
             }
+
             _state = TcpClientState.Closing;
             receiveTask = _receiveLoopTask ?? Task.CompletedTask;
             if (_admittedSends == 0)
@@ -663,6 +698,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         {
             _state = TcpClientState.Closed;
         }
+
         RaiseDisconnected();
 
         try
@@ -673,6 +709,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         {
             failures.Add(exception);
         }
+
         AttemptRelease(_sendLock.Dispose, failures);
         AttemptRelease(_externalCancellationTokenRegistration.Dispose, failures);
         AttemptRelease(_internalCancellationTokenSource.Dispose, failures);
@@ -681,6 +718,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         {
             _state = TcpClientState.Disposed;
         }
+
         if (failures.Count == 0)
         {
             _completion.TrySetResult();

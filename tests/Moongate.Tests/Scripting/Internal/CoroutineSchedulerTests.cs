@@ -21,10 +21,17 @@ public sealed class CoroutineSchedulerTests : IDisposable
         _state.OpenBasicLibrary();
         _state.OpenCoroutineLibrary();
         _state.OpenMathLibrary();
-        _budget = new InstructionBudget(_state, maxInstructionsPerResume: 5_000, maxInstructionsPerChunk: 5_000, hookInterval: 100);
+        _budget = new InstructionBudget(
+            _state,
+            maxInstructionsPerResume: 5_000,
+            maxInstructionsPerChunk: 5_000,
+            hookInterval: 100
+        );
         _budget.Install();
         _scheduler = new CoroutineScheduler(_state, _timers, _budget, _ownership, _errors.Add, () => "test.lua");
-        SyncValueTask.Run(_state.DoStringAsync("function wait(s) return coroutine.yield('wait', s) end", "prelude", default));
+        SyncValueTask.Run(
+            _state.DoStringAsync("function wait(s) return coroutine.yield('wait', s) end", "prelude", default)
+        );
     }
 
     private LuaFunction Define(string name, string body)
@@ -165,7 +172,10 @@ public sealed class CoroutineSchedulerTests : IDisposable
     [Fact]
     public void Budget_CountsPerResume_NotPerCoroutineLifetime()
     {
-        var outcome = _scheduler.Start(Define("f", "for i = 1, 3 do local n = 0 for j = 1, 1000 do n = n + j end wait(1) end finished = true"), "a.lua");
+        var outcome = _scheduler.Start(
+            Define("f", "for i = 1, 3 do local n = 0 for j = 1, 1000 do n = n + j end wait(1) end finished = true"),
+            "a.lua"
+        );
         Assert.Equal(ScriptResultKind.Suspended, outcome.Kind);
 
         _timers.Fire(_timers.Timers.Single().Id);
@@ -238,19 +248,22 @@ public sealed class CoroutineSchedulerTests : IDisposable
     public void Start_FromInsideARunningResume_IsRefused()
     {
         InvalidOperationException? nested = null;
-        _state.Environment["spawn"] = new LuaFunction("spawn", (context, _) =>
-        {
-            try
+        _state.Environment["spawn"] = new LuaFunction(
+            "spawn",
+            (context, _) =>
             {
-                _scheduler.Start(_state.Environment["inner"].Read<LuaFunction>(), "a.lua");
-            }
-            catch (InvalidOperationException exception)
-            {
-                nested = exception;
-            }
+                try
+                {
+                    _scheduler.Start(_state.Environment["inner"].Read<LuaFunction>(), "a.lua");
+                }
+                catch (InvalidOperationException exception)
+                {
+                    nested = exception;
+                }
 
-            return new ValueTask<int>(context.Return());
-        });
+                return new ValueTask<int>(context.Return());
+            }
+        );
         Define("inner", "return 1");
 
         _scheduler.Start(Define("outer", "spawn()"), "a.lua");
@@ -269,7 +282,8 @@ public sealed class CoroutineSchedulerTests : IDisposable
         _scheduler.Start(Define("f", "local n = 0 for i = 1, 2000 do n = n + i end wait(1)"), "a.lua");
 
         var result = _budget.Chunk(token =>
-            SyncValueTask.Run(_state.DoStringAsync("local n = 0 for i = 1, 2000 do n = n + i end return n", "chunk", token)));
+            SyncValueTask.Run(_state.DoStringAsync("local n = 0 for i = 1, 2000 do n = n + i end return n", "chunk", token))
+        );
 
         Assert.Equal(2001000, result[0].Read<double>());
         Assert.Equal(0, _scheduler.BudgetAborts);

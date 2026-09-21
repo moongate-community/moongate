@@ -9,8 +9,10 @@ public sealed class PersistenceDatabaseOptionsTests
     [Theory, InlineData("postgres"), InlineData("postgresql")]
     public void ResolveRuntimeConnectionString_Uri_PreservesDecodedComponentsAndOptions(string scheme)
     {
-        var options = new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm,
-            $"{scheme}://test%20user:synthetic%40%3A%2F%3F%23%25%2B@localhost:5433/realm%20one?sslmode=require&connect_timeout=7&application_name=Moongate%20Test&pooling=false");
+        var options = new PersistenceDatabaseOptions(
+            PersistenceDatabaseTarget.Realm,
+            $"{scheme}://test%20user:synthetic%40%3A%2F%3F%23%25%2B@localhost:5433/realm%20one?sslmode=require&connect_timeout=7&application_name=Moongate%20Test&pooling=false"
+        );
 
         var parsed = new NpgsqlConnectionStringBuilder(options.ResolveRuntimeConnectionString());
 
@@ -28,8 +30,10 @@ public sealed class PersistenceDatabaseOptionsTests
     [Fact]
     public void ResolveRuntimeConnectionString_Ipv6AndDefaultPort_AreSupported()
     {
-        var options = new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Accounts,
-            "postgres://user@[::1]/accounts");
+        var options = new PersistenceDatabaseOptions(
+            PersistenceDatabaseTarget.Accounts,
+            "postgres://user@[::1]/accounts"
+        );
         var parsed = new NpgsqlConnectionStringBuilder(options.ResolveRuntimeConnectionString());
         Assert.Equal("::1", parsed.Host);
         Assert.Equal(5432, parsed.Port);
@@ -55,8 +59,11 @@ public sealed class PersistenceDatabaseOptionsTests
     [Fact]
     public void ValidateSameDatabaseEndpoint_UriAndNativeFormat_CompareNormalizedEndpoints()
     {
-        var options = new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm,
-            "postgres://runtime@localhost/realm", "Host=LOCALHOST;Database=realm;Username=schema");
+        var options = new PersistenceDatabaseOptions(
+            PersistenceDatabaseTarget.Realm,
+            "postgres://runtime@localhost/realm",
+            "Host=LOCALHOST;Database=realm;Username=schema"
+        );
         var runtime = options.ResolveRuntimeConnectionString();
         var schema = options.ResolveSchemaConnectionString(runtime);
         options.ValidateSameDatabaseEndpoint(runtime, schema);

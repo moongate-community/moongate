@@ -23,10 +23,10 @@ public sealed class DisposeFromHandlerTests
         var disposed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
         receiver.OnDataReceived += (_, e) =>
-                                   {
-                                       e.Client.Dispose();
-                                       disposed.TrySetResult();
-                                   };
+        {
+            e.Client.Dispose();
+            disposed.TrySetResult();
+        };
 
         try
         {
@@ -75,6 +75,7 @@ public sealed class DisposeFromHandlerTests
             release.Set();
             await server.DisposeAsync().AsTask().WaitAsync(Timeout);
         }
+
         Assert.NotNull(accepted);
         Assert.False(accepted.IsConnected);
         Assert.False(server.IsRunning);

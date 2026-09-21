@@ -35,11 +35,19 @@ public sealed class SerialTypeHandlerTests
 
         Assert.NotNull(loaded);
         Assert.Equal(id, loaded.Id);
-        Assert.Equal(value, await database.ScalarAsync<long>(
-            "SELECT id FROM plugin_characters.characters"));
-        Assert.Equal("bigint", await database.ScalarAsync<string>(
-            "SELECT data_type FROM information_schema.columns " +
-            "WHERE table_schema = 'plugin_characters' AND table_name = 'characters' AND column_name = 'id'"));
+        Assert.Equal(
+            value,
+            await database.ScalarAsync<long>(
+                "SELECT id FROM plugin_characters.characters"
+            )
+        );
+        Assert.Equal(
+            "bigint",
+            await database.ScalarAsync<string>(
+                "SELECT data_type FROM information_schema.columns " +
+                "WHERE table_schema = 'plugin_characters' AND table_name = 'characters' AND column_name = 'id'"
+            )
+        );
     }
 
     [Fact]
@@ -49,10 +57,12 @@ public sealed class SerialTypeHandlerTests
         await using var coordinator = CreateCoordinator(database);
         await coordinator.SynchronizeAsync();
         await database.ExecuteAsync(
-            "INSERT INTO plugin_characters.characters (id, name) VALUES (4294967296, 'invalid')");
+            "INSERT INTO plugin_characters.characters (id, name) VALUES (4294967296, 'invalid')"
+        );
 
         var exception = await Record.ExceptionAsync(() =>
-            coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm.Select<CharacterEntity>().ToListAsync());
+            coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm.Select<CharacterEntity>().ToListAsync()
+        );
 
         Assert.NotNull(exception);
         Assert.IsType<OverflowException>(exception.GetBaseException());
@@ -64,9 +74,11 @@ public sealed class SerialTypeHandlerTests
         var registry = new PersistenceModuleRegistry();
         registry.RegisterModule(module);
         registry.RegisterEntity(typeof(CharacterEntity));
-        var options = new PostgreSqlPersistenceOptions([
-            new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, database.ConnectionString)
-        ]);
+        var options = new PostgreSqlPersistenceOptions(
+            [
+                new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, database.ConnectionString)
+            ]
+        );
 
         return new PersistenceSchemaCoordinator(options, registry);
     }

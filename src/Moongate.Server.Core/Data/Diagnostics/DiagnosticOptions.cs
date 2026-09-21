@@ -13,9 +13,11 @@ public sealed class DiagnosticOptions
     {
         if (Interval < MinimumInterval || Interval > MaximumInterval)
         {
-            throw new ArgumentOutOfRangeException(nameof(Interval),
+            throw new ArgumentOutOfRangeException(
+                nameof(Interval),
                 $"The diagnostic interval must be between {MinimumInterval.TotalMilliseconds} and " +
-                $"{MaximumInterval.TotalMilliseconds} milliseconds.");
+                $"{MaximumInterval.TotalMilliseconds} milliseconds."
+            );
         }
     }
 }

@@ -2,7 +2,9 @@ using MessagePack;
 using Moongate.Api.Exceptions;
 using Moongate.Api.Serialization.Internal;
 using Moongate.Api.Tests.TestSupport.Contracts;
+
 namespace Moongate.Api.Tests.Serialization;
+
 public sealed class ApiPayloadSerializerTests
 {
     [Fact]
@@ -17,13 +19,17 @@ public sealed class ApiPayloadSerializerTests
     [Theory, InlineData("910700"), InlineData("91A178"), InlineData("C0"), InlineData("81A17801"), InlineData("D40000")]
     public void Deserialize_MalformedOrUnsupportedValue_Rejects(string hex)
     {
-        Assert.ThrowsAny<MessagePackSerializationException>(() => ApiPayloadSerializer.Deserialize<IncrementRequest>(Convert.FromHexString(hex)));
+        Assert.ThrowsAny<MessagePackSerializationException>(() =>
+            ApiPayloadSerializer.Deserialize<IncrementRequest>(Convert.FromHexString(hex))
+        );
     }
 
     [Theory, InlineData("DDFFFFFFFF"), InlineData("DBFFFFFFFF"), InlineData("C6FFFFFFFF")]
     public void Deserialize_HostileLength_RejectsBeforeAllocation(string hex)
     {
-        Assert.Throws<ApiProtocolException>(() => ApiPayloadSerializer.Deserialize<IncrementRequest>(Convert.FromHexString(hex)));
+        Assert.Throws<ApiProtocolException>(() =>
+            ApiPayloadSerializer.Deserialize<IncrementRequest>(Convert.FromHexString(hex))
+        );
     }
 
     [Fact]

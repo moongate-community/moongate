@@ -31,9 +31,11 @@ public sealed class SamplePluginTests
     {
         using var files = new PluginDirectoryFixture("plugins", "scripts");
         files.Deploy("SamplePlugin", "sample");
-        await File.WriteAllTextAsync(Path.Combine(files.Directories["scripts"], "init.lua"),
+        await File.WriteAllTextAsync(
+            Path.Combine(files.Directories["scripts"], "init.lua"),
             "greeting = greeter.hello('Moongate', Tone.Warm)\n" +
-            "function report() return greeting, greeter.DEFAULT_GREETING end");
+            "function report() return greeting, greeter.DEFAULT_GREETING end"
+        );
         await using var persistence = await HostPersistenceFixture.CreateAsync();
         var container = persistence.Container;
         container.RegisterMoongateEventBus();
@@ -44,11 +46,12 @@ public sealed class SamplePluginTests
         container.RegisterInstance(new ScriptEngineOptions { ScriptsDirectory = files.Directories["scripts"] });
         container.RegisterDelegate<ITimerService>(resolver => resolver.Resolve<TimerWheelService>(), Reuse.Singleton);
         container.RegisterMoongateService<TimerWheelService>(priority: -900)
-                 .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
-                 .RegisterMoongateService<IEventBusService, EventBusService>()
-                 .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(
-                     () => new PluginLoaderService(container, files.Directories))
-                 .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority);
+            .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
+            .RegisterMoongateService<IEventBusService, EventBusService>()
+            .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(() =>
+                new PluginLoaderService(container, files.Directories)
+            )
+            .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         await bootstrap.StartAsync().WaitAsync(Timeout);
@@ -62,17 +65,20 @@ public sealed class SamplePluginTests
             var engine = container.Resolve<IScriptEngine>();
             var loop = container.Resolve<IGameLoopService>();
             var probe = new TaskCompletionSource<object?[]>(TaskCreationOptions.RunContinuationsAsynchronously);
-            await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-            {
-                try
-                {
-                    probe.SetResult(engine.Call("report").Values.ToArray());
-                }
-                catch (Exception exception)
-                {
-                    probe.SetException(exception);
-                }
-            }));
+            await loop.PostAsync(
+                new ActionGameLoopWorkItem(() =>
+                    {
+                        try
+                        {
+                            probe.SetResult(engine.Call("report").Values.ToArray());
+                        }
+                        catch (Exception exception)
+                        {
+                            probe.SetException(exception);
+                        }
+                    }
+                )
+            );
             Assert.Equal(["Hello there, Moongate!", "Hello"], await probe.Task.WaitAsync(Timeout));
 
             var commands = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
@@ -88,7 +94,10 @@ public sealed class SamplePluginTests
             Assert.Equal(CommandOutputLevel.Error, undefinedTone.Level);
             await commands.StopAsync();
 
-            var provider = Assert.Single(container.ResolveMany<IMetricProvider>(), candidate => candidate.ProviderName == "greeter");
+            var provider = Assert.Single(
+                container.ResolveMany<IMetricProvider>(),
+                candidate => candidate.ProviderName == "greeter"
+            );
             using var diagnostics = new DiagnosticServiceFixture([provider]);
             await diagnostics.Service.StartAsync();
             var snapshot = await diagnostics.NextAsync();

@@ -16,7 +16,10 @@ internal sealed class ApiConnectionAdmission : IDisposable
 
     public void ReleaseTransport()
     {
-        if (Interlocked.CompareExchange(ref _owner, Released, SetupOwner) == SetupOwner) { _release(); }
+        if (Interlocked.CompareExchange(ref _owner, Released, SetupOwner) == SetupOwner)
+        {
+            _release();
+        }
     }
 
     public void TransferToConnection()
@@ -29,6 +32,9 @@ internal sealed class ApiConnectionAdmission : IDisposable
 
     public void Dispose()
     {
-        if (Interlocked.Exchange(ref _owner, Released) != Released) { _release(); }
+        if (Interlocked.Exchange(ref _owner, Released) != Released)
+        {
+            _release();
+        }
     }
 }

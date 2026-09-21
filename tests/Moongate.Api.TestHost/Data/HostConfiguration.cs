@@ -1,4 +1,5 @@
 namespace Moongate.Api.TestHost.Data;
+
 internal sealed class HostConfiguration
 {
     public required string Certificate { get; init; }

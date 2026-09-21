@@ -30,6 +30,7 @@ internal sealed class GameLoopFinalWorkSession
             {
                 throw new InvalidOperationException("Final capture dispatch is closed or already has an active capture.");
             }
+
             _cancellationToken.ThrowIfCancellationRequested();
             _dispatch = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
             _pending = item;
@@ -47,14 +48,27 @@ internal sealed class GameLoopFinalWorkSession
             item = _pending;
             completion = _dispatch;
             _pending = null;
-            if (item is null) { return !_closed; }
+            if (item is null)
+            {
+                return !_closed;
+            }
         }
-        try { item.Execute(); completion!.TrySetResult(); }
+
+        try
+        {
+            item.Execute();
+            completion!.TrySetResult();
+        }
         catch (Exception exception)
         {
-            lock (_gate) { _failures.Add(exception); }
+            lock (_gate)
+            {
+                _failures.Add(exception);
+            }
+
             completion!.TrySetException(exception);
         }
+
         return true;
     }
 
@@ -74,22 +88,46 @@ internal sealed class GameLoopFinalWorkSession
             returnedEarly = active is { IsCompleted: false };
             _wake();
         }
+
         if (active is not null)
         {
-            try { await active.ConfigureAwait(false); }
-            catch (Exception) { /* Capture failures were retained before completing the dispatch. */ }
+            try
+            {
+                await active.ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                /* Capture failures were retained before completing the dispatch. */
+            }
         }
+
         List<Exception> failures = [];
-        if (callbackFailure is not null) { failures.Add(callbackFailure); }
+        if (callbackFailure is not null)
+        {
+            failures.Add(callbackFailure);
+        }
+
         lock (_gate)
         {
             foreach (var failure in _failures)
             {
-                if (!failures.Any(existing => ReferenceEquals(existing, failure))) { failures.Add(failure); }
+                if (!failures.Any(existing => ReferenceEquals(existing, failure)))
+                {
+                    failures.Add(failure);
+                }
             }
         }
-        if (failures.Count == 1) { ExceptionDispatchInfo.Capture(failures[0]).Throw(); }
-        if (failures.Count > 1) { throw new AggregateException(failures); }
+
+        if (failures.Count == 1)
+        {
+            ExceptionDispatchInfo.Capture(failures[0]).Throw();
+        }
+
+        if (failures.Count > 1)
+        {
+            throw new AggregateException(failures);
+        }
+
         if (returnedEarly)
         {
             throw new InvalidOperationException("The final callback returned before awaiting its admitted capture.");

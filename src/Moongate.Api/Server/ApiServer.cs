@@ -43,7 +43,10 @@ public sealed class ApiServer : IApiServer
     {
         get
         {
-            lock (_gate) { return _running && !_stopping ? _tcp!.Endpoint : null; }
+            lock (_gate)
+            {
+                return _running && !_stopping ? _tcp!.Endpoint : null;
+            }
         }
     }
 
@@ -91,7 +94,10 @@ public sealed class ApiServer : IApiServer
             ObjectDisposedException.ThrowIf(_disposeRequested, this);
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (_running && !_stopping) { return Task.CompletedTask; }
+            if (_running && !_stopping)
+            {
+                return Task.CompletedTask;
+            }
 
             if (_stopCompletion is { IsCompleted: false })
             {
@@ -105,6 +111,7 @@ public sealed class ApiServer : IApiServer
                 _stopResult = null;
                 _start = StartCoreAsync();
             }
+
             start = _start;
         }
 
@@ -129,7 +136,11 @@ public sealed class ApiServer : IApiServer
         _stopping = true;
         _running = false;
 
-        if (_stopCompletion is not null) { return; }
+        if (_stopCompletion is not null)
+        {
+            return;
+        }
+
         _stopCompletion = StopCoreAsync();
         _stopResult = ApiShutdown.WaitAsync(_stopCompletion, ForceClose, _options.ShutdownTimeout, _clock, Remaining);
         _ = ApiShutdown.ObserveAsync(_stopCompletion);
@@ -142,20 +153,29 @@ public sealed class ApiServer : IApiServer
 
         lock (_gate)
         {
-            if (_stopping || _disposeRequested) { throw new IOException("The API listener is stopping."); }
+            if (_stopping || _disposeRequested)
+            {
+                throw new IOException("The API listener is stopping.");
+            }
+
             admission.TransferToConnection();
 
-            try { connection = new(transport, peer, _registry, _options, _slots, _clock, admission); }
+            try
+            {
+                connection = new(transport, peer, _registry, _options, _slots, _clock, admission);
+            }
             catch
             {
                 admission.Dispose();
 
                 throw;
             }
+
             transport.OnDataReceived += (_, args) => connection.Receive(args.Data);
             transport.OnDisconnected += (_, _) => _ = connection.CloseAsync();
             _connections.Add(connection);
         }
+
         _ = RemoveCompletedAsync(connection);
     }
 
@@ -171,21 +191,21 @@ public sealed class ApiServer : IApiServer
         return setup.Pipeline with
         {
             PrepareStreamAsync = async (stream, token) =>
-                                 {
-                                     admission = ReserveAdmission();
-                                     var owned = new ApiAdmissionStream(stream, admission);
+            {
+                admission = ReserveAdmission();
+                var owned = new ApiAdmissionStream(stream, admission);
 
-                                     try
-                                     {
-                                         return await setup.Pipeline.PrepareStreamAsync!(owned, token).ConfigureAwait(false);
-                                     }
-                                     catch
-                                     {
-                                         await owned.DisposeAsync().ConfigureAwait(false);
+                try
+                {
+                    return await setup.Pipeline.PrepareStreamAsync!(owned, token).ConfigureAwait(false);
+                }
+                catch
+                {
+                    await owned.DisposeAsync().ConfigureAwait(false);
 
-                                         throw;
-                                     }
-                                 }
+                    throw;
+                }
+            }
         };
     }
 
@@ -193,7 +213,10 @@ public sealed class ApiServer : IApiServer
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
 
-        try { await stop.ConfigureAwait(false); }
+        try
+        {
+            await stop.ConfigureAwait(false);
+        }
         finally
         {
             _tls.Dispose();
@@ -212,37 +235,58 @@ public sealed class ApiServer : IApiServer
             tcp = _tcp;
         }
 
-        foreach (var connection in connections) { _ = connection.CloseAsync(); }
+        foreach (var connection in connections)
+        {
+            _ = connection.CloseAsync();
+        }
 
-        if (tcp is not null) { _ = ApiShutdown.ObserveAsync(tcp.StopAsync(CancellationToken.None)); }
+        if (tcp is not null)
+        {
+            _ = ApiShutdown.ObserveAsync(tcp.StopAsync(CancellationToken.None));
+        }
     }
 
     private int Remaining()
     {
-        lock (_gate) { return _admitted; }
+        lock (_gate)
+        {
+            return _admitted;
+        }
     }
 
     private async Task RemoveCompletedAsync(ApiConnection connection)
     {
         await ApiShutdown.ObserveAsync(connection.Completion).ConfigureAwait(false);
 
-        lock (_gate) { _connections.Remove(connection); }
+        lock (_gate)
+        {
+            _connections.Remove(connection);
+        }
     }
 
     private ApiConnectionAdmission ReserveAdmission()
     {
         lock (_gate)
         {
-            if (_stopping || _disposeRequested) { throw new IOException("The API listener is stopping."); }
+            if (_stopping || _disposeRequested)
+            {
+                throw new IOException("The API listener is stopping.");
+            }
 
-            if (_admitted >= _options.MaxConnections) { throw new ApiBusyException(); }
+            if (_admitted >= _options.MaxConnections)
+            {
+                throw new ApiBusyException();
+            }
+
             _admitted++;
         }
 
-        return new(
-            () =>
+        return new(() =>
             {
-                lock (_gate) { _admitted--; }
+                lock (_gate)
+                {
+                    _admitted--;
+                }
             }
         );
     }
@@ -263,13 +307,20 @@ public sealed class ApiServer : IApiServer
             }
         );
 
-        lock (_gate) { _tcp = tcp; }
+        lock (_gate)
+        {
+            _tcp = tcp;
+        }
 
         try
         {
             await tcp.StartAsync(CancellationToken.None).ConfigureAwait(false);
 
-            lock (_gate) { _running = !_stopping; }
+            lock (_gate)
+            {
+                _running = !_stopping;
+            }
+
             Logger.Information(
                 "API listener started at {Endpoint}: {ContractCount} contracts, {HandlerCount} handlers",
                 tcp.Endpoint,
@@ -283,7 +334,10 @@ public sealed class ApiServer : IApiServer
 
             lock (_gate)
             {
-                if (ReferenceEquals(_tcp, tcp)) { _tcp = null; }
+                if (ReferenceEquals(_tcp, tcp))
+                {
+                    _tcp = null;
+                }
             }
 
             throw;
@@ -294,26 +348,52 @@ public sealed class ApiServer : IApiServer
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
 
-        try { await _start.ConfigureAwait(false); }
+        try
+        {
+            await _start.ConfigureAwait(false);
+        }
 
-        catch { }
+        catch
+        {
+        }
+
         MoongateTcpServer? tcp;
-
-        lock (_gate) { tcp = _tcp; }
-
-        if (tcp is null) { return; }
-        await tcp.StopAcceptingAsync().ConfigureAwait(false);
-        ApiConnection[] connections;
-
-        lock (_gate) { connections = _connections.ToArray(); }
-
-        try { await Task.WhenAll(connections.Select(connection => connection.DrainAsync())).ConfigureAwait(false); }
-        finally { await tcp.DisposeAsync().ConfigureAwait(false); }
 
         lock (_gate)
         {
-            if (ReferenceEquals(_tcp, tcp)) { _tcp = null; }
+            tcp = _tcp;
         }
+
+        if (tcp is null)
+        {
+            return;
+        }
+
+        await tcp.StopAcceptingAsync().ConfigureAwait(false);
+        ApiConnection[] connections;
+
+        lock (_gate)
+        {
+            connections = _connections.ToArray();
+        }
+
+        try
+        {
+            await Task.WhenAll(connections.Select(connection => connection.DrainAsync())).ConfigureAwait(false);
+        }
+        finally
+        {
+            await tcp.DisposeAsync().ConfigureAwait(false);
+        }
+
+        lock (_gate)
+        {
+            if (ReferenceEquals(_tcp, tcp))
+            {
+                _tcp = null;
+            }
+        }
+
         Logger.Information("API listener stopped");
     }
 

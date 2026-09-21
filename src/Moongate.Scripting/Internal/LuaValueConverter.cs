@@ -86,11 +86,11 @@ internal static class LuaValueConverter
             // and the method would hand back a boxed LuaValue instead of the unwrapped CLR value.
             return value.Type switch
             {
-                LuaValueType.Number => (object)value.Read<double>(),
-                LuaValueType.String => (object)value.Read<string>(),
+                LuaValueType.Number  => (object)value.Read<double>(),
+                LuaValueType.String  => (object)value.Read<string>(),
                 LuaValueType.Boolean => (object)value.Read<bool>(),
-                LuaValueType.Table => (object)value.Read<LuaTable>(),
-                _ => value
+                LuaValueType.Table   => (object)value.Read<LuaTable>(),
+                _                    => value
             };
         }
 

@@ -19,7 +19,8 @@ public sealed class PacketDescriptor
         int minimumLength,
         PacketDirection direction,
         Type packetType,
-        string? description)
+        string? description
+    )
     {
         OpCode = opCode;
         Sizing = sizing;

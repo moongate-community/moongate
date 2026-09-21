@@ -16,8 +16,7 @@ public sealed class TimerWheelService : ITimerService
     private readonly LinkedList<TimerEntry>[] _wheel;
 
     private readonly SortedSet<TimerEntry> _ready = new(
-        Comparer<TimerEntry>.Create(
-            (left, right) =>
+        Comparer<TimerEntry>.Create((left, right) =>
             {
                 var due = left.DueTick.CompareTo(right.DueTick);
 
@@ -93,11 +92,13 @@ public sealed class TimerWheelService : ITimerService
                 ids = new HashSet<string>(StringComparer.Ordinal);
                 _timerIdsByName.Add(name, ids);
             }
+
             ids.Add(entry.Id);
             AddToWheel(entry);
             _registeredTimers = sequence;
             wakeUp = _wakeUp;
         }
+
         wakeUp?.Invoke();
 
         return entry.Id;
@@ -118,6 +119,7 @@ public sealed class TimerWheelService : ITimerService
             removed = RemoveEntryById(timerId);
             wakeUp = removed ? _wakeUp : null;
         }
+
         wakeUp?.Invoke();
 
         return removed;
@@ -149,6 +151,7 @@ public sealed class TimerWheelService : ITimerService
             removed = timerIds.Length;
             wakeUp = _wakeUp;
         }
+
         wakeUp?.Invoke();
 
         return removed;
@@ -163,6 +166,7 @@ public sealed class TimerWheelService : ITimerService
             ClearTimers();
             wakeUp = _wakeUp;
         }
+
         wakeUp?.Invoke();
     }
 
@@ -402,6 +406,7 @@ public sealed class TimerWheelService : ITimerService
             entry.Node = null;
             entry.Ready = false;
         }
+
         _timersById.Clear();
         _timerIdsByName.Clear();
         _ready.Clear();
@@ -434,9 +439,11 @@ public sealed class TimerWheelService : ITimerService
                     entry.Ready = true;
                     _ready.Add(entry);
                 }
+
                 node = next;
             }
         }
+
         _processedTick = nowTick;
     }
 
@@ -476,6 +483,7 @@ public sealed class TimerWheelService : ITimerService
             _ready.Remove(entry);
             entry.Ready = false;
         }
+
         RemoveFromIndexes(entry);
 
         return true;

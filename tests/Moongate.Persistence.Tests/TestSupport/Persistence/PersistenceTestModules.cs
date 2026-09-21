@@ -26,7 +26,8 @@ internal static class PersistenceTestModules
             "plugin.characters",
             "plugin_characters",
             PersistenceDatabaseTarget.Realm,
-            [typeof(CharacterSharedEntity)]);
+            [typeof(CharacterSharedEntity)]
+        );
     }
 
     public static TestPersistenceModule InventoryShared()
@@ -35,7 +36,8 @@ internal static class PersistenceTestModules
             "plugin.inventory",
             "plugin_inventory",
             PersistenceDatabaseTarget.Realm,
-            [typeof(InventorySharedEntity)]);
+            [typeof(InventorySharedEntity)]
+        );
     }
 
     public static TestPersistenceModule UpgradeV1()
@@ -59,7 +61,8 @@ internal static class PersistenceTestModules
             "plugin.failing",
             "plugin_failing",
             PersistenceDatabaseTarget.Realm,
-            [typeof(FailingSchemaEntity)]);
+            [typeof(FailingSchemaEntity)]
+        );
     }
 
     private static TestPersistenceModule Upgrade(Type entityType)
@@ -68,6 +71,7 @@ internal static class PersistenceTestModules
             "plugin.upgrade",
             "plugin_upgrade",
             PersistenceDatabaseTarget.Realm,
-            [entityType]);
+            [entityType]
+        );
     }
 }

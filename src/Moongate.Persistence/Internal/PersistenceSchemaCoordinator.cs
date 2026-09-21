@@ -49,7 +49,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
                     var modules = string.Join(", ", changes.Select(change => change.ModuleId));
                     throw new InvalidOperationException(
                         $"PostgreSQL schema changes are required for persistence modules: {modules}. " +
-                        "Run the schema preview/apply command or explicitly enable automatic schema synchronization.");
+                        "Run the schema preview/apply command or explicitly enable automatic schema synchronization."
+                    );
                 }
             }
 
@@ -163,10 +164,13 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             var ddl = await CompareAsync(database, module, cancellationToken).ConfigureAwait(false);
             if (!string.IsNullOrWhiteSpace(ddl))
             {
-                changes.Add(new PersistenceSchemaChange(
-                    module.Module.DatabaseTarget,
-                    module.Module.Id,
-                    ddl));
+                changes.Add(
+                    new PersistenceSchemaChange(
+                        module.Module.DatabaseTarget,
+                        module.Module.Id,
+                        ddl
+                    )
+                );
             }
         }
 
@@ -179,9 +183,11 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         {
             var database = _databases[targetGroup.Key];
             await using var schemaLock = await PostgreSqlSchemaLock.AcquireAsync(
-                database.SchemaConnectionString,
-                targetGroup.Key,
-                cancellationToken).ConfigureAwait(false);
+                    database.SchemaConnectionString,
+                    targetGroup.Key,
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
             foreach (var module in targetGroup)
             {
                 var ddl = await CompareAsync(database, module, cancellationToken).ConfigureAwait(false);
@@ -197,7 +203,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
                 if (!string.IsNullOrWhiteSpace(remaining))
                 {
                     throw new InvalidOperationException(
-                        $"Persistence module '{module.Module.Id}' still requires schema changes after synchronization.");
+                        $"Persistence module '{module.Module.Id}' still requires schema changes after synchronization."
+                    );
                 }
             }
         }
@@ -212,7 +219,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         cancellationToken.ThrowIfCancellationRequested();
         var comparison = Task.Run(
             () => database.Orm.CodeFirst.GetComparisonDDLStatements(module.EntityTypes.ToArray()),
-            CancellationToken.None);
+            CancellationToken.None
+        );
         try
         {
             return await comparison.WaitAsync(cancellationToken).ConfigureAwait(false);
@@ -227,7 +235,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             {
                 throw new InvalidOperationException(
                     $"Persistence module '{module.Module.Id}' schema comparison failed after cancellation was requested.",
-                    comparisonFailure);
+                    comparisonFailure
+                );
             }
 
             cancellationToken.ThrowIfCancellationRequested();

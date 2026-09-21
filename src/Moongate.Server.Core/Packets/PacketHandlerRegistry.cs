@@ -52,7 +52,9 @@ public sealed class PacketHandlerRegistry
 
             if (container.IsRegistered<THandler>(condition: factory => factory.Reuse != Reuse.Singleton))
             {
-                throw new InvalidOperationException($"Packet handler {typeof(THandler).Name} must be registered as a singleton.");
+                throw new InvalidOperationException(
+                    $"Packet handler {typeof(THandler).Name} must be registered as a singleton."
+                );
             }
 
             if (!container.IsRegistered<THandler>())
@@ -60,15 +62,18 @@ public sealed class PacketHandlerRegistry
                 container.Register<THandler>(Reuse.Singleton);
             }
 
-            _registrations.Add(typeof(TPacket), new PacketHandlerRegistration(
+            _registrations.Add(
                 typeof(TPacket),
-                typeof(THandler),
-                resolver =>
-                {
-                    var handler = resolver.Resolve<THandler>();
-                    return (session, packet) => handler.Handle(session, (TPacket)packet);
-                }
-            ));
+                new PacketHandlerRegistration(
+                    typeof(TPacket),
+                    typeof(THandler),
+                    resolver =>
+                    {
+                        var handler = resolver.Resolve<THandler>();
+                        return (session, packet) => handler.Handle(session, (TPacket)packet);
+                    }
+                )
+            );
         }
     }
 }

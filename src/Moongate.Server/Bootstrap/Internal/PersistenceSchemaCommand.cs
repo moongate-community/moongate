@@ -13,8 +13,10 @@ namespace Moongate.Server.Bootstrap.Internal;
 /// <summary>Composes only registration prerequisites and executes schema administration without host startup.</summary>
 internal static class PersistenceSchemaCommand
 {
-    public static async Task ExecuteAsync(string rootDirectory, PersistenceSchemaMode mode, TextWriter output,
-        CancellationToken cancellationToken)
+    public static async Task ExecuteAsync(
+        string rootDirectory, PersistenceSchemaMode mode, TextWriter output,
+        CancellationToken cancellationToken
+    )
     {
         using var container = new Container();
         var directories = new DirectoriesConfig(rootDirectory, ["config", "plugins"]);
@@ -28,13 +30,16 @@ internal static class PersistenceSchemaCommand
         await RunAsync(container, mode, output, cancellationToken).ConfigureAwait(false);
     }
 
-    public static async Task RunAsync(Container container, PersistenceSchemaMode mode, TextWriter output,
-        CancellationToken cancellationToken)
+    public static async Task RunAsync(
+        Container container, PersistenceSchemaMode mode, TextWriter output,
+        CancellationToken cancellationToken
+    )
     {
         if (mode is not (PersistenceSchemaMode.Preview or PersistenceSchemaMode.Apply))
         {
             throw new ArgumentOutOfRangeException(nameof(mode), "Choose --persistence-schema preview or apply.");
         }
+
         PersistencePreparation.LoadPlugins(container);
         var persistence = container.Resolve<MoongatePersistenceService>();
         var changes = await persistence.PreviewSchemaAsync(cancellationToken).ConfigureAwait(false);
@@ -43,6 +48,7 @@ internal static class PersistenceSchemaCommand
             await output.WriteLineAsync($"-- {change.Target}: {change.ModuleId}");
             await output.WriteLineAsync(change.Ddl);
         }
+
         if (mode == PersistenceSchemaMode.Apply)
         {
             await persistence.SynchronizeSchemaAsync(cancellationToken).ConfigureAwait(false);

@@ -137,5 +137,4 @@ public sealed class SendMiddlewareSerializationTests
 
         return (sender, receiver);
     }
-
 }

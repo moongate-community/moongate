@@ -18,7 +18,9 @@ public sealed class ApiOperationPermissionsConfig
     {
         if (OperationIds.Contains((ushort)0) || (AllowsAll && OperationIds.Count != 0))
         {
-            throw new InvalidOperationException("api.peers.allowed_operations must be a list of IDs from 1 to 65535 or [\"*\"] alone.");
+            throw new InvalidOperationException(
+                "api.peers.allowed_operations must be a list of IDs from 1 to 65535 or [\"*\"] alone."
+            );
         }
     }
 }

@@ -52,7 +52,9 @@ internal sealed partial class PersistenceModuleRegistry
         {
             if (!databaseByTarget.TryGetValue(targetGroup.Key, out var database))
             {
-                throw new InvalidOperationException($"Persistence target '{targetGroup.Key}' is required by a module but is not configured.");
+                throw new InvalidOperationException(
+                    $"Persistence target '{targetGroup.Key}' is required by a module but is not configured."
+                );
             }
 
             ValidateFinalMappings(database, targetGroup, owners);
@@ -60,8 +62,10 @@ internal sealed partial class PersistenceModuleRegistry
 
         var registrations = orderedModules
             .Select(module => new PersistenceModuleRegistration(
-                module,
-                module.EntityTypes.OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray()))
+                    module,
+                    module.EntityTypes.OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray()
+                )
+            )
             .ToArray();
 
         return new PersistenceModuleRegistrySnapshot(registrations, owners);
@@ -78,29 +82,42 @@ internal sealed partial class PersistenceModuleRegistry
             .ToArray();
     }
 
-    private AutomaticPersistenceModule[] CreateAutomaticModules(IReadOnlyDictionary<PersistenceDatabaseTarget, PostgreSqlDatabase> databases)
+    private AutomaticPersistenceModule[] CreateAutomaticModules(
+        IReadOnlyDictionary<PersistenceDatabaseTarget, PostgreSqlDatabase> databases
+    )
     {
         var explicitlyOwned = _modules.SelectMany(module => module.EntityTypes).ToHashSet();
         var groups = _entities
             .Where(entity => entity.Value.HasValue && !explicitlyOwned.Contains(entity.Key))
             .GroupBy(entity =>
-            {
-                var target = entity.Value!.Value;
-                if (!databases.TryGetValue(target, out var database))
                 {
-                    throw new InvalidOperationException($"Persistence target '{target}' is required but is not configured.");
+                    var target = entity.Value!.Value;
+                    if (!databases.TryGetValue(target, out var database))
+                    {
+                        throw new InvalidOperationException(
+                            $"Persistence target '{target}' is required but is not configured."
+                        );
+                    }
+
+                    var tableName = database.Orm.CodeFirst.GetTableByEntity(entity.Key).DbName;
+                    var separator = tableName.IndexOf('.');
+                    if (separator <= 0)
+                    {
+                        throw new InvalidOperationException(
+                            $"Persistence entity '{entity.Key.FullName}' must declare a schema-qualified table, for example [Table(Name = \"world.characters\")]."
+                        );
+                    }
+
+                    return (Target: target, Schema: tableName[..separator]);
                 }
-                var tableName = database.Orm.CodeFirst.GetTableByEntity(entity.Key).DbName;
-                var separator = tableName.IndexOf('.');
-                if (separator <= 0)
-                {
-                    throw new InvalidOperationException(
-                        $"Persistence entity '{entity.Key.FullName}' must declare a schema-qualified table, for example [Table(Name = \"world.characters\")].");
-                }
-                return (Target: target, Schema: tableName[..separator]);
-            });
-        return groups.Select(group => new AutomaticPersistenceModule(group.Key.Schema, group.Key.Target,
-            group.Select(entity => entity.Key).OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray())).ToArray();
+            );
+        return groups.Select(group => new AutomaticPersistenceModule(
+                    group.Key.Schema,
+                    group.Key.Target,
+                    group.Select(entity => entity.Key).OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray()
+                )
+            )
+            .ToArray();
     }
 
     private static void ValidateModuleDeclarations(IReadOnlyList<IPersistenceModule> modules)
@@ -113,7 +130,8 @@ internal sealed partial class PersistenceModuleRegistry
                 !ModuleIdPattern().IsMatch(module.Id))
             {
                 throw new InvalidOperationException(
-                    $"Persistence module id '{module.Id}' must contain lowercase ASCII segments separated by '.', '_' or '-'.");
+                    $"Persistence module id '{module.Id}' must contain lowercase ASCII segments separated by '.', '_' or '-'."
+                );
             }
 
             if (!ids.Add(module.Id))
@@ -124,40 +142,48 @@ internal sealed partial class PersistenceModuleRegistry
             if (string.IsNullOrWhiteSpace(module.Schema) || !SchemaPattern().IsMatch(module.Schema))
             {
                 throw new InvalidOperationException(
-                    $"Persistence module '{module.Id}' schema '{module.Schema}' must be 1..63 lowercase snake_case characters and start with a letter.");
+                    $"Persistence module '{module.Id}' schema '{module.Schema}' must be 1..63 lowercase snake_case characters and start with a letter."
+                );
             }
 
             if (!schemas.Add((module.DatabaseTarget, module.Schema)))
             {
                 throw new InvalidOperationException(
-                    $"Persistence schema '{module.Schema}' is duplicated for target '{module.DatabaseTarget}'.");
+                    $"Persistence schema '{module.Schema}' is duplicated for target '{module.DatabaseTarget}'."
+                );
             }
 
             if (!Enum.IsDefined(module.DatabaseTarget))
             {
                 throw new InvalidOperationException(
-                    $"Persistence module '{module.Id}' uses unsupported database target '{module.DatabaseTarget}'.");
+                    $"Persistence module '{module.Id}' uses unsupported database target '{module.DatabaseTarget}'."
+                );
             }
 
             if (module.EntityTypes is null || module.EntityTypes.Count == 0)
             {
-                throw new InvalidOperationException($"Persistence module '{module.Id}' must declare at least one entity type.");
+                throw new InvalidOperationException(
+                    $"Persistence module '{module.Id}' must declare at least one entity type."
+                );
             }
 
             var declared = new HashSet<Type>();
             foreach (var entityType in module.EntityTypes)
             {
-                if (entityType is null || !entityType.IsClass || entityType.IsAbstract || entityType.ContainsGenericParameters ||
+                if (entityType is null || !entityType.IsClass || entityType.IsAbstract ||
+                    entityType.ContainsGenericParameters ||
                     !typeof(IMoongateEntity).IsAssignableFrom(entityType))
                 {
                     throw new InvalidOperationException(
-                        $"Persistence module '{module.Id}' owned type '{entityType?.FullName ?? "<null>"}' must be a concrete, closed class implementing {nameof(IMoongateEntity)}.");
+                        $"Persistence module '{module.Id}' owned type '{entityType?.FullName ?? "<null>"}' must be a concrete, closed class implementing {nameof(IMoongateEntity)}."
+                    );
                 }
 
                 if (!declared.Add(entityType))
                 {
                     throw new InvalidOperationException(
-                        $"Persistence module '{module.Id}' declares entity '{entityType.FullName}' more than once.");
+                        $"Persistence module '{module.Id}' declares entity '{entityType.FullName}' more than once."
+                    );
                 }
             }
         }
@@ -173,19 +199,22 @@ internal sealed partial class PersistenceModuleRegistry
                 if (!_entities.TryGetValue(entityType, out var target))
                 {
                     throw new InvalidOperationException(
-                        $"Persistence module '{module.Id}' owns entity '{entityType.FullName}', but that entity was not registered.");
+                        $"Persistence module '{module.Id}' owns entity '{entityType.FullName}', but that entity was not registered."
+                    );
                 }
 
                 if (target.HasValue && target.Value != module.DatabaseTarget)
                 {
                     throw new InvalidOperationException(
-                        $"Persistence entity '{entityType.FullName}' was registered for '{target}', but module '{module.Id}' targets '{module.DatabaseTarget}'.");
+                        $"Persistence entity '{entityType.FullName}' was registered for '{target}', but module '{module.Id}' targets '{module.DatabaseTarget}'."
+                    );
                 }
 
                 if (!owners.TryAdd(entityType, module))
                 {
                     throw new InvalidOperationException(
-                        $"Persistence entity '{entityType.FullName}' is owned by both modules '{owners[entityType].Id}' and '{module.Id}'.");
+                        $"Persistence entity '{entityType.FullName}' is owned by both modules '{owners[entityType].Id}' and '{module.Id}'."
+                    );
                 }
             }
         }
@@ -221,20 +250,23 @@ internal sealed partial class PersistenceModuleRegistry
                 {
                     throw new InvalidOperationException(
                         $"Persistence module '{module.Id}' owns entity '{entityType.FullName}' in schema '{module.Schema}', " +
-                        $"but the final shared FreeSql mapping resolves to schema '{schema}'.");
+                        $"but the final shared FreeSql mapping resolves to schema '{schema}'."
+                    );
                 }
 
                 if (!SchemaPattern().IsMatch(tableName))
                 {
                     throw new InvalidOperationException(
-                        $"Persistence entity '{entityType.FullName}' table '{table.DbName}' must use a lowercase snake_case table name.");
+                        $"Persistence entity '{entityType.FullName}' table '{table.DbName}' must use a lowercase snake_case table name."
+                    );
                 }
 
                 var tableKey = $"{schema}.{tableName}";
                 if (!tables.TryAdd(tableKey, entityType))
                 {
                     throw new InvalidOperationException(
-                        $"Persistence table '{tableKey}' is duplicated by entities '{tables[tableKey].FullName}' and '{entityType.FullName}'.");
+                        $"Persistence table '{tableKey}' is duplicated by entities '{tables[tableKey].FullName}' and '{entityType.FullName}'."
+                    );
                 }
 
                 foreach (var column in table.ColumnsByCs.Values)
@@ -243,7 +275,8 @@ internal sealed partial class PersistenceModuleRegistry
                     if (!SchemaPattern().IsMatch(columnName))
                     {
                         throw new InvalidOperationException(
-                            $"Persistence entity '{entityType.FullName}' column '{columnName}' must use a lowercase snake_case name.");
+                            $"Persistence entity '{entityType.FullName}' column '{columnName}' must use a lowercase snake_case name."
+                        );
                     }
                 }
 
@@ -259,13 +292,15 @@ internal sealed partial class PersistenceModuleRegistry
 
                     throw new InvalidOperationException(
                         $"Persistence module '{module.Id}' entity '{entityType.FullName}' property '{property.Name}' " +
-                        "is not mapped by FreeSql. Use a supported column mapping, explicit Column(IsIgnore = true), or Navigate declaration.");
+                        "is not mapped by FreeSql. Use a supported column mapping, explicit Column(IsIgnore = true), or Navigate declaration."
+                    );
                 }
 
                 if (!ReferenceEquals(owners[entityType], module))
                 {
                     throw new InvalidOperationException(
-                        $"Persistence entity '{entityType.FullName}' final mapping is not owned by module '{module.Id}'.");
+                        $"Persistence entity '{entityType.FullName}' final mapping is not owned by module '{module.Id}'."
+                    );
                 }
             }
         }
@@ -280,7 +315,8 @@ internal sealed partial class PersistenceModuleRegistry
         if (!table.ColumnsByCs.TryGetValue(nameof(IMoongateEntity.Id), out var idColumn))
         {
             throw new InvalidOperationException(
-                $"Persistence module '{module.Id}' entity '{entityType.FullName}' must map its public Serial Id property.");
+                $"Persistence module '{module.Id}' entity '{entityType.FullName}' must map its public Serial Id property."
+            );
         }
 
         if (idColumn.CsType != typeof(Moongate.Core.Primitives.Serial) ||
@@ -288,19 +324,22 @@ internal sealed partial class PersistenceModuleRegistry
             !ReferenceEquals(table.Primarys[0], idColumn))
         {
             throw new InvalidOperationException(
-                $"Persistence module '{module.Id}' entity '{entityType.FullName}' must map Serial Id as its sole primary key.");
+                $"Persistence module '{module.Id}' entity '{entityType.FullName}' must map Serial Id as its sole primary key."
+            );
         }
 
         if (idColumn.Attribute.IsIdentity)
         {
             throw new InvalidOperationException(
-                $"Persistence module '{module.Id}' entity '{entityType.FullName}' must keep Serial Id application-assigned, not database-generated.");
+                $"Persistence module '{module.Id}' entity '{entityType.FullName}' must keep Serial Id application-assigned, not database-generated."
+            );
         }
 
         if (idColumn.Attribute.MapType != typeof(long))
         {
             throw new InvalidOperationException(
-                $"Persistence module '{module.Id}' entity '{entityType.FullName}' must map Serial Id through CLR long storage.");
+                $"Persistence module '{module.Id}' entity '{entityType.FullName}' must map Serial Id through CLR long storage."
+            );
         }
 
         var databaseType = idColumn.Attribute.DbType.Trim();
@@ -309,7 +348,8 @@ internal sealed partial class PersistenceModuleRegistry
         {
             throw new InvalidOperationException(
                 $"Persistence module '{module.Id}' entity '{entityType.FullName}' must map Serial Id to PostgreSQL bigint/int8 storage, " +
-                $"but the effective database type is '{databaseType}'.");
+                $"but the effective database type is '{databaseType}'."
+            );
         }
     }
 

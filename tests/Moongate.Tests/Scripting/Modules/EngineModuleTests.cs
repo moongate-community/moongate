@@ -17,11 +17,16 @@ public sealed class EngineModuleTests
         state.OpenBasicLibrary();
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new EngineModule());
 
-        var result = SyncValueTask.Run(state.DoStringAsync("return engine.name, engine.version, engine.codename, engine.platform", "t", default));
+        var result = SyncValueTask.Run(
+            state.DoStringAsync("return engine.name, engine.version, engine.codename, engine.platform", "t", default)
+        );
 
         Assert.Equal("Moongate", result[0].Read<string>());
         Assert.Equal(VersionUtils.GetVersion(), result[1].Read<string>());
-        Assert.Equal(VersionUtils.GetCodename(Assembly.GetEntryAssembly() ?? typeof(EngineModule).Assembly), result[2].Read<string>());
+        Assert.Equal(
+            VersionUtils.GetCodename(Assembly.GetEntryAssembly() ?? typeof(EngineModule).Assembly),
+            result[2].Read<string>()
+        );
         Assert.Equal(Environment.OSVersion.Platform.ToString(), result[3].Read<string>());
     }
 
@@ -32,8 +37,13 @@ public sealed class EngineModuleTests
         state.OpenBasicLibrary();
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, new LogModule());
 
-        var result = SyncValueTask.Run(state.DoStringAsync(
-            "log.info('hello {Name}', 'x') log.warning('w') log.error('e') log.debug('d') return log.LEVEL_INFO, type(log.info)", "t", default));
+        var result = SyncValueTask.Run(
+            state.DoStringAsync(
+                "log.info('hello {Name}', 'x') log.warning('w') log.error('e') log.debug('d') return log.LEVEL_INFO, type(log.info)",
+                "t",
+                default
+            )
+        );
 
         Assert.Equal(2, result[0].Read<double>());
         Assert.Equal("function", result[1].Read<string>());

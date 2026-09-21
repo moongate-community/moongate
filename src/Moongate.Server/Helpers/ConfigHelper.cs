@@ -21,9 +21,9 @@ public static class ConfigHelper
         if (File.Exists(filePath))
         {
             var loaded = TomlUtils.DeserializeFromFile<MoongateServerConfig>(filePath)
-                   ?? throw new InvalidDataException(
-                       $"Configuration file '{filePath}' did not contain a server configuration."
-                   );
+                         ?? throw new InvalidDataException(
+                             $"Configuration file '{filePath}' did not contain a server configuration."
+                         );
             loaded.Validate();
             return loaded;
         }

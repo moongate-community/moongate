@@ -20,13 +20,17 @@ public static partial class EnvExtensions
             return input;
         }
 
-        return EnvironmentVariablePattern().Replace(input, match =>
-        {
-            var name = match.Groups["name"].Value;
-            return Environment.GetEnvironmentVariable(name) ?? (requireDefined
-                ? throw new InvalidOperationException($"Environment variable '{name}' is not defined.")
-                : match.Value);
-        });
+        return EnvironmentVariablePattern()
+            .Replace(
+                input,
+                match =>
+                {
+                    var name = match.Groups["name"].Value;
+                    return Environment.GetEnvironmentVariable(name) ?? (requireDefined
+                        ? throw new InvalidOperationException($"Environment variable '{name}' is not defined.")
+                        : match.Value);
+                }
+            );
     }
 
     [GeneratedRegex(@"\$\{(?<name>[A-Za-z_][A-Za-z0-9_]*)\}|\$(?<name>[A-Za-z_][A-Za-z0-9_]*)")]

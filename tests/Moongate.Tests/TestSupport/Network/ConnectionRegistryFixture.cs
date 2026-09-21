@@ -23,6 +23,7 @@ internal sealed class ConnectionRegistryFixture : IAsyncDisposable
                 throw new InvalidOperationException("Could not register the test connection.");
             }
         }
+
         return fixture;
     }
 

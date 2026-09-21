@@ -16,7 +16,8 @@ public sealed record MoongatePluginData
         Version version,
         string? author = null,
         string? description = null,
-        IEnumerable<MoongatePluginDependencyData>? dependencies = null)
+        IEnumerable<MoongatePluginDependencyData>? dependencies = null
+    )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(id);
         ArgumentException.ThrowIfNullOrWhiteSpace(name);
@@ -28,7 +29,9 @@ public sealed record MoongatePluginData
             if (dependency is null || !ids.Add(dependency.Id))
             {
                 throw new ArgumentException(
-                    "Dependencies must be non-null and have unique IDs.", nameof(dependencies));
+                    "Dependencies must be non-null and have unique IDs.",
+                    nameof(dependencies)
+                );
             }
         }
 

@@ -38,8 +38,13 @@ public sealed class PacketNetworkPipelineTests
         await peer.GetStream().WriteAsync(new byte[] { 0x73 });
         using (var pause = new CancellationTokenSource(TimeSpan.FromMilliseconds(100)))
         {
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () => { _ = await peer.GetStream().ReadAsync(new byte[1], pause.Token); });
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () =>
+                {
+                    _ = await peer.GetStream().ReadAsync(new byte[1], pause.Token);
+                }
+            );
         }
+
         await peer.GetStream().WriteAsync(new byte[] { 42 });
         Assert.Equal(new byte[] { 0x73, 42 }, await ReadAsync(peer, 2));
         await fixture.Game.StopAsync().WaitAsync(Timeout);
@@ -92,7 +97,8 @@ public sealed class PacketNetworkPipelineTests
         Assert.False(fixture.Loop.Completion.IsCompleted);
     }
 
-    [Theory, InlineData(new byte[] { 0xFF }), InlineData(new byte[] { 0xBD, 0, 3 }), InlineData(new byte[] { 0xBD, 0, 4, 0 }), InlineData(new byte[] { 0xA0, 0, 1 })]
+    [Theory, InlineData(new byte[] { 0xFF }), InlineData(new byte[] { 0xBD, 0, 3 }),
+     InlineData(new byte[] { 0xBD, 0, 4, 0 }), InlineData(new byte[] { 0xA0, 0, 1 })]
     public async Task UnknownMalformedOrUnhandledPacket_ClosesConnection(byte[] bytes)
     {
         await using var fixture = new PacketNetworkFixture();
@@ -109,7 +115,12 @@ public sealed class PacketNetworkPipelineTests
     {
         using var occupied = new TcpListener(IPAddress.Loopback, 0);
         occupied.Start();
-        await using var fixture = new PacketNetworkFixture([new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0)), new MoongateTcpServer((IPEndPoint)occupied.LocalEndpoint)]);
+        await using var fixture = new PacketNetworkFixture(
+            [
+                new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0)),
+                new MoongateTcpServer((IPEndPoint)occupied.LocalEndpoint)
+            ]
+        );
         await Assert.ThrowsAsync<SocketException>(() => fixture.StartAsync());
         Assert.Equal(0, fixture.Listeners[0].Port);
     }
@@ -121,13 +132,15 @@ public sealed class PacketNetworkPipelineTests
         container.RegisterInstance(new GameLoopOptions());
         container.RegisterInstance(new TimerWheelOptions());
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
-        container.RegisterInstance(new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } });
+        container.RegisterInstance(
+            new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } }
+        );
         container.RegisterMoongateService<TimerWheelService>(-900);
         container.RegisterMoongateService<IGameLoopService, GameLoopService>(-800);
         container.RegisterMoongateService<ISessionService, SessionService>();
         container.RegisterInstance<IPluginLoaderService>(new DeferredPacketPluginLoader(container));
         container.RegisterPacketHandler<PingPacket, PingPacketHandler>()
-                 .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
+            .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
         PacketPipelineRegistration.Register(container);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         try
@@ -159,17 +172,19 @@ public sealed class PacketNetworkPipelineTests
     {
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        await using var fixture = new PacketNetworkFixture(disconnectSender: _ =>
-        {
-            entered.TrySetResult();
-            if (failSender)
-            {
-                throw new IOException("Controlled sender cleanup failure.");
-            }
+        await using var fixture = new PacketNetworkFixture(
+                disconnectSender: _ =>
+                {
+                    entered.TrySetResult();
+                    if (failSender)
+                    {
+                        throw new IOException("Controlled sender cleanup failure.");
+                    }
 
-            return release.Task;
-        })
-        { AllowCleanupFailure = failSender };
+                    return release.Task;
+                }
+            )
+            { AllowCleanupFailure = failSender };
         await fixture.StartAsync();
         using var peer = await fixture.ConnectAsync();
         await peer.GetStream().WriteAsync(new byte[] { 0x73, 1 });
@@ -187,8 +202,15 @@ public sealed class PacketNetworkPipelineTests
             }
 
             release.TrySetResult();
-            if (failSender) { await Assert.ThrowsAsync<AggregateException>(() => stopping.WaitAsync(Timeout)); }
-            else { await stopping.WaitAsync(Timeout); }
+            if (failSender)
+            {
+                await Assert.ThrowsAsync<AggregateException>(() => stopping.WaitAsync(Timeout));
+            }
+            else
+            {
+                await stopping.WaitAsync(Timeout);
+            }
+
             Assert.Empty(fixture.Sessions.GetAll());
             Assert.Null(session.NetworkSession.Client);
         }
@@ -232,9 +254,17 @@ public sealed class PacketNetworkPipelineTests
     [Fact]
     public async Task Stop_ClosesAllListenersAndDrainsSessionsWhenOneListenerCleanupFails()
     {
-        var first = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0),
-            connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [new FailingCleanupMiddleware()], framer: new UoPacketFramer(PacketRegistry.Default)));
-        var second = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0), framer: new UoPacketFramer(PacketRegistry.Default));
+        var first = new MoongateTcpServer(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            connectionPipelineFactory: () => new ConnectionPipeline(
+                middlewares: [new FailingCleanupMiddleware()],
+                framer: new UoPacketFramer(PacketRegistry.Default)
+            )
+        );
+        var second = new MoongateTcpServer(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            framer: new UoPacketFramer(PacketRegistry.Default)
+        );
         await using var fixture = new PacketNetworkFixture([first, second]) { AllowCleanupFailure = true };
         await fixture.StartAsync();
         using var peer = await fixture.ConnectAsync();

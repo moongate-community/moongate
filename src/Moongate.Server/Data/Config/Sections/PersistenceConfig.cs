@@ -16,6 +16,7 @@ public sealed class PersistenceConfig
         {
             throw new InvalidOperationException("Persistence accounts and realm configuration sections cannot be null.");
         }
+
         Accounts.Validate();
         Realm.Validate();
     }
@@ -23,9 +24,12 @@ public sealed class PersistenceConfig
     public PostgreSqlPersistenceOptions ToOptions()
     {
         Validate();
-        return new PostgreSqlPersistenceOptions([
-            Accounts.ToOptions(PersistenceDatabaseTarget.Accounts),
-            Realm.ToOptions(PersistenceDatabaseTarget.Realm)
-        ], AutoSyncSchema);
+        return new PostgreSqlPersistenceOptions(
+            [
+                Accounts.ToOptions(PersistenceDatabaseTarget.Accounts),
+                Realm.ToOptions(PersistenceDatabaseTarget.Realm)
+            ],
+            AutoSyncSchema
+        );
     }
 }

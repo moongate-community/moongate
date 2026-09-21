@@ -35,11 +35,15 @@ public sealed class ApiRegistry
 
             return;
         }
+
         IsFrozen = true;
 
         try
         {
-            foreach (var operation in _operations.Values) { operation.ResolveHandler(); }
+            foreach (var operation in _operations.Values)
+            {
+                operation.ResolveHandler();
+            }
         }
         catch (Exception exception)
         {
@@ -60,6 +64,7 @@ public sealed class ApiRegistry
         {
             throw new InvalidOperationException("An operation with this identifier is already registered.");
         }
+
         _requests.Add(typeof(TRequest), operation);
     }
 
@@ -73,7 +78,7 @@ public sealed class ApiRegistry
         var method =
             typeof(ApiRegistry).GetMethod(nameof(CreateRegistration), BindingFlags.NonPublic | BindingFlags.Static)!;
         var entry = (IApiOperationRegistration)method.MakeGenericMethod(types[0], types[1], typeof(THandler))
-                                                     .Invoke(null, [id, factory])!;
+            .Invoke(null, [id, factory])!;
         _operations[id] = entry;
         _requests[types[0]] = entry;
     }
@@ -121,12 +126,19 @@ public sealed class ApiRegistry
 
     private void EnsureMutable()
     {
-        if (IsFrozen) { throw new InvalidOperationException("The API registry is frozen."); }
+        if (IsFrozen)
+        {
+            throw new InvalidOperationException("The API registry is frozen.");
+        }
     }
 
     private void EnsureReady()
     {
-        if (!IsFrozen) { throw new InvalidOperationException("The API registry must be frozen before use."); }
+        if (!IsFrozen)
+        {
+            throw new InvalidOperationException("The API registry must be frozen before use.");
+        }
+
         _freezeFailure?.Throw();
     }
 
@@ -134,11 +146,10 @@ public sealed class ApiRegistry
     {
         ArgumentNullException.ThrowIfNull(handlerType);
         var contracts = handlerType.GetInterfaces()
-                                   .Where(
-                                       type => type.IsGenericType &&
-                                               type.GetGenericTypeDefinition() == typeof(IApiHandler<,>)
-                                   )
-                                   .ToArray();
+            .Where(type => type.IsGenericType &&
+                           type.GetGenericTypeDefinition() == typeof(IApiHandler<,>)
+            )
+            .ToArray();
 
         if (!handlerType.IsClass || handlerType.IsAbstract || handlerType.ContainsGenericParameters || contracts.Length != 1)
         {
@@ -153,15 +164,15 @@ public sealed class ApiRegistry
         var attribute = requestType.GetCustomAttribute<ApiOperationAttribute>() ??
                         throw new InvalidOperationException("The request needs an explicit operation identifier.");
         var contracts = requestType.GetInterfaces()
-                                   .Where(
-                                       type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IApiRequest<>)
-                                   )
-                                   .ToArray();
+            .Where(type => type.IsGenericType && type.GetGenericTypeDefinition() == typeof(IApiRequest<>)
+            )
+            .ToArray();
 
         if (contracts.Length != 1 || contracts[0].GetGenericArguments()[0] != responseType)
         {
             throw new InvalidOperationException("The request must identify exactly one matching response type.");
         }
+
         ValidateDto(requestType);
         ValidateDto(responseType);
 
@@ -176,11 +187,16 @@ public sealed class ApiRegistry
         {
             throw new InvalidOperationException("API contracts require explicit MessagePack integer keys.");
         }
+
         var keys = new HashSet<int>();
 
         foreach (var member in type.GetMembers(BindingFlags.Instance | BindingFlags.Public))
         {
-            if (member is not (PropertyInfo or FieldInfo) || member.IsDefined(typeof(IgnoreMemberAttribute))) { continue; }
+            if (member is not (PropertyInfo or FieldInfo) || member.IsDefined(typeof(IgnoreMemberAttribute)))
+            {
+                continue;
+            }
+
             var key = member.GetCustomAttribute<KeyAttribute>();
 
             if (key?.IntKey is not { } index || index < 0 || !keys.Add(index))

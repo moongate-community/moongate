@@ -45,15 +45,15 @@ internal static class PostgreSqlConnectionString
 
             var key = Uri.UnescapeDataString(parameter[..separator]).ToLowerInvariant() switch
             {
-                "user" => "Username",
-                "dbname" => "Database",
-                "connect_timeout" => "Timeout",
-                "command_timeout" => "Command Timeout",
+                "user"             => "Username",
+                "dbname"           => "Database",
+                "connect_timeout"  => "Timeout",
+                "command_timeout"  => "Command Timeout",
                 "application_name" => "Application Name",
-                "search_path" => "Search Path",
-                "sslmode" => "SSL Mode",
-                "sslrootcert" => "Root Certificate",
-                var name => name
+                "search_path"      => "Search Path",
+                "sslmode"          => "SSL Mode",
+                "sslrootcert"      => "Root Certificate",
+                var name           => name
             };
             var option = Uri.UnescapeDataString(parameter[(separator + 1)..]);
             if (key.Replace(" ", "").Equals("sslmode", StringComparison.OrdinalIgnoreCase))

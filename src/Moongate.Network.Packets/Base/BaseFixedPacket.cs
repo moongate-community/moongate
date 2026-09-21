@@ -12,7 +12,9 @@ public abstract class BaseFixedPacket<TPacket> : BasePacket<TPacket>
     {
         if (Descriptor.Sizing != PacketSizing.Fixed || Descriptor.FixedLength is not int fixedLength)
         {
-            throw new InvalidOperationException($"Packet type '{typeof(TPacket).FullName}' uses BaseFixedPacket but is not fixed-size.");
+            throw new InvalidOperationException(
+                $"Packet type '{typeof(TPacket).FullName}' uses BaseFixedPacket but is not fixed-size."
+            );
         }
 
         Length = fixedLength;

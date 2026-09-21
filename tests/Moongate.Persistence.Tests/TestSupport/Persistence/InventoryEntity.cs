@@ -10,6 +10,5 @@ internal sealed class InventoryEntity : IMoongateEntity
     [Column(Name = "id", IsPrimary = true)]
     public Serial Id { get; set; }
 
-    [Column(Name = "balance")]
-    public int Balance { get; set; }
+    [Column(Name = "balance")] public int Balance { get; set; }
 }

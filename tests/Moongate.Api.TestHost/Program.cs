@@ -12,27 +12,46 @@ using Moongate.Api.TestHost.Handlers;
 
 try
 {
-    var config = JsonSerializer.Deserialize<HostConfiguration>(await Console.In.ReadLineAsync() ?? throw new InvalidDataException()) ?? throw new InvalidDataException();
-    using var certificate = X509CertificateLoader.LoadPkcs12(Convert.FromBase64String(config.Certificate), null, X509KeyStorageFlags.EphemeralKeySet);
+    var config = JsonSerializer.Deserialize<HostConfiguration>(
+        await Console.In.ReadLineAsync() ?? throw new InvalidDataException()
+    ) ?? throw new InvalidDataException();
+    using var certificate = X509CertificateLoader.LoadPkcs12(
+        Convert.FromBase64String(config.Certificate),
+        null,
+        X509KeyStorageFlags.EphemeralKeySet
+    );
     using var root = X509CertificateLoader.LoadCertificate(Convert.FromBase64String(config.Root));
     var tls = new ApiTlsOptions
     {
         Certificate = certificate,
         TrustedRoots = [root],
-        PeersByCertificateSha256 = config.Peers.ToDictionary(pair => pair.Key, pair => new ApiPeerIdentity(pair.Value, config.Permissions[pair.Value]))
+        PeersByCertificateSha256 = config.Peers.ToDictionary(
+            pair => pair.Key,
+            pair => new ApiPeerIdentity(pair.Value, config.Permissions[pair.Value])
+        )
     };
     var registry = new ApiRegistry();
     if (args.Single() is "login" or "game")
     {
         var handler = new IncrementHandler();
         registry.RegisterHandler(() => handler);
-        await using var server = new ApiServer(new IPEndPoint(IPAddress.Loopback, 0), registry, new ApiOptions(), tls, TimeProvider.System);
+        await using var server = new ApiServer(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            registry,
+            new ApiOptions(),
+            tls,
+            TimeProvider.System
+        );
         await server.StartAsync();
         Console.WriteLine($"READY {server.Endpoint!.Port}");
         while (await Console.In.ReadLineAsync() is { } command && command != "STOP")
         {
-            if (command == "COUNT") { Console.WriteLine($"COUNT {handler.Invocations}"); }
+            if (command == "COUNT")
+            {
+                Console.WriteLine($"COUNT {handler.Invocations}");
+            }
         }
+
         await server.StopAsync();
     }
     else if (args[0] == "client")
@@ -42,18 +61,31 @@ try
         var connection = await client.ConnectAsync(new IPEndPoint(IPAddress.Loopback, config.Port), "localhost", "target");
         try
         {
-            var result = await connection.RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = config.Value });
+            var result = await connection.RequestAsync<IncrementRequest, IncrementResponse>(
+                new IncrementRequest { Value = config.Value }
+            );
             Console.WriteLine(result.Value);
         }
-        catch (ApiRemoteException error) { Console.WriteLine($"ERROR {error.Code}"); }
+        catch (ApiRemoteException error)
+        {
+            Console.WriteLine($"ERROR {error.Code}");
+        }
         catch (IOException) when (config.ReconnectAfterLoss)
         {
             await connection.Completion;
-            await using var replacement = await client.ConnectAsync(new IPEndPoint(IPAddress.Loopback, config.Port), "localhost", "target");
+            await using var replacement = await client.ConnectAsync(
+                new IPEndPoint(IPAddress.Loopback, config.Port),
+                "localhost",
+                "target"
+            );
             Console.WriteLine("DISCONNECTED RECONNECTED");
         }
     }
-    else { throw new ArgumentException("Unknown test host role."); }
+    else
+    {
+        throw new ArgumentException("Unknown test host role.");
+    }
+
     return 0;
 }
 catch (Exception exception)

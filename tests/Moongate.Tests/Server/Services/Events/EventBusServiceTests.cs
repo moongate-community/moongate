@@ -17,10 +17,11 @@ public sealed class EventBusServiceTests
         container.RegisterMoongateEventBus()
             .RegisterMoongateService<IEventBusService, EventBusService>();
         container.OnEvent<MoongateStartedEvent>((message, _) =>
-        {
-            received = message;
-            return Task.CompletedTask;
-        });
+            {
+                received = message;
+                return Task.CompletedTask;
+            }
+        );
         var message = new MoongateStartedEvent();
 
         await container.Resolve<IEventBusService>().PublishAsync(message);
@@ -37,10 +38,11 @@ public sealed class EventBusServiceTests
             .RegisterMoongateService<IEventBusService, EventBusService>();
         var service = container.Resolve<IEventBusService>();
         var subscription = service.Subscribe<MoongateStoppingEvent>((_, _) =>
-        {
-            received++;
-            return Task.CompletedTask;
-        });
+            {
+                received++;
+                return Task.CompletedTask;
+            }
+        );
         var eventBus = container.Resolve<IMoongateEventBus>();
 
         await eventBus.PublishAsync(new MoongateStoppingEvent());
@@ -61,10 +63,11 @@ public sealed class EventBusServiceTests
         var first = container.Resolve<IEventBusService>();
         var second = container.Resolve<IEventBusService>();
         first.Subscribe<MoongateStoppedEvent>((_, cancellationToken) =>
-        {
-            receivedToken = cancellationToken;
-            return Task.CompletedTask;
-        });
+            {
+                receivedToken = cancellationToken;
+                return Task.CompletedTask;
+            }
+        );
 
         await second.PublishAsync(new MoongateStoppedEvent(), cancellationSource.Token);
 

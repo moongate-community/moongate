@@ -18,7 +18,7 @@ namespace Moongate.Api.Dispatch.Internal;
 internal sealed class ApiDispatcher
 {
     private static readonly ILogger Logger = Log.ForContext<ApiDispatcher>();
-    private readonly object _gate = new();
+    private readonly Lock _gate = new();
     private readonly IApiConnection _connection;
     private readonly ApiRegistry _registry;
     private readonly ApiOptions _options;
@@ -48,6 +48,7 @@ internal sealed class ApiDispatcher
         {
             throw new InvalidOperationException("Freeze the API registry before accepting requests.");
         }
+
         options.Validate();
         _connection = connection;
         _registry = registry;
@@ -81,7 +82,11 @@ internal sealed class ApiDispatcher
 
         foreach (var call in calls)
         {
-            if (call.TryFinish()) { SendError(call.Envelope, ApiErrorCode.Unavailable); }
+            if (call.TryFinish())
+            {
+                SendError(call.Envelope, ApiErrorCode.Unavailable);
+            }
+
             call.Cancel();
         }
     }
@@ -107,20 +112,33 @@ internal sealed class ApiDispatcher
             {
                 throw new ApiProtocolException("Incoming request identifiers must strictly increase.");
             }
+
             _lastIncomingId = request.RequestId;
 
-            if (!_accepting) { rejection = ApiErrorCode.Unavailable; }
+            if (!_accepting)
+            {
+                rejection = ApiErrorCode.Unavailable;
+            }
             else if (!_registry.TryGet(request.OperationId, out var operation) || !operation.HasHandler)
             {
                 rejection = ApiErrorCode.UnsupportedOperation;
             }
-            else if (!_connection.Peer.CanInvoke(request.OperationId)) { rejection = ApiErrorCode.Forbidden; }
+            else if (!_connection.Peer.CanInvoke(request.OperationId))
+            {
+                rejection = ApiErrorCode.Forbidden;
+            }
             else
             {
                 call = new(new(request.Kind, request.RequestId, request.OperationId, request.Payload.ToArray()), operation);
 
-                if (!_queue.Writer.TryWrite(call)) { rejection = ApiErrorCode.Busy; }
-                else { _calls.Add(call); }
+                if (!_queue.Writer.TryWrite(call))
+                {
+                    rejection = ApiErrorCode.Busy;
+                }
+                else
+                {
+                    _calls.Add(call);
+                }
             }
         }
 
@@ -133,10 +151,12 @@ internal sealed class ApiDispatcher
                 // No timer, token registration or handler exists for a rejected entry.
                 call.DisposeAsync().AsTask().GetAwaiter().GetResult();
             }
+
             SendError(request, code);
 
             return false;
         }
+
         call!.Arm(_clock, _options.HandlerTimeout - _clock.GetElapsedTime(arrived), Expire);
 
         return true;
@@ -152,21 +172,42 @@ internal sealed class ApiDispatcher
 
             try
             {
-                if (call.IsTerminal) { continue; }
+                if (call.IsTerminal)
+                {
+                    continue;
+                }
+
                 await _executionSlots.WaitAsync(call.Token).ConfigureAwait(false);
                 acquired = true;
 
-                if (!call.IsTerminal) { await ExecuteAsync(call).ConfigureAwait(false); }
+                if (!call.IsTerminal)
+                {
+                    await ExecuteAsync(call).ConfigureAwait(false);
+                }
             }
-            catch (OperationCanceledException) when (call.Token.IsCancellationRequested) { }
-            catch (Exception exception) { Fail(exception); }
+            catch (OperationCanceledException) when (call.Token.IsCancellationRequested)
+            {
+            }
+            catch (Exception exception)
+            {
+                Fail(exception);
+            }
             finally
             {
-                if (acquired) { _executionSlots.Release(); }
+                if (acquired)
+                {
+                    _executionSlots.Release();
+                }
 
-                lock (_gate) { _calls.Remove(call); }
+                lock (_gate)
+                {
+                    _calls.Remove(call);
+                }
 
-                try { await call.DisposeAsync().ConfigureAwait(false); }
+                try
+                {
+                    await call.DisposeAsync().ConfigureAwait(false);
+                }
                 catch (Exception exception)
                 {
                     Logger.Warning(
@@ -185,10 +226,16 @@ internal sealed class ApiDispatcher
     {
         object request;
 
-        try { request = call.Operation.DeserializeRequest(call.Envelope.Payload); }
+        try
+        {
+            request = call.Operation.DeserializeRequest(call.Envelope.Payload);
+        }
         catch (MessagePackSerializationException)
         {
-            if (call.TryFinish()) { SendError(call.Envelope, ApiErrorCode.InvalidRequest); }
+            if (call.TryFinish())
+            {
+                SendError(call.Envelope, ApiErrorCode.InvalidRequest);
+            }
 
             return;
         }
@@ -199,25 +246,39 @@ internal sealed class ApiDispatcher
             return;
         }
 
-        if (call.IsTerminal) { return; }
+        if (call.IsTerminal)
+        {
+            return;
+        }
 
         try
         {
             var context = new ApiRequestContext(_connection, call.Envelope.RequestId, call.Envelope.OperationId);
             var response = await call.Operation
-                                     .InvokeAsync(context, request, _options.MaxFrameLength, call.Token)
-                                     .ConfigureAwait(false);
+                .InvokeAsync(context, request, _options.MaxFrameLength, call.Token)
+                .ConfigureAwait(false);
 
-            if (call.IsTerminal) { return; }
+            if (call.IsTerminal)
+            {
+                return;
+            }
+
             var frame = _codec.Encode(
                 new(ApiMessageKind.Response, call.Envelope.RequestId, call.Envelope.OperationId, response)
             );
 
-            if (call.TryFinish()) { Send(frame); }
+            if (call.TryFinish())
+            {
+                Send(frame);
+            }
         }
         catch (Exception exception)
         {
-            if (call.TryFinish()) { SendError(call.Envelope, ApiErrorCode.InternalError); }
+            if (call.TryFinish())
+            {
+                SendError(call.Envelope, ApiErrorCode.InternalError);
+            }
+
             Logger.Warning(
                 "API handler failed for peer {PeerId}, operation {OperationId}, request {RequestId}: {ErrorType}",
                 _connection.Peer.PeerId,
@@ -243,7 +304,11 @@ internal sealed class ApiDispatcher
 
         lock (_gate)
         {
-            if (_faulted) { return; }
+            if (_faulted)
+            {
+                return;
+            }
+
             _faulted = true;
             _accepting = false;
             _queue.Writer.TryComplete();
@@ -255,12 +320,16 @@ internal sealed class ApiDispatcher
             call.TryFinish();
             call.Cancel();
         }
+
         _abort(exception);
     }
 
     private void Send(byte[] frame)
     {
-        if (!_outbox.TryEnqueue(new(frame, null))) { Fail(new IOException("The API response queue is full or closed.")); }
+        if (!_outbox.TryEnqueue(new(frame, null)))
+        {
+            Fail(new IOException("The API response queue is full or closed."));
+        }
     }
 
     private void SendError(ApiEnvelope request, ApiErrorCode code)
@@ -273,6 +342,9 @@ internal sealed class ApiDispatcher
             );
             Send(_codec.Encode(new(ApiMessageKind.Error, request.RequestId, request.OperationId, payload)));
         }
-        catch (Exception exception) { Fail(exception); }
+        catch (Exception exception)
+        {
+            Fail(exception);
+        }
     }
 }

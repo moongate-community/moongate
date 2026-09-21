@@ -12,8 +12,8 @@ public static class NetworkUtils
     /// </remarks>
     public static IEnumerable<IPAddress> GetLocalIpAddresses()
         => NetworkInterface.GetAllNetworkInterfaces()
-                           .SelectMany(adapter => adapter.GetIPProperties().UnicastAddresses)
-                           .Select(address => address.Address);
+            .SelectMany(adapter => adapter.GetIPProperties().UnicastAddresses)
+            .Select(address => address.Address);
 
     /// <summary>Gets local endpoints with the supplied endpoint's address family and port.</summary>
     /// <param name="endPoint">Provides the IPv4 or IPv6 family and the port to use.</param>
@@ -29,7 +29,7 @@ public static class NetworkUtils
         var port = endPoint.Port;
 
         return GetLocalIpAddresses()
-               .Where(address => address.AddressFamily == addressFamily)
-               .Select(address => new IPEndPoint(address, port));
+            .Where(address => address.AddressFamily == addressFamily)
+            .Select(address => new IPEndPoint(address, port));
     }
 }

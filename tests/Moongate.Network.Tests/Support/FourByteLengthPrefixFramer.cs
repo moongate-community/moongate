@@ -1,5 +1,4 @@
 using System.Buffers.Binary;
-
 using Moongate.Network.Interfaces.Framing;
 
 namespace Moongate.Network.Tests.Support;

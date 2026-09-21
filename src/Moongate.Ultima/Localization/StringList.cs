@@ -133,8 +133,8 @@ public sealed class StringList
 
         public int Compare(StringEntry x, StringEntry y)
             => _sortDescending
-                   ? string.CompareOrdinal(y.Text, x.Text)
-                   : string.CompareOrdinal(x.Text, y.Text);
+                ? string.CompareOrdinal(y.Text, x.Text)
+                : string.CompareOrdinal(x.Text, y.Text);
     }
 
     public StringEntry GetEntry(int number)

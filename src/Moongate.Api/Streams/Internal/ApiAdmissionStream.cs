@@ -67,8 +67,14 @@ internal sealed class ApiAdmissionStream : Stream
         {
             if (Interlocked.Exchange(ref _disposed, 1) == 0)
             {
-                try { await _inner.DisposeAsync().ConfigureAwait(false); }
-                finally { _admission.ReleaseTransport(); }
+                try
+                {
+                    await _inner.DisposeAsync().ConfigureAwait(false);
+                }
+                finally
+                {
+                    _admission.ReleaseTransport();
+                }
             }
         }
         finally
@@ -84,10 +90,19 @@ internal sealed class ApiAdmissionStream : Stream
         {
             if (disposing && Interlocked.Exchange(ref _disposed, 1) == 0)
             {
-                try { _inner.Dispose(); }
-                finally { _admission.ReleaseTransport(); }
+                try
+                {
+                    _inner.Dispose();
+                }
+                finally
+                {
+                    _admission.ReleaseTransport();
+                }
             }
         }
-        finally { base.Dispose(disposing); }
+        finally
+        {
+            base.Dispose(disposing);
+        }
     }
 }

@@ -56,6 +56,7 @@ public sealed class LoopbackPair : IAsyncDisposable
             {
                 await sender.StartAsync(CancellationToken.None);
             }
+
             await receiver.StartAsync(CancellationToken.None);
             return new LoopbackPair(sender, receiver);
         }
@@ -75,6 +76,7 @@ public sealed class LoopbackPair : IAsyncDisposable
                     await receiver.DisposeAsync();
                 }
             }
+
             throw;
         }
         finally

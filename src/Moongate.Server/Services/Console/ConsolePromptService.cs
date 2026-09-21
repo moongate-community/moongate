@@ -102,8 +102,7 @@ public sealed class ConsolePromptService : IConsolePromptService
     /// <inheritdoc />
     public void WriteOutputLine(string text, CommandOutputLevel level)
     {
-        RunWithPromptHidden(
-            () =>
+        RunWithPromptHidden(() =>
             {
                 if (level == CommandOutputLevel.Information)
                 {

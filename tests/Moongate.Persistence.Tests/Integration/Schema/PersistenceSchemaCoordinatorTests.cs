@@ -42,7 +42,8 @@ public sealed class PersistenceSchemaCoordinatorTests
             await coordinator.SynchronizeAsync();
             Assert.True(coordinator.IsReady);
             Assert.False(coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm.CodeFirst.IsAutoSyncStructure);
-            await coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm
+            await coordinator.GetDatabase(PersistenceDatabaseTarget.Realm)
+                .Orm
                 .Insert(new CharacterEntity { Id = new Serial(1), Name = "seeded" })
                 .ExecuteAffrowsAsync();
         }
@@ -50,8 +51,12 @@ public sealed class PersistenceSchemaCoordinatorTests
         await using var reopened = CreateCoordinator(database, PersistenceTestModules.Character());
 
         Assert.Empty(await reopened.PreviewAsync());
-        Assert.Equal("seeded", await database.ScalarAsync<string>(
-            "SELECT name FROM plugin_characters.characters WHERE id = 1"));
+        Assert.Equal(
+            "seeded",
+            await database.ScalarAsync<string>(
+                "SELECT name FROM plugin_characters.characters WHERE id = 1"
+            )
+        );
     }
 
     [Fact]
@@ -61,17 +66,26 @@ public sealed class PersistenceSchemaCoordinatorTests
         await using var coordinator = CreateCoordinator(
             database,
             PersistenceTestModules.CharacterShared(),
-            PersistenceTestModules.InventoryShared());
+            PersistenceTestModules.InventoryShared()
+        );
 
         await coordinator.SynchronizeAsync();
         var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
         await orm.Insert(new CharacterSharedEntity { Id = new Serial(7), Name = "character" }).ExecuteAffrowsAsync();
         await orm.Insert(new InventorySharedEntity { Id = new Serial(7), Balance = 42 }).ExecuteAffrowsAsync();
 
-        Assert.Equal("character", await database.ScalarAsync<string>(
-            "SELECT name FROM plugin_characters.entities WHERE id = 7"));
-        Assert.Equal(42, await database.ScalarAsync<int>(
-            "SELECT balance FROM plugin_inventory.entities WHERE id = 7"));
+        Assert.Equal(
+            "character",
+            await database.ScalarAsync<string>(
+                "SELECT name FROM plugin_characters.entities WHERE id = 7"
+            )
+        );
+        Assert.Equal(
+            42,
+            await database.ScalarAsync<int>(
+                "SELECT balance FROM plugin_inventory.entities WHERE id = 7"
+            )
+        );
     }
 
     [Fact]
@@ -81,33 +95,51 @@ public sealed class PersistenceSchemaCoordinatorTests
         await using (var version1 = CreateCoordinator(database, PersistenceTestModules.UpgradeV1()))
         {
             await version1.SynchronizeAsync();
-            await version1.GetDatabase(PersistenceDatabaseTarget.Realm).Orm
+            await version1.GetDatabase(PersistenceDatabaseTarget.Realm)
+                .Orm
                 .Insert(new UpgradeV1Entity { Id = new Serial(1), Name = "seeded character" })
                 .ExecuteAffrowsAsync();
         }
 
         var before = await database.ScalarAsync<string>(
-            "SELECT name FROM plugin_upgrade.characters WHERE id = 1");
+            "SELECT name FROM plugin_upgrade.characters WHERE id = 1"
+        );
         await using (var version2 = CreateCoordinator(database, PersistenceTestModules.UpgradeV2()))
         {
             await version2.SynchronizeAsync();
         }
 
-        Assert.Equal(before, await database.ScalarAsync<string>(
-            "SELECT display_name FROM plugin_upgrade.characters WHERE id = 1"));
-        Assert.Equal(1, await database.ScalarAsync<int>(
-            "SELECT level FROM plugin_upgrade.characters WHERE id = 1"));
+        Assert.Equal(
+            before,
+            await database.ScalarAsync<string>(
+                "SELECT display_name FROM plugin_upgrade.characters WHERE id = 1"
+            )
+        );
+        Assert.Equal(
+            1,
+            await database.ScalarAsync<int>(
+                "SELECT level FROM plugin_upgrade.characters WHERE id = 1"
+            )
+        );
 
         await using (var version3 = CreateCoordinator(database, PersistenceTestModules.UpgradeV3()))
         {
             await version3.SynchronizeAsync();
         }
 
-        Assert.Equal("seeded character", await database.ScalarAsync<string>(
-            "SELECT display_name FROM plugin_upgrade.characters WHERE id = 1"));
-        Assert.Equal("bigint", await database.ScalarAsync<string>(
-            "SELECT data_type FROM information_schema.columns " +
-            "WHERE table_schema = 'plugin_upgrade' AND table_name = 'characters' AND column_name = 'level'"));
+        Assert.Equal(
+            "seeded character",
+            await database.ScalarAsync<string>(
+                "SELECT display_name FROM plugin_upgrade.characters WHERE id = 1"
+            )
+        );
+        Assert.Equal(
+            "bigint",
+            await database.ScalarAsync<string>(
+                "SELECT data_type FROM information_schema.columns " +
+                "WHERE table_schema = 'plugin_upgrade' AND table_name = 'characters' AND column_name = 'level'"
+            )
+        );
         await using var reopened = CreateCoordinator(database, PersistenceTestModules.UpgradeV3());
         Assert.Empty(await reopened.PreviewAsync());
     }
@@ -120,16 +152,25 @@ public sealed class PersistenceSchemaCoordinatorTests
             "plugin.invalid",
             "plugin_invalid",
             PersistenceDatabaseTarget.Realm,
-            [typeof(NarrowSqlIdEntity)]);
+            [typeof(NarrowSqlIdEntity)]
+        );
         await using var coordinator = CreateCoordinator(database, PersistenceTestModules.Character(), invalid);
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => coordinator.SynchronizeAsync());
 
         Assert.Contains("integer", exception.Message, StringComparison.OrdinalIgnoreCase);
-        Assert.Equal(0L, await database.ScalarAsync<long>(
-            "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'plugin_characters'"));
-        Assert.Equal(0L, await database.ScalarAsync<long>(
-            "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'plugin_invalid'"));
+        Assert.Equal(
+            0L,
+            await database.ScalarAsync<long>(
+                "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'plugin_characters'"
+            )
+        );
+        Assert.Equal(
+            0L,
+            await database.ScalarAsync<long>(
+                "SELECT count(*) FROM information_schema.tables WHERE table_schema = 'plugin_invalid'"
+            )
+        );
         Assert.False(coordinator.IsReady);
     }
 
@@ -141,7 +182,8 @@ public sealed class PersistenceSchemaCoordinatorTests
             "plugin.mapping",
             "plugin_mapping",
             PersistenceDatabaseTarget.Realm,
-            [typeof(UnmappedPropertyEntity)]);
+            [typeof(UnmappedPropertyEntity)]
+        );
         await using var coordinator = CreateCoordinator(database, PersistenceTestModules.Character(), invalid);
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(() => coordinator.SynchronizeAsync());
@@ -149,9 +191,13 @@ public sealed class PersistenceSchemaCoordinatorTests
         Assert.Contains("plugin.mapping", exception.Message, StringComparison.Ordinal);
         Assert.Contains(typeof(UnmappedPropertyEntity).FullName!, exception.Message, StringComparison.Ordinal);
         Assert.Contains(nameof(UnmappedPropertyEntity.Position), exception.Message, StringComparison.Ordinal);
-        Assert.Equal(0L, await database.ScalarAsync<long>(
-            "SELECT count(*) FROM information_schema.schemata " +
-            "WHERE schema_name IN ('plugin_characters', 'plugin_mapping')"));
+        Assert.Equal(
+            0L,
+            await database.ScalarAsync<long>(
+                "SELECT count(*) FROM information_schema.schemata " +
+                "WHERE schema_name IN ('plugin_characters', 'plugin_mapping')"
+            )
+        );
         Assert.False(coordinator.IsReady);
     }
 
@@ -163,28 +209,36 @@ public sealed class PersistenceSchemaCoordinatorTests
             "plugin.mapping",
             "plugin_mapping",
             PersistenceDatabaseTarget.Realm,
-            [typeof(SupportedMappingEntity)]);
+            [typeof(SupportedMappingEntity)]
+        );
         await using var coordinator = CreateCoordinator(database, PersistenceTestModules.Character(), mapped);
 
         await coordinator.SynchronizeAsync();
         var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
         await orm.Insert(new CharacterEntity { Id = new Serial(7), Name = "linked character" }).ExecuteAffrowsAsync();
-        await orm.Insert(new SupportedMappingEntity
-        {
-            Id = new Serial(1),
-            Scores = [12, 34],
-            Position = new MappingPosition { X = 123, Y = 456 },
-            CharacterId = new Serial(7)
-        }).ExecuteAffrowsAsync();
+        await orm.Insert(
+                new SupportedMappingEntity
+                {
+                    Id = new Serial(1),
+                    Scores = [12, 34],
+                    Position = new MappingPosition { X = 123, Y = 456 },
+                    CharacterId = new Serial(7)
+                }
+            )
+            .ExecuteAffrowsAsync();
 
         var saved = await orm.Select<SupportedMappingEntity>().Include(entity => entity.Character).FirstAsync();
 
         Assert.Equal(new[] { 12, 34 }, saved.Scores);
         Assert.Equal("linked character", saved.Character?.Name);
-        Assert.Equal(0L, await database.ScalarAsync<long>(
-            "SELECT count(*) FROM information_schema.columns " +
-            "WHERE table_schema = 'plugin_mapping' AND table_name = 'supported_entities' " +
-            "AND column_name IN ('Position', 'position', 'Character', 'character')"));
+        Assert.Equal(
+            0L,
+            await database.ScalarAsync<long>(
+                "SELECT count(*) FROM information_schema.columns " +
+                "WHERE table_schema = 'plugin_mapping' AND table_name = 'supported_entities' " +
+                "AND column_name IN ('Position', 'position', 'Character', 'character')"
+            )
+        );
         Assert.True(coordinator.IsReady);
     }
 
@@ -210,7 +264,8 @@ public sealed class PersistenceSchemaCoordinatorTests
         await using var heldLock = await PostgreSqlSchemaLock.AcquireAsync(
             database.ConnectionString,
             PersistenceDatabaseTarget.Realm,
-            CancellationToken.None);
+            CancellationToken.None
+        );
         await using var coordinator = CreateCoordinator(database, PersistenceTestModules.Character());
         using var cancellation = new CancellationTokenSource(TimeSpan.FromMilliseconds(250));
 
@@ -234,7 +289,8 @@ public sealed class PersistenceSchemaCoordinatorTests
         await using var lockAfterFailure = await PostgreSqlSchemaLock.AcquireAsync(
             database.ConnectionString,
             PersistenceDatabaseTarget.Realm,
-            CancellationToken.None);
+            CancellationToken.None
+        );
     }
 
     [Fact]
@@ -245,12 +301,15 @@ public sealed class PersistenceSchemaCoordinatorTests
         {
             Database = $"moongate_test_{Guid.NewGuid():N}"
         };
-        var options = new PostgreSqlPersistenceOptions([
-            new PersistenceDatabaseOptions(
-                PersistenceDatabaseTarget.Realm,
-                database.ConnectionString,
-                mismatched.ConnectionString)
-        ]);
+        var options = new PostgreSqlPersistenceOptions(
+            [
+                new PersistenceDatabaseOptions(
+                    PersistenceDatabaseTarget.Realm,
+                    database.ConnectionString,
+                    mismatched.ConnectionString
+                )
+            ]
+        );
         var registry = CreateRegistry(PersistenceTestModules.Character());
         await using var coordinator = new PersistenceSchemaCoordinator(options, registry);
 
@@ -280,10 +339,12 @@ public sealed class PersistenceSchemaCoordinatorTests
         await using var database = await _fixture.CreateDatabaseAsync();
         var options = new PostgreSqlPersistenceOptions(
             [new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, database.ConnectionString)],
-            autoSynchronizeSchema: true);
+            autoSynchronizeSchema: true
+        );
         await using var coordinator = new PersistenceSchemaCoordinator(
             options,
-            CreateRegistry(PersistenceTestModules.Character()));
+            CreateRegistry(PersistenceTestModules.Character())
+        );
 
         await coordinator.InitializeAsync();
 
@@ -326,9 +387,11 @@ public sealed class PersistenceSchemaCoordinatorTests
         try
         {
             await Assert.ThrowsAnyAsync<OperationCanceledException>(() => PostgreSqlSchemaLock.AcquireAsync(
-                database.ConnectionString,
-                PersistenceDatabaseTarget.Realm,
-                competingCancellation.Token));
+                    database.ConnectionString,
+                    PersistenceDatabaseTarget.Realm,
+                    competingCancellation.Token
+                )
+            );
         }
         finally
         {
@@ -339,7 +402,8 @@ public sealed class PersistenceSchemaCoordinatorTests
         await using var acquiredAfterSettlement = await PostgreSqlSchemaLock.AcquireAsync(
             database.ConnectionString,
             PersistenceDatabaseTarget.Realm,
-            CancellationToken.None);
+            CancellationToken.None
+        );
         Assert.False(coordinator.IsReady);
     }
 
@@ -348,9 +412,11 @@ public sealed class PersistenceSchemaCoordinatorTests
         params TestPersistenceModule[] modules
     )
     {
-        var options = new PostgreSqlPersistenceOptions([
-            new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, database.ConnectionString)
-        ]);
+        var options = new PostgreSqlPersistenceOptions(
+            [
+                new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, database.ConnectionString)
+            ]
+        );
 
         return new PersistenceSchemaCoordinator(options, CreateRegistry(modules));
     }
@@ -373,6 +439,7 @@ public sealed class PersistenceSchemaCoordinatorTests
     private static Task<long> TableCountAsync(PostgreSqlTestDatabase database, string schema, string table)
     {
         return database.ScalarAsync<long>(
-            $"SELECT count(*) FROM information_schema.tables WHERE table_schema = '{schema}' AND table_name = '{table}'");
+            $"SELECT count(*) FROM information_schema.tables WHERE table_schema = '{schema}' AND table_name = '{table}'"
+        );
     }
 }

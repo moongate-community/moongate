@@ -17,11 +17,15 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
     {
         ArgumentNullException.ThrowIfNull(operation);
         cancellationToken.ThrowIfCancellationRequested();
-        return AdmitAsync(() =>
-        {
-            cancellationToken.ThrowIfCancellationRequested();
-            return operation(cancellationToken);
-        }, critical: true, allowClosed: false);
+        return AdmitAsync(
+            () =>
+            {
+                cancellationToken.ThrowIfCancellationRequested();
+                return operation(cancellationToken);
+            },
+            critical: true,
+            allowClosed: false
+        );
     }
 
     internal Task RunSaveAsync(Func<Task> save, bool finalSave = false)
@@ -38,8 +42,12 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
             _closed = true;
             drain = _tail;
         }
+
         await drain.ConfigureAwait(false);
-        lock (_gate) { _failure?.Throw(); }
+        lock (_gate)
+        {
+            _failure?.Throw();
+        }
     }
 
     private Task AdmitAsync(Func<Task> operation, bool critical, bool allowClosed)
@@ -54,9 +62,11 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
             {
                 throw new InvalidOperationException("Persistence owner operations are closed for shutdown.");
             }
+
             previous = _tail;
             _tail = finished.Task;
         }
+
         return RunAsync();
 
         async Task RunAsync()
@@ -64,7 +74,11 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
             try
             {
                 await previous.ConfigureAwait(false);
-                lock (_gate) { _failure?.Throw(); }
+                lock (_gate)
+                {
+                    _failure?.Throw();
+                }
+
                 _inside.Value = true;
                 await operation().ConfigureAwait(false);
             }
@@ -72,8 +86,12 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
             {
                 if (critical)
                 {
-                    lock (_gate) { _failure ??= ExceptionDispatchInfo.Capture(exception); }
+                    lock (_gate)
+                    {
+                        _failure ??= ExceptionDispatchInfo.Capture(exception);
+                    }
                 }
+
                 throw;
             }
             finally

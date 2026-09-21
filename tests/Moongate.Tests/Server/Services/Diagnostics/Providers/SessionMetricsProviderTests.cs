@@ -43,14 +43,15 @@ public sealed class SessionMetricsProviderTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => provider.CollectAsync(cancellation.Token).AsTask());
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => provider.CollectAsync(cancellation.Token).AsTask());
 
         Assert.Equal(0, source.CountReadCount);
     }
 
-    private static void AssertMetric(MetricSample metric, string name, double value, string unit,
-        DiagnosticMetricType type)
+    private static void AssertMetric(
+        MetricSample metric, string name, double value, string unit,
+        DiagnosticMetricType type
+    )
     {
         Assert.Equal(name, metric.Name);
         Assert.Equal(value, metric.Value);

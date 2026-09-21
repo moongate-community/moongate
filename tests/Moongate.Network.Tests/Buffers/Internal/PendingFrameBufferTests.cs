@@ -20,7 +20,8 @@ public sealed class PendingFrameBufferTests
                 receiveBufferSize,
                 maxFrameLength,
                 pool
-            ));
+            )
+        );
         Assert.Equal(0, pool.RentCount);
     }
 

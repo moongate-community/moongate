@@ -33,7 +33,10 @@ public sealed class PostgreSqlPersistenceOptions
             ArgumentNullException.ThrowIfNull(database);
             if (!configured.TryAdd(database.Target, database))
             {
-                throw new ArgumentException($"Persistence target '{database.Target}' is configured more than once.", nameof(databases));
+                throw new ArgumentException(
+                    $"Persistence target '{database.Target}' is configured more than once.",
+                    nameof(databases)
+                );
             }
         }
 
@@ -45,7 +48,9 @@ public sealed class PostgreSqlPersistenceOptions
     {
         if (!_databases.TryGetValue(target, out var database))
         {
-            throw new InvalidOperationException($"Persistence target '{target}' is required by a module but is not configured.");
+            throw new InvalidOperationException(
+                $"Persistence target '{target}' is required by a module but is not configured."
+            );
         }
 
         return database;
@@ -54,6 +59,7 @@ public sealed class PostgreSqlPersistenceOptions
     /// <inheritdoc />
     public override string ToString()
     {
-        return $"PostgreSqlPersistenceOptions {{ AutoSynchronizeSchema = {AutoSynchronizeSchema}, ConfiguredTargets = {_databases.Count} }}";
+        return
+            $"PostgreSqlPersistenceOptions {{ AutoSynchronizeSchema = {AutoSynchronizeSchema}, ConfiguredTargets = {_databases.Count} }}";
     }
 }

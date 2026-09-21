@@ -25,7 +25,10 @@ internal sealed class ApiPendingCalls
     {
         get
         {
-            lock (_outbox.SyncRoot) { return _lastAssignedId; }
+            lock (_outbox.SyncRoot)
+            {
+                return _lastAssignedId;
+            }
         }
     }
 
@@ -33,7 +36,10 @@ internal sealed class ApiPendingCalls
     {
         get
         {
-            lock (_outbox.SyncRoot) { return _reservations.Count; }
+            lock (_outbox.SyncRoot)
+            {
+                return _reservations.Count;
+            }
         }
     }
 
@@ -60,7 +66,11 @@ internal sealed class ApiPendingCalls
             _accepting = false;
             calls = _reservations.ToArray();
 
-            foreach (var call in calls) { Remove(call); }
+            foreach (var call in calls)
+            {
+                Remove(call);
+            }
+
             _drained.TrySetResult();
         }
 
@@ -80,7 +90,10 @@ internal sealed class ApiPendingCalls
                 throw new ApiProtocolException("Response references a never-assigned request.");
             }
 
-            if (!_pending.TryGetValue(requestId, out var call)) { return false; }
+            if (!_pending.TryGetValue(requestId, out var call))
+            {
+                return false;
+            }
 
             if (call.Operation.Id != operationId)
             {
@@ -106,9 +119,16 @@ internal sealed class ApiPendingCalls
 
         lock (_outbox.SyncRoot)
         {
-            if (!_accepting || _closed is not null) { throw new IOException("The API connection is closed.", _closed); }
+            if (!_accepting || _closed is not null)
+            {
+                throw new IOException("The API connection is closed.", _closed);
+            }
 
-            if (_reservations.Count >= _options.MaxPendingCalls) { throw new ApiBusyException(); }
+            if (_reservations.Count >= _options.MaxPendingCalls)
+            {
+                throw new ApiBusyException();
+            }
+
             _reservations.Add(call);
         }
 
@@ -142,20 +162,31 @@ internal sealed class ApiPendingCalls
 
                 return call.Source.Task;
             }
+
             var payload = operation.SerializeRequest(request, _options.MaxFrameLength);
 
             lock (_outbox.SyncRoot)
             {
-                if (!_reservations.Contains(call)) { return call.Source.Task; }
+                if (!_reservations.Contains(call))
+                {
+                    return call.Source.Task;
+                }
+
                 var id = ReserveNextId();
                 var bytes = _codec.Encode(new(ApiMessageKind.Request, id, operation.Id, payload));
                 call.RequestId = id;
                 _pending.Add(id, call);
 
-                if (!_outbox.TryEnqueue(new(bytes, id))) { throw new ApiBusyException(); }
+                if (!_outbox.TryEnqueue(new(bytes, id)))
+                {
+                    throw new ApiBusyException();
+                }
             }
         }
-        catch (Exception exception) { Fail(call, exception); }
+        catch (Exception exception)
+        {
+            Fail(call, exception);
+        }
 
         return call.Source.Task;
     }
@@ -179,7 +210,10 @@ internal sealed class ApiPendingCalls
         {
             _accepting = false;
 
-            if (_reservations.Count == 0) { _drained.TrySetResult(); }
+            if (_reservations.Count == 0)
+            {
+                _drained.TrySetResult();
+            }
 
             return _drained.Task;
         }
@@ -196,14 +230,19 @@ internal sealed class ApiPendingCalls
                 throw new ApiProtocolException("Response references a never-assigned request.");
             }
 
-            if (!_pending.TryGetValue(requestId, out call!)) { return false; }
+            if (!_pending.TryGetValue(requestId, out call!))
+            {
+                return false;
+            }
 
             if (call.Operation.Id != operationId)
             {
                 throw new ApiProtocolException("Response operation does not match the request.");
             }
+
             Remove(call);
         }
+
         call.Release();
 
         if (error is not null)
@@ -213,7 +252,10 @@ internal sealed class ApiPendingCalls
             return true;
         }
 
-        try { call.Source.TrySetResult(call.Operation.DeserializeResponse(response)); }
+        try
+        {
+            call.Source.TrySetResult(call.Operation.DeserializeResponse(response));
+        }
         catch (Exception exception)
         {
             var failure = new ApiProtocolException("Invalid typed API response.", exception);
@@ -229,8 +271,12 @@ internal sealed class ApiPendingCalls
     {
         lock (_outbox.SyncRoot)
         {
-            if (!Remove(call)) { return; }
+            if (!Remove(call))
+            {
+                return;
+            }
         }
+
         call.Release();
         call.Source.TrySetCanceled(token);
     }
@@ -239,17 +285,27 @@ internal sealed class ApiPendingCalls
     {
         lock (_outbox.SyncRoot)
         {
-            if (!Remove(call)) { return; }
+            if (!Remove(call))
+            {
+                return;
+            }
         }
+
         call.Release();
         call.Source.TrySetException(error);
     }
 
     private bool Remove(ApiPendingCall call)
     {
-        if (!_reservations.Remove(call)) { return false; }
+        if (!_reservations.Remove(call))
+        {
+            return false;
+        }
 
-        if (!_accepting && _reservations.Count == 0) { _drained.TrySetResult(); }
+        if (!_accepting && _reservations.Count == 0)
+        {
+            _drained.TrySetResult();
+        }
 
         if (call.RequestId != 0)
         {
@@ -262,13 +318,17 @@ internal sealed class ApiPendingCalls
 
     private async Task WatchOutboxAsync()
     {
-        try { await _outbox.Completion.ConfigureAwait(false); }
+        try
+        {
+            await _outbox.Completion.ConfigureAwait(false);
+        }
         catch (Exception exception)
         {
             FailAll(new IOException("The API transport failed.", exception));
 
             return;
         }
+
         FailAll(new IOException("The API transport stopped."));
     }
 }

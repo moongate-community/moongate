@@ -15,18 +15,24 @@ public sealed class GameLoopServiceTests
     public void WorkItemBudget_NonPositive_RejectsInvalidConfiguration(int milliseconds)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() => new GameLoopOptions
-        {
-            WorkItemBudget = TimeSpan.FromMilliseconds(milliseconds)
-        });
+            {
+                WorkItemBudget = TimeSpan.FromMilliseconds(milliseconds)
+            }
+        );
     }
 
     [Theory, InlineData(0, 1), InlineData(-1, 1), InlineData(1, 0), InlineData(1, -1)]
     public void Constructor_NonPositiveLimits_RejectsInvalidConfiguration(int capacity, int batch)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(() => new GameLoopService(new GameLoopOptions
-        {
-            QueueCapacity = capacity, MaxWorkItemsPerBatch = batch
-        }, new TimerWheelService(new TimerWheelOptions(), TimeProvider.System), TimeProvider.System));
+        Assert.Throws<ArgumentOutOfRangeException>(() => new GameLoopService(
+                new GameLoopOptions
+                {
+                    QueueCapacity = capacity, MaxWorkItemsPerBatch = batch
+                },
+                new TimerWheelService(new TimerWheelOptions(), TimeProvider.System),
+                TimeProvider.System
+            )
+        );
     }
 
     [Fact]
@@ -40,21 +46,29 @@ public sealed class GameLoopServiceTests
         await loop.StartAsync().WaitAsync(Timeout);
         for (var i = 0; i < 8; i++)
         {
-            await loop.PostAsync(new ActionGameLoopWorkItem(() => observations.Add((
-                Environment.CurrentManagedThreadId, loop.IsOnLoopThread,
-                Thread.CurrentThread.IsThreadPoolThread, Thread.CurrentThread.Name))));
+            await loop.PostAsync(
+                new ActionGameLoopWorkItem(() => observations.Add(
+                        (
+                            Environment.CurrentManagedThreadId, loop.IsOnLoopThread,
+                            Thread.CurrentThread.IsThreadPoolThread, Thread.CurrentThread.Name)
+                    )
+                )
+            );
         }
 
         await loop.StopAsync().WaitAsync(Timeout);
 
         Assert.Equal(8, observations.Count);
         Assert.Single(observations.Select(value => value.Id).Distinct());
-        Assert.All(observations, value =>
-        {
-            Assert.True(value.OnLoop);
-            Assert.False(value.Pool);
-            Assert.False(string.IsNullOrWhiteSpace(value.Name));
-        });
+        Assert.All(
+            observations,
+            value =>
+            {
+                Assert.True(value.OnLoop);
+                Assert.False(value.Pool);
+                Assert.False(string.IsNullOrWhiteSpace(value.Name));
+            }
+        );
         Assert.False(loop.IsOnLoopThread);
         Assert.Same(completion, loop.Completion);
         Assert.True(completion.IsCompletedSuccessfully);
@@ -110,7 +124,11 @@ public sealed class GameLoopServiceTests
         await loop.StartAsync();
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => loop.PostAsync(
-            new ActionGameLoopWorkItem(() => executed = true), cancellation.Token).AsTask());
+                new ActionGameLoopWorkItem(() => executed = true),
+                cancellation.Token
+            )
+            .AsTask()
+        );
         await loop.StopAsync();
 
         Assert.False(executed);
@@ -149,7 +167,9 @@ public sealed class GameLoopServiceTests
         Assert.True(loop.TryPost(blocker));
         await blocker.Entered.WaitAsync(Timeout);
 
-        await loop.PostAsync(new ActionGameLoopWorkItem(() => executed = true), cancellation.Token).AsTask().WaitAsync(Timeout);
+        await loop.PostAsync(new ActionGameLoopWorkItem(() => executed = true), cancellation.Token)
+            .AsTask()
+            .WaitAsync(Timeout);
         cancellation.Cancel();
         Assert.False(executed);
         blocker.Release();
@@ -279,28 +299,42 @@ public sealed class GameLoopServiceTests
         var producerExited = false;
         var observedProducerExited = false;
         await loop.StartAsync();
-        Assert.True(loop.TryPost(new ActionGameLoopWorkItem(() =>
-        {
-            try
-            {
-                Assert.Throws<InvalidOperationException>(() => { _ = loop.StopAsync(); });
-                Assert.Throws<InvalidOperationException>(() => loop.Dispose());
-                Assert.Throws<InvalidOperationException>(() => { _ = loop.PostAsync(new ActionGameLoopWorkItem(() => { })).AsTask(); });
-                Assert.True(loop.TryPost(new ActionGameLoopWorkItem(() =>
-                {
-                    observedProducerExited = producerExited;
-                    nestedExecuted = true;
-                })));
-                Assert.False(nestedExecuted);
-                Assert.False(loop.TryPost(new ActionGameLoopWorkItem(() => { })));
-                producerExited = true;
-                checkedReentrancy.SetResult();
-            }
-            catch (Exception exception)
-            {
-                checkedReentrancy.SetException(exception);
-            }
-        })));
+        Assert.True(
+            loop.TryPost(
+                new ActionGameLoopWorkItem(() =>
+                    {
+                        try
+                        {
+                            Assert.Throws<InvalidOperationException>(() => { _ = loop.StopAsync(); });
+                            Assert.Throws<InvalidOperationException>(() => loop.Dispose());
+                            Assert.Throws<InvalidOperationException>(() =>
+                                {
+                                    _ = loop.PostAsync(new ActionGameLoopWorkItem(() => { })).AsTask();
+                                }
+                            );
+                            Assert.True(
+                                loop.TryPost(
+                                    new ActionGameLoopWorkItem(() =>
+                                        {
+                                            observedProducerExited = producerExited;
+                                            nestedExecuted = true;
+                                        }
+                                    )
+                                )
+                            );
+                            Assert.False(nestedExecuted);
+                            Assert.False(loop.TryPost(new ActionGameLoopWorkItem(() => { })));
+                            producerExited = true;
+                            checkedReentrancy.SetResult();
+                        }
+                        catch (Exception exception)
+                        {
+                            checkedReentrancy.SetException(exception);
+                        }
+                    }
+                )
+            )
+        );
         await checkedReentrancy.Task.WaitAsync(Timeout);
         await loop.StopAsync().WaitAsync(Timeout);
 
@@ -333,6 +367,7 @@ public sealed class GameLoopServiceTests
         catch (InvalidOperationException)
         {
         }
+
         await loop.StopAsync().WaitAsync(Timeout);
 
         Assert.Same(failure, observed);
@@ -350,11 +385,16 @@ public sealed class GameLoopServiceTests
         var failure = new ApplicationException("fatal while producer waits");
         var executedAfterFailure = false;
         await loop.StartAsync();
-        Assert.True(loop.TryPost(new ActionGameLoopWorkItem(() =>
-        {
-            blocker.Execute();
-            throw failure;
-        })));
+        Assert.True(
+            loop.TryPost(
+                new ActionGameLoopWorkItem(() =>
+                    {
+                        blocker.Execute();
+                        throw failure;
+                    }
+                )
+            )
+        );
         await blocker.Entered.WaitAsync(Timeout);
         Assert.True(loop.TryPost(new ActionGameLoopWorkItem(() => executedAfterFailure = true)));
         var pending = loop.PostAsync(new ActionGameLoopWorkItem(() => executedAfterFailure = true)).AsTask();
@@ -374,27 +414,33 @@ public sealed class GameLoopServiceTests
         using var loop = Create();
         var begin = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var starting = Task.Run(async () =>
-        {
-            await begin.Task;
-            try
             {
-                await loop.StartAsync();
+                await begin.Task;
+                try
+                {
+                    await loop.StartAsync();
+                }
+                catch (InvalidOperationException)
+                {
+                    // Stop or disposal may permanently close the instance before start wins admission.
+                }
             }
-            catch (InvalidOperationException)
-            {
-                // Stop or disposal may permanently close the instance before start wins admission.
-            }
-        });
+        );
         var stopping = Task.Run(async () =>
-        {
-            await begin.Task;
-            await loop.StopAsync();
-        });
-        var disposals = Enumerable.Range(0, 4).Select(_ => Task.Run(async () =>
-        {
-            await begin.Task;
-            loop.Dispose();
-        })).ToArray();
+            {
+                await begin.Task;
+                await loop.StopAsync();
+            }
+        );
+        var disposals = Enumerable.Range(0, 4)
+            .Select(_ => Task.Run(async () =>
+                    {
+                        await begin.Task;
+                        loop.Dispose();
+                    }
+                )
+            )
+            .ToArray();
 
         begin.SetResult();
         await Task.WhenAll(disposals.Append(starting).Append(stopping)).WaitAsync(Timeout);
@@ -413,22 +459,29 @@ public sealed class GameLoopServiceTests
         var active = 0;
         var overlap = 0;
         await loop.StartAsync();
-        var producers = Enumerable.Range(0, 12).Select(producer => Task.Run(async () =>
-        {
-            for (var index = 0; index < 40; index++)
-            {
-                var id = producer * 40 + index;
-                await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-                {
-                    if (Interlocked.Increment(ref active) != 1)
+        var producers = Enumerable.Range(0, 12)
+            .Select(producer => Task.Run(async () =>
                     {
-                        Interlocked.Increment(ref overlap);
+                        for (var index = 0; index < 40; index++)
+                        {
+                            var id = producer * 40 + index;
+                            await loop.PostAsync(
+                                new ActionGameLoopWorkItem(() =>
+                                    {
+                                        if (Interlocked.Increment(ref active) != 1)
+                                        {
+                                            Interlocked.Increment(ref overlap);
+                                        }
+
+                                        executed.Add(id);
+                                        Interlocked.Decrement(ref active);
+                                    }
+                                )
+                            );
+                        }
                     }
-                    executed.Add(id);
-                    Interlocked.Decrement(ref active);
-                }));
-            }
-        }));
+                )
+            );
         await Task.WhenAll(producers).WaitAsync(Timeout);
         await loop.StopAsync().WaitAsync(Timeout);
 
@@ -447,23 +500,28 @@ public sealed class GameLoopServiceTests
         await loop.StartAsync();
         Assert.True(loop.TryPost(blocker));
         await blocker.Entered.WaitAsync(Timeout);
-        var producers = Enumerable.Range(0, 32).Select(id => Task.Run(async () =>
-        {
-            await begin.Task;
-            try
-            {
-                await loop.PostAsync(new ActionGameLoopWorkItem(() => executed.Add(id)));
-                accepted.Add(id);
-            }
-            catch (InvalidOperationException)
-            {
-            }
-        })).ToArray();
+        var producers = Enumerable.Range(0, 32)
+            .Select(id => Task.Run(async () =>
+                    {
+                        await begin.Task;
+                        try
+                        {
+                            await loop.PostAsync(new ActionGameLoopWorkItem(() => executed.Add(id)));
+                            accepted.Add(id);
+                        }
+                        catch (InvalidOperationException)
+                        {
+                        }
+                    }
+                )
+            )
+            .ToArray();
         var disposing = Task.Run(async () =>
-        {
-            await begin.Task;
-            loop.Dispose();
-        });
+            {
+                await begin.Task;
+                loop.Dispose();
+            }
+        );
         begin.SetResult();
         blocker.Release();
         await Task.WhenAll(producers.Append(disposing)).WaitAsync(Timeout);
@@ -497,18 +555,29 @@ public sealed class GameLoopServiceTests
         await loop.StartAsync();
         await loop.PostAsync(blocker);
         await blocker.Entered.WaitAsync(Timeout);
-        await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-        {
-            loopThread = Environment.CurrentManagedThreadId;
-            mutations++;
-        }));
-        var stopping = loop.StopAsync(new ActionGameLoopWorkItem(() =>
-        {
-            Assert.True(loop.IsOnLoopThread);
-            Assert.Throws<InvalidOperationException>(() => timers.RegisterTimer("late", TimeSpan.FromSeconds(1), () => { }));
-            finalThread = Environment.CurrentManagedThreadId;
-            captured = mutations;
-        }));
+        await loop.PostAsync(
+            new ActionGameLoopWorkItem(() =>
+                {
+                    loopThread = Environment.CurrentManagedThreadId;
+                    mutations++;
+                }
+            )
+        );
+        var stopping = loop.StopAsync(
+            new ActionGameLoopWorkItem(() =>
+                {
+                    Assert.True(loop.IsOnLoopThread);
+                    Assert.Throws<InvalidOperationException>(() => timers.RegisterTimer(
+                            "late",
+                            TimeSpan.FromSeconds(1),
+                            () => { }
+                        )
+                    );
+                    finalThread = Environment.CurrentManagedThreadId;
+                    captured = mutations;
+                }
+            )
+        );
         Assert.False(loop.TryPost(new ActionGameLoopWorkItem(() => mutations++)));
         blocker.Release();
         await stopping.WaitAsync(Timeout);
@@ -545,7 +614,8 @@ public sealed class GameLoopServiceTests
         var stopping = loop.StopAsync();
         var captured = false;
         var terminal = Assert.ThrowsAsync<InvalidOperationException>(() =>
-            loop.StopAsync(new ActionGameLoopWorkItem(() => captured = true)).WaitAsync(Timeout));
+            loop.StopAsync(new ActionGameLoopWorkItem(() => captured = true)).WaitAsync(Timeout)
+        );
         blocker.Release();
         await Task.WhenAll(stopping, terminal).WaitAsync(Timeout);
         Assert.False(captured);
@@ -571,15 +641,22 @@ public sealed class GameLoopServiceTests
         using var loop = Create();
         var failure = new ApplicationException("terminal failure");
         await loop.StartAsync();
-        Assert.Same(failure, await Assert.ThrowsAsync<ApplicationException>(() =>
-            loop.StopAsync(new ActionGameLoopWorkItem(() => throw failure)).WaitAsync(Timeout)));
+        Assert.Same(
+            failure,
+            await Assert.ThrowsAsync<ApplicationException>(() =>
+                loop.StopAsync(new ActionGameLoopWorkItem(() => throw failure)).WaitAsync(Timeout)
+            )
+        );
         await loop.StopAsync().WaitAsync(Timeout);
         Assert.Same(failure, await Assert.ThrowsAsync<ApplicationException>(() => loop.Completion));
     }
 
     private static GameLoopService Create(int capacity = 16, int batch = 4)
     {
-        return new GameLoopService(new GameLoopOptions { QueueCapacity = capacity, MaxWorkItemsPerBatch = batch },
-            new TimerWheelService(new TimerWheelOptions(), TimeProvider.System), TimeProvider.System);
+        return new GameLoopService(
+            new GameLoopOptions { QueueCapacity = capacity, MaxWorkItemsPerBatch = batch },
+            new TimerWheelService(new TimerWheelOptions(), TimeProvider.System),
+            TimeProvider.System
+        );
     }
 }

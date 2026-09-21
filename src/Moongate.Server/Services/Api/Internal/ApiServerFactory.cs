@@ -22,22 +22,36 @@ internal static class ApiServerFactory
             {
                 roots.Add(X509CertificateLoader.LoadCertificateFromFile(Path.GetFullPath(path, configDirectory)));
             }
+
             var peers = config.Peers.ToDictionary(
                 peer => peer.CertificateSha256,
-                peer => new ApiPeerIdentity(peer.PeerId, peer.AllowedOperations.OperationIds, peer.AllowedOperations.AllowsAll),
-                StringComparer.OrdinalIgnoreCase);
-            return new ApiServer(new IPEndPoint(IPAddress.Parse(config.ListenAddress), config.Port), registry,
-                new ApiOptions(), new ApiTlsOptions
+                peer => new ApiPeerIdentity(
+                    peer.PeerId,
+                    peer.AllowedOperations.OperationIds,
+                    peer.AllowedOperations.AllowsAll
+                ),
+                StringComparer.OrdinalIgnoreCase
+            );
+            return new ApiServer(
+                new IPEndPoint(IPAddress.Parse(config.ListenAddress), config.Port),
+                registry,
+                new ApiOptions(),
+                new ApiTlsOptions
                 {
                     Certificate = certificate,
                     TrustedRoots = roots,
                     PeersByCertificateSha256 = peers
-                }, clock);
+                },
+                clock
+            );
         }
         finally
         {
             // ApiServer snapshots certificate handles before these caller-owned handles are released.
-            foreach (var root in roots) { root.Dispose(); }
+            foreach (var root in roots)
+            {
+                root.Dispose();
+            }
         }
     }
 }

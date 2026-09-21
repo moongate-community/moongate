@@ -40,30 +40,35 @@ public class MoongateServerConfig
         {
             throw new InvalidOperationException("The api configuration section cannot be null.");
         }
+
         Api.Validate();
 
         if (Persistence is null)
         {
             throw new InvalidOperationException("The persistence configuration section cannot be null.");
         }
+
         Persistence.Validate();
 
         if (WorldSave is null)
         {
             throw new InvalidOperationException("The world_save configuration section cannot be null.");
         }
+
         WorldSave.Validate();
 
         if (Diagnostics is null)
         {
             throw new InvalidOperationException("The diagnostics configuration section cannot be null.");
         }
+
         Diagnostics.ToOptions();
 
         if (Scripting is null)
         {
             throw new InvalidOperationException("The scripting configuration section cannot be null.");
         }
+
         Scripting.Validate();
     }
 }

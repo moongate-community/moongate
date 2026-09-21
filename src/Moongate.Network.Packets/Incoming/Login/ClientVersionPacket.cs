@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
@@ -46,8 +45,8 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
         var payload = data[LoginProtocolConstants.VariableHeaderLength..];
         var reader = new PacketReader(payload);
         var parsed = payload[^1] == 0
-                         ? reader.TryReadNullTerminatedAscii(payload.Length, out var version)
-                         : reader.TryReadAscii(payload.Length, out version);
+            ? reader.TryReadNullTerminatedAscii(payload.Length, out var version)
+            : reader.TryReadAscii(payload.Length, out version);
         if (!parsed || string.IsNullOrWhiteSpace(version))
         {
             return false;

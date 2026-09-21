@@ -14,8 +14,11 @@ public sealed class NetworkUtilsTests
         Assert.Contains(IPAddress.Loopback, addresses);
         Assert.DoesNotContain(IPAddress.Any, addresses);
         Assert.DoesNotContain(IPAddress.IPv6Any, addresses);
-        Assert.All(addresses, address =>
-            Assert.True(address.AddressFamily is AddressFamily.InterNetwork or AddressFamily.InterNetworkV6));
+        Assert.All(
+            addresses,
+            address =>
+                Assert.True(address.AddressFamily is AddressFamily.InterNetwork or AddressFamily.InterNetworkV6)
+        );
     }
 
     [Theory, InlineData("0.0.0.0", 0), InlineData("0.0.0.0", 2593), InlineData("192.0.2.10", 65535)]
@@ -24,12 +27,15 @@ public sealed class NetworkUtilsTests
         var endPoints = NetworkUtils.GetListeningAddresses(new IPEndPoint(IPAddress.Parse(address), port)).ToArray();
 
         Assert.Contains(new IPEndPoint(IPAddress.Loopback, port), endPoints);
-        Assert.All(endPoints, endPoint =>
-        {
-            Assert.Equal(AddressFamily.InterNetwork, endPoint.AddressFamily);
-            Assert.Equal(port, endPoint.Port);
-            Assert.NotEqual(IPAddress.Any, endPoint.Address);
-        });
+        Assert.All(
+            endPoints,
+            endPoint =>
+            {
+                Assert.Equal(AddressFamily.InterNetwork, endPoint.AddressFamily);
+                Assert.Equal(port, endPoint.Port);
+                Assert.NotEqual(IPAddress.Any, endPoint.Address);
+            }
+        );
     }
 
     [Fact]
@@ -38,12 +44,15 @@ public sealed class NetworkUtilsTests
         var endPoints = NetworkUtils.GetListeningAddresses(new IPEndPoint(IPAddress.IPv6Any, 2593)).ToArray();
 
         // IPv6 may be disabled on the host; an empty result is valid in that case.
-        Assert.All(endPoints, endPoint =>
-        {
-            Assert.Equal(AddressFamily.InterNetworkV6, endPoint.AddressFamily);
-            Assert.Equal(2593, endPoint.Port);
-            Assert.NotEqual(IPAddress.IPv6Any, endPoint.Address);
-        });
+        Assert.All(
+            endPoints,
+            endPoint =>
+            {
+                Assert.Equal(AddressFamily.InterNetworkV6, endPoint.AddressFamily);
+                Assert.Equal(2593, endPoint.Port);
+                Assert.NotEqual(IPAddress.IPv6Any, endPoint.Address);
+            }
+        );
     }
 
     [Fact]

@@ -30,10 +30,17 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         _container.RegisterScriptModule<ProbeModule>();
         _container.RegisterScriptModule<LogModule>();
         _container.Resolve<Moongate.Server.Core.Interfaces.Events.IMoongateEventBus>()
-            .Subscribe<ScriptErrorEvent>((evt, _) => { _events.Add(evt); return Task.CompletedTask; });
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _events.Add(evt);
+                    return Task.CompletedTask;
+                }
+            );
     }
 
-    private LuaScriptEngineService NewEngine(bool writeDefinitions = false, int maxInstructionsPerChunk = 100_000, int maxStringLength = 16 * 1024 * 1024)
+    private LuaScriptEngineService NewEngine(
+        bool writeDefinitions = false, int maxInstructionsPerChunk = 100_000, int maxStringLength = 16 * 1024 * 1024
+    )
     {
         var options = new ScriptEngineOptions
         {
@@ -58,9 +65,11 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     [Fact]
     public async Task StartAsync_RunsThePreludeAndInitLua_WithModulesBound()
     {
-        _scripts.Write("init.lua",
+        _scripts.Write(
+            "init.lua",
             "result = probe.add(1, 2) has_wait = type(wait) == 'function' has_engine = engine.name\n" +
-            "function inspect() return result, has_wait, has_engine end");
+            "function inspect() return result, has_wait, has_engine end"
+        );
         using var engine = NewEngine();
 
         await engine.StartAsync();
@@ -134,7 +143,10 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     [Fact]
     public async Task Call_FunctionThatWaits_ReportsSuspended_AndResumesFromTheTimer()
     {
-        _scripts.Write("init.lua", "function slow() wait(1) slow_done = true end function check() return slow_done == true end");
+        _scripts.Write(
+            "init.lua",
+            "function slow() wait(1) slow_done = true end function check() return slow_done == true end"
+        );
         using var engine = NewEngine();
         await engine.StartAsync();
 
@@ -209,7 +221,9 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     [Fact]
     public async Task StringRep_OverTheCap_RaisesAScriptError_AndCountsTheHit()
     {
-        _scripts.Write("init.lua", """
+        _scripts.Write(
+            "init.lua",
+            """
             ok, err = pcall(string.rep, 'x', 2000)
             small = string.rep('ab', 3, '-')
             empty = string.rep('x', 0)
@@ -219,14 +233,19 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
             _, wrong_type = pcall(string.rep, nil, 3)
             _, fractional = pcall(string.rep, 'x', 1.5)
             function report() return ok, err, small, empty, numeric, wrap, huge_empty, wrong_type, fractional end
-            """);
+            """
+        );
         using var engine = NewEngine(maxStringLength: 1024);
         await engine.StartAsync();
 
         var values = engine.Call("report").Values;
 
         Assert.Equal(false, values[0]);
-        Assert.Contains("string.rep: a result of 2000 characters exceeds the script string cap of 1024 characters", (string)values[1]!, StringComparison.Ordinal);
+        Assert.Contains(
+            "string.rep: a result of 2000 characters exceeds the script string cap of 1024 characters",
+            (string)values[1]!,
+            StringComparison.Ordinal
+        );
         Assert.Equal("ab-ab-ab", values[2]);
         Assert.Equal("", values[3]);
         Assert.Equal("77", values[4]);
@@ -234,7 +253,11 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         Assert.Contains("exceeds the script string cap", (string)values[5]!, StringComparison.Ordinal);
         Assert.Contains("exceeds the script string cap", (string)values[6]!, StringComparison.Ordinal);
         Assert.Contains("bad argument #1 to 'rep' (string expected, got nil)", (string)values[7]!, StringComparison.Ordinal);
-        Assert.Contains("bad argument #2 to 'rep' (number has no integer representation)", (string)values[8]!, StringComparison.Ordinal);
+        Assert.Contains(
+            "bad argument #2 to 'rep' (number has no integer representation)",
+            (string)values[8]!,
+            StringComparison.Ordinal
+        );
         Assert.Equal(3, engine.GetMetrics().StringCapHits);
         Assert.Empty(_events);
     }
@@ -326,8 +349,13 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         var sink = new CapturingLogSink();
         // The engine takes script output from a logger registered in the container, so no global swap
         // is needed and tests in other classes cannot interfere.
-        _container.RegisterInstance<ILogger>(new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(sink).CreateLogger());
-        _scripts.Write("init.lua", "print('a', 1, nil, true, setmetatable({}, { __tostring = function() return 'custom' end }))");
+        _container.RegisterInstance<ILogger>(
+            new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(sink).CreateLogger()
+        );
+        _scripts.Write(
+            "init.lua",
+            "print('a', 1, nil, true, setmetatable({}, { __tostring = function() return 'custom' end }))"
+        );
         using var engine = NewEngine();
 
         await engine.StartAsync();
@@ -343,7 +371,9 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     public async Task HostReachingFunctions_AreNotAvailableToScripts()
     {
         _scripts.Write("common/util.lua", "return { greeting = 'still reachable' }");
-        _scripts.Write("init.lua", """
+        _scripts.Write(
+            "init.lua",
+            """
             function libs()
                 return io == nil, os == nil, dofile == nil, loadfile == nil, rawset == nil,
                     coroutine.create == nil, coroutine.wrap == nil, coroutine.resume == nil,
@@ -351,7 +381,8 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
                     package.cpath == nil, #package.searchers, require ~= nil, coroutine.yield ~= nil,
                     require('common.util').greeting
             end
-            """);
+            """
+        );
         using var engine = NewEngine();
         await engine.StartAsync();
 
@@ -364,11 +395,13 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     [Fact]
     public async Task ModuleTable_CannotBeShadowedByRawset_BecauseTheEngineRemovesIt()
     {
-        _scripts.Write("init.lua",
+        _scripts.Write(
+            "init.lua",
             "function shadow()\n" +
             "    local ok = pcall(function() rawset(probe, 'add', function() return 0 end) end)\n" +
             "    return ok, probe.add(1, 2)\n" +
-            "end");
+            "end"
+        );
         using var engine = NewEngine();
         await engine.StartAsync();
 
@@ -380,8 +413,10 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     {
         using var outside = new TemporaryScriptsDirectory();
         outside.Write("intruder.lua", "escaped = true return 1");
-        _scripts.Write("init.lua",
-            $"package.path = [[{outside.Path.Replace('\\', '/')}/?.lua]]\nreturn require('intruder')");
+        _scripts.Write(
+            "init.lua",
+            $"package.path = [[{outside.Path.Replace('\\', '/')}/?.lua]]\nreturn require('intruder')"
+        );
         using var engine = NewEngine();
 
         var exception = await Assert.ThrowsAsync<InvalidOperationException>(engine.StartAsync);

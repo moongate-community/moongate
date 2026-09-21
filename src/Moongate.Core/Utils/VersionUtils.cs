@@ -28,7 +28,7 @@ public static class VersionUtils
         ArgumentNullException.ThrowIfNull(assembly);
 
         var informationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-                                           ?.InformationalVersion;
+            ?.InformationalVersion;
 
         if (!string.IsNullOrWhiteSpace(informationalVersion))
         {
@@ -50,6 +50,7 @@ public static class VersionUtils
         ArgumentNullException.ThrowIfNull(assembly);
 
         return assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
-                       .FirstOrDefault(attribute => attribute.Key == "Codename")?.Value ?? "";
+            .FirstOrDefault(attribute => attribute.Key == "Codename")
+            ?.Value ?? "";
     }
 }

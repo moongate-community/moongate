@@ -509,7 +509,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-                 by = y;
+             by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -523,7 +523,7 @@ public sealed class Map
             var pRow7 = (int*)(pStart + 7 * stride);
 
             for (int ox = 0,
-                     bx = x;
+                 bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -589,7 +589,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-                 by = y;
+             by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -599,7 +599,7 @@ public sealed class Map
             var pRow3 = (int*)(pStart + 3 * stride);
 
             for (int ox = 0,
-                     bx = x;
+                 bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -634,7 +634,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-                 by = y;
+             by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -642,7 +642,7 @@ public sealed class Map
             var pRow1 = (int*)(pStart + 1 * stride);
 
             for (int ox = 0,
-                     bx = x;
+                 bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -814,9 +814,9 @@ public sealed class Map
         reportFile = Path.Combine(reportFile, $"staticReport-{_mapId}.csv");
 
         using var tex = new StreamWriter(
-                   new FileStream(reportFile, FileMode.Create, FileAccess.ReadWrite),
-                   Encoding.GetEncoding(1252)
-               );
+            new FileStream(reportFile, FileMode.Create, FileAccess.ReadWrite),
+            Encoding.GetEncoding(1252)
+        );
         tex.WriteLine("x;y;z;Static");
 
         for (var x = 0; x < Width; ++x)
@@ -1495,7 +1495,7 @@ public sealed class Map
         return data;
     }
 
-#region Altitude Map Rendering
+    #region Altitude Map Rendering
 
     /// <summary>
     /// Returns Bitmap with altitude rendering mode support
@@ -1552,7 +1552,7 @@ public sealed class Map
         {
             // Grayscale altitude mode (formerly 8bpp indexed with a gray palette)
             for (int oy = 0,
-                     by = y;
+                 by = y;
                  oy < height;
                  ++oy, ++by, pStart += blockStride)
             {
@@ -1566,7 +1566,7 @@ public sealed class Map
                 var pRow7 = (ushort*)(pStart + 7 * stride);
 
                 for (int ox = 0,
-                         bx = x;
+                     bx = x;
                      ox < width;
                      ++ox, ++bx)
                 {
@@ -1625,7 +1625,7 @@ public sealed class Map
             var withAltitude = altitudeMode == MapAltitudeModeType.NormalWithAltitude;
 
             for (int oy = 0,
-                     by = y;
+                 by = y;
                  oy < height;
                  ++oy, ++by, pStart += blockStride)
             {
@@ -1639,13 +1639,13 @@ public sealed class Map
                 var pRow7 = (ushort*)(pStart + 7 * stride);
 
                 for (int ox = 0,
-                         bx = x;
+                     bx = x;
                      ox < width;
                      ++ox, ++bx)
                 {
                     var colorData = withAltitude
-                                        ? GetLitBlock(bx, by, statics)
-                                        : GetRenderedBlock(bx, by, statics);
+                        ? GetLitBlock(bx, by, statics)
+                        : GetRenderedBlock(bx, by, statics);
 
                     fixed (ushort* pData = colorData)
                     {
@@ -1817,8 +1817,8 @@ public sealed class Map
     {
         // Get current shading settings based on preset
         var settings = ShadingPreset == AltitudeShadingPresetType.Custom
-                           ? CustomShadingSettings
-                           : AltitudeShadingSettings.GetPreset(ShadingPreset);
+            ? CustomShadingSettings
+            : AltitudeShadingSettings.GetPreset(ShadingPreset);
 
         // Use configurable intensity (lower = more contrast, higher = softer)
         var maxSlope = Math.Clamp(AltitudeIntensity, 1, 20);
@@ -1919,5 +1919,5 @@ public sealed class Map
         return (ushort)(OpaqueBit | (red << 10) | (green << 5) | blue);
     }
 
-#endregion
+    #endregion
 }

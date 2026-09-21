@@ -18,7 +18,10 @@ public sealed class NetworkServiceTests
     public async Task RawListener_AdmitsAndReceivesWithoutGameServices()
     {
         await using var registry = await ConnectionRegistryFixture.CreateAsync();
-        var network = new NetworkService(new NetworkListenerOptions { Endpoints = [new(IPAddress.Loopback, 0)] }, registry.Service);
+        var network = new NetworkService(
+            new NetworkListenerOptions { Endpoints = [new(IPAddress.Loopback, 0)] },
+            registry.Service
+        );
         var received = Channel.CreateUnbounded<byte[]>();
         var accepted = new TaskCompletionSource<long>(TaskCreationOptions.RunContinuationsAsynchronously);
         network.ConnectionAccepted += (_, e) =>
@@ -37,13 +40,20 @@ public sealed class NetworkServiceTests
             Assert.Equal(1, registry.Service.Count);
             await peer.GetStream().WriteAsync(new byte[] { 0xFF, 0x00, 0xFE });
             var bytes = new List<byte>();
-            while (bytes.Count < 3) { bytes.AddRange(await received.Reader.ReadAsync().AsTask().WaitAsync(Timeout)); }
+            while (bytes.Count < 3)
+            {
+                bytes.AddRange(await received.Reader.ReadAsync().AsTask().WaitAsync(Timeout));
+            }
+
             Assert.Equal(new byte[] { 0xFF, 0x00, 0xFE }, bytes);
             peer.Close();
             await network.StopAsync().WaitAsync(Timeout);
             Assert.Equal(0, registry.Service.Count);
         }
-        finally { await network.StopAsync().WaitAsync(Timeout); }
+        finally
+        {
+            await network.StopAsync().WaitAsync(Timeout);
+        }
     }
 
     [Fact]
@@ -54,11 +64,18 @@ public sealed class NetworkServiceTests
         var endpoints = new List<IPEndPoint> { endpoint };
         var calls = 0;
         var accepted = Channel.CreateUnbounded<long>();
-        var network = new NetworkService(new NetworkListenerOptions
-        {
-            Endpoints = endpoints,
-            ConnectionPipelineFactory = () => { Interlocked.Increment(ref calls); return new ConnectionPipeline(); }
-        }, registry.Service);
+        var network = new NetworkService(
+            new NetworkListenerOptions
+            {
+                Endpoints = endpoints,
+                ConnectionPipelineFactory = () =>
+                {
+                    Interlocked.Increment(ref calls);
+                    return new ConnectionPipeline();
+                }
+            },
+            registry.Service
+        );
         endpoints.Clear();
         endpoint.Address = IPAddress.Parse("192.0.2.1");
         try
@@ -75,7 +92,10 @@ public sealed class NetworkServiceTests
             Assert.Equal(2, calls);
             Assert.Equal(IPAddress.Loopback, network.Listeners[0].Endpoint.Address);
         }
-        finally { await network.StopAsync().WaitAsync(Timeout); }
+        finally
+        {
+            await network.StopAsync().WaitAsync(Timeout);
+        }
     }
 
     [Fact]
@@ -99,7 +119,10 @@ public sealed class NetworkServiceTests
             await first.StopAsync();
             Assert.True(secondRegistry.Service.TryGet(id, out _));
         }
-        finally { await Task.WhenAll(first.StopAsync(), second.StopAsync()).WaitAsync(Timeout); }
+        finally
+        {
+            await Task.WhenAll(first.StopAsync(), second.StopAsync()).WaitAsync(Timeout);
+        }
     }
 
     [Fact]
@@ -109,8 +132,10 @@ public sealed class NetworkServiceTests
         occupied.Start();
         var registry = new ConnectionService();
         await registry.StartAsync();
-        var first = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0),
-            connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [new FailingCleanupMiddleware()]));
+        var first = new MoongateTcpServer(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [new FailingCleanupMiddleware()])
+        );
         var network = new NetworkService([first, new MoongateTcpServer((IPEndPoint)occupied.LocalEndpoint)], registry);
         var accepted = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         network.ConnectionAccepted += (_, _) => accepted.TrySetResult();
@@ -131,8 +156,10 @@ public sealed class NetworkServiceTests
         }
         finally
         {
-            await network.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
-            await registry.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await network.StopAsync()
+                .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await registry.StopAsync()
+                .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
         }
     }
 
@@ -144,8 +171,10 @@ public sealed class NetworkServiceTests
         using var middleware = new BlockingFailingCleanupMiddleware();
         var registry = new ConnectionService();
         await registry.StartAsync();
-        var first = new MoongateTcpServer(new IPEndPoint(IPAddress.Loopback, 0),
-            connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [middleware]));
+        var first = new MoongateTcpServer(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            connectionPipelineFactory: () => new ConnectionPipeline(middlewares: [middleware])
+        );
         var network = new NetworkService([first, new MoongateTcpServer((IPEndPoint)occupied.LocalEndpoint)], registry);
         var received = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         network.DataReceived += (_, _) => received.TrySetResult();
@@ -172,8 +201,10 @@ public sealed class NetworkServiceTests
         finally
         {
             middleware.Release();
-            await network.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
-            await registry.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await network.StopAsync()
+                .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await registry.StopAsync()
+                .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
         }
     }
 
@@ -187,10 +218,20 @@ public sealed class NetworkServiceTests
     public async Task ThrowingSubscriber_ClosesOffenderAndStillPublishesClosure(bool onAccept)
     {
         await using var registry = await ConnectionRegistryFixture.CreateAsync();
-        var network = new NetworkService(new NetworkListenerOptions { Endpoints = [new(IPAddress.Loopback, 0)] }, registry.Service);
+        var network = new NetworkService(
+            new NetworkListenerOptions { Endpoints = [new(IPAddress.Loopback, 0)] },
+            registry.Service
+        );
         var closed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        if (onAccept) { network.ConnectionAccepted += (_, _) => throw new IOException("accept callback"); }
-        else { network.DataReceived += (_, _) => throw new IOException("data callback"); }
+        if (onAccept)
+        {
+            network.ConnectionAccepted += (_, _) => throw new IOException("accept callback");
+        }
+        else
+        {
+            network.DataReceived += (_, _) => throw new IOException("data callback");
+        }
+
         network.ConnectionClosed += (_, _) => throw new IOException("first close callback");
         network.ConnectionClosed += (_, _) => closed.TrySetResult();
         try
@@ -198,11 +239,18 @@ public sealed class NetworkServiceTests
             await network.StartAsync();
             using var peer = new TcpClient();
             await peer.ConnectAsync(network.Listeners[0].Endpoint);
-            if (!onAccept) { await peer.GetStream().WriteAsync(new byte[] { 1 }); }
+            if (!onAccept)
+            {
+                await peer.GetStream().WriteAsync(new byte[] { 1 });
+            }
+
             await closed.Task.WaitAsync(Timeout);
             await network.StopAsync().WaitAsync(Timeout);
             Assert.Equal(0, registry.Service.Count);
         }
-        finally { await network.StopAsync().WaitAsync(Timeout); }
+        finally
+        {
+            await network.StopAsync().WaitAsync(Timeout);
+        }
     }
 }

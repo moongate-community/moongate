@@ -151,6 +151,7 @@ public sealed class WorldSaveServiceTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Saves.SaveAsync().WaitAsync(Timeout));
         Assert.Equal(0, fixture.Captures);
     }
+
     [Fact]
     public async Task SaveAsync_AdmittedCaptureAbandonedByLoopFault_CompletesWithOriginalFailure()
     {
@@ -170,6 +171,7 @@ public sealed class WorldSaveServiceTests
         {
             blocker.Release();
         }
+
         Assert.Same(failure, await Record.ExceptionAsync(() => saving.WaitAsync(Timeout)));
         Assert.Equal(0, fixture.Captures);
     }
@@ -179,7 +181,9 @@ public sealed class WorldSaveServiceTests
     {
         await using var fixture = await WorldSaveFixture.CreateAsync(autosave: true);
         await fixture.StartAsync();
-        await fixture.Database.ExecuteAsync("ALTER TABLE host_test.items ADD CONSTRAINT reject_save CHECK (name <> 'before')");
+        await fixture.Database.ExecuteAsync(
+            "ALTER TABLE host_test.items ADD CONSTRAINT reject_save CHECK (name <> 'before')"
+        );
         await fixture.BlockWritesAsync();
         fixture.Clock.Advance(TimeSpan.FromSeconds(1));
         await fixture.OnLoopAsync(() => { });
@@ -207,12 +211,13 @@ public sealed class WorldSaveServiceTests
         var committed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var apply = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var operation = fixture.Operations.ExecuteAsync(async token =>
-        {
-            await fixture.Items.UpsertAsync(new() { Id = fixture.Entities[0].Id, Name = "committed" }, token);
-            committed.SetResult();
-            await apply.Task;
-            await fixture.OnLoopAsync(() => fixture.Entities[0].Name = "committed");
-        });
+            {
+                await fixture.Items.UpsertAsync(new() { Id = fixture.Entities[0].Id, Name = "committed" }, token);
+                committed.SetResult();
+                await apply.Task;
+                await fixture.OnLoopAsync(() => fixture.Entities[0].Name = "committed");
+            }
+        );
         await committed.Task;
         var saving = fixture.Saves.SaveAsync();
         await fixture.OnLoopAsync(() => { });
@@ -229,11 +234,16 @@ public sealed class WorldSaveServiceTests
         await using var fixture = await WorldSaveFixture.CreateAsync();
         await fixture.StartAsync();
         var failure = new IOException("owner application failed after commit");
-        Assert.Same(failure, await Record.ExceptionAsync(() => fixture.Operations.ExecuteAsync(async token =>
-        {
-            await fixture.Items.UpsertAsync(new() { Id = fixture.Entities[0].Id, Name = "committed" }, token);
-            throw failure;
-        })));
+        Assert.Same(
+            failure,
+            await Record.ExceptionAsync(() => fixture.Operations.ExecuteAsync(async token =>
+                    {
+                        await fixture.Items.UpsertAsync(new() { Id = fixture.Entities[0].Id, Name = "committed" }, token);
+                        throw failure;
+                    }
+                )
+            )
+        );
         Assert.Same(failure, await Record.ExceptionAsync(() => fixture.Saves.SaveAsync().WaitAsync(Timeout)));
         Assert.Same(failure, await Record.ExceptionAsync(() => fixture.Saves.StopAsync(true).WaitAsync(Timeout)));
         Assert.Equal(0, fixture.Captures);
@@ -254,7 +264,11 @@ public sealed class WorldSaveServiceTests
             Assert.Equal(1, fixture.Captures);
             Assert.False(fixture.Loop.TryPost(new ActionGameLoopWorkItem(() => fixture.Entities[0].Name = "lost mutation")));
         }
-        finally { await fixture.ReleaseWritesAsync(); }
+        finally
+        {
+            await fixture.ReleaseWritesAsync();
+        }
+
         await stopping.WaitAsync(Timeout);
         Assert.Equal(2, fixture.Captures);
         Assert.Equal("before", await fixture.ReadSavedNameAsync());
@@ -269,22 +283,29 @@ public sealed class WorldSaveServiceTests
         var committed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var apply = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var operation = fixture.Operations.ExecuteAsync(async token =>
-        {
-            await fixture.Items.UpsertAsync(new() { Id = fixture.Entities[0].Id, Name = "final committed" }, token);
-            committed.SetResult();
-            await apply.Task;
-            await fixture.OnLoopAsync(() => fixture.Entities[0].Name = "final committed");
-        });
+            {
+                await fixture.Items.UpsertAsync(new() { Id = fixture.Entities[0].Id, Name = "final committed" }, token);
+                committed.SetResult();
+                await apply.Task;
+                await fixture.OnLoopAsync(() => fixture.Entities[0].Name = "final committed");
+            }
+        );
         await committed.Task;
         var stopping = fixture.Saves.StopAsync(true);
         try
         {
             Assert.False(stopping.IsCompleted);
-            await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Operations.ExecuteAsync(_ => throw new IOException("must not execute")));
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                fixture.Operations.ExecuteAsync(_ => throw new IOException("must not execute"))
+            );
             await fixture.OnLoopAsync(() => { });
             Assert.Equal(0, fixture.Captures);
         }
-        finally { apply.SetResult(); }
+        finally
+        {
+            apply.SetResult();
+        }
+
         await Task.WhenAll(operation, stopping).WaitAsync(Timeout);
         Assert.Equal(1, fixture.Captures);
         Assert.Equal("final committed", await fixture.ReadSavedNameAsync());
@@ -311,7 +332,8 @@ public sealed class WorldSaveServiceTests
         await fixture.StartAsync();
         fixture.OnCapture = () =>
         {
-            Action[] operations = [
+            Action[] operations =
+            [
                 () => { _ = fixture.Operations.ExecuteAsync(_ => Task.CompletedTask); },
                 () => { _ = fixture.Saves.SaveAsync(); },
                 () => { _ = fixture.Saves.StopAsync(true); }
@@ -319,13 +341,19 @@ public sealed class WorldSaveServiceTests
             foreach (var operation in operations)
             {
                 Exception? error = null;
-                try { operation(); }
-                catch (Exception exception) { error = exception; }
+                try
+                {
+                    operation();
+                }
+                catch (Exception exception)
+                {
+                    error = exception;
+                }
+
                 Assert.IsType<InvalidOperationException>(error);
             }
         };
         await fixture.Saves.SaveAsync().WaitAsync(Timeout);
         Assert.Equal("before", await fixture.ReadSavedNameAsync());
     }
-
 }

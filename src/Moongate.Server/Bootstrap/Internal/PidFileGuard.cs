@@ -80,8 +80,8 @@ internal sealed class PidFileGuard : IDisposable
             var content = File.ReadAllText(path, Encoding.UTF8).Trim().TrimStart('\uFEFF');
 
             return int.TryParse(content, NumberStyles.Integer, CultureInfo.InvariantCulture, out var pid) && pid > 0
-                       ? pid
-                       : null;
+                ? pid
+                : null;
         }
         catch (FileNotFoundException)
         {

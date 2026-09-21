@@ -22,13 +22,18 @@ public sealed class ApiFrameFramer : INetFramer
     {
         frameLength = 0;
 
-        if (buffer.Length < sizeof(uint)) { return false; }
+        if (buffer.Length < sizeof(uint))
+        {
+            return false;
+        }
+
         var declared = BinaryPrimitives.ReadUInt32BigEndian(buffer);
 
         if (declared == 0 || declared > _maxFrameLength)
         {
             throw new ApiProtocolException("Invalid frame length.");
         }
+
         frameLength = checked((int)declared + sizeof(uint));
 
         return buffer.Length >= frameLength;

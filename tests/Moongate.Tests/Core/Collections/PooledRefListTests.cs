@@ -29,9 +29,10 @@ public class PooledRefListTests
     public void Constructor_NullCollection_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>((IEnumerable<int>)null!);
-        });
+            {
+                using var list = new PooledRefList<int>((IEnumerable<int>)null!);
+            }
+        );
 
         Assert.Equal("collection", exception.ParamName);
     }
@@ -40,9 +41,10 @@ public class PooledRefListTests
     public void Constructor_NegativeCapacity_Throws()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(-1);
-        });
+            {
+                using var list = new PooledRefList<int>(-1);
+            }
+        );
 
         Assert.Equal("capacity", exception.ParamName);
     }
@@ -65,19 +67,20 @@ public class PooledRefListTests
     public void Capacity_ShrinkBelowCount_Throws()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            var list = new PooledRefList<int>(new[] { 4, 8 });
-            try
             {
-                list.Capacity = 1;
+                var list = new PooledRefList<int>(new[] { 4, 8 });
+                try
+                {
+                    list.Capacity = 1;
+                }
+                finally
+                {
+                    var contents = list.ToArray();
+                    list.Dispose();
+                    Assert.Equal(new[] { 4, 8 }, contents);
+                }
             }
-            finally
-            {
-                var contents = list.ToArray();
-                list.Dispose();
-                Assert.Equal(new[] { 4, 8 }, contents);
-            }
-        });
+        );
 
         Assert.Equal("value", exception.ParamName);
     }
@@ -86,10 +89,11 @@ public class PooledRefListTests
     public void IndexerGet_OutsideCount_Throws(int index)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 4, 8 });
-            _ = list[index];
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 4, 8 });
+                _ = list[index];
+            }
+        );
 
         Assert.Equal("index", exception.ParamName);
     }
@@ -98,19 +102,20 @@ public class PooledRefListTests
     public void IndexerSet_OutsideCount_ThrowsWithoutChangingItems(int index)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            var list = new PooledRefList<int>(new[] { 4, 8 });
-            try
             {
-                list[index] = 99;
+                var list = new PooledRefList<int>(new[] { 4, 8 });
+                try
+                {
+                    list[index] = 99;
+                }
+                finally
+                {
+                    var contents = list.ToArray();
+                    list.Dispose();
+                    Assert.Equal(new[] { 4, 8 }, contents);
+                }
             }
-            finally
-            {
-                var contents = list.ToArray();
-                list.Dispose();
-                Assert.Equal(new[] { 4, 8 }, contents);
-            }
-        });
+        );
 
         Assert.Equal("index", exception.ParamName);
     }
@@ -229,11 +234,12 @@ public class PooledRefListTests
         try
         {
             using var matches = source.FindAll(value =>
-            {
-                visited.Add(value);
+                {
+                    visited.Add(value);
 
-                return value == 1 ? true : throw expected;
-            });
+                    return value == 1 ? true : throw expected;
+                }
+            );
         }
         catch (Exception caught)
         {
@@ -257,10 +263,11 @@ public class PooledRefListTests
         using var list = new PooledRefList<int>(new[] { 2, 4, 6 });
         var visited = new List<int>();
         using var converted = list.ConvertAll(value =>
-        {
-            visited.Add(value);
-            return value switch { 2 => "two", 4 => "four", _ => "six" };
-        });
+            {
+                visited.Add(value);
+                return value switch { 2 => "two", 4 => "four", _ => "six" };
+            }
+        );
 
         Assert.Equal(new[] { 2, 4, 6 }, visited);
         Assert.Equal(new[] { "two", "four", "six" }, converted.ToArray());
@@ -553,34 +560,36 @@ public class PooledRefListTests
     public void Enumerator_CurrentBeforeStartOrAfterEnd_Throws(bool afterEnd)
     {
         Assert.Throws<InvalidOperationException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 4 });
-            var enumerator = list.GetEnumerator();
-            try
             {
-                if (afterEnd)
+                using var list = new PooledRefList<int>(new[] { 4 });
+                var enumerator = list.GetEnumerator();
+                try
                 {
-                    Assert.True(enumerator.MoveNext());
-                    Assert.False(enumerator.MoveNext());
-                }
+                    if (afterEnd)
+                    {
+                        Assert.True(enumerator.MoveNext());
+                        Assert.False(enumerator.MoveNext());
+                    }
 
-                _ = enumerator.Current;
+                    _ = enumerator.Current;
+                }
+                finally
+                {
+                    enumerator.Dispose();
+                }
             }
-            finally
-            {
-                enumerator.Dispose();
-            }
-        });
+        );
     }
 
     [Theory, InlineData(-1, 1, "index"), InlineData(0, -1, "count")]
     public void BinarySearch_NegativeRange_Throws(int index, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.BinarySearch(index, count, 20, null);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.BinarySearch(index, count, 20, null);
+            }
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -589,20 +598,22 @@ public class PooledRefListTests
     public void BinarySearch_RangeBeyondCount_Throws(int index, int count)
     {
         Assert.Throws<ArgumentException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.BinarySearch(index, count, 20, null);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.BinarySearch(index, count, 20, null);
+            }
+        );
     }
 
     [Theory, InlineData(-1, 1, "index"), InlineData(0, -1, "count")]
     public void GetRange_NegativeRange_Throws(int index, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.GetRange(index, count);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.GetRange(index, count);
+            }
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -611,20 +622,22 @@ public class PooledRefListTests
     public void GetRange_RangeBeyondCount_Throws(int index, int count)
     {
         Assert.Throws<ArgumentException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.GetRange(index, count);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.GetRange(index, count);
+            }
+        );
     }
 
     [Theory, InlineData(-1, 1, "index"), InlineData(0, -1, "count")]
     public void RemoveRange_NegativeRange_Throws(int index, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.RemoveRange(index, count);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.RemoveRange(index, count);
+            }
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -633,20 +646,22 @@ public class PooledRefListTests
     public void RemoveRange_RangeBeyondCount_Throws(int index, int count)
     {
         Assert.Throws<ArgumentException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.RemoveRange(index, count);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.RemoveRange(index, count);
+            }
+        );
     }
 
     [Theory, InlineData(-1, 1, "index"), InlineData(0, -1, "count")]
     public void Reverse_NegativeRange_Throws(int index, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.Reverse(index, count);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.Reverse(index, count);
+            }
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -655,20 +670,22 @@ public class PooledRefListTests
     public void Reverse_RangeBeyondCount_Throws(int index, int count)
     {
         Assert.Throws<ArgumentException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.Reverse(index, count);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.Reverse(index, count);
+            }
+        );
     }
 
     [Theory, InlineData(-1, 1, "index"), InlineData(0, -1, "count")]
     public void Sort_NegativeRange_Throws(int index, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.Sort(index, count, null);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.Sort(index, count, null);
+            }
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -677,20 +694,22 @@ public class PooledRefListTests
     public void Sort_RangeBeyondCount_Throws(int index, int count)
     {
         Assert.Throws<ArgumentException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.Sort(index, count, null);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.Sort(index, count, null);
+            }
+        );
     }
 
     [Fact]
     public void Find_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.Find(null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.Find(null!);
+            }
+        );
 
         Assert.Equal("match", exception.ParamName);
     }
@@ -699,10 +718,11 @@ public class PooledRefListTests
     public void FindAll_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.FindAll(null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.FindAll(null!);
+            }
+        );
 
         Assert.Equal("match", exception.ParamName);
     }
@@ -711,10 +731,11 @@ public class PooledRefListTests
     public void FindLast_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.FindLast(null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.FindLast(null!);
+            }
+        );
 
         Assert.Equal("match", exception.ParamName);
     }
@@ -723,10 +744,11 @@ public class PooledRefListTests
     public void FindIndex_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.FindIndex(null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.FindIndex(null!);
+            }
+        );
 
         Assert.Equal("match", exception.ParamName);
     }
@@ -735,10 +757,11 @@ public class PooledRefListTests
     public void FindLastIndex_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.FindLastIndex(null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.FindLastIndex(null!);
+            }
+        );
 
         Assert.Equal("match", exception.ParamName);
     }
@@ -747,10 +770,11 @@ public class PooledRefListTests
     public void RemoveAll_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.RemoveAll(null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.RemoveAll(null!);
+            }
+        );
 
         Assert.Equal("match", exception.ParamName);
     }
@@ -759,10 +783,11 @@ public class PooledRefListTests
     public void TrueForAll_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.TrueForAll(null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.TrueForAll(null!);
+            }
+        );
 
         Assert.Equal("match", exception.ParamName);
     }
@@ -771,10 +796,11 @@ public class PooledRefListTests
     public void ForEach_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.ForEach(null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.ForEach(null!);
+            }
+        );
 
         Assert.Equal("action", exception.ParamName);
     }
@@ -783,10 +809,11 @@ public class PooledRefListTests
     public void ConvertAll_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.ConvertAll<string>(null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.ConvertAll<string>(null!);
+            }
+        );
 
         Assert.Equal("converter", exception.ParamName);
     }
@@ -795,10 +822,11 @@ public class PooledRefListTests
     public void Sort_NullCallback_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.Sort((Comparison<int>)null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.Sort((Comparison<int>)null!);
+            }
+        );
 
         Assert.Equal("comparison", exception.ParamName);
     }
@@ -811,10 +839,11 @@ public class PooledRefListTests
     public void FindIndex_InvalidRange_Throws(int startIndex, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.FindIndex(startIndex, count, _ => true);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.FindIndex(startIndex, count, _ => true);
+            }
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -827,10 +856,11 @@ public class PooledRefListTests
     public void FindLastIndex_InvalidRange_Throws(int startIndex, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.FindLastIndex(startIndex, count, _ => true);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.FindLastIndex(startIndex, count, _ => true);
+            }
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -839,10 +869,11 @@ public class PooledRefListTests
     public void FindLastIndex_EmptyListWithNonnegativeStartIndex_Throws()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.FindLastIndex(0, 0, _ => true);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.FindLastIndex(0, 0, _ => true);
+            }
+        );
 
         Assert.Equal("startIndex", exception.ParamName);
     }
@@ -851,10 +882,11 @@ public class PooledRefListTests
     public void IndexOf_InvalidRange_Throws(int index, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.IndexOf(20, index, count);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.IndexOf(20, index, count);
+            }
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -863,10 +895,11 @@ public class PooledRefListTests
     public void IndexOf_StartBeyondCount_Throws()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.IndexOf(20, 4);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.IndexOf(20, 4);
+            }
+        );
 
         Assert.Equal("index", exception.ParamName);
     }
@@ -875,10 +908,11 @@ public class PooledRefListTests
     public void LastIndexOf_StartAtCount_Throws()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.LastIndexOf(20, 3);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.LastIndexOf(20, 3);
+            }
+        );
 
         Assert.Equal("index", exception.ParamName);
     }
@@ -887,10 +921,11 @@ public class PooledRefListTests
     public void LastIndexOf_InvalidRange_Throws(int index, int count, string parameter)
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
-            list.LastIndexOf(20, index, count);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20, 30 });
+                list.LastIndexOf(20, index, count);
+            }
+        );
 
         Assert.Equal(parameter, exception.ParamName);
     }
@@ -899,44 +934,47 @@ public class PooledRefListTests
     public void Insert_InvalidIndex_ThrowsWithoutChangingItems(int index)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20 });
-            try
             {
-                list.Insert(index, 99);
+                using var list = new PooledRefList<int>(new[] { 10, 20 });
+                try
+                {
+                    list.Insert(index, 99);
+                }
+                finally
+                {
+                    Assert.Equal(new[] { 10, 20 }, list.ToArray());
+                }
             }
-            finally
-            {
-                Assert.Equal(new[] { 10, 20 }, list.ToArray());
-            }
-        });
+        );
     }
 
     [Theory, InlineData(-1), InlineData(3)]
     public void InsertRange_InvalidIndex_ThrowsWithoutChangingItems(int index)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20 });
-            try
             {
-                list.InsertRange(index, new[] { 99 });
+                using var list = new PooledRefList<int>(new[] { 10, 20 });
+                try
+                {
+                    list.InsertRange(index, new[] { 99 });
+                }
+                finally
+                {
+                    Assert.Equal(new[] { 10, 20 }, list.ToArray());
+                }
             }
-            finally
-            {
-                Assert.Equal(new[] { 10, 20 }, list.ToArray());
-            }
-        });
+        );
     }
 
     [Fact]
     public void InsertRange_NullCollection_Throws()
     {
         var exception = Assert.Throws<ArgumentNullException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.InsertRange(0, null!);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.InsertRange(0, null!);
+            }
+        );
 
         Assert.Equal("collection", exception.ParamName);
     }
@@ -945,17 +983,18 @@ public class PooledRefListTests
     public void RemoveAt_InvalidIndex_ThrowsWithoutChangingItems(int index)
     {
         Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20 });
-            try
             {
-                list.RemoveAt(index);
+                using var list = new PooledRefList<int>(new[] { 10, 20 });
+                try
+                {
+                    list.RemoveAt(index);
+                }
+                finally
+                {
+                    Assert.Equal(new[] { 10, 20 }, list.ToArray());
+                }
             }
-            finally
-            {
-                Assert.Equal(new[] { 10, 20 }, list.ToArray());
-            }
-        });
+        );
     }
 
     [Fact]
@@ -964,10 +1003,11 @@ public class PooledRefListTests
         var destination = new[] { -1, -1, -1 };
 
         Assert.Throws<ArgumentException>(() =>
-        {
-            using var list = new PooledRefList<int>(new[] { 10, 20 });
-            list.CopyTo(1, destination, 0, 2);
-        });
+            {
+                using var list = new PooledRefList<int>(new[] { 10, 20 });
+                list.CopyTo(1, destination, 0, 2);
+            }
+        );
 
         Assert.Equal(new[] { -1, -1, -1 }, destination);
     }
@@ -976,10 +1016,11 @@ public class PooledRefListTests
     public void EnsureCapacity_NegativeCapacity_Throws()
     {
         var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
-        {
-            using var list = new PooledRefList<int>(0);
-            list.EnsureCapacity(-1);
-        });
+            {
+                using var list = new PooledRefList<int>(0);
+                list.EnsureCapacity(-1);
+            }
+        );
 
         Assert.Equal("capacity", exception.ParamName);
     }

@@ -24,7 +24,8 @@ public sealed class GreetingMetricProvider : IMetricProvider
     public ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default)
     {
         cancellationToken.ThrowIfCancellationRequested();
-        IReadOnlyList<MetricSample> samples = [new MetricSample("hello_calls", _counter.Count, "calls", DiagnosticMetricType.Counter)];
+        IReadOnlyList<MetricSample> samples =
+            [new MetricSample("hello_calls", _counter.Count, "calls", DiagnosticMetricType.Counter)];
 
         return new ValueTask<IReadOnlyList<MetricSample>>(samples);
     }

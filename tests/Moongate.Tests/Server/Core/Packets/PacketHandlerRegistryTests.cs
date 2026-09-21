@@ -17,7 +17,8 @@ public sealed class PacketHandlerRegistryTests
     {
         using var container = new Container();
         container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>();
-        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>());
+        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
+        );
         Assert.Single(container.Resolve<PacketHandlerRegistry>().Registrations);
         Assert.False(container.IsRegistered<DependentPacketHandler>());
     }
@@ -48,7 +49,8 @@ public sealed class PacketHandlerRegistryTests
         using var container = new Container();
         container.RegisterInstance(new PacketHandlerRegistry());
         var frozen = container.Resolve<PacketHandlerRegistry>().Freeze();
-        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>());
+        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
+        );
         Assert.Empty(frozen);
         Assert.False(container.IsRegistered<DependentPacketHandler>());
     }
@@ -70,7 +72,8 @@ public sealed class PacketHandlerRegistryTests
     {
         using var container = new Container();
         container.Register<RecordingPacketHandler>(Reuse.Transient);
-        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>());
+        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>()
+        );
         Assert.Empty(container.Resolve<PacketHandlerRegistry>().Registrations);
         Assert.NotSame(container.Resolve<RecordingPacketHandler>(), container.Resolve<RecordingPacketHandler>());
     }
@@ -81,7 +84,12 @@ public sealed class PacketHandlerRegistryTests
         await using var fixture = await SessionFixture.CreateAsync();
         using var container = new Container();
         container.RegisterPacketHandler<PingPacket, DependentPacketHandler>();
-        var dispatcher = new PacketDispatchService(fixture.Loop, new SessionService(fixture.Loop), container.Resolve<PacketHandlerRegistry>(), container);
+        var dispatcher = new PacketDispatchService(
+            fixture.Loop,
+            new SessionService(fixture.Loop),
+            container.Resolve<PacketHandlerRegistry>(),
+            container
+        );
         container.Register<RecordingPacketHandler>(Reuse.Singleton);
         await dispatcher.StartAsync();
         Assert.Same(container.Resolve<DependentPacketHandler>(), container.Resolve<DependentPacketHandler>());
@@ -94,7 +102,12 @@ public sealed class PacketHandlerRegistryTests
         await using var fixture = await SessionFixture.CreateAsync();
         using var container = new Container();
         container.RegisterPacketHandler<PingPacket, DependentPacketHandler>();
-        var dispatcher = new PacketDispatchService(fixture.Loop, new SessionService(fixture.Loop), container.Resolve<PacketHandlerRegistry>(), container);
+        var dispatcher = new PacketDispatchService(
+            fixture.Loop,
+            new SessionService(fixture.Loop),
+            container.Resolve<PacketHandlerRegistry>(),
+            container
+        );
         await Assert.ThrowsAnyAsync<Exception>(() => dispatcher.StartAsync());
     }
 }

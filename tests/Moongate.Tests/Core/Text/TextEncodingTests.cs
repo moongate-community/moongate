@@ -27,8 +27,8 @@ public class TextEncodingTests
         const string input = "Aé😀";
 
         var bytes = useSpan
-                        ? TextEncoding.GetBytes(input.AsSpan(), TextEncoding.UTF8)
-                        : TextEncoding.GetBytes(input, TextEncoding.UTF8);
+            ? TextEncoding.GetBytes(input.AsSpan(), TextEncoding.UTF8)
+            : TextEncoding.GetBytes(input, TextEncoding.UTF8);
 
         Assert.Equal(new byte[] { 0x41, 0xC3, 0xA9, 0xF0, 0x9F, 0x98, 0x80 }, bytes);
     }
@@ -37,8 +37,8 @@ public class TextEncodingTests
     public void GetBytes_EmptyText_ProducesNoBytes(bool useSpan)
     {
         var bytes = useSpan
-                        ? TextEncoding.GetBytes(ReadOnlySpan<char>.Empty, TextEncoding.Unicode)
-                        : TextEncoding.GetBytes("", TextEncoding.Unicode);
+            ? TextEncoding.GetBytes(ReadOnlySpan<char>.Empty, TextEncoding.Unicode)
+            : TextEncoding.GetBytes("", TextEncoding.Unicode);
 
         Assert.Empty(bytes);
     }

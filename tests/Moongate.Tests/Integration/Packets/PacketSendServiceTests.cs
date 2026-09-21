@@ -122,10 +122,11 @@ public sealed class PacketSendServiceTests
         {
             var loopThread = 0;
             await slow.ExecuteOnLoopAsync(() =>
-            {
-                loopThread = Environment.CurrentManagedThreadId;
-                Assert.True(sender.TrySend(slow.Client.SessionId, new PingPacket(1)));
-            });
+                {
+                    loopThread = Environment.CurrentManagedThreadId;
+                    Assert.True(sender.TrySend(slow.Client.SessionId, new PingPacket(1)));
+                }
+            );
             await slowMiddleware.Entered.WaitAsync(Timeout);
             await slow.ExecuteOnLoopAsync(() => Assert.True(sender.TrySend(fast.Client.SessionId, new PingPacket(2))));
             Assert.NotEqual(loopThread, slowMiddleware.SendThreadId);
@@ -149,7 +150,9 @@ public sealed class PacketSendServiceTests
     public async Task SendFailure_ClosesConnectionAndIsObservedByCleanup(bool canceled)
     {
         await using var fixture = await SessionFixture.CreateAsync();
-        Exception failure = canceled ? new OperationCanceledException("independent send cancellation") : new IOException("send failure");
+        Exception failure = canceled
+            ? new OperationCanceledException("independent send cancellation")
+            : new IOException("send failure");
         using var middleware = new ControlledSendMiddleware { Failure = failure };
         fixture.Client.AddMiddleware(middleware);
         var sessions = new SessionService(fixture.Loop);
@@ -181,8 +184,10 @@ public sealed class PacketSendServiceTests
             await middleware.ReadAsync();
             Assert.Equal(1, sender.ActiveOutboxCount);
             await fixture.Client.DisposeAsync().AsTask().WaitAsync(Timeout);
-            Assert.True(SpinWait.SpinUntil(() => sender.ActiveOutboxCount == 0, Timeout),
-                "The idle outbox must retire after connection completion, before sender shutdown.");
+            Assert.True(
+                SpinWait.SpinUntil(() => sender.ActiveOutboxCount == 0, Timeout),
+                "The idle outbox must retire after connection completion, before sender shutdown."
+            );
             Assert.False(sender.TrySend(fixture.Client.SessionId, new PingPacket(2)));
         }
         finally

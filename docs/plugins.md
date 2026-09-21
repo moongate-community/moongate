@@ -208,6 +208,8 @@ required, and registration does not connect or change the database. The host
 validates every plugin registration as one batch, then checks schema readiness
 before resolving any startup service. See [PostgreSQL persistence](persistence.md)
 for attributes, schema review, transactions, and explicit complex-property mapping.
+For a runnable example from the entity class through CRUD operations, follow
+[Create a persistent entity](persistence-entity-tutorial.md).
 
 `container.RegisterInstance(new GreetingCounter())` shares one counter instance
 between the Lua module and the metric provider; `GreetingCounter`

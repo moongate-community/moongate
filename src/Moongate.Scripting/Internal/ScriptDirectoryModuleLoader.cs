@@ -43,7 +43,9 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
 
         if (Path.IsPathRooted(relativePath))
         {
-            throw new InvalidOperationException($"'{relativePath}' is absolute; script paths are relative to the scripts directory.");
+            throw new InvalidOperationException(
+                $"'{relativePath}' is absolute; script paths are relative to the scripts directory."
+            );
         }
 
         var full = Path.GetFullPath(Path.Combine(root, relativePath.Replace('/', Path.DirectorySeparatorChar)));
@@ -64,7 +66,8 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
     {
         var current = root;
 
-        foreach (var segment in full[rootWithSeparator.Length..].Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
+        foreach (var segment in full[rootWithSeparator.Length..]
+                     .Split(Path.DirectorySeparatorChar, StringSplitOptions.RemoveEmptyEntries))
         {
             current = Path.Combine(current, segment);
             FileSystemInfo entry = Directory.Exists(current) ? new DirectoryInfo(current) : new FileInfo(current);
@@ -76,9 +79,12 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
 
             var target = entry.ResolveLinkTarget(returnFinalTarget: true)?.FullName;
 
-            if (target is null || (!target.StartsWith(rootWithSeparator, StringComparison.Ordinal) && !string.Equals(target, root, StringComparison.Ordinal)))
+            if (target is null || (!target.StartsWith(rootWithSeparator, StringComparison.Ordinal) &&
+                                   !string.Equals(target, root, StringComparison.Ordinal)))
             {
-                throw new InvalidOperationException($"'{relativePath}' resolves outside the scripts directory through a link.");
+                throw new InvalidOperationException(
+                    $"'{relativePath}' resolves outside the scripts directory through a link."
+                );
             }
         }
     }

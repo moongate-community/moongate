@@ -24,10 +24,10 @@ public class ContainerExtensionsTests
         var returned = overload switch
         {
             "generic-mapping" => container.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(7),
-            "generic-self" => container.RegisterMoongateService<StartupRegistrationService>(7),
+            "generic-self"    => container.RegisterMoongateService<StartupRegistrationService>(7),
             "runtime-mapping" => container.RegisterMoongateService(contractType, implementationType, 7),
-            "runtime-self" => container.RegisterMoongateService(implementationType, 7),
-            _ => throw new ArgumentOutOfRangeException(nameof(overload))
+            "runtime-self"    => container.RegisterMoongateService(implementationType, 7),
+            _                 => throw new ArgumentOutOfRangeException(nameof(overload))
         };
 
         var serviceType = mapped ? typeof(IRegistrationService) : typeof(StartupRegistrationService);
@@ -56,10 +56,13 @@ public class ContainerExtensionsTests
         var returned = overload switch
         {
             "generic-service" => container.RegisterMoongateService(service, -2),
-            "generic-mapping" => container.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(instance, -2),
-            "inferred-self" => container.RegisterMoongateService(instance, -2),
+            "generic-mapping" => container.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(
+                instance,
+                -2
+            ),
+            "inferred-self"   => container.RegisterMoongateService(instance, -2),
             "runtime-service" => container.RegisterMoongateService(contractType, instance, -2),
-            _ => throw new ArgumentOutOfRangeException(nameof(overload))
+            _                 => throw new ArgumentOutOfRangeException(nameof(overload))
         };
 
         var serviceType = mapped ? typeof(IRegistrationService) : typeof(StartupRegistrationService);
@@ -100,30 +103,49 @@ public class ContainerExtensionsTests
         var returned = overload switch
         {
             "generic-mapping-context" => container.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(
-                resolver => Create(resolver.Resolve<RegistrationDependency>()), 3
+                resolver => Create(resolver.Resolve<RegistrationDependency>()),
+                3
             ),
-            "generic-mapping-parameterless" => container.RegisterMoongateService<IRegistrationService, StartupRegistrationService>(
-                () => Create(dependency), 3
-            ),
+            "generic-mapping-parameterless" => container
+                .RegisterMoongateService<IRegistrationService, StartupRegistrationService>(
+                    () => Create(dependency),
+                    3
+                ),
             "generic-self-context" => container.RegisterMoongateService<StartupRegistrationService>(
-                resolver => Create(resolver.Resolve<RegistrationDependency>()), 3
+                resolver => Create(resolver.Resolve<RegistrationDependency>()),
+                3
             ),
-            "generic-self-parameterless" => container.RegisterMoongateService<StartupRegistrationService>(() => Create(dependency), 3),
+            "generic-self-parameterless" => container.RegisterMoongateService<StartupRegistrationService>(
+                () => Create(dependency),
+                3
+            ),
             "inferred-self-context" => container.RegisterMoongateService(
-                (IResolverContext resolver) => Create(resolver.Resolve<RegistrationDependency>()), 3
+                (IResolverContext resolver) => Create(resolver.Resolve<RegistrationDependency>()),
+                3
             ),
             "inferred-self-parameterless" => container.RegisterMoongateService(() => Create(dependency), 3),
             "runtime-mapping-context" => container.RegisterMoongateService(
-                typeof(IRegistrationService), typeof(StartupRegistrationService),
-                resolver => Create(resolver.Resolve<RegistrationDependency>()), 3
+                typeof(IRegistrationService),
+                typeof(StartupRegistrationService),
+                resolver => Create(resolver.Resolve<RegistrationDependency>()),
+                3
             ),
             "runtime-mapping-parameterless" => container.RegisterMoongateService(
-                typeof(IRegistrationService), typeof(StartupRegistrationService), () => Create(dependency), 3
+                typeof(IRegistrationService),
+                typeof(StartupRegistrationService),
+                () => Create(dependency),
+                3
             ),
             "runtime-self-context" => container.RegisterMoongateService(
-                typeof(StartupRegistrationService), resolver => Create(resolver.Resolve<RegistrationDependency>()), 3
+                typeof(StartupRegistrationService),
+                resolver => Create(resolver.Resolve<RegistrationDependency>()),
+                3
             ),
-            "runtime-self-parameterless" => container.RegisterMoongateService(typeof(StartupRegistrationService), () => Create(dependency), 3),
+            "runtime-self-parameterless" => container.RegisterMoongateService(
+                typeof(StartupRegistrationService),
+                () => Create(dependency),
+                3
+            ),
             _ => throw new ArgumentOutOfRangeException(nameof(overload))
         };
 
@@ -148,12 +170,23 @@ public class ContainerExtensionsTests
         container.RegisterInstance(new RegistrationDependency());
 
         container.RegisterMoongateService<RegistrationService>()
-                 .RegisterMoongateService<StartupRegistrationService>(10);
+            .RegisterMoongateService<StartupRegistrationService>(10);
 
         Assert.Collection(
             container.Resolve<List<ServiceRegistrationData>>(),
-            data => Assert.Equal(new ServiceRegistrationData(typeof(RegistrationService), typeof(RegistrationService), false), data),
-            data => Assert.Equal(new ServiceRegistrationData(typeof(StartupRegistrationService), typeof(StartupRegistrationService), true, 10), data)
+            data => Assert.Equal(
+                new ServiceRegistrationData(typeof(RegistrationService), typeof(RegistrationService), false),
+                data
+            ),
+            data => Assert.Equal(
+                new ServiceRegistrationData(
+                    typeof(StartupRegistrationService),
+                    typeof(StartupRegistrationService),
+                    true,
+                    10
+                ),
+                data
+            )
         );
         Assert.NotNull(container.Resolve<RegistrationService>());
         Assert.NotNull(container.Resolve<StartupRegistrationService>());
@@ -167,21 +200,28 @@ public class ContainerExtensionsTests
     {
         using var container = new Container();
 
-        Assert.Throws(exceptionType, () =>
-        {
-            switch (overload)
+        Assert.Throws(
+            exceptionType,
+            () =>
             {
-                case "type":
-                    container.RegisterMoongateService(typeof(IRegistrationService), typeof(RegistrationDependency));
-                    break;
-                case "instance":
-                    container.RegisterMoongateService(typeof(IRegistrationService), new RegistrationDependency());
-                    break;
-                case "factory":
-                    container.RegisterMoongateService(typeof(IRegistrationService), typeof(RegistrationDependency), () => new RegistrationDependency());
-                    break;
+                switch (overload)
+                {
+                    case "type":
+                        container.RegisterMoongateService(typeof(IRegistrationService), typeof(RegistrationDependency));
+                        break;
+                    case "instance":
+                        container.RegisterMoongateService(typeof(IRegistrationService), new RegistrationDependency());
+                        break;
+                    case "factory":
+                        container.RegisterMoongateService(
+                            typeof(IRegistrationService),
+                            typeof(RegistrationDependency),
+                            () => new RegistrationDependency()
+                        );
+                        break;
+                }
             }
-        });
+        );
 
         Assert.False(container.IsRegistered<IRegistrationService>());
         Assert.False(container.IsRegistered<List<ServiceRegistrationData>>());
@@ -194,11 +234,13 @@ public class ContainerExtensionsTests
         var calls = 0;
 
         Assert.Throws<ArgumentException>(() => container.RegisterMoongateService<IRegistrationService>(() =>
-        {
-            calls++;
+                {
+                    calls++;
 
-            return new StartupRegistrationService(new RegistrationDependency());
-        }));
+                    return new StartupRegistrationService(new RegistrationDependency());
+                }
+            )
+        );
 
         Assert.Equal(0, calls);
         Assert.False(container.IsRegistered<IRegistrationService>());
@@ -210,7 +252,9 @@ public class ContainerExtensionsTests
     {
         using var container = new Container();
 
-        Assert.Throws<ArgumentException>(() => container.RegisterMoongateService(typeof(object), implementationType, () => new object()));
+        Assert.Throws<ArgumentException>(() =>
+            container.RegisterMoongateService(typeof(object), implementationType, () => new object())
+        );
 
         Assert.False(container.IsRegistered<object>());
         Assert.False(container.IsRegistered<List<ServiceRegistrationData>>());
@@ -237,7 +281,8 @@ public class ContainerExtensionsTests
     {
         using var container = new Container();
         container.RegisterMoongateService(
-            typeof(IRegistrationService), typeof(StartupRegistrationService),
+            typeof(IRegistrationService),
+            typeof(StartupRegistrationService),
             () => returnsNull ? null! : new RegistrationService(new RegistrationDependency())
         );
 
@@ -249,9 +294,15 @@ public class ContainerExtensionsTests
     {
         using var container = new Container();
 
-        Assert.Throws<ArgumentNullException>(() => container.RegisterMoongateService<RegistrationService>((RegistrationService)null!));
-        Assert.Throws<ArgumentNullException>(() => container.RegisterMoongateService<RegistrationService>((Func<RegistrationService>)null!));
-        Assert.Throws<ArgumentNullException>(() => container.RegisterMoongateService<RegistrationService>((Func<IResolverContext, RegistrationService>)null!));
+        Assert.Throws<ArgumentNullException>(() =>
+            container.RegisterMoongateService<RegistrationService>((RegistrationService)null!)
+        );
+        Assert.Throws<ArgumentNullException>(() =>
+            container.RegisterMoongateService<RegistrationService>((Func<RegistrationService>)null!)
+        );
+        Assert.Throws<ArgumentNullException>(() =>
+            container.RegisterMoongateService<RegistrationService>((Func<IResolverContext, RegistrationService>)null!)
+        );
         Assert.False(container.IsRegistered<RegistrationService>());
         Assert.False(container.IsRegistered<List<ServiceRegistrationData>>());
     }

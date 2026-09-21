@@ -25,10 +25,12 @@ public sealed class ScriptingBootstrapTests
     public async Task Bootstrap_RunsInitLuaOnTheLoop_FiresATimerThroughTheWheel_AndWritesDefinitions()
     {
         using var scripts = new TemporaryScriptsDirectory();
-        scripts.Write("init.lua",
+        scripts.Write(
+            "init.lua",
             "log.info('booted {Engine}', engine.name)\n" +
             "timer.after(0.05, function() wait(0.05) fired = (fired or 0) + 1 end)\n" +
-            "function fired_count() return fired or 0 end");
+            "function fired_count() return fired or 0 end"
+        );
         using var container = new Container();
         container.RegisterMoongateEventBus();
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
@@ -37,10 +39,10 @@ public sealed class ScriptingBootstrapTests
         container.RegisterInstance(new ScriptEngineOptions { ScriptsDirectory = scripts.Path });
         container.RegisterDelegate<ITimerService>(resolver => resolver.Resolve<TimerWheelService>(), Reuse.Singleton);
         container.RegisterMoongateService<TimerWheelService>(priority: -900)
-                 .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
-                 .RegisterMoongateService<IEventBusService, EventBusService>()
-                 .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority)
-                 .RegisterScriptModule<LogModule>();
+            .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
+            .RegisterMoongateService<IEventBusService, EventBusService>()
+            .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority)
+            .RegisterScriptModule<LogModule>();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         await bootstrap.StartAsync().WaitAsync(Timeout);
@@ -60,8 +62,11 @@ public sealed class ScriptingBootstrapTests
             {
                 await Task.Delay(20);
                 var probe = new TaskCompletionSource<double>(TaskCreationOptions.RunContinuationsAsynchronously);
-                await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-                    probe.SetResult((double)engine.Call("fired_count").Values[0]!)));
+                await loop.PostAsync(
+                    new ActionGameLoopWorkItem(() =>
+                        probe.SetResult((double)engine.Call("fired_count").Values[0]!)
+                    )
+                );
                 count = await probe.Task.WaitAsync(Timeout);
             }
 

@@ -11,5 +11,6 @@ public interface IIncomingPacket<TSelf> : IPacket
 {
     abstract static bool TryParse(
         ReadOnlySpan<byte> data,
-        [NotNullWhen(true)] out TSelf? packet);
+        [NotNullWhen(true)] out TSelf? packet
+    );
 }

@@ -19,8 +19,10 @@ internal sealed class TimerMetricsSourceStub : ITimerService
         return Snapshot;
     }
 
-    public string RegisterTimer(string name, TimeSpan interval, Action callback, TimeSpan? delay = null,
-        bool repeat = false)
+    public string RegisterTimer(
+        string name, TimeSpan interval, Action callback, TimeSpan? delay = null,
+        bool repeat = false
+    )
     {
         throw new NotSupportedException();
     }

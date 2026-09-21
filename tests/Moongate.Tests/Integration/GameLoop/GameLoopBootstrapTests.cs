@@ -40,8 +40,10 @@ public sealed class GameLoopBootstrapTests
         finally
         {
             cancellation.Cancel();
-            await run.WaitAsync(TestTimeout).ConfigureAwait(
-                ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await run.WaitAsync(TestTimeout)
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -85,8 +87,10 @@ public sealed class GameLoopBootstrapTests
         finally
         {
             cancellation.Cancel();
-            await run.WaitAsync(TestTimeout).ConfigureAwait(
-                ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await run.WaitAsync(TestTimeout)
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -105,20 +109,26 @@ public sealed class GameLoopBootstrapTests
 
         try
         {
-            await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-            {
-                entered.SetResult();
-                if (!release.Wait(TestTimeout))
-                {
-                    throw new TimeoutException("The test did not release the game command.");
-                }
-            }));
+            await loop.PostAsync(
+                new ActionGameLoopWorkItem(() =>
+                    {
+                        entered.SetResult();
+                        if (!release.Wait(TestTimeout))
+                        {
+                            throw new TimeoutException("The test did not release the game command.");
+                        }
+                    }
+                )
+            );
             await entered.Task.WaitAsync(TestTimeout);
-            await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-            {
-                Assert.False(container.IsDisposed);
-                Interlocked.Increment(ref ran);
-            }));
+            await loop.PostAsync(
+                new ActionGameLoopWorkItem(() =>
+                    {
+                        Assert.False(container.IsDisposed);
+                        Interlocked.Increment(ref ran);
+                    }
+                )
+            );
 
             cancellation.Cancel();
             Assert.False(run.IsCompleted);
@@ -133,8 +143,10 @@ public sealed class GameLoopBootstrapTests
         {
             release.Set();
             cancellation.Cancel();
-            await run.WaitAsync(TestTimeout).ConfigureAwait(
-                ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await run.WaitAsync(TestTimeout)
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -155,15 +167,19 @@ public sealed class GameLoopBootstrapTests
 
         try
         {
-            await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-            {
-                entered.SetResult();
-                if (!release.Wait(TestTimeout))
-                {
-                    throw new TimeoutException("The test did not release the game command.");
-                }
-                throw failure;
-            }));
+            await loop.PostAsync(
+                new ActionGameLoopWorkItem(() =>
+                    {
+                        entered.SetResult();
+                        if (!release.Wait(TestTimeout))
+                        {
+                            throw new TimeoutException("The test did not release the game command.");
+                        }
+
+                        throw failure;
+                    }
+                )
+            );
             await entered.Task.WaitAsync(TestTimeout);
             cancellation.Cancel();
             await shutdown.ShutdownStarted.WaitAsync(TestTimeout);
@@ -178,8 +194,10 @@ public sealed class GameLoopBootstrapTests
         {
             release.Set();
             cancellation.Cancel();
-            await run.WaitAsync(TestTimeout).ConfigureAwait(
-                ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await run.WaitAsync(TestTimeout)
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -224,8 +242,10 @@ public sealed class GameLoopBootstrapTests
         finally
         {
             cancellation.Cancel();
-            await run.WaitAsync(TestTimeout).ConfigureAwait(
-                ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await run.WaitAsync(TestTimeout)
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -237,26 +257,33 @@ public sealed class GameLoopBootstrapTests
         var loop = container.Resolve<IGameLoopService>();
         var startupFailure = new IOException("later service failed to start");
         var loopFailure = new InvalidOperationException("game command failed during rollback");
-        container.RegisterMoongateService(new CallbackStartupService(
-            async () =>
-            {
-                await loop.PostAsync(new ActionGameLoopWorkItem(() =>
+        container.RegisterMoongateService(
+            new CallbackStartupService(
+                async () =>
                 {
-                    blocker.Execute();
-                    throw loopFailure;
-                }));
-                await blocker.Entered.WaitAsync(TestTimeout);
-                throw startupFailure;
-            },
-            () =>
-            {
-                blocker.Release();
-                return Task.CompletedTask;
-            }));
+                    await loop.PostAsync(
+                        new ActionGameLoopWorkItem(() =>
+                            {
+                                blocker.Execute();
+                                throw loopFailure;
+                            }
+                        )
+                    );
+                    await blocker.Entered.WaitAsync(TestTimeout);
+                    throw startupFailure;
+                },
+                () =>
+                {
+                    blocker.Release();
+                    return Task.CompletedTask;
+                }
+            )
+        );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
-        var actual = await Assert.ThrowsAsync<AggregateException>(
-            () => MoongateServerRunner.RunAsync(bootstrap).WaitAsync(TestTimeout));
+        var actual = await Assert.ThrowsAsync<AggregateException>(() =>
+            MoongateServerRunner.RunAsync(bootstrap).WaitAsync(TestTimeout)
+        );
 
         Assert.Equal([startupFailure, loopFailure], actual.InnerExceptions);
         Assert.True(container.IsDisposed);
@@ -268,13 +295,16 @@ public sealed class GameLoopBootstrapTests
         using var container = CreateContainer();
         var loop = container.Resolve<IGameLoopService>();
         var failure = new InvalidOperationException("game command failed during startup");
-        container.RegisterMoongateService(new CallbackStartupService(
-            async () =>
-            {
-                await loop.PostAsync(new ActionGameLoopWorkItem(() => throw failure));
-                await loop.Completion.WaitAsync(TestTimeout);
-            },
-            () => Task.CompletedTask));
+        container.RegisterMoongateService(
+            new CallbackStartupService(
+                async () =>
+                {
+                    await loop.PostAsync(new ActionGameLoopWorkItem(() => throw failure));
+                    await loop.Completion.WaitAsync(TestTimeout);
+                },
+                () => Task.CompletedTask
+            )
+        );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         var actual = await Record.ExceptionAsync(() => MoongateServerRunner.RunAsync(bootstrap).WaitAsync(TestTimeout));
@@ -285,7 +315,8 @@ public sealed class GameLoopBootstrapTests
 
     [Theory, InlineData(false, false), InlineData(true, false), InlineData(false, true), InlineData(true, true)]
     public async Task RunAsync_ExternalStopAlreadyObservedFailure_ReportsEachFailureOnce(
-        bool failOtherService, bool aggregateHandlerFailure)
+        bool failOtherService, bool aggregateHandlerFailure
+    )
     {
         using var container = CreateContainer();
         Exception loopFailure = aggregateHandlerFailure
@@ -314,6 +345,7 @@ public sealed class GameLoopBootstrapTests
         {
             Assert.Same(loopFailure, actual);
         }
+
         Assert.True(container.IsDisposed);
     }
 

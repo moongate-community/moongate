@@ -16,7 +16,8 @@ internal sealed class SerialTypeHandler : TypeHandler<Serial>
             if (existing is not SerialTypeHandler)
             {
                 throw new InvalidOperationException(
-                    $"A different FreeSql type handler is already registered for {typeof(Serial).FullName}.");
+                    $"A different FreeSql type handler is already registered for {typeof(Serial).FullName}."
+                );
             }
 
             return;
@@ -27,7 +28,8 @@ internal sealed class SerialTypeHandler : TypeHandler<Serial>
             existing is not SerialTypeHandler)
         {
             throw new InvalidOperationException(
-                $"A different FreeSql type handler is already registered for {typeof(Serial).FullName}.");
+                $"A different FreeSql type handler is already registered for {typeof(Serial).FullName}."
+            );
         }
     }
 

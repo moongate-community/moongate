@@ -19,30 +19,46 @@ public sealed class ApiConfig
     /// <summary>Validates certificate provisioning and enabled listeners without reading files or secrets.</summary>
     public void Validate()
     {
-        if (!Enabled && !AutoGenerateCertificate) { return; }
+        if (!Enabled && !AutoGenerateCertificate)
+        {
+            return;
+        }
+
         ValidateCertificate();
-        if (!Enabled) { return; }
+        if (!Enabled)
+        {
+            return;
+        }
+
         if (!IPAddress.TryParse(ListenAddress, out _))
         {
             throw new InvalidOperationException("api.listen_address must be an IP address.");
         }
+
         if (Port is < 1 or > 65535)
         {
             throw new InvalidOperationException("api.port must be between 1 and 65535.");
         }
+
         if (TrustedRootPaths is null || TrustedRootPaths.Length == 0 ||
             TrustedRootPaths.Any(string.IsNullOrWhiteSpace))
         {
             throw new InvalidOperationException("api.trusted_root_paths must contain at least one certificate path.");
         }
+
         if (Peers is null || Peers.Length == 0)
         {
             throw new InvalidOperationException("api.peers must contain at least one allowed peer.");
         }
+
         var fingerprints = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
         foreach (var peer in Peers)
         {
-            if (peer is null) { throw new InvalidOperationException("api.peers cannot contain null entries."); }
+            if (peer is null)
+            {
+                throw new InvalidOperationException("api.peers cannot contain null entries.");
+            }
+
             peer.Validate();
             if (!fingerprints.Add(peer.CertificateSha256))
             {
@@ -57,23 +73,34 @@ public sealed class ApiConfig
         {
             throw new InvalidOperationException("api.certificate_path must name a PFX certificate with a private key.");
         }
+
         if (CertificatePasswordEnvironmentVariable is null)
         {
             throw new InvalidOperationException("api.certificate_password_environment_variable cannot be null.");
         }
-        if (!AutoGenerateCertificate) { return; }
+
+        if (!AutoGenerateCertificate)
+        {
+            return;
+        }
+
         if (CertificateDnsNames is null || CertificateIpAddresses is null ||
             CertificateDnsNames.Length + CertificateIpAddresses.Length == 0)
         {
             throw new InvalidOperationException("API certificate generation requires at least one DNS name or IP address.");
         }
-        if (CertificateDnsNames.Any(name => string.IsNullOrWhiteSpace(name) || Uri.CheckHostName(name) != UriHostNameType.Dns))
+
+        if (CertificateDnsNames.Any(name => string.IsNullOrWhiteSpace(name) || Uri.CheckHostName(name) != UriHostNameType.Dns
+            ))
         {
             throw new InvalidOperationException("api.certificate_dns_names must contain valid DNS names.");
         }
+
         if (CertificateIpAddresses.Any(value => !IPAddress.TryParse(value, out _) || value.Contains('%')))
         {
-            throw new InvalidOperationException("api.certificate_ip_addresses must contain IP literals without scope identifiers.");
+            throw new InvalidOperationException(
+                "api.certificate_ip_addresses must contain IP literals without scope identifiers."
+            );
         }
     }
 }

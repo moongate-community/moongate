@@ -28,15 +28,26 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
             }
             catch (Exception exception) when (exception is FileNotFoundException or FileLoadException)
             {
-                throw new FileLoadException($"Required host persistence contract '{assemblyName}' is unavailable; private copies are not supported.", exception);
+                throw new FileLoadException(
+                    $"Required host persistence contract '{assemblyName}' is unavailable; private copies are not supported.",
+                    exception
+                );
             }
+
             var identity = host.GetName();
             if (assemblyName.Version != identity.Version ||
-                !string.Equals(assemblyName.CultureName ?? "", identity.CultureName ?? "", StringComparison.OrdinalIgnoreCase) ||
+                !string.Equals(
+                    assemblyName.CultureName ?? "",
+                    identity.CultureName ?? "",
+                    StringComparison.OrdinalIgnoreCase
+                ) ||
                 !(assemblyName.GetPublicKeyToken() ?? []).SequenceEqual(identity.GetPublicKeyToken() ?? []))
             {
-                throw new FileLoadException($"Incompatible host persistence contract '{assemblyName}'; host provides '{identity}'. Private copies are not supported.");
+                throw new FileLoadException(
+                    $"Incompatible host persistence contract '{assemblyName}'; host provides '{identity}'. Private copies are not supported."
+                );
             }
+
             return host;
         }
 

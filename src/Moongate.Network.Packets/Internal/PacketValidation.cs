@@ -1,7 +1,6 @@
 using System.Buffers.Binary;
 using System.Net;
 using System.Net.Sockets;
-
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Types.Packets;
 

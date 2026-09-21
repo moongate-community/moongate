@@ -10,7 +10,7 @@ namespace Moongate.Core.Geometry;
 /// </summary>
 public struct Point3D
     : IPoint3D, IComparable<Point3D>, IComparable<IPoint3D>, IEquatable<object>, IEquatable<Point3D>,
-      IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>
+        IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>
 {
     public static readonly Point3D Zero = new(0, 0, 0);
 
@@ -21,13 +21,19 @@ public struct Point3D
     public int Z { get; set; }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point3D(IPoint3D p) : this(p.X, p.Y, p.Z) { }
+    public Point3D(IPoint3D p) : this(p.X, p.Y, p.Z)
+    {
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point3D(Point3D p) : this(p.X, p.Y, p.Z) { }
+    public Point3D(Point3D p) : this(p.X, p.Y, p.Z)
+    {
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point3D(Point2D p, int z) : this(p.X, p.Y, z) { }
+    public Point3D(Point2D p, int z) : this(p.X, p.Y, z)
+    {
+    }
 
     public Point3D(int x, int y, int z)
     {

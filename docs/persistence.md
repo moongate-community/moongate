@@ -5,6 +5,9 @@ uses one Accounts database and one database for each realm. Transactions and
 world saves are independent across those targets; there is no cross-database
 atomic commit.
 
+For a complete first example, follow [Create a persistent entity](persistence-entity-tutorial.md).
+It covers the entity class, registration, schema setup, and asynchronous reads and writes.
+
 ## Register entities
 
 Every persisted type implements `IMoongateEntity` and has an application-assigned,

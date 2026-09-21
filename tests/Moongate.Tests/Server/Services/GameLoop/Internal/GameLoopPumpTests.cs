@@ -15,11 +15,15 @@ public sealed class GameLoopPumpTests
         var clock = new ManualTimeProvider(1000);
         var channel = Channel.CreateUnbounded<QueuedGameLoopWorkItem>();
         var executed = new List<int>();
-        Write(channel, new ActionGameLoopWorkItem(() =>
-        {
-            executed.Add(1);
-            clock.Advance(TimeSpan.FromMilliseconds(5));
-        }));
+        Write(
+            channel,
+            new ActionGameLoopWorkItem(() =>
+                {
+                    executed.Add(1);
+                    clock.Advance(TimeSpan.FromMilliseconds(5));
+                }
+            )
+        );
         Write(channel, new ActionGameLoopWorkItem(() => executed.Add(2)));
         var pump = new GameLoopPump(channel.Reader, 10, clock, TimeSpan.FromMilliseconds(5));
 
@@ -60,9 +64,9 @@ public sealed class GameLoopPumpTests
         Assert.True(channel.Reader.TryRead(out var remaining));
         Assert.Same(next, remaining.WorkItem);
     }
+
     private static void Write(Channel<QueuedGameLoopWorkItem> channel, IGameLoopWorkItem workItem)
     {
         channel.Writer.TryWrite(new QueuedGameLoopWorkItem(workItem, 0));
     }
-
 }

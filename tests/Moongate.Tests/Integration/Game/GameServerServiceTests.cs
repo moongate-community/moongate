@@ -87,7 +87,11 @@ public sealed class GameServerServiceTests
         await fixture.StartAsync();
         using var connection = new ControlledNetworkConnection(1);
         fixture.Network.Accept(connection);
-        fixture.Network.OnStop = () => { entered.TrySetResult(); return release.Task; };
+        fixture.Network.OnStop = () =>
+        {
+            entered.TrySetResult();
+            return release.Task;
+        };
         try
         {
             var first = fixture.Game.StopAsync();
@@ -101,14 +105,17 @@ public sealed class GameServerServiceTests
             Assert.Empty(fixture.Sessions.GetAll());
             Assert.Equal(0, fixture.Connections.Count);
         }
-        finally { release.TrySetResult(); }
+        finally
+        {
+            release.TrySetResult();
+        }
     }
 
     [Fact]
     public async Task FailedStartAfterAccept_PreservesOriginalFailureAndRetiresSessionDespiteCleanupFailure()
     {
         await using var fixture = new GameCoordinatorFixture(disconnect: _ => throw new IOException("sender cleanup"))
-        { AllowCleanupFailure = true };
+            { AllowCleanupFailure = true };
         await fixture.StartDependenciesAsync();
         using var connection = new ControlledNetworkConnection(1);
         var startupFailure = new InvalidOperationException("startup after admission");

@@ -7,7 +7,11 @@ namespace Moongate.Persistence.Tests.Integration.DataAccess;
 public sealed class DataAccessTests
 {
     private readonly PostgreSqlFixture _postgres;
-    public DataAccessTests(PostgreSqlFixture postgres) { _postgres = postgres; }
+
+    public DataAccessTests(PostgreSqlFixture postgres)
+    {
+        _postgres = postgres;
+    }
 
     [Fact]
     public async Task UpsertAsync_DetachedReadsAndFullRangeIds_PreservesCommittedValues()
@@ -75,9 +79,16 @@ public sealed class DataAccessTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => store.QueryAsync(null!));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => store.QueryAsync(e => true, -1, 1));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => store.QueryAsync(e => true, 0, 0));
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => store.UpsertAsync(new CharacterEntity { Id = new Serial(1) }, new CancellationToken(true)));
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => store.UpsertAsync(
+                new CharacterEntity { Id = new Serial(1) },
+                new CancellationToken(true)
+            )
+        );
         Assert.Empty(await store.GetAllAsync());
     }
 
-    private static bool Unsupported(string value) { throw new InvalidOperationException("Must not evaluate rows on the client."); }
+    private static bool Unsupported(string value)
+    {
+        throw new InvalidOperationException("Must not evaluate rows on the client.");
+    }
 }

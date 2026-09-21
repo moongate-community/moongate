@@ -21,7 +21,12 @@ public sealed class GatedWriteStream : Stream
     public override bool CanWrite => true;
     public override bool CanSeek => false;
     public override long Length => throw new NotSupportedException();
-    public override long Position { get => throw new NotSupportedException(); set => throw new NotSupportedException(); }
+
+    public override long Position
+    {
+        get => throw new NotSupportedException();
+        set => throw new NotSupportedException();
+    }
 
     public GatedWriteStream()
     {
@@ -48,12 +53,13 @@ public sealed class GatedWriteStream : Stream
     public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
         using var registration = cancellationToken.Register(() =>
-        {
-            if (CancellationFailure is not null)
             {
-                throw CancellationFailure;
+                if (CancellationFailure is not null)
+                {
+                    throw CancellationFailure;
+                }
             }
-        });
+        );
         ReadEntered.TrySetResult();
         try
         {
@@ -66,10 +72,14 @@ public sealed class GatedWriteStream : Stream
                 await ReleaseRead.Task;
             }
         }
+
         return 0;
     }
 
-    public override void Flush() { }
+    public override void Flush()
+    {
+    }
+
     public override Task FlushAsync(CancellationToken cancellationToken) => Task.CompletedTask;
     public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
     public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();

@@ -10,14 +10,14 @@ namespace Moongate.Tests.Core.Utils;
 public sealed class TomlUtilsTests
 {
     private const string SettingsToml = """
-        server_name = "Città di Luna"
-        enabled = false
-        tags = ["roleplay", "Italia"]
+                                        server_name = "Città di Luna"
+                                        enabled = false
+                                        tags = ["roleplay", "Italia"]
 
-        [network]
-        host = "127.0.0.1"
-        port = 2594
-        """;
+                                        [network]
+                                        host = "127.0.0.1"
+                                        port = 2594
+                                        """;
 
     [Fact]
     public void Deserialize_ConfigurationText_ReadsNestedValuesAndUnicode()
@@ -55,7 +55,10 @@ public sealed class TomlUtilsTests
         Assert.Contains("server_name = \"Luna\"", standard);
         Assert.Contains("[network]", standard);
         Assert.DoesNotContain("serverName", standard);
-        Assert.Equal("Britannia", TomlUtils.Deserialize<TomlTestSettings>("serverName = \"Britannia\"", options)!.ServerName);
+        Assert.Equal(
+            "Britannia",
+            TomlUtils.Deserialize<TomlTestSettings>("serverName = \"Britannia\"", options)!.ServerName
+        );
     }
 
     [Fact]
@@ -138,7 +141,8 @@ public sealed class TomlUtilsTests
 
         if (asynchronous)
         {
-            await Assert.ThrowsAsync<FileNotFoundException>(() => TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path));
+            await Assert.ThrowsAsync<FileNotFoundException>(() => TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path)
+            );
         }
         else
         {
@@ -174,9 +178,11 @@ public sealed class TomlUtilsTests
         var path = Path.Combine(parent, "settings.toml");
 
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            TomlUtils.SerializeToFileAsync(new TomlTestSettings(), path, cancellationToken: cancellation.Token));
+            TomlUtils.SerializeToFileAsync(new TomlTestSettings(), path, cancellationToken: cancellation.Token)
+        );
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
-            TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, cancellationToken: cancellation.Token));
+            TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, cancellationToken: cancellation.Token)
+        );
 
         Assert.False(Directory.Exists(parent));
     }

@@ -11,20 +11,16 @@ public sealed class LogModule
     private readonly ILogger _logger = Log.ForContext<LogModule>();
 
     /// <summary>Numeric value of the Debug level.</summary>
-    [ScriptConstant("LEVEL_DEBUG")]
-    public static readonly int LevelDebug = (int)LogEventLevel.Debug;
+    [ScriptConstant("LEVEL_DEBUG")] public static readonly int LevelDebug = (int)LogEventLevel.Debug;
 
     /// <summary>Numeric value of the Information level.</summary>
-    [ScriptConstant("LEVEL_INFO")]
-    public static readonly int LevelInfo = (int)LogEventLevel.Information;
+    [ScriptConstant("LEVEL_INFO")] public static readonly int LevelInfo = (int)LogEventLevel.Information;
 
     /// <summary>Numeric value of the Warning level.</summary>
-    [ScriptConstant("LEVEL_WARNING")]
-    public static readonly int LevelWarning = (int)LogEventLevel.Warning;
+    [ScriptConstant("LEVEL_WARNING")] public static readonly int LevelWarning = (int)LogEventLevel.Warning;
 
     /// <summary>Numeric value of the Error level.</summary>
-    [ScriptConstant("LEVEL_ERROR")]
-    public static readonly int LevelError = (int)LogEventLevel.Error;
+    [ScriptConstant("LEVEL_ERROR")] public static readonly int LevelError = (int)LogEventLevel.Error;
 
     /// <summary>Writes a Debug event; <paramref name="message"/> is a Serilog template filled by <paramref name="args"/>.</summary>
     [ScriptFunction(helpText: "Logs at DEBUG.")]

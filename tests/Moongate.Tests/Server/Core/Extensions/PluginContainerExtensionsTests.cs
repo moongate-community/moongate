@@ -57,15 +57,23 @@ public sealed class PluginContainerExtensionsTests
     {
         using var container = new Container();
         var root = new RecordingPlugin(new MoongatePluginData("root", "Root", new Version(1, 0, 0)));
-        var app = new RecordingPlugin(new MoongatePluginData("app", "App", new Version(1, 0, 0),
-            dependencies: [new MoongatePluginDependencyData("root")]));
+        var app = new RecordingPlugin(
+            new MoongatePluginData(
+                "app",
+                "App",
+                new Version(1, 0, 0),
+                dependencies: [new MoongatePluginDependencyData("root")]
+            )
+        );
 
         var result = container.RegisterMoongatePlugins(app, root)
             .RegisterMoongatePlugin<DefaultRegistrationPlugin>();
 
         Assert.Same(container, result);
-        Assert.Equal(new[] { "root", "app", "default" },
-            container.Resolve<MoongatePluginRegistry>().Plugins.Select(plugin => plugin.Id));
+        Assert.Equal(
+            new[] { "root", "app", "default" },
+            container.Resolve<MoongatePluginRegistry>().Plugins.Select(plugin => plugin.Id)
+        );
     }
 
     [Fact]

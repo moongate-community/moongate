@@ -41,7 +41,11 @@ public sealed class ApiServerService : IApiServerService, IAsyncDisposable
     {
         lock (_lifecycleGate)
         {
-            if (_stopping) { throw new InvalidOperationException("The API server cannot start after shutdown begins."); }
+            if (_stopping)
+            {
+                throw new InvalidOperationException("The API server cannot start after shutdown begins.");
+            }
+
             return _lifecycle.StartAsync(StartCoreAsync);
         }
     }
@@ -65,17 +69,28 @@ public sealed class ApiServerService : IApiServerService, IAsyncDisposable
             {
                 using var certificate = new ApiCertificateStore().Load(_config, _directories, _clock);
             }
-            _logger.Warning("API server is disabled; set api.enabled = true and configure mutual TLS certificates to enable it");
+
+            _logger.Warning(
+                "API server is disabled; set api.enabled = true and configure mutual TLS certificates to enable it"
+            );
             return;
         }
+
         _server = ApiServerFactory.Create(_config, _directories, _registry, _clock);
         await _server.StartAsync().ConfigureAwait(false);
     }
 
     private async Task StopCoreAsync(Task? startup)
     {
-        if (startup is not null) { await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing); }
-        if (_server is not null) { await _server.DisposeAsync().ConfigureAwait(false); }
+        if (startup is not null)
+        {
+            await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        }
+
+        if (_server is not null)
+        {
+            await _server.DisposeAsync().ConfigureAwait(false);
+        }
     }
 
     /// <summary>Stops admission and disposes the owned listener within its bounded shutdown budget.</summary>

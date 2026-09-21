@@ -184,10 +184,11 @@ public sealed class SessionServiceTests
         using var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         bootstrap.RegisterServices(services =>
-        {
-            services.RegisterInstance<IGameLoopService>(fixture.Loop);
-            return services.RegisterMoongateService<ISessionService, SessionService>();
-        });
+            {
+                services.RegisterInstance<IGameLoopService>(fixture.Loop);
+                return services.RegisterMoongateService<ISessionService, SessionService>();
+            }
+        );
 
         var rootInstance = container.Resolve<ISessionService>();
         using var scope = container.OpenScope();

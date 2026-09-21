@@ -65,8 +65,7 @@ public class StringHelpersTests
         using var culture = new CultureScope("fr-FR");
         var buffer = new[] { '?' };
 
-        Assert.Throws<OutOfMemoryException>(
-            () => "xe\u0301y".AsSpan().Remove("é", comparison, buffer, out _)
+        Assert.Throws<OutOfMemoryException>(() => "xe\u0301y".AsSpan().Remove("é", comparison, buffer, out _)
         );
 
         Assert.Equal('?', buffer[0]);
@@ -178,8 +177,7 @@ public class StringHelpersTests
     {
         var buffer = new char[2];
 
-        Assert.Throws<OutOfMemoryException>(
-            () => "a--b--c".AsSpan().Remove("--", StringComparison.Ordinal, buffer, out _)
+        Assert.Throws<OutOfMemoryException>(() => "a--b--c".AsSpan().Remove("--", StringComparison.Ordinal, buffer, out _)
         );
     }
 
@@ -199,8 +197,7 @@ public class StringHelpersTests
     {
         var buffer = new char[3];
 
-        Assert.Throws<ArgumentException>(
-            () => "abc".AsSpan().Remove("", StringComparison.Ordinal, buffer, out _)
+        Assert.Throws<ArgumentException>(() => "abc".AsSpan().Remove("", StringComparison.Ordinal, buffer, out _)
         );
     }
 

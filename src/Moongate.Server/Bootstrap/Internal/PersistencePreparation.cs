@@ -22,15 +22,27 @@ internal static class PersistencePreparation
         LoadPlugins(container);
         if (container.IsRegistered<MoongatePersistenceService>())
         {
-            var autoSync = container.IsRegistered<MoongateServerConfig>() && container.Resolve<MoongateServerConfig>().Persistence.AutoSyncSchema;
-            Log.Information("Preparing PostgreSQL persistence; schema mode {SchemaMode}", autoSync ? "synchronize" : "validate");
+            var autoSync = container.IsRegistered<MoongateServerConfig>() &&
+                           container.Resolve<MoongateServerConfig>().Persistence.AutoSyncSchema;
+            Log.Information(
+                "Preparing PostgreSQL persistence; schema mode {SchemaMode}",
+                autoSync ? "synchronize" : "validate"
+            );
             try
             {
-                await container.Resolve<MoongatePersistenceService>().InitializeAsync(cancellationToken).ConfigureAwait(false);
+                await container.Resolve<MoongatePersistenceService>()
+                    .InitializeAsync(cancellationToken)
+                    .ConfigureAwait(false);
             }
-            catch (InvalidOperationException exception) when (exception.Message.StartsWith("PostgreSQL schema changes are required", StringComparison.Ordinal))
+            catch (InvalidOperationException exception) when (exception.Message.StartsWith(
+                                                                  "PostgreSQL schema changes are required",
+                                                                  StringComparison.Ordinal
+                                                              ))
             {
-                throw new InvalidOperationException(exception.Message + " Use --persistence-schema preview, then --persistence-schema apply.", exception);
+                throw new InvalidOperationException(
+                    exception.Message + " Use --persistence-schema preview, then --persistence-schema apply.",
+                    exception
+                );
             }
         }
     }

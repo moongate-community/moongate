@@ -8,6 +8,7 @@ public sealed class TrackingArrayPool : ArrayPool<byte>
     private readonly Lock _sync = new();
 
     public int LargestRequestedLength { get; private set; }
+
     public int OutstandingCount
     {
         get
@@ -18,6 +19,7 @@ public sealed class TrackingArrayPool : ArrayPool<byte>
             }
         }
     }
+
     public int RentCount { get; private set; }
     public int ReturnCount { get; private set; }
 

@@ -145,8 +145,7 @@ public static class ResourceUtils
         {
             // Try to find a partial match
             var resourceNames = assembly.GetManifestResourceNames();
-            var matchingResource = resourceNames.FirstOrDefault(
-                n => n.EndsWith(
+            var matchingResource = resourceNames.FirstOrDefault(n => n.EndsWith(
                     resourceName.Replace('/', '.').Replace('\\', '.'),
                     StringComparison.Ordinal
                 )
@@ -305,8 +304,7 @@ public static class ResourceUtils
         {
             // Try to find a partial match
             var resourceNames = assembly.GetManifestResourceNames();
-            var matchingResource = resourceNames.FirstOrDefault(
-                n => n.EndsWith(
+            var matchingResource = resourceNames.FirstOrDefault(n => n.EndsWith(
                     resourceName.Replace('/', '.').Replace('\\', '.'),
                     StringComparison.Ordinal
                 )
@@ -395,7 +393,7 @@ public static class ResourceUtils
         var resourcePath = resourceName.Replace('/', '.').Replace('\\', '.');
 
         var fullResourceName = assembly.GetManifestResourceNames()
-                                       .FirstOrDefault(name => name.EndsWith(resourcePath, StringComparison.Ordinal));
+            .FirstOrDefault(name => name.EndsWith(resourcePath, StringComparison.Ordinal));
 
         if (fullResourceName == null)
         {

@@ -376,10 +376,10 @@ public ref struct SpanReader : IDisposable
             0L,
             origin switch
             {
-                SeekOrigin.Begin => offset,
+                SeekOrigin.Begin   => offset,
                 SeekOrigin.Current => (long)Position + offset,
-                SeekOrigin.End => (long)_buffer.Length + offset,
-                _ => throw new ArgumentOutOfRangeException(nameof(origin), origin, "Unknown seek origin.")
+                SeekOrigin.End     => (long)_buffer.Length + offset,
+                _                  => throw new ArgumentOutOfRangeException(nameof(origin), origin, "Unknown seek origin.")
             }
         );
 
@@ -552,8 +552,8 @@ public ref struct SpanReader : IDisposable
         return encoding switch
         {
             UnicodeEncoding => 2,
-            UTF32Encoding => 4,
-            _ => 1
+            UTF32Encoding   => 4,
+            _               => 1
         };
     }
 

@@ -2,10 +2,8 @@ using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
 using System.Text.Json;
-
 using Moongate.Network.Server;
 using Moongate.Network.Tests.Support;
-
 using Xunit.Abstractions;
 
 namespace Moongate.Network.Tests.Performance;
@@ -32,7 +30,9 @@ public sealed class TcpThroughputTests
         var count = 0;
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(30));
         await using var server = new MoongateTcpServer(
-            new IPEndPoint(IPAddress.Loopback, 0), framer: new LengthPrefixFramer());
+            new IPEndPoint(IPAddress.Loopback, 0),
+            framer: new LengthPrefixFramer()
+        );
         server.OnDataReceived += (_, args) =>
         {
             if (!args.Data.Span.SequenceEqual(frame))
@@ -60,26 +60,33 @@ public sealed class TcpThroughputTests
 
             var before = GC.GetTotalAllocatedBytes(precise: true);
             var startedAt = Stopwatch.GetTimestamp();
-            await Task.WhenAll(peers.Select(async peer =>
-            {
-                for (var index = 0; index < messagesPerClient; index++)
-                {
-                    await peer.GetStream().WriteAsync(frame, deadline.Token);
-                }
-            }));
+            await Task.WhenAll(
+                peers.Select(async peer =>
+                    {
+                        for (var index = 0; index < messagesPerClient; index++)
+                        {
+                            await peer.GetStream().WriteAsync(frame, deadline.Token);
+                        }
+                    }
+                )
+            );
             await received.Task.WaitAsync(deadline.Token);
             var elapsed = Stopwatch.GetElapsedTime(startedAt);
             var allocated = GC.GetTotalAllocatedBytes(precise: true) - before;
             Assert.Equal(expectedCount, Volatile.Read(ref count));
-            _output.WriteLine(JsonSerializer.Serialize(new
-            {
-                connections,
-                payloadSize,
-                frames = expectedCount,
-                elapsedMilliseconds = elapsed.TotalMilliseconds,
-                framesPerSecond = expectedCount / elapsed.TotalSeconds,
-                allocatedBytesWholeProcess = allocated
-            }));
+            _output.WriteLine(
+                JsonSerializer.Serialize(
+                    new
+                    {
+                        connections,
+                        payloadSize,
+                        frames = expectedCount,
+                        elapsedMilliseconds = elapsed.TotalMilliseconds,
+                        framesPerSecond = expectedCount / elapsed.TotalSeconds,
+                        allocatedBytesWholeProcess = allocated
+                    }
+                )
+            );
         }
         finally
         {

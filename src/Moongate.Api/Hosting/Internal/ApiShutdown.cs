@@ -8,8 +8,14 @@ internal static class ApiShutdown
 
     public static async Task ObserveAsync(Task cleanup)
     {
-        try { await cleanup.ConfigureAwait(false); }
-        catch (Exception exception) { Logger.Error("API background cleanup failed: {ErrorType}", exception.GetType().Name); }
+        try
+        {
+            await cleanup.ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            Logger.Error("API background cleanup failed: {ErrorType}", exception.GetType().Name);
+        }
     }
 
     public static async Task WaitAsync(
@@ -20,7 +26,10 @@ internal static class ApiShutdown
         Func<int> remaining
     )
     {
-        try { await cleanup.WaitAsync(timeout, clock).ConfigureAwait(false); }
+        try
+        {
+            await cleanup.WaitAsync(timeout, clock).ConfigureAwait(false);
+        }
         catch (TimeoutException) when (!cleanup.IsCompleted)
         {
             forceClose();

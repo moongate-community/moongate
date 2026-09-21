@@ -52,7 +52,9 @@ public sealed class EnvExtensionsTests
         using var shortName = new EnvironmentVariableScope(key, "short");
         using var longName = new EnvironmentVariableScope(key + "_LONG", "$" + key);
 
-        Assert.Equal($"short/${key}/tail",
-            ($"${{{key}}}/${key}_LONG/tail").ExpandEnvironmentVariables());
+        Assert.Equal(
+            $"short/${key}/tail",
+            ($"${{{key}}}/${key}_LONG/tail").ExpandEnvironmentVariables()
+        );
     }
 }

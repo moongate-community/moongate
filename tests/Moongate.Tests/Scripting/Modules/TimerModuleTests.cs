@@ -20,7 +20,12 @@ public sealed class TimerModuleTests : IDisposable
     {
         _state.OpenBasicLibrary();
         _state.OpenCoroutineLibrary();
-        var budget = new InstructionBudget(_state, maxInstructionsPerResume: 10_000, maxInstructionsPerChunk: 10_000, hookInterval: 100);
+        var budget = new InstructionBudget(
+            _state,
+            maxInstructionsPerResume: 10_000,
+            maxInstructionsPerChunk: 10_000,
+            hookInterval: 100
+        );
         budget.Install();
         var scheduler = new CoroutineScheduler(_state, _timers, budget, _ownership, _errors.Add, () => _owner);
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(_state, new TimerModule(_timers, scheduler, _ownership));

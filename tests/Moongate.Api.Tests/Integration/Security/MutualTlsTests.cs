@@ -29,19 +29,37 @@ public class MutualTlsTests
         Assert.Equal("game", identities.Client.PeerId);
     }
 
-    [Theory, InlineData("name"), InlineData("peer"), InlineData("expired"), InlineData("untrusted"), InlineData("unlisted"), InlineData("eku")]
+    [Theory, InlineData("name"), InlineData("peer"), InlineData("expired"), InlineData("untrusted"), InlineData("unlisted"),
+     InlineData("eku")]
     public async Task PrepareClient_RejectsInvalidServer(string failure)
     {
         using var ca = new TestCertificateAuthority();
         using var otherCa = new TestCertificateAuthority();
-        using var serverCertificate = ca.Issue(failure == "name" ? "wrong.example" : "localhost", failure == "expired", failure == "eku");
+        using var serverCertificate = ca.Issue(
+            failure == "name" ? "wrong.example" : "localhost",
+            failure == "expired",
+            failure == "eku"
+        );
         using var clientCertificate = ca.Issue();
         using var otherCertificate = ca.Issue();
         using var serverPolicy = new ApiTlsPolicy(ca.Options(serverCertificate, clientCertificate, "admin"));
-        var clientOptions = ca.Options(clientCertificate, failure == "unlisted" ? otherCertificate : serverCertificate, "game");
-        if (failure == "untrusted") { clientOptions = clientOptions with { TrustedRoots = new[] { otherCa.Root } }; }
+        var clientOptions = ca.Options(
+            clientCertificate,
+            failure == "unlisted" ? otherCertificate : serverCertificate,
+            "game"
+        );
+        if (failure == "untrusted")
+        {
+            clientOptions = clientOptions with { TrustedRoots = new[] { otherCa.Root } };
+        }
+
         using var clientPolicy = new ApiTlsPolicy(clientOptions);
-        await Assert.ThrowsAnyAsync<AuthenticationException>(() => HandshakeAsync(serverPolicy, clientPolicy, failure == "peer" ? "other" : "game"));
+        await Assert.ThrowsAnyAsync<AuthenticationException>(() => HandshakeAsync(
+                serverPolicy,
+                clientPolicy,
+                failure == "peer" ? "other" : "game"
+            )
+        );
     }
 
     [Theory, InlineData("expired"), InlineData("untrusted"), InlineData("unlisted")]
@@ -52,7 +70,9 @@ public class MutualTlsTests
         using var serverCertificate = ca.Issue();
         using var clientCertificate = (failure == "untrusted" ? otherCa : ca).Issue(expired: failure == "expired");
         using var otherCertificate = ca.Issue();
-        using var serverPolicy = new ApiTlsPolicy(ca.Options(serverCertificate, failure == "unlisted" ? otherCertificate : clientCertificate, "admin"));
+        using var serverPolicy = new ApiTlsPolicy(
+            ca.Options(serverCertificate, failure == "unlisted" ? otherCertificate : clientCertificate, "admin")
+        );
         using var clientPolicy = new ApiTlsPolicy(ca.Options(clientCertificate, serverCertificate, "game"));
         await Assert.ThrowsAnyAsync<AuthenticationException>(() => HandshakeAsync(serverPolicy, clientPolicy));
     }
@@ -70,23 +90,39 @@ public class MutualTlsTests
         await client.ConnectAsync((IPEndPoint)listener.LocalEndpoint, timeout.Token);
         using var server = await listener.AcceptTcpClientAsync(timeout.Token);
         using var ssl = new SslStream(client.GetStream(), false);
-        var serverTask = policy.PrepareServerAsync(server.GetStream(), _ => Assert.Fail("No identity may be published."), timeout.Token).AsTask();
-        var clientTask = ssl.AuthenticateAsClientAsync(new SslClientAuthenticationOptions
-        {
-            TargetHost = "localhost",
-            CertificateChainPolicy = new X509ChainPolicy
+        var serverTask = policy.PrepareServerAsync(
+                server.GetStream(),
+                _ => Assert.Fail("No identity may be published."),
+                timeout.Token
+            )
+            .AsTask();
+        var clientTask = ssl.AuthenticateAsClientAsync(
+            new SslClientAuthenticationOptions
             {
-                TrustMode = X509ChainTrustMode.CustomRootTrust,
-                CustomTrustStore = { ca.Root },
-                RevocationMode = X509RevocationMode.NoCheck,
-                DisableCertificateDownloads = true
-            }
-        }, timeout.Token);
+                TargetHost = "localhost",
+                CertificateChainPolicy = new X509ChainPolicy
+                {
+                    TrustMode = X509ChainTrustMode.CustomRootTrust,
+                    CustomTrustStore = { ca.Root },
+                    RevocationMode = X509RevocationMode.NoCheck,
+                    DisableCertificateDownloads = true
+                }
+            },
+            timeout.Token
+        );
         await Assert.ThrowsAnyAsync<AuthenticationException>(() => serverTask);
-        try { await clientTask; } catch (System.Security.Authentication.AuthenticationException) { }
+        try
+        {
+            await clientTask;
+        }
+        catch (System.Security.Authentication.AuthenticationException)
+        {
+        }
     }
 
-    private static async Task<(ApiPeerIdentity Server, ApiPeerIdentity Client)> HandshakeAsync(ApiTlsPolicy serverPolicy, ApiTlsPolicy clientPolicy, string expectedPeer = "game")
+    private static async Task<(ApiPeerIdentity Server, ApiPeerIdentity Client)> HandshakeAsync(
+        ApiTlsPolicy serverPolicy, ApiTlsPolicy clientPolicy, string expectedPeer = "game"
+    )
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         using var listener = new TcpListener(IPAddress.Loopback, 0);
@@ -96,8 +132,16 @@ public class MutualTlsTests
         using var server = await listener.AcceptTcpClientAsync(timeout.Token);
         ApiPeerIdentity? serverPeer = null;
         ApiPeerIdentity? clientPeer = null;
-        var serverTask = serverPolicy.PrepareServerAsync(server.GetStream(), peer => serverPeer = peer, timeout.Token).AsTask();
-        var clientTask = clientPolicy.PrepareClientAsync(client.GetStream(), "localhost", expectedPeer, peer => clientPeer = peer, timeout.Token).AsTask();
+        var serverTask = serverPolicy.PrepareServerAsync(server.GetStream(), peer => serverPeer = peer, timeout.Token)
+            .AsTask();
+        var clientTask = clientPolicy.PrepareClientAsync(
+                client.GetStream(),
+                "localhost",
+                expectedPeer,
+                peer => clientPeer = peer,
+                timeout.Token
+            )
+            .AsTask();
         try
         {
             await Task.WhenAll(serverTask, clientTask);
@@ -105,8 +149,15 @@ public class MutualTlsTests
         }
         finally
         {
-            if (serverTask.IsCompletedSuccessfully) { await serverTask.Result.DisposeAsync(); }
-            if (clientTask.IsCompletedSuccessfully) { await clientTask.Result.DisposeAsync(); }
+            if (serverTask.IsCompletedSuccessfully)
+            {
+                await serverTask.Result.DisposeAsync();
+            }
+
+            if (clientTask.IsCompletedSuccessfully)
+            {
+                await clientTask.Result.DisposeAsync();
+            }
         }
     }
 }

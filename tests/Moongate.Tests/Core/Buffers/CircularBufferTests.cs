@@ -56,7 +56,11 @@ public class CircularBufferTests
         Assert.Empty(buffer.ToArray());
         Assert.Empty(buffer);
         Assert.Empty(((IEnumerable)buffer).Cast<int>());
-        Assert.Collection(buffer.ToArraySegments(), segment => Assert.Equal(0, segment.Count), segment => Assert.Equal(0, segment.Count));
+        Assert.Collection(
+            buffer.ToArraySegments(),
+            segment => Assert.Equal(0, segment.Count),
+            segment => Assert.Equal(0, segment.Count)
+        );
     }
 
     [Fact]

@@ -12,7 +12,13 @@ public class PacketDescriptorTests
     {
         var first = PingPacket.Descriptor;
         var second = PingPacket.Descriptor;
-        Assert.True(PacketRegistry.Default.TryGetDescriptor(first.OpCode, first.Direction & ~Moongate.Network.Packets.Types.Packets.PacketDirection.Outgoing, out var registered));
+        Assert.True(
+            PacketRegistry.Default.TryGetDescriptor(
+                first.OpCode,
+                first.Direction & ~Moongate.Network.Packets.Types.Packets.PacketDirection.Outgoing,
+                out var registered
+            )
+        );
 
         Assert.Same(first, second);
         Assert.Same(first, registered);
@@ -27,7 +33,8 @@ public class PacketDescriptorTests
     {
         var descriptorProperty = packetType.GetProperty(
             "Descriptor",
-            BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy)!;
+            BindingFlags.Public | BindingFlags.Static | BindingFlags.FlattenHierarchy
+        )!;
 
         var error = Assert.ThrowsAny<Exception>(() => descriptorProperty.GetValue(null));
         var details = error.ToString();

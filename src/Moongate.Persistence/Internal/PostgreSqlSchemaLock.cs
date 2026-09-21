@@ -28,7 +28,8 @@ internal static class PostgreSqlSchemaLock
                 await using var command = new NpgsqlCommand(
                     "SELECT pg_try_advisory_lock(" +
                     "(SELECT oid::integer FROM pg_database WHERE datname = current_database()), @lock_key)",
-                    connection);
+                    connection
+                );
                 command.Parameters.AddWithValue("lock_key", LockKeyBase + (int)target);
                 if (await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is true)
                 {

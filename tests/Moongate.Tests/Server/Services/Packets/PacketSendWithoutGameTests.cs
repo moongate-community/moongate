@@ -64,6 +64,7 @@ public sealed class PacketSendWithoutGameTests
             await sender.StopAsync().WaitAsync(Timeout);
             await connections.StopAsync().WaitAsync(Timeout);
         }
+
         Assert.Equal(0, sender.ActiveOutboxCount);
         Assert.Equal(0, connections.Count);
     }
@@ -85,7 +86,11 @@ public sealed class PacketSendWithoutGameTests
             Assert.False(stopping.IsCompleted);
             await connection.CloseRequested.WaitAsync(Timeout);
         }
-        finally { connection.Complete(); }
+        finally
+        {
+            connection.Complete();
+        }
+
         await Task.WhenAll(closing, stopping).WaitAsync(Timeout);
         await connections.StopAsync();
     }
@@ -117,7 +122,8 @@ public sealed class PacketSendWithoutGameTests
         finally
         {
             release.TrySetResult();
-            await sender.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await sender.StopAsync()
+                .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
         }
     }
 

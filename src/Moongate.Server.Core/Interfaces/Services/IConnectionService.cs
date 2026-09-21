@@ -26,8 +26,10 @@ public interface IConnectionService : IMoongateStartupService
     /// Remote closure and cleanup of an already closed transport do not signal it. It remains valid after membership
     /// removal, allowing senders to distinguish interrupted writes from failures that themselves closed the transport.
     /// </remarks>
-    bool TryGet(long sessionId, [NotNullWhen(true)] out INetworkConnection? connection,
-        [NotNullWhen(true)] out Task? disconnectRequested);
+    bool TryGet(
+        long sessionId, [NotNullWhen(true)] out INetworkConnection? connection,
+        [NotNullWhen(true)] out Task? disconnectRequested
+    );
 
     /// <summary>Closes send admission immediately and returns the shared task joining closure and actual cleanup.</summary>
     /// <remarks>Unknown identifiers are a no-op. Never wait for this task inside a transport callback.</remarks>

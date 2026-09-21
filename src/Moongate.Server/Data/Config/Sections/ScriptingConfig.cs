@@ -38,7 +38,10 @@ public sealed class ScriptingConfig
 
         if (HookInterval > MaxInstructionsPerResume || HookInterval > MaxInstructionsPerChunk)
         {
-            throw new ArgumentOutOfRangeException(nameof(HookInterval), "The scripting hook_interval cannot exceed either instruction budget.");
+            throw new ArgumentOutOfRangeException(
+                nameof(HookInterval),
+                "The scripting hook_interval cannot exceed either instruction budget."
+            );
         }
     }
 

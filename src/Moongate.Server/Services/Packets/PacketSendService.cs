@@ -22,7 +22,13 @@ public sealed class PacketSendService : IPacketSendService
 
     internal int ActiveOutboxCount
     {
-        get { lock (_gate) { return _outboxes.Count; } }
+        get
+        {
+            lock (_gate)
+            {
+                return _outboxes.Count;
+            }
+        }
     }
 
     public PacketSendService(IConnectionService connections, int capacity = 128)
@@ -37,9 +43,14 @@ public sealed class PacketSendService : IPacketSendService
     {
         lock (_gate)
         {
-            if (_stopped) { throw new InvalidOperationException("The packet sender cannot restart after shutdown."); }
+            if (_stopped)
+            {
+                throw new InvalidOperationException("The packet sender cannot restart after shutdown.");
+            }
+
             _running = true;
         }
+
         return Task.CompletedTask;
     }
 
@@ -50,7 +61,11 @@ public sealed class PacketSendService : IPacketSendService
         {
             _running = false;
             _stopped = true;
-            foreach (var outbox in _outboxes.Values) { outbox.Close(); }
+            foreach (var outbox in _outboxes.Values)
+            {
+                outbox.Close();
+            }
+
             return _stopTask ??= StopCoreAsync();
         }
     }
@@ -60,7 +75,11 @@ public sealed class PacketSendService : IPacketSendService
     {
         lock (_gate)
         {
-            if (!_running || !_connections.TryGet(sessionId, out var connection, out var disconnectRequested)) { return false; }
+            if (!_running || !_connections.TryGet(sessionId, out var connection, out var disconnectRequested))
+            {
+                return false;
+            }
+
             if (!_outboxes.TryGetValue(sessionId, out var outbox))
             {
                 outbox = new SessionPacketOutbox(connection, disconnectRequested, _capacity, _connections.DisconnectAsync);
@@ -68,17 +87,25 @@ public sealed class PacketSendService : IPacketSendService
                 outbox.Start();
                 _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));
             }
-            else if (!ReferenceEquals(outbox.Connection, connection)) { return false; }
+            else if (!ReferenceEquals(outbox.Connection, connection))
+            {
+                return false;
+            }
 
             try
             {
-                if (outbox.TryWrite(PacketCodec.Encode(packet))) { return true; }
+                if (outbox.TryWrite(PacketCodec.Encode(packet)))
+                {
+                    return true;
+                }
+
                 _logger.Warning("Outbound packet queue is full or closed for session {SessionId}", sessionId);
             }
             catch (Exception exception)
             {
                 _logger.Error(exception, "Could not encode outgoing packet for session {SessionId}", sessionId);
             }
+
             outbox.Close();
             return false;
         }
@@ -94,11 +121,13 @@ public sealed class PacketSendService : IPacketSendService
                 outbox.Close();
                 return outbox.Completion;
             }
+
             var cleanup = _connections.DisconnectAsync(sessionId);
             if (!_cleanups.ContainsKey(sessionId) && !cleanup.IsCompletedSuccessfully)
             {
                 _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, cleanup, null));
             }
+
             return cleanup;
         }
     }
@@ -106,20 +135,29 @@ public sealed class PacketSendService : IPacketSendService
     private async Task ObserveCleanupAsync(long sessionId, Task cleanup, SessionPacketOutbox? outbox)
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
-        try { await cleanup.ConfigureAwait(false); }
+        try
+        {
+            await cleanup.ConfigureAwait(false);
+        }
         catch (Exception exception)
         {
-            lock (_gate) { _failures.Add(exception); }
+            lock (_gate)
+            {
+                _failures.Add(exception);
+            }
+
             _logger.Error(exception, "Outgoing connection cleanup failed for session {SessionId}", sessionId);
         }
         finally
         {
             lock (_gate)
             {
-                if (outbox is not null && _outboxes.TryGetValue(sessionId, out var current) && ReferenceEquals(current, outbox))
+                if (outbox is not null && _outboxes.TryGetValue(sessionId, out var current) &&
+                    ReferenceEquals(current, outbox))
                 {
                     _outboxes.Remove(sessionId);
                 }
+
                 _cleanups.Remove(sessionId);
             }
         }
@@ -136,10 +174,15 @@ public sealed class PacketSendService : IPacketSendService
                 pending = _cleanups.Values.ToArray();
                 if (pending.Length == 0)
                 {
-                    if (_failures.Count > 0) { throw new AggregateException(_failures); }
+                    if (_failures.Count > 0)
+                    {
+                        throw new AggregateException(_failures);
+                    }
+
                     return;
                 }
             }
+
             await Task.WhenAll(pending).ConfigureAwait(false);
         }
     }

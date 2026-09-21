@@ -17,7 +17,8 @@ public sealed class ScriptCommandTests
     private readonly FakeScriptEngine _engine = new();
     private readonly StubGameLoop _loop = new();
 
-    [Theory, InlineData("script"), InlineData("script reload"), InlineData("script metrics extra"), InlineData("script frobnicate")]
+    [Theory, InlineData("script"), InlineData("script reload"), InlineData("script metrics extra"),
+     InlineData("script frobnicate")]
     public async Task ExecuteAsync_WithoutAKnownSubcommand_PrintsTheUsageLine(string input)
     {
         var service = await CreateStartedServiceAsync();

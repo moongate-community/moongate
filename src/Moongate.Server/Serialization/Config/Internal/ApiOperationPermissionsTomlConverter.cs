@@ -15,6 +15,7 @@ internal sealed class ApiOperationPermissionsTomlConverter : TomlConverter<ApiOp
         {
             throw reader.CreateException("allowed_operations must be an array of operation IDs or [\"*\"].");
         }
+
         reader.Read();
         var operations = new List<ushort>();
         var allowsAll = false;
@@ -24,6 +25,7 @@ internal sealed class ApiOperationPermissionsTomlConverter : TomlConverter<ApiOp
             {
                 throw reader.CreateException("The allowed_operations wildcard must appear alone: [\"*\"].");
             }
+
             if (reader.TokenType == TomlTokenType.String && reader.GetString() == "*" && operations.Count == 0)
             {
                 allowsAll = true;
@@ -36,8 +38,10 @@ internal sealed class ApiOperationPermissionsTomlConverter : TomlConverter<ApiOp
             {
                 throw reader.CreateException("allowed_operations accepts integer IDs from 1 to 65535 or [\"*\"] alone.");
             }
+
             reader.Read();
         }
+
         reader.Read();
         return new ApiOperationPermissionsConfig(operations, allowsAll);
     }
@@ -46,11 +50,18 @@ internal sealed class ApiOperationPermissionsTomlConverter : TomlConverter<ApiOp
     {
         value.Validate();
         writer.WriteStartArray();
-        if (value.AllowsAll) { writer.WriteStringValue("*"); }
+        if (value.AllowsAll)
+        {
+            writer.WriteStringValue("*");
+        }
         else
         {
-            foreach (var operation in value.OperationIds) { writer.WriteIntegerValue(operation); }
+            foreach (var operation in value.OperationIds)
+            {
+                writer.WriteIntegerValue(operation);
+            }
         }
+
         writer.WriteEndArray();
     }
 }

@@ -1,7 +1,6 @@
 using System.Diagnostics;
 using DryIoc;
 using Serilog;
-
 using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Interfaces.Services;
 
@@ -26,11 +25,11 @@ internal sealed class StartupServiceLifecycle
     public async Task StartAsync(Action<IMoongateStartupService>? onStarting = null)
     {
         var registrations = (_container.IsRegistered<List<ServiceRegistrationData>>()
-                                 ? _container.Resolve<List<ServiceRegistrationData>>()
-                                 : [])
-                            .Where(registration => registration.IsAutostart)
-                            .OrderBy(registration => registration.Priority)
-                            .ToArray();
+                ? _container.Resolve<List<ServiceRegistrationData>>()
+                : [])
+            .Where(registration => registration.IsAutostart)
+            .OrderBy(registration => registration.Priority)
+            .ToArray();
 
         foreach (var registration in registrations)
         {

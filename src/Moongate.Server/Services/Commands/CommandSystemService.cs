@@ -76,10 +76,10 @@ public sealed class CommandSystemService : ICommandSystemService
         }
 
         return commands.Values
-                       .Select(command => command.Definition)
-                       .Distinct()
-                       .OrderBy(definition => definition.Name, StringComparer.OrdinalIgnoreCase)
-                       .ToArray();
+            .Select(command => command.Definition)
+            .Distinct()
+            .OrderBy(definition => definition.Name, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 
     /// <inheritdoc />

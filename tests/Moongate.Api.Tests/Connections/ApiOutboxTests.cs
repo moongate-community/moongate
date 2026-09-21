@@ -2,7 +2,9 @@ using Microsoft.Extensions.Time.Testing;
 using Moongate.Api.Connections.Internal;
 using Moongate.Api.Data.Internal.Requests;
 using Moongate.Api.Tests.TestSupport.Connections;
+
 namespace Moongate.Api.Tests.Connections;
+
 public class ApiOutboxTests
 {
     [Fact]

@@ -1,5 +1,4 @@
 using System.Buffers.Binary;
-
 using Moongate.Network.Interfaces.Framing;
 using Moongate.Network.Packets.Data.Packets;
 using Moongate.Network.Packets.Registry;
@@ -55,7 +54,8 @@ public sealed class UoPacketFramer : INetFramer
     {
         var declaredLength = descriptor.FixedLength ??
                              throw new InvalidDataException(
-                                 $"Opcode 0x{descriptor.OpCode:X2} has no fixed packet length.");
+                                 $"Opcode 0x{descriptor.OpCode:X2} has no fixed packet length."
+                             );
         ValidateDeclaredLength(descriptor, declaredLength);
         if (buffer.Length < declaredLength)
         {
@@ -92,7 +92,8 @@ public sealed class UoPacketFramer : INetFramer
         if (declaredLength < descriptor.MinimumLength || declaredLength > _maxFrameLength)
         {
             throw new InvalidDataException(
-                $"Opcode 0x{descriptor.OpCode:X2} declared invalid frame length {declaredLength}.");
+                $"Opcode 0x{descriptor.OpCode:X2} declared invalid frame length {declaredLength}."
+            );
         }
     }
 }

@@ -7,7 +7,9 @@ using Moongate.Api.Tests.TestSupport.Contracts;
 using Moongate.Api.Tests.TestSupport.Handlers;
 using Moongate.Api.Tests.TestSupport.Hosting;
 using Moongate.Api.Tests.TestSupport.Security;
+
 namespace Moongate.Api.Tests.Integration.Hosting;
+
 public class ApiLifecycleTests
 {
     [Fact]
@@ -15,7 +17,8 @@ public class ApiLifecycleTests
     {
         var handler = new GatedHandler();
         await using var pair = await ApiPair.StartAsync(handler);
-        var pending = pair.ClientConnection.RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = 41 });
+        var pending =
+            pair.ClientConnection.RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = 41 });
         await handler.Entered.Reader.ReadAsync();
         var stopping = pair.Server.StopAsync();
         Assert.False(stopping.IsCompleted);
@@ -26,7 +29,10 @@ public class ApiLifecycleTests
         Assert.Null(pair.Server.Endpoint);
         await pair.Server.StartAsync();
         await using var next = await pair.Client.ConnectAsync(pair.Server.Endpoint!, "localhost", "game");
-        Assert.Equal(42, (await next.RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = 41 })).Value);
+        Assert.Equal(
+            42,
+            (await next.RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = 41 })).Value
+        );
         Assert.NotEqual(pair.ClientConnection.ConnectionId, next.ConnectionId);
     }
 
@@ -80,7 +86,8 @@ public class ApiLifecycleTests
     {
         await using var pair = await ApiPair.StartAsync(options: new ApiOptions { MaxConnections = 1 });
         await pair.ClientConnection.CloseAsync();
-        await Task.WhenAll(pair.ClientConnection.Completion, pair.ServerConnection.Completion).WaitAsync(TimeSpan.FromSeconds(5));
+        await Task.WhenAll(pair.ClientConnection.Completion, pair.ServerConnection.Completion)
+            .WaitAsync(TimeSpan.FromSeconds(5));
         using var rawClient = new TcpClient();
         await rawClient.ConnectAsync(pair.Server.Endpoint!);
         await pair.Server.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));
@@ -89,7 +96,10 @@ public class ApiLifecycleTests
         await pair.Server.StartAsync();
         Assert.NotNull(pair.Server.Endpoint);
         await using var replacement = await pair.Client.ConnectAsync(pair.Server.Endpoint!, "localhost", "game");
-        Assert.Equal(42, (await replacement.RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = 41 })).Value);
+        Assert.Equal(
+            42,
+            (await replacement.RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = 41 })).Value
+        );
     }
 
     [Fact]
@@ -99,10 +109,17 @@ public class ApiLifecycleTests
         using var certificate = ca.Issue();
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
-        await using var client = new Moongate.Api.Client.ApiClient(new ApiRegistry(), new ApiOptions { MaxConcurrentHandshakes = 1 }, ca.Options(certificate, certificate, "peer"), TimeProvider.System);
+        await using var client = new Moongate.Api.Client.ApiClient(
+            new ApiRegistry(),
+            new ApiOptions { MaxConcurrentHandshakes = 1 },
+            ca.Options(certificate, certificate, "peer"),
+            TimeProvider.System
+        );
         var connecting = client.ConnectAsync((IPEndPoint)listener.LocalEndpoint, "localhost", "peer");
         using var accepted = await listener.AcceptTcpClientAsync();
-        await Assert.ThrowsAsync<Moongate.Api.Exceptions.ApiBusyException>(() => client.ConnectAsync((IPEndPoint)listener.LocalEndpoint, "localhost", "peer"));
+        await Assert.ThrowsAsync<Moongate.Api.Exceptions.ApiBusyException>(() =>
+            client.ConnectAsync((IPEndPoint)listener.LocalEndpoint, "localhost", "peer")
+        );
         await client.DisposeAsync();
         await Assert.ThrowsAnyAsync<OperationCanceledException>(() => connecting);
     }
@@ -117,16 +134,33 @@ public class ApiLifecycleTests
         serverRegistry.RegisterContract<IncrementRequest, IncrementResponse>();
         var clientRegistry = new ApiRegistry();
         clientRegistry.RegisterHandler(() => new Moongate.Api.Tests.TestSupport.Contracts.IncrementHandler());
-        await using var server = new ApiServer(new IPEndPoint(IPAddress.Loopback, 0), serverRegistry, new ApiOptions(), ca.Options(serverCert, clientCert, "admin"), TimeProvider.System);
-        await using var client = new Moongate.Api.Client.ApiClient(clientRegistry, new ApiOptions(), ca.Options(clientCert, serverCert, "game"), TimeProvider.System);
+        await using var server = new ApiServer(
+            new IPEndPoint(IPAddress.Loopback, 0),
+            serverRegistry,
+            new ApiOptions(),
+            ca.Options(serverCert, clientCert, "admin"),
+            TimeProvider.System
+        );
+        await using var client = new Moongate.Api.Client.ApiClient(
+            clientRegistry,
+            new ApiOptions(),
+            ca.Options(clientCert, serverCert, "game"),
+            TimeProvider.System
+        );
         await server.StartAsync();
         var connecting = client.ConnectAsync(server.Endpoint!, "localhost", "game");
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
-        while (server.Connections.Count != 1) { await Task.Delay(1, timeout.Token); }
-        var first = server.Connections[0].RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = 41 });
+        while (server.Connections.Count != 1)
+        {
+            await Task.Delay(1, timeout.Token);
+        }
+
+        var first = server.Connections[0]
+            .RequestAsync<IncrementRequest, IncrementResponse>(new IncrementRequest { Value = 41 });
         await connecting;
         Assert.Equal(42, (await first).Value);
-        var snapshot = Assert.IsAssignableFrom<IList<Moongate.Api.Interfaces.Connections.IApiConnection>>(server.Connections);
+        var snapshot =
+            Assert.IsAssignableFrom<IList<Moongate.Api.Interfaces.Connections.IApiConnection>>(server.Connections);
         Assert.Throws<NotSupportedException>(snapshot.Clear);
     }
 
@@ -138,7 +172,13 @@ public class ApiLifecycleTests
         using var occupied = new TcpListener(IPAddress.Loopback, 0);
         occupied.Start();
         var endpoint = (IPEndPoint)occupied.LocalEndpoint;
-        await using var server = new ApiServer(endpoint, new ApiRegistry(), new ApiOptions(), ca.Options(certificate, certificate, "peer"), TimeProvider.System);
+        await using var server = new ApiServer(
+            endpoint,
+            new ApiRegistry(),
+            new ApiOptions(),
+            ca.Options(certificate, certificate, "peer"),
+            TimeProvider.System
+        );
         await Assert.ThrowsAsync<SocketException>(() => server.StartAsync());
         Assert.Null(server.Endpoint);
         occupied.Stop();

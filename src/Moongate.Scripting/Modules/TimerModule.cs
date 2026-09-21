@@ -71,15 +71,21 @@ internal sealed class TimerModule
         var owner = _scheduler.CurrentOwner ?? AnonymousOwner;
         var interval = TimeSpan.FromSeconds(seconds);
         string? handle = null;
-        handle = _timers.RegisterTimer("lua-timer:" + owner, interval, () =>
-        {
-            if (!repeat && handle is not null)
+        handle = _timers.RegisterTimer(
+            "lua-timer:" + owner,
+            interval,
+            () =>
             {
-                _ownership.ForgetTimer(handle);
-            }
+                if (!repeat && handle is not null)
+                {
+                    _ownership.ForgetTimer(handle);
+                }
 
-            _scheduler.Start(function, owner);
-        }, delay: null, repeat: repeat);
+                _scheduler.Start(function, owner);
+            },
+            delay: null,
+            repeat: repeat
+        );
         _ownership.TrackTimer(owner, handle);
 
         return handle;

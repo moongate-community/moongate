@@ -45,7 +45,10 @@ public sealed class ScriptEngineOptions
 
         if (HookInterval > MaxInstructionsPerResume)
         {
-            throw new ArgumentOutOfRangeException(nameof(HookInterval), "The hook interval cannot exceed the resume budget.");
+            throw new ArgumentOutOfRangeException(
+                nameof(HookInterval),
+                "The hook interval cannot exceed the resume budget."
+            );
         }
 
         if (HookInterval > MaxInstructionsPerChunk)

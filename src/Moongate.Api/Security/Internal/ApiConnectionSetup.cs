@@ -29,6 +29,7 @@ internal sealed class ApiConnectionSetup
         {
             throw new ArgumentException("Outbound setup requires both target host and expected peer identity.");
         }
+
         Pipeline = new(framer: framer)
         {
             PrepareStreamAsync = (stream, token) => PrepareAsync(stream, targetHost, expectedPeerId, token),
@@ -42,6 +43,7 @@ internal sealed class ApiConnectionSetup
         {
             throw new AuthenticationException("A connection must authenticate before callbacks are installed.");
         }
+
         _configure(client, _peer);
     }
 
@@ -58,7 +60,7 @@ internal sealed class ApiConnectionSetup
         }
 
         return targetHost is null
-                   ? _policy.PrepareServerAsync(stream, peer => _peer = peer, token)
-                   : _policy.PrepareClientAsync(stream, targetHost, expectedPeerId!, peer => _peer = peer, token);
+            ? _policy.PrepareServerAsync(stream, peer => _peer = peer, token)
+            : _policy.PrepareClientAsync(stream, targetHost, expectedPeerId!, peer => _peer = peer, token);
     }
 }

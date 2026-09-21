@@ -16,8 +16,10 @@ internal sealed class GameLoopPump
     private TimeSpan _lastBatchDuration;
     private TimeSpan _maxHandlerDuration;
 
-    internal GameLoopPump(ChannelReader<QueuedGameLoopWorkItem> reader, int maxWorkItemsPerBatch,
-        TimeProvider timeProvider, TimeSpan workItemBudget)
+    internal GameLoopPump(
+        ChannelReader<QueuedGameLoopWorkItem> reader, int maxWorkItemsPerBatch,
+        TimeProvider timeProvider, TimeSpan workItemBudget
+    )
     {
         _reader = reader;
         _maxWorkItemsPerBatch = maxWorkItemsPerBatch;

@@ -48,47 +48,31 @@ public sealed class PersistenceDatabaseOptions
         _hasSeparateSchemaConnection = schemaConnectionStringFactory is not null;
     }
 
+    /// <inheritdoc />
+    public override string ToString()
+        => $"PersistenceDatabaseOptions {{ Target = {Target}, SeparateSchemaConnection = {_hasSeparateSchemaConnection} }}";
+
     internal string ResolveRuntimeConnectionString()
-    {
-        return ResolveConnectionString(_runtimeConnectionStringFactory, "runtime");
-    }
+        => ResolveConnectionString(_runtimeConnectionStringFactory, "runtime");
 
     internal string ResolveSchemaConnectionString(string runtimeConnectionString)
-    {
-        return _hasSeparateSchemaConnection
+        => _hasSeparateSchemaConnection
             ? ResolveConnectionString(_schemaConnectionStringFactory, "schema")
             : runtimeConnectionString;
-    }
 
     internal void ValidateSameDatabaseEndpoint(string runtimeConnectionString, string schemaConnectionString)
     {
         var runtime = Parse(runtimeConnectionString, "runtime");
         var schema = Parse(schemaConnectionString, "schema");
+
         if (!string.Equals(runtime.Host, schema.Host, StringComparison.OrdinalIgnoreCase) ||
             runtime.Port != schema.Port ||
             !string.Equals(runtime.Database, schema.Database, StringComparison.Ordinal))
         {
             throw new InvalidOperationException(
-                $"Persistence target '{Target}' runtime and schema connections must use the same Host, Port and Database endpoint.");
+                $"Persistence target '{Target}' runtime and schema connections must use the same Host, Port and Database endpoint."
+            );
         }
-    }
-
-    /// <inheritdoc />
-    public override string ToString()
-    {
-        return $"PersistenceDatabaseOptions {{ Target = {Target}, SeparateSchemaConnection = {_hasSeparateSchemaConnection} }}";
-    }
-
-    private string ResolveConnectionString(Func<string?> factory, string purpose)
-    {
-        var connectionString = factory();
-        if (string.IsNullOrWhiteSpace(connectionString))
-        {
-            throw new InvalidOperationException(
-                $"Persistence target '{Target}' requires a nonempty {purpose} PostgreSQL connection string.");
-        }
-
-        return Parse(connectionString, purpose).ConnectionString;
     }
 
     private NpgsqlConnectionStringBuilder Parse(string connectionString, string purpose)
@@ -96,6 +80,7 @@ public sealed class PersistenceDatabaseOptions
         try
         {
             var parsed = PostgreSqlConnectionString.Parse(connectionString);
+
             if (string.IsNullOrWhiteSpace(parsed.Host) || string.IsNullOrWhiteSpace(parsed.Database))
             {
                 throw new ArgumentException("Host and Database are required.");
@@ -107,7 +92,22 @@ public sealed class PersistenceDatabaseOptions
         {
             throw new InvalidOperationException(
                 $"Persistence target '{Target}' has an invalid {purpose} PostgreSQL connection string. " +
-                "Use postgres://user:password@host:5432/database or Npgsql key=value; format with Host and Database.");
+                "Use postgres://user:password@host:5432/database or Npgsql key=value; format with Host and Database."
+            );
         }
+    }
+
+    private string ResolveConnectionString(Func<string?> factory, string purpose)
+    {
+        var connectionString = factory();
+
+        if (string.IsNullOrWhiteSpace(connectionString))
+        {
+            throw new InvalidOperationException(
+                $"Persistence target '{Target}' requires a nonempty {purpose} PostgreSQL connection string."
+            );
+        }
+
+        return Parse(connectionString, purpose).ConnectionString;
     }
 }

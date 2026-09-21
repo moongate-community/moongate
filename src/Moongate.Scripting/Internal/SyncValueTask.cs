@@ -11,7 +11,8 @@ internal static class SyncValueTask
         if (!task.IsCompleted)
         {
             throw new InvalidOperationException(
-                "Lua execution went asynchronous. Script code must complete on the calling thread.");
+                "Lua execution went asynchronous. Script code must complete on the calling thread."
+            );
         }
 
         // ValueTask<T>.Result goes through GetAwaiter().GetResult(), which rethrows the original
@@ -24,7 +25,8 @@ internal static class SyncValueTask
         if (!task.IsCompleted)
         {
             throw new InvalidOperationException(
-                "Lua execution went asynchronous. Script code must complete on the calling thread.");
+                "Lua execution went asynchronous. Script code must complete on the calling thread."
+            );
         }
 
         task.GetAwaiter().GetResult();

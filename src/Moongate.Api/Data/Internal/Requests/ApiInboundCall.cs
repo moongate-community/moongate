@@ -33,8 +33,14 @@ internal sealed class ApiInboundCall : IAsyncDisposable
 
         lock (_gate)
         {
-            if (_disposed || IsTerminal) { timer.Dispose(); }
-            else { _timer = timer; }
+            if (_disposed || IsTerminal)
+            {
+                timer.Dispose();
+            }
+            else
+            {
+                _timer = timer;
+            }
         }
     }
 
@@ -42,13 +48,19 @@ internal sealed class ApiInboundCall : IAsyncDisposable
     {
         lock (_gate)
         {
-            if (!_disposed && !_cancellation.IsCancellationRequested) { _cancelled = _cancellation.CancelAsync(); }
+            if (!_disposed && !_cancellation.IsCancellationRequested)
+            {
+                _cancelled = _cancellation.CancelAsync();
+            }
         }
     }
 
     public bool TryFinish()
     {
-        if (Interlocked.CompareExchange(ref _terminal, 1, 0) != 0) { return false; }
+        if (Interlocked.CompareExchange(ref _terminal, 1, 0) != 0)
+        {
+            return false;
+        }
 
         lock (_gate)
         {
@@ -65,14 +77,24 @@ internal sealed class ApiInboundCall : IAsyncDisposable
 
         lock (_gate)
         {
-            if (_disposed) { return; }
+            if (_disposed)
+            {
+                return;
+            }
+
             _disposed = true;
             _timer?.Dispose();
             _timer = null;
             cancelled = _cancelled;
         }
 
-        try { await cancelled.ConfigureAwait(false); }
-        finally { _cancellation.Dispose(); }
+        try
+        {
+            await cancelled.ConfigureAwait(false);
+        }
+        finally
+        {
+            _cancellation.Dispose();
+        }
     }
 }

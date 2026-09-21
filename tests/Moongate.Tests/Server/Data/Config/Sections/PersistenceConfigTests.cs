@@ -52,8 +52,12 @@ public sealed class PersistenceConfigTests
             Assert.True(restored.Persistence.AutoSyncSchema);
             Assert.Equal("${REALM_DATABASE}", restored.Persistence.Realm.ConnectionString);
         }
-        finally { File.Delete(path); }
+        finally
+        {
+            File.Delete(path);
+        }
     }
+
     [Fact]
     public void ToOptions_ExpandsEnvironmentLazilyWithoutResolvingAFilePath()
     {
@@ -61,11 +65,15 @@ public sealed class PersistenceConfigTests
         var config = new PersistenceConfig();
         config.Realm.ConnectionString = "${" + key + "}";
         var options = config.ToOptions();
-        using var environment = new EnvironmentVariableScope(key,
-            "postgres://runtime:synthetic$UNEXPANDED@localhost/realm?application_name=Moongate");
+        using var environment = new EnvironmentVariableScope(
+            key,
+            "postgres://runtime:synthetic$UNEXPANDED@localhost/realm?application_name=Moongate"
+        );
 
-        var parsed = new NpgsqlConnectionStringBuilder(options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-            .ResolveRuntimeConnectionString());
+        var parsed = new NpgsqlConnectionStringBuilder(
+            options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
+                .ResolveRuntimeConnectionString()
+        );
 
         Assert.Equal("localhost", parsed.Host);
         Assert.Equal("realm", parsed.Database);
@@ -79,10 +87,15 @@ public sealed class PersistenceConfigTests
         config.Accounts.ConnectionString = "postgres://runtime@localhost/accounts";
         config.Realm.ConnectionString = "$MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
         var options = config.ToOptions();
-        Assert.Contains("Database=accounts", options.GetRequiredDatabase(PersistenceDatabaseTarget.Accounts)
-            .ResolveRuntimeConnectionString());
-        var error = Assert.Throws<InvalidOperationException>(() => options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-            .ResolveRuntimeConnectionString());
+        Assert.Contains(
+            "Database=accounts",
+            options.GetRequiredDatabase(PersistenceDatabaseTarget.Accounts)
+                .ResolveRuntimeConnectionString()
+        );
+        var error = Assert.Throws<InvalidOperationException>(() =>
+            options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
+                .ResolveRuntimeConnectionString()
+        );
         Assert.Contains("is not defined", error.Message);
     }
 }

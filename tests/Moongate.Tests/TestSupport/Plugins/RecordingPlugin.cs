@@ -11,6 +11,7 @@ public sealed class RecordingPlugin : IMoongatePlugin
 
     public int RegisterCalls { get; private set; }
     public int MetadataReads { get; private set; }
+
     public MoongatePluginData Metadata
     {
         get
