@@ -31,7 +31,7 @@ public class AccountService : IAccountService
         try
         {
             var existingAccount = await _accountDataAccess
-                .QueryAsync(a => a.Username == username, cancellationToken);
+                                      .QueryAsync(a => a.Username == username, cancellationToken);
 
             if (existingAccount.Any())
             {
@@ -101,7 +101,7 @@ public class AccountService : IAccountService
         try
         {
             var account = await _accountDataAccess
-                .QueryAsync(a => a.Username == username, cancellationToken);
+                              .QueryAsync(a => a.Username == username, cancellationToken);
 
             AccountEntity? accountEntity = null;
 
@@ -133,6 +133,20 @@ public class AccountService : IAccountService
         catch (Exception exception) when (cancellationToken.IsCancellationRequested)
         {
             throw new OperationCanceledException("Account login canceled.", exception, cancellationToken);
+        }
+    }
+
+    public async Task<IEnumerable<AccountEntity>> ListAccountsAsync(CancellationToken cancellationToken = default)
+    {
+        try
+        {
+            var accounts = await _accountDataAccess.GetAllAsync(cancellationToken);
+
+            return accounts;
+        }
+        catch (Exception exception) when (cancellationToken.IsCancellationRequested)
+        {
+            throw new OperationCanceledException("Listing accounts canceled.", exception, cancellationToken);
         }
     }
 }

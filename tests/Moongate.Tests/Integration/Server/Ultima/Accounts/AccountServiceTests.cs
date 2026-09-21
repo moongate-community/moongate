@@ -14,8 +14,45 @@ namespace Moongate.Tests.Integration.Server.Ultima.Accounts;
 
 public sealed class AccountServiceTests
 {
-    [Theory, InlineData(false), InlineData(true)]
-    public async Task Request_CanceledWhileWaitingForDatabase_PropagatesCancellation(bool login)
+    [Fact]
+    public async Task ListAccountsAsync_EmptyDatabase_ReturnsEmptyCollection()
+    {
+        await using var fixture = await AccountServiceFixture.CreateAsync();
+        Assert.Empty(await fixture.Service.ListAccountsAsync());
+    }
+
+    [Fact]
+    public async Task ListAccountsAsync_ReturnsAllAccountsIncludingLockedAsDetachedEntities()
+    {
+        await using var fixture = await AccountServiceFixture.CreateAsync();
+        var locked = await fixture.SeedAsync(locked: true);
+        var created = await fixture.Service.CreateAccountAsync("bob", fixture.Password);
+        Assert.True(created.Success, created.Exception?.ToString());
+
+        var accounts = (await fixture.Service.ListAccountsAsync()).ToArray();
+        Assert.Equal(new[] { "alice", "bob" }, accounts.Select(account => account.Username).Order().ToArray());
+        var listedLocked = Assert.Single(accounts, account => account.Id == locked.Id);
+        Assert.True(listedLocked.IsLocked);
+        Assert.Equal(locked.AccountType, listedLocked.AccountType);
+        Assert.Contains(accounts, account => account.Id == created.Account!.Id && !account.IsLocked);
+
+        listedLocked.Username = "modified only in memory";
+        Assert.Equal("alice", (await fixture.Accounts.GetByIdAsync(locked.Id))!.Username);
+    }
+
+    [Fact]
+    public async Task ListAccountsAsync_Canceled_PropagatesCallerToken()
+    {
+        await using var fixture = await AccountServiceFixture.CreateAsync();
+        using var cancellation = new CancellationTokenSource();
+        cancellation.Cancel();
+        var exception = await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => fixture.Service.ListAccountsAsync(cancellation.Token));
+        Assert.Equal(cancellation.Token, exception.CancellationToken);
+    }
+
+    [Theory, InlineData("login"), InlineData("create"), InlineData("list")]
+    public async Task Request_CanceledWhileWaitingForDatabase_PropagatesCancellation(string operation)
     {
         await using var fixture = await AccountServiceFixture.CreateAsync();
         await using var blocker = new NpgsqlConnection(fixture.Database.ConnectionString);
@@ -28,15 +65,20 @@ public sealed class AccountServiceTests
         );
         await command.ExecuteNonQueryAsync();
         using var cancellation = new CancellationTokenSource();
-        Task request = login
-            ? fixture.Service.LoginAsync("alice", fixture.Password, cancellation.Token)
-            : fixture.Service.CreateAccountAsync("alice", fixture.Password, cancellationToken: cancellation.Token);
+        Task request = operation switch
+        {
+            "login" => fixture.Service.LoginAsync("alice", fixture.Password, cancellation.Token),
+            "list" => fixture.Service.ListAccountsAsync(cancellation.Token),
+            _ => fixture.Service.CreateAccountAsync("alice", fixture.Password, cancellationToken: cancellation.Token)
+        };
+
         try
         {
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
             while (!await fixture.Database.ScalarAsync<bool>(
-                       "SELECT EXISTS (SELECT 1 FROM pg_locks WHERE relation = 'auth.accounts'::regclass AND NOT granted)"
-                   ))
+                        "SELECT EXISTS (SELECT 1 FROM pg_locks WHERE relation = 'auth.accounts'::regclass AND NOT granted)"
+                    ))
             {
                 await Task.Delay(10, deadline.Token);
             }
@@ -69,14 +111,15 @@ public sealed class AccountServiceTests
         await persistence.InitializeAsync();
         var peerService = peer.Resolve<IAccountService>();
         var results = await Task.WhenAll(
-            Enumerable.Range(0, 12)
-                .Select(index =>
-                    (index % 2 == 0 ? fixture.Service : peerService).CreateAccountAsync(
-                        sameUsername ? "alice" : $"user{index}",
-                        fixture.Password
-                    )
-                )
-        );
+                          Enumerable.Range(0, 12)
+                                    .Select(
+                                        index =>
+                                            (index % 2 == 0 ? fixture.Service : peerService).CreateAccountAsync(
+                                                sameUsername ? "alice" : $"user{index}",
+                                                fixture.Password
+                                            )
+                                    )
+                      );
         var successes = results.Where(result => result.Success).ToArray();
         Assert.Equal(sameUsername ? 1 : 12, successes.Length);
         Assert.All(
@@ -148,10 +191,10 @@ public sealed class AccountServiceTests
         await using var fixture = await AccountServiceFixture.CreateAsync();
         var original = await fixture.SeedAsync();
         var result = await fixture.Service.CreateAccountAsync(
-            "alice",
-            Guid.NewGuid().ToString("N"),
-            AccountType.Administrator
-        );
+                         "alice",
+                         Guid.NewGuid().ToString("N"),
+                         AccountType.Administrator
+                     );
         Assert.False(result.Success);
         Assert.Equal(AccountCreateResultType.UsernameAlreadyExists, result.ResultType);
         Assert.Null(result.Account);
@@ -178,7 +221,8 @@ public sealed class AccountServiceTests
         await using var fixture = await AccountServiceFixture.CreateAsync();
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => fixture.Service.CreateAccountAsync(
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => fixture.Service.CreateAccountAsync(
                 "alice",
                 fixture.Password,
                 cancellationToken: cancellation.Token
@@ -212,9 +256,9 @@ public sealed class AccountServiceTests
         await using var fixture = await AccountServiceFixture.CreateAsync();
         var original = await fixture.SeedAsync();
         var result = await fixture.Service.LoginAsync(
-            unknownUser ? "missing" : "alice",
-            unknownUser ? fixture.Password : Guid.NewGuid().ToString("N")
-        );
+                         unknownUser ? "missing" : "alice",
+                         unknownUser ? fixture.Password : Guid.NewGuid().ToString("N")
+                     );
         Assert.Null(result);
         var stored = await fixture.Accounts.GetByIdAsync(original.Id);
         Assert.NotNull(stored);
@@ -239,7 +283,8 @@ public sealed class AccountServiceTests
         await using var fixture = await AccountServiceFixture.CreateAsync();
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => fixture.Service.LoginAsync(
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => fixture.Service.LoginAsync(
                 "alice",
                 fixture.Password,
                 cancellation.Token

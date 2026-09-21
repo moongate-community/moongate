@@ -53,10 +53,15 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
             {
                 ArgumentException.ThrowIfNullOrWhiteSpace(sequenceName);
                 var parts = sequenceName.Split('.');
-                if (parts.Length != 2 || parts[0] != _schema.GetOwner(typeof(T)).Schema ||
-                    parts[1].Length == 0 || !parts[1]
-                        .All(character => char.IsAsciiLetterLower(character) ||
-                                          char.IsAsciiDigit(character) || character == '_'
+
+                if (parts.Length != 2 ||
+                    parts[0] != _schema.GetOwner(typeof(T)).Schema ||
+                    parts[1].Length == 0 ||
+                    !parts[1]
+                        .All(
+                            character => char.IsAsciiLetterLower(character) ||
+                                         char.IsAsciiDigit(character) ||
+                                         character == '_'
                         ))
                 {
                     throw new ArgumentException(
@@ -66,13 +71,15 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                 }
 
                 var value = Convert.ToInt64(
-                    await orm.Ado.ExecuteScalarAsync(
-                            "SELECT nextval(CAST(@sequence AS regclass))",
-                            new { sequence = sequenceName },
-                            token
-                        )
-                        .ConfigureAwait(false)
+                    await orm.Ado
+                             .ExecuteScalarAsync(
+                                 "SELECT nextval(CAST(@sequence AS regclass))",
+                                 new { sequence = sequenceName },
+                                 token
+                             )
+                             .ConfigureAwait(false)
                 );
+
                 if (value <= 0 || value > uint.MaxValue)
                 {
                     throw new InvalidOperationException("The sequence returned a value outside the nonzero Serial range.");

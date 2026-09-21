@@ -19,4 +19,6 @@ public interface IAccountService
         string password,
         CancellationToken cancellationToken = default
     );
+
+    Task<IEnumerable<AccountEntity>> ListAccountsAsync(CancellationToken cancellationToken = default);
 }
