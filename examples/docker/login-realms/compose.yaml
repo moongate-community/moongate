@@ -84,8 +84,12 @@ services:
       MOONGATE_ACCOUNTS_DATABASE_FILE: /run/secrets/accounts-runtime-password
       MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
       MOONGATE_ACCOUNTS_RUNTIME_USER: ${ACCOUNTS_RUNTIME_USER:-moongate_accounts_runtime}
+      MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-1-runtime-password
+      MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
+      MOONGATE_REALM_RUNTIME_USER: ${REALM_1_RUNTIME_USER:-moongate_realm_1_runtime}
     secrets:
       - accounts-runtime-password
+      - realm-1-runtime-password
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${LOGIN_PORT:-2593}:2593"
     configs:
@@ -102,8 +106,12 @@ services:
       MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-1-runtime-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
       MOONGATE_REALM_RUNTIME_USER: ${REALM_1_RUNTIME_USER:-moongate_realm_1_runtime}
+      MOONGATE_ACCOUNTS_DATABASE_FILE: /run/secrets/accounts-runtime-password
+      MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
+      MOONGATE_ACCOUNTS_RUNTIME_USER: ${ACCOUNTS_RUNTIME_USER:-moongate_accounts_runtime}
     secrets:
       - realm-1-runtime-password
+      - accounts-runtime-password
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_1_PORT:-2595}:2593"
     configs:
@@ -120,8 +128,12 @@ services:
       MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-2-runtime-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_2_DATABASE:-moongate_realm_2}
       MOONGATE_REALM_RUNTIME_USER: ${REALM_2_RUNTIME_USER:-moongate_realm_2_runtime}
+      MOONGATE_ACCOUNTS_DATABASE_FILE: /run/secrets/accounts-runtime-password
+      MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
+      MOONGATE_ACCOUNTS_RUNTIME_USER: ${ACCOUNTS_RUNTIME_USER:-moongate_accounts_runtime}
     secrets:
       - realm-2-runtime-password
+      - accounts-runtime-password
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_2_PORT:-2596}:2593"
     configs:

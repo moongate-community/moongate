@@ -225,8 +225,11 @@ auto_sync_schema = false
 connection_string = "$MOONGATE_REALM_DATABASE"
 ```
 
-Set that variable to the realm's PostgreSQL URI. Auth entities use
-`[persistence.accounts]`. In deployment, keep auto-sync disabled and ship a
+Set that variable to the realm's PostgreSQL URI. Also configure
+`[persistence.accounts]`: normal host startup pings both databases, even when the
+plugin registers only World entities. The defaults are local `auth` and `world`
+databases using `moongate` / `moongate`. Schema preview/generate commands only
+connect to the targets needed for their mappings. In deployment, keep auto-sync disabled and ship a
 versioned SQL migration with the plugin.
 
 1. Deploy the plugin to a reference root whose database has the previous schema.

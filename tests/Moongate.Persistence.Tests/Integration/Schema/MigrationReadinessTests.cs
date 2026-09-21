@@ -18,6 +18,28 @@ public sealed class MigrationReadinessTests
     }
 
     [Fact]
+    public async Task InitializeAsync_ConnectionCheck_DoesNotActivateFilteredSqlTarget()
+    {
+        await using var db = await _postgres.CreateDatabaseAsync();
+        using var files = new MigrationFiles();
+        files.Write("migrations/world/0001_data.sql", "SELECT 42;");
+        await using var coordinator = new PersistenceSchemaCoordinator(
+            new(
+                [new(PersistenceDatabaseTarget.Realm, db.ConnectionString)],
+                migrationCatalogFactory: _ => MigrationCatalog.Load(files.Core, null, MigrationTarget.World),
+                activateMigrationTarget: _ => false
+            ),
+            new()
+        );
+
+        await coordinator.InitializeAsync();
+
+        Assert.True(coordinator.IsReady);
+        Assert.Throws<InvalidOperationException>(() => coordinator.GetDatabase(PersistenceDatabaseTarget.Realm));
+        Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('moongate_migrations.history') IS NOT NULL"));
+    }
+
+    [Fact]
     public async Task InitializeAsync_AppliedDataMigration_ValidatesChecksum()
     {
         await using var db = await _postgres.CreateDatabaseAsync();
@@ -55,16 +77,17 @@ public sealed class MigrationReadinessTests
     }
 
     [Fact]
-    public async Task InitializeAsync_EmptyCatalogAndNoEntities_DoesNotResolveUnusedDatabase()
+    public async Task InitializeAsync_EmptyCatalogAndNoEntities_StillRequiresConfiguredDatabase()
     {
         using var files = new MigrationFiles();
         var options = new PostgreSqlPersistenceOptions(
-            [new(PersistenceDatabaseTarget.Accounts, () => throw new("unused"))],
+            [new(PersistenceDatabaseTarget.Accounts, () => throw new InvalidOperationException("missing connection"))],
             migrationCatalogFactory: _ => MigrationCatalog.Load(files.Core, null, MigrationTarget.Auth)
         );
         await using var coordinator = new PersistenceSchemaCoordinator(options, new());
-        await coordinator.InitializeAsync();
-        Assert.True(coordinator.IsReady);
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() => coordinator.InitializeAsync());
+        Assert.Contains("missing connection", error.Message);
+        Assert.False(coordinator.IsReady);
     }
 
     private static PersistenceSchemaCoordinator Create(PostgreSqlTestDatabase db, MigrationFiles files)
@@ -72,7 +95,7 @@ public sealed class MigrationReadinessTests
         var options = new PostgreSqlPersistenceOptions(
             [
                 new(PersistenceDatabaseTarget.Realm, db.ConnectionString),
-                new(PersistenceDatabaseTarget.Accounts, () => throw new("unused"))
+                new(PersistenceDatabaseTarget.Accounts, db.ConnectionString)
             ],
             migrationCatalogFactory: target => MigrationCatalog.Load(
                                          files.Core,

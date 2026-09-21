@@ -84,15 +84,13 @@ public sealed class ContainerPersistenceExtensionsTests
     public async Task AuthSnapshot_DoesNotActivateWorldAndRejectsDuplicateTargetRegistration()
     {
         await using var database = await _postgres.CreateDatabaseAsync();
+        await using var world = await _postgres.CreateDatabaseAsync();
         using var container = new Container();
         container.RegisterMoongatePersistence(
             new(
                 [
                     new(PersistenceDatabaseTarget.Accounts, database.ConnectionString),
-                    new(
-                        PersistenceDatabaseTarget.Realm,
-                        () => throw new InvalidOperationException("World must stay inactive.")
-                    )
+                    new(PersistenceDatabaseTarget.Realm, world.ConnectionString)
                 ],
                 true
             )
@@ -106,6 +104,9 @@ public sealed class ContainerPersistenceExtensionsTests
         await owner.InitializeAsync();
         await owner.SaveAllAsync();
         Assert.Single(await container.Resolve<IDataAccess<AccountsSharedEntity>>().GetAllAsync());
+        Assert.False(
+            await world.ScalarAsync<bool>("SELECT EXISTS (SELECT 1 FROM pg_namespace WHERE nspname = 'plugin_shared')")
+        );
     }
 
     [Fact]

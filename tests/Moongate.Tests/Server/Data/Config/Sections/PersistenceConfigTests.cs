@@ -1,5 +1,4 @@
 using Moongate.Core.Utils;
-using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
@@ -11,17 +10,19 @@ namespace Moongate.Tests.Server.Data.Config.Sections;
 [Collection(EnvironmentTestsCollection.Name)]
 public sealed class PersistenceConfigTests
 {
-    [Fact]
-    public async Task Defaults_NoEntities_DoNotResolveDatabaseEnvironment()
+    [Theory, InlineData(PersistenceDatabaseTarget.Accounts, "auth"), InlineData(PersistenceDatabaseTarget.Realm, "world")]
+    public void Defaults_ResolveLocalDatabaseWithoutEnvironment(PersistenceDatabaseTarget target, string database)
     {
         var config = new MoongateServerConfig();
         Assert.False(config.Persistence.AutoSyncSchema);
-        Assert.Equal("$MOONGATE_ACCOUNTS_DATABASE", config.Persistence.Accounts.ConnectionString);
-        Assert.Equal("$MOONGATE_REALM_DATABASE", config.Persistence.Realm.ConnectionString);
-        config.Persistence.Accounts.ConnectionString = "$MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
-        config.Persistence.Realm.ConnectionString = "$MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
-        await using var owner = new MoongatePersistenceService(config.Persistence.ToOptions());
-        await owner.InitializeAsync();
+        var parsed = new NpgsqlConnectionStringBuilder(
+            config.Persistence.ToOptions().GetRequiredDatabase(target).ResolveRuntimeConnectionString()
+        );
+        Assert.Equal("localhost", parsed.Host);
+        Assert.Equal(5432, parsed.Port);
+        Assert.Equal(database, parsed.Database);
+        Assert.Equal("moongate", parsed.Username);
+        Assert.Equal("moongate", parsed.Password);
     }
 
     [Fact]
@@ -85,8 +86,7 @@ public sealed class PersistenceConfigTests
             options.GetRequiredDatabase(PersistenceDatabaseTarget.Accounts)
                    .ResolveRuntimeConnectionString()
         );
-        var error = Assert.Throws<InvalidOperationException>(
-            () =>
+        var error = Assert.Throws<InvalidOperationException>(() =>
                 options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
                        .ResolveRuntimeConnectionString()
         );

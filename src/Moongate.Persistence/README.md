@@ -12,6 +12,13 @@ Moongate.Persistence requires .NET 10 and PostgreSQL. Use the Moongate version a
 dotnet add package Moongate.Persistence
 ```
 
+`InitializeAsync` opens and pings every configured runtime database with `SELECT 1`,
+even when no entities use that target. Each success logs `Postgres connection successful`;
+a failure throws before readiness. Connections are checked before migrations or schema
+synchronization, and missing databases are never created automatically. The server
+configures both Accounts and Realm in every mode; library integrations select their
+own targets in `PostgreSqlPersistenceOptions`.
+
 ## Features
 
 - Auth/World entity registration with automatic internal modules and PostgreSQL schemas.

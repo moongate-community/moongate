@@ -7,11 +7,13 @@ using Moongate.Persistence.Migrations.Services;
 using Moongate.Persistence.Migrations.Types.Migrations;
 using Moongate.Persistence.Types.Persistence;
 using Npgsql;
+using Serilog;
 
 namespace Moongate.Persistence.Internal;
 
 internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
 {
+    private readonly ILogger _logger;
     private readonly PostgreSqlPersistenceOptions _options;
     private readonly PersistenceModuleRegistry _registry;
     private readonly SemaphoreSlim _operationGate = new(1, 1);
@@ -26,9 +28,11 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
 
     public PersistenceSchemaCoordinator(
         PostgreSqlPersistenceOptions options,
-        PersistenceModuleRegistry registry
+        PersistenceModuleRegistry registry,
+        ILogger? logger = null
     )
     {
+        _logger = logger ?? Log.ForContext<PersistenceSchemaCoordinator>();
         _options = options;
         _registry = registry;
     }
@@ -60,6 +64,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             ThrowIfDisposed();
             IsReady = false;
             Prepare();
+            await CheckConnectionsAsync(cancellationToken).ConfigureAwait(false);
             await ValidateMigrationsAsync(cancellationToken).ConfigureAwait(false);
 
             if (_options.AutoSynchronizeSchema)
@@ -121,6 +126,40 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         finally
         {
             _operationGate.Release();
+        }
+    }
+
+    private async Task CheckConnectionsAsync(CancellationToken cancellationToken)
+    {
+        foreach (var target in _options.ConfiguredTargets)
+        {
+            cancellationToken.ThrowIfCancellationRequested();
+            var connectionString = _databases.TryGetValue(target, out var database)
+                ? database.RuntimeConnectionString
+                : _options.GetRequiredDatabase(target).ResolveRuntimeConnectionString();
+            await using var connection = new NpgsqlConnection(connectionString);
+
+            try
+            {
+                await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+                await using var command = new NpgsqlCommand("SELECT 1", connection);
+                await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false);
+            }
+            catch (NpgsqlException exception) when (!cancellationToken.IsCancellationRequested)
+            {
+                throw new InvalidOperationException(
+                    $"Postgres connection failed for persistence target '{target}'. Check the database, credentials and server availability.",
+                    exception
+                );
+            }
+
+            _logger.Information(
+                "Postgres connection successful: {Target} database {Database} at {Host}:{Port}",
+                target,
+                connection.Database,
+                connection.Host,
+                connection.Port
+            );
         }
     }
 

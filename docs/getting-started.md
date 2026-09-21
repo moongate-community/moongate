@@ -50,6 +50,12 @@ default). Node.js is only needed to work on the documentation website.
    [configuration reference](server-configuration.md) for listener, persistence,
    and world-save settings.
 
+   PostgreSQL must be running with existing `auth` and `world` databases. The
+   default connections use `localhost:5432`, username `moongate`, password `moongate`.
+   Set both `[persistence.accounts].connection_string` and
+   `[persistence.realm].connection_string` if your database endpoints differ.
+   All server modes check both targets, even before any entities are registered.
+
 4. Run the same command again. Check the startup logs for loaded services and
    bound endpoints. A missing `scripts/init.lua` produces a warning and starts
    an empty scripting environment. A bootstrap script that exists but fails

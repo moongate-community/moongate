@@ -94,10 +94,15 @@ rerun database initialization. Never use `docker compose down --volumes` on data
 you intend to retain.
 
 All TOMLs keep `auto_sync_schema = false` and use one `connection_string` per
-database. Runtime TOMLs reference `$MOONGATE_REALM_DATABASE` (or the Accounts
-variable); `game-1-schema.toml` references `$MOONGATE_REALM_SCHEMA_DATABASE`.
+database. Runtime TOMLs reference both `$MOONGATE_REALM_DATABASE` and
+`$MOONGATE_ACCOUNTS_DATABASE`; `game-1-schema.toml` references `$MOONGATE_REALM_SCHEMA_DATABASE`.
 Schema jobs receive only the schema-role secret; normal hosts receive only the
-runtime-role secret. Each process builds its PostgreSQL URI in memory.
+runtime-role secrets for both configured targets. Each process builds its PostgreSQL
+URIs in memory. Each game process checks the shared Accounts database and its own
+realm database. The login process checks Accounts and, in this example, realm 1;
+therefore realm 1 must also be reachable for login startup. This is a startup
+connectivity requirement, not realm discovery or ongoing health monitoring.
+Schema jobs still connect only to their selected target.
 
 ## Review and apply schema changes
 

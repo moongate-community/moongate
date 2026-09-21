@@ -1,4 +1,6 @@
 using DryIoc;
+using Moongate.Persistence.Types.Persistence;
+using Npgsql;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
 using Moongate.Server.Bootstrap;
@@ -14,8 +16,62 @@ namespace Moongate.Tests.Integration.Persistence;
 
 public sealed class PersistenceBootstrapTests
 {
+    [Theory,
+     InlineData(ServerMode.Login, PersistenceDatabaseTarget.Accounts),
+     InlineData(ServerMode.Login, PersistenceDatabaseTarget.Realm),
+     InlineData(ServerMode.Game, PersistenceDatabaseTarget.Accounts),
+     InlineData(ServerMode.Game, PersistenceDatabaseTarget.Realm),
+     InlineData(ServerMode.Standalone, PersistenceDatabaseTarget.Accounts),
+     InlineData(ServerMode.Standalone, PersistenceDatabaseTarget.Realm)]
+    public async Task StartAsync_MissingDatabaseWithoutEntities_StartsNoServicesInAnyMode(
+        ServerMode mode, PersistenceDatabaseTarget missingTarget
+    )
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        var missing = new NpgsqlConnectionStringBuilder(database.ConnectionString)
+        {
+            Database = $"moongate_test_missing_{Guid.NewGuid():N}"
+        }.ConnectionString;
+        var config = new PersistenceConfig
+        {
+            Accounts = new()
+            {
+                ConnectionString = missingTarget == PersistenceDatabaseTarget.Accounts ? missing : database.ConnectionString
+            },
+            Realm = new()
+                { ConnectionString = missingTarget == PersistenceDatabaseTarget.Realm ? missing : database.ConnectionString }
+        };
+        using var container = new Container();
+        container.RegisterMoongatePersistence(config.ToOptions(mode: mode));
+        var started = false;
+        container.RegisterMoongateService(
+            new CallbackStartupService(
+                () =>
+                {
+                    started = true;
+                    return Task.CompletedTask;
+                },
+                () => Task.CompletedTask
+            ),
+            -2000
+        );
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
+        try
+        {
+            var error = await Assert.ThrowsAsync<InvalidOperationException>(bootstrap.StartAsync);
+            Assert.Contains(missingTarget.ToString(), error.Message);
+            Assert.False(started);
+            Assert.True(container.IsDisposed);
+        }
+        finally
+        {
+            await bootstrap.StopAsync();
+        }
+    }
+
     [Fact]
-    public async Task StartAndStopAsync_NoEntities_NeverResolvesEnvironmentFactories()
+    public async Task StartAndStopAsync_NoConfiguredTargets_CompletesWithoutDatabase()
     {
         var container = new Container();
         container.RegisterMoongatePersistence(new());
@@ -61,7 +117,7 @@ public sealed class PersistenceBootstrapTests
         var config = new PersistenceConfig
         {
             Accounts = new() { ConnectionString = database.ConnectionString },
-            Realm = new() { ConnectionString = "$UNUSED_WORLD_DATABASE" }
+            Realm = new() { ConnectionString = database.ConnectionString }
         };
         using var container = new Container();
         container.RegisterMoongatePersistence(

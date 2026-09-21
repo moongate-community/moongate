@@ -99,8 +99,11 @@ containers but retains that volume; adding `--volumes` deletes the persisted dat
 
 ## PostgreSQL persistence
 
-The ordinary image does not bundle PostgreSQL or the sample plugin. A server with
-registered persistence entities uses a `postgres://user:password@host/database`
+The ordinary image does not bundle PostgreSQL or the sample plugin. Current builds
+require reachable Accounts and Realm databases even without registered entities.
+Both are pinged before services start; `localhost` inside the container refers to
+the container itself, so configure the PostgreSQL service hostname for both targets.
+Each target uses a `postgres://user:password@host/database`
 URI in its `connection_string` setting. Use a `$NAME` environment reference to
 supply the URI from a secret provider. Keep `auto_sync_schema = false` and
 give the runtime process a DML-only role. Run reviewed versioned SQL migration jobs

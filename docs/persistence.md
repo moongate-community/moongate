@@ -76,20 +76,28 @@ registered in both databases in the same container.
 ## Connections and schema preparation
 
 Each database has one `connection_string`. It can contain a PostgreSQL URI or a
-reference to an environment variable:
+reference to an environment variable. A newly generated server configuration uses:
 
 ```toml
 [persistence]
 auto_sync_schema = false
 
 [persistence.accounts]
-connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
+connection_string = "postgres://moongate:moongate@localhost:5432/auth"
 
 [persistence.realm]
-connection_string = "${MOONGATE_REALM_DATABASE}"
+connection_string = "postgres://moongate:moongate@localhost:5432/world"
 ```
 
-Set each variable to a URI such as
+The `auth` and `world` databases must already exist. Normal startup checks both
+with `SELECT 1`, regardless of server mode or registered entities. A successful
+ping logs `Postgres connection successful` for its target; any failure aborts
+startup before other services start. Databases are not created automatically.
+These defaults are for local development, and existing TOML files remain unchanged.
+
+To use environment variables, replace the Accounts `connection_string` with
+`"$MOONGATE_ACCOUNTS_DATABASE"` and the Realm value with
+`"${MOONGATE_REALM_DATABASE}"`. Set each variable to a URI such as
 `postgres://runtime:password@db:5432/moongate_realm?sslmode=require` through your
 service manager or secret provider. A literal URI is also supported by
 `connection_string`; keep real credentials in your secret provider. Both
@@ -106,12 +114,17 @@ strings are also accepted for direct library integrations.
 `$NAME` and `${NAME}` references expand once, without treating the result as a
 filesystem path or re-expanding characters in the substituted value. If a URI
 contains individual placeholders, supply URI-encoded component values. Undefined
-variables fail only when their database target is activated. Targets without registered entities or installed SQL do not resolve a connection
-or contact PostgreSQL. Use an explicit runner `status --target ...` during deployment to check history
-even when a target has become completely empty; an inactive host target cannot
-detect removal of its last data-only file without connecting. SQL-only targets
-follow the configured login/game mode. A registered entity
-always activates its target and migration checks, even when it uses the other role.
+variables fail during initialization for every configured runtime connection,
+including targets without entities or SQL files. Direct library users choose the
+configured targets in `PostgreSqlPersistenceOptions`; the server always configures
+both. Construction and registration remain free of database I/O.
+
+Connection checks do not activate entity mappings or migrations for an otherwise
+inactive target. Use an explicit runner `status --target ...` during deployment to
+check history even when a target has become completely empty: a connectivity ping
+does not detect removal of its last data-only file. SQL-only migration targets
+follow the configured login/game mode. A registered entity always activates its
+target and migration checks, even when it uses the other role.
 
 `FreeSql.Provider.PostgreSQL` 3.5.311 currently resolves Npgsql 5.0.18. This old
 driver branch is an acknowledged provider limitation. Do not silently override

@@ -10,8 +10,12 @@ namespace Moongate.Server.Data.Config.Sections;
 public sealed class PersistenceConfig
 {
     public bool AutoSyncSchema { get; set; }
-    public PersistenceDatabaseConfig Accounts { get; set; } = new() { ConnectionString = "$MOONGATE_ACCOUNTS_DATABASE" };
-    public PersistenceDatabaseConfig Realm { get; set; } = new() { ConnectionString = "$MOONGATE_REALM_DATABASE" };
+
+    public PersistenceDatabaseConfig Accounts { get; set; } =
+        new() { ConnectionString = "postgres://moongate:moongate@localhost:5432/auth" };
+
+    public PersistenceDatabaseConfig Realm { get; set; } =
+        new() { ConnectionString = "postgres://moongate:moongate@localhost:5432/world" };
 
     public PostgreSqlPersistenceOptions ToOptions(
         string? migrationsDirectory = null,

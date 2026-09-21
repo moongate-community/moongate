@@ -41,10 +41,10 @@ ultima_path = "ChangeMe" # Replace with your client data directory.
 auto_sync_schema = false
 
 [persistence.accounts]
-connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
+connection_string = "postgres://moongate:moongate@localhost:5432/auth"
 
 [persistence.realm]
-connection_string = "$MOONGATE_REALM_DATABASE"
+connection_string = "postgres://moongate:moongate@localhost:5432/world"
 
 [world_save]
 enabled = true # Enables periodic saves; manual/final saves remain available.
@@ -63,6 +63,20 @@ hook_interval = 1000
 write_definitions = true
 max_string_length = 16777216
 ```
+
+Both databases must already exist and accept connections before normal startup,
+including `login`-only or `game`-only processes and hosts without persistence entities.
+The defaults use local development credentials `moongate` / `moongate`; an existing
+configuration file is not rewritten. For deployment, set each `connection_string`
+to a secret-provider environment reference such as `$MOONGATE_ACCOUNTS_DATABASE`
+or `$MOONGATE_REALM_DATABASE`. Merely exporting those variables does not override
+a literal URI in the TOML file.
+
+`MoongatePersistenceService` opens each database and runs `SELECT 1`. Each success
+logs `Postgres connection successful` with the target and endpoint, without credentials.
+A connection or ping failure throws and prevents other services from starting.
+Moongate does not create missing databases; schema and migration checks run after
+the connection checks. See [PostgreSQL persistence](persistence.md).
 
 ## Settings and validation
 

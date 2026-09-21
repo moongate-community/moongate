@@ -39,7 +39,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     public MoongatePersistenceService(PostgreSqlPersistenceOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
-        _schema = new(options, _registry);
+        _schema = new(options, _registry, _logger);
     }
 
     /// <summary>Executes a sequential callback in one target's asynchronous transaction.</summary>
@@ -66,7 +66,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
             }
         );
 
-    /// <summary>Validates the complete registration batch and prepares schemas according to the configured policy.</summary>
+    /// <summary>Checks every configured runtime database, validates registrations and prepares schemas according to the configured policy.</summary>
     public Task InitializeAsync(CancellationToken cancellationToken = default)
         => RunSchemaAsync(
             async () =>

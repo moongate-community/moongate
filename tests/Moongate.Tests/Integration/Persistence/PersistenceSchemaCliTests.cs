@@ -1,6 +1,8 @@
 using System.Diagnostics;
 using System.Net;
 using System.Net.Sockets;
+using Moongate.Core.Utils;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Tests.TestSupport.Persistence;
@@ -122,6 +124,18 @@ public sealed class PersistenceSchemaCliTests
             start.ArgumentList.Clear();
             start.ArgumentList.Add(typeof(MoongateServerBootstrap).Assembly.Location);
             start.ArgumentList.Add("--help");
+        }
+
+        if (!help && mode != "invalid")
+        {
+            var configDirectory = Path.Combine(root, "config");
+            Directory.CreateDirectory(configDirectory);
+            var configPath = Path.Combine(configDirectory, "moongate.toml");
+            var config = File.Exists(configPath)
+                ? TomlUtils.DeserializeFromFile<MoongateServerConfig>(configPath)!
+                : new MoongateServerConfig();
+            config.Persistence.Realm.ConnectionString = "$MOONGATE_REALM_DATABASE";
+            TomlUtils.SerializeToFile(config, configPath);
         }
 
         start.Environment.Remove("MOONGATE_REALM_DATABASE");
