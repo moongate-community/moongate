@@ -14,6 +14,7 @@ using Moongate.Tests.TestSupport.Server.Ultima;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Accounts;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class AccountServiceTests
 {
     [Fact]

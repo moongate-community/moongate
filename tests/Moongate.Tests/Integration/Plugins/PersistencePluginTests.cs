@@ -11,6 +11,7 @@ using Npgsql;
 
 namespace Moongate.Tests.Integration.Plugins;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class PersistencePluginTests
 {
     [Fact]

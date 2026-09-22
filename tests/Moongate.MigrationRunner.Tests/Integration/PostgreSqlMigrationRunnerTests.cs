@@ -6,6 +6,7 @@ using Npgsql;
 
 namespace Moongate.MigrationRunner.Tests.Integration;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class PostgreSqlMigrationRunnerTests : IClassFixture<PostgreSqlFixture>
 {
     private readonly PostgreSqlFixture _postgres;

@@ -1,9 +1,11 @@
 using Moongate.Core.Utils;
 using Npgsql;
+using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Server.Ultima;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Accounts;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class AccountEntityTests
 {
     [Fact]

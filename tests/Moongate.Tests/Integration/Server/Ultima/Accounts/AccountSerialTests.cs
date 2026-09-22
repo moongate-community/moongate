@@ -1,8 +1,10 @@
 using Moongate.Server.Ultima.Entities.Auth;
+using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Server.Ultima;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Accounts;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class AccountSerialTests
 {
     [Fact]
