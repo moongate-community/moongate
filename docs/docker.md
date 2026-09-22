@@ -240,3 +240,23 @@ Run it as a one-shot job with the same SQL/plugin bundle as the server, a select
 Normal server startup validates migrations but does not apply them by default.
 See the [Compose maintenance example](docker-login-realms.md#review-and-apply-schema-changes)
 and [versioned SQL workflow](persistence.md#generate-review-and-apply).
+
+## UOX3 content conversion
+
+Images built from this source also include `/app/mg-uoxconv`, the same tool as
+`src/Moongate.UoxItemConverter` (see [Migrate from UOX3](templates.md#migrate-from-uox3)),
+published as a self-contained single file. Run it as a one-shot job, mounting a UOX3
+`.dfn` source directory read-only and an output directory for the converted TOML:
+
+```sh
+docker run --rm --entrypoint /app/mg-uoxconv \
+  --user "$(id -u):$(id -g)" \
+  -v /path/to/uox3/data/dfndata/items:/uox-source:ro \
+  -v /path/to/templates:/uox-out \
+  moongate --source /uox-source --destination /uox-out/items --loot-destination /uox-out/loots
+```
+
+`--user "$(id -u):$(id -g)"` matters: the image otherwise runs as its own non-root
+`$APP_UID`, which cannot write into a bind-mounted host directory it does not own -
+the same class of ownership mismatch `MOONGATE_ROOT` avoids for `/data` by creating
+that directory pre-owned by the runtime user at build time.

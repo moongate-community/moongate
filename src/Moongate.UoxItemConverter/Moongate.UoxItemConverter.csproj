@@ -1,6 +1,7 @@
 <Project Sdk="Microsoft.NET.Sdk">
     <PropertyGroup>
         <OutputType>Exe</OutputType>
+        <AssemblyName>mg-uoxconv</AssemblyName>
         <PublishSingleFile>true</PublishSingleFile>
         <PublishSelfContained>true</PublishSelfContained>
         <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>

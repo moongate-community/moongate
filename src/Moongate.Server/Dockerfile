@@ -28,9 +28,11 @@ COPY ["src/Moongate.Server.Ultima/Moongate.Server.Ultima.csproj", "src/Moongate.
 COPY ["src/Moongate.Ultima/Moongate.Ultima.csproj", "src/Moongate.Ultima/"]
 COPY ["src/Moongate.Scripting/Moongate.Scripting.csproj", "src/Moongate.Scripting/"]
 COPY ["src/Moongate.Server/Moongate.Server.csproj", "src/Moongate.Server/"]
+COPY ["src/Moongate.UoxItemConverter/Moongate.UoxItemConverter.csproj", "src/Moongate.UoxItemConverter/"]
 RUN dotnet restore "src/Moongate.Server/Moongate.Server.csproj"
 RUN dotnet restore "src/Moongate.Boot/Moongate.Boot.csproj"
 RUN dotnet restore "src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj"
+RUN dotnet restore "src/Moongate.UoxItemConverter/Moongate.UoxItemConverter.csproj"
 COPY . .
 WORKDIR "/src/src/Moongate.Server"
 RUN dotnet build "./Moongate.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
@@ -49,6 +51,11 @@ ARG BUILD_CONFIGURATION=Release
 WORKDIR "/src/src/Moongate.Boot"
 RUN dotnet publish "./Moongate.Boot.csproj" -c $BUILD_CONFIGURATION -o /app/mgboot
 
+FROM build AS uoxconv-publish
+ARG BUILD_CONFIGURATION=Release
+WORKDIR "/src/src/Moongate.UoxItemConverter"
+RUN dotnet publish "./Moongate.UoxItemConverter.csproj" -c $BUILD_CONFIGURATION -o /app/uoxconv
+
 FROM build AS sample-plugin-publish
 ARG BUILD_CONFIGURATION=Release
 WORKDIR "/src/samples/Moongate.Sample.Plugin"
@@ -59,6 +66,7 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=mgboot-publish /app/mgboot/mgboot ./mgboot
 COPY --from=migration-runner-publish /app/migration-runner ./migration-runner
+COPY --from=uoxconv-publish /app/uoxconv/mg-uoxconv ./mg-uoxconv
 COPY --from=sample-plugin-publish /app/sample-plugin /opt/moongate/sample-plugin
 ENTRYPOINT ["./Moongate.Server"]
 
@@ -67,4 +75,5 @@ WORKDIR /app
 COPY --from=publish /app/publish .
 COPY --from=mgboot-publish /app/mgboot/mgboot ./mgboot
 COPY --from=migration-runner-publish /app/migration-runner ./migration-runner
+COPY --from=uoxconv-publish /app/uoxconv/mg-uoxconv ./mg-uoxconv
 ENTRYPOINT ["./Moongate.Server"]
