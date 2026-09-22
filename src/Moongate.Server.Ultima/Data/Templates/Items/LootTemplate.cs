@@ -1,8 +1,7 @@
 namespace Moongate.Server.Ultima.Data.Templates.Items;
 
 /// <summary>
-/// A weighted loot table, one TOML entry under <c>templates/items/</c>, the way UOX3's
-/// <c>[LOOTLIST name]</c> blocks live alongside the item blocks they draw from. Picking one entry from
+/// A weighted loot table, its own file under <c>templates/loots/</c>. Picking one entry from
 /// <see cref="Entries" /> is the loader's job, not this type's.
 /// </summary>
 public class LootTemplate

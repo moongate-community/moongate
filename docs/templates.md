@@ -253,6 +253,10 @@ into `ItemTemplate` TOML:
 dotnet run --project src/Moongate.UoxItemConverter -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
 ```
 
+The server's own Docker image bundles the same tool, published as a self-contained single file,
+at `/app/mg-uoxconv`; see [UOX3 content conversion](docker.md#uox3-content-conversion) for a
+`docker run` example against a mounted UOX3 checkout when there is no local .NET SDK to hand.
+
 Its arguments are `ConsoleApp.Run` (`ConsoleAppFramework`, the same library
 `src/Moongate.Server/Program.cs` already uses) reading `Cli.Run`'s own parameters and their XML doc
 comments - `--help`, `--source`/`--destination` being required while `--loot-destination` is
