@@ -245,8 +245,8 @@ public sealed class UoxItemConverterTests : IDisposable
         var result = await _converter.RunAsync();
 
         Assert.True(result.ExitCode == 0, result.Output);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
         );
         var loot = Assert.Single(file!.Loot);
         Assert.Equal("eartheleLoot", loot.Id);
@@ -282,8 +282,8 @@ public sealed class UoxItemConverterTests : IDisposable
         var result = await _converter.RunAsync();
 
         Assert.True(result.ExitCode == 0, result.Output);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
         );
         var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
         Assert.Equal(1, entry.Weight);
@@ -310,8 +310,8 @@ public sealed class UoxItemConverterTests : IDisposable
         var result = await _converter.RunAsync();
 
         Assert.True(result.ExitCode == 0, result.Output);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
         );
         var eartheleLoot = file!.Loot.Single(l => l.Id == "eartheleLoot");
         var entry = Assert.Single(eartheleLoot.Entries);
@@ -338,8 +338,8 @@ public sealed class UoxItemConverterTests : IDisposable
 
         Assert.True(result.ExitCode == 0, result.Output);
         Assert.Contains("2 loot entry/entries", result.Output, StringComparison.Ordinal);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
         );
         Assert.Empty(Assert.Single(file!.Loot).Entries);
     }
@@ -365,8 +365,8 @@ public sealed class UoxItemConverterTests : IDisposable
         var result = await _converter.RunAsync();
 
         Assert.True(result.ExitCode == 0, result.Output);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
         );
         var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
         var resolves = Enumerable.Range(0, 20).Select(_ => entry.Amount.Resolve()).ToArray();
@@ -402,11 +402,39 @@ public sealed class UoxItemConverterTests : IDisposable
         var result = await _converter.RunAsync();
 
         Assert.True(result.ExitCode == 0, result.Output);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_converter.DestinationDirectory, "aaa_lootlist.toml")
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "aaa_lootlist.toml")
         );
         var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
         Assert.Equal("0x0f0f", entry.ItemId);
+    }
+
+    [Fact]
+    public async Task Run_WithoutLootDestination_LeavesLootListBlocksUnconverted()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|0x0f0f
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync(includeLootDestination: false);
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        );
+        Assert.Single(file!.Item);
+        Assert.False(Directory.Exists(_converter.LootDestinationDirectory));
     }
 
     public void Dispose()

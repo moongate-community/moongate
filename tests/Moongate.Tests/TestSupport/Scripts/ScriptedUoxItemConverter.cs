@@ -9,14 +9,18 @@ internal sealed class ScriptedUoxItemConverter : IDisposable
     /// <summary>Gets the temporary directory the converter reads <c>.dfn</c> files from.</summary>
     public string SourceDirectory { get; }
 
-    /// <summary>Gets the temporary directory the converter writes <c>.toml</c> files under.</summary>
+    /// <summary>Gets the temporary directory the converter writes item <c>.toml</c> files under.</summary>
     public string DestinationDirectory { get; }
+
+    /// <summary>Gets the temporary directory the converter writes loot <c>.toml</c> files under.</summary>
+    public string LootDestinationDirectory { get; }
 
     public ScriptedUoxItemConverter()
     {
         var root = Path.Combine(Path.GetTempPath(), "moongate-uox-converter-" + Guid.NewGuid().ToString("N"));
         SourceDirectory = Path.Combine(root, "source");
         DestinationDirectory = Path.Combine(root, "destination");
+        LootDestinationDirectory = Path.Combine(root, "loot-destination");
         Directory.CreateDirectory(SourceDirectory);
     }
 
@@ -33,9 +37,10 @@ internal sealed class ScriptedUoxItemConverter : IDisposable
     /// <summary>
     /// Runs the converter over the whole source directory, returning its exit code and combined output.
     /// With <paramref name="withArguments" /> false, runs it with neither --source nor --destination,
-    /// to exercise the usage error path.
+    /// to exercise the usage error path. With <paramref name="includeLootDestination" /> false, runs
+    /// it without --loot-destination, to exercise a LOOTLIST block being left unconverted.
     /// </summary>
-    public async Task<(int ExitCode, string Output)> RunAsync(bool withArguments = true)
+    public async Task<(int ExitCode, string Output)> RunAsync(bool withArguments = true, bool includeLootDestination = true)
     {
         var start = new ProcessStartInfo("dotnet")
         {
@@ -55,6 +60,12 @@ internal sealed class ScriptedUoxItemConverter : IDisposable
             start.ArgumentList.Add(SourceDirectory);
             start.ArgumentList.Add("--destination");
             start.ArgumentList.Add(DestinationDirectory);
+
+            if (includeLootDestination)
+            {
+                start.ArgumentList.Add("--loot-destination");
+                start.ArgumentList.Add(LootDestinationDirectory);
+            }
         }
 
         using var process = Process.Start(start) ?? throw new InvalidOperationException("dotnet did not start");

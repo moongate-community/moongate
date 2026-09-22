@@ -6,16 +6,18 @@
 // equivalent, so a POL source would leave BaseId empty for everything.
 //
 // Usage:
-//   dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir>
+//   dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
 //
 // --source is a single .dfn file or a directory scanned recursively for *.dfn files. Every block is
 // read from every source file, and every block's own Id computed, before any cross-reference (get=,
 // a loot entry) is resolved, since a target can live in a different file than the block that names
 // it (base_item and base_cutlass do, in real UOX3 data; so do items and the loot tables that drop
 // them: lootlists.dfn sits alongside them, referencing headers defined all over the items tree).
-// One <name>.toml is written per source .dfn, alongside the source's own relative path under
-// --destination, holding one [[item]] per convertible item block and one [[loot]] per [LOOTLIST ...]
-// block found in the same source file.
+// One <name>.toml, holding one [[item]] per convertible item block, is written per source .dfn at
+// its own relative path under --destination; --loot-destination, when given, gets the same
+// treatment for a [LOOTLIST ...] block's [[loot]] instead, its own tree mirroring templates/loots/
+// next to templates/items/ rather than one file mixing both kinds. Without --loot-destination, a
+// LOOTLIST block converts nothing, the same as it did before this converter knew about loot at all.
 //
 // Items - what converts, and what does not:
 //   the block's own id=        -> ItemId (a Serial)
@@ -62,6 +64,7 @@ internal static class UoxItemConverter
     {
         string? source = null;
         string? destination = null;
+        string? lootDestination = null;
 
         for (var i = 0; i < args.Length; i++)
         {
@@ -72,6 +75,9 @@ internal static class UoxItemConverter
                     break;
                 case "--destination" when i + 1 < args.Length:
                     destination = args[++i];
+                    break;
+                case "--loot-destination" when i + 1 < args.Length:
+                    lootDestination = args[++i];
                     break;
                 case "-h" or "--help":
                     PrintUsage();
@@ -91,6 +97,7 @@ internal static class UoxItemConverter
 
         source = Path.GetFullPath(source);
         destination = Path.GetFullPath(destination);
+        lootDestination = lootDestination is null ? null : Path.GetFullPath(lootDestination);
 
         if (!File.Exists(source) && !Directory.Exists(source))
         {
@@ -135,13 +142,14 @@ internal static class UoxItemConverter
         // Every block's own Id is computed once, up front, from the block alone - never from another
         // block's Id - so a get= chain or a loot entry resolves the same way no matter which order
         // the source files happen to scan in.
+        var convertLoot = lootDestination is not null;
         var idByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var lootIdByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var knownLootIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var block in blocksByHeader.Values)
         {
-            if (LootTemplateBuilder.TryGetLootId(block.Header, out var lootId))
+            if (convertLoot && LootTemplateBuilder.TryGetLootId(block.Header, out var lootId))
             {
                 lootIdByHeader[block.Header] = lootId;
                 knownLootIds.Add(lootId);
@@ -150,7 +158,6 @@ internal static class UoxItemConverter
             {
                 idByHeader[block.Header] = id;
             }
-
         }
 
         var written = 0;
@@ -177,7 +184,7 @@ internal static class UoxItemConverter
                     continue;
                 }
 
-                if (lootIdByHeader.TryGetValue(block.Header, out var lootId))
+                if (convertLoot && lootIdByHeader.TryGetValue(block.Header, out var lootId))
                 {
                     lootTemplates.Add(LootTemplateBuilder.Build(block, lootId, idByHeader, knownLootIds, out var skipped));
                     skippedUnresolvedLootEntry += skipped;
@@ -197,20 +204,27 @@ internal static class UoxItemConverter
                 templates.Add(template);
             }
 
-            if (templates.Count == 0 && lootTemplates.Count == 0)
+            var relative = Path.GetRelativePath(Directory.Exists(source) ? source : Path.GetDirectoryName(source)!, file);
+
+            if (templates.Count > 0)
             {
-                continue;
+                var outputPath = Path.Combine(destination, Path.ChangeExtension(relative, ".toml"));
+                Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+                TomlUtils.SerializeToFile(new ItemTemplateFile { Item = templates }, outputPath);
+                written += templates.Count;
+
+                Console.WriteLine($"{relative} -> {Path.GetRelativePath(destination, outputPath)} ({templates.Count} item(s))");
             }
 
-            var relative = Path.GetRelativePath(Directory.Exists(source) ? source : Path.GetDirectoryName(source)!, file);
-            var outputPath = Path.Combine(destination, Path.ChangeExtension(relative, ".toml"));
-            Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
-            TomlUtils.SerializeToFile(new ItemTemplateFile { Item = templates, Loot = lootTemplates }, outputPath);
-            written += templates.Count;
-            lootWritten += lootTemplates.Count;
+            if (lootTemplates.Count > 0)
+            {
+                var lootOutputPath = Path.Combine(lootDestination!, Path.ChangeExtension(relative, ".toml"));
+                Directory.CreateDirectory(Path.GetDirectoryName(lootOutputPath)!);
+                TomlUtils.SerializeToFile(new LootTemplateFile { Loot = lootTemplates }, lootOutputPath);
+                lootWritten += lootTemplates.Count;
 
-            var lootSummary = lootTemplates.Count > 0 ? $", {lootTemplates.Count} loot table(s)" : "";
-            Console.WriteLine($"{relative} -> {Path.GetRelativePath(destination, outputPath)} ({templates.Count} item(s){lootSummary})");
+                Console.WriteLine($"{relative} -> {Path.GetRelativePath(lootDestination!, lootOutputPath)} ({lootTemplates.Count} loot table(s))");
+            }
         }
 
         Console.WriteLine(
@@ -226,10 +240,12 @@ internal static class UoxItemConverter
     {
         Console.Error.WriteLine(
             """
-            Usage: dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir>
+            Usage: dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
 
-              --source       A single .dfn file, or a directory scanned recursively for *.dfn files.
-              --destination  Directory to write the converted ItemTemplate .toml files under.
+              --source           A single .dfn file, or a directory scanned recursively for *.dfn files.
+              --destination      Directory to write the converted ItemTemplate .toml files under.
+              --loot-destination Directory to write the converted LootTemplate .toml files under.
+                                 Omit it to leave every [LOOTLIST ...] block unconverted.
             """
         );
     }
@@ -532,10 +548,14 @@ internal static class LootTemplateBuilder
     }
 }
 
-/// <summary>The root of one converted TOML file: an array of tables under <c>item</c>, and one under
-/// <c>loot</c> for any <c>[LOOTLIST ...]</c> blocks found in the same source file.</summary>
+/// <summary>The root of one converted item TOML file: an array of tables under <c>item</c>.</summary>
 internal sealed class ItemTemplateFile
 {
     public List<ItemTemplate> Item { get; set; } = [];
+}
+
+/// <summary>The root of one converted loot TOML file: an array of tables under <c>loot</c>.</summary>
+internal sealed class LootTemplateFile
+{
     public List<LootTemplate> Loot { get; set; } = [];
 }

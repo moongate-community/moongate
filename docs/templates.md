@@ -249,7 +249,7 @@ once with `TomlUtils.AddTomlConverter`.
 (github.com/UOX3DevTeam/UOX3) `.dfn` item definitions into `ItemTemplate` TOML:
 
 ```sh
-dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir>
+dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
 ```
 
 `--source` is a single `.dfn` file or a directory scanned recursively for every `.dfn` under it.
@@ -288,8 +288,10 @@ reference to a block defined in a file scanned later in the same run still resol
 
 UOX3's `[LOOTLIST name] { ... }` blocks, real weighted loot tables verified against the engine
 itself (`source/items.cpp`'s `CItem::CreateRandomItem`, not just the `.dfn` shape), convert into
-the same source file's output `.toml` alongside its `[[item]]` entries, as `[[loot]]`. Each bare
-entry line is:
+`--loot-destination` as `[[loot]]`, mirroring the same relative path `--destination` gets for
+items, `templates/loots/` next to `templates/items/` rather than one file mixing both kinds.
+Without `--loot-destination`, every `LOOTLIST` block converts nothing, the same as before this
+converter knew about loot at all. Each bare entry line is:
 
 ```
 weight|entry[,amount]
@@ -350,8 +352,9 @@ converter registry are all in place and tested. `ItemTemplate`
 | `LootEntry.LootTemplateId` | Another table's `Id` to pick from instead of a direct item |
 | `LootEntry.Amount` | `RangeValueSpec<int>`, how many of `ItemId` to create |
 
-None of this is loaded yet: `IDataLoader<ItemTemplate>` and `IDataLoader<LootTemplate>` (reading
-every file under `templates/items/`, resolving the `BaseId` chain and loot references across
-files, and registering with `AddUltimaDataLoader`) have not been written. This page documents the
+None of this is loaded yet: `IDataLoader<ItemTemplate>` (reading every file under
+`templates/items/`, resolving the `BaseId` chain across files) and `IDataLoader<LootTemplate>`
+(reading `templates/loots/`, resolving `LootEntry` references against both) have not been
+written, nor has either been registered with `AddUltimaDataLoader`. This page documents the
 mechanism once it lands; `ItemTemplate`'s and `LootTemplate`'s own guides follow once the loader
 does.
