@@ -110,8 +110,9 @@ Start with [Writing Lua scripts](docs/scripting.md). The
 - [Writing a plugin](docs/plugins.md): an assembly under `plugins/` that registers services, commands, Lua modules and metric providers before the server starts.
 - [Writing a Lua module](docs/lua-modules.md): a C# class with `[ScriptModule]` and `[ScriptFunction]` that scripts call as a read-only table.
 - [Registering a metric provider](docs/metric-providers.md): an `IMetricProvider` whose samples join the diagnostics snapshot.
+- [Loading TOML templates](docs/templates.md): an `IDataLoader<TEntity>` that reads shard content once at startup, plus `EnumValueSpec<TEnum>` for fields that resolve randomly.
 
-All three are shown by one compiled sample, [samples/Moongate.Sample.Plugin](samples/Moongate.Sample.Plugin/), which the test suite loads through the real plugin loader.
+The first three are shown by one compiled sample, [samples/Moongate.Sample.Plugin](samples/Moongate.Sample.Plugin/), which the test suite loads through the real plugin loader.
 
 ## Libraries
 

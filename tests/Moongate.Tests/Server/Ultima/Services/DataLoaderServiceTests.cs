@@ -28,7 +28,7 @@ public sealed class DataLoaderServiceTests
 
         await service.StartAsync();
 
-        Assert.Equal(["orc", "ratman"], service.Get<string>());
+        Assert.Equal(["orc", "ratman"], service.GetEntities<string>());
     }
 
     [Fact]
@@ -49,13 +49,13 @@ public sealed class DataLoaderServiceTests
     }
 
     [Fact]
-    public void Get_WithNoLoaderRegisteredForTheType_ThrowsNamingTheType()
+    public void GetEntities_WithNoLoaderRegisteredForTheType_ThrowsNamingTheType()
     {
         using var container = new Container();
         container.Register<DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<DataLoaderService>();
 
-        var exception = Assert.Throws<InvalidOperationException>(() => service.Get<string>());
+        var exception = Assert.Throws<InvalidOperationException>(() => service.GetEntities<string>());
 
         Assert.Contains("String", exception.Message, StringComparison.Ordinal);
     }

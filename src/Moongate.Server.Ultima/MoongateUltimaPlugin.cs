@@ -1,4 +1,7 @@
 using DryIoc;
+using Moongate.Core.Directories;
+using Moongate.Core.Serialization.Toml;
+using Moongate.Core.Utils;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
@@ -23,6 +26,14 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
     public void Register(Container container)
     {
+        container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates");
+        container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates/mobiles/");
+        container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates/items/");
+
+        TomlUtils.AddTomlConverter(new SerialTomlConverter());
+        TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
+        TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
+
         container
             .AddPersistenceAuth<AccountEntity>();
 

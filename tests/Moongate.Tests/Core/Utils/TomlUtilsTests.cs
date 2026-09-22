@@ -1,9 +1,11 @@
 using System.Text.Json;
 using Moongate.Core.Utils;
 using Moongate.Tests.Support.Serialization.Data;
+using Moongate.Tests.Support.Serialization.Toml;
 using Moongate.Tests.TestSupport.Directories;
 using Tomlyn;
 using Tomlyn.Model;
+using Tomlyn.Serialization;
 
 namespace Moongate.Tests.Core.Utils;
 
@@ -189,5 +191,72 @@ public sealed class TomlUtilsTests
     {
         Assert.Throws<ArgumentNullException>(() => TomlUtils.Serialize<TomlTestSettings>(null!));
         Assert.Throws<ArgumentNullException>(() => TomlUtils.Deserialize<TomlTestSettings>(null!));
+    }
+
+    [Fact]
+    public void AddTomlConverter_MakesTheConverterAvailableWithoutExplicitOptions()
+    {
+        try
+        {
+            TomlUtils.AddTomlConverter(new RecordingTomlConverter());
+
+            var value = TomlUtils.Serialize(new MarkerHolder());
+
+            Assert.Equal("value = true", value.Trim());
+        }
+        finally
+        {
+            TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
+        }
+    }
+
+    [Fact]
+    public void AddTomlConverter_CalledTwiceWithTheSameType_RegistersOnce()
+    {
+        try
+        {
+            TomlUtils.AddTomlConverter(new RecordingTomlConverter());
+            TomlUtils.AddTomlConverter(new RecordingTomlConverter());
+
+            Assert.Single(TomlUtils.GetTomlConverters().OfType<RecordingTomlConverter>());
+        }
+        finally
+        {
+            TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
+        }
+    }
+
+    [Fact]
+    public void RemoveTomlConverter_RemovesEveryConverterOfThatType_AndReportsWhetherAnyWasRemoved()
+    {
+        TomlUtils.AddTomlConverter(new RecordingTomlConverter());
+
+        var removed = TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
+        var removedAgain = TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
+
+        Assert.True(removed);
+        Assert.False(removedAgain);
+        Assert.Empty(TomlUtils.GetTomlConverters().OfType<RecordingTomlConverter>());
+    }
+
+    [Fact]
+    public void ExplicitOptions_AreNeverExtendedWithRegisteredConverters()
+    {
+        try
+        {
+            TomlUtils.AddTomlConverter(new RecordingTomlConverter());
+            var options = new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower };
+
+            // Without the converter, Tomlyn falls back to walking Marker's (zero) public properties,
+            // producing an empty nested table rather than the converter's "true" — proving the explicit
+            // options object never picked up what AddTomlConverter registered globally.
+            var value = TomlUtils.Serialize(new MarkerHolder(), options);
+
+            Assert.DoesNotContain("true", value, StringComparison.Ordinal);
+        }
+        finally
+        {
+            TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
+        }
     }
 }

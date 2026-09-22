@@ -6,7 +6,7 @@ namespace Moongate.Server.Ultima.Interfaces.Loaders;
 /// <remarks>
 /// Register with <c>AddUltimaDataLoader&lt;TLoader, TEntity&gt;</c>; <see cref="Services.DataLoaderService"/>
 /// then calls <see cref="InitializeAsync"/> followed by <see cref="LoadDataAsync"/> once, in priority order,
-/// and keeps the result under its own type for <c>Get&lt;TEntity&gt;()</c>.
+/// and keeps the result under its own type for <c>GetEntities&lt;TEntity&gt;()</c>.
 /// </remarks>
 public interface IDataLoader<TEntity>
 {

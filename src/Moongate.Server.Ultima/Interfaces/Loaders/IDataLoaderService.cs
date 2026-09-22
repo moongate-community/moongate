@@ -10,5 +10,5 @@ public interface IDataLoaderService : IMoongateStartupService
 {
     /// <summary>Gets the entities the loader registered for <typeparamref name="TEntity"/> produced.</summary>
     /// <exception cref="InvalidOperationException">No loader is registered for <typeparamref name="TEntity"/>.</exception>
-    IReadOnlyList<TEntity> Get<TEntity>();
+    IReadOnlyList<TEntity> GetEntities<TEntity>();
 }
