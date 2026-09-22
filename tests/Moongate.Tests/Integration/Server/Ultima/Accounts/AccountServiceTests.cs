@@ -1,5 +1,6 @@
 using DryIoc;
 using Npgsql;
+using Moongate.Core.Directories;
 using Moongate.Core.Utils;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Services;
@@ -8,6 +9,7 @@ using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Types;
+using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Server.Ultima;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Accounts;
@@ -102,7 +104,9 @@ public sealed class AccountServiceTests
     public async Task CreateAccountAsync_IndependentServices_ReserveUniqueIdsAndRejectDuplicateUsernames(bool sameUsername)
     {
         await using var fixture = await AccountServiceFixture.CreateAsync();
+        using var peerDirectory = new TemporaryPersistenceDirectory();
         using var peer = new Container();
+        peer.RegisterInstance(new DirectoriesConfig(peerDirectory.Path, []));
         peer.RegisterMoongatePersistence(
             new([new(PersistenceDatabaseTarget.Accounts, fixture.Database.ConnectionString)], true)
         );
@@ -137,7 +141,9 @@ public sealed class AccountServiceTests
         await using var fixture = await AccountServiceFixture.CreateAsync();
         var first = await fixture.Service.CreateAccountAsync("alice", fixture.Password);
         Assert.True(first.Success, first.Exception?.ToString());
+        using var peerDirectory = new TemporaryPersistenceDirectory();
         using var peer = new Container();
+        peer.RegisterInstance(new DirectoriesConfig(peerDirectory.Path, []));
         peer.RegisterMoongatePersistence(
             new([new(PersistenceDatabaseTarget.Accounts, fixture.Database.ConnectionString)], true)
         );
