@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Directories;
 using Moongate.Core.Extensions.Container;
 using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Interfaces.Services;
@@ -164,6 +165,13 @@ public static class ContainerExtensions
             );
 
             return RecordRegistration(container, serviceType, implementationType, priority);
+        }
+
+        public DirectoriesConfig GetDirectoriesConfig()
+        {
+            return !container.IsRegistered<DirectoriesConfig>()
+                       ? throw new InvalidOperationException("DirectoriesConfig is not registered in the container.")
+                       : container.Resolve<DirectoriesConfig>();
         }
     }
 
