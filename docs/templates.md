@@ -252,6 +252,13 @@ once with `TomlUtils.AddTomlConverter`.
 dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
 ```
 
+Its arguments are `ConsoleApp.Run` (`ConsoleAppFramework`, pulled in via `#:package`, the same
+library `src/Moongate.Server/Program.cs` already uses) reading `UoxItemConverter.Run`'s own
+parameters and their XML doc comments - `--help`, `--source`/`--destination` being required while
+`--loot-destination` is optional, and an unrecognized flag, all come from the framework, not from
+this file. A bare invocation with no arguments at all prints the same help and exits `0`; a real
+mistake, some arguments but a required one missing, exits `1`.
+
 `--source` is a single `.dfn` file or a directory scanned recursively for every `.dfn` under it.
 Every block from every source file is read before any `get=` chain is resolved, since a chain's
 target can live in a different file than the block that names it; UOX3's own data does this, a

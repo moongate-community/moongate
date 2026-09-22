@@ -1,4 +1,5 @@
 #:project ../src/Moongate.Server.Ultima/Moongate.Server.Ultima.csproj
+#:package ConsoleAppFramework@5.7.13
 
 // Converts UOX3 item and loot definitions (github.com/UOX3DevTeam/UOX3, data/dfndata/items/**/*.dfn)
 // into Moongate ItemTemplate/LootTemplate TOML files. UOX3, not POL: UOX3's get= chains one item off
@@ -7,6 +8,10 @@
 //
 // Usage:
 //   dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
+//
+// ConsoleAppFramework (already used the same way in src/Moongate.Server/Program.cs) builds this from
+// UoxItemConverter.Run's own signature and XML doc comments below - --help, required-vs-optional,
+// and an unrecognized flag all come from the framework, not from this file.
 //
 // --source is a single .dfn file or a directory scanned recursively for *.dfn files. Every block is
 // read from every source file, and every block's own Id computed, before any cross-reference (get=,
@@ -54,51 +59,26 @@
 // allows in this slot, never appears in real lootlists.dfn data and has no home here; an entry this
 // converter cannot resolve any other way is dropped, same as an unresolved get=.
 
+using ConsoleAppFramework;
 using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Types.Templates;
 
-return UoxItemConverter.Run(args);
+ConsoleApp.Run(args, UoxItemConverter.Run);
 
 internal static class UoxItemConverter
 {
-    public static int Run(string[] args)
+    /// <summary>Converts UOX3 item and loot .dfn definitions into Moongate ItemTemplate/LootTemplate TOML.</summary>
+    /// <param name="source">A single .dfn file, or a directory scanned recursively for *.dfn files.</param>
+    /// <param name="destination">Directory to write the converted ItemTemplate .toml files under.</param>
+    /// <param name="lootDestination">
+    /// Directory to write the converted LootTemplate .toml files under. Omit it to leave every
+    /// [LOOTLIST ...] block unconverted.
+    /// </param>
+    public static void Run(string source, string destination, string? lootDestination = null)
     {
-        string? source = null;
-        string? destination = null;
-        string? lootDestination = null;
-
-        for (var i = 0; i < args.Length; i++)
-        {
-            switch (args[i])
-            {
-                case "--source" when i + 1 < args.Length:
-                    source = args[++i];
-                    break;
-                case "--destination" when i + 1 < args.Length:
-                    destination = args[++i];
-                    break;
-                case "--loot-destination" when i + 1 < args.Length:
-                    lootDestination = args[++i];
-                    break;
-                case "-h" or "--help":
-                    PrintUsage();
-                    return 0;
-                default:
-                    Console.Error.WriteLine($"Unknown or incomplete argument: {args[i]}");
-                    PrintUsage();
-                    return 2;
-            }
-        }
-
-        if (source is null || destination is null)
-        {
-            PrintUsage();
-            return 2;
-        }
-
         source = Path.GetFullPath(source);
         destination = Path.GetFullPath(destination);
         lootDestination = lootDestination is null ? null : Path.GetFullPath(lootDestination);
@@ -106,7 +86,9 @@ internal static class UoxItemConverter
         if (!File.Exists(source) && !Directory.Exists(source))
         {
             Console.Error.WriteLine($"Source does not exist: {source}");
-            return 2;
+            Environment.ExitCode = 2;
+
+            return;
         }
 
         AppContext.SetSwitch("Tomlyn.TomlSerializer.IsReflectionEnabledByDefault", true);
@@ -121,7 +103,9 @@ internal static class UoxItemConverter
         if (sourceFiles.Length == 0)
         {
             Console.Error.WriteLine($"No .dfn files found under {source}");
-            return 2;
+            Environment.ExitCode = 2;
+
+            return;
         }
 
         var blocksByFile = new Dictionary<string, List<DfnBlock>>(StringComparer.Ordinal);
@@ -267,16 +251,15 @@ internal static class UoxItemConverter
             }
 
             Console.Error.WriteLine($"{errors.Count} verification error(s) found reading the converted output back.");
+            Environment.ExitCode = 1;
 
-            return 1;
+            return;
         }
 
         Console.WriteLine(
             $"Verified {verifiedItems} item(s) and {verifiedLoot} loot table(s) read back from disk: " +
             "no duplicate ids, every BaseId and loot reference resolves."
         );
-
-        return 0;
     }
 
     /// <summary>
@@ -374,20 +357,6 @@ internal static class UoxItemConverter
         }
 
         return entities;
-    }
-
-    private static void PrintUsage()
-    {
-        Console.Error.WriteLine(
-            """
-            Usage: dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
-
-              --source           A single .dfn file, or a directory scanned recursively for *.dfn files.
-              --destination      Directory to write the converted ItemTemplate .toml files under.
-              --loot-destination Directory to write the converted LootTemplate .toml files under.
-                                 Omit it to leave every [LOOTLIST ...] block unconverted.
-            """
-        );
     }
 }
 

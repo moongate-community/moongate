@@ -241,11 +241,14 @@ public sealed class UoxItemConverterTests : IDisposable
     }
 
     [Fact]
-    public async Task Run_NoSourceOrDestination_FailsWithUsage()
+    public async Task Run_NoArguments_PrintsUsageAndExitsZero()
     {
+        // ConsoleAppFramework's own convention: a bare invocation shows help rather than erroring
+        // (a genuine mistake, some but not all required arguments, does exit non-zero instead -
+        // ConsoleAppFramework's own behaviour, not this script's, so not re-tested here).
         var result = await _converter.RunAsync(withArguments: false);
 
-        Assert.NotEqual(0, result.ExitCode);
+        Assert.Equal(0, result.ExitCode);
         Assert.Contains("Usage:", result.Output, StringComparison.Ordinal);
     }
 
