@@ -166,6 +166,32 @@ public sealed class UoxItemConverterTests : IDisposable
     }
 
     [Fact]
+    public async Task Run_ANameWithSpacesOnABareHexHeader_ProducesASnakeCaseId()
+    {
+        // Real name= values are free text ("pitcher of wine", "bone gloves"): the combined Id goes
+        // through ToSnakeCase so it never carries a literal space.
+        _converter.WriteSource(
+            "items.dfn",
+            """
+            [0x1f9b]
+            {
+            name=pitcher of wine
+            id=0x1f9b
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "items.toml")
+        );
+        var item = Assert.Single(file!.Item);
+        Assert.Equal("0x1f9b_pitcher_of_wine", item.Id);
+    }
+
+    [Fact]
     public async Task Run_TheSameNameOnDifferentBareHexHeaders_ProducesDistinctIds()
     {
         _converter.WriteSource(
@@ -215,12 +241,364 @@ public sealed class UoxItemConverterTests : IDisposable
     }
 
     [Fact]
-    public async Task Run_NoSourceOrDestination_FailsWithUsage()
+    public async Task Run_NoArguments_PrintsUsageAndExitsZero()
     {
+        // ConsoleAppFramework's own convention: a bare invocation shows help rather than erroring
+        // (a genuine mistake, some but not all required arguments, does exit non-zero instead -
+        // ConsoleAppFramework's own behaviour, not this script's, so not re-tested here).
         var result = await _converter.RunAsync(withArguments: false);
 
-        Assert.NotEqual(0, result.ExitCode);
+        Assert.Equal(0, result.ExitCode);
         Assert.Contains("Usage:", result.Output, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task Run_ALootListBlock_ConvertsWeightedEntriesAgainstItemsInTheSameFile()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            40|blank
+            10|0x0f0f
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        // Each loot table writes to its own file, named after its own Id, not the source .dfn's.
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
+        );
+        var loot = Assert.Single(file!.Loot);
+        // Real LOOTLIST names are camelCase; the Id goes through ToSnakeCase like everything else.
+        Assert.Equal("earthele_loot", loot.Id);
+        Assert.Equal(2, loot.Entries.Count);
+
+        var blankEntry = loot.Entries.Single(e => e.Weight == 40);
+        Assert.Null(blankEntry.ItemId);
+        Assert.Null(blankEntry.LootTemplateId);
+
+        var itemEntry = loot.Entries.Single(e => e.Weight == 10);
+        Assert.Equal("0x0f0f", itemEntry.ItemId);
+        Assert.Null(itemEntry.LootTemplateId);
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryForAnItemWithAName_CarriesThatNameAsAComment()
+    {
+        // A non-bare-hex header's own Id never carries name= (only a bare-hex header's does, see
+        // Run_ANameOnABareHexHeader_PrefixesTheNameWithTheHeader), so this is the case where a
+        // Comment is not just redundant with the Id: "raw_iron_ore" alone does not say "iron ore".
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [raw_iron_ore]
+            {
+            id=0x19b7
+            name=iron ore
+            }
+
+            [0x0f81]
+            {
+            id=0x0f81
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|raw_iron_ore
+            10|0x0f81
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
+        );
+        var loot = Assert.Single(file!.Loot);
+        var namedEntry = loot.Entries.Single(e => e.ItemId == "raw_iron_ore");
+        Assert.Equal("iron ore", namedEntry.Comment);
+
+        var unnamedEntry = loot.Entries.Single(e => e.ItemId == "0x0f81");
+        Assert.Null(unnamedEntry.Comment);
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryWithNoWeightPrefix_DefaultsToWeightOne()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+
+            [LOOTLIST unweighted]
+            {
+            0x0f0f
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "unweighted.toml")
+        );
+        var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
+        Assert.Equal(1, entry.Weight);
+    }
+
+    [Fact]
+    public async Task Run_ANestedLootListReference_ResolvesLootTemplateIdAndAmount()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [LOOTLIST randomgems]
+            {
+            10|blank
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|LOOTLIST=randomgems,2
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        // randomgems and eartheleLoot are two tables from the same source .dfn, but each still
+        // writes to its own file: randomgems.toml and earthele_loot.toml.
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
+        );
+        var eartheleLoot = Assert.Single(file!.Loot);
+        var entry = Assert.Single(eartheleLoot.Entries);
+        Assert.Equal("randomgems", entry.LootTemplateId);
+        Assert.Null(entry.ItemId);
+        Assert.Equal(2, entry.Amount.Resolve());
+    }
+
+    [Fact]
+    public async Task Run_MultipleLootListBlocksInTheSameFile_EachWriteItsOwnFile()
+    {
+        // Reviewing or hand-editing one loot table has no reason to load every other table defined
+        // in the same source .dfn alongside it, so each gets its own file under --loot-destination.
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [LOOTLIST randomgems]
+            {
+            10|blank
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|blank
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.True(File.Exists(Path.Combine(_converter.LootDestinationDirectory, "randomgems.toml")));
+        Assert.True(File.Exists(Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")));
+        Assert.False(File.Exists(Path.Combine(_converter.LootDestinationDirectory, "loot.toml")));
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryPointingAtNothingResolvable_IsSkipped()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [LOOTLIST eartheleLoot]
+            {
+            10|LOOTLIST=nonexistent
+            10|0x9999
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Contains("2 loot entry/entries", result.Output, StringComparison.Ordinal);
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
+        );
+        Assert.Empty(Assert.Single(file!.Loot).Entries);
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryWithAMinMaxAmount_ParsesARangeSpec()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|0x0f0f,1 3
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
+        );
+        var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
+        var resolves = Enumerable.Range(0, 20).Select(_ => entry.Amount.Resolve()).ToArray();
+        Assert.All(resolves, value => Assert.InRange(value, 1, 3));
+        Assert.Contains(resolves, value => value != resolves[0]);
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryReferencingAnItemDefinedInAFileScannedLater_StillResolves()
+    {
+        // File names deliberately sort the referencing loot block before the item that defines its
+        // target, the exact ordering that broke Id resolution before every block's Id was precomputed
+        // up front instead of being filled in as each file happened to be visited. The output path
+        // no longer depends on the source file's own name (each loot table gets its own file, named
+        // after its own Id), only the resolution itself is what this test is pinning down.
+        _converter.WriteSource(
+            "aaa_lootlist.dfn",
+            """
+            [LOOTLIST eartheleLoot]
+            {
+            10|0x0f0f
+            }
+            """
+        );
+        _converter.WriteSource(
+            "zzz_items.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
+        );
+        var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
+        Assert.Equal("0x0f0f", entry.ItemId);
+    }
+
+    [Fact]
+    public async Task Run_WithoutLootDestination_LeavesLootListBlocksUnconverted()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|0x0f0f
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync(includeLootDestination: false);
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        );
+        Assert.Single(file!.Item);
+        Assert.False(Directory.Exists(_converter.LootDestinationDirectory));
+    }
+
+    [Fact]
+    public async Task Run_ASuccessfulConversion_VerifiesTheOutputReadBackFromDisk()
+    {
+        _converter.WriteSource(
+            "items.dfn",
+            """
+            [base_torch]
+            {
+            id=0x0f6b
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|base_torch
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Contains(
+            "Verified 1 item(s) and 1 loot table(s) read back from disk",
+            result.Output,
+            StringComparison.Ordinal
+        );
+    }
+
+    [Fact]
+    public async Task Run_TwoHeadersCollidingOnlyAfterSnakeCase_FailsVerificationWithANonZeroExitCode()
+    {
+        // "Base-Item" and "base_item" are two distinct headers - neither duplicate-header check
+        // above skips either - but ToSnakeCase collapses both to the same final Id, which only a
+        // real read-back of what was written can catch.
+        _converter.WriteSource(
+            "items.dfn",
+            """
+            [Base-Item]
+            {
+            id=0x0f6b
+            }
+
+            [base_item]
+            {
+            id=0x0f6c
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains(
+            "Verification failed: item 'base_item' is defined more than once",
+            result.Output,
+            StringComparison.Ordinal
+        );
     }
 
     public void Dispose()

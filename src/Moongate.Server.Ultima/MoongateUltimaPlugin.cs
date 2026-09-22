@@ -29,6 +29,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates");
         container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates/mobiles/");
         container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates/items/");
+        container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates/loots/");
 
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());

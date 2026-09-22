@@ -249,8 +249,15 @@ once with `TomlUtils.AddTomlConverter`.
 (github.com/UOX3DevTeam/UOX3) `.dfn` item definitions into `ItemTemplate` TOML:
 
 ```sh
-dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir>
+dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
 ```
+
+Its arguments are `ConsoleApp.Run` (`ConsoleAppFramework`, pulled in via `#:package`, the same
+library `src/Moongate.Server/Program.cs` already uses) reading `UoxItemConverter.Run`'s own
+parameters and their XML doc comments - `--help`, `--source`/`--destination` being required while
+`--loot-destination` is optional, and an unrecognized flag, all come from the framework, not from
+this file. A bare invocation with no arguments at all prints the same help and exits `0`; a real
+mistake, some arguments but a required one missing, exits `1`.
 
 `--source` is a single `.dfn` file or a directory scanned recursively for every `.dfn` under it.
 Every block from every source file is read before any `get=` chain is resolved, since a chain's
@@ -267,7 +274,7 @@ What maps, verified against real UOX3 data:
 | UOX3 | ItemTemplate | Note |
 | --- | --- | --- |
 | The block's own `id=` | `ItemId` | Required; a block with no `id=` is not converted at all |
-| The block header, or `name=` when the header is a bare hex | `Id` | |
+| The block header, or `name=` when the header is a bare hex | `Id` | Run through `StringUtils.ToSnakeCase`; `name=` is free text ("pitcher of wine") |
 | `name=` | `Name` | Carried as-is; UOX3 does not separate an identifier from display text |
 | A single-target `get=` | `BaseId` | Only when that target itself converted; `get=a b`, an alias with no `id=` of its own, converts nothing |
 | `movable=1` | `Movable` | Anything else, including absent, is `false` |
@@ -279,6 +286,59 @@ available from tiledata through `IItemCatalog`, see above), `script=`, the multi
 fields, has no home in `ItemTemplate` yet and is dropped. `BaseId` is a pointer only: the
 converter does not flatten a parent's fields into its children, the same way the loader itself
 will resolve the chain once it exists, not before.
+
+Every block's `Id` (and, for a `[LOOTLIST ...]` block below, its loot id) is computed once, up
+front, from the block alone, before any `get=` chain or loot entry is resolved against it: a
+reference to a block defined in a file scanned later in the same run still resolves.
+
+### Verifying the output
+
+After writing every file, the converter reads all of it back from disk, exactly as a real loader
+would, and checks it: no two items or loot tables share an Id, and every `BaseId`,
+`LootEntry.ItemId` and `LootEntry.LootTemplateId` names something that actually exists in what was
+written. This is a real read-back, not a re-check of the resolution that already ran in memory - it
+also catches a TOML round-trip going wrong, and two different headers, `Base-Item` and `base_item`
+say, that only collide once both go through `ToSnakeCase`. Any problem found exits `1` and lists
+every one, prefixed `Verification failed:`; a clean run prints `Verified <N> item(s) and <M> loot
+table(s) read back from disk`.
+
+### Loot tables
+
+UOX3's `[LOOTLIST name] { ... }` blocks, real weighted loot tables verified against the engine
+itself (`source/items.cpp`'s `CItem::CreateRandomItem`, not just the `.dfn` shape), convert into
+`--loot-destination` (`templates/loots/`, next to `templates/items/`) as one `<id>.toml` per table,
+named after the table's own Id, not the source `.dfn`'s: real UOX3 data defines all 71 tables in
+one file, `lootlists.dfn`, and reviewing one has no reason to load every other table alongside it.
+Without `--loot-destination`, every `LOOTLIST` block converts nothing, the same as before this
+converter knew about loot at all. Each bare entry line is:
+
+```
+weight|entry[,amount]
+```
+
+`weight` defaults to `1` when the `weight|` prefix is absent. `entry` is an item header (resolved
+through the same map `get=` uses), `LOOTLIST=other` (a nested, weighted pick from another table,
+only once `other` is confirmed to be a real table), or the literal `blank`, a real weighted chance
+of dropping nothing. `amount` is a single count or `min max` (a space, not a dash) and maps onto
+`LootEntry.Amount`, a `RangeValueSpec<int>`.
+
+| UOX3 | LootTemplate / LootEntry | Note |
+| --- | --- | --- |
+| The block header's name, after `LOOTLIST ` | `LootTemplate.Id` | Also through `StringUtils.ToSnakeCase`; real names are camelCase ("eartheleLoot") |
+| An entry's `weight\|` prefix | `LootEntry.Weight` | Defaults to `1` |
+| An item header entry | `LootEntry.ItemId` | Resolved through the same map `get=` uses; also fills `Comment` with that item's own `name=`, when it had one |
+| `LOOTLIST=other` | `LootEntry.LootTemplateId` | Only when `other` itself converted |
+| `blank` | Neither `ItemId` nor `LootTemplateId` set | A real, weighted chance of nothing |
+| A trailing `,amount` | `LootEntry.Amount` | `RangeValueSpec<int>`; `min max` (space) becomes a range |
+
+`ITEMLIST=`, UOX3's "spawn every entry" sibling to `LOOTLIST=`, has no home in `LootEntry` (it is
+a different mechanic, not a weighted pick) and never appears in real `lootlists.dfn` data. An
+entry the converter cannot resolve any other way is dropped, same as an unresolved `get=`.
+
+A trailing `//comment` is stripped from every line before anything else, matching the real
+engine's own `oldstrutil::removeTrailing(sLine, "//")`: real data glues one straight onto a block's
+opening brace with no space (`{//approximately 1%`), which would otherwise hide the whole block,
+not just the comment.
 
 ## What is not built yet
 
@@ -298,7 +358,23 @@ converter registry are all in place and tested. `ItemTemplate`
 | `Hue` | `RangeValueSpec<int>`, `0` meaning the art's native coloring |
 | `MaxItems`, `MaxWeight` | Nullable; set only on a container template |
 
+`LootTemplate`/`LootEntry`
+(`src/Moongate.Server.Ultima/Data/Templates/Items/{LootTemplate,LootEntry}.cs`) are the same:
+
+| Field | Purpose |
+| --- | --- |
+| `LootTemplate.Id` | The stable name a `LootEntry.LootTemplateId` or an NPC's death loot names this table by |
+| `LootTemplate.Comment` | A designer note nobody reads at runtime |
+| `LootTemplate.Entries` | The table's weighted outcomes |
+| `LootEntry.Weight` | This entry's share of the table, relative to every other entry's; `1` by default |
+| `LootEntry.ItemId` | The `ItemTemplate.Id` to drop; unset when `LootTemplateId` is set instead |
+| `LootEntry.LootTemplateId` | Another table's `Id` to pick from instead of a direct item |
+| `LootEntry.Comment` | What `ItemId`/`LootTemplateId` is, for a human reading this file by hand; an id alone says nothing |
+| `LootEntry.Amount` | `RangeValueSpec<int>`, how many of `ItemId` to create |
+
 None of this is loaded yet: `IDataLoader<ItemTemplate>` (reading every file under
-`templates/items/`, resolving the `BaseId` chain across files, and registering with
-`AddUltimaDataLoader`) has not been written. This page documents the mechanism once it lands;
-`ItemTemplate`'s own guide follows once the loader does.
+`templates/items/`, resolving the `BaseId` chain across files) and `IDataLoader<LootTemplate>`
+(reading `templates/loots/`, resolving `LootEntry` references against both) have not been
+written, nor has either been registered with `AddUltimaDataLoader`. This page documents the
+mechanism once it lands; `ItemTemplate`'s and `LootTemplate`'s own guides follow once the loader
+does.
