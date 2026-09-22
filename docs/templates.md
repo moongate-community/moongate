@@ -243,6 +243,43 @@ A converter for a type of your own follows the same shape: subclass `TomlConvert
 closed type, or `TomlConverterFactory` when the type is itself generic, and register the instance
 once with `TomlUtils.AddTomlConverter`.
 
+## Migrate from UOX3
+
+`scripts/UoxItemConverter.cs`, a `dotnet run --file` script, converts UOX3
+(github.com/UOX3DevTeam/UOX3) `.dfn` item definitions into `ItemTemplate` TOML:
+
+```sh
+dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir>
+```
+
+`--source` is a single `.dfn` file or a directory scanned recursively for every `.dfn` under it.
+Every block from every source file is read before any `get=` chain is resolved, since a chain's
+target can live in a different file than the block that names it; UOX3's own data does this, a
+sword's base definition and its facing variants sit in the same file, but a shared `base_item`
+often sits in another. One `<name>.toml` is written per source `.dfn`, at the same relative path
+under `--destination`, holding one `[[item]]` per block that has an `id=` of its own.
+
+UOX3's `get=` chains one item off another, `get=base_item`, or a facing variant with
+`get=0x1440`, and that maps directly onto `ItemTemplate.BaseId`.
+
+What maps, verified against real UOX3 data:
+
+| UOX3 | ItemTemplate | Note |
+| --- | --- | --- |
+| The block's own `id=` | `ItemId` | Required; a block with no `id=` is not converted at all |
+| The block header, or `name=` when the header is a bare hex | `Id` | |
+| `name=` | `Name` | Carried as-is; UOX3 does not separate an identifier from display text |
+| A single-target `get=` | `BaseId` | Only when that target itself converted; `get=a b`, an alias with no `id=` of its own, converts nothing |
+| `movable=1` | `Movable` | Anything else, including absent, is `false` |
+| `color=` | `Hue` | A fixed value, not a range |
+| `weightmax=` | `MaxWeight` | |
+
+Everything else, weight, value, layer, the combat stat fields, `colorlist`, `pileable` (already
+available from tiledata through `IItemCatalog`, see above), `script=`, the multi and geometry
+fields, has no home in `ItemTemplate` yet and is dropped. `BaseId` is a pointer only: the
+converter does not flatten a parent's fields into its children, the same way the loader itself
+will resolve the chain once it exists, not before.
+
 ## What is not built yet
 
 The loader contract, `DataLoaderService`, `EnumValueSpec<TEnum>`, `RangeValueSpec<T>` and the
