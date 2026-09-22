@@ -267,7 +267,7 @@ What maps, verified against real UOX3 data:
 | UOX3 | ItemTemplate | Note |
 | --- | --- | --- |
 | The block's own `id=` | `ItemId` | Required; a block with no `id=` is not converted at all |
-| The block header, or `name=` when the header is a bare hex | `Id` | |
+| The block header, or `name=` when the header is a bare hex | `Id` | Run through `StringUtils.ToSnakeCase`; `name=` is free text ("pitcher of wine") |
 | `name=` | `Name` | Carried as-is; UOX3 does not separate an identifier from display text |
 | A single-target `get=` | `BaseId` | Only when that target itself converted; `get=a b`, an alias with no `id=` of its own, converts nothing |
 | `movable=1` | `Movable` | Anything else, including absent, is `false` |
@@ -305,7 +305,7 @@ of dropping nothing. `amount` is a single count or `min max` (a space, not a das
 
 | UOX3 | LootTemplate / LootEntry | Note |
 | --- | --- | --- |
-| The block header's name, after `LOOTLIST ` | `LootTemplate.Id` | |
+| The block header's name, after `LOOTLIST ` | `LootTemplate.Id` | Also through `StringUtils.ToSnakeCase`; real names are camelCase ("eartheleLoot") |
 | An entry's `weight\|` prefix | `LootEntry.Weight` | Defaults to `1` |
 | An item header entry | `LootEntry.ItemId` | Resolved through the same map `get=` uses |
 | `LOOTLIST=other` | `LootEntry.LootTemplateId` | Only when `other` itself converted |

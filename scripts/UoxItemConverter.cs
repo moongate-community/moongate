@@ -362,10 +362,14 @@ internal static class ItemTemplateBuilder
         // The header alone is always unique (duplicates are caught and warned about while every
         // block is being read). name= is not: UOX3 reuses it across many facing, material or
         // damage-state variants of the same conceptual thing, sometimes literally "#", so it can
-        // only ever be an addition to the header, never a replacement for it.
-        id = IsBareHex(block.Header) && block.Fields.TryGetValue("name", out var name) && name.Length > 0
-                 ? $"{block.Header}_{name}"
-                 : block.Header;
+        // only ever be an addition to the header, never a replacement for it. name= is free text
+        // ("bone gloves", "smith's hammer"), so the combined Id goes through ToSnakeCase, the same
+        // normalization EnumValueSpec already writes its own text form through.
+        id = StringUtils.ToSnakeCase(
+            IsBareHex(block.Header) && block.Fields.TryGetValue("name", out var name) && name.Length > 0
+                ? $"{block.Header}_{name}"
+                : block.Header
+        );
 
         return true;
     }
@@ -428,12 +432,13 @@ internal static class LootTemplateBuilder
     private const string NestedItemListPrefix = "ITEMLIST=";
 
     /// <summary>True when <paramref name="header" /> names a loot block (<c>"LOOTLIST name"</c>),
-    /// with the table's own Id, everything after the prefix, as <paramref name="lootId" />.</summary>
+    /// with the table's own Id, everything after the prefix run through <see cref="StringUtils.ToSnakeCase" />
+    /// (real names are camelCase, "eartheleLoot"), as <paramref name="lootId" />.</summary>
     public static bool TryGetLootId(string header, out string lootId)
     {
         if (header.StartsWith(HeaderPrefix, StringComparison.OrdinalIgnoreCase))
         {
-            lootId = header[HeaderPrefix.Length..].Trim();
+            lootId = StringUtils.ToSnakeCase(header[HeaderPrefix.Length..].Trim());
 
             return true;
         }
@@ -510,7 +515,7 @@ internal static class LootTemplateBuilder
 
         if (reference.StartsWith(NestedLootPrefix, StringComparison.OrdinalIgnoreCase))
         {
-            var nestedId = reference[NestedLootPrefix.Length..].Trim();
+            var nestedId = StringUtils.ToSnakeCase(reference[NestedLootPrefix.Length..].Trim());
 
             return knownLootIds.Contains(nestedId)
                        ? new LootEntry { Weight = weight, LootTemplateId = nestedId, Amount = amount }

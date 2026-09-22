@@ -166,6 +166,32 @@ public sealed class UoxItemConverterTests : IDisposable
     }
 
     [Fact]
+    public async Task Run_ANameWithSpacesOnABareHexHeader_ProducesASnakeCaseId()
+    {
+        // Real name= values are free text ("pitcher of wine", "bone gloves"): the combined Id goes
+        // through ToSnakeCase so it never carries a literal space.
+        _converter.WriteSource(
+            "items.dfn",
+            """
+            [0x1f9b]
+            {
+            name=pitcher of wine
+            id=0x1f9b
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "items.toml")
+        );
+        var item = Assert.Single(file!.Item);
+        Assert.Equal("0x1f9b_pitcher_of_wine", item.Id);
+    }
+
+    [Fact]
     public async Task Run_TheSameNameOnDifferentBareHexHeaders_ProducesDistinctIds()
     {
         _converter.WriteSource(
@@ -249,7 +275,8 @@ public sealed class UoxItemConverterTests : IDisposable
             Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
         );
         var loot = Assert.Single(file!.Loot);
-        Assert.Equal("eartheleLoot", loot.Id);
+        // Real LOOTLIST names are camelCase; the Id goes through ToSnakeCase like everything else.
+        Assert.Equal("earthele_loot", loot.Id);
         Assert.Equal(2, loot.Entries.Count);
 
         var blankEntry = loot.Entries.Single(e => e.Weight == 40);
@@ -313,7 +340,7 @@ public sealed class UoxItemConverterTests : IDisposable
         var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
             Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
         );
-        var eartheleLoot = file!.Loot.Single(l => l.Id == "eartheleLoot");
+        var eartheleLoot = file!.Loot.Single(l => l.Id == "earthele_loot");
         var entry = Assert.Single(eartheleLoot.Entries);
         Assert.Equal("randomgems", entry.LootTemplateId);
         Assert.Null(entry.ItemId);
