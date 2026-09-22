@@ -284,6 +284,17 @@ Every block's `Id` (and, for a `[LOOTLIST ...]` block below, its loot id) is com
 front, from the block alone, before any `get=` chain or loot entry is resolved against it: a
 reference to a block defined in a file scanned later in the same run still resolves.
 
+### Verifying the output
+
+After writing every file, the converter reads all of it back from disk, exactly as a real loader
+would, and checks it: no two items or loot tables share an Id, and every `BaseId`,
+`LootEntry.ItemId` and `LootEntry.LootTemplateId` names something that actually exists in what was
+written. This is a real read-back, not a re-check of the resolution that already ran in memory - it
+also catches a TOML round-trip going wrong, and two different headers, `Base-Item` and `base_item`
+say, that only collide once both go through `ToSnakeCase`. Any problem found exits `1` and lists
+every one, prefixed `Verification failed:`; a clean run prints `Verified <N> item(s) and <M> loot
+table(s) read back from disk`.
+
 ### Loot tables
 
 UOX3's `[LOOTLIST name] { ... }` blocks, real weighted loot tables verified against the engine

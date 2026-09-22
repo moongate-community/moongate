@@ -14,10 +14,13 @@
 // it (base_item and base_cutlass do, in real UOX3 data; so do items and the loot tables that drop
 // them: lootlists.dfn sits alongside them, referencing headers defined all over the items tree).
 // One <name>.toml, holding one [[item]] per convertible item block, is written per source .dfn at
-// its own relative path under --destination; --loot-destination, when given, gets the same
-// treatment for a [LOOTLIST ...] block's [[loot]] instead, its own tree mirroring templates/loots/
-// next to templates/items/ rather than one file mixing both kinds. Without --loot-destination, a
-// LOOTLIST block converts nothing, the same as it did before this converter knew about loot at all.
+// its own relative path under --destination. --loot-destination, when given, gets one <id>.toml per
+// [LOOTLIST ...] block instead, named after the table's own Id rather than the source .dfn's:
+// templates/loots/, next to templates/items/, one file per table rather than one file mixing every
+// kind and every table from the same source together. Without --loot-destination, a LOOTLIST block
+// converts nothing, the same as it did before this converter knew about loot at all. Once every file
+// is written, it is all read back from disk and cross-checked (see the header comment on
+// VerifyOutput below); anything wrong there exits 1.
 //
 // Items - what converts, and what does not:
 //   the block's own id=        -> ItemId (a Serial)
@@ -250,7 +253,127 @@ internal static class UoxItemConverter
             $"{skippedUnresolvedLootEntry} loot entry/entries pointing at nothing this converter could resolve."
         );
 
+        // A real read-back of what was actually written to disk, not a re-check of the resolution
+        // that already ran in memory: it also catches a TOML round-trip going wrong, and a Serial
+        // pair like "Base-Item"/"base_item" that would collide only after ToSnakeCase, neither of
+        // which the in-memory resolution above could ever see going wrong.
+        var errors = VerifyOutput(destination, convertLoot ? lootDestination : null, out var verifiedItems, out var verifiedLoot);
+
+        if (errors.Count > 0)
+        {
+            foreach (var error in errors)
+            {
+                Console.Error.WriteLine($"Verification failed: {error}");
+            }
+
+            Console.Error.WriteLine($"{errors.Count} verification error(s) found reading the converted output back.");
+
+            return 1;
+        }
+
+        Console.WriteLine(
+            $"Verified {verifiedItems} item(s) and {verifiedLoot} loot table(s) read back from disk: " +
+            "no duplicate ids, every BaseId and loot reference resolves."
+        );
+
         return 0;
+    }
+
+    /// <summary>
+    /// Reads every <c>.toml</c> file back from <paramref name="destination" /> and, when given,
+    /// <paramref name="lootDestination" />, exactly as a real loader would, and checks that no two
+    /// items or loot tables share an Id and that every <see cref="ItemTemplate.BaseId" />,
+    /// <see cref="LootEntry.ItemId" /> and <see cref="LootEntry.LootTemplateId" /> names something
+    /// that actually exists in what was written.
+    /// </summary>
+    private static List<string> VerifyOutput(
+        string destination,
+        string? lootDestination,
+        out int itemCount,
+        out int lootCount
+    )
+    {
+        var errors = new List<string>();
+        var items = ReadAllFromToml<ItemTemplateFile, ItemTemplate>(destination, f => f.Item);
+        var itemIds = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var item in items)
+        {
+            if (!itemIds.Add(item.Id))
+            {
+                errors.Add($"item '{item.Id}' is defined more than once");
+            }
+        }
+
+        foreach (var item in items)
+        {
+            if (item.BaseId is not null && !itemIds.Contains(item.BaseId))
+            {
+                errors.Add($"item '{item.Id}' has BaseId '{item.BaseId}', which does not exist");
+            }
+        }
+
+        itemCount = items.Count;
+        lootCount = 0;
+
+        if (lootDestination is null)
+        {
+            return errors;
+        }
+
+        var lootTables = ReadAllFromToml<LootTemplateFile, LootTemplate>(lootDestination, f => f.Loot);
+        var lootIds = new HashSet<string>(StringComparer.Ordinal);
+
+        foreach (var loot in lootTables)
+        {
+            if (!lootIds.Add(loot.Id))
+            {
+                errors.Add($"loot table '{loot.Id}' is defined more than once");
+            }
+        }
+
+        foreach (var loot in lootTables)
+        {
+            foreach (var entry in loot.Entries)
+            {
+                if (entry.ItemId is not null && !itemIds.Contains(entry.ItemId))
+                {
+                    errors.Add($"loot table '{loot.Id}' has an entry with ItemId '{entry.ItemId}', which does not exist");
+                }
+
+                if (entry.LootTemplateId is not null && !lootIds.Contains(entry.LootTemplateId))
+                {
+                    errors.Add(
+                        $"loot table '{loot.Id}' has an entry with LootTemplateId '{entry.LootTemplateId}', which does not exist"
+                    );
+                }
+            }
+        }
+
+        lootCount = lootTables.Count;
+
+        return errors;
+    }
+
+    private static List<TEntity> ReadAllFromToml<TFile, TEntity>(string root, Func<TFile, List<TEntity>> selectEntities)
+        where TFile : class
+    {
+        var entities = new List<TEntity>();
+
+        // A root that was never written to (a source with no items at all, or --loot-destination on
+        // a run with no LOOTLIST blocks) is empty, not an error.
+        if (!Directory.Exists(root))
+        {
+            return entities;
+        }
+
+        foreach (var path in Directory.EnumerateFiles(root, "*.toml", SearchOption.AllDirectories))
+        {
+            var file = TomlUtils.DeserializeFromFile<TFile>(path);
+            entities.AddRange(selectEntities(file!));
+        }
+
+        return entities;
     }
 
     private static void PrintUsage()

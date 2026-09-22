@@ -539,6 +539,65 @@ public sealed class UoxItemConverterTests : IDisposable
         Assert.False(Directory.Exists(_converter.LootDestinationDirectory));
     }
 
+    [Fact]
+    public async Task Run_ASuccessfulConversion_VerifiesTheOutputReadBackFromDisk()
+    {
+        _converter.WriteSource(
+            "items.dfn",
+            """
+            [base_torch]
+            {
+            id=0x0f6b
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|base_torch
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Contains(
+            "Verified 1 item(s) and 1 loot table(s) read back from disk",
+            result.Output,
+            StringComparison.Ordinal
+        );
+    }
+
+    [Fact]
+    public async Task Run_TwoHeadersCollidingOnlyAfterSnakeCase_FailsVerificationWithANonZeroExitCode()
+    {
+        // "Base-Item" and "base_item" are two distinct headers - neither duplicate-header check
+        // above skips either - but ToSnakeCase collapses both to the same final Id, which only a
+        // real read-back of what was written can catch.
+        _converter.WriteSource(
+            "items.dfn",
+            """
+            [Base-Item]
+            {
+            id=0x0f6b
+            }
+
+            [base_item]
+            {
+            id=0x0f6c
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.NotEqual(0, result.ExitCode);
+        Assert.Contains(
+            "Verification failed: item 'base_item' is defined more than once",
+            result.Output,
+            StringComparison.Ordinal
+        );
+    }
+
     public void Dispose()
     {
         _converter.Dispose();
