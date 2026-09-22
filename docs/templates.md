@@ -245,19 +245,28 @@ once with `TomlUtils.AddTomlConverter`.
 
 ## Migrate from UOX3
 
-`scripts/UoxItemConverter.cs`, a `dotnet run --file` script, converts UOX3
-(github.com/UOX3DevTeam/UOX3) `.dfn` item definitions into `ItemTemplate` TOML:
+`src/Moongate.UoxItemConverter`, a `/tools/` project (alongside `Moongate.Boot` and
+`Moongate.MigrationRunner`), converts UOX3 (github.com/UOX3DevTeam/UOX3) `.dfn` item definitions
+into `ItemTemplate` TOML:
 
 ```sh
-dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
+dotnet run --project src/Moongate.UoxItemConverter -- --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
 ```
 
-Its arguments are `ConsoleApp.Run` (`ConsoleAppFramework`, pulled in via `#:package`, the same
-library `src/Moongate.Server/Program.cs` already uses) reading `UoxItemConverter.Run`'s own
-parameters and their XML doc comments - `--help`, `--source`/`--destination` being required while
-`--loot-destination` is optional, and an unrecognized flag, all come from the framework, not from
-this file. A bare invocation with no arguments at all prints the same help and exits `0`; a real
-mistake, some arguments but a required one missing, exits `1`.
+The server's own Docker image bundles the same tool, published as a self-contained single file,
+at `/app/mg-uoxconv`; see [UOX3 content conversion](docker.md#uox3-content-conversion) for a
+`docker run` example against a mounted UOX3 checkout when there is no local .NET SDK to hand.
+
+Its arguments are `ConsoleApp.Run` (`ConsoleAppFramework`, the same library
+`src/Moongate.Server/Program.cs` already uses) reading `Cli.Run`'s own parameters and their XML doc
+comments - `--help`, `--source`/`--destination` being required while `--loot-destination` is
+optional, and an unrecognized flag, all come from the framework, not from this project. A bare
+invocation with no arguments at all prints the same help and exits `0`; a real mistake, some
+arguments but a required one missing, exits `1`. `Cli.Run` is a thin wrapper; the real logic,
+`Internal.UoxItemConverterCommand.Run`, takes plain `TextWriter`s instead of touching `Console`
+directly and returns its exit code rather than setting `Environment.ExitCode`, so
+`Moongate.UoxItemConverter.Tests` calls it in-process - no subprocess per test, the same shape
+`Moongate.MigrationRunner.Tests` already uses for `MigrationCommand.ExecuteAsync`.
 
 `--source` is a single `.dfn` file or a directory scanned recursively for every `.dfn` under it.
 Every block from every source file is read before any `get=` chain is resolved, since a chain's

@@ -10,6 +10,7 @@ using Moongate.Tests.TestSupport.Plugins;
 
 namespace Moongate.Tests.Integration.Persistence;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class PersistenceSchemaCliTests
 {
     [Fact]

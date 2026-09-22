@@ -15,6 +15,7 @@ using Moongate.Tests.TestSupport.Persistence;
 
 namespace Moongate.Tests.Integration.Persistence;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class WorldSaveBootstrapTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);

@@ -29,9 +29,9 @@ original Moongate logo, XML documentation, and a companion symbol package.
 | [Moongate.Server.Core](../src/Moongate.Server.Core/README.md) | Server and plugin contracts, events, and registrations | Api, Core, Network, Network.Packets |
 | [Moongate.Ultima](../src/Moongate.Ultima/README.md) | UO client data readers and rendering utilities | None |
 
-`Moongate.Server`, `Moongate.Boot`, and `Moongate.MigrationRunner` are executables distributed through
-release artifacts and container images. They do not produce library packages. Tests and plugin fixtures
-are also excluded from packing.
+`Moongate.Server`, `Moongate.Boot`, `Moongate.MigrationRunner`, and `Moongate.UoxItemConverter` are
+executables distributed through release artifacts and container images. They do not produce library
+packages. Tests and plugin fixtures are also excluded from packing.
 
 ## What the command checks
 

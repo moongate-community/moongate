@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Directories;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Services;
@@ -8,6 +9,8 @@ namespace Moongate.Tests.TestSupport.Persistence;
 
 public sealed class HostPersistenceFixture : IAsyncDisposable
 {
+    private readonly TemporaryPersistenceDirectory _directory = new();
+
     public PostgreSqlTestDatabase Database { get; }
     public PostgreSqlTestDatabase? AccountsDatabase { get; }
     public Container Container { get; } = new();
@@ -24,6 +27,10 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
             targets.Add(new(PersistenceDatabaseTarget.Accounts, accountsDatabase.ConnectionString));
         }
 
+        // A real host always registers this before a plugin's Register runs (Program.cs does, via
+        // services.RegisterInstance(directoriesConfig)); AccountServiceFixture calls
+        // MoongateUltimaPlugin.Register directly on this container, which now needs it too.
+        Container.RegisterInstance(new DirectoriesConfig(_directory.Path, []));
         Container.RegisterMoongatePersistence(new(targets, autoSync));
     }
 
@@ -48,6 +55,8 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
         {
             await AccountsDatabase.DisposeAsync();
         }
+
+        _directory.Dispose();
     }
 
     public void RegisterEntity()

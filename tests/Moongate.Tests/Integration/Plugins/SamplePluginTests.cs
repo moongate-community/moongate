@@ -22,6 +22,7 @@ using Moongate.Tests.TestSupport.Plugins;
 
 namespace Moongate.Tests.Integration.Plugins;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class SamplePluginTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);

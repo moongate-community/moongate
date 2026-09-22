@@ -14,6 +14,7 @@ using Moongate.Tests.TestSupport.Plugins;
 
 namespace Moongate.Tests.Integration.Plugins;
 
+[Collection(PostgresTestCollection.Name)]
 public sealed class PluginLifecycleEventTests
 {
     [Fact]
