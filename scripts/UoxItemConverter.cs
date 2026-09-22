@@ -45,10 +45,11 @@
 //                               absent; amount is a single count or "min max" (space, not a dash).
 // Each resolvable entry becomes a LootEntry: an item header resolves through the same Id map get=
 // uses, LOOTLIST=other becomes LootEntry.LootTemplateId once "other" is confirmed to be a real
-// table, and blank becomes an entry with neither ItemId nor LootTemplateId set. ITEMLIST=, a
-// different "spawn everything" mechanic UOX3 also allows in this slot, never appears in real
-// lootlists.dfn data and has no home here; an entry this converter cannot resolve any other way is
-// dropped, same as an unresolved get=.
+// table, and blank becomes an entry with neither ItemId nor LootTemplateId set. An ItemId entry also
+// gets a Comment, that item's own name= when it had one - an id alone, "0x19b7", says nothing to a
+// human reading the loot file by hand. ITEMLIST=, a different "spawn everything" mechanic UOX3 also
+// allows in this slot, never appears in real lootlists.dfn data and has no home here; an entry this
+// converter cannot resolve any other way is dropped, same as an unresolved get=.
 
 using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
@@ -144,6 +145,7 @@ internal static class UoxItemConverter
         // the source files happen to scan in.
         var convertLoot = lootDestination is not null;
         var idByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var itemNameById = new Dictionary<string, string>(StringComparer.Ordinal);
         var lootIdByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var knownLootIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
@@ -157,6 +159,13 @@ internal static class UoxItemConverter
             else if (ItemTemplateBuilder.TryComputeId(block, out var id, out _))
             {
                 idByHeader[block.Header] = id;
+
+                // Carried only so a loot entry can leave a human-readable Comment behind: an id
+                // alone, "0x19b7", says nothing to someone reading the loot file by hand.
+                if (block.Fields.TryGetValue("name", out var itemName) && itemName.Length > 0)
+                {
+                    itemNameById[id] = itemName;
+                }
             }
         }
 
@@ -166,10 +175,15 @@ internal static class UoxItemConverter
         var skippedNoId = 0;
         var skippedUnresolvedLootEntry = 0;
 
+        if (convertLoot)
+        {
+            Directory.CreateDirectory(lootDestination!);
+        }
+
         foreach (var (file, blocks) in blocksByFile)
         {
             var templates = new List<ItemTemplate>();
-            var lootTemplates = new List<LootTemplate>();
+            var lootWrittenForFile = 0;
 
             foreach (var block in blocks)
             {
@@ -186,8 +200,16 @@ internal static class UoxItemConverter
 
                 if (convertLoot && lootIdByHeader.TryGetValue(block.Header, out var lootId))
                 {
-                    lootTemplates.Add(LootTemplateBuilder.Build(block, lootId, idByHeader, knownLootIds, out var skipped));
+                    var lootTemplate = LootTemplateBuilder.Build(block, lootId, idByHeader, itemNameById, knownLootIds, out var skipped);
                     skippedUnresolvedLootEntry += skipped;
+
+                    // Each loot table gets its own file, named after its own Id: unlike an item,
+                    // reviewing or hand-editing one loot table has no reason to load every other
+                    // table defined in the same source .dfn alongside it.
+                    var lootOutputPath = Path.Combine(lootDestination!, lootTemplate.Id + ".toml");
+                    TomlUtils.SerializeToFile(new LootTemplateFile { Loot = [lootTemplate] }, lootOutputPath);
+                    lootWritten++;
+                    lootWrittenForFile++;
 
                     continue;
                 }
@@ -216,14 +238,9 @@ internal static class UoxItemConverter
                 Console.WriteLine($"{relative} -> {Path.GetRelativePath(destination, outputPath)} ({templates.Count} item(s))");
             }
 
-            if (lootTemplates.Count > 0)
+            if (lootWrittenForFile > 0)
             {
-                var lootOutputPath = Path.Combine(lootDestination!, Path.ChangeExtension(relative, ".toml"));
-                Directory.CreateDirectory(Path.GetDirectoryName(lootOutputPath)!);
-                TomlUtils.SerializeToFile(new LootTemplateFile { Loot = lootTemplates }, lootOutputPath);
-                lootWritten += lootTemplates.Count;
-
-                Console.WriteLine($"{relative} -> {Path.GetRelativePath(lootDestination!, lootOutputPath)} ({lootTemplates.Count} loot table(s))");
+                Console.WriteLine($"{relative} -> {lootWrittenForFile} loot table(s), one file each under --loot-destination");
             }
         }
 
@@ -452,6 +469,7 @@ internal static class LootTemplateBuilder
         DfnBlock block,
         string id,
         IReadOnlyDictionary<string, string> idByHeader,
+        IReadOnlyDictionary<string, string> itemNameById,
         IReadOnlySet<string> knownLootIds,
         out int skippedEntries
     )
@@ -461,7 +479,7 @@ internal static class LootTemplateBuilder
 
         foreach (var rawLine in block.Entries)
         {
-            var entry = ParseEntry(rawLine, idByHeader, knownLootIds);
+            var entry = ParseEntry(rawLine, idByHeader, itemNameById, knownLootIds);
 
             if (entry is null)
             {
@@ -479,6 +497,7 @@ internal static class LootTemplateBuilder
     private static LootEntry? ParseEntry(
         string rawLine,
         IReadOnlyDictionary<string, string> idByHeader,
+        IReadOnlyDictionary<string, string> itemNameById,
         IReadOnlySet<string> knownLootIds
     )
     {
@@ -530,9 +549,14 @@ internal static class LootTemplateBuilder
             return null;
         }
 
-        return idByHeader.TryGetValue(reference, out var itemId)
-                   ? new LootEntry { Weight = weight, ItemId = itemId, Amount = amount }
-                   : null;
+        if (!idByHeader.TryGetValue(reference, out var itemId))
+        {
+            return null;
+        }
+
+        itemNameById.TryGetValue(itemId, out var comment);
+
+        return new LootEntry { Weight = weight, ItemId = itemId, Comment = comment, Amount = amount };
     }
 
     private static RangeValueSpec<int> ParseAmount(string? amountText)

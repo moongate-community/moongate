@@ -288,8 +288,9 @@ reference to a block defined in a file scanned later in the same run still resol
 
 UOX3's `[LOOTLIST name] { ... }` blocks, real weighted loot tables verified against the engine
 itself (`source/items.cpp`'s `CItem::CreateRandomItem`, not just the `.dfn` shape), convert into
-`--loot-destination` as `[[loot]]`, mirroring the same relative path `--destination` gets for
-items, `templates/loots/` next to `templates/items/` rather than one file mixing both kinds.
+`--loot-destination` (`templates/loots/`, next to `templates/items/`) as one `<id>.toml` per table,
+named after the table's own Id, not the source `.dfn`'s: real UOX3 data defines all 71 tables in
+one file, `lootlists.dfn`, and reviewing one has no reason to load every other table alongside it.
 Without `--loot-destination`, every `LOOTLIST` block converts nothing, the same as before this
 converter knew about loot at all. Each bare entry line is:
 
@@ -307,7 +308,7 @@ of dropping nothing. `amount` is a single count or `min max` (a space, not a das
 | --- | --- | --- |
 | The block header's name, after `LOOTLIST ` | `LootTemplate.Id` | Also through `StringUtils.ToSnakeCase`; real names are camelCase ("eartheleLoot") |
 | An entry's `weight\|` prefix | `LootEntry.Weight` | Defaults to `1` |
-| An item header entry | `LootEntry.ItemId` | Resolved through the same map `get=` uses |
+| An item header entry | `LootEntry.ItemId` | Resolved through the same map `get=` uses; also fills `Comment` with that item's own `name=`, when it had one |
 | `LOOTLIST=other` | `LootEntry.LootTemplateId` | Only when `other` itself converted |
 | `blank` | Neither `ItemId` nor `LootTemplateId` set | A real, weighted chance of nothing |
 | A trailing `,amount` | `LootEntry.Amount` | `RangeValueSpec<int>`; `min max` (space) becomes a range |
@@ -350,6 +351,7 @@ converter registry are all in place and tested. `ItemTemplate`
 | `LootEntry.Weight` | This entry's share of the table, relative to every other entry's; `1` by default |
 | `LootEntry.ItemId` | The `ItemTemplate.Id` to drop; unset when `LootTemplateId` is set instead |
 | `LootEntry.LootTemplateId` | Another table's `Id` to pick from instead of a direct item |
+| `LootEntry.Comment` | What `ItemId`/`LootTemplateId` is, for a human reading this file by hand; an id alone says nothing |
 | `LootEntry.Amount` | `RangeValueSpec<int>`, how many of `ItemId` to create |
 
 None of this is loaded yet: `IDataLoader<ItemTemplate>` (reading every file under

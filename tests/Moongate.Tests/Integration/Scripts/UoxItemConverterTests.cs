@@ -271,8 +271,9 @@ public sealed class UoxItemConverterTests : IDisposable
         var result = await _converter.RunAsync();
 
         Assert.True(result.ExitCode == 0, result.Output);
+        // Each loot table writes to its own file, named after its own Id, not the source .dfn's.
         var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
-            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
         );
         var loot = Assert.Single(file!.Loot);
         // Real LOOTLIST names are camelCase; the Id goes through ToSnakeCase like everything else.
@@ -286,6 +287,48 @@ public sealed class UoxItemConverterTests : IDisposable
         var itemEntry = loot.Entries.Single(e => e.Weight == 10);
         Assert.Equal("0x0f0f", itemEntry.ItemId);
         Assert.Null(itemEntry.LootTemplateId);
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryForAnItemWithAName_CarriesThatNameAsAComment()
+    {
+        // A non-bare-hex header's own Id never carries name= (only a bare-hex header's does, see
+        // Run_ANameOnABareHexHeader_PrefixesTheNameWithTheHeader), so this is the case where a
+        // Comment is not just redundant with the Id: "raw_iron_ore" alone does not say "iron ore".
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [raw_iron_ore]
+            {
+            id=0x19b7
+            name=iron ore
+            }
+
+            [0x0f81]
+            {
+            id=0x0f81
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|raw_iron_ore
+            10|0x0f81
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
+        );
+        var loot = Assert.Single(file!.Loot);
+        var namedEntry = loot.Entries.Single(e => e.ItemId == "raw_iron_ore");
+        Assert.Equal("iron ore", namedEntry.Comment);
+
+        var unnamedEntry = loot.Entries.Single(e => e.ItemId == "0x0f81");
+        Assert.Null(unnamedEntry.Comment);
     }
 
     [Fact]
@@ -310,7 +353,7 @@ public sealed class UoxItemConverterTests : IDisposable
 
         Assert.True(result.ExitCode == 0, result.Output);
         var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
-            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
+            Path.Combine(_converter.LootDestinationDirectory, "unweighted.toml")
         );
         var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
         Assert.Equal(1, entry.Weight);
@@ -337,14 +380,44 @@ public sealed class UoxItemConverterTests : IDisposable
         var result = await _converter.RunAsync();
 
         Assert.True(result.ExitCode == 0, result.Output);
+        // randomgems and eartheleLoot are two tables from the same source .dfn, but each still
+        // writes to its own file: randomgems.toml and earthele_loot.toml.
         var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
-            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
         );
-        var eartheleLoot = file!.Loot.Single(l => l.Id == "earthele_loot");
+        var eartheleLoot = Assert.Single(file!.Loot);
         var entry = Assert.Single(eartheleLoot.Entries);
         Assert.Equal("randomgems", entry.LootTemplateId);
         Assert.Null(entry.ItemId);
         Assert.Equal(2, entry.Amount.Resolve());
+    }
+
+    [Fact]
+    public async Task Run_MultipleLootListBlocksInTheSameFile_EachWriteItsOwnFile()
+    {
+        // Reviewing or hand-editing one loot table has no reason to load every other table defined
+        // in the same source .dfn alongside it, so each gets its own file under --loot-destination.
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [LOOTLIST randomgems]
+            {
+            10|blank
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|blank
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.True(File.Exists(Path.Combine(_converter.LootDestinationDirectory, "randomgems.toml")));
+        Assert.True(File.Exists(Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")));
+        Assert.False(File.Exists(Path.Combine(_converter.LootDestinationDirectory, "loot.toml")));
     }
 
     [Fact]
@@ -366,7 +439,7 @@ public sealed class UoxItemConverterTests : IDisposable
         Assert.True(result.ExitCode == 0, result.Output);
         Assert.Contains("2 loot entry/entries", result.Output, StringComparison.Ordinal);
         var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
-            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
         );
         Assert.Empty(Assert.Single(file!.Loot).Entries);
     }
@@ -393,7 +466,7 @@ public sealed class UoxItemConverterTests : IDisposable
 
         Assert.True(result.ExitCode == 0, result.Output);
         var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
-            Path.Combine(_converter.LootDestinationDirectory, "loot.toml")
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
         );
         var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
         var resolves = Enumerable.Range(0, 20).Select(_ => entry.Amount.Resolve()).ToArray();
@@ -406,7 +479,9 @@ public sealed class UoxItemConverterTests : IDisposable
     {
         // File names deliberately sort the referencing loot block before the item that defines its
         // target, the exact ordering that broke Id resolution before every block's Id was precomputed
-        // up front instead of being filled in as each file happened to be visited.
+        // up front instead of being filled in as each file happened to be visited. The output path
+        // no longer depends on the source file's own name (each loot table gets its own file, named
+        // after its own Id), only the resolution itself is what this test is pinning down.
         _converter.WriteSource(
             "aaa_lootlist.dfn",
             """
@@ -430,7 +505,7 @@ public sealed class UoxItemConverterTests : IDisposable
 
         Assert.True(result.ExitCode == 0, result.Output);
         var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
-            Path.Combine(_converter.LootDestinationDirectory, "aaa_lootlist.toml")
+            Path.Combine(_converter.LootDestinationDirectory, "earthele_loot.toml")
         );
         var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
         Assert.Equal("0x0f0f", entry.ItemId);
