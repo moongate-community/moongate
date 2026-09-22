@@ -16,6 +16,7 @@ export const contentEntries = [
   { source: 'docs/network.md', slug: 'libraries/network-cookbook', title: 'Standalone TCP cookbook', group: 'Libraries' },
   { source: 'docs/lua-modules.md', slug: 'server/lua-modules', title: 'Writing a Lua module', group: 'Server guides' },
   { source: 'docs/metric-providers.md', slug: 'server/metric-providers', title: 'Registering a metric provider', group: 'Server guides' },
+  { source: 'docs/templates.md', slug: 'server/templates', title: 'Loading TOML templates', group: 'Server guides' },
   { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Server guides' },
   { source: 'docs/network-game-separation.md', slug: 'server/network-game-separation', title: 'Transport and game ownership', group: 'Server guides' },
   { source: 'docs/persistence.md', slug: 'server/persistence', title: 'PostgreSQL persistence and world saves', group: 'Server guides' },
