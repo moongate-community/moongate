@@ -280,6 +280,45 @@ fields, has no home in `ItemTemplate` yet and is dropped. `BaseId` is a pointer 
 converter does not flatten a parent's fields into its children, the same way the loader itself
 will resolve the chain once it exists, not before.
 
+Every block's `Id` (and, for a `[LOOTLIST ...]` block below, its loot id) is computed once, up
+front, from the block alone, before any `get=` chain or loot entry is resolved against it: a
+reference to a block defined in a file scanned later in the same run still resolves.
+
+### Loot tables
+
+UOX3's `[LOOTLIST name] { ... }` blocks, real weighted loot tables verified against the engine
+itself (`source/items.cpp`'s `CItem::CreateRandomItem`, not just the `.dfn` shape), convert into
+the same source file's output `.toml` alongside its `[[item]]` entries, as `[[loot]]`. Each bare
+entry line is:
+
+```
+weight|entry[,amount]
+```
+
+`weight` defaults to `1` when the `weight|` prefix is absent. `entry` is an item header (resolved
+through the same map `get=` uses), `LOOTLIST=other` (a nested, weighted pick from another table,
+only once `other` is confirmed to be a real table), or the literal `blank`, a real weighted chance
+of dropping nothing. `amount` is a single count or `min max` (a space, not a dash) and maps onto
+`LootEntry.Amount`, a `RangeValueSpec<int>`.
+
+| UOX3 | LootTemplate / LootEntry | Note |
+| --- | --- | --- |
+| The block header's name, after `LOOTLIST ` | `LootTemplate.Id` | |
+| An entry's `weight\|` prefix | `LootEntry.Weight` | Defaults to `1` |
+| An item header entry | `LootEntry.ItemId` | Resolved through the same map `get=` uses |
+| `LOOTLIST=other` | `LootEntry.LootTemplateId` | Only when `other` itself converted |
+| `blank` | Neither `ItemId` nor `LootTemplateId` set | A real, weighted chance of nothing |
+| A trailing `,amount` | `LootEntry.Amount` | `RangeValueSpec<int>`; `min max` (space) becomes a range |
+
+`ITEMLIST=`, UOX3's "spawn every entry" sibling to `LOOTLIST=`, has no home in `LootEntry` (it is
+a different mechanic, not a weighted pick) and never appears in real `lootlists.dfn` data. An
+entry the converter cannot resolve any other way is dropped, same as an unresolved `get=`.
+
+A trailing `//comment` is stripped from every line before anything else, matching the real
+engine's own `oldstrutil::removeTrailing(sLine, "//")`: real data glues one straight onto a block's
+opening brace with no space (`{//approximately 1%`), which would otherwise hide the whole block,
+not just the comment.
+
 ## What is not built yet
 
 The loader contract, `DataLoaderService`, `EnumValueSpec<TEnum>`, `RangeValueSpec<T>` and the
@@ -298,7 +337,21 @@ converter registry are all in place and tested. `ItemTemplate`
 | `Hue` | `RangeValueSpec<int>`, `0` meaning the art's native coloring |
 | `MaxItems`, `MaxWeight` | Nullable; set only on a container template |
 
-None of this is loaded yet: `IDataLoader<ItemTemplate>` (reading every file under
-`templates/items/`, resolving the `BaseId` chain across files, and registering with
-`AddUltimaDataLoader`) has not been written. This page documents the mechanism once it lands;
-`ItemTemplate`'s own guide follows once the loader does.
+`LootTemplate`/`LootEntry`
+(`src/Moongate.Server.Ultima/Data/Templates/Items/{LootTemplate,LootEntry}.cs`) are the same:
+
+| Field | Purpose |
+| --- | --- |
+| `LootTemplate.Id` | The stable name a `LootEntry.LootTemplateId` or an NPC's death loot names this table by |
+| `LootTemplate.Comment` | A designer note nobody reads at runtime |
+| `LootTemplate.Entries` | The table's weighted outcomes |
+| `LootEntry.Weight` | This entry's share of the table, relative to every other entry's; `1` by default |
+| `LootEntry.ItemId` | The `ItemTemplate.Id` to drop; unset when `LootTemplateId` is set instead |
+| `LootEntry.LootTemplateId` | Another table's `Id` to pick from instead of a direct item |
+| `LootEntry.Amount` | `RangeValueSpec<int>`, how many of `ItemId` to create |
+
+None of this is loaded yet: `IDataLoader<ItemTemplate>` and `IDataLoader<LootTemplate>` (reading
+every file under `templates/items/`, resolving the `BaseId` chain and loot references across
+files, and registering with `AddUltimaDataLoader`) have not been written. This page documents the
+mechanism once it lands; `ItemTemplate`'s and `LootTemplate`'s own guides follow once the loader
+does.

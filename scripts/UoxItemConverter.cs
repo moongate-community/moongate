@@ -1,20 +1,23 @@
 #:project ../src/Moongate.Server.Ultima/Moongate.Server.Ultima.csproj
 
-// Converts UOX3 item definitions (github.com/UOX3DevTeam/UOX3, data/dfndata/items/**/*.dfn) into
-// Moongate ItemTemplate TOML files. UOX3, not POL: UOX3's get= chains one item off another
-// (get=base_item, get=0x1440), which maps directly onto ItemTemplate.BaseId; POL has no equivalent,
-// so a POL source would leave BaseId empty for everything.
+// Converts UOX3 item and loot definitions (github.com/UOX3DevTeam/UOX3, data/dfndata/items/**/*.dfn)
+// into Moongate ItemTemplate/LootTemplate TOML files. UOX3, not POL: UOX3's get= chains one item off
+// another (get=base_item, get=0x1440), which maps directly onto ItemTemplate.BaseId; POL has no
+// equivalent, so a POL source would leave BaseId empty for everything.
 //
 // Usage:
 //   dotnet run --file scripts/UoxItemConverter.cs -- --source <file-or-directory> --destination <dir>
 //
 // --source is a single .dfn file or a directory scanned recursively for *.dfn files. Every block is
-// read from every source file before any get= chain is resolved, since a chain's target can live in
-// a different file than the block that names it (base_item and base_cutlass do, in real UOX3 data).
+// read from every source file, and every block's own Id computed, before any cross-reference (get=,
+// a loot entry) is resolved, since a target can live in a different file than the block that names
+// it (base_item and base_cutlass do, in real UOX3 data; so do items and the loot tables that drop
+// them: lootlists.dfn sits alongside them, referencing headers defined all over the items tree).
 // One <name>.toml is written per source .dfn, alongside the source's own relative path under
-// --destination, each holding one [[item]] per convertible block.
+// --destination, holding one [[item]] per convertible item block and one [[loot]] per [LOOTLIST ...]
+// block found in the same source file.
 //
-// What converts, and what does not:
+// Items - what converts, and what does not:
 //   the block's own id=        -> ItemId (a Serial)
 //   the block header, or name= when the header is a bare hex -> Id
 //   name=                      -> Name, carried verbatim; UOX3 does not separate an internal
@@ -31,8 +34,20 @@
 // spawnobj(list), the archery fields and origin have no home in ItemTemplate yet and are dropped.
 // script= is dropped rather than copied into ScriptId: it names a UOX3 JS script, not a Moongate Lua
 // module, and copying it across would look like a working reference when it is not one.
+//
+// Loot - a [LOOTLIST name] block is a weighted table, one bare line per entry (verified against the
+// real engine, source/items.cpp's CItem::CreateRandomItem, not just the .dfn shape):
+//   weight|entry[,amount]      entry is an item header, LOOTLIST=other (a nested, weighted pick from
+//                               another table), or the literal blank (a real, weighted chance of
+//                               dropping nothing). weight defaults to 1 when the "weight|" prefix is
+//                               absent; amount is a single count or "min max" (space, not a dash).
+// Each resolvable entry becomes a LootEntry: an item header resolves through the same Id map get=
+// uses, LOOTLIST=other becomes LootEntry.LootTemplateId once "other" is confirmed to be a real
+// table, and blank becomes an entry with neither ItemId nor LootTemplateId set. ITEMLIST=, a
+// different "spawn everything" mechanic UOX3 also allows in this slot, never appears in real
+// lootlists.dfn data and has no home here; an entry this converter cannot resolve any other way is
+// dropped, same as an unresolved get=.
 
-using System.Text;
 using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
@@ -117,14 +132,37 @@ internal static class UoxItemConverter
             }
         }
 
+        // Every block's own Id is computed once, up front, from the block alone - never from another
+        // block's Id - so a get= chain or a loot entry resolves the same way no matter which order
+        // the source files happen to scan in.
         var idByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var lootIdByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+        var knownLootIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var block in blocksByHeader.Values)
+        {
+            if (LootTemplateBuilder.TryGetLootId(block.Header, out var lootId))
+            {
+                lootIdByHeader[block.Header] = lootId;
+                knownLootIds.Add(lootId);
+            }
+            else if (ItemTemplateBuilder.TryComputeId(block, out var id, out _))
+            {
+                idByHeader[block.Header] = id;
+            }
+
+        }
+
         var written = 0;
+        var lootWritten = 0;
         var skippedDuplicate = 0;
         var skippedNoId = 0;
+        var skippedUnresolvedLootEntry = 0;
 
         foreach (var (file, blocks) in blocksByFile)
         {
             var templates = new List<ItemTemplate>();
+            var lootTemplates = new List<LootTemplate>();
 
             foreach (var block in blocks)
             {
@@ -139,7 +177,15 @@ internal static class UoxItemConverter
                     continue;
                 }
 
-                var template = ItemTemplateBuilder.Build(block, blocksByHeader, idByHeader);
+                if (lootIdByHeader.TryGetValue(block.Header, out var lootId))
+                {
+                    lootTemplates.Add(LootTemplateBuilder.Build(block, lootId, idByHeader, knownLootIds, out var skipped));
+                    skippedUnresolvedLootEntry += skipped;
+
+                    continue;
+                }
+
+                var template = ItemTemplateBuilder.Build(block, idByHeader);
 
                 if (template is null)
                 {
@@ -148,11 +194,10 @@ internal static class UoxItemConverter
                     continue;
                 }
 
-                idByHeader[block.Header] = template.Id;
                 templates.Add(template);
             }
 
-            if (templates.Count == 0)
+            if (templates.Count == 0 && lootTemplates.Count == 0)
             {
                 continue;
             }
@@ -160,15 +205,18 @@ internal static class UoxItemConverter
             var relative = Path.GetRelativePath(Directory.Exists(source) ? source : Path.GetDirectoryName(source)!, file);
             var outputPath = Path.Combine(destination, Path.ChangeExtension(relative, ".toml"));
             Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
-            TomlUtils.SerializeToFile(new ItemTemplateFile { Item = templates }, outputPath);
+            TomlUtils.SerializeToFile(new ItemTemplateFile { Item = templates, Loot = lootTemplates }, outputPath);
             written += templates.Count;
+            lootWritten += lootTemplates.Count;
 
-            Console.WriteLine($"{relative} -> {Path.GetRelativePath(destination, outputPath)} ({templates.Count} item(s))");
+            var lootSummary = lootTemplates.Count > 0 ? $", {lootTemplates.Count} loot table(s)" : "";
+            Console.WriteLine($"{relative} -> {Path.GetRelativePath(destination, outputPath)} ({templates.Count} item(s){lootSummary})");
         }
 
         Console.WriteLine(
-            $"Converted {written} item(s); skipped {skippedNoId} block(s) with no id= of their own " +
-            $"and {skippedDuplicate} duplicate of an already-converted header."
+            $"Converted {written} item(s) and {lootWritten} loot table(s); skipped {skippedNoId} block(s) with no " +
+            $"id= of their own, {skippedDuplicate} duplicate of an already-converted header, and " +
+            $"{skippedUnresolvedLootEntry} loot entry/entries pointing at nothing this converter could resolve."
         );
 
         return 0;
@@ -187,11 +235,17 @@ internal static class UoxItemConverter
     }
 }
 
-/// <summary>One <c>[header] { key=value ... }</c> block read from a UOX3 <c>.dfn</c> file.</summary>
-internal sealed record DfnBlock(string Header, Dictionary<string, string> Fields);
+/// <summary>One <c>[header] { ... }</c> block read from a UOX3 <c>.dfn</c> file: <see cref="Fields" />
+/// for an item block's flat <c>key=value</c> lines, <see cref="Entries" /> for every line verbatim,
+/// which is what a <c>[LOOTLIST ...]</c> block's bare, unkeyed entry lines need instead.</summary>
+internal sealed record DfnBlock(string Header, Dictionary<string, string> Fields, List<string> Entries);
 
 /// <summary>Reads UOX3's <c>.dfn</c> block format: <c>// comment</c> lines, blank lines, a
-/// <c>[header]</c> line, a bare <c>{</c>, flat <c>key=value</c> lines, and a bare <c>}</c>.</summary>
+/// <c>[header]</c> line, a bare <c>{</c>, one line per entry, and a bare <c>}</c>. A trailing
+/// <c>//comment</c> is stripped from every line first, real data has it glued straight onto a brace
+/// with no space (<c>{//approximately 1%</c>), which otherwise hides the whole block: the real
+/// engine (<c>oldstrutil::removeTrailing(sLine, "//")</c> in UOX3's own <c>ssection.cpp</c>) does the
+/// same, unconditionally, before looking at a line's content.</summary>
 internal static class DfnParser
 {
     public static List<DfnBlock> Parse(IReadOnlyList<string> lines)
@@ -199,12 +253,19 @@ internal static class DfnParser
         var blocks = new List<DfnBlock>();
         string? header = null;
         Dictionary<string, string>? fields = null;
+        List<string>? entries = null;
 
         foreach (var rawLine in lines)
         {
             var line = rawLine.Trim();
+            var commentIndex = line.IndexOf("//", StringComparison.Ordinal);
 
-            if (line.Length == 0 || line.StartsWith("//", StringComparison.Ordinal))
+            if (commentIndex >= 0)
+            {
+                line = line[..commentIndex].TrimEnd();
+            }
+
+            if (line.Length == 0)
             {
                 continue;
             }
@@ -213,6 +274,7 @@ internal static class DfnParser
             {
                 header = line[1..^1];
                 fields = null;
+                entries = null;
 
                 continue;
             }
@@ -220,27 +282,31 @@ internal static class DfnParser
             if (line == "{")
             {
                 fields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                entries = [];
 
                 continue;
             }
 
             if (line == "}")
             {
-                if (header is not null && fields is not null)
+                if (header is not null && fields is not null && entries is not null)
                 {
-                    blocks.Add(new DfnBlock(header, fields));
+                    blocks.Add(new DfnBlock(header, fields, entries));
                 }
 
                 header = null;
                 fields = null;
+                entries = null;
 
                 continue;
             }
 
-            if (fields is null)
+            if (fields is null || entries is null)
             {
                 continue;
             }
+
+            entries.Add(line);
 
             var separator = line.IndexOf('=');
 
@@ -259,27 +325,41 @@ internal static class DfnParser
 }
 
 /// <summary>Builds an <see cref="ItemTemplate" /> from one parsed block, resolving its <c>get=</c>
-/// target against templates already built from earlier blocks.</summary>
+/// target against a fully precomputed header-to-Id map.</summary>
 internal static class ItemTemplateBuilder
 {
-    public static ItemTemplate? Build(
-        DfnBlock block,
-        IReadOnlyDictionary<string, DfnBlock> blocksByHeader,
-        IReadOnlyDictionary<string, string> idByHeader
-    )
+    /// <summary>
+    /// Computes a block's Id and item Serial, with no dependency on any other block. Used both to
+    /// precompute the full header-to-Id map up front and, once that map exists, by <see cref="Build" />.
+    /// False for a block with no id= of its own (a get=a b alias, or a non-item block).
+    /// </summary>
+    public static bool TryComputeId(DfnBlock block, out string id, out Serial itemId)
     {
-        if (!block.Fields.TryGetValue("id", out var idText) || !Serial.TryParse(idText, out var itemId))
+        if (!block.Fields.TryGetValue("id", out var idText) || !Serial.TryParse(idText, out itemId))
         {
-            return null;
+            id = "";
+            itemId = default;
+
+            return false;
         }
 
         // The header alone is always unique (duplicates are caught and warned about while every
         // block is being read). name= is not: UOX3 reuses it across many facing, material or
         // damage-state variants of the same conceptual thing, sometimes literally "#", so it can
         // only ever be an addition to the header, never a replacement for it.
-        var id = IsBareHex(block.Header) && block.Fields.TryGetValue("name", out var name) && name.Length > 0
-                     ? $"{block.Header}_{name}"
-                     : block.Header;
+        id = IsBareHex(block.Header) && block.Fields.TryGetValue("name", out var name) && name.Length > 0
+                 ? $"{block.Header}_{name}"
+                 : block.Header;
+
+        return true;
+    }
+
+    public static ItemTemplate? Build(DfnBlock block, IReadOnlyDictionary<string, string> idByHeader)
+    {
+        if (!TryComputeId(block, out var id, out var itemId))
+        {
+            return null;
+        }
 
         var template = new ItemTemplate
         {
@@ -323,8 +403,139 @@ internal static class ItemTemplateBuilder
         => header.StartsWith("0x", StringComparison.OrdinalIgnoreCase);
 }
 
-/// <summary>The root of one converted TOML file: an array of tables under the key <c>item</c>.</summary>
+/// <summary>Builds a <see cref="LootTemplate" /> from one <c>[LOOTLIST name]</c> block, resolving each
+/// entry's item or nested-table reference against the same maps <see cref="ItemTemplateBuilder" /> uses.</summary>
+internal static class LootTemplateBuilder
+{
+    private const string HeaderPrefix = "LOOTLIST ";
+    private const string NestedLootPrefix = "LOOTLIST=";
+    private const string NestedItemListPrefix = "ITEMLIST=";
+
+    /// <summary>True when <paramref name="header" /> names a loot block (<c>"LOOTLIST name"</c>),
+    /// with the table's own Id, everything after the prefix, as <paramref name="lootId" />.</summary>
+    public static bool TryGetLootId(string header, out string lootId)
+    {
+        if (header.StartsWith(HeaderPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            lootId = header[HeaderPrefix.Length..].Trim();
+
+            return true;
+        }
+
+        lootId = "";
+
+        return false;
+    }
+
+    public static LootTemplate Build(
+        DfnBlock block,
+        string id,
+        IReadOnlyDictionary<string, string> idByHeader,
+        IReadOnlySet<string> knownLootIds,
+        out int skippedEntries
+    )
+    {
+        var entries = new List<LootEntry>();
+        skippedEntries = 0;
+
+        foreach (var rawLine in block.Entries)
+        {
+            var entry = ParseEntry(rawLine, idByHeader, knownLootIds);
+
+            if (entry is null)
+            {
+                skippedEntries++;
+
+                continue;
+            }
+
+            entries.Add(entry);
+        }
+
+        return new LootTemplate { Id = id, Entries = entries };
+    }
+
+    private static LootEntry? ParseEntry(
+        string rawLine,
+        IReadOnlyDictionary<string, string> idByHeader,
+        IReadOnlySet<string> knownLootIds
+    )
+    {
+        var weight = 1;
+        var rest = rawLine;
+        var pipe = rawLine.IndexOf('|');
+
+        if (pipe >= 0)
+        {
+            if (!int.TryParse(rawLine[..pipe].Trim(), out weight))
+            {
+                weight = 1;
+            }
+
+            rest = rawLine[(pipe + 1)..].Trim();
+        }
+
+        var reference = rest;
+        string? amountText = null;
+        var comma = rest.IndexOf(',');
+
+        if (comma >= 0)
+        {
+            reference = rest[..comma].Trim();
+            amountText = rest[(comma + 1)..].Trim();
+        }
+
+        var amount = ParseAmount(amountText);
+
+        if (reference.Equals("blank", StringComparison.OrdinalIgnoreCase))
+        {
+            return new LootEntry { Weight = weight, Amount = amount };
+        }
+
+        if (reference.StartsWith(NestedLootPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            var nestedId = reference[NestedLootPrefix.Length..].Trim();
+
+            return knownLootIds.Contains(nestedId)
+                       ? new LootEntry { Weight = weight, LootTemplateId = nestedId, Amount = amount }
+                       : null;
+        }
+
+        // ITEMLIST=, UOX3's "spawn everything in this list" sibling to LOOTLIST=, has no home in
+        // LootEntry: it is a different mechanic (spawn every entry, not pick one), and never appears
+        // in real lootlists.dfn data.
+        if (reference.StartsWith(NestedItemListPrefix, StringComparison.OrdinalIgnoreCase))
+        {
+            return null;
+        }
+
+        return idByHeader.TryGetValue(reference, out var itemId)
+                   ? new LootEntry { Weight = weight, ItemId = itemId, Amount = amount }
+                   : null;
+    }
+
+    private static RangeValueSpec<int> ParseAmount(string? amountText)
+    {
+        if (string.IsNullOrEmpty(amountText))
+        {
+            return RangeValueSpec<int>.FromValue(1);
+        }
+
+        var parts = amountText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+        if (parts.Length >= 2 && int.TryParse(parts[0], out var min) && int.TryParse(parts[1], out var max))
+        {
+            return RangeValueSpec<int>.FromRange(min, max);
+        }
+
+        return int.TryParse(parts[0], out var value) ? RangeValueSpec<int>.FromValue(value) : RangeValueSpec<int>.FromValue(1);
+    }
+}
+
+/// <summary>The root of one converted TOML file: an array of tables under <c>item</c>, and one under
+/// <c>loot</c> for any <c>[LOOTLIST ...]</c> blocks found in the same source file.</summary>
 internal sealed class ItemTemplateFile
 {
     public List<ItemTemplate> Item { get; set; } = [];
+    public List<LootTemplate> Loot { get; set; } = [];
 }

@@ -223,6 +223,192 @@ public sealed class UoxItemConverterTests : IDisposable
         Assert.Contains("Usage:", result.Output, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Run_ALootListBlock_ConvertsWeightedEntriesAgainstItemsInTheSameFile()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            40|blank
+            10|0x0f0f
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        );
+        var loot = Assert.Single(file!.Loot);
+        Assert.Equal("eartheleLoot", loot.Id);
+        Assert.Equal(2, loot.Entries.Count);
+
+        var blankEntry = loot.Entries.Single(e => e.Weight == 40);
+        Assert.Null(blankEntry.ItemId);
+        Assert.Null(blankEntry.LootTemplateId);
+
+        var itemEntry = loot.Entries.Single(e => e.Weight == 10);
+        Assert.Equal("0x0f0f", itemEntry.ItemId);
+        Assert.Null(itemEntry.LootTemplateId);
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryWithNoWeightPrefix_DefaultsToWeightOne()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+
+            [LOOTLIST unweighted]
+            {
+            0x0f0f
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        );
+        var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
+        Assert.Equal(1, entry.Weight);
+    }
+
+    [Fact]
+    public async Task Run_ANestedLootListReference_ResolvesLootTemplateIdAndAmount()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [LOOTLIST randomgems]
+            {
+            10|blank
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|LOOTLIST=randomgems,2
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        );
+        var eartheleLoot = file!.Loot.Single(l => l.Id == "eartheleLoot");
+        var entry = Assert.Single(eartheleLoot.Entries);
+        Assert.Equal("randomgems", entry.LootTemplateId);
+        Assert.Null(entry.ItemId);
+        Assert.Equal(2, entry.Amount.Resolve());
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryPointingAtNothingResolvable_IsSkipped()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [LOOTLIST eartheleLoot]
+            {
+            10|LOOTLIST=nonexistent
+            10|0x9999
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        Assert.Contains("2 loot entry/entries", result.Output, StringComparison.Ordinal);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        );
+        Assert.Empty(Assert.Single(file!.Loot).Entries);
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryWithAMinMaxAmount_ParsesARangeSpec()
+    {
+        _converter.WriteSource(
+            "loot.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+
+            [LOOTLIST eartheleLoot]
+            {
+            10|0x0f0f,1 3
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "loot.toml")
+        );
+        var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
+        var resolves = Enumerable.Range(0, 20).Select(_ => entry.Amount.Resolve()).ToArray();
+        Assert.All(resolves, value => Assert.InRange(value, 1, 3));
+        Assert.Contains(resolves, value => value != resolves[0]);
+    }
+
+    [Fact]
+    public async Task Run_ALootEntryReferencingAnItemDefinedInAFileScannedLater_StillResolves()
+    {
+        // File names deliberately sort the referencing loot block before the item that defines its
+        // target, the exact ordering that broke Id resolution before every block's Id was precomputed
+        // up front instead of being filled in as each file happened to be visited.
+        _converter.WriteSource(
+            "aaa_lootlist.dfn",
+            """
+            [LOOTLIST eartheleLoot]
+            {
+            10|0x0f0f
+            }
+            """
+        );
+        _converter.WriteSource(
+            "zzz_items.dfn",
+            """
+            [0x0f0f]
+            {
+            id=0x0f0f
+            }
+            """
+        );
+
+        var result = await _converter.RunAsync();
+
+        Assert.True(result.ExitCode == 0, result.Output);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
+            Path.Combine(_converter.DestinationDirectory, "aaa_lootlist.toml")
+        );
+        var entry = Assert.Single(Assert.Single(file!.Loot).Entries);
+        Assert.Equal("0x0f0f", entry.ItemId);
+    }
+
     public void Dispose()
     {
         _converter.Dispose();
