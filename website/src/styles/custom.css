@@ -1,0 +1,41 @@
+/* Moongate brand palette, derived from images/moongate_logo.png:
+   night sky #1C1928 / #252230, rune stone indigo #656394, portal blue #6BA0D6,
+   moonlight cream #F5F1EA. Starlight reads these tokens for every component. */
+
+/* Dark theme (default) */
+:root {
+  --sl-color-accent-low: #2b2c5e;
+  --sl-color-accent: #7f83e0;
+  --sl-color-accent-high: #c6c8f6;
+  --sl-color-white: #f5f1ea;
+  --sl-color-gray-1: #e9e6e1;
+  --sl-color-gray-2: #c9c5c3;
+  --sl-color-gray-3: #969199;
+  --sl-color-gray-4: #625d6e;
+  --sl-color-gray-5: #403c4f;
+  --sl-color-gray-6: #2a2737;
+  --sl-color-gray-7: #1c1928;
+  --sl-color-black: #16141f;
+}
+
+/* Light theme */
+:root[data-theme='light'] {
+  --sl-color-accent-low: #dfe0f8;
+  --sl-color-accent: #4d51b8;
+  --sl-color-accent-high: #26285f;
+  --sl-color-white: #16141f;
+  --sl-color-gray-1: #26232f;
+  --sl-color-gray-2: #403c4f;
+  --sl-color-gray-3: #625d6e;
+  --sl-color-gray-4: #969199;
+  --sl-color-gray-5: #c9c5c3;
+  --sl-color-gray-6: #e9e6e1;
+  --sl-color-gray-7: #f3f0ea;
+  --sl-color-black: #fbf9f5;
+}
+
+/* Hero: the logo is pixel art; keep it crisp instead of blurred by scaling. */
+.hero img,
+.site-title img {
+  image-rendering: pixelated;
+}
