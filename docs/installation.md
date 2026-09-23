@@ -14,11 +14,11 @@ against the checksum published beside it, and puts it in place:
 
 | Path | Contents |
 | --- | --- |
-| `/opt/moongate/` | The archive's contents: the server binary, `LICENSE`, `THIRD-PARTY-NOTICES.md` and the debug symbols |
+| `/opt/moongate/` | The archive's contents: the server binary, the core SQL in `migrations/`, the migration runner in `migration-runner/`, `mgboot` (releases after 0.6.0), `LICENSE`, `THIRD-PARTY-NOTICES.md` and the debug symbols |
 | `/usr/local/bin/moongate` | A symlink to `/opt/moongate/Moongate.Server` |
-| `/usr/local/bin/mgboot` | Root initialization command, when included in the installed release |
+| `/usr/local/bin/mgboot` | A symlink to `/opt/moongate/mgboot`, when the release contains it |
 
-Those two locations need root. Run the line as root, or leave it to `sudo`, which the script
+Both locations need root. Run the line as root, or leave it to `sudo`, which the script
 uses itself when it is not running as root. Nothing else is created: no service, no system user
 and no data directory, because you choose where the server root lives at the first start.
 
@@ -27,49 +27,24 @@ needs no .NET runtime. Systems using musl, Alpine among them, are refused: the b
 against glibc. On macOS and Windows, take the archive for your platform from the
 [releases page](https://github.com/moongate-community/moongate/releases), or use Docker.
 
-## Prepare the root
+## Next: first start
 
-Releases containing `mgboot` can prepare the data root without a server startup:
+Never run the server inside `/opt/moongate`. Upgrading replaces that whole directory,
+so configuration, plugins and generated files kept there are lost the next time the
+install line runs; as an ordinary user the attempt fails anyway with
+`Access to the path '/opt/moongate/moongate.pid.lock' is denied`. Give the server a
+root of its own and prepare it:
 
 ```sh
 sudo mkdir -p /srv/moongate && sudo chown "$USER" /srv/moongate
 mgboot /srv/moongate
 ```
 
-This writes the default config and copies the release's base SQL migrations.
-Configure the client path and databases, then apply the migrations before starting.
-See [Prepare a root with mgboot](mgboot.md) for the complete sequence and rerun behavior.
-The first-start behavior below also applies to older releases without the utility.
-
-## First start
-
-Give the server a directory of its own and point it there:
-
-```sh
-sudo mkdir -p /srv/moongate && sudo chown "$USER" /srv/moongate
-moongate --root-directory /srv/moongate
-```
-
-Always pass `--root-directory`. Without it the server uses the directory the binary sits in,
-which is the installation directory, and writes its configuration and logs
-into it. Upgrading replaces that whole directory, so configuration, plugins, and
-generated files kept there are lost the next time the install line runs. Run as
-an ordinary user, the attempt fails instead, with
-`Access to the path '/opt/moongate/moongate.pid.lock' is denied`.
-
-On a fresh root the server writes `config/moongate.toml` and exits, because the default client
-path is `ChangeMe`. Set it to your own Ultima Online client data, which Moongate does not
-distribute, and start again:
-
-```toml
-[ultima]
-ultima_path = "/absolute/path/to/your/ultima-client"
-```
-
-[First start](getting-started.md) covers what the server writes under the root, how it guards
-against a second instance, and how to shut it down without interrupting a world save. The
-[configuration reference](server-configuration.md) lists every setting; the
-[persistence guide](persistence.md) explains PostgreSQL connections and schema preparation.
+`mgboot` ships in releases after 0.6.0; on 0.6.0 the first-start guide shows the
+equivalent manual steps. Then follow [Start a Moongate server](getting-started.md#first-start): edit the
+generated `config/moongate.toml`, create the two PostgreSQL databases, apply the
+core migrations with `/opt/moongate/migration-runner/Moongate.MigrationRunner`,
+and start with `moongate --root-directory /srv/moongate`.
 
 ## Upgrade
 
@@ -94,7 +69,7 @@ The script reads five environment variables:
 
 | Variable | Default | Purpose |
 | --- | --- | --- |
-| `MOONGATE_VERSION` | the latest release | Install a specific version, such as `0.4.1`; a leading `v` is accepted |
+| `MOONGATE_VERSION` | the latest release | Install a specific version, such as `0.6.0`; a leading `v` is accepted |
 | `MOONGATE_RID` | detected from `uname -m` | `linux-x64` or `linux-arm64` |
 | `MOONGATE_BASE_URL` | the GitHub release downloads | A mirror holding the same file names |
 | `MOONGATE_INSTALL_DIR` | `/opt/moongate` | Where the archive's contents go |
@@ -121,8 +96,8 @@ To skip the script entirely, download the archive and its checksum from the rele
 check it yourself:
 
 ```sh
-sha256sum -c moongate-linux-x64-0.4.1.tar.gz.sha256
-tar -xzf moongate-linux-x64-0.4.1.tar.gz
+sha256sum -c moongate-linux-x64-0.6.0.tar.gz.sha256
+tar -xzf moongate-linux-x64-0.6.0.tar.gz
 ```
 
 ## When it refuses
