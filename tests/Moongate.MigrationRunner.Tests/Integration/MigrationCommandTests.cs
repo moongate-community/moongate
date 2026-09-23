@@ -39,8 +39,12 @@ public sealed class MigrationCommandTests : IClassFixture<PostgreSqlFixture>
         await using var db = await _postgres.CreateDatabaseAsync();
         using var files = new MigrationFiles();
         var builder = new NpgsqlConnectionStringBuilder(db.ConnectionString);
+        // PostgreSqlConnectionString.Normalize reads the port only from the URI's own authority
+        // (defaulting to 5432 there), never from a query parameter, so a non-default port must ride
+        // in the authority itself - "localhost" alone silently assumed 5432 whenever the real
+        // Postgres this test runs against listens elsewhere.
         var uri =
-            $"postgres://postgres@localhost/{builder.Database}?host={Uri.EscapeDataString(builder.Host!)}&pooling=false";
+            $"postgres://postgres@localhost:{builder.Port}/{builder.Database}?host={Uri.EscapeDataString(builder.Host!)}&pooling=false";
         var config =
             "[api]\nenabled = false\n[persistence.accounts]\nconnection_string = '$ABSENT_AUTH_DATABASE'\n[persistence.realm]\nconnection_string = '" +
             uri +
