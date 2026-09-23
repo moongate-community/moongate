@@ -18,7 +18,7 @@ internal sealed class AccountServiceFixture : IAsyncDisposable
     public MoongatePersistenceService Persistence => _host.Owner;
     public PostgreSqlTestDatabase Database => _host.AccountsDatabase!;
     public PostgreSqlTestDatabase WorldDatabase => _host.Database;
-    public string Password { get; } = Guid.NewGuid().ToString("N");
+    public string Password { get; } = Guid.NewGuid().ToString("N")[..30];
 
     private AccountServiceFixture(HostPersistenceFixture host)
     {
