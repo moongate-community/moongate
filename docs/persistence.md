@@ -337,7 +337,7 @@ dotnet run --project src/Moongate.MigrationRunner -- status \
 
 The server uses its shipped catalog; the runner's optional directory override is
 for authoring and maintenance. Deploy identical SQL to the server before restart.
-`Moongate.Server --persistence-schema apply` is no longer supported: it directs
+Since 0.6.0, `Moongate.Server --persistence-schema apply` is not supported: it directs
 you to the versioned runner. For framework-dependent server output use
 `dotnet Moongate.Server.dll ...`.
 
@@ -547,7 +547,7 @@ a new entity with `UpsertAsync` before adding it to the live save collection.
 
 The advanced `MoongatePersistenceService.ReserveSerialAsync<TEntity>("schema.sequence",
 cancellationToken)` API remains available for explicitly migration-managed sequences.
-It is no longer required by account services or ordinary new entities. It does not
+Account services and ordinary new entities do not need it. It does not
 create sequences or allocate gameplay serial ranges.
 
 ## Concurrent load testing

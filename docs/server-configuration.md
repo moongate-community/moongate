@@ -132,8 +132,7 @@ library's default `ApiOptions` limits and timeouts. See
 
 ## Enable the internal API server
 
-This integration is available in builds containing the API hosting change. Older
-release images require upgrading or building the current checkout.
+API hosting ships from 0.4.0 and automatic certificate generation from 0.5.0.
 
 1. Provision certificates using the [API certificate guide](api-certificates.md).
    It covers automatic self-signed generation with the port closed, public

@@ -82,19 +82,10 @@ The executable host provides these implementations and their startup order.
 
 ### Compatibility
 
-`NetworkSession` now accepts `INetworkConnection`, and its nullable `Client` property
-returns that interface. `ISessionService.GetOrCreate` also accepts `INetworkConnection`.
-These are **binary API changes: rebuild consumers and plugins**. Passing an existing
-`MoongateTcpClient` remains source-compatible. Implementations of `ISessionService`
-must update their method signature. Replace `session.NetworkSession.Client.Dispose()`
-with the owning connection/sender service's `DisconnectAsync(session.SessionId)`.
-
-Implementations of `INetworkService` must implement the three new events. Session detach
-only clears the reference; it does not close the transport. Endpoint strings remain
-snapshotted after detach, and missing local endpoint metadata remains null.
-
-See the [migration guide](https://github.com/moongate-community/moongate/blob/develop/docs/network-game-separation.md)
-for composition and shutdown examples.
+Since 0.2.0, sessions hold an `INetworkConnection` instead of a `MoongateTcpClient`;
+consumers and plugins built against 0.1.x must be rebuilt. See
+[Transport and game ownership](https://moongate.sh/server/network-game-separation/)
+for the composition sample, the shutdown sequence and the upgrade notes.
 
 ## Runtime guides
 

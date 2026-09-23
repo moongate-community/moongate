@@ -80,13 +80,14 @@ overload. That signal survives registry removal and distinguishes an explicit li
 close from transport failure or remote completion. Cleanup failures are logged and
 remain observable at shutdown; writes interrupted by a requested local close are expected.
 
-## Migrate consumers and plugins
+## Upgrading from 0.1.x
 
-Rebuild all `Moongate.Server.Core` consumers: the `NetworkSession` constructor,
-`NetworkSession.Client` return type, and `ISessionService.GetOrCreate` parameter now use
-`INetworkConnection` instead of `MoongateTcpClient`. Existing calls passing a concrete
-TCP client still compile. Custom session services must change their method signature.
-Custom network services must implement the three new synchronous events.
+Since 0.2.0 the `NetworkSession` constructor, the `NetworkSession.Client` return type
+and the `ISessionService.GetOrCreate` parameter use `INetworkConnection` instead of
+`MoongateTcpClient`. This is a binary API change: rebuild consumers and plugins.
+Existing calls passing a concrete TCP client still compile. Custom session services
+must change their method signature. Custom network services must implement the
+three synchronous events `ConnectionAccepted`, `DataReceived` and `ConnectionClosed`.
 
 ```csharp
 // Before: session.NetworkSession.Client?.Dispose();
@@ -103,7 +104,7 @@ snapshots; it does not close a connection. Its disconnected state remains termin
 `INetworkConnection.LocalEndPoint` is optional and defaults to null for existing custom
 implementations. Always handle absent local metadata.
 
-`NetworkService` construction now takes `(NetworkListenerOptions, IConnectionService)`;
+`NetworkService` construction takes `(NetworkListenerOptions, IConnectionService)`;
 `PacketSendService` takes `(IConnectionService, int capacity = 128)`. Custom hosts must
 add `GameServerService` if they need the UO session/dispatch path. Registering only the raw
 network service intentionally performs no packet decoding or game-session creation.
