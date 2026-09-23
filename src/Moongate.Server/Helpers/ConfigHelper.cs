@@ -1,4 +1,5 @@
 using Moongate.Core.Utils;
+using Moongate.Core.Extensions.Env;
 using Moongate.Server.Data.Config;
 
 namespace Moongate.Server.Helpers;
@@ -24,6 +25,17 @@ public static class ConfigHelper
                          throw new InvalidDataException(
                              $"Configuration file '{filePath}' did not contain a server configuration."
                          );
+            if (loaded.Api?.Peers is not null)
+            {
+                foreach (var peer in loaded.Api.Peers)
+                {
+                    if (peer?.CertificateSha256 is not null)
+                    {
+                        peer.CertificateSha256 = peer.CertificateSha256.ExpandEnvironmentVariables(true);
+                    }
+                }
+            }
+
             loaded.Validate();
 
             return loaded;

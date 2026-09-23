@@ -1,8 +1,8 @@
 # PostgreSQL persistence: entities and data access
 
 Moongate stores registered entities in PostgreSQL through FreeSql. A deployment
-uses one Accounts database, shared by every server, and one Realm database per
-world. Transactions and world saves never span those databases.
+uses one Accounts database owned by login and one Realm database per game world.
+Standalone uses both. Transactions and world saves never span those databases.
 
 This page is for the developer who registers an entity and reads or writes it.
 The other two persistence pages are
@@ -32,6 +32,11 @@ Select the database when registering it:
 container.AddPersistenceAuth<Account>();     // Shared Accounts database.
 container.AddPersistenceWorld<Character>();  // This realm's database.
 ```
+
+Register an entity only in a process that owns its target: Auth entities in
+`login` or `standalone`, World entities in `game` or `standalone`. Registering an
+entity for an inactive target fails during startup. A login process checks only
+Accounts connectivity; a game checks only its Realm database.
 
 Moongate creates internal modules automatically, grouping entities by database
 and PostgreSQL schema. A separate module class is not required. Declare a stable,
@@ -212,7 +217,8 @@ The built-in Ultima plugin registers `AccountEntity` in the Accounts database an
 `IDataAccess<AccountEntity>` and lets `UpsertAsync` assign the new account's `Id`.
 `ListAccountsAsync` wraps `GetAllAsync`: an unbounded, detached snapshot of every
 account, for administration rather than per-request lookups. `LoginAsync` verifies
-the password hash and the lock state; the packet login success path is still incomplete.
+the password hash and the lock state. A successful login now returns the filtered
+`0xA8` realm list, but selection and game handoff remain future work.
 
 The built-in Ultima plugin also registers a command to create accounts:
 

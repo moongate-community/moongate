@@ -1,53 +1,57 @@
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
-using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Interfaces.Packets;
-using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
-using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Handlers.Login;
 
 public sealed class AccountLoginPacketHandler : IAsyncPacketHandler<AccountLoginPacket>
 {
-    private readonly IPacketSendService _sender;
     private readonly ILogger _logger = Log.ForContext<AccountLoginPacketHandler>();
 
-    private readonly IAccountService _accountService;
+    private readonly LoginAccountFlow _flow;
 
-    public AccountLoginPacketHandler(IPacketSendService sender, IAccountService accountService)
+    public AccountLoginPacketHandler(LoginAccountFlow flow)
     {
-        _sender = sender;
-        _accountService = accountService;
+        _flow = flow;
     }
 
     public async ValueTask HandleAsync(PacketContext context, AccountLoginPacket packet, CancellationToken cancellationToken)
     {
-        var account = await _accountService.LoginAsync(packet.Account, packet.Password, cancellationToken);
+        var result = await _flow.AuthenticateAsync(packet.Account, packet.Password, cancellationToken);
 
         await context.RunOnGameLoopAsync(
             (session) =>
             {
-                if (account == null)
+                if (!result.Success)
                 {
                     _logger.Information("Login failed for account {Account}", packet.Account);
 
-                    if (!_sender.TrySend(session.SessionId, new LoginDeniedPacket(LoginDeniedReason.InvalidCredentials)))
+                    if (!context.TrySend(new LoginDeniedPacket(result.DenialReason!.Value)))
                     {
-                        _ = _sender.DisconnectAsync(session.SessionId);
+                        _ = session.NetworkSession.Client?.CloseAsync();
                     }
 
                     return;
                 }
 
-                session.SetAccountId(account.Id);
-                session.SetAccountType(account.AccountType);
+                session.SetAccountId(result.AccountId);
+                session.SetAccountType(result.AccountType);
+
+                if (!context.TrySend(new ServerListPacket(result.Servers)))
+                {
+                    session.SetAccountId(Moongate.Core.Primitives.Serial.Zero);
+                    session.SetAccountType(Moongate.Server.Core.Types.Accounts.AccountType.Regular);
+                    _ = session.NetworkSession.Client?.CloseAsync();
+                    return;
+                }
 
                 _logger.Information(
                     "Login successful for account {Account} (Level: {AccountLevel})",
                     packet.Account,
-                    account.AccountType
+                    result.AccountType
                 );
             },
             cancellationToken

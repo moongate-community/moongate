@@ -13,6 +13,34 @@ public sealed class PacketSendServiceTests
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     [Fact]
+    public async Task DisconnectAsync_ExpectedConnection_DoesNotCloseReplacementWithSameId()
+    {
+        using var original = new ControlledNetworkConnection(9002);
+        using var replacement = new ControlledNetworkConnection(9002);
+        var connections = new ConnectionService();
+        await connections.StartAsync();
+        Assert.True(connections.TryRegister(original));
+        var sender = new PacketSendService(connections);
+        await sender.StartAsync();
+
+        try
+        {
+            original.Complete();
+            Assert.True(SpinWait.SpinUntil(() => connections.TryRegister(replacement), Timeout));
+            await sender.DisconnectAsync(9002, original).WaitAsync(Timeout);
+            Assert.True(replacement.IsConnected);
+            Assert.True(sender.TrySend(9002, replacement, new PingPacket(7)));
+            Assert.Equal(new byte[] { 0x73, 7 },
+                await replacement.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+        }
+        finally
+        {
+            await sender.StopAsync().WaitAsync(Timeout);
+            await connections.StopAsync().WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
     public async Task TrySend_ExpectedConnectionRejectsReusedSessionId()
     {
         using var original = new ControlledNetworkConnection(9001);

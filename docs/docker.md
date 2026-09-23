@@ -206,7 +206,8 @@ Check `docker compose logs moongate`: disabled APIs produce an activation warnin
 enabled APIs log the bound endpoint and registered contract/handler counts. Bad
 TLS configuration or an occupied listener port fails startup. The API speaks
 MessagePack over mutual TLS/TCP, so an HTTP request or `curl` is not an API probe.
-There are no built-in login or realm operations yet; register handlers first.
+In login mode, realm registration operations 256–258 are registered by the host.
+Other operations still need their own typed handlers.
 
 ## Storage and multiple instances
 
@@ -281,7 +282,8 @@ pre-owned by the runtime user at build time.
   that, check the logs for the configuration or client-data error.
 - **`Postgres connection` failure:** the database host must be reachable from the
   container. `localhost` is the container itself; use the Compose service name or a
-  host address. Check that both databases exist and the role can log in.
+  host address. Check that the databases for the configured role exist and the
+  role can log in (Accounts for login, Realm for game, both for standalone).
 - **`The core migrations directory is missing`:** on images after 0.6.0 the server
   reads `/data/migrations`, which `mgboot` creates. Prepare the root with `mgboot` as
   in step 1, or set `persistence.migrations_directory = "/app/migrations"`.

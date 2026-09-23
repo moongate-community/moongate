@@ -1,0 +1,76 @@
+using DryIoc;
+using Moongate.Api.Registry;
+using Moongate.Core.Directories;
+using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Persistence.Extensions;
+using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Packets;
+using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Core.Types.Hosting;
+using Moongate.Server.Data.Config;
+using Moongate.Server.Ultima;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Tests.TestSupport.Directories;
+
+namespace Moongate.Tests.Server.Bootstrap.Internal;
+
+public sealed class ServerRoleRegistrationTests
+{
+    [Fact]
+    public void Register_StandaloneWithUnicodeShardName_UsesWireSafeDefaultRealmName()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Shard.ShardName = "Città di Luna";
+        container.RegisterInstance(config);
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+
+        ServerRoleRegistration.Register(container, config, directories);
+
+        Assert.Equal("Moongate", Assert.Single(container.Resolve<IRealmDirectoryService>()
+            .GetAvailable(AccountType.Regular)).Name);
+    }
+
+    [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
+    public void Register_SelectsRoleServicesAndPluginRegistrations(ServerMode mode)
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = mode };
+        container.RegisterInstance(config);
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: mode));
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IGameLoopService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ISessionService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IWorldSaveService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IDataLoaderService>());
+        Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());
+        Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IRealmDirectoryService>());
+        Assert.Equal(mode == ServerMode.Login ? 3 : 0, container.Resolve<ApiRegistry>().HandlerCount);
+        if (mode == ServerMode.Login)
+        {
+            Assert.Contains(typeof(AccountLoginPacket),
+                container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys);
+            Assert.False(container.IsRegistered<PacketHandlerRegistry>());
+        }
+        else
+        {
+            Assert.Equal(mode == ServerMode.Standalone,
+                container.Resolve<PacketHandlerRegistry>().Registrations.ContainsKey(typeof(AccountLoginPacket)));
+        }
+        Assert.Equal(mode == ServerMode.Standalone,
+            mode != ServerMode.Game && container.Resolve<IRealmDirectoryService>()
+                .GetAvailable(AccountType.Regular).Count == 1);
+    }
+}

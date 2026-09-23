@@ -16,6 +16,40 @@ trap cleanup EXIT INT TERM
 
 mkdir -p "$temporary_directory/uo"
 
+make_certificate()
+{
+    identity=$1
+    mkdir -p "$temporary_directory/tls/$identity"
+    openssl req -x509 -newkey rsa:2048 -nodes -days 1 \
+        -keyout "$temporary_directory/$identity.key" \
+        -out "$temporary_directory/$identity.pem" \
+        -subj "/CN=$identity" \
+        -addext "subjectAltName=DNS:$identity" \
+        -addext "extendedKeyUsage=serverAuth,clientAuth" >/dev/null 2>&1
+    openssl pkcs12 -export \
+        -inkey "$temporary_directory/$identity.key" \
+        -in "$temporary_directory/$identity.pem" \
+        -out "$temporary_directory/tls/$identity/server.pfx" \
+        -passout pass: >/dev/null 2>&1
+    rm -f -- "$temporary_directory/$identity.key"
+}
+
+make_certificate login
+make_certificate game-1
+make_certificate game-2
+cp "$temporary_directory/game-1.pem" "$temporary_directory/tls/login/game-1.pem"
+cp "$temporary_directory/game-2.pem" "$temporary_directory/tls/login/game-2.pem"
+cp "$temporary_directory/login.pem" "$temporary_directory/tls/game-1/login.pem"
+cp "$temporary_directory/login.pem" "$temporary_directory/tls/game-2/login.pem"
+chmod 755 "$temporary_directory" "$temporary_directory/tls" "$temporary_directory/tls/login" \
+    "$temporary_directory/tls/game-1" "$temporary_directory/tls/game-2"
+chmod 644 "$temporary_directory/tls/login/"* "$temporary_directory/tls/game-1/"* \
+    "$temporary_directory/tls/game-2/"*
+export MOONGATE_TLS_PATH="$temporary_directory/tls"
+export MOONGATE_LOGIN_CERT_SHA256="$(openssl x509 -in "$temporary_directory/login.pem" -noout -fingerprint -sha256 | cut -d= -f2 | tr -d :)"
+export MOONGATE_GAME_1_CERT_SHA256="$(openssl x509 -in "$temporary_directory/game-1.pem" -noout -fingerprint -sha256 | cut -d= -f2 | tr -d :)"
+export MOONGATE_GAME_2_CERT_SHA256="$(openssl x509 -in "$temporary_directory/game-2.pem" -noout -fingerprint -sha256 | cut -d= -f2 | tr -d :)"
+
 if env -i PATH="$PATH" UO_DATA_PATH="$temporary_directory/uo" \
     docker compose -p "$project" -f "$example_directory/compose.yaml" config --quiet >/dev/null 2>&1
 then
@@ -35,8 +69,13 @@ export MOONGATE_REALM_2_SCHEMA_PASSWORD="smoke-realm-2-schema-$project"
 export MOONGATE_REALM_2_RUNTIME_PASSWORD="smoke-realm-2-runtime-$project"
 
 $compose config --quiet
-$compose build login game-1 game-2 schema-preview schema-apply migration-status
+$compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply migration-status
 $compose up -d --wait postgres
+$compose run --rm auth-schema-apply
+auth_access=$($compose exec -T -e PGPASSWORD="$MOONGATE_ACCOUNTS_RUNTIME_PASSWORD" postgres \
+    psql -h 127.0.0.1 -At -v ON_ERROR_STOP=1 -U moongate_accounts_runtime \
+    -d moongate_accounts -c "SELECT has_sequence_privilege(current_user, 'auth.account_id_seq', 'USAGE');")
+[ "$auth_access" = "t" ] || { echo "Accounts runtime role cannot use its ID sequence." >&2; exit 1; }
 
 $compose exec -T -e PGPASSWORD="$MOONGATE_REALM_1_SCHEMA_PASSWORD" postgres \
     psql -h 127.0.0.1 -At -v ON_ERROR_STOP=1 -U moongate_realm_1_schema \
@@ -84,7 +123,7 @@ fi
 echo "PASS: runtime role cannot perform DDL"
 history=$($postgres_exec psql -At -v ON_ERROR_STOP=1 -U moongate_realm_1_runtime -d moongate_realm_1 \
     -c "SELECT count(*) FROM moongate_migrations.history WHERE target = 'world';")
-[ "$history" = "1" ] || { echo "Expected one readable migration history row." >&2; exit 1; }
+[ "$history" = "2" ] || { echo "Expected two readable World migration history rows." >&2; exit 1; }
 if $postgres_exec psql -v ON_ERROR_STOP=1 -U moongate_realm_1_runtime -d moongate_realm_1 \
     -c "DELETE FROM moongate_migrations.history;" >/dev/null 2>&1
 then
@@ -108,6 +147,22 @@ do
         sleep 1
     done
 done
+
+for realm in game-1 game-2
+do
+    attempts=0
+    until $compose logs "$realm" 2>&1 | grep -F 'registered with login API' >/dev/null
+    do
+        attempts=$((attempts + 1))
+        if [ "$attempts" -ge 30 ]; then
+            $compose logs "$realm" >&2
+            echo "$realm did not register with login within 30 seconds." >&2
+            exit 1
+        fi
+        sleep 1
+    done
+done
+echo "PASS: two game realms registered with the login API"
 
 $compose stop login game-1 game-2
 for service in login game-1 game-2

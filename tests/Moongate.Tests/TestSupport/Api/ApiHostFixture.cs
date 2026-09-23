@@ -5,6 +5,7 @@ using System.Security.Cryptography.X509Certificates;
 using Moongate.Api.Client;
 using Moongate.Api.Registry;
 using Moongate.Core.Directories;
+using Moongate.Server.Core.Data.Realms.Api;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Api;
 using Moongate.Tests.TestSupport.Directories;
@@ -17,12 +18,15 @@ internal sealed class ApiHostFixture : IDisposable
     private readonly ApiTestCertificateAuthority _authority = new();
     private readonly X509Certificate2 _server;
     private readonly X509Certificate2 _client;
+    private readonly List<X509Certificate2> _additionalClients = [];
     private readonly string _passwordVariable = $"MOONGATE_TEST_API_{Guid.NewGuid():N}";
 
     public ApiConfig Config { get; }
     public DirectoriesConfig Directories { get; }
     public ApiRegistry Registry { get; } = new();
     public string Password { get; } = Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
+
+    public string ServerFingerprint => _server.GetCertHashString(HashAlgorithmName.SHA256);
 
     public ApiHostFixture()
     {
@@ -72,10 +76,11 @@ internal sealed class ApiHostFixture : IDisposable
         }
     }
 
-    public ApiClient CreateClient()
+    public ApiClient CreateClient(Action<ApiRegistry>? configureRegistry = null)
     {
         var registry = new ApiRegistry();
         registry.RegisterContract<IncrementRequest, IncrementResponse>();
+        configureRegistry?.Invoke(registry);
 
         return new(
             registry,
@@ -85,6 +90,27 @@ internal sealed class ApiHostFixture : IDisposable
         );
     }
 
+    public ApiClient CreateRealmClient(string realmId)
+    {
+        var certificate = _authority.Issue();
+        _additionalClients.Add(certificate);
+        Config.Peers =
+        [
+            .. Config.Peers,
+            new()
+            {
+                CertificateSha256 = certificate.GetCertHashString(HashAlgorithmName.SHA256),
+                PeerId = realmId,
+                AllowedOperations = new([0x0100, 0x0101, 0x0102])
+            }
+        ];
+        var registry = new ApiRegistry();
+        registry.RegisterContract<RegisterRealmRequest, RegisterRealmResponse>();
+        registry.RegisterContract<RenewRealmRequest, RenewRealmResponse>();
+        registry.RegisterContract<UnregisterRealmRequest, UnregisterRealmResponse>();
+        return new(registry, new(), _authority.Options(certificate, _server, "server"), TimeProvider.System);
+    }
+
     public ApiServerService CreateService()
         => new(Config, Directories, Registry, TimeProvider.System);
 
@@ -92,6 +118,10 @@ internal sealed class ApiHostFixture : IDisposable
     {
         System.Environment.SetEnvironmentVariable(_passwordVariable, null);
         _client.Dispose();
+        foreach (var certificate in _additionalClients)
+        {
+            certificate.Dispose();
+        }
         _server.Dispose();
         _authority.Dispose();
         _directory.Dispose();

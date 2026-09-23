@@ -46,7 +46,7 @@ public static class ContainerExtensions
         public Container AddMoongateService<TService, TImplementation>(TImplementation instance, int priority = 0)
             where TService : class
             where TImplementation : class, TService
-            => container.AddMoongateService(typeof(TService), instance, priority);
+            => container.AddMoongateService<TService>(instance, priority);
 
         /// <summary>Registers an existing instance under a service type known at runtime.</summary>
         public Container AddMoongateService(Type serviceType, object instance, int priority = 0)

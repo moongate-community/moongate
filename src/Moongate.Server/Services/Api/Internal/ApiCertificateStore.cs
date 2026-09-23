@@ -19,7 +19,8 @@ internal sealed class ApiCertificateStore
 
     private readonly ILogger _logger = Log.ForContext<ApiCertificateStore>();
 
-    public X509Certificate2 Load(ApiConfig config, DirectoriesConfig directories, TimeProvider clock)
+    public X509Certificate2 Load(ApiConfig config, DirectoriesConfig directories, TimeProvider clock,
+        bool forClient = false)
     {
         config.ValidateCertificate();
         var passwordVariable = config.CertificatePasswordEnvironmentVariable;
@@ -44,7 +45,7 @@ internal sealed class ApiCertificateStore
 
         try
         {
-            ValidateServerCertificate(certificate, clock);
+            ValidateCertificateUsage(certificate, clock, forClient);
 
             if (config.AutoGenerateCertificate)
             {
@@ -185,7 +186,7 @@ internal sealed class ApiCertificateStore
         }
     }
 
-    private static void ValidateServerCertificate(X509Certificate2 certificate, TimeProvider clock)
+    private static void ValidateCertificateUsage(X509Certificate2 certificate, TimeProvider clock, bool forClient)
     {
         if (!certificate.HasPrivateKey)
         {
@@ -204,9 +205,12 @@ internal sealed class ApiCertificateStore
         {
             if (!usage.EnhancedKeyUsages
                       .Cast<Oid>()
-                      .Any(oid => oid.Value is ServerAuthenticationOid or AnyExtendedKeyUsageOid))
+                      .Any(oid => oid.Value == AnyExtendedKeyUsageOid ||
+                                  oid.Value == (forClient ? ClientAuthenticationOid : ServerAuthenticationOid)))
             {
-                throw new InvalidOperationException("The API server certificate must allow TLS server authentication.");
+                throw new InvalidOperationException(forClient
+                    ? "The API client certificate must allow TLS client authentication."
+                    : "The API server certificate must allow TLS server authentication.");
             }
         }
     }

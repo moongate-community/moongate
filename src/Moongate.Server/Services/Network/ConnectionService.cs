@@ -46,6 +46,25 @@ public sealed class ConnectionService : IConnectionService
     }
 
     /// <inheritdoc />
+    public Task DisconnectAsync(long sessionId, INetworkConnection expectedConnection)
+    {
+        ArgumentNullException.ThrowIfNull(expectedConnection);
+        lock (_gate)
+        {
+            if (_entries.TryGetValue(sessionId, out var entry) &&
+                ReferenceEquals(entry.Connection, expectedConnection))
+            {
+                RequestClose(entry, true);
+                return entry.Cleanup.Task;
+            }
+        }
+
+        return expectedConnection.Completion.IsCompleted
+                   ? Task.CompletedTask
+                   : expectedConnection.CloseAsync();
+    }
+
+    /// <inheritdoc />
     public IReadOnlyCollection<INetworkConnection> GetAll()
     {
         lock (_gate)

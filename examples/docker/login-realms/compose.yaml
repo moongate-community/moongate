@@ -1,5 +1,4 @@
-# Topology example: mode does not yet select a role-specific runtime.
-# Account sharing, realm discovery and login handoff are not implemented.
+# Realm discovery and server lists work; realm selection and handoff are not implemented.
 name: moongate-login-realms
 
 x-required-secrets:
@@ -10,6 +9,10 @@ x-required-secrets:
   realm-1-runtime: ${MOONGATE_REALM_1_RUNTIME_PASSWORD:?Export MOONGATE_REALM_1_RUNTIME_PASSWORD from Bitwarden}
   realm-2-schema: ${MOONGATE_REALM_2_SCHEMA_PASSWORD:?Export MOONGATE_REALM_2_SCHEMA_PASSWORD from Bitwarden}
   realm-2-runtime: ${MOONGATE_REALM_2_RUNTIME_PASSWORD:?Export MOONGATE_REALM_2_RUNTIME_PASSWORD from Bitwarden}
+  login-certificate: ${MOONGATE_LOGIN_CERT_SHA256:?Set the login certificate SHA-256 fingerprint}
+  game-1-certificate: ${MOONGATE_GAME_1_CERT_SHA256:?Set the game-1 certificate SHA-256 fingerprint}
+  game-2-certificate: ${MOONGATE_GAME_2_CERT_SHA256:?Set the game-2 certificate SHA-256 fingerprint}
+  tls-directory: ${MOONGATE_TLS_PATH:?Set MOONGATE_TLS_PATH to the certificate directory}
 
 x-moongate: &moongate
   build:
@@ -80,16 +83,16 @@ services:
 
   login:
     <<: *moongate
+    stdin_open: true
+    tty: true
     environment:
       MOONGATE_ACCOUNTS_DATABASE_FILE: /run/secrets/accounts-runtime-password
       MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
       MOONGATE_ACCOUNTS_RUNTIME_USER: ${ACCOUNTS_RUNTIME_USER:-moongate_accounts_runtime}
-      MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-1-runtime-password
-      MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
-      MOONGATE_REALM_RUNTIME_USER: ${REALM_1_RUNTIME_USER:-moongate_realm_1_runtime}
+      MOONGATE_GAME_1_CERT_SHA256: ${MOONGATE_GAME_1_CERT_SHA256}
+      MOONGATE_GAME_2_CERT_SHA256: ${MOONGATE_GAME_2_CERT_SHA256}
     secrets:
       - accounts-runtime-password
-      - realm-1-runtime-password
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${LOGIN_PORT:-2593}:2593"
     configs:
@@ -97,6 +100,7 @@ services:
         target: /data/config/moongate.toml
     volumes:
       - login-data:/data
+      - ${MOONGATE_TLS_PATH}/login:/data/config/tls:ro
       - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
       - *ultima
 
@@ -106,12 +110,9 @@ services:
       MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-1-runtime-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
       MOONGATE_REALM_RUNTIME_USER: ${REALM_1_RUNTIME_USER:-moongate_realm_1_runtime}
-      MOONGATE_ACCOUNTS_DATABASE_FILE: /run/secrets/accounts-runtime-password
-      MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
-      MOONGATE_ACCOUNTS_RUNTIME_USER: ${ACCOUNTS_RUNTIME_USER:-moongate_accounts_runtime}
+      MOONGATE_LOGIN_CERT_SHA256: ${MOONGATE_LOGIN_CERT_SHA256}
     secrets:
       - realm-1-runtime-password
-      - accounts-runtime-password
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_1_PORT:-2595}:2593"
     configs:
@@ -119,6 +120,7 @@ services:
         target: /data/config/moongate.toml
     volumes:
       - game-1-data:/data
+      - ${MOONGATE_TLS_PATH}/game-1:/data/config/tls:ro
       - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
       - *ultima
 
@@ -128,12 +130,9 @@ services:
       MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-2-runtime-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_2_DATABASE:-moongate_realm_2}
       MOONGATE_REALM_RUNTIME_USER: ${REALM_2_RUNTIME_USER:-moongate_realm_2_runtime}
-      MOONGATE_ACCOUNTS_DATABASE_FILE: /run/secrets/accounts-runtime-password
-      MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
-      MOONGATE_ACCOUNTS_RUNTIME_USER: ${ACCOUNTS_RUNTIME_USER:-moongate_accounts_runtime}
+      MOONGATE_LOGIN_CERT_SHA256: ${MOONGATE_LOGIN_CERT_SHA256}
     secrets:
       - realm-2-runtime-password
-      - accounts-runtime-password
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_2_PORT:-2596}:2593"
     configs:
@@ -141,8 +140,33 @@ services:
         target: /data/config/moongate.toml
     volumes:
       - game-2-data:/data
+      - ${MOONGATE_TLS_PATH}/game-2:/data/config/tls:ro
       - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
       - *ultima
+
+  auth-schema-apply:
+    <<: *moongate
+    profiles:
+      - schema
+    command:
+      - migrations
+      - apply
+      - --root-directory
+      - /data
+      - --target
+      - auth
+    environment:
+      MOONGATE_ACCOUNTS_SCHEMA_DATABASE_FILE: /run/secrets/accounts-schema-password
+      MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
+      MOONGATE_ACCOUNTS_SCHEMA_USER: ${ACCOUNTS_SCHEMA_USER:-moongate_accounts_schema}
+    secrets:
+      - accounts-schema-password
+    configs:
+      - source: auth-schema-config
+        target: /data/config/moongate.toml
+    volumes:
+      - schema-job-data:/data
+      - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
 
   schema-preview:
     <<: *moongate-sample
@@ -157,6 +181,7 @@ services:
       MOONGATE_REALM_SCHEMA_DATABASE_FILE: /run/secrets/realm-1-schema-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
       MOONGATE_REALM_SCHEMA_USER: ${REALM_1_SCHEMA_USER:-moongate_realm_1_schema}
+      MOONGATE_LOGIN_CERT_SHA256: ${MOONGATE_LOGIN_CERT_SHA256}
     secrets:
       - realm-1-schema-password
     configs:
@@ -164,6 +189,7 @@ services:
         target: /data/config/moongate.toml
     volumes:
       - schema-job-data:/data
+      - ${MOONGATE_TLS_PATH}/game-1:/data/config/tls:ro
       - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
 
   schema-apply:
@@ -181,6 +207,7 @@ services:
       MOONGATE_REALM_SCHEMA_DATABASE_FILE: /run/secrets/realm-1-schema-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
       MOONGATE_REALM_SCHEMA_USER: ${REALM_1_SCHEMA_USER:-moongate_realm_1_schema}
+      MOONGATE_LOGIN_CERT_SHA256: ${MOONGATE_LOGIN_CERT_SHA256}
     secrets:
       - realm-1-schema-password
     configs:
@@ -188,6 +215,7 @@ services:
         target: /data/config/moongate.toml
     volumes:
       - schema-job-data:/data
+      - ${MOONGATE_TLS_PATH}/game-1:/data/config/tls:ro
       - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
 
   migration-status:
@@ -205,6 +233,7 @@ services:
       MOONGATE_REALM_SCHEMA_DATABASE_FILE: /run/secrets/realm-1-schema-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
       MOONGATE_REALM_SCHEMA_USER: ${REALM_1_SCHEMA_USER:-moongate_realm_1_schema}
+      MOONGATE_LOGIN_CERT_SHA256: ${MOONGATE_LOGIN_CERT_SHA256}
     secrets:
       - realm-1-schema-password
     configs:
@@ -212,6 +241,7 @@ services:
         target: /data/config/moongate.toml
     volumes:
       - schema-job-data:/data
+      - ${MOONGATE_TLS_PATH}/game-1:/data/config/tls:ro
       - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
 
 configs:
@@ -223,6 +253,8 @@ configs:
     file: ./config/game-2.toml
   game-1-schema-config:
     file: ./config/game-1-schema.toml
+  auth-schema-config:
+    file: ./config/auth-schema.toml
 
 secrets:
   postgres-admin-password:

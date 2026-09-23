@@ -5,6 +5,23 @@ namespace Moongate.Tests.Server.Services.Network;
 
 public sealed class ConnectionServiceTests
 {
+    [Fact]
+    public async Task DisconnectAsync_ExpectedConnection_DoesNotCloseReplacement()
+    {
+        using var original = new ControlledNetworkConnection(7);
+        using var replacement = new ControlledNetworkConnection(7);
+        var connections = new ConnectionService();
+        await connections.StartAsync();
+        Assert.True(connections.TryRegister(original));
+        original.Complete();
+        Assert.True(SpinWait.SpinUntil(() => connections.TryRegister(replacement), TimeSpan.FromSeconds(2)));
+
+        await connections.DisconnectAsync(7, original);
+
+        Assert.True(replacement.IsConnected);
+        await connections.StopAsync();
+    }
+
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     [Fact]

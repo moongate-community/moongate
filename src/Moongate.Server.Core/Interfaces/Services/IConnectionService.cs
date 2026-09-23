@@ -14,6 +14,10 @@ public interface IConnectionService : IMoongateStartupService
     /// <remarks>Unknown identifiers are a no-op. Never wait for this task inside a transport callback.</remarks>
     Task DisconnectAsync(long sessionId);
 
+    /// <summary>Closes only the expected connection if its identifier has been reused.</summary>
+    Task DisconnectAsync(long sessionId, INetworkConnection expectedConnection)
+        => expectedConnection.CloseAsync();
+
     /// <summary>Returns an independent membership snapshot, including connections with unfinished cleanup.</summary>
     IReadOnlyCollection<INetworkConnection> GetAll();
 

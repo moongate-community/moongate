@@ -1,5 +1,6 @@
 using Moongate.Core.Utils;
 using Moongate.Persistence.Types.Persistence;
+using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Tests.TestSupport.Environment;
@@ -10,6 +11,38 @@ namespace Moongate.Tests.Server.Data.Config.Sections;
 [Collection(EnvironmentTestsCollection.Name)]
 public sealed class PersistenceConfigTests
 {
+    [Theory,
+     InlineData(ServerMode.Login, PersistenceDatabaseTarget.Accounts),
+     InlineData(ServerMode.Game, PersistenceDatabaseTarget.Realm)]
+    public void ToOptions_ConfiguresOnlyDatabaseOwnedByRole(ServerMode mode, PersistenceDatabaseTarget expected)
+    {
+        var options = new PersistenceConfig().ToOptions(mode: mode);
+
+        Assert.Equal([expected], options.ConfiguredTargets);
+    }
+
+    [Fact]
+    public void ToOptions_StandaloneConfiguresAccountsAndRealm()
+    {
+        var options = new PersistenceConfig().ToOptions(mode: ServerMode.Standalone);
+
+        Assert.Equal(
+            [PersistenceDatabaseTarget.Accounts, PersistenceDatabaseTarget.Realm],
+            options.ConfiguredTargets.Order().ToArray()
+        );
+    }
+
+    [Fact]
+    public void ToOptions_DoesNotValidateInactiveDatabase()
+    {
+        var config = new PersistenceConfig();
+        config.Realm.ConnectionString = " ";
+
+        var options = config.ToOptions(mode: ServerMode.Login);
+
+        Assert.Equal([PersistenceDatabaseTarget.Accounts], options.ConfiguredTargets);
+    }
+
     [Fact]
     public void ResolveMigrationsDirectory_ExpandsEnvironmentAndRejectsMissingVariables()
     {

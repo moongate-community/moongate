@@ -7,9 +7,9 @@ SHA-256 fingerprint allowlist. Clients also check the server's DNS name or IP
 address and expected peer ID.
 
 Moongate.Server can create a missing self-signed identity. This does not trust
-other servers automatically or register login/realm operations. The examples
-below prepare two identities named `login` and `realm-1`; application handlers
-and outbound connections still need to be registered by your code or plugin.
+other servers automatically. In `login` mode the host registers realm discovery
+operations 256–258; in `game` mode it connects outward to the login API. The
+examples below prepare two identities named `login` and `realm-1`.
 See [API host configuration](server-configuration.md#enable-the-internal-api-server)
 and the [typed API client example](../src/Moongate.Api/README.md#handle-requests-and-open-a-channel).
 
@@ -38,13 +38,15 @@ peers = []
    target, put that literal in `certificate_ip_addresses`. At least one DNS name
    or IP is required; URLs, wildcard DNS names and scoped IPv6 addresses are not
    accepted. Omitted arrays default to `["localhost"]` and `["127.0.0.1", "::1"]`.
-2. Start Moongate with that data root. At API service startup it creates
+2. Start a standalone Moongate instance with that data root. At API service startup it creates
    `<root>/config/tls/server.pfx` and `<root>/config/tls/server.pfx.pem`. It logs
    the paths, SHA-256 fingerprint and expiry. The API remains disabled, its
    registry remains unfrozen, and it opens **no API port**. Other configured
    host services still start normally; this is not a certificate-only CLI mode.
 3. Stop the instance before editing its configuration. Repeat with a separate
-   data root for `login`, using `certificate_dns_names = ["login"]`. Every
+   data root for `login`, using `certificate_dns_names = ["login"]`. Before
+   running it in `mode = "login"`, enable the API and configure trust peers;
+   login mode does not start with `api.enabled = false`. Every
    instance must keep its own PFX and private key.
 
 Relative certificate and trust-root paths resolve under `<root>/config`.
@@ -107,8 +109,12 @@ allowed_operations = ["*"]
 
 On **realm-1**, use the same structure with its own DNS name `realm-1`,
 `trusted_root_paths = ["tls/login.pem"]`, the **login** certificate fingerprint,
-and `peer_id = "login"`. Remove the earlier `peers = []` line when adding
-`[[api.peers]]` tables. Restart each instance to load the policy and bind the port.
+and `peer_id = "login"`. Set `enabled = false` if the game only calls login;
+outbound mTLS still loads the certificate, trust roots and peer policy. Remove
+the earlier `peers = []` line when adding `[[api.peers]]` tables. Set
+`allowed_operations = [256, 257, 258]` for the realm on login; the game's
+incoming login peer can use `allowed_operations = []`. Restart each instance to
+load the policy.
 
 `allowed_operations = ["*"]` grants this authenticated peer every registered
 operation, including operations added later. Use it for a fully trusted login,
@@ -132,8 +138,9 @@ For an outbound `ApiClient`, configure `ApiTlsOptions` with the local PFX as
 SHA-256 fingerprint mapped to the expected `ApiPeerIdentity` in
 `PeersByCertificateSha256`. For all operations in C#, use
 `new ApiPeerIdentity("realm-1", [], allowAllOperations: true)`. Connecting to realm-1 uses target host `realm-1`
-and expected peer ID `realm-1`. The host's `[api]` section configures its
-**listener**, not an outbound client or realm discovery.
+and expected peer ID `realm-1`. In game mode the host reuses `[api]` certificate
+and trust settings for its outbound registration client even when the local
+listener is disabled. The login listener binds only on the private API address.
 
 ## Passwords and filesystem permissions
 

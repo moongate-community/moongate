@@ -13,8 +13,8 @@ in-game access, when added, will use the invoking session's account level.
 | --- | --- | --- | --- | --- |
 | `echo`, `e` | Yes | Yes | Regular | Print the arguments back to the caller |
 | `help` | Yes | Yes | Regular | List accessible commands or show details for one command |
-| `script` | Yes | No | — | Reload one Lua script or show script metrics |
-| `account` | Yes | Yes | Administrator | Create an account in the Accounts database |
+| `script` | Game/Standalone | No | — | Reload one Lua script or show script metrics |
+| `account` | Login/Standalone | Yes | Administrator | Create an account in the Accounts database |
 
 ## Help
 
@@ -60,6 +60,7 @@ The account level defaults to `Regular`. The command waits for
 an error without printing the password. The interactive console masks the password
 token while it is typed and does not include the raw command line in its error log.
 The account is stored in the shared Accounts PostgreSQL database.
+Game-only processes do not register this command or receive Accounts credentials.
 
 The command is registered for in-game administrators, but there is no in-game
 command input yet. Before enabling one, its input path must protect the password

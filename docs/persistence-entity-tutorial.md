@@ -231,10 +231,9 @@ auto_sync_schema = false
 connection_string = "$MOONGATE_REALM_DATABASE"
 ```
 
-Set that variable to the realm's PostgreSQL URI. Also configure
-`[persistence.accounts]`: normal host startup pings both databases, even when the
-plugin registers only World entities. The defaults are local `auth` and `world`
-databases using `moongate` / `moongate`. Schema preview/generate commands only
+Set that variable to the realm's PostgreSQL URI. A `game` host checks only its
+Realm database; `standalone` also needs `[persistence.accounts]`. The defaults are
+local `auth` and `world` databases using `moongate` / `moongate`. Schema preview/generate commands only
 connect to the targets needed for their mappings. In deployment, keep auto-sync disabled and ship a
 versioned SQL migration with the plugin.
 

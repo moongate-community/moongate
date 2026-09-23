@@ -31,7 +31,7 @@ public sealed class PersistenceConfig
         string? rootDirectory = null
     )
     {
-        Validate();
+        Validate(mode);
         migrationsDirectory = ResolveMigrationsDirectory(migrationsDirectory);
 
         var development = AutoGenerateMigrations
@@ -48,11 +48,20 @@ public sealed class PersistenceConfig
                               )
                               : null;
 
-        return new(
-            [
+        var databases = mode switch
+        {
+            ServerMode.Login => [Accounts.ToOptions(PersistenceDatabaseTarget.Accounts)],
+            ServerMode.Game => [Realm.ToOptions(PersistenceDatabaseTarget.Realm)],
+            ServerMode.Standalone => new[]
+            {
                 Accounts.ToOptions(PersistenceDatabaseTarget.Accounts),
                 Realm.ToOptions(PersistenceDatabaseTarget.Realm)
-            ],
+            },
+            _ => throw new InvalidOperationException("Unsupported server mode.")
+        };
+
+        return new(
+            databases,
             AutoSyncSchema,
             migrationsDirectory is null
                 ? null
@@ -72,6 +81,9 @@ public sealed class PersistenceConfig
                : MigrationsDirectory.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
 
     public void Validate()
+        => Validate(ServerMode.Standalone);
+
+    public void Validate(ServerMode mode)
     {
         if (AutoGenerateMigrations && AutoSyncSchema)
         {
@@ -85,12 +97,25 @@ public sealed class PersistenceConfig
             );
         }
 
-        if (Accounts is null || Realm is null)
+        if (mode is not (ServerMode.Login or ServerMode.Game or ServerMode.Standalone))
         {
-            throw new InvalidOperationException("Persistence accounts and realm configuration sections cannot be null.");
+            throw new InvalidOperationException("Unsupported server mode.");
         }
 
-        Accounts.Validate();
-        Realm.Validate();
+        if ((mode & ServerMode.Login) != 0 && Accounts is null ||
+            (mode & ServerMode.Game) != 0 && Realm is null)
+        {
+            throw new InvalidOperationException("The active persistence configuration section cannot be null.");
+        }
+
+        if ((mode & ServerMode.Login) != 0)
+        {
+            Accounts!.Validate();
+        }
+
+        if ((mode & ServerMode.Game) != 0)
+        {
+            Realm!.Validate();
+        }
     }
 }

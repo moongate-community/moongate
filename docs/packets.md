@@ -15,8 +15,8 @@ UO protocol or a claim that the login sequence is implemented:
 | Opcode | Class | Direction | Length | Default host handler |
 | --- | --- | --- | --- | --- |
 | `0x55` | `LoginCompletePacket` | Outgoing | Fixed 1 | — |
-| `0x73` | `PingPacket` | Both | Fixed 2 | `PingPacketHandler` |
-| `0x80` | `AccountLoginPacket` | Incoming | Fixed 62 | `AccountLoginPacketHandler` (partial login) |
+| `0x73` | `PingPacket` | Both | Fixed 2 | Game: `PingPacketHandler`; Login: `LoginRolePingPacketHandler` |
+| `0x80` | `AccountLoginPacket` | Incoming | Fixed 62 | Login: async account check, then `0xA8` list or `0x82` denial |
 | `0x82` | `LoginDeniedPacket` | Outgoing | Fixed 2 | — |
 | `0x8C` | `ServerRedirectPacket` | Outgoing | Fixed 11 | — |
 | `0x91` | `GameLoginPacket` | Incoming | Fixed 65 | None |
@@ -28,6 +28,9 @@ UO protocol or a claim that the login sequence is implemented:
 | `0xEF` | `LoginSeedPacket` | Incoming | Fixed 21 | `LoginSeedPacketHandler` |
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
+The realm list is filtered by the authenticated account's minimum realm level.
+It contains each realm's IPv4 address but no port. `0xA0` selection, `0x8C`
+redirect and a game handoff ticket are not handled yet.
 `TryGetDescriptor(opCode, out descriptor)` prefers incoming, then outgoing;
 `descriptor.PacketType.Name` gives its class name. The overload accepting
 `PacketDirection` selects one direction explicitly when needed.
@@ -229,9 +232,11 @@ own completed registry consistently to framing and decoding; changing just one
 side is insufficient.
 
 The host also registers LoginSeed and an async AccountLogin handler. The latter
-checks credentials against `IAccountService`, sends `0x82` invalid credentials for
-unknown accounts, and records the account identity on success. It does not list
-realms or complete the login sequence ([Implementation status](implementation-status.md)). See
+checks credentials against `IAccountService`, sends `0x82` for denied login or
+an empty eligible realm list, and sends a filtered `0xA8` list after success.
+The login-only host uses a dedicated ordered async connection pipeline; standalone
+uses the game packet pipeline. Neither handles selection or handoff yet
+([Implementation status](implementation-status.md)). See
 [Transport and game ownership](network-game-separation.md) for connection lifecycle,
 queue limits and overload policy, and [Game loop and timers](game-loop-and-timers.md)
 for thread ownership and completion.

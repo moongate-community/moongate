@@ -197,22 +197,8 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(directoriesConfig);
                     services.RegisterInstance(serverArgs);
                     services.RegisterInstance(serverConfig);
-                    services.RegisterInstance(serverConfig.WorldSave.ToOptions());
-                    services.RegisterInstance(serverConfig.Scripting.ToOptions(directoriesConfig["scripts"]));
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
-                    services.RegisterInstance(new GameLoopOptions());
                     services.RegisterInstance(TimeProvider.System);
-                    services.RegisterInstance(new TimerWheelOptions());
-                    services.RegisterDelegate<ITimerService>(
-                        resolver => resolver.Resolve<TimerWheelService>(),
-                        Reuse.Singleton
-                    );
-
-                    services.Register<PersistenceOperationBarrier>(Reuse.Singleton);
-                    services.RegisterDelegate<IPersistenceOperationBarrier>(
-                        resolver => resolver.Resolve<PersistenceOperationBarrier>(),
-                        Reuse.Singleton
-                    );
                     services.RegisterMoongatePersistence(
                                 serverConfig.Persistence.ToOptions(
                                     Path.Combine(directoriesConfig.Root, "migrations"),
@@ -221,24 +207,14 @@ await ConsoleApp.RunAsync(
                                     rootDirectory
                                 )
                             )
-                            .AddMoongateService<TimerWheelService>(-900)
-                            .AddMoongateService<IGameLoopService, GameLoopService>(-800)
-                            .AddMoongateService<IUltimaDataService, UltimaDataService>(-10)
-                            .AddMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
-                            .AddMoongateService<ISessionService, SessionService>()
                             .AddMoongateService<IEventBusService, EventBusService>();
 
-                    services.AddMetricProvider<SystemMetricsProvider>()
-                            .AddMetricProvider<GameLoopMetricsProvider>()
-                            .AddMetricProvider<TimerMetricsProvider>()
-                            .AddMetricProvider<SessionMetricsProvider>();
+                    services.AddMetricProvider<SystemMetricsProvider>();
                     services.AddMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority)
                             .AddMoongateService<IPluginLoaderService, PluginLoaderService>(
                                 () =>
                                     new(services, directoriesConfig)
                             )
-                            .RegisterPacketHandler<PingPacket, PingPacketHandler>()
-                            .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>()
                             .AddMoongateService<ICommandSystemService, CommandSystemService>()
                             .RegisterCommand<EchoCommand>(
                                 "echo|e",
@@ -252,21 +228,11 @@ await ConsoleApp.RunAsync(
                                 CommandSourceType.Console | CommandSourceType.InGame,
                                 AccountType.Regular
                             )
-                            .AddMoongateService<IScriptEngine, LuaScriptEngineService>(
-                                LuaScriptEngineService.StartupPriority
-                            )
-                            .AddScriptModule<LogModule>()
-                            .RegisterCommand<ScriptCommand>(
-                                "script",
-                                "Reloads a script file or prints the engine's counters: script reload <file> | script metrics."
-                            )
                             .AddMoongateService<IConsolePromptService>(consolePrompt)
                             .AddMoongateService<IConsoleInputService, ConsoleInputService>(1000);
 
+                    ServerRoleRegistration.Register(services, serverConfig, directoriesConfig);
                     container.RegisterPlugin<MoongateUltimaPlugin>();
-
-                    PacketPipelineRegistration.Register(services);
-                    ApiServerRegistration.Register(services);
 
                     return services;
                 }

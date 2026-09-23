@@ -62,6 +62,22 @@ public sealed class PacketSendService : IPacketSendService
         }
     }
 
+    public Task DisconnectAsync(long sessionId, INetworkConnection expectedConnection)
+    {
+        ArgumentNullException.ThrowIfNull(expectedConnection);
+        lock (_gate)
+        {
+            if (_outboxes.TryGetValue(sessionId, out var outbox) &&
+                ReferenceEquals(outbox.Connection, expectedConnection))
+            {
+                outbox.Close();
+                return outbox.Completion;
+            }
+        }
+
+        return _connections.DisconnectAsync(sessionId, expectedConnection);
+    }
+
     /// <inheritdoc />
     public Task StartAsync()
     {
@@ -122,7 +138,8 @@ public sealed class PacketSendService : IPacketSendService
 
             if (!_outboxes.TryGetValue(sessionId, out var outbox))
             {
-                outbox = new(connection, disconnectRequested, _capacity, _connections.DisconnectAsync);
+                outbox = new(connection, disconnectRequested, _capacity,
+                    id => _connections.DisconnectAsync(id, connection));
                 _outboxes.Add(sessionId, outbox);
                 outbox.Start();
                 _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));

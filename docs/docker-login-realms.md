@@ -5,9 +5,10 @@ Moongate images and runs three server processes plus one PostgreSQL 16 service.
 PostgreSQL owns three databases: Accounts, Realm 1, and Realm 2. Each database has
 separate schema and runtime roles.
 
-**This is a topology example, not a working login-to-realm flow.** `mode` does not
-select service composition, and there is no shared account API, realm discovery or
-login handoff; see [Implementation status](implementation-status.md).
+The login process owns Accounts and discovers the two game processes over the
+private mTLS API. A successful account login returns a `0xA8` realm list.
+Realm selection (`0xA0`), redirect (`0x8C`) and handoff tickets are not yet
+implemented, so the client cannot enter a realm through this example.
 
 ## Topology and credential boundaries
 
@@ -16,16 +17,20 @@ login handoff; see [Implementation status](implementation-status.md).
 | `login` | Accounts runtime only | `127.0.0.1:2593` | ordinary `final` |
 | `game-1` | Realm 1 runtime only | `127.0.0.1:2595` | optional `sample-plugin` |
 | `game-2` | Realm 2 runtime only | `127.0.0.1:2596` | ordinary `final` |
+| `auth-schema-apply` | Accounts schema | none; one-shot profile | ordinary `final` |
 | `schema-preview` / `schema-apply` / `migration-status` | Realm 1 runtime and schema | none; one-shot profile | optional `sample-plugin` |
 
-A game container does not receive Accounts credentials. Future login/account APIs
-will own shared-account access. A standalone deployment may separately configure
-both targets, but that is outside this example.
+A game container does not receive Accounts credentials. The login container does
+not receive a Realm database credential. A standalone deployment configures both
+targets and lists its own local realm without mTLS discovery.
 
-All services join the private `moongate` bridge. The three server data directories
+All services join the private `moongate` bridge. Login listens for realm registration
+on port 2594 inside that bridge; the API port is not published to the host. The
+three server data directories
 and the PostgreSQL data directory are separate named volumes. Ultima Online client
-files are mounted read-only at `/uo`. The internal API remains disabled and no API
-port is published.
+files are mounted read-only at `/uo`. Each service has a separate read-only TLS
+directory mounted at `/data/config/tls`. Game processes use their certificates
+as outbound mTLS clients while their local API listeners remain disabled.
 
 `game-1` and the schema jobs use the Dockerfile's explicit sample-plugin stage.
 The entrypoint copies the bundled `SamplePlugin` into that container's plugin
@@ -63,6 +68,39 @@ export MOONGATE_REALM_2_SCHEMA_PASSWORD="$(bw get password moongate-realm-2-sche
 export MOONGATE_REALM_2_RUNTIME_PASSWORD="$(bw get password moongate-realm-2-runtime)"
 ```
 
+Provision three different PFX identities outside the repository, named `login`,
+`game-1` and `game-2`. Each needs `serverAuth` and `clientAuth`; login's DNS SAN
+must contain `login`. For each identity, put `server.pfx` in its own directory.
+Copy the public PEMs so the host directory has this shape:
+
+```text
+<tls>/login/server.pfx
+<tls>/login/game-1.pem
+<tls>/login/game-2.pem
+<tls>/game-1/server.pfx
+<tls>/game-1/login.pem
+<tls>/game-2/server.pfx
+<tls>/game-2/login.pem
+```
+
+The example uses passwordless PFX files; restrict each private file to its
+runtime owner. Use the [certificate guide](api-certificates.md) to generate and
+verify the identities. Set `MOONGATE_TLS_PATH` in `.env` to the absolute host
+directory containing those subdirectories. Set the three public SHA-256
+fingerprints in `.env` without colons:
+
+```sh
+openssl x509 -in /path/to/login-public.pem -noout -fingerprint -sha256
+```
+
+`MOONGATE_LOGIN_CERT_SHA256`, `MOONGATE_GAME_1_CERT_SHA256` and
+`MOONGATE_GAME_2_CERT_SHA256` are public identifiers. The TOML references them
+through `$NAME`; `ConfigHelper.Load` resolves those references at startup.
+The login allowlist maps each game certificate to its exact `realm_id` and permits
+only operations 256 (register), 257 (renew), and 258 (unregister). Each game
+pins the login fingerprint and peer ID. Certificate or private key bytes do not
+belong in `.env` or source control.
+
 Do not put these values in `.env`, TOML, command history, or checked-in files.
 Compose secrets mount each value as a file. The entrypoint percent-encodes the PostgreSQL URI components and constructs the
 connection environment variable in memory for the process that needs it.
@@ -71,7 +109,7 @@ Validate without printing the rendered model, then build:
 
 ```sh
 docker compose config --quiet
-docker compose build login game-1 game-2 schema-preview schema-apply migration-status
+docker compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply migration-status
 ```
 
 Missing secret variables fail validation with their names. Use `--quiet` as shown:
@@ -83,7 +121,8 @@ validation, so plain `docker compose config` can expose them to the terminal.
 On the first empty PostgreSQL volume, `postgres/init.sh` creates all six roles and
 three databases. Schema roles own their database and plugin schemas. Runtime roles
 receive database `CONNECT`, schema `USAGE`, table DML, and default table DML for
-new tables. They receive no schema creation permission. Moongate does not create
+new tables. The Accounts runtime role also receives sequence `USAGE` for account
+serial allocation. They receive no schema creation permission. Moongate does not create
 these grants itself.
 
 The initialization scripts run only when the PostgreSQL data directory is empty.
@@ -92,15 +131,21 @@ PostgreSQL administration change; recreating an application container does not
 rerun database initialization. Never use `docker compose down --volumes` on data
 you intend to retain.
 
-All TOMLs keep `auto_sync_schema = false` and use one `connection_string` per
-database. Runtime TOMLs reference both `$MOONGATE_REALM_DATABASE` and
-`$MOONGATE_ACCOUNTS_DATABASE`; `game-1-schema.toml` references `$MOONGATE_REALM_SCHEMA_DATABASE`.
-Schema jobs receive only the schema-role secret; normal hosts receive only the
-runtime-role secrets for both configured targets. Each process builds its PostgreSQL
-URIs in memory. Each game process checks the shared Accounts database and its own
-realm database. The login process checks Accounts and, in this example, realm 1;
-therefore realm 1 must also be reachable for login startup. This is a startup
-connectivity requirement, not realm discovery or ongoing health monitoring.
+Apply the built-in Accounts migrations before starting login:
+
+```sh
+docker compose up -d postgres
+docker compose --profile schema run --rm auth-schema-apply
+```
+
+All runtime TOMLs set `migrations_directory = "/app/migrations"` because these
+containers use the core SQL bundled in the image rather than a generated
+`/data/migrations` tree. They keep `auto_sync_schema = false` and use one `connection_string` per
+active database. Login references `$MOONGATE_ACCOUNTS_DATABASE`; each game
+references only `$MOONGATE_REALM_DATABASE`; `game-1-schema.toml` references
+`$MOONGATE_REALM_SCHEMA_DATABASE`. Schema jobs receive only the schema-role
+secret, and normal hosts receive only their role's runtime secret. Each process
+builds its PostgreSQL URI in memory and checks only its own database at startup.
 Schema jobs still connect only to their selected target.
 
 ## Review and apply schema changes
@@ -151,10 +196,26 @@ docker compose ps
 docker compose logs --tail 100 login game-1 game-2
 ```
 
+To create a test account, open the login console with `docker compose attach
+login`, press `*` to unlock commands, then use `account create <username>
+<password> [level]`. Save the password in Bitwarden before typing it into the
+masked prompt. Detach with Docker's `Ctrl-P`, `Ctrl-Q` sequence so the server
+keeps running. The game containers do not register this account command.
+
 Compose waits for PostgreSQL health before starting each process. Each normal
 startup validates its registered schema with its runtime connection. The minimal
 TOMLs are mounted read-only at `/data/config/moongate.toml`; edit a source file
 and recreate that service to apply a change.
+
+`realm_directory.advertised_address` in the game TOMLs is `127.0.0.1` for a
+client running on the same host as Compose. For clients on another machine,
+replace it with a host-reachable IPv4 address and publish the corresponding
+game ports. The `0xA8` protocol list carries IPv4 but no port; the published
+ports are preparation for a later redirect/handoff implementation. Realm leases
+expire after 15 seconds without renewal. A game that loses login connectivity
+retries registration; an expired game disappears from new realm lists.
+An expired lease can register again; a lease superseded by a newer game instance
+stops the older instance from reclaiming the realm.
 
 Each server's `/data` volume contains its PID file, logs, generated scripts and
 plugins. PostgreSQL data lives only in `postgres-data`. The host-managed TOMLs,
@@ -186,7 +247,7 @@ sh examples/docker/login-realms/smoke.sh
 
 It verifies missing-input failure, builds the local images, previews and applies
 the real sample schema, checks runtime SELECT/INSERT/UPDATE/DELETE and DDL denial,
-and checks clean startup and shutdown logs. The Realm 1 passwords contain literal
+checks both realm registrations, and checks clean startup and shutdown logs. The Realm 1 passwords contain literal
 text-`COPY` escape sequences, and both roles must authenticate over TCP before the
 schema gate continues. These disposable values exist only in the process
 environment; no plaintext credential file is created.
@@ -203,7 +264,8 @@ environment; no plaintext credential file is created.
   migration status/apply profile with the same plugin image.
 - **Runtime permission denied:** verify database `CONNECT`, schema `USAGE`, table
   DML, and the schema owner's default table privileges.
-- **Login does not list realms:** realm discovery and login handoff are not
-  implemented; Docker DNS and `mode` metadata do not create that application flow.
+- **Login does not list realms:** check the game logs for `registered with login
+  API`, inspect both certificate fingerprints and trust PEMs, and ensure the
+  login API is reachable as `login:2594` on the private Compose network.
 - **Container exits:** inspect `docker compose ps -a` and the affected service log.
   Correct the configuration or database error before recreating it.

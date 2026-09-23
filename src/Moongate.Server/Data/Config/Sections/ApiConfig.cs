@@ -41,6 +41,18 @@ public sealed class ApiConfig
             throw new InvalidOperationException("api.port must be between 1 and 65535.");
         }
 
+        ValidatePeerTrust();
+    }
+
+    /// <summary>Validates client credentials and trust even while the local listener is disabled.</summary>
+    public void ValidateOutbound()
+    {
+        ValidateCertificate();
+        ValidatePeerTrust();
+    }
+
+    private void ValidatePeerTrust()
+    {
         if (TrustedRootPaths is null ||
             TrustedRootPaths.Length == 0 ||
             TrustedRootPaths.Any(string.IsNullOrWhiteSpace))

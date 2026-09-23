@@ -1,8 +1,10 @@
 # Transport and game service ownership
 
-The host separates TCP connection lifetime from game-session lifetime. This prepares
-independent login and game services without adding login/account/realm behavior yet.
-`MoongateServerConfig.Mode` still does not select runtime services in this phase.
+The host separates TCP connection lifetime from game-session lifetime. `mode =
+"login"` runs a dedicated ordered async login packet pipeline, Accounts access and
+realm directory. `mode = "game"` runs the game loop, world services and an outbound
+realm registration client. `standalone` combines account and game services with a
+local realm entry, without mTLS registration traffic.
 
 | Component | Responsibility |
 | --- | --- |
@@ -10,6 +12,8 @@ independent login and game services without adding login/account/realm behavior 
 | `NetworkService` | Listeners, per-connection protocol pipelines and synchronous transport notifications |
 | `PacketSendService` | Encoded snapshots, bounded FIFO queues and owned outgoing I/O |
 | `GameServerService` | Session creation, immediate packet decoding, dispatch and session retirement |
+| `LoginServerService` | Independent login connections and ordered async packet handling |
+| `RealmDirectoryService` | Local and leased realm entries exposed to account login |
 | `PacketDispatchService` / `GameLoopService` | Typed handlers, ordered game work and loop-owned state mutation |
 
 Transport and outgoing sends can run without `ISessionService` or `IGameLoopService`.
