@@ -22,6 +22,8 @@ public class MoongateServerConfig
 
     public PersistenceConfig Persistence { get; set; } = new();
 
+    public RealmDirectoryConfig RealmDirectory { get; set; } = new();
+
     public WorldSaveConfig WorldSave { get; set; } = new();
 
     public DiagnosticConfig Diagnostics { get; set; } = new();
@@ -48,7 +50,14 @@ public class MoongateServerConfig
             throw new InvalidOperationException("The persistence configuration section cannot be null.");
         }
 
-        Persistence.Validate();
+        Persistence.Validate(Mode);
+
+        if (RealmDirectory is null)
+        {
+            throw new InvalidOperationException("The realm_directory configuration section cannot be null.");
+        }
+
+        RealmDirectory.Validate(Mode);
 
         if (WorldSave is null)
         {

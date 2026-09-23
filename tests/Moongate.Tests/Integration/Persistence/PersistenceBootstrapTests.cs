@@ -19,12 +19,10 @@ public sealed class PersistenceBootstrapTests
 {
     [Theory,
      InlineData(ServerMode.Login, PersistenceDatabaseTarget.Accounts),
-     InlineData(ServerMode.Login, PersistenceDatabaseTarget.Realm),
-     InlineData(ServerMode.Game, PersistenceDatabaseTarget.Accounts),
      InlineData(ServerMode.Game, PersistenceDatabaseTarget.Realm),
      InlineData(ServerMode.Standalone, PersistenceDatabaseTarget.Accounts),
      InlineData(ServerMode.Standalone, PersistenceDatabaseTarget.Realm)]
-    public async Task StartAsync_MissingDatabaseWithoutEntities_StartsNoServicesInAnyMode(
+    public async Task StartAsync_MissingActiveDatabase_StartsNoServices(
         ServerMode mode, PersistenceDatabaseTarget missingTarget
     )
     {
@@ -71,6 +69,47 @@ public sealed class PersistenceBootstrapTests
         }
     }
 
+    [Theory,
+     InlineData(ServerMode.Login, PersistenceDatabaseTarget.Realm),
+     InlineData(ServerMode.Game, PersistenceDatabaseTarget.Accounts)]
+    public async Task StartAsync_MissingInactiveDatabase_StartsServices(
+        ServerMode mode, PersistenceDatabaseTarget missingTarget
+    )
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        var missing = new NpgsqlConnectionStringBuilder(database.ConnectionString)
+        {
+            Database = $"moongate_test_missing_{Guid.NewGuid():N}"
+        }.ConnectionString;
+        var config = new PersistenceConfig
+        {
+            Accounts = new()
+            {
+                ConnectionString = missingTarget == PersistenceDatabaseTarget.Accounts ? missing : database.ConnectionString
+            },
+            Realm = new()
+            {
+                ConnectionString = missingTarget == PersistenceDatabaseTarget.Realm ? missing : database.ConnectionString
+            }
+        };
+        using var container = new Container();
+        container.RegisterMoongatePersistence(config.ToOptions(mode: mode));
+        var started = false;
+        container.AddMoongateService(new CallbackStartupService(
+            () =>
+            {
+                started = true;
+                return Task.CompletedTask;
+            },
+            () => Task.CompletedTask
+        ));
+        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
+        await bootstrap.StartAsync();
+        Assert.True(started);
+        await bootstrap.StopAsync();
+    }
+
     [Fact]
     public async Task StartAndStopAsync_NoConfiguredTargets_CompletesWithoutDatabase()
     {
@@ -108,7 +147,7 @@ public sealed class PersistenceBootstrapTests
     }
 
     [Fact]
-    public async Task StartAsync_RegisteredAuthEntityInGameMode_StillRequiresAuthDataMigrations()
+    public async Task StartAsync_RegisteredAuthEntityInGameMode_RejectsInactiveTarget()
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var files = new PluginDirectoryFixture("migrations", "plugins");
@@ -127,7 +166,8 @@ public sealed class PersistenceBootstrapTests
                  .AddPersistenceAuth<TestEntity>();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         var error = await Assert.ThrowsAsync<InvalidOperationException>(bootstrap.StartAsync);
-        Assert.Contains("0001_data.sql", error.Message);
+        Assert.Contains("Accounts", error.Message);
+        Assert.Contains("not configured", error.Message);
         Assert.True(container.IsDisposed);
     }
 

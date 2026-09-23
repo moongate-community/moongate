@@ -30,6 +30,36 @@ public sealed class ConfigHelperTests
     }
 
     [Fact]
+    public void Load_RealmDirectory_RoundTripsSnakeCaseAndAccountType()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", """
+            mode = "game"
+            [realm_directory]
+            realm_id = "realm-a"
+            name = "Realm A"
+            server_index = 7
+            advertised_address = "127.0.0.1"
+            advertised_port = 2593
+            minimum_account_type = "game_master"
+            login_api_host = "login"
+            login_api_port = 2594
+            expected_login_peer_id = "login"
+            heartbeat_interval_seconds = 5
+            lease_duration_seconds = 15
+            max_realms = 128
+            """);
+
+        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!;
+
+        Assert.Equal("realm-a", config.RealmDirectory.RealmId);
+        Assert.Equal("Realm A", config.RealmDirectory.Name);
+        Assert.Equal(7, config.RealmDirectory.ServerIndex);
+        Assert.Equal("127.0.0.1", config.RealmDirectory.AdvertisedAddress);
+        Assert.Equal(Moongate.Server.Core.Types.Accounts.AccountType.GameMaster, config.RealmDirectory.MinimumAccountType);
+    }
+
+    [Fact]
     public void Load_ApiOverrides_ReadsEndpointTlsAndPeerPermissions()
     {
         using var directory = new TemporaryDirectory();
@@ -280,7 +310,7 @@ public sealed class ConfigHelperTests
      InlineData(ServerMode.Login, "login"),
      InlineData(ServerMode.Game, "game"),
      InlineData(ServerMode.Login | ServerMode.Game, "standalone")]
-    public void Load_SerializedServerMode_RoundTripsReadableName(ServerMode mode, string name)
+    public void Deserialize_SerializedServerMode_RoundTripsReadableName(ServerMode mode, string name)
     {
         using var directory = new TemporaryDirectory();
         var toml = TomlUtils.Serialize(new MoongateServerConfig { Mode = mode });
@@ -288,20 +318,20 @@ public sealed class ConfigHelperTests
         var path = directory.CreateFile("moongate.toml", toml);
 
         Assert.Equal(name, document["mode"]);
-        Assert.Equal(mode, ConfigHelper.Load(path).Mode);
+        Assert.Equal(mode, TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!.Mode);
     }
 
     [Theory,
      InlineData("login", true, false),
      InlineData("game", false, true),
      InlineData("standalone", true, true)]
-    public void Load_ServerMode_EnablesExpectedFlags(string mode, bool login, bool game)
+    public void Deserialize_ServerMode_EnablesExpectedFlags(string mode, bool login, bool game)
     {
         using var directory = new TemporaryDirectory();
         var toml = $"mode = \"{mode}\"\n";
         var path = directory.CreateFile("moongate.toml", toml);
 
-        var config = ConfigHelper.Load(path);
+        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!;
 
         Assert.Equal(login, config.Mode.HasFlag(ServerMode.Login));
         Assert.Equal(game, config.Mode.HasFlag(ServerMode.Game));
