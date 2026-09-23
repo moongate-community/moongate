@@ -41,7 +41,9 @@ public sealed class UoPacketFramer : INetFramer
 
         if (!_registry.TryGetDescriptor(opCode, PacketDirection.Incoming, out var descriptor))
         {
-            throw new InvalidDataException($"Opcode 0x{opCode:X2} is not registered as an incoming packet.");
+            throw new InvalidDataException(
+                $"Opcode 0x{opCode:X2} is not registered as an incoming packet; {buffer.Length - 1} bytes buffered after opcode."
+            );
         }
 
         return descriptor.Sizing switch

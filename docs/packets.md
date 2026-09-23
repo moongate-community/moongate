@@ -16,7 +16,7 @@ UO protocol or a claim that the login sequence is implemented:
 | --- | --- | --- | --- | --- |
 | `0x55` | `LoginCompletePacket` | Outgoing | Fixed 1 | — |
 | `0x73` | `PingPacket` | Both | Fixed 2 | `PingPacketHandler` |
-| `0x80` | `AccountLoginPacket` | Incoming | Fixed 62 | None |
+| `0x80` | `AccountLoginPacket` | Incoming | Fixed 62 | `AccountLoginPacketHandler` (partial login) |
 | `0x82` | `LoginDeniedPacket` | Outgoing | Fixed 2 | — |
 | `0x8C` | `ServerRedirectPacket` | Outgoing | Fixed 11 | — |
 | `0x91` | `GameLoginPacket` | Incoming | Fixed 65 | None |
@@ -25,7 +25,7 @@ UO protocol or a claim that the login sequence is implemented:
 | `0xB9` | `SupportFeaturesPacket` | Outgoing | Fixed 5 | — |
 | `0xBD` | `ClientVersionPacket` | Incoming | Variable, minimum 4 | `ClientVersionPacketHandler` |
 | `0xBD` | `ClientVersionRequestPacket` | Outgoing | Fixed 3 | — |
-| `0xEF` | `LoginSeedPacket` | Incoming | Fixed 21 | None |
+| `0xEF` | `LoginSeedPacket` | Incoming | Fixed 21 | `LoginSeedPacketHandler` |
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 `TryGetDescriptor(opCode, out descriptor)` prefers incoming, then outgoing;
@@ -228,8 +228,10 @@ source and register its handler in host composition. A custom host may supply it
 own completed registry consistently to framing and decoding; changing just one
 side is insufficient.
 
-The host registers only Ping and ClientVersion handlers; no built-in async handler
-or account login flow is registered yet ([Implementation status](implementation-status.md)). See
+The host also registers LoginSeed and an async AccountLogin handler. The latter
+checks credentials against `IAccountService`, sends `0x82` invalid credentials for
+unknown accounts, and records the account identity on success. It does not list
+realms or complete the login sequence ([Implementation status](implementation-status.md)). See
 [Transport and game ownership](network-game-separation.md) for connection lifecycle,
 queue limits and overload policy, and [Game loop and timers](game-loop-and-timers.md)
 for thread ownership and completion.

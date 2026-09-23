@@ -212,7 +212,19 @@ The built-in Ultima plugin registers `AccountEntity` in the Accounts database an
 `IDataAccess<AccountEntity>` and lets `UpsertAsync` assign the new account's `Id`.
 `ListAccountsAsync` wraps `GetAllAsync`: an unbounded, detached snapshot of every
 account, for administration rather than per-request lookups. `LoginAsync` verifies
-the password hash and the lock state; no packet handler calls it yet.
+the password hash and the lock state; the packet login success path is still incomplete.
+
+The built-in Ultima plugin also registers a command to create accounts:
+
+```text
+account create <username> <password> [Regular|GameMaster|Administrator]
+```
+
+The level defaults to `Regular`. The interactive console masks the password while
+typing, and command output never repeats it. The command is also registered for
+in-game administrators, but no in-game command input is wired yet; that input must
+protect the password before exposing this command. Usernames and passwords must each
+be one token because the command system separates arguments on spaces.
 
 The username index is case-sensitive, matching the service's lookup. Concurrent
 attempts to register the same username return one success and

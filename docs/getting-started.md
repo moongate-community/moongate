@@ -129,7 +129,8 @@ use the documentation published for that version.
    database, then the loaded services and the bound endpoints. A missing
    `scripts/init.lua` is a warning and starts an empty scripting environment; a
    bootstrap script that exists but fails prevents startup. Add scripts with
-   [Writing Lua scripts](scripting.md).
+   [Writing Lua scripts](scripting.md). The interactive console commands are listed
+   in [Server commands](commands.md).
 
 6. **Stop it.** Press Ctrl+C and let shutdown finish. After a successful startup the
    host runs a final world save before closing PostgreSQL persistence. A failed

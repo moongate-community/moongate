@@ -221,7 +221,7 @@ await ConsoleApp.RunAsync(
                                     rootDirectory
                                 )
                             )
-                            .AddMoongateService<ITimerService, TimerWheelService>(-900)
+                            .AddMoongateService<TimerWheelService>(-900)
                             .AddMoongateService<IGameLoopService, GameLoopService>(-800)
                             .AddMoongateService<IUltimaDataService, UltimaDataService>(-10)
                             .AddMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
@@ -243,6 +243,12 @@ await ConsoleApp.RunAsync(
                             .RegisterCommand<EchoCommand>(
                                 "echo|e",
                                 "Echoes back its arguments.",
+                                CommandSourceType.Console | CommandSourceType.InGame,
+                                AccountType.Regular
+                            )
+                            .RegisterCommand<HelpCommand>(
+                                "help",
+                                "Lists available commands or shows details for one command.",
                                 CommandSourceType.Console | CommandSourceType.InGame,
                                 AccountType.Regular
                             )

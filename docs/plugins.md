@@ -244,6 +244,9 @@ startup validation belongs in a startup service.
 
 ## Console commands
 
+For the built-in `echo`, `help`, `script`, and `account` commands, see
+[Server commands](commands.md).
+
 A command is a class implementing `ICommandExecutor`, registered with
 `RegisterCommand<T>(name, description, source, minimumAccountType)` as in
 [the plugin class](#the-plugin-class) above. `CommandContext` gives it `Arguments`
@@ -264,6 +267,13 @@ thread.** A command that reads or mutates game state must post its own work item
 sample's [GreetCommand](../samples/Moongate.Sample.Plugin/Commands/GreetCommand.cs)
 shows argument validation, including the `Enum.IsDefined` check that stops a numeric
 string like `"7"` from parsing into an undefined enum member.
+
+The built-in Ultima plugin registers the `account` command:
+`account create <username> <password> [Regular|GameMaster|Administrator]`.
+The level defaults to `Regular`; the interactive prompt masks the password token
+and the command awaits `IAccountService.CreateAccountAsync` before reporting an outcome.
+The registration also permits in-game administrators, though no in-game input is
+wired yet. Its future input path must protect the password as the console does.
 
 ## Deployment and loading
 

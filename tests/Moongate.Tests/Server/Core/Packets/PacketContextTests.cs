@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Outgoing.Login;
+using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Services.Sessions;
 using Moongate.Tests.Support.GameLoop;
@@ -149,7 +150,7 @@ public sealed class PacketContextTests
         var session = sessions.GetOrCreate(fixture.Client);
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
-        var denial = new LoginDeniedPacket(0x04);
+        var denial = new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem);
 
         Assert.True(context.TrySend(denial));
         Assert.Same(fixture.Client, sender.ExpectedConnection);

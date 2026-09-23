@@ -7,6 +7,7 @@ using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Console;
 using Moongate.Tests.TestSupport.Console;
+using Moongate.Tests.TestSupport.Commands;
 
 namespace Moongate.Tests.Server.Services.Console;
 
@@ -33,6 +34,35 @@ public sealed class ConsoleInputServiceTests
         Assert.Equal("hello", line.Text);
         Assert.Equal(CommandOutputLevel.Information, line.Level);
         await service.StopAsync();
+        await commands.StopAsync();
+    }
+
+    [Fact]
+    public async Task AccountCreate_MasksPasswordOnPromptButDispatchesOriginalValue()
+    {
+        var prompt = new RecordingPromptService();
+        var keys = new ScriptedConsoleKeySource();
+        keys.Enqueue('*');
+        keys.EnqueueText("account create alice synthetic-password Administrator");
+        keys.Enqueue(ConsoleKey.Enter);
+        using var container = CreateContainer();
+        container.RegisterCommand<RecordingCommandExecutor>("account");
+        var commands = await CreateCommandsAsync(container);
+        using var service = new ConsoleInputService(prompt, commands, keys);
+        await service.StartAsync();
+
+        await WaitForAsync(() => prompt.Output.Count > 0);
+        await service.StopAsync();
+
+        const string prefix = "input:account create alice ";
+        foreach (var call in prompt.Calls.Where(call => call.StartsWith(prefix, StringComparison.Ordinal)))
+        {
+            var displayedPassword = call[prefix.Length..].Split(' ')[0];
+            Assert.All(displayedPassword, character => Assert.Equal('*', character));
+        }
+
+        var invocation = Assert.Single(container.Resolve<RecordingCommandExecutor>().Invocations);
+        Assert.Equal("synthetic-password", invocation.Arguments[2]);
         await commands.StopAsync();
     }
 

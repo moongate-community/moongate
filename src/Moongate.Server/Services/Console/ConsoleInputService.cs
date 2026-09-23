@@ -75,6 +75,51 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     private static bool IsNoKey(ConsoleKeyInfo key)
         => key.KeyChar == '\0' && key.Key == default && key.Modifiers == 0;
 
+    private static string MaskSensitiveInput(string input)
+    {
+        var text = input.AsSpan();
+        var position = 0;
+        var command = ReadToken(text, ref position);
+        var action = ReadToken(text, ref position);
+        var username = ReadToken(text, ref position);
+
+        if (!command.Equals("account".AsSpan(), StringComparison.OrdinalIgnoreCase) ||
+            !action.Equals("create".AsSpan(), StringComparison.OrdinalIgnoreCase) ||
+            username.IsEmpty)
+        {
+            return input;
+        }
+
+        while (position < text.Length && char.IsWhiteSpace(text[position]))
+        {
+            position++;
+        }
+
+        var passwordStart = position;
+        _ = ReadToken(text, ref position);
+
+        return position == passwordStart
+                   ? input
+                   : input[..passwordStart] + new string('*', position - passwordStart) + input[position..];
+    }
+
+    private static ReadOnlySpan<char> ReadToken(ReadOnlySpan<char> text, ref int position)
+    {
+        while (position < text.Length && char.IsWhiteSpace(text[position]))
+        {
+            position++;
+        }
+
+        var start = position;
+
+        while (position < text.Length && !char.IsWhiteSpace(text[position]))
+        {
+            position++;
+        }
+
+        return text[start..position];
+    }
+
     private async Task RunAsync(CancellationToken cancellationToken)
     {
         var buffer = new StringBuilder();
@@ -141,7 +186,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                     if (buffer.Length > 0)
                     {
                         buffer.Length--;
-                        _prompt.UpdateInput(buffer.ToString());
+                        _prompt.UpdateInput(MaskSensitiveInput(buffer.ToString()));
                     }
 
                     continue;
@@ -158,7 +203,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                 if (!char.IsControl(key.KeyChar))
                 {
                     buffer.Append(key.KeyChar);
-                    _prompt.UpdateInput(buffer.ToString());
+                    _prompt.UpdateInput(MaskSensitiveInput(buffer.ToString()));
                 }
             }
         }
@@ -200,7 +245,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         }
         catch (Exception exception)
         {
-            _logger.Error(exception, "Console command '{CommandLine}' failed", commandLine);
+            _logger.Error(exception, "Console command execution failed");
             _prompt.WriteOutputLine("Command failed. Check logs for details.", CommandOutputLevel.Error);
         }
     }

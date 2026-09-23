@@ -9,6 +9,7 @@ export const contentEntries = [
   { source: 'docs/docker.md', slug: 'server/docker', title: 'Run with Docker', group: 'Server guides' },
   { source: 'docs/docker-login-realms.md', slug: 'server/docker-login-realms', title: 'Docker login and realms', group: 'Server guides' },
   { source: 'docs/server-configuration.md', slug: 'server/configuration', title: 'Configuration', group: 'Server guides' },
+  { source: 'docs/commands.md', slug: 'server/commands', title: 'Server commands', group: 'Server guides' },
   { source: 'docs/api-certificates.md', slug: 'server/api-certificates', title: 'API certificates', group: 'Server guides' },
   { source: 'docs/packets.md', slug: 'server/packets', title: 'Packets and handlers', group: 'Server guides' },
   { source: 'docs/game-loop-and-timers.md', slug: 'server/game-loop-and-timers', title: 'Game loop and timers', group: 'Server guides' },
