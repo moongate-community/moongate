@@ -12,7 +12,7 @@ using Serilog;
 namespace Moongate.Server.Services.Packets;
 
 /// <summary>Dispatches typed handlers through the existing bounded game loop inbox.</summary>
-public sealed class PacketDispatchService : IPacketDispatchService
+public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDisposable
 {
     private readonly Lock _gate = new();
     private readonly IGameLoopService _gameLoop;
@@ -24,10 +24,14 @@ public sealed class PacketDispatchService : IPacketDispatchService
 
     private FrozenDictionary<Type, Action<GameSession, IPacket>> _handlers =
         FrozenDictionary<Type, Action<GameSession, IPacket>>.Empty;
+    private FrozenDictionary<Type, Func<PacketContext, IPacket, CancellationToken, ValueTask>> _asyncHandlers =
+        FrozenDictionary<Type, Func<PacketContext, IPacket, CancellationToken, ValueTask>>.Empty;
+    private AsyncPacketExecutor? _asyncExecutor;
 
     private bool _everStarted;
     private bool _running;
     private bool _stopped;
+    private Task? _stopTask;
 
     public PacketDispatchService(
         IGameLoopService gameLoop,
@@ -45,6 +49,8 @@ public sealed class PacketDispatchService : IPacketDispatchService
     /// <inheritdoc />
     public Task DisconnectAsync(long sessionId)
     {
+        _asyncExecutor?.CancelSession(sessionId);
+
         lock (_gate)
         {
             if (!_everStarted || _gameLoop.IsOnLoopThread || _gameLoop.Completion.IsCompleted)
@@ -85,13 +91,23 @@ public sealed class PacketDispatchService : IPacketDispatchService
 
             if (!_running)
             {
-                _handlers = _registry.Freeze().ToFrozenDictionary(pair => pair.Key, pair => pair.Value.Bind(_resolver));
+                var registrations = _registry.Freeze();
+                _handlers = registrations.Where(pair => !pair.Value.IsAsync)
+                                         .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.Bind(_resolver));
+                _asyncHandlers = registrations.Where(pair => pair.Value.IsAsync)
+                                              .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.BindAsync(_resolver));
+
+                if (_asyncHandlers.Count > 0)
+                {
+                    _asyncExecutor = new(_gameLoop, _sessions, _resolver.Resolve<IPacketSendService>());
+                }
+
                 _everStarted = true;
                 _running = true;
                 _logger.Information(
                     "Packet dispatcher started with {PacketCount} registered packets and {HandlerCount} registered handlers",
                     PacketRegistry.Default.RegisteredPackets.Count,
-                    _handlers.Count
+                    _handlers.Count + _asyncHandlers.Count
                 );
             }
         }
@@ -106,9 +122,8 @@ public sealed class PacketDispatchService : IPacketDispatchService
         {
             _running = false;
             _stopped = true;
+            return _stopTask ??= _asyncExecutor?.DisposeAsync().AsTask() ?? Task.CompletedTask;
         }
-
-        return Task.CompletedTask;
     }
 
     /// <inheritdoc />
@@ -121,7 +136,8 @@ public sealed class PacketDispatchService : IPacketDispatchService
                 return false;
             }
 
-            if (!_handlers.TryGetValue(packet.GetType(), out var handler))
+            if (!_handlers.TryGetValue(packet.GetType(), out var handler) &&
+                !_asyncHandlers.TryGetValue(packet.GetType(), out _))
             {
                 _logger.Debug("No packet handler for {PacketType} on session {SessionId}", packet.GetType().Name, sessionId);
 
@@ -135,7 +151,30 @@ public sealed class PacketDispatchService : IPacketDispatchService
                 return false;
             }
 
-            if (_gameLoop.TryPost(new PacketDispatchWorkItem(_sessions, sessionId, packet, handler)))
+            if (_asyncExecutor?.IsBusy(sessionId) == true)
+            {
+                return false;
+            }
+
+            if (_asyncHandlers.TryGetValue(packet.GetType(), out var asyncHandler))
+            {
+                var executor = _asyncExecutor!;
+
+                if (!executor.TryReserve(session, packet, asyncHandler, out var job))
+                {
+                    return false;
+                }
+
+                if (_gameLoop.TryPost(new AsyncPacketDispatchWorkItem(_sessions, job!, executor)))
+                {
+                    return true;
+                }
+
+                executor.Release(job!);
+                return false;
+            }
+
+            if (_gameLoop.TryPost(new PacketDispatchWorkItem(_sessions, sessionId, packet, handler!)))
             {
                 return true;
             }
@@ -199,4 +238,7 @@ public sealed class PacketDispatchService : IPacketDispatchService
             }
         }
     }
+
+    public ValueTask DisposeAsync()
+        => new(StopAsync());
 }
