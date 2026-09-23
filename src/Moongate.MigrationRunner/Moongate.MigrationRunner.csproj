@@ -11,6 +11,10 @@
         <Content Include="../../THIRD-PARTY-NOTICES.md" Link="THIRD-PARTY-NOTICES.md" CopyToPublishDirectory="PreserveNewest"/>
     </ItemGroup>
     <ItemGroup>
+        <PackageReference Include="ConsoleAppFramework" Version="5.7.13">
+            <PrivateAssets>all</PrivateAssets>
+            <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+        </PackageReference>
         <PackageReference Include="dbup-postgresql" Version="7.0.1"/>
         <ProjectReference Include="../Moongate.Persistence.Migrations/Moongate.Persistence.Migrations.csproj"/>
         <ProjectReference Include="../Moongate.Core/Moongate.Core.csproj"/>

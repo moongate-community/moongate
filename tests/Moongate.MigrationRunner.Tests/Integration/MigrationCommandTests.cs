@@ -1,6 +1,7 @@
 using System.Diagnostics;
 using Moongate.MigrationRunner.Internal;
 using Moongate.MigrationRunner.Tests.TestSupport;
+using Moongate.Persistence.Migrations.Types.Migrations;
 using Npgsql;
 
 namespace Moongate.MigrationRunner.Tests.Integration;
@@ -27,11 +28,7 @@ public sealed class MigrationCommandTests : IClassFixture<PostgreSqlFixture>
         using var error = new StringWriter();
         Assert.Equal(
             1,
-            await MigrationCommand.ExecuteAsync(
-                ["status", "--root-directory", files.Root, "--target", "world", "--migrations-directory", files.Core],
-                output,
-                error
-            )
+            await MigrationCommand.StatusAsync(MigrationTarget.World, files.Root, files.Core, null, output, error)
         );
         Assert.DoesNotContain("sentinel-secret", output.ToString() + error);
     }
@@ -52,25 +49,19 @@ public sealed class MigrationCommandTests : IClassFixture<PostgreSqlFixture>
         files.Write("migrations/world/0001_create.sql", "CREATE TABLE sample (value integer);");
         using var output = new StringWriter();
         using var error = new StringWriter();
-        string[] options = ["--root-directory", files.Root, "--target", "world", "--migrations-directory", files.Core];
-        Assert.Equal(0, await MigrationCommand.ExecuteAsync(["status", .. options], output, error));
+        Assert.Equal(
+            0,
+            await MigrationCommand.StatusAsync(MigrationTarget.World, files.Root, files.Core, null, output, error)
+        );
         Assert.Contains("core/0001_create.sql", output.ToString());
         Assert.False(await db.ScalarAsync<bool>("SELECT to_regclass('sample') IS NOT NULL"));
-        Assert.Equal(0, await MigrationCommand.ExecuteAsync(["apply", .. options], output, error));
+        Assert.Equal(
+            0,
+            await MigrationCommand.ApplyAsync(MigrationTarget.World, files.Root, files.Core, null, output, error)
+        );
         Assert.True(await db.ScalarAsync<bool>("SELECT to_regclass('sample') IS NOT NULL"));
         Assert.Equal(string.Empty, error.ToString());
         Assert.False(File.Exists(Path.Combine(files.Root, "moongate.pid")));
-    }
-
-    [Theory, InlineData(""), InlineData("apply"), InlineData("apply --target both")]
-    public async Task ExecuteAsync_RequiresExplicitCommandAndSingleTarget(string arguments)
-    {
-        using var output = new StringWriter();
-        using var error = new StringWriter();
-        Assert.Equal(
-            1,
-            await MigrationCommand.ExecuteAsync(arguments.Split(' ', StringSplitOptions.RemoveEmptyEntries), output, error)
-        );
     }
 
     [Fact]
