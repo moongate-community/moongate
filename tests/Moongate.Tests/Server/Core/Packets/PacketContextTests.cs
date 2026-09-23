@@ -152,6 +152,7 @@ public sealed class PacketContextTests
         var denial = new LoginDeniedPacket(0x04);
 
         Assert.True(context.TrySend(denial));
+        Assert.Same(fixture.Client, sender.ExpectedConnection);
         session.NetworkSession.DetachClient();
         Assert.False(context.TrySend(denial));
         Assert.Equal(1, sender.SentCount);

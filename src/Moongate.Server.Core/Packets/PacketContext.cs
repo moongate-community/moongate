@@ -31,7 +31,13 @@ public sealed class PacketContext
 
     /// <summary>Queues an outgoing packet only while the original session remains connected.</summary>
     public bool TrySend(IOutgoingPacket packet)
-        => IsOriginalSessionConnected() && _sender.TrySend(SessionId, packet);
+    {
+        var connection = _originalSession.NetworkSession.Client;
+
+        return connection is not null &&
+               IsOriginalSessionConnected() &&
+               _sender.TrySend(SessionId, connection, packet);
+    }
 
     /// <summary>Runs one state change on the game loop; false means the original session is gone.</summary>
     public async ValueTask<bool> RunOnGameLoopAsync(

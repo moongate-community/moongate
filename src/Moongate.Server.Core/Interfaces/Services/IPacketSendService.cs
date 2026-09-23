@@ -1,4 +1,5 @@
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Network.Interfaces.Client;
 
 namespace Moongate.Server.Core.Interfaces.Services;
 
@@ -12,4 +13,7 @@ public interface IPacketSendService : IMoongateStartupService
 
     /// <summary>Encodes and queues a packet without waiting for socket I/O; returns false when unavailable or full.</summary>
     bool TrySend(long sessionId, IOutgoingPacket packet);
+
+    /// <summary>Admits a packet only when the session ID still belongs to the expected connection.</summary>
+    bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet);
 }

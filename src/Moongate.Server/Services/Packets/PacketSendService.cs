@@ -1,5 +1,6 @@
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Serialization;
+using Moongate.Network.Interfaces.Client;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Services.Packets.Internal;
 using Serilog;
@@ -96,10 +97,25 @@ public sealed class PacketSendService : IPacketSendService
 
     /// <inheritdoc />
     public bool TrySend(long sessionId, IOutgoingPacket packet)
+        => TrySendCore(sessionId, packet, null);
+
+    /// <inheritdoc />
+    public bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet)
+    {
+        ArgumentNullException.ThrowIfNull(expectedConnection);
+        return TrySendCore(sessionId, packet, expectedConnection);
+    }
+
+    private bool TrySendCore(long sessionId, IOutgoingPacket packet, INetworkConnection? expectedConnection)
     {
         lock (_gate)
         {
             if (!_running || !_connections.TryGet(sessionId, out var connection, out var disconnectRequested))
+            {
+                return false;
+            }
+
+            if (expectedConnection is not null && !ReferenceEquals(connection, expectedConnection))
             {
                 return false;
             }

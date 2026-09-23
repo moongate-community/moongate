@@ -49,8 +49,16 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
     /// <inheritdoc />
     public Task DisconnectAsync(long sessionId)
     {
-        _asyncExecutor?.CancelSession(sessionId);
+        var cancellationFailure = _asyncExecutor?.CancelSession(sessionId);
+        var retirement = RetireSessionAsync(sessionId);
 
+        return cancellationFailure is null
+                   ? retirement
+                   : CompleteAfterCancellationFailureAsync(retirement, cancellationFailure);
+    }
+
+    private Task RetireSessionAsync(long sessionId)
+    {
         lock (_gate)
         {
             if (!_everStarted || _gameLoop.IsOnLoopThread || _gameLoop.Completion.IsCompleted)
@@ -77,6 +85,20 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
 
             return completion.Task;
         }
+    }
+
+    private static async Task CompleteAfterCancellationFailureAsync(Task retirement, Exception cancellationFailure)
+    {
+        try
+        {
+            await retirement.ConfigureAwait(false);
+        }
+        catch (Exception retirementFailure)
+        {
+            throw new AggregateException(cancellationFailure, retirementFailure);
+        }
+
+        throw new AggregateException("Async packet cancellation failed after session retirement.", cancellationFailure);
     }
 
     /// <inheritdoc />

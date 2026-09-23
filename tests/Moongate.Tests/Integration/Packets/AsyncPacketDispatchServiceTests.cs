@@ -246,6 +246,95 @@ public sealed class AsyncPacketDispatchServiceTests
         await Task.WhenAll(first, second).WaitAsync(Timeout);
     }
 
+    [Fact]
+    public async Task DisconnectAsync_ThrowingCancellationCallbackStillRetiresSession()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        using var container = CreateContainer();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        var registered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, _, cancellationToken) =>
+        {
+            using var callback = cancellationToken.Register(
+                () => throw new InvalidOperationException("cancel callback")
+            );
+            registered.TrySetResult();
+
+            try
+            {
+                await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, cancellationToken);
+            }
+            finally
+            {
+                finished.TrySetResult();
+            }
+        };
+        var dispatcher = CreateDispatcher(fixture, sessions, container);
+        await dispatcher.StartAsync();
+        Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));
+        await registered.Task.WaitAsync(Timeout);
+
+        await Assert.ThrowsAnyAsync<Exception>(() => dispatcher.DisconnectAsync(session.SessionId));
+        await finished.Task.WaitAsync(Timeout);
+        Assert.False(sessions.TryGet(session.SessionId, out _));
+        await dispatcher.StopAsync().WaitAsync(Timeout);
+    }
+
+    [Fact]
+    public async Task StopAsync_ThrowingCancellationCallbackStillJoinsWorker()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        using var secondConnection = new ControlledNetworkConnection(91_001);
+        using var container = CreateContainer();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        var secondSession = sessions.GetOrCreate(secondConnection);
+        var registered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var secondEntered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, packet, cancellationToken) =>
+        {
+            if (packet.Sequence == 2)
+            {
+                secondEntered.TrySetResult();
+                await release.Task;
+                finished.TrySetResult();
+                return;
+            }
+
+            using var callback = cancellationToken.Register(
+                () => throw new InvalidOperationException("cancel callback")
+            );
+            registered.TrySetResult();
+            await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, cancellationToken);
+        };
+        var dispatcher = CreateDispatcher(fixture, sessions, container);
+        await dispatcher.StartAsync();
+        Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));
+        Assert.True(dispatcher.TryDispatch(secondSession.SessionId, new PingPacket(2)));
+        await registered.Task.WaitAsync(Timeout);
+        await secondEntered.Task.WaitAsync(Timeout);
+
+        var stopping = dispatcher.StopAsync();
+
+        try
+        {
+            Assert.False(stopping.IsCompleted);
+            Assert.False(finished.Task.IsCompleted);
+        }
+        finally
+        {
+            release.TrySetResult();
+        }
+
+        await Assert.ThrowsAnyAsync<Exception>(() => stopping.WaitAsync(Timeout));
+        Assert.True(finished.Task.IsCompleted);
+        Assert.False(dispatcher.TryDispatch(session.SessionId, new PingPacket(3)));
+    }
+
     private static Container CreateContainer()
     {
         var container = new Container();

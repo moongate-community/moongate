@@ -83,17 +83,19 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
         }
     }
 
-    public void CancelSession(long sessionId)
+    public Exception? CancelSession(long sessionId)
     {
         AsyncPacketJob? job;
         lock (_gate)
         {
             if (!_jobs.TryGetValue(sessionId, out job))
             {
-                return;
+                return null;
             }
 
         }
+
+        Exception? cancellationFailure = null;
 
         try
         {
@@ -101,7 +103,11 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
         }
         catch (ObjectDisposedException)
         {
-            return;
+            // The worker already completed and released this job.
+        }
+        catch (Exception exception)
+        {
+            cancellationFailure = exception;
         }
 
         lock (_gate)
@@ -111,6 +117,8 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
                 ReleaseCore(job);
             }
         }
+
+        return cancellationFailure;
     }
 
     public void Release(AsyncPacketJob job)
@@ -137,14 +145,47 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
             jobs = _jobs.Values.ToArray();
         }
 
-        await _stopping.CancelAsync().ConfigureAwait(false);
+        Exception? cancellationFailure = null;
+
+        try
+        {
+            await _stopping.CancelAsync().ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            cancellationFailure = exception;
+        }
 
         foreach (var job in jobs.Where(job => !job.Enqueued))
         {
             Release(job);
         }
 
-        await Task.WhenAll(_workers).ConfigureAwait(false);
+        Exception? workerFailure = null;
+
+        try
+        {
+            await Task.WhenAll(_workers).ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            workerFailure = exception;
+        }
+
+        if (cancellationFailure is not null && workerFailure is not null)
+        {
+            throw new AggregateException(cancellationFailure, workerFailure);
+        }
+
+        if (cancellationFailure is not null)
+        {
+            throw new AggregateException("Async packet cancellation callbacks failed.", cancellationFailure);
+        }
+
+        if (workerFailure is not null)
+        {
+            throw new AggregateException("Async packet workers failed.", workerFailure);
+        }
     }
 
     private void ReleaseCore(AsyncPacketJob job)
@@ -190,7 +231,13 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
 
     public async ValueTask DisposeAsync()
     {
-        await StopAsync().ConfigureAwait(false);
-        _stopping.Dispose();
+        try
+        {
+            await StopAsync().ConfigureAwait(false);
+        }
+        finally
+        {
+            _stopping.Dispose();
+        }
     }
 }
