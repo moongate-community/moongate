@@ -14,9 +14,9 @@ export default defineConfig({
   integrations: [starlight({
     title: `Moongate ${version}`,
     routeMiddleware: './src/route-data.ts',
-    favicon: '/generated/images/moongate_logo.png',
+    favicon: '/favicon.png',
     description: 'An Ultima Online server and reusable .NET libraries.',
-    logo: { src: '../images/moongate_logo.png', alt: 'Moongate' },
+    logo: { src: '../images/moongate_mark.png', alt: 'Moongate' },
     customCss: ['./src/styles/custom.css'],
     social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/moongate-community/moongate' }],
     sidebar: groups.map(label => ({
