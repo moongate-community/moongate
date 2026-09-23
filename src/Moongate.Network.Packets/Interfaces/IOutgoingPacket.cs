@@ -7,5 +7,7 @@ namespace Moongate.Network.Packets.Interfaces;
 /// </summary>
 public interface IOutgoingPacket : IPacket
 {
+    /// <summary>Encodes the complete packet into the supplied writer.</summary>
+    /// <param name="writer">The writer for the caller-owned output buffer.</param>
     void Write(ref PacketWriter writer);
 }
