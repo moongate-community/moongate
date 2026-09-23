@@ -14,15 +14,17 @@ their target names are listed in
 
 ## Migration directory
 
-The server reads core SQL from `<root>/migrations` unless
-`persistence.migrations_directory` selects another directory. `mgboot` copies the
-release's core SQL there and writes that absolute path into a new configuration;
-see [Prepare a root with mgboot](mgboot.md).
+On 0.6.0, both the server and the migration runner read the core SQL from the
+`migrations/` directory beside the server executable; the runner also accepts
+`--migrations-directory`. There is nothing to configure.
 
-The migration runner uses `--migrations-directory` if given, then the configured
-`persistence.migrations_directory`, then the `migrations/` directory beside the
-server executable. Keep `migrations_directory` explicit so the server and the
-runner read the same catalog.
+From the release after 0.6.0, the server reads `<root>/migrations` unless
+`persistence.migrations_directory` selects another directory, and `mgboot` copies
+the release's core SQL there and writes that absolute path into a new
+configuration; see [Prepare a root with mgboot](mgboot.md). The runner uses
+`--migrations-directory` if given, then the configured `migrations_directory`, then
+the directory beside the server executable. Keep `migrations_directory` explicit so
+the server and the runner read the same catalog.
 
 ## Versioned SQL files
 

@@ -18,7 +18,7 @@ playable world are not.
 | Game loop | Single owner thread, bounded queues, timer wheel, admission and completion semantics | |
 | Scripting | Sandboxed Lua 5.2, deterministic instruction budget, `engine`, `log`, `timer` modules, `wait`, reload, editor definitions; C# modules from plugins | World, character and inventory APIs |
 | Persistence | Entity registration on two databases, async reads and writes, transactions, automatic Serial assignment, world saves, versioned SQL with a separate runner, development migration generation | Core world catalog has no tables; no database backup or restore |
-| Accounts | `AccountEntity` in the Accounts database, `IAccountService` create and list | Login against it |
+| Accounts | `AccountEntity` in the Accounts database; `IAccountService` creates, lists and verifies a login (password hash and lock state) | The packet-level login flow that would call it |
 | Internal API | MessagePack over mutual TLS, typed request/reply handlers, channels, certificate generation | Built-in operations: a listener with no registered handlers only authenticates peers |
 | Templates | `ItemTemplate` and `LootTemplate` shapes, `EnumValueSpec`, `RangeValueSpec`, TOML converters, loader contract | A loader that reads `templates/`; nothing under it is loaded |
 | Plugins | Assemblies under `plugins/` registering services, commands, Lua modules, metric providers, entities and SQL | |

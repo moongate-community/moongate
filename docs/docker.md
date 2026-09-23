@@ -89,10 +89,6 @@ These are development credentials; for anything else, see
    [ultima]
    ultima_path = "/uo"
 
-   [persistence]
-   auto_sync_schema = false
-   migrations_directory = "/app/migrations"
-
    [persistence.accounts]
    connection_string = "postgres://moongate:moongate@postgres:5432/auth"
 
@@ -100,11 +96,11 @@ These are development credentials; for anything else, see
    connection_string = "postgres://moongate:moongate@postgres:5432/world"
    ```
 
-   Both paths are **inside the container**: `/uo` is the client mount, and
-   `/app/migrations` is the core SQL shipped in the image. The database host is the
-   Compose service name; `localhost` inside the container is the container itself.
-   With a root prepared by `mgboot`, leave `migrations_directory` as generated. Keep
-   the other sections, then:
+   The client path is **inside the container**: `/uo` is the mount above. The
+   database host is the Compose service name; `localhost` inside the container is
+   the container itself. On the 0.6.0 image the server and the migration runner read
+   the core SQL from `/app/migrations`; a root prepared by `mgboot` has its own copy.
+   Keep the other sections, then:
 
    ```sh
    docker compose cp ./moongate.toml moongate:/data/config/moongate.toml
@@ -260,15 +256,17 @@ uses it.
 
 Images after 0.6.0 include `/app/mg-uoxconv`, the same tool as
 `src/Moongate.UoxItemConverter` (see [Migrate from UOX3](uox3-migration.md)),
-published as a self-contained single file. Run it as a one-shot job, mounting a UOX3
-`.dfn` source directory read-only and an output directory for the converted TOML:
+published as a self-contained single file. Until that release, use an image
+[built from source](#build-the-image-from-source). Run it as a one-shot job,
+mounting a UOX3 `.dfn` source directory read-only and an output directory for the
+converted TOML:
 
 ```sh
 docker run --rm --entrypoint /app/mg-uoxconv \
   --user "$(id -u):$(id -g)" \
   -v /path/to/uox3/data/dfndata/items:/uox-source:ro \
   -v /path/to/templates:/uox-out \
-  ghcr.io/moongate-community/moongate:latest \
+  moongate:local \
   --source /uox-source --destination /uox-out/items --loot-destination /uox-out/loots
 ```
 
@@ -284,9 +282,9 @@ pre-owned by the runtime user at build time.
 - **`Postgres connection` failure:** the database host must be reachable from the
   container. `localhost` is the container itself; use the Compose service name or a
   host address. Check that both databases exist and the role can log in.
-- **`The core migrations directory is missing`:** set
-  `persistence.migrations_directory = "/app/migrations"` as in step 2, or prepare the
-  root with `mgboot`.
+- **`The core migrations directory is missing`:** on images after 0.6.0 the server
+  reads `/data/migrations`, which `mgboot` creates. Prepare the root with `mgboot` as
+  in step 1, or set `persistence.migrations_directory = "/app/migrations"`.
 - **Pending migrations:** run the migration runner as in step 3 for the named target.
 - **Cannot read client files:** confirm the host path exists and is mounted at
   `/uo`, with permission for the container user to read it.

@@ -211,7 +211,8 @@ The built-in Ultima plugin registers `AccountEntity` in the Accounts database an
 `IAccountService` in the container. `CreateAccountAsync` uses
 `IDataAccess<AccountEntity>` and lets `UpsertAsync` assign the new account's `Id`.
 `ListAccountsAsync` wraps `GetAllAsync`: an unbounded, detached snapshot of every
-account, for administration rather than per-request lookups.
+account, for administration rather than per-request lookups. `LoginAsync` verifies
+the password hash and the lock state; no packet handler calls it yet.
 
 The username index is case-sensitive, matching the service's lookup. Concurrent
 attempts to register the same username return one success and

@@ -62,12 +62,12 @@ use the documentation published for that version.
    what happens on a root that already exists.
 
    `mgboot` ships in releases after 0.6.0. On 0.6.0, start the server once instead:
-   it writes the configuration and exits. Then copy the core SQL yourself, because
-   the server looks for it under the root and refuses to start without it:
+   it writes the configuration and exits. Nothing else is needed, because on 0.6.0
+   both the server and the migration runner read the core SQL from
+   `/opt/moongate/migrations`, beside the executable:
 
    ```sh
    moongate --root-directory /srv/moongate
-   cp -r /opt/moongate/migrations /srv/moongate/migrations
    ```
 
 2. **Edit the configuration.** Open `/srv/moongate/config/moongate.toml` and set the
@@ -146,7 +146,7 @@ All server-managed paths below are relative to `--root-directory`:
 | Path | Purpose |
 | --- | --- |
 | `config/moongate.toml` | Server configuration; created once, never rewritten |
-| `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgboot`; plugins ship their own |
+| `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgboot` (releases after 0.6.0); plugins ship their own under `plugins/` |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `plugins/` | One assembly bundle per plugin directory |
 | `scripts/` | Lua source and generated editor definitions |
