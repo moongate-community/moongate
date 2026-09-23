@@ -155,9 +155,10 @@ sharing cipher, codec, middleware or framing state across connections.
 `PrepareStreamAsync` can wrap the stream (for example, an authenticated TLS stream).
 Its returned readable/writable stream must own the input. Observe the supplied
 cancellation token and dispose any wrapper you create if preparation fails. After
-successful setup, transport owns the prepared stream and socket. Use the configured
-entry points for this behavior; the legacy constructor keeps its original setup
-and admission behavior. For the implemented authenticated API transport, see
+successful setup, transport owns the prepared stream and socket. Preparation runs
+only through the configured entry points, `MoongateTcpServer.CreateConfigured` and
+`MoongateTcpClient.ConnectConfiguredAsync` (from 0.4.0); the plain constructor and
+`ConnectAsync` have no preparation step. For the implemented authenticated API transport, see
 [Moongate.Api](../src/Moongate.Api/README.md).
 
 For graceful shutdown, stop producers and call `StopAcceptingAsync()` to close the

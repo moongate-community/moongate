@@ -2,24 +2,6 @@
 
 # Moongate.Network
 
-`MoongateTcpClient.ConnectConfiguredAsync` accepts `TcpClientOptions` to prepare
-a transport stream and install callbacks before reception starts. For example,
-`ConnectionPipeline.PrepareStreamAsync` can authenticate an `SslStream`, while
-`ConfigureClient` subscribes to receive events before the first byte is delivered.
-The preparation token covers the connection/setup deadline and caller cancellation.
-The returned stream must own its input stream; if preparation throws, dispose any
-wrapper created before throwing. After successful setup, the client owns both the
-prepared stream and socket. Configuration failure also releases both resources.
-The existing `ConnectAsync` overload remains available with its original behavior.
-
-Use `MoongateTcpServer.CreateConfigured(endpoint, options)` for the corresponding
-accepted-connection preparation path. `TcpServerOptions` bounds both admitted
-connections and concurrent preparation operations; excess sockets close immediately.
-A slow TLS handshake does not block accepting another connection. Server stop cancels
-preparation, drains the admitted setups and owns their socket cleanup before a restart.
-Preparation callbacks must observe cancellation. The legacy constructor retains its
-original admission behavior; preparation callbacks are enabled by the configured entry points.
-
 Standalone asynchronous TCP transport with framing, middleware, and per-connection pipelines for .NET applications.
 
 ## Installation
@@ -85,16 +67,38 @@ string DescribeLocalEndpoint(Moongate.Network.Interfaces.Client.INetworkConnecti
 ```
 
 TCP event payloads are stable copies; middleware inputs are borrowed until their
-`ValueTask` completes. The host `INetworkService` contract requires decoding or
-copying before its callback returns.
-Keep connection ownership separate from game sessions; the host's `IConnectionService`
-and `INetworkService` contracts live in `Moongate.Server.Core`, not in this transport library.
+`ValueTask` completes. Connection ownership above the transport (game sessions,
+`IConnectionService`, `INetworkService`) lives in `Moongate.Server.Core`, not here.
 
-## License and source
+## Configured entry points
 
-Licensed under AGPL-3.0-or-later. See the [source repository and license](https://github.com/moongate-community/moongate).
+From 0.4.0, `MoongateTcpServer.CreateConfigured(endpoint, options)` and
+`MoongateTcpClient.ConnectConfiguredAsync(options)` prepare a transport stream and
+install callbacks before reception starts. `ConnectionPipeline.PrepareStreamAsync` can
+wrap the socket stream, for example to authenticate an `SslStream`, and
+`ConfigureClient` subscribes to receive events before the first byte is delivered.
+The rules:
+
+- The preparation token covers the connection/setup deadline and caller cancellation;
+  preparation callbacks must observe it.
+- The returned stream must own its input stream. If preparation throws, dispose any
+  wrapper you created before throwing. After successful setup the transport owns the
+  prepared stream and the socket, and a configuration failure releases both.
+- `TcpServerOptions` bounds admitted connections and concurrent preparations; excess
+  sockets close immediately. A slow TLS handshake does not block accepting another
+  connection. Server stop cancels preparation and drains the admitted setups before
+  a restart.
+
+The plain constructor and `ConnectAsync` have no preparation step and keep their
+original admission behavior.
+
+## Graceful shutdown
 
 For graceful application shutdown, `StopAcceptingAsync()` closes the listener and cancels unfinished stream preparation while
 established connections remain usable. `IsRunning` becomes false during this drain, while `Endpoint` retains a safe snapshot
 of the bound address and port. Drain application work, then call `StopAsync()` or `DisposeAsync()`. A new listener generation
 requires a complete stop before restart.
+
+## License and source
+
+Licensed under AGPL-3.0-or-later. See the [source repository and license](https://github.com/moongate-community/moongate).

@@ -113,7 +113,7 @@ freezing happen before bind/connect. Factories resolve once at `Freeze()`; regis
 Both sides can initiate requests on the same `IApiConnection`. Register a handler on each receiving endpoint and grant the
 corresponding peer permission. `ApiServer.Connections` returns an immutable snapshot. In Moongate.Server,
 `container.RegisterApiHandler<IncrementHandler>()` infers the contract and owns a singleton handler. Registration alone
-starts no listener. Moongate.Server now hosts the listener through `IApiServerService` when `[api].enabled = true`, with
+starts no listener. From 0.4.0, Moongate.Server hosts the listener through `IApiServerService` when `[api].enabled = true`, with
 port 2594 by default and certificates/peer permissions configured in TOML. APIs remain disabled by default and log an
 activation warning. See [API host configuration](../../docs/server-configuration.md#enable-the-internal-api-server),
 the [certificate setup guide](../../docs/api-certificates.md)

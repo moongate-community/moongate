@@ -5,10 +5,9 @@ Moongate images and runs three server processes plus one PostgreSQL 16 service.
 PostgreSQL owns three databases: Accounts, Realm 1, and Realm 2. Each database has
 separate schema and runtime roles.
 
-**This remains a topology example, not a working login-to-realm flow.** `mode` is
-metadata and does not select service composition. Shared account APIs, realm
-registration/discovery, login handoff, and role-specific startup are not yet
-implemented.
+**This is a topology example, not a working login-to-realm flow.** `mode` does not
+select service composition, and there is no shared account API, realm discovery or
+login handoff; see [Implementation status](implementation-status.md).
 
 ## Topology and credential boundaries
 
@@ -141,7 +140,7 @@ docker run --rm --entrypoint /app/migration-runner/Moongate.MigrationRunner \
 
 Build `moongate:local` from a revision containing the migration runner. The source Compose example builds that image
 locally. Its wrapper constructs the schema URI from Compose secrets in memory.
-For authoring new SQL, see [Generate, review and apply](persistence.md#generate-review-and-apply).
+For authoring new SQL, see [Generate, review and apply](persistence-migrations.md#generate-review-and-apply).
 The advisory lock serializes migration jobs; it does not stop runtime queries.
 
 ## Start and operate the servers

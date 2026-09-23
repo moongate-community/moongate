@@ -7,10 +7,10 @@ and examples. This guide explains how to prepare a contribution for review.
 
 Search the [existing issues](https://github.com/moongate-community/moongate/issues)
 and [pull requests](https://github.com/moongate-community/moongate/pulls) before
-starting. For a substantial feature or a change to public APIs, packet behavior,
-or persistence formats, open an issue to discuss the problem and proposed approach
-before investing in the implementation. Small fixes and documentation corrections
-can go directly into a pull request.
+starting. Every feature starts with an issue that describes it in detail, as
+[CODE_CONVENTION.md §13.1](CODE_CONVENTION.md) requires; the same goes for a change
+to public APIs, packet behavior or persistence formats. Bug fixes and documentation
+corrections can go directly into a pull request.
 
 For a bug report, include the Moongate version or commit, operating system,
 reproduction steps, expected and actual behavior, and relevant logs. Include the

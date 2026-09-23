@@ -15,8 +15,8 @@ and the [typed API client example](../src/Moongate.Api/README.md#handle-requests
 
 ## Generate an identity without opening the API port
 
-Use a build containing certificate generation; older releases do not recognize
-these options. Configure the server normally using [First start](getting-started.md),
+Certificate generation ships from 0.5.0; earlier releases do not recognize these
+options. Configure the server normally using [First start](getting-started.md),
 then replace its `[api]` section in `<root>/config/moongate.toml`:
 
 ```toml

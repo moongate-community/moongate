@@ -5,97 +5,38 @@ under `<root>/plugins/<bundle>/`. It registers services into the host's containe
 before the server starts; the host resolves and starts them the same way it starts
 its own built-in services.
 
-**What the sample does.** [samples/Moongate.Sample.Plugin/](../samples/Moongate.Sample.Plugin/)
-registers five things: a world persistence entity, a shared `GreetingCounter` instance, the `greeter` Lua module
-(with the `Tone` enum it takes), a `greet` console command, and a `greeter` metric
-provider that reports how many greetings were produced.
+This page takes you from an empty class library to a deployed bundle. The complete
+worked example, [samples/Moongate.Sample.Plugin/](../samples/Moongate.Sample.Plugin/),
+registers a persistence entity, a Lua module and enum, a console command and a metric
+provider, and the test suite loads it through the real plugin loader.
 
 ## The contract
 
-Every plugin implements `IMoongatePlugin`, quoted here from
-`src/Moongate.Server.Core/Interfaces/Plugins/IMoongatePlugin.cs` (usings omitted):
+Every plugin implements `IMoongatePlugin` from `Moongate.Server.Core.Interfaces.Plugins`:
 
 ```csharp
-namespace Moongate.Server.Core.Interfaces.Plugins;
-
-/// <summary>Declares plugin metadata and registers services before server startup.</summary>
 public interface IMoongatePlugin
 {
-    /// <summary>Gets the immutable plugin metadata and required dependencies.</summary>
     MoongatePluginData Metadata { get; }
 
-    /// <summary>Registers services in the host container without starting them.</summary>
-    /// <param name="container">The host-owned dependency container.</param>
     void Register(Container container);
 }
 ```
 
-`Metadata` is a `MoongatePluginData`, a record whose constructor
-(`src/Moongate.Server.Core/Data/Plugins/MoongatePluginData.cs`) is:
+`Metadata` is a `MoongatePluginData` record constructed as
+`new(id, name, version, author?, description?, dependencies?)`. `id` is the value
+every dependency and error message refers to. It is matched case-insensitively and
+`CODE_CONVENTION.md` §10 fixes its shape: reverse-domain,
+`com.github.author.Moongate.plugins.name`. The sample uses
+`com.github.moongate-community.moongate.plugins.greeter`.
 
-```csharp
-public MoongatePluginData(
-    string id,
-    string name,
-    Version version,
-    string? author = null,
-    string? description = null,
-    IEnumerable<MoongatePluginDependencyData>? dependencies = null)
-```
+`dependencies` is a list of `MoongatePluginDependencyData(id, minimumVersion?)`.
+`minimumVersion` is inclusive. A list with two entries for the same ID is rejected by
+the `MoongatePluginData` constructor itself, before the plugin reaches the registry.
 
-`id` is the value every dependency and error message refers to; it, and every ID
-compared against it, is matched case-insensitively (`StringComparer.OrdinalIgnoreCase`
-throughout `MoongatePluginRegistry`). `CODE_CONVENTION.md` §10 fixes its shape: "The
-Id uses reverse-domain format, `com.github.author.Moongate.plugins.name`, and is
-case-insensitive." The sample's id follows it:
-`com.github.moongate-community.moongate.plugins.greeter`. `dependencies` is a list of
-`MoongatePluginDependencyData`, whose constructor
-(`src/Moongate.Server.Core/Data/Plugins/MoongatePluginDependencyData.cs`) is:
-
-```csharp
-public MoongatePluginDependencyData(string id, Version? minimumVersion = null)
-```
-
-`minimumVersion` is inclusive: a required plugin at exactly that version satisfies
-the dependency. Passing a dependency list with two entries for the same ID is
-rejected immediately, by the `MoongatePluginData` constructor itself, before the
-plugin ever reaches the registry.
-
-Plugins are ordered and validated by `MoongatePluginRegistry.ValidateAndOrder`
-(`src/Moongate.Server.Core/Plugins/MoongatePluginRegistry.cs`) before any `Register`
-runs. Two plugins sharing one ID — including a disk plugin that collides with one
-already registered — fail the whole batch with the same wording:
-
-```
-Plugin ID '{candidate.Id}' is already registered or duplicated.
-```
-
-A dependency naming an ID nothing supplies fails with:
-
-```
-Plugin '{candidate.Id}' requires missing plugin '{dependency.Id}'.
-```
-
-and a dependency whose `minimumVersion` the available plugin does not meet fails
-with:
-
-```
-Plugin '{candidate.Id}' requires '{dependency.Id}' >= {dependency.MinimumVersion}; found {required.Version}.
-```
-
-A cycle in the dependency graph fails with the path that closed it:
-
-```
-Plugin dependency cycle: {string.Join(" -> ", path.Append(candidate.Id))}.
-```
-
-which renders as the visited IDs joined by `" -> "`, for example
-`Plugin dependency cycle: first -> second -> first.` for a two-plugin cycle.
-
-None of these four checks runs any plugin's `Register`; a rejected batch leaves
-every previously registered plugin untouched and lets the caller retry with a
-corrected batch (`MoongatePluginRegistryTests.Register_MissingDependencyRejectsEntireBatchAndAllowsCorrection`
-exercises exactly this).
+`Register` only registers. Nothing may start, open a file or a socket, or touch the
+database in it; the host starts services later, in priority order (see
+[What Register may do](#what-register-may-do)).
 
 ## Creating the project
 
@@ -103,10 +44,7 @@ exercises exactly this).
 dotnet new classlib -n MyShard.Plugin
 ```
 
-Then edit the generated `.csproj`. As an author writes it — referencing the published
-packages instead of the source tree, and without the sample's `<AssemblyName>`
-override (see [Deployment and loading](#deployment-and-loading) for why the sample
-needs one and a real plugin usually does not) — it looks like this:
+Then edit the generated `.csproj`:
 
 ```xml
 <Project Sdk="Microsoft.NET.Sdk">
@@ -126,167 +64,117 @@ needs one and a real plugin usually does not) — it looks like this:
 </Project>
 ```
 
-`0.6.0` is the current released version; pin the version shown on
-[nuget.org/packages/Moongate.Server.Core](https://www.nuget.org/packages/Moongate.Server.Core)
-or the repository's GitHub releases page.
-`ExcludeAssets="runtime"` keeps each package's own `.dll` out of your
-build output — the host already loads `Moongate.Server.Core.dll` and
-`Moongate.Scripting.dll`, so a copy in your bundle would only be dead weight (see
-[Deployment and loading](#deployment-and-loading)). A package the host does not ship
-must **not** carry that attribute, so its assembly does end up in the bundle.
+Pin the version your host ships; the current one is on
+[nuget.org/packages/Moongate.Server.Core](https://www.nuget.org/packages/Moongate.Server.Core).
 
-Plugins that register persisted entities also reference `Moongate.Persistence`
-at the same version with `ExcludeAssets="runtime"`; the host supplies and
-identity-checks its shared FreeSql and Npgsql persistence contracts.
+`ExcludeAssets="runtime"` keeps each package's own `.dll` out of your build output.
+The host already loads `Moongate.Server.Core.dll` and `Moongate.Scripting.dll`, so a
+copy in your bundle would be dead weight. A package the host does not ship must
+**not** carry that attribute, so its assembly does end up in the bundle. Plugins that
+register persisted entities also reference `Moongate.Persistence` the same way; the
+host supplies and identity-checks its shared FreeSql and Npgsql contracts.
 
-`EnableDynamicLoading` controls whether the SDK copies your NuGet package
-dependencies next to the build output (via `CopyLocalLockFileAssemblies`) and writes
-`MyShard.Plugin.runtimeconfig.json` for a plugin host; `MyShard.Plugin.deps.json` is
-written either way. Without it the SDK does not copy a private package's own `.dll`
-into your output at all, so a dependency the host does not ship is simply missing
-from the bundle — neither `PluginLoadContext`'s `AssemblyDependencyResolver` (built
-from that `.deps.json`) nor its adjacent-file fallback (see
-[Deployment and loading](#deployment-and-loading)) has anything to find.
+`EnableDynamicLoading` makes the SDK copy your private NuGet dependencies next to the
+build output; without it a dependency the host does not ship is missing from the
+bundle. Name the project after the bundle you intend to deploy (`MyShard.Plugin/`
+producing `plugins/MyShard.Plugin/`): the loader expects the entry assembly to carry
+the bundle directory's name.
 
 ## The plugin class
 
-The sample's plugin class, quoted in full from
-[samples/Moongate.Sample.Plugin/SamplePlugin.cs](../samples/Moongate.Sample.Plugin/SamplePlugin.cs):
+The smallest useful plugin registers one console command:
 
 ```csharp
 using DryIoc;
-using Moongate.Persistence.Extensions;
-using Moongate.Sample.Plugin.Data.Persistence;
-using Moongate.Sample.Plugin.Commands;
-using Moongate.Sample.Plugin.Diagnostics;
-using Moongate.Sample.Plugin.Internal;
-using Moongate.Sample.Plugin.Modules;
-using Moongate.Sample.Plugin.Types;
-using Moongate.Scripting.Extensions.Scripts;
+using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Plugins;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 
-namespace Moongate.Sample.Plugin;
+namespace MyShard.Plugin;
 
-/// <summary>The sample plugin: registers a Lua module and enum, a console command, a metric provider and a persistence schema. Registration only; nothing starts here.</summary>
-public sealed class SamplePlugin : IMoongatePlugin
+public sealed class MyShardPlugin : IMoongatePlugin
 {
-    /// <inheritdoc />
     public MoongatePluginData Metadata { get; } = new(
-        "com.github.moongate-community.moongate.plugins.greeter",
-        "Greeter sample",
-        new Version(1, 0),
-        author: "Moongate",
-        description: "Adds a greeter Lua module, a greet console command and a greeting counter metric."
+        "com.github.myshard.moongate.plugins.hello",
+        "Hello",
+        new Version(1, 0)
     );
 
-    /// <inheritdoc />
     public void Register(Container container)
     {
-        container.AddPersistenceWorld<GreetingNote>();
-        container.RegisterInstance(new GreetingCounter());
-        container.AddScriptModule<GreeterModule>();
-        container.RegisterScriptEnum<Tone>();
-        container.RegisterCommand<GreetCommand>(
-            "greet",
-            "Greets someone from the console: greet <name> [tone].",
+        container.RegisterCommand<HelloCommand>(
+            "hello",
+            "Prints a greeting: hello <name>.",
             CommandSourceType.Console,
             AccountType.Regular
         );
-        container.AddMetricProvider<GreetingMetricProvider>();
+    }
+}
+
+public sealed class HelloCommand : ICommandExecutor
+{
+    public Task ExecuteAsync(CommandContext context)
+    {
+        if (context.Arguments.Length != 1)
+        {
+            context.PrintError("Usage: hello <name>");
+
+            return Task.CompletedTask;
+        }
+
+        context.Print($"Hello, {context.Arguments[0]}!");
+
+        return Task.CompletedTask;
     }
 }
 ```
 
-`AddPersistenceWorld<GreetingNote>()` selects the Realm database and registers its
-asynchronous data facade. Moongate creates the internal module for the
-`sample_greeter` schema from the entity's table attribute. No module class is
-required, and registration does not connect or change the database. The host
-validates every plugin registration as one batch, then checks schema readiness
-before resolving any startup service. See [PostgreSQL persistence](persistence.md)
-for attributes, schema review, transactions, and explicit complex-property mapping.
-For a runnable example from the entity class through CRUD operations, follow
-[Create a persistent entity](persistence-entity-tutorial.md).
+The plugin class needs a public parameterless constructor; the loader instantiates
+it before any container exists. In a real plugin, put each type in its own file.
 
-`container.RegisterInstance(new GreetingCounter())` shares one counter instance
-between the Lua module and the metric provider; `GreetingCounter`
-(`samples/Moongate.Sample.Plugin/Internal/GreetingCounter.cs`) increments with
-`Interlocked` because it is touched from the game loop (through the Lua module) and
-from whatever thread runs the console command.
-
-`container.AddScriptModule<GreeterModule>()` and
-`container.RegisterScriptEnum<Tone>()` publish `GreeterModule`
-(`samples/Moongate.Sample.Plugin/Modules/GreeterModule.cs`) as the `greeter` Lua
-table and `Tone` (`samples/Moongate.Sample.Plugin/Types/Tone.cs`) as a read-only
-`Tone` table; see [Registering Lua modules](#registering-lua-modules).
-
-`container.RegisterCommand<GreetCommand>(...)` registers `GreetCommand`
-(`samples/Moongate.Sample.Plugin/Commands/GreetCommand.cs`) as the `greet` console
-command, restricted to `CommandSourceType.Console` and `AccountType.Regular`; see
-[Console commands](#console-commands).
-
-`container.AddMetricProvider<GreetingMetricProvider>()` adds
-`GreetingMetricProvider` (`samples/Moongate.Sample.Plugin/Diagnostics/GreetingMetricProvider.cs`)
-to the diagnostics collector. It reports the local name `hello_calls` from the same
-counter; the diagnostics service combines that with `ProviderName` ("greeter") to
-publish it in a snapshot as `greeter.hello_calls`. See
-[Registering metric providers](#registering-metric-providers).
+The sample's `Register` in
+[SamplePlugin.cs](../samples/Moongate.Sample.Plugin/SamplePlugin.cs) shows the
+other helpers side by side: `AddPersistenceWorld<GreetingNote>()` registers a Realm
+entity and its data facade, `RegisterInstance(new GreetingCounter())` shares one
+instance between a Lua module and a metric provider, `AddScriptModule<GreeterModule>()`
+and `RegisterScriptEnum<Tone>()` publish a Lua table and enum, and
+`AddMetricProvider<GreetingMetricProvider>()` adds samples to the diagnostics
+snapshot. Registration never connects to or changes the database; the host validates
+every plugin registration as one batch and checks schema readiness before resolving
+any startup service.
 
 ### Ship versioned SQL with a persistence plugin
 
-Keep entity registration in `Register` with `AddPersistenceAuth<T>()` or
-`AddPersistenceWorld<T>()`. Ship reviewed SQL alongside the plugin DLL:
-
-```text
-MyPlugin/
-  MyPlugin.dll
-  migrations/
-    manifest.json
-    world/0001_create_characters.sql
-```
-
-`manifest.json` contains a stable migration component ID, for example
-`{ "id": "my-plugin" }`. It need not equal the plugin metadata ID; it must remain
-unique and unchanged across releases and folder renames. Add to the plugin project:
-
-```xml
-<ItemGroup>
-  <Content Include="migrations/**/*"
-           CopyToOutputDirectory="PreserveNewest"
-           CopyToPublishDirectory="PreserveNewest" />
-</ItemGroup>
-```
-
-The separate runner discovers SQL and manifests without loading assemblies.
-Core runs first, then plugin component IDs in ordinal order and their numbered
-scripts. Include required earlier migrations when publishing a new plugin version.
-Applied files cannot change. Removing a plugin retains its schema and history.
-The sample plugin includes a complete manifest, an initial World migration and
-an additive migration for its column-owned Serial sequence. New notes can be
-saved with a zero `Id`; `UpsertAsync` assigns the ID automatically.
-Follow [Generate, review and apply](persistence.md#generate-review-and-apply).
+A plugin that registers entities with `AddPersistenceAuth<T>()` or
+`AddPersistenceWorld<T>()` ships its reviewed SQL beside its DLL, under
+`migrations/` with a `manifest.json` holding a stable component ID, and copies that
+directory to its output through a `<Content Include="migrations/**/*">` item. The
+migration runner discovers the SQL without loading assemblies; core runs first, then
+plugin components in ordinal order. See
+[Versioned SQL files](persistence-migrations.md#versioned-sql-files) for the layout
+and rules, and [Create a persistent entity](persistence-entity-tutorial.md) for a
+runnable walk-through from entity class to applied migration.
 
 ## What Register may do
 
 | Registration helper | What it registers | Documented in |
 | --- | --- | --- |
-| `AddMoongateService<TService, TImpl>(priority)` / `AddMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order (`src/Moongate.Server.Core/Extensions/ContainerExtensions.cs` has further overloads for factories and runtime types) | this page |
+| `AddMoongateService<TService, TImpl>(priority)` / `AddMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order. Further overloads accept factories and runtime types | this page |
 | `RegisterCommand<TExecutor>(name, description, source, minimumAccountType)` | One console/in-game command executor, as a singleton | [Console commands](#console-commands) |
 | `RegisterApiHandler<THandler>()` | One typed API handler singleton in the host registry; the opt-in listener freezes it after plugin loading | [API host configuration](server-configuration.md#enable-the-internal-api-server) |
 | `RegisterPacketHandler<TPacket, THandler>()` | One packet handler singleton bound to an incoming packet type | this page |
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
-| `AddScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Registering Lua modules](#registering-lua-modules) |
-| `AddMetricProvider<T>()` | An `IMetricProvider` contribution, singleton, added to the diagnostics collector | [Registering metric providers](#registering-metric-providers) |
+| `AddScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Writing a Lua module](lua-modules.md) |
+| `AddMetricProvider<T>()` | An `IMetricProvider` contribution, singleton, added to the diagnostics collector | [Registering a metric provider](metric-providers.md) |
 | `AddPersistenceAuth<T>()` / `AddPersistenceWorld<T>()` | A typed entity facade for Accounts or Realm, with modules managed internally (needs `Moongate.Persistence`) | [PostgreSQL persistence](persistence.md) |
 
-`priority` only matters for a service that also implements `IMoongateStartupService`
-(`src/Moongate.Server.Core/Interfaces/Services/IMoongateStartupService.cs`): the
-bootstrap starts registered services in ascending priority and stops them in
-reverse, so a service takes a lower priority than the services that depend on it.
-The built-in services use these priorities:
+`priority` only matters for a service that also implements `IMoongateStartupService`:
+the bootstrap starts services in ascending priority and stops them in reverse, so a
+service takes a lower priority than the services that depend on it. Built-in values:
 
 | Priority | Service |
 | --- | --- |
@@ -305,32 +193,18 @@ The built-in services use these priorities:
 
 A plugin registering its own startup service picks a priority relative to this
 table: after `IGameLoopService` (-800) if it needs to post work to the loop, after
-`IScriptEngine` (70) if it needs the engine already bound, and so on.
-Persistence schema preparation completes before this startup-service list is
-resolved, regardless of a plugin service's numeric priority.
+`IScriptEngine` (70) if it needs the engine already bound, and so on. Plugins load
+before the persistence checks, and persistence schema preparation completes before
+this startup-service list is resolved, regardless of a plugin service's priority.
 
 `RegisterPacketHandler<TPacket, THandler>()` binds one `IPacketHandler<TPacket>`
-singleton (`Handle(GameSession session, TPacket packet)`,
-`src/Moongate.Server.Core/Interfaces/Packets/IPacketHandler.cs`) to one incoming
-packet type; the dispatcher calls it synchronously on the game loop thread, and
-registering a second handler for the same packet type throws before startup.
-The [packet guide](packets.md) shows the complete implementation and explains why
-handler registration alone cannot add an opcode to the frozen default wire registry.
-`INetworkService` is a singleton owned by the game coordinator, not an independently
-autostarted listener service. See [game-loop ownership](game-loop-and-timers.md).
+singleton to one incoming packet type, called synchronously on the game loop thread;
+a second handler for the same type throws before startup. The [packet guide](packets.md)
+explains why handler registration alone cannot add an opcode to the wire registry.
 
-`OnEvent<TEvent>(handler)`, from
-`src/Moongate.Server.Core/Extensions/ContainerEventExtensions.cs`, is how a plugin
-subscribes to the host's event bus from `Register`:
-
-```csharp
-public Container OnEvent<TEvent>(Func<TEvent, CancellationToken, Task> handler)
-    where TEvent : class, IMoongateEvent
-```
-
-It resolves (registering, if needed) the one container-owned `IMoongateEventBus` and
-calls its `Subscribe`, so the handler is awaited for every published `TEvent` for as
-long as the container lives.
+`OnEvent<TEvent>(handler)` subscribes to the container-owned event bus from
+`Register`; the handler is awaited for every published `TEvent` as long as the
+container lives.
 
 ### Persistence lifecycle events
 
@@ -351,511 +225,114 @@ container.OnEvent<PersistenceStoppedEvent>((_, _) =>
 });
 ```
 
-`Item` stands for your registered persistence entity. Import
-`Moongate.Persistence.Interfaces` for `IDataAccess<T>` and
-`Moongate.Server.Core.Extensions` for `OnEvent<TEvent>`.
-
-Both events are payload-free host lifecycle notifications published through the
-same singleton event bus used by `IEventBusService`. They are awaited and emitted
-at most once per bootstrap lifecycle:
+`Item` stands for your registered entity; `IDataAccess<T>` comes from
+`Moongate.Persistence.Interfaces` and `OnEvent<TEvent>` from `Moongate.Server.Core.Extensions`.
 
 | Event | Timing and guarantees |
 | --- | --- |
 | `PersistenceReadyEvent` | Plugin registration and persistence initialization have completed successfully, including connection, migration, and schema checks. Persistence is usable; startup services and `MoongateStartedEvent` follow. |
 | `PersistenceStoppedEvent` | An initialized persistence owner has been disposed successfully, after service shutdown and `MoongateStoppedEvent`, but before container disposal. It uses a non-cancelable token so shutdown observers can finish. |
 
-No persistence events are published when the host has no persistence registration
-or initialization fails. If persistence initializes but a later startup stage
-fails, cleanup still publishes `PersistenceStoppedEvent`. These events belong to
-the server bootstrap; directly constructing or disposing a library persistence
-owner does not publish host events. `PersistenceStoppedEvent` is a closure signal,
-not confirmation that a final world save succeeded.
-
-Handlers run as part of the lifecycle operation, not on the game loop. Do not
-await the bootstrap's `StartAsync` or `StopAsync` from one of these handlers: that
-operation can be waiting for the handler itself. The default event bus logs and
-isolates observer exceptions; critical startup validation belongs in a startup
-service. A canceled startup token still aborts startup.
-
-### Registering Lua modules
-
-`AddScriptModule<T>()` registers `T` as a container singleton and records its
-type for the script engine to bind when it starts, which is why `GreetCommand` can
-take `GreeterModule` in its own constructor and call the exact instance the engine
-publishes to Lua; `RegisterScriptEnum<T>()` publishes an enum the same way without
-requiring a module to reference it. The full authoring guide — attributes, typed
-returns, the definitions file — is [docs/lua-modules.md](lua-modules.md).
-
-### Registering metric providers
-
-`AddMetricProvider<T>()` registers `T` as an additional singleton `IMetricProvider`;
-the diagnostics collector resolves every registered provider, including plugin ones,
-and folds their samples into the same snapshot and event bus described in
-[docs/diagnostics.md](diagnostics.md#plugin-providers). A sample's `Name` is a local
-name, not the qualified key — the collector prefixes it with the provider's own
-`ProviderName` and a dot, which is why `GreetingMetricProvider` reports the local
-name `hello_calls` rather than `greeter.hello_calls`. Naming rules, sample types
-and failure isolation are documented in full in
-[docs/metric-providers.md](metric-providers.md).
+Both are payload-free, awaited, and emitted at most once per bootstrap lifecycle.
+Nothing is published when the host has no persistence registration or initialization
+fails; a later startup failure still publishes `PersistenceStoppedEvent`, which is a
+closure signal, not confirmation of a final world save. Handlers run as part of the
+lifecycle operation, not on the game loop; never await the bootstrap's `StartAsync` or
+`StopAsync` from one. The event bus logs and isolates observer exceptions, so critical
+startup validation belongs in a startup service.
 
 ## Console commands
 
-The sample's command, quoted in full from
-[samples/Moongate.Sample.Plugin/Commands/GreetCommand.cs](../samples/Moongate.Sample.Plugin/Commands/GreetCommand.cs):
+A command is a class implementing `ICommandExecutor`, registered with
+`RegisterCommand<T>(name, description, source, minimumAccountType)` as in
+[the plugin class](#the-plugin-class) above. `CommandContext` gives it `Arguments`
+(the tokens after the command name), `Print` and `PrintError` (one output line each)
+and the `CancellationToken` of the invocation.
 
-```csharp
-using Moongate.Sample.Plugin.Modules;
-using Moongate.Sample.Plugin.Types;
-using Moongate.Server.Core.Data.Commands;
-using Moongate.Server.Core.Interfaces.Commands;
-
-namespace Moongate.Sample.Plugin.Commands;
-
-/// <summary>"greet &lt;name&gt; [plain|warm|formal]": prints a greeting on the console through the same module scripts use.</summary>
-public sealed class GreetCommand : ICommandExecutor
-{
-    private const string Usage = "Usage: greet <name> [plain|warm|formal]";
-
-    private readonly GreeterModule _greeter;
-
-    /// <summary>Initializes a new instance of the <see cref="GreetCommand"/> class.</summary>
-    /// <param name="greeter">The module singleton the script engine binds; its method is plain C#, safe to call from the console thread.</param>
-    public GreetCommand(GreeterModule greeter)
-    {
-        _greeter = greeter;
-    }
-
-    /// <inheritdoc />
-    public Task ExecuteAsync(CommandContext context)
-    {
-        if (context.Arguments.Length is 0 or > 2)
-        {
-            context.PrintError(Usage);
-
-            return Task.CompletedTask;
-        }
-
-        var tone = Tone.Plain;
-
-        if (context.Arguments.Length == 2 &&
-            (!Enum.TryParse(context.Arguments[1], ignoreCase: true, out tone) || !Enum.IsDefined(tone)))
-        {
-            context.PrintError(Usage);
-
-            return Task.CompletedTask;
-        }
-
-        context.Print(_greeter.Hello(context.Arguments[0], tone));
-
-        return Task.CompletedTask;
-    }
-}
-```
-
-`Enum.TryParse` parses a numeric string like `"7"` into the enum even though no
-member has that value, which is why the guard also
-checks `Enum.IsDefined(tone)`: `greet Bob 7` fails that second check and prints the
-usage line rather than crashing or silently picking `Tone.Plain`
-(`SamplePluginTests` asserts this).
-
-`ICommandExecutor` (`src/Moongate.Server.Core/Interfaces/Commands/ICommandExecutor.cs`)
-carries this remark:
-
-> Handlers run on the thread that called the command system, never on the game loop
-> thread.
-> A command that mutates game state must post its own work item to
-> IGameLoopService.
-
-`GreetCommand` never touches loop-owned state, so it needs nothing beyond calling
-`_greeter.Hello(...)` directly. A command that does — reloading a script file, for
-example — follows the pattern in `src/Moongate.Server/Commands/ScriptCommand.cs`:
-it builds a `ScriptReloadWorkItem`, awaits `IGameLoopService.PostAsync(workItem, ...)`
-to hand the work to the loop thread, and then awaits the work item's own outcome
-before writing the result back through `CommandContext`.
-
-Of `CommandContext`'s members (`src/Moongate.Server.Core/Data/Commands/CommandContext.cs`),
-`GreetCommand` uses:
-
-- `Arguments` — the whitespace-separated tokens after the command name, as
-  `string[]`; `context.Arguments[0]` is the name to greet, `context.Arguments[1]` the
-  optional tone.
-- `Print(message, args)` — appends an informational output line.
-- `PrintError(message, args)` — appends an error output line; used for every usage
-  failure.
-
-`CommandContext.CancellationToken` is the token cancelling this invocation;
-`GreetCommand` does not need it, but a loop-affine command does, to pass along to
-`IGameLoopService.PostAsync` and to the work item's own `WaitAsync`, exactly as
-`ScriptCommand` does.
-
-`RegisterCommand<GreetCommand>("greet", ..., CommandSourceType.Console, AccountType.Regular)`
-ties the command to a source and a minimum account type.
-`CommandSourceType` (`src/Moongate.Server.Core/Types/Commands/CommandSourceType.cs`)
-is a `[Flags]` enum (`InGame = 1 << 0`, `Console = 1 << 1`), so a command can be
-registered for more than one source by ORing them together — the built-in `echo`
-command, for instance, registers with `CommandSourceType.Console | CommandSourceType.InGame`.
-`AccountType` (`src/Moongate.Server.Core/Types/Accounts/AccountType.cs`) is
+`CommandSourceType` is a `[Flags]` enum (`InGame`, `Console`), so one command can
+serve both sources by ORing them, as the built-in `echo` does. `AccountType` is
 `Regular`, `GameMaster`, `Administrator` in ascending order; a console invocation is
-always treated as `Administrator`, so `AccountType.Regular` here only matters for the
-same command reached from `CommandSourceType.InGame`, where the invoking session's
-own account type is checked against it.
+always treated as `Administrator`, so the minimum only matters for the same command
+reached from `InGame`, where the invoking session's account type is checked.
+
+**Commands run on the thread that called the command system, never on the game loop
+thread.** A command that reads or mutates game state must post its own work item to
+`IGameLoopService` and await its outcome before writing the result through
+`CommandContext`. The built-in `script reload` command
+(`src/Moongate.Server/Commands/ScriptCommand.cs`) is the reference pattern. The
+sample's [GreetCommand](../samples/Moongate.Sample.Plugin/Commands/GreetCommand.cs)
+shows argument validation, including the `Enum.IsDefined` check that stops a numeric
+string like `"7"` from parsing into an undefined enum member.
 
 ## Deployment and loading
 
-Build the plugin project in Release and copy its output — everything under
-`bin/Release/net10.0/`, not just the entry DLL — into `<root>/plugins/<BundleName>/`
-on the target server. `<root>` is the directory `Program.cs`
-(`src/Moongate.Server/Program.cs`) resolves at startup: the `--root-directory`
-command-line option, then the `MOONGATE_ROOT` environment variable, then the running
-executable's own directory (`AppContext.BaseDirectory`) if neither is given.
+Build the plugin project in Release and copy its output, everything under
+`bin/Release/net10.0/` and not just the entry DLL, into `<root>/plugins/<BundleName>/`
+on the target server. `<root>` is resolved at startup from `--root-directory`, then
+`MOONGATE_ROOT`, then the executable's own directory.
 
-A bundle is a directory under `<root>/plugins/`; its name is also the name the
-loader expects for its entry assembly. `PluginLoaderService.LoadBundle`
-(`src/Moongate.Server/Services/Plugins/PluginLoaderService.cs`) builds the path as
-`Path.Combine(directory, Path.GetFileName(directory) + ".dll")`, so a bundle at
-`plugins/mymod/` must contain `mymod.dll` and any private dependency the host does
-not already ship; `mymod.deps.json` should sit alongside it too, so
-`AssemblyDependencyResolver` can resolve those dependencies by name, though the
-adjacent-`.dll` fallback shown below still finds a dependency placed directly in the
-bundle even without one. This is also why the sample's `.csproj` sets
-`<AssemblyName>SamplePlugin</AssemblyName>`: `PluginDirectoryFixture.Deploy("SamplePlugin",
-"sample")` expects the built output at `PluginFixtures/SamplePlugin/SamplePlugin.dll`
-so it can copy `SamplePlugin.dll`/`SamplePlugin.deps.json` into `plugins/sample/` as
-`sample.dll`/`sample.deps.json`, alongside the original `SamplePlugin.*` files rather
-than renaming them — a test-infrastructure naming constraint
-(`PluginDirectoryFixture.cs:18,29`), not the loader's rule. An author who names the
-project directory after the intended bundle name (`MyShard.Plugin/` producing
-`plugins/MyShard.Plugin/`) does not need an `AssemblyName` override at all.
+A bundle is a directory under `<root>/plugins/`; its name is also the name the loader
+expects for its entry assembly. A bundle at `plugins/mymod/` must contain `mymod.dll`,
+its `mymod.deps.json`, and any private dependency the host does not already ship.
+Bundles load in ordinal directory-name order; the order plugins are registered is
+decided by the dependency sort, not by load order.
 
-The loader enumerates bundle directories with `Directory.EnumerateDirectories(root).Order(StringComparer.Ordinal)`,
-so bundles load in a fixed, ordinal directory-name order; this governs load order,
-not the order plugins are eventually registered, which is decided by the dependency
-topological sort in `MoongatePluginRegistry.ValidateAndOrder` regardless of which
-bundle loaded first.
+Each bundle gets one collectible `AssemblyLoadContext`. Its rule for every assembly
+the bundle references:
 
-Each bundle gets one collectible `AssemblyLoadContext`: `PluginLoadContext`
-(`src/Moongate.Server/Services/Plugins/Internal/PluginLoadContext.cs`) is constructed
-per bundle with `isCollectible: true`. Its `Load` override decides where every
-assembly the bundle references comes from:
+1. `Moongate.Core`, `Moongate.Server.Core`, `Moongate.Persistence`,
+   `Moongate.Persistence.Migrations`, `FreeSql`, `FreeSql.Provider.PostgreSQL` and
+   `Npgsql` always resolve from the host, and the version, culture and public key
+   token the plugin referenced must match the host's copy exactly, older or newer.
+   Build against the exact package version the target host ships.
+2. Every other assembly first tries the host's own load context. Everything the host
+   ships (other `Moongate.*` assemblies, Serilog, DryIoc, LuaCSharp, and so on)
+   resolves there as long as the version the plugin references is no newer than the
+   host's. A bundled copy of such an assembly is dead weight, never an override; a
+   newer reference is treated as not found and, with `ExcludeAssets="runtime"`, the
+   bundle fails to load.
+3. Only an assembly the host does not have falls through to the bundle: its
+   `.deps.json` resolver first, then a same-named `.dll` next to the entry assembly.
+   Two bundles carrying their own copies of one library get two separate instances of
+   its static state.
 
-```csharp
-protected override Assembly? Load(AssemblyName assemblyName)
-{
-    if (assemblyName.Name is "Moongate.Core" or
-        "Moongate.Server.Core" or
-        "Moongate.Persistence" or
-        "Moongate.Persistence.Migrations" or
-        "FreeSql" or
-        "FreeSql.Provider.PostgreSQL" or
-        "Npgsql")
-    {
-        Assembly host;
-
-        try
-        {
-            host = Default.LoadFromAssemblyName(new(assemblyName.Name));
-        }
-        catch (Exception exception) when (exception is FileNotFoundException or FileLoadException)
-        {
-            throw new FileLoadException(
-                $"Required host persistence contract '{assemblyName}' is unavailable; private copies are not supported.",
-                exception
-            );
-        }
-
-        var identity = host.GetName();
-
-        if (assemblyName.Version != identity.Version ||
-            !string.Equals(assemblyName.CultureName ?? "", identity.CultureName ?? "", StringComparison.OrdinalIgnoreCase) ||
-            !(assemblyName.GetPublicKeyToken() ?? []).SequenceEqual(identity.GetPublicKeyToken() ?? []))
-        {
-            throw new FileLoadException(
-                $"Incompatible host persistence contract '{assemblyName}'; host provides '{identity}'. Private copies are not supported."
-            );
-        }
-
-        return host;
-    }
-
-    try
-    {
-        // Host contracts and their dependencies must retain the host's type identity.
-        return Default.LoadFromAssemblyName(assemblyName);
-    }
-    catch (FileNotFoundException)
-    {
-        // Assemblies not supplied by the host belong to the plugin's private context.
-    }
-
-    var path = _resolver.ResolveAssemblyToPath(assemblyName);
-    if (path is null && assemblyName.Name is not null)
-    {
-        var adjacentPath = Path.Combine(_directory, assemblyName.Name + ".dll");
-        if (File.Exists(adjacentPath))
-        {
-            path = adjacentPath;
-        }
-    }
-
-    return path is null ? null : LoadFromAssemblyPath(path);
-}
-```
-
-`Moongate.Core`, `Moongate.Server.Core`, `Moongate.Persistence`,
-`Moongate.Persistence.Migrations`, `FreeSql`, `FreeSql.Provider.PostgreSQL` and
-`Npgsql` are checked first and held to a stricter rule than every other host
-assembly: they always resolve from `AssemblyLoadContext.Default`, then the version,
-culture and public key token the plugin referenced must match the host's copy
-exactly — an *older* reference is rejected too, not only a newer one. A missing or
-mismatched contract fails the bundle load immediately with a `FileLoadException`
-naming the assembly (`"Required host persistence contract '{assemblyName}' is
-unavailable; private copies are not supported."` or `"Incompatible host persistence
-contract '{assemblyName}'; host provides '{identity}'. Private copies are not
-supported."`), itself wrapped as `Failed to load plugin bundle '{path}'.` the same
-way as every other loader failure (see below). Build a plugin that references
-`Moongate.Persistence` against the exact package version the target host ships.
-
-Every other assembly first tries `AssemblyLoadContext.Default` — the host's own load
-context. Every assembly the host ships (every other `Moongate.*` assembly, Serilog,
-DryIoc, LuaCSharp, and so on) resolves there, so a copy of that same assembly
-sitting in the bundle is not touched as long as the version the plugin references is
-no newer than the host's; only `FileNotFoundException` falls through to the bundle's
-own `AssemblyDependencyResolver` (built from the bundle's `.deps.json`) and, failing
-that, a same-named `.dll` next to the entry assembly.
-
-Consequences of that rule:
-
-- Do not ship `Moongate.*.dll` in the bundle: the host's copy always wins, so a
-  bundled copy is dead weight, not a working override (the sample's own bundle keeps
-  four such inert files — `Moongate.Api.dll`, `Moongate.Core.dll`,
-  `Moongate.Network.dll`, `Moongate.Network.Packets.dll` — pulled in transitively; see
-  [Common mistakes](#common-mistakes)).
-- No static state is shared between bundles for a dependency the host does *not*
-  ship: each bundle's `PluginLoadContext` resolves that dependency independently, so
-  two bundles carrying their own copies of the same third-party library get two
-  separate instances of its static state, not one.
-- A dependency the host *does* ship, and does not identity-check as above, must be
-  compiled against a package version no newer than the host you deploy to. An older
-  reference binds cleanly to the host's copy. A *newer* reference is treated as not
-  found by the host context, so the loader falls through to the bundle: with
-  `ExcludeAssets="runtime"` there is no copy there and the bundle fails to load
-  (`Failed to load plugin bundle '{path}'.` with an inner `FileNotFoundException`);
-  if a newer `Moongate.Network.dll` *is* in the bundle, it loads privately instead.
-  `Moongate.Server.Core` itself is one of the identity-checked assemblies above, so a
-  version mismatch there fails fast with the `FileLoadException` wording quoted above
-  rather than loading a private copy.
-
-`PluginLoaderService.LoadPlugins()` is called from `PersistencePreparation.LoadPlugins`
-(`src/Moongate.Server/Bootstrap/Internal/PersistencePreparation.cs`), which
-`PersistencePreparation.InitializeAsync` calls as its own first line, before it
-touches persistence at all:
-
-```csharp
-public static void LoadPlugins(Container container)
-{
-    if (container.IsRegistered<IPluginLoaderService>())
-    {
-        container.Resolve<IPluginLoaderService>().LoadPlugins();
-    }
-}
-```
-
-`MoongateServerBootstrap.StartCoreAsync`
-(`src/Moongate.Server/Bootstrap/MoongateServerBootstrap.cs`) awaits
-`PersistencePreparation.InitializeAsync` as its own first step, before it resolves
-and starts any `StartupServiceLifecycle`-managed autostart service — but after the
-host's own registrations, since `RegisterServices` runs its callback synchronously
-through `BootstrapLifecycleTasks.Configure` when it is called, and `StartAsync` (and
-therefore `StartCoreAsync`) only runs later. Plugin loading therefore always
-completes before persistence schema checks and before `PersistenceReadyEvent`, whether
-or not the host has any persistence registration.
+## Errors that refuse the start
 
 Every failure refuses the start with a named `InvalidOperationException`. Loading a
-bundle wraps any failure — including the three below — as:
+bundle wraps any failure as `Failed to load plugin bundle '{path}'.` with the original
+problem as `InnerException`:
 
-```
-Failed to load plugin bundle '{path}'.
-```
+| Message | Cause |
+| --- | --- |
+| `The plugin entry assembly is missing.` | The bundle directory holds no DLL named after itself |
+| `The assembly contains no public concrete IMoongatePlugin types.` | No plugin type in the entry assembly |
+| `Plugin '{type}' needs a public parameterless constructor.` | The plugin class cannot be instantiated |
+| `Required host persistence contract '{assembly}' is unavailable; private copies are not supported.` | An identity-checked assembly is missing from the host |
+| `Incompatible host persistence contract '{assembly}'; host provides '{identity}'. Private copies are not supported.` | The plugin was built against a different version of an identity-checked assembly |
+| `FileNotFoundException` inner exception | A dependency newer than the host's copy, with no private copy in the bundle |
 
-with the original problem as `InnerException`. The three loader-level problems it can
-wrap are a missing entry assembly — the bundle directory holds no DLL named after
-itself, the naming rule from [Deployment and loading](#deployment-and-loading):
+The registry validates the whole batch before any `Register` runs; a rejected batch
+leaves previously registered plugins untouched:
 
-```
-The plugin entry assembly is missing.
-```
-
-no plugin type in the assembly:
-
-```
-The assembly contains no public concrete IMoongatePlugin types.
-```
-
-and a plugin type with no public parameterless constructor:
-
-```
-Plugin '{type.FullName}' needs a public parameterless constructor.
-```
-
-If loading succeeds but a plugin's own `Register` throws, `MoongatePluginRegistry.Register`
-wraps it the same way:
-
-```
-Plugin '{metadata.Id}' failed during registration.
-```
-
-again with the thrown exception as `InnerException`. An unknown or under-versioned
-dependency fails before any `Register` runs at all, with the wording quoted in
-[The contract](#the-contract).
+| Message | Cause |
+| --- | --- |
+| `Plugin ID '{id}' is already registered or duplicated.` | Two plugins share one ID, including a disk plugin colliding with a registered one |
+| `Plugin '{id}' requires missing plugin '{dependency}'.` | A dependency names an ID nothing supplies |
+| `Plugin '{id}' requires '{dependency}' >= {minimum}; found {version}.` | The available plugin is older than `minimumVersion` |
+| `Plugin dependency cycle: first -> second -> first.` | A cycle in the dependency graph, printed as the path that closed it |
+| `Plugin '{id}' failed during registration.` | The plugin's own `Register` threw; the exception is the `InnerException` |
 
 ## Testing a plugin
 
-The integration approach loads a real bundle through the real loader. Quoted in
-full from
-[tests/Moongate.Tests/Integration/Plugins/SamplePluginTests.cs](../tests/Moongate.Tests/Integration/Plugins/SamplePluginTests.cs):
-
-```csharp
-using DryIoc;
-using Moongate.Scripting.Data.Config;
-using Moongate.Scripting.Interfaces;
-using Moongate.Scripting.Services;
-using Moongate.Server.Bootstrap;
-using Moongate.Server.Core.Commands;
-using Moongate.Server.Core.Data.GameLoop;
-using Moongate.Server.Core.Data.Timing;
-using Moongate.Server.Core.Extensions;
-using Moongate.Server.Core.Interfaces.Diagnostics;
-using Moongate.Server.Core.Interfaces.Services;
-using Moongate.Server.Core.Types.Commands;
-using Moongate.Server.Services.Commands;
-using Moongate.Server.Services.Events;
-using Moongate.Server.Services.GameLoop;
-using Moongate.Server.Services.Plugins;
-using Moongate.Server.Services.Timing;
-using Moongate.Tests.Support.GameLoop;
-using Moongate.Tests.TestSupport.Diagnostics;
-using Moongate.Tests.TestSupport.Plugins;
-
-namespace Moongate.Tests.Integration.Plugins;
-
-public sealed class SamplePluginTests
-{
-    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
-
-    [Fact]
-    public async Task SampleBundle_LoadsThroughTheLoader_AndItsModuleCommandAndMetricWork()
-    {
-        using var files = new PluginDirectoryFixture("plugins", "scripts");
-        files.Deploy("SamplePlugin", "sample");
-        await File.WriteAllTextAsync(Path.Combine(files.Directories["scripts"], "init.lua"),
-            "greeting = greeter.hello('Moongate', Tone.Warm)\n" +
-            "function report() return greeting, greeter.DEFAULT_GREETING end");
-        using var container = new Container();
-        container.RegisterMoongateEventBus();
-        container.RegisterInstance<TimeProvider>(TimeProvider.System);
-        container.RegisterInstance(new TimerWheelOptions());
-        container.RegisterInstance(new GameLoopOptions());
-        container.RegisterInstance(files.Directories);
-        container.RegisterInstance(new ScriptEngineOptions { ScriptsDirectory = files.Directories["scripts"] });
-        container.RegisterDelegate<ITimerService>(resolver => resolver.Resolve<TimerWheelService>(), Reuse.Singleton);
-        container.AddMoongateService<TimerWheelService>(priority: -900)
-                 .AddMoongateService<IGameLoopService, GameLoopService>(priority: -800)
-                 .AddMoongateService<IEventBusService, EventBusService>()
-                 .AddMoongateService<IPluginLoaderService, PluginLoaderService>(
-                     () => new PluginLoaderService(container, files.Directories))
-                 .AddMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority);
-        var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-
-        await bootstrap.StartAsync().WaitAsync(Timeout);
-
-        try
-        {
-            var loader = container.Resolve<IPluginLoaderService>();
-            Assert.Contains(loader.Plugins, plugin => plugin.Id == "com.github.moongate-community.moongate.plugins.greeter");
-
-            var engine = container.Resolve<IScriptEngine>();
-            var loop = container.Resolve<IGameLoopService>();
-            var probe = new TaskCompletionSource<object?[]>(TaskCreationOptions.RunContinuationsAsynchronously);
-            await loop.PostAsync(new ActionGameLoopWorkItem(() =>
-            {
-                try
-                {
-                    probe.SetResult(engine.Call("report").Values.ToArray());
-                }
-                catch (Exception exception)
-                {
-                    probe.SetException(exception);
-                }
-            }));
-            Assert.Equal(["Hello there, Moongate!", "Hello"], await probe.Task.WaitAsync(Timeout));
-
-            var commands = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
-            await commands.StartAsync();
-            var greeted = Assert.Single(await commands.ExecuteAsync("greet Moongate formal"));
-            Assert.Equal("Good day, Moongate.", greeted.Text);
-            Assert.Equal(CommandOutputLevel.Information, greeted.Level);
-            var usage = Assert.Single(await commands.ExecuteAsync("greet"));
-            Assert.Equal("Usage: greet <name> [plain|warm|formal]", usage.Text);
-            Assert.Equal(CommandOutputLevel.Error, usage.Level);
-            var undefinedTone = Assert.Single(await commands.ExecuteAsync("greet Bob 7"));
-            Assert.Equal("Usage: greet <name> [plain|warm|formal]", undefinedTone.Text);
-            Assert.Equal(CommandOutputLevel.Error, undefinedTone.Level);
-            await commands.StopAsync();
-
-            var provider = Assert.Single(container.ResolveMany<IMetricProvider>(), candidate => candidate.ProviderName == "greeter");
-            using var diagnostics = new DiagnosticServiceFixture([provider]);
-            await diagnostics.Service.StartAsync();
-            var snapshot = await diagnostics.NextAsync();
-            Assert.Empty(snapshot.FailedProviders);
-            Assert.Equal(2, snapshot.Metrics["greeter.hello_calls"].Value);
-
-            var definitions = await File.ReadAllTextAsync(Path.Combine(files.Directories["scripts"], "definitions.lua"));
-            Assert.Contains("---@class greeter", definitions, StringComparison.Ordinal);
-            Assert.Contains("---@enum Tone", definitions, StringComparison.Ordinal);
-        }
-        finally
-        {
-            await bootstrap.StopAsync().WaitAsync(Timeout);
-        }
-    }
-}
-```
-
-This test proves three things:
-
-- Deploying the built sample under `plugins/sample/` and calling the production
-  `PluginLoaderService.LoadPlugins()` through a real `MoongateServerBootstrap` start
-  proves the bundle loads exactly the way a shipped plugin would, and that
-  `com.github.moongate-community.moongate.plugins.greeter` ends up in
-  `IPluginLoaderService.Plugins`.
-- Running `report()` on the game loop thread and then executing `greet Moongate
-  formal`, the bare `greet`, and `greet Bob 7` through `CommandSystemService` proves
-  the Lua module, the `Tone` enum and the console command all resolve through the
-  one container the loader populated — the same `GreeterModule` instance backs both
-  call sites, and both a missing argument and an undefined numeric tone (`greet Bob
-  7`) are refused with the usage line rather than accepted.
-- Wrapping the resolved provider in a real `DiagnosticService` through
-  `DiagnosticServiceFixture` and collecting one snapshot proves the provider passes
-  the same validation and naming a shipped provider would — `snapshot.FailedProviders`
-  is empty, meaning `GreetingMetricProvider`'s local name `hello_calls` was accepted —
-  and that the snapshot carries `greeter.hello_calls` (the service's own
-  `ProviderName + "." + sample.Name` qualification) equal to `2` after exactly two
-  `Hello` calls (one from Lua, one from the command), proving the shared
-  `GreetingCounter` is genuinely shared. Asserting `definitions.lua` contains
-  `---@class greeter` and `---@enum Tone` proves
-  `AddScriptModule`/`RegisterScriptEnum` fed the editor tooling the plugin
-  asked for.
-
-The unit approach skips the disk and the loader and exercises the registry
-directly, the way `MoongatePluginRegistryTests`
-(`tests/Moongate.Tests/Server/Core/Plugins/MoongatePluginRegistryTests.cs`) does:
-construct `new MoongatePluginRegistry(container)`, call `.Register(plugin)` with an
-in-memory `IMoongatePlugin`, then resolve what `Register` added from the same
-container. `Register_PreservesLazySingletonServiceAndRegistrationMetadata` is the
-clearest example: it registers a plugin whose `Register` calls
-`AddMoongateService<TService, TImpl>(factory, priority: 42)`, then resolves
-`List<ServiceRegistrationData>` to assert the recorded priority and autostart flag,
-and resolves the service itself to assert the factory ran lazily exactly once.
+Test through the real loader: deploy the built bundle under a temporary
+`plugins/<name>/` directory, register the host services your plugin needs in a
+`Container`, add `PluginLoaderService`, and start a `MoongateServerBootstrap`. Then
+resolve what your `Register` added and exercise it: call Lua through the game loop,
+run commands through `CommandSystemService`, collect a diagnostics snapshot.
+[tests/Moongate.Tests/Integration/Plugins/SamplePluginTests.cs](../tests/Moongate.Tests/Integration/Plugins/SamplePluginTests.cs)
+does exactly this for the sample and is the template to copy. For unit tests that skip
+the disk, construct `new MoongatePluginRegistry(container)`, call `Register(plugin)`
+with an in-memory `IMoongatePlugin`, and resolve what it added from the same container.
 
 ## Common mistakes
 
@@ -864,11 +341,11 @@ and resolves the service itself to assert the factory ran lazily exactly once.
 - **Shipping host assemblies in the bundle.** The host's own copy always wins, so a
   bundled `Moongate.*.dll` is dead weight; see
   [Deployment and loading](#deployment-and-loading).
-- **Doing work — I/O, starting threads — in `Register`.** `Register` only registers;
+- **Doing work, I/O or starting threads, in `Register`.** `Register` only registers;
   nothing may start yet; see [The contract](#the-contract).
 - **Registering a loop-affine object and touching it from a command without
   posting.** Commands run on the caller's thread, never the game loop; see
   [Console commands](#console-commands).
 - **A `[ScriptModule]` class with a constructor dependency that is not registered
   before startup.** The engine resolves the instance only when it starts; see
-  [docs/lua-modules.md#registering](lua-modules.md#registering).
+  [Writing a Lua module](lua-modules.md#registering).

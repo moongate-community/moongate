@@ -2,7 +2,8 @@
 
 `mgboot` prepares a Moongate data directory without starting the server or connecting
 to PostgreSQL. It ships beside `Moongate.Server` in release archives and Docker
-images. The Linux installer also adds the `mgboot` command to your PATH.
+images after 0.6.0, and the Linux installer links it as the `mgboot` command. It is
+step 1 of [the first-start sequence](getting-started.md#first-start).
 
 ## Usage
 
@@ -40,7 +41,7 @@ The root does not need database access or Ultima Online client files to be prepa
 
 Base migration preparation copies the versioned SQL distributed with Moongate.
 It does not generate new SQL from entities, load plugins, create databases or apply
-migrations. Use the [persistence tools](persistence.md#automatic-development-migrations)
+migrations. Use the [persistence tools](persistence-migrations.md#automatic-development-migrations)
 for entity changes after initialization.
 
 ## Existing directories
@@ -58,21 +59,11 @@ update the absolute path in a newly generated config accordingly.
 
 ## Next steps
 
-1. Edit `config/moongate.toml`: set `ultima.ultima_path` and the auth/world database
-   connection strings for your environment.
-2. Create the PostgreSQL databases and roles. Moongate does not create databases.
-3. Apply the bundled SQL from the extracted distribution:
-
-   ```sh
-   ./migration-runner/Moongate.MigrationRunner apply --root-directory /absolute/path/to/moongate-data --target auth
-   ./migration-runner/Moongate.MigrationRunner apply --root-directory /absolute/path/to/moongate-data --target world
-   ```
-
-4. Start `moongate --root-directory /absolute/path/to/moongate-data` (or the extracted
-   `Moongate.Server` executable). Add your plugins and scripts as needed.
-
-For development, you can instead enable `persistence.auto_generate_migrations`
-after preparing the databases. See the [entity tutorial](persistence-entity-tutorial.md).
+Continue with [Start a Moongate server](getting-started.md#first-start): edit the
+generated configuration, create the PostgreSQL databases, apply the bundled SQL with
+the migration runner and start the server. For development, you can instead enable
+`persistence.auto_generate_migrations` after preparing the databases; see the
+[entity tutorial](persistence-entity-tutorial.md).
 
 ## Docker
 
