@@ -2,7 +2,8 @@
 
 `Moongate.Network.Packets` defines wire formats independently of TCP and the game
 server. `PacketRegistry` describes frames and decodes incoming packets;
-`IPacketHandler<TPacket>` supplies synchronous game behavior. These are separate
+`IPacketHandler<TPacket>` supplies synchronous game behavior, while
+`IAsyncPacketHandler<TPacket>` handles packets that need I/O. These are separate
 registrations. The initial built-in formats target **ClassicUO 7.x**.
 
 ## Built-in packet coverage
@@ -167,6 +168,58 @@ handler fields. `Handle` executes on the game loop; keep it short and synchronou
 `TrySend` snapshots encoded bytes and returns admission status, not delivery
 confirmation. Decide what to do when it returns false; the example disconnects.
 
+For a handler that awaits database or network I/O, implement
+`IAsyncPacketHandler<TPacket>` and register it with
+`RegisterAsyncPacketHandler<TPacket, THandler>()`. Its `HandleAsync` runs off
+the game loop. The handler receives a `PacketContext` rather than a mutable
+`GameSession`. This example assumes an application-specific lookup service:
+
+```csharp
+// Define this service in your plugin; keep its interface in a separate file.
+public interface IExampleLookup
+{
+    Task<ushort?> LoadAsync(ushort value, CancellationToken cancellationToken);
+}
+
+public sealed class ExampleAsyncPacketHandler : IAsyncPacketHandler<ExamplePacket>
+{
+    private readonly IExampleLookup _lookup;
+
+    public ExampleAsyncPacketHandler(IExampleLookup lookup)
+    {
+        _lookup = lookup;
+    }
+
+    public async ValueTask HandleAsync(
+        PacketContext context,
+        ExamplePacket packet,
+        CancellationToken cancellationToken
+    )
+    {
+        var value = await _lookup.LoadAsync(packet.Value, cancellationToken);
+
+        if (value is not null)
+        {
+            context.TrySend(new ExamplePacket(value.Value));
+        }
+    }
+}
+
+container.RegisterAsyncPacketHandler<ExamplePacket, ExampleAsyncPacketHandler>();
+```
+
+When the result must change game state, return to the loop with
+`await context.RunOnGameLoopAsync(session => { /* update session/world */ }, cancellationToken)`.
+It returns `false` if the original session disconnected before the action ran.
+An async handler must not mutate a session directly after an `await`.
+
+Only one async packet may be in flight for a session. Until it finishes, the
+dispatcher rejects further packets from that session; its executor accepts at
+most 64 operations at once and runs at most four handlers concurrently.
+Admission stays nonblocking. Disconnect and server shutdown cancel the
+handler token; observe it in every awaited I/O call. Exceptions are logged
+without packet payloads and do not stop the game loop.
+
 **Host integration requires both registrations.** `PacketRegistry.Default` is
 already frozen. The current host creates its UO framer and default game decoder
 with that registry. Registering only a handler in a plugin does not add a new
@@ -175,8 +228,8 @@ source and register its handler in host composition. A custom host may supply it
 own completed registry consistently to framing and decoding; changing just one
 side is insufficient.
 
-The host registers only Ping and ClientVersion handlers; a decodable packet has no
-login or game behavior beyond that ([Implementation status](implementation-status.md)). See
+The host registers only Ping and ClientVersion handlers; no built-in async handler
+or account login flow is registered yet ([Implementation status](implementation-status.md)). See
 [Transport and game ownership](network-game-separation.md) for connection lifecycle,
 queue limits and overload policy, and [Game loop and timers](game-loop-and-timers.md)
 for thread ownership and completion.

@@ -1,8 +1,10 @@
 # Game loop and timers
 
-The game loop owns synchronous world mutations, packet handlers and timer
-callbacks on one dedicated thread. Socket I/O and disk writes belong outside that
-thread. Inject `IGameLoopService` and `ITimerService` into host/plugin components;
+The game loop owns synchronous world mutations, synchronous packet handlers and timer
+callbacks on one dedicated thread. Async packet handlers run off-loop and post any
+state changes back through `PacketContext.RunOnGameLoopAsync`. Socket I/O and disk
+writes belong outside that thread. Inject `IGameLoopService` and
+`ITimerService` into host/plugin components;
 their contracts are in `Moongate.Server.Core` and implementations in the
 `Moongate.Server` executable project.
 

@@ -13,7 +13,7 @@ playable world are not.
 | Area | Works today | Not built yet |
 | --- | --- | --- |
 | Transport | Framed TCP listener and client, per-connection pipelines, connection and session registries, graceful shutdown | |
-| Packets | Wire table, typed packet definitions, decoding on the game loop; host handlers for Ping and ClientVersion | Login sequence, character list, movement, world packets; a decodable packet has no game behavior |
+| Packets | Wire table, typed packet definitions, synchronous handlers on the game loop and bounded async handler support; host handlers for Ping and ClientVersion | No built-in async handler, account login sequence, character list, movement or world packets; a decodable packet has no game behavior |
 | Login and realms | The `mode` setting is validated (`login`, `game`, `standalone`) | `mode` selects nothing: every process runs the same services. No account login, no shared account API, no realm registration, discovery or handoff |
 | Game loop | Single owner thread, bounded queues, timer wheel, admission and completion semantics | |
 | Scripting | Sandboxed Lua 5.2, deterministic instruction budget, `engine`, `log`, `timer` modules, `wait`, reload, editor definitions; C# modules from plugins | World, character and inventory APIs |
