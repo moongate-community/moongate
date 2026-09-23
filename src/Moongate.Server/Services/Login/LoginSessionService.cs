@@ -21,7 +21,7 @@ public sealed class LoginSessionService : ILoginSessionService
     public bool IsCurrent(LoginSession session)
         => _sessions.TryGetValue(session.SessionId, out var current) &&
            ReferenceEquals(current, session) && !session.IsDisconnected &&
-           session.NetworkSession.Client is not null;
+           session.NetworkSession.Client is { IsConnected: true };
 
     public bool Remove(LoginSession session)
     {
