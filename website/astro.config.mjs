@@ -17,6 +17,7 @@ export default defineConfig({
     favicon: '/generated/images/moongate_logo.png',
     description: 'An Ultima Online server and reusable .NET libraries.',
     logo: { src: '../images/moongate_logo.png', alt: 'Moongate' },
+    customCss: ['./src/styles/custom.css'],
     social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/moongate-community/moongate' }],
     sidebar: groups.map(label => ({
       label,
