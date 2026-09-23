@@ -24,6 +24,8 @@ internal sealed class ApiHostFixture : IDisposable
     public ApiRegistry Registry { get; } = new();
     public string Password { get; } = Convert.ToHexString(RandomNumberGenerator.GetBytes(16));
 
+    public string ServerFingerprint => _server.GetCertHashString(HashAlgorithmName.SHA256);
+
     public ApiHostFixture()
     {
         _server = _authority.Issue();
