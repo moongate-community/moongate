@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Data.Login;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Core.Types.Realms;
 using Moongate.Server.Services.Realms.Internal;
 
 namespace Moongate.Server.Services.Realms;
@@ -33,12 +34,12 @@ public sealed class RealmDirectoryService : IRealmDirectoryService
         ArgumentNullException.ThrowIfNull(registration);
         if (instanceId == Guid.Empty)
         {
-            throw new InvalidOperationException("Realm instance ID must be nonempty.");
+            throw new RealmDirectoryException(RealmRegistrationError.InvalidDescriptor, "Realm instance ID must be nonempty.");
         }
 
         if (!StringComparer.Ordinal.Equals(peerId, registration.RealmId))
         {
-            throw new InvalidOperationException("Realm identity does not match the authenticated peer.");
+            throw new RealmDirectoryException(RealmRegistrationError.IdentityMismatch, "Realm identity does not match the authenticated peer.");
         }
 
         var descriptor = new RealmDescriptor(
@@ -52,21 +53,21 @@ public sealed class RealmDirectoryService : IRealmDirectoryService
             RemoveExpired();
             if (_local.ContainsKey(descriptor.RealmId))
             {
-                throw new InvalidOperationException("Realm ID is already registered locally.");
+                throw new RealmDirectoryException(RealmRegistrationError.InvalidDescriptor, "Realm ID is already registered locally.");
             }
 
             if (_remote.TryGetValue(descriptor.RealmId, out var previous))
             {
                 if (!StringComparer.Ordinal.Equals(previous.PeerId, peerId))
                 {
-                    throw new InvalidOperationException("Realm ID belongs to a different peer.");
+                    throw new RealmDirectoryException(RealmRegistrationError.IdentityMismatch, "Realm ID belongs to a different peer.");
                 }
 
                 if (previous.InstanceId == instanceId)
                 {
                     if (!SameMetadata(previous.Descriptor, descriptor))
                     {
-                        throw new InvalidOperationException("Realm metadata changed without a new instance ID.");
+                        throw new RealmDirectoryException(RealmRegistrationError.InvalidDescriptor, "Realm metadata changed without a new instance ID.");
                     }
 
                     previous.LastRenewedTimestamp = _clock.GetTimestamp();
@@ -78,12 +79,12 @@ public sealed class RealmDirectoryService : IRealmDirectoryService
                                             entry.Descriptor.ServerIndex == descriptor.ServerIndex) ||
                 _local.Values.Any(entry => entry.ServerIndex == descriptor.ServerIndex))
             {
-                throw new InvalidOperationException("Realm server index is already registered.");
+                throw new RealmDirectoryException(RealmRegistrationError.DuplicateIndex, "Realm server index is already registered.");
             }
 
             if (previous is null && _remote.Count + _local.Count >= _maxRealms)
             {
-                throw new InvalidOperationException("Realm directory capacity exceeded.");
+                throw new RealmDirectoryException(RealmRegistrationError.CapacityExceeded, "Realm directory capacity exceeded.");
             }
 
             var leaseId = Guid.NewGuid();

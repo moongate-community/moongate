@@ -72,10 +72,11 @@ internal sealed class ApiHostFixture : IDisposable
         }
     }
 
-    public ApiClient CreateClient()
+    public ApiClient CreateClient(Action<ApiRegistry>? configureRegistry = null)
     {
         var registry = new ApiRegistry();
         registry.RegisterContract<IncrementRequest, IncrementResponse>();
+        configureRegistry?.Invoke(registry);
 
         return new(
             registry,
