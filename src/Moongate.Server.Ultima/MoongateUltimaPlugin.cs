@@ -9,6 +9,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Plugins;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
+using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Handlers.Login;
@@ -40,22 +41,37 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
 
-        container
-            .AddPersistenceAuth<AccountEntity>();
+        var mode = container.IsRegistered<ServerMode>() ? container.Resolve<ServerMode>() : ServerMode.Standalone;
 
-        container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
-        container.RegisterAsyncPacketHandler<AccountLoginPacket, AccountLoginPacketHandler>();
+        if ((mode & ServerMode.Login) != 0)
+        {
+            container.AddPersistenceAuth<AccountEntity>();
+            container.AddMoongateService<IAccountService, AccountService>();
+            container.Register<LoginAccountFlow>(Reuse.Singleton);
+            container.RegisterCommand<AccountCommand>(
+                "account",
+                "Creates an account: account create <username> <password> [Regular|GameMaster|Administrator].",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.Administrator
+            );
 
-        container.AddMoongateService<IAccountService, AccountService>();
-        container.RegisterCommand<AccountCommand>(
-            "account",
-            "Creates an account: account create <username> <password> [Regular|GameMaster|Administrator].",
-            CommandSourceType.Console | CommandSourceType.InGame,
-            AccountType.Administrator
-        );
+            if (mode == ServerMode.Login)
+            {
+                container.RegisterLoginPacketHandler<LoginSeedPacket, LoginRoleSeedPacketHandler>();
+                container.RegisterLoginPacketHandler<ClientVersionPacket, LoginRoleClientVersionPacketHandler>();
+                container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
+            }
+            else
+            {
+                container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
+                container.RegisterAsyncPacketHandler<AccountLoginPacket, AccountLoginPacketHandler>();
+            }
+        }
 
-        // After IUltimaDataService (-10): loaders read MUL/UOP files, which need Files.SetDirectory
-        // to already point at the configured client path.
-        container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
+        if ((mode & ServerMode.Game) != 0)
+        {
+            // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
+            container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
+        }
     }
 }

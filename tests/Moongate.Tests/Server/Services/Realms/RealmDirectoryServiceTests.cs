@@ -1,7 +1,9 @@
 using System.Net;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Core.Types.Realms;
 using Moongate.Server.Services.Realms;
+using Moongate.Server.Services.Realms.Internal;
 using Moongate.Tests.Support.Timing;
 
 namespace Moongate.Tests.Server.Services.Realms;
@@ -46,8 +48,9 @@ public sealed class RealmDirectoryServiceTests
         var lease = directory.Register("realm-a", Registration("realm-a", 1), instance);
         clock.Advance(TimeSpan.FromSeconds(10));
 
-        Assert.Throws<InvalidOperationException>(() =>
-            directory.Register("realm-a", Registration("realm-a", 2), instance));
+        Assert.Equal(RealmRegistrationError.InvalidDescriptor,
+            Assert.Throws<RealmDirectoryException>(() =>
+                directory.Register("realm-a", Registration("realm-a", 2), instance)).Error);
         clock.Advance(TimeSpan.FromSeconds(5));
 
         Assert.Empty(directory.GetAvailable(AccountType.Regular));
@@ -60,10 +63,12 @@ public sealed class RealmDirectoryServiceTests
         var directory = Create();
         var first = directory.Register("realm-a", Registration("realm-a", 1), Guid.NewGuid());
 
-        Assert.Throws<InvalidOperationException>(() =>
-            directory.Register("realm-b", Registration("realm-a", 1), Guid.NewGuid()));
-        Assert.Throws<InvalidOperationException>(() =>
-            directory.Register("realm-b", Registration("realm-b", 1), Guid.NewGuid()));
+        Assert.Equal(RealmRegistrationError.IdentityMismatch,
+            Assert.Throws<RealmDirectoryException>(() =>
+                directory.Register("realm-b", Registration("realm-a", 1), Guid.NewGuid())).Error);
+        Assert.Equal(RealmRegistrationError.DuplicateIndex,
+            Assert.Throws<RealmDirectoryException>(() =>
+                directory.Register("realm-b", Registration("realm-b", 1), Guid.NewGuid())).Error);
 
         Assert.True(directory.Renew("realm-a", "realm-a", first.LeaseId));
         Assert.Equal("realm-a", Assert.Single(directory.GetAvailable(AccountType.Regular)).RealmId);
@@ -102,8 +107,9 @@ public sealed class RealmDirectoryServiceTests
         var directory = Create(maxRealms: 1);
         var first = directory.Register("realm-a", Registration("realm-a", 1), Guid.NewGuid());
 
-        Assert.Throws<InvalidOperationException>(() =>
-            directory.Register("realm-b", Registration("realm-b", 2), Guid.NewGuid()));
+        Assert.Equal(RealmRegistrationError.CapacityExceeded,
+            Assert.Throws<RealmDirectoryException>(() =>
+                directory.Register("realm-b", Registration("realm-b", 2), Guid.NewGuid())).Error);
         Assert.True(directory.Renew("realm-a", "realm-a", first.LeaseId));
     }
 
@@ -118,8 +124,9 @@ public sealed class RealmDirectoryServiceTests
         }
 
         Assert.Equal(128, directory.GetAvailable(AccountType.Regular).Count);
-        Assert.Throws<InvalidOperationException>(() =>
-            directory.Register("realm-overflow", Registration("realm-overflow", 128), Guid.NewGuid()));
+        Assert.Equal(RealmRegistrationError.CapacityExceeded,
+            Assert.Throws<RealmDirectoryException>(() =>
+                directory.Register("realm-overflow", Registration("realm-overflow", 128), Guid.NewGuid())).Error);
     }
 
     [Fact]

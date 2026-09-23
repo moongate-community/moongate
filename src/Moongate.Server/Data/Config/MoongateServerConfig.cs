@@ -8,7 +8,6 @@ namespace Moongate.Server.Data.Config;
 public class MoongateServerConfig
 {
     /// <summary>Gets or sets the configured server roles, defaulting to both login and game.</summary>
-    /// <remarks>This setting does not yet change which services are started.</remarks>
     [TomlConverter(typeof(ServerModeTomlConverter))]
     public ServerMode Mode { get; set; } = ServerMode.Standalone;
 
@@ -58,6 +57,16 @@ public class MoongateServerConfig
         }
 
         RealmDirectory.Validate(Mode);
+
+        if (Mode == ServerMode.Login && !Api.Enabled)
+        {
+            throw new InvalidOperationException("api.enabled must be true in login mode.");
+        }
+
+        if (Mode == ServerMode.Game)
+        {
+            Api.ValidateOutbound();
+        }
 
         if (WorldSave is null)
         {
