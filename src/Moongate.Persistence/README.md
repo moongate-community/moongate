@@ -141,10 +141,6 @@ compatibility tests.
 See the [persistence and operations guide](https://moongate.sh/server/persistence/) for schema review, plugin ownership,
 world saves, transactions, and database backup responsibility.
 
-## License and source
-
-Licensed under AGPL-3.0-or-later. See the [source repository and license](https://github.com/moongate-community/moongate).
-
 ## Development migrations
 
 The server supports `persistence.auto_generate_migrations = true` together with an
@@ -158,4 +154,8 @@ or options require review.
 Standalone library integrations can supply `DevelopmentMigrationOptions` with an
 `IDevelopmentMigrationRunner` implementation and an explicit component resolver.
 Keep migration execution isolated from FreeSql's PostgreSQL driver. See the
-[development migration guide](https://moongate.sh/server/persistence/#automatic-development-migrations).
+[development migration guide](https://moongate.sh/server/persistence-migrations/#automatic-development-migrations).
+
+## License and source
+
+Licensed under AGPL-3.0-or-later. See the [source repository and license](https://github.com/moongate-community/moongate).

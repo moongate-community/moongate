@@ -175,8 +175,8 @@ source and register its handler in host composition. A custom host may supply it
 own completed registry consistently to framing and decoding; changing just one
 side is insufficient.
 
-The host currently registers only Ping and ClientVersion handlers. A packet being
-decodable does not imply it has login/game behavior. See
+The host registers only Ping and ClientVersion handlers; a decodable packet has no
+login or game behavior beyond that ([Implementation status](implementation-status.md)). See
 [Transport and game ownership](network-game-separation.md) for connection lifecycle,
 queue limits and overload policy, and [Game loop and timers](game-loop-and-timers.md)
 for thread ownership and completion.

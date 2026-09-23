@@ -41,7 +41,7 @@ The root does not need database access or Ultima Online client files to be prepa
 
 Base migration preparation copies the versioned SQL distributed with Moongate.
 It does not generate new SQL from entities, load plugins, create databases or apply
-migrations. Use the [persistence tools](persistence.md#automatic-development-migrations)
+migrations. Use the [persistence tools](persistence-migrations.md#automatic-development-migrations)
 for entity changes after initialization.
 
 ## Existing directories

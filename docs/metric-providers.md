@@ -6,7 +6,7 @@ counters and gauges appear in the diagnostics snapshot next to the built-in metr
 This page covers the contract the provider must meet, how failures and threading
 work, and how to test one. For the collector's configuration and the built-in
 metrics, see [Diagnostics](diagnostics.md); for where the registration call sits in a
-plugin, see [Registering metric providers](plugins.md#registering-metric-providers).
+plugin, see [Registering metric providers](plugins.md#what-register-may-do).
 
 ## The sample provider
 

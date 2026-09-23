@@ -172,7 +172,7 @@ Binding runs once, at startup, and any failure is reported through the exception
 - a function parameter or return type the converter cannot bind: `"{Module}.{Method}: parameter '{parameter}' of type {Type} cannot be bound."` / `"{Module}.{Method}: return type {Type} cannot be bound."`
 - a `[ScriptConstant]` that is not a public static readonly field or a public static get-only property, or is of an unsupported type (see [Constants and enums](#constants-and-enums) for the exact messages).
 
-See [Writing a plugin: registering Lua modules](plugins.md#registering-lua-modules) for where `Register` fits in the plugin lifecycle.
+See [Writing a plugin: registering Lua modules](plugins.md#what-register-may-do) for where `Register` fits in the plugin lifecycle.
 
 ## Testing without a server
 

@@ -102,7 +102,7 @@ use the documentation published for that version.
 
    Both databases are checked at every start, in every server mode. For a deployment,
    give the server a DML-only role and keep schema changes on a separate role; see
-   [Separate DDL and runtime roles](persistence.md#separate-ddl-and-runtime-roles).
+   [Separate DDL and runtime roles](persistence-operations.md#separate-ddl-and-runtime-roles).
 
 4. **Apply the core migrations.** Startup validates the versioned SQL history and
    refuses to start while files are pending, so apply them first:

@@ -11,8 +11,7 @@ startup. Changes take effect at the next start; there is no configuration reload
 TOML keys use `snake_case`. Keep `mode` before the first table header:
 
 ```toml
-# Configuration contract only: currently does not select service composition.
-mode = "standalone"
+mode = "standalone" # Validated; selects no services yet.
 
 [shard]
 shard_name = "Moongate"
@@ -82,7 +81,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 
 | Setting | Meaning and limits |
 | --- | --- |
-| `mode` | `login`, `game` or `standalone`; default standalone. Empty and unknown values fail. Maps to `ServerMode`, with `Standalone = Login \| Game`. Service selection is not implemented yet. |
+| `mode` | `login`, `game` or `standalone`; default standalone. Empty and unknown values fail. Maps to `ServerMode`, with `Standalone = Login \| Game`. Selects no services yet; see [Implementation status](implementation-status.md). |
 | `shard.shard_name` | Shard display metadata; does not implement realm discovery or a server list by itself. |
 | `network.game_port` | TCP listener port; use a distinct port for each local instance. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create endpoints for them, including IPv6 addresses; it is not a single wildcard listener. Use a specific IP to restrict binding. |
@@ -237,4 +236,4 @@ connection, schema and world-save semantics, and
 Versioned SQL is applied by the isolated `migration-runner/Moongate.MigrationRunner`
 executable using `status|apply --target auth|world`. In released artifacts its default
 root is the parent server directory; `--root-directory` and `MOONGATE_ROOT` override
-it. See [Generate, review and apply](persistence.md#generate-review-and-apply).
+it. See [Generate, review and apply](persistence-migrations.md#generate-review-and-apply).

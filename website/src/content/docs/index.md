@@ -31,13 +31,13 @@ script before running it.
 ## Find your starting point
 
 - **Run:** [Install on Linux](/start/install/), [first start from source](/start/getting-started/), [Docker](/server/docker/) and [configuration](/server/configuration/).
-- **Keep data:** [Persistence, world saves and recovery](/server/persistence/).
+- **Keep data:** [entities and data access](/server/persistence/), [migrations](/server/persistence-migrations/) and [operating PostgreSQL](/server/persistence-operations/).
 - **Build game behavior:** [Packets and handlers](/server/packets/), [game loop and timers](/server/game-loop-and-timers/), [Lua scripts](/server/scripting/).
 - **Extend or reuse:** [Plugins](/server/plugins/), [standalone TCP](/libraries/network-cookbook/) and [NuGet libraries](/reference/nuget-packaging/).
 - **Contribute:** [Contribution guide](/contributing/getting-started/) and [writing documentation](/contributing/documentation/).
 
-The internal API guide covers the implemented transport and request/reply contracts.
-Login-to-realm coordination is planned separately.
+[Implementation status](/start/implementation-status/) says what the server does
+today and what it does not.
 
 ## Releases
 

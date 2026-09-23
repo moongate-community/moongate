@@ -72,7 +72,8 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-There are no built-in world, character or inventory APIs yet. To expose application
+There are no built-in world, character or inventory APIs yet
+([Implementation status](implementation-status.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Reload and ownership

@@ -12,6 +12,9 @@
   <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
 </p>
 
+An Ultima Online server written in C# on .NET 10, with reusable libraries for
+networking, persistence, scripting and internal APIs.
+
 ## Install on Linux
 
 ```sh
@@ -42,20 +45,12 @@ storage, Docker Compose, logs, and upgrades.
 - [Writing Lua scripts](docs/scripting.md): bootstrap, modules, timers, reload and editor support.
 - [Diagnostics](docs/diagnostics.md): metrics and events; [dependency security](docs/security-audit.md) covers package auditing.
 
-## Server mode
+## Status
 
-Set `mode` at the root of `config/moongate.toml`, before any table headers:
-
-```toml
-mode = "standalone"
-```
-
-Supported values are `"login"`, `"game"`, and `"standalone"`. Omitting the setting
-defaults to standalone. In C#, `MoongateServerConfig.Mode` uses the `ServerMode`
-flags enum, where `Standalone = Login | Game`; an empty or unknown mode is rejected.
-
-This setting currently defines the configuration contract. It does not yet select
-which services start; separate login and game runtimes will use it in a subsequent change.
+Moongate is under active development. The transport, packet pipeline, scripting,
+persistence and internal API infrastructure are in place; account login, realm
+selection and a playable world are not. [Implementation status](docs/implementation-status.md)
+lists what works today, area by area.
 
 ## Scripting
 

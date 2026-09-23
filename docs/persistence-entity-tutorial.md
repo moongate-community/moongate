@@ -153,7 +153,7 @@ postgres://USER:PASSWORD@HOST:5432/moongate_tutorial
 
 Replace the placeholders with your connection details and percent-encode reserved
 characters in credentials, such as `@` as `%40`. Keep actual credentials out of
-source files. See [connection configuration](persistence.md#connections-and-schema-preparation)
+source files. See [connection configuration](persistence-operations.md#connections)
 for URI options and environment expansion in server TOML.
 
 From the repository root, run:
@@ -273,7 +273,7 @@ modules for the target, so use an isolated plugin reference root and review owne
 
 The earlier console example deliberately uses automatic synchronization for a
 throwaway database. That convenience does not create SQL files or version history.
-Use the [schema operations guide](persistence.md#generate-review-and-apply) for
+Use the [schema operations guide](persistence-migrations.md#generate-review-and-apply) for
 production-style deployment, reference databases, roles and failure handling.
 
 Simple entity registration enables explicit reads and writes. For live objects
@@ -283,7 +283,7 @@ also enrolls them in `SaveAllAsync` and host world saves. Follow
 clone and capture it through the owning loop. Removing an object from memory does
 not delete its row; deletion remains explicit.
 
-## Generate migrations automatically while developing
+## 6. Generate migrations automatically while developing
 
 Once your entity is registered with `AddPersistenceAuth<TEntity>()` or
 `AddPersistenceWorld<TEntity>()`, enable the development workflow:
@@ -296,8 +296,9 @@ migrations_directory = "${MOONGATE_ROOT}/migrations"
 ```
 
 Set `MOONGATE_ROOT` to your server data root, or use an absolute source directory.
-For a new custom entity registered with `AddPersistenceAuth<CustomAuthEntity>()`
-(after applying the shipped core auth migrations):
+The shipped core auth migrations (`0001` to `0003`) must already be applied, which
+is why the generated files below start at `0004`. For a new custom entity
+registered with `AddPersistenceAuth<CustomAuthEntity>()`:
 
 1. Start the server with the new entity registered. Startup writes
    `migrations/auth/0004_auto_schema.sql`, applies it and records its checksum.
@@ -317,6 +318,6 @@ unapplied file and remove `-- moongate:review-required` before restarting. Exist
 applied files are immutable. Leave the development flags off in deployment and use
 the standalone migration runner for the reviewed files.
 
-See [automatic development migrations](persistence.md#automatic-development-migrations)
+See [automatic development migrations](persistence-migrations.md#automatic-development-migrations)
 for plugin directories, required-column defaults, existing database baselines and
 failure recovery.
