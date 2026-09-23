@@ -41,7 +41,7 @@ public sealed class AccountServerListTests
         directory.RegisterLocal(new RealmDescriptor("hidden", 2, "Hidden", IPAddress.Loopback,
             2596, AccountType.Administrator));
         container.RegisterInstance<ILoginSessionService>(sessions);
-        container.RegisterInstance<IPacketSendService>(sender);
+        container.RegisterInstance<ILoginPacketSendService>(sender);
         container.RegisterInstance(accountFixture.Service);
         container.RegisterInstance(new LoginAccountFlow(accountFixture.Service, directory));
         container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
@@ -95,7 +95,7 @@ public sealed class AccountServerListTests
             Id = new Serial(42), AccountType = AccountType.Regular
         } };
         container.RegisterInstance<ILoginSessionService>(sessions);
-        container.RegisterInstance<IPacketSendService>(sender);
+        container.RegisterInstance<ILoginPacketSendService>(sender);
         container.RegisterInstance<IAccountService>(accounts);
         container.RegisterInstance(new LoginAccountFlow(accounts, directory));
         container.RegisterLoginPacketHandler<LoginSeedPacket, LoginRoleSeedPacketHandler>();

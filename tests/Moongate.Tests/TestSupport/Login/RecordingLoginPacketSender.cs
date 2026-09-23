@@ -4,7 +4,7 @@ using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Tests.TestSupport.Login;
 
-internal sealed class RecordingLoginPacketSender : IPacketSendService
+internal sealed class RecordingLoginPacketSender : ILoginPacketSendService
 {
     private readonly List<IOutgoingPacket> _sent = new();
 

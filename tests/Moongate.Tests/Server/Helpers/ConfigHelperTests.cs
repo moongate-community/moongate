@@ -27,6 +27,9 @@ public sealed class ConfigHelperTests
         Assert.Equal(2594L, api["port"]);
         Assert.Equal("0.0.0.0", api["listen_address"]);
         Assert.Equal("MOONGATE_API_CERTIFICATE_PASSWORD", api["certificate_password_environment_variable"]);
+        var network = Assert.IsType<TomlTable>(document["network"]);
+        Assert.Equal(2593L, network["login_port"]);
+        Assert.Equal(2595L, network["game_port"]);
     }
 
     [Fact]
@@ -143,6 +146,8 @@ public sealed class ConfigHelperTests
         var config = ConfigHelper.Load(path);
         Assert.False(config.Api.Enabled);
         Assert.Equal(2594, config.Api.Port);
+        Assert.Equal(2593, config.Network.LoginPort);
+        Assert.Equal(4001, config.Network.GamePort);
         Assert.Equal(toml, File.ReadAllText(path));
     }
 
@@ -156,6 +161,7 @@ public sealed class ConfigHelperTests
                             shard_name = "Città di Luna"
 
                             [network]
+                            login_port = 4002
                             game_port = 4000
                             listen_address = "127.0.0.1"
                             enable_ping_server = false
@@ -165,6 +171,7 @@ public sealed class ConfigHelperTests
         var config = ConfigHelper.Load(path);
 
         Assert.Equal("Città di Luna", config.Shard.ShardName);
+        Assert.Equal(4002, config.Network.LoginPort);
         Assert.Equal(4000, config.Network.GamePort);
         Assert.Equal("127.0.0.1", config.Network.ListenAddress);
         Assert.False(config.Network.EnablePingServer);

@@ -23,6 +23,11 @@ implemented, so the client cannot enter a realm through this example.
 A game container does not receive Accounts credentials. The login container does
 not receive a Realm database credential. A standalone deployment configures both
 targets and lists its own local realm without mTLS discovery.
+Inside the containers, login listens on `network.login_port = 2593` and each
+game listens on `network.game_port = 2595`. Compose publishes game 1 as host
+port 2595 and game 2 as host port 2596; their `advertised_port` values match
+those host ports. Standalone would run both role listeners in one container and
+would need both ports published for direct client access.
 
 All services join the private `moongate` bridge. Login listens for realm registration
 on port 2594 inside that bridge; the API port is not published to the host. The

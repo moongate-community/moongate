@@ -9,6 +9,8 @@ using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Services.Login;
+using Moongate.Server.Services.Network;
 using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -54,23 +56,58 @@ public sealed class ServerRoleRegistrationTests
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IGameLoopService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ISessionService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IWorldSaveService>());
+        Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginServerService>());
+        Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginPacketHandlerRegistry>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IDataLoaderService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IRealmDirectoryService>());
         Assert.Equal(mode == ServerMode.Login ? 3 : 0, container.Resolve<ApiRegistry>().HandlerCount);
-        if (mode == ServerMode.Login)
+        if (mode != ServerMode.Game)
         {
             Assert.Contains(typeof(AccountLoginPacket),
                 container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys);
+        }
+
+        if (mode == ServerMode.Login)
+        {
             Assert.False(container.IsRegistered<PacketHandlerRegistry>());
         }
         else
         {
-            Assert.Equal(mode == ServerMode.Standalone,
-                container.Resolve<PacketHandlerRegistry>().Registrations.ContainsKey(typeof(AccountLoginPacket)));
+            Assert.DoesNotContain(typeof(AccountLoginPacket),
+                container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
+            Assert.Contains(typeof(LoginSeedPacket),
+                container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
         }
         Assert.Equal(mode == ServerMode.Standalone,
             mode != ServerMode.Game && container.Resolve<IRealmDirectoryService>()
                 .GetAvailable(AccountType.Regular).Count == 1);
+    }
+
+    [Fact]
+    public void Register_StandaloneKeepsRoleTransportInstancesAndPortsSeparate()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig
+        {
+            Mode = ServerMode.Standalone,
+            Network = new() { ListenAddress = "127.0.0.1", LoginPort = 2593, GamePort = 2595 }
+        };
+        container.RegisterInstance(config);
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: config.Mode));
+
+        ServerRoleRegistration.Register(container, config, directories);
+
+        Assert.NotSame(container.Resolve<IConnectionService>(), container.Resolve<ILoginConnectionService>());
+        Assert.NotSame(container.Resolve<IPacketSendService>(), container.Resolve<ILoginPacketSendService>());
+        var game = Assert.IsType<NetworkService>(container.Resolve<INetworkService>());
+        var login = Assert.IsType<NetworkService>(container.Resolve<ILoginNetworkService>());
+        Assert.NotSame(game, login);
+        Assert.Equal(2593, Assert.Single(login.Listeners).Endpoint.Port);
+        Assert.Equal(2595, Assert.Single(game.Listeners).Endpoint.Port);
     }
 }

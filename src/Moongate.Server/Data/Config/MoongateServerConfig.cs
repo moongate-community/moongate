@@ -37,6 +37,13 @@ public class MoongateServerConfig
             throw new InvalidOperationException("The server mode must be Login, Game, or Standalone.");
         }
 
+        if (Network is null)
+        {
+            throw new InvalidOperationException("The network configuration section cannot be null.");
+        }
+
+        Network.Validate(Mode);
+
         if (Api is null)
         {
             throw new InvalidOperationException("The api configuration section cannot be null.");

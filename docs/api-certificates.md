@@ -140,7 +140,9 @@ SHA-256 fingerprint mapped to the expected `ApiPeerIdentity` in
 `new ApiPeerIdentity("realm-1", [], allowAllOperations: true)`. Connecting to realm-1 uses target host `realm-1`
 and expected peer ID `realm-1`. In game mode the host reuses `[api]` certificate
 and trust settings for its outbound registration client even when the local
-listener is disabled. The login listener binds only on the private API address.
+listener is disabled. The login process's mTLS API listener binds to
+`api.listen_address:api.port` on the private network; its UO client listener
+binds separately to `network.listen_address:network.login_port`.
 
 ## Passwords and filesystem permissions
 
@@ -177,7 +179,7 @@ services:
   realm-1:
     image: moongate:local
     ports:
-      - "2593:2593"
+      - "2595:2595"
     volumes:
       - realm-1-data:/data
       - /absolute/path/to/ultima:/uo:ro

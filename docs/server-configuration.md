@@ -17,7 +17,8 @@ mode = "standalone" # Runs login and game services together.
 shard_name = "Moongate"
 
 [network]
-game_port = 2593
+login_port = 2593
+game_port = 2595
 listen_address = "0.0.0.0"
 enable_ping_server = true # Reserved: currently not consumed by the host.
 
@@ -97,8 +98,9 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | --- | --- |
 | `mode` | `login`, `game` or `standalone`; default standalone. Login runs account authentication, a login packet listener and realm directory; Game runs world services and registers with login; Standalone runs both roles with a local directory entry. |
 | `shard.shard_name` | Shard display metadata; used as the standalone list name when it fits the 32-character ASCII wire limit. Otherwise the local list name defaults to `Moongate`. |
-| `network.game_port` | TCP listener port; use a distinct port for each local instance. |
-| `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create endpoints for them, including IPv6 addresses; it is not a single wildcard listener. Use a specific IP to restrict binding. |
+| `network.login_port` | Login TCP listener port; default 2593. Used in login and standalone modes. |
+| `network.game_port` | Game TCP listener port; default 2595. Used in game and standalone modes. Standalone rejects equal login and game ports. |
+| `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create an endpoint for each active role on every address, including IPv6 addresses; it is not a single wildcard listener. Standalone therefore starts two listeners per address. Use a specific IP to restrict binding. |
 | `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
 | `api.enabled` | Enables the internal MessagePack/mTLS listener; default false. Required for `login`, optional for `game` (its outbound client still requires certificates and peer trust). Standalone can leave it disabled. |
 | `api.listen_address` | IPv4/IPv6 literal; default `0.0.0.0` binds one IPv4 wildcard listener. Unlike the game listener, it does not enumerate interfaces. |

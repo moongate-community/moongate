@@ -14,7 +14,7 @@ internal static class PacketPipelineRegistration
     internal static Container Register(Container container)
     {
         container.RegisterDelegate<NetworkListenerOptions>(
-            resolver => GameNetworkOptionsFactory.Create(resolver.Resolve<MoongateServerConfig>()),
+            resolver => CreateGameNetworkOptions(resolver.Resolve<MoongateServerConfig>()),
             Reuse.Singleton
         );
         container.Register<INetworkService, NetworkService>(Reuse.Singleton);
@@ -26,4 +26,7 @@ internal static class PacketPipelineRegistration
                         .AddMoongateService<IPacketDispatchService, PacketDispatchService>(60)
                         .AddMoongateService<IGameServerService, GameServerService>(100);
     }
+
+    private static NetworkListenerOptions CreateGameNetworkOptions(MoongateServerConfig config)
+        => UoNetworkOptionsFactory.Create(config, config.Network.GamePort);
 }
