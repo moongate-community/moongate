@@ -155,7 +155,14 @@ public sealed class RealmRegistrationService : IMoongateStartupService, IAsyncDi
 
                     if (renewed.Error == RealmRegistrationError.StaleLease)
                     {
-                        _logger.Warning("Realm {RealmId} lease is stale; registering again", _config.RealmId);
+                        _logger.Warning("Realm {RealmId} lease was superseded; stopping this registration instance",
+                            _config.RealmId);
+                        return false;
+                    }
+
+                    if (renewed.Error == RealmRegistrationError.ExpiredLease)
+                    {
+                        _logger.Warning("Realm {RealmId} lease expired; registering again", _config.RealmId);
                         break;
                     }
 

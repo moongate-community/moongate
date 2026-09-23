@@ -1,0 +1,8 @@
+# Administrative Accounts schema job; the migration runner reads only this target.
+mode = "login"
+
+[persistence]
+auto_sync_schema = false
+
+[persistence.accounts]
+connection_string = "$MOONGATE_ACCOUNTS_SCHEMA_DATABASE"

@@ -18,6 +18,24 @@ namespace Moongate.Tests.Server.Bootstrap.Internal;
 
 public sealed class ServerRoleRegistrationTests
 {
+    [Fact]
+    public void Register_StandaloneWithUnicodeShardName_UsesWireSafeDefaultRealmName()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Shard.ShardName = "Città di Luna";
+        container.RegisterInstance(config);
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+
+        ServerRoleRegistration.Register(container, config, directories);
+
+        Assert.Equal("Moongate", Assert.Single(container.Resolve<IRealmDirectoryService>()
+            .GetAvailable(AccountType.Regular)).Name);
+    }
+
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
     public void Register_SelectsRoleServicesAndPluginRegistrations(ServerMode mode)
     {

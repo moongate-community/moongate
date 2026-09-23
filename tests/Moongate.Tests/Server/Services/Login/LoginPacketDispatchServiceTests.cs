@@ -13,6 +13,28 @@ namespace Moongate.Tests.Server.Services.Login;
 public sealed class LoginPacketDispatchServiceTests
 {
     [Fact]
+    public async Task TryDispatch_ReplacementSessionId_DoesNotReuseOrCloseOldMailbox()
+    {
+        using var container = new Container();
+        container.RegisterLoginPacketHandler<PingPacket, RecordingLoginPacketHandler>();
+        var sessions = new LoginSessionService();
+        using var first = new ControlledNetworkConnection(1);
+        using var replacement = new ControlledNetworkConnection(1);
+        var oldSession = sessions.GetOrCreate(first);
+        var dispatcher = new LoginPacketDispatchService(sessions,
+            container.Resolve<LoginPacketHandlerRegistry>(), container);
+        await dispatcher.StartAsync();
+
+        Assert.True(dispatcher.TryDispatch(1, new PingPacket(1)));
+        Assert.True(sessions.Remove(oldSession));
+        sessions.GetOrCreate(replacement);
+        Assert.True(dispatcher.TryDispatch(1, new PingPacket(2)));
+        await dispatcher.DisconnectAsync(oldSession);
+        Assert.True(dispatcher.TryDispatch(1, new PingPacket(3)));
+        await dispatcher.StopAsync();
+    }
+
+    [Fact]
     public async Task TryDispatch_AwaitsPerConnectionInOrder_WhileOtherConnectionsProgress()
     {
         using var container = new Container();
@@ -43,7 +65,7 @@ public sealed class LoginPacketDispatchServiceTests
                 }
             }
         };
-        var dispatcher = new LoginPacketDispatchService(sessions, new ConnectionService(),
+        var dispatcher = new LoginPacketDispatchService(sessions,
             container.Resolve<LoginPacketHandlerRegistry>(), container);
         await dispatcher.StartAsync();
 
@@ -72,7 +94,7 @@ public sealed class LoginPacketDispatchServiceTests
             entered.TrySetResult();
             await Task.Delay(Timeout.InfiniteTimeSpan, token);
         };
-        var dispatcher = new LoginPacketDispatchService(sessions, new ConnectionService(),
+        var dispatcher = new LoginPacketDispatchService(sessions,
             container.Resolve<LoginPacketHandlerRegistry>(), container);
         await dispatcher.StartAsync();
         Assert.True(dispatcher.TryDispatch(1, new PingPacket(0)));

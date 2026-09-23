@@ -3,6 +3,7 @@ using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.General;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
@@ -57,6 +58,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
             if (mode == ServerMode.Login)
             {
+                container.RegisterLoginPacketHandler<PingPacket, LoginRolePingPacketHandler>();
                 container.RegisterLoginPacketHandler<LoginSeedPacket, LoginRoleSeedPacketHandler>();
                 container.RegisterLoginPacketHandler<ClientVersionPacket, LoginRoleClientVersionPacketHandler>();
                 container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();

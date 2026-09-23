@@ -11,7 +11,7 @@ startup. Changes take effect at the next start; there is no configuration reload
 TOML keys use `snake_case`. Keep `mode` before the first table header:
 
 ```toml
-mode = "standalone" # Validated; selects no services yet.
+mode = "standalone" # Runs login and game services together.
 
 [shard]
 shard_name = "Moongate"
@@ -45,6 +45,20 @@ connection_string = "postgres://moongate:moongate@localhost:5432/auth"
 [persistence.realm]
 connection_string = "postgres://moongate:moongate@localhost:5432/world"
 
+[realm_directory]
+realm_id = ""
+name = ""
+server_index = 0
+advertised_address = ""
+advertised_port = 0
+minimum_account_type = "regular"
+login_api_host = ""
+login_api_port = 2594
+expected_login_peer_id = ""
+heartbeat_interval_seconds = 5
+lease_duration_seconds = 15
+max_realms = 128
+
 [world_save]
 enabled = true # Enables periodic saves; manual/final saves remain available.
 interval_seconds = 300
@@ -63,15 +77,15 @@ write_definitions = true
 max_string_length = 16777216
 ```
 
-Both databases must already exist and accept connections before normal startup,
-including `login`-only or `game`-only processes and hosts without persistence entities.
+Only the databases for the active role must already exist and accept connections:
+Accounts for `login`, Realm for `game`, and both for `standalone`.
 The defaults use local development credentials `moongate` / `moongate`; an existing
 configuration file is not rewritten. For deployment, set each `connection_string`
 to a secret-provider environment reference such as `$MOONGATE_ACCOUNTS_DATABASE`
 or `$MOONGATE_REALM_DATABASE`. Merely exporting those variables does not override
 a literal URI in the TOML file.
 
-`MoongatePersistenceService` opens each database and runs `SELECT 1`. Each success
+`MoongatePersistenceService` opens each active database and runs `SELECT 1`. Each success
 logs `Postgres connection successful` with the target and endpoint, without credentials.
 A connection or ping failure throws and prevents other services from starting.
 Moongate does not create missing databases; schema and migration checks run after
@@ -81,12 +95,12 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 
 | Setting | Meaning and limits |
 | --- | --- |
-| `mode` | `login`, `game` or `standalone`; default standalone. Empty and unknown values fail. Maps to `ServerMode`, with `Standalone = Login \| Game`. Selects no services yet; see [Implementation status](implementation-status.md). |
-| `shard.shard_name` | Shard display metadata; does not implement realm discovery or a server list by itself. |
+| `mode` | `login`, `game` or `standalone`; default standalone. Login runs account authentication, a login packet listener and realm directory; Game runs world services and registers with login; Standalone runs both roles with a local directory entry. |
+| `shard.shard_name` | Shard display metadata; used as the standalone list name when it fits the 32-character ASCII wire limit. Otherwise the local list name defaults to `Moongate`. |
 | `network.game_port` | TCP listener port; use a distinct port for each local instance. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create endpoints for them, including IPv6 addresses; it is not a single wildcard listener. Use a specific IP to restrict binding. |
 | `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
-| `api.enabled` | Enables the internal MessagePack/mTLS listener; default false. Disabled APIs log a warning and leave handlers unfrozen; certificate I/O occurs only if generation is explicitly enabled. |
+| `api.enabled` | Enables the internal MessagePack/mTLS listener; default false. Required for `login`, optional for `game` (its outbound client still requires certificates and peer trust). Standalone can leave it disabled. |
 | `api.listen_address` | IPv4/IPv6 literal; default `0.0.0.0` binds one IPv4 wildcard listener. Unlike the game listener, it does not enumerate interfaces. |
 | `api.port` | TCP port from 1 through 65535; default 2594. |
 | `api.auto_generate_certificate` | Default false. Creates a missing PFX and exports its public `.pem` copy, even with `enabled = false`. Existing PFX files are never replaced. |
@@ -96,13 +110,19 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `api.certificate_password_environment_variable` | Name of the environment variable containing the PFX password. If named but unset, startup fails. An empty name permits an unencrypted PFX. Never put the password itself in TOML. |
 | `api.trusted_root_paths` | When enabled, a nonempty array of trusted private CA certificates or explicitly trusted self-signed peer certificates (PEM or DER). Relative certificate/root paths resolve under `<root>/config`, independent of working directory. |
 | `api.peers` | Nonempty array of allowed certificate identities; see the example below. Each fingerprint is unique ignoring case. |
-| `api.peers.certificate_sha256` | Exactly 64 hexadecimal characters identifying the peer's leaf certificate; no colons. |
+| `api.peers.certificate_sha256` | Exactly 64 hexadecimal characters identifying the peer's leaf certificate; no colons. In a loaded TOML file, `$NAME` / `${NAME}` environment references are expanded first. |
 | `api.peers.peer_id` | Nonblank local identity for this peer. Multiple certificates may map to one identity during rotation. |
 | `api.peers.allowed_operations` | `["*"]` grants all registered operations, including future additions. Otherwise use integer IDs from 1 through 65535. Empty or omitted denies all incoming operations; the wildcard must appear alone. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. |
 | `persistence.auto_sync_schema` | Defaults to false. Normal startup checks versioned SQL history; when false it also fails if registered entities require DDL. Generate and review SQL, then apply it with the separate migration runner. Enable only as an explicit development convenience. |
 | `persistence.accounts.connection_string` | Accounts/login PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Accounts. |
 | `persistence.realm.connection_string` | This realm's PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Realm. |
+| `realm_directory.realm_id` | Stable ID for a game realm. Must match its authenticated API `peer_id`. Standalone defaults to `local`. |
+| `realm_directory.name`, `server_index` | ASCII list name (at most 32 characters) and unique index (0–65535). Standalone defaults to the shard name and index zero. |
+| `realm_directory.advertised_address`, `advertised_port` | Client-facing IPv4 literal and port. Required in game mode; standalone defaults to loopback and `network.game_port`. The current `0xA8` list encodes the IPv4 address only. |
+| `realm_directory.minimum_account_type` | Lowest account level allowed to see the realm; `regular`, `game_master` or `administrator`. |
+| `realm_directory.login_api_host`, `login_api_port`, `expected_login_peer_id` | Game's private login API DNS name, port and pinned TLS peer ID. Required in game mode. |
+| `realm_directory.heartbeat_interval_seconds`, `lease_duration_seconds`, `max_realms` | Defaults 5, 15 and 128. Lease duration must exceed two heartbeats; the directory caps realms at 128. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
 | `diagnostics.enabled` | Starts the periodic diagnostic collector when true. |
@@ -115,13 +135,16 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 
-Full API validation applies when `api.enabled` is true. Certificate provisioning
+Full API validation applies when `api.enabled` is true; game mode validates its
+outbound certificate and peer trust even with the local listener disabled. Certificate provisioning
 settings are also validated when `api.auto_generate_certificate` is true. Invalid API configuration,
 missing/unreadable certificates, a local leaf outside its validity window, an explicit
 EKU excluding server authentication, a missing private key, a wrong password or an
 occupied port fail startup;
-services already started are stopped in reverse order. With both options false, incomplete API
-settings are ignored. Provisioning with the listener disabled does not require trust roots or peers. There is no plaintext fallback.
+services already started are stopped in reverse order. In standalone mode with
+both options false, incomplete API settings are ignored. Provisioning with the
+listener disabled does not require trust roots or peers unless the role is game.
+There is no plaintext fallback.
 
 Game-loop queue limits, timer-wheel resolution and packet dispatch limits use C#
 option objects rather than additional TOML sections. The hosted API uses the
@@ -188,10 +211,12 @@ Handler service dependencies that require startup must start before priority 110
 API handlers execute outside the game loop; explicitly marshal world changes to
 `IGameLoopService` as described in [Game loop and timers](game-loop-and-timers.md).
 
-The listener speaks **MessagePack over mutual TLS/TCP**, not HTTP. No built-in
-login, realm discovery or administration operations are registered yet. A listener
-with zero handlers can authenticate configured peers but cannot serve application
-requests. See [Docker](docker.md#internal-api-port) for private-network deployment.
+The listener speaks **MessagePack over mutual TLS/TCP**, not HTTP. In login mode,
+the host registers realm operations 256 (register), 257 (renew) and 258
+(unregister). It checks the authenticated peer ID against the realm ID. A
+standalone instance uses a local realm entry and does not need these API calls.
+Other application handlers can be registered by the host or a plugin. See
+[Docker](docker.md#internal-api-port) for private-network deployment.
 
 ## Command line and root directory
 

@@ -31,11 +31,11 @@ public sealed class RenewRealmHandler : IApiHandler<RenewRealmRequest, RenewReal
             return ValueTask.FromResult(new RenewRealmResponse { Error = RealmRegistrationError.InvalidDescriptor });
         }
 
-        var accepted = _directory.Renew(context.Peer.PeerId, request.RealmId, new Guid(request.LeaseId));
+        var error = _directory.Renew(context.Peer.PeerId, request.RealmId, new Guid(request.LeaseId));
         return ValueTask.FromResult(new RenewRealmResponse
         {
-            Accepted = accepted,
-            Error = accepted ? RealmRegistrationError.None : RealmRegistrationError.StaleLease
+            Accepted = error == RealmRegistrationError.None,
+            Error = error
         });
     }
 }

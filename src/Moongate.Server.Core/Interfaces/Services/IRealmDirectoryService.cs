@@ -1,5 +1,6 @@
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Core.Types.Realms;
 
 namespace Moongate.Server.Core.Interfaces.Services;
 
@@ -8,7 +9,7 @@ public interface IRealmDirectoryService
 {
     RealmLease Register(string peerId, RealmRegistration registration, Guid instanceId);
 
-    bool Renew(string peerId, string realmId, Guid leaseId);
+    RealmRegistrationError Renew(string peerId, string realmId, Guid leaseId);
 
     bool Unregister(string peerId, string realmId, Guid leaseId);
 

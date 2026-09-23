@@ -77,8 +77,8 @@ public sealed class LoginServerService : IMoongateStartupService
         }
 
         TrackCleanup(Task.WhenAll(
-            _dispatcher.DisconnectAsync(args.Connection.SessionId),
-            _sender.DisconnectAsync(args.Connection.SessionId)));
+            _dispatcher.DisconnectAsync(session),
+            _sender.DisconnectAsync(args.Connection.SessionId, args.Connection)));
     }
 
     private void OnData(object? sender, NetworkDataEventArgs args)
@@ -97,7 +97,7 @@ public sealed class LoginServerService : IMoongateStartupService
 
         _logger.Warning("Rejected login packet from session {SessionId}, opcode 0x{OpCode:X2}",
             args.Connection.SessionId, opCode);
-        TrackCleanup(_connections.DisconnectAsync(args.Connection.SessionId));
+        TrackCleanup(_connections.DisconnectAsync(args.Connection.SessionId, args.Connection));
     }
 
     private async Task StartCoreAsync()

@@ -93,18 +93,27 @@ public sealed class RealmDirectoryService : IRealmDirectoryService
         }
     }
 
-    public bool Renew(string peerId, string realmId, Guid leaseId)
+    public RealmRegistrationError Renew(string peerId, string realmId, Guid leaseId)
     {
         lock (_gate)
         {
-            if (!_remote.TryGetValue(realmId, out var entry) || IsExpired(entry) ||
-                !StringComparer.Ordinal.Equals(entry.PeerId, peerId) || entry.LeaseId != leaseId)
+            if (!_remote.TryGetValue(realmId, out var entry) || IsExpired(entry))
             {
-                return false;
+                return RealmRegistrationError.ExpiredLease;
+            }
+
+            if (!StringComparer.Ordinal.Equals(entry.PeerId, peerId))
+            {
+                return RealmRegistrationError.IdentityMismatch;
+            }
+
+            if (entry.LeaseId != leaseId)
+            {
+                return RealmRegistrationError.StaleLease;
             }
 
             entry.LastRenewedTimestamp = _clock.GetTimestamp();
-            return true;
+            return RealmRegistrationError.None;
         }
     }
 

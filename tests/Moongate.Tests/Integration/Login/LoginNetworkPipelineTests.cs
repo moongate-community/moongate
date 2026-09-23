@@ -21,7 +21,7 @@ public sealed class LoginNetworkPipelineTests
         var network = new NetworkServiceStub(connections);
         var sessions = new LoginSessionService();
         var sender = new PacketSendService(connections);
-        var dispatcher = new LoginPacketDispatchService(sessions, connections,
+        var dispatcher = new LoginPacketDispatchService(sessions,
             container.Resolve<LoginPacketHandlerRegistry>(), container);
         var server = new LoginServerService(network, connections, sessions, dispatcher, sender);
         using var connection = new ControlledNetworkConnection(1);

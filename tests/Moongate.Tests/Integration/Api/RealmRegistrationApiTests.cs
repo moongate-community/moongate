@@ -75,6 +75,9 @@ public sealed class RealmRegistrationApiTests
                 new() { RealmId = "client", LeaseId = accepted.LeaseId });
             Assert.True(removed.Accepted);
             Assert.Empty(directory.GetAvailable(AccountType.Regular));
+            var expired = await connection.RequestAsync<RenewRealmRequest, RenewRealmResponse>(
+                new() { RealmId = "client", LeaseId = accepted.LeaseId });
+            Assert.Equal(RealmRegistrationError.ExpiredLease, expired.Error);
         }
         finally
         {

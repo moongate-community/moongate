@@ -147,6 +147,11 @@ snapshot. Registration never connects to or changes the database; the host valid
 every plugin registration as one batch and checks schema readiness before resolving
 any startup service.
 
+Plugins run in the configured server role. Register Auth entities and account
+services only in login/standalone, and World entities, Lua world modules and game
+services only in game/standalone. Persistence registration for an inactive target
+fails at startup; it does not connect to the other role's database.
+
 ### Ship versioned SQL with a persistence plugin
 
 A plugin that registers entities with `AddPersistenceAuth<T>()` or

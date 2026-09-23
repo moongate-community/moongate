@@ -8,5 +8,6 @@ public enum RealmRegistrationError : byte
     InvalidDescriptor = 2,
     DuplicateIndex = 3,
     StaleLease = 4,
-    CapacityExceeded = 5
+    CapacityExceeded = 5,
+    ExpiredLease = 6
 }

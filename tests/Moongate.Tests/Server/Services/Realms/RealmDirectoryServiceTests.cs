@@ -33,9 +33,9 @@ public sealed class RealmDirectoryServiceTests
         var second = directory.Register("realm-a", registration, Guid.NewGuid());
 
         Assert.NotEqual(first.LeaseId, second.LeaseId);
-        Assert.False(directory.Renew("realm-a", "realm-a", first.LeaseId));
+        Assert.Equal(RealmRegistrationError.StaleLease, directory.Renew("realm-a", "realm-a", first.LeaseId));
         Assert.False(directory.Unregister("realm-a", "realm-a", first.LeaseId));
-        Assert.True(directory.Renew("realm-a", "realm-a", second.LeaseId));
+        Assert.Equal(RealmRegistrationError.None, directory.Renew("realm-a", "realm-a", second.LeaseId));
         Assert.Single(directory.GetAvailable(AccountType.Regular));
     }
 
@@ -54,7 +54,7 @@ public sealed class RealmDirectoryServiceTests
         clock.Advance(TimeSpan.FromSeconds(5));
 
         Assert.Empty(directory.GetAvailable(AccountType.Regular));
-        Assert.False(directory.Renew("realm-a", "realm-a", lease.LeaseId));
+        Assert.Equal(RealmRegistrationError.ExpiredLease, directory.Renew("realm-a", "realm-a", lease.LeaseId));
     }
 
     [Fact]
@@ -70,7 +70,7 @@ public sealed class RealmDirectoryServiceTests
             Assert.Throws<RealmDirectoryException>(() =>
                 directory.Register("realm-b", Registration("realm-b", 1), Guid.NewGuid())).Error);
 
-        Assert.True(directory.Renew("realm-a", "realm-a", first.LeaseId));
+        Assert.Equal(RealmRegistrationError.None, directory.Renew("realm-a", "realm-a", first.LeaseId));
         Assert.Equal("realm-a", Assert.Single(directory.GetAvailable(AccountType.Regular)).RealmId);
     }
 
@@ -96,7 +96,7 @@ public sealed class RealmDirectoryServiceTests
         clock.Advance(TimeSpan.FromSeconds(15));
 
         Assert.Empty(directory.GetAvailable(AccountType.Regular));
-        Assert.False(directory.Renew("realm-a", "realm-a", lease.LeaseId));
+        Assert.Equal(RealmRegistrationError.ExpiredLease, directory.Renew("realm-a", "realm-a", lease.LeaseId));
         directory.Register("realm-b", Registration("realm-b", 1), Guid.NewGuid());
         Assert.Single(directory.GetAvailable(AccountType.Regular));
     }
@@ -110,7 +110,7 @@ public sealed class RealmDirectoryServiceTests
         Assert.Equal(RealmRegistrationError.CapacityExceeded,
             Assert.Throws<RealmDirectoryException>(() =>
                 directory.Register("realm-b", Registration("realm-b", 2), Guid.NewGuid())).Error);
-        Assert.True(directory.Renew("realm-a", "realm-a", first.LeaseId));
+        Assert.Equal(RealmRegistrationError.None, directory.Renew("realm-a", "realm-a", first.LeaseId));
     }
 
     [Fact]

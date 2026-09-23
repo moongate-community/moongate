@@ -1,4 +1,3 @@
-# The role is configuration metadata; it does not yet select startup services.
 mode = "login"
 
 [shard]
@@ -13,14 +12,29 @@ ultima_path = "/uo"
 
 [persistence]
 auto_sync_schema = false
+migrations_directory = "/app/migrations"
 
 [persistence.accounts]
 connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
 
 [api]
-enabled = false
+enabled = true
 listen_address = "0.0.0.0"
 port = 2594
+certificate_path = "tls/server.pfx"
+certificate_password_environment_variable = ""
+trusted_root_paths = ["tls/game-1.pem", "tls/game-2.pem"]
 
-[persistence.realm]
-connection_string = "$MOONGATE_REALM_DATABASE"
+[[api.peers]]
+certificate_sha256 = "$MOONGATE_GAME_1_CERT_SHA256"
+peer_id = "realm-1"
+allowed_operations = [256, 257, 258]
+
+[[api.peers]]
+certificate_sha256 = "$MOONGATE_GAME_2_CERT_SHA256"
+peer_id = "realm-2"
+allowed_operations = [256, 257, 258]
+
+[realm_directory]
+lease_duration_seconds = 15
+max_realms = 128

@@ -18,11 +18,62 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Server.Ultima;
+using Moongate.Tests.TestSupport.Environment;
 
 namespace Moongate.Tests.Integration.Login;
 
+[Collection(EnvironmentTestsCollection.Name)]
 public sealed class AccountServerListTests
 {
+    [Fact]
+    public async Task LoginPacket_PostgreSqlAccount_FiltersRealmListByAccountType()
+    {
+        await using var accountFixture = await AccountServiceFixture.CreateAsync();
+        var account = await accountFixture.SeedAsync();
+        using var container = new Container();
+        var connections = new ConnectionService();
+        var network = new NetworkServiceStub(connections);
+        var sessions = new LoginSessionService();
+        var sender = new PacketSendService(connections);
+        var directory = new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15));
+        directory.RegisterLocal(new RealmDescriptor("visible", 1, "Visible", IPAddress.Loopback,
+            2595, AccountType.Regular));
+        directory.RegisterLocal(new RealmDescriptor("hidden", 2, "Hidden", IPAddress.Loopback,
+            2596, AccountType.Administrator));
+        container.RegisterInstance<ILoginSessionService>(sessions);
+        container.RegisterInstance<IPacketSendService>(sender);
+        container.RegisterInstance(accountFixture.Service);
+        container.RegisterInstance(new LoginAccountFlow(accountFixture.Service, directory));
+        container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
+        var dispatcher = new LoginPacketDispatchService(sessions,
+            container.Resolve<LoginPacketHandlerRegistry>(), container);
+        var server = new LoginServerService(network, connections, sessions, dispatcher, sender);
+        await connections.StartAsync();
+        await sender.StartAsync();
+        await dispatcher.StartAsync();
+        await server.StartAsync();
+        using var connection = new ControlledNetworkConnection(11);
+
+        try
+        {
+            network.Accept(connection);
+            network.Receive(connection, LoginFrame(account.Username, accountFixture.Password));
+            using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+            var response = await connection.ReadSentAsync(timeout.Token);
+
+            Assert.Equal(0xA8, response[0]);
+            Assert.Equal(1, response[5]);
+            Assert.Equal(account.Id, sessions.TryGet(11, out var session) ? session.AccountId : Serial.Zero);
+        }
+        finally
+        {
+            await server.StopAsync();
+            await dispatcher.StopAsync();
+            await sender.StopAsync();
+            await connections.StopAsync();
+        }
+    }
+
     [Theory, InlineData(true, 0xA8, 0x00), InlineData(false, 0x82, 0x04)]
     public async Task LoginPacket_SendsServerListOrCommunicationProblem(bool available,
         byte expectedOpcode, byte expectedReason)
@@ -50,7 +101,7 @@ public sealed class AccountServerListTests
         container.RegisterLoginPacketHandler<LoginSeedPacket, LoginRoleSeedPacketHandler>();
         container.RegisterLoginPacketHandler<ClientVersionPacket, LoginRoleClientVersionPacketHandler>();
         container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
-        var dispatcher = new LoginPacketDispatchService(sessions, connections,
+        var dispatcher = new LoginPacketDispatchService(sessions,
             container.Resolve<LoginPacketHandlerRegistry>(), container);
         var server = new LoginServerService(network, connections, sessions, dispatcher, sender);
         await connections.StartAsync();

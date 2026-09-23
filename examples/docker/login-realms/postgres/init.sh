@@ -50,6 +50,21 @@ SELECT format('ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA sample_greeter GRA
 SQL
 }
 
+provision_auth_schema()
+{
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$MOONGATE_ACCOUNTS_DATABASE" \
+        --set=schema_role="$MOONGATE_ACCOUNTS_SCHEMA_USER" \
+        --set=runtime_role="$MOONGATE_ACCOUNTS_RUNTIME_USER" <<'SQL'
+SELECT format('CREATE SCHEMA IF NOT EXISTS auth AUTHORIZATION %I', :'schema_role') \gexec
+REVOKE ALL ON SCHEMA auth FROM PUBLIC;
+SELECT format('GRANT USAGE ON SCHEMA auth TO %I', :'runtime_role') \gexec
+SELECT format('GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA auth TO %I', :'runtime_role') \gexec
+SELECT format('GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA auth TO %I', :'runtime_role') \gexec
+SELECT format('ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA auth GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO %I', :'schema_role', :'runtime_role') \gexec
+SELECT format('ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA auth GRANT USAGE, SELECT ON SEQUENCES TO %I', :'schema_role', :'runtime_role') \gexec
+SQL
+}
+
 provision_role "$MOONGATE_ACCOUNTS_SCHEMA_USER" /run/secrets/accounts-schema-password
 provision_role "$MOONGATE_ACCOUNTS_RUNTIME_USER" /run/secrets/accounts-runtime-password
 provision_role "$MOONGATE_REALM_1_SCHEMA_USER" /run/secrets/realm-1-schema-password
@@ -60,4 +75,5 @@ provision_role "$MOONGATE_REALM_2_RUNTIME_USER" /run/secrets/realm-2-runtime-pas
 provision_database "$MOONGATE_ACCOUNTS_DATABASE" "$MOONGATE_ACCOUNTS_SCHEMA_USER" "$MOONGATE_ACCOUNTS_RUNTIME_USER"
 provision_database "$MOONGATE_REALM_1_DATABASE" "$MOONGATE_REALM_1_SCHEMA_USER" "$MOONGATE_REALM_1_RUNTIME_USER"
 provision_database "$MOONGATE_REALM_2_DATABASE" "$MOONGATE_REALM_2_SCHEMA_USER" "$MOONGATE_REALM_2_RUNTIME_USER"
+provision_auth_schema
 provision_sample_schema

@@ -98,6 +98,35 @@ public sealed class ConfigHelperTests
     }
 
     [Fact]
+    public void Load_ApiPeerFingerprint_ExpandsEnvironmentReferenceWithoutRewritingFile()
+    {
+        using var directory = new TemporaryDirectory();
+        var variable = $"MOONGATE_TEST_CERT_{Guid.NewGuid():N}";
+        var fingerprint = new string('A', 64);
+        var toml = $$"""
+                     [api]
+                     enabled = true
+                     certificate_path = "tls/server.pfx"
+                     trusted_root_paths = ["tls/peer.pem"]
+                     [[api.peers]]
+                     certificate_sha256 = "${{variable}}"
+                     peer_id = "realm-a"
+                     allowed_operations = [256, 257, 258]
+                     """;
+        var path = directory.CreateFile("moongate.toml", toml);
+        Environment.SetEnvironmentVariable(variable, fingerprint);
+        try
+        {
+            Assert.Equal(fingerprint, Assert.Single(ConfigHelper.Load(path).Api.Peers).CertificateSha256);
+            Assert.Equal(toml, File.ReadAllText(path));
+        }
+        finally
+        {
+            Environment.SetEnvironmentVariable(variable, null);
+        }
+    }
+
+    [Fact]
     public void Load_EnabledApiWithoutTls_RejectsBeforeStartup()
     {
         using var directory = new TemporaryDirectory();

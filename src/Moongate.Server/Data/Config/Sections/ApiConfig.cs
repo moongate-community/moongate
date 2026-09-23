@@ -53,7 +53,6 @@ public sealed class ApiConfig
 
     private void ValidatePeerTrust()
     {
-
         if (TrustedRootPaths is null ||
             TrustedRootPaths.Length == 0 ||
             TrustedRootPaths.Any(string.IsNullOrWhiteSpace))

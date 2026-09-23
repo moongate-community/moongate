@@ -13,20 +13,17 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
 {
     private readonly Lock _gate = new();
     private readonly ILoginSessionService _sessions;
-    private readonly IConnectionService _connections;
     private readonly LoginPacketHandlerRegistry _registry;
     private readonly IResolverContext _resolver;
     private readonly ILogger _logger = Log.ForContext<LoginPacketDispatchService>();
-    private readonly Dictionary<long, LoginPacketMailbox> _mailboxes = new();
+    private readonly Dictionary<LoginSession, LoginPacketMailbox> _mailboxes = new(ReferenceEqualityComparer.Instance);
     private IReadOnlyDictionary<Type, Func<LoginSession, IPacket, CancellationToken, ValueTask>>? _handlers;
     private bool _running;
 
-    public LoginPacketDispatchService(ILoginSessionService sessions, IConnectionService connections,
-        LoginPacketHandlerRegistry registry,
+    public LoginPacketDispatchService(ILoginSessionService sessions, LoginPacketHandlerRegistry registry,
         IResolverContext resolver)
     {
         _sessions = sessions;
-        _connections = connections;
         _registry = registry;
         _resolver = resolver;
     }
@@ -53,23 +50,28 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
                 return false;
             }
 
-            if (!_mailboxes.TryGetValue(sessionId, out var mailbox))
+            if (!_mailboxes.TryGetValue(session, out var mailbox))
             {
-                mailbox = new(session, _handlers, _logger, _connections.DisconnectAsync, 128);
-                _mailboxes.Add(sessionId, mailbox);
+                mailbox = new(session, _handlers, _logger, 128);
+                _mailboxes.Add(session, mailbox);
                 mailbox.Start();
             }
 
-            return ReferenceEquals(mailbox.Session, session) && mailbox.TryWrite(packet);
+            return mailbox.TryWrite(packet);
         }
     }
 
     public Task DisconnectAsync(long sessionId)
+        => _sessions.TryGet(sessionId, out var session)
+               ? DisconnectAsync(session)
+               : Task.CompletedTask;
+
+    public Task DisconnectAsync(LoginSession session)
     {
         LoginPacketMailbox? mailbox;
         lock (_gate)
         {
-            if (!_mailboxes.Remove(sessionId, out mailbox))
+            if (!_mailboxes.Remove(session, out mailbox))
             {
                 return Task.CompletedTask;
             }

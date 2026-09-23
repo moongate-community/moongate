@@ -100,7 +100,8 @@ use the documentation published for that version.
    CREATE DATABASE world OWNER moongate;
    ```
 
-   Both databases are checked at every start, in every server mode. For a deployment,
+   Standalone checks both databases at every start; login checks Accounts only,
+   and game checks its Realm only. For a deployment,
    give the server a DML-only role and keep schema changes on a separate role; see
    [Separate DDL and runtime roles](persistence-operations.md#separate-ddl-and-runtime-roles).
 

@@ -3,12 +3,53 @@ using System.Security.Authentication;
 using Moongate.Api.Interfaces.Connections;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Realms;
+using Moongate.Server.Core.Types.Realms;
 using Moongate.Tests.TestSupport.Realms;
 
 namespace Moongate.Tests.Server.Services.Realms;
 
 public sealed class RealmRegistrationServiceTests
 {
+    [Fact]
+    public async Task Renew_ExpiredLease_RegistersAgainOnSameConnection()
+    {
+        var connection = new StubStaleRealmConnection(RealmRegistrationError.ExpiredLease);
+        await using var client = new StubRealmApiClient(_ => Task.FromResult<IApiConnection>(connection));
+        var config = Config();
+        config.HeartbeatIntervalSeconds = 1;
+        config.LeaseDurationSeconds = 3;
+        await using var service = new RealmRegistrationService(client, config, TimeProvider.System);
+        await service.StartAsync();
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+        while (connection.Registrations < 2)
+        {
+            await Task.Delay(20, timeout.Token);
+        }
+
+        await service.StopAsync();
+    }
+
+    [Fact]
+    public async Task Renew_StaleLease_DoesNotSupersedeReplacementAgain()
+    {
+        var connection = new StubStaleRealmConnection();
+        await using var client = new StubRealmApiClient(_ => Task.FromResult<IApiConnection>(connection));
+        var config = Config();
+        config.HeartbeatIntervalSeconds = 1;
+        config.LeaseDurationSeconds = 3;
+        await using var service = new RealmRegistrationService(client, config, TimeProvider.System);
+        await service.StartAsync();
+        using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(3));
+        while (connection.Renewals == 0)
+        {
+            await Task.Delay(20, timeout.Token);
+        }
+
+        await Task.Delay(100);
+        Assert.Equal(1, connection.Registrations);
+        await service.StopAsync();
+    }
+
     [Fact]
     public async Task StartAsync_PermanentIdentityRejection_DoesNotRetry()
     {

@@ -110,10 +110,15 @@ internal static class ServerRoleRegistration
         var address = string.IsNullOrWhiteSpace(settings.AdvertisedAddress)
                           ? IPAddress.Loopback
                           : IPAddress.Parse(settings.AdvertisedAddress);
+        var shardName = config.Shard.ShardName;
+        var defaultName = shardName is { Length: > 0 and <= 32 } &&
+                          shardName.All(character => character is >= ' ' and <= '~')
+                              ? shardName
+                              : "Moongate";
         var descriptor = new RealmDescriptor(
             string.IsNullOrWhiteSpace(settings.RealmId) ? "local" : settings.RealmId,
             checked((ushort)settings.ServerIndex),
-            string.IsNullOrWhiteSpace(settings.Name) ? config.Shard.ShardName : settings.Name,
+            string.IsNullOrWhiteSpace(settings.Name) ? defaultName : settings.Name,
             address,
             checked((ushort)(settings.AdvertisedPort == 0 ? config.Network.GamePort : settings.AdvertisedPort)),
             settings.MinimumAccountType);
