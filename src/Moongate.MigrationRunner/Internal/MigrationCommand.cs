@@ -9,59 +9,56 @@ using Npgsql;
 
 namespace Moongate.MigrationRunner.Internal;
 
+/// <summary>
+/// The real logic, testable in-process: no CLI parsing (Program.cs's Cli class and
+/// ConsoleAppFramework own that), output written to the given writers rather than
+/// <see cref="Console" /> directly, and the exit code returned rather than set on
+/// <see cref="Environment.ExitCode" />.
+/// </summary>
 internal static class MigrationCommand
 {
-    public static async Task<int> ExecuteAsync(
-        string[] args,
+    public static Task<int> StatusAsync(
+        MigrationTarget target,
+        string? rootDirectory,
+        string? migrationsDirectory,
+        string? pluginsDirectory,
         TextWriter output,
         TextWriter error,
         CancellationToken cancellationToken = default
     )
+        => RunAsync(false, target, rootDirectory, migrationsDirectory, pluginsDirectory, output, error, cancellationToken);
+
+    public static Task<int> ApplyAsync(
+        MigrationTarget target,
+        string? rootDirectory,
+        string? migrationsDirectory,
+        string? pluginsDirectory,
+        TextWriter output,
+        TextWriter error,
+        CancellationToken cancellationToken = default
+    )
+        => RunAsync(true, target, rootDirectory, migrationsDirectory, pluginsDirectory, output, error, cancellationToken);
+
+    private static async Task<int> RunAsync(
+        bool apply,
+        MigrationTarget target,
+        string? rootDirectory,
+        string? migrationsDirectory,
+        string? pluginsDirectory,
+        TextWriter output,
+        TextWriter error,
+        CancellationToken cancellationToken
+    )
     {
-        const string usage =
-            "Usage: Moongate.MigrationRunner status|apply --target auth|world [--root-directory PATH] [--migrations-directory PATH] [--plugins-directory PATH]";
-
-        if (args is ["--help"] or ["-h"])
-        {
-            await output.WriteLineAsync(usage);
-
-            return 0;
-        }
-
         try
         {
-            if (args.Length == 0 || args[0] is not ("status" or "apply"))
-            {
-                throw new InvalidOperationException(usage);
-            }
-
-            var options = new Dictionary<string, string>(StringComparer.Ordinal);
-
-            for (var index = 1; index < args.Length; index += 2)
-            {
-                if (index + 1 >= args.Length ||
-                    args[index] is not ("--target" or "--root-directory" or "--migrations-directory"
-                        or "--plugins-directory") ||
-                    !options.TryAdd(args[index], args[index + 1]))
-                {
-                    throw new InvalidOperationException(usage);
-                }
-            }
-
-            var target = options.GetValueOrDefault("--target") switch
-            {
-                "auth"  => MigrationTarget.Auth,
-                "world" => MigrationTarget.World,
-                _       => throw new InvalidOperationException(usage)
-            };
-            var root = (options.GetValueOrDefault("--root-directory") ??
+            var root = (rootDirectory ??
                         Environment.GetEnvironmentVariable("MOONGATE_ROOT") ??
                         Path.GetFullPath(Path.Combine(AppContext.BaseDirectory, "..")))
                 .ResolvePathAndEnvs();
             string? configuredMigrations = null;
             var migrations =
-                (options.GetValueOrDefault("--migrations-directory") ??
-                 Path.Combine(AppContext.BaseDirectory, "..", "migrations")).ResolvePathAndEnvs();
+                (migrationsDirectory ?? Path.Combine(AppContext.BaseDirectory, "..", "migrations")).ResolvePathAndEnvs();
             string connectionString;
 
             try
@@ -91,17 +88,16 @@ internal static class MigrationCommand
                 );
             }
 
-            if (!options.ContainsKey("--migrations-directory") && !string.IsNullOrWhiteSpace(configuredMigrations))
+            if (migrationsDirectory is null && !string.IsNullOrWhiteSpace(configuredMigrations))
             {
                 migrations = configuredMigrations.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
             }
 
-            var plugins = (options.GetValueOrDefault("--plugins-directory") ?? Path.Combine(root, "plugins"))
-                .ResolvePathAndEnvs();
+            var plugins = (pluginsDirectory ?? Path.Combine(root, "plugins")).ResolvePathAndEnvs();
             var catalog = MigrationCatalog.Load(migrations, plugins, target);
             cancellationToken.ThrowIfCancellationRequested();
 
-            if (args[0] == "apply")
+            if (apply)
             {
                 var count = PostgreSqlMigrationRunner.Apply(connectionString, catalog);
                 await output.WriteLineAsync($"Applied {count} migration(s) to {target}.");
