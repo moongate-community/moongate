@@ -22,4 +22,19 @@ public static class PacketHandlerContainerExtensions
 
         return container;
     }
+
+    /// <summary>Registers an asynchronous typed handler and its deferred binder.</summary>
+    public static Container RegisterAsyncPacketHandler<TPacket, THandler>(this Container container)
+        where TPacket : class, IIncomingPacket<TPacket>
+        where THandler : class, IAsyncPacketHandler<TPacket>
+    {
+        if (!container.IsRegistered<PacketHandlerRegistry>())
+        {
+            container.RegisterInstance(new PacketHandlerRegistry());
+        }
+
+        container.Resolve<PacketHandlerRegistry>().RegisterAsync<TPacket, THandler>(container);
+
+        return container;
+    }
 }

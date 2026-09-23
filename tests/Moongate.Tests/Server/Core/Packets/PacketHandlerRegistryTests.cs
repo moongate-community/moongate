@@ -13,6 +13,52 @@ namespace Moongate.Tests.Server.Core.Packets;
 public sealed class PacketHandlerRegistryTests
 {
     [Fact]
+    public async Task RegisterAsync_BindsSingletonAndRejectsDuplicateSyncRegistration()
+    {
+        using var container = new Container();
+        container.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>();
+        var registration = container.Resolve<PacketHandlerRegistry>().Freeze()[typeof(PingPacket)];
+        Assert.True(registration.IsAsync);
+        Assert.Same(container.Resolve<AsyncPingPacketHandler>(), container.Resolve<AsyncPingPacketHandler>());
+        await registration.BindAsync(container)(null!, new PingPacket(42), CancellationToken.None);
+        Assert.Equal((byte)42, container.Resolve<AsyncPingPacketHandler>().LastSequence);
+        Assert.Throws<InvalidOperationException>(
+            () => container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>()
+        );
+        Assert.False(container.IsRegistered<RecordingPacketHandler>());
+    }
+
+    [Fact]
+    public void RegisterSync_RejectsDuplicateAsyncRegistrationBeforeContainerMutation()
+    {
+        using var container = new Container();
+        container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>();
+        Assert.Throws<InvalidOperationException>(
+            () => container.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>()
+        );
+        Assert.False(container.IsRegistered<AsyncPingPacketHandler>());
+    }
+
+    [Fact]
+    public void RegisterAsync_RejectsTransientAndFrozenRegistry()
+    {
+        using var container = new Container();
+        container.Register<AsyncPingPacketHandler>(Reuse.Transient);
+        Assert.Throws<InvalidOperationException>(
+            () => container.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>()
+        );
+        Assert.Empty(container.Resolve<PacketHandlerRegistry>().Registrations);
+
+        using var frozenContainer = new Container();
+        frozenContainer.RegisterInstance(new PacketHandlerRegistry());
+        frozenContainer.Resolve<PacketHandlerRegistry>().Freeze();
+        Assert.Throws<InvalidOperationException>(
+            () => frozenContainer.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>()
+        );
+        Assert.False(frozenContainer.IsRegistered<AsyncPingPacketHandler>());
+    }
+
+    [Fact]
     public async Task Freeze_DistinctPacketTypesBindToSameSingletonWithTypedDelegates()
     {
         await using var fixture = await SessionFixture.CreateAsync();
