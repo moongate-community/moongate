@@ -64,13 +64,13 @@ internal static class MigrationCommand
             try
             {
                 var config = await TomlUtils.DeserializeFromFileAsync<RunnerConfiguration>(
-                    Path.Combine(root, "config", "moongate.toml"),
-                    cancellationToken: cancellationToken
-                );
+                                 Path.Combine(root, "config", "moongate.toml"),
+                                 cancellationToken: cancellationToken
+                             );
                 configuredMigrations = config?.Persistence.MigrationsDirectory;
                 var template = target == MigrationTarget.Auth
-                    ? config?.Persistence.Accounts.ConnectionString
-                    : config?.Persistence.Realm.ConnectionString;
+                                   ? config?.Persistence.Accounts.ConnectionString
+                                   : config?.Persistence.Realm.ConnectionString;
 
                 if (string.IsNullOrWhiteSpace(template))
                 {
