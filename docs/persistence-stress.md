@@ -129,6 +129,41 @@ compare repeated runs on the same host and workload before setting a performance
 budget. The generator retains expected journal revisions for verification, so
 long write-heavy runs also consume test-host memory.
 
+## Performance: a real reference run
+
+There is no pass/fail threshold (see above); what follows is one real run, for
+orientation, not a target. Reproduce it with `python3 scripts/stress-persistence.py`
+(default settings: 100/500/1,000 sessions, 30 s/phase, concurrency 32, think 10 ms).
+
+**Development machine:**
+
+| | |
+| --- | --- |
+| CPU | AMD Ryzen AI 9 HX 370 (12 cores / 24 threads) |
+| RAM | 30 GiB |
+| Disk | NVMe SSD (Samsung 970 EVO Plus) |
+| OS | Debian GNU/Linux 13 (trixie) |
+| .NET | 10.0.12 |
+
+The stress container itself stays capped at 2 CPUs / 1 GiB regardless of host
+specs (see Isolation above), so host power mostly affects the .NET test-host
+side of this workload, not the database side.
+
+**Results** (commit `1489e1f7`, `report.json`, read/update/commit shown; see
+[Workload](#workload) above for what each operation does):
+
+| Sessions | Ops/s | Read P50/P95/P99 (ms) | Update P50/P95/P99 (ms) | Commit P50/P95/P99 (ms) | Verified | Errors |
+| --- | --- | --- | --- | --- | --- | --- |
+| 100 | 2,656 | 12 / 36 / 52 | 56 / 91 / 127 | 66 / 105 / 193 | true | 0 |
+| 500 | 2,678 | 19 / 430 / 546 | 431 / 581 / 669 | 538 / 733 / 800 | true | 0 |
+| 1,000 | 1,659 | 76 / 1,227 / 5,811 | 1,121 / 2,388 / 3,893 | 1,556 / 7,661 / 7,939 | true | 0 |
+
+Every phase verified correctly and produced zero errors at every session count;
+what degrades is latency, not correctness. The sharp jump between 500 and 1,000
+sessions is the deliberately tiny 2 CPU/1 GiB stress container saturating, not
+a statement about `DataAccess<T>` itself: rerun with more sessions on a Postgres
+instance sized for them to see where a *real* deployment's ceiling sits.
+
 ## Ordinary tests and CI
 
 The full stress test is marked `Category=Stress` and skipped unless
