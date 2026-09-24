@@ -4,12 +4,12 @@ This is the one first-start sequence for Moongate. It applies whether you instal
 the release with [the Linux installer](installation.md), run the
 [container image](docker.md), or build from source. Moongate is under active
 development: the transport, packet pipeline, scripting and persistence
-infrastructure are available, but account login and a playable world are not
-implemented yet. See [Implementation status](implementation-status.md).
+infrastructure and login-to-game handoff are available, but character selection
+and a playable world are not implemented yet. See [Implementation status](implementation-status.md).
 
-A server start needs four things in place: a server root, a configuration that
-points at your client files, two PostgreSQL databases, and the core SQL
-migrations applied to them. The steps below produce them in that order.
+A server start needs a root, readable client files, the active role's PostgreSQL
+database and reviewed SQL, and a private Redis instance for realm leases and
+one-use handoff tickets. The steps below prepare these dependencies.
 
 ## Before you start
 
@@ -17,6 +17,7 @@ migrations applied to them. The steps below produce them in that order.
   packet protocol targets ClassicUO 7.x.
 - A reachable PostgreSQL server on which you can create databases. The examples in
   this repository use PostgreSQL 16.
+- A reachable Redis 7+ server with authentication and `maxmemory-policy noeviction`. Keep it on a private network.
 - Two free TCP ports in standalone mode: login defaults to 2593 and game to 2595.
 - For a source build: Git and the .NET 10 SDK selected by `global.json`. Node.js is
   only needed to work on the documentation website.
@@ -33,7 +34,7 @@ The sequence uses three executables. Each installation method ships them:
 
 The steps below use the installed names. Substitute the source-checkout form, keeping
 everything after `--`. For the container image the same steps run through
-`--entrypoint`; see [Run with Docker](docker.md#first-start).
+`--entrypoint`; see [Run with Docker](docker.md).
 
 For a source checkout, build once first:
 
@@ -78,32 +79,35 @@ use the documentation published for that version.
    ultima_path = "/absolute/path/to/your/ultima-client"
 
    [persistence.accounts]
-   connection_string = "postgres://moongate:moongate@localhost:5432/auth"
+   connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
 
    [persistence.realm]
-   connection_string = "postgres://moongate:moongate@localhost:5432/world"
+   connection_string = "$MOONGATE_REALM_DATABASE"
+
+   [redis]
+   connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
+   handoff_secret = "$MOONGATE_HANDOFF_SECRET"
    ```
 
    Use an absolute client path; relative paths resolve from the process working
-   directory, not from the root. The two connection strings shown are the generated
-   defaults; change host, credentials and database names to match step 3. Outside
-   local development, write `"$MOONGATE_ACCOUNTS_DATABASE"` and
-   `"$MOONGATE_REALM_DATABASE"` instead and supply the URIs from your secret provider.
+   directory, not from the root. Supply the two PostgreSQL URIs, the Redis
+   connection string and a separate cluster-wide handoff secret through the
+   referenced environment variables. Read credentials from Bitwarden; do not
+   write their values in this file. Every login and game process in one deployment
+   needs the same Redis endpoint, Redis password and handoff secret.
    The [configuration reference](server-configuration.md) lists every setting.
 
-3. **Create the databases.** Moongate never creates databases or roles. With the
-   default connection strings, run as a PostgreSQL superuser:
+3. **Provision PostgreSQL and Redis.** Create the Accounts and World databases and
+   role-specific credentials before starting Moongate. The server never creates
+   databases or roles. Use a DML-only runtime role and a separate schema role;
+   see [Separate DDL and runtime roles](persistence-operations.md#separate-ddl-and-runtime-roles).
 
-   ```sql
-   CREATE ROLE moongate LOGIN PASSWORD 'moongate';
-   CREATE DATABASE auth OWNER moongate;
-   CREATE DATABASE world OWNER moongate;
-   ```
-
-   Standalone checks both databases at every start; login checks Accounts only,
-   and game checks its Realm only. For a deployment,
-   give the server a DML-only role and keep schema changes on a separate role; see
-   [Separate DDL and runtime roles](persistence-operations.md#separate-ddl-and-runtime-roles).
+   Provision Redis with a strong password, private-network access and
+   `maxmemory-policy noeviction`. Keep its password separate from the handoff
+   secret. For a runnable PostgreSQL and Redis topology, use the
+   [Docker login and realms example](docker-login-realms.md). Standalone checks
+   both databases; login checks Accounts only, and game checks its Realm only.
+   All three modes also check Redis at startup.
 
 4. **Apply the core migrations.** Startup validates the versioned SQL history and
    refuses to start while files are pending, so apply them first:
@@ -176,7 +180,8 @@ for schema operations and world saves see
 | Client path error | Set `ultima.ultima_path` to readable, real client data |
 | TOML parse or validation error | Fix the named field; existing files are not silently replaced |
 | `Postgres connection` failure | The database does not exist, the host is wrong, or the role cannot log in. Inside a container, `localhost` is the container itself |
-| Persistence variable missing | Export the PostgreSQL URI referenced by the target's `connection_string` |
+| Connection variable missing | Export the PostgreSQL and Redis variables referenced by the active TOML sections |
+| Redis connection failure | Check the private endpoint, credential, Redis health and `noeviction` policy |
 | Pending or changed migrations | Run the migration runner `status` and `apply` for the named target (step 4). Never edit an applied file |
 | PostgreSQL schema changes required | An entity needs DDL that no migration provides. Generate and review a versioned SQL file with `--persistence-schema generate`, then apply it with the runner while the server is stopped |
 | Port binding failure | Check `network.listen_address`, port availability and interface addresses |

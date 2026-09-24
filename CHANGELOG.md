@@ -1,5 +1,16 @@
 # Changelog
 
+## Unreleased
+
+### Features
+
+* **login:** discover live game realms through Redis leases and transfer authenticated clients with one-use `0x8C`/`0x91` handoff tickets.
+* **docker:** run one login and two game processes with private Redis, role-local PostgreSQL credentials and Compose secrets.
+
+### Breaking changes
+
+* **server:** remove the internal TCP API and `Moongate.Api` package. Runtime login, game and standalone roles now require Redis; PostgreSQL remains role-local.
+
 ## [0.6.0](https://github.com/moongate-community/moongate/compare/v0.5.0...v0.6.0) (2026-09-21)
 
 

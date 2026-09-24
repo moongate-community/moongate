@@ -170,7 +170,6 @@ runnable walk-through from entity class to applied migration.
 | --- | --- | --- |
 | `AddMoongateService<TService, TImpl>(priority)` / `AddMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order. Further overloads accept factories and runtime types | this page |
 | `RegisterCommand<TExecutor>(name, description, source, minimumAccountType)` | One console/in-game command executor, as a singleton | [Console commands](#console-commands) |
-| `RegisterApiHandler<THandler>()` | One typed API handler singleton in the host registry; the opt-in listener freezes it after plugin loading | [API host configuration](server-configuration.md#enable-the-internal-api-server) |
 | `RegisterPacketHandler<TPacket, THandler>()` | One packet handler singleton bound to an incoming packet type | this page |
 | `RegisterAsyncPacketHandler<TPacket, THandler>()` | One async packet handler singleton for I/O; results return to the game loop through `PacketContext` | [Packets and handlers](packets.md#register-a-game-handler) |
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |

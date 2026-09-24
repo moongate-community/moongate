@@ -17,16 +17,10 @@ migrations_directory = "/app/migrations"
 [persistence.realm]
 connection_string = "$MOONGATE_REALM_DATABASE"
 
-[api]
-enabled = false
-certificate_path = "tls/server.pfx"
-certificate_password_environment_variable = ""
-trusted_root_paths = ["tls/login.pem"]
 
-[[api.peers]]
-certificate_sha256 = "$MOONGATE_LOGIN_CERT_SHA256"
-peer_id = "login"
-allowed_operations = []
+[redis]
+connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
+handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
 [realm_directory]
 realm_id = "realm-2"
@@ -34,6 +28,3 @@ name = "Moongate Realm 2"
 server_index = 2
 advertised_address = "127.0.0.1"
 advertised_port = 2596
-login_api_host = "login"
-login_api_port = 2594
-expected_login_peer_id = "login"

@@ -17,23 +17,10 @@ migrations_directory = "/app/migrations"
 [persistence.accounts]
 connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
 
-[api]
-enabled = true
-listen_address = "0.0.0.0"
-port = 2594
-certificate_path = "tls/server.pfx"
-certificate_password_environment_variable = ""
-trusted_root_paths = ["tls/game-1.pem", "tls/game-2.pem"]
 
-[[api.peers]]
-certificate_sha256 = "$MOONGATE_GAME_1_CERT_SHA256"
-peer_id = "realm-1"
-allowed_operations = [256, 257, 258]
-
-[[api.peers]]
-certificate_sha256 = "$MOONGATE_GAME_2_CERT_SHA256"
-peer_id = "realm-2"
-allowed_operations = [256, 257, 258]
+[redis]
+connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
+handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
 [realm_directory]
 lease_duration_seconds = 15

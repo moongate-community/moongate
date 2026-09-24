@@ -14,7 +14,6 @@ export const contentEntries = [
   { source: 'docs/docker.md', slug: 'server/docker', title: 'Run with Docker', group: 'Run a shard' },
   { source: 'docs/docker-login-realms.md', slug: 'server/docker-login-realms', title: 'Docker login and realms', group: 'Run a shard' },
   { source: 'docs/server-configuration.md', slug: 'server/configuration', title: 'Configuration', group: 'Run a shard' },
-  { source: 'docs/api-certificates.md', slug: 'server/api-certificates', title: 'API certificates', group: 'Run a shard' },
   { source: 'docs/persistence-operations.md', slug: 'server/persistence-operations', title: 'Operate PostgreSQL', group: 'Run a shard' },
   { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Run a shard' },
 
@@ -40,7 +39,7 @@ export const contentEntries = [
   ...[
     ['Core', 'core'], ['Network', 'network'], ['Network.Packets', 'network-packets'],
     ['Persistence', 'persistence'], ['Persistence.Migrations', 'persistence-migrations'],
-    ['Server.Core', 'server-core'], ['Api', 'api'], ['Scripting', 'scripting'], ['Ultima', 'ultima'],
+    ['Server.Core', 'server-core'], ['Scripting', 'scripting'], ['Ultima', 'ultima'],
   ].map(([name, slug]) => ({
     source: `src/Moongate.${name}/README.md`, slug: `libraries/${slug}`,
     title: `Moongate.${name}`, group: 'Libraries',

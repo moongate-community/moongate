@@ -9,7 +9,6 @@ USER $APP_UID
 WORKDIR /app
 VOLUME ["/data"]
 EXPOSE 2593
-EXPOSE 2594/tcp
 EXPOSE 2595/tcp
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
@@ -18,7 +17,6 @@ WORKDIR /src
 COPY ["Directory.Build.props", "./"]
 COPY ["src/Moongate.Boot/Moongate.Boot.csproj", "src/Moongate.Boot/"]
 COPY ["src/Moongate.Core/Moongate.Core.csproj", "src/Moongate.Core/"]
-COPY ["src/Moongate.Api/Moongate.Api.csproj", "src/Moongate.Api/"]
 COPY ["src/Moongate.Persistence/Moongate.Persistence.csproj", "src/Moongate.Persistence/"]
 COPY ["src/Moongate.Persistence.Migrations/Moongate.Persistence.Migrations.csproj", "src/Moongate.Persistence.Migrations/"]
 COPY ["src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj", "src/Moongate.MigrationRunner/"]

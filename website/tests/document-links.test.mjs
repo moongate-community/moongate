@@ -10,12 +10,12 @@ import { compileDocument } from '../scripts/compile-document.mjs';
 async function fixture(t) {
   const repositoryRoot = await mkdtemp(join(tmpdir(), 'docs-links-'));
   t.after(() => rm(repositoryRoot, { recursive: true, force: true }));
-  for (const file of ['docs/guide.md', 'src/Moongate.Api/README.md', 'images/logo.png', 'scripts/source.cs']) {
+  for (const file of ['docs/guide.md', 'src/Moongate.Network/README.md', 'images/logo.png', 'scripts/source.cs']) {
     await mkdir(join(repositoryRoot, file, '..'), { recursive: true });
     await writeFile(join(repositoryRoot, file), 'content');
   }
   return { repositoryRoot, source: 'docs/guide.md', sourceRef: 'v0.4.0', assets: new Map(), entries: [
-    { source: 'src/Moongate.Api/README.md', slug: 'libraries/api' },
+    { source: 'src/Moongate.Network/README.md', slug: 'libraries/network' },
     { source: 'docs/guide.md', slug: 'server/guide' },
   ] };
 }
@@ -23,9 +23,9 @@ async function fixture(t) {
 test('resolves local and GitHub documents, released source, anchors, and external URLs', async t => {
   const context = await fixture(t);
   for (const [input, expected] of [
-    ['../src/Moongate.Api/README.md#wire-format', '/libraries/api/#wire-format'],
+    ['../src/Moongate.Network/README.md#wire-format', '/libraries/network/#wire-format'],
     ['https://github.com/moongate-community/moongate/blob/develop/docs/guide.md', '/server/guide/'],
-    ['../src/Moongate.Api/README.md?q=x#wire-format', '/libraries/api/?q=x#wire-format'],
+    ['../src/Moongate.Network/README.md?q=x#wire-format', '/libraries/network/?q=x#wire-format'],
     ['../scripts/source.cs', 'https://github.com/moongate-community/moongate/blob/v0.4.0/scripts/source.cs'],
     ['#local', '#local'], ['?q=x#local', '?q=x#local'],
     ['https://example.com/README.md', 'https://example.com/README.md'], ['mailto:dev@example.com', 'mailto:dev@example.com'],
@@ -51,12 +51,12 @@ test('rejects missing paths, repository traversal, and symlinks outside the repo
 test('transforms Markdown references and raw HTML while preserving code and comments', async t => {
   const context = await fixture(t);
   const entry = { source: 'docs/guide.md', slug: 'server/guide', title: 'A "quoted" title' };
-  const input = '# Old title\n\n[API][api]\n\n[api]: ../src/Moongate.Api/README.md#wire-format\n\n<img src="../images/logo.png" alt="logo">\n\n<!-- nuget-smoke:Program.cs -->\n\n```csharp\nvar path = "../README.md";\n```\n\n`../README.md`\n';
+  const input = '# Old title\n\n[Network][network]\n\n[network]: ../src/Moongate.Network/README.md#wire-format\n\n<img src="../images/logo.png" alt="logo">\n\n<!-- nuget-smoke:Program.cs -->\n\n```csharp\nvar path = "../README.md";\n```\n\n`../README.md`\n';
   const result = compileDocument(entry, input, context);
   assert.match(result, /slug: "server\/guide"/);
   assert.match(result, /title: "A \\"quoted\\" title"/);
   assert(!result.includes('# Old title'));
-  assert(result.includes('/libraries/api/#wire-format'));
+  assert(result.includes('/libraries/network/#wire-format'));
   assert(result.includes('src="/generated/images/logo.png"'));
   assert(result.includes('<!-- nuget-smoke:Program.cs -->'));
   const tree = remark().parse(result);
@@ -73,22 +73,22 @@ test('removes the first HTML H1 without removing surrounding content', async t =
 
 test('preserves inline HTML opening and closing tags around linked text', async t => {
   const context = await fixture(t);
-  const result = compileDocument({ source: 'docs/guide.md', slug: 'server/guide', title: 'Guide' }, 'Read <a href="../src/Moongate.Api/README.md">the API</a> now.\n', context);
-  assert(result.includes('<a href="/libraries/api/">the API</a>'));
+  const result = compileDocument({ source: 'docs/guide.md', slug: 'server/guide', title: 'Guide' }, 'Read <a href="../src/Moongate.Network/README.md">the network guide</a> now.\n', context);
+  assert(result.includes('<a href="/libraries/network/">the network guide</a>'));
 });
 
 test('links sample directories to the matching released GitHub tree', async t => {
   const context = await fixture(t);
-  assert.equal(resolveDocumentUrl('../src/Moongate.Api/', context), 'https://github.com/moongate-community/moongate/tree/v0.4.0/src/Moongate.Api/');
+  assert.equal(resolveDocumentUrl('../src/Moongate.Network/', context), 'https://github.com/moongate-community/moongate/tree/v0.4.0/src/Moongate.Network/');
   assert.throws(() => resolveDocumentUrl('../missing-directory/', context), /cannot resolve/);
 });
 
 test('retains the removed Markdown title anchor and explicit HTML title ID', async t => {
   const context = await fixture(t);
   const entry = { source: 'docs/guide.md', slug: 'server/guide', title: 'Guide' };
-  const markdown = compileDocument(entry, '# Moongate.Api\n\n[Top](#moongateapi)\n', context);
-  assert(markdown.includes('id="moongateapi"'));
-  assert(markdown.includes('(#moongateapi)'));
+  const markdown = compileDocument(entry, '# Moongate.Network\n\n[Top](#moongatenetwork)\n', context);
+  assert(markdown.includes('id="moongatenetwork"'));
+  assert(markdown.includes('(#moongatenetwork)'));
   const html = compileDocument(entry, '<h1 id="custom-title">Old</h1>\n\n[Top](#custom-title)\n', context);
   assert(html.includes('id="custom-title"'));
   assert(!html.includes('<h1'));

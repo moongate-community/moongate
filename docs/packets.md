@@ -9,8 +9,7 @@ registrations. The initial built-in formats target **ClassicUO 7.x**.
 ## Built-in packet coverage
 
 Lengths include the opcode and, for variable packets, the length header.
-Directions are relative to the server. This is the default table, not the whole
-UO protocol or a claim that the login sequence is implemented:
+Directions are relative to the server. This is the default table, not the whole UO protocol:
 
 | Opcode | Class | Direction | Length | Default host handler |
 | --- | --- | --- | --- | --- |
@@ -18,9 +17,9 @@ UO protocol or a claim that the login sequence is implemented:
 | `0x73` | `PingPacket` | Both | Fixed 2 | Game: `PingPacketHandler`; Login: `LoginRolePingPacketHandler` |
 | `0x80` | `AccountLoginPacket` | Incoming | Fixed 62 | Login: async account check, then `0xA8` list or `0x82` denial |
 | `0x82` | `LoginDeniedPacket` | Outgoing | Fixed 2 | — |
-| `0x8C` | `ServerRedirectPacket` | Outgoing | Fixed 11 | — |
-| `0x91` | `GameLoginPacket` | Incoming | Fixed 65 | None |
-| `0xA0` | `ServerSelectPacket` | Incoming | Fixed 3 | None |
+| `0x8C` | `ServerRedirectPacket` | Outgoing | Fixed 11 | Login: sent after a valid `0xA0`, before closing the login connection |
+| `0x91` | `GameLoginPacket` | Incoming | Fixed 65 | Game: validates and consumes the one-use handoff ticket |
+| `0xA0` | `ServerSelectPacket` | Incoming | Fixed 3 | Login: checks realm eligibility, issues ticket and redirects |
 | `0xA8` | `ServerListPacket` | Outgoing | Variable, minimum 6 | — |
 | `0xB9` | `SupportFeaturesPacket` | Outgoing | Fixed 5 | — |
 | `0xBD` | `ClientVersionPacket` | Incoming | Variable, minimum 4 | `ClientVersionPacketHandler` |
@@ -29,8 +28,14 @@ UO protocol or a claim that the login sequence is implemented:
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
-It contains each realm's IPv4 address but no port. `0xA0` selection, `0x8C`
-redirect and a game handoff ticket are not handled yet.
+It contains each realm's IPv4 address but no port. `0xA0` selects a live eligible
+realm and `0x8C` supplies its IPv4 address, port and one-use key. The login sender
+flushes `0x8C` before closing the login connection. On the new game connection
+the client sends that key as a raw four-byte seed, followed by `0x91` with the
+same key, username and password. The game checks the seed and atomically consumes
+the Redis ticket. A direct `0xEF` client-version seed still works on game
+listeners. Character selection and world entry are separate future work.
+
 `TryGetDescriptor(opCode, out descriptor)` prefers incoming, then outgoing;
 `descriptor.PacketType.Name` gives its class name. The overload accepting
 `PacketDirection` selects one direction explicitly when needed.
@@ -235,8 +240,8 @@ The host also registers LoginSeed and an async AccountLogin handler. The latter
 checks credentials against `IAccountService`, sends `0x82` for denied login or
 an empty eligible realm list, and sends a filtered `0xA8` list after success.
 The login-only host uses a dedicated ordered async connection pipeline; standalone
-uses the game packet pipeline. Neither handles selection or handoff yet
-([Implementation status](implementation-status.md)). See
+runs separate login and game listeners. Selection and handoff use Redis-backed
+leases and one-use tickets ([Implementation status](implementation-status.md)). See
 [Transport and game ownership](network-game-separation.md) for connection lifecycle,
 queue limits and overload policy, and [Game loop and timers](game-loop-and-timers.md)
 for thread ownership and completion.
