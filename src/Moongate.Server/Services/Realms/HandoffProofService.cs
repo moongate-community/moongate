@@ -1,6 +1,7 @@
 using System.Buffers.Binary;
 using System.Security.Cryptography;
 using System.Text;
+using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Server.Services.Realms;
@@ -11,6 +12,9 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
     private const int CredentialKeySize = 32;
     private const int LengthPrefixSize = sizeof(int);
     private const int RedirectKeySize = sizeof(uint);
+    private const int AccountIdSize = sizeof(uint);
+    private const int AccountTypeSize = sizeof(int);
+    private const int InstanceIdSize = 16;
 
     private static readonly byte[] CredentialDomain = "moongate/credential/v1"u8.ToArray();
     private static readonly byte[] HandoffDomain = "moongate/handoff/v1"u8.ToArray();
@@ -61,27 +65,56 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
         }
     }
 
-    public byte[] Sign(ReadOnlySpan<byte> credentialKey, string realmId, uint authKey)
+    public byte[] Sign(ReadOnlySpan<byte> credentialKey, PendingHandoff handoff, uint authKey)
     {
         if (credentialKey.Length != CredentialKeySize)
         {
             throw new ArgumentException("The credential key must contain 32 bytes.", nameof(credentialKey));
         }
 
-        ArgumentException.ThrowIfNullOrEmpty(realmId);
+        ArgumentNullException.ThrowIfNull(handoff);
 
-        var realmBytes = Encoding.UTF8.GetBytes(realmId);
-        var input = new byte[HandoffDomain.Length + LengthPrefixSize + realmBytes.Length + RedirectKeySize];
+        if (!IsValid(handoff))
+        {
+            throw new ArgumentException("The pending handoff must identify an account and realm instance.",
+                nameof(handoff));
+        }
+
+        var usernameBytes = Encoding.UTF8.GetBytes(handoff.Username);
+        var realmBytes = Encoding.UTF8.GetBytes(handoff.RealmId);
+        var versionBytes = handoff.ClientVersion is null ? null : Encoding.UTF8.GetBytes(handoff.ClientVersion);
+        var input = new byte[HandoffDomain.Length + AccountIdSize + AccountTypeSize +
+                             LengthPrefixSize + usernameBytes.Length + LengthPrefixSize + realmBytes.Length +
+                             InstanceIdSize + LengthPrefixSize + (versionBytes?.Length ?? 0) + RedirectKeySize];
 
         try
         {
             var offset = 0;
             HandoffDomain.CopyTo(input, offset);
             offset += HandoffDomain.Length;
+            BinaryPrimitives.WriteUInt32BigEndian(input.AsSpan(offset), handoff.AccountId.Value);
+            offset += AccountIdSize;
+            BinaryPrimitives.WriteInt32BigEndian(input.AsSpan(offset), (int)handoff.AccountType);
+            offset += AccountTypeSize;
+            BinaryPrimitives.WriteInt32BigEndian(input.AsSpan(offset), usernameBytes.Length);
+            offset += LengthPrefixSize;
+            usernameBytes.CopyTo(input, offset);
+            offset += usernameBytes.Length;
             BinaryPrimitives.WriteInt32BigEndian(input.AsSpan(offset), realmBytes.Length);
             offset += LengthPrefixSize;
             realmBytes.CopyTo(input, offset);
             offset += realmBytes.Length;
+            handoff.InstanceId.TryWriteBytes(input.AsSpan(offset, InstanceIdSize));
+            offset += InstanceIdSize;
+            BinaryPrimitives.WriteInt32BigEndian(input.AsSpan(offset), versionBytes?.Length ?? -1);
+            offset += LengthPrefixSize;
+
+            if (versionBytes is not null)
+            {
+                versionBytes.CopyTo(input, offset);
+                offset += versionBytes.Length;
+            }
+
             BinaryPrimitives.WriteUInt32BigEndian(input.AsSpan(offset), authKey);
 
             return HMACSHA256.HashData(credentialKey, input);
@@ -92,10 +125,12 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
         }
     }
 
-    public bool Verify(string username, string password, string realmId, uint authKey, ReadOnlySpan<byte> expected)
+    public bool Verify(string username, string password, PendingHandoff handoff, uint authKey,
+        ReadOnlySpan<byte> expected)
     {
         if (expected.Length != CredentialKeySize || string.IsNullOrEmpty(username) ||
-            string.IsNullOrEmpty(realmId))
+            handoff is null || !IsValid(handoff) ||
+            !StringComparer.Ordinal.Equals(username, handoff.Username))
         {
             return false;
         }
@@ -104,7 +139,7 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
 
         try
         {
-            var actual = Sign(credentialKey, realmId, authKey);
+            var actual = Sign(credentialKey, handoff, authKey);
 
             try
             {
@@ -120,6 +155,11 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
             CryptographicOperations.ZeroMemory(credentialKey);
         }
     }
+
+    private static bool IsValid(PendingHandoff handoff)
+        => handoff.AccountId.IsValid && Enum.IsDefined(handoff.AccountType) &&
+           !string.IsNullOrEmpty(handoff.Username) && !string.IsNullOrEmpty(handoff.RealmId) &&
+           handoff.InstanceId != Guid.Empty;
 
     public void Dispose()
     {
