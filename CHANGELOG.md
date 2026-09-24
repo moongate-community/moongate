@@ -1,17 +1,34 @@
 # Changelog
 
-## Unreleased
+## [0.7.0](https://github.com/moongate-community/moongate/compare/v0.6.0...v0.7.0) (2026-09-24)
 
 ### Features
 
-* **admin:** embed optional gRPC administration on private port 2590 with TLS, shared Redis sessions, account permissions, console provisioning and portable protobuf clients.
-* **boot:** generate or reuse a self-signed administration TLS certificate offline with `mgboot --generate-admin-certificate`, configure endpoint DNS/IP names, and enable the administration endpoint in the root configuration.
-* **login:** discover live game realms through Redis leases and transfer authenticated clients with one-use `0x8C`/`0x91` handoff tickets.
-* **docker:** run one login and two game processes with private Redis, role-local PostgreSQL credentials and Compose secrets.
+* **login and realms:** discover game servers through expiring Redis leases, filter the realm list by account level, and transfer authenticated clients with one-use `0x8C`/`0x91` handoff tickets.
+* **server:** run Login, Game or Standalone roles with separate login and game TCP listeners and role-local PostgreSQL databases.
+* **administration:** embed an optional gRPC plugin on port 2590 with server TLS, shared Redis sessions, bounded login throttling, account listing/creation, session revocation and server information. Ship portable protobuf contracts and C#/Python client examples.
+* **accounts and commands:** add account persistence, account listing, console account creation and API-access provisioning, plus command discovery through `help`. Administrative API access is disabled for new accounts unless explicitly granted.
+* **boot:** ship `mgboot` to prepare a root directory, default configuration and bundled migrations offline. Use `--generate-admin-certificate` to create or reuse a server TLS identity and enable the administration API without starting the server.
+* **packets:** register asynchronous packet handlers, perform asynchronous work outside the GameLoop and return game-state changes to its owning thread.
+* **persistence:** assign persistent serials automatically, map convention-based columns to snake_case, and generate reviewable development migrations at startup. Publish persistence readiness and shutdown events.
+* **events:** subscribe to all published events through `SubscribeAll`.
+* **templates and tools:** add item/loot template contracts, typed value specifications, data-loader registration and UOX3 conversion tooling with validated references and snake_case identifiers.
+* **deployment:** document one Login and two independent Game processes with private Redis, PostgreSQL, Compose secrets and administration TLS.
 
-### Architecture updates
+### Fixes
 
-* **server:** remove the internal TCP API and `Moongate.Api` package. Runtime login, game and standalone roles now require Redis; PostgreSQL remains role-local.
+* Preserve delivered redirect tickets when closing login connections; handle cancellation and terminal packet replies safely.
+* Fence realm lease recovery, make heartbeat updates atomic and skip malformed directory entries.
+* Coordinate administrative account changes with session revocation, classify dependency failures and complete operation audits.
+* Preserve renamed persistence columns, detect default changes and allow indexes on newly created tables.
+* Serialize PostgreSQL integration test projects to avoid contention in CI, and verify generated administration clients across languages.
+* Normalize nested directory paths and improve item/loot conversion output and validation.
+
+### Architecture and operation
+
+* Redis provides shared realm coordination and temporary login/session state in all runtime roles, including Standalone. PostgreSQL remains the durable store, scoped to Accounts on Login and Realm on Game.
+* The internal TCP API and `Moongate.Api` package are retired. Runtime peers coordinate through Redis; the optional administration endpoint uses standard gRPC with server TLS.
+* Character selection, live-world editing and a playable world remain outside the implemented feature set. See the implementation-status guide for current limits.
 
 ## [0.6.0](https://github.com/moongate-community/moongate/compare/v0.5.0...v0.6.0) (2026-09-21)
 
