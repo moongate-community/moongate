@@ -48,6 +48,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         {
             container.AddPersistenceAuth<AccountEntity>();
             container.AddMoongateService<IAccountService, AccountService>();
+            container.Register<IAccountAdminAccessService, AccountAdminAccessService>(Reuse.Singleton);
             container.Register<LoginAccountFlow>(Reuse.Singleton);
             container.RegisterCommand<AccountCommand>(
                 "account",
