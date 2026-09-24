@@ -11,6 +11,7 @@ public class LoginSeedPacketHandler : IPacketHandler<LoginSeedPacket>
 
     public void Handle(GameSession session, LoginSeedPacket packet)
     {
+        session.NetworkSession.SetSeed(packet.Seed);
         _logger.Information(
             "Client connected with version: v{Major}.{Minor}.{Revision}",
             packet.Major,

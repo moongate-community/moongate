@@ -36,11 +36,24 @@ public sealed class StandaloneTransportTests
         var loginAccepted = new TaskCompletionSource<long>(TaskCreationOptions.RunContinuationsAsynchronously);
         var gameAccepted = new TaskCompletionSource<long>(TaskCreationOptions.RunContinuationsAsynchronously);
         var loginReceived = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
-        var gameReceived = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var gameSeedReceived = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var gamePacketReceived = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
         loginNetwork.ConnectionAccepted += (_, args) => loginAccepted.TrySetResult(args.Connection.SessionId);
         gameNetwork.ConnectionAccepted += (_, args) => gameAccepted.TrySetResult(args.Connection.SessionId);
         loginNetwork.DataReceived += (_, args) => loginReceived.TrySetResult(args.Data.ToArray());
-        gameNetwork.DataReceived += (_, args) => gameReceived.TrySetResult(args.Data.ToArray());
+        gameNetwork.DataReceived += (_, args) =>
+        {
+            var frame = args.Data.ToArray();
+
+            if (frame.Length == 4)
+            {
+                gameSeedReceived.TrySetResult(frame);
+            }
+            else
+            {
+                gamePacketReceived.TrySetResult(frame);
+            }
+        };
 
         await Task.WhenAll(loginConnections.StartAsync(), gameConnections.StartAsync());
 
@@ -67,11 +80,13 @@ public sealed class StandaloneTransportTests
             await loginClient.GetStream().WriteAsync(new byte[] { 0x73, 0x2A });
             Assert.Equal(new byte[] { 0x73, 0x2A },
                 await loginReceived.Task.WaitAsync(TimeSpan.FromSeconds(5)));
-            Assert.False(gameReceived.Task.IsCompleted);
+            Assert.False(gameSeedReceived.Task.IsCompleted);
 
-            await gameClient.GetStream().WriteAsync(new byte[] { 0x73, 0x3B });
+            await gameClient.GetStream().WriteAsync(new byte[] { 0x12, 0x34, 0x56, 0x78, 0x73, 0x3B });
+            Assert.Equal(new byte[] { 0x12, 0x34, 0x56, 0x78 },
+                await gameSeedReceived.Task.WaitAsync(TimeSpan.FromSeconds(5)));
             Assert.Equal(new byte[] { 0x73, 0x3B },
-                await gameReceived.Task.WaitAsync(TimeSpan.FromSeconds(5)));
+                await gamePacketReceived.Task.WaitAsync(TimeSpan.FromSeconds(5)));
         }
         finally
         {

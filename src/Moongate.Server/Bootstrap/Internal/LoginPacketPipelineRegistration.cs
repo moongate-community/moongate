@@ -17,7 +17,7 @@ internal static class LoginPacketPipelineRegistration
         {
             var config = resolver.Resolve<MoongateServerConfig>();
             return new NetworkService(
-                UoNetworkOptionsFactory.Create(config, config.Network.LoginPort),
+                UoNetworkOptionsFactory.CreateLogin(config),
                 resolver.Resolve<ILoginConnectionService>());
         }, Reuse.Singleton);
         container.Register<ILoginSessionService, LoginSessionService>(Reuse.Singleton);

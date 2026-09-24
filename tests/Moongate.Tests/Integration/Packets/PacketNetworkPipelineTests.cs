@@ -74,7 +74,7 @@ public sealed class PacketNetworkPipelineTests
             Assert.Same(container.Resolve<IPacketDispatchService>(), container.Resolve<IPacketDispatchService>());
             using var peer = new TcpClient();
             await peer.ConnectAsync(IPAddress.Loopback, network.Listeners[0].Port);
-            await peer.GetStream().WriteAsync(new byte[] { 0xA0, 0, 17, 0x73, 18 });
+            await peer.GetStream().WriteAsync(new byte[] { 0x12, 0x34, 0x56, 0x78, 0xA0, 0, 17, 0x73, 18 });
             Assert.Equal(new byte[] { 0x73, 17, 0x73, 18 }, await ReadAsync(peer, 4));
             await bootstrap.StopAsync().WaitAsync(Timeout);
             Assert.True(dependency.Stopped);

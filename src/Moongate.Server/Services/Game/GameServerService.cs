@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using Moongate.Network.Packets.Registry;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Data.Network.Events;
@@ -93,6 +94,28 @@ public sealed class GameServerService : IGameServerService
 
     private void OnData(object? sender, NetworkDataEventArgs args)
     {
+        if (!_sessions.TryGet(args.Connection.SessionId, out var session) ||
+            !ReferenceEquals(session.NetworkSession.Client, args.Connection))
+        {
+            return;
+        }
+
+        if (session.NetworkSession.Seed is null && args.Data.Length == sizeof(uint))
+        {
+            var seed = BinaryPrimitives.ReadUInt32BigEndian(args.Data.Span);
+
+            if (seed == 0)
+            {
+                TrackCleanup(() => _connections.DisconnectAsync(args.Connection.SessionId, args.Connection));
+
+                return;
+            }
+
+            session.NetworkSession.SetSeed(seed);
+
+            return;
+        }
+
         // Decode now: transport memory is borrowed only until this callback returns.
         if (PacketRegistry.Default.TryDecode(args.Data.Span, out var packet, out var opCode) &&
             _dispatcher.TryDispatch(args.Connection.SessionId, packet))

@@ -23,11 +23,11 @@ public sealed class UoNetworkOptionsFactoryTests
         {
             Network = new() { ListenAddress = "127.0.0.1", GamePort = 2594 }
         };
-        var options = UoNetworkOptionsFactory.Create(config, config.Network.GamePort);
+        var options = UoNetworkOptionsFactory.CreateGame(config);
         Assert.Equal(new(IPAddress.Loopback, 2594), Assert.Single(options.Endpoints));
         var first = options.ConnectionPipelineFactory!();
         var second = options.ConnectionPipelineFactory();
-        Assert.IsType<UoPacketFramer>(first.Framer);
+        Assert.IsType<GameSeedFramer>(first.Framer);
         Assert.NotSame(first.Framer, second.Framer);
     }
 
@@ -38,7 +38,7 @@ public sealed class UoNetworkOptionsFactoryTests
         {
             Network = new() { ListenAddress = "0.0.0.0", GamePort = 2593 }
         };
-        var options = UoNetworkOptionsFactory.Create(config, config.Network.GamePort);
+        var options = UoNetworkOptionsFactory.CreateGame(config);
         Assert.Equal(NetworkUtils.GetLocalIpAddresses(), options.Endpoints.Select(endpoint => endpoint.Address));
         Assert.All(options.Endpoints, endpoint => Assert.Equal(2593, endpoint.Port));
     }
@@ -51,13 +51,15 @@ public sealed class UoNetworkOptionsFactoryTests
             Network = new() { ListenAddress = "0.0.0.0", LoginPort = 4000, GamePort = 5000 }
         };
 
-        var login = UoNetworkOptionsFactory.Create(config, config.Network.LoginPort);
-        var game = UoNetworkOptionsFactory.Create(config, config.Network.GamePort);
+        var login = UoNetworkOptionsFactory.CreateLogin(config);
+        var game = UoNetworkOptionsFactory.CreateGame(config);
         var addresses = NetworkUtils.GetLocalIpAddresses();
 
         Assert.Equal(addresses, login.Endpoints.Select(endpoint => endpoint.Address));
         Assert.Equal(addresses, game.Endpoints.Select(endpoint => endpoint.Address));
         Assert.All(login.Endpoints, endpoint => Assert.Equal(4000, endpoint.Port));
         Assert.All(game.Endpoints, endpoint => Assert.Equal(5000, endpoint.Port));
+        Assert.IsType<UoPacketFramer>(login.ConnectionPipelineFactory!().Framer);
+        Assert.IsType<GameSeedFramer>(game.ConnectionPipelineFactory!().Framer);
     }
 }
