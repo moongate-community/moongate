@@ -4,6 +4,8 @@ using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Realms;
+using Moongate.Server.Services.Redis;
+using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Server.Ultima;
@@ -64,6 +66,23 @@ public sealed class LoginAccountFlowTests
         accounts.LoginResult = Account((AccountType)99);
         var unknownLevel = await flow.AuthenticateAsync("user", "password", CancellationToken.None);
         Assert.Equal(LoginDeniedReason.CommunicationProblem, unknownLevel.DenialReason);
+    }
+
+    [Fact]
+    public async Task AuthenticateAsync_UnavailableRealmCatalog_DeniesCommunicationProblem()
+    {
+        await using var redis = new RedisConnectionService(new RedisConfig
+        {
+            ConnectionString = "127.0.0.1:1",
+            HandoffSecret = new string('x', 32)
+        });
+        var directory = new RedisRealmDirectoryService(redis);
+        var flow = new LoginAccountFlow(
+            new RecordingAccountService { LoginResult = Account(AccountType.Regular) }, directory);
+
+        var result = await flow.AuthenticateAsync("user", "password", CancellationToken.None);
+
+        Assert.Equal(LoginDeniedReason.CommunicationProblem, result.DenialReason);
     }
 
     private static AccountEntity Account(AccountType accountType)

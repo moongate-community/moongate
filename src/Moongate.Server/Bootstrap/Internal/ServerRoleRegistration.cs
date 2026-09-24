@@ -79,6 +79,8 @@ internal static class ServerRoleRegistration
             resolver.Resolve<TimeProvider>(),
             TimeSpan.FromSeconds(config.RealmDirectory.LeaseDurationSeconds),
             config.RealmDirectory.MaxRealms), Reuse.Singleton);
+        container.RegisterDelegate<IRealmCatalog>(
+            resolver => (IRealmCatalog)resolver.Resolve<IRealmDirectoryService>(), Reuse.Singleton);
     }
 
     private static void RegisterGame(Container container, MoongateServerConfig config, DirectoriesConfig directories)

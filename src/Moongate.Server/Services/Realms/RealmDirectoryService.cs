@@ -10,7 +10,7 @@ using Moongate.Server.Services.Realms.Internal;
 namespace Moongate.Server.Services.Realms;
 
 /// <summary>Thread-safe, process-local directory of remote leases and local realms.</summary>
-public sealed class RealmDirectoryService : IRealmDirectoryService
+public sealed class RealmDirectoryService : IRealmDirectoryService, IRealmCatalog
 {
     private readonly Lock _gate = new();
     private readonly Dictionary<string, RealmDirectoryEntry> _remote = new(StringComparer.Ordinal);
@@ -146,6 +146,28 @@ public sealed class RealmDirectoryService : IRealmDirectoryService
                          .OrderBy(realm => realm.ServerIndex)
                          .ToArray();
         }
+    }
+
+    public ValueTask<IReadOnlyList<RealmDescriptor>> GetAvailableAsync(
+        AccountType accountType,
+        CancellationToken cancellationToken = default
+    )
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+
+        return ValueTask.FromResult(GetAvailable(accountType));
+    }
+
+    public ValueTask<RealmInstance?> FindByIndexAsync(
+        ushort index,
+        AccountType accountType,
+        CancellationToken cancellationToken = default
+    )
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        var descriptor = GetAvailable(accountType).FirstOrDefault(realm => realm.ServerIndex == index);
+
+        return ValueTask.FromResult(descriptor is null ? null : new RealmInstance(descriptor, Guid.Empty));
     }
 
     public void RegisterLocal(RealmDescriptor descriptor)

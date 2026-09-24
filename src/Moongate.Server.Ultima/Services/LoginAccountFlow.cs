@@ -1,5 +1,6 @@
 using Moongate.Network.Packets.Data.Login;
 using Moongate.Network.Packets.Types.Login;
+using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Login;
 using Moongate.Server.Ultima.Interfaces;
@@ -10,9 +11,9 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class LoginAccountFlow
 {
     private readonly IAccountService _accounts;
-    private readonly IRealmDirectoryService _directory;
+    private readonly IRealmCatalog _directory;
 
-    public LoginAccountFlow(IAccountService accounts, IRealmDirectoryService directory)
+    public LoginAccountFlow(IAccountService accounts, IRealmCatalog directory)
     {
         _accounts = accounts;
         _directory = directory;
@@ -36,7 +37,22 @@ public sealed class LoginAccountFlow
             return new(LoginDeniedReason.CommunicationProblem);
         }
 
-        var servers = _directory.GetAvailable(account.AccountType)
+        IReadOnlyList<RealmDescriptor> available;
+
+        try
+        {
+            available = await _directory.GetAvailableAsync(account.AccountType, cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            throw;
+        }
+        catch (Exception)
+        {
+            return new(LoginDeniedReason.CommunicationProblem);
+        }
+
+        var servers = available
                                 .Select(
                                     realm => new GameServerEntry(
                                         realm.ServerIndex,
