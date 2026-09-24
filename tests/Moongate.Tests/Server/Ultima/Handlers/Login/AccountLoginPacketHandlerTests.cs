@@ -5,7 +5,6 @@ using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Services.Packets;
-using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Handlers.Login;
@@ -13,6 +12,7 @@ using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Realms;
 using Moongate.Tests.TestSupport.Server.Ultima;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Login;
@@ -109,7 +109,7 @@ public sealed class AccountLoginPacketHandlerTests
         var accounts = new RecordingAccountService { LoginResult =
             new AccountEntity { Id = new Serial(42), AccountType = AccountType.Regular } };
         var handler = new AccountLoginPacketHandler(
-            new LoginAccountFlow(accounts, new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15))));
+            new LoginAccountFlow(accounts, new StubRealmCatalog()));
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
         await sender.StartAsync();
 
@@ -125,12 +125,8 @@ public sealed class AccountLoginPacketHandlerTests
         }
     }
 
-    private static RealmDirectoryService Directory()
-    {
-        var directory = new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15));
-        directory.RegisterLocal(new RealmDescriptor("local", 1, "Local", IPAddress.Loopback, 2593,
+    private static StubRealmCatalog Directory()
+        => new(new RealmDescriptor("local", 1, "Local", IPAddress.Loopback, 2593,
             AccountType.Regular));
-        return directory;
-    }
 
 }

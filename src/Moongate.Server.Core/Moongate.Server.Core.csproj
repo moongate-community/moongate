@@ -7,7 +7,6 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <ProjectReference Include="../Moongate.Api/Moongate.Api.csproj"/>
         <ProjectReference Include="..\Moongate.Core\Moongate.Core.csproj"/>
         <ProjectReference Include="..\Moongate.Network\Moongate.Network.csproj"/>
         <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>

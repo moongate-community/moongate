@@ -1,6 +1,4 @@
 using System.Diagnostics;
-using System.Net;
-using System.Net.Sockets;
 using Moongate.Core.Utils;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Bootstrap;
@@ -33,10 +31,8 @@ public sealed class PersistenceSchemaCliTests
         Assert.False(Directory.Exists(Path.Combine(files.Directories.Root, "config")));
     }
 
-    [Theory, InlineData(false, "PersistencePlugin"), InlineData(true, "PersistencePlugin"),
-     InlineData(false, "SamplePlugin")]
+    [Theory, InlineData("PersistencePlugin"), InlineData("SamplePlugin")]
     public async Task PreviewThenGenerate_ActualCliLoadsDiskPlugin_WithoutNormalHostComposition(
-        bool autoGenerateCertificate,
         string bundle
     )
     {
@@ -46,26 +42,8 @@ public sealed class PersistenceSchemaCliTests
         var table = bundle == "SamplePlugin" ? "sample_greeter.notes" : "fixture_data.items";
         var module = bundle == "SamplePlugin" ? "moongate.auto.realm." : "fixture.persistenceplugin";
 
-        // Normal startup would fail immediately on this guard and require a certificate/Ultima data later.
+        // Normal startup would fail immediately on this guard and require Ultima data later.
         using var pid = PidFileGuard.Acquire(files.Directories.Root);
-        using var listener = new TcpListener(IPAddress.Loopback, 0);
-        listener.Start();
-        var port = ((IPEndPoint)listener.LocalEndpoint).Port;
-        await File.WriteAllTextAsync(
-            Path.Combine(files.Directories["config"], "moongate.toml"),
-            $"""
-             [api]
-             enabled = true
-             listen_address = "127.0.0.1"
-             port = {port}
-             auto_generate_certificate = {autoGenerateCertificate.ToString().ToLowerInvariant()}
-             certificate_path = "certificates/schema-must-not-create.pfx"
-             trusted_root_paths = ["missing-root.crt"]
-             [[api.peers]]
-             certificate_sha256 = "{new('A', 64)}"
-             peer_id = "schema-test"
-             """
-        );
         var preview = await RunAsync(files.Directories.Root, "preview", database.ConnectionString);
         Assert.True(preview.ExitCode == 0, preview.Output);
         Assert.Contains(module, preview.Output);
@@ -82,7 +60,6 @@ public sealed class PersistenceSchemaCliTests
         Assert.Contains("No PostgreSQL schema changes", unchanged.Output);
         Assert.False(Directory.Exists(Path.Combine(files.Directories.Root, "logs")));
         Assert.False(Directory.Exists(Path.Combine(files.Directories.Root, "scripts")));
-        Assert.Empty(Directory.EnumerateFiles(files.Directories.Root, "*.pfx", SearchOption.AllDirectories));
     }
 
     [Fact]

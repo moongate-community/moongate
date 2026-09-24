@@ -7,12 +7,12 @@ using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Login;
-using Moongate.Server.Services.Realms;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Login;
 using Moongate.Tests.TestSupport.Network;
+using Moongate.Tests.TestSupport.Realms;
 using Moongate.Tests.TestSupport.Server.Ultima;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Login;
@@ -73,7 +73,7 @@ public sealed class LoginRoleAccountPacketHandlerTests
         using var proof = new HandoffProofService(new byte[32]);
         var handler = new LoginRoleAccountPacketHandler(sessions, sender,
             new LoginAccountFlow(new RecordingAccountService { LoginResult = Account() },
-                new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15))), proof);
+                new StubRealmCatalog()), proof);
 
         await handler.HandleAsync(session, new AccountLoginPacket("user", "password", 0xFF),
             CancellationToken.None);
@@ -111,11 +111,7 @@ public sealed class LoginRoleAccountPacketHandlerTests
     private static AccountEntity Account()
         => new() { Id = new Serial(42), AccountType = AccountType.Regular };
 
-    private static RealmDirectoryService Directory()
-    {
-        var directory = new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15));
-        directory.RegisterLocal(new RealmDescriptor("local", 1, "Local", IPAddress.Loopback, 2593,
+    private static StubRealmCatalog Directory()
+        => new(new RealmDescriptor("local", 1, "Local", IPAddress.Loopback, 2593,
             AccountType.Regular));
-        return directory;
-    }
 }

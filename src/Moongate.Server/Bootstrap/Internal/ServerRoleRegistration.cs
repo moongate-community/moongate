@@ -1,6 +1,7 @@
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using DryIoc;
-using Moongate.Api.Interfaces.Client;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
@@ -18,7 +19,6 @@ using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
-using Moongate.Server.Services.Api.Internal;
 using Moongate.Server.Commands;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Server.Services.GameLoop;
@@ -51,6 +51,9 @@ internal static class ServerRoleRegistration
                 maxRealms: config.RealmDirectory.MaxRealms), Reuse.Singleton);
         container.RegisterDelegate<IRealmCatalog>(
             resolver => resolver.Resolve<RedisRealmDirectoryService>(), Reuse.Singleton);
+        container.RegisterDelegate<IHandoffProofService>(
+            resolver => CreateHandoffProof(resolver.Resolve<RedisConfig>()), Reuse.Singleton);
+        container.Register<IGameHandoffStore, RedisGameHandoffStore>(Reuse.Singleton);
 
         if ((config.Mode & ServerMode.Game) != 0)
         {
@@ -65,20 +68,12 @@ internal static class ServerRoleRegistration
         switch (config.Mode)
         {
             case ServerMode.Login:
-                RegisterDirectory(container, config);
                 LoginPacketPipelineRegistration.Register(container);
                 break;
             case ServerMode.Game:
                 RegisterGame(container, config, directories);
-                container.RegisterDelegate<IApiClient>(resolver => ApiClientFactory.Create(
-                    resolver.Resolve<MoongateServerConfig>().Api,
-                    resolver.Resolve<DirectoriesConfig>(),
-                    resolver.Resolve<TimeProvider>()), Reuse.Singleton);
-                container.AddMoongateService<RealmRegistrationService>(RealmRegistrationService.StartupPriority);
                 break;
             case ServerMode.Standalone:
-                RegisterDirectory(container, config);
-                RegisterLocalRealm(container, config);
                 RegisterGame(container, config, directories);
                 LoginPacketPipelineRegistration.Register(container, 110);
                 break;
@@ -86,16 +81,21 @@ internal static class ServerRoleRegistration
                 throw new InvalidOperationException("Unsupported server mode.");
         }
 
-        ApiServerRegistration.Register(container);
         return container;
     }
 
-    private static void RegisterDirectory(Container container, MoongateServerConfig config)
+    private static HandoffProofService CreateHandoffProof(RedisConfig config)
     {
-        container.RegisterDelegate<IRealmDirectoryService>(resolver => new RealmDirectoryService(
-            resolver.Resolve<TimeProvider>(),
-            TimeSpan.FromSeconds(config.RealmDirectory.LeaseDurationSeconds),
-            config.RealmDirectory.MaxRealms), Reuse.Singleton);
+        var secret = Encoding.UTF8.GetBytes(config.ResolveHandoffSecret());
+
+        try
+        {
+            return new HandoffProofService(secret);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(secret);
+        }
     }
 
     private static void RegisterGame(Container container, MoongateServerConfig config, DirectoriesConfig directories)
@@ -124,11 +124,6 @@ internal static class ServerRoleRegistration
                  .AddMetricProvider<TimerMetricsProvider>()
                  .AddMetricProvider<SessionMetricsProvider>();
         PacketPipelineRegistration.Register(container);
-    }
-
-    private static void RegisterLocalRealm(Container container, MoongateServerConfig config)
-    {
-        container.Resolve<IRealmDirectoryService>().RegisterLocal(CreateRealmDescriptor(config));
     }
 
     private static RealmDescriptor CreateRealmDescriptor(MoongateServerConfig config)

@@ -1,12 +1,10 @@
 using DryIoc;
-using Moongate.Api.Registry;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
-using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Login;
@@ -36,8 +34,7 @@ public sealed class ServerRoleRegistrationTests
 
         ServerRoleRegistration.Register(container, config, directories);
 
-        Assert.Equal("Moongate", Assert.Single(container.Resolve<IRealmDirectoryService>()
-            .GetAvailable(AccountType.Regular)).Name);
+        Assert.Equal("Moongate", container.Resolve<Moongate.Server.Core.Data.Realms.RealmInstance>().Descriptor.Name);
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
@@ -47,6 +44,7 @@ public sealed class ServerRoleRegistrationTests
         var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
         using var container = new Container();
         var config = new MoongateServerConfig { Mode = mode };
+        config.Redis.HandoffSecret = new string('x', 32);
         container.RegisterInstance(config);
         container.RegisterInstance(directories);
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
@@ -62,12 +60,14 @@ public sealed class ServerRoleRegistrationTests
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginPacketHandlerRegistry>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IDataLoaderService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());
-        Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IRealmDirectoryService>());
         Assert.True(container.IsRegistered<RedisConnectionService>());
         Assert.True(container.IsRegistered<IRealmCatalog>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IRealmPresenceService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<RedisRealmRegistrationService>());
-        Assert.Equal(mode == ServerMode.Login ? 3 : 0, container.Resolve<ApiRegistry>().HandlerCount);
+        Assert.True(container.IsRegistered<IHandoffProofService>());
+        Assert.True(container.IsRegistered<IGameHandoffStore>());
+        Assert.IsType<HandoffProofService>(container.Resolve<IHandoffProofService>());
+        Assert.IsType<RedisGameHandoffStore>(container.Resolve<IGameHandoffStore>());
         if (mode != ServerMode.Game)
         {
             Assert.Contains(typeof(AccountLoginPacket),
@@ -89,9 +89,10 @@ public sealed class ServerRoleRegistrationTests
             Assert.Contains(typeof(LoginSeedPacket),
                 container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
         }
-        Assert.Equal(mode == ServerMode.Standalone,
-            mode != ServerMode.Game && container.Resolve<IRealmDirectoryService>()
-                .GetAvailable(AccountType.Regular).Count == 1);
+        if (mode != ServerMode.Login)
+        {
+            Assert.Same(container.Resolve<IRealmCatalog>(), container.Resolve<IRealmPresenceService>());
+        }
     }
 
     [Fact]

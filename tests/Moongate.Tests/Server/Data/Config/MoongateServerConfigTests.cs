@@ -14,10 +14,10 @@ public sealed class MoongateServerConfigTests
     }
 
     [Fact]
-    public void Validate_LoginModeRequiresEnabledInternalApi()
+    public void Validate_LoginModeRequiresNoInternalApiConfiguration()
     {
         var config = new MoongateServerConfig { Mode = ServerMode.Login };
 
-        Assert.Contains("api.enabled", Assert.Throws<InvalidOperationException>(config.Validate).Message);
+        config.Validate();
     }
 }
