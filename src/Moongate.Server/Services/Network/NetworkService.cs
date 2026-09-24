@@ -12,7 +12,7 @@ using Serilog;
 namespace Moongate.Server.Services.Network;
 
 /// <summary>Owns transport listeners and synchronous notifications independently of game state.</summary>
-public sealed class NetworkService : INetworkService
+public sealed class NetworkService : INetworkService, ILoginNetworkService
 {
     public event EventHandler<NetworkConnectionEventArgs>? ConnectionAccepted;
     public event EventHandler<NetworkConnectionEventArgs>? ConnectionClosed;

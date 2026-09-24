@@ -114,7 +114,7 @@ services:
     secrets:
       - realm-1-runtime-password
     ports:
-      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_1_PORT:-2595}:2593"
+      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_1_PORT:-2595}:2595"
     configs:
       - source: game-1-config
         target: /data/config/moongate.toml
@@ -134,7 +134,7 @@ services:
     secrets:
       - realm-2-runtime-password
     ports:
-      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_2_PORT:-2596}:2593"
+      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_2_PORT:-2596}:2595"
     configs:
       - source: game-2-config
         target: /data/config/moongate.toml

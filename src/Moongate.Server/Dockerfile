@@ -10,6 +10,7 @@ WORKDIR /app
 VOLUME ["/data"]
 EXPOSE 2593
 EXPOSE 2594/tcp
+EXPOSE 2595/tcp
 
 FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
 ARG BUILD_CONFIGURATION=Release

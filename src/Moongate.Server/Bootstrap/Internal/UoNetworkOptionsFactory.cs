@@ -7,9 +7,9 @@ using Moongate.Server.Services.Network.Framing;
 
 namespace Moongate.Server.Bootstrap.Internal;
 
-internal static class GameNetworkOptionsFactory
+internal static class UoNetworkOptionsFactory
 {
-    internal static NetworkListenerOptions Create(MoongateServerConfig config)
+    internal static NetworkListenerOptions Create(MoongateServerConfig config, int port)
     {
         var addresses = config.Network.ListenAddress == "0.0.0.0"
                             ? NetworkUtils.GetLocalIpAddresses().ToArray()
@@ -17,7 +17,7 @@ internal static class GameNetworkOptionsFactory
 
         return new()
         {
-            Endpoints = addresses.Select(address => new IPEndPoint(address, config.Network.GamePort)).ToArray(),
+            Endpoints = addresses.Select(address => new IPEndPoint(address, port)).ToArray(),
             ConnectionPipelineFactory = () => new() { Framer = new UoPacketFramer(PacketRegistry.Default) }
         };
     }

@@ -59,6 +59,7 @@ internal static class ServerRoleRegistration
                 RegisterDirectory(container, config);
                 RegisterLocalRealm(container, config);
                 RegisterGame(container, config, directories);
+                LoginPacketPipelineRegistration.Register(container, 110);
                 break;
             default:
                 throw new InvalidOperationException("Unsupported server mode.");

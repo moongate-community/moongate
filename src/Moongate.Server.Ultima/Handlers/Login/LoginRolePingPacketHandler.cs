@@ -8,9 +8,9 @@ namespace Moongate.Server.Ultima.Handlers.Login;
 /// <summary>Echoes login keepalive pings on the originating connection.</summary>
 public sealed class LoginRolePingPacketHandler : ILoginPacketHandler<PingPacket>
 {
-    private readonly IPacketSendService _sender;
+    private readonly ILoginPacketSendService _sender;
 
-    public LoginRolePingPacketHandler(IPacketSendService sender)
+    public LoginRolePingPacketHandler(ILoginPacketSendService sender)
     {
         _sender = sender;
     }

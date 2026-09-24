@@ -23,7 +23,7 @@ public sealed class ServerModeBootstrapTests
         {
             Mode = ServerMode.Login,
             Api = fixture.Config,
-            Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 }
+            Network = new() { ListenAddress = "127.0.0.1", LoginPort = 0 }
         };
         container.RegisterInstance(config);
         container.RegisterInstance(fixture.Directories);

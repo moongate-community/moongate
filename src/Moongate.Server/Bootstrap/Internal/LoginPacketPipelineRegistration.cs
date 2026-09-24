@@ -1,5 +1,4 @@
 using DryIoc;
-using Moongate.Server.Core.Data.Network;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
@@ -12,16 +11,26 @@ namespace Moongate.Server.Bootstrap.Internal;
 
 internal static class LoginPacketPipelineRegistration
 {
-    public static Container Register(Container container)
+    public static Container Register(Container container, int listenerPriority = 100)
     {
-        container.RegisterDelegate<NetworkListenerOptions>(
-            resolver => GameNetworkOptionsFactory.Create(resolver.Resolve<MoongateServerConfig>()), Reuse.Singleton);
-        container.Register<INetworkService, NetworkService>(Reuse.Singleton);
+        container.RegisterDelegate<ILoginNetworkService>(resolver =>
+        {
+            var config = resolver.Resolve<MoongateServerConfig>();
+            return new NetworkService(
+                UoNetworkOptionsFactory.Create(config, config.Network.LoginPort),
+                resolver.Resolve<ILoginConnectionService>());
+        }, Reuse.Singleton);
         container.Register<ILoginSessionService, LoginSessionService>(Reuse.Singleton);
         container.RegisterInstance(new LoginPacketHandlerRegistry());
-        return container.AddMoongateService<IConnectionService, ConnectionService>(40)
-                        .AddMoongateService<IPacketSendService, PacketSendService>(50)
+        return container.AddMoongateService<ILoginConnectionService, ConnectionService>(40)
+                        .AddMoongateService<ILoginPacketSendService, PacketSendService>(
+                            resolver => new PacketSendService(resolver.Resolve<ILoginConnectionService>()), 50)
                         .AddMoongateService<LoginPacketDispatchService>(60)
-                        .AddMoongateService<LoginServerService>(100);
+                        .AddMoongateService<LoginServerService>(resolver => new LoginServerService(
+                            resolver.Resolve<ILoginNetworkService>(),
+                            resolver.Resolve<ILoginConnectionService>(),
+                            resolver.Resolve<ILoginSessionService>(),
+                            resolver.Resolve<LoginPacketDispatchService>(),
+                            resolver.Resolve<ILoginPacketSendService>()), listenerPriority);
     }
 }

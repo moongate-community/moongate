@@ -55,11 +55,10 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         _container.RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
         Dispatcher = new(Loop, Sessions, _container.Resolve<PacketHandlerRegistry>(), _container);
         _container.RegisterInstance<IPacketDispatchService>(Dispatcher);
-        _container.RegisterInstance(
-            new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } }
-        );
+        var config = new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } };
+        _container.RegisterInstance(config);
         Network = listeners is null
-                      ? new(GameNetworkOptionsFactory.Create(_container.Resolve<MoongateServerConfig>()), Connections)
+                      ? new(UoNetworkOptionsFactory.Create(config, config.Network.GamePort), Connections)
                       : new NetworkService(listeners, Connections);
         Game = new(Network, Connections, Sessions, Dispatcher, networkSender);
     }

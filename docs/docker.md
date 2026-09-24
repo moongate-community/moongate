@@ -9,9 +9,11 @@ The site header displays the current version.
 
 You need Docker with Compose v2 and your own Ultima Online client files; the image
 does not include them. The server also needs two PostgreSQL databases, which the
-image does not bundle either: the Compose file below adds one. TCP port **2593** is
-the game listener; **2594/tcp** is declared for the optional internal API, which is
-disabled by default.
+image does not bundle either: the Compose file below adds one. In the pinned
+**0.6.0** image, TCP port **2593** is the game listener. Current source builds
+use **2593** for login and **2595** for game, including two listeners in standalone
+mode. **2594/tcp** is reserved for the optional internal API, which is disabled
+by default.
 
 The image sets `MOONGATE_ROOT=/data` and runs as the .NET image's non-root user.
 Beside the server it ships the core SQL at `/app/migrations` and the migration runner
@@ -165,7 +167,8 @@ profiles.
 
 ## Internal API port
 
-The image declares `2593/tcp` and `2594/tcp`. `EXPOSE` does not start a listener or
+The pinned 0.6.0 image declares `2593/tcp` and `2594/tcp`; current source
+builds also declare `2595/tcp`. `EXPOSE` does not start a listener or
 publish a host port. Enable `[api]` and configure certificates and peer permissions
 with [API host configuration](server-configuration.md#enable-the-internal-api-server).
 For automatic certificate generation, follow [API certificates](api-certificates.md#docker):

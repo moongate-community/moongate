@@ -17,7 +17,7 @@ migrations applied to them. The steps below produce them in that order.
   packet protocol targets ClassicUO 7.x.
 - A reachable PostgreSQL server on which you can create databases. The examples in
   this repository use PostgreSQL 16.
-- A free TCP port; the game listener defaults to 2593.
+- Two free TCP ports in standalone mode: login defaults to 2593 and game to 2595.
 - For a source build: Git and the .NET 10 SDK selected by `global.json`. Node.js is
   only needed to work on the documentation website.
 

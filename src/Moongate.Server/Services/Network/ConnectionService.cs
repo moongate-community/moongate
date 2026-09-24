@@ -7,7 +7,7 @@ using Serilog;
 namespace Moongate.Server.Services.Network;
 
 /// <summary>Tracks connections independently of game sessions and owns their complete cleanup lifetime.</summary>
-public sealed class ConnectionService : IConnectionService
+public sealed class ConnectionService : IConnectionService, ILoginConnectionService
 {
     private readonly Lock _gate = new();
     private readonly Dictionary<long, ConnectionEntry> _entries = new();

@@ -4,7 +4,13 @@ The host separates TCP connection lifetime from game-session lifetime. `mode =
 "login"` runs a dedicated ordered async login packet pipeline, Accounts access and
 realm directory. `mode = "game"` runs the game loop, world services and an outbound
 realm registration client. `standalone` combines account and game services with a
-local realm entry, without mTLS registration traffic.
+local realm entry, without mTLS registration traffic. Login and game own separate
+connection registries, senders, packet dispatchers and TCP listeners. The defaults
+are `network.login_port = 2593` and `network.game_port = 2595`; standalone rejects
+the same port for both roles. With `network.listen_address = "0.0.0.0"`, each role
+binds once per discovered local address, so standalone starts two listeners per
+address. The local realm advertises `network.game_port` unless
+`realm_directory.advertised_port` is set.
 
 | Component | Responsibility |
 | --- | --- |
@@ -70,10 +76,11 @@ at construction, including endpoint objects.
 4. Game shutdown closes transport first, then joins both sender cleanup and loop-owned
    session retirement. Both operations start even if either throws. All listeners are
    stopped after partial startup failure, while the original startup exception is preserved.
-5. Startup priorities are connection registry **40**, sender **50**, dispatcher **60**,
-   game coordinator **100**. The loop starts earlier. `NetworkService` is a plain singleton
-   started by the coordinator, so it is not registered for automatic startup a second time.
-   Reverse shutdown keeps all dependencies alive through session retirement.
+5. Startup priorities are connection registries **40**, senders **50**, dispatchers
+   **60**, game coordinator **100**, and standalone login coordinator **110**. The loop
+   starts earlier. Each `NetworkService` is a plain singleton started by its role
+   coordinator, so it is not registered for automatic startup a second time.
+   Reverse shutdown keeps both roles' dependencies alive through session retirement.
 
 The sender capacity defaults to 128 waiting encoded frames per connection, plus one
 active write. It snapshots packets before a successful `TrySend` returns and preserves

@@ -12,11 +12,11 @@ namespace Moongate.Server.Ultima.Handlers.Login;
 public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountLoginPacket>
 {
     private readonly ILoginSessionService _sessions;
-    private readonly IPacketSendService _sender;
+    private readonly ILoginPacketSendService _sender;
     private readonly LoginAccountFlow _flow;
     private readonly ILogger _logger = Log.ForContext<LoginRoleAccountPacketHandler>();
 
-    public LoginRoleAccountPacketHandler(ILoginSessionService sessions, IPacketSendService sender,
+    public LoginRoleAccountPacketHandler(ILoginSessionService sessions, ILoginPacketSendService sender,
         LoginAccountFlow flow)
     {
         _sessions = sessions;
