@@ -9,7 +9,7 @@
 * **login:** discover live game realms through Redis leases and transfer authenticated clients with one-use `0x8C`/`0x91` handoff tickets.
 * **docker:** run one login and two game processes with private Redis, role-local PostgreSQL credentials and Compose secrets.
 
-### Breaking changes
+### Architecture updates
 
 * **server:** remove the internal TCP API and `Moongate.Api` package. Runtime login, game and standalone roles now require Redis; PostgreSQL remains role-local.
 
