@@ -1,4 +1,6 @@
 using DryIoc;
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Account;
 using Npgsql;
 using Moongate.Core.Directories;
 using Moongate.Core.Utils;
@@ -17,6 +19,67 @@ namespace Moongate.Tests.Integration.Server.Ultima.Accounts;
 [Collection(PostgresTestCollection.Name)]
 public sealed class AccountServiceTests
 {
+    [Fact]
+    public async Task ListAccountsPageAsync_KeysetPagination_PreservesOrderAndPrivileges()
+    {
+        await using var fixture = await AccountServiceFixture.CreateAsync();
+        for (var i = 0; i < 4; i++)
+        {
+            var result = await fixture.Service.CreateAccountAsync(new AccountCreateOptions
+            {
+                Username = $"user{i}", Password = fixture.Password,
+                AccountType = AccountType.Administrator, CanAccessApi = i == 0
+            });
+            Assert.True(result.Success, result.Exception?.ToString());
+        }
+        var first = await fixture.Service.ListAccountsPageAsync(Serial.Zero, 2);
+        var second = await fixture.Service.ListAccountsPageAsync(first.NextAfterId, 2);
+        Assert.Equal(new[] { "user0", "user1" }, first.Items.Select(a => a.Username));
+        Assert.Equal(new[] { "user2", "user3" }, second.Items.Select(a => a.Username));
+        Assert.Equal(first.Items[1].Id, first.NextAfterId);
+        Assert.Equal(Serial.Zero, second.NextAfterId);
+        Assert.True(first.Items[0].CanAccessApi);
+        Assert.False(first.Items[1].CanAccessApi);
+        Assert.All(first.Items, a => Assert.Equal(AccountType.Administrator, a.AccountType));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => fixture.Service.ListAccountsPageAsync(Serial.Zero, 201));
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => fixture.Service.ListAccountsPageAsync(Serial.Zero, 0));
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task LoginAsync_ConcurrentSecurityChange_DoesNotRestoreStalePrivileges(bool locked)
+    {
+        await using var fixture = await AccountServiceFixture.CreateAsync();
+        var account = await fixture.SeedAsync();
+        await using var connection = new NpgsqlConnection(fixture.Database.ConnectionString);
+        await connection.OpenAsync();
+        await using var transaction = await connection.BeginTransactionAsync();
+        await using var command = new NpgsqlCommand(
+            "UPDATE auth.accounts SET account_type=0, is_locked=@locked WHERE id=42", connection, transaction);
+        command.Parameters.AddWithValue("locked", locked);
+        await command.ExecuteNonQueryAsync();
+        var login = fixture.Service.LoginAsync("alice", fixture.Password);
+        try
+        {
+            using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            while (!await fixture.Database.ScalarAsync<bool>(
+                "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock')"))
+            {
+                await Task.Delay(10, deadline.Token);
+            }
+            await transaction.CommitAsync();
+            var result = await login.WaitAsync(TimeSpan.FromSeconds(10));
+            Assert.Equal(locked, result is null);
+            var stored = (await fixture.Accounts.GetByIdAsync(account.Id))!;
+            Assert.Equal(AccountType.Regular, stored.AccountType);
+            Assert.Equal(locked, stored.IsLocked);
+        }
+        finally
+        {
+            await transaction.DisposeAsync();
+            await ((Task)login).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+        }
+    }
+
     [Fact]
     public async Task ListAccountsAsync_EmptyDatabase_ReturnsEmptyCollection()
     {

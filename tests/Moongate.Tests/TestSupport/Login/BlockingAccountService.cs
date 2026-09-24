@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Account;
 using Moongate.Server.Ultima.Entities.Auth;
@@ -27,5 +28,10 @@ internal sealed class BlockingAccountService : IAccountService
         => throw new NotSupportedException();
 
     public Task<IEnumerable<AccountEntity>> ListAccountsAsync(CancellationToken cancellationToken = default)
+        => throw new NotSupportedException();
+    public Task<AccountCreateResult> CreateAccountAsync(AccountCreateOptions options, CancellationToken cancellationToken = default)
+        => throw new NotSupportedException();
+
+    public Task<AccountPage> ListAccountsPageAsync(Serial afterId, int pageSize = 50, CancellationToken cancellationToken = default)
         => throw new NotSupportedException();
 }
