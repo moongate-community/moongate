@@ -6,6 +6,13 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
+using Moongate.Server.Services.Sessions;
+using Moongate.Server.Core.Packets;
+using Moongate.Server.Ultima.Handlers.Login;
+using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Tests.Support.Sessions;
+using Moongate.Tests.TestSupport.Packets;
+using System.Net;
 
 namespace Moongate.Tests.Integration.Realms;
 
@@ -95,6 +102,27 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
             .Select(_ => _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password").AsTask()));
 
         Assert.Single(attempts, result => result is not null);
+    }
+
+    [Fact]
+    public async Task GameLoginPacket_RealRedisTicket_AssociatesIdentityAndRejectsReplay()
+    {
+        var authKey = await IssueAsync();
+        await using var fixture = await SessionFixture.CreateAsync();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        session.NetworkSession.SetSeed(authKey);
+        var context = new PacketContext(session, fixture.Loop, sessions, new StubPacketSendService());
+        var realm = new RealmInstance(new RealmDescriptor(_realmId, 1, "Test Realm", IPAddress.Loopback,
+            2595, AccountType.Regular), _instanceId);
+        var handler = new GameLoginPacketHandler(realm, _store);
+
+        await handler.HandleAsync(context, new GameLoginPacket(authKey, "Alice", "password"),
+            CancellationToken.None);
+
+        Assert.Equal(new Serial(42), session.AccountId);
+        Assert.Equal(AccountType.GameMaster, session.AccountType);
+        Assert.Null(await _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password"));
     }
 
     [Fact]
