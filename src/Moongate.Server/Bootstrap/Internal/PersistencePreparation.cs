@@ -9,30 +9,35 @@ namespace Moongate.Server.Bootstrap.Internal;
 /// <summary>Loads the host's plugin registrations before an explicit persistence phase.</summary>
 internal static class PersistencePreparation
 {
-    public static void LoadPlugins(Container container)
+    public static async Task DisposePersistenceAsync(Container container)
     {
-        if (container.IsRegistered<IPluginLoaderService>())
+        if (container.IsRegistered<MoongatePersistenceService>())
         {
-            container.Resolve<IPluginLoaderService>().LoadPlugins();
+            await container.Resolve<MoongatePersistenceService>().DisposeAsync().ConfigureAwait(false);
         }
     }
 
-    public static async Task InitializeAsync(Container container, CancellationToken cancellationToken)
+    public static async Task<bool> InitializeAsync(Container container, CancellationToken cancellationToken)
     {
         LoadPlugins(container);
+
         if (container.IsRegistered<MoongatePersistenceService>())
         {
             var autoSync = container.IsRegistered<MoongateServerConfig>() &&
                            container.Resolve<MoongateServerConfig>().Persistence.AutoSyncSchema;
+            var autoGenerate = container.IsRegistered<MoongateServerConfig>() &&
+                               container.Resolve<MoongateServerConfig>().Persistence.AutoGenerateMigrations;
             Log.Information(
                 "Preparing PostgreSQL persistence; schema mode {SchemaMode}",
+                autoGenerate ? "generate-migrations" :
                 autoSync ? "synchronize" : "validate"
             );
+
             try
             {
                 await container.Resolve<MoongatePersistenceService>()
-                    .InitializeAsync(cancellationToken)
-                    .ConfigureAwait(false);
+                               .InitializeAsync(cancellationToken)
+                               .ConfigureAwait(false);
             }
             catch (InvalidOperationException exception) when (exception.Message.StartsWith(
                                                                   "PostgreSQL schema changes are required",
@@ -45,14 +50,18 @@ internal static class PersistencePreparation
                     exception
                 );
             }
+
+            return true;
         }
+
+        return false;
     }
 
-    public static async Task DisposePersistenceAsync(Container container)
+    public static void LoadPlugins(Container container)
     {
-        if (container.IsRegistered<MoongatePersistenceService>())
+        if (container.IsRegistered<IPluginLoaderService>())
         {
-            await container.Resolve<MoongatePersistenceService>().DisposeAsync().ConfigureAwait(false);
+            container.Resolve<IPluginLoaderService>().LoadPlugins();
         }
     }
 }

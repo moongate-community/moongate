@@ -6,10 +6,6 @@ namespace Moongate.Server.Serialization.Config.Internal;
 
 internal sealed class ServerModeTomlConverter : TomlConverter<ServerMode>
 {
-    public ServerModeTomlConverter()
-    {
-    }
-
     public override ServerMode Read(TomlReader reader)
     {
         if (reader.TokenType != TomlTokenType.String)
@@ -26,6 +22,7 @@ internal sealed class ServerModeTomlConverter : TomlConverter<ServerMode>
         };
 
         reader.Read();
+
         return mode;
     }
 

@@ -1,8 +1,9 @@
 using System.Diagnostics;
 using DryIoc;
-using Serilog;
 using Moongate.Server.Core.Data.Services;
+using Moongate.Server.Core.Interfaces.Admin;
 using Moongate.Server.Core.Interfaces.Services;
+using Serilog;
 
 namespace Moongate.Server.Bootstrap.Internal;
 
@@ -22,14 +23,32 @@ internal sealed class StartupServiceLifecycle
         _container = container;
     }
 
+    public void ActivateAdministration()
+    {
+        foreach (var service in _startedServices.OfType<IAdminApiService>()) { service.Activate(); }
+    }
+
+    public void StopAcceptingAdministration()
+    {
+        foreach (var service in _startedServices.OfType<IAdminApiService>()) { service.StopAccepting(); }
+    }
+
+    public void ActivateWorldSaving()
+    {
+        foreach (var service in _startedServices.OfType<IWorldSaveService>())
+        {
+            service.Activate();
+        }
+    }
+
     public async Task StartAsync(Action<IMoongateStartupService>? onStarting = null)
     {
         var registrations = (_container.IsRegistered<List<ServiceRegistrationData>>()
-                ? _container.Resolve<List<ServiceRegistrationData>>()
-                : [])
-            .Where(registration => registration.IsAutostart)
-            .OrderBy(registration => registration.Priority)
-            .ToArray();
+                                 ? _container.Resolve<List<ServiceRegistrationData>>()
+                                 : [])
+                            .Where(registration => registration.IsAutostart)
+                            .OrderBy(registration => registration.Priority)
+                            .ToArray();
 
         foreach (var registration in registrations)
         {
@@ -54,6 +73,7 @@ internal sealed class StartupServiceLifecycle
             catch (Exception exception)
             {
                 _logger.Error(exception, "Failed to start service {ServiceName:l}", serviceName);
+
                 throw;
             }
 
@@ -62,14 +82,6 @@ internal sealed class StartupServiceLifecycle
                 serviceName,
                 Stopwatch.GetElapsedTime(startedAt).TotalMilliseconds
             );
-        }
-    }
-
-    public void ActivateWorldSaving()
-    {
-        foreach (var service in _startedServices.OfType<IWorldSaveService>())
-        {
-            service.Activate();
         }
     }
 

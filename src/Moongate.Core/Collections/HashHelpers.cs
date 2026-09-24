@@ -5,9 +5,9 @@ namespace Moongate.Core.Collections;
 
 internal static class HashHelpers
 {
-    internal static readonly int[] SizeOneIntArray = new int[1];
     public const int MaxPrimeArrayLength = 0x7FEFFFFD;
     public const int HashPrime = 101;
+    internal static readonly int[] SizeOneIntArray = new int[1];
 
     public static readonly int[] primes =
     [

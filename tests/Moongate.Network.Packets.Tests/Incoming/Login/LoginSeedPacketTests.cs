@@ -5,9 +5,21 @@ namespace Moongate.Network.Packets.Tests.Incoming.Login;
 
 public class LoginSeedPacketTests
 {
-    private static readonly byte[] Fixture = Convert.FromHexString(
-        "EF1234567800000007000000000000006D00000000"
-    );
+    private static readonly byte[] Fixture = Convert.FromHexString("EF1234567800000007000000000000006D00000000");
+
+    [Fact]
+    public void TryDecode_IncompleteWrongOrAppendedFrame_ReturnsFalse()
+    {
+        for (var length = 0; length < Fixture.Length; length++)
+        {
+            Assert.False(PacketCodec.TryDecode<LoginSeedPacket>(Fixture.AsSpan(0, length), out _));
+        }
+
+        var wrongOpcode = Fixture.ToArray();
+        wrongOpcode[0] = 0xEE;
+        Assert.False(PacketCodec.TryDecode<LoginSeedPacket>(wrongOpcode, out _));
+        Assert.False(PacketCodec.TryDecode<LoginSeedPacket>([.. Fixture, 0x00], out _));
+    }
 
     [Fact]
     public void TryDecode_KnownFixture_ReadsAllUnsignedFields()
@@ -28,19 +40,5 @@ public class LoginSeedPacketTests
         highBitFixture[4] = 0;
         Assert.True(PacketCodec.TryDecode<LoginSeedPacket>(highBitFixture, out var highBit));
         Assert.Equal(0x80000000u, highBit.Seed);
-    }
-
-    [Fact]
-    public void TryDecode_IncompleteWrongOrAppendedFrame_ReturnsFalse()
-    {
-        for (var length = 0; length < Fixture.Length; length++)
-        {
-            Assert.False(PacketCodec.TryDecode<LoginSeedPacket>(Fixture.AsSpan(0, length), out _));
-        }
-
-        var wrongOpcode = Fixture.ToArray();
-        wrongOpcode[0] = 0xEE;
-        Assert.False(PacketCodec.TryDecode<LoginSeedPacket>(wrongOpcode, out _));
-        Assert.False(PacketCodec.TryDecode<LoginSeedPacket>([.. Fixture, 0x00], out _));
     }
 }

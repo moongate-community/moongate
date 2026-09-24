@@ -26,9 +26,9 @@ public sealed class MultiComponentList
     private readonly SKPointI _min;
     private readonly SKPointI _max;
 
-    private SKPointI _center;
-
     public static readonly MultiComponentList Empty = new();
+
+    private SKPointI _center;
 
     public SKPointI Min => _min;
     public SKPointI Max => _max;
@@ -41,16 +41,6 @@ public sealed class MultiComponentList
     public int Surface { get; private set; }
 
     public static HashSet<ushort> DynamicItemIds { get; set; }
-
-    public struct MultiTileEntry
-    {
-        public ushort ItemId;
-        public short OffsetX;
-        public short OffsetY;
-        public short OffsetZ;
-        public int Flags;
-        public int Unk1;
-    }
 
     public MultiComponentList(BinaryReader reader, int count, bool useNewMultiFormat)
     {
@@ -258,6 +248,7 @@ public sealed class MultiComponentList
                 {
                     using var fs = new FileStream(fileName, FileMode.Open, FileAccess.Read, FileShare.Read);
                     using var reader = new BinaryReader(fs);
+
                     if (reader.ReadInt16() != 1) // Version check
                     {
                         return;
@@ -718,6 +709,16 @@ public sealed class MultiComponentList
         Tiles = Array.Empty<MTile[][]>();
     }
 
+    public struct MultiTileEntry
+    {
+        public ushort ItemId;
+        public short OffsetX;
+        public short OffsetY;
+        public short OffsetZ;
+        public int Flags;
+        public int Unk1;
+    }
+
     /// <summary>
     /// Punt's multi tool csv format
     /// </summary>
@@ -744,6 +745,7 @@ public sealed class MultiComponentList
             new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
             Encoding.GetEncoding(1252)
         );
+
         for (var i = 0; i < SortedTiles.Length; ++i)
         {
             tex.WriteLine(
@@ -777,6 +779,7 @@ public sealed class MultiComponentList
             new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
             Encoding.GetEncoding(1252)
         );
+
         for (var i = 0; i < SortedTiles.Length; ++i)
         {
             tex.WriteLine($"[HOUSE ITEM {i}]");
@@ -796,6 +799,7 @@ public sealed class MultiComponentList
             new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite),
             Encoding.GetEncoding(1252)
         );
+
         for (var i = 0; i < SortedTiles.Length; ++i)
         {
             tex.WriteLine($"SECTION WORLDITEM {i}");

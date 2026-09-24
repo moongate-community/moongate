@@ -7,13 +7,41 @@ namespace Moongate.Tests.Scripting.Internal;
 
 public sealed class ScriptFileLoaderTests
 {
-    private static LuaState NewState()
+    [Fact]
+    public void Invalidate_EvictsTheModuleFromRequire()
     {
-        var state = LuaState.Create();
-        state.OpenBasicLibrary();
-        state.OpenModuleLibrary();
+        using var scripts = new TemporaryScriptsDirectory();
+        scripts.Write("common/util.lua", "return { v = 1 }");
+        scripts.Write("init.lua", "return require('common.util').v");
+        using var state = NewState();
+        state.ModuleLoader = new ScriptDirectoryModuleLoader(scripts.Path);
+        var loader = new ScriptFileLoader(state, scripts.Path);
+        Assert.Equal(1, loader.Load("init.lua", default)[0].Read<double>());
+        scripts.Write("common/util.lua", "return { v = 2 }");
 
-        return state;
+        loader.Invalidate("common/util.lua");
+        loader.Invalidate("init.lua");
+
+        Assert.Equal(2, loader.Load("init.lua", default)[0].Read<double>());
+    }
+
+    [Fact]
+    public void Invalidate_UsesTheNormalizedPath_ForBothTheCacheAndTheRequireName()
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        scripts.Write("common/util.lua", "return { v = 1 }");
+        scripts.Write("init.lua", "return require('common.util').v");
+        using var state = NewState();
+        state.ModuleLoader = new ScriptDirectoryModuleLoader(scripts.Path);
+        var loader = new ScriptFileLoader(state, scripts.Path);
+        Assert.Equal(1, loader.Load("init.lua", default)[0].Read<double>());
+        scripts.Write("common/util.lua", "return { v = 2 }");
+
+        // The module was required, never loaded as a file, so only its require entry is evicted.
+        Assert.False(loader.Invalidate("./common/util.lua"));
+        Assert.True(loader.Invalidate(".\\init.lua"));
+
+        Assert.Equal(2, loader.Load("init.lua", default)[0].Read<double>());
     }
 
     [Fact]
@@ -45,7 +73,8 @@ public sealed class ScriptFileLoaderTests
             (context, _) =>
             {
                 seen = loader.CurrentFile;
-                return new ValueTask<int>(context.Return());
+
+                return new(context.Return());
             }
         );
 
@@ -53,6 +82,45 @@ public sealed class ScriptFileLoaderTests
 
         Assert.Equal("ai/guard.lua", seen);
         Assert.Null(loader.CurrentFile);
+    }
+
+    [Fact]
+    public void Load_MissingFile_ThrowsFileNotFound()
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        using var state = NewState();
+
+        Assert.Throws<FileNotFoundException>(() => new ScriptFileLoader(state, scripts.Path).Load("missing.lua", default));
+    }
+
+    [Theory, InlineData("./ai/guard.lua"), InlineData(".//ai/guard.lua"), InlineData("././ai/guard.lua"),
+     InlineData("/ai/guard.lua"), InlineData(".\\ai\\guard.lua")]
+    public void Load_SpellingsOfOnePath_ShareOneKey(string spelling)
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        scripts.Write("ai/guard.lua", "runs = (runs or 0) + 1 return runs");
+        using var state = NewState();
+        var loader = new ScriptFileLoader(state, scripts.Path);
+        loader.Load("ai/guard.lua", default);
+
+        var again = loader.Load(spelling, default);
+
+        Assert.Equal(1, again[0].Read<double>());
+        Assert.Equal(1, loader.FilesLoaded);
+        Assert.Equal(["ai/guard.lua"], loader.LoadedFiles);
+    }
+
+    [Fact]
+    public void Load_SyntaxError_ThrowsLuaCompileExceptionNamingTheFile()
+    {
+        using var scripts = new TemporaryScriptsDirectory();
+        scripts.Write("bad.lua", "this is not lua");
+        using var state = NewState();
+
+        var exception =
+            Assert.Throws<LuaCompileException>(() => new ScriptFileLoader(state, scripts.Path).Load("bad.lua", default));
+
+        Assert.Contains("bad.lua", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -75,83 +143,12 @@ public sealed class ScriptFileLoaderTests
         Assert.False(loader.Invalidate("never-loaded.lua"));
     }
 
-    [Fact]
-    public void Invalidate_EvictsTheModuleFromRequire()
+    private static LuaState NewState()
     {
-        using var scripts = new TemporaryScriptsDirectory();
-        scripts.Write("common/util.lua", "return { v = 1 }");
-        scripts.Write("init.lua", "return require('common.util').v");
-        using var state = NewState();
-        state.ModuleLoader = new ScriptDirectoryModuleLoader(scripts.Path);
-        var loader = new ScriptFileLoader(state, scripts.Path);
-        Assert.Equal(1, loader.Load("init.lua", default)[0].Read<double>());
-        scripts.Write("common/util.lua", "return { v = 2 }");
+        var state = LuaState.Create();
+        state.OpenBasicLibrary();
+        state.OpenModuleLibrary();
 
-        loader.Invalidate("common/util.lua");
-        loader.Invalidate("init.lua");
-
-        Assert.Equal(2, loader.Load("init.lua", default)[0].Read<double>());
-    }
-
-    [Theory]
-    [InlineData("./ai/guard.lua")]
-    [InlineData(".//ai/guard.lua")]
-    [InlineData("././ai/guard.lua")]
-    [InlineData("/ai/guard.lua")]
-    [InlineData(".\\ai\\guard.lua")]
-    public void Load_SpellingsOfOnePath_ShareOneKey(string spelling)
-    {
-        using var scripts = new TemporaryScriptsDirectory();
-        scripts.Write("ai/guard.lua", "runs = (runs or 0) + 1 return runs");
-        using var state = NewState();
-        var loader = new ScriptFileLoader(state, scripts.Path);
-        loader.Load("ai/guard.lua", default);
-
-        var again = loader.Load(spelling, default);
-
-        Assert.Equal(1, again[0].Read<double>());
-        Assert.Equal(1, loader.FilesLoaded);
-        Assert.Equal(["ai/guard.lua"], loader.LoadedFiles);
-    }
-
-    [Fact]
-    public void Invalidate_UsesTheNormalizedPath_ForBothTheCacheAndTheRequireName()
-    {
-        using var scripts = new TemporaryScriptsDirectory();
-        scripts.Write("common/util.lua", "return { v = 1 }");
-        scripts.Write("init.lua", "return require('common.util').v");
-        using var state = NewState();
-        state.ModuleLoader = new ScriptDirectoryModuleLoader(scripts.Path);
-        var loader = new ScriptFileLoader(state, scripts.Path);
-        Assert.Equal(1, loader.Load("init.lua", default)[0].Read<double>());
-        scripts.Write("common/util.lua", "return { v = 2 }");
-
-        // The module was required, never loaded as a file, so only its require entry is evicted.
-        Assert.False(loader.Invalidate("./common/util.lua"));
-        Assert.True(loader.Invalidate(".\\init.lua"));
-
-        Assert.Equal(2, loader.Load("init.lua", default)[0].Read<double>());
-    }
-
-    [Fact]
-    public void Load_MissingFile_ThrowsFileNotFound()
-    {
-        using var scripts = new TemporaryScriptsDirectory();
-        using var state = NewState();
-
-        Assert.Throws<FileNotFoundException>(() => new ScriptFileLoader(state, scripts.Path).Load("missing.lua", default));
-    }
-
-    [Fact]
-    public void Load_SyntaxError_ThrowsLuaCompileExceptionNamingTheFile()
-    {
-        using var scripts = new TemporaryScriptsDirectory();
-        scripts.Write("bad.lua", "this is not lua");
-        using var state = NewState();
-
-        var exception =
-            Assert.Throws<LuaCompileException>(() => new ScriptFileLoader(state, scripts.Path).Load("bad.lua", default));
-
-        Assert.Contains("bad.lua", exception.Message, StringComparison.Ordinal);
+        return state;
     }
 }

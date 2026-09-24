@@ -25,7 +25,7 @@ public sealed class TrackingArrayPool : ArrayPool<byte>
 
     public TrackingArrayPool()
     {
-        _outstanding = new HashSet<byte[]>(ReferenceEqualityComparer.Instance);
+        _outstanding = new(ReferenceEqualityComparer.Instance);
     }
 
     public override byte[] Rent(int minimumLength)

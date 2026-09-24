@@ -18,22 +18,38 @@ internal sealed class PersistenceCaptureState
         {
             if (_state == Closed)
             {
-                throw new InvalidOperationException(
-                    "The persistence capture action cannot run after its callback returns."
-                );
+                throw new InvalidOperationException("The persistence capture action cannot run after its callback returns.");
             }
 
             if (_state != AwaitingCapture)
             {
                 _state = Invalid;
-                throw new InvalidOperationException(
-                    "The persistence capture action must be invoked exactly once."
-                );
+
+                throw new InvalidOperationException("The persistence capture action must be invoked exactly once.");
             }
 
             _state = Capturing;
-            _captureExited = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            _captureExited = new(TaskCreationOptions.RunContinuationsAsynchronously);
         }
+    }
+
+    public async Task<bool> CloseAsync()
+    {
+        Task exited;
+        bool valid;
+
+        lock (_sync)
+        {
+            // Freeze the result at dispatcher exit: late success cannot repair an early return.
+            valid = _state == Captured && _captureExited?.Task.IsCompleted == true;
+            _state = Closed;
+            exited = _captureExited?.Task ?? Task.CompletedTask;
+        }
+
+        // Cancellation must not release coordination while admitted source/snapshot code is running.
+        await exited.ConfigureAwait(false);
+
+        return valid;
     }
 
     public void CompleteCapture()
@@ -47,12 +63,18 @@ internal sealed class PersistenceCaptureState
                     _state = Invalid;
                 }
 
-                throw new InvalidOperationException(
-                    "The persistence capture action completed after its callback returned."
-                );
+                throw new InvalidOperationException("The persistence capture action completed after its callback returned.");
             }
 
             _state = Captured;
+        }
+    }
+
+    public void ExitCapture()
+    {
+        lock (_sync)
+        {
+            _captureExited?.TrySetResult();
         }
     }
 
@@ -65,30 +87,5 @@ internal sealed class PersistenceCaptureState
                 _state = Invalid;
             }
         }
-    }
-
-    public void ExitCapture()
-    {
-        lock (_sync)
-        {
-            _captureExited?.TrySetResult();
-        }
-    }
-
-    public async Task<bool> CloseAsync()
-    {
-        Task exited;
-        bool valid;
-        lock (_sync)
-        {
-            // Freeze the result at dispatcher exit: late success cannot repair an early return.
-            valid = _state == Captured && _captureExited?.Task.IsCompleted == true;
-            _state = Closed;
-            exited = _captureExited?.Task ?? Task.CompletedTask;
-        }
-
-        // Cancellation must not release coordination while admitted source/snapshot code is running.
-        await exited.ConfigureAwait(false);
-        return valid;
     }
 }

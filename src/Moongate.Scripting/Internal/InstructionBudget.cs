@@ -4,8 +4,8 @@ namespace Moongate.Scripting.Internal;
 
 /// <summary>
 /// Counts VM instructions through the runtime's hook and aborts a unit of execution that runs past the
-/// budget. A unit is either one coroutine resume (<see cref="Resume{T}"/>) or one top-level chunk
-/// (<see cref="Chunk{T}"/>); each gets a fresh counter and its own limit, and restores the enclosing
+/// budget. A unit is either one coroutine resume (<see cref="Resume{T}" />) or one top-level chunk
+/// (<see cref="Chunk{T}" />); each gets a fresh counter and its own limit, and restores the enclosing
 /// unit's afterwards. A chunk's cancellation source is its own; a coroutine's belongs to the coroutine
 /// and is passed in, because the runtime checks the token of a coroutine's first resume on every later
 /// one.
@@ -15,7 +15,7 @@ namespace Moongate.Scripting.Internal;
 /// hook stops firing for the rest of that state's life, and <c>pcall</c> swallows the exception anyway.
 /// The hook therefore records the abort and cancels the unit's token, which the VM checks per
 /// instruction; the resulting <c>LuaCanceledException</c> cannot be swallowed by <c>pcall</c>, and the
-/// scoping method turns it back into the recorded <see cref="ScriptBudgetExceededException"/>.
+/// scoping method turns it back into the recorded <see cref="ScriptBudgetExceededException" />.
 /// Deterministic by construction: the instruction count, not the clock, decides when the token is
 /// cancelled, so the same script aborts at the same instruction on every machine.
 /// </remarks>
@@ -42,17 +42,26 @@ internal sealed class InstructionBudget
         _hookInterval = hookInterval;
     }
 
+    /// <summary>
+    /// Runs one top-level chunk (the prelude, the bootstrap file, a file loaded by LoadFile) under the per-chunk limit, on
+    /// a source of its own.
+    /// </summary>
+    /// <exception cref="ScriptBudgetExceededException">The unit ran past its limit.</exception>
+    public T Chunk<T>(Func<CancellationToken, T> unit)
+    {
+        using var source = new CancellationTokenSource();
+
+        return Run(source, unit, _maxInstructionsPerChunk);
+    }
+
     /// <summary>Installs the hook on the main state.</summary>
     public void Install()
-    {
-        Install(_state);
-    }
+        => Install(_state);
 
     /// <summary>Installs the hook on a coroutine, which has its own hook slot.</summary>
     public void Install(LuaState coroutine)
-    {
-        coroutine.SetHook(
-            new LuaFunction(
+        => coroutine.SetHook(
+            new(
                 "moongate.budget",
                 (context, _) =>
                 {
@@ -62,20 +71,19 @@ internal sealed class InstructionBudget
                     // because the state's position is only readable while the hook frame is on the stack.
                     if (_unit is not null && _abort is null && _instructionsThisUnit > _limit)
                     {
-                        _abort = new ScriptBudgetExceededException(context.State, _instructionsThisUnit);
+                        _abort = new(context.State, _instructionsThisUnit);
                         _unit.Cancel();
                     }
 
-                    return new ValueTask<int>(context.Return());
+                    return new(context.Return());
                 }
             ),
             "",
             _hookInterval
         );
-    }
 
     /// <summary>
-    /// Runs one resume of the coroutine that owns <paramref name="unitSource"/>, under the per-resume
+    /// Runs one resume of the coroutine that owns <paramref name="unitSource" />, under the per-resume
     /// limit. The caller's source is used and left open: the runtime keeps the token of a coroutine's
     /// first resume with its suspended frames and checks that one on every later resume, so every
     /// resume of one coroutine must carry the same token for the hook's cancellation to be seen.
@@ -90,15 +98,6 @@ internal sealed class InstructionBudget
         return Run(unitSource, unit, _maxInstructionsPerResume);
     }
 
-    /// <summary>Runs one top-level chunk (the prelude, the bootstrap file, a file loaded by LoadFile) under the per-chunk limit, on a source of its own.</summary>
-    /// <exception cref="ScriptBudgetExceededException">The unit ran past its limit.</exception>
-    public T Chunk<T>(Func<CancellationToken, T> unit)
-    {
-        using var source = new CancellationTokenSource();
-
-        return Run(source, unit, _maxInstructionsPerChunk);
-    }
-
     private T Run<T>(CancellationTokenSource source, Func<CancellationToken, T> unit, int limit)
     {
         ArgumentNullException.ThrowIfNull(unit);
@@ -106,6 +105,7 @@ internal sealed class InstructionBudget
         var enclosingLimit = _limit;
         var enclosingUnit = _unit;
         var enclosingAbort = _abort;
+
         // The counter and the limit are per unit even when the source is not: a coroutine that waits
         // often may run indefinitely, as long as no single resume runs past the limit.
         _instructionsThisUnit = 0;

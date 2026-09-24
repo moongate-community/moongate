@@ -39,14 +39,15 @@ dotnet nuget-license \
     echo
     echo "## Server"
     echo
-    cat "$table"
+    # Keep generated table separators consistent with the Markdown formatter.
+    sed '/^|[- |]*|$/s/ /-/g' "$table"
     echo
     echo "## Separate migration runner"
     echo
     echo "The \`migration-runner/\` executable has its own dependency graph. Versions"
     echo "listed here belong to that executable and do not replace server dependencies."
     echo
-    cat "$runner_table"
+    sed '/^|[- |]*|$/s/ /-/g' "$runner_table"
 } >"$output"
 
 echo "Wrote $output"

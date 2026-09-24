@@ -1,5 +1,4 @@
-# Topology example: mode does not yet select a role-specific runtime.
-# Account sharing, realm discovery and login handoff are not implemented.
+# One login, two independent game realms, PostgreSQL, and private Redis.
 name: moongate-login-realms
 
 x-required-secrets:
@@ -10,6 +9,8 @@ x-required-secrets:
   realm-1-runtime: ${MOONGATE_REALM_1_RUNTIME_PASSWORD:?Export MOONGATE_REALM_1_RUNTIME_PASSWORD from Bitwarden}
   realm-2-schema: ${MOONGATE_REALM_2_SCHEMA_PASSWORD:?Export MOONGATE_REALM_2_SCHEMA_PASSWORD from Bitwarden}
   realm-2-runtime: ${MOONGATE_REALM_2_RUNTIME_PASSWORD:?Export MOONGATE_REALM_2_RUNTIME_PASSWORD from Bitwarden}
+  redis: ${MOONGATE_REDIS_PASSWORD:?Export MOONGATE_REDIS_PASSWORD from Bitwarden}
+  handoff: ${MOONGATE_HANDOFF_SECRET:?Export MOONGATE_HANDOFF_SECRET from Bitwarden}
 
 x-moongate: &moongate
   build:
@@ -41,7 +42,38 @@ x-ultima: &ultima
   bind:
     create_host_path: false
 
+x-runtime-dependencies: &runtime-dependencies
+  postgres:
+    condition: service_healthy
+  redis:
+    condition: service_healthy
+
 services:
+  redis:
+    image: redis:7.4.11-alpine@sha256:858f009f9709ce576febc734aa78b8f6d624b82571f9ddb6bda4377c833b3499
+    user: redis
+    command:
+      - /bin/sh
+      - -ec
+      - |
+        umask 077
+        password=$$(cat /run/secrets/redis-password)
+        printf 'requirepass %s\nmaxmemory-policy noeviction\nappendonly no\nsave ""\n' "$$password" > /tmp/moongate.conf
+        exec redis-server /tmp/moongate.conf
+    healthcheck:
+      test:
+        - CMD-SHELL
+        - REDISCLI_AUTH="$$(cat /run/secrets/redis-password)" redis-cli ping | grep -qx PONG
+      interval: 2s
+      timeout: 5s
+      retries: 30
+    secrets:
+      - redis-password
+    tmpfs:
+      - /tmp:mode=1777
+    networks:
+      - moongate
+
   postgres:
     image: postgres:16-alpine@sha256:cf78e76683b9ca8c5733cbbdce6c9262b45b6767934dd0a95e671f9a0fc20685
     environment:
@@ -80,12 +112,19 @@ services:
 
   login:
     <<: *moongate
+    depends_on: *runtime-dependencies
+    stdin_open: true
+    tty: true
     environment:
       MOONGATE_ACCOUNTS_DATABASE_FILE: /run/secrets/accounts-runtime-password
       MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
       MOONGATE_ACCOUNTS_RUNTIME_USER: ${ACCOUNTS_RUNTIME_USER:-moongate_accounts_runtime}
+      MOONGATE_REDIS_PASSWORD_FILE: /run/secrets/redis-password
+      MOONGATE_HANDOFF_SECRET_FILE: /run/secrets/handoff-secret
     secrets:
       - accounts-runtime-password
+      - redis-password
+      - handoff-secret
     ports:
       - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${LOGIN_PORT:-2593}:2593"
     configs:
@@ -98,14 +137,19 @@ services:
 
   game-1:
     <<: *moongate-sample
+    depends_on: *runtime-dependencies
     environment:
       MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-1-runtime-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_1_DATABASE:-moongate_realm_1}
       MOONGATE_REALM_RUNTIME_USER: ${REALM_1_RUNTIME_USER:-moongate_realm_1_runtime}
+      MOONGATE_REDIS_PASSWORD_FILE: /run/secrets/redis-password
+      MOONGATE_HANDOFF_SECRET_FILE: /run/secrets/handoff-secret
     secrets:
       - realm-1-runtime-password
+      - redis-password
+      - handoff-secret
     ports:
-      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_1_PORT:-2595}:2593"
+      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_1_PORT:-2595}:2595"
     configs:
       - source: game-1-config
         target: /data/config/moongate.toml
@@ -116,14 +160,19 @@ services:
 
   game-2:
     <<: *moongate
+    depends_on: *runtime-dependencies
     environment:
       MOONGATE_REALM_DATABASE_FILE: /run/secrets/realm-2-runtime-password
       MOONGATE_REALM_DATABASE_NAME: ${REALM_2_DATABASE:-moongate_realm_2}
       MOONGATE_REALM_RUNTIME_USER: ${REALM_2_RUNTIME_USER:-moongate_realm_2_runtime}
+      MOONGATE_REDIS_PASSWORD_FILE: /run/secrets/redis-password
+      MOONGATE_HANDOFF_SECRET_FILE: /run/secrets/handoff-secret
     secrets:
       - realm-2-runtime-password
+      - redis-password
+      - handoff-secret
     ports:
-      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_2_PORT:-2596}:2593"
+      - "${MOONGATE_BIND_ADDRESS:-127.0.0.1}:${GAME_2_PORT:-2596}:2595"
     configs:
       - source: game-2-config
         target: /data/config/moongate.toml
@@ -131,6 +180,30 @@ services:
       - game-2-data:/data
       - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
       - *ultima
+
+  auth-schema-apply:
+    <<: *moongate
+    profiles:
+      - schema
+    command:
+      - migrations
+      - apply
+      - --root-directory
+      - /data
+      - --target
+      - auth
+    environment:
+      MOONGATE_ACCOUNTS_SCHEMA_DATABASE_FILE: /run/secrets/accounts-schema-password
+      MOONGATE_ACCOUNTS_DATABASE_NAME: ${ACCOUNTS_DATABASE:-moongate_accounts}
+      MOONGATE_ACCOUNTS_SCHEMA_USER: ${ACCOUNTS_SCHEMA_USER:-moongate_accounts_schema}
+    secrets:
+      - accounts-schema-password
+    configs:
+      - source: auth-schema-config
+        target: /data/config/moongate.toml
+    volumes:
+      - schema-job-data:/data
+      - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
 
   schema-preview:
     <<: *moongate-sample
@@ -211,8 +284,14 @@ configs:
     file: ./config/game-2.toml
   game-1-schema-config:
     file: ./config/game-1-schema.toml
+  auth-schema-config:
+    file: ./config/auth-schema.toml
 
 secrets:
+  redis-password:
+    environment: MOONGATE_REDIS_PASSWORD
+  handoff-secret:
+    environment: MOONGATE_HANDOFF_SECRET
   postgres-admin-password:
     environment: MOONGATE_POSTGRES_ADMIN_PASSWORD
   accounts-schema-password:

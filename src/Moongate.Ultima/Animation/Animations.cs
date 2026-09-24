@@ -17,12 +17,6 @@ public static class Animations
 
     public static readonly int PaletteCapacity = 0x100;
 
-    // LRU decode cache shared by the MUL and UOP paths. Bitmaps it returns
-    // are cache-owned and borrowed by callers — do NOT dispose them; clone
-    // first if you need an owned copy (e.g. to feed AnimatedPictureBox).
-
-    internal static LruAnimationCache Cache { get; } = new(Files.CacheCapacityAnimations);
-
     private static FileIndex _fileIndex = new("Anim.idx", "Anim.mul", 0x40000, 6);
     private static FileIndex _fileIndex2 = new("Anim2.idx", "Anim2.mul", 0x10000, -1);
     private static FileIndex _fileIndex3 = new("Anim3.idx", "Anim3.mul", 0x20000, -1);
@@ -33,6 +27,12 @@ public static class Animations
     private static byte[] _streamBuffer;
 
     private static int[] _table;
+
+    // LRU decode cache shared by the MUL and UOP paths. Bitmaps it returns
+    // are cache-owned and borrowed by callers — do NOT dispose them; clone
+    // first if you need an owned copy (e.g. to feed AnimatedPictureBox).
+
+    internal static LruAnimationCache Cache { get; } = new(Files.CacheCapacityAnimations);
 
     /// <summary>
     /// Maximum number of action slots physically reserved for <paramref name="body" />

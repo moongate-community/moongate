@@ -16,45 +16,44 @@ public sealed class ControlledSendMiddleware : INetMiddleware, IDisposable
 
     public ControlledSendMiddleware(bool blocked = false)
     {
-        _release = new ManualResetEventSlim(!blocked);
+        _release = new(!blocked);
     }
 
     public ValueTask<ReadOnlyMemory<byte>> ProcessAsync(
-        MoongateTcpClient? client, ReadOnlyMemory<byte> data,
+        MoongateTcpClient? client,
+        ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-    {
-        return ValueTask.FromResult(data);
-    }
+        => ValueTask.FromResult(data);
 
     public ValueTask<ReadOnlyMemory<byte>> ProcessSendAsync(
-        MoongateTcpClient? client, ReadOnlyMemory<byte> data,
+        MoongateTcpClient? client,
+        ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
     {
         SendThreadId = System.Environment.CurrentManagedThreadId;
         _entered.TrySetResult();
+
         // Intentionally block the synchronous prefix to expose accidental sends on the game loop.
         _release.Wait(TimeSpan.FromSeconds(5), CancellationToken.None);
         cancellationToken.ThrowIfCancellationRequested();
+
         if (Failure is not null)
         {
             throw Failure;
         }
 
         _frames.Writer.TryWrite(data.ToArray());
+
         return ValueTask.FromResult(data);
     }
 
     public Task<byte[]> ReadAsync()
-    {
-        return _frames.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
-    }
+        => _frames.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
 
     public void Release()
-    {
-        _release.Set();
-    }
+        => _release.Set();
 
     public void Dispose()
     {

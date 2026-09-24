@@ -26,9 +26,11 @@ public static partial class EnvExtensions
                 match =>
                 {
                     var name = match.Groups["name"].Value;
-                    return Environment.GetEnvironmentVariable(name) ?? (requireDefined
-                        ? throw new InvalidOperationException($"Environment variable '{name}' is not defined.")
-                        : match.Value);
+
+                    return Environment.GetEnvironmentVariable(name) ??
+                           (requireDefined
+                                ? throw new InvalidOperationException($"Environment variable '{name}' is not defined.")
+                                : match.Value);
                 }
             );
     }

@@ -12,83 +12,13 @@ public ref struct PooledRefList<T>
     private const int MaxLength = int.MaxValue;
     private const int DefaultCapacity = 4;
 
-    internal T[] _items;
-    internal int _size;
-    private int _version;
-
 #pragma warning disable CA1825
     private static readonly T[] s_emptyArray = new T[0];
 #pragma warning restore CA1825
 
-    public PooledRefList(int capacity, bool mt = false)
-    {
-        _size = 0;
-        _version = 0;
-        _items = capacity switch
-        {
-            < 0 => throw new ArgumentOutOfRangeException(
-                nameof(capacity),
-                capacity,
-                CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum
-            ),
-            0 => Array.Empty<T>(),
-            _ => ArrayPool<T>.Shared.Rent(capacity)
-        };
-    }
-
-    public PooledRefList(PooledRefList<T> collection, bool mt = false)
-    {
-        _version = 0;
-
-        var count = collection.Count;
-
-        if (count == 0)
-        {
-            _items = s_emptyArray;
-            _size = 0;
-        }
-        else
-        {
-            _items = ArrayPool<T>.Shared.Rent(count);
-            collection.CopyTo(_items, 0);
-            _size = count;
-        }
-    }
-
-    public PooledRefList(IEnumerable<T> collection, bool mt = false)
-    {
-        ArgumentNullException.ThrowIfNull(collection);
-
-        _version = 0;
-
-        if (collection is ICollection<T> c)
-        {
-            var count = c.Count;
-
-            if (count == 0)
-            {
-                _items = s_emptyArray;
-                _size = 0;
-            }
-            else
-            {
-                _items = ArrayPool<T>.Shared.Rent(count);
-                c.CopyTo(_items, 0);
-                _size = count;
-            }
-        }
-        else
-        {
-            _size = 0;
-            _items = s_emptyArray;
-            using var en = collection.GetEnumerator();
-
-            while (en.MoveNext())
-            {
-                Add(en.Current);
-            }
-        }
-    }
+    internal T[] _items;
+    internal int _size;
+    private int _version;
 
     public int Capacity
     {
@@ -157,20 +87,82 @@ public ref struct PooledRefList<T>
         }
     }
 
+    public PooledRefList(int capacity, bool mt = false)
+    {
+        _size = 0;
+        _version = 0;
+        _items = capacity switch
+        {
+            < 0 => throw new ArgumentOutOfRangeException(
+                       nameof(capacity),
+                       capacity,
+                       CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum
+                   ),
+            0 => Array.Empty<T>(),
+            _ => ArrayPool<T>.Shared.Rent(capacity)
+        };
+    }
+
+    public PooledRefList(PooledRefList<T> collection, bool mt = false)
+    {
+        _version = 0;
+
+        var count = collection.Count;
+
+        if (count == 0)
+        {
+            _items = s_emptyArray;
+            _size = 0;
+        }
+        else
+        {
+            _items = ArrayPool<T>.Shared.Rent(count);
+            collection.CopyTo(_items, 0);
+            _size = count;
+        }
+    }
+
+    public PooledRefList(IEnumerable<T> collection, bool mt = false)
+    {
+        ArgumentNullException.ThrowIfNull(collection);
+
+        _version = 0;
+
+        if (collection is ICollection<T> c)
+        {
+            var count = c.Count;
+
+            if (count == 0)
+            {
+                _items = s_emptyArray;
+                _size = 0;
+            }
+            else
+            {
+                _items = ArrayPool<T>.Shared.Rent(count);
+                c.CopyTo(_items, 0);
+                _size = count;
+            }
+        }
+        else
+        {
+            _size = 0;
+            _items = s_emptyArray;
+            using var en = collection.GetEnumerator();
+
+            while (en.MoveNext())
+            {
+                Add(en.Current);
+            }
+        }
+    }
+
     public ref struct Enumerator
     {
         private readonly PooledRefList<T> _list;
-        private int _index;
         private readonly int _version;
+        private int _index;
         private T? _current;
-
-        internal Enumerator(PooledRefList<T> list)
-        {
-            _list = list;
-            _index = 0;
-            _version = list._version;
-            _current = default;
-        }
 
         public T Current
         {
@@ -186,9 +178,11 @@ public ref struct PooledRefList<T>
             }
         }
 
-        public void Dispose()
+        internal Enumerator(PooledRefList<T> list)
         {
-            _index = -2;
+            _list = list;
+            _index = 0;
+            _version = list._version;
             _current = default;
         }
 
@@ -240,6 +234,12 @@ public ref struct PooledRefList<T>
                     ? CollectionThrowStrings.InvalidOperation_EnumNotStarted
                     : CollectionThrowStrings.InvalidOperation_EnumEnded
             );
+        }
+
+        public void Dispose()
+        {
+            _index = -2;
+            _current = default;
         }
     }
 

@@ -12,8 +12,11 @@ public sealed class GreetCommand : ICommandExecutor
 
     private readonly GreeterModule _greeter;
 
-    /// <summary>Initializes a new instance of the <see cref="GreetCommand"/> class.</summary>
-    /// <param name="greeter">The module singleton the script engine binds; its method is plain C#, safe to call from the console thread.</param>
+    /// <summary>Initializes a new instance of the <see cref="GreetCommand" /> class.</summary>
+    /// <param name="greeter">
+    /// The module singleton the script engine binds; its method is plain C#, safe to call from the console
+    /// thread.
+    /// </param>
     public GreetCommand(GreeterModule greeter)
     {
         _greeter = greeter;
@@ -32,7 +35,7 @@ public sealed class GreetCommand : ICommandExecutor
         var tone = Tone.Plain;
 
         if (context.Arguments.Length == 2 &&
-            (!Enum.TryParse(context.Arguments[1], ignoreCase: true, out tone) || !Enum.IsDefined(tone)))
+            (!Enum.TryParse(context.Arguments[1], true, out tone) || !Enum.IsDefined(tone)))
         {
             context.PrintError(Usage);
 

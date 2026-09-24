@@ -19,6 +19,46 @@ public sealed class SendMiddlewareSerializationTests
     private int _decodePosition;
 
     [Fact]
+    public async Task SendAsync_ConcurrentSends_PreserveMiddlewareKeystreamIntegrity()
+    {
+        // Arrange
+        const int messageCount = 40;
+        var frames = new BlockingCollection<byte[]>();
+        var (sender, receiver) = await ConnectedPairAsync(new YieldingKeystreamMiddleware());
+        receiver.OnDataReceived += (_, e) => frames.Add(e.Data.ToArray());
+
+        try
+        {
+            // Act
+            await Parallel.ForEachAsync(
+                Enumerable.Range(0, messageCount),
+                async (id, ct) => await sender.SendAsync(new[] { (byte)id, (byte)id, (byte)id, (byte)id }, ct)
+            );
+
+            // Assert
+            // Every frame carries its id in clear next to the same id enciphered. A keystream consumed
+            // in a different order than the wire order decodes the body against the wrong slice, so
+            // the body stops agreeing with the tag whatever order the frames themselves arrive in.
+            var ids = new HashSet<byte>();
+
+            for (var i = 0; i < messageCount; i++)
+            {
+                var (tag, payload) = DecodeNext(frames);
+                Assert.Equal(4, payload.Length);
+                Assert.All(payload, actual => Assert.Equal(tag, actual));
+                Assert.True(ids.Add(tag), $"Duplicate payload id {tag}.");
+            }
+
+            Assert.Equal(messageCount, ids.Count);
+        }
+        finally
+        {
+            await receiver.DisposeAsync();
+            await sender.DisposeAsync();
+        }
+    }
+
+    [Fact]
     public async Task SendAsync_SecondSendOvertakingTheFirst_DoesNotDesyncTheMiddlewareKeystream()
     {
         // Arrange
@@ -56,44 +96,28 @@ public sealed class SendMiddlewareSerializationTests
         }
     }
 
-    [Fact]
-    public async Task SendAsync_ConcurrentSends_PreserveMiddlewareKeystreamIntegrity()
+    private static async Task<(MoongateTcpClient Sender, MoongateTcpClient Receiver)> ConnectedPairAsync(
+        INetMiddleware middleware
+    )
     {
-        // Arrange
-        const int messageCount = 40;
-        var frames = new BlockingCollection<byte[]>();
-        var (sender, receiver) = await ConnectedPairAsync(new YieldingKeystreamMiddleware());
-        receiver.OnDataReceived += (_, e) => frames.Add(e.Data.ToArray());
+        var listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        listener.Bind(new IPEndPoint(IPAddress.Loopback, 0));
+        listener.Listen(1);
+        var port = ((IPEndPoint)listener.LocalEndPoint!).Port;
 
-        try
-        {
-            // Act
-            await Parallel.ForEachAsync(
-                Enumerable.Range(0, messageCount),
-                async (id, ct) => await sender.SendAsync(new byte[] { (byte)id, (byte)id, (byte)id, (byte)id }, ct)
-            );
+        var senderSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+        var connectTask = senderSocket.ConnectAsync(IPAddress.Loopback, port);
+        var receiverSocket = await listener.AcceptAsync();
+        await connectTask;
+        listener.Dispose();
 
-            // Assert
-            // Every frame carries its id in clear next to the same id enciphered. A keystream consumed
-            // in a different order than the wire order decodes the body against the wrong slice, so
-            // the body stops agreeing with the tag whatever order the frames themselves arrive in.
-            var ids = new HashSet<byte>();
+        var sender = new MoongateTcpClient(senderSocket, [middleware]);
+        var receiver = new MoongateTcpClient(receiverSocket, null, new LengthPrefixFramer());
 
-            for (var i = 0; i < messageCount; i++)
-            {
-                var (tag, payload) = DecodeNext(frames);
-                Assert.Equal(4, payload.Length);
-                Assert.All(payload, actual => Assert.Equal(tag, actual));
-                Assert.True(ids.Add(tag), $"Duplicate payload id {tag}.");
-            }
+        await sender.StartAsync(CancellationToken.None);
+        await receiver.StartAsync(CancellationToken.None);
 
-            Assert.Equal(messageCount, ids.Count);
-        }
-        finally
-        {
-            await receiver.DisposeAsync();
-            await sender.DisposeAsync();
-        }
+        return (sender, receiver);
     }
 
     /// <summary>
@@ -112,29 +136,5 @@ public sealed class SendMiddlewareSerializationTests
         }
 
         return (frame[1], payload);
-    }
-
-    private static async Task<(MoongateTcpClient Sender, MoongateTcpClient Receiver)> ConnectedPairAsync(
-        INetMiddleware middleware
-    )
-    {
-        var listener = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        listener.Bind(new IPEndPoint(IPAddress.Loopback, 0));
-        listener.Listen(1);
-        var port = ((IPEndPoint)listener.LocalEndPoint!).Port;
-
-        var senderSocket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-        var connectTask = senderSocket.ConnectAsync(IPAddress.Loopback, port);
-        var receiverSocket = await listener.AcceptAsync();
-        await connectTask;
-        listener.Dispose();
-
-        var sender = new MoongateTcpClient(senderSocket, [middleware]);
-        var receiver = new MoongateTcpClient(receiverSocket, middlewares: null, new LengthPrefixFramer(), null);
-
-        await sender.StartAsync(CancellationToken.None);
-        await receiver.StartAsync(CancellationToken.None);
-
-        return (sender, receiver);
     }
 }

@@ -37,17 +37,6 @@ public sealed class LruAnimationCache : IDisposable
     private int _evictedCount;
     private bool _disposed;
 
-    public LruAnimationCache(int capacity)
-    {
-        if (capacity < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be non-negative.");
-        }
-
-        _capacity = capacity;
-        _map = new(Math.Min(capacity, 4096));
-    }
-
     public int Capacity
     {
         get
@@ -86,6 +75,17 @@ public sealed class LruAnimationCache : IDisposable
                 return _evictedCount;
             }
         }
+    }
+
+    public LruAnimationCache(int capacity)
+    {
+        if (capacity < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be non-negative.");
+        }
+
+        _capacity = capacity;
+        _map = new(Math.Min(capacity, 4096));
     }
 
     /// <summary>

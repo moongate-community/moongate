@@ -44,50 +44,38 @@ internal sealed class ScriptedInstall : IDisposable
             .All(tool => directories.Any(directory => File.Exists(Path.Combine(directory, tool))));
     }
 
-    /// <summary>Locates scripts/install.sh by walking up from the test output directory to the repository root.</summary>
-    public static string ScriptPath()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Moongate.slnx")))
-        {
-            directory = directory.Parent;
-        }
-
-        if (directory is null)
-        {
-            throw new InvalidOperationException("The repository root was not found above " + AppContext.BaseDirectory);
-        }
-
-        return Path.Combine(directory.FullName, "scripts", "install.sh");
-    }
+    /// <summary>Replaces the archive's bytes and leaves its checksum file untouched.</summary>
+    public void Corrupt(string version, string rid)
+        => File.WriteAllText(ArchivePath(version, rid), "not an archive");
 
     /// <summary>Writes a release archive and its checksum, with the given text standing in for the server binary.</summary>
-    public void Publish(string version, string rid, string binaryContent)
+    public void Publish(string version, string rid, string binaryContent, bool includeMgboot = false)
     {
         var bundle = Path.Combine(_root, "staging-" + Guid.NewGuid().ToString("N"), "moongate-" + rid);
         Directory.CreateDirectory(bundle);
         File.WriteAllText(Path.Combine(bundle, "Moongate.Server"), binaryContent);
+
+        if (includeMgboot)
+        {
+            File.WriteAllText(Path.Combine(bundle, "mgboot"), "boot payload");
+        }
+
         File.WriteAllText(Path.Combine(bundle, "LICENSE"), "GNU AFFERO GENERAL PUBLIC LICENSE");
         var directory = Path.Combine(ReleaseDirectory, "v" + version);
         Directory.CreateDirectory(directory);
         var archive = ArchivePath(version, rid);
 
         using (var file = File.Create(archive))
+        {
             using (var gzip = new GZipStream(file, CompressionLevel.Optimal))
             {
-                TarFile.CreateFromDirectory(Path.GetDirectoryName(bundle)!, gzip, includeBaseDirectory: false);
+                TarFile.CreateFromDirectory(Path.GetDirectoryName(bundle)!, gzip, false);
             }
+        }
 
         using var stream = File.OpenRead(archive);
         var hash = Convert.ToHexStringLower(SHA256.HashData(stream));
         File.WriteAllText(archive + ".sha256", hash + "  " + Path.GetFileName(archive) + "\n");
-    }
-
-    /// <summary>Replaces the archive's bytes and leaves its checksum file untouched.</summary>
-    public void Corrupt(string version, string rid)
-    {
-        File.WriteAllText(ArchivePath(version, rid), "not an archive");
     }
 
     /// <summary>Runs the script against the fake release, returning its exit code and combined output.</summary>
@@ -116,10 +104,26 @@ internal sealed class ScriptedInstall : IDisposable
         return (process.ExitCode, await standardOutput + await standardError);
     }
 
-    private string ArchivePath(string version, string rid)
+    /// <summary>Locates scripts/install.sh by walking up from the test output directory to the repository root.</summary>
+    public static string ScriptPath()
     {
-        return Path.Combine(ReleaseDirectory, "v" + version, $"moongate-{rid}-{version}.tar.gz");
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Moongate.slnx")))
+        {
+            directory = directory.Parent;
+        }
+
+        if (directory is null)
+        {
+            throw new InvalidOperationException("The repository root was not found above " + AppContext.BaseDirectory);
+        }
+
+        return Path.Combine(directory.FullName, "scripts", "install.sh");
     }
+
+    private string ArchivePath(string version, string rid)
+        => Path.Combine(ReleaseDirectory, "v" + version, $"moongate-{rid}-{version}.tar.gz");
 
     /// <summary>Deletes the temporary tree, releases and installation alike.</summary>
     public void Dispose()

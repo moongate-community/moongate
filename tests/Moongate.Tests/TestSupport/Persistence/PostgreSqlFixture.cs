@@ -8,22 +8,17 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
 
     public PostgreSqlFixture()
     {
-        _adminConnectionString = System.Environment.GetEnvironmentVariable("MOONGATE_TEST_POSTGRES_CONNECTION_STRING")
-                                 ?? throw new InvalidOperationException(
+        _adminConnectionString = System.Environment.GetEnvironmentVariable("MOONGATE_TEST_POSTGRES_CONNECTION_STRING") ??
+                                 throw new InvalidOperationException(
                                      "MOONGATE_TEST_POSTGRES_CONNECTION_STRING is required for PostgreSQL integration tests."
                                  );
-    }
-
-    public async Task InitializeAsync()
-    {
-        await using var connection = new NpgsqlConnection(_adminConnectionString);
-        await connection.OpenAsync();
     }
 
     public async Task<PostgreSqlTestDatabase> CreateDatabaseAsync()
     {
         var databaseName = $"moongate_test_{Guid.NewGuid():N}";
         var quotedDatabaseName = new NpgsqlCommandBuilder().QuoteIdentifier(databaseName);
+
         await using (var connection = new NpgsqlConnection(_adminConnectionString))
         {
             await connection.OpenAsync();
@@ -40,11 +35,15 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
             Pooling = false
         };
 
-        return new PostgreSqlTestDatabase(databaseName, _adminConnectionString, builder.ConnectionString);
+        return new(databaseName, _adminConnectionString, builder.ConnectionString);
+    }
+
+    public async Task InitializeAsync()
+    {
+        await using var connection = new NpgsqlConnection(_adminConnectionString);
+        await connection.OpenAsync();
     }
 
     public Task DisposeAsync()
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 }

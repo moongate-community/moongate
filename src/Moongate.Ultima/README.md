@@ -24,6 +24,7 @@ dotnet add package Moongate.Ultima
 Create an in-memory surface and convert it to a caller-owned SkiaSharp bitmap. This example does not require UO client files.
 
 <!-- nuget-smoke:Program.cs -->
+
 ```csharp
 using Moongate.Ultima.Imaging;
 
@@ -109,11 +110,15 @@ first example. These examples demonstrate reading; they do not modify client fil
 
 ## Client data and native dependencies
 
-Provide your own Ultima Online client data when using the asset readers and configure its location through `Moongate.Ultima.Io.Files.SetDirectory`. Client assets are not included in this package.
+Provide your own Ultima Online client data when using the asset readers and configure its location through
+`Moongate.Ultima.Io.Files.SetDirectory`. Client assets are not included in this package.
 
-The package depends on SkiaSharp, `SkiaSharp.NativeAssets.Linux.NoDependencies`, and `System.IO.Hashing`. NuGet resolves these dependencies. Rendering requires the appropriate native SkiaSharp runtime for the deployment platform; validate that runtime on the systems where your application will run.
+The package depends on SkiaSharp, `SkiaSharp.NativeAssets.Linux.NoDependencies`, and `System.IO.Hashing`. NuGet resolves
+these dependencies. Rendering requires the appropriate native SkiaSharp runtime for the deployment platform; validate that
+runtime on the systems where your application will run.
 
-This package has no dependency on another Moongate package. It provides client-data APIs, not a game server or a complete game client.
+This package has no dependency on another Moongate package. It provides client-data APIs, not a game server or a complete
+game client.
 
 ## License and source
 

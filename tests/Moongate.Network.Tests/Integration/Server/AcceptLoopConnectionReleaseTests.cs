@@ -18,6 +18,39 @@ public sealed class AcceptLoopConnectionReleaseTests
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(10);
 
     [Fact]
+    public async Task AcceptLoop_ConnectHandlerThrowsAfterRegistration_ClosesTheAcceptedConnection()
+    {
+        // Arrange
+        // OnClientConnect is raised from inside the client's StartAsync, so throwing from it fails
+        // the loop at the one point where the client already exists and is already registered. The
+        // release must dispose the client that owns the socket rather than the socket underneath it,
+        // and must drop the registration the started client would otherwise have cleaned up itself.
+        var failed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
+
+        server.OnClientConnect += (_, _) => throw new InvalidOperationException("connect handler failed");
+        server.OnException += (_, _) => failed.TrySetResult();
+
+        await server.StartAsync(CancellationToken.None);
+
+        using var peer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
+
+        try
+        {
+            // Act
+            await peer.ConnectAsync(IPAddress.Loopback, server.Port);
+            await failed.Task.WaitAsync(Timeout);
+
+            // Assert
+            Assert.Equal(0, await ReceiveWithTimeoutAsync(peer));
+        }
+        finally
+        {
+            await server.DisposeAsync();
+        }
+    }
+
+    [Fact]
     public async Task AcceptLoop_ConnectionPipelineFactoryThrows_ClosesTheAcceptedConnection()
     {
         // Arrange
@@ -45,39 +78,6 @@ public sealed class AcceptLoopConnectionReleaseTests
             // A receive of zero bytes is the peer seeing FIN, which is the only externally visible
             // proof that the server let the connection go. While the server still holds the accepted
             // socket the receive simply never completes, so a regression hits the timeout below.
-            Assert.Equal(0, await ReceiveWithTimeoutAsync(peer));
-        }
-        finally
-        {
-            await server.DisposeAsync();
-        }
-    }
-
-    [Fact]
-    public async Task AcceptLoop_ConnectHandlerThrowsAfterRegistration_ClosesTheAcceptedConnection()
-    {
-        // Arrange
-        // OnClientConnect is raised from inside the client's StartAsync, so throwing from it fails
-        // the loop at the one point where the client already exists and is already registered. The
-        // release must dispose the client that owns the socket rather than the socket underneath it,
-        // and must drop the registration the started client would otherwise have cleaned up itself.
-        var failed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
-
-        server.OnClientConnect += (_, _) => throw new InvalidOperationException("connect handler failed");
-        server.OnException += (_, _) => failed.TrySetResult();
-
-        await server.StartAsync(CancellationToken.None);
-
-        using var peer = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
-
-        try
-        {
-            // Act
-            await peer.ConnectAsync(IPAddress.Loopback, server.Port);
-            await failed.Task.WaitAsync(Timeout);
-
-            // Assert
             Assert.Equal(0, await ReceiveWithTimeoutAsync(peer));
         }
         finally

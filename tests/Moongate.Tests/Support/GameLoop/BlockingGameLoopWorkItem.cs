@@ -12,6 +12,7 @@ public sealed class BlockingGameLoopWorkItem : IGameLoopWorkItem, IDisposable
     public void Execute()
     {
         _entered.TrySetResult();
+
         if (!_release.Wait(TimeSpan.FromSeconds(10)))
         {
             throw new TimeoutException("The test did not release the blocking handler.");
@@ -19,13 +20,10 @@ public sealed class BlockingGameLoopWorkItem : IGameLoopWorkItem, IDisposable
     }
 
     public void Release()
-    {
-        _release.Set();
-    }
+        => _release.Set();
 
     public void Dispose()
-    {
+
         // The loop may still be returning from Wait; do not dispose its gate concurrently.
-        _release.Set();
-    }
+        => _release.Set();
 }

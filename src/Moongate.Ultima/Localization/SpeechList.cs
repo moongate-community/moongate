@@ -7,9 +7,8 @@ namespace Moongate.Ultima.Localization;
 
 public sealed class SpeechList
 {
-    public static List<SpeechEntry> Entries { get; private set; }
-
     private static readonly byte[] _buffer = new byte[128];
+    public static List<SpeechEntry> Entries { get; private set; }
 
     static SpeechList()
     {
@@ -61,19 +60,6 @@ public sealed class SpeechList
         }
     }
 
-    private sealed class OrderComparer : IComparer<SpeechEntry>
-    {
-        public int Compare(SpeechEntry x, SpeechEntry y)
-        {
-            if (x.Order == y.Order)
-            {
-                return 0;
-            }
-
-            return x.Order < y.Order ? -1 : 1;
-        }
-    }
-
     public static void ExportToCsv(string fileName)
     {
         using var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite), Encoding.Unicode);
@@ -95,6 +81,7 @@ public sealed class SpeechList
         }
 
         using var sr = new StreamReader(fileName);
+
         while (sr.ReadLine() is { } line)
         {
             line = line.Trim();
@@ -184,6 +171,7 @@ public sealed class SpeechList
 
         using var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var bin = new BinaryWriter(fs);
+
         foreach (var entry in Entries)
         {
             bin.Write(BinaryPrimitives.ReverseEndianness(entry.Id));
@@ -191,6 +179,19 @@ public sealed class SpeechList
             var length = (short)utf8String.Length;
             bin.Write(BinaryPrimitives.ReverseEndianness(length));
             bin.Write(utf8String);
+        }
+    }
+
+    private sealed class OrderComparer : IComparer<SpeechEntry>
+    {
+        public int Compare(SpeechEntry x, SpeechEntry y)
+        {
+            if (x.Order == y.Order)
+            {
+                return 0;
+            }
+
+            return x.Order < y.Order ? -1 : 1;
         }
     }
 

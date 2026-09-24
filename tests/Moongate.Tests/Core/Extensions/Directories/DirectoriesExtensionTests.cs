@@ -7,25 +7,6 @@ namespace Moongate.Tests.Core.Extensions.Directories;
 [Collection(EnvironmentTestsCollection.Name)]
 public sealed class DirectoriesExtensionTests
 {
-    [Theory, InlineData(null), InlineData(""), InlineData(" ")]
-    public void ResolvePathAndEnvs_NullOrWhitespace_ReturnsNull(string? path)
-    {
-        Assert.Null(path!.ResolvePathAndEnvs());
-    }
-
-    [Fact]
-    public void ResolvePathAndEnvs_TildePath_UsesUserProfileAndReturnsAbsolutePath()
-    {
-        var expected = Path.GetFullPath(
-            Path.Combine(
-                System.Environment.GetFolderPath(System.Environment.SpecialFolder.UserProfile),
-                "moongate"
-            )
-        );
-
-        Assert.Equal(expected, "~/moongate".ResolvePathAndEnvs());
-    }
-
     [Fact]
     public void ResolvePathAndEnvs_CustomVariable_ExpandsBeforeNormalizing()
     {
@@ -36,5 +17,22 @@ public sealed class DirectoriesExtensionTests
         var result = $"${key}/nested".ResolvePathAndEnvs();
 
         Assert.Equal(Path.Combine(directory.Path, "nested"), result);
+    }
+
+    [Theory, InlineData(null), InlineData(""), InlineData(" ")]
+    public void ResolvePathAndEnvs_NullOrWhitespace_ReturnsNull(string? path)
+        => Assert.Null(path!.ResolvePathAndEnvs());
+
+    [Fact]
+    public void ResolvePathAndEnvs_TildePath_UsesUserProfileAndReturnsAbsolutePath()
+    {
+        var expected = Path.GetFullPath(
+            Path.Combine(
+                Environment.GetFolderPath(Environment.SpecialFolder.UserProfile),
+                "moongate"
+            )
+        );
+
+        Assert.Equal(expected, "~/moongate".ResolvePathAndEnvs());
     }
 }

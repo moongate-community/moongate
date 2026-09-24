@@ -24,6 +24,7 @@ public sealed class ServerListPacket : BasePacket<ServerListPacket>, IOutgoingPa
     {
         ArgumentNullException.ThrowIfNull(servers);
         var snapshot = servers.ToArray();
+
         if (snapshot.Any(server => server is null))
         {
             throw new ArgumentException("The server list must not contain null entries.", nameof(servers));

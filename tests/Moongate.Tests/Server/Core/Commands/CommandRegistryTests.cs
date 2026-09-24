@@ -11,62 +11,32 @@ namespace Moongate.Tests.Server.Core.Commands;
 public sealed class CommandRegistryTests
 {
     [Fact]
-    public void Register_AliasesShareOneRegistrationAndOneDefinition()
+    public async Task Bind_ResolvesTheSingletonExecutorAndInvokesIt()
     {
         using var container = new Container();
+        container.RegisterCommand<RecordingCommandExecutor>("echo");
+        var registration = container.Resolve<CommandRegistry>().Freeze()["echo"];
+        var context = new CommandContext("echo hi", "echo", ["hi"], CommandSourceType.Console, null);
 
-        container.RegisterCommand<RecordingCommandExecutor>("echo|e|say");
+        await registration.Bind(container)(context);
 
-        var registrations = container.Resolve<CommandRegistry>().Registrations;
-        Assert.Equal(3, registrations.Count);
-        Assert.Same(registrations["echo"], registrations["e"]);
-        Assert.Same(registrations["echo"], registrations["say"]);
-        Assert.Equal("echo", registrations["say"].Definition.Name);
-        Assert.Equal(new[] { "echo", "e", "say" }, registrations["echo"].Definition.Aliases);
+        var executor = container.Resolve<RecordingCommandExecutor>();
+        Assert.Same(context, Assert.Single(executor.Invocations));
+        Assert.Same(executor, container.Resolve<RecordingCommandExecutor>());
     }
 
     [Fact]
-    public void Register_NormalizesAliasesAndLooksThemUpCaseInsensitively()
+    public void Freeze_ReturnsTheSameSnapshotOnRepeatedCalls()
     {
         using var container = new Container();
+        container.RegisterCommand<RecordingCommandExecutor>("echo");
+        var registry = container.Resolve<CommandRegistry>();
 
-        container.RegisterCommand<RecordingCommandExecutor>(" Echo | E ");
+        var first = registry.Freeze();
+        var second = registry.Freeze();
 
-        var registrations = container.Resolve<CommandRegistry>().Registrations;
-        Assert.Equal("echo", registrations["ECHO"].Definition.Name);
-        Assert.Equal(new[] { "echo", "e" }, registrations["echo"].Definition.Aliases);
-    }
-
-    [Fact]
-    public void Register_DuplicateAliasRejectsBeforeContainerMutation()
-    {
-        using var container = new Container();
-        container.RegisterCommand<RecordingCommandExecutor>("echo|e");
-
-        Assert.Throws<InvalidOperationException>(() => container.RegisterCommand<ThrowingCommandExecutor>("boom|E"));
-
-        Assert.Equal(2, container.Resolve<CommandRegistry>().Registrations.Count);
-        Assert.False(container.IsRegistered<ThrowingCommandExecutor>());
-    }
-
-    [Fact]
-    public void Register_RepeatedAliasWithinOneNameIsRejected()
-    {
-        using var container = new Container();
-
-        Assert.Throws<InvalidOperationException>(() => container.RegisterCommand<RecordingCommandExecutor>("echo|echo"));
-
-        Assert.Empty(container.Resolve<CommandRegistry>().Registrations);
-    }
-
-    [Fact]
-    public void Register_BlankNameIsRejected()
-    {
-        using var container = new Container();
-
-        Assert.Throws<ArgumentException>(() => container.RegisterCommand<RecordingCommandExecutor>("   "));
-
-        Assert.Empty(container.Resolve<CommandRegistry>().Registrations);
+        Assert.Same(first, second);
+        Assert.Same(first, registry.Registrations);
     }
 
     [Fact]
@@ -83,28 +53,28 @@ public sealed class CommandRegistryTests
     }
 
     [Fact]
-    public void Register_PreRegisteredTransientExecutorRejectsWithoutPartialMetadata()
+    public void Register_AliasesShareOneRegistrationAndOneDefinition()
     {
         using var container = new Container();
-        container.Register<RecordingCommandExecutor>(Reuse.Transient);
 
-        Assert.Throws<InvalidOperationException>(() => container.RegisterCommand<RecordingCommandExecutor>("echo"));
+        container.RegisterCommand<RecordingCommandExecutor>("echo|e|say");
 
-        Assert.Empty(container.Resolve<CommandRegistry>().Registrations);
+        var registrations = container.Resolve<CommandRegistry>().Registrations;
+        Assert.Equal(3, registrations.Count);
+        Assert.Same(registrations["echo"], registrations["e"]);
+        Assert.Same(registrations["echo"], registrations["say"]);
+        Assert.Equal("echo", registrations["say"].Definition.Name);
+        Assert.Equal(new[] { "echo", "e", "say" }, registrations["echo"].Definition.Aliases);
     }
 
     [Fact]
-    public void Freeze_ReturnsTheSameSnapshotOnRepeatedCalls()
+    public void Register_BlankNameIsRejected()
     {
         using var container = new Container();
-        container.RegisterCommand<RecordingCommandExecutor>("echo");
-        var registry = container.Resolve<CommandRegistry>();
 
-        var first = registry.Freeze();
-        var second = registry.Freeze();
+        Assert.Throws<ArgumentException>(() => container.RegisterCommand<RecordingCommandExecutor>("   "));
 
-        Assert.Same(first, second);
-        Assert.Same(first, registry.Registrations);
+        Assert.Empty(container.Resolve<CommandRegistry>().Registrations);
     }
 
     [Fact]
@@ -127,17 +97,47 @@ public sealed class CommandRegistryTests
     }
 
     [Fact]
-    public async Task Bind_ResolvesTheSingletonExecutorAndInvokesIt()
+    public void Register_DuplicateAliasRejectsBeforeContainerMutation()
     {
         using var container = new Container();
-        container.RegisterCommand<RecordingCommandExecutor>("echo");
-        var registration = container.Resolve<CommandRegistry>().Freeze()["echo"];
-        var context = new CommandContext("echo hi", "echo", ["hi"], CommandSourceType.Console, null);
+        container.RegisterCommand<RecordingCommandExecutor>("echo|e");
 
-        await registration.Bind(container)(context);
+        Assert.Throws<InvalidOperationException>(() => container.RegisterCommand<ThrowingCommandExecutor>("boom|E"));
 
-        var executor = container.Resolve<RecordingCommandExecutor>();
-        Assert.Same(context, Assert.Single(executor.Invocations));
-        Assert.Same(executor, container.Resolve<RecordingCommandExecutor>());
+        Assert.Equal(2, container.Resolve<CommandRegistry>().Registrations.Count);
+        Assert.False(container.IsRegistered<ThrowingCommandExecutor>());
+    }
+
+    [Fact]
+    public void Register_NormalizesAliasesAndLooksThemUpCaseInsensitively()
+    {
+        using var container = new Container();
+
+        container.RegisterCommand<RecordingCommandExecutor>(" Echo | E ");
+
+        var registrations = container.Resolve<CommandRegistry>().Registrations;
+        Assert.Equal("echo", registrations["ECHO"].Definition.Name);
+        Assert.Equal(new[] { "echo", "e" }, registrations["echo"].Definition.Aliases);
+    }
+
+    [Fact]
+    public void Register_PreRegisteredTransientExecutorRejectsWithoutPartialMetadata()
+    {
+        using var container = new Container();
+        container.Register<RecordingCommandExecutor>(Reuse.Transient);
+
+        Assert.Throws<InvalidOperationException>(() => container.RegisterCommand<RecordingCommandExecutor>("echo"));
+
+        Assert.Empty(container.Resolve<CommandRegistry>().Registrations);
+    }
+
+    [Fact]
+    public void Register_RepeatedAliasWithinOneNameIsRejected()
+    {
+        using var container = new Container();
+
+        Assert.Throws<InvalidOperationException>(() => container.RegisterCommand<RecordingCommandExecutor>("echo|echo"));
+
+        Assert.Empty(container.Resolve<CommandRegistry>().Registrations);
     }
 }

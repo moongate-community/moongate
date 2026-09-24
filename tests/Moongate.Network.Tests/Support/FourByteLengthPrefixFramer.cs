@@ -5,10 +5,6 @@ namespace Moongate.Network.Tests.Support;
 
 public sealed class FourByteLengthPrefixFramer : INetFramer
 {
-    public FourByteLengthPrefixFramer()
-    {
-    }
-
     public bool TryReadFrame(Span<byte> buffer, out int frameLength)
     {
         frameLength = 0;

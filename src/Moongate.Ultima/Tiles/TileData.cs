@@ -17,6 +17,9 @@ namespace Moongate.Ultima.Tiles;
 /// </summary>
 public static class TileData
 {
+    private static int[] _landHeader;
+    private static int[] _itemHeader;
+
     /// <summary>
     /// Gets the list of <see cref="LandData">land tile data</see>.
     /// </summary>
@@ -28,9 +31,6 @@ public static class TileData
     public static ItemData[] ItemTable { get; private set; }
 
     public static int[] HeightTable { get; private set; }
-
-    private static int[] _landHeader;
-    private static int[] _itemHeader;
 
     static TileData()
     {
@@ -121,6 +121,7 @@ public static class TileData
         }
 
         using var sr = new StreamReader(fileName);
+
         while (sr.ReadLine() is { } line)
         {
             line = line.Trim();
@@ -168,6 +169,7 @@ public static class TileData
         }
 
         using var sr = new StreamReader(fileName);
+
         while (sr.ReadLine() is { } line)
         {
             line = line.Trim();

@@ -6,19 +6,11 @@ namespace Moongate.Network.Packets.Serialization;
 
 public static class PacketCodec
 {
-    public static bool TryDecode<TPacket>(
-        ReadOnlySpan<byte> data,
-        [NotNullWhen(true)] out TPacket? packet
-    )
-        where TPacket : class, IIncomingPacket<TPacket>
-    {
-        return TPacket.TryParse(data, out packet);
-    }
-
     public static byte[] Encode(IOutgoingPacket packet)
     {
         ArgumentNullException.ThrowIfNull(packet);
         var length = packet.Length;
+
         if (length is < 1 or > ushort.MaxValue)
         {
             throw new ArgumentOutOfRangeException(
@@ -31,6 +23,7 @@ public static class PacketCodec
         var destination = new byte[length];
         var writer = new PacketWriter(destination);
         packet.Write(ref writer);
+
         if (writer.WrittenCount != length)
         {
             throw new InvalidOperationException("The packet did not write its declared complete length.");
@@ -38,4 +31,11 @@ public static class PacketCodec
 
         return destination;
     }
+
+    public static bool TryDecode<TPacket>(
+        ReadOnlySpan<byte> data,
+        [NotNullWhen(true)] out TPacket? packet
+    )
+        where TPacket : class, IIncomingPacket<TPacket>
+        => TPacket.TryParse(data, out packet);
 }

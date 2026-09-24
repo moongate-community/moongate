@@ -137,6 +137,8 @@ private readonly ILogger _logger = Log.ForContext<MyService>();
 - Handlers run sequentially in registration order and the publisher awaits each. One failing handler is
   logged and does not skip the handlers after it. Events are routed by exact type, and a late subscriber
   never receives an earlier event.
+- `SubscribeAll` receives every published event regardless of type, dispatched after that event's typed
+  subscribers, and follows the same sequential-await, idempotent-disposal, fault-isolated rules.
 
 - A service subscribes in `StartAsync` and disposes the token in `StopAsync`, never in the constructor:
   a singleton's constructor runs only when something resolves it, so a constructor subscription is
@@ -188,7 +190,7 @@ internal sealed class MySubscriber : IMoongateStartupService
 ## 11. Startup Services / Subscribers
 
 - Services that own work across the host lifetime implement `IMoongateStartupService`, which extends `IMoongateService` with `StartAsync()` and `StopAsync()`.
-- Register them with `container.RegisterMoongateService<TContract, TService>(priority)`. Services start in ascending priority order and stop in reverse, so a dependency takes a lower number than its dependents; the default is `0`.
+- Register them with `container.AddMoongateService<TContract, TService>(priority)`. Services start in ascending priority order and stop in reverse, so a dependency takes a lower number than its dependents; the default is `0`.
 - If an optional dependency is unavailable at startup, log a `Warning` and return cleanly — do not bring the host down. Throw only when the server cannot run without it; the bootstrap then stops every service it already started, in reverse order.
 - A service that only subscribes to events still implements `IMoongateStartupService` and subscribes in `StartAsync`, so that its subscription exists exactly while the host runs. Nothing is force-resolved from `Program.cs` to make a constructor run.
 

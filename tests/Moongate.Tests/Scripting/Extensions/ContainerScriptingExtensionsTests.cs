@@ -8,11 +8,21 @@ namespace Moongate.Tests.Scripting.Extensions;
 public sealed class ContainerScriptingExtensionsTests
 {
     [Fact]
+    public void RegisterScriptEnum_IsIdempotent()
+    {
+        using var container = new Container();
+
+        container.RegisterScriptEnum<RegistryColour>().RegisterScriptEnum<RegistryColour>();
+
+        Assert.Equal([typeof(RegistryColour)], container.Resolve<IScriptModuleRegistry>().EnumTypes);
+    }
+
+    [Fact]
     public void RegisterScriptModule_AppendsInOrderAndRegistersASingleton()
     {
         using var container = new Container();
 
-        var result = container.RegisterScriptModule<FirstRegistryModule>().RegisterScriptModule<SecondRegistryModule>();
+        var result = container.AddScriptModule<FirstRegistryModule>().AddScriptModule<SecondRegistryModule>();
 
         Assert.Same(container, result);
         Assert.Equal(
@@ -26,9 +36,9 @@ public sealed class ContainerScriptingExtensionsTests
     public void RegisterScriptModule_TwiceForTheSameType_Throws()
     {
         using var container = new Container();
-        container.RegisterScriptModule<FirstRegistryModule>();
+        container.AddScriptModule<FirstRegistryModule>();
 
-        Assert.Throws<InvalidOperationException>(() => container.RegisterScriptModule<FirstRegistryModule>());
+        Assert.Throws<InvalidOperationException>(() => container.AddScriptModule<FirstRegistryModule>());
     }
 
     [Fact]
@@ -36,16 +46,6 @@ public sealed class ContainerScriptingExtensionsTests
     {
         using var container = new Container();
 
-        Assert.Throws<ArgumentException>(() => container.RegisterScriptModule<UnmarkedModule>());
-    }
-
-    [Fact]
-    public void RegisterScriptEnum_IsIdempotent()
-    {
-        using var container = new Container();
-
-        container.RegisterScriptEnum<RegistryColour>().RegisterScriptEnum<RegistryColour>();
-
-        Assert.Equal([typeof(RegistryColour)], container.Resolve<IScriptModuleRegistry>().EnumTypes);
+        Assert.Throws<ArgumentException>(() => container.AddScriptModule<UnmarkedModule>());
     }
 }

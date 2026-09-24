@@ -1,0 +1,34 @@
+mode = "login"
+
+[shard]
+shard_name = "Moongate Login"
+
+[network]
+listen_address = "0.0.0.0"
+login_port = 2593
+
+[ultima]
+ultima_path = "/uo"
+
+[persistence]
+auto_sync_schema = false
+migrations_directory = "/app/migrations"
+
+[persistence.accounts]
+connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
+
+
+[redis]
+connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
+handoff_secret = "$MOONGATE_HANDOFF_SECRET"
+
+[realm_directory]
+lease_duration_seconds = 15
+max_realms = 128
+
+[admin_api]
+enabled = true
+listen_address = "0.0.0.0"
+port = 2590
+certificate_path = "/run/admin-certificates/login.pfx"
+certificate_password = "$MOONGATE_ADMIN_CERTIFICATE_PASSWORD"

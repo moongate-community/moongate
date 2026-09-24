@@ -19,19 +19,19 @@ original Moongate logo, XML documentation, and a companion symbol package.
 
 | Package and README | Purpose | Direct Moongate dependencies |
 |---|---|---|
-| [Moongate.Api](../src/Moongate.Api/README.md) | Typed MessagePack request/reply over mutual TLS with local authorization | Network |
+| [Moongate.Admin.Contracts](../src/Moongate.Admin.Contracts/README.md) | Versioned gRPC contracts and portable `.proto` definitions | None |
 | [Moongate.Core](../src/Moongate.Core/README.md) | Shared primitives, geometry, configuration, and utilities | None |
 | [Moongate.Network](../src/Moongate.Network/README.md) | Standalone TCP transport, framing, and pipelines | None |
 | [Moongate.Network.Packets](../src/Moongate.Network.Packets/README.md) | UO packet definitions and span-based serialization | Core |
 | [Moongate.Persistence](../src/Moongate.Persistence/README.md) | Asynchronous PostgreSQL modules, transactions, schema operations, and typed entity access | Core, Persistence.Migrations |
 | [Moongate.Persistence.Migrations](../src/Moongate.Persistence.Migrations/README.md) | Versioned SQL catalogs and immutable migration history validation | None |
 | [Moongate.Scripting](../src/Moongate.Scripting/README.md) | Embedded Lua 5.2 runtime, attribute-bound modules, coroutine scheduling and editor definitions | Core, Server.Core |
-| [Moongate.Server.Core](../src/Moongate.Server.Core/README.md) | Server and plugin contracts, events, and registrations | Api, Core, Network, Network.Packets |
+| [Moongate.Server.Core](../src/Moongate.Server.Core/README.md) | Server and plugin contracts, events, and registrations | Core, Network, Network.Packets |
 | [Moongate.Ultima](../src/Moongate.Ultima/README.md) | UO client data readers and rendering utilities | None |
 
-`Moongate.Server` and `Moongate.MigrationRunner` are executables distributed through release artifacts and
-container images. They do not produce library packages. Tests and plugin fixtures
-are also excluded from packing.
+`Moongate.Server`, `Moongate.Boot`, `Moongate.MigrationRunner`, and `Moongate.UoxItemConverter` are
+executables distributed through release artifacts and container images. They do not produce library
+packages. `Moongate.Server.Admin` and `Moongate.Server.Ultima` are embedded modules shipped with the server, also non-packable. Tests and plugin fixtures are excluded from packing.
 
 ## What the command checks
 
@@ -41,11 +41,11 @@ are also excluded from packing.
    SourceLink pointing to the repository commit recorded in the package.
 3. Extracts the marked C# examples from each README into nine temporary console apps
    outside the repository. Each app references one Moongate package directly;
-   the persistence verifier references Npgsql to provision its isolated database,
-   and the API example references MessagePack to generate its serializers.
+   the persistence verifier references Npgsql to provision its isolated database.
 4. Restores, builds, and runs those apps, checking their output. This exercises
    geometry, TCP lifecycle, packet encoding/decoding, PostgreSQL persistence,
-   the event bus, typed API registration, and native SkiaSharp loading. Separate solution tests also start independent .NET processes to verify mutual TLS, local authorization, direct game access with login offline, and no replay after a lost response.
+   the event bus, embedded Lua module execution, and native SkiaSharp loading.
+   Separate solution tests verify Redis-backed realm leases and one-use login handoff tickets.
 
 The persistence consumer requires `MOONGATE_TEST_POSTGRES_CONNECTION_STRING` as
 an administrative Npgsql connection. It creates a unique
@@ -58,12 +58,15 @@ The current `FreeSql.Provider.PostgreSQL` 3.5.311 dependency resolves Npgsql
 overriding Npgsql to another major. A provider/driver upgrade must pass the real
 PostgreSQL package consumer and solution compatibility tests described here.
 
-The solution's PostgreSQL fixtures use the same contract. Point it only at an
-isolated test server whose admin role may create/drop databases:
+The solution's PostgreSQL fixtures use the same connection contract. Set
+`MOONGATE_TEST_POSTGRES_CONNECTION_STRING` for an isolated test server whose admin
+role may create/drop databases. Solution tests also require
+`MOONGATE_TEST_REDIS_CONNECTION_STRING` for a disposable Redis instance; see the
+[integration-test prerequisites](../CONTRIBUTING.md#verify-your-changes).
+Run test projects serially because their hosts share these services:
 
 ```sh
-MOONGATE_TEST_POSTGRES_CONNECTION_STRING='Host=127.0.0.1;Port=5432;Database=postgres;Username=postgres;Password=...;Pooling=false' \
-  dotnet test Moongate.slnx -c Release
+dotnet test Moongate.slnx -c Release -m:1
 ```
 
 Each fixture creates a unique `moongate_test_<uuid>` database and drops only that

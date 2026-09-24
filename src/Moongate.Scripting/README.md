@@ -2,7 +2,8 @@
 
 # Moongate.Scripting
 
-Embedded Lua 5.2 for Moongate: C# modules bound by attribute, scripts that run on the game loop, coroutines parked on the timer wheel, an instruction budget per resume, and editor definitions generated from the bindings.
+Embedded Lua 5.2 for Moongate: C# modules bound by attribute, scripts that run on the game loop, coroutines parked on the
+timer wheel, an instruction budget per resume, and editor definitions generated from the bindings.
 
 ## Installation
 
@@ -22,15 +23,28 @@ dotnet add package Moongate.Scripting
 
 ## Sandbox
 
-Scripts see the base, `string`, `table`, `math`, `coroutine` and `package` libraries. `io`, `os` and `debug` are never opened, and the engine removes the rest of what reaches past the scripts directory or past the instruction budget: `dofile`, `loadfile` and `rawset`; `package.searchpath`, `package.path`, `package.cpath`, `package.loadlib` and the runtime's second `package.searchers` entry, which resolves `package.path` on the host filesystem independently of the module loader; and `coroutine.create`, `coroutine.wrap` and `coroutine.resume`, whose threads would carry neither the budget's hook nor its cancellation token. `coroutine.yield` stays, so `wait(seconds)` keeps working. `require` therefore resolves only under the scripts directory. `print` is replaced by a function that joins its arguments with tabs, as Lua does, and writes them to the server log at Information level under the script that called it, so script output never bypasses the configured sinks.
+Scripts see the base, `string`, `table`, `math`, `coroutine` and `package` libraries. `io`, `os` and `debug` are never
+opened, and the engine removes the rest of what reaches past the scripts directory or past the instruction budget: `dofile`,
+`loadfile` and `rawset`; `package.searchpath`, `package.path`, `package.cpath`, `package.loadlib` and the runtime's second
+`package.searchers` entry, which resolves `package.path` on the host filesystem independently of the module loader; and
+`coroutine.create`, `coroutine.wrap` and `coroutine.resume`, whose threads would carry neither the budget's hook nor its
+cancellation token. `coroutine.yield` stays, so `wait(seconds)` keeps working. `require` therefore resolves only under the
+scripts directory. `print` is replaced by a function that joins its arguments with tabs, as Lua does, and writes them to the
+server log at Information level under the script that called it, so script output never bypasses the configured sinks.
 
-Memory is only partly bounded. `string.rep` refuses a result longer than `MaxStringLength` (16,777,216 characters by default, `max_string_length` in the server's `[scripting]` section; Lua strings here are UTF-16, so that is 32 MiB of text) with a script error, counted as a string cap hit in the metrics. Everything else allocates freely under the instruction budget: a table constructor, or a loop that doubles a string with `..`, can build far more than the budget suggests before it is stopped, and there is no cap on the total memory a state may hold.
+Memory is only partly bounded. `string.rep` refuses a result longer than `MaxStringLength` (16,777,216 characters by default,
+`max_string_length` in the server's `[scripting]` section; Lua strings here are UTF-16, so that is 32 MiB of text) with a
+script error, counted as a string cap hit in the metrics. Everything else allocates freely under the instruction budget: a
+table constructor, or a loop that doubles a string with `..`, can build far more than the budget suggests before it is
+stopped, and there is no cap on the total memory a state may hold.
 
 ## Example
 
-Bind a module to a Lua state and call it. This runs without a Moongate server; inside the server the engine service does the binding and enforces the loop thread.
+Bind a module to a Lua state and call it. This runs without a Moongate server; inside the server the engine service does the
+binding and enforces the loop thread.
 
 <!-- nuget-smoke:Program.cs -->
+
 ```csharp
 using Lua;
 using Lua.Standard;
@@ -60,7 +74,9 @@ for bootstrap/module examples, timer ownership, reload and editor support.
 
 ## Dependencies and scope
 
-This package depends on `Moongate.Core`, `Moongate.Server.Core`, `LuaCSharp` and `Serilog`. It does not start a game loop or timers; the host provides them and registers the engine with `RegisterMoongateService<IScriptEngine, LuaScriptEngineService>`.
+This package depends on `Moongate.Core`, `Moongate.Server.Core`, `LuaCSharp` and `Serilog`. It does not start a game loop or
+timers; the host provides them and registers the engine with
+`AddMoongateService<IScriptEngine, LuaScriptEngineService>`.
 
 ## License and source
 

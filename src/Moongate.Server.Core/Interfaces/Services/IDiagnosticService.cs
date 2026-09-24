@@ -9,6 +9,6 @@ namespace Moongate.Server.Core.Interfaces.Services;
 /// </remarks>
 public interface IDiagnosticService : IMoongateStartupService
 {
-    /// <summary>Returns the latest published snapshot, or <see langword="null"/> before the first completed collection.</summary>
+    /// <summary>Returns the latest published snapshot, or <see langword="null" /> before the first completed collection.</summary>
     DiagnosticSnapshot? GetSnapshot();
 }

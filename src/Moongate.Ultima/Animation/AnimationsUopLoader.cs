@@ -20,34 +20,25 @@ internal static class AnimationsUopLoader
 {
     internal const int _maxAnimActions = 80;
     private const int _maxDirections = 5;
-
-    private static FileStream[] _uopFiles = new FileStream[6];
     private static readonly Dictionary<ulong, UopEntry> _hashTable = new();
     private static readonly Dictionary<int, int[]> _sequenceReplacements = new();
 
-    private struct UopEntry
-    {
-        public int FileIndex;
-        public long Position;
-        public int CompressedSize;
-        public int DecompressedSize;
-        public short CompressionFlagType;
-    }
+    private static FileStream[] _uopFiles = new FileStream[6];
+
+    public static bool IsLoaded { get; private set; }
 
     static AnimationsUopLoader()
     {
         Initialize();
     }
 
-    public static bool IsLoaded { get; private set; }
-
     public static IEnumerable<int> GetAllMobTypeBodyIds()
         => MobTypes.GetDefinedBodies().OrderBy(id => id);
 
     public static IEnumerable<int> GetAllUopBodyIds()
         => MobTypes.GetDefinedBodies()
-            .Where(id => (MobTypes.GetFlags(id) & 0x10000u) != 0)
-            .OrderBy(id => id);
+                   .Where(id => (MobTypes.GetFlags(id) & 0x10000u) != 0)
+                   .OrderBy(id => id);
 
     public static AnimationFrame[] GetAnimation(
         int body,
@@ -114,8 +105,8 @@ internal static class AnimationsUopLoader
         }
 
         var result = firstFrame && frames.Length > 1
-            ? new[] { frames[0] }
-            : frames;
+                         ? new[] { frames[0] }
+                         : frames;
 
         Animations.Cache.Set(cacheKey, result);
 
@@ -202,6 +193,15 @@ internal static class AnimationsUopLoader
         IsLoaded = false;
 
         Initialize();
+    }
+
+    private struct UopEntry
+    {
+        public int FileIndex;
+        public long Position;
+        public int CompressedSize;
+        public int DecompressedSize;
+        public short CompressionFlagType;
     }
 
     private static void BuildHashTable(FileStream fs, int fileIdx)

@@ -13,12 +13,8 @@ public sealed class CountingModuleLoader : ILuaModuleLoader
     }
 
     public bool Exists(string moduleName)
-    {
-        return moduleName == "m";
-    }
+        => moduleName == "m";
 
     public ValueTask<LuaModule> LoadAsync(string moduleName, CancellationToken cancellationToken)
-    {
-        return new ValueTask<LuaModule>(new LuaModule(moduleName, _source()));
-    }
+        => new(new LuaModule(moduleName, _source()));
 }

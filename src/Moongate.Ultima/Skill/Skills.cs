@@ -5,6 +5,7 @@ namespace Moongate.Ultima.Skill;
 
 public sealed class Skills
 {
+    private static readonly byte[] _stringBuffer = new byte[1024];
     private static FileIndex _fileIndex = new("skills.idx", "skills.mul", 16);
 
     private static List<SkillInfo> _skillEntries;
@@ -36,8 +37,6 @@ public sealed class Skills
         }
         set => _skillEntries = value;
     }
-
-    private static readonly byte[] _stringBuffer = new byte[1024];
 
     /// <summary>
     /// Returns <see cref="SkillInfo" /> of index

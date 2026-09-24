@@ -23,7 +23,5 @@ public sealed class SystemMetricsProviderTests
     }
 
     private static IReadOnlyDictionary<string, double> ToDictionary(IReadOnlyList<MetricSample> samples)
-    {
-        return samples.ToDictionary(sample => sample.Name, sample => sample.Value);
-    }
+        => samples.ToDictionary(sample => sample.Name, sample => sample.Value);
 }

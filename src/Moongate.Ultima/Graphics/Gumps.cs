@@ -10,6 +10,9 @@ namespace Moongate.Ultima.Graphics;
 
 public sealed class Gumps
 {
+    private static readonly Dictionary<int, UltimaBitmap> _replaced = new();
+    private static readonly Dictionary<int, bool> _patched = new();
+
     private static FileIndex _fileIndex = new(
         "Gumpidx.mul",
         "Gumpart.mul",
@@ -24,9 +27,7 @@ public sealed class Gumps
     // LRU read cache replaces the old Bitmap[_fileIndex.IndexLength].
     // User edits go in _replaced (below) and are never evicted.
     private static LruBitmapCache _cache;
-    private static readonly Dictionary<int, UltimaBitmap> _replaced = new();
     private static bool[] _removed;
-    private static readonly Dictionary<int, bool> _patched = new();
 
     private static byte[] _pixelBuffer;
     private static byte[] _streamBuffer;
@@ -141,7 +142,7 @@ public sealed class Gumps
                         var pPixelEnd = pPixel + width;
 
                         ushort color,
-                            count;
+                               count;
 
                         if (onlyHueGrayPixels)
                         {
@@ -753,6 +754,7 @@ public sealed class Gumps
         using var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var binidx = new BinaryWriter(fsidx);
         using var binmul = new BinaryWriter(fsmul);
+
         for (var index = 0; index < _indexLength; index++)
         {
             Files.FireFileSaveEvent();

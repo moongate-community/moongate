@@ -18,7 +18,7 @@ public sealed class DependentPlugin : IMoongatePlugin
     {
         var events = container.Resolve<List<string>>();
         events.Add($"dependent:register:{PluginMessage.GetMessage()}");
-        container.RegisterMoongateService<IMoongateStartupService, PluginStartupService>();
+        container.AddMoongateService<IMoongateStartupService, PluginStartupService>();
         container.OnEvent<MoongateStartedEvent>((_, _) => RecordAsync(events, "dependent:started"))
             .OnEvent<MoongateStoppingEvent>((_, _) => RecordAsync(events, "dependent:stopping"))
             .OnEvent<MoongateStoppedEvent>((_, _) => RecordAsync(events, "dependent:stopped"));

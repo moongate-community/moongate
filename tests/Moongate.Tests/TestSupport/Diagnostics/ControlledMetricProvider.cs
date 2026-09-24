@@ -20,19 +20,25 @@ internal sealed class ControlledMetricProvider : IMetricProvider
     public ControlledMetricProvider(string providerName = "test")
     {
         ProviderName = providerName;
-        _release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        _entered = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
+        _release = new(TaskCreationOptions.RunContinuationsAsynchronously);
+        _entered = new(TaskCreationOptions.RunContinuationsAsynchronously);
     }
 
     public async ValueTask<IReadOnlyList<MetricSample>> CollectAsync(CancellationToken cancellationToken = default)
     {
         var active = Interlocked.Increment(ref _active);
-        lock (_concurrencyGate) _maximumConcurrency = Math.Max(active, _maximumConcurrency);
+
+        lock (_concurrencyGate)
+        {
+            _maximumConcurrency = Math.Max(active, _maximumConcurrency);
+        }
         _entered.TrySetResult(Interlocked.Increment(ref _calls));
+
         try
         {
             await _release.Task.WaitAsync(cancellationToken);
-            return [new MetricSample("value", 42, "count", DiagnosticMetricType.Gauge)];
+
+            return [new("value", 42, "count", DiagnosticMetricType.Gauge)];
         }
         finally
         {
@@ -40,6 +46,9 @@ internal sealed class ControlledMetricProvider : IMetricProvider
         }
     }
 
-    public Task<int> WaitForEntryAsync() => _entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
-    public void Release() => _release.TrySetResult();
+    public void Release()
+        => _release.TrySetResult();
+
+    public Task<int> WaitForEntryAsync()
+        => _entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
 }

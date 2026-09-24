@@ -17,11 +17,12 @@ internal sealed class ProcessMetricsReader : IProcessMetricsReader
     public ProcessMetricsReading Read()
     {
         _process.Refresh();
-        return new ProcessMetricsReading
+
+        return new()
         {
             ProcessId = _process.Id,
             ProcessorCount = Environment.ProcessorCount,
-            StartedAtUtc = new DateTimeOffset(_process.StartTime.ToUniversalTime()),
+            StartedAtUtc = new(_process.StartTime.ToUniversalTime()),
             TotalProcessorTime = _process.TotalProcessorTime,
             WorkingSetBytes = _process.WorkingSet64,
             PrivateMemoryBytes = _process.PrivateMemorySize64,

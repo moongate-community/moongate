@@ -139,6 +139,7 @@ public sealed class Multis
 
         using var idxfs = new FileStream(idx, FileMode.Open, FileAccess.Read, FileShare.Read);
         using var binfs = new FileStream(bin, FileMode.Open, FileAccess.Read, FileShare.Read);
+
         using (var idxbin = new BinaryReader(idxfs))
         {
             using var binbin = new BinaryReader(binfs);
@@ -263,6 +264,7 @@ public sealed class Multis
         using var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var binidx = new BinaryWriter(fsidx);
         using var binmul = new BinaryWriter(fsmul);
+
         for (var index = 0; index < MaximumMultiIndex; ++index)
         {
             var comp = GetComponents(index);

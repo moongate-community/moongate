@@ -4,21 +4,14 @@ using Moongate.Core.Directories;
 using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Types;
 using Moongate.Core.Utils;
-using Moongate.Network.Packets.General;
-using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
-using Moongate.Scripting.Extensions.Scripts;
-using Moongate.Scripting.Interfaces;
-using Moongate.Scripting.Modules;
-using Moongate.Scripting.Services;
+using Moongate.Server.Admin;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Bootstrap.Internal.Setup;
 using Moongate.Server.Commands;
 using Moongate.Server.Core.Data.Args;
-using Moongate.Server.Core.Data.GameLoop;
-using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
-using Moongate.Server.Core.Interfaces.Persistence;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
@@ -29,15 +22,9 @@ using Moongate.Server.Services.Console.Internal.Logging;
 using Moongate.Server.Services.Diagnostics;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Server.Services.Events;
-using Moongate.Server.Services.GameLoop;
-using Moongate.Server.Services.Persistence;
 using Moongate.Server.Services.Plugins;
-using Moongate.Server.Services.Sessions;
-using Moongate.Server.Services.Timing;
-using Moongate.Server.Services.Ultima;
 using Moongate.Server.Types.Persistence;
-using Moongate.Server.Ultima.Handlers.General;
-using Moongate.Server.Ultima.Handlers.Login;
+using Moongate.Server.Ultima;
 using Serilog;
 using Serilog.Formatting.Compact;
 using Serilog.Templates;
@@ -49,12 +36,43 @@ await ConsoleApp.RunAsync(
         CancellationToken cancellationToken, LogLevelType logLevel = LogLevelType.Information, bool logToFile = true,
         bool logPackets = false, string? rootDirectory = null, bool showHeader = true, string pidFileName = "moongate.pid",
         PersistenceSchemaMode persistenceSchema = PersistenceSchemaMode.None,
-        string? migrationOutput = null, string? migrationTarget = null
+        string? migrationOutput = null, string? migrationTarget = null, bool initializeRoot = false,
+        bool generateAdminCertificate = false, string? adminCertificateHosts = null
     ) =>
     {
         rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory;
 
         rootDirectory = rootDirectory.ResolvePathAndEnvs();
+
+        if (generateAdminCertificate && !initializeRoot || adminCertificateHosts is not null && !generateAdminCertificate)
+        {
+            await Console.Error.WriteLineAsync(
+                "Certificate options require --initialize-root and --generate-admin-certificate."
+            );
+            Environment.ExitCode = 2;
+
+            return;
+        }
+
+        if (initializeRoot)
+        {
+            try
+            {
+                RootDirectoryInitializer.Initialize(
+                    rootDirectory,
+                    Path.Combine(AppContext.BaseDirectory, "migrations"),
+                    Console.Out,
+                    generateAdminCertificate ? adminCertificateHosts?.Split(',') ?? [] : null
+                );
+            }
+            catch (Exception exception)
+            {
+                await Console.Error.WriteLineAsync($"Root initialization failed: {exception.Message}");
+                Environment.ExitCode = 1;
+            }
+
+            return;
+        }
 
         if (persistenceSchema != PersistenceSchemaMode.None)
         {
@@ -85,8 +103,8 @@ await ConsoleApp.RunAsync(
             processGuard = PidFileGuard.Acquire(rootDirectory, pidFileName);
         }
         catch (Exception exception) when (exception is InvalidOperationException or
-                                              IOException or
-                                              UnauthorizedAccessException)
+                                                       IOException or
+                                                       UnauthorizedAccessException)
         {
             await Console.Error.WriteLineAsync($"Moongate startup aborted: {exception.Message}");
             Environment.ExitCode = 1;
@@ -101,7 +119,7 @@ await ConsoleApp.RunAsync(
 
         var directoriesConfig = new DirectoriesConfig(rootDirectory, ["logs", "plugins", "config", "scripts"]);
 
-        var serverArgs = new MoongateServerArgs()
+        var serverArgs = new MoongateServerArgs
         {
             LogLevel = logLevel,
             LogPackets = logPackets,
@@ -127,23 +145,23 @@ await ConsoleApp.RunAsync(
 
         var consoleLogger = new LoggerConfiguration()
 
-            // pass-through: the outer logger owns level policy
-            .MinimumLevel
-            .Verbose()
-            .WriteTo
-            .Console(
-                new ExpressionTemplate(
-                    "{@t:HH:mm:ss.fff} {@l:u3} " +
-                    "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
-                    " | {@m}\n{@x}",
-                    theme: TemplateTheme.Code
-                )
-            )
-            .CreateLogger();
+                            // pass-through: the outer logger owns level policy
+                            .MinimumLevel
+                            .Verbose()
+                            .WriteTo
+                            .Console(
+                                new ExpressionTemplate(
+                                    "{@t:HH:mm:ss.fff} {@l:u3} " +
+                                    "{Coalesce(Substring(SourceContext, LastIndexOf(SourceContext, '.') + 1), 'Moongate'),-28}" +
+                                    " | {@m}\n{@x}",
+                                    theme: TemplateTheme.Code
+                                )
+                            )
+                            .CreateLogger();
 
         var loggingConfiguration = new LoggerConfiguration()
-            .WriteTo
-            .Sink(new PromptAwareConsoleSink(consolePrompt, consoleLogger));
+                                   .WriteTo
+                                   .Sink(new PromptAwareConsoleSink(consolePrompt, consoleLogger));
 
         if (logToFile)
         {
@@ -152,6 +170,7 @@ await ConsoleApp.RunAsync(
             var logFilePath = Path.Combine(directoriesConfig["logs"], "moongate-.clef");
 
             loggingConfiguration = loggingConfiguration.WriteTo.File(
+
                 // One JSON object per line, keeping the message template and its
                 // properties separate so a log reader can group events by template.
                 new CompactJsonFormatter(),
@@ -166,77 +185,52 @@ await ConsoleApp.RunAsync(
         Log.Logger = loggingConfiguration.CreateLogger();
 
         var serverConfig = ConfigHelper.Load(Path.Combine(directoriesConfig["config"], "moongate.toml"));
+        Log.Information("Server mode: {ServerMode}", serverConfig.Mode);
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
-            .RegisterServices(services =>
+            .RegisterServices(
+                services =>
                 {
                     services.RegisterInstance(directoriesConfig);
                     services.RegisterInstance(serverArgs);
                     services.RegisterInstance(serverConfig);
-                    services.RegisterInstance(serverConfig.WorldSave.ToOptions());
-                    services.RegisterInstance(serverConfig.Scripting.ToOptions(directoriesConfig["scripts"]));
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
-                    services.RegisterInstance(new GameLoopOptions());
-                    services.RegisterInstance<TimeProvider>(TimeProvider.System);
-                    services.RegisterInstance(new TimerWheelOptions());
-                    services.RegisterDelegate<ITimerService>(
-                        resolver => resolver.Resolve<TimerWheelService>(),
-                        Reuse.Singleton
-                    );
-
-                    services.Register<PersistenceOperationBarrier>(Reuse.Singleton);
-                    services.RegisterDelegate<IPersistenceOperationBarrier>(
-                        resolver => resolver.Resolve<PersistenceOperationBarrier>(),
-                        Reuse.Singleton
-                    );
+                    services.RegisterInstance(TimeProvider.System);
                     services.RegisterMoongatePersistence(
-                            serverConfig.Persistence.ToOptions(
-                                Path.Combine(AppContext.BaseDirectory, "migrations"),
-                                directoriesConfig["plugins"],
-                                serverConfig.Mode
+                                serverConfig.Persistence.ToOptions(
+                                    Path.Combine(directoriesConfig.Root, "migrations"),
+                                    directoriesConfig["plugins"],
+                                    serverConfig.Mode,
+                                    rootDirectory
+                                )
                             )
-                        )
-                        .RegisterMoongateService<TimerWheelService>(priority: -900)
-                        .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
-                        .RegisterMoongateService<IUltimaDataService, UltimaDataService>(-10)
-                        .RegisterMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
-                        .RegisterMoongateService<ISessionService, SessionService>()
-                        .RegisterMoongateService<IEventBusService, EventBusService>();
+                            .AddMoongateService<IEventBusService, EventBusService>();
 
-                    services.AddMetricProvider<SystemMetricsProvider>()
-                        .AddMetricProvider<GameLoopMetricsProvider>()
-                        .AddMetricProvider<TimerMetricsProvider>()
-                        .AddMetricProvider<SessionMetricsProvider>();
-                    services.RegisterMoongateService<IDiagnosticService, DiagnosticService>(
-                            DiagnosticService.StartupPriority
-                        )
-                        .RegisterMoongateService<IPluginLoaderService, PluginLoaderService>(() =>
-                            new PluginLoaderService(services, directoriesConfig)
-                        )
-                        .RegisterPacketHandler<PingPacket, PingPacketHandler>()
-                        .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>()
-                        .RegisterMoongateService<ICommandSystemService, CommandSystemService>()
-                        .RegisterCommand<EchoCommand>(
-                            "echo|e",
-                            "Echoes back its arguments.",
-                            CommandSourceType.Console | CommandSourceType.InGame,
-                            AccountType.Regular
-                        )
-                        .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(
-                            LuaScriptEngineService.StartupPriority
-                        )
-                        .RegisterScriptModule<LogModule>()
-                        .RegisterCommand<ScriptCommand>(
-                            "script",
-                            "Reloads a script file or prints the engine's counters: script reload <file> | script metrics.",
-                            CommandSourceType.Console,
-                            AccountType.Administrator
-                        )
-                        .RegisterMoongateService<IConsolePromptService>(consolePrompt)
-                        .RegisterMoongateService<IConsoleInputService, ConsoleInputService>(priority: 1000);
+                    services.AddMetricProvider<SystemMetricsProvider>();
+                    services.AddMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority)
+                            .AddMoongateService<IPluginLoaderService, PluginLoaderService>(
+                                () =>
+                                    new(services, directoriesConfig)
+                            )
+                            .AddMoongateService<ICommandSystemService, CommandSystemService>()
+                            .RegisterCommand<EchoCommand>(
+                                "echo|e",
+                                "Echoes back its arguments.",
+                                CommandSourceType.Console | CommandSourceType.InGame,
+                                AccountType.Regular
+                            )
+                            .RegisterCommand<HelpCommand>(
+                                "help",
+                                "Lists available commands or shows details for one command.",
+                                CommandSourceType.Console | CommandSourceType.InGame,
+                                AccountType.Regular
+                            )
+                            .AddMoongateService<IConsolePromptService>(consolePrompt)
+                            .AddMoongateService<IConsoleInputService, ConsoleInputService>(1000);
 
-                    PacketPipelineRegistration.Register(services);
-                    ApiServerRegistration.Register(services);
+                    ServerRoleRegistration.Register(services, serverConfig, directoriesConfig);
+                    container.RegisterPlugin<MoongateUltimaPlugin>()
+                             .RegisterPlugin<MoongateAdminPlugin>();
 
                     return services;
                 }

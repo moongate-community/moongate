@@ -65,7 +65,7 @@ public static class MythicDecompress
         var output = new byte[input.Length + nonZeroCount + 1024];
 
         for (int i = 0,
-             m = 0;
+                 m = 0;
              i < nonZeroCount;
              ++i)
         {
@@ -117,7 +117,7 @@ public static class MythicDecompress
         } while (count >= 0);
 
         for (int i = 0,
-             m = 0;
+                 m = 0;
              i < nonZeroCount;
              ++i)
         {
@@ -285,7 +285,7 @@ public static class MythicDecompress
             Frequency(partialInput, frequency);
 
             for (int i = 0,
-                 m = 0;
+                     m = 0;
                  i < nonZeroCount;
                  ++i)
             {

@@ -23,6 +23,7 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
         var values = new List<T>();
         var ids = new HashSet<Serial>();
         var source = _source() ?? throw new InvalidOperationException("A persistence source returned null.");
+
         foreach (var live in source)
         {
             if (live is null || !live.Id.IsValid)
@@ -32,8 +33,13 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
 
             var identity = live.Id;
             var value = _snapshot(live);
-            if (value is null || ReferenceEquals(live, value) || value.Id != identity || live.Id != identity ||
-                !value.Id.IsValid || !ids.Add(value.Id))
+
+            if (value is null ||
+                ReferenceEquals(live, value) ||
+                value.Id != identity ||
+                live.Id != identity ||
+                !value.Id.IsValid ||
+                !ids.Add(value.Id))
             {
                 throw new InvalidOperationException(
                     $"Snapshot for '{typeof(T).FullName}' must be detached with an unchanged, unique, nonzero identity."
@@ -44,12 +50,13 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
         }
 
         entityCount = values.Count;
+
         return async (transaction, cancellationToken) =>
-        {
-            foreach (var batch in values.Chunk(SnapshotBatchSize))
-            {
-                await transaction.UpsertSnapshotsAsync(batch, cancellationToken).ConfigureAwait(false);
-            }
-        };
+               {
+                   foreach (var batch in values.Chunk(SnapshotBatchSize))
+                   {
+                       await transaction.UpsertSnapshotsAsync(batch, cancellationToken).ConfigureAwait(false);
+                   }
+               };
     }
 }

@@ -51,6 +51,7 @@ exists but fails compilation/execution aborts server startup.
 | --- | --- |
 | `engine.name`, `.version`, `.codename`, `.platform` | Read-only engine metadata |
 | `log.debug/info/warning/error(template, ...)` | Structured Serilog events; extra arguments fill template properties |
+| `log.LEVEL_DEBUG/.LEVEL_INFO/.LEVEL_WARNING/.LEVEL_ERROR` | Numeric constants for the matching Serilog level |
 | `print(...)` | Tab-separated values written to the server log at Information level |
 | `timer.after(seconds, fn)` | One callback after a positive delay; returns a cancellation handle |
 | `timer.every(seconds, fn)` | Repeating callbacks with a positive interval; returns a handle |
@@ -71,7 +72,8 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-There are no built-in world, character or inventory APIs yet. To expose application
+There are no built-in world, character or inventory APIs yet
+([Implementation status](implementation-status.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Reload and ownership

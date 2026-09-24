@@ -113,6 +113,7 @@ public static class AsciiText
     {
         using var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var bin = new BinaryWriter(fs);
+
         for (var i = 0; i < 10; ++i)
         {
             bin.Write(Fonts[i].Header);

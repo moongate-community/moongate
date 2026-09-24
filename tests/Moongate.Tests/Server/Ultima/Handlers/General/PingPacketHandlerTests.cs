@@ -1,10 +1,8 @@
-using Moongate.Server.Services.Network;
-using Moongate.Tests.TestSupport.Network;
-using Moongate.Network.Packets.General;
-using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
+using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Tests.Support.Sessions;
+using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.General;
@@ -23,9 +21,10 @@ public sealed class PingPacketHandlerTests
         var sender = new PacketSendService(connections.Service);
         var handler = new PingPacketHandler(sender);
         await sender.StartAsync();
+
         try
         {
-            await fixture.ExecuteOnLoopAsync(() => handler.Handle(session, new PingPacket(0xA7)));
+            await fixture.ExecuteOnLoopAsync(() => handler.Handle(session, new(0xA7)));
             Assert.Equal(new byte[] { 0x73, 0xA7 }, await middleware.ReadAsync());
         }
         finally
@@ -43,7 +42,7 @@ public sealed class PingPacketHandlerTests
         await using var connections = await ConnectionRegistryFixture.CreateAsync(fixture.Client);
         var sender = new PacketSendService(connections.Service);
         var handler = new PingPacketHandler(sender);
-        await fixture.ExecuteOnLoopAsync(() => handler.Handle(session, new PingPacket(3)));
+        await fixture.ExecuteOnLoopAsync(() => handler.Handle(session, new(3)));
         await fixture.Client.Completion.WaitAsync(TimeSpan.FromSeconds(5));
         Assert.False(fixture.Client.IsConnected);
         await sender.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));

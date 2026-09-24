@@ -15,7 +15,7 @@ public interface ICommandSystemService : IMoongateStartupService
     /// <param name="cancellationToken">Cancels the invocation before the handler runs.</param>
     /// <returns>Output lines produced by the command, or by the rejection that replaced it.</returns>
     /// <remarks>
-    /// <see cref="CommandSourceType.Console"/> resolves to <see cref="AccountType.Administrator"/> without
+    /// <see cref="CommandSourceType.Console" /> resolves to <see cref="AccountType.Administrator" /> without
     /// authentication, and it is this parameter's default. Any caller that is not a trusted in-process
     /// console must pass an explicit source and authenticate the user first.
     /// </remarks>

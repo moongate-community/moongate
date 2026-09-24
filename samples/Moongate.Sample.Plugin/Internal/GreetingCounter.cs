@@ -1,6 +1,9 @@
 namespace Moongate.Sample.Plugin.Internal;
 
-/// <summary>Counts greetings. Incremented from the game loop by the module and from the console thread by the command; read by the diagnostics thread; hence atomic.</summary>
+/// <summary>
+/// Counts greetings. Incremented from the game loop by the module and from the console thread by the command; read by
+/// the diagnostics thread; hence atomic.
+/// </summary>
 public sealed class GreetingCounter
 {
     private long _count;
@@ -10,7 +13,5 @@ public sealed class GreetingCounter
 
     /// <summary>Records one greeting.</summary>
     public void Increment()
-    {
-        Interlocked.Increment(ref _count);
-    }
+        => Interlocked.Increment(ref _count);
 }

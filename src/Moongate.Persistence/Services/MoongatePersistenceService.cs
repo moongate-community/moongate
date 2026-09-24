@@ -1,6 +1,7 @@
 using System.Data.Common;
 using System.Diagnostics;
 using Moongate.Core.Interfaces.Entities;
+using Moongate.Core.Primitives;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Data.Schema;
 using Moongate.Persistence.DataAccess;
@@ -39,13 +40,87 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     public MoongatePersistenceService(PostgreSqlPersistenceOptions options)
     {
         ArgumentNullException.ThrowIfNull(options);
-        _schema = new PersistenceSchemaCoordinator(options, _registry);
+        _schema = new(options, _registry, _logger);
     }
 
-    /// <summary>Validates the complete registration batch and prepares schemas according to the configured policy.</summary>
+    /// <summary>Reserves a nonzero Serial from a migration-managed sequence in the entity owner's schema.</summary>
+    /// <remarks>Reservations are durable and are not reclaimed after failed saves. This does not allocate UO mobile/item ranges.</remarks>
+    public Task<Serial> ReserveSerialAsync<T>(string sequenceName, CancellationToken cancellationToken = default)
+        where T : class, IMoongateEntity
+        => RunOperationAsync<T, Serial>(
+            true,
+            async (orm, _, token) =>
+            {
+                ArgumentException.ThrowIfNullOrWhiteSpace(sequenceName);
+                var parts = sequenceName.Split('.');
+
+                if (parts.Length != 2 ||
+                    parts[0] != _schema.GetOwner(typeof(T)).Schema ||
+                    parts[1].Length == 0 ||
+                    !parts[1]
+                        .All(
+                            character => char.IsAsciiLetterLower(character) ||
+                                         char.IsAsciiDigit(character) ||
+                                         character == '_'
+                        ))
+                {
+                    throw new ArgumentException(
+                        "Use a lowercase schema-qualified sequence in the entity owner's schema.",
+                        nameof(sequenceName)
+                    );
+                }
+
+                var value = Convert.ToInt64(
+                    await orm.Ado
+                             .ExecuteScalarAsync(
+                                 "SELECT nextval(CAST(@sequence AS regclass))",
+                                 new { sequence = sequenceName },
+                                 token
+                             )
+                             .ConfigureAwait(false)
+                );
+
+                if (value <= 0 || value > uint.MaxValue)
+                {
+                    throw new InvalidOperationException("The sequence returned a value outside the nonzero Serial range.");
+                }
+
+                return new((uint)value);
+            },
+            cancellationToken
+        );
+
+    /// <summary>Executes a sequential callback in one target's asynchronous transaction.</summary>
+    /// <remarks>
+    /// Do not reenter this owner through standalone facades. Failures poison the transaction even if caught.
+    /// No callback is retried; a failed commit acknowledgement may have an unknown durable outcome.
+    /// </remarks>
+    public Task ExecuteInTransactionAsync(
+        PersistenceDatabaseTarget target,
+        Func<IPersistenceTransaction, Task> operation,
+        CancellationToken cancellationToken = default
+    )
+        => RunOwnedAsync(
+            async () =>
+            {
+                ArgumentNullException.ThrowIfNull(operation);
+                EnsureReady();
+                var database = _schema.GetDatabase(target);
+                await _gates[target]
+                      .RunAsync(token => ExecuteCoreAsync(database, operation, token), cancellationToken)
+                      .ConfigureAwait(false);
+
+                return true;
+            }
+        );
+
+    /// <summary>
+    /// Checks every configured runtime database, validates registrations and prepares schemas according to the configured
+    /// policy.
+    /// </summary>
     public Task InitializeAsync(CancellationToken cancellationToken = default)
-    {
-        return RunSchemaAsync(async () =>
+        => RunSchemaAsync(
+            async () =>
             {
                 await _schema.InitializeAsync(cancellationToken).ConfigureAwait(false);
                 _logger.Information(
@@ -56,156 +131,136 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                 );
             }
         );
-    }
 
     /// <summary>Returns pending schema DDL without requiring normal initialization to succeed.</summary>
     public Task<IReadOnlyList<PersistenceSchemaChange>> PreviewSchemaAsync(CancellationToken cancellationToken = default)
-    {
-        return RunOwnedAsync(() =>
+        => RunOwnedAsync(
+            () =>
             {
                 Freeze();
+
                 return _schema.PreviewAsync(cancellationToken);
             }
         );
-    }
-
-    /// <summary>Explicitly applies schema changes for all registered modules.</summary>
-    public Task SynchronizeSchemaAsync(CancellationToken cancellationToken = default)
-    {
-        return RunSchemaAsync(() => _schema.SynchronizeAsync(cancellationToken));
-    }
-
-    /// <summary>Executes a sequential callback in one target's asynchronous transaction.</summary>
-    /// <remarks>Do not reenter this owner through standalone facades. Failures poison the transaction even if caught.
-    /// No callback is retried; a failed commit acknowledgement may have an unknown durable outcome.</remarks>
-    public Task ExecuteInTransactionAsync(
-        PersistenceDatabaseTarget target, Func<IPersistenceTransaction, Task> operation,
-        CancellationToken cancellationToken = default
-    )
-    {
-        return RunOwnedAsync(async () =>
-            {
-                ArgumentNullException.ThrowIfNull(operation);
-                EnsureReady();
-                var database = _schema.GetDatabase(target);
-                await _gates[target]
-                    .RunAsync(token => ExecuteCoreAsync(database, operation, token), cancellationToken)
-                    .ConfigureAwait(false);
-                return true;
-            }
-        );
-    }
 
     /// <summary>Saves detached snapshots, assuming the caller provides safe ownership of live sources.</summary>
     public Task SaveAllAsync(CancellationToken cancellationToken = default)
-    {
-        return SaveAllAsync(
+        => SaveAllAsync(
             (capture, token) =>
             {
                 token.ThrowIfCancellationRequested();
                 capture();
+
                 return Task.CompletedTask;
             },
             cancellationToken
         );
-    }
 
     /// <summary>Captures sources on their owner loop and commits one independent transaction per target.</summary>
-    /// <remarks>Invoke the capture action exactly once during each callback. Snapshot functions must deep-copy
+    /// <remarks>
+    /// Invoke the capture action exactly once during each callback. Snapshot functions must deep-copy
     /// nested mutable values. Absence is not deletion. All captures for a target validate before its first write.
     /// The mutation gate spans capture through commit, including draining any already-started capture when
-    /// its dispatcher returns early or fails. Targets do not share a distributed transaction.</remarks>
+    /// its dispatcher returns early or fails. Targets do not share a distributed transaction.
+    /// </remarks>
     public Task SaveAllAsync(
-        Func<Action, CancellationToken, Task> captureAsync, CancellationToken cancellationToken = default
+        Func<Action, CancellationToken, Task> captureAsync,
+        CancellationToken cancellationToken = default
     )
-    {
-        return RunOwnedAsync(async () =>
+        => RunOwnedAsync(
+            async () =>
             {
                 ArgumentNullException.ThrowIfNull(captureAsync);
                 EnsureReady();
                 var started = Stopwatch.GetTimestamp();
                 var savedCount = 0;
+
                 foreach (var group in _sources.GroupBy(source => GetTarget(source.EntityType)).OrderBy(group => group.Key))
                 {
                     await _gates[group.Key]
-                        .RunAsync(
-                            async token =>
-                            {
-                                var targetStarted = Stopwatch.GetTimestamp();
-                                var targetCount = 0;
-                                var state = new PersistenceCaptureState();
-                                var writes = new List<Func<PersistenceTransaction, CancellationToken, Task>>();
-                                _capture.Value = state;
-                                try
-                                {
-                                    await captureAsync(
-                                            () =>
-                                            {
-                                                state.BeginCapture();
-                                                var previousCapture = _capture.Value;
-                                                _capture.Value = state;
-                                                try
-                                                {
-                                                    token.ThrowIfCancellationRequested();
-                                                    foreach (var source in group)
-                                                    {
-                                                        writes.Add(source.Capture(out var count));
-                                                        targetCount += count;
-                                                    }
+                          .RunAsync(
+                              async token =>
+                              {
+                                  var targetStarted = Stopwatch.GetTimestamp();
+                                  var targetCount = 0;
+                                  var state = new PersistenceCaptureState();
+                                  var writes = new List<Func<PersistenceTransaction, CancellationToken, Task>>();
+                                  _capture.Value = state;
 
-                                                    state.CompleteCapture();
-                                                }
-                                                catch
-                                                {
-                                                    state.FailCapture();
-                                                    throw;
-                                                }
-                                                finally
-                                                {
-                                                    _capture.Value = previousCapture;
-                                                    state.ExitCapture();
-                                                }
-                                            },
-                                            token
-                                        )
-                                        .ConfigureAwait(false);
-                                    if (!await state.CloseAsync().ConfigureAwait(false))
-                                    {
-                                        throw new InvalidOperationException(
-                                            "Persistence capture must complete exactly once without reentry."
-                                        );
-                                    }
-                                }
-                                finally
-                                {
-                                    await state.CloseAsync().ConfigureAwait(false);
-                                    _capture.Value = null;
-                                }
+                                  try
+                                  {
+                                      await captureAsync(
+                                              () =>
+                                              {
+                                                  state.BeginCapture();
+                                                  var previousCapture = _capture.Value;
+                                                  _capture.Value = state;
 
-                                token.ThrowIfCancellationRequested();
-                                await ExecuteCoreAsync(
-                                        _schema.GetDatabase(group.Key),
-                                        async transaction =>
-                                        {
-                                            foreach (var write in writes)
-                                            {
-                                                await write(transaction, token).ConfigureAwait(false);
-                                            }
-                                        },
-                                        token
-                                    )
-                                    .ConfigureAwait(false);
-                                savedCount += targetCount;
-                                _logger.Information(
-                                    "PostgreSQL snapshot committed for {Target}: {EntityCount} entities in {ElapsedMilliseconds} ms",
-                                    group.Key,
-                                    targetCount,
-                                    Stopwatch.GetElapsedTime(targetStarted).TotalMilliseconds
-                                );
-                            },
-                            cancellationToken
-                        )
-                        .ConfigureAwait(false);
+                                                  try
+                                                  {
+                                                      token.ThrowIfCancellationRequested();
+
+                                                      foreach (var source in group)
+                                                      {
+                                                          writes.Add(source.Capture(out var count));
+                                                          targetCount += count;
+                                                      }
+
+                                                      state.CompleteCapture();
+                                                  }
+                                                  catch
+                                                  {
+                                                      state.FailCapture();
+
+                                                      throw;
+                                                  }
+                                                  finally
+                                                  {
+                                                      _capture.Value = previousCapture;
+                                                      state.ExitCapture();
+                                                  }
+                                              },
+                                              token
+                                          )
+                                          .ConfigureAwait(false);
+
+                                      if (!await state.CloseAsync().ConfigureAwait(false))
+                                      {
+                                          throw new InvalidOperationException(
+                                              "Persistence capture must complete exactly once without reentry."
+                                          );
+                                      }
+                                  }
+                                  finally
+                                  {
+                                      await state.CloseAsync().ConfigureAwait(false);
+                                      _capture.Value = null;
+                                  }
+
+                                  token.ThrowIfCancellationRequested();
+                                  await ExecuteCoreAsync(
+                                          _schema.GetDatabase(group.Key),
+                                          async transaction =>
+                                          {
+                                              foreach (var write in writes)
+                                              {
+                                                  await write(transaction, token).ConfigureAwait(false);
+                                              }
+                                          },
+                                          token
+                                      )
+                                      .ConfigureAwait(false);
+                                  savedCount += targetCount;
+                                  _logger.Information(
+                                      "PostgreSQL snapshot committed for {Target}: {EntityCount} entities in {ElapsedMilliseconds} ms",
+                                      group.Key,
+                                      targetCount,
+                                      Stopwatch.GetElapsedTime(targetStarted).TotalMilliseconds
+                                  );
+                              },
+                              cancellationToken
+                          )
+                          .ConfigureAwait(false);
                 }
 
                 cancellationToken.ThrowIfCancellationRequested();
@@ -214,9 +269,52 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                     savedCount,
                     Stopwatch.GetElapsedTime(started).TotalMilliseconds
                 );
+
                 return true;
             }
         );
+
+    /// <summary>Explicitly applies schema changes for all registered modules.</summary>
+    public Task SynchronizeSchemaAsync(CancellationToken cancellationToken = default)
+        => RunSchemaAsync(() => _schema.SynchronizeAsync(cancellationToken));
+
+    internal PersistenceDatabaseTarget GetTarget(Type type)
+        => _schema.GetOwner(type).DatabaseTarget;
+
+    internal bool IsCurrentTransaction(PersistenceTransaction transaction)
+        => ReferenceEquals(_transaction.Value, transaction);
+
+    internal DataAccess<T> RegisterEntity<T>(
+        Func<IEnumerable<T>>? source = null,
+        Func<T, T>? snapshot = null,
+        PersistenceDatabaseTarget? target = null
+    ) where T : class, IMoongateEntity
+    {
+        lock (_registrationSync)
+        {
+            ThrowIfFrozen();
+
+            if (source is null != snapshot is null)
+            {
+                throw new ArgumentException("A live source requires an explicit snapshot function.");
+            }
+
+            _registry.RegisterEntity(typeof(T), target);
+
+            if (target.HasValue)
+            {
+                _registeredTargets.Add(target.Value);
+            }
+
+            _entityCount++;
+
+            if (source is not null)
+            {
+                _sources.Add(new PersistenceEntityRegistration<T>(source, snapshot!));
+            }
+
+            return new(this);
+        }
     }
 
     internal void RegisterModule(IPersistenceModule module)
@@ -229,88 +327,51 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         }
     }
 
-    internal DataAccess<T> RegisterEntity<T>(
-        Func<IEnumerable<T>>? source = null, Func<T, T>? snapshot = null, PersistenceDatabaseTarget? target = null
-    ) where T : class, IMoongateEntity
-    {
-        lock (_registrationSync)
-        {
-            ThrowIfFrozen();
-            if ((source is null) != (snapshot is null))
-            {
-                throw new ArgumentException("A live source requires an explicit snapshot function.");
-            }
-
-            _registry.RegisterEntity(typeof(T), target);
-            if (target.HasValue)
-            {
-                _registeredTargets.Add(target.Value);
-            }
-
-            _entityCount++;
-            if (source is not null)
-            {
-                _sources.Add(new PersistenceEntityRegistration<T>(source, snapshot!));
-            }
-
-            return new DataAccess<T>(this);
-        }
-    }
-
-    internal PersistenceDatabaseTarget GetTarget(Type type)
-    {
-        return _schema.GetOwner(type).DatabaseTarget;
-    }
-
-    internal bool IsCurrentTransaction(PersistenceTransaction transaction)
-    {
-        return ReferenceEquals(_transaction.Value, transaction);
-    }
-
     internal Task<TResult> RunOperationAsync<T, TResult>(
-        bool mutation, Func<IFreeSql, DbTransaction?, CancellationToken, Task<TResult>> operation,
+        bool mutation,
+        Func<IFreeSql, DbTransaction?, CancellationToken, Task<TResult>> operation,
         CancellationToken cancellationToken
     ) where T : class, IMoongateEntity
-    {
-        return RunOwnedAsync(async () =>
+        => RunOwnedAsync(
+            async () =>
             {
                 EnsureReady();
                 cancellationToken.ThrowIfCancellationRequested();
                 var target = GetTarget(typeof(T));
                 var database = _schema.GetDatabase(target);
-                return mutation
-                    ? await _gates[target]
-                        .RunAsync(token => operation(database.Orm, null, token), cancellationToken)
-                        .ConfigureAwait(false)
-                    : await operation(database.Orm, null, cancellationToken).ConfigureAwait(false);
-            }
-        );
-    }
 
-    private Task RunSchemaAsync(Func<Task> operation)
-    {
-        return RunOwnedAsync(async () =>
-            {
-                Freeze();
-                await operation().ConfigureAwait(false);
-                return true;
+                return mutation
+                           ? await _gates[target]
+                                   .RunAsync(token => operation(database.Orm, null, token), cancellationToken)
+                                   .ConfigureAwait(false)
+                           : await operation(database.Orm, null, cancellationToken).ConfigureAwait(false);
             }
         );
+
+    private void EnsureReady()
+    {
+        if (!_schema.IsReady)
+        {
+            throw new InvalidOperationException("Initialize persistence successfully before using its facades.");
+        }
     }
 
     private async Task ExecuteCoreAsync(
-        PostgreSqlDatabase database, Func<PersistenceTransaction, Task> operation, CancellationToken cancellationToken
+        PostgreSqlDatabase database,
+        Func<PersistenceTransaction, Task> operation,
+        CancellationToken cancellationToken
     )
     {
         var connection = new NpgsqlConnection(database.RuntimeConnectionString);
         NpgsqlTransaction? native = null;
         PersistenceTransaction? scope = null;
         Exception? failure = null;
+
         try
         {
             await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
             native = await connection.BeginTransactionAsync(cancellationToken).ConfigureAwait(false);
-            scope = new PersistenceTransaction(this, database, native, cancellationToken);
+            scope = new(this, database, native, cancellationToken);
             _transaction.Value = scope;
             await operation(scope).ConfigureAwait(false);
             await scope.CompleteCallbackAsync().ConfigureAwait(false);
@@ -321,9 +382,11 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         catch (Exception exception)
         {
             failure = exception;
+
             if (scope is not null)
             {
                 scope.Fail(exception);
+
                 try
                 {
                     await scope.CompleteCallbackAsync().ConfigureAwait(false);
@@ -351,6 +414,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         finally
         {
             _transaction.Value = null;
+
             try
             {
                 if (native is not null)
@@ -376,10 +440,12 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
         }
     }
 
-    private async Task<TResult> RunOwnedAsync<TResult>(Func<Task<TResult>> operation)
+    private void Freeze()
     {
-        RejectReentry();
-        return await _lifetime.RunAsync(operation).ConfigureAwait(false);
+        lock (_registrationSync)
+        {
+            _frozen = true;
+        }
     }
 
     private void RejectReentry()
@@ -390,31 +456,35 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                 "A transaction callback cannot reenter its persistence owner through standalone APIs."
             );
             transaction.Fail(error);
+
             throw error;
         }
 
         if (_capture.Value is { } capture)
         {
             capture.FailCapture();
+
             throw new InvalidOperationException("A capture callback cannot reenter persistence.");
         }
     }
 
-    private void EnsureReady()
+    private async Task<TResult> RunOwnedAsync<TResult>(Func<Task<TResult>> operation)
     {
-        if (!_schema.IsReady)
-        {
-            throw new InvalidOperationException("Initialize persistence successfully before using its facades.");
-        }
+        RejectReentry();
+
+        return await _lifetime.RunAsync(operation).ConfigureAwait(false);
     }
 
-    private void Freeze()
-    {
-        lock (_registrationSync)
-        {
-            _frozen = true;
-        }
-    }
+    private Task RunSchemaAsync(Func<Task> operation)
+        => RunOwnedAsync(
+            async () =>
+            {
+                Freeze();
+                await operation().ConfigureAwait(false);
+
+                return true;
+            }
+        );
 
     private void ThrowIfFrozen()
     {
@@ -429,8 +499,10 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     {
         RejectReentry();
         Freeze();
-        return new ValueTask(
-            _lifetime.CloseAsync(async () =>
+
+        return new(
+            _lifetime.CloseAsync(
+                async () =>
                 {
                     foreach (var gate in _gates.Values)
                     {

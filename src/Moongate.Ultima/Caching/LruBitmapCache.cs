@@ -42,17 +42,6 @@ public sealed class LruBitmapCache : IDisposable
     private int _disposedCount;
     private bool _disposed;
 
-    public LruBitmapCache(int capacity)
-    {
-        if (capacity < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be non-negative.");
-        }
-
-        _capacity = capacity;
-        _map = new(Math.Min(capacity, 4096));
-    }
-
     /// <summary>
     /// Maximum number of bitmaps held by the cache. Setting this lower
     /// than the current Count evicts down to the new cap immediately.
@@ -117,6 +106,17 @@ public sealed class LruBitmapCache : IDisposable
                 return _disposedCount;
             }
         }
+    }
+
+    public LruBitmapCache(int capacity)
+    {
+        if (capacity < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be non-negative.");
+        }
+
+        _capacity = capacity;
+        _map = new(Math.Min(capacity, 4096));
     }
 
     /// <summary>

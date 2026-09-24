@@ -2,10 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.ExceptionServices;
 using Moongate.Network.Client;
-using Moongate.Server.Core.Data.GameLoop;
-using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Services.GameLoop;
-using Moongate.Server.Services.Timing;
 
 namespace Moongate.Tests.Support.Sessions;
 
@@ -40,14 +37,14 @@ public sealed class SessionFixture : IAsyncDisposable
             var acceptTask = listener.AcceptSocketAsync();
             client = await MoongateTcpClient.ConnectAsync(endPoint).WaitAsync(Timeout);
             peer = await acceptTask.WaitAsync(Timeout);
-            loop = new GameLoopService(
-                new GameLoopOptions { QueueCapacity = 16, MaxWorkItemsPerBatch = 4 },
-                new TimerWheelService(new TimerWheelOptions(), TimeProvider.System),
+            loop = new(
+                new() { QueueCapacity = 16, MaxWorkItemsPerBatch = 4 },
+                new(new(), TimeProvider.System),
                 TimeProvider.System
             );
             await loop.StartAsync().WaitAsync(Timeout);
 
-            return new SessionFixture(client, peer, loop);
+            return new(client, peer, loop);
         }
         catch (Exception creationException)
         {
@@ -74,6 +71,34 @@ public sealed class SessionFixture : IAsyncDisposable
         var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         await Loop.PostAsync(new SessionGameLoopWorkItem(action, completion));
         await completion.Task.WaitAsync(Timeout);
+    }
+
+    private static void Attempt(Action action, List<Exception> failures)
+    {
+        try
+        {
+            action();
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
+    }
+
+    private static async Task<bool> AttemptAsync(Func<Task> action, List<Exception> failures)
+    {
+        try
+        {
+            await action();
+
+            return true;
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+
+            return false;
+        }
     }
 
     private static async Task DisposeResourcesAsync(
@@ -105,6 +130,7 @@ public sealed class SessionFixture : IAsyncDisposable
                 if (loop is not null)
                 {
                     var stopped = false;
+
                     try
                     {
                         stopped = await AttemptAsync(() => loop.StopAsync().WaitAsync(Timeout), failures);
@@ -131,34 +157,6 @@ public sealed class SessionFixture : IAsyncDisposable
         }
     }
 
-    private static async Task<bool> AttemptAsync(Func<Task> action, List<Exception> failures)
-    {
-        try
-        {
-            await action();
-            return true;
-        }
-        catch (Exception exception)
-        {
-            failures.Add(exception);
-            return false;
-        }
-    }
-
-    private static void Attempt(Action action, List<Exception> failures)
-    {
-        try
-        {
-            action();
-        }
-        catch (Exception exception)
-        {
-            failures.Add(exception);
-        }
-    }
-
     public async ValueTask DisposeAsync()
-    {
-        await DisposeResourcesAsync(Client, _peer, Loop);
-    }
+        => await DisposeResourcesAsync(Client, _peer, Loop);
 }

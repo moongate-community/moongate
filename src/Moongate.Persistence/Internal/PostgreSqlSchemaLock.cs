@@ -19,9 +19,11 @@ internal static class PostgreSqlSchemaLock
             Pooling = false
         };
         var connection = new NpgsqlConnection(builder.ConnectionString);
+
         try
         {
             await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
             while (true)
             {
                 cancellationToken.ThrowIfCancellationRequested();
@@ -31,9 +33,10 @@ internal static class PostgreSqlSchemaLock
                     connection
                 );
                 command.Parameters.AddWithValue("lock_key", LockKeyBase + (int)target);
+
                 if (await command.ExecuteScalarAsync(cancellationToken).ConfigureAwait(false) is true)
                 {
-                    return new PostgreSqlSchemaLockLease(connection);
+                    return new(connection);
                 }
 
                 await Task.Delay(RetryDelay, cancellationToken).ConfigureAwait(false);
@@ -42,6 +45,7 @@ internal static class PostgreSqlSchemaLock
         catch
         {
             await connection.DisposeAsync().ConfigureAwait(false);
+
             throw;
         }
     }

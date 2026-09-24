@@ -21,9 +21,11 @@ dotnet add package Moongate.Server.Core
 
 ## Example
 
-Register the event bus and subscribe to a lifecycle event. This example publishes the event manually to demonstrate the bus; it does not start a Moongate server.
+Register the event bus and subscribe to a lifecycle event. This example publishes the event manually to demonstrate the bus;
+it does not start a Moongate server.
 
 <!-- nuget-smoke:Program.cs -->
+
 ```csharp
 using DryIoc;
 using Moongate.Server.Core.Data.Events;
@@ -43,11 +45,19 @@ using var subscription = bus.Subscribe<MoongateStartedEvent>((_, cancellationTok
 await bus.PublishAsync(new MoongateStartedEvent());
 ```
 
+`SubscribeAll` registers a handler invoked for every published event, independent of
+type — dispatched after that event's own typed subscribers, in subscription order.
+Each catch-all subscription is independent and returns its own disposable token,
+exactly like `Subscribe<TEvent>`; disposing one never affects another.
+
 ## Dependencies and scope
 
-This package depends on `Moongate.Core`, `Moongate.Api`, `Moongate.Network`, and `Moongate.Network.Packets`. DryIoc is available through the dependency graph.
+This package depends on `Moongate.Core`, `Moongate.Network`, and `Moongate.Network.Packets`. DryIoc is
+available through the dependency graph.
 
-The executable host and implementations of server runtime services are provided by `Moongate.Server`, which is not distributed as part of this library package. Referencing this package does not start the host, listener, timers, or game loop.
+The executable host and implementations of server runtime services are provided by `Moongate.Server`, which is not
+distributed as part of this library package. Referencing this package does not start the host, listener, timers, or game
+loop.
 
 ## Connections and game coordination
 
@@ -72,19 +82,10 @@ The executable host provides these implementations and their startup order.
 
 ### Compatibility
 
-`NetworkSession` now accepts `INetworkConnection`, and its nullable `Client` property
-returns that interface. `ISessionService.GetOrCreate` also accepts `INetworkConnection`.
-These are **binary API changes: rebuild consumers and plugins**. Passing an existing
-`MoongateTcpClient` remains source-compatible. Implementations of `ISessionService`
-must update their method signature. Replace `session.NetworkSession.Client.Dispose()`
-with the owning connection/sender service's `DisconnectAsync(session.SessionId)`.
-
-Implementations of `INetworkService` must implement the three new events. Session detach
-only clears the reference; it does not close the transport. Endpoint strings remain
-snapshotted after detach, and missing local endpoint metadata remains null.
-
-See the [migration guide](https://github.com/moongate-community/moongate/blob/develop/docs/network-game-separation.md)
-for composition and shutdown examples.
+Since 0.2.0, sessions hold an `INetworkConnection` instead of a `MoongateTcpClient`;
+consumers and plugins built against 0.1.x must be rebuilt. See
+[Transport and game ownership](https://moongate.sh/server/network-game-separation/)
+for the composition sample, the shutdown sequence and the upgrade notes.
 
 ## Runtime guides
 

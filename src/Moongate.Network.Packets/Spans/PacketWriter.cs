@@ -21,6 +21,7 @@ public ref struct PacketWriter
     public readonly void EnsureCapacity(int count)
     {
         ArgumentOutOfRangeException.ThrowIfNegative(count);
+
         if (Remaining < count)
         {
             throw new InvalidOperationException("The destination does not have enough remaining capacity.");
@@ -32,32 +33,6 @@ public ref struct PacketWriter
         EnsureCapacity(1);
         _destination[WrittenCount] = value;
         WrittenCount++;
-    }
-
-    public void WriteUInt16BigEndian(ushort value)
-    {
-        EnsureCapacity(sizeof(ushort));
-        BinaryPrimitives.WriteUInt16BigEndian(_destination[WrittenCount..], value);
-        WrittenCount += sizeof(ushort);
-    }
-
-    public void WriteUInt32BigEndian(uint value)
-    {
-        EnsureCapacity(sizeof(uint));
-        BinaryPrimitives.WriteUInt32BigEndian(_destination[WrittenCount..], value);
-        WrittenCount += sizeof(uint);
-    }
-
-    public void WriteUInt32LittleEndian(uint value)
-    {
-        EnsureCapacity(sizeof(uint));
-        BinaryPrimitives.WriteUInt32LittleEndian(_destination[WrittenCount..], value);
-        WrittenCount += sizeof(uint);
-    }
-
-    public void WriteSerial(Serial value)
-    {
-        WriteUInt32BigEndian(value.Value);
     }
 
     public void WriteBytes(ReadOnlySpan<byte> value)
@@ -72,6 +47,7 @@ public ref struct PacketWriter
         ArgumentNullException.ThrowIfNull(value);
         ArgumentOutOfRangeException.ThrowIfNegative(byteCount);
         ValidateAscii(value);
+
         if (value.Length > byteCount)
         {
             throw new ArgumentException("The value exceeds the fixed ASCII field width.", nameof(value));
@@ -92,6 +68,30 @@ public ref struct PacketWriter
         Encoding.ASCII.GetBytes(value, _destination[WrittenCount..]);
         _destination[WrittenCount + value.Length] = 0;
         WrittenCount += value.Length + 1;
+    }
+
+    public void WriteSerial(Serial value)
+        => WriteUInt32BigEndian(value.Value);
+
+    public void WriteUInt16BigEndian(ushort value)
+    {
+        EnsureCapacity(sizeof(ushort));
+        BinaryPrimitives.WriteUInt16BigEndian(_destination[WrittenCount..], value);
+        WrittenCount += sizeof(ushort);
+    }
+
+    public void WriteUInt32BigEndian(uint value)
+    {
+        EnsureCapacity(sizeof(uint));
+        BinaryPrimitives.WriteUInt32BigEndian(_destination[WrittenCount..], value);
+        WrittenCount += sizeof(uint);
+    }
+
+    public void WriteUInt32LittleEndian(uint value)
+    {
+        EnsureCapacity(sizeof(uint));
+        BinaryPrimitives.WriteUInt32LittleEndian(_destination[WrittenCount..], value);
+        WrittenCount += sizeof(uint);
     }
 
     private static void ValidateAscii(string value)

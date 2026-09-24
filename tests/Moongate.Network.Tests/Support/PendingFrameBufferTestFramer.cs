@@ -23,16 +23,19 @@ public sealed class PendingFrameBufferTestFramer : INetFramer
         if (_reportedLength.HasValue)
         {
             frameLength = _reportedLength.Value;
+
             return true;
         }
 
         if (buffer.IsEmpty)
         {
             frameLength = 0;
+
             return false;
         }
 
         frameLength = buffer[0] + 1;
+
         return buffer.Length >= frameLength;
     }
 }

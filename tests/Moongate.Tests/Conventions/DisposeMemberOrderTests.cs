@@ -43,30 +43,12 @@ public sealed class DisposeMemberOrderTests
         Assert.Empty(offenders);
     }
 
-    private static string RepositoryRoot()
-    {
-        var directory = new DirectoryInfo(AppContext.BaseDirectory);
-
-        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Moongate.slnx")))
-        {
-            directory = directory.Parent;
-        }
-
-        if (directory is null)
-        {
-            throw new InvalidOperationException("The repository root was not found above " + AppContext.BaseDirectory);
-        }
-
-        return directory.FullName;
-    }
-
     private static IEnumerable<string> EnumerateProductionSources(string root)
-    {
-        return Directory.EnumerateFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories)
-            .Where(file => !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}")
-                           && !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
-            );
-    }
+        => Directory.EnumerateFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories)
+                    .Where(
+                        file => !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}") &&
+                                !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
+                    );
 
     /// <summary>
     /// Names the top-level members declared after the last Dispose member of the file. Nesting depth keeps the
@@ -97,5 +79,22 @@ public sealed class DisposeMemberOrderTests
         }
 
         return trailing;
+    }
+
+    private static string RepositoryRoot()
+    {
+        var directory = new DirectoryInfo(AppContext.BaseDirectory);
+
+        while (directory is not null && !File.Exists(Path.Combine(directory.FullName, "Moongate.slnx")))
+        {
+            directory = directory.Parent;
+        }
+
+        if (directory is null)
+        {
+            throw new InvalidOperationException("The repository root was not found above " + AppContext.BaseDirectory);
+        }
+
+        return directory.FullName;
     }
 }

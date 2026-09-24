@@ -5,10 +5,9 @@ namespace Moongate.Ultima.Skill;
 
 public sealed class SkillGroups
 {
+    private static bool _unicode;
     public static List<SkillGroup> List { get; private set; }
     public static List<int> SkillList { get; private set; }
-
-    private static bool _unicode;
 
     static SkillGroups()
     {
@@ -91,6 +90,7 @@ public sealed class SkillGroups
 
         using var fs = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var bin = new BinaryWriter(fs);
+
         if (_unicode)
         {
             bin.Write(-1);

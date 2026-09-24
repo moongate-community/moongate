@@ -13,12 +13,12 @@ public sealed class DefaultRegistrationPlugin : IMoongatePlugin
 
     public DefaultRegistrationPlugin()
     {
-        Metadata = new MoongatePluginData("default", "Default plugin", new Version(1, 0, 0));
+        Metadata = new("default", "Default plugin", new(1, 0, 0));
     }
 
     public void Register(Container container)
     {
         container.RegisterInstance(new RegistrationDependency());
-        container.RegisterMoongateService<IRegistrationService, RegistrationService>();
+        container.AddMoongateService<IRegistrationService, RegistrationService>();
     }
 }

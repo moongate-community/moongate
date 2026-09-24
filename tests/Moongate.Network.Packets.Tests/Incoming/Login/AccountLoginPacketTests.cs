@@ -7,22 +7,9 @@ public class AccountLoginPacketTests
 {
     private static readonly byte[] Fixture = CreateFixture(0xFF);
 
-    [Fact]
-    public void TryDecode_KnownFixture_ReadsCredentialsAndRawKey()
-    {
-        Assert.True(PacketCodec.TryDecode<AccountLoginPacket>(Fixture, out var packet));
-        Assert.Equal(0x80, packet.OpCode);
-        Assert.Equal(62, packet.Length);
-        Assert.Equal("a", packet.Account);
-        Assert.Equal("b", packet.Password);
-        Assert.Equal((byte)0xFF, packet.NextLoginKey);
-
-        foreach (var rawKey in new byte[] { 0x00, 0x5D })
-        {
-            Assert.True(PacketCodec.TryDecode<AccountLoginPacket>(CreateFixture(rawKey), out var rawPacket));
-            Assert.Equal(rawKey, rawPacket.NextLoginKey);
-        }
-    }
+    [Theory, InlineData("1234567890123456789012345678901", "b"), InlineData("é", "b"), InlineData("a", "b\0")]
+    public void Constructor_InvalidCredential_ThrowsArgumentException(string account, string password)
+        => Assert.Throws<ArgumentException>(() => new AccountLoginPacket(account, password, 0xFF));
 
     [Fact]
     public void TryDecode_FullWidthCredentials_PreservesAllCharacters()
@@ -55,10 +42,21 @@ public class AccountLoginPacketTests
         Assert.False(PacketCodec.TryDecode<AccountLoginPacket>([.. Fixture, 0x00], out _));
     }
 
-    [Theory, InlineData("1234567890123456789012345678901", "b"), InlineData("é", "b"), InlineData("a", "b\0")]
-    public void Constructor_InvalidCredential_ThrowsArgumentException(string account, string password)
+    [Fact]
+    public void TryDecode_KnownFixture_ReadsCredentialsAndRawKey()
     {
-        Assert.Throws<ArgumentException>(() => new AccountLoginPacket(account, password, 0xFF));
+        Assert.True(PacketCodec.TryDecode<AccountLoginPacket>(Fixture, out var packet));
+        Assert.Equal(0x80, packet.OpCode);
+        Assert.Equal(62, packet.Length);
+        Assert.Equal("a", packet.Account);
+        Assert.Equal("b", packet.Password);
+        Assert.Equal((byte)0xFF, packet.NextLoginKey);
+
+        foreach (var rawKey in new byte[] { 0x00, 0x5D })
+        {
+            Assert.True(PacketCodec.TryDecode<AccountLoginPacket>(CreateFixture(rawKey), out var rawPacket));
+            Assert.Equal(rawKey, rawPacket.NextLoginKey);
+        }
     }
 
     private static byte[] CreateFixture(byte nextLoginKey)
@@ -68,6 +66,7 @@ public class AccountLoginPacketTests
         fixture[1] = (byte)'a';
         fixture[31] = (byte)'b';
         fixture[61] = nextLoginKey;
+
         return fixture;
     }
 }

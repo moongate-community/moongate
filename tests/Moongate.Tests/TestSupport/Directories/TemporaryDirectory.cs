@@ -14,12 +14,14 @@ public sealed class TemporaryDirectory : IDisposable
     {
         var path = System.IO.Path.Combine(Path, relativePath);
         var directory = System.IO.Path.GetDirectoryName(path);
+
         if (directory is not null)
         {
             Directory.CreateDirectory(directory);
         }
 
         File.WriteAllText(path, content);
+
         return path;
     }
 

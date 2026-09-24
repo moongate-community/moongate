@@ -5,53 +5,15 @@ namespace Moongate.Network.Tests.Buffers.Internal;
 
 public sealed class PendingFrameBufferTests
 {
-    [Theory,
-     InlineData(0, 8),
-     InlineData(1048577, 8),
-     InlineData(4, 0),
-     InlineData(4, 16777217)]
-    public void Constructor_OutOfRangeLimits_RejectBeforeRenting(int receiveBufferSize, int maxFrameLength)
-    {
-        var pool = new TrackingArrayPool();
-
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new PendingFrameBuffer(
-                new PendingFrameBufferTestFramer(),
-                receiveBufferSize,
-                maxFrameLength,
-                pool
-            )
-        );
-        Assert.Equal(0, pool.RentCount);
-    }
-
-    [Fact]
-    public void Append_OverBudget_RejectsBeforeRenting()
-    {
-        var pool = new TrackingArrayPool();
-        using var pending = new PendingFrameBuffer(
-            new PendingFrameBufferTestFramer(),
-            receiveBufferSize: 4,
-            maxFrameLength: 8,
-            pool: pool
-        );
-        var rentsBefore = pool.RentCount;
-
-        Assert.Throws<InvalidDataException>(() => pending.Append(new byte[13]));
-
-        Assert.Equal(rentsBefore, pool.RentCount);
-        Assert.Equal(0, pending.Length);
-    }
-
     [Fact]
     public void Append_OverBudgetAfterInitialRental_RejectsBeforeGrowing()
     {
         var pool = new TrackingArrayPool();
         using var pending = new PendingFrameBuffer(
             new PendingFrameBufferTestFramer(),
-            receiveBufferSize: 2,
-            maxFrameLength: 4,
-            pool: pool
+            2,
+            4,
+            pool
         );
         pending.Append(new byte[] { 3, 10 });
         var rentsBefore = pool.RentCount;
@@ -63,12 +25,126 @@ public sealed class PendingFrameBufferTests
     }
 
     [Fact]
+    public void Append_OverBudget_RejectsBeforeRenting()
+    {
+        var pool = new TrackingArrayPool();
+        using var pending = new PendingFrameBuffer(
+            new PendingFrameBufferTestFramer(),
+            4,
+            8,
+            pool
+        );
+        var rentsBefore = pool.RentCount;
+
+        Assert.Throws<InvalidDataException>(() => pending.Append(new byte[13]));
+
+        Assert.Equal(rentsBefore, pool.RentCount);
+        Assert.Equal(0, pending.Length);
+    }
+
+    [Theory,
+     InlineData(0, 8),
+     InlineData(1048577, 8),
+     InlineData(4, 0),
+     InlineData(4, 16777217)]
+    public void Constructor_OutOfRangeLimits_RejectBeforeRenting(int receiveBufferSize, int maxFrameLength)
+    {
+        var pool = new TrackingArrayPool();
+
+        Assert.Throws<ArgumentOutOfRangeException>(
+            () =>
+                new PendingFrameBuffer(
+                    new PendingFrameBufferTestFramer(),
+                    receiveBufferSize,
+                    maxFrameLength,
+                    pool
+                )
+        );
+        Assert.Equal(0, pool.RentCount);
+    }
+
+    [Fact]
+    public void Dispose_AfterFramerThrows_ReturnsEachRentalOnce()
+    {
+        var pool = new TrackingArrayPool();
+        var failure = new InvalidOperationException("Framer failed.");
+        var pending = new PendingFrameBuffer(
+            new PendingFrameBufferTestFramer(exception: failure),
+            1,
+            4,
+            pool
+        );
+        pending.Append(new byte[] { 1 });
+        pending.Append(new byte[] { 10, 20, 30 });
+
+        Assert.Same(failure, Assert.Throws<InvalidOperationException>(() => pending.TryRead(out _)));
+        pending.Dispose();
+        pending.Dispose();
+
+        Assert.True(pool.RentCount >= 2);
+        Assert.Equal(pool.RentCount, pool.ReturnCount);
+        Assert.Equal(0, pool.OutstandingCount);
+    }
+
+    [Fact]
+    public void TryRead_CoalescedFramesExceedMaxFrameLengthInTotal_AcceptsEachFrame()
+    {
+        using var pending = new PendingFrameBuffer(
+            new PendingFrameBufferTestFramer(),
+            3,
+            3
+        );
+        pending.Append(new byte[] { 2, 10, 11, 2, 20, 21 });
+
+        Assert.True(pending.TryRead(out var first));
+        Assert.True(pending.TryRead(out var second));
+
+        Assert.Equal(new byte[] { 2, 10, 11 }, first);
+        Assert.Equal(new byte[] { 2, 20, 21 }, second);
+    }
+
+    [Fact]
+    public void TryRead_CompletedFrameExceedsMaxFrameLength_Throws()
+    {
+        using var pending = new PendingFrameBuffer(
+            new PendingFrameBufferTestFramer(5),
+            4,
+            4
+        );
+        pending.Append(new byte[] { 4, 10, 20, 30, 40 });
+
+        Assert.Throws<InvalidDataException>(() => pending.TryRead(out _));
+    }
+
+    [Fact]
+    public void TryRead_ConsumedFrame_RemainsValidAfterReuseAndDispose()
+    {
+        var pool = new TrackingArrayPool();
+        var pending = new PendingFrameBuffer(
+            new PendingFrameBufferTestFramer(),
+            4,
+            8,
+            pool
+        );
+        pending.Append(new byte[] { 2, 0xAA, 0xBB });
+        Assert.True(pending.TryRead(out var frame));
+        pending.Append(new byte[] { 1, 0xCC });
+        pending.Dispose();
+        pending.Dispose();
+
+        Assert.Equal(new byte[] { 2, 0xAA, 0xBB }, frame);
+        Assert.Equal(1, pool.RentCount);
+        Assert.Equal(1, pool.ReturnCount);
+        Assert.Equal(0, pool.OutstandingCount);
+    }
+
+    [Fact]
     public void TryRead_FrameFragmentedAfterEveryByte_EmitsOnlyWhenComplete()
     {
         using var pending = new PendingFrameBuffer(
             new PendingFrameBufferTestFramer(),
-            receiveBufferSize: 1,
-            maxFrameLength: 4
+            1,
+            4
         );
         var encodedFrame = new byte[] { 3, 10, 20, 30 };
 
@@ -85,67 +161,15 @@ public sealed class PendingFrameBufferTests
         Assert.Equal(0, pending.Length);
     }
 
-    [Fact]
-    public void TryRead_ThreeCoalescedFrames_EmitsEachFrameInOrder()
-    {
-        using var pending = new PendingFrameBuffer(
-            new PendingFrameBufferTestFramer(),
-            receiveBufferSize: 6,
-            maxFrameLength: 8
-        );
-        pending.Append(new byte[] { 1, 10, 1, 20, 1, 30 });
-
-        Assert.True(pending.TryRead(out var first));
-        Assert.True(pending.TryRead(out var second));
-        Assert.True(pending.TryRead(out var third));
-        Assert.False(pending.TryRead(out var fourth));
-
-        Assert.Equal(new byte[] { 1, 10 }, first);
-        Assert.Equal(new byte[] { 1, 20 }, second);
-        Assert.Equal(new byte[] { 1, 30 }, third);
-        Assert.Null(fourth);
-        Assert.Equal(0, pending.Length);
-    }
-
-    [Fact]
-    public void TryRead_CoalescedFramesExceedMaxFrameLengthInTotal_AcceptsEachFrame()
-    {
-        using var pending = new PendingFrameBuffer(
-            new PendingFrameBufferTestFramer(),
-            receiveBufferSize: 3,
-            maxFrameLength: 3
-        );
-        pending.Append(new byte[] { 2, 10, 11, 2, 20, 21 });
-
-        Assert.True(pending.TryRead(out var first));
-        Assert.True(pending.TryRead(out var second));
-
-        Assert.Equal(new byte[] { 2, 10, 11 }, first);
-        Assert.Equal(new byte[] { 2, 20, 21 }, second);
-    }
-
     [Theory, InlineData(0), InlineData(-1), InlineData(3)]
     public void TryRead_FramerReportsNonPositiveOrUnavailableLength_Throws(int reportedLength)
     {
         using var pending = new PendingFrameBuffer(
             new PendingFrameBufferTestFramer(reportedLength),
-            receiveBufferSize: 2,
-            maxFrameLength: 8
+            2,
+            8
         );
         pending.Append(new byte[] { 1, 42 });
-
-        Assert.Throws<InvalidDataException>(() => pending.TryRead(out _));
-    }
-
-    [Fact]
-    public void TryRead_CompletedFrameExceedsMaxFrameLength_Throws()
-    {
-        using var pending = new PendingFrameBuffer(
-            new PendingFrameBufferTestFramer(reportedLength: 5),
-            receiveBufferSize: 4,
-            maxFrameLength: 4
-        );
-        pending.Append(new byte[] { 4, 10, 20, 30, 40 });
 
         Assert.Throws<InvalidDataException>(() => pending.TryRead(out _));
     }
@@ -156,9 +180,9 @@ public sealed class PendingFrameBufferTests
         var pool = new TrackingArrayPool();
         using var pending = new PendingFrameBuffer(
             new PendingFrameBufferTestFramer(),
-            receiveBufferSize: 2,
-            maxFrameLength: 4,
-            pool: pool
+            2,
+            4,
+            pool
         );
         pending.Append(new byte[] { 6, 10, 20, 30, 40 });
 
@@ -173,9 +197,9 @@ public sealed class PendingFrameBufferTests
         var pool = new TrackingArrayPool();
         using var pending = new PendingFrameBuffer(
             new StatefulPendingFrameFramer(),
-            receiveBufferSize: 1,
-            maxFrameLength: 8,
-            pool: pool
+            1,
+            8,
+            pool
         );
         pending.Append(new byte[] { 0x5E });
         Assert.False(pending.TryRead(out _));
@@ -190,47 +214,24 @@ public sealed class PendingFrameBufferTests
     }
 
     [Fact]
-    public void TryRead_ConsumedFrame_RemainsValidAfterReuseAndDispose()
+    public void TryRead_ThreeCoalescedFrames_EmitsEachFrameInOrder()
     {
-        var pool = new TrackingArrayPool();
-        var pending = new PendingFrameBuffer(
+        using var pending = new PendingFrameBuffer(
             new PendingFrameBufferTestFramer(),
-            receiveBufferSize: 4,
-            maxFrameLength: 8,
-            pool: pool
+            6,
+            8
         );
-        pending.Append(new byte[] { 2, 0xAA, 0xBB });
-        Assert.True(pending.TryRead(out var frame));
-        pending.Append(new byte[] { 1, 0xCC });
-        pending.Dispose();
-        pending.Dispose();
+        pending.Append(new byte[] { 1, 10, 1, 20, 1, 30 });
 
-        Assert.Equal(new byte[] { 2, 0xAA, 0xBB }, frame);
-        Assert.Equal(1, pool.RentCount);
-        Assert.Equal(1, pool.ReturnCount);
-        Assert.Equal(0, pool.OutstandingCount);
-    }
+        Assert.True(pending.TryRead(out var first));
+        Assert.True(pending.TryRead(out var second));
+        Assert.True(pending.TryRead(out var third));
+        Assert.False(pending.TryRead(out var fourth));
 
-    [Fact]
-    public void Dispose_AfterFramerThrows_ReturnsEachRentalOnce()
-    {
-        var pool = new TrackingArrayPool();
-        var failure = new InvalidOperationException("Framer failed.");
-        var pending = new PendingFrameBuffer(
-            new PendingFrameBufferTestFramer(exception: failure),
-            receiveBufferSize: 1,
-            maxFrameLength: 4,
-            pool: pool
-        );
-        pending.Append(new byte[] { 1 });
-        pending.Append(new byte[] { 10, 20, 30 });
-
-        Assert.Same(failure, Assert.Throws<InvalidOperationException>(() => pending.TryRead(out _)));
-        pending.Dispose();
-        pending.Dispose();
-
-        Assert.True(pool.RentCount >= 2);
-        Assert.Equal(pool.RentCount, pool.ReturnCount);
-        Assert.Equal(0, pool.OutstandingCount);
+        Assert.Equal(new byte[] { 1, 10 }, first);
+        Assert.Equal(new byte[] { 1, 20 }, second);
+        Assert.Equal(new byte[] { 1, 30 }, third);
+        Assert.Null(fourth);
+        Assert.Equal(0, pending.Length);
     }
 }

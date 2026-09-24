@@ -23,10 +23,10 @@ public sealed class DisposeFromHandlerTests
         var disposed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
         receiver.OnDataReceived += (_, e) =>
-        {
-            e.Client.Dispose();
-            disposed.TrySetResult();
-        };
+                                   {
+                                       e.Client.Dispose();
+                                       disposed.TrySetResult();
+                                   };
 
         try
         {
@@ -51,17 +51,19 @@ public sealed class DisposeFromHandlerTests
         var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
         MoongateTcpClient? accepted = null;
         server.OnDataReceived += (_, args) =>
-        {
-            accepted = args.Client;
-            server.Dispose();
-            disposed.TrySetResult();
-            if (!release.Wait(Timeout))
-            {
-                throw new TimeoutException("Data handler was not released.");
-            }
-        };
+                                 {
+                                     accepted = args.Client;
+                                     server.Dispose();
+                                     disposed.TrySetResult();
+
+                                     if (!release.Wait(Timeout))
+                                     {
+                                         throw new TimeoutException("Data handler was not released.");
+                                     }
+                                 };
         await server.StartAsync(CancellationToken.None);
         using var peer = new TcpClient();
+
         try
         {
             await peer.ConnectAsync(IPAddress.Loopback, server.Port).WaitAsync(Timeout);

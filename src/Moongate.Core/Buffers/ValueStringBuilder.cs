@@ -14,6 +14,15 @@ public ref struct ValueStringBuilder
     private char[] _arrayToReturnToPool;
     private Span<char> _chars;
 
+    public int Length { get; private set; }
+
+    public int Capacity => _chars.Length;
+
+    public ref char this[int index] => ref _chars[index];
+
+    /// <summary>Returns the underlying storage of the builder.</summary>
+    public Span<char> RawChars => _chars;
+
     // If this ctor is used, you cannot pass in stackalloc ROS for append/replace.
     public ValueStringBuilder(ReadOnlySpan<char> initialString, bool mt = false) : this(initialString.Length, mt)
     {
@@ -42,15 +51,6 @@ public ref struct ValueStringBuilder
         _arrayToReturnToPool = ArrayPool<char>.Shared.Rent(initialCapacity);
         _chars = _arrayToReturnToPool;
     }
-
-    public int Length { get; private set; }
-
-    public int Capacity => _chars.Length;
-
-    public ref char this[int index] => ref _chars[index];
-
-    /// <summary>Returns the underlying storage of the builder.</summary>
-    public Span<char> RawChars => _chars;
 
     public void Append<T>(T value, string? format = null)
     {

@@ -1,11 +1,11 @@
 using DryIoc;
-using Serilog;
 using Moongate.Core.Directories;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Interfaces.Plugins;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Plugins;
 using Moongate.Server.Services.Plugins.Internal;
+using Serilog;
 
 namespace Moongate.Server.Services.Plugins;
 
@@ -101,14 +101,15 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
             var context = new PluginLoadContext(path);
             _contexts.Add(context);
             var types = context.LoadFromAssemblyPath(path)
-                .GetExportedTypes()
-                .Where(type => type.IsClass &&
-                               !type.IsAbstract &&
-                               !type.ContainsGenericParameters &&
-                               typeof(IMoongatePlugin).IsAssignableFrom(type)
-                )
-                .OrderBy(type => type.FullName, StringComparer.Ordinal)
-                .ToArray();
+                               .GetExportedTypes()
+                               .Where(
+                                   type => type.IsClass &&
+                                           !type.IsAbstract &&
+                                           !type.ContainsGenericParameters &&
+                                           typeof(IMoongatePlugin).IsAssignableFrom(type)
+                               )
+                               .OrderBy(type => type.FullName, StringComparer.Ordinal)
+                               .ToArray();
 
             if (types.Length == 0)
             {

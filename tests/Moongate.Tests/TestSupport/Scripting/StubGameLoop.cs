@@ -13,31 +13,17 @@ public sealed class StubGameLoop : IGameLoopService
     /// <summary>Gets the number of work items handed to TryPost or PostAsync.</summary>
     public int PostedWorkItems { get; private set; }
 
-    /// <summary>When true, PostAsync reports IsOnLoopThread as true for the duration of the posted item's Execute, restoring the previous value afterwards.</summary>
+    /// <summary>
+    /// When true, PostAsync reports IsOnLoopThread as true for the duration of the posted item's Execute, restoring the
+    /// previous value afterwards.
+    /// </summary>
     public bool SimulateLoopThreadWhilePosting { get; set; }
 
     /// <summary>When true, PostAsync refuses the item with the real loop's "not accepting work" error after counting the attempt.</summary>
     public bool ThrowOnPost { get; set; }
 
-    public Task StartAsync() => Task.CompletedTask;
-    public Task StopAsync() => Task.CompletedTask;
-    public Task StopAsync(IGameLoopWorkItem finalWorkItem) => Task.CompletedTask;
-    public GameLoopMetricsSnapshot GetMetricsSnapshot() => throw new NotSupportedException();
-
-    public Task StopWithFinalWorkAsync(
-        Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
-        CancellationToken cancellationToken = default
-    )
-    {
-        throw new NotSupportedException();
-    }
-
-    public bool TryPost(IGameLoopWorkItem workItem)
-    {
-        PostedWorkItems++;
-        workItem.Execute();
-        return true;
-    }
+    public GameLoopMetricsSnapshot GetMetricsSnapshot()
+        => throw new NotSupportedException();
 
     public ValueTask PostAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken = default)
     {
@@ -68,5 +54,28 @@ public sealed class StubGameLoop : IGameLoopService
         }
 
         return ValueTask.CompletedTask;
+    }
+
+    public Task StartAsync()
+        => Task.CompletedTask;
+
+    public Task StopAsync()
+        => Task.CompletedTask;
+
+    public Task StopAsync(IGameLoopWorkItem finalWorkItem)
+        => Task.CompletedTask;
+
+    public Task StopWithFinalWorkAsync(
+        Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
+        CancellationToken cancellationToken = default
+    )
+        => throw new NotSupportedException();
+
+    public bool TryPost(IGameLoopWorkItem workItem)
+    {
+        PostedWorkItems++;
+        workItem.Execute();
+
+        return true;
     }
 }

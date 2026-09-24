@@ -11,13 +11,16 @@ internal sealed class BlockingFailingCleanupMiddleware : INetMiddleware, IDispos
     public Task Entered => _entered.Task;
 
     public ValueTask<ReadOnlyMemory<byte>> ProcessAsync(
-        MoongateTcpClient? client, ReadOnlyMemory<byte> data,
+        MoongateTcpClient? client,
+        ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
     {
-        cancellationToken.Register(() =>
+        cancellationToken.Register(
+            () =>
             {
                 _entered.TrySetResult();
+
                 if (!_release.Wait(TimeSpan.FromSeconds(10)))
                 {
                     throw new TimeoutException("Cleanup gate was not released.");
@@ -26,16 +29,13 @@ internal sealed class BlockingFailingCleanupMiddleware : INetMiddleware, IDispos
                 throw new IOException("Controlled gated cleanup failure.");
             }
         );
+
         return ValueTask.FromResult(data);
     }
 
     public void Release()
-    {
-        _release.Set();
-    }
+        => _release.Set();
 
     public void Dispose()
-    {
-        _release.Set();
-    }
+        => _release.Set();
 }

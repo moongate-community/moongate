@@ -9,14 +9,23 @@ internal sealed class SessionPacketOutbox
     private readonly Func<long, Task> _disconnect;
     private readonly Task _disconnectRequested;
     private readonly TaskCompletionSource _closure = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly Lock _admissionGate = new();
+    private byte[]? _terminalFrame;
     private int _closed;
     private int _closeRequested;
+    private int _terminalQueued;
+    private int _terminalSent;
 
     public INetworkConnection Connection { get; }
     public Task Completion { get; private set; } = Task.CompletedTask;
+    public bool TerminalQueued => Volatile.Read(ref _terminalQueued) != 0;
+    public bool TerminalSent => Volatile.Read(ref _terminalSent) != 0;
 
     public SessionPacketOutbox(
-        INetworkConnection connection, Task disconnectRequested, int capacity, Func<long, Task> disconnect
+        INetworkConnection connection,
+        Task disconnectRequested,
+        int capacity,
+        Func<long, Task> disconnect
     )
     {
         Connection = connection;
@@ -33,30 +42,44 @@ internal sealed class SessionPacketOutbox
         );
     }
 
-    public void Start()
-    {
-        // Middleware can block synchronously: one worker per connection, never per packet.
-        Completion = Task.Run(RunAsync);
-    }
-
-    public bool TryWrite(byte[] frame)
-    {
-        return Volatile.Read(ref _closed) == 0 && _queue.Writer.TryWrite(frame);
-    }
-
     public void Close()
     {
         CloseQueue();
+
         if (Interlocked.Exchange(ref _closeRequested, 1) == 0)
         {
             _ = CloseConnectionAsync();
         }
     }
 
-    private void CloseQueue()
+    public void Start()
+
+        // Middleware can block synchronously: one worker per connection, never per packet.
+        => Completion = Task.Run(RunAsync);
+
+    public bool TryWrite(byte[] frame)
     {
-        Interlocked.Exchange(ref _closed, 1);
-        _queue.Writer.TryComplete();
+        lock (_admissionGate)
+        {
+            return _closed == 0 && _terminalFrame is null && _queue.Writer.TryWrite(frame);
+        }
+    }
+
+    public bool TryWriteTerminal(byte[] frame)
+    {
+        lock (_admissionGate)
+        {
+            if (_closed != 0 || _terminalFrame is not null)
+            {
+                return false;
+            }
+
+            _terminalFrame = frame;
+            Volatile.Write(ref _terminalQueued, 1);
+            _queue.Writer.TryComplete();
+
+            return true;
+        }
     }
 
     private async Task CloseConnectionAsync()
@@ -73,39 +96,12 @@ internal sealed class SessionPacketOutbox
         }
     }
 
-    private async Task RunAsync()
+    private void CloseQueue()
     {
-        List<Exception> failures = [];
-        var drain = DrainAsync();
-        await Task.WhenAny(drain, Connection.Completion).ConfigureAwait(false);
-        CloseQueue();
-        try
+        lock (_admissionGate)
         {
-            await drain.ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            failures.Add(exception);
-        }
-
-        // Classify the send result before automatic failure cleanup can publish a close request.
-        Close();
-        try
-        {
-            await _closure.Task.ConfigureAwait(false);
-        }
-        catch (Exception exception)
-        {
-            failures.Add(exception);
-        }
-
-        while (_queue.Reader.TryRead(out _))
-        {
-        }
-
-        if (failures.Count > 0)
-        {
-            throw new AggregateException(failures);
+            Volatile.Write(ref _closed, 1);
+            _queue.Writer.TryComplete();
         }
     }
 
@@ -118,18 +114,73 @@ internal sealed class SessionPacketOutbox
                 break;
             }
 
-            try
+            if (!await SendFrameAsync(frame).ConfigureAwait(false))
             {
-                await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false);
-            }
-            catch (Exception exception) when (_disconnectRequested.IsCompletedSuccessfully &&
-                                              exception is IOException or ObjectDisposedException
-                                                  or OperationCanceledException)
-            {
-                // Only the captured owner request identifies an intentionally interrupted write.
-                // A send failure may close the transport itself, so its current state is not a cause.
                 break;
             }
+        }
+
+        if (_terminalFrame is not null &&
+            Volatile.Read(ref _closed) == 0 &&
+            Connection.IsConnected &&
+            await SendFrameAsync(_terminalFrame).ConfigureAwait(false))
+        {
+            Volatile.Write(ref _terminalSent, 1);
+        }
+    }
+
+    private async Task<bool> SendFrameAsync(byte[] frame)
+    {
+        try
+        {
+            await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false);
+
+            return true;
+        }
+        catch (Exception exception) when (_disconnectRequested.IsCompletedSuccessfully &&
+                                          exception is IOException or
+                                                       ObjectDisposedException or
+                                                       OperationCanceledException)
+        {
+            // Only the captured owner request identifies an intentionally interrupted write.
+            // A send failure may close the transport itself, so its current state is not a cause.
+            return false;
+        }
+    }
+
+    private async Task RunAsync()
+    {
+        List<Exception> failures = [];
+        var drain = DrainAsync();
+        await Task.WhenAny(drain, Connection.Completion).ConfigureAwait(false);
+        CloseQueue();
+
+        try
+        {
+            await drain.ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
+
+        // Classify the send result before automatic failure cleanup can publish a close request.
+        Close();
+
+        try
+        {
+            await _closure.Task.ConfigureAwait(false);
+        }
+        catch (Exception exception)
+        {
+            failures.Add(exception);
+        }
+
+        while (_queue.Reader.TryRead(out _)) { }
+
+        if (failures.Count > 0)
+        {
+            throw new AggregateException(failures);
         }
     }
 }

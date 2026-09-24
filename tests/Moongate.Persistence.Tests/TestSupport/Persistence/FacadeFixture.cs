@@ -1,4 +1,3 @@
-using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
 
@@ -9,8 +8,8 @@ internal static class FacadeFixture
     public static MoongatePersistenceService Create(PostgreSqlTestDatabase database)
     {
         var owner = new MoongatePersistenceService(
-            new PostgreSqlPersistenceOptions(
-                [new PersistenceDatabaseOptions(PersistenceDatabaseTarget.Realm, database.ConnectionString)],
+            new(
+                [new(PersistenceDatabaseTarget.Realm, database.ConnectionString)],
                 true
             )
         );
@@ -30,6 +29,7 @@ internal static class FacadeFixture
                 [typeof(InventoryEntity)]
             )
         );
+
         return owner;
     }
 }

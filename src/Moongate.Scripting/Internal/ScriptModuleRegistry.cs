@@ -11,23 +11,6 @@ internal sealed class ScriptModuleRegistry : IScriptModuleRegistry
     public IReadOnlyList<Type> ModuleTypes => _modules;
     public IReadOnlyList<Type> EnumTypes => _enums;
 
-    public void AddModule(Type moduleType)
-    {
-        ArgumentNullException.ThrowIfNull(moduleType);
-
-        if (moduleType.GetCustomAttributes(typeof(ScriptModuleAttribute), inherit: false).Length == 0)
-        {
-            throw new ArgumentException($"{moduleType.FullName} carries no [ScriptModule].", nameof(moduleType));
-        }
-
-        if (_modules.Contains(moduleType))
-        {
-            throw new InvalidOperationException($"Script module {moduleType.FullName} is already registered.");
-        }
-
-        _modules.Add(moduleType);
-    }
-
     public void AddEnum(Type enumType)
     {
         ArgumentNullException.ThrowIfNull(enumType);
@@ -41,5 +24,22 @@ internal sealed class ScriptModuleRegistry : IScriptModuleRegistry
         {
             _enums.Add(enumType);
         }
+    }
+
+    public void AddModule(Type moduleType)
+    {
+        ArgumentNullException.ThrowIfNull(moduleType);
+
+        if (moduleType.GetCustomAttributes(typeof(ScriptModuleAttribute), false).Length == 0)
+        {
+            throw new ArgumentException($"{moduleType.FullName} carries no [ScriptModule].", nameof(moduleType));
+        }
+
+        if (_modules.Contains(moduleType))
+        {
+            throw new InvalidOperationException($"Script module {moduleType.FullName} is already registered.");
+        }
+
+        _modules.Add(moduleType);
     }
 }

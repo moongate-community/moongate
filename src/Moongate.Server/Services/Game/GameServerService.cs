@@ -1,3 +1,4 @@
+using System.Buffers.Binary;
 using Moongate.Network.Packets.Registry;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Data.Network.Events;
@@ -23,8 +24,11 @@ public sealed class GameServerService : IGameServerService
     private bool _stopping;
 
     public GameServerService(
-        INetworkService network, IConnectionService connections, ISessionService sessions,
-        IPacketDispatchService dispatcher, IPacketSendService sender
+        INetworkService network,
+        IConnectionService connections,
+        ISessionService sessions,
+        IPacketDispatchService dispatcher,
+        IPacketSendService sender
     )
     {
         _network = network;
@@ -47,42 +51,14 @@ public sealed class GameServerService : IGameServerService
         }
     }
 
-    private async Task StartCoreAsync()
-    {
-        _network.ConnectionAccepted += OnAccepted;
-        _network.DataReceived += OnData;
-        _network.ConnectionClosed += OnClosed;
-        try
-        {
-            _logger.Information("Starting game server packet coordination");
-            await _network.StartAsync().ConfigureAwait(false);
-        }
-        catch
-        {
-            lock (_lifecycleGate)
-            {
-                _stopping = true;
-            }
-
-            try
-            {
-                await StopCoreAsync().ConfigureAwait(false);
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "Game cleanup failed after startup failure");
-            }
-
-            throw;
-        }
-    }
-
     public Task StopAsync()
     {
         lock (_lifecycleGate)
         {
             _stopping = true;
-            return _lifecycle.StopAsync(async startup =>
+
+            return _lifecycle.StopAsync(
+                async startup =>
                 {
                     if (startup is not null)
                     {
@@ -95,6 +71,9 @@ public sealed class GameServerService : IGameServerService
         }
     }
 
+    private static async Task CaptureCleanup(Func<Task> cleanup)
+        => await cleanup().ConfigureAwait(false);
+
     private void OnAccepted(object? sender, NetworkConnectionEventArgs args)
     {
         _sessions.GetOrCreate(args.Connection);
@@ -105,8 +84,38 @@ public sealed class GameServerService : IGameServerService
         );
     }
 
+    private void OnClosed(object? sender, NetworkConnectionEventArgs args)
+        => TrackCleanup(
+            () => Task.WhenAll(
+                CaptureCleanup(() => _sender.DisconnectAsync(args.Connection.SessionId)),
+                CaptureCleanup(() => _dispatcher.DisconnectAsync(args.Connection.SessionId))
+            )
+        );
+
     private void OnData(object? sender, NetworkDataEventArgs args)
     {
+        if (!_sessions.TryGet(args.Connection.SessionId, out var session) ||
+            !ReferenceEquals(session.NetworkSession.Client, args.Connection))
+        {
+            return;
+        }
+
+        if (session.NetworkSession.Seed is null && args.Data.Length == sizeof(uint))
+        {
+            var seed = BinaryPrimitives.ReadUInt32BigEndian(args.Data.Span);
+
+            if (seed == 0)
+            {
+                TrackCleanup(() => _connections.DisconnectAsync(args.Connection.SessionId, args.Connection));
+
+                return;
+            }
+
+            session.NetworkSession.SetSeed(seed);
+
+            return;
+        }
+
         // Decode now: transport memory is borrowed only until this callback returns.
         if (PacketRegistry.Default.TryDecode(args.Data.Span, out var packet, out var opCode) &&
             _dispatcher.TryDispatch(args.Connection.SessionId, packet))
@@ -115,8 +124,8 @@ public sealed class GameServerService : IGameServerService
         }
 
         var packetName = PacketRegistry.Default.TryGetDescriptor(opCode, out var descriptor)
-            ? descriptor.PacketType.Name
-            : "Unknown";
+                             ? descriptor.PacketType.Name
+                             : "Unknown";
         _logger.Warning(
             "Rejected packet from session {SessionId}, opcode {OpCode}, name {PacketName}",
             args.Connection.SessionId,
@@ -124,31 +133,6 @@ public sealed class GameServerService : IGameServerService
             packetName
         );
         TrackCleanup(() => _connections.DisconnectAsync(args.Connection.SessionId));
-    }
-
-    private void OnClosed(object? sender, NetworkConnectionEventArgs args)
-    {
-        TrackCleanup(() => Task.WhenAll(
-                CaptureCleanup(() => _sender.DisconnectAsync(args.Connection.SessionId)),
-                CaptureCleanup(() => _dispatcher.DisconnectAsync(args.Connection.SessionId))
-            )
-        );
-    }
-
-    private static async Task CaptureCleanup(Func<Task> cleanup)
-    {
-        await cleanup().ConfigureAwait(false);
-    }
-
-    private void TrackCleanup(Func<Task> cleanup)
-    {
-        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        lock (_cleanupGate)
-        {
-            _cleanups.Add(completion.Task);
-        }
-
-        _ = RunCleanupAsync(cleanup, completion);
     }
 
     private async Task RunCleanupAsync(Func<Task> cleanup, TaskCompletionSource completion)
@@ -176,9 +160,41 @@ public sealed class GameServerService : IGameServerService
         }
     }
 
+    private async Task StartCoreAsync()
+    {
+        _network.ConnectionAccepted += OnAccepted;
+        _network.DataReceived += OnData;
+        _network.ConnectionClosed += OnClosed;
+
+        try
+        {
+            _logger.Information("Starting game server packet coordination");
+            await _network.StartAsync().ConfigureAwait(false);
+        }
+        catch
+        {
+            lock (_lifecycleGate)
+            {
+                _stopping = true;
+            }
+
+            try
+            {
+                await StopCoreAsync().ConfigureAwait(false);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Game cleanup failed after startup failure");
+            }
+
+            throw;
+        }
+    }
+
     private async Task StopCoreAsync()
     {
         List<Exception> failures = [];
+
         try
         {
             try
@@ -191,12 +207,14 @@ public sealed class GameServerService : IGameServerService
             }
 
             Task[] pending;
+
             lock (_cleanupGate)
             {
                 pending = _cleanups.ToArray();
             }
 
             await Task.WhenAll(pending).ConfigureAwait(false);
+
             lock (_cleanupGate)
             {
                 failures.AddRange(_failures);
@@ -213,5 +231,17 @@ public sealed class GameServerService : IGameServerService
         {
             throw new AggregateException(failures);
         }
+    }
+
+    private void TrackCleanup(Func<Task> cleanup)
+    {
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        lock (_cleanupGate)
+        {
+            _cleanups.Add(completion.Task);
+        }
+
+        _ = RunCleanupAsync(cleanup, completion);
     }
 }

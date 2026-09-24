@@ -4,12 +4,12 @@ public sealed class TileList
 {
     private readonly List<Tile> _tiles;
 
+    public int Count => _tiles.Count;
+
     public TileList()
     {
         _tiles = new();
     }
-
-    public int Count => _tiles.Count;
 
     public void Add(ushort id, sbyte z)
         => _tiles.Add(new(id, z));

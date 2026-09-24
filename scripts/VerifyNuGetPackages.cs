@@ -13,14 +13,14 @@ internal static class VerifyNuGetPackages
     private const string IconHash = "44501F487EF8670A73FF709A8F78CE33154B8ED42F13245A579ECCd056BC4A0F";
     private static readonly Dictionary<string, string[]> InternalDependencies = new(StringComparer.Ordinal)
     {
-        ["Moongate.Api"] = ["Moongate.Network"],
+        ["Moongate.Admin.Contracts"] = [],
         ["Moongate.Core"] = [],
         ["Moongate.Network"] = [],
         ["Moongate.Network.Packets"] = ["Moongate.Core"],
         ["Moongate.Persistence"] = ["Moongate.Core", "Moongate.Persistence.Migrations"],
         ["Moongate.Persistence.Migrations"] = [],
         ["Moongate.Scripting"] = ["Moongate.Core", "Moongate.Server.Core"],
-        ["Moongate.Server.Core"] = ["Moongate.Api", "Moongate.Core", "Moongate.Network", "Moongate.Network.Packets"],
+        ["Moongate.Server.Core"] = ["Moongate.Core", "Moongate.Network", "Moongate.Network.Packets"],
         ["Moongate.Ultima"] = []
     };
 
@@ -108,6 +108,16 @@ internal static class VerifyNuGetPackages
         {
             "README.md", "moongate_logo.png", assemblyPath, $"lib/net10.0/{id}.xml", $"lib/net10.0/{id}.pdb"
         };
+        if (id == "Moongate.Admin.Contracts")
+        {
+            foreach (var name in new[] { "common", "auth", "server", "accounts" })
+            {
+                var path = $"proto/moongate/admin/v1/{name}.proto";
+                allowed.Add(path);
+                Require(ReadEntry(archive, path).SequenceEqual(File.ReadAllBytes(Path.Combine(repository, "src", id, path))),
+                    $"Missing or changed portable contract: {path}");
+            }
+        }
         VerifyPayload(archive, id, allowed);
         VerifyDependencies(metadata, project, id, version);
 

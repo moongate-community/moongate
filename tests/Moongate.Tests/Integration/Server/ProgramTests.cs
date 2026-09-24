@@ -9,23 +9,6 @@ namespace Moongate.Tests.Integration.Server;
 public sealed class ProgramTests
 {
     [Fact]
-    public async Task Startup_LivePid_ExitsBeforeCreatingConfigurationOrServices()
-    {
-        using var directory = new TemporaryDirectory();
-        var content = Environment.ProcessId.ToString(CultureInfo.InvariantCulture);
-        var pidPath = directory.CreateFile("moongate.pid", content);
-
-        var (exitCode, output) = await RunServerAsync(directory.Path);
-
-        Assert.Equal(1, exitCode);
-        Assert.Contains("already running", output, StringComparison.Ordinal);
-        Assert.Contains(content, output, StringComparison.Ordinal);
-        Assert.Equal(content, File.ReadAllText(pidPath));
-        Assert.False(Directory.Exists(Path.Combine(directory.Path, "config")));
-        Assert.False(Directory.Exists(Path.Combine(directory.Path, "save")));
-    }
-
-    [Fact]
     public async Task Startup_AnotherProcessHoldsLock_ExitsEvenWithMissingPid()
     {
         using var directory = new TemporaryDirectory();
@@ -57,6 +40,23 @@ public sealed class ProgramTests
         using var guard = PidFileGuard.Acquire(directory.Path);
     }
 
+    [Fact]
+    public async Task Startup_LivePid_ExitsBeforeCreatingConfigurationOrServices()
+    {
+        using var directory = new TemporaryDirectory();
+        var content = Environment.ProcessId.ToString(CultureInfo.InvariantCulture);
+        var pidPath = directory.CreateFile("moongate.pid", content);
+
+        var (exitCode, output) = await RunServerAsync(directory.Path);
+
+        Assert.Equal(1, exitCode);
+        Assert.Contains("already running", output, StringComparison.Ordinal);
+        Assert.Contains(content, output, StringComparison.Ordinal);
+        Assert.Equal(content, File.ReadAllText(pidPath));
+        Assert.False(Directory.Exists(Path.Combine(directory.Path, "config")));
+        Assert.False(Directory.Exists(Path.Combine(directory.Path, "save")));
+    }
+
     private static async Task<(int ExitCode, string Output)> RunServerAsync(string root)
     {
         using var process = Process.Start(
@@ -86,7 +86,7 @@ public sealed class ProgramTests
         {
             if (!process.HasExited)
             {
-                process.Kill(entireProcessTree: true);
+                process.Kill(true);
                 await process.WaitForExitAsync();
             }
         }

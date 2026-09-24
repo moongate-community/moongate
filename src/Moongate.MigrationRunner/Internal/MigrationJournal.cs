@@ -18,24 +18,6 @@ internal sealed class MigrationJournal : IJournal
         _catalog = catalog;
     }
 
-    public string[] GetExecutedScripts()
-    {
-        return _connectionManager()
-            .ExecuteCommandsWithManagedConnection(factory =>
-                {
-                    using var command = factory();
-                    command.CommandText =
-                        "SET LOCAL standard_conforming_strings = on; SELECT pg_advisory_xact_lock(1296516941)";
-                    command.ExecuteNonQuery();
-                    var applied = MigrationHistory.ReadAsync(() => (DbCommand)factory(), _catalog.Target)
-                        .GetAwaiter()
-                        .GetResult();
-                    MigrationHistory.Validate(_catalog, applied);
-                    return applied.Select(entry => entry.Name).ToArray();
-                }
-            );
-    }
-
     public void EnsureTableExistsAndIsLatestVersion(Func<IDbCommand> dbCommandFactory)
     {
         using var command = dbCommandFactory();
@@ -52,6 +34,24 @@ internal sealed class MigrationJournal : IJournal
                               """;
         command.ExecuteNonQuery();
     }
+
+    public string[] GetExecutedScripts()
+        => _connectionManager()
+            .ExecuteCommandsWithManagedConnection(
+                factory =>
+                {
+                    using var command = factory();
+                    command.CommandText =
+                        "SET LOCAL standard_conforming_strings = on; SELECT pg_advisory_xact_lock(1296516941)";
+                    command.ExecuteNonQuery();
+                    var applied = MigrationHistory.ReadAsync(() => (DbCommand)factory(), _catalog.Target)
+                                                  .GetAwaiter()
+                                                  .GetResult();
+                    MigrationHistory.Validate(_catalog, applied);
+
+                    return applied.Select(entry => entry.Name).ToArray();
+                }
+            );
 
     public void StoreExecutedScript(SqlScript script, Func<IDbCommand> dbCommandFactory)
     {

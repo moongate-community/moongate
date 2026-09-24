@@ -1,12 +1,12 @@
 using System.Runtime.ExceptionServices;
 using DryIoc;
-using Serilog;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Data.Events;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Bootstrap;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
+using Serilog;
 
 namespace Moongate.Server.Bootstrap;
 
@@ -20,14 +20,15 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     private readonly StartupServiceLifecycle _services;
     private Task? _gameLoopCompletion;
     private bool _startupSucceeded;
+    private bool _persistenceInitialized;
 
     public MoongateServerBootstrap(Container container, CancellationToken cancellationToken)
     {
         _container = container;
         _cancellationToken = cancellationToken;
         _container.RegisterMoongateEventBus();
-        _eventBus = new Lazy<IMoongateEventBus>(() => _container.Resolve<IMoongateEventBus>());
-        _services = new StartupServiceLifecycle(container);
+        _eventBus = new(() => _container.Resolve<IMoongateEventBus>());
+        _services = new(container);
     }
 
     /// <summary>Configures services immediately and returns this bootstrap for fluent composition.</summary>
@@ -39,7 +40,8 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     public MoongateServerBootstrap RegisterServices(Func<Container, Container> registerServices)
     {
         ArgumentNullException.ThrowIfNull(registerServices);
-        _lifecycle.Configure(() =>
+        _lifecycle.Configure(
+            () =>
             {
                 if (!ReferenceEquals(registerServices(_container), _container))
                 {
@@ -49,16 +51,6 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         );
 
         return this;
-    }
-
-    public Task StartAsync()
-    {
-        return _lifecycle.StartAsync(StartCoreAsync);
-    }
-
-    public Task StopAsync()
-    {
-        return _lifecycle.StopAsync(StopAfterStartupAsync);
     }
 
     public async Task RunAsync()
@@ -80,6 +72,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             if (_gameLoopCompletion.IsCompleted)
             {
                 await _gameLoopCompletion.ConfigureAwait(false);
+
                 return;
             }
         }
@@ -87,76 +80,45 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         _logger.Debug("Moongate Server is shutting down due to cancellation request.");
     }
 
-    private async Task StartCoreAsync()
+    public Task StartAsync()
+        => _lifecycle.StartAsync(StartCoreAsync);
+
+    public Task StopAsync()
+        => _lifecycle.StopAsync(StopAfterStartupAsync);
+
+    private static void CaptureFailure(Action operation, List<Exception> failures)
     {
         try
         {
-            await PersistencePreparation.InitializeAsync(_container, _cancellationToken).ConfigureAwait(false);
-
-            await _services.StartAsync(service =>
-                    {
-                        if (service is IGameLoopService gameLoop)
-                        {
-                            // Capture after priority-ordered resolution, even if a later startup step fails.
-                            _gameLoopCompletion = gameLoop.Completion;
-                        }
-                    }
-                )
-                .ConfigureAwait(false);
-
-            if (_gameLoopCompletion is { IsCompleted: true })
-            {
-                await _gameLoopCompletion.ConfigureAwait(false);
-            }
-
-            await _eventBus.Value.PublishAsync(new MoongateStartedEvent(), _cancellationToken).ConfigureAwait(false);
-            _services.ActivateWorldSaving();
-            _startupSucceeded = true;
-            _logger.Information("Moongate Server started.");
+            operation();
         }
         catch (Exception exception)
         {
-            var cleanupFailures = await _lifecycle.ShutdownAsync(ShutdownCoreAsync).ConfigureAwait(false);
-            cleanupFailures.RemoveAll(failure => ReferenceEquals(failure, exception));
-
-            if (cleanupFailures.Count == 0)
-            {
-                ExceptionDispatchInfo.Capture(exception).Throw();
-            }
-
-            cleanupFailures.Insert(0, exception);
-
-            throw new AggregateException(cleanupFailures);
+            failures.Add(exception);
         }
     }
 
-    private async Task StopAfterStartupAsync(Task? startupTask)
+    private static async Task CaptureFailureAsync(Func<Task> operation, List<Exception> failures)
     {
-        var startupFailed = false;
-
-        if (startupTask is not null)
+        try
         {
-            try
-            {
-                await startupTask.ConfigureAwait(false);
-            }
-            catch (Exception)
-            {
-                startupFailed = true;
-            }
+            await operation().ConfigureAwait(false);
         }
-
-        var failures = await _lifecycle.ShutdownAsync(ShutdownCoreAsync).ConfigureAwait(false);
-
-        if (!startupFailed)
+        catch (Exception exception)
         {
-            ThrowFailures(failures);
+            failures.Add(exception);
         }
     }
+
+    private static bool ContainsFailure(Exception failure, Exception expected)
+        => ReferenceEquals(failure, expected) ||
+           failure is AggregateException aggregate &&
+           aggregate.InnerExceptions.Any(inner => ContainsFailure(inner, expected));
 
     private async Task<List<Exception>> ShutdownCoreAsync()
     {
         List<Exception> failures = [];
+        _services.StopAcceptingAdministration();
 
         await CaptureFailureAsync(
                 () => _eventBus.Value.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None),
@@ -188,7 +150,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             )
             .ConfigureAwait(false);
 
-        await CaptureFailureAsync(() => PersistencePreparation.DisposePersistenceAsync(_container), failures)
+        await CaptureFailureAsync(StopPersistenceAsync, failures)
             .ConfigureAwait(false);
         CaptureFailure(_container.Dispose, failures);
         _logger.Information("Moongate Server stopped.");
@@ -201,34 +163,89 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         return failures;
     }
 
-    private static bool ContainsFailure(Exception failure, Exception expected)
-    {
-        return ReferenceEquals(failure, expected) ||
-               failure is AggregateException aggregate &&
-               aggregate.InnerExceptions.Any(inner => ContainsFailure(inner, expected));
-    }
-
-    private static void CaptureFailure(Action operation, List<Exception> failures)
+    private async Task StartCoreAsync()
     {
         try
         {
-            operation();
+            _persistenceInitialized = await PersistencePreparation.InitializeAsync(_container, _cancellationToken)
+                                                                  .ConfigureAwait(false);
+
+            if (_persistenceInitialized)
+            {
+                await _eventBus.Value.PublishAsync(new PersistenceReadyEvent(), _cancellationToken).ConfigureAwait(false);
+            }
+
+            await _services.StartAsync(
+                               service =>
+                               {
+                                   if (service is IGameLoopService gameLoop)
+                                   {
+                                       // Capture after priority-ordered resolution, even if a later startup step fails.
+                                       _gameLoopCompletion = gameLoop.Completion;
+                                   }
+                               }
+                           )
+                           .ConfigureAwait(false);
+
+            if (_gameLoopCompletion is { IsCompleted: true })
+            {
+                await _gameLoopCompletion.ConfigureAwait(false);
+            }
+
+            await _eventBus.Value.PublishAsync(new MoongateStartedEvent(), _cancellationToken).ConfigureAwait(false);
+            _services.ActivateWorldSaving();
+            _startupSucceeded = true;
+            _services.ActivateAdministration();
+            _logger.Information("Moongate Server started.");
         }
         catch (Exception exception)
         {
-            failures.Add(exception);
+            var cleanupFailures = await _lifecycle.ShutdownAsync(ShutdownCoreAsync).ConfigureAwait(false);
+            cleanupFailures.RemoveAll(failure => ReferenceEquals(failure, exception));
+
+            if (cleanupFailures.Count == 0)
+            {
+                ExceptionDispatchInfo.Capture(exception).Throw();
+            }
+
+            cleanupFailures.Insert(0, exception);
+
+            throw new AggregateException(cleanupFailures);
         }
     }
 
-    private static async Task CaptureFailureAsync(Func<Task> operation, List<Exception> failures)
+    private async Task StopPersistenceAsync()
     {
-        try
+        await PersistencePreparation.DisposePersistenceAsync(_container).ConfigureAwait(false);
+
+        if (_persistenceInitialized)
         {
-            await operation().ConfigureAwait(false);
+            _persistenceInitialized = false;
+            await _eventBus.Value.PublishAsync(new PersistenceStoppedEvent(), CancellationToken.None).ConfigureAwait(false);
         }
-        catch (Exception exception)
+    }
+
+    private async Task StopAfterStartupAsync(Task? startupTask)
+    {
+        var startupFailed = false;
+
+        if (startupTask is not null)
         {
-            failures.Add(exception);
+            try
+            {
+                await startupTask.ConfigureAwait(false);
+            }
+            catch (Exception)
+            {
+                startupFailed = true;
+            }
+        }
+
+        var failures = await _lifecycle.ShutdownAsync(ShutdownCoreAsync).ConfigureAwait(false);
+
+        if (!startupFailed)
+        {
+            ThrowFailures(failures);
         }
     }
 

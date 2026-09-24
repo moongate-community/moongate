@@ -18,7 +18,7 @@ public sealed class DeferredPacketPluginLoader : IPluginLoaderService
 
     public void LoadPlugins()
     {
-        _container.RegisterMoongateService<PacketPluginDependency>();
+        _container.AddMoongateService<PacketPluginDependency>();
         _container.RegisterPacketHandler<ServerSelectPacket, PluginServerSelectHandler>();
     }
 }

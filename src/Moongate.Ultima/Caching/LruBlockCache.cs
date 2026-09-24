@@ -28,17 +28,6 @@ public sealed class LruBlockCache<TValue> where TValue : class
     private int _capacity;
     private int _evictedCount;
 
-    public LruBlockCache(int capacity)
-    {
-        if (capacity < 0)
-        {
-            throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be non-negative.");
-        }
-
-        _capacity = capacity;
-        _map = new(Math.Min(capacity, 4096));
-    }
-
     /// <summary>Maximum number of blocks held. Lowering it evicts down to the new cap immediately.</summary>
     public int Capacity
     {
@@ -75,6 +64,17 @@ public sealed class LruBlockCache<TValue> where TValue : class
                 return _evictedCount;
             }
         }
+    }
+
+    public LruBlockCache(int capacity)
+    {
+        if (capacity < 0)
+        {
+            throw new ArgumentOutOfRangeException(nameof(capacity), "Capacity must be non-negative.");
+        }
+
+        _capacity = capacity;
+        _map = new(Math.Min(capacity, 4096));
     }
 
     public void Clear()

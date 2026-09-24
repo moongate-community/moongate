@@ -23,35 +23,10 @@ internal sealed class RecordingPromptService : IConsolePromptService
 
     public bool PromptVisible { get; private set; }
 
-    public void RunWithPromptHidden(Action write)
-    {
-        write();
-    }
-
-    public void WriteOutputLine(string text, CommandOutputLevel level)
-    {
-        lock (_output)
-        {
-            _output.Add(new CommandOutputLine(text, level));
-        }
-    }
-
-    public void ShowPrompt()
-    {
-        PromptVisible = true;
-        Record("show");
-    }
-
     public void HidePrompt()
     {
         PromptVisible = false;
         Record("hide");
-    }
-
-    public void UpdateInput(string input)
-    {
-        CurrentInput = input;
-        Record($"input:{input}");
     }
 
     public void LockInput()
@@ -61,10 +36,33 @@ internal sealed class RecordingPromptService : IConsolePromptService
         Record("lock");
     }
 
+    public void RunWithPromptHidden(Action write)
+        => write();
+
+    public void ShowPrompt()
+    {
+        PromptVisible = true;
+        Record("show");
+    }
+
     public void UnlockInput()
     {
         IsInputLocked = false;
         Record("unlock");
+    }
+
+    public void UpdateInput(string input)
+    {
+        CurrentInput = input;
+        Record($"input:{input}");
+    }
+
+    public void WriteOutputLine(string text, CommandOutputLevel level)
+    {
+        lock (_output)
+        {
+            _output.Add(new(text, level));
+        }
     }
 
     private void Record(string call)

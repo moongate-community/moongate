@@ -1,4 +1,5 @@
 using System.Net;
+using System.Net.Sockets;
 using Moongate.Network.Data.Events;
 using Moongate.Network.Interfaces.Client;
 using Moongate.Network.Server;
@@ -11,12 +12,8 @@ using Serilog;
 namespace Moongate.Server.Services.Network;
 
 /// <summary>Owns transport listeners and synchronous notifications independently of game state.</summary>
-public sealed class NetworkService : INetworkService
+public sealed class NetworkService : INetworkService, ILoginNetworkService
 {
-    public event EventHandler<NetworkConnectionEventArgs>? ConnectionAccepted;
-    public event EventHandler<NetworkConnectionEventArgs>? ConnectionClosed;
-    public event EventHandler<NetworkDataEventArgs>? DataReceived;
-
     private readonly ILogger _logger = Log.ForContext<NetworkService>();
     private readonly IConnectionService _connections;
     private readonly Lock _cleanupGate = new();
@@ -26,18 +23,20 @@ public sealed class NetworkService : INetworkService
     private readonly BootstrapLifecycleTasks _lifecycle = new();
     private readonly Lock _lifecycleGate = new();
     private bool _stopping;
+    public event EventHandler<NetworkConnectionEventArgs>? ConnectionAccepted;
+    public event EventHandler<NetworkConnectionEventArgs>? ConnectionClosed;
+    public event EventHandler<NetworkDataEventArgs>? DataReceived;
 
     internal IReadOnlyList<MoongateTcpServer> Listeners { get; }
 
     public NetworkService(NetworkListenerOptions options, IConnectionService connections)
-        : this(CreateListeners(options), connections)
-    {
-    }
+        : this(CreateListeners(options), connections) { }
 
     internal NetworkService(IReadOnlyList<MoongateTcpServer> listeners, IConnectionService connections)
     {
         _connections = connections;
         Listeners = listeners.ToArray();
+
         foreach (var listener in Listeners)
         {
             listener.OnClientConnect += OnClientConnect;
@@ -46,6 +45,50 @@ public sealed class NetworkService : INetworkService
         }
     }
 
+    public Task StartAsync()
+    {
+        lock (_lifecycleGate)
+        {
+            if (_stopping)
+            {
+                throw new InvalidOperationException("Network listeners cannot start after shutdown begins.");
+            }
+
+            return _lifecycle.StartAsync(StartCoreAsync);
+        }
+    }
+
+    public Task StopAsync()
+    {
+        lock (_lifecycleGate)
+        {
+            _stopping = true;
+
+            return _lifecycle.StopAsync(
+                async startup =>
+                {
+                    if (startup is not null)
+                    {
+                        await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                    }
+
+                    await StopListenersAsync().ConfigureAwait(false);
+                }
+            );
+        }
+    }
+
+    private static async Task CaptureCloseAsync(INetworkConnection connection)
+    {
+        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+        await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
+    }
+
+    private static async Task CloseRejectedAsync(INetworkConnection connection)
+
+        // A close request is distinct from actual completion; join both even when one fails.
+        => await Task.WhenAll(CaptureCloseAsync(connection), connection.Completion).ConfigureAwait(false);
+
     private static MoongateTcpServer[] CreateListeners(NetworkListenerOptions options)
     {
         if (options.Endpoints is null || options.Endpoints.Count == 0)
@@ -53,19 +96,22 @@ public sealed class NetworkService : INetworkService
             throw new ArgumentException("At least one listener endpoint is required.", nameof(options));
         }
 
-        return options.Endpoints.Select(endpoint =>
-                {
-                    ArgumentNullException.ThrowIfNull(endpoint);
-                    var address = endpoint.Address.AddressFamily == System.Net.Sockets.AddressFamily.InterNetworkV6
-                        ? new IPAddress(endpoint.Address.GetAddressBytes(), endpoint.Address.ScopeId)
-                        : new IPAddress(endpoint.Address.GetAddressBytes());
-                    return new MoongateTcpServer(
-                        new IPEndPoint(address, endpoint.Port),
-                        connectionPipelineFactory: options.ConnectionPipelineFactory
-                    );
-                }
-            )
-            .ToArray();
+        return options.Endpoints
+                      .Select(
+                          endpoint =>
+                          {
+                              ArgumentNullException.ThrowIfNull(endpoint);
+                              var address = endpoint.Address.AddressFamily == AddressFamily.InterNetworkV6
+                                                ? new IPAddress(endpoint.Address.GetAddressBytes(), endpoint.Address.ScopeId)
+                                                : new IPAddress(endpoint.Address.GetAddressBytes());
+
+                              return new MoongateTcpServer(
+                                  new(address, endpoint.Port),
+                                  connectionPipelineFactory: options.ConnectionPipelineFactory
+                              );
+                          }
+                      )
+                      .ToArray();
     }
 
     private void OnClientConnect(object? sender, TcpClientEventArgs args)
@@ -73,6 +119,7 @@ public sealed class NetworkService : INetworkService
         if (!_connections.TryRegister(args.Client))
         {
             TrackCleanup(() => CloseRejectedAsync(args.Client));
+
             return;
         }
 
@@ -81,15 +128,7 @@ public sealed class NetworkService : INetworkService
             _admitted.Add(args.Client.SessionId);
         }
 
-        Publish(ConnectionAccepted, new NetworkConnectionEventArgs(args.Client), args.Client, closeOnFailure: true);
-    }
-
-    private void OnDataReceived(object? sender, TcpDataReceivedEventArgs args)
-    {
-        if (_connections.TryGet(args.Client.SessionId, out _))
-        {
-            Publish(DataReceived, new NetworkDataEventArgs(args.Client, args.Data), args.Client, closeOnFailure: true);
-        }
+        Publish(ConnectionAccepted, new(args.Client), args.Client, true);
     }
 
     private void OnClientDisconnect(object? sender, TcpClientEventArgs args)
@@ -102,8 +141,16 @@ public sealed class NetworkService : INetworkService
             }
         }
 
-        Publish(ConnectionClosed, new NetworkConnectionEventArgs(args.Client), args.Client, closeOnFailure: false);
+        Publish(ConnectionClosed, new(args.Client), args.Client, false);
         TrackCleanup(() => _connections.DisconnectAsync(args.Client.SessionId));
+    }
+
+    private void OnDataReceived(object? sender, TcpDataReceivedEventArgs args)
+    {
+        if (_connections.TryGet(args.Client.SessionId, out _))
+        {
+            Publish(DataReceived, new(args.Client, args.Data), args.Client, true);
+        }
     }
 
     private void Publish<T>(EventHandler<T>? handlers, T args, INetworkConnection connection, bool closeOnFailure)
@@ -123,23 +170,13 @@ public sealed class NetworkService : INetworkService
             catch (Exception exception)
             {
                 _logger.Error(exception, "Network callback failed for connection {SessionId}", connection.SessionId);
+
                 if (closeOnFailure)
                 {
                     TrackCleanup(() => _connections.DisconnectAsync(connection.SessionId));
                 }
             }
         }
-    }
-
-    private void TrackCleanup(Func<Task> cleanup)
-    {
-        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        lock (_cleanupGate)
-        {
-            _cleanups.Add(completion.Task);
-        }
-
-        _ = RunCleanupAsync(cleanup, completion);
     }
 
     private async Task RunCleanupAsync(Func<Task> cleanup, TaskCompletionSource completion)
@@ -164,31 +201,6 @@ public sealed class NetworkService : INetworkService
                 completion.TrySetResult();
                 _cleanups.Remove(completion.Task);
             }
-        }
-    }
-
-    private static async Task CloseRejectedAsync(INetworkConnection connection)
-    {
-        // A close request is distinct from actual completion; join both even when one fails.
-        await Task.WhenAll(CaptureCloseAsync(connection), connection.Completion).ConfigureAwait(false);
-    }
-
-    private static async Task CaptureCloseAsync(INetworkConnection connection)
-    {
-        await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
-        await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
-    }
-
-    public Task StartAsync()
-    {
-        lock (_lifecycleGate)
-        {
-            if (_stopping)
-            {
-                throw new InvalidOperationException("Network listeners cannot start after shutdown begins.");
-            }
-
-            return _lifecycle.StartAsync(StartCoreAsync);
         }
     }
 
@@ -226,46 +238,30 @@ public sealed class NetworkService : INetworkService
         }
     }
 
-    public Task StopAsync()
-    {
-        lock (_lifecycleGate)
-        {
-            _stopping = true;
-            return _lifecycle.StopAsync(async startup =>
-                {
-                    if (startup is not null)
-                    {
-                        await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-                    }
-
-                    await StopListenersAsync().ConfigureAwait(false);
-                }
-            );
-        }
-    }
-
     private async Task StopListenersAsync()
     {
         List<Exception> failures = [];
         await Task.WhenAll(
-                Listeners.Select(async listener =>
-                    {
-                        try
-                        {
-                            await listener.StopAsync(default).ConfigureAwait(false);
-                        }
-                        catch (Exception exception)
-                        {
-                            lock (failures)
-                            {
-                                failures.Add(exception);
-                            }
-                        }
-                    }
-                )
-            )
-            .ConfigureAwait(false);
+                      Listeners.Select(
+                          async listener =>
+                          {
+                              try
+                              {
+                                  await listener.StopAsync(default).ConfigureAwait(false);
+                              }
+                              catch (Exception exception)
+                              {
+                                  lock (failures)
+                                  {
+                                      failures.Add(exception);
+                                  }
+                              }
+                          }
+                      )
+                  )
+                  .ConfigureAwait(false);
         Task[] pending;
+
         lock (_cleanupGate)
         {
             pending = _cleanups.ToArray();
@@ -273,6 +269,7 @@ public sealed class NetworkService : INetworkService
 
         // Listener stop has joined callbacks, so no new cleanup can be published.
         await Task.WhenAll(pending).ConfigureAwait(false);
+
         lock (_cleanupGate)
         {
             failures.AddRange(_failures);
@@ -282,5 +279,17 @@ public sealed class NetworkService : INetworkService
         {
             throw new AggregateException(failures);
         }
+    }
+
+    private void TrackCleanup(Func<Task> cleanup)
+    {
+        var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+
+        lock (_cleanupGate)
+        {
+            _cleanups.Add(completion.Task);
+        }
+
+        _ = RunCleanupAsync(cleanup, completion);
     }
 }

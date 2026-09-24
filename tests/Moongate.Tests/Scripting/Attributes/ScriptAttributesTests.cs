@@ -5,19 +5,8 @@ namespace Moongate.Tests.Scripting.Attributes;
 public sealed class ScriptAttributesTests
 {
     [Fact]
-    public void ScriptModule_KeepsNameAndHelpText()
-    {
-        var attribute = new ScriptModuleAttribute("log", "Logging.");
-
-        Assert.Equal("log", attribute.Name);
-        Assert.Equal("Logging.", attribute.HelpText);
-    }
-
-    [Theory, InlineData(""), InlineData(" "), InlineData("Log"), InlineData("my-module"), InlineData("1st")]
-    public void ScriptModule_RejectsANameThatIsNotALuaIdentifierInLowerCase(string name)
-    {
-        Assert.Throws<ArgumentException>(() => new ScriptModuleAttribute(name));
-    }
+    public void ScriptConstant_DefaultsToNoOverride()
+        => Assert.Null(new ScriptConstantAttribute().Name);
 
     [Fact]
     public void ScriptFunction_DefaultsToNoOverride()
@@ -30,13 +19,18 @@ public sealed class ScriptAttributesTests
 
     [Fact]
     public void ScriptFunction_RejectsAnOverrideThatIsNotALuaIdentifier()
-    {
-        Assert.Throws<ArgumentException>(() => new ScriptFunctionAttribute("bad name"));
-    }
+        => Assert.Throws<ArgumentException>(() => new ScriptFunctionAttribute("bad name"));
 
     [Fact]
-    public void ScriptConstant_DefaultsToNoOverride()
+    public void ScriptModule_KeepsNameAndHelpText()
     {
-        Assert.Null(new ScriptConstantAttribute().Name);
+        var attribute = new ScriptModuleAttribute("log", "Logging.");
+
+        Assert.Equal("log", attribute.Name);
+        Assert.Equal("Logging.", attribute.HelpText);
     }
+
+    [Theory, InlineData(""), InlineData(" "), InlineData("Log"), InlineData("my-module"), InlineData("1st")]
+    public void ScriptModule_RejectsANameThatIsNotALuaIdentifierInLowerCase(string name)
+        => Assert.Throws<ArgumentException>(() => new ScriptModuleAttribute(name));
 }

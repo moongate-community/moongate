@@ -28,22 +28,25 @@ public sealed class LoginSeedPacket : BaseFixedPacket<LoginSeedPacket>, IIncomin
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out LoginSeedPacket? packet)
     {
         packet = null;
+
         if (!HasValidHeader(data))
         {
             return false;
         }
 
         var reader = new PacketReader(data[1..]);
-        if (!reader.TryReadUInt32BigEndian(out var seed)
-            || !reader.TryReadUInt32BigEndian(out var major)
-            || !reader.TryReadUInt32BigEndian(out var minor)
-            || !reader.TryReadUInt32BigEndian(out var revision)
-            || !reader.TryReadUInt32BigEndian(out var patch))
+
+        if (!reader.TryReadUInt32BigEndian(out var seed) ||
+            !reader.TryReadUInt32BigEndian(out var major) ||
+            !reader.TryReadUInt32BigEndian(out var minor) ||
+            !reader.TryReadUInt32BigEndian(out var revision) ||
+            !reader.TryReadUInt32BigEndian(out var patch))
         {
             return false;
         }
 
-        packet = new LoginSeedPacket(seed, major, minor, revision, patch);
+        packet = new(seed, major, minor, revision, patch);
+
         return true;
     }
 }

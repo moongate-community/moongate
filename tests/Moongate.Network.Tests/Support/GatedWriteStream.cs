@@ -28,31 +28,18 @@ public sealed class GatedWriteStream : Stream
         set => throw new NotSupportedException();
     }
 
-    public GatedWriteStream()
-    {
-    }
+    public override void Flush() { }
 
-    public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
-    {
-        Interlocked.Increment(ref _writeCount);
-        WriteEntered.TrySetResult();
-        try
-        {
-            await ReleaseWrite.Task.WaitAsync(cancellationToken);
-            if (WriteFailure is not null)
-            {
-                throw WriteFailure;
-            }
-        }
-        finally
-        {
-            WriteExited.TrySetResult();
-        }
-    }
+    public override Task FlushAsync(CancellationToken cancellationToken)
+        => Task.CompletedTask;
+
+    public override int Read(byte[] buffer, int offset, int count)
+        => throw new NotSupportedException();
 
     public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        using var registration = cancellationToken.Register(() =>
+        using var registration = cancellationToken.Register(
+            () =>
             {
                 if (CancellationFailure is not null)
                 {
@@ -61,6 +48,7 @@ public sealed class GatedWriteStream : Stream
             }
         );
         ReadEntered.TrySetResult();
+
         try
         {
             await Task.Delay(Timeout.Infinite, cancellationToken);
@@ -76,21 +64,41 @@ public sealed class GatedWriteStream : Stream
         return 0;
     }
 
-    public override void Flush()
-    {
-    }
+    public override long Seek(long offset, SeekOrigin origin)
+        => throw new NotSupportedException();
 
-    public override Task FlushAsync(CancellationToken cancellationToken) => Task.CompletedTask;
-    public override int Read(byte[] buffer, int offset, int count) => throw new NotSupportedException();
-    public override void Write(byte[] buffer, int offset, int count) => throw new NotSupportedException();
-    public override long Seek(long offset, SeekOrigin origin) => throw new NotSupportedException();
-    public override void SetLength(long value) => throw new NotSupportedException();
+    public override void SetLength(long value)
+        => throw new NotSupportedException();
+
+    public override void Write(byte[] buffer, int offset, int count)
+        => throw new NotSupportedException();
+
+    public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
+    {
+        Interlocked.Increment(ref _writeCount);
+        WriteEntered.TrySetResult();
+
+        try
+        {
+            await ReleaseWrite.Task.WaitAsync(cancellationToken);
+
+            if (WriteFailure is not null)
+            {
+                throw WriteFailure;
+            }
+        }
+        finally
+        {
+            WriteExited.TrySetResult();
+        }
+    }
 
     protected override void Dispose(bool disposing)
     {
         Interlocked.Increment(ref _disposeCount);
         DisposedDuringWrite = WriteEntered.Task.IsCompleted && !WriteExited.Task.IsCompleted;
         base.Dispose(disposing);
+
         if (DisposeFailure is not null)
         {
             throw DisposeFailure;

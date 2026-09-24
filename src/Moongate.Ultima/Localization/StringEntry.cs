@@ -5,7 +5,16 @@ namespace Moongate.Ultima.Localization;
 
 public sealed class StringEntry
 {
+    // Razor
+    private static readonly Regex _regEx = new(
+        @"~(\d+)[_\w]+~",
+        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant
+    );
+
+    private static readonly object[] _args = { "", "", "", "", "", "", "", "", "", "", "" };
     private string _text;
+
+    private string _fmtTxt;
 
     public int Number { get; }
 
@@ -30,15 +39,6 @@ public sealed class StringEntry
         _text = text;
         Flag = flag;
     }
-
-    // Razor
-    private static readonly Regex _regEx = new(
-        @"~(\d+)[_\w]+~",
-        RegexOptions.Compiled | RegexOptions.IgnoreCase | RegexOptions.Singleline | RegexOptions.CultureInvariant
-    );
-
-    private string _fmtTxt;
-    private static readonly object[] _args = { "", "", "", "", "", "", "", "", "", "", "" };
 
     public string Format(params object[] args)
     {

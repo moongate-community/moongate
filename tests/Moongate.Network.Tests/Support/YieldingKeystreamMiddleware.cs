@@ -7,10 +7,6 @@ public sealed class YieldingKeystreamMiddleware : INetMiddleware
 {
     private int _position;
 
-    public YieldingKeystreamMiddleware()
-    {
-    }
-
     public ValueTask<ReadOnlyMemory<byte>> ProcessAsync(
         MoongateTcpClient? client,
         ReadOnlyMemory<byte> data,

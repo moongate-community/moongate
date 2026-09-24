@@ -10,25 +10,30 @@ public sealed class PacketSendWithoutGameTests
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     [Fact]
-    public async Task TrySend_OnlyConnectionRegistry_ProducesExactPacketBytes()
+    public async Task DisconnectWithoutOutbox_ClosesConnectionAndStopOwnsPendingCleanup()
     {
         var connections = new ConnectionService();
         await connections.StartAsync();
-        using var connection = new ControlledNetworkConnection(1);
+        using var connection = new ControlledNetworkConnection(1) { DelayCompletion = true };
         connections.TryRegister(connection);
         var sender = new PacketSendService(connections);
         await sender.StartAsync();
+        var closing = sender.DisconnectAsync(1);
+        var stopping = sender.StopAsync();
+
         try
         {
-            Assert.True(sender.TrySend(1, new PingPacket(0x2A)));
-            using var deadline = new CancellationTokenSource(Timeout);
-            Assert.Equal(new byte[] { 0x73, 0x2A }, await connection.ReadSentAsync(deadline.Token));
+            Assert.False(closing.IsCompleted);
+            Assert.False(stopping.IsCompleted);
+            await connection.CloseRequested.WaitAsync(Timeout);
         }
         finally
         {
-            await sender.StopAsync().WaitAsync(Timeout);
-            await connections.StopAsync().WaitAsync(Timeout);
+            connection.Complete();
         }
+
+        await Task.WhenAll(closing, stopping).WaitAsync(Timeout);
+        await connections.StopAsync();
     }
 
     [Fact]
@@ -44,8 +49,9 @@ public sealed class PacketSendWithoutGameTests
             DelayDisconnectionState = true
         };
         connections.TryRegister(connection);
-        var sender = new PacketSendService(connections, capacity: 1);
+        var sender = new PacketSendService(connections, 1);
         await sender.StartAsync();
+
         try
         {
             Assert.True(sender.TrySend(1, new PingPacket(1)));
@@ -70,32 +76,6 @@ public sealed class PacketSendWithoutGameTests
     }
 
     [Fact]
-    public async Task DisconnectWithoutOutbox_ClosesConnectionAndStopOwnsPendingCleanup()
-    {
-        var connections = new ConnectionService();
-        await connections.StartAsync();
-        using var connection = new ControlledNetworkConnection(1) { DelayCompletion = true };
-        connections.TryRegister(connection);
-        var sender = new PacketSendService(connections);
-        await sender.StartAsync();
-        var closing = sender.DisconnectAsync(1);
-        var stopping = sender.StopAsync();
-        try
-        {
-            Assert.False(closing.IsCompleted);
-            Assert.False(stopping.IsCompleted);
-            await connection.CloseRequested.WaitAsync(Timeout);
-        }
-        finally
-        {
-            connection.Complete();
-        }
-
-        await Task.WhenAll(closing, stopping).WaitAsync(Timeout);
-        await connections.StopAsync();
-    }
-
-    [Fact]
     public async Task RequestedClose_InterruptsActiveSocketWriteWithoutReportingASendFailure()
     {
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -108,6 +88,7 @@ public sealed class PacketSendWithoutGameTests
         registry.Service.TryRegister(connection);
         var sender = new PacketSendService(registry.Service);
         await sender.StartAsync();
+
         try
         {
             Assert.True(sender.TrySend(17, new PingPacket(1)));
@@ -123,7 +104,9 @@ public sealed class PacketSendWithoutGameTests
         {
             release.TrySetResult();
             await sender.StopAsync()
-                .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+                        .ConfigureAwait(
+                            ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                        );
         }
     }
 
@@ -141,5 +124,28 @@ public sealed class PacketSendWithoutGameTests
         await Assert.ThrowsAsync<AggregateException>(() => sender.StopAsync().WaitAsync(Timeout));
         Assert.False(sender.TrySend(1, new PingPacket(2)));
         await connections.StopAsync();
+    }
+
+    [Fact]
+    public async Task TrySend_OnlyConnectionRegistry_ProducesExactPacketBytes()
+    {
+        var connections = new ConnectionService();
+        await connections.StartAsync();
+        using var connection = new ControlledNetworkConnection(1);
+        connections.TryRegister(connection);
+        var sender = new PacketSendService(connections);
+        await sender.StartAsync();
+
+        try
+        {
+            Assert.True(sender.TrySend(1, new PingPacket(0x2A)));
+            using var deadline = new CancellationTokenSource(Timeout);
+            Assert.Equal(new byte[] { 0x73, 0x2A }, await connection.ReadSentAsync(deadline.Token));
+        }
+        finally
+        {
+            await sender.StopAsync().WaitAsync(Timeout);
+            await connections.StopAsync().WaitAsync(Timeout);
+        }
     }
 }

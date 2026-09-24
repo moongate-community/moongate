@@ -11,12 +11,6 @@ public abstract class BasePacket<TPacket> : IPacket
     public byte OpCode => Descriptor.OpCode;
     public abstract int Length { get; }
 
-    protected BasePacket()
-    {
-    }
-
     protected static bool HasValidHeader(ReadOnlySpan<byte> data)
-    {
-        return PacketValidation.HasValidHeader(data, Descriptor);
-    }
+        => PacketValidation.HasValidHeader(data, Descriptor);
 }

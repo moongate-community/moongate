@@ -56,6 +56,40 @@ if [ -n "${MOONGATE_REALM_SCHEMA_DATABASE_FILE:-}" ]; then
         "$MOONGATE_REALM_SCHEMA_DATABASE_FILE"
 fi
 
+if [ -n "${MOONGATE_REDIS_PASSWORD_FILE:-}" ]; then
+    if [ ! -r "$MOONGATE_REDIS_PASSWORD_FILE" ]; then
+        echo "Required Redis secret is not readable: $MOONGATE_REDIS_PASSWORD_FILE" >&2
+        exit 1
+    fi
+    redis_password=$(cat "$MOONGATE_REDIS_PASSWORD_FILE")
+    case "$redis_password" in
+        ''|*[!0-9a-fA-F]*)
+            echo "Redis password must be hexadecimal." >&2
+            exit 1
+            ;;
+    esac
+    export MOONGATE_REDIS_CONNECTION_STRING="redis:6379,password=$redis_password"
+fi
+
+if [ -n "${MOONGATE_HANDOFF_SECRET_FILE:-}" ]; then
+    if [ ! -r "$MOONGATE_HANDOFF_SECRET_FILE" ]; then
+        echo "Required handoff secret is not readable: $MOONGATE_HANDOFF_SECRET_FILE" >&2
+        exit 1
+    fi
+    handoff_secret=$(cat "$MOONGATE_HANDOFF_SECRET_FILE")
+    case "$handoff_secret" in
+        ''|*[!0-9a-fA-F]*)
+            echo "Handoff secret must be hexadecimal." >&2
+            exit 1
+            ;;
+    esac
+    if [ "${#handoff_secret}" -lt 64 ]; then
+        echo "Handoff secret must contain at least 64 hexadecimal characters." >&2
+        exit 1
+    fi
+    export MOONGATE_HANDOFF_SECRET="$handoff_secret"
+fi
+
 if [ -d /opt/moongate/sample-plugin ]; then
     mkdir -p /data/plugins/SamplePlugin
     cp -a /opt/moongate/sample-plugin/. /data/plugins/SamplePlugin/

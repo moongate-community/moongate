@@ -12,9 +12,16 @@ public sealed class Map
     /// <summary>The ARGB1555 "visible" bit, set on every rendered map pixel so it decodes opaque.</summary>
     private const ushort OpaqueBit = 0x8000;
 
-    private TileMatrix _tiles;
     private readonly int _mapId;
     private readonly string _path;
+
+    public static readonly Map Felucca = new(0, 0, 6144, 4096);
+    public static readonly Map Ilshenar = new(2, 2, 2304, 1600);
+    public static readonly Map Malas = new(3, 3, 2560, 2048);
+    public static readonly Map Tokuno = new(4, 4, 1448, 1448);
+    public static readonly Map TerMur = new(5, 5, 1280, 4096);
+
+    private TileMatrix _tiles;
     private static bool _useDiff;
 
     private static int _altitudeIntensity = 15;
@@ -22,6 +29,47 @@ public sealed class Map
 
     private static AltitudeShadingSettings _customShadingSettings =
         AltitudeShadingSettings.GetPreset(AltitudeShadingPresetType.Soft);
+
+    public static Map Trammel = new(0, 1, 6144, 4096);
+    public static Map Custom;
+
+    private bool _isCachedDefault;
+    private bool _isCachedNoStatics;
+    private bool _isCachedNoPatch;
+    private bool _isCachedNoStaticsNoPatch;
+
+    private ushort[][][] _cache;
+    private ushort[][][] _cacheNoStatics;
+    private ushort[][][] _cacheNoPatch;
+    private ushort[][][] _cacheNoStaticsNoPatch;
+    private ushort[] _black;
+
+    // Half-resolution mipmap (4x4 px per block, 16 ushorts)
+    private ushort[][][] _cacheHalf;
+    private ushort[][][] _cacheHalfNoStatics;
+    private ushort[][][] _cacheHalfNoPatch;
+    private ushort[][][] _cacheHalfNoStaticsNoPatch;
+    private ushort[] _blackHalf;
+
+    // Quarter-resolution mipmap (2x2 px per block, 4 ushorts)
+    private ushort[][][] _cacheQuarter;
+    private ushort[][][] _cacheQuarterNoStatics;
+    private ushort[][][] _cacheQuarterNoPatch;
+    private ushort[][][] _cacheQuarterNoStaticsNoPatch;
+    private ushort[] _blackQuarter;
+
+    // Per-block altitude data (sbyte[64])
+    private sbyte[][][] _altitudeCache;
+    private sbyte[][][] _altitudeCacheNoStatics;
+    private sbyte[][][] _altitudeCacheNoPatch;
+    private sbyte[][][] _altitudeCacheNoStaticsNoPatch;
+    private sbyte[] _blackAltitude;
+
+    // Pre-shaded color blocks for NormalWithAltitude mode (ushort[64])
+    private ushort[][][] _litCache;
+    private ushort[][][] _litCacheNoStatics;
+    private ushort[][][] _litCacheNoPatch;
+    private ushort[][][] _litCacheNoStaticsNoPatch;
 
     /// <summary>
     /// Controls the intensity of altitude-based shading (1-20, lower = more contrast)
@@ -83,13 +131,13 @@ public sealed class Map
         }
     }
 
-    public static readonly Map Felucca = new(0, 0, 6144, 4096);
-    public static Map Trammel = new(0, 1, 6144, 4096);
-    public static readonly Map Ilshenar = new(2, 2, 2304, 1600);
-    public static readonly Map Malas = new(3, 3, 2560, 2048);
-    public static readonly Map Tokuno = new(4, 4, 1448, 1448);
-    public static readonly Map TerMur = new(5, 5, 1280, 4096);
-    public static Map Custom;
+    public TileMatrix Tiles => _tiles ??= new(FileIndex, _mapId, Width, Height, _path);
+
+    public int Width { get; set; }
+
+    public int Height { get; }
+
+    public int FileIndex { get; }
 
     public Map(int fileIndex, int mapId, int width, int height)
     {
@@ -108,52 +156,6 @@ public sealed class Map
         Height = height;
         _path = path;
     }
-
-    public TileMatrix Tiles => _tiles ??= new(FileIndex, _mapId, Width, Height, _path);
-
-    public int Width { get; set; }
-
-    public int Height { get; }
-
-    public int FileIndex { get; }
-
-    private bool _isCachedDefault;
-    private bool _isCachedNoStatics;
-    private bool _isCachedNoPatch;
-    private bool _isCachedNoStaticsNoPatch;
-
-    private ushort[][][] _cache;
-    private ushort[][][] _cacheNoStatics;
-    private ushort[][][] _cacheNoPatch;
-    private ushort[][][] _cacheNoStaticsNoPatch;
-    private ushort[] _black;
-
-    // Half-resolution mipmap (4x4 px per block, 16 ushorts)
-    private ushort[][][] _cacheHalf;
-    private ushort[][][] _cacheHalfNoStatics;
-    private ushort[][][] _cacheHalfNoPatch;
-    private ushort[][][] _cacheHalfNoStaticsNoPatch;
-    private ushort[] _blackHalf;
-
-    // Quarter-resolution mipmap (2x2 px per block, 4 ushorts)
-    private ushort[][][] _cacheQuarter;
-    private ushort[][][] _cacheQuarterNoStatics;
-    private ushort[][][] _cacheQuarterNoPatch;
-    private ushort[][][] _cacheQuarterNoStaticsNoPatch;
-    private ushort[] _blackQuarter;
-
-    // Per-block altitude data (sbyte[64])
-    private sbyte[][][] _altitudeCache;
-    private sbyte[][][] _altitudeCacheNoStatics;
-    private sbyte[][][] _altitudeCacheNoPatch;
-    private sbyte[][][] _altitudeCacheNoStaticsNoPatch;
-    private sbyte[] _blackAltitude;
-
-    // Pre-shaded color blocks for NormalWithAltitude mode (ushort[64])
-    private ushort[][][] _litCache;
-    private ushort[][][] _litCacheNoStatics;
-    private ushort[][][] _litCacheNoPatch;
-    private ushort[][][] _litCacheNoStaticsNoPatch;
 
     public static void DefragStatics(string path, Map map, int width, int height, bool remove)
     {
@@ -200,6 +202,7 @@ public sealed class Map
             using var binidx = new BinaryWriter(memidx);
 
             using var binmul = new BinaryWriter(memmul);
+
             for (var x = 0; x < blockx; ++x)
             {
                 for (var y = 0; y < blocky; ++y)
@@ -509,7 +512,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-             by = y;
+                 by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -523,7 +526,7 @@ public sealed class Map
             var pRow7 = (int*)(pStart + 7 * stride);
 
             for (int ox = 0,
-                 bx = x;
+                     bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -589,7 +592,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-             by = y;
+                 by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -599,7 +602,7 @@ public sealed class Map
             var pRow3 = (int*)(pStart + 3 * stride);
 
             for (int ox = 0,
-                 bx = x;
+                     bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -634,7 +637,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-             by = y;
+                 by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -642,7 +645,7 @@ public sealed class Map
             var pRow1 = (int*)(pStart + 1 * stride);
 
             for (int ox = 0,
-                 bx = x;
+                     bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -879,6 +882,7 @@ public sealed class Map
             var memoryStream = new MemoryStream();
 
             using var binaryWriter = new BinaryWriter(memoryStream);
+
             for (var x = 0; x < blockX; ++x)
             {
                 for (var y = 0; y < blockY; ++y)
@@ -1495,7 +1499,7 @@ public sealed class Map
         return data;
     }
 
-    #region Altitude Map Rendering
+#region Altitude Map Rendering
 
     /// <summary>
     /// Returns Bitmap with altitude rendering mode support
@@ -1552,7 +1556,7 @@ public sealed class Map
         {
             // Grayscale altitude mode (formerly 8bpp indexed with a gray palette)
             for (int oy = 0,
-                 by = y;
+                     by = y;
                  oy < height;
                  ++oy, ++by, pStart += blockStride)
             {
@@ -1566,7 +1570,7 @@ public sealed class Map
                 var pRow7 = (ushort*)(pStart + 7 * stride);
 
                 for (int ox = 0,
-                     bx = x;
+                         bx = x;
                      ox < width;
                      ++ox, ++bx)
                 {
@@ -1625,7 +1629,7 @@ public sealed class Map
             var withAltitude = altitudeMode == MapAltitudeModeType.NormalWithAltitude;
 
             for (int oy = 0,
-                 by = y;
+                     by = y;
                  oy < height;
                  ++oy, ++by, pStart += blockStride)
             {
@@ -1639,13 +1643,13 @@ public sealed class Map
                 var pRow7 = (ushort*)(pStart + 7 * stride);
 
                 for (int ox = 0,
-                     bx = x;
+                         bx = x;
                      ox < width;
                      ++ox, ++bx)
                 {
                     var colorData = withAltitude
-                        ? GetLitBlock(bx, by, statics)
-                        : GetRenderedBlock(bx, by, statics);
+                                        ? GetLitBlock(bx, by, statics)
+                                        : GetRenderedBlock(bx, by, statics);
 
                     fixed (ushort* pData = colorData)
                     {
@@ -1817,8 +1821,8 @@ public sealed class Map
     {
         // Get current shading settings based on preset
         var settings = ShadingPreset == AltitudeShadingPresetType.Custom
-            ? CustomShadingSettings
-            : AltitudeShadingSettings.GetPreset(ShadingPreset);
+                           ? CustomShadingSettings
+                           : AltitudeShadingSettings.GetPreset(ShadingPreset);
 
         // Use configurable intensity (lower = more contrast, higher = softer)
         var maxSlope = Math.Clamp(AltitudeIntensity, 1, 20);
@@ -1919,5 +1923,5 @@ public sealed class Map
         return (ushort)(OpaqueBit | (red << 10) | (green << 5) | blue);
     }
 
-    #endregion
+#endregion
 }

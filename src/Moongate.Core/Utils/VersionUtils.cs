@@ -8,6 +8,21 @@ namespace Moongate.Core.Utils;
 public static class VersionUtils
 {
     /// <summary>
+    /// Gets the codename embedded in the specified assembly's metadata.
+    /// </summary>
+    /// <param name="assembly">The assembly to read codename metadata from.</param>
+    /// <returns>The codename, or an empty string when the metadata is unavailable.</returns>
+    public static string GetCodename(Assembly assembly)
+    {
+        ArgumentNullException.ThrowIfNull(assembly);
+
+        return assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
+                       .FirstOrDefault(attribute => attribute.Key == "Codename")
+                       ?.Value ??
+               "";
+    }
+
+    /// <summary>
     /// Gets the informational version of the Moongate.Core assembly.
     /// </summary>
     /// <returns>The version declared for Moongate.Core, without build metadata.</returns>
@@ -28,7 +43,7 @@ public static class VersionUtils
         ArgumentNullException.ThrowIfNull(assembly);
 
         var informationalVersion = assembly.GetCustomAttribute<AssemblyInformationalVersionAttribute>()
-            ?.InformationalVersion;
+                                           ?.InformationalVersion;
 
         if (!string.IsNullOrWhiteSpace(informationalVersion))
         {
@@ -38,19 +53,5 @@ public static class VersionUtils
         }
 
         return assembly.GetName().Version?.ToString() ?? "";
-    }
-
-    /// <summary>
-    /// Gets the codename embedded in the specified assembly's metadata.
-    /// </summary>
-    /// <param name="assembly">The assembly to read codename metadata from.</param>
-    /// <returns>The codename, or an empty string when the metadata is unavailable.</returns>
-    public static string GetCodename(Assembly assembly)
-    {
-        ArgumentNullException.ThrowIfNull(assembly);
-
-        return assembly.GetCustomAttributes<AssemblyMetadataAttribute>()
-            .FirstOrDefault(attribute => attribute.Key == "Codename")
-            ?.Value ?? "";
     }
 }

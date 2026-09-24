@@ -1,233 +1,101 @@
 # Run with Docker
 
-Each Moongate release publishes a **linux/amd64** image to
-[GitHub Container Registry](https://github.com/moongate-community/moongate/pkgs/container/moongate).
-Images are tagged with the version (without `v`) and with `latest`. The examples
-below pin `0.4.0`; choose the version you want from the [changelog](../CHANGELOG.md)
-or [GitHub releases](https://github.com/moongate-community/moongate/releases).
-The site header displays the current version.
-
-You need Docker and your own Ultima Online client files. The image does not
-include those files. TCP port **2593** is the default game listener. Current source
-builds also declare **2594/tcp** for the optional internal API; it is disabled by default.
-
-## First start
-
-Pull the image and create persistent storage:
-
-```sh
-docker pull ghcr.io/moongate-community/moongate:0.4.0
-docker volume create moongate-data
-```
-
-Replace `/absolute/path/to/ultima` with your client directory. Mount it read-only;
-server configuration, logs, plugins, and scripts belong in `/data`:
-
-```sh
-docker run -d --name moongate \
-  --mount type=volume,source=moongate-data,target=/data \
-  --mount type=bind,source=/absolute/path/to/ultima,target=/uo,readonly \
-  -p 2593:2593 \
-  ghcr.io/moongate-community/moongate:0.4.0
-```
-
-On a fresh volume the server writes `/data/config/moongate.toml` and exits because
-`ultima_path` still contains its placeholder. Copy out the generated configuration:
-
-```sh
-docker cp moongate:/data/config/moongate.toml ./moongate.toml
-```
-
-Edit the existing `[ultima]` section in that file:
-
-```toml
-[ultima]
-ultima_path = "/uo"
-```
-
-The path is **inside the container**, so it must match the `/uo` mount, not the
-host path. Keep the other generated settings. Copy the file back and start again:
-
-```sh
-docker cp ./moongate.toml moongate:/data/config/moongate.toml
-docker start moongate
-docker logs --tail 100 -f moongate
-```
-
-Stop the log viewer with Ctrl+C; it does not stop the detached container.
-Use `docker stop moongate` for a normal shutdown and `docker start moongate`
-to resume with the same volume.
-
-## Docker Compose
-
-For a local source build with three separate processes, use the
-[one login and two game instances example](docker-login-realms.md). It includes
-one PostgreSQL service with three databases, runtime/schema role separation,
-schema jobs, independent server storage and ports, and the current limitations of
-the login/game modes.
-
-Save this as `compose.yaml`, replacing the client directory:
-
-```yaml
-services:
-  moongate:
-    image: ghcr.io/moongate-community/moongate:0.4.0
-    ports:
-      - "2593:2593"
-    volumes:
-      - moongate-data:/data
-      - /absolute/path/to/ultima:/uo:ro
-
-volumes:
-  moongate-data:
-```
-
-Start it with `docker compose up -d`. A new Compose volume also requires the
-first-start configuration above. Use the Compose service name for the copy steps:
-
-```sh
-docker compose cp moongate:/data/config/moongate.toml ./moongate.toml
-# Edit [ultima].ultima_path to /uo in moongate.toml.
-docker compose cp ./moongate.toml moongate:/data/config/moongate.toml
-docker compose start moongate
-docker compose logs --tail 100 -f moongate
-```
-
-Compose creates a project-scoped named volume. Keep the same Compose project name
-and directory when restarting the same world. `docker compose down` removes the
-containers but retains that volume; adding `--volumes` deletes the persisted data.
-
-## PostgreSQL persistence
-
-The ordinary image does not bundle PostgreSQL or the sample plugin. A server with
-registered persistence entities uses a `postgres://user:password@host/database`
-URI in its `connection_string` setting. Use a `$NAME` environment reference to
-supply the URI from a secret provider. Keep `auto_sync_schema = false` and
-give the runtime process a DML-only role. Run reviewed versioned SQL migration jobs
-with the same plugin bundle and a separate schema connection while the relevant
-runtime is stopped. See [PostgreSQL persistence](persistence.md) and the complete
-[login and realms example](docker-login-realms.md).
-
-## Internal API port
-
-API hosting is available in builds containing this change; the pinned `0.4.0`
-image examples above predate it. Build the current checkout from the repository
-root to try it before the next release:
+Moongate publishes Linux images to [GitHub Container Registry](https://github.com/moongate-community/moongate/pkgs/container/moongate). Use the documentation for the version you run; the [changelog](../CHANGELOG.md) identifies published releases. To run the current source, build the image locally:
 
 ```sh
 docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 ```
 
-The image declares `2593/tcp` and `2594/tcp`. `EXPOSE` does not start a listener or
-publish a host port. Enable `[api]` and configure certificates/peer permissions
-using [API host configuration](server-configuration.md#enable-the-internal-api-server).
-For automatic certificate generation, follow [API certificates](api-certificates.md#docker):
-keep the API disabled while creating identities and exchanging public PEM files,
-and use a writable persistent volume. The read-only mount below is for
-**externally provisioned** certificates.
+The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships `mgboot`, the migration runner, the core SQL and `mg-uoxconv`. The `sample-plugin` build target adds the sample plugin bundle.
 
-A private Compose deployment can use:
+## Recommended Compose example
 
-```yaml
-services:
-  moongate:
-    image: moongate:local
-    ports:
-      - "2593:2593"
-    environment:
-      MOONGATE_API_CERTIFICATE_PASSWORD: "${MOONGATE_API_CERTIFICATE_PASSWORD:?Inject the PFX password into the shell environment}"
-    volumes:
-      - moongate-data:/data
-      - /absolute/path/to/ultima:/uo:ro
-      - /absolute/path/to/api-certificates:/data/config/tls:ro
+The [login and two game instances example](docker-login-realms.md) is a complete build-from-source deployment with:
 
-volumes:
-  moongate-data:
+- A login process on UO TCP port 2593 and two game processes on host ports 2595 and 2596.
+- Separate Accounts, Realm 1 and Realm 2 PostgreSQL databases and schema/runtime roles.
+- One private Redis service for live realm leases and one-use login handoff tickets.
+- Bitwarden-sourced Compose secrets, schema jobs, persistent server/PostgreSQL volumes and a disposable smoke test.
+
+Follow that guide for the exact `.env`, secret exports, build, SQL application and startup commands. Redis is not published to the host. There is no internal API listener or certificate exchange in this topology.
+
+## Standalone container
+
+`mode = "standalone"` runs both UO roles in one process, with separate login and game listeners. Publish both configured ports. Standalone also needs reachable Accounts and Realm PostgreSQL databases and the shared Redis service; it advertises its own local realm through Redis. Its root TOML includes:
+
+```toml
+mode = "standalone"
+
+[network]
+login_port = 2593
+game_port = 2595
+
+[ultima]
+ultima_path = "/uo"
+
+[persistence.accounts]
+connection_string = "$MOONGATE_ACCOUNTS_DATABASE"
+
+[persistence.realm]
+connection_string = "$MOONGATE_REALM_DATABASE"
+
+[redis]
+connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
+handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 ```
 
-Obtain the password from your credential provider into the invoking shell's
-environment. Do not write it into TOML or commit it in Compose/`.env` files. Keep
-`certificate_path = "tls/server.pfx"` and `trusted_root_paths = ["tls/root.pem"]`
-in `/data/config/moongate.toml`; these resolve under `/data/config`. The mounted
-files must be readable by the image's non-root user.
+Supply the four referenced variables from a secret provider in the container environment. PostgreSQL variables are `postgres://` URIs for role-specific databases. The Redis variable is a StackExchange.Redis connection string such as `redis:6379,password=<secret>` on a private Docker network; the handoff secret is a different value. Do not commit either value into TOML, Compose or `.env`. The [configuration reference](server-configuration.md) covers the other settings.
 
-Clients on the same Compose network can connect to `moongate:2594` without a
-published API port. Provision the server certificate with the DNS name the client
-uses as its TLS target host. A client on the Docker host can use a loopback-only
-mapping added under `ports`:
-
-```yaml
-      - "127.0.0.1:2594:2594"
-```
-
-For another private-network host, publish on the Docker host's private IP instead.
-Keep this internal channel on the private network. If you change `api.port`, use
-that value as the mapping's container port and the client's destination port; the
-Dockerfile's `EXPOSE` metadata remains the default 2594.
-
-Check `docker compose logs moongate`: disabled APIs produce an activation warning;
-enabled APIs log the bound endpoint and registered contract/handler counts. Bad
-TLS configuration or an occupied listener port fails startup. The API speaks
-MessagePack over mutual TLS/TCP, so an HTTP request or `curl` is not an API probe.
-There are no built-in login/realm operations yet; register handlers first.
-
-## Storage and multiple instances
-
-The image sets `MOONGATE_ROOT=/data` and runs as the .NET image's non-root user.
-A new named volume inherits the writable ownership prepared by the image.
-If you replace it with a host bind mount, make that directory writable by the
-container user; changing the mount does not change host ownership automatically.
-
-`MOONGATE_ROOT` and `--root-directory` can select another server root. If you change
-it, mount persistent storage at that path too. For multiple instances, use a
-separate data volume and a different published host port for each server. Do not
-share one root between running servers, and give each realm its own database.
-
-The `mode` setting currently defines the `login`, `game`, or `standalone`
-configuration contract. It does not yet select separate login/game service
-runtimes; see the [overview](../README.md#server-mode).
-
-## Update an instance
-
-Read the target version's [changelog](../CHANGELOG.md), stop the server, and follow
-your operator data-protection policy before upgrading. Change the pinned image tag
-in `compose.yaml`:
+Prepare a root before starting, then apply Auth and World SQL to their respective databases:
 
 ```sh
-docker compose stop
-docker compose pull
-docker compose up -d
-docker compose logs --tail 100 -f moongate
+docker volume create moongate-data
+docker run --rm --entrypoint /app/mgboot -v moongate-data:/data moongate:local /data
 ```
 
-The named volume is reused. With plain `docker run`, stop and remove the old
-container, then recreate it with the new image tag and the same named data volume
-and client mount. Removing a container does not delete its named volume.
+For optional administration TLS in this root, append `--generate-admin-certificate`
+after `/data`, with `--admin-certificate-hosts` naming the DNS/IP used by clients.
+See [mgboot certificate setup](mgboot.md#generate-an-administration-certificate)
+for the generated files and client trust. The default bind remains loopback;
+configure a private interface before connecting from another container. The
+multi-process Compose override instead uses its mounted TOMLs and operator-provided
+certificates, as described in the [example README](../examples/docker/login-realms/README.md#optional-administration-api).
+
+Mount that same volume for the server and migration runner. Stop the affected runtime before applying new reviewed SQL. For the runner's targets and output, see [Generate, review and apply](persistence-migrations.md#generate-review-and-apply). A missing database, Redis connection or required migration fails startup; the server does not create databases or apply unreviewed SQL automatically.
+
+## Ports, storage and updates
+
+The current image declares UO client ports 2593 and 2595. `EXPOSE` does not publish a host port; configure `ports` for the login and each game listener that clients must reach. Keep Redis and PostgreSQL on a private network. Each running Moongate process needs its own `/data` volume; each realm needs its own Realm database. Do not share one root or Realm database between running game processes.
+
+`docker compose down` preserves named volumes. Adding `--volumes` deletes server roots and PostgreSQL data; use it only for a disposable environment. World saves are not PostgreSQL backups. Stop services normally so the final world save can complete.
+
+To update an instance, read the target release's changelog, stop it, follow your database backup policy, change the image tag, and restart with the same volumes. If startup reports pending migrations, stop the affected server and apply the reviewed SQL before starting it again.
+
+## UOX3 content conversion
+
+The image includes `/app/mg-uoxconv` for converting UOX3 `.dfn` files to TOML. Bind the source read-only and an output directory writable by the invoking user:
+
+```sh
+docker run --rm --entrypoint /app/mg-uoxconv \
+  --user "$(id -u):$(id -g)" \
+  -v /path/to/uox3/dfndata/items:/uox-source:ro \
+  -v /path/to/templates:/uox-out \
+  moongate:local \
+  --source /uox-source --destination /uox-out/items --loot-destination /uox-out/loots
+```
+
+See [Migrate from UOX3](uox3-migration.md) for what the converter does and its current limits.
 
 ## Troubleshooting
 
-- **Exits on first start:** edit the generated `ultima_path` and restart; check the
-  logs for any further configuration or client-data error.
-- **Cannot read client files:** confirm the host path exists and is mounted at
-  `/uo`, with permission for the container user to read it.
-- **Cannot write config or generated files:** check `/data` volume ownership, especially for
-  bind mounts.
-- **Persistence connection/schema failure:** verify the configured environment
-  variable, PostgreSQL URI encoding, plugin bundle, role grants, and schema
-  preview output. Do not give the normal runtime a DDL credential.
-- **Cannot connect:** check `docker ps`, the `2593:2593` mapping, the listener
-  configuration, and the host firewall.
+- **Database connection fails:** `localhost` inside a container means that container. Use the reachable service name or private-network address and confirm the role has access to its target database.
+- **Redis connection fails:** verify the private service, its health, the shared credential and `noeviction` policy. A Redis restart clears tickets and leases; games republish leases after reconnect.
+- **Realm absent from login:** check the game logs and Redis lease TTLs as shown in the [Compose guide](docker-login-realms.md#start-observe-and-stop).
+- **Client redirect cannot connect:** the game's advertised IPv4 address and port must be reachable from the client and match the published host mapping.
+- **Missing client data or unwritable root:** check the `/uo` read-only mount and `/data` ownership for the image's non-root user.
 
-See [Configuration](server-configuration.md) for all TOML settings and CLI limits,
-[First start](getting-started.md#files-and-process-ownership) for PID ownership,
-and [Diagnostics](diagnostics.md) for process metrics and diagnostic events.
+See [First start](getting-started.md), [Configuration](server-configuration.md) and [Diagnostics](diagnostics.md) for server-level operation.
 
-## Database migration job
+## Private administration endpoint
 
-Images built from this source include the isolated runner at
-`/app/migration-runner/Moongate.MigrationRunner` and core SQL at `/app/migrations`.
-Run it as a one-shot job with the same SQL/plugin bundle as the server, a selected
-`--target auth|world`, and a root containing a TOML with schema-role credentials.
-Normal server startup validates migrations but does not apply them by default.
-See the [Compose maintenance example](docker-login-realms.md#review-and-apply-schema-changes)
-and [versioned SQL workflow](persistence.md#generate-review-and-apply).
+Port 2590 is reserved for optional gRPC administration and remains disabled in the default image/Compose configuration. Use server TLS on the private network; no mTLS or public port mapping is required. See the [administration guide](admin-api.md) and [opt-in Compose configuration](../examples/docker/login-realms/README.md#optional-administration-api).

@@ -18,21 +18,15 @@ public sealed class PacketRegistry
     public bool IsFrozen { get; private set; }
     public IReadOnlyList<PacketDescriptor> RegisteredPackets => IsFrozen ? _snapshot : CreateSnapshot();
 
-    public PacketRegistry()
+    public void Freeze()
     {
-    }
+        if (IsFrozen)
+        {
+            return;
+        }
 
-    /// <summary>
-    /// Registers a packet using the direction inferred from its incoming and outgoing interfaces.
-    /// Bidirectional packets are registered for both directions in one operation.
-    /// </summary>
-    /// <typeparam name="TPacket">The concrete packet type with packet metadata.</typeparam>
-    public void RegisterPacket<TPacket>()
-        where TPacket : class, IPacket
-    {
-        EnsureMutable();
-        var descriptor = PacketMetadataCache<TPacket>.Descriptor;
-        Register(descriptor, PacketParserCache<TPacket>.Parser);
+        _snapshot = CreateSnapshot();
+        IsFrozen = true;
     }
 
     public void RegisterIncoming<TPacket>()
@@ -70,48 +64,9 @@ public sealed class PacketRegistry
         Register(descriptor, null);
     }
 
-    public void Freeze()
-    {
-        if (IsFrozen)
-        {
-            return;
-        }
-
-        _snapshot = CreateSnapshot();
-        IsFrozen = true;
-    }
-
-    /// <summary>Finds a registered packet by opcode, preferring the incoming packet when both directions exist.</summary>
-    /// <param name="opCode">The opcode to look up.</param>
-    /// <param name="descriptor">The matching descriptor, or null when the opcode is unknown.</param>
-    /// <returns>True when a packet is registered for the opcode; otherwise, false.</returns>
-    public bool TryGetDescriptor(byte opCode, [NotNullWhen(true)] out PacketDescriptor? descriptor)
-    {
-        return TryGetDescriptor(opCode, PacketDirection.Incoming, out descriptor) ||
-               TryGetDescriptor(opCode, PacketDirection.Outgoing, out descriptor);
-    }
-
-    public bool TryGetDescriptor(
-        byte opCode,
-        PacketDirection direction,
-        [NotNullWhen(true)] out PacketDescriptor? descriptor
-    )
-    {
-        if (direction is not (PacketDirection.Incoming or PacketDirection.Outgoing))
-        {
-            descriptor = null;
-
-            return false;
-        }
-
-        return _descriptors.TryGetValue((opCode, direction), out descriptor);
-    }
-
     /// <summary>Tries to decode one complete incoming packet, including its opcode and header.</summary>
     public bool TryDecode(ReadOnlySpan<byte> data, [NotNullWhen(true)] out IPacket? packet)
-    {
-        return TryDecode(data, out packet, out _);
-    }
+        => TryDecode(data, out packet, out _);
 
     /// <summary>Tries to decode one complete incoming packet and returns its opcode even when decoding fails.</summary>
     /// <param name="data">The complete packet, including its opcode and header.</param>
@@ -134,38 +89,37 @@ public sealed class PacketRegistry
         return parser(data, out packet);
     }
 
-    private void Register(PacketDescriptor descriptor, PacketParser? parser)
+    /// <summary>Finds a registered packet by opcode, preferring the incoming packet when both directions exist.</summary>
+    /// <param name="opCode">The opcode to look up.</param>
+    /// <param name="descriptor">The matching descriptor, or null when the opcode is unknown.</param>
+    /// <returns>True when a packet is registered for the opcode; otherwise, false.</returns>
+    public bool TryGetDescriptor(byte opCode, [NotNullWhen(true)] out PacketDescriptor? descriptor)
+        => TryGetDescriptor(opCode, PacketDirection.Incoming, out descriptor) ||
+           TryGetDescriptor(opCode, PacketDirection.Outgoing, out descriptor);
+
+    public bool TryGetDescriptor(
+        byte opCode,
+        PacketDirection direction,
+        [NotNullWhen(true)] out PacketDescriptor? descriptor
+    )
     {
-        var keys = descriptor.Direction == PacketDirection.Both
-            ? new[]
-            {
-                (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing)
-            }
-            : new[] { (descriptor.OpCode, descriptor.Direction) };
-        EnsureAvailable(descriptor, keys);
-
-        foreach (var key in keys)
+        if (direction is not (PacketDirection.Incoming or PacketDirection.Outgoing))
         {
-            _descriptors.Add(key, descriptor);
+            descriptor = null;
+
+            return false;
         }
 
-        if (parser is not null)
-        {
-            _incomingParsers.Add(descriptor.OpCode, parser);
-        }
-
-        _registeredPackets.Add(descriptor);
+        return _descriptors.TryGetValue((opCode, direction), out descriptor);
     }
 
     private ReadOnlyCollection<PacketDescriptor> CreateSnapshot()
-    {
-        return Array.AsReadOnly(
+        => Array.AsReadOnly(
             _registeredPackets
                 .OrderBy(descriptor => descriptor.OpCode)
                 .ThenBy(descriptor => descriptor.Direction)
                 .ToArray()
         );
-    }
 
     private void EnsureAvailable(
         PacketDescriptor descriptor,
@@ -194,5 +148,28 @@ public sealed class PacketRegistry
         {
             throw new InvalidOperationException("The packet registry is frozen and cannot be changed.");
         }
+    }
+
+    private void Register(PacketDescriptor descriptor, PacketParser? parser)
+    {
+        var keys = descriptor.Direction == PacketDirection.Both
+                       ? new[]
+                       {
+                           (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing)
+                       }
+                       : new[] { (descriptor.OpCode, descriptor.Direction) };
+        EnsureAvailable(descriptor, keys);
+
+        foreach (var key in keys)
+        {
+            _descriptors.Add(key, descriptor);
+        }
+
+        if (parser is not null)
+        {
+            _incomingParsers.Add(descriptor.OpCode, parser);
+        }
+
+        _registeredPackets.Add(descriptor);
     }
 }

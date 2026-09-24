@@ -33,7 +33,7 @@ internal sealed class PidFileGuard : IDisposable
         {
             // Keep a separate, stable file: deleting a locked file can allow another
             // process to create and lock a different file at the same path on Unix.
-            instanceLock = new FileStream(
+            instanceLock = new(
                 pidFilePath + ".lock",
                 FileMode.OpenOrCreate,
                 FileAccess.ReadWrite,
@@ -63,29 +63,13 @@ internal sealed class PidFileGuard : IDisposable
             var processId = Environment.ProcessId;
             File.WriteAllText(pidFilePath, processId.ToString(CultureInfo.InvariantCulture), Utf8WithoutBom);
 
-            return new PidFileGuard(pidFilePath, processId, instanceLock);
+            return new(pidFilePath, processId, instanceLock);
         }
         catch
         {
             instanceLock.Dispose();
 
             throw;
-        }
-    }
-
-    private static int? ReadPid(string path)
-    {
-        try
-        {
-            var content = File.ReadAllText(path, Encoding.UTF8).Trim().TrimStart('\uFEFF');
-
-            return int.TryParse(content, NumberStyles.Integer, CultureInfo.InvariantCulture, out var pid) && pid > 0
-                ? pid
-                : null;
-        }
-        catch (FileNotFoundException)
-        {
-            return null;
         }
     }
 
@@ -100,6 +84,22 @@ internal sealed class PidFileGuard : IDisposable
         catch (ArgumentException)
         {
             return false;
+        }
+    }
+
+    private static int? ReadPid(string path)
+    {
+        try
+        {
+            var content = File.ReadAllText(path, Encoding.UTF8).Trim().TrimStart('\uFEFF');
+
+            return int.TryParse(content, NumberStyles.Integer, CultureInfo.InvariantCulture, out var pid) && pid > 0
+                       ? pid
+                       : null;
+        }
+        catch (FileNotFoundException)
+        {
+            return null;
         }
     }
 

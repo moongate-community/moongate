@@ -34,7 +34,10 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     public long Errors { get; private set; }
     public long BudgetAborts { get; private set; }
 
-    /// <summary>Gets the owner of the code executing right now: the running coroutine's owner during a resume, otherwise the file being loaded; null when neither applies.</summary>
+    /// <summary>
+    /// Gets the owner of the code executing right now: the running coroutine's owner during a resume, otherwise the file
+    /// being loaded; null when neither applies.
+    /// </summary>
     public string? CurrentOwner => _current?.Owner ?? _currentOwner();
 
     public CoroutineScheduler(
@@ -54,65 +57,8 @@ internal sealed class CoroutineScheduler : IScriptScheduler
         _currentOwner = currentOwner;
     }
 
-    /// <summary>Starts <paramref name="function"/> as a coroutine owned by <paramref name="owner"/> and runs it until it returns, waits, or fails.</summary>
-    /// <exception cref="InvalidCastException">An argument has no Lua representation; nothing is registered.</exception>
-    /// <exception cref="InvalidOperationException">Called while another resume is running on this scheduler.</exception>
-    public ScriptResult Start(LuaFunction function, string owner, params object?[] args)
-    {
-        if (_stopped)
-        {
-            return ScriptResult.Failed(new ScriptErrorInfo(owner, 0, "the script engine has stopped", null));
-        }
-
-        ArgumentNullException.ThrowIfNull(function);
-        ArgumentException.ThrowIfNullOrWhiteSpace(owner);
-        EnsureNotResuming();
-
-        // Convert before registering, so an unconvertible argument cannot leave a phantom coroutine behind.
-        var arguments = new LuaValue[args.Length];
-
-        for (var i = 0; i < args.Length; i++)
-        {
-            arguments[i] = LuaValueConverter.ToLua(args[i], args[i]?.GetType() ?? typeof(object));
-        }
-
-        var coroutine = _state.CreateCoroutine(function, isProtectedMode: false);
-        _budget.Install(coroutine);
-        var entry = new ScheduledCoroutine(Guid.NewGuid(), coroutine, owner);
-        _active[entry.Id] = entry;
-        _ownership.TrackCoroutine(owner, entry.Id);
-        _stack.Clear();
-        _stack.PushRange(arguments);
-
-        return Resume(entry);
-    }
-
-    /// <summary>Cancels every pending coroutine and timer the owner file created. Running code is never interrupted; only future resumes are dropped.</summary>
-    public void CancelOwned(string owner)
-    {
-        foreach (var timerId in _ownership.ReleaseTimers(owner))
-        {
-            _timers.UnregisterTimer(timerId);
-        }
-
-        foreach (var id in _ownership.ReleaseCoroutines(owner))
-        {
-            if (!_active.Remove(id, out var entry))
-            {
-                continue;
-            }
-
-            if (entry.PendingTimer is not null)
-            {
-                _timers.UnregisterTimer(entry.PendingTimer);
-            }
-
-            entry.Dispose();
-        }
-    }
-
     /// <summary>
-    /// Cancels every pending timer and coroutine regardless of owner, and makes every later <see cref="Start"/>
+    /// Cancels every pending timer and coroutine regardless of owner, and makes every later <see cref="Start" />
     /// fail instead of touching the Lua state. Called once, right before the engine disposes the state: a
     /// periodic timer callback that fires after that point must not reach <c>CreateCoroutine</c> on a disposed
     /// state.
@@ -139,13 +85,161 @@ internal sealed class CoroutineScheduler : IScriptScheduler
         _stopped = true;
     }
 
+    /// <summary>
+    /// Cancels every pending coroutine and timer the owner file created. Running code is never interrupted; only future
+    /// resumes are dropped.
+    /// </summary>
+    public void CancelOwned(string owner)
+    {
+        foreach (var timerId in _ownership.ReleaseTimers(owner))
+        {
+            _timers.UnregisterTimer(timerId);
+        }
+
+        foreach (var id in _ownership.ReleaseCoroutines(owner))
+        {
+            if (!_active.Remove(id, out var entry))
+            {
+                continue;
+            }
+
+            if (entry.PendingTimer is not null)
+            {
+                _timers.UnregisterTimer(entry.PendingTimer);
+            }
+
+            entry.Dispose();
+        }
+    }
+
+    /// <summary>
+    /// Starts <paramref name="function" /> as a coroutine owned by <paramref name="owner" /> and runs it until it returns,
+    /// waits, or fails.
+    /// </summary>
+    /// <exception cref="InvalidCastException">An argument has no Lua representation; nothing is registered.</exception>
+    /// <exception cref="InvalidOperationException">Called while another resume is running on this scheduler.</exception>
+    public ScriptResult Start(LuaFunction function, string owner, params object?[] args)
+    {
+        if (_stopped)
+        {
+            return ScriptResult.Failed(new(owner, 0, "the script engine has stopped", null));
+        }
+
+        ArgumentNullException.ThrowIfNull(function);
+        ArgumentException.ThrowIfNullOrWhiteSpace(owner);
+        EnsureNotResuming();
+
+        // Convert before registering, so an unconvertible argument cannot leave a phantom coroutine behind.
+        var arguments = new LuaValue[args.Length];
+
+        for (var i = 0; i < args.Length; i++)
+        {
+            arguments[i] = LuaValueConverter.ToLua(args[i], args[i]?.GetType() ?? typeof(object));
+        }
+
+        var coroutine = _state.CreateCoroutine(function);
+        _budget.Install(coroutine);
+        var entry = new ScheduledCoroutine(Guid.NewGuid(), coroutine, owner);
+        _active[entry.Id] = entry;
+        _ownership.TrackCoroutine(owner, entry.Id);
+        _stack.Clear();
+        _stack.PushRange(arguments);
+
+        return Resume(entry);
+    }
+
+    private void EnsureNotResuming()
+    {
+        if (_resuming)
+        {
+            throw new InvalidOperationException(
+                "Coroutine resumes cannot nest: start or resume a coroutine from a timer callback, not from inside running Lua."
+            );
+        }
+    }
+
+    private ScriptResult Fail(ScheduledCoroutine entry, ScriptErrorInfo error)
+    {
+        if (entry.PendingTimer is not null)
+        {
+            _timers.UnregisterTimer(entry.PendingTimer);
+            _ownership.ForgetTimer(entry.PendingTimer);
+            entry.PendingTimer = null;
+        }
+
+        Forget(entry);
+        Errors++;
+        _onError(error);
+
+        return ScriptResult.Failed(error);
+    }
+
+    /// <summary>Drops a finished or failed coroutine and releases its budget source; the entry is never resumed again.</summary>
+    private void Forget(ScheduledCoroutine entry)
+    {
+        _active.Remove(entry.Id);
+        _ownership.ForgetCoroutine(entry.Id);
+        entry.Dispose();
+    }
+
+    private ScriptResult Park(ScheduledCoroutine entry, double seconds)
+    {
+        string? timerId = null;
+
+        try
+        {
+            timerId = _timers.RegisterTimer(
+                "lua-wait:" + entry.Owner,
+                TimeSpan.FromSeconds(seconds),
+                () =>
+                {
+                    if (timerId is not null)
+                    {
+                        _ownership.ForgetTimer(timerId);
+                    }
+
+                    entry.PendingTimer = null;
+
+                    if (!_active.ContainsKey(entry.Id))
+                    {
+                        return;
+                    }
+
+                    _stack.Clear();
+                    _stack.Push(new(seconds));
+                    Resume(entry);
+                }
+            );
+        }
+        catch (Exception exception)
+        {
+            // The wheel refuses a registration at capacity, and it closes on a callback that throws.
+            // A 'wait' that cannot be scheduled fails its own coroutine rather than the caller: this
+            // runs inside a timer callback whenever the coroutine was resumed by one.
+            return Fail(
+                entry,
+                new(
+                    entry.Owner,
+                    0,
+                    $"'wait' could not schedule the timer: {exception.Message}",
+                    null
+                )
+            );
+        }
+
+        entry.PendingTimer = timerId;
+        _ownership.TrackTimer(entry.Owner, timerId);
+
+        return ScriptResult.Suspended;
+    }
+
     private ScriptResult Resume(ScheduledCoroutine entry)
     {
         EnsureNotResuming();
 
         if (_stopped)
         {
-            return ScriptResult.Failed(new ScriptErrorInfo(entry.Owner, 0, "the script engine has stopped", null));
+            return ScriptResult.Failed(new(entry.Owner, 0, "the script engine has stopped", null));
         }
 
         _resuming = true;
@@ -190,7 +284,9 @@ internal sealed class CoroutineScheduler : IScriptScheduler
                 return ScriptResult.Completed(ToClr(values[1..]));
             }
 
-            if (values.Length >= 3 && values[1].Type == LuaValueType.String && values[1].Read<string>() == WaitTag &&
+            if (values.Length >= 3 &&
+                values[1].Type == LuaValueType.String &&
+                values[1].Read<string>() == WaitTag &&
                 values[2].Type == LuaValueType.Number)
             {
                 var seconds = values[2].Read<double>();
@@ -199,7 +295,7 @@ internal sealed class CoroutineScheduler : IScriptScheduler
                 {
                     return Fail(
                         entry,
-                        new ScriptErrorInfo(
+                        new(
                             entry.Owner,
                             0,
                             $"wait(seconds) needs a positive number of seconds, got {seconds}",
@@ -213,7 +309,7 @@ internal sealed class CoroutineScheduler : IScriptScheduler
 
             return Fail(
                 entry,
-                new ScriptErrorInfo(
+                new(
                     entry.Owner,
                     0,
                     "unsupported yield: coroutines may only yield through wait(seconds)",
@@ -228,96 +324,6 @@ internal sealed class CoroutineScheduler : IScriptScheduler
         }
     }
 
-    private ScriptResult Park(ScheduledCoroutine entry, double seconds)
-    {
-        string? timerId = null;
-
-        try
-        {
-            timerId = _timers.RegisterTimer(
-                "lua-wait:" + entry.Owner,
-                TimeSpan.FromSeconds(seconds),
-                () =>
-                {
-                    if (timerId is not null)
-                    {
-                        _ownership.ForgetTimer(timerId);
-                    }
-
-                    entry.PendingTimer = null;
-
-                    if (!_active.ContainsKey(entry.Id))
-                    {
-                        return;
-                    }
-
-                    _stack.Clear();
-                    _stack.Push(new LuaValue(seconds));
-                    Resume(entry);
-                }
-            );
-        }
-        catch (Exception exception)
-        {
-            // The wheel refuses a registration at capacity, and it closes on a callback that throws.
-            // A 'wait' that cannot be scheduled fails its own coroutine rather than the caller: this
-            // runs inside a timer callback whenever the coroutine was resumed by one.
-            return Fail(
-                entry,
-                new ScriptErrorInfo(
-                    entry.Owner,
-                    0,
-                    $"'wait' could not schedule the timer: {exception.Message}",
-                    null
-                )
-            );
-        }
-
-        entry.PendingTimer = timerId;
-        _ownership.TrackTimer(entry.Owner, timerId);
-
-        return ScriptResult.Suspended;
-    }
-
-    private ScriptResult Fail(ScheduledCoroutine entry, ScriptErrorInfo error)
-    {
-        if (entry.PendingTimer is not null)
-        {
-            _timers.UnregisterTimer(entry.PendingTimer);
-            _ownership.ForgetTimer(entry.PendingTimer);
-            entry.PendingTimer = null;
-        }
-
-        Forget(entry);
-        Errors++;
-        _onError(error);
-
-        return ScriptResult.Failed(error);
-    }
-
-    /// <summary>Drops a finished or failed coroutine and releases its budget source; the entry is never resumed again.</summary>
-    private void Forget(ScheduledCoroutine entry)
-    {
-        _active.Remove(entry.Id);
-        _ownership.ForgetCoroutine(entry.Id);
-        entry.Dispose();
-    }
-
-    private void EnsureNotResuming()
-    {
-        if (_resuming)
-        {
-            throw new InvalidOperationException(
-                "Coroutine resumes cannot nest: start or resume a coroutine from a timer callback, not from inside running Lua."
-            );
-        }
-    }
-
-    private static ScriptErrorInfo WithOwner(ScriptErrorInfo error, string owner)
-    {
-        return error.File.Length == 0 ? error with { File = owner } : error;
-    }
-
     private static object?[] ToClr(ReadOnlySpan<LuaValue> values)
     {
         var result = new object?[values.Length];
@@ -329,4 +335,7 @@ internal sealed class CoroutineScheduler : IScriptScheduler
 
         return result;
     }
+
+    private static ScriptErrorInfo WithOwner(ScriptErrorInfo error, string owner)
+        => error.File.Length == 0 ? error with { File = owner } : error;
 }

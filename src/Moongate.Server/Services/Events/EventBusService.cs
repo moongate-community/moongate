@@ -15,16 +15,16 @@ public sealed class EventBusService : IEventBusService
     }
 
     /// <inheritdoc />
-    public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
-        where TEvent : class, IMoongateEvent
-    {
-        return _eventBus.Subscribe(handler);
-    }
-
-    /// <inheritdoc />
     public Task PublishAsync<TEvent>(TEvent message, CancellationToken cancellationToken = default)
         where TEvent : class, IMoongateEvent
-    {
-        return _eventBus.PublishAsync(message, cancellationToken);
-    }
+        => _eventBus.PublishAsync(message, cancellationToken);
+
+    /// <inheritdoc />
+    public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
+        where TEvent : class, IMoongateEvent
+        => _eventBus.Subscribe(handler);
+
+    /// <inheritdoc />
+    public IDisposable SubscribeAll(Func<IMoongateEvent, CancellationToken, Task> handler)
+        => _eventBus.SubscribeAll(handler);
 }

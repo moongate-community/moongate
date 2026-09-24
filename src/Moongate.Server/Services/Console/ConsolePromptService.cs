@@ -48,14 +48,46 @@ public sealed class ConsolePromptService : IConsolePromptService
     public char UnlockCharacter => PromptUnlockCharacter;
 
     public ConsolePromptService()
-        : this(new SystemConsoleDriver(), IsInteractiveTerminal())
-    {
-    }
+        : this(new SystemConsoleDriver(), IsInteractiveTerminal()) { }
 
     internal ConsolePromptService(IConsoleDriver driver, bool interactive)
     {
         _driver = driver;
         _interactive = interactive;
+    }
+
+    /// <inheritdoc />
+    public void HidePrompt()
+    {
+        lock (_sync)
+        {
+            if (!_interactive || !_promptVisible)
+            {
+                return;
+            }
+
+            _promptVisible = false;
+
+            try
+            {
+                ClearPromptRow();
+            }
+            catch (Exception exception) when (exception is IOException or ArgumentOutOfRangeException)
+            {
+                Degrade();
+            }
+        }
+    }
+
+    /// <inheritdoc />
+    public void LockInput()
+    {
+        lock (_sync)
+        {
+            _locked = true;
+            _input = "";
+            SafeRender();
+        }
     }
 
     /// <inheritdoc />
@@ -100,25 +132,6 @@ public sealed class ConsolePromptService : IConsolePromptService
     }
 
     /// <inheritdoc />
-    public void WriteOutputLine(string text, CommandOutputLevel level)
-    {
-        RunWithPromptHidden(() =>
-            {
-                if (level == CommandOutputLevel.Information)
-                {
-                    _driver.WriteLine(text);
-
-                    return;
-                }
-
-                _driver.ForegroundColor = level == CommandOutputLevel.Error ? ConsoleColor.Red : ConsoleColor.Yellow;
-                _driver.WriteLine(text);
-                _driver.ResetColor();
-            }
-        );
-    }
-
-    /// <inheritdoc />
     public void ShowPrompt()
     {
         lock (_sync)
@@ -134,25 +147,12 @@ public sealed class ConsolePromptService : IConsolePromptService
     }
 
     /// <inheritdoc />
-    public void HidePrompt()
+    public void UnlockInput()
     {
         lock (_sync)
         {
-            if (!_interactive || !_promptVisible)
-            {
-                return;
-            }
-
-            _promptVisible = false;
-
-            try
-            {
-                ClearPromptRow();
-            }
-            catch (Exception exception) when (exception is IOException or ArgumentOutOfRangeException)
-            {
-                Degrade();
-            }
+            _locked = false;
+            SafeRender();
         }
     }
 
@@ -167,25 +167,48 @@ public sealed class ConsolePromptService : IConsolePromptService
     }
 
     /// <inheritdoc />
-    public void LockInput()
+    public void WriteOutputLine(string text, CommandOutputLevel level)
+        => RunWithPromptHidden(
+            () =>
+            {
+                if (level == CommandOutputLevel.Information)
+                {
+                    _driver.WriteLine(text);
+
+                    return;
+                }
+
+                _driver.ForegroundColor = level == CommandOutputLevel.Error ? ConsoleColor.Red : ConsoleColor.Yellow;
+                _driver.WriteLine(text);
+                _driver.ResetColor();
+            }
+        );
+
+    private void ClearPromptRow()
     {
-        lock (_sync)
-        {
-            _locked = true;
-            _input = "";
-            SafeRender();
-        }
+        var width = _driver.WindowWidth;
+        var row = GetPromptRow();
+
+        EraseRow(row, width);
     }
 
-    /// <inheritdoc />
-    public void UnlockInput()
+    private void Degrade()
     {
-        lock (_sync)
-        {
-            _locked = false;
-            SafeRender();
-        }
+        _interactive = false;
+        _promptVisible = false;
     }
+
+    private void EraseRow(int row, int width)
+    {
+        var eraseWidth = Math.Max(1, width - 1);
+
+        _driver.SetCursorPosition(0, row);
+        _driver.Write(new(' ', eraseWidth));
+        _driver.SetCursorPosition(0, row);
+    }
+
+    private int GetPromptRow()
+        => Math.Clamp(_driver.WindowTop + _driver.WindowHeight - 1, 0, _driver.BufferHeight - 1);
 
     private static bool IsInteractiveTerminal()
     {
@@ -195,37 +218,6 @@ public sealed class ConsolePromptService : IConsolePromptService
         }
 
         return !System.Console.IsInputRedirected && !System.Console.IsOutputRedirected;
-    }
-
-    private void Degrade()
-    {
-        _interactive = false;
-        _promptVisible = false;
-    }
-
-    private void SafeRender()
-    {
-        if (!_interactive || !_promptVisible)
-        {
-            return;
-        }
-
-        try
-        {
-            RenderPrompt();
-        }
-        catch (Exception exception) when (exception is IOException or ArgumentOutOfRangeException)
-        {
-            Degrade();
-        }
-    }
-
-    private void ClearPromptRow()
-    {
-        var width = _driver.WindowWidth;
-        var row = GetPromptRow();
-
-        EraseRow(row, width);
     }
 
     private void RenderPrompt()
@@ -245,17 +237,20 @@ public sealed class ConsolePromptService : IConsolePromptService
         _driver.SetCursorPosition(Math.Min(width - 1, line.Length), row);
     }
 
-    private void EraseRow(int row, int width)
+    private void SafeRender()
     {
-        var eraseWidth = Math.Max(1, width - 1);
+        if (!_interactive || !_promptVisible)
+        {
+            return;
+        }
 
-        _driver.SetCursorPosition(0, row);
-        _driver.Write(new string(' ', eraseWidth));
-        _driver.SetCursorPosition(0, row);
-    }
-
-    private int GetPromptRow()
-    {
-        return Math.Clamp(_driver.WindowTop + _driver.WindowHeight - 1, 0, _driver.BufferHeight - 1);
+        try
+        {
+            RenderPrompt();
+        }
+        catch (Exception exception) when (exception is IOException or ArgumentOutOfRangeException)
+        {
+            Degrade();
+        }
     }
 }

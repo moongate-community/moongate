@@ -14,9 +14,7 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
     }
 
     public bool Exists(string moduleName)
-    {
-        return TryResolve(moduleName, out var path) && File.Exists(path);
-    }
+        => TryResolve(moduleName, out var path) && File.Exists(path);
 
     public ValueTask<LuaModule> LoadAsync(string moduleName, CancellationToken cancellationToken)
     {
@@ -27,10 +25,13 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
 
         var text = File.ReadAllText(path);
 
-        return new ValueTask<LuaModule>(new LuaModule(ToRelative(moduleName), text));
+        return new(new LuaModule(ToRelative(moduleName), text));
     }
 
-    /// <summary>Resolves a relative script path to an absolute one, refusing anything that escapes the directory, symbolic links included.</summary>
+    /// <summary>
+    /// Resolves a relative script path to an absolute one, refusing anything that escapes the directory, symbolic links
+    /// included.
+    /// </summary>
     /// <remarks>
     /// The path is used exactly as written, so a file named <c>100%25.lua</c> is that file and not
     /// <c>100%.lua</c>. Every existing entry along the path that is a link is followed to its final
@@ -61,7 +62,24 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
         return full;
     }
 
-    /// <summary>Follows every link along <paramref name="full"/> below the root and refuses one whose final target leaves the directory.</summary>
+    /// <summary>
+    /// Maps a normalized relative path back to the require() name it is served under: "common/dialogue.lua" becomes
+    /// "common.dialogue". The inverse of the name-to-path mapping.
+    /// </summary>
+    public static string ToModuleName(string normalizedRelativePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(normalizedRelativePath);
+        var withoutExtension = normalizedRelativePath.EndsWith(".lua", StringComparison.Ordinal)
+                                   ? normalizedRelativePath[..^4]
+                                   : normalizedRelativePath;
+
+        return withoutExtension.Replace('/', '.');
+    }
+
+    /// <summary>
+    /// Follows every link along <paramref name="full" /> below the root and refuses one whose final target leaves the
+    /// directory.
+    /// </summary>
     private static void EnsureNoLinkEscapes(string root, string rootWithSeparator, string full, string relativePath)
     {
         var current = root;
@@ -77,10 +95,11 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
                 continue;
             }
 
-            var target = entry.ResolveLinkTarget(returnFinalTarget: true)?.FullName;
+            var target = entry.ResolveLinkTarget(true)?.FullName;
 
-            if (target is null || (!target.StartsWith(rootWithSeparator, StringComparison.Ordinal) &&
-                                   !string.Equals(target, root, StringComparison.Ordinal)))
+            if (target is null ||
+                !target.StartsWith(rootWithSeparator, StringComparison.Ordinal) &&
+                !string.Equals(target, root, StringComparison.Ordinal))
             {
                 throw new InvalidOperationException(
                     $"'{relativePath}' resolves outside the scripts directory through a link."
@@ -89,21 +108,8 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
         }
     }
 
-    /// <summary>Maps a normalized relative path back to the require() name it is served under: "common/dialogue.lua" becomes "common.dialogue". The inverse of the name-to-path mapping.</summary>
-    public static string ToModuleName(string normalizedRelativePath)
-    {
-        ArgumentException.ThrowIfNullOrWhiteSpace(normalizedRelativePath);
-        var withoutExtension = normalizedRelativePath.EndsWith(".lua", StringComparison.Ordinal)
-            ? normalizedRelativePath[..^4]
-            : normalizedRelativePath;
-
-        return withoutExtension.Replace('/', '.');
-    }
-
     private static string ToRelative(string moduleName)
-    {
-        return moduleName.Replace('.', '/') + ".lua";
-    }
+        => moduleName.Replace('.', '/') + ".lua";
 
     private bool TryResolve(string moduleName, out string path)
     {

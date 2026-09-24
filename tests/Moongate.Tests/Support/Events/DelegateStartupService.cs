@@ -14,12 +14,8 @@ public sealed class DelegateStartupService : IMoongateStartupService
     }
 
     public Task StartAsync()
-    {
-        return _start();
-    }
+        => _start();
 
     public Task StopAsync()
-    {
-        return _stop();
-    }
+        => _stop();
 }

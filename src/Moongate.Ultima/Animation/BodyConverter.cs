@@ -8,12 +8,6 @@ namespace Moongate.Ultima.Animation;
 /// </summary>
 public static class BodyConverter
 {
-    public static int[] Table1 { get; private set; }
-    public static int[] Table2 { get; private set; }
-    public static int[] Table3 { get; private set; }
-    public static int[] Table4 { get; private set; }
-    public static int[] Table5 { get; private set; }
-
     // Reverse maps: in-file body id → server body id (first match wins,
     // matching the historical linear-scan behavior of GetTrueBody).
     private static Dictionary<int, int> _reverse1;
@@ -21,6 +15,11 @@ public static class BodyConverter
     private static Dictionary<int, int> _reverse3;
     private static Dictionary<int, int> _reverse4;
     private static Dictionary<int, int> _reverse5;
+    public static int[] Table1 { get; private set; }
+    public static int[] Table2 { get; private set; }
+    public static int[] Table3 { get; private set; }
+    public static int[] Table4 { get; private set; }
+    public static int[] Table5 { get; private set; }
 
     static BodyConverter()
     {

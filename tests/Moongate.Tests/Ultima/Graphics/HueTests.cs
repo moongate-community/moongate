@@ -1,4 +1,3 @@
-using SkiaSharp;
 using Moongate.Ultima.Graphics;
 
 namespace Moongate.Tests.Ultima.Graphics;
@@ -13,6 +12,6 @@ public class HueTests
 
         var color = hue.GetColor(2);
 
-        Assert.Equal(new SKColor(248, 248, 8, 255), color);
+        Assert.Equal(new(248, 248, 8, 255), color);
     }
 }

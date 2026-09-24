@@ -4,7 +4,7 @@ using Moongate.Core.Interfaces.Geometry;
 namespace Moongate.Core.Geometry;
 
 /// <summary>
-///     Represents Rectangle3D.
+/// Represents Rectangle3D.
 /// </summary>
 public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
 {
@@ -55,44 +55,30 @@ public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
 
     public Rectangle3D(int x, int y, int z, int width, int height, int depth)
     {
-        _start = new Point3D(x, y, z);
-        _end = new Point3D(x + width, y + height, z + depth);
+        _start = new(x, y, z);
+        _end = new(x + width, y + height, z + depth);
     }
 
     public bool Contains(Point3D p)
-    {
-        return p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y && p.Z >= _start.Z && p.Z < _end.Z;
-    }
+        => p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y && p.Z >= _start.Z && p.Z < _end.Z;
 
     public bool Contains(Point2D p)
-    {
-        return p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y;
-    }
+        => p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y;
 
     public bool Contains(IPoint2D p)
-    {
-        return p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y;
-    }
+        => p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y;
 
     public bool Contains(IPoint3D p)
-    {
-        return p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y && p.Z >= _start.Z && p.Z < _end.Z;
-    }
+        => p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y && p.Z >= _start.Z && p.Z < _end.Z;
 
     public bool Equals(Rectangle3D other)
-    {
-        return _start == other._start && _end == other._end;
-    }
+        => _start == other._start && _end == other._end;
 
     public override bool Equals(object? obj)
-    {
-        return obj is Rectangle3D other && Equals(other);
-    }
+        => obj is Rectangle3D other && Equals(other);
 
     public override int GetHashCode()
-    {
-        return HashCode.Combine(_start, _end);
-    }
+        => HashCode.Combine(_start, _end);
 
     public void MakeHold(Rectangle3D r)
     {
@@ -127,27 +113,13 @@ public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
         }
     }
 
-    public static bool operator ==(Rectangle3D l, Rectangle3D r)
-    {
-        return l._start == r._start && l._end == r._end;
-    }
-
-    public static bool operator !=(Rectangle3D l, Rectangle3D r)
-    {
-        return l._start != r._start || l._end != r._end;
-    }
-
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rectangle3D Parse(string s)
-    {
-        return Parse(s, null);
-    }
+        => Parse(s, null);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rectangle3D Parse(string s, IFormatProvider? provider)
-    {
-        return Parse(s.AsSpan(), provider);
-    }
+        => Parse(s.AsSpan(), provider);
 
     public static Rectangle3D Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
@@ -160,44 +132,46 @@ public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
     }
 
     public override string ToString()
-    {
-        return ToString(null, null);
-    }
+        => ToString(null, null);
 
     public string ToString(string? format, IFormatProvider? formatProvider)
-    {
-        return string.Create(formatProvider, $"({X}, {Y}, {Z})+({Width}, {Height}, {Depth})");
-    }
+        => string.Create(formatProvider, $"({X}, {Y}, {Z})+({Width}, {Height}, {Depth})");
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-    {
-        return destination.TryWrite(provider, $"({X}, {Y}, {Z})+({Width}, {Height}, {Depth})", out charsWritten);
-    }
+        => destination.TryWrite(provider, $"({X}, {Y}, {Z})+({Width}, {Height}, {Depth})", out charsWritten);
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryParse(string? s, IFormatProvider? provider, out Rectangle3D result)
-    {
-        return TryParse(s.AsSpan(), provider, out result);
-    }
+        => TryParse(s.AsSpan(), provider, out result);
 
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Rectangle3D result)
     {
         result = default;
         s = s.Trim();
         var startEnd = s.IndexOf(')');
+
         if (startEnd < 0 || !Point3D.TryParse(s[..(startEnd + 1)], provider, out var start))
         {
             return false;
         }
 
         var remainder = s[(startEnd + 1)..].TrimStart();
-        if (remainder.IsEmpty || remainder[0] != '+' ||
+
+        if (remainder.IsEmpty ||
+            remainder[0] != '+' ||
             !Point3D.TryParse(remainder[1..], provider, out var size))
         {
             return false;
         }
 
-        result = new Rectangle3D(start.X, start.Y, start.Z, size.X, size.Y, size.Z);
+        result = new(start.X, start.Y, start.Z, size.X, size.Y, size.Z);
+
         return true;
     }
+
+    public static bool operator ==(Rectangle3D l, Rectangle3D r)
+        => l._start == r._start && l._end == r._end;
+
+    public static bool operator !=(Rectangle3D l, Rectangle3D r)
+        => l._start != r._start || l._end != r._end;
 }

@@ -16,9 +16,7 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
     public string Version { get; }
 
     public ClientVersionPacket(string version)
-        : this(version, GetCanonicalLength(version))
-    {
-    }
+        : this(version, GetCanonicalLength(version)) { }
 
     private ClientVersionPacket(string version, int length)
     {
@@ -37,6 +35,7 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out ClientVersionPacket? packet)
     {
         packet = null;
+
         if (!HasValidHeader(data))
         {
             return false;
@@ -45,20 +44,23 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
         var payload = data[LoginProtocolConstants.VariableHeaderLength..];
         var reader = new PacketReader(payload);
         var parsed = payload[^1] == 0
-            ? reader.TryReadNullTerminatedAscii(payload.Length, out var version)
-            : reader.TryReadAscii(payload.Length, out version);
+                         ? reader.TryReadNullTerminatedAscii(payload.Length, out var version)
+                         : reader.TryReadAscii(payload.Length, out version);
+
         if (!parsed || string.IsNullOrWhiteSpace(version))
         {
             return false;
         }
 
-        packet = new ClientVersionPacket(version, data.Length);
+        packet = new(version, data.Length);
+
         return true;
     }
 
     private static int GetCanonicalLength(string version)
     {
         ArgumentNullException.ThrowIfNull(version);
+
         return checked(LoginProtocolConstants.VariableHeaderLength + version.Length);
     }
 }

@@ -6,12 +6,6 @@ namespace Moongate.Scripting.Interfaces;
 /// <summary>The Lua runtime as the rest of the server sees it. Every member runs on the game loop thread.</summary>
 public interface IScriptEngine
 {
-    /// <summary>Executes a file under the scripts directory, reading it from disk if it was never loaded or was invalidated.</summary>
-    /// <param name="relativePath">Path relative to the scripts directory, with forward slashes, such as <c>ai/guard.lua</c>.</param>
-    /// <exception cref="InvalidOperationException">Called off the loop thread, or the path leaves the scripts directory.</exception>
-    /// <exception cref="FileNotFoundException">The file does not exist.</exception>
-    void LoadFile(string relativePath);
-
     /// <summary>Calls a global Lua function as a coroutine.</summary>
     /// <param name="functionName">Name of a global function.</param>
     /// <param name="args">Arguments converted with the same rules as module functions.</param>
@@ -27,6 +21,12 @@ public interface IScriptEngine
     )]
     ScriptResult Call(string functionName, params object?[] args);
 
+    /// <summary>
+    /// Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread;
+    /// diagnostics collectors run off the loop.
+    /// </summary>
+    ScriptExecutionMetrics GetMetrics();
+
     /// <summary>Forgets a loaded file, cancels the coroutines and timers it owns, and evicts it from require's cache.</summary>
     /// <param name="relativePath">Path relative to the scripts directory.</param>
     /// <exception cref="InvalidOperationException">Called off the loop thread, or the engine has not started.</exception>
@@ -37,6 +37,9 @@ public interface IScriptEngine
     /// </remarks>
     void Invalidate(string relativePath);
 
-    /// <summary>Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread; diagnostics collectors run off the loop.</summary>
-    ScriptExecutionMetrics GetMetrics();
+    /// <summary>Executes a file under the scripts directory, reading it from disk if it was never loaded or was invalidated.</summary>
+    /// <param name="relativePath">Path relative to the scripts directory, with forward slashes, such as <c>ai/guard.lua</c>.</param>
+    /// <exception cref="InvalidOperationException">Called off the loop thread, or the path leaves the scripts directory.</exception>
+    /// <exception cref="FileNotFoundException">The file does not exist.</exception>
+    void LoadFile(string relativePath);
 }

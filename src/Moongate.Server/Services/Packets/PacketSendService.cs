@@ -1,3 +1,4 @@
+using Moongate.Network.Interfaces.Client;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Serialization;
 using Moongate.Server.Core.Interfaces.Services;
@@ -7,7 +8,7 @@ using Serilog;
 namespace Moongate.Server.Services.Packets;
 
 /// <summary>Snapshots outgoing packets and sends them through bounded, game-independent connection queues.</summary>
-public sealed class PacketSendService : IPacketSendService
+public sealed class PacketSendService : IPacketSendService, ILoginPacketSendService
 {
     private readonly Lock _gate = new();
     private readonly IConnectionService _connections;
@@ -39,6 +40,47 @@ public sealed class PacketSendService : IPacketSendService
     }
 
     /// <inheritdoc />
+    public Task DisconnectAsync(long sessionId)
+    {
+        lock (_gate)
+        {
+            if (_outboxes.TryGetValue(sessionId, out var outbox))
+            {
+                outbox.Close();
+
+                return outbox.Completion;
+            }
+
+            var cleanup = _connections.DisconnectAsync(sessionId);
+
+            if (!_cleanups.ContainsKey(sessionId) && !cleanup.IsCompletedSuccessfully)
+            {
+                _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, cleanup, null));
+            }
+
+            return cleanup;
+        }
+    }
+
+    public Task DisconnectAsync(long sessionId, INetworkConnection expectedConnection)
+    {
+        ArgumentNullException.ThrowIfNull(expectedConnection);
+
+        lock (_gate)
+        {
+            if (_outboxes.TryGetValue(sessionId, out var outbox) &&
+                ReferenceEquals(outbox.Connection, expectedConnection))
+            {
+                outbox.Close();
+
+                return outbox.Completion;
+            }
+        }
+
+        return _connections.DisconnectAsync(sessionId, expectedConnection);
+    }
+
+    /// <inheritdoc />
     public Task StartAsync()
     {
         lock (_gate)
@@ -61,6 +103,7 @@ public sealed class PacketSendService : IPacketSendService
         {
             _running = false;
             _stopped = true;
+
             foreach (var outbox in _outboxes.Values)
             {
                 outbox.Close();
@@ -72,6 +115,71 @@ public sealed class PacketSendService : IPacketSendService
 
     /// <inheritdoc />
     public bool TrySend(long sessionId, IOutgoingPacket packet)
+        => TrySendCore(sessionId, packet, null);
+
+    /// <inheritdoc />
+    public bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet)
+    {
+        ArgumentNullException.ThrowIfNull(expectedConnection);
+
+        return TrySendCore(sessionId, packet, expectedConnection);
+    }
+
+    /// <inheritdoc />
+    public Task<bool> SendAndDisconnectAsync(
+        long sessionId,
+        INetworkConnection expectedConnection,
+        IOutgoingPacket packet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(expectedConnection);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (_gate)
+        {
+            if (!_running ||
+                !_connections.TryGet(sessionId, out var connection, out var disconnectRequested) ||
+                !ReferenceEquals(connection, expectedConnection))
+            {
+                return Task.FromResult(false);
+            }
+
+            if (!_outboxes.TryGetValue(sessionId, out var outbox))
+            {
+                outbox = new(
+                    connection,
+                    disconnectRequested,
+                    _capacity,
+                    id => _connections.DisconnectAsync(id, connection)
+                );
+                _outboxes.Add(sessionId, outbox);
+                outbox.Start();
+                _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));
+            }
+            else if (!ReferenceEquals(outbox.Connection, connection))
+            {
+                return Task.FromResult(false);
+            }
+
+            try
+            {
+                if (outbox.TryWriteTerminal(PacketCodec.Encode(packet)))
+                {
+                    return WaitForTerminalAsync(outbox, cancellationToken);
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Could not encode terminal packet for session {SessionId}", sessionId);
+                outbox.Close();
+            }
+
+            return Task.FromResult(false);
+        }
+    }
+
+    private bool TrySendCore(long sessionId, IOutgoingPacket packet, INetworkConnection? expectedConnection)
     {
         lock (_gate)
         {
@@ -80,14 +188,29 @@ public sealed class PacketSendService : IPacketSendService
                 return false;
             }
 
+            if (expectedConnection is not null && !ReferenceEquals(connection, expectedConnection))
+            {
+                return false;
+            }
+
             if (!_outboxes.TryGetValue(sessionId, out var outbox))
             {
-                outbox = new SessionPacketOutbox(connection, disconnectRequested, _capacity, _connections.DisconnectAsync);
+                outbox = new(
+                    connection,
+                    disconnectRequested,
+                    _capacity,
+                    id => _connections.DisconnectAsync(id, connection)
+                );
                 _outboxes.Add(sessionId, outbox);
                 outbox.Start();
                 _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));
             }
             else if (!ReferenceEquals(outbox.Connection, connection))
+            {
+                return false;
+            }
+
+            if (outbox.TerminalQueued)
             {
                 return false;
             }
@@ -107,34 +230,15 @@ public sealed class PacketSendService : IPacketSendService
             }
 
             outbox.Close();
+
             return false;
-        }
-    }
-
-    /// <inheritdoc />
-    public Task DisconnectAsync(long sessionId)
-    {
-        lock (_gate)
-        {
-            if (_outboxes.TryGetValue(sessionId, out var outbox))
-            {
-                outbox.Close();
-                return outbox.Completion;
-            }
-
-            var cleanup = _connections.DisconnectAsync(sessionId);
-            if (!_cleanups.ContainsKey(sessionId) && !cleanup.IsCompletedSuccessfully)
-            {
-                _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, cleanup, null));
-            }
-
-            return cleanup;
         }
     }
 
     private async Task ObserveCleanupAsync(long sessionId, Task cleanup, SessionPacketOutbox? outbox)
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+
         try
         {
             await cleanup.ConfigureAwait(false);
@@ -152,7 +256,8 @@ public sealed class PacketSendService : IPacketSendService
         {
             lock (_gate)
             {
-                if (outbox is not null && _outboxes.TryGetValue(sessionId, out var current) &&
+                if (outbox is not null &&
+                    _outboxes.TryGetValue(sessionId, out var current) &&
                     ReferenceEquals(current, outbox))
                 {
                     _outboxes.Remove(sessionId);
@@ -163,15 +268,25 @@ public sealed class PacketSendService : IPacketSendService
         }
     }
 
+    private static async Task<bool> WaitForTerminalAsync(SessionPacketOutbox outbox, CancellationToken cancellationToken)
+    {
+        await outbox.Completion.WaitAsync(cancellationToken).ConfigureAwait(false);
+
+        return outbox.TerminalSent;
+    }
+
     private async Task StopCoreAsync()
     {
         await Task.CompletedTask.ConfigureAwait(ConfigureAwaitOptions.ForceYielding);
+
         while (true)
         {
             Task[] pending;
+
             lock (_gate)
             {
                 pending = _cleanups.Values.ToArray();
+
                 if (pending.Length == 0)
                 {
                     if (_failures.Count > 0)

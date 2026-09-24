@@ -11,7 +11,5 @@ public sealed class InvalidVariableLengthPacket : BasePacket<InvalidVariableLeng
 {
     public override int Length => 4;
 
-    public void Write(ref PacketWriter writer)
-    {
-    }
+    public void Write(ref PacketWriter writer) { }
 }

@@ -4,12 +4,6 @@ namespace Moongate.Tests.Core.Utils;
 
 public sealed class HashUtilsTests
 {
-    [Theory, InlineData(null), InlineData(""), InlineData(" \t")]
-    public void HashPassword_RejectsMissingPassword(string? password)
-    {
-        Assert.Throws<ArgumentException>(() => HashUtils.HashPassword(password!));
-    }
-
     [Fact]
     public void HashPassword_ProducesSaltedPayloadThatVerifiesOnlyMatchingPassword()
     {
@@ -22,6 +16,10 @@ public sealed class HashUtilsTests
         Assert.False(HashUtils.VerifyPassword("different-test-password", first));
     }
 
+    [Theory, InlineData(null), InlineData(""), InlineData(" \t")]
+    public void HashPassword_RejectsMissingPassword(string? password)
+        => Assert.Throws<ArgumentException>(() => HashUtils.HashPassword(password!));
+
     // Independent fixtures generated with Python hashlib.pbkdf2_hmac("sha256", ...).
     [Theory,
      InlineData("test-password", "pbkdf2-sha256$1$c2FsdA==$BiPkvtz+xs0uiXGY/ePDdA8vCrlbC64ObpUq6FQ03o0="),
@@ -30,18 +28,6 @@ public sealed class HashUtilsTests
     {
         Assert.True(HashUtils.VerifyPassword(password, payload));
         Assert.False(HashUtils.VerifyPassword(password + "!", payload));
-    }
-
-    [Theory,
-     InlineData(null, "payload"),
-     InlineData("", "payload"),
-     InlineData(" \t", "payload"),
-     InlineData("test-password", null),
-     InlineData("test-password", ""),
-     InlineData("test-password", " ")]
-    public void VerifyPassword_RejectsMissingInputs(string? password, string? payload)
-    {
-        Assert.False(HashUtils.VerifyPassword(password!, payload!));
     }
 
     [Theory,
@@ -60,7 +46,15 @@ public sealed class HashUtilsTests
      InlineData("pbkdf2-sha256$1$c2FsdA==$not base64!"),
      InlineData("pbkdf2-sha256$1$c2FsdA==$")]
     public void VerifyPassword_RejectsMalformedPayload(string payload)
-    {
-        Assert.False(HashUtils.VerifyPassword("test-password", payload));
-    }
+        => Assert.False(HashUtils.VerifyPassword("test-password", payload));
+
+    [Theory,
+     InlineData(null, "payload"),
+     InlineData("", "payload"),
+     InlineData(" \t", "payload"),
+     InlineData("test-password", null),
+     InlineData("test-password", ""),
+     InlineData("test-password", " ")]
+    public void VerifyPassword_RejectsMissingInputs(string? password, string? payload)
+        => Assert.False(HashUtils.VerifyPassword(password!, payload!));
 }

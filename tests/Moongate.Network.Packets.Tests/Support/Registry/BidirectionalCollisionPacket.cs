@@ -14,11 +14,10 @@ public sealed class BidirectionalCollisionPacket
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out BidirectionalCollisionPacket? packet)
     {
         packet = data.SequenceEqual(new byte[] { 0xE1 }) ? new BidirectionalCollisionPacket() : null;
+
         return packet is not null;
     }
 
     public void Write(ref PacketWriter writer)
-    {
-        writer.WriteByte(OpCode);
-    }
+        => writer.WriteByte(OpCode);
 }

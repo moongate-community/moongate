@@ -5,14 +5,14 @@
         <Nullable>enable</Nullable>
     </PropertyGroup>
     <ItemGroup>
-        <ProjectReference Include="../Moongate.Core/Moongate.Core.csproj" />
-        <ProjectReference Include="../Moongate.Server.Core/Moongate.Server.Core.csproj" />
-        <PackageReference Include="LuaCSharp" Version="0.5.6" />
-        <PackageReference Include="Serilog" Version="4.4.0" />
-        <InternalsVisibleTo Include="Moongate.Tests" />
+        <ProjectReference Include="../Moongate.Core/Moongate.Core.csproj"/>
+        <ProjectReference Include="../Moongate.Server.Core/Moongate.Server.Core.csproj"/>
+        <PackageReference Include="LuaCSharp" Version="0.5.6"/>
+        <PackageReference Include="Serilog" Version="4.4.0"/>
+        <InternalsVisibleTo Include="Moongate.Tests"/>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="Assets/prelude.lua" LogicalName="Moongate.Scripting.Assets.prelude.lua" />
+        <EmbeddedResource Include="Assets/prelude.lua" LogicalName="Moongate.Scripting.Assets.prelude.lua"/>
     </ItemGroup>
 
     <PropertyGroup>

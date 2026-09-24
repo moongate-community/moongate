@@ -1,3 +1,4 @@
+using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Serialization.Config.Internal;
@@ -8,19 +9,22 @@ namespace Moongate.Server.Data.Config;
 public class MoongateServerConfig
 {
     /// <summary>Gets or sets the configured server roles, defaulting to both login and game.</summary>
-    /// <remarks>This setting does not yet change which services are started.</remarks>
     [TomlConverter(typeof(ServerModeTomlConverter))]
     public ServerMode Mode { get; set; } = ServerMode.Standalone;
 
-    public ShardConfig Shard { get; set; } = new ShardConfig();
+    public ShardConfig Shard { get; set; } = new();
 
-    public NetworkConfig Network { get; set; } = new NetworkConfig();
+    public NetworkConfig Network { get; set; } = new();
 
-    public ApiConfig Api { get; set; } = new();
+    public AdminApiConfig AdminApi { get; set; } = new();
 
-    public UltimaConfig Ultima { get; set; } = new UltimaConfig();
+    public RedisConfig Redis { get; set; } = new();
+
+    public UltimaConfig Ultima { get; set; } = new();
 
     public PersistenceConfig Persistence { get; set; } = new();
+
+    public RealmDirectoryConfig RealmDirectory { get; set; } = new();
 
     public WorldSaveConfig WorldSave { get; set; } = new();
 
@@ -36,19 +40,36 @@ public class MoongateServerConfig
             throw new InvalidOperationException("The server mode must be Login, Game, or Standalone.");
         }
 
-        if (Api is null)
+        if (Network is null)
         {
-            throw new InvalidOperationException("The api configuration section cannot be null.");
+            throw new InvalidOperationException("The network configuration section cannot be null.");
         }
 
-        Api.Validate();
+        Network.Validate(Mode);
+
+        if (Redis is null)
+        {
+            throw new InvalidOperationException("The redis configuration section cannot be null.");
+        }
+
+        Redis.Validate();
+
+        if (AdminApi is null) { throw new InvalidOperationException("The admin_api configuration section cannot be null."); }
+        AdminApi.Validate();
 
         if (Persistence is null)
         {
             throw new InvalidOperationException("The persistence configuration section cannot be null.");
         }
 
-        Persistence.Validate();
+        Persistence.Validate(Mode);
+
+        if (RealmDirectory is null)
+        {
+            throw new InvalidOperationException("The realm_directory configuration section cannot be null.");
+        }
+
+        RealmDirectory.Validate(Mode);
 
         if (WorldSave is null)
         {

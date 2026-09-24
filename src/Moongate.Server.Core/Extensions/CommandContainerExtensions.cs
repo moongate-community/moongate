@@ -25,7 +25,7 @@ public static class CommandContainerExtensions
         }
 
         container.Resolve<CommandRegistry>()
-            .Register<TExecutor>(container, commandName, description, source, minimumAccountType);
+                 .Register<TExecutor>(container, commandName, description, source, minimumAccountType);
 
         return container;
     }

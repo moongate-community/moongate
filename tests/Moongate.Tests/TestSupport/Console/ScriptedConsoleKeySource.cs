@@ -21,13 +21,17 @@ internal sealed class ScriptedConsoleKeySource : IConsoleKeySource
     }
 
     public void Enqueue(char character)
-    {
-        Enqueue(new ConsoleKeyInfo(character, ConsoleKey.A, false, false, false));
-    }
+        => Enqueue(new ConsoleKeyInfo(character, ConsoleKey.A, false, false, false));
 
     public void Enqueue(ConsoleKey key)
+        => Enqueue(new ConsoleKeyInfo('\0', key, false, false, false));
+
+    public void Enqueue(ConsoleKeyInfo key)
     {
-        Enqueue(new ConsoleKeyInfo('\0', key, false, false, false));
+        lock (_keys)
+        {
+            _keys.Enqueue(key);
+        }
     }
 
     public void EnqueueText(string text)
@@ -35,14 +39,6 @@ internal sealed class ScriptedConsoleKeySource : IConsoleKeySource
         foreach (var character in text)
         {
             Enqueue(character);
-        }
-    }
-
-    public void Enqueue(ConsoleKeyInfo key)
-    {
-        lock (_keys)
-        {
-            _keys.Enqueue(key);
         }
     }
 

@@ -17,11 +17,10 @@ internal sealed class StubProcessMetricsReader : IProcessMetricsReader
     public ProcessMetricsReading Read()
     {
         ReadCount++;
+
         return Reading;
     }
 
     public void Dispose()
-    {
-        IsDisposed = true;
-    }
+        => IsDisposed = true;
 }

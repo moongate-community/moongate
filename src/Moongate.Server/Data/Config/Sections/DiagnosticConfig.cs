@@ -19,6 +19,7 @@ public sealed class DiagnosticConfig
             LogMetrics = LogMetrics
         };
         options.Validate();
+
         return options;
     }
 }

@@ -13,12 +13,8 @@ public class StartupRegistrationService : IRegistrationService, IMoongateStartup
     }
 
     public Task StartAsync()
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 
     public Task StopAsync()
-    {
-        return Task.CompletedTask;
-    }
+        => Task.CompletedTask;
 }

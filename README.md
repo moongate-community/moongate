@@ -12,6 +12,9 @@
   <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
 </p>
 
+An Ultima Online server written in C# on .NET 10, with reusable libraries for
+networking, PostgreSQL persistence, Redis-backed realm handoff and scripting.
+
 ## Install on Linux
 
 ```sh
@@ -42,20 +45,12 @@ storage, Docker Compose, logs, and upgrades.
 - [Writing Lua scripts](docs/scripting.md): bootstrap, modules, timers, reload and editor support.
 - [Diagnostics](docs/diagnostics.md): metrics and events; [dependency security](docs/security-audit.md) covers package auditing.
 
-## Server mode
+## Status
 
-Set `mode` at the root of `config/moongate.toml`, before any table headers:
-
-```toml
-mode = "standalone"
-```
-
-Supported values are `"login"`, `"game"`, and `"standalone"`. Omitting the setting
-defaults to standalone. In C#, `MoongateServerConfig.Mode` uses the `ServerMode`
-flags enum, where `Standalone = Login | Game`; an empty or unknown mode is rejected.
-
-This setting currently defines the configuration contract. It does not yet select
-which services start; separate login and game runtimes will use it in a subsequent change.
+Moongate is under active development. The transport, packet pipeline, scripting,
+persistence and Redis-backed login-to-game handoff are in place; character
+selection and a playable world are not. [Implementation status](docs/implementation-status.md)
+lists what works today, area by area.
 
 ## Scripting
 
@@ -79,7 +74,7 @@ end)
   `error`, Serilog templates), `timer` (`after`, `every`, `cancel`) and the global
   `wait(seconds)`; `print` goes to the server log. Host modules are C# classes marked
   `[ScriptModule]` / `[ScriptFunction]` / `[ScriptConstant]`, registered with
-  `RegisterScriptModule<T>()` in `Program.cs`.
+  `AddScriptModule<T>()` in `Program.cs`.
 - **Budget:** a deterministic instruction count, not a wall clock. A coroutine resume
   may run 150,000 instructions and a top-level chunk 10,000,000 before it is aborted
   with a script error; `string.rep` refuses results longer than 16,777,216 characters. The budget bounds VM execution; C# bindings must avoid blocking, and total memory is not capped.
@@ -110,12 +105,13 @@ Start with [Writing Lua scripts](docs/scripting.md). The
 - [Writing a plugin](docs/plugins.md): an assembly under `plugins/` that registers services, commands, Lua modules and metric providers before the server starts.
 - [Writing a Lua module](docs/lua-modules.md): a C# class with `[ScriptModule]` and `[ScriptFunction]` that scripts call as a read-only table.
 - [Registering a metric provider](docs/metric-providers.md): an `IMetricProvider` whose samples join the diagnostics snapshot.
+- [Loading TOML templates](docs/templates.md): an `IDataLoader<TEntity>` that reads shard content once at startup, plus `EnumValueSpec<TEnum>` for fields that resolve randomly.
 
-All three are shown by one compiled sample, [samples/Moongate.Sample.Plugin](samples/Moongate.Sample.Plugin/), which the test suite loads through the real plugin loader.
+The first three are shown by one compiled sample, [samples/Moongate.Sample.Plugin](samples/Moongate.Sample.Plugin/), which the test suite loads through the real plugin loader.
 
 ## Libraries
 
-The eight library packages have their own English READMEs and runnable examples.
+The nine library packages have their own English READMEs and runnable examples.
 See [NuGet libraries and package verification](docs/nuget-packaging.md) for the
 package list, dependencies, and the local verification command.
 

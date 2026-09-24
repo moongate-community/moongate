@@ -8,24 +8,13 @@ internal sealed class ScriptOwnership
     private readonly Dictionary<string, string> _ownerByTimer = new(StringComparer.Ordinal);
     private readonly Dictionary<Guid, string> _ownerByCoroutine = new();
 
-    public void TrackTimer(string owner, string timerId)
+    /// <summary>Empties every map: timers, coroutines and their owners.</summary>
+    public void Clear()
     {
-        Add(_timersByOwner, owner, timerId);
-        _ownerByTimer[timerId] = owner;
-    }
-
-    public void TrackCoroutine(string owner, Guid coroutineId)
-    {
-        Add(_coroutinesByOwner, owner, coroutineId);
-        _ownerByCoroutine[coroutineId] = owner;
-    }
-
-    public void ForgetTimer(string timerId)
-    {
-        if (_ownerByTimer.Remove(timerId, out var owner) && _timersByOwner.TryGetValue(owner, out var set))
-        {
-            set.Remove(timerId);
-        }
+        _timersByOwner.Clear();
+        _coroutinesByOwner.Clear();
+        _ownerByTimer.Clear();
+        _ownerByCoroutine.Clear();
     }
 
     public void ForgetCoroutine(Guid coroutineId)
@@ -36,19 +25,22 @@ internal sealed class ScriptOwnership
         }
     }
 
-    public IReadOnlyList<string> ReleaseTimers(string owner)
+    public void ForgetTimer(string timerId)
     {
-        if (!_timersByOwner.Remove(owner, out var set))
+        if (_ownerByTimer.Remove(timerId, out var owner) && _timersByOwner.TryGetValue(owner, out var set))
         {
-            return [];
+            set.Remove(timerId);
         }
+    }
 
-        foreach (var id in set)
-        {
-            _ownerByTimer.Remove(id);
-        }
+    /// <summary>Releases and returns every tracked timer id, regardless of owner, clearing both timer maps.</summary>
+    public IReadOnlyList<string> ReleaseAllTimers()
+    {
+        var ids = _ownerByTimer.Keys.ToArray();
+        _timersByOwner.Clear();
+        _ownerByTimer.Clear();
 
-        return set.ToArray();
+        return ids;
     }
 
     public IReadOnlyList<Guid> ReleaseCoroutines(string owner)
@@ -66,23 +58,31 @@ internal sealed class ScriptOwnership
         return set.ToArray();
     }
 
-    /// <summary>Releases and returns every tracked timer id, regardless of owner, clearing both timer maps.</summary>
-    public IReadOnlyList<string> ReleaseAllTimers()
+    public IReadOnlyList<string> ReleaseTimers(string owner)
     {
-        var ids = _ownerByTimer.Keys.ToArray();
-        _timersByOwner.Clear();
-        _ownerByTimer.Clear();
+        if (!_timersByOwner.Remove(owner, out var set))
+        {
+            return [];
+        }
 
-        return ids;
+        foreach (var id in set)
+        {
+            _ownerByTimer.Remove(id);
+        }
+
+        return set.ToArray();
     }
 
-    /// <summary>Empties every map: timers, coroutines and their owners.</summary>
-    public void Clear()
+    public void TrackCoroutine(string owner, Guid coroutineId)
     {
-        _timersByOwner.Clear();
-        _coroutinesByOwner.Clear();
-        _ownerByTimer.Clear();
-        _ownerByCoroutine.Clear();
+        Add(_coroutinesByOwner, owner, coroutineId);
+        _ownerByCoroutine[coroutineId] = owner;
+    }
+
+    public void TrackTimer(string owner, string timerId)
+    {
+        Add(_timersByOwner, owner, timerId);
+        _ownerByTimer[timerId] = owner;
     }
 
     private static void Add<T>(Dictionary<string, HashSet<T>> map, string owner, T item)

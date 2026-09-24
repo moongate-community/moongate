@@ -10,10 +10,12 @@ internal static class PacketParserAdapter<TPacket>
         if (TPacket.TryParse(data, out var parsed))
         {
             packet = parsed;
+
             return true;
         }
 
         packet = null;
+
         return false;
     }
 }

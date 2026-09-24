@@ -7,10 +7,6 @@ public sealed class StatefulPendingFrameFramer : INetFramer
     private byte _headerKey = 0x5A;
     private int? _pendingFrameLength;
 
-    public StatefulPendingFrameFramer()
-    {
-    }
-
     public bool TryReadFrame(Span<byte> buffer, out int frameLength)
     {
         if (!_pendingFrameLength.HasValue)
@@ -18,6 +14,7 @@ public sealed class StatefulPendingFrameFramer : INetFramer
             if (buffer.IsEmpty)
             {
                 frameLength = 0;
+
                 return false;
             }
 
@@ -28,12 +25,14 @@ public sealed class StatefulPendingFrameFramer : INetFramer
         if (buffer.Length < _pendingFrameLength.Value)
         {
             frameLength = 0;
+
             return false;
         }
 
         frameLength = _pendingFrameLength.Value;
         _pendingFrameLength = null;
         _headerKey++;
+
         return true;
     }
 }

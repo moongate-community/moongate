@@ -20,12 +20,14 @@ public sealed class PingPacket : BaseFixedPacket<PingPacket>, IIncomingPacket<Pi
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out PingPacket? packet)
     {
         packet = null;
+
         if (!HasValidHeader(data))
         {
             return false;
         }
 
-        packet = new PingPacket(data[1]);
+        packet = new(data[1]);
+
         return true;
     }
 

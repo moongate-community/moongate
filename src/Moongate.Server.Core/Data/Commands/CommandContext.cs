@@ -52,21 +52,15 @@ public sealed class CommandContext
 
     /// <summary>Writes an informational line.</summary>
     public void Print(string message, params object[] args)
-    {
-        Write(message, args, CommandOutputLevel.Information);
-    }
-
-    /// <summary>Writes a warning line.</summary>
-    public void PrintWarning(string message, params object[] args)
-    {
-        Write(message, args, CommandOutputLevel.Warning);
-    }
+        => Write(message, args, CommandOutputLevel.Information);
 
     /// <summary>Writes an error line.</summary>
     public void PrintError(string message, params object[] args)
-    {
-        Write(message, args, CommandOutputLevel.Error);
-    }
+        => Write(message, args, CommandOutputLevel.Error);
+
+    /// <summary>Writes a warning line.</summary>
+    public void PrintWarning(string message, params object[] args)
+        => Write(message, args, CommandOutputLevel.Warning);
 
     private void Write(string message, object[] args, CommandOutputLevel level)
     {
@@ -76,7 +70,7 @@ public sealed class CommandContext
         // only genuinely multi-line text is split, and its blank segments are dropped.
         if (!formatted.Contains('\n'))
         {
-            _output.Add(new CommandOutputLine(formatted.TrimEnd('\r'), level));
+            _output.Add(new(formatted.TrimEnd('\r'), level));
 
             return;
         }
@@ -87,7 +81,7 @@ public sealed class CommandContext
 
             if (normalized.Length > 0)
             {
-                _output.Add(new CommandOutputLine(normalized, level));
+                _output.Add(new(normalized, level));
             }
         }
     }

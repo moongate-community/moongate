@@ -38,11 +38,11 @@ public sealed class ScriptingBootstrapTests
         container.RegisterInstance(new GameLoopOptions());
         container.RegisterInstance(new ScriptEngineOptions { ScriptsDirectory = scripts.Path });
         container.RegisterDelegate<ITimerService>(resolver => resolver.Resolve<TimerWheelService>(), Reuse.Singleton);
-        container.RegisterMoongateService<TimerWheelService>(priority: -900)
-            .RegisterMoongateService<IGameLoopService, GameLoopService>(priority: -800)
-            .RegisterMoongateService<IEventBusService, EventBusService>()
-            .RegisterMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority)
-            .RegisterScriptModule<LogModule>();
+        container.AddMoongateService<TimerWheelService>(-900)
+                 .AddMoongateService<IGameLoopService, GameLoopService>(-800)
+                 .AddMoongateService<IEventBusService, EventBusService>()
+                 .AddMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority)
+                 .AddScriptModule<LogModule>();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         await bootstrap.StartAsync().WaitAsync(Timeout);
@@ -63,8 +63,9 @@ public sealed class ScriptingBootstrapTests
                 await Task.Delay(20);
                 var probe = new TaskCompletionSource<double>(TaskCreationOptions.RunContinuationsAsynchronously);
                 await loop.PostAsync(
-                    new ActionGameLoopWorkItem(() =>
-                        probe.SetResult((double)engine.Call("fired_count").Values[0]!)
+                    new ActionGameLoopWorkItem(
+                        () =>
+                            probe.SetResult((double)engine.Call("fired_count").Values[0]!)
                     )
                 );
                 count = await probe.Task.WaitAsync(Timeout);

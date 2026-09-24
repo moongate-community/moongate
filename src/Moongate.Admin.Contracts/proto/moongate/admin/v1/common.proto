@@ -1,0 +1,14 @@
+syntax = "proto3";
+package moongate.admin.v1;
+option csharp_namespace = "Moongate.Admin.Contracts.V1";
+import "google/protobuf/timestamp.proto";
+enum AccountType { ACCOUNT_TYPE_UNSPECIFIED = 0; REGULAR = 1; GAME_MASTER = 2; ADMINISTRATOR = 3; }
+enum ServerMode { SERVER_MODE_UNSPECIFIED = 0; LOGIN = 1; GAME = 2; STANDALONE = 3; }
+message AccountSummary {
+  uint32 account_id = 1;
+  string username = 2;
+  AccountType account_type = 3;
+  bool can_access_api = 4;
+  bool is_locked = 5;
+  google.protobuf.Timestamp created_at = 6;
+}

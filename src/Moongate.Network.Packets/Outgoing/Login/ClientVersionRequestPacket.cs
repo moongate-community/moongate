@@ -9,10 +9,6 @@ namespace Moongate.Network.Packets.Outgoing.Login;
 [PacketHandler(0xBD, PacketSizing.Fixed, Length = 3)]
 public sealed class ClientVersionRequestPacket : BaseFixedPacket<ClientVersionRequestPacket>, IOutgoingPacket
 {
-    public ClientVersionRequestPacket()
-    {
-    }
-
     public void Write(ref PacketWriter writer)
     {
         writer.EnsureCapacity(Length);

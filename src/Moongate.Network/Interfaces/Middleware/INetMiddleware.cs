@@ -11,7 +11,6 @@ namespace Moongate.Network.Interfaces.Middleware;
 /// <c>OnDataReceived</c>; protocol parsing remains the consumer's responsibility. Returning
 /// <see cref="ReadOnlyMemory{T}.Empty" /> from either method drops the payload and
 /// short-circuits the remaining pipeline.
-///
 /// <see cref="ProcessAsync" /> is invoked only from a connection's receive loop (serial), and
 /// <see cref="ProcessSendAsync" /> only from its send path (serial under the send lock). A stateful
 /// send middleware — a protocol that encrypts only part of each packet has nowhere else to do it —
@@ -19,15 +18,12 @@ namespace Moongate.Network.Interfaces.Middleware;
 /// may run concurrently (one each), so an implementation MUST NOT share mutable state between them.
 /// Both guarantees are per connection: an instance registered on the server is shared by every
 /// connection, so per-connection state must be supplied fresh through <c>ConnectionPipeline</c>.
-///
 /// Input memory may be used only until the returned ValueTask completes; do not retain it or
 /// return a view over released memory. Event payloads are separate stable copies.
-///
 /// Inbound output is bounded by the connection configuration. Raw connections accept at most the
 /// receive-buffer size per invocation. Framed connections bound pending data to the maximum frame
 /// length plus the receive-buffer size, while applying the frame-length limit to each frame rather
 /// than to the combined size of multiple complete frames. Exceeding either budget closes the connection.
-///
 /// The send lock is not reentrant. Calling <c>SendAsync</c> on the same client from inside
 /// <see cref="ProcessSendAsync" /> deadlocks that connection's send path — silently, and without
 /// bound whenever the original caller passed <see cref="CancellationToken.None" />.

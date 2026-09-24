@@ -1,7 +1,8 @@
 # Core migrations
 
 Place reviewed SQL in `auth/NNNN_description.sql` or `world/NNNN_description.sql`.
-No core persisted entities exist yet, so both catalogs initially contain no SQL.
+The auth catalog contains the account ID sequence and the accounts table with its
+unique username index. The world catalog has no core tables yet.
 Plugin SQL ships inside each plugin bundle with a stable migration manifest.
 
 Never edit an applied migration. Generate a draft against the previous schema,

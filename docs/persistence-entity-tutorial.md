@@ -11,7 +11,7 @@ Moongate plugin.
 ## 1. Create the example project
 
 You need the .NET 10 SDK, a Moongate checkout, and an empty PostgreSQL database.
-The example's database role must be allowed to create schemas and tables.
+The example's database role must be allowed to create schemas, tables and sequences.
 Create the database first: Moongate creates the entity schema and table, not the
 database itself.
 
@@ -56,14 +56,21 @@ public sealed class CharacterProfile : IMoongateEntity
 | --- | --- |
 | `IMoongateEntity` | Gives persistence a common `Serial Id` identity. |
 | `Table(Name = "tutorial_entities.character_profiles")` | Selects the PostgreSQL schema and table. Use explicit lowercase names. |
-| `IsPrimary = true, MapType = typeof(long)` | Stores the application-assigned `Serial` as a PostgreSQL `bigint` primary key. |
+| `IsPrimary = true, MapType = typeof(long)` | Stores the `Serial` as a PostgreSQL `bigint` primary key. |
 | `Column(Name = ...)` | Keeps database column names stable when C# names change. |
 | `StringLength = 100` | Declares the maximum stored name length. |
 
-Assign a stable, nonzero ID before saving. `Serial.Zero` is invalid for persistence,
-and PostgreSQL does not generate these IDs. The example uses `new Serial(1)` only
-for its empty tutorial database; a real application must allocate unique IDs and
-reuse an entity's ID when updating it.
+Leave `Id` at its default (`Serial.Zero`) for a new entity. `UpsertAsync` reserves
+an ID from the table's PostgreSQL sequence, inserts the entity and writes the ID
+back to the same object. No sequence name or extra service dependency is needed.
+Keep a public `Id` setter and do not use `IsIdentity = true`. An explicitly supplied
+nonzero ID is preserved and uses the normal insert-or-update behavior.
+
+Column names default to lowercase snake_case: `Username` maps to `username`,
+`HashPassword` to `hash_password`, and `CreatedAt` to `created_at`. Explicit
+`[Column(Name = "...")]` mappings take precedence and must also use lowercase
+snake_case. Keep the schema-qualified `[Table(Name = "...")]` and identity
+mapping explicit.
 
 Keep the initial model scalar. For a property that must stay in memory, use
 `[Column(IsIgnore = true)]`. Complex properties need an explicit supported mapping
@@ -100,12 +107,11 @@ await persistence.InitializeAsync();
 var profiles = container.Resolve<IDataAccess<CharacterProfile>>();
 var profile = new CharacterProfile
 {
-    Id = new Serial(1),
     Name = "Mario",
     Level = 1
 };
 
-await profiles.UpsertAsync(profile);
+await profiles.UpsertAsync(profile); // profile.Id is now assigned.
 
 var loaded = await profiles.GetByIdAsync(profile.Id)
     ?? throw new InvalidOperationException("The saved profile was not found.");
@@ -147,7 +153,7 @@ postgres://USER:PASSWORD@HOST:5432/moongate_tutorial
 
 Replace the placeholders with your connection details and percent-encode reserved
 characters in credentials, such as `@` as `%40`. Keep actual credentials out of
-source files. See [connection configuration](persistence.md#connections-and-schema-preparation)
+source files. See [connection configuration](persistence-operations.md#connections)
 for URI options and environment expansion in server TOML.
 
 From the repository root, run:
@@ -225,8 +231,10 @@ auto_sync_schema = false
 connection_string = "$MOONGATE_REALM_DATABASE"
 ```
 
-Set that variable to the realm's PostgreSQL URI. Auth entities use
-`[persistence.accounts]`. In deployment, keep auto-sync disabled and ship a
+Set that variable to the realm's PostgreSQL URI. A `game` host checks only its
+Realm database; `standalone` also needs `[persistence.accounts]`. The defaults are
+local `auth` and `world` databases using `moongate` / `moongate`. Schema preview/generate commands only
+connect to the targets needed for their mappings. In deployment, keep auto-sync disabled and ship a
 versioned SQL migration with the plugin.
 
 1. Deploy the plugin to a reference root whose database has the previous schema.
@@ -264,7 +272,7 @@ modules for the target, so use an isolated plugin reference root and review owne
 
 The earlier console example deliberately uses automatic synchronization for a
 throwaway database. That convenience does not create SQL files or version history.
-Use the [schema operations guide](persistence.md#generate-review-and-apply) for
+Use the [schema operations guide](persistence-migrations.md#generate-review-and-apply) for
 production-style deployment, reference databases, roles and failure handling.
 
 Simple entity registration enables explicit reads and writes. For live objects
@@ -273,3 +281,42 @@ also enrolls them in `SaveAllAsync` and host world saves. Follow
 [Live world snapshots](persistence.md#live-world-snapshots) to register a detached
 clone and capture it through the owning loop. Removing an object from memory does
 not delete its row; deletion remains explicit.
+
+## 6. Generate migrations automatically while developing
+
+Once your entity is registered with `AddPersistenceAuth<TEntity>()` or
+`AddPersistenceWorld<TEntity>()`, enable the development workflow:
+
+```toml
+[persistence]
+auto_sync_schema = false
+auto_generate_migrations = true
+migrations_directory = "${MOONGATE_ROOT}/migrations"
+```
+
+Set `MOONGATE_ROOT` to your server data root, or use an absolute source directory.
+The shipped core auth migrations (`0001` to `0003`) must already be applied, which
+is why the generated files below start at `0004`. For a new custom entity
+registered with `AddPersistenceAuth<CustomAuthEntity>()`:
+
+1. Start the server with the new entity registered. Startup writes
+   `migrations/auth/0004_auto_schema.sql`, applies it and records its checksum.
+2. Stop the server and add `public DateTime? LastLoginAt { get; set; }` to the entity.
+3. Start again. Startup writes and applies `0005_auto_schema.sql`; existing rows
+   receive a null `last_login_at` value.
+4. Restart without changing the entity: no new migration is generated.
+5. Commit both generated SQL files and the entity code. Numbers always continue
+   after the highest existing migration in the component.
+
+Indexes declared with `[Index(...)]` are automatic for a newly created table when
+they use plain columns, including unique and composite indexes. Adding an index
+to an existing table requires review: existing data may violate a unique index.
+
+A change that needs review leaves a marked SQL draft and stops startup. Review the
+unapplied file and remove `-- moongate:review-required` before restarting. Existing
+applied files are immutable. Leave the development flags off in deployment and use
+the standalone migration runner for the reviewed files.
+
+See [automatic development migrations](persistence-migrations.md#automatic-development-migrations)
+for plugin directories, required-column defaults, existing database baselines and
+failure recovery.

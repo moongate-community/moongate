@@ -10,7 +10,5 @@ public sealed class TemporaryPersistenceDirectory : IDisposable
     }
 
     public void Dispose()
-    {
-        Directory.Delete(Path, true);
-    }
+        => Directory.Delete(Path, true);
 }

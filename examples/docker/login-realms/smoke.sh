@@ -33,10 +33,17 @@ export MOONGATE_REALM_1_SCHEMA_PASSWORD='smoke-schema-\t-\N-\\-@:%$?#-'"$project
 export MOONGATE_REALM_1_RUNTIME_PASSWORD='smoke-runtime-\n-\x41-\\-@:%$?#-'"$project"
 export MOONGATE_REALM_2_SCHEMA_PASSWORD="smoke-realm-2-schema-$project"
 export MOONGATE_REALM_2_RUNTIME_PASSWORD="smoke-realm-2-runtime-$project"
+export MOONGATE_REDIS_PASSWORD="$(openssl rand -hex 32)"
+export MOONGATE_HANDOFF_SECRET="$(openssl rand -hex 32)"
 
 $compose config --quiet
-$compose build login game-1 game-2 schema-preview schema-apply migration-status
-$compose up -d --wait postgres
+$compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply migration-status
+$compose up -d --wait postgres redis
+$compose run --rm auth-schema-apply
+auth_access=$($compose exec -T -e PGPASSWORD="$MOONGATE_ACCOUNTS_RUNTIME_PASSWORD" postgres \
+    psql -h 127.0.0.1 -At -v ON_ERROR_STOP=1 -U moongate_accounts_runtime \
+    -d moongate_accounts -c "SELECT has_sequence_privilege(current_user, 'auth.account_id_seq', 'USAGE');")
+[ "$auth_access" = "t" ] || { echo "Accounts runtime role cannot use its ID sequence." >&2; exit 1; }
 
 $compose exec -T -e PGPASSWORD="$MOONGATE_REALM_1_SCHEMA_PASSWORD" postgres \
     psql -h 127.0.0.1 -At -v ON_ERROR_STOP=1 -U moongate_realm_1_schema \
@@ -84,7 +91,7 @@ fi
 echo "PASS: runtime role cannot perform DDL"
 history=$($postgres_exec psql -At -v ON_ERROR_STOP=1 -U moongate_realm_1_runtime -d moongate_realm_1 \
     -c "SELECT count(*) FROM moongate_migrations.history WHERE target = 'world';")
-[ "$history" = "1" ] || { echo "Expected one readable migration history row." >&2; exit 1; }
+[ "$history" = "2" ] || { echo "Expected two readable World migration history rows." >&2; exit 1; }
 if $postgres_exec psql -v ON_ERROR_STOP=1 -U moongate_realm_1_runtime -d moongate_realm_1 \
     -c "DELETE FROM moongate_migrations.history;" >/dev/null 2>&1
 then
@@ -108,6 +115,40 @@ do
         sleep 1
     done
 done
+
+redis_query()
+{
+    $compose exec -T redis sh -ec 'export REDISCLI_AUTH="$(cat /run/secrets/redis-password)"; exec redis-cli --raw "$@"' sh "$@"
+}
+
+for index in 1 2
+do
+    key="moongate:realm:$index"
+    attempts=0
+    until [ "$(redis_query TYPE "$key")" = "hash" ]
+    do
+        attempts=$((attempts + 1))
+        if [ "$attempts" -ge 30 ]; then
+            $compose logs login game-1 game-2 >&2
+            echo "Realm $index was not published to Redis within 30 seconds." >&2
+            exit 1
+        fi
+        sleep 1
+    done
+    ttl=$(redis_query TTL "$key")
+    [ "$ttl" -gt 0 ] || { echo "Realm $index has no positive TTL." >&2; exit 1; }
+done
+
+# A lease lasts 15 seconds. Surviving beyond that interval proves renewal.
+sleep 17
+for index in 1 2
+do
+    key="moongate:realm:$index"
+    [ "$(redis_query TYPE "$key")" = "hash" ] || { echo "Realm $index lease expired." >&2; exit 1; }
+    ttl=$(redis_query TTL "$key")
+    [ "$ttl" -gt 0 ] || { echo "Realm $index lease stopped renewing." >&2; exit 1; }
+done
+echo "PASS: both Redis realm leases remain live beyond one lease duration"
 
 $compose stop login game-1 game-2
 for service in login game-1 game-2

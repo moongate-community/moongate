@@ -25,6 +25,7 @@ public sealed record TcpClientOptions
     {
         ArgumentNullException.ThrowIfNull(Pipeline);
         ArgumentNullException.ThrowIfNull(TimeProvider);
+
         if (ReceiveBufferSize is < 1 or > 1024 * 1024)
         {
             throw new ArgumentOutOfRangeException(nameof(ReceiveBufferSize));

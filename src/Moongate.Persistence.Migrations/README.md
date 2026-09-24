@@ -18,6 +18,7 @@ installed components, and newly inserted earlier sequences. SHA-256 checksums
 normalize CRLF to LF and ignore a UTF-8 BOM. Removed plugin histories remain.
 
 <!-- nuget-smoke:Program.cs -->
+
 ```csharp
 using Moongate.Persistence.Migrations.Types.Migrations;
 

@@ -16,13 +16,13 @@ public static class DynamicAssemblyFactory
         if (informationalVersion is not null)
         {
             var constructor = typeof(AssemblyInformationalVersionAttribute).GetConstructor([typeof(string)])!;
-            assembly.SetCustomAttribute(new CustomAttributeBuilder(constructor, [informationalVersion]));
+            assembly.SetCustomAttribute(new(constructor, [informationalVersion]));
         }
 
         if (codename is not null)
         {
             var constructor = typeof(AssemblyMetadataAttribute).GetConstructor([typeof(string), typeof(string)])!;
-            assembly.SetCustomAttribute(new CustomAttributeBuilder(constructor, ["Codename", codename]));
+            assembly.SetCustomAttribute(new(constructor, ["Codename", codename]));
         }
 
         return assembly;

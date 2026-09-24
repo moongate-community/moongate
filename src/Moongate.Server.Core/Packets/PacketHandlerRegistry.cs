@@ -37,6 +37,41 @@ public sealed class PacketHandlerRegistry
     internal void Register<TPacket, THandler>(Container container)
         where TPacket : class, IIncomingPacket<TPacket>
         where THandler : class, IPacketHandler<TPacket>
+        => RegisterCore<TPacket, THandler>(
+            container,
+            new(
+                typeof(TPacket),
+                typeof(THandler),
+                resolver =>
+                {
+                    var handler = resolver.Resolve<THandler>();
+
+                    return (session, packet) => handler.Handle(session, (TPacket)packet);
+                }
+            )
+        );
+
+    internal void RegisterAsync<TPacket, THandler>(Container container)
+        where TPacket : class, IIncomingPacket<TPacket>
+        where THandler : class, IAsyncPacketHandler<TPacket>
+        => RegisterCore<TPacket, THandler>(
+            container,
+            new(
+                typeof(TPacket),
+                typeof(THandler),
+                resolver =>
+                {
+                    var handler = resolver.Resolve<THandler>();
+
+                    return (context, packet, cancellationToken) =>
+                               handler.HandleAsync(context, (TPacket)packet, cancellationToken);
+                }
+            )
+        );
+
+    private void RegisterCore<TPacket, THandler>(Container container, PacketHandlerRegistration registration)
+        where TPacket : class, IIncomingPacket<TPacket>
+        where THandler : class
     {
         lock (_gate)
         {
@@ -62,18 +97,7 @@ public sealed class PacketHandlerRegistry
                 container.Register<THandler>(Reuse.Singleton);
             }
 
-            _registrations.Add(
-                typeof(TPacket),
-                new PacketHandlerRegistration(
-                    typeof(TPacket),
-                    typeof(THandler),
-                    resolver =>
-                    {
-                        var handler = resolver.Resolve<THandler>();
-                        return (session, packet) => handler.Handle(session, (TPacket)packet);
-                    }
-                )
-            );
+            _registrations.Add(typeof(TPacket), registration);
         }
     }
 }

@@ -7,6 +7,25 @@ public sealed class UoPacketFramerTests
 {
     private static readonly byte[] ClientVersion = Convert.FromHexString("BD000C372E302E3130392E30");
 
+    [Theory, InlineData(0), InlineData(-1), InlineData(65536)]
+    public void Constructor_InvalidMaximumFrameLength_ThrowsArgumentOutOfRangeException(int maxFrameLength)
+        => Assert.Throws<ArgumentOutOfRangeException>(
+            () =>
+                new UoPacketFramer(PacketRegistry.Default, maxFrameLength)
+        );
+
+    [Fact]
+    public void Constructor_MutableRegistry_ThrowsArgumentException()
+    {
+        var registry = new PacketRegistry();
+
+        Assert.Throws<ArgumentException>(() => new UoPacketFramer(registry));
+    }
+
+    [Fact]
+    public void Constructor_NullRegistry_ThrowsArgumentNullException()
+        => Assert.Throws<ArgumentNullException>(() => new UoPacketFramer(null!));
+
     [Fact]
     public void TryReadFrame_CompleteFixedPacket_ReturnsPacketLength()
     {
@@ -14,6 +33,26 @@ public sealed class UoPacketFramerTests
 
         Assert.True(framer.TryReadFrame(new byte[] { 0x73, 0x2A }, out var frameLength));
         Assert.Equal(2, frameLength);
+    }
+
+    [Fact]
+    public void TryReadFrame_CompleteVariablePacket_ReturnsDeclaredLength()
+    {
+        var framer = new UoPacketFramer(PacketRegistry.Default);
+
+        Assert.True(framer.TryReadFrame(ClientVersion, out var frameLength));
+        Assert.Equal(12, frameLength);
+    }
+
+    [Fact]
+    public void TryReadFrame_DoesNotModifyInput()
+    {
+        var framer = new UoPacketFramer(PacketRegistry.Default);
+        var packet = ClientVersion.ToArray();
+        var original = packet.ToArray();
+
+        Assert.True(framer.TryReadFrame(packet, out _));
+        Assert.Equal(original, packet);
     }
 
     [Fact]
@@ -30,15 +69,6 @@ public sealed class UoPacketFramerTests
     }
 
     [Fact]
-    public void TryReadFrame_CompleteVariablePacket_ReturnsDeclaredLength()
-    {
-        var framer = new UoPacketFramer(PacketRegistry.Default);
-
-        Assert.True(framer.TryReadFrame(ClientVersion, out var frameLength));
-        Assert.Equal(12, frameLength);
-    }
-
-    [Fact]
     public void TryReadFrame_EveryIncompleteVariableSplit_ReturnsFalseAndZeroLength()
     {
         var framer = new UoPacketFramer(PacketRegistry.Default);
@@ -48,6 +78,14 @@ public sealed class UoPacketFramerTests
             Assert.False(framer.TryReadFrame(ClientVersion.AsSpan(0, length), out var frameLength));
             Assert.Equal(0, frameLength);
         }
+    }
+
+    [Fact]
+    public void TryReadFrame_FixedLengthAboveConfiguredMaximum_ThrowsBeforePayloadArrives()
+    {
+        var framer = new UoPacketFramer(PacketRegistry.Default, 2);
+
+        Assert.Throws<InvalidDataException>(() => framer.TryReadFrame(new byte[] { 0x80 }, out _));
     }
 
     [Fact]
@@ -79,12 +117,15 @@ public sealed class UoPacketFramerTests
         Assert.Throws<InvalidDataException>(() => framer.TryReadFrame(Convert.FromHexString(hex), out _));
     }
 
-    [Fact]
-    public void TryReadFrame_VariableLengthBelowMinimum_ThrowsInvalidDataException()
+    [Theory, InlineData("2A", 0), InlineData("2A010203", 3)]
+    public void TryReadFrame_UnregisteredOpcode_ReportsBufferedBytesAfterOpcode(string hex, int bufferedBytes)
     {
         var framer = new UoPacketFramer(PacketRegistry.Default);
 
-        Assert.Throws<InvalidDataException>(() => framer.TryReadFrame(Convert.FromHexString("BD0002"), out _));
+        var exception = Assert.Throws<InvalidDataException>(() => framer.TryReadFrame(Convert.FromHexString(hex), out _));
+
+        Assert.Contains("0x2A", exception.Message);
+        Assert.Contains($"{bufferedBytes} bytes buffered after opcode", exception.Message);
     }
 
     [Fact]
@@ -96,43 +137,10 @@ public sealed class UoPacketFramerTests
     }
 
     [Fact]
-    public void TryReadFrame_FixedLengthAboveConfiguredMaximum_ThrowsBeforePayloadArrives()
-    {
-        var framer = new UoPacketFramer(PacketRegistry.Default, 2);
-
-        Assert.Throws<InvalidDataException>(() => framer.TryReadFrame(new byte[] { 0x80 }, out _));
-    }
-
-    [Fact]
-    public void TryReadFrame_DoesNotModifyInput()
+    public void TryReadFrame_VariableLengthBelowMinimum_ThrowsInvalidDataException()
     {
         var framer = new UoPacketFramer(PacketRegistry.Default);
-        var packet = ClientVersion.ToArray();
-        var original = packet.ToArray();
 
-        Assert.True(framer.TryReadFrame(packet, out _));
-        Assert.Equal(original, packet);
-    }
-
-    [Fact]
-    public void Constructor_MutableRegistry_ThrowsArgumentException()
-    {
-        var registry = new PacketRegistry();
-
-        Assert.Throws<ArgumentException>(() => new UoPacketFramer(registry));
-    }
-
-    [Theory, InlineData(0), InlineData(-1), InlineData(65536)]
-    public void Constructor_InvalidMaximumFrameLength_ThrowsArgumentOutOfRangeException(int maxFrameLength)
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() =>
-            new UoPacketFramer(PacketRegistry.Default, maxFrameLength)
-        );
-    }
-
-    [Fact]
-    public void Constructor_NullRegistry_ThrowsArgumentNullException()
-    {
-        Assert.Throws<ArgumentNullException>(() => new UoPacketFramer(null!));
+        Assert.Throws<InvalidDataException>(() => framer.TryReadFrame(Convert.FromHexString("BD0002"), out _));
     }
 }

@@ -7,81 +7,40 @@ public sealed class ConnectionServiceTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
-    [Theory, InlineData(false), InlineData(true)]
-    public async Task TryGet_DisconnectSignalSurvivesMembershipRemoval(bool stop)
+    [Fact]
+    public async Task DisconnectAsync_ExpectedConnection_DoesNotCloseReplacement()
+    {
+        using var original = new ControlledNetworkConnection(7);
+        using var replacement = new ControlledNetworkConnection(7);
+        var connections = new ConnectionService();
+        await connections.StartAsync();
+        Assert.True(connections.TryRegister(original));
+        original.Complete();
+        Assert.True(SpinWait.SpinUntil(() => connections.TryRegister(replacement), TimeSpan.FromSeconds(2)));
+
+        await connections.DisconnectAsync(7, original);
+
+        Assert.True(replacement.IsConnected);
+        await connections.StopAsync();
+    }
+
+    [Fact]
+    public async Task DisconnectAsync_CloseFailureIsObservedAndRemainsVisibleAtStop()
     {
         var service = new ConnectionService();
         await service.StartAsync();
-        using var connection = new ControlledNetworkConnection(1);
+        using var connection = new ControlledNetworkConnection(1)
+        {
+            DelayCompletion = true,
+            CloseFailure = new IOException("close failed")
+        };
         service.TryRegister(connection);
-        Assert.True(service.TryGet(1, out var found, out var requested));
-        Assert.Same(connection, found);
-        Assert.False(requested.IsCompleted);
-        if (stop)
-        {
-            await service.StopAsync().WaitAsync(Timeout);
-        }
-        else
-        {
-            await service.DisconnectAsync(1).WaitAsync(Timeout);
-        }
-
+        var closing = service.DisconnectAsync(1);
+        await connection.CloseRequested.WaitAsync(Timeout);
+        connection.Complete();
+        await Assert.ThrowsAsync<AggregateException>(() => closing.WaitAsync(Timeout));
+        await Assert.ThrowsAsync<AggregateException>(() => service.StopAsync().WaitAsync(Timeout));
         Assert.Equal(0, service.Count);
-        Assert.True(requested.IsCompletedSuccessfully);
-        await service.StopAsync();
-    }
-
-    [Theory, InlineData(false), InlineData(true)]
-    public async Task RemoteCompletion_DoesNotBecomeAnOwnerRequestedClose(bool redundantDisconnect)
-    {
-        var service = new ConnectionService();
-        await service.StartAsync();
-        using var connection = new ControlledNetworkConnection(1);
-        service.TryRegister(connection);
-        Assert.True(service.TryGet(1, out _, out var requested));
-        connection.Complete();
-        if (redundantDisconnect)
-        {
-            await service.DisconnectAsync(1).WaitAsync(Timeout);
-        }
-
-        await service.StopAsync().WaitAsync(Timeout);
-        Assert.False(requested.IsCompleted);
-    }
-
-    [Fact]
-    public async Task TryRegister_RequiresRunningAndLiveConnection()
-    {
-        var service = new ConnectionService();
-        using var connection = new ControlledNetworkConnection(1);
-        Assert.False(service.TryRegister(connection));
-        await service.StartAsync();
-        connection.Complete();
-        Assert.False(service.TryRegister(connection));
-        await service.StopAsync();
-        await Assert.ThrowsAsync<InvalidOperationException>(() => service.StartAsync());
-    }
-
-    [Fact]
-    public async Task TryRegister_DuplicateIdentityCannotReplaceTheOriginal()
-    {
-        var service = new ConnectionService();
-        await service.StartAsync();
-        using var first = new ControlledNetworkConnection(1);
-        using var conflicting = new ControlledNetworkConnection(1);
-        using var second = new ControlledNetworkConnection(2);
-        Assert.True(service.TryRegister(first));
-        var snapshot = service.GetAll();
-        Assert.True(service.TryRegister(first));
-        Assert.False(service.TryRegister(conflicting));
-        Assert.True(service.TryRegister(second));
-        Assert.Same(first, Assert.Single(snapshot));
-        Assert.Equal(2, service.Count);
-        Assert.True(service.TryGet(1, out var found));
-        Assert.Same(first, found);
-        await service.StopAsync().WaitAsync(Timeout);
-        Assert.True(conflicting.IsConnected);
-        Assert.Equal(0, conflicting.CloseCalls);
     }
 
     [Fact]
@@ -92,6 +51,7 @@ public sealed class ConnectionServiceTests
         using var connection = new ControlledNetworkConnection(1) { DelayCompletion = true, DelayDisconnectionState = true };
         Assert.True(service.TryRegister(connection));
         var closing = service.DisconnectAsync(1);
+
         try
         {
             Assert.True(connection.IsConnected);
@@ -121,6 +81,7 @@ public sealed class ConnectionServiceTests
         using var connection = new ControlledNetworkConnection(1) { CloseGate = gate.Task };
         service.TryRegister(connection);
         var closing = service.DisconnectAsync(1);
+
         try
         {
             await connection.CloseRequested.WaitAsync(Timeout);
@@ -136,6 +97,25 @@ public sealed class ConnectionServiceTests
         await closing.WaitAsync(Timeout);
         Assert.Equal(0, service.Count);
         await service.StopAsync();
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task RemoteCompletion_DoesNotBecomeAnOwnerRequestedClose(bool redundantDisconnect)
+    {
+        var service = new ConnectionService();
+        await service.StartAsync();
+        using var connection = new ControlledNetworkConnection(1);
+        service.TryRegister(connection);
+        Assert.True(service.TryGet(1, out _, out var requested));
+        connection.Complete();
+
+        if (redundantDisconnect)
+        {
+            await service.DisconnectAsync(1).WaitAsync(Timeout);
+        }
+
+        await service.StopAsync().WaitAsync(Timeout);
+        Assert.False(requested.IsCompleted);
     }
 
     [Fact]
@@ -192,25 +172,6 @@ public sealed class ConnectionServiceTests
     }
 
     [Fact]
-    public async Task DisconnectAsync_CloseFailureIsObservedAndRemainsVisibleAtStop()
-    {
-        var service = new ConnectionService();
-        await service.StartAsync();
-        using var connection = new ControlledNetworkConnection(1)
-        {
-            DelayCompletion = true,
-            CloseFailure = new IOException("close failed")
-        };
-        service.TryRegister(connection);
-        var closing = service.DisconnectAsync(1);
-        await connection.CloseRequested.WaitAsync(Timeout);
-        connection.Complete();
-        await Assert.ThrowsAsync<AggregateException>(() => closing.WaitAsync(Timeout));
-        await Assert.ThrowsAsync<AggregateException>(() => service.StopAsync().WaitAsync(Timeout));
-        Assert.Equal(0, service.Count);
-    }
-
-    [Fact]
     public async Task StopBeforeStart_RejectsLaterStartupAndUnknownDisconnectIsNoOp()
     {
         var service = new ConnectionService();
@@ -218,5 +179,65 @@ public sealed class ConnectionServiceTests
         await Assert.ThrowsAsync<InvalidOperationException>(() => service.StartAsync());
         await service.DisconnectAsync(42);
         Assert.Empty(service.GetAll());
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task TryGet_DisconnectSignalSurvivesMembershipRemoval(bool stop)
+    {
+        var service = new ConnectionService();
+        await service.StartAsync();
+        using var connection = new ControlledNetworkConnection(1);
+        service.TryRegister(connection);
+        Assert.True(service.TryGet(1, out var found, out var requested));
+        Assert.Same(connection, found);
+        Assert.False(requested.IsCompleted);
+
+        if (stop)
+        {
+            await service.StopAsync().WaitAsync(Timeout);
+        }
+        else
+        {
+            await service.DisconnectAsync(1).WaitAsync(Timeout);
+        }
+
+        Assert.Equal(0, service.Count);
+        Assert.True(requested.IsCompletedSuccessfully);
+        await service.StopAsync();
+    }
+
+    [Fact]
+    public async Task TryRegister_DuplicateIdentityCannotReplaceTheOriginal()
+    {
+        var service = new ConnectionService();
+        await service.StartAsync();
+        using var first = new ControlledNetworkConnection(1);
+        using var conflicting = new ControlledNetworkConnection(1);
+        using var second = new ControlledNetworkConnection(2);
+        Assert.True(service.TryRegister(first));
+        var snapshot = service.GetAll();
+        Assert.True(service.TryRegister(first));
+        Assert.False(service.TryRegister(conflicting));
+        Assert.True(service.TryRegister(second));
+        Assert.Same(first, Assert.Single(snapshot));
+        Assert.Equal(2, service.Count);
+        Assert.True(service.TryGet(1, out var found));
+        Assert.Same(first, found);
+        await service.StopAsync().WaitAsync(Timeout);
+        Assert.True(conflicting.IsConnected);
+        Assert.Equal(0, conflicting.CloseCalls);
+    }
+
+    [Fact]
+    public async Task TryRegister_RequiresRunningAndLiveConnection()
+    {
+        var service = new ConnectionService();
+        using var connection = new ControlledNetworkConnection(1);
+        Assert.False(service.TryRegister(connection));
+        await service.StartAsync();
+        connection.Complete();
+        Assert.False(service.TryRegister(connection));
+        await service.StopAsync();
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.StartAsync());
     }
 }

@@ -21,8 +21,9 @@ public sealed class SessionMetricsProvider : IMetricProvider
         cancellationToken.ThrowIfCancellationRequested();
         IReadOnlyList<MetricSample> samples =
         [
-            new MetricSample("registered_sessions", _sessions.Count, "count", DiagnosticMetricType.Gauge)
+            new("registered_sessions", _sessions.Count, "count", DiagnosticMetricType.Gauge)
         ];
+
         return ValueTask.FromResult(samples);
     }
 }

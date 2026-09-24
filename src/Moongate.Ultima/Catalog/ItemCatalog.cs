@@ -90,8 +90,8 @@ public sealed class ItemCatalog : IItemCatalog
     internal static Stream EncodePng(UltimaBitmap bitmap)
     {
         using var image = bitmap.ToImage();
-        using var encoded = image.Encode(SKEncodedImageFormat.Png, quality: 100)
-                            ?? throw new InvalidOperationException("The image could not be encoded as PNG.");
+        using var encoded = image.Encode(SKEncodedImageFormat.Png, 100) ??
+                            throw new InvalidOperationException("The image could not be encoded as PNG.");
 
         return new MemoryStream(encoded.ToArray());
     }

@@ -24,6 +24,7 @@ public sealed class Light
         }
 
         using var index = new FileStream(idxPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+
         return (int)(index.Length / 12);
     }
 
@@ -159,6 +160,7 @@ public sealed class Light
         using var fsmul = new FileStream(mul, FileMode.Create, FileAccess.Write, FileShare.Write);
         using var binidx = new BinaryWriter(fsidx);
         using var binmul = new BinaryWriter(fsmul);
+
         for (var index = 0; index < _cache.Length; index++)
         {
             if (_cache[index] == null)

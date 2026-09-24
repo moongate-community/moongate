@@ -1,4 +1,3 @@
-# The role is configuration metadata; it does not yet select startup services.
 mode = "game"
 
 [shard]
@@ -6,18 +5,29 @@ shard_name = "Moongate Realm 2"
 
 [network]
 listen_address = "0.0.0.0"
-game_port = 2593
+game_port = 2595
 
 [ultima]
 ultima_path = "/uo"
 
 [persistence]
 auto_sync_schema = false
+migrations_directory = "/app/migrations"
 
 [persistence.realm]
 connection_string = "$MOONGATE_REALM_DATABASE"
 
-[api]
+
+[redis]
+connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
+handoff_secret = "$MOONGATE_HANDOFF_SECRET"
+
+[realm_directory]
+realm_id = "realm-2"
+name = "Moongate Realm 2"
+server_index = 2
+advertised_address = "127.0.0.1"
+advertised_port = 2596
+
+[admin_api]
 enabled = false
-listen_address = "0.0.0.0"
-port = 2594

@@ -28,6 +28,7 @@ internal sealed class SerialConstantExpressionVisitor : ExpressionVisitor
         if (expression is ConstantExpression constant)
         {
             value = constant.Value;
+
             return true;
         }
 
@@ -35,16 +36,19 @@ internal sealed class SerialConstantExpressionVisitor : ExpressionVisitor
             (member.Expression is null || TryReadClosedValue(member.Expression, out _)))
         {
             object? instance = null;
+
             if (member.Expression is not null)
             {
                 TryReadClosedValue(member.Expression, out instance);
             }
 
             value = field.GetValue(instance);
+
             return true;
         }
 
         value = null;
+
         return false;
     }
 }

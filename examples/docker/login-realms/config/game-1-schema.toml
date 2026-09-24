@@ -3,6 +3,15 @@ mode = "game"
 
 [persistence]
 auto_sync_schema = false
+migrations_directory = "/app/migrations"
 
 [persistence.realm]
 connection_string = "$MOONGATE_REALM_SCHEMA_DATABASE"
+
+
+[realm_directory]
+realm_id = "realm-1"
+name = "Moongate Realm 1"
+server_index = 1
+advertised_address = "127.0.0.1"
+advertised_port = 2595

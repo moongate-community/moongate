@@ -1,29 +1,13 @@
+using System.Reflection;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Tests.Support.Metadata;
-using System.Reflection;
+using Moongate.Network.Packets.Types.Packets;
 
 namespace Moongate.Network.Packets.Tests.Data.Packets;
 
 public class PacketDescriptorTests
 {
-    [Fact]
-    public void Descriptor_RepeatedBaseAndRegistryAccess_ReturnsSameInstance()
-    {
-        var first = PingPacket.Descriptor;
-        var second = PingPacket.Descriptor;
-        Assert.True(
-            PacketRegistry.Default.TryGetDescriptor(
-                first.OpCode,
-                first.Direction & ~Moongate.Network.Packets.Types.Packets.PacketDirection.Outgoing,
-                out var registered
-            )
-        );
-
-        Assert.Same(first, second);
-        Assert.Same(first, registered);
-    }
-
     [Theory,
      InlineData(typeof(MissingMetadataPacket)),
      InlineData(typeof(InvalidFixedLengthPacket)),
@@ -40,6 +24,23 @@ public class PacketDescriptorTests
         var details = error.ToString();
         Assert.Contains(packetType.FullName!, details, StringComparison.Ordinal);
         Assert.Contains("InvalidOperationException", details, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Descriptor_RepeatedBaseAndRegistryAccess_ReturnsSameInstance()
+    {
+        var first = PingPacket.Descriptor;
+        var second = PingPacket.Descriptor;
+        Assert.True(
+            PacketRegistry.Default.TryGetDescriptor(
+                first.OpCode,
+                first.Direction & ~PacketDirection.Outgoing,
+                out var registered
+            )
+        );
+
+        Assert.Same(first, second);
+        Assert.Same(first, registered);
     }
 
     [Fact]

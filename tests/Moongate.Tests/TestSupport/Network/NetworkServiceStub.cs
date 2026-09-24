@@ -6,43 +6,24 @@ namespace Moongate.Tests.TestSupport.Network;
 
 internal sealed class NetworkServiceStub : INetworkService
 {
+    private readonly IConnectionService _connections;
+    private readonly Lock _gate = new();
+    private readonly HashSet<ControlledNetworkConnection> _clients = [];
     public event EventHandler<NetworkConnectionEventArgs>? ConnectionAccepted;
     public event EventHandler<NetworkConnectionEventArgs>? ConnectionClosed;
     public event EventHandler<NetworkDataEventArgs>? DataReceived;
 
-    private readonly IConnectionService _connections;
-    private readonly Lock _gate = new();
-    private readonly HashSet<ControlledNetworkConnection> _clients = [];
-
     public Func<Task> OnStart { get; set; } = () => Task.CompletedTask;
     public Func<Task> OnStop { get; set; } = () => Task.CompletedTask;
 
-    public int SubscriberCount => (ConnectionAccepted?.GetInvocationList().Length ?? 0) +
-                                  (ConnectionClosed?.GetInvocationList().Length ?? 0) +
-                                  (DataReceived?.GetInvocationList().Length ?? 0);
+    public int SubscriberCount
+        => (ConnectionAccepted?.GetInvocationList().Length ?? 0) +
+           (ConnectionClosed?.GetInvocationList().Length ?? 0) +
+           (DataReceived?.GetInvocationList().Length ?? 0);
 
     public NetworkServiceStub(IConnectionService connections)
     {
         _connections = connections;
-    }
-
-    public Task StartAsync() => OnStart();
-
-    public async Task StopAsync()
-    {
-        await OnStop();
-        ControlledNetworkConnection[] clients;
-        lock (_gate)
-        {
-            clients = _clients.ToArray();
-        }
-
-        foreach (var client in clients)
-        {
-            Close(client);
-        }
-
-        await Task.WhenAll(clients.Select(client => _connections.DisconnectAsync(client.SessionId)));
     }
 
     public void Accept(ControlledNetworkConnection connection)
@@ -57,12 +38,7 @@ internal sealed class NetworkServiceStub : INetworkService
             _clients.Add(connection);
         }
 
-        ConnectionAccepted?.Invoke(this, new NetworkConnectionEventArgs(connection));
-    }
-
-    public void Receive(INetworkConnection connection, ReadOnlyMemory<byte> data)
-    {
-        DataReceived?.Invoke(this, new NetworkDataEventArgs(connection, data));
+        ConnectionAccepted?.Invoke(this, new(connection));
     }
 
     public void Close(ControlledNetworkConnection connection)
@@ -75,8 +51,33 @@ internal sealed class NetworkServiceStub : INetworkService
             }
         }
 
-        ConnectionClosed?.Invoke(this, new NetworkConnectionEventArgs(connection));
+        ConnectionClosed?.Invoke(this, new(connection));
+
         // Completion deliberately follows the callback, as it does in the real transport.
         connection.Complete();
+    }
+
+    public void Receive(INetworkConnection connection, ReadOnlyMemory<byte> data)
+        => DataReceived?.Invoke(this, new(connection, data));
+
+    public Task StartAsync()
+        => OnStart();
+
+    public async Task StopAsync()
+    {
+        await OnStop();
+        ControlledNetworkConnection[] clients;
+
+        lock (_gate)
+        {
+            clients = _clients.ToArray();
+        }
+
+        foreach (var client in clients)
+        {
+            Close(client);
+        }
+
+        await Task.WhenAll(clients.Select(client => _connections.DisconnectAsync(client.SessionId)));
     }
 }

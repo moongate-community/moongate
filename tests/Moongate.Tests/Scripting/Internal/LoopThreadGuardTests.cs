@@ -7,14 +7,6 @@ namespace Moongate.Tests.Scripting.Internal;
 public sealed class LoopThreadGuardTests
 {
     [Fact]
-    public void EnsureScriptThread_OnTheLoop_Passes()
-    {
-        var guard = new LoopThreadGuard(new StubGameLoop { IsOnLoopThread = true });
-
-        guard.EnsureScriptThread("LoadFile");
-    }
-
-    [Fact]
     public void EnsureScriptThread_OffTheLoop_ThrowsNamingTheMember()
     {
         var guard = new LoopThreadGuard(new StubGameLoop { IsOnLoopThread = false });
@@ -26,8 +18,14 @@ public sealed class LoopThreadGuardTests
     }
 
     [Fact]
-    public void NoThreadGuard_AlwaysPasses()
+    public void EnsureScriptThread_OnTheLoop_Passes()
     {
-        NoThreadGuard.Instance.EnsureScriptThread("anything");
+        var guard = new LoopThreadGuard(new StubGameLoop { IsOnLoopThread = true });
+
+        guard.EnsureScriptThread("LoadFile");
     }
+
+    [Fact]
+    public void NoThreadGuard_AlwaysPasses()
+        => NoThreadGuard.Instance.EnsureScriptThread("anything");
 }

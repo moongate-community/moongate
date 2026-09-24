@@ -5,6 +5,18 @@ namespace Moongate.Tests.Server.Data.Config.Sections;
 public sealed class ScriptingConfigTests
 {
     [Fact]
+    public void Defaults_MatchTheDesign()
+    {
+        var options = new ScriptingConfig().ToOptions("scripts");
+
+        Assert.Equal("init.lua", options.BootstrapFile);
+        Assert.Equal(150_000, options.MaxInstructionsPerResume);
+        Assert.Equal(10_000_000, options.MaxInstructionsPerChunk);
+        Assert.Equal(1_000, options.HookInterval);
+        Assert.True(options.WriteDefinitions);
+    }
+
+    [Fact]
     public void ToOptions_CopiesEveryFieldAndTheDirectory()
     {
         var config = new ScriptingConfig
@@ -24,18 +36,6 @@ public sealed class ScriptingConfigTests
         Assert.Equal(400_000, options.MaxInstructionsPerChunk);
         Assert.Equal(500, options.HookInterval);
         Assert.False(options.WriteDefinitions);
-    }
-
-    [Fact]
-    public void Defaults_MatchTheDesign()
-    {
-        var options = new ScriptingConfig().ToOptions("scripts");
-
-        Assert.Equal("init.lua", options.BootstrapFile);
-        Assert.Equal(150_000, options.MaxInstructionsPerResume);
-        Assert.Equal(10_000_000, options.MaxInstructionsPerChunk);
-        Assert.Equal(1_000, options.HookInterval);
-        Assert.True(options.WriteDefinitions);
     }
 
     [Theory, InlineData(0, 1000), InlineData(1000, 0), InlineData(500, 1000)]

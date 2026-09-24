@@ -8,19 +8,11 @@ namespace Moongate.Tests.Core.Utils;
 public sealed class PlatformUtilsTests
 {
     [Fact]
-    public void PlatformFlags_MatchOperatingSystemRuntime()
-    {
-        Assert.Equal(OperatingSystem.IsWindows(), PlatformUtils.IsRunningOnWindows());
-        Assert.Equal(OperatingSystem.IsMacOS(), PlatformUtils.IsRunningOnMacOS());
-        Assert.Equal(OperatingSystem.IsLinux(), PlatformUtils.IsRunningOnLinux());
-    }
-
-    [Fact]
     public void GetCurrentPlatform_MatchesExclusiveRuntimePlatform()
     {
         var expected = OperatingSystem.IsWindows() ? PlatformType.Windows :
-            OperatingSystem.IsMacOS() ? PlatformType.Osx :
-            OperatingSystem.IsLinux() ? PlatformType.Linux : PlatformType.Unknown;
+                       OperatingSystem.IsMacOS() ? PlatformType.Osx :
+                       OperatingSystem.IsLinux() ? PlatformType.Linux : PlatformType.Unknown;
 
         Assert.Equal(expected, PlatformUtils.GetCurrentPlatform());
     }
@@ -31,5 +23,13 @@ public sealed class PlatformUtilsTests
         using var environment = new EnvironmentVariableScope("MOONGATE_IS_DOCKER", value);
 
         Assert.Equal(expected, PlatformUtils.IsRunningFromDocker());
+    }
+
+    [Fact]
+    public void PlatformFlags_MatchOperatingSystemRuntime()
+    {
+        Assert.Equal(OperatingSystem.IsWindows(), PlatformUtils.IsRunningOnWindows());
+        Assert.Equal(OperatingSystem.IsMacOS(), PlatformUtils.IsRunningOnMacOS());
+        Assert.Equal(OperatingSystem.IsLinux(), PlatformUtils.IsRunningOnLinux());
     }
 }

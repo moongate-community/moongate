@@ -1,0 +1,9 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>Exe</OutputType>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Grpc.Net.Client" Version="2.84.0"/>
+        <ProjectReference Include="../../src/Moongate.Admin.Contracts/Moongate.Admin.Contracts.csproj"/>
+    </ItemGroup>
+</Project>

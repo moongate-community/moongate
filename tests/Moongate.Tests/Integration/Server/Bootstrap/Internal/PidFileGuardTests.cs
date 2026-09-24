@@ -9,19 +9,15 @@ namespace Moongate.Tests.Integration.Server.Bootstrap.Internal;
 public sealed class PidFileGuardTests
 {
     [Fact]
-    public void Acquire_MissingRoot_CreatesPidAndRemovesItOnDispose()
+    public void Acquire_DifferentRoots_AllowsIndependentInstances()
     {
-        using var directory = new TemporaryDirectory();
-        var root = Path.Combine(directory.Path, "server");
-        var pidPath = Path.Combine(root, "moongate.pid");
+        using var first = new TemporaryDirectory();
+        using var second = new TemporaryDirectory();
+        using var firstGuard = PidFileGuard.Acquire(first.Path);
+        using var secondGuard = PidFileGuard.Acquire(second.Path);
 
-        using (PidFileGuard.Acquire(root))
-        {
-            Assert.Equal(Environment.ProcessId.ToString(CultureInfo.InvariantCulture), File.ReadAllText(pidPath));
-        }
-
-        Assert.False(File.Exists(pidPath));
-        using var next = PidFileGuard.Acquire(root);
+        Assert.True(File.Exists(Path.Combine(first.Path, "moongate.pid")));
+        Assert.True(File.Exists(Path.Combine(second.Path, "moongate.pid")));
     }
 
     [Fact]
@@ -44,6 +40,16 @@ public sealed class PidFileGuardTests
         using var guard = PidFileGuard.Acquire(directory.Path);
 
         Assert.Equal(Environment.ProcessId.ToString(CultureInfo.InvariantCulture), File.ReadAllText(pidPath));
+    }
+
+    [Fact]
+    public void Acquire_HeldLockAndMissingPid_StillRejectsSecondOwner()
+    {
+        using var directory = new TemporaryDirectory();
+        using var guard = PidFileGuard.Acquire(directory.Path);
+        File.Delete(Path.Combine(directory.Path, "moongate.pid"));
+
+        Assert.Throws<IOException>(() => PidFileGuard.Acquire(directory.Path));
     }
 
     [Theory, InlineData(""), InlineData("invalid"), InlineData("0"), InlineData("-1"), InlineData("999999999999999999999")]
@@ -76,25 +82,19 @@ public sealed class PidFileGuardTests
     }
 
     [Fact]
-    public void Acquire_HeldLockAndMissingPid_StillRejectsSecondOwner()
+    public void Acquire_MissingRoot_CreatesPidAndRemovesItOnDispose()
     {
         using var directory = new TemporaryDirectory();
-        using var guard = PidFileGuard.Acquire(directory.Path);
-        File.Delete(Path.Combine(directory.Path, "moongate.pid"));
+        var root = Path.Combine(directory.Path, "server");
+        var pidPath = Path.Combine(root, "moongate.pid");
 
-        Assert.Throws<IOException>(() => PidFileGuard.Acquire(directory.Path));
-    }
+        using (PidFileGuard.Acquire(root))
+        {
+            Assert.Equal(Environment.ProcessId.ToString(CultureInfo.InvariantCulture), File.ReadAllText(pidPath));
+        }
 
-    [Fact]
-    public void Acquire_DifferentRoots_AllowsIndependentInstances()
-    {
-        using var first = new TemporaryDirectory();
-        using var second = new TemporaryDirectory();
-        using var firstGuard = PidFileGuard.Acquire(first.Path);
-        using var secondGuard = PidFileGuard.Acquire(second.Path);
-
-        Assert.True(File.Exists(Path.Combine(first.Path, "moongate.pid")));
-        Assert.True(File.Exists(Path.Combine(second.Path, "moongate.pid")));
+        Assert.False(File.Exists(pidPath));
+        using var next = PidFileGuard.Acquire(root);
     }
 
     [Fact]
@@ -112,18 +112,6 @@ public sealed class PidFileGuardTests
     }
 
     [Fact]
-    public void Dispose_ChangedPid_PreservesOtherOwnersFile()
-    {
-        using var directory = new TemporaryDirectory();
-        using var guard = PidFileGuard.Acquire(directory.Path);
-        var pidPath = directory.CreateFile("moongate.pid", "12345-other-owner");
-
-        guard.Dispose();
-
-        Assert.Equal("12345-other-owner", File.ReadAllText(pidPath));
-    }
-
-    [Fact]
     public void Dispose_CalledAgainAfterNewAcquisition_DoesNotDeleteNewPid()
     {
         using var directory = new TemporaryDirectory();
@@ -137,5 +125,17 @@ public sealed class PidFileGuardTests
             Environment.ProcessId.ToString(CultureInfo.InvariantCulture),
             File.ReadAllText(Path.Combine(directory.Path, "moongate.pid"))
         );
+    }
+
+    [Fact]
+    public void Dispose_ChangedPid_PreservesOtherOwnersFile()
+    {
+        using var directory = new TemporaryDirectory();
+        using var guard = PidFileGuard.Acquire(directory.Path);
+        var pidPath = directory.CreateFile("moongate.pid", "12345-other-owner");
+
+        guard.Dispose();
+
+        Assert.Equal("12345-other-owner", File.ReadAllText(pidPath));
     }
 }

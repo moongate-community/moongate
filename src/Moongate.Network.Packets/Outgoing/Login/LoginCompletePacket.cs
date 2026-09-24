@@ -9,10 +9,6 @@ namespace Moongate.Network.Packets.Outgoing.Login;
 [PacketHandler(0x55, PacketSizing.Fixed, Length = 1)]
 public sealed class LoginCompletePacket : BaseFixedPacket<LoginCompletePacket>, IOutgoingPacket
 {
-    public LoginCompletePacket()
-    {
-    }
-
     public void Write(ref PacketWriter writer)
     {
         writer.EnsureCapacity(Length);

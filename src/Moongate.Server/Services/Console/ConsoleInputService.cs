@@ -1,5 +1,4 @@
 using System.Text;
-using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Interfaces.Internal.Console;
@@ -22,9 +21,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     private Task _loop = Task.CompletedTask;
 
     public ConsoleInputService(IConsolePromptService prompt, ICommandSystemService commands)
-        : this(prompt, commands, new SystemConsoleKeySource())
-    {
-    }
+        : this(prompt, commands, new SystemConsoleKeySource()) { }
 
     internal ConsoleInputService(
         IConsolePromptService prompt,
@@ -73,6 +70,54 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         }
 
         _prompt.HidePrompt();
+    }
+
+    private static bool IsNoKey(ConsoleKeyInfo key)
+        => key.KeyChar == '\0' && key.Key == default && key.Modifiers == 0;
+
+    private static string MaskSensitiveInput(string input)
+    {
+        var text = input.AsSpan();
+        var position = 0;
+        var command = ReadToken(text, ref position);
+        var action = ReadToken(text, ref position);
+        var username = ReadToken(text, ref position);
+
+        if (!command.Equals("account".AsSpan(), StringComparison.OrdinalIgnoreCase) ||
+            !action.Equals("create".AsSpan(), StringComparison.OrdinalIgnoreCase) ||
+            username.IsEmpty)
+        {
+            return input;
+        }
+
+        while (position < text.Length && char.IsWhiteSpace(text[position]))
+        {
+            position++;
+        }
+
+        var passwordStart = position;
+        _ = ReadToken(text, ref position);
+
+        return position == passwordStart
+                   ? input
+                   : input[..passwordStart] + new string('*', position - passwordStart) + input[position..];
+    }
+
+    private static ReadOnlySpan<char> ReadToken(ReadOnlySpan<char> text, ref int position)
+    {
+        while (position < text.Length && char.IsWhiteSpace(text[position]))
+        {
+            position++;
+        }
+
+        var start = position;
+
+        while (position < text.Length && !char.IsWhiteSpace(text[position]))
+        {
+            position++;
+        }
+
+        return text[start..position];
     }
 
     private async Task RunAsync(CancellationToken cancellationToken)
@@ -141,7 +186,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                     if (buffer.Length > 0)
                     {
                         buffer.Length--;
-                        _prompt.UpdateInput(buffer.ToString());
+                        _prompt.UpdateInput(MaskSensitiveInput(buffer.ToString()));
                     }
 
                     continue;
@@ -158,7 +203,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
                 if (!char.IsControl(key.KeyChar))
                 {
                     buffer.Append(key.KeyChar);
-                    _prompt.UpdateInput(buffer.ToString());
+                    _prompt.UpdateInput(MaskSensitiveInput(buffer.ToString()));
                 }
             }
         }
@@ -173,11 +218,6 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         }
     }
 
-    private static bool IsNoKey(ConsoleKeyInfo key)
-    {
-        return key.KeyChar == '\0' && key.Key == default(ConsoleKey) && key.Modifiers == 0;
-    }
-
     private async Task SubmitAsync(string commandLine, CancellationToken cancellationToken)
     {
         if (string.IsNullOrWhiteSpace(commandLine))
@@ -188,11 +228,11 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         try
         {
             var output = await _commands.ExecuteAsync(
-                commandLine,
-                CommandSourceType.Console,
-                null,
-                cancellationToken
-            );
+                             commandLine,
+                             CommandSourceType.Console,
+                             null,
+                             cancellationToken
+                         );
 
             foreach (var line in output)
             {
@@ -205,13 +245,11 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         }
         catch (Exception exception)
         {
-            _logger.Error(exception, "Console command '{CommandLine}' failed", commandLine);
+            _logger.Error(exception, "Console command execution failed");
             _prompt.WriteOutputLine("Command failed. Check logs for details.", CommandOutputLevel.Error);
         }
     }
 
     public void Dispose()
-    {
-        _lifetime.Dispose();
-    }
+        => _lifetime.Dispose();
 }

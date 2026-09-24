@@ -1,41 +1,120 @@
 using Moongate.Core.Utils;
 using Moongate.Persistence.Types.Persistence;
-using Moongate.Tests.TestSupport.Environment;
-using Npgsql;
-using Moongate.Persistence.Services;
+using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
+using Moongate.Tests.TestSupport.Environment;
+using Npgsql;
 
 namespace Moongate.Tests.Server.Data.Config.Sections;
 
 [Collection(EnvironmentTestsCollection.Name)]
 public sealed class PersistenceConfigTests
 {
-    [Fact]
-    public async Task Defaults_NoEntities_DoNotResolveDatabaseEnvironment()
+    [Theory,
+     InlineData(ServerMode.Login, PersistenceDatabaseTarget.Accounts),
+     InlineData(ServerMode.Game, PersistenceDatabaseTarget.Realm)]
+    public void ToOptions_ConfiguresOnlyDatabaseOwnedByRole(ServerMode mode, PersistenceDatabaseTarget expected)
     {
-        var config = new MoongateServerConfig();
-        Assert.False(config.Persistence.AutoSyncSchema);
-        Assert.Equal("$MOONGATE_ACCOUNTS_DATABASE", config.Persistence.Accounts.ConnectionString);
-        Assert.Equal("$MOONGATE_REALM_DATABASE", config.Persistence.Realm.ConnectionString);
-        config.Persistence.Accounts.ConnectionString = "$MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
-        config.Persistence.Realm.ConnectionString = "$MOONGATE_TEST_MISSING_" + Guid.NewGuid().ToString("N");
-        await using var owner = new MoongatePersistenceService(config.Persistence.ToOptions());
-        await owner.InitializeAsync();
+        var options = new PersistenceConfig().ToOptions(mode: mode);
+
+        Assert.Equal([expected], options.ConfiguredTargets);
     }
 
     [Fact]
-    public void Validate_BlankConnectionString_RejectsWithoutReadingEnvironment()
+    public void ToOptions_StandaloneConfiguresAccountsAndRealm()
+    {
+        var options = new PersistenceConfig().ToOptions(mode: ServerMode.Standalone);
+
+        Assert.Equal(
+            [PersistenceDatabaseTarget.Accounts, PersistenceDatabaseTarget.Realm],
+            options.ConfiguredTargets.Order().ToArray()
+        );
+    }
+
+    [Fact]
+    public void ToOptions_DoesNotValidateInactiveDatabase()
     {
         var config = new PersistenceConfig();
         config.Realm.ConnectionString = " ";
+
+        var options = config.ToOptions(mode: ServerMode.Login);
+
+        Assert.Equal([PersistenceDatabaseTarget.Accounts], options.ConfiguredTargets);
+    }
+
+    [Fact]
+    public void ResolveMigrationsDirectory_ExpandsEnvironmentAndRejectsMissingVariables()
+    {
+        var name = "MOONGATE_SOURCE_" + Guid.NewGuid().ToString("N");
+        var config = new PersistenceConfig { MigrationsDirectory = "${" + name + "}/migrations" };
+        Assert.Throws<InvalidOperationException>(() => config.ResolveMigrationsDirectory());
+        using var scope = new EnvironmentVariableScope(name, Path.GetTempPath());
+        Assert.Equal(Path.Combine(Path.GetTempPath(), "migrations"), config.ResolveMigrationsDirectory());
+    }
+
+    [Fact]
+    public void Validate_AutomaticPoliciesConflict_RejectsBeforeDatabaseAccess()
+    {
+        var config = new PersistenceConfig
+        {
+            AutoSyncSchema = true,
+            AutoGenerateMigrations = true,
+            MigrationsDirectory = "/tmp/moongate-source/migrations"
+        };
         Assert.Throws<InvalidOperationException>(config.Validate);
+    }
+
+    [Fact]
+    public void Validate_AutomaticGenerationRequiresExplicitSourceDirectory()
+    {
+        var config = new PersistenceConfig { AutoGenerateMigrations = true };
+        Assert.Throws<InvalidOperationException>(config.Validate);
+        Assert.False(new PersistenceConfig().AutoGenerateMigrations);
+    }
+
+    [Fact]
+    public void RoundTrip_DevelopmentMigrations_PreservesSourceDirectory()
+    {
+        var config = new MoongateServerConfig();
+        config.Persistence.AutoGenerateMigrations = true;
+        config.Persistence.MigrationsDirectory = "${MOONGATE_SOURCE}/migrations";
+        var path = Path.Combine(Path.GetTempPath(), $"moongate-{Guid.NewGuid():N}.toml");
+
+        try
+        {
+            TomlUtils.SerializeToFile(config, path);
+            Assert.Contains("auto_generate_migrations = true", File.ReadAllText(path));
+            var restored = TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!;
+            Assert.True(restored.Persistence.AutoGenerateMigrations);
+            Assert.Equal(config.Persistence.MigrationsDirectory, restored.Persistence.MigrationsDirectory);
+        }
+        finally
+        {
+            File.Delete(path);
+        }
+    }
+
+    [Theory, InlineData(PersistenceDatabaseTarget.Accounts, "auth"), InlineData(PersistenceDatabaseTarget.Realm, "world")]
+    public void Defaults_ResolveLocalDatabaseWithoutEnvironment(PersistenceDatabaseTarget target, string database)
+    {
+        var config = new MoongateServerConfig();
+        Assert.False(config.Persistence.AutoSyncSchema);
+        var parsed = new NpgsqlConnectionStringBuilder(
+            config.Persistence.ToOptions().GetRequiredDatabase(target).ResolveRuntimeConnectionString()
+        );
+        Assert.Equal("localhost", parsed.Host);
+        Assert.Equal(5432, parsed.Port);
+        Assert.Equal(database, parsed.Database);
+        Assert.Equal("moongate", parsed.Username);
+        Assert.Equal("moongate", parsed.Password);
     }
 
     [Fact]
     public void RoundTrip_PersistenceSettings_PreservesConnectionTemplateAndPolicy()
     {
         var path = Path.Combine(Path.GetTempPath(), $"moongate-config-{Guid.NewGuid():N}.toml");
+
         try
         {
             var config = new MoongateServerConfig();
@@ -72,7 +151,7 @@ public sealed class PersistenceConfigTests
 
         var parsed = new NpgsqlConnectionStringBuilder(
             options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-                .ResolveRuntimeConnectionString()
+                   .ResolveRuntimeConnectionString()
         );
 
         Assert.Equal("localhost", parsed.Host);
@@ -90,12 +169,21 @@ public sealed class PersistenceConfigTests
         Assert.Contains(
             "Database=accounts",
             options.GetRequiredDatabase(PersistenceDatabaseTarget.Accounts)
-                .ResolveRuntimeConnectionString()
+                   .ResolveRuntimeConnectionString()
         );
-        var error = Assert.Throws<InvalidOperationException>(() =>
-            options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-                .ResolveRuntimeConnectionString()
+        var error = Assert.Throws<InvalidOperationException>(
+            () =>
+                options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
+                       .ResolveRuntimeConnectionString()
         );
         Assert.Contains("is not defined", error.Message);
+    }
+
+    [Fact]
+    public void Validate_BlankConnectionString_RejectsWithoutReadingEnvironment()
+    {
+        var config = new PersistenceConfig();
+        config.Realm.ConnectionString = " ";
+        Assert.Throws<InvalidOperationException>(config.Validate);
     }
 }

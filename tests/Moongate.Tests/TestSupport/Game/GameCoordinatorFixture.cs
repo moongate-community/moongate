@@ -1,8 +1,6 @@
 using DryIoc;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
-using Moongate.Server.Core.Data.GameLoop;
-using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
@@ -11,7 +9,6 @@ using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
-using Moongate.Server.Services.Timing;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 
@@ -33,24 +30,30 @@ internal sealed class GameCoordinatorFixture : IAsyncDisposable
 
     public GameCoordinatorFixture(int capacity = 16, Func<long, Task>? disconnect = null)
     {
-        Loop = new GameLoopService(
-            new GameLoopOptions { QueueCapacity = capacity },
-            new TimerWheelService(new TimerWheelOptions(), TimeProvider.System),
+        Loop = new(
+            new() { QueueCapacity = capacity },
+            new(new(), TimeProvider.System),
             TimeProvider.System
         );
-        Network = new NetworkServiceStub(Connections);
-        Sessions = new SessionService(Loop);
-        Sender = new PacketSendService(Connections);
+        Network = new(Connections);
+        Sessions = new(Loop);
+        Sender = new(Connections);
         _container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>();
         _container.RegisterPacketHandler<ClientVersionPacket, RecordingPacketHandler>();
-        Dispatcher = new PacketDispatchService(Loop, Sessions, _container.Resolve<PacketHandlerRegistry>(), _container);
-        Game = new GameServerService(
+        Dispatcher = new(Loop, Sessions, _container.Resolve<PacketHandlerRegistry>(), _container);
+        Game = new(
             Network,
             Connections,
             Sessions,
             Dispatcher,
             disconnect is null ? Sender : new CallbackPacketSender(Sender, disconnect)
         );
+    }
+
+    public async Task StartAsync()
+    {
+        await StartDependenciesAsync();
+        await Game.StartAsync();
     }
 
     public async Task StartDependenciesAsync()
@@ -61,15 +64,10 @@ internal sealed class GameCoordinatorFixture : IAsyncDisposable
         await Dispatcher.StartAsync();
     }
 
-    public async Task StartAsync()
-    {
-        await StartDependenciesAsync();
-        await Game.StartAsync();
-    }
-
     public async ValueTask DisposeAsync()
     {
         List<Exception> failures = [];
+
         foreach (var service in new IMoongateStartupService[] { Game, Dispatcher, Sender, Connections, Loop })
         {
             try
@@ -84,6 +82,7 @@ internal sealed class GameCoordinatorFixture : IAsyncDisposable
 
         Loop.Dispose();
         _container.Dispose();
+
         if (!AllowCleanupFailure && failures.Count > 0)
         {
             throw new AggregateException(failures);

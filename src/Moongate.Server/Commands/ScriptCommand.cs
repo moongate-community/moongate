@@ -6,7 +6,10 @@ using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Server.Commands;
 
-/// <summary>"script reload &lt;file&gt;" re-reads one script file on the game loop; "script metrics" prints the engine's counters.</summary>
+/// <summary>
+/// "script reload &lt;file&gt;" re-reads one script file on the game loop; "script metrics" prints the engine's
+/// counters.
+/// </summary>
 public sealed class ScriptCommand : ICommandExecutor
 {
     private const string Usage = "Usage: script reload <file relative to scripts/> | script metrics";
@@ -14,8 +17,11 @@ public sealed class ScriptCommand : ICommandExecutor
     private readonly IScriptEngine _engine;
     private readonly IGameLoopService _gameLoop;
 
-    /// <summary>Initializes a new instance of the <see cref="ScriptCommand"/> class.</summary>
-    /// <param name="engine">Engine whose <see cref="IScriptEngine.Invalidate"/> and <see cref="IScriptEngine.LoadFile"/> run a reload, and whose <see cref="IScriptEngine.GetMetrics"/> answers "metrics".</param>
+    /// <summary>Initializes a new instance of the <see cref="ScriptCommand" /> class.</summary>
+    /// <param name="engine">
+    /// Engine whose <see cref="IScriptEngine.Invalidate" /> and <see cref="IScriptEngine.LoadFile" /> run a
+    /// reload, and whose <see cref="IScriptEngine.GetMetrics" /> answers "metrics".
+    /// </param>
     /// <param name="gameLoop">Loop a reload is posted to, since the command runs on the caller's thread.</param>
     public ScriptCommand(IScriptEngine engine, IGameLoopService gameLoop)
     {

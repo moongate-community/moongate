@@ -1,32 +1,48 @@
-using System.Collections;
 using Moongate.Core.Buffers;
 
 namespace Moongate.Tests.Core.Buffers;
 
 public class CircularBufferTests
 {
-    [Theory, InlineData(0), InlineData(-1)]
-    public void Constructor_NonpositiveCapacity_Throws(int capacity)
+    [Fact]
+    public void CapacityOne_OverwritesAtEitherEnd_AndCanBeReused()
     {
-        var exception = Assert.Throws<ArgumentException>(() => new CircularBuffer<int>(capacity));
+        var buffer = new CircularBuffer<int>(1);
+        buffer.PushBack(1);
+        buffer.PushBack(2);
+        AssertContents(buffer, 2);
 
-        Assert.Equal("capacity", exception.ParamName);
+        buffer.PushFront(3);
+        Assert.True(buffer.IsFull);
+        AssertContents(buffer, 3);
+
+        buffer.PopBack();
+        Assert.True(buffer.IsEmpty);
+        buffer.PushFront(4);
+        AssertContents(buffer, 4);
+        buffer.PopFront();
+        Assert.True(buffer.IsEmpty);
     }
 
     [Fact]
-    public void Constructor_NullItems_Throws()
+    public void Clear_WrappedBuffer_ReleasesReferencesAndKeepsCapacityForReuse()
     {
-        var exception = Assert.Throws<ArgumentNullException>(() => new CircularBuffer<int>(3, null!));
+        var buffer = new CircularBuffer<string>(3, ["a", "b", "c"]);
+        buffer.PushBack("d");
+        var borrowedSegments = buffer.ToArraySegments();
 
-        Assert.Equal("items", exception.ParamName);
-    }
+        buffer.Clear();
 
-    [Fact]
-    public void Constructor_ItemsExceedCapacity_Throws()
-    {
-        var exception = Assert.Throws<ArgumentException>(() => new CircularBuffer<int>(2, [1, 2, 3]));
+        Assert.Equal(3, buffer.Capacity);
+        Assert.Equal(0, buffer.Size);
+        Assert.True(buffer.IsEmpty);
+        Assert.False(buffer.IsFull);
+        Assert.Empty(buffer.ToArray());
+        Assert.All(borrowedSegments.SelectMany(segment => segment), item => Assert.Null(item));
 
-        Assert.Equal("items", exception.ParamName);
+        buffer.PushBack("e");
+        buffer.PushFront("f");
+        AssertContents(buffer, "f", "e");
     }
 
     [Fact]
@@ -46,21 +62,27 @@ public class CircularBufferTests
     }
 
     [Fact]
-    public void EmptyBuffer_EnumerationsAndSegments_AreEmpty()
+    public void Constructor_ItemsExceedCapacity_Throws()
     {
-        var buffer = new CircularBuffer<int>(3);
+        var exception = Assert.Throws<ArgumentException>(() => new CircularBuffer<int>(2, [1, 2, 3]));
 
-        Assert.True(buffer.IsEmpty);
-        Assert.False(buffer.IsFull);
-        Assert.Equal(0, buffer.Size);
-        Assert.Empty(buffer.ToArray());
-        Assert.Empty(buffer);
-        Assert.Empty(((IEnumerable)buffer).Cast<int>());
-        Assert.Collection(
-            buffer.ToArraySegments(),
-            segment => Assert.Equal(0, segment.Count),
-            segment => Assert.Equal(0, segment.Count)
-        );
+        Assert.Equal("items", exception.ParamName);
+    }
+
+    [Theory, InlineData(0), InlineData(-1)]
+    public void Constructor_NonpositiveCapacity_Throws(int capacity)
+    {
+        var exception = Assert.Throws<ArgumentException>(() => new CircularBuffer<int>(capacity));
+
+        Assert.Equal("capacity", exception.ParamName);
+    }
+
+    [Fact]
+    public void Constructor_NullItems_Throws()
+    {
+        var exception = Assert.Throws<ArgumentNullException>(() => new CircularBuffer<int>(3, null!));
+
+        Assert.Equal("items", exception.ParamName);
     }
 
     [Fact]
@@ -78,51 +100,56 @@ public class CircularBufferTests
     }
 
     [Fact]
-    public void PushBack_FullBuffer_OverwritesOldestItemsAndWraps()
+    public void EmptyBuffer_EnumerationsAndSegments_AreEmpty()
+    {
+        var buffer = new CircularBuffer<int>(3);
+
+        Assert.True(buffer.IsEmpty);
+        Assert.False(buffer.IsFull);
+        Assert.Equal(0, buffer.Size);
+        Assert.Empty(buffer.ToArray());
+        Assert.Empty(buffer);
+        Assert.Empty(buffer);
+        Assert.Collection(
+            buffer.ToArraySegments(),
+            segment => Assert.Equal(0, segment.Count),
+            segment => Assert.Equal(0, segment.Count)
+        );
+    }
+
+    [Theory, InlineData(-1), InlineData(-2), InlineData(int.MinValue), InlineData(3), InlineData(int.MaxValue)]
+    public void IndexerGet_InvalidLogicalIndex_ThrowsAfterFrontHasMoved(int index)
+    {
+        var buffer = new CircularBuffer<int>(4, [1, 2, 3, 4]);
+        buffer.PopFront();
+
+        Assert.Throws<IndexOutOfRangeException>(() => buffer[index]);
+    }
+
+    [Theory, InlineData(-1), InlineData(-2), InlineData(int.MinValue), InlineData(3), InlineData(int.MaxValue)]
+    public void IndexerSet_InvalidLogicalIndex_ThrowsWithoutChangingContents(int index)
+    {
+        var buffer = new CircularBuffer<int>(4, [1, 2, 3, 4]);
+        buffer.PopFront();
+
+        Assert.Throws<IndexOutOfRangeException>(() => buffer[index] = 99);
+        AssertContents(buffer, 2, 3, 4);
+    }
+
+    [Fact]
+    public void Indexer_WrappedBuffer_ReadsAndUpdatesLogicalPositions()
     {
         var buffer = new CircularBuffer<int>(3, [1, 2, 3]);
-
         buffer.PushBack(4);
         buffer.PushBack(5);
 
-        Assert.True(buffer.IsFull);
-        AssertContents(buffer, 3, 4, 5);
-    }
+        Assert.Equal(3, buffer[0]);
+        Assert.Equal(4, buffer[1]);
+        Assert.Equal(5, buffer[2]);
+        buffer[0] = 30;
+        buffer[2] = 50;
 
-    [Fact]
-    public void PushFront_FullBuffer_OverwritesLastItemsAndWraps()
-    {
-        var buffer = new CircularBuffer<int>(3, [1, 2, 3]);
-
-        buffer.PushFront(0);
-        buffer.PushFront(-1);
-
-        Assert.True(buffer.IsFull);
-        AssertContents(buffer, -1, 0, 1);
-    }
-
-    [Fact]
-    public void PushAndPop_BothEnds_PreserveLogicalOrderAcrossWraparound()
-    {
-        var buffer = new CircularBuffer<int>(4);
-        buffer.PushBack(1);
-        buffer.PushBack(2);
-        buffer.PushFront(0);
-        AssertContents(buffer, 0, 1, 2);
-
-        buffer.PopBack();
-        buffer.PushBack(3);
-        buffer.PushBack(4);
-        Assert.True(buffer.IsFull);
-        AssertContents(buffer, 0, 1, 3, 4);
-
-        buffer.PopFront();
-        buffer.PushFront(9);
-        buffer.PopBack();
-        buffer.PopBack();
-
-        Assert.False(buffer.IsFull);
-        AssertContents(buffer, 9, 1);
+        AssertContents(buffer, 30, 4, 50);
     }
 
     [Theory, InlineData(true), InlineData(false)]
@@ -155,72 +182,65 @@ public class CircularBufferTests
     }
 
     [Fact]
-    public void CapacityOne_OverwritesAtEitherEnd_AndCanBeReused()
+    public void Pop_RemovesReferencesFromBothEnds()
     {
-        var buffer = new CircularBuffer<int>(1);
-        buffer.PushBack(1);
-        buffer.PushBack(2);
-        AssertContents(buffer, 2);
+        var buffer = new CircularBuffer<string>(3, ["first", "middle", "last"]);
+        var contents = buffer.ToArraySegments()[0];
 
-        buffer.PushFront(3);
-        Assert.True(buffer.IsFull);
-        AssertContents(buffer, 3);
-
-        buffer.PopBack();
-        Assert.True(buffer.IsEmpty);
-        buffer.PushFront(4);
-        AssertContents(buffer, 4);
         buffer.PopFront();
-        Assert.True(buffer.IsEmpty);
+        buffer.PopBack();
+
+        Assert.Null(contents.Array![contents.Offset]);
+        Assert.Null(contents.Array[contents.Offset + contents.Count - 1]);
+        AssertContents(buffer, "middle");
     }
 
     [Fact]
-    public void Indexer_WrappedBuffer_ReadsAndUpdatesLogicalPositions()
+    public void PushAndPop_BothEnds_PreserveLogicalOrderAcrossWraparound()
+    {
+        var buffer = new CircularBuffer<int>(4);
+        buffer.PushBack(1);
+        buffer.PushBack(2);
+        buffer.PushFront(0);
+        AssertContents(buffer, 0, 1, 2);
+
+        buffer.PopBack();
+        buffer.PushBack(3);
+        buffer.PushBack(4);
+        Assert.True(buffer.IsFull);
+        AssertContents(buffer, 0, 1, 3, 4);
+
+        buffer.PopFront();
+        buffer.PushFront(9);
+        buffer.PopBack();
+        buffer.PopBack();
+
+        Assert.False(buffer.IsFull);
+        AssertContents(buffer, 9, 1);
+    }
+
+    [Fact]
+    public void PushBack_FullBuffer_OverwritesOldestItemsAndWraps()
     {
         var buffer = new CircularBuffer<int>(3, [1, 2, 3]);
+
         buffer.PushBack(4);
         buffer.PushBack(5);
 
-        Assert.Equal(3, buffer[0]);
-        Assert.Equal(4, buffer[1]);
-        Assert.Equal(5, buffer[2]);
-        buffer[0] = 30;
-        buffer[2] = 50;
-
-        AssertContents(buffer, 30, 4, 50);
-    }
-
-    [Theory, InlineData(-1), InlineData(-2), InlineData(int.MinValue), InlineData(3), InlineData(int.MaxValue)]
-    public void IndexerGet_InvalidLogicalIndex_ThrowsAfterFrontHasMoved(int index)
-    {
-        var buffer = new CircularBuffer<int>(4, [1, 2, 3, 4]);
-        buffer.PopFront();
-
-        Assert.Throws<IndexOutOfRangeException>(() => buffer[index]);
-    }
-
-    [Theory, InlineData(-1), InlineData(-2), InlineData(int.MinValue), InlineData(3), InlineData(int.MaxValue)]
-    public void IndexerSet_InvalidLogicalIndex_ThrowsWithoutChangingContents(int index)
-    {
-        var buffer = new CircularBuffer<int>(4, [1, 2, 3, 4]);
-        buffer.PopFront();
-
-        Assert.Throws<IndexOutOfRangeException>(() => buffer[index] = 99);
-        AssertContents(buffer, 2, 3, 4);
+        Assert.True(buffer.IsFull);
+        AssertContents(buffer, 3, 4, 5);
     }
 
     [Fact]
-    public void ToArray_ReturnsIndependentSnapshot()
+    public void PushFront_FullBuffer_OverwritesLastItemsAndWraps()
     {
-        var buffer = new CircularBuffer<int>(2, [1, 2]);
-        var snapshot = buffer.ToArray();
-        snapshot[0] = 99;
-        Assert.Equal(1, buffer.Front());
+        var buffer = new CircularBuffer<int>(3, [1, 2, 3]);
 
-        buffer.PushBack(3);
+        buffer.PushFront(0);
+        buffer.PushFront(-1);
 
-        Assert.Equal(new[] { 99, 2 }, snapshot);
-        AssertContents(buffer, 2, 3);
+        Assert.True(buffer.IsFull);
+        AssertContents(buffer, -1, 0, 1);
     }
 
     [Fact]
@@ -239,38 +259,17 @@ public class CircularBufferTests
     }
 
     [Fact]
-    public void Pop_RemovesReferencesFromBothEnds()
+    public void ToArray_ReturnsIndependentSnapshot()
     {
-        var buffer = new CircularBuffer<string>(3, ["first", "middle", "last"]);
-        var contents = buffer.ToArraySegments()[0];
+        var buffer = new CircularBuffer<int>(2, [1, 2]);
+        var snapshot = buffer.ToArray();
+        snapshot[0] = 99;
+        Assert.Equal(1, buffer.Front());
 
-        buffer.PopFront();
-        buffer.PopBack();
+        buffer.PushBack(3);
 
-        Assert.Null(contents.Array![contents.Offset]);
-        Assert.Null(contents.Array[contents.Offset + contents.Count - 1]);
-        AssertContents(buffer, "middle");
-    }
-
-    [Fact]
-    public void Clear_WrappedBuffer_ReleasesReferencesAndKeepsCapacityForReuse()
-    {
-        var buffer = new CircularBuffer<string>(3, ["a", "b", "c"]);
-        buffer.PushBack("d");
-        var borrowedSegments = buffer.ToArraySegments();
-
-        buffer.Clear();
-
-        Assert.Equal(3, buffer.Capacity);
-        Assert.Equal(0, buffer.Size);
-        Assert.True(buffer.IsEmpty);
-        Assert.False(buffer.IsFull);
-        Assert.Empty(buffer.ToArray());
-        Assert.All(borrowedSegments.SelectMany(segment => segment), item => Assert.Null(item));
-
-        buffer.PushBack("e");
-        buffer.PushFront("f");
-        AssertContents(buffer, "f", "e");
+        Assert.Equal(new[] { 99, 2 }, snapshot);
+        AssertContents(buffer, 2, 3);
     }
 
     private static void AssertContents<T>(CircularBuffer<T> buffer, params T[] expected)
@@ -281,6 +280,6 @@ public class CircularBufferTests
         Assert.Equal(expected[^1], buffer.Back());
         Assert.Equal(expected, buffer.ToArray());
         Assert.Equal(expected, buffer.ToList());
-        Assert.Equal(expected, ((IEnumerable)buffer).Cast<T>().ToArray());
+        Assert.Equal(expected, buffer.Cast<T>().ToArray());
     }
 }

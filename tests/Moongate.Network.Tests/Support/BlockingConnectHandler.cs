@@ -10,6 +10,7 @@ internal sealed class BlockingConnectHandler : IDisposable
     public void Handle(object? sender, TcpClientEventArgs args)
     {
         Entered.TrySetResult();
+
         if (!Release.Wait(TimeSpan.FromSeconds(10)))
         {
             throw new TimeoutException("The connect handler was not released.");
