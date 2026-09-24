@@ -111,7 +111,7 @@ The first three are shown by one compiled sample, [samples/Moongate.Sample.Plugi
 
 ## Libraries
 
-The eight library packages have their own English READMEs and runnable examples.
+The nine library packages have their own English READMEs and runnable examples.
 See [NuGet libraries and package verification](docs/nuget-packaging.md) for the
 package list, dependencies, and the local verification command.
 

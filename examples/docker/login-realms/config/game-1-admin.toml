@@ -30,4 +30,8 @@ advertised_address = "127.0.0.1"
 advertised_port = 2595
 
 [admin_api]
-enabled = false
+enabled = true
+listen_address = "0.0.0.0"
+port = 2590
+certificate_path = "/run/admin-certificates/game-1.pfx"
+certificate_password = "$MOONGATE_ADMIN_CERTIFICATE_PASSWORD"

@@ -364,3 +364,7 @@ with an in-memory `IMoongatePlugin`, and resolve what it added from the same con
 - **A `[ScriptModule]` class with a constructor dependency that is not registered
   before startup.** The engine resolves the instance only when it starts; see
   [Writing a Lua module](lua-modules.md#registering).
+
+## Embedded administration plugin
+
+`MoongateAdminPlugin` is registered in `Program.cs` after its required Ultima plugin. It ships with the server and is not loaded from `plugins/`. Its optional HTTP/2 listener uses `[admin_api]` configuration and existing host-owned services. See [Administration API](admin-api.md).

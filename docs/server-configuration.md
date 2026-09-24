@@ -26,6 +26,17 @@ enable_ping_server = true # Reserved: currently not consumed by the host.
 connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
 handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
+[admin_api]
+enabled = false
+listen_address = "127.0.0.1"
+port = 2590
+session_lifetime_minutes = 30
+max_receive_message_bytes = 65536
+max_concurrent_calls = 64
+allow_insecure_loopback = false
+certificate_path = ""
+certificate_password = ""
+
 [ultima]
 ultima_path = "ChangeMe" # Replace with your client data directory.
 
@@ -162,3 +173,7 @@ Versioned SQL is applied by the isolated `migration-runner/Moongate.MigrationRun
 executable using `status|apply --target auth|world`. In released artifacts its default
 root is the parent server directory; `--root-directory` and `MOONGATE_ROOT` override
 it. See [Generate, review and apply](persistence-migrations.md#generate-review-and-apply).
+
+## Administration endpoint
+
+`[admin_api]` configures the embedded gRPC plugin. It is disabled by default and uses server TLS on port 2590 when enabled. Certificate paths resolve relative to the root; password environment references are resolved only for enabled endpoints. See [Administration API](admin-api.md) for roles, permissions, first-admin provisioning and all limits.

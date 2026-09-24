@@ -10,6 +10,6 @@
         <PackageReference Include="Grpc.Core.Api" Version="2.84.0"/>
         <PackageReference Include="Grpc.Tools" Version="2.84.0" PrivateAssets="all"/>
         <Protobuf Include="proto/**/*.proto" ProtoRoot="proto" GrpcServices="Both"/>
-        <None Update="proto/**/*.proto" Pack="true" PackagePath="proto/%(RecursiveDir)%(Filename)%(Extension)"/>
+        <None Update="proto/**/*.proto" Pack="true" PackagePath="%(Identity)"/>
     </ItemGroup>
 </Project>

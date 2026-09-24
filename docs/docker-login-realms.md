@@ -123,3 +123,7 @@ The script creates a unique Compose project with temporary volumes and synthetic
 - **Startup reports pending SQL:** run the matching schema profile job while the affected runtime is stopped.
 - **Client cannot enter the selected game:** confirm `advertised_address` is reachable from the client, the host port matches `advertised_port`, and the redirect key has not expired or been used.
 - **Container exits:** inspect `docker compose ps -a` and its logs. Correct the database, Redis or configuration error before recreating it.
+
+## Private administration endpoint
+
+Port 2590 is reserved for optional gRPC administration and remains disabled in the default image/Compose configuration. Use server TLS on the private network; no mTLS or public port mapping is required. See the [administration guide](admin-api.md) and [opt-in Compose configuration](../examples/docker/login-realms/README.md#optional-administration-api).

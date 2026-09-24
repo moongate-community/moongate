@@ -1,7 +1,7 @@
 mode = "game"
 
 [shard]
-shard_name = "Moongate Realm 1"
+shard_name = "Moongate Realm 2"
 
 [network]
 listen_address = "0.0.0.0"
@@ -23,11 +23,15 @@ connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
 handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
 [realm_directory]
-realm_id = "realm-1"
-name = "Moongate Realm 1"
-server_index = 1
+realm_id = "realm-2"
+name = "Moongate Realm 2"
+server_index = 2
 advertised_address = "127.0.0.1"
-advertised_port = 2595
+advertised_port = 2596
 
 [admin_api]
-enabled = false
+enabled = true
+listen_address = "0.0.0.0"
+port = 2590
+certificate_path = "/run/admin-certificates/game-2.pfx"
+certificate_password = "$MOONGATE_ADMIN_CERTIFICATE_PASSWORD"

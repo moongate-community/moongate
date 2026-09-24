@@ -19,6 +19,7 @@ original Moongate logo, XML documentation, and a companion symbol package.
 
 | Package and README | Purpose | Direct Moongate dependencies |
 |---|---|---|
+| [Moongate.Admin.Contracts](../src/Moongate.Admin.Contracts/README.md) | Versioned gRPC contracts and portable `.proto` definitions | None |
 | [Moongate.Core](../src/Moongate.Core/README.md) | Shared primitives, geometry, configuration, and utilities | None |
 | [Moongate.Network](../src/Moongate.Network/README.md) | Standalone TCP transport, framing, and pipelines | None |
 | [Moongate.Network.Packets](../src/Moongate.Network.Packets/README.md) | UO packet definitions and span-based serialization | Core |
@@ -30,15 +31,15 @@ original Moongate logo, XML documentation, and a companion symbol package.
 
 `Moongate.Server`, `Moongate.Boot`, `Moongate.MigrationRunner`, and `Moongate.UoxItemConverter` are
 executables distributed through release artifacts and container images. They do not produce library
-packages. Tests and plugin fixtures are also excluded from packing.
+packages. `Moongate.Server.Admin` and `Moongate.Server.Ultima` are embedded modules shipped with the server, also non-packable. Tests and plugin fixtures are excluded from packing.
 
 ## What the command checks
 
 1. Builds and packs the solution in Release into a new `artifacts/nuget.*` directory.
-2. Checks exactly eight `.nupkg` and eight `.snupkg` files: metadata, dependencies,
+2. Checks exactly nine `.nupkg` and nine `.snupkg` files: metadata, dependencies,
    README bytes, original logo hash, DLL/XML payload, Portable PDB identity, and
    SourceLink pointing to the repository commit recorded in the package.
-3. Extracts the marked C# examples from each README into eight temporary console apps
+3. Extracts the marked C# examples from each README into nine temporary console apps
    outside the repository. Each app references one Moongate package directly;
    the persistence verifier references Npgsql to provision its isolated database.
 4. Restores, builds, and runs those apps, checking their output. This exercises
@@ -89,7 +90,7 @@ dotnet run --file scripts/VerifyNuGetPackages.cs -- "$PWD" /path/to/package-dire
 dotnet run --file scripts/VerifyNuGetConsumers.cs -- "$PWD" /path/to/package-directory
 ```
 
-An empty symbol package indicates missing PDB output. The eight library projects set
+An empty symbol package indicates missing PDB output. The nine library projects set
 Release `DebugType=portable` in their `.csproj` files, before MSBuild computes symbol
 output items. Setting it later in `Directory.Build.targets` is insufficient. Shared
 README, icon, and symbol-pack metadata are configured in that targets file. The
@@ -106,7 +107,7 @@ enabled. These checks do not publish anything or require a NuGet API key.
 
 Publication is a separate responsibility of the existing release workflow.
 Running the verification script does not create a release or push packages to a feed.
-Packability is opt-in: the shared default is `IsPackable=false`, and only the eight
+Packability is opt-in: the shared default is `IsPackable=false`, and only the nine
 library projects explicitly enable it. Their existing `ProjectReference` entries
 become NuGet dependencies instead of bundled copies of other project assemblies.
 

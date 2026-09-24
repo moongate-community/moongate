@@ -1,0 +1,24 @@
+# Opt-in private TLS administration. No administration ports are published to the host.
+services:
+  login:
+    environment:
+      MOONGATE_ADMIN_CERTIFICATE_PASSWORD: ${MOONGATE_ADMIN_CERTIFICATE_PASSWORD:-}
+    volumes:
+      - ${MOONGATE_ADMIN_CERT_DIRECTORY:?Set the absolute directory containing login.pfx and game certificates}:/run/admin-certificates:ro
+  game-1:
+    environment:
+      MOONGATE_ADMIN_CERTIFICATE_PASSWORD: ${MOONGATE_ADMIN_CERTIFICATE_PASSWORD:-}
+    volumes:
+      - ${MOONGATE_ADMIN_CERT_DIRECTORY:?Set the absolute certificate directory}:/run/admin-certificates:ro
+  game-2:
+    environment:
+      MOONGATE_ADMIN_CERTIFICATE_PASSWORD: ${MOONGATE_ADMIN_CERTIFICATE_PASSWORD:-}
+    volumes:
+      - ${MOONGATE_ADMIN_CERT_DIRECTORY:?Set the absolute certificate directory}:/run/admin-certificates:ro
+configs:
+  login-config:
+    file: ./config/login-admin.toml
+  game-1-config:
+    file: ./config/game-1-admin.toml
+  game-2-config:
+    file: ./config/game-2-admin.toml
