@@ -16,20 +16,28 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
     private readonly LoginAccountFlow _flow;
     private readonly ILogger _logger = Log.ForContext<LoginRoleAccountPacketHandler>();
 
-    public LoginRoleAccountPacketHandler(ILoginSessionService sessions, ILoginPacketSendService sender,
-        LoginAccountFlow flow)
+    public LoginRoleAccountPacketHandler(
+        ILoginSessionService sessions,
+        ILoginPacketSendService sender,
+        LoginAccountFlow flow
+    )
     {
         _sessions = sessions;
         _sender = sender;
         _flow = flow;
     }
 
-    public async ValueTask HandleAsync(LoginSession session, AccountLoginPacket packet,
-        CancellationToken cancellationToken)
+    public async ValueTask HandleAsync(
+        LoginSession session,
+        AccountLoginPacket packet,
+        CancellationToken cancellationToken
+    )
     {
         var result = await _flow.AuthenticateAsync(packet.Account, packet.Password, cancellationToken)
-            .ConfigureAwait(false);
-        if (cancellationToken.IsCancellationRequested || !_sessions.IsCurrent(session) ||
+                                .ConfigureAwait(false);
+
+        if (cancellationToken.IsCancellationRequested ||
+            !_sessions.IsCurrent(session) ||
             session.NetworkSession.Client is not { } connection)
         {
             return;
@@ -38,6 +46,7 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
         if (!result.Success)
         {
             _logger.Information("Login failed for account {Account}: {Reason}", packet.Account, result.DenialReason);
+
             if (!_sender.TrySend(session.SessionId, connection, new LoginDeniedPacket(result.DenialReason!.Value)))
             {
                 await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
@@ -54,6 +63,7 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
         if (!_sessions.IsCurrent(session))
         {
             session.ClearAccount();
+
             return;
         }
 
@@ -61,10 +71,14 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
         {
             session.ClearAccount();
             await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
+
             return;
         }
 
-        _logger.Information("Login successful for account {Account}; {RealmCount} realms available",
-            packet.Account, result.Servers.Count);
+        _logger.Information(
+            "Login successful for account {Account}; {RealmCount} realms available",
+            packet.Account,
+            result.Servers.Count
+        );
     }
 }

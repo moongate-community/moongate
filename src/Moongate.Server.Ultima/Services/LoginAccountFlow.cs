@@ -18,10 +18,14 @@ public sealed class LoginAccountFlow
         _directory = directory;
     }
 
-    public async Task<LoginAccountResult> AuthenticateAsync(string username, string password,
-        CancellationToken cancellationToken)
+    public async Task<LoginAccountResult> AuthenticateAsync(
+        string username,
+        string password,
+        CancellationToken cancellationToken
+    )
     {
         var account = await _accounts.LoginAsync(username, password, cancellationToken).ConfigureAwait(false);
+
         if (account is null)
         {
             return new(LoginDeniedReason.InvalidCredentials);
@@ -33,9 +37,17 @@ public sealed class LoginAccountFlow
         }
 
         var servers = _directory.GetAvailable(account.AccountType)
-                                .Select(realm => new GameServerEntry(realm.ServerIndex, realm.Name, 0, 0,
-                                    realm.Address))
+                                .Select(
+                                    realm => new GameServerEntry(
+                                        realm.ServerIndex,
+                                        realm.Name,
+                                        0,
+                                        0,
+                                        realm.Address
+                                    )
+                                )
                                 .ToArray();
+
         return servers.Length == 0
                    ? new(LoginDeniedReason.CommunicationProblem)
                    : new(account.Id, account.AccountType, servers);

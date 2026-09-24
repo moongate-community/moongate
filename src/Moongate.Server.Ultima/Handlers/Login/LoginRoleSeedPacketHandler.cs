@@ -9,13 +9,21 @@ public sealed class LoginRoleSeedPacketHandler : ILoginPacketHandler<LoginSeedPa
 {
     private readonly ILogger _logger = Log.ForContext<LoginRoleSeedPacketHandler>();
 
-    public ValueTask HandleAsync(LoginSession session, LoginSeedPacket packet,
-        CancellationToken cancellationToken)
+    public ValueTask HandleAsync(
+        LoginSession session,
+        LoginSeedPacket packet,
+        CancellationToken cancellationToken
+    )
     {
         cancellationToken.ThrowIfCancellationRequested();
         session.NetworkSession.SetSeed(packet.Seed);
-        _logger.Information("Login client connected with version v{Major}.{Minor}.{Revision}",
-            packet.Major, packet.Minor, packet.Revision);
+        _logger.Information(
+            "Login client connected with version v{Major}.{Minor}.{Revision}",
+            packet.Major,
+            packet.Minor,
+            packet.Revision
+        );
+
         return ValueTask.CompletedTask;
     }
 }
