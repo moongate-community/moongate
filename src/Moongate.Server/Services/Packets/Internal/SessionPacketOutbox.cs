@@ -9,11 +9,17 @@ internal sealed class SessionPacketOutbox
     private readonly Func<long, Task> _disconnect;
     private readonly Task _disconnectRequested;
     private readonly TaskCompletionSource _closure = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private readonly Lock _admissionGate = new();
+    private byte[]? _terminalFrame;
     private int _closed;
     private int _closeRequested;
+    private int _terminalQueued;
+    private int _terminalSent;
 
     public INetworkConnection Connection { get; }
     public Task Completion { get; private set; } = Task.CompletedTask;
+    public bool TerminalQueued => Volatile.Read(ref _terminalQueued) != 0;
+    public bool TerminalSent => Volatile.Read(ref _terminalSent) != 0;
 
     public SessionPacketOutbox(
         INetworkConnection connection,
@@ -52,7 +58,29 @@ internal sealed class SessionPacketOutbox
         => Completion = Task.Run(RunAsync);
 
     public bool TryWrite(byte[] frame)
-        => Volatile.Read(ref _closed) == 0 && _queue.Writer.TryWrite(frame);
+    {
+        lock (_admissionGate)
+        {
+            return _closed == 0 && _terminalFrame is null && _queue.Writer.TryWrite(frame);
+        }
+    }
+
+    public bool TryWriteTerminal(byte[] frame)
+    {
+        lock (_admissionGate)
+        {
+            if (_closed != 0 || _terminalFrame is not null)
+            {
+                return false;
+            }
+
+            _terminalFrame = frame;
+            Volatile.Write(ref _terminalQueued, 1);
+            _queue.Writer.TryComplete();
+
+            return true;
+        }
+    }
 
     private async Task CloseConnectionAsync()
     {
@@ -70,8 +98,11 @@ internal sealed class SessionPacketOutbox
 
     private void CloseQueue()
     {
-        Interlocked.Exchange(ref _closed, 1);
-        _queue.Writer.TryComplete();
+        lock (_admissionGate)
+        {
+            Volatile.Write(ref _closed, 1);
+            _queue.Writer.TryComplete();
+        }
     }
 
     private async Task DrainAsync()
@@ -83,19 +114,34 @@ internal sealed class SessionPacketOutbox
                 break;
             }
 
-            try
+            if (!await SendFrameAsync(frame).ConfigureAwait(false))
             {
-                await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false);
-            }
-            catch (Exception exception) when (_disconnectRequested.IsCompletedSuccessfully &&
-                                              exception is IOException or
-                                                           ObjectDisposedException or
-                                                           OperationCanceledException)
-            {
-                // Only the captured owner request identifies an intentionally interrupted write.
-                // A send failure may close the transport itself, so its current state is not a cause.
                 break;
             }
+        }
+
+        if (_terminalFrame is not null && Volatile.Read(ref _closed) == 0 && Connection.IsConnected &&
+            await SendFrameAsync(_terminalFrame).ConfigureAwait(false))
+        {
+            Volatile.Write(ref _terminalSent, 1);
+        }
+    }
+
+    private async Task<bool> SendFrameAsync(byte[] frame)
+    {
+        try
+        {
+            await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false);
+            return true;
+        }
+        catch (Exception exception) when (_disconnectRequested.IsCompletedSuccessfully &&
+                                          exception is IOException or
+                                                       ObjectDisposedException or
+                                                       OperationCanceledException)
+        {
+            // Only the captured owner request identifies an intentionally interrupted write.
+            // A send failure may close the transport itself, so its current state is not a cause.
+            return false;
         }
     }
 

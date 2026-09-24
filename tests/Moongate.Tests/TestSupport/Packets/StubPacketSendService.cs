@@ -29,4 +29,17 @@ public sealed class StubPacketSendService : IPacketSendService
         ExpectedConnection = expectedConnection;
         return TrySend(sessionId, packet);
     }
+
+    public async Task<bool> SendAndDisconnectAsync(
+        long sessionId,
+        INetworkConnection expectedConnection,
+        IOutgoingPacket packet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        TrySend(sessionId, expectedConnection, packet);
+        await expectedConnection.CloseAsync(cancellationToken);
+        return true;
+    }
 }

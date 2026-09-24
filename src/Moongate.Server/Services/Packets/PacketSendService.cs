@@ -122,6 +122,55 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
         return TrySendCore(sessionId, packet, expectedConnection);
     }
 
+    /// <inheritdoc />
+    public Task<bool> SendAndDisconnectAsync(
+        long sessionId,
+        INetworkConnection expectedConnection,
+        IOutgoingPacket packet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(expectedConnection);
+        cancellationToken.ThrowIfCancellationRequested();
+
+        lock (_gate)
+        {
+            if (!_running || !_connections.TryGet(sessionId, out var connection, out var disconnectRequested) ||
+                !ReferenceEquals(connection, expectedConnection))
+            {
+                return Task.FromResult(false);
+            }
+
+            if (!_outboxes.TryGetValue(sessionId, out var outbox))
+            {
+                outbox = new(connection, disconnectRequested, _capacity,
+                    id => _connections.DisconnectAsync(id, connection));
+                _outboxes.Add(sessionId, outbox);
+                outbox.Start();
+                _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));
+            }
+            else if (!ReferenceEquals(outbox.Connection, connection))
+            {
+                return Task.FromResult(false);
+            }
+
+            try
+            {
+                if (outbox.TryWriteTerminal(PacketCodec.Encode(packet)))
+                {
+                    return WaitForTerminalAsync(outbox, cancellationToken);
+                }
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Could not encode terminal packet for session {SessionId}", sessionId);
+                outbox.Close();
+            }
+
+            return Task.FromResult(false);
+        }
+    }
+
     private bool TrySendCore(long sessionId, IOutgoingPacket packet, INetworkConnection? expectedConnection)
     {
         lock (_gate)
@@ -145,6 +194,11 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
                 _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));
             }
             else if (!ReferenceEquals(outbox.Connection, connection))
+            {
+                return false;
+            }
+
+            if (outbox.TerminalQueued)
             {
                 return false;
             }
@@ -200,6 +254,12 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
                 _cleanups.Remove(sessionId);
             }
         }
+    }
+
+    private static async Task<bool> WaitForTerminalAsync(SessionPacketOutbox outbox, CancellationToken cancellationToken)
+    {
+        await outbox.Completion.WaitAsync(cancellationToken).ConfigureAwait(false);
+        return outbox.TerminalSent;
     }
 
     private async Task StopCoreAsync()

@@ -25,6 +25,19 @@ internal sealed class RecordingLoginPacketSender : ILoginPacketSendService
         return true;
     }
 
+    public async Task<bool> SendAndDisconnectAsync(
+        long sessionId,
+        INetworkConnection expectedConnection,
+        IOutgoingPacket packet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        cancellationToken.ThrowIfCancellationRequested();
+        _sent.Add(packet);
+        await expectedConnection.CloseAsync(cancellationToken);
+        return true;
+    }
+
     public Task StartAsync()
         => Task.CompletedTask;
 
