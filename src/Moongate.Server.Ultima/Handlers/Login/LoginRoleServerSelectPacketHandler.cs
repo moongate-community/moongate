@@ -103,8 +103,9 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
                 if (IsCurrent(session, connection) && !cancellationToken.IsCancellationRequested)
                 {
                     var redirect = new ServerRedirectPacket(realm.Descriptor.Address, realm.Descriptor.Port, authKey);
+                    // The expected close cancels the login mailbox token; delivery must finish before revocation is decided.
                     delivered = await _sender.SendAndDisconnectAsync(session.SessionId, connection, redirect,
-                        cancellationToken).ConfigureAwait(false);
+                        CancellationToken.None).ConfigureAwait(false);
                 }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
