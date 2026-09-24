@@ -61,7 +61,8 @@ jobs:
         run: dotnet build Moongate.slnx -c Release --no-restore
 
       - name: Test
-        run: dotnet test Moongate.slnx -c Release --no-build
+        # Test projects share one PostgreSQL service; run their hosts one at a time.
+        run: dotnet test Moongate.slnx -c Release --no-build -m:1
 
       - name: Verify NuGet packages and README examples
         run: bash scripts/verify-packages.sh
