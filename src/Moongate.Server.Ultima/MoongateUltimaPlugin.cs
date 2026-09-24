@@ -60,6 +60,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterLoginPacketHandler<LoginSeedPacket, LoginRoleSeedPacketHandler>();
             container.RegisterLoginPacketHandler<ClientVersionPacket, LoginRoleClientVersionPacketHandler>();
             container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
+            container.RegisterLoginPacketHandler<ServerSelectPacket, LoginRoleServerSelectPacketHandler>();
         }
 
         if ((mode & ServerMode.Game) != 0)

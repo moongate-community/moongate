@@ -66,4 +66,14 @@ public sealed class LoginSessionTests
         Assert.False(session.TryGetAuthenticatedAccount(out _, out _, out _, out _));
         Assert.Equal(new Serial(43), session.AccountId);
     }
+
+    [Fact]
+    public void TrySetAccount_ZeroIdentityDoesNotRetainCredentialKey()
+    {
+        using var connection = new ControlledNetworkConnection(1);
+        var session = new LoginSession(connection);
+
+        Assert.False(session.TrySetAccount(Serial.Zero, AccountType.Regular, "alice", new byte[32]));
+        Assert.False(session.TryGetAuthenticatedAccount(out _, out _, out _, out _));
+    }
 }

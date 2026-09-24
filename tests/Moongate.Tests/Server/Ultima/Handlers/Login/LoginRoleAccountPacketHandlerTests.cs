@@ -1,4 +1,5 @@
 using System.Net;
+using System.Security.Cryptography;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
@@ -19,6 +20,30 @@ namespace Moongate.Tests.Server.Ultima.Handlers.Login;
 public sealed class LoginRoleAccountPacketHandlerTests
 {
     [Fact]
+    public async Task HandleAsync_ValidAccountStoresDerivedCredentialKeyForRealmSelection()
+    {
+        var sessions = new LoginSessionService();
+        using var connection = new ControlledNetworkConnection(1);
+        var session = sessions.GetOrCreate(connection);
+        using var proof = new HandoffProofService(Enumerable.Range(0, 32).Select(value => (byte)value).ToArray());
+        var handler = new LoginRoleAccountPacketHandler(sessions, new RecordingLoginPacketSender(),
+            new LoginAccountFlow(new RecordingAccountService { LoginResult = Account() }, Directory()), proof);
+
+        await handler.HandleAsync(session, new AccountLoginPacket("user", "password", 0xFF),
+            CancellationToken.None);
+
+        Assert.True(session.TryGetAuthenticatedAccount(out var accountId, out var accountType,
+            out var username, out var credentialKey));
+        Assert.Equal(new Serial(42), accountId);
+        Assert.Equal(AccountType.Regular, accountType);
+        Assert.Equal("user", username);
+        var expected = proof.DeriveCredentialKey("user", "password");
+        Assert.Equal(expected, credentialKey);
+        CryptographicOperations.ZeroMemory(expected);
+        CryptographicOperations.ZeroMemory(credentialKey);
+    }
+
+    [Fact]
     public async Task HandleAsync_ValidAccount_SendsEligibleServerList()
     {
         var sessions = new LoginSessionService();
@@ -26,8 +51,9 @@ public sealed class LoginRoleAccountPacketHandlerTests
         var session = sessions.GetOrCreate(connection);
         var sender = new RecordingLoginPacketSender();
         var accounts = new RecordingAccountService { LoginResult = Account() };
+        using var proof = new HandoffProofService(new byte[32]);
         var handler = new LoginRoleAccountPacketHandler(sessions, sender,
-            new LoginAccountFlow(accounts, Directory()));
+            new LoginAccountFlow(accounts, Directory()), proof);
 
         await handler.HandleAsync(session, new AccountLoginPacket("user", "password", 0xFF),
             CancellationToken.None);
@@ -44,9 +70,10 @@ public sealed class LoginRoleAccountPacketHandlerTests
         using var connection = new ControlledNetworkConnection(1);
         var session = sessions.GetOrCreate(connection);
         var sender = new RecordingLoginPacketSender();
+        using var proof = new HandoffProofService(new byte[32]);
         var handler = new LoginRoleAccountPacketHandler(sessions, sender,
             new LoginAccountFlow(new RecordingAccountService { LoginResult = Account() },
-                new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15))));
+                new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15))), proof);
 
         await handler.HandleAsync(session, new AccountLoginPacket("user", "password", 0xFF),
             CancellationToken.None);
@@ -64,8 +91,9 @@ public sealed class LoginRoleAccountPacketHandlerTests
         var original = sessions.GetOrCreate(first);
         var accounts = new BlockingAccountService();
         var sender = new RecordingLoginPacketSender();
+        using var proof = new HandoffProofService(new byte[32]);
         var handler = new LoginRoleAccountPacketHandler(sessions, sender,
-            new LoginAccountFlow(accounts, Directory()));
+            new LoginAccountFlow(accounts, Directory()), proof);
         var pending = handler.HandleAsync(original, new AccountLoginPacket("user", "password", 0xFF),
             CancellationToken.None).AsTask();
         await accounts.Entered.Task.WaitAsync(TimeSpan.FromSeconds(2));

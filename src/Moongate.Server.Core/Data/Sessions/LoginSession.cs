@@ -72,7 +72,7 @@ public sealed class LoginSession
 
         lock (_gate)
         {
-            if (_disconnected || !Enum.IsDefined(accountType))
+            if (_disconnected || !accountId.IsValid || !Enum.IsDefined(accountType))
             {
                 return false;
             }

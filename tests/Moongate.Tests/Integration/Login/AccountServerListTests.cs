@@ -35,6 +35,7 @@ public sealed class AccountServerListTests
         var network = new NetworkServiceStub(connections);
         var sessions = new LoginSessionService();
         var sender = new PacketSendService(connections);
+        using var proof = new HandoffProofService(new byte[32]);
         var directory = new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15));
         directory.RegisterLocal(new RealmDescriptor("visible", 1, "Visible", IPAddress.Loopback,
             2595, AccountType.Regular));
@@ -42,6 +43,7 @@ public sealed class AccountServerListTests
             2596, AccountType.Administrator));
         container.RegisterInstance<ILoginSessionService>(sessions);
         container.RegisterInstance<ILoginPacketSendService>(sender);
+        container.RegisterInstance<IHandoffProofService>(proof);
         container.RegisterInstance(accountFixture.Service);
         container.RegisterInstance(new LoginAccountFlow(accountFixture.Service, directory));
         container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
@@ -83,6 +85,7 @@ public sealed class AccountServerListTests
         var network = new NetworkServiceStub(connections);
         var sessions = new LoginSessionService();
         var sender = new PacketSendService(connections);
+        using var proof = new HandoffProofService(new byte[32]);
         var directory = new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15));
         if (available)
         {
@@ -96,6 +99,7 @@ public sealed class AccountServerListTests
         } };
         container.RegisterInstance<ILoginSessionService>(sessions);
         container.RegisterInstance<ILoginPacketSendService>(sender);
+        container.RegisterInstance<IHandoffProofService>(proof);
         container.RegisterInstance<IAccountService>(accounts);
         container.RegisterInstance(new LoginAccountFlow(accounts, directory));
         container.RegisterLoginPacketHandler<LoginSeedPacket, LoginRoleSeedPacketHandler>();

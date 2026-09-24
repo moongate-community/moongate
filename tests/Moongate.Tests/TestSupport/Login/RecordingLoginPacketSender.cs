@@ -9,6 +9,7 @@ internal sealed class RecordingLoginPacketSender : ILoginPacketSendService
     private readonly List<IOutgoingPacket> _sent = new();
 
     public IReadOnlyList<IOutgoingPacket> Sent => _sent;
+    public bool TerminalResult { get; set; } = true;
 
     public Task DisconnectAsync(long sessionId)
         => Task.CompletedTask;
@@ -34,6 +35,12 @@ internal sealed class RecordingLoginPacketSender : ILoginPacketSendService
     {
         cancellationToken.ThrowIfCancellationRequested();
         _sent.Add(packet);
+
+        if (!TerminalResult)
+        {
+            return false;
+        }
+
         await expectedConnection.CloseAsync(cancellationToken);
         return true;
     }

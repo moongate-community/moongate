@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Server.Core.Data.Sessions;
@@ -13,18 +14,21 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
 {
     private readonly ILoginSessionService _sessions;
     private readonly ILoginPacketSendService _sender;
+    private readonly IHandoffProofService _proof;
     private readonly LoginAccountFlow _flow;
     private readonly ILogger _logger = Log.ForContext<LoginRoleAccountPacketHandler>();
 
     public LoginRoleAccountPacketHandler(
         ILoginSessionService sessions,
         ILoginPacketSendService sender,
-        LoginAccountFlow flow
+        LoginAccountFlow flow,
+        IHandoffProofService proof
     )
     {
         _sessions = sessions;
         _sender = sender;
         _flow = flow;
+        _proof = proof;
     }
 
     public async ValueTask HandleAsync(
@@ -55,30 +59,39 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
             return;
         }
 
-        if (!session.TrySetAccount(result.AccountId, result.AccountType))
+        var credentialKey = _proof.DeriveCredentialKey(packet.Account, packet.Password);
+
+        try
         {
-            return;
-        }
+            if (!session.TrySetAccount(result.AccountId, result.AccountType, packet.Account, credentialKey))
+            {
+                return;
+            }
 
-        if (!_sessions.IsCurrent(session))
+            if (!_sessions.IsCurrent(session))
+            {
+                session.ClearAccount();
+
+                return;
+            }
+
+            if (!_sender.TrySend(session.SessionId, connection, new ServerListPacket(result.Servers)))
+            {
+                session.ClearAccount();
+                await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
+
+                return;
+            }
+
+            _logger.Information(
+                "Login successful for account {Account}; {RealmCount} realms available",
+                packet.Account,
+                result.Servers.Count
+            );
+        }
+        finally
         {
-            session.ClearAccount();
-
-            return;
+            CryptographicOperations.ZeroMemory(credentialKey);
         }
-
-        if (!_sender.TrySend(session.SessionId, connection, new ServerListPacket(result.Servers)))
-        {
-            session.ClearAccount();
-            await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
-
-            return;
-        }
-
-        _logger.Information(
-            "Login successful for account {Account}; {RealmCount} realms available",
-            packet.Account,
-            result.Servers.Count
-        );
     }
 }

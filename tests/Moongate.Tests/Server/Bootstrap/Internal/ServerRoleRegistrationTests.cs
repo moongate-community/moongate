@@ -72,6 +72,8 @@ public sealed class ServerRoleRegistrationTests
         {
             Assert.Contains(typeof(AccountLoginPacket),
                 container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys);
+            Assert.Contains(typeof(ServerSelectPacket),
+                container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys);
         }
 
         if (mode == ServerMode.Login)
@@ -81,6 +83,8 @@ public sealed class ServerRoleRegistrationTests
         else
         {
             Assert.DoesNotContain(typeof(AccountLoginPacket),
+                container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
+            Assert.DoesNotContain(typeof(ServerSelectPacket),
                 container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
             Assert.Contains(typeof(LoginSeedPacket),
                 container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
