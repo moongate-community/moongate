@@ -119,7 +119,14 @@ internal static class UoxItemConverterCommand
 
                 if (convertLoot && lootIdByHeader.TryGetValue(block.Header, out var lootId))
                 {
-                    var lootTemplate = LootTemplateBuilder.Build(block, lootId, idByHeader, itemNameById, knownLootIds, out var skipped);
+                    var lootTemplate = LootTemplateBuilder.Build(
+                        block,
+                        lootId,
+                        idByHeader,
+                        itemNameById,
+                        knownLootIds,
+                        out var skipped
+                    );
                     skippedUnresolvedLootEntry += skipped;
 
                     // Each loot table gets its own file, named after its own Id: unlike an item,
@@ -154,12 +161,16 @@ internal static class UoxItemConverterCommand
                 TomlUtils.SerializeToFile(new ItemTemplateFile { Item = templates }, outputPath);
                 written += templates.Count;
 
-                output.WriteLine($"{relative} -> {Path.GetRelativePath(destination, outputPath)} ({templates.Count} item(s))");
+                output.WriteLine(
+                    $"{relative} -> {Path.GetRelativePath(destination, outputPath)} ({templates.Count} item(s))"
+                );
             }
 
             if (lootWrittenForFile > 0)
             {
-                output.WriteLine($"{relative} -> {lootWrittenForFile} loot table(s), one file each under --loot-destination");
+                output.WriteLine(
+                    $"{relative} -> {lootWrittenForFile} loot table(s), one file each under --loot-destination"
+                );
             }
         }
 
@@ -173,7 +184,12 @@ internal static class UoxItemConverterCommand
         // that already ran in memory: it also catches a TOML round-trip going wrong, and a Serial
         // pair like "Base-Item"/"base_item" that would collide only after ToSnakeCase, neither of
         // which the in-memory resolution above could ever see going wrong.
-        var errors = VerifyOutput(destination, convertLoot ? lootDestination : null, out var verifiedItems, out var verifiedLoot);
+        var errors = VerifyOutput(
+            destination,
+            convertLoot ? lootDestination : null,
+            out var verifiedItems,
+            out var verifiedLoot
+        );
 
         if (errors.Count > 0)
         {

@@ -15,13 +15,14 @@ internal sealed class AccountTypeTomlConverter : TomlConverter<AccountType>
 
         var value = reader.GetString().ToLowerInvariant() switch
         {
-            "regular" => AccountType.Regular,
-            "game_master" => AccountType.GameMaster,
+            "regular"       => AccountType.Regular,
+            "game_master"   => AccountType.GameMaster,
             "administrator" => AccountType.Administrator,
-            _ => throw reader.CreateException("Account type must be regular, game_master, or administrator.")
+            _               => throw reader.CreateException("Account type must be regular, game_master, or administrator.")
         };
 
         reader.Read();
+
         return value;
     }
 

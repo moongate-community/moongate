@@ -10,8 +10,8 @@ public sealed class RedisConnectionService : IMoongateStartupService, IAsyncDisp
     private readonly RedisConfig _config;
     private IConnectionMultiplexer? _connection;
 
-    public IConnectionMultiplexer Connection =>
-        _connection ?? throw new InvalidOperationException("The Redis connection has not started.");
+    public IConnectionMultiplexer Connection
+        => _connection ?? throw new InvalidOperationException("The Redis connection has not started.");
 
     public RedisConnectionService(RedisConfig config)
     {
@@ -47,6 +47,7 @@ public sealed class RedisConnectionService : IMoongateStartupService, IAsyncDisp
             {
                 await connection.CloseAsync().ConfigureAwait(false);
                 connection.Dispose();
+
                 throw;
             }
         }
@@ -72,7 +73,5 @@ public sealed class RedisConnectionService : IMoongateStartupService, IAsyncDisp
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
-    {
-        await StopAsync().ConfigureAwait(false);
-    }
+        => await StopAsync().ConfigureAwait(false);
 }

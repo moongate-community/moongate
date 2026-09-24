@@ -6,8 +6,8 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Console;
-using Moongate.Tests.TestSupport.Console;
 using Moongate.Tests.TestSupport.Commands;
+using Moongate.Tests.TestSupport.Console;
 
 namespace Moongate.Tests.Server.Services.Console;
 
@@ -55,6 +55,7 @@ public sealed class ConsoleInputServiceTests
         await service.StopAsync();
 
         const string prefix = "input:account create alice ";
+
         foreach (var call in prompt.Calls.Where(call => call.StartsWith(prefix, StringComparison.Ordinal)))
         {
             var displayedPassword = call[prefix.Length..].Split(' ')[0];

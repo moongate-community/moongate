@@ -27,23 +27,33 @@ public sealed class AdminCertificateSetupTests
         Assert.Contains("# preserve this comment", text);
         Assert.Contains("custom_value = 'unchanged'", text);
         Assert.Contains("# keep port", text);
-        using var certificate = X509CertificateLoader.LoadPkcs12FromFile(Path.Combine(directory.Path, "certificates/admin.pfx"), "");
-        using var exported = X509CertificateLoader.LoadCertificateFromFile(Path.Combine(directory.Path, "certificates/admin.crt"));
+        using var certificate = X509CertificateLoader.LoadPkcs12FromFile(
+            Path.Combine(directory.Path, "certificates/admin.pfx"),
+            ""
+        );
+        using var exported =
+            X509CertificateLoader.LoadCertificateFromFile(Path.Combine(directory.Path, "certificates/admin.crt"));
         Assert.True(certificate.HasPrivateKey);
         Assert.False(exported.HasPrivateKey);
         Assert.Equal(certificate.Thumbprint, exported.Thumbprint);
+
         foreach (var host in new[] { "localhost", "127.0.0.1", "::1", "login.example.test", "192.0.2.10" })
         {
             Assert.True(certificate.MatchesHostname(host, false, false), host);
         }
         Assert.True(certificate.NotAfter.ToUniversalTime() > DateTime.UtcNow.AddDays(360));
         Assert.False(certificate.Extensions.OfType<X509BasicConstraintsExtension>().Single().CertificateAuthority);
-        Assert.Contains(certificate.Extensions.OfType<X509EnhancedKeyUsageExtension>().Single().EnhancedKeyUsages.Cast<System.Security.Cryptography.Oid>(),
-            oid => oid.Value == "1.3.6.1.5.5.7.3.1");
+        Assert.Contains(
+            certificate.Extensions.OfType<X509EnhancedKeyUsageExtension>().Single().EnhancedKeyUsages.Cast<Oid>(),
+            oid => oid.Value == "1.3.6.1.5.5.7.3.1"
+        );
+
         if (!OperatingSystem.IsWindows())
         {
-            Assert.Equal(UnixFileMode.UserRead | UnixFileMode.UserWrite,
-                File.GetUnixFileMode(Path.Combine(directory.Path, "certificates/admin.pfx")));
+            Assert.Equal(
+                UnixFileMode.UserRead | UnixFileMode.UserWrite,
+                File.GetUnixFileMode(Path.Combine(directory.Path, "certificates/admin.pfx"))
+            );
         }
     }
 
@@ -60,7 +70,8 @@ public sealed class AdminCertificateSetupTests
         Assert.Equal(originalPfx, File.ReadAllBytes(Path.Combine(directory.Path, "certificates/admin.pfx")));
     }
 
-    [Theory, InlineData("*"), InlineData("https://login.example.test"), InlineData("bad name"), InlineData("0.0.0.0"), InlineData("::")]
+    [Theory, InlineData("*"), InlineData("https://login.example.test"), InlineData("bad name"), InlineData("0.0.0.0"),
+     InlineData("::")]
     public void Configure_InvalidHost_DoesNotChangeConfigOrCreateCertificate(string host)
     {
         using var directory = new TemporaryDirectory();
@@ -92,7 +103,9 @@ public sealed class AdminCertificateSetupTests
         var configPath = CreateConfig(directory.Path);
         AdminCertificateSetup.Configure(directory.Path, [], TextWriter.Null);
         var original = File.ReadAllBytes(configPath);
-        Assert.Throws<InvalidOperationException>(() => AdminCertificateSetup.Configure(directory.Path, ["new.example.test"], TextWriter.Null));
+        Assert.Throws<InvalidOperationException>(
+            () => AdminCertificateSetup.Configure(directory.Path, ["new.example.test"], TextWriter.Null)
+        );
         Assert.Equal(original, File.ReadAllBytes(configPath));
     }
 
@@ -134,17 +147,27 @@ public sealed class AdminCertificateSetupTests
         var originalConfig = File.ReadAllBytes(configPath);
         using var key = RSA.Create(2048);
         var request = new CertificateRequest("CN=localhost", key, HashAlgorithmName.SHA256, RSASignaturePadding.Pkcs1);
-        request.CertificateExtensions.Add(new X509EnhancedKeyUsageExtension(
-            new OidCollection { new(serverUsage ? "1.3.6.1.5.5.7.3.1" : "1.3.6.1.5.5.7.3.2") }, true));
-        request.CertificateExtensions.Add(new X509KeyUsageExtension(
-            signatureUsage ? X509KeyUsageFlags.DigitalSignature : X509KeyUsageFlags.KeyEncipherment, true));
+        request.CertificateExtensions.Add(
+            new X509EnhancedKeyUsageExtension(
+                new OidCollection { new(serverUsage ? "1.3.6.1.5.5.7.3.1" : "1.3.6.1.5.5.7.3.2") },
+                true
+            )
+        );
+        request.CertificateExtensions.Add(
+            new X509KeyUsageExtension(
+                signatureUsage ? X509KeyUsageFlags.DigitalSignature : X509KeyUsageFlags.KeyEncipherment,
+                true
+            )
+        );
         var san = new SubjectAlternativeNameBuilder();
         san.AddDnsName("localhost");
         san.AddIpAddress(IPAddress.Loopback);
         san.AddIpAddress(IPAddress.IPv6Loopback);
         request.CertificateExtensions.Add(san.Build());
-        using var certificate = request.CreateSelfSigned(DateTimeOffset.UtcNow.AddDays(-2),
-            DateTimeOffset.UtcNow.AddDays(expired ? -1 : 1));
+        using var certificate = request.CreateSelfSigned(
+            DateTimeOffset.UtcNow.AddDays(-2),
+            DateTimeOffset.UtcNow.AddDays(expired ? -1 : 1)
+        );
         Directory.CreateDirectory(Path.Combine(directory.Path, "certificates"));
         var pfxPath = Path.Combine(directory.Path, "certificates/admin.pfx");
         var originalPfx = certificate.Export(X509ContentType.Pfx, "");
@@ -159,7 +182,9 @@ public sealed class AdminCertificateSetupTests
     {
         Directory.CreateDirectory(Path.Combine(root, "config"));
         var path = Path.Combine(root, "config/moongate.toml");
-        File.WriteAllText(path, """
+        File.WriteAllText(
+            path,
+            """
             # preserve this comment
             custom_value = 'unchanged'
             [admin_api]
@@ -168,7 +193,9 @@ public sealed class AdminCertificateSetupTests
             port = 2599 # keep port
             certificate_path = ''
             certificate_password = ''
-            """);
+            """
+        );
+
         return path;
     }
 }

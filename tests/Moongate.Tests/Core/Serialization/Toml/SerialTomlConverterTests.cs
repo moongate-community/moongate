@@ -1,5 +1,4 @@
 using System.Text.Json;
-using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Tests.Support.Serialization.Data;
@@ -20,7 +19,7 @@ public sealed class SerialTomlConverterTests
     {
         var holder = TomlUtils.Deserialize<SerialHolder>("item_id = 0x0FEF\n", Options);
 
-        Assert.Equal(new Serial(0x0FEF), holder!.ItemId);
+        Assert.Equal(new(0x0FEF), holder!.ItemId);
     }
 
     [Fact]
@@ -28,7 +27,7 @@ public sealed class SerialTomlConverterTests
     {
         var holder = TomlUtils.Deserialize<SerialHolder>("item_id = \"0x0FEF\"\n", Options);
 
-        Assert.Equal(new Serial(0x0FEF), holder!.ItemId);
+        Assert.Equal(new(0x0FEF), holder!.ItemId);
     }
 
     [Fact]
@@ -36,7 +35,7 @@ public sealed class SerialTomlConverterTests
     {
         var holder = TomlUtils.Deserialize<SerialHolder>("item_id = \"4079\"\n", Options);
 
-        Assert.Equal(new Serial(4079), holder!.ItemId);
+        Assert.Equal(new(4079), holder!.ItemId);
     }
 
     [Fact]
@@ -52,7 +51,7 @@ public sealed class SerialTomlConverterTests
     [Fact]
     public void Serialize_WritesABareInteger()
     {
-        var toml = TomlUtils.Serialize(new SerialHolder { ItemId = new Serial(0x0FEF) }, Options);
+        var toml = TomlUtils.Serialize(new SerialHolder { ItemId = new(0x0FEF) }, Options);
 
         Assert.Equal("item_id = 4079", toml.Trim());
     }
@@ -60,7 +59,7 @@ public sealed class SerialTomlConverterTests
     [Fact]
     public void RoundTrip_PreservesTheValue()
     {
-        var original = new SerialHolder { ItemId = new Serial(0x40000001) };
+        var original = new SerialHolder { ItemId = new(0x40000001) };
 
         var toml = TomlUtils.Serialize(original, Options);
         var restored = TomlUtils.Deserialize<SerialHolder>(toml, Options);

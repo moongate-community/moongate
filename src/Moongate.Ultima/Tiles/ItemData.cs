@@ -11,40 +11,6 @@ namespace Moongate.Ultima.Tiles;
 /// </summary>
 public struct ItemData
 {
-    public unsafe ItemData(NewItemTileDataMul mulStruct)
-    {
-        Name = TileDataHelpers.ReadNameString(mulStruct.name);
-        Flags = (TileFlagType)mulStruct.flags;
-        Weight = mulStruct.weight;
-        Quality = mulStruct.quality;
-        Quantity = mulStruct.quantity;
-        Value = mulStruct.value;
-        Height = mulStruct.height;
-        Animation = mulStruct.anim;
-        Hue = mulStruct.hue;
-        StackingOffset = mulStruct.stackingOffset;
-        MiscData = mulStruct.miscData;
-        Unk2 = mulStruct.unk2;
-        Unk3 = mulStruct.unk3;
-    }
-
-    public unsafe ItemData(OldItemTileDataMul mulStruct)
-    {
-        Name = TileDataHelpers.ReadNameString(mulStruct.name);
-        Flags = (TileFlagType)mulStruct.flags;
-        Weight = mulStruct.weight;
-        Quality = mulStruct.quality;
-        Quantity = mulStruct.quantity;
-        Value = mulStruct.value;
-        Height = mulStruct.height;
-        Animation = mulStruct.anim;
-        Hue = mulStruct.hue;
-        StackingOffset = mulStruct.stackingOffset;
-        MiscData = mulStruct.miscData;
-        Unk2 = mulStruct.unk2;
-        Unk3 = mulStruct.unk3;
-    }
-
     /// <summary>
     /// Gets the name of this item.
     /// </summary>
@@ -158,6 +124,40 @@ public struct ItemData
     /// <seealso cref="TileFlagType" />
     /// </summary>
     public bool Wearable => (Flags & TileFlagType.Wearable) != 0;
+
+    public unsafe ItemData(NewItemTileDataMul mulStruct)
+    {
+        Name = TileDataHelpers.ReadNameString(mulStruct.name);
+        Flags = (TileFlagType)mulStruct.flags;
+        Weight = mulStruct.weight;
+        Quality = mulStruct.quality;
+        Quantity = mulStruct.quantity;
+        Value = mulStruct.value;
+        Height = mulStruct.height;
+        Animation = mulStruct.anim;
+        Hue = mulStruct.hue;
+        StackingOffset = mulStruct.stackingOffset;
+        MiscData = mulStruct.miscData;
+        Unk2 = mulStruct.unk2;
+        Unk3 = mulStruct.unk3;
+    }
+
+    public unsafe ItemData(OldItemTileDataMul mulStruct)
+    {
+        Name = TileDataHelpers.ReadNameString(mulStruct.name);
+        Flags = (TileFlagType)mulStruct.flags;
+        Weight = mulStruct.weight;
+        Quality = mulStruct.quality;
+        Quantity = mulStruct.quantity;
+        Value = mulStruct.value;
+        Height = mulStruct.height;
+        Animation = mulStruct.anim;
+        Hue = mulStruct.hue;
+        StackingOffset = mulStruct.stackingOffset;
+        MiscData = mulStruct.miscData;
+        Unk2 = mulStruct.unk2;
+        Unk3 = mulStruct.unk3;
+    }
 
     public void ReadData(string[] split)
     {

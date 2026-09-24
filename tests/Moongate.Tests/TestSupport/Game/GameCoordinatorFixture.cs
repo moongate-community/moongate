@@ -50,6 +50,20 @@ internal sealed class GameCoordinatorFixture : IAsyncDisposable
         );
     }
 
+    public async Task StartAsync()
+    {
+        await StartDependenciesAsync();
+        await Game.StartAsync();
+    }
+
+    public async Task StartDependenciesAsync()
+    {
+        await Loop.StartAsync();
+        await Connections.StartAsync();
+        await Sender.StartAsync();
+        await Dispatcher.StartAsync();
+    }
+
     public async ValueTask DisposeAsync()
     {
         List<Exception> failures = [];
@@ -73,19 +87,5 @@ internal sealed class GameCoordinatorFixture : IAsyncDisposable
         {
             throw new AggregateException(failures);
         }
-    }
-
-    public async Task StartAsync()
-    {
-        await StartDependenciesAsync();
-        await Game.StartAsync();
-    }
-
-    public async Task StartDependenciesAsync()
-    {
-        await Loop.StartAsync();
-        await Connections.StartAsync();
-        await Sender.StartAsync();
-        await Dispatcher.StartAsync();
     }
 }

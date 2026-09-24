@@ -5,12 +5,11 @@ namespace Moongate.Ultima.Animation;
 
 public sealed class AnimationFrame
 {
-    public SKPointI Center { get; set; }
-    public UltimaBitmap Bitmap { get; set; }
-
     private const int _doubleXor = (0x200 << 22) | (0x200 << 12);
 
     public static readonly AnimationFrame Empty = new();
+    public SKPointI Center { get; set; }
+    public UltimaBitmap Bitmap { get; set; }
 
     //public static readonly AnimationFrame[] EmptyFrames = new AnimationFrame[1] { Empty };
 

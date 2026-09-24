@@ -7,17 +7,10 @@ namespace Moongate.Ultima.Graphics;
 
 public sealed class Textures
 {
+    private static readonly Dictionary<int, bool> _patched = new();
     private static FileIndex _fileIndex = new("Texidx.mul", "Texmaps.mul", 0x4000, 10);
     private static UltimaBitmap[] _cache = new UltimaBitmap[0x4000];
     private static bool[] _removed = new bool[0x4000];
-    private static readonly Dictionary<int, bool> _patched = new();
-
-    private struct Checksums
-    {
-        public int Position;
-        public int Length;
-        public int Extra;
-    }
 
     public static int GetIdxLength()
         => (int)(_fileIndex.IdxLength / 12);
@@ -251,6 +244,13 @@ public sealed class Textures
         var valid = _fileIndex.Valid(index, out var length, out _, out _);
 
         return valid && length != 0;
+    }
+
+    private struct Checksums
+    {
+        public int Position;
+        public int Length;
+        public int Extra;
     }
 
     private static int GetExtraFlag(int length)

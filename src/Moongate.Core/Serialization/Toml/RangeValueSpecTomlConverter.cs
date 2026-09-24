@@ -13,16 +13,16 @@ public sealed class RangeValueSpecTomlConverter<T> : TomlConverter<RangeValueSpe
         switch (reader.TokenType)
         {
             case TomlTokenType.String:
-            {
-                var text = reader.GetString();
-
-                if (!RangeValueSpec<T>.TryParse(text, out var spec))
                 {
-                    throw reader.CreateException($"'{text}' is not a valid {typeof(T).Name} value or range.");
-                }
+                    var text = reader.GetString();
 
-                return spec;
-            }
+                    if (!RangeValueSpec<T>.TryParse(text, out var spec))
+                    {
+                        throw reader.CreateException($"'{text}' is not a valid {typeof(T).Name} value or range.");
+                    }
+
+                    return spec;
+                }
             case TomlTokenType.Integer:
                 return RangeValueSpec<T>.FromValue(T.CreateChecked(reader.GetInt64()));
             case TomlTokenType.Float:

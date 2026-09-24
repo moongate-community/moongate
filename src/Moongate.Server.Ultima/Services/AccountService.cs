@@ -27,15 +27,25 @@ public class AccountService : IAccountService
         _persistence = persistence;
     }
 
-    public Task<AccountCreateResult> CreateAccountAsync(string username, string password,
-        AccountType accountType = AccountType.Regular, CancellationToken cancellationToken = default)
-        => CreateAccountAsync(new AccountCreateOptions
-        {
-            Username = username, Password = password, AccountType = accountType
-        }, cancellationToken);
+    public Task<AccountCreateResult> CreateAccountAsync(
+        string username,
+        string password,
+        AccountType accountType = AccountType.Regular,
+        CancellationToken cancellationToken = default
+    )
+        => CreateAccountAsync(
+            new()
+            {
+                Username = username, Password = password, AccountType = accountType
+            },
+            cancellationToken
+        );
 
-    public async Task<AccountPage> ListAccountsPageAsync(Serial afterId, int pageSize = 50,
-        CancellationToken cancellationToken = default)
+    public async Task<AccountPage> ListAccountsPageAsync(
+        Serial afterId,
+        int pageSize = 50,
+        CancellationToken cancellationToken = default
+    )
     {
         if (pageSize is < 1 or > 200)
         {
@@ -43,13 +53,17 @@ public class AccountService : IAccountService
         }
         var values = await _accountDataAccess.QueryAsync(a => a.Id > afterId, 0, pageSize + 1, cancellationToken);
         var items = values.Take(pageSize).ToArray();
+
         return new(items, values.Count > pageSize ? items[^1].Id : Serial.Zero);
     }
 
-    public async Task<AccountCreateResult> CreateAccountAsync(AccountCreateOptions options,
-        CancellationToken cancellationToken = default)
+    public async Task<AccountCreateResult> CreateAccountAsync(
+        AccountCreateOptions options,
+        CancellationToken cancellationToken = default
+    )
     {
         ArgumentNullException.ThrowIfNull(options);
+
         if (!Enum.IsDefined(options.AccountType))
         {
             throw new ArgumentOutOfRangeException(nameof(options));
@@ -57,6 +71,7 @@ public class AccountService : IAccountService
         var username = options.Username;
         var password = options.Password;
         var accountType = options.AccountType;
+
         try
         {
             var existingAccount = await _accountDataAccess
@@ -64,10 +79,9 @@ public class AccountService : IAccountService
 
             if (existingAccount.Any())
             {
-                return new AccountCreateResult(
-                    success: false,
-                    resultType: AccountCreateResultType.UsernameAlreadyExists,
-                    account: null
+                return new(
+                    false,
+                    AccountCreateResultType.UsernameAlreadyExists
                 );
             }
 
@@ -86,10 +100,10 @@ public class AccountService : IAccountService
 
             await _accountDataAccess.UpsertAsync(newAccount, cancellationToken);
 
-            return new AccountCreateResult(
-                success: true,
-                resultType: AccountCreateResultType.Success,
-                account: newAccount
+            return new(
+                true,
+                AccountCreateResultType.Success,
+                newAccount
             );
         }
         catch (OperationCanceledException)
@@ -102,10 +116,10 @@ public class AccountService : IAccountService
             throw new OperationCanceledException("Account creation canceled.", exception, cancellationToken);
         }
         catch (Exception exception) when (exception.GetBaseException() is PostgresException
-        {
-            SqlState: PostgresErrorCodes.UniqueViolation,
-            ConstraintName: "ux_accounts_username"
-        })
+                                          {
+                                              SqlState: PostgresErrorCodes.UniqueViolation,
+                                              ConstraintName: "ux_accounts_username"
+                                          })
         {
             return new(false, AccountCreateResultType.UsernameAlreadyExists);
         }
@@ -113,11 +127,11 @@ public class AccountService : IAccountService
         {
             _logger.Error("Account creation failed with {ExceptionType}", ex.GetType().Name);
 
-            return new AccountCreateResult(
-                success: false,
-                resultType: AccountCreateResultType.Error,
-                account: null,
-                exception: ex
+            return new(
+                false,
+                AccountCreateResultType.Error,
+                null,
+                ex
             );
         }
     }
@@ -132,23 +146,32 @@ public class AccountService : IAccountService
         {
             var matches = await _accountDataAccess.QueryAsync(a => a.Username == username, 0, 1, cancellationToken);
             Serial? id = matches.Count == 0 ? null : matches[0].Id;
+
             if (id is null)
             {
                 return null;
             }
             AccountEntity? result = null;
-            await _persistence.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Accounts, async tx =>
-            {
-                var account = await tx.GetByIdForUpdateAsync<AccountEntity>(id.Value, cancellationToken);
-                if (account is null || account.IsLocked || !StringComparer.Ordinal.Equals(account.Username, username) ||
-                    !HashUtils.VerifyPassword(password, account.HashPassword))
+            await _persistence.ExecuteInTransactionAsync(
+                PersistenceDatabaseTarget.Accounts,
+                async tx =>
                 {
-                    return;
-                }
-                account.LastLoginAt = DateTime.UtcNow;
-                await tx.GetDataAccess<AccountEntity>().UpsertAsync(account, cancellationToken);
-                result = account;
-            }, cancellationToken);
+                    var account = await tx.GetByIdForUpdateAsync<AccountEntity>(id.Value, cancellationToken);
+
+                    if (account is null ||
+                        account.IsLocked ||
+                        !StringComparer.Ordinal.Equals(account.Username, username) ||
+                        !HashUtils.VerifyPassword(password, account.HashPassword))
+                    {
+                        return;
+                    }
+                    account.LastLoginAt = DateTime.UtcNow;
+                    await tx.GetDataAccess<AccountEntity>().UpsertAsync(account, cancellationToken);
+                    result = account;
+                },
+                cancellationToken
+            );
+
             return result;
         }
         catch (Exception exception) when (cancellationToken.IsCancellationRequested)

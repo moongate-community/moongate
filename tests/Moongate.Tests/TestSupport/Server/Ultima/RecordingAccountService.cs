@@ -43,13 +43,22 @@ internal sealed class RecordingAccountService : IAccountService
         string username,
         string password,
         CancellationToken cancellationToken = default
-    ) => Task.FromResult(LoginResult);
+    )
+        => Task.FromResult(LoginResult);
 
     public Task<IEnumerable<AccountEntity>> ListAccountsAsync(CancellationToken cancellationToken = default)
         => throw new NotSupportedException();
-    public Task<AccountCreateResult> CreateAccountAsync(AccountCreateOptions options, CancellationToken cancellationToken = default)
+
+    public Task<AccountCreateResult> CreateAccountAsync(
+        AccountCreateOptions options,
+        CancellationToken cancellationToken = default
+    )
         => throw new NotSupportedException();
 
-    public Task<AccountPage> ListAccountsPageAsync(Serial afterId, int pageSize = 50, CancellationToken cancellationToken = default)
+    public Task<AccountPage> ListAccountsPageAsync(
+        Serial afterId,
+        int pageSize = 50,
+        CancellationToken cancellationToken = default
+    )
         => throw new NotSupportedException();
 }

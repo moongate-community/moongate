@@ -122,9 +122,7 @@ public sealed class UoPacketFramerTests
     {
         var framer = new UoPacketFramer(PacketRegistry.Default);
 
-        var exception = Assert.Throws<InvalidDataException>(
-            () => framer.TryReadFrame(Convert.FromHexString(hex), out _)
-        );
+        var exception = Assert.Throws<InvalidDataException>(() => framer.TryReadFrame(Convert.FromHexString(hex), out _));
 
         Assert.Contains("0x2A", exception.Message);
         Assert.Contains($"{bufferedBytes} bytes buffered after opcode", exception.Message);

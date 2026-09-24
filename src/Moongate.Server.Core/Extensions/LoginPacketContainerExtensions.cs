@@ -17,6 +17,7 @@ public static class LoginPacketContainerExtensions
         }
 
         container.Resolve<LoginPacketHandlerRegistry>().Register<TPacket, THandler>(container);
+
         return container;
     }
 }

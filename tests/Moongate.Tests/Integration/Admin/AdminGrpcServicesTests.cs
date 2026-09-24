@@ -1,8 +1,6 @@
 using System.Net.Sockets;
-using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Moongate.Admin.Contracts.V1;
-using Moongate.Server.Ultima.Data.Account;
 using Moongate.Tests.TestSupport.Admin;
 using Moongate.Tests.TestSupport.Persistence;
 using Npgsql;
@@ -20,11 +18,22 @@ public sealed class AdminGrpcServicesTests
         await using var fixture = await AdminGrpcFixture.CreateAsync(decorateAccounts: service => controlled = new(service));
         var headers = await LoginAsync(fixture, DomainAccountType.Administrator);
         Exception provider = transient
-            ? new NpgsqlException("private provider details", new SocketException((int)SocketError.ConnectionRefused))
-            : new PostgresException("private SQL details", "ERROR", "ERROR", PostgresErrorCodes.UndefinedTable);
+                                 ? new NpgsqlException(
+                                     "private provider details",
+                                     new SocketException((int)SocketError.ConnectionRefused)
+                                 )
+                                 : new PostgresException(
+                                     "private SQL details",
+                                     "ERROR",
+                                     "ERROR",
+                                     PostgresErrorCodes.UndefinedTable
+                                 );
         controlled!.ListFailure = new InvalidOperationException("private wrapper details", provider);
-        var error = await Assert.ThrowsAsync<RpcException>(() => new AdminAccounts.AdminAccountsClient(fixture.Channel)
-            .ListAccountsAsync(new(), headers).ResponseAsync);
+        var error = await Assert.ThrowsAsync<RpcException>(
+                        () => new AdminAccounts.AdminAccountsClient(fixture.Channel)
+                              .ListAccountsAsync(new(), headers)
+                              .ResponseAsync
+                    );
         Assert.Equal(expected, error.StatusCode);
         Assert.DoesNotContain("private", error.ToString());
     }
@@ -43,7 +52,11 @@ public sealed class AdminGrpcServicesTests
         cancellation.Cancel();
         Assert.Equal(StatusCode.Cancelled, (await Assert.ThrowsAsync<RpcException>(() => call)).StatusCode);
         delayed.DelayResponse = false;
-        Assert.Equal(StatusCode.AlreadyExists, (await Assert.ThrowsAsync<RpcException>(() => accounts.CreateAccountAsync(request, headers).ResponseAsync)).StatusCode);
+        Assert.Equal(
+            StatusCode.AlreadyExists,
+            (await Assert.ThrowsAsync<RpcException>(() => accounts.CreateAccountAsync(request, headers).ResponseAsync))
+            .StatusCode
+        );
         Assert.Equal(2, (await accounts.ListAccountsAsync(new(), headers)).Accounts.Count);
     }
 
@@ -54,20 +67,41 @@ public sealed class AdminGrpcServicesTests
         var headers = await LoginAsync(fixture, DomainAccountType.Administrator);
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        fixture.Backend.Store.BeforeIssue = async () => { entered.TrySetResult(); await release.Task; };
-        var pending = new AdminLogin.AdminLoginClient(fixture.Channel).LoginAsync(new()
-        {
-            Username = "admin", Password = fixture.Backend.Accounts.Password
-        }).ResponseAsync;
+        fixture.Backend.Store.BeforeIssue = async () =>
+                                            {
+                                                entered.TrySetResult();
+                                                await release.Task;
+                                            };
+        var pending = new AdminLogin.AdminLoginClient(fixture.Channel).LoginAsync(
+                                                                          new()
+                                                                          {
+                                                                              Username = "admin",
+                                                                              Password = fixture.Backend.Accounts.Password
+                                                                          }
+                                                                      )
+                                                                      .ResponseAsync;
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
+
         try
         {
             var client = new AdminServer.AdminServerClient(fixture.Channel);
-            Assert.Equal(StatusCode.ResourceExhausted, (await Assert.ThrowsAsync<RpcException>(() => client.GetServerInfoAsync(new(), headers).ResponseAsync)).StatusCode);
+            Assert.Equal(
+                StatusCode.ResourceExhausted,
+                (await Assert.ThrowsAsync<RpcException>(() => client.GetServerInfoAsync(new(), headers).ResponseAsync))
+                .StatusCode
+            );
             fixture.Gate.StopAccepting();
-            Assert.Equal(StatusCode.Unavailable, (await Assert.ThrowsAsync<RpcException>(() => client.GetServerInfoAsync(new(), headers).ResponseAsync)).StatusCode);
+            Assert.Equal(
+                StatusCode.Unavailable,
+                (await Assert.ThrowsAsync<RpcException>(() => client.GetServerInfoAsync(new(), headers).ResponseAsync))
+                .StatusCode
+            );
         }
-        finally { release.TrySetResult(); await pending; }
+        finally
+        {
+            release.TrySetResult();
+            await pending;
+        }
     }
 
     [Theory, InlineData(DomainAccountType.Regular), InlineData(DomainAccountType.GameMaster)]
@@ -75,19 +109,41 @@ public sealed class AdminGrpcServicesTests
     {
         await using var fixture = await AdminGrpcFixture.CreateAsync();
         var headers = await LoginAsync(fixture, role);
-        Assert.Equal(StatusCode.PermissionDenied, (await Assert.ThrowsAsync<RpcException>(() =>
-            new AdminAccounts.AdminAccountsClient(fixture.Channel).ListAccountsAsync(new(), headers).ResponseAsync)).StatusCode);
-        Assert.Equal(StatusCode.PermissionDenied, (await Assert.ThrowsAsync<RpcException>(() =>
-            new AdminAccountSessions.AdminAccountSessionsClient(fixture.Channel).RevokeAccountSessionsAsync(new() { AccountId = 1 }, headers).ResponseAsync)).StatusCode);
-        Assert.Equal("Lilly", (await new AdminServer.AdminServerClient(fixture.Channel).GetServerInfoAsync(new(), headers)).Codename);
+        Assert.Equal(
+            StatusCode.PermissionDenied,
+            (await Assert.ThrowsAsync<RpcException>(
+                 () =>
+                     new AdminAccounts.AdminAccountsClient(fixture.Channel).ListAccountsAsync(new(), headers).ResponseAsync
+             )).StatusCode
+        );
+        Assert.Equal(
+            StatusCode.PermissionDenied,
+            (await Assert.ThrowsAsync<RpcException>(
+                 () =>
+                     new AdminAccountSessions.AdminAccountSessionsClient(fixture.Channel)
+                         .RevokeAccountSessionsAsync(new() { AccountId = 1 }, headers)
+                         .ResponseAsync
+             )).StatusCode
+        );
+        Assert.Equal(
+            "Lilly",
+            (await new AdminServer.AdminServerClient(fixture.Channel).GetServerInfoAsync(new(), headers)).Codename
+        );
     }
 
     [Theory, InlineData(""), InlineData("   "), InlineData("bad\0name")]
     public async Task Login_InvalidInput_ReturnsInvalidArgument(string username)
     {
         await using var fixture = await AdminGrpcFixture.CreateAsync();
-        Assert.Equal(StatusCode.InvalidArgument, (await Assert.ThrowsAsync<RpcException>(() =>
-            new AdminLogin.AdminLoginClient(fixture.Channel).LoginAsync(new() { Username = username, Password = "unused" }).ResponseAsync)).StatusCode);
+        Assert.Equal(
+            StatusCode.InvalidArgument,
+            (await Assert.ThrowsAsync<RpcException>(
+                 () =>
+                     new AdminLogin.AdminLoginClient(fixture.Channel)
+                         .LoginAsync(new() { Username = username, Password = "unused" })
+                         .ResponseAsync
+             )).StatusCode
+        );
     }
 
     [Theory, InlineData(DomainAccountType.Regular), InlineData(DomainAccountType.GameMaster)]
@@ -96,10 +152,16 @@ public sealed class AdminGrpcServicesTests
         await using var fixture = await AdminGrpcFixture.CreateAsync();
         var headers = await LoginAsync(fixture, role);
         var client = new AdminAccounts.AdminAccountsClient(fixture.Channel);
-        var error = await Assert.ThrowsAsync<RpcException>(() => client.CreateAccountAsync(new()
-        {
-            Username = "blocked", Password = fixture.Backend.Accounts.Password
-        }, headers).ResponseAsync);
+        var error = await Assert.ThrowsAsync<RpcException>(
+                        () => client.CreateAccountAsync(
+                                        new()
+                                        {
+                                            Username = "blocked", Password = fixture.Backend.Accounts.Password
+                                        },
+                                        headers
+                                    )
+                                    .ResponseAsync
+                    );
         Assert.Equal(StatusCode.PermissionDenied, error.StatusCode);
         Assert.Single(await fixture.Backend.Accounts.Service.ListAccountsAsync());
     }
@@ -116,7 +178,11 @@ public sealed class AdminGrpcServicesTests
         Assert.False(account.CanAccessApi);
         Assert.True(account.AccountId > 0);
         Assert.True(account.CreatedAt.Seconds > 0);
-        Assert.Equal(StatusCode.AlreadyExists, (await Assert.ThrowsAsync<RpcException>(() => client.CreateAccountAsync(request, headers).ResponseAsync)).StatusCode);
+        Assert.Equal(
+            StatusCode.AlreadyExists,
+            (await Assert.ThrowsAsync<RpcException>(() => client.CreateAccountAsync(request, headers).ResponseAsync))
+            .StatusCode
+        );
         var page = await client.ListAccountsAsync(new() { PageSize = 1 }, headers);
         Assert.Single(page.Accounts);
         Assert.NotEqual(0u, page.NextAfterAccountId);
@@ -124,11 +190,14 @@ public sealed class AdminGrpcServicesTests
         Assert.Equal("new-user", Assert.Single(next.Accounts).Username);
         Assert.Equal(0u, next.NextAfterAccountId);
         var info = new AdminServer.AdminServerClient(fixture.Channel);
-        Assert.Equal("Lilly", (await info.GetServerInfoAsync(new Empty(), headers)).Codename);
+        Assert.Equal("Lilly", (await info.GetServerInfoAsync(new(), headers)).Codename);
         var sessions = new AdminSession.AdminSessionClient(fixture.Channel);
         await sessions.LogoutAsync(new(), headers);
         await sessions.LogoutAsync(new(), headers);
-        Assert.Equal(StatusCode.Unauthenticated, (await Assert.ThrowsAsync<RpcException>(() => info.GetServerInfoAsync(new(), headers).ResponseAsync)).StatusCode);
+        Assert.Equal(
+            StatusCode.Unauthenticated,
+            (await Assert.ThrowsAsync<RpcException>(() => info.GetServerInfoAsync(new(), headers).ResponseAsync)).StatusCode
+        );
     }
 
     [Theory, InlineData("missing"), InlineData("malformed"), InlineData("duplicate")]
@@ -138,12 +207,17 @@ public sealed class AdminGrpcServicesTests
         var valid = await LoginAsync(fixture, DomainAccountType.Regular);
         var headers = kind switch
         {
-            "missing" => new Metadata(),
+            "missing"   => new Metadata(),
             "duplicate" => new Metadata { valid[0], valid[0] },
-            _ => new Metadata { { "authorization", "Bearer bad" } }
+            _           => new Metadata { { "authorization", "Bearer bad" } }
         };
-        Assert.Equal(StatusCode.Unauthenticated, (await Assert.ThrowsAsync<RpcException>(() =>
-            new AdminServer.AdminServerClient(fixture.Channel).GetServerInfoAsync(new(), headers).ResponseAsync)).StatusCode);
+        Assert.Equal(
+            StatusCode.Unauthenticated,
+            (await Assert.ThrowsAsync<RpcException>(
+                 () =>
+                     new AdminServer.AdminServerClient(fixture.Channel).GetServerInfoAsync(new(), headers).ResponseAsync
+             )).StatusCode
+        );
     }
 
     [Fact]
@@ -152,14 +226,38 @@ public sealed class AdminGrpcServicesTests
         await using var fixture = await AdminGrpcFixture.CreateAsync();
         var headers = await LoginAsync(fixture, DomainAccountType.Administrator);
         var client = new AdminAccounts.AdminAccountsClient(fixture.Channel);
+
         foreach (var type in new[] { AccountType.Unspecified, (AccountType)99 })
         {
-            Assert.Equal(StatusCode.InvalidArgument, (await Assert.ThrowsAsync<RpcException>(() => client.CreateAccountAsync(
-                new() { Username = "new", Password = fixture.Backend.Accounts.Password, AccountType = type }, headers).ResponseAsync)).StatusCode);
+            Assert.Equal(
+                StatusCode.InvalidArgument,
+                (await Assert.ThrowsAsync<RpcException>(
+                     () => client.CreateAccountAsync(
+                                     new()
+ {
+                                         Username = "new", Password = fixture.Backend.Accounts.Password, AccountType = type
+                                     },
+                                     headers
+                                 )
+                                 .ResponseAsync
+                 )).StatusCode
+            );
         }
-        Assert.Equal(StatusCode.InvalidArgument, (await Assert.ThrowsAsync<RpcException>(() => client.ListAccountsAsync(new() { PageSize = 201 }, headers).ResponseAsync)).StatusCode);
-        Assert.Equal(StatusCode.InvalidArgument, (await Assert.ThrowsAsync<RpcException>(() =>
-            new AdminAccountSessions.AdminAccountSessionsClient(fixture.Channel).RevokeAccountSessionsAsync(new(), headers).ResponseAsync)).StatusCode);
+        Assert.Equal(
+            StatusCode.InvalidArgument,
+            (await Assert.ThrowsAsync<RpcException>(
+                 () => client.ListAccountsAsync(new() { PageSize = 201 }, headers).ResponseAsync
+             )).StatusCode
+        );
+        Assert.Equal(
+            StatusCode.InvalidArgument,
+            (await Assert.ThrowsAsync<RpcException>(
+                 () =>
+                     new AdminAccountSessions.AdminAccountSessionsClient(fixture.Channel)
+                         .RevokeAccountSessionsAsync(new(), headers)
+                         .ResponseAsync
+             )).StatusCode
+        );
         Assert.Single(await fixture.Backend.Accounts.Service.ListAccountsAsync());
     }
 
@@ -169,25 +267,37 @@ public sealed class AdminGrpcServicesTests
         await using var fixture = await AdminGrpcFixture.CreateAsync();
         var headers = await LoginAsync(fixture, DomainAccountType.Administrator);
         await fixture.Backend.Redis.Redis.StopAsync();
+
         try
         {
-            Assert.Equal(StatusCode.Unavailable, (await Assert.ThrowsAsync<RpcException>(() =>
-                new AdminServer.AdminServerClient(fixture.Channel).GetServerInfoAsync(new(), headers).ResponseAsync)).StatusCode);
+            Assert.Equal(
+                StatusCode.Unavailable,
+                (await Assert.ThrowsAsync<RpcException>(
+                     () =>
+                         new AdminServer.AdminServerClient(fixture.Channel).GetServerInfoAsync(new(), headers).ResponseAsync
+                 )).StatusCode
+            );
         }
         finally { await fixture.Backend.Redis.Redis.StartAsync(); }
     }
 
     private static async Task<Metadata> LoginAsync(AdminGrpcFixture fixture, DomainAccountType role)
     {
-        var result = await fixture.Backend.Accounts.Service.CreateAccountAsync(new AccountCreateOptions
-        {
-            Username = "admin", Password = fixture.Backend.Accounts.Password, AccountType = role, CanAccessApi = true
-        });
+        var result = await fixture.Backend.Accounts.Service.CreateAccountAsync(
+                         new()
+                         {
+                             Username = "admin", Password = fixture.Backend.Accounts.Password, AccountType = role,
+                             CanAccessApi = true
+                         }
+                     );
         Assert.True(result.Success);
-        var response = await new AdminLogin.AdminLoginClient(fixture.Channel).LoginAsync(new()
-        {
-            Username = "admin", Password = fixture.Backend.Accounts.Password
-        });
+        var response = await new AdminLogin.AdminLoginClient(fixture.Channel).LoginAsync(
+                           new()
+                           {
+                               Username = "admin", Password = fixture.Backend.Accounts.Password
+                           }
+                       );
+
         return new() { { "authorization", "Bearer " + response.AccessToken } };
     }
 }

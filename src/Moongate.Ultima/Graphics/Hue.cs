@@ -8,6 +8,7 @@ namespace Moongate.Ultima.Graphics;
 
 public sealed class Hue
 {
+    private static readonly byte[] _stringBuffer = new byte[20];
     public int Index { get; }
     public ushort[] Colors { get; }
     public string Name { get; set; }
@@ -22,8 +23,6 @@ public sealed class Hue
         TableStart = 0;
         TableEnd = 0;
     }
-
-    private static readonly byte[] _stringBuffer = new byte[20];
 
     public Hue(int index, BinaryReader bin)
     {

@@ -77,12 +77,6 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
         }
     }
 
-    public void Dispose()
-    {
-        Complete();
-        _sent.Writer.TryComplete();
-    }
-
     public Task<byte[]> ReadSentAsync(CancellationToken token)
         => _sent.Reader.ReadAsync(token).AsTask();
 
@@ -118,5 +112,11 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
         }
 
         _sent.Writer.TryWrite(payload.ToArray());
+    }
+
+    public void Dispose()
+    {
+        Complete();
+        _sent.Writer.TryComplete();
     }
 }

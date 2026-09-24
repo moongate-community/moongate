@@ -1,8 +1,8 @@
 using System.Diagnostics;
 using Moongate.Core.Utils;
-using Moongate.Server.Data.Config;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Data.Config;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Plugins;
 
@@ -32,9 +32,7 @@ public sealed class PersistenceSchemaCliTests
     }
 
     [Theory, InlineData("PersistencePlugin"), InlineData("SamplePlugin")]
-    public async Task PreviewThenGenerate_ActualCliLoadsDiskPlugin_WithoutNormalHostComposition(
-        string bundle
-    )
+    public async Task PreviewThenGenerate_ActualCliLoadsDiskPlugin_WithoutNormalHostComposition(string bundle)
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var files = new PluginDirectoryFixture("plugins", "config");
@@ -110,8 +108,8 @@ public sealed class PersistenceSchemaCliTests
             Directory.CreateDirectory(configDirectory);
             var configPath = Path.Combine(configDirectory, "moongate.toml");
             var config = File.Exists(configPath)
-                ? TomlUtils.DeserializeFromFile<MoongateServerConfig>(configPath)!
-                : new MoongateServerConfig();
+                             ? TomlUtils.DeserializeFromFile<MoongateServerConfig>(configPath)!
+                             : new();
             config.Persistence.Realm.ConnectionString = "$MOONGATE_REALM_DATABASE";
             TomlUtils.SerializeToFile(config, configPath);
         }

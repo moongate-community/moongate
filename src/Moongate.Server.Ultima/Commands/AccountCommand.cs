@@ -27,9 +27,11 @@ public sealed class AccountCommand : ICommandExecutor
     public async Task ExecuteAsync(CommandContext context)
     {
         var arguments = context.Arguments;
+
         if (arguments.Length > 0 && arguments[0].Equals("api-access", StringComparison.OrdinalIgnoreCase))
         {
             await SetApiAccessAsync(context);
+
             return;
         }
 
@@ -72,24 +74,34 @@ public sealed class AccountCommand : ICommandExecutor
             context.PrintError("Account creation failed. Check server logs.");
         }
     }
+
     private async Task SetApiAccessAsync(CommandContext context)
     {
         var args = context.Arguments;
+
         if (context.Source != CommandSourceType.Console)
         {
             context.PrintError("API access provisioning is available only from the local console.");
+
             return;
         }
-        if (args.Length != 3 || !(args[2].Equals("on", StringComparison.OrdinalIgnoreCase) || args[2].Equals("off", StringComparison.OrdinalIgnoreCase)))
+
+        if (args.Length != 3 ||
+            !(args[2].Equals("on", StringComparison.OrdinalIgnoreCase) ||
+              args[2].Equals("off", StringComparison.OrdinalIgnoreCase)))
         {
             context.PrintError("Usage: account api-access <username> <on|off>");
+
             return;
         }
+
         if (_adminAccess is null)
         {
             context.PrintError("Account administration is unavailable.");
+
             return;
         }
+
         try
         {
             var enabled = args[2].Equals("on", StringComparison.OrdinalIgnoreCase);

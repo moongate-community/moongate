@@ -71,12 +71,6 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         Assert.Contains("nothing_here", result.Error!.Message, StringComparison.Ordinal);
     }
 
-    public void Dispose()
-    {
-        _container.Dispose();
-        _scripts.Dispose();
-    }
-
     [Fact]
     public async Task HostReachingFunctions_AreNotAvailableToScripts()
     {
@@ -447,5 +441,11 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
             _timers,
             new EventBusAdapter(_container)
         );
+    }
+
+    public void Dispose()
+    {
+        _container.Dispose();
+        _scripts.Dispose();
     }
 }

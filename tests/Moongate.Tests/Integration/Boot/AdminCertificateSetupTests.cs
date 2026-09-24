@@ -16,8 +16,12 @@ public sealed class AdminCertificateSetupTests
         Directory.CreateDirectory(Path.Combine(directory.Path, "config"));
         File.WriteAllText(Path.Combine(directory.Path, "config/moongate.toml"), "[admin_api]\n");
         AdminCertificateSetup.Configure(directory.Path, ["admin.example.test"], TextWriter.Null);
-        using var identity = X509CertificateLoader.LoadPkcs12FromFile(Path.Combine(directory.Path, "certificates/admin.pfx"), "");
-        using var trust = X509CertificateLoader.LoadCertificateFromFile(Path.Combine(directory.Path, "certificates/admin.crt"));
+        using var identity = X509CertificateLoader.LoadPkcs12FromFile(
+            Path.Combine(directory.Path, "certificates/admin.pfx"),
+            ""
+        );
+        using var trust =
+            X509CertificateLoader.LoadCertificateFromFile(Path.Combine(directory.Path, "certificates/admin.crt"));
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(15));
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();
@@ -27,23 +31,29 @@ public sealed class AdminCertificateSetupTests
         using var server = await accept;
         using var serverStream = new SslStream(server.GetStream());
         using var clientStream = new SslStream(client.GetStream());
-        var serverHandshake = serverStream.AuthenticateAsServerAsync(new SslServerAuthenticationOptions
-        {
-            ServerCertificate = identity,
-            ClientCertificateRequired = false,
-            ApplicationProtocols = [SslApplicationProtocol.Http2]
-        }, timeout.Token);
-        var clientHandshake = clientStream.AuthenticateAsClientAsync(new SslClientAuthenticationOptions
-        {
-            TargetHost = "admin.example.test",
-            ApplicationProtocols = [SslApplicationProtocol.Http2],
-            CertificateChainPolicy = new X509ChainPolicy
+        var serverHandshake = serverStream.AuthenticateAsServerAsync(
+            new()
             {
-                TrustMode = X509ChainTrustMode.CustomRootTrust,
-                CustomTrustStore = { trust },
-                RevocationMode = X509RevocationMode.NoCheck
-            }
-        }, timeout.Token);
+                ServerCertificate = identity,
+                ClientCertificateRequired = false,
+                ApplicationProtocols = [SslApplicationProtocol.Http2]
+            },
+            timeout.Token
+        );
+        var clientHandshake = clientStream.AuthenticateAsClientAsync(
+            new()
+            {
+                TargetHost = "admin.example.test",
+                ApplicationProtocols = [SslApplicationProtocol.Http2],
+                CertificateChainPolicy = new()
+                {
+                    TrustMode = X509ChainTrustMode.CustomRootTrust,
+                    CustomTrustStore = { trust },
+                    RevocationMode = X509RevocationMode.NoCheck
+                }
+            },
+            timeout.Token
+        );
         await Task.WhenAll(serverHandshake, clientHandshake);
         Assert.True(clientStream.IsAuthenticated);
         Assert.Equal(SslApplicationProtocol.Http2, clientStream.NegotiatedApplicationProtocol);

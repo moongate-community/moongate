@@ -29,8 +29,10 @@ internal sealed class AdminRequestGate
         lock (_sync)
         {
             if (!_accepting) { return StatusCode.Unavailable; }
+
             if (_active == _capacity) { return StatusCode.ResourceExhausted; }
             _active++;
+
             return StatusCode.OK;
         }
     }

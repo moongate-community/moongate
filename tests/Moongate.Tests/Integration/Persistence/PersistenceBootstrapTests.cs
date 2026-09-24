@@ -1,8 +1,7 @@
 using DryIoc;
-using Moongate.Persistence.Types.Persistence;
-using Npgsql;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
+using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
@@ -11,6 +10,7 @@ using Moongate.Server.Data.Config.Sections;
 using Moongate.Tests.Support.Server;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Plugins;
+using Npgsql;
 
 namespace Moongate.Tests.Integration.Persistence;
 
@@ -23,7 +23,8 @@ public sealed class PersistenceBootstrapTests
      InlineData(ServerMode.Standalone, PersistenceDatabaseTarget.Accounts),
      InlineData(ServerMode.Standalone, PersistenceDatabaseTarget.Realm)]
     public async Task StartAsync_MissingActiveDatabase_StartsNoServices(
-        ServerMode mode, PersistenceDatabaseTarget missingTarget
+        ServerMode mode,
+        PersistenceDatabaseTarget missingTarget
     )
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
@@ -48,6 +49,7 @@ public sealed class PersistenceBootstrapTests
                 () =>
                 {
                     started = true;
+
                     return Task.CompletedTask;
                 },
                 () => Task.CompletedTask
@@ -73,7 +75,8 @@ public sealed class PersistenceBootstrapTests
      InlineData(ServerMode.Login, PersistenceDatabaseTarget.Realm),
      InlineData(ServerMode.Game, PersistenceDatabaseTarget.Accounts)]
     public async Task StartAsync_MissingInactiveDatabase_StartsServices(
-        ServerMode mode, PersistenceDatabaseTarget missingTarget
+        ServerMode mode,
+        PersistenceDatabaseTarget missingTarget
     )
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
@@ -95,14 +98,17 @@ public sealed class PersistenceBootstrapTests
         using var container = new Container();
         container.RegisterMoongatePersistence(config.ToOptions(mode: mode));
         var started = false;
-        container.AddMoongateService(new CallbackStartupService(
-            () =>
-            {
-                started = true;
-                return Task.CompletedTask;
-            },
-            () => Task.CompletedTask
-        ));
+        container.AddMoongateService(
+            new CallbackStartupService(
+                () =>
+                {
+                    started = true;
+
+                    return Task.CompletedTask;
+                },
+                () => Task.CompletedTask
+            )
+        );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         await bootstrap.StartAsync();

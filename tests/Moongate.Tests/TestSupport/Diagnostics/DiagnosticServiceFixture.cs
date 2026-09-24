@@ -20,6 +20,8 @@ internal sealed class DiagnosticServiceFixture : IDisposable
     public EventBusService Bus { get; }
     public DiagnosticService Service { get; }
 
+    public bool HasPendingSnapshot => _snapshots.Reader.TryPeek(out _);
+
     public DiagnosticServiceFixture(IEnumerable<IMetricProvider> providers, DiagnosticOptions? options = null)
     {
         _container = new();
@@ -38,7 +40,8 @@ internal sealed class DiagnosticServiceFixture : IDisposable
         );
     }
 
-    public bool HasPendingSnapshot => _snapshots.Reader.TryPeek(out _);
+    public Task<DiagnosticSnapshot> NextAsync()
+        => _snapshots.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
 
     public void Dispose()
     {
@@ -53,7 +56,4 @@ internal sealed class DiagnosticServiceFixture : IDisposable
             _container.Dispose();
         }
     }
-
-    public Task<DiagnosticSnapshot> NextAsync()
-        => _snapshots.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
 }

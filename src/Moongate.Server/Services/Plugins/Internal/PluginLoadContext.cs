@@ -7,26 +7,25 @@ namespace Moongate.Server.Services.Plugins.Internal;
 internal sealed class PluginLoadContext : AssemblyLoadContext
 {
     private readonly AssemblyDependencyResolver _resolver;
-    private readonly string _directory;
 
-    internal string BundleDirectory => _directory;
+    internal string BundleDirectory { get; }
 
     public PluginLoadContext(string pluginPath)
         : base($"Moongate.Plugin:{Path.GetFileNameWithoutExtension(pluginPath)}", true)
     {
         _resolver = new(pluginPath);
-        _directory = Path.GetDirectoryName(pluginPath)!;
+        BundleDirectory = Path.GetDirectoryName(pluginPath)!;
     }
 
     protected override Assembly? Load(AssemblyName assemblyName)
     {
         if (assemblyName.Name is "Moongate.Core" or
-            "Moongate.Server.Core" or
-            "Moongate.Persistence" or
-            "Moongate.Persistence.Migrations" or
-            "FreeSql" or
-            "FreeSql.Provider.PostgreSQL" or
-            "Npgsql")
+                                 "Moongate.Server.Core" or
+                                 "Moongate.Persistence" or
+                                 "Moongate.Persistence.Migrations" or
+                                 "FreeSql" or
+                                 "FreeSql.Provider.PostgreSQL" or
+                                 "Npgsql")
         {
             Assembly host;
 
@@ -74,7 +73,7 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
 
         if (path is null && assemblyName.Name is not null)
         {
-            var adjacentPath = Path.Combine(_directory, assemblyName.Name + ".dll");
+            var adjacentPath = Path.Combine(BundleDirectory, assemblyName.Name + ".dll");
 
             if (File.Exists(adjacentPath))
             {

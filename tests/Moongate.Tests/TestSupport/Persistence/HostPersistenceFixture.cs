@@ -41,6 +41,9 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
             autoSync
         );
 
+    public void RegisterEntity()
+        => Container.AddPersistenceModule<TestPersistenceModule>().AddPersistenceEntity<TestEntity>();
+
     public async ValueTask DisposeAsync()
     {
         if (!Container.IsDisposed)
@@ -58,7 +61,4 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
 
         _directory.Dispose();
     }
-
-    public void RegisterEntity()
-        => Container.AddPersistenceModule<TestPersistenceModule>().AddPersistenceEntity<TestEntity>();
 }

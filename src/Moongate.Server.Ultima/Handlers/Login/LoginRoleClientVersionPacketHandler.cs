@@ -6,11 +6,15 @@ namespace Moongate.Server.Ultima.Handlers.Login;
 
 public sealed class LoginRoleClientVersionPacketHandler : ILoginPacketHandler<ClientVersionPacket>
 {
-    public ValueTask HandleAsync(LoginSession session, ClientVersionPacket packet,
-        CancellationToken cancellationToken)
+    public ValueTask HandleAsync(
+        LoginSession session,
+        ClientVersionPacket packet,
+        CancellationToken cancellationToken
+    )
     {
         cancellationToken.ThrowIfCancellationRequested();
         session.NetworkSession.SetClientVersion(packet.Version);
+
         return ValueTask.CompletedTask;
     }
 }

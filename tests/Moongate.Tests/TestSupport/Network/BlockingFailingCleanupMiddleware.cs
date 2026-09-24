@@ -10,9 +10,6 @@ internal sealed class BlockingFailingCleanupMiddleware : INetMiddleware, IDispos
 
     public Task Entered => _entered.Task;
 
-    public void Dispose()
-        => _release.Set();
-
     public ValueTask<ReadOnlyMemory<byte>> ProcessAsync(
         MoongateTcpClient? client,
         ReadOnlyMemory<byte> data,
@@ -37,5 +34,8 @@ internal sealed class BlockingFailingCleanupMiddleware : INetMiddleware, IDispos
     }
 
     public void Release()
+        => _release.Set();
+
+    public void Dispose()
         => _release.Set();
 }

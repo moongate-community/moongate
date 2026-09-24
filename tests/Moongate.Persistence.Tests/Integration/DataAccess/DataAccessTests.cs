@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Tests.TestSupport.Persistence;
+using Moongate.Persistence.Types.Persistence;
 
 namespace Moongate.Persistence.Tests.Integration.DataAccess;
 
@@ -42,7 +43,7 @@ public sealed class DataAccessTests
         await store.UpsertAsync(new() { Id = new(1), Name = "explicit" });
         var entity = new CharacterEntity { Name = "automatic" };
         await store.UpsertAsync(entity);
-        Assert.NotEqual(new Serial(1), entity.Id);
+        Assert.NotEqual(new(1), entity.Id);
         Assert.Equal("explicit", (await store.GetByIdAsync(new(1)))!.Name);
         Assert.Equal(2, (await store.GetAllAsync()).Count);
     }
@@ -52,18 +53,23 @@ public sealed class DataAccessTests
     {
         await using var database = await _postgres.CreateDatabaseAsync();
         var entities = Enumerable.Range(0, 24).Select(i => new CharacterEntity { Name = $"entity-{i}" }).ToArray();
+
         await using (var first = FacadeFixture.Create(database))
-        await using (var second = FacadeFixture.Create(database))
         {
-            var firstStore = first.RegisterEntity<CharacterEntity>();
-            first.RegisterEntity<InventoryEntity>();
-            var secondStore = second.RegisterEntity<CharacterEntity>();
-            second.RegisterEntity<InventoryEntity>();
-            await first.InitializeAsync();
-            await second.InitializeAsync();
-            await Task.WhenAll(entities.Select((entity, i) => (i % 2 == 0 ? firstStore : secondStore).UpsertAsync(entity)));
-            Assert.Equal(entities.Length, entities.Select(entity => entity.Id).Distinct().Count());
-            Assert.All(entities, entity => Assert.True(entity.Id.IsValid));
+            await using (var second = FacadeFixture.Create(database))
+            {
+                var firstStore = first.RegisterEntity<CharacterEntity>();
+                first.RegisterEntity<InventoryEntity>();
+                var secondStore = second.RegisterEntity<CharacterEntity>();
+                second.RegisterEntity<InventoryEntity>();
+                await first.InitializeAsync();
+                await second.InitializeAsync();
+                await Task.WhenAll(
+                    entities.Select((entity, i) => (i % 2 == 0 ? firstStore : secondStore).UpsertAsync(entity))
+                );
+                Assert.Equal(entities.Length, entities.Select(entity => entity.Id).Distinct().Count());
+                Assert.All(entities, entity => Assert.True(entity.Id.IsValid));
+            }
         }
 
         await using var restarted = FacadeFixture.Create(database);
@@ -85,19 +91,22 @@ public sealed class DataAccessTests
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
         var rolledBack = new CharacterEntity();
-        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExecuteInTransactionAsync(
-            Moongate.Persistence.Types.Persistence.PersistenceDatabaseTarget.Realm,
-            async transaction =>
-            {
-                await transaction.GetDataAccess<CharacterEntity>().UpsertAsync(rolledBack);
-                Assert.True(rolledBack.Id.IsValid);
-                throw new InvalidOperationException("Rollback requested by test");
-            }
-        ));
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () => owner.ExecuteInTransactionAsync(
+                PersistenceDatabaseTarget.Realm,
+                async transaction =>
+                {
+                    await transaction.GetDataAccess<CharacterEntity>().UpsertAsync(rolledBack);
+                    Assert.True(rolledBack.Id.IsValid);
+
+                    throw new InvalidOperationException("Rollback requested by test");
+                }
+            )
+        );
         Assert.Empty(await store.GetAllAsync());
         var committed = new CharacterEntity();
         await owner.ExecuteInTransactionAsync(
-            Moongate.Persistence.Types.Persistence.PersistenceDatabaseTarget.Realm,
+            PersistenceDatabaseTarget.Realm,
             transaction => transaction.GetDataAccess<CharacterEntity>().UpsertAsync(committed)
         );
         Assert.True(committed.Id.IsValid);
@@ -119,7 +128,7 @@ public sealed class DataAccessTests
         var entity = new CharacterEntity { Name = "same" };
         await Assert.ThrowsAnyAsync<Exception>(() => store.UpsertAsync(entity));
         Assert.Equal(Serial.Zero, entity.Id);
-        Assert.Equal(new Serial(42), Assert.Single(await store.GetAllAsync()).Id);
+        Assert.Equal(new(42), Assert.Single(await store.GetAllAsync()).Id);
         entity.Name = "different";
         await store.UpsertAsync(entity);
         Assert.True(entity.Id.IsValid);

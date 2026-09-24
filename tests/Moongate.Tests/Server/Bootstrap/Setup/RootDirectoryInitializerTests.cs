@@ -14,6 +14,7 @@ public sealed class RootDirectoryInitializerTests
         var source = CreateMigrations(directory);
         var root = Path.Combine(directory.Path, "new root");
         RootDirectoryInitializer.Initialize(root, source, TextWriter.Null);
+
         foreach (var folder in new[] { "config", "logs", "plugins", "scripts", "migrations/auth", "migrations/world" })
         {
             Assert.True(Directory.Exists(Path.Combine(root, folder)), folder);
@@ -24,8 +25,10 @@ public sealed class RootDirectoryInitializerTests
         Assert.Equal(Path.Combine(root, "migrations"), config.Persistence.MigrationsDirectory);
         Assert.False(config.Persistence.AutoGenerateMigrations);
         Assert.NotNull(config.Redis);
-        Assert.Equal(File.ReadAllBytes(Path.Combine(source, "auth/0001_base.sql")),
-            File.ReadAllBytes(Path.Combine(root, "migrations/auth/0001_base.sql")));
+        Assert.Equal(
+            File.ReadAllBytes(Path.Combine(source, "auth/0001_base.sql")),
+            File.ReadAllBytes(Path.Combine(root, "migrations/auth/0001_base.sql"))
+        );
         Assert.False(File.Exists(Path.Combine(root, "moongate.pid")));
     }
 
@@ -54,8 +57,10 @@ public sealed class RootDirectoryInitializerTests
         Directory.CreateDirectory(Path.Combine(root, "migrations/auth"));
         var conflicting = Path.Combine(root, "migrations/auth", name);
         File.WriteAllText(conflicting, sql);
-        var exception = Assert.Throws<InvalidOperationException>(() =>
-            RootDirectoryInitializer.Initialize(root, source, TextWriter.Null));
+        var exception = Assert.Throws<InvalidOperationException>(
+            () =>
+                RootDirectoryInitializer.Initialize(root, source, TextWriter.Null)
+        );
         Assert.Contains(name, exception.Message);
         Assert.Equal(sql, File.ReadAllText(conflicting));
         Assert.False(File.Exists(Path.Combine(root, "config/moongate.toml")));
@@ -66,8 +71,9 @@ public sealed class RootDirectoryInitializerTests
     {
         using var directory = new TemporaryDirectory();
         var root = Path.Combine(directory.Path, "root");
-        Assert.ThrowsAny<Exception>(() => RootDirectoryInitializer.Initialize(
-            root, Path.Combine(directory.Path, "missing"), TextWriter.Null));
+        Assert.ThrowsAny<Exception>(
+            () => RootDirectoryInitializer.Initialize(root, Path.Combine(directory.Path, "missing"), TextWriter.Null)
+        );
         Assert.False(Directory.Exists(root));
     }
 
@@ -106,6 +112,7 @@ public sealed class RootDirectoryInitializerTests
         var source = Path.Combine(directory.Path, "distribution-migrations");
         Directory.CreateDirectory(Path.Combine(source, "auth"));
         File.WriteAllText(Path.Combine(source, "auth/0001_base.sql"), "SELECT 1;\n");
+
         return source;
     }
 }

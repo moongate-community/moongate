@@ -39,14 +39,9 @@ public sealed class RangeValueSpecTests
 
     [Fact]
     public void FromRange_MinGreaterThanMax_ThrowsArgumentOutOfRangeException()
-    {
-        Assert.Throws<ArgumentOutOfRangeException>(() => RangeValueSpec<int>.FromRange(10, 5));
-    }
+        => Assert.Throws<ArgumentOutOfRangeException>(() => RangeValueSpec<int>.FromRange(10, 5));
 
-    [Theory]
-    [InlineData("1150", 1150)]
-    [InlineData("  1150  ", 1150)]
-    [InlineData("-5", -5)]
+    [Theory, InlineData("1150", 1150), InlineData("  1150  ", 1150), InlineData("-5", -5)]
     public void TryParse_ABareNumber_ParsesAFixedValue(string text, int expected)
     {
         Assert.True(RangeValueSpec<int>.TryParse(text, out var spec));
@@ -78,12 +73,7 @@ public sealed class RangeValueSpecTests
         }
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData("not-a-number")]
-    [InlineData("1200-1150")]
+    [Theory, InlineData(null), InlineData(""), InlineData("   "), InlineData("not-a-number"), InlineData("1200-1150")]
     public void TryParse_InvalidText_ReturnsFalse(string? text)
     {
         Assert.False(RangeValueSpec<int>.TryParse(text, out var spec));

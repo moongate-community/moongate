@@ -1,6 +1,5 @@
 using DryIoc;
 using Moongate.Core.Directories;
-using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Commands;
@@ -10,7 +9,6 @@ using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
 using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Commands;
-using Moongate.Server.Ultima.Data.Account;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types;
 using Moongate.Tests.TestSupport.Persistence;
@@ -26,7 +24,7 @@ public sealed class AccountCommandTests
         using var directory = new TemporaryPersistenceDirectory();
         using var container = new Container();
         container.RegisterInstance(new DirectoriesConfig(directory.Path, []));
-        container.RegisterMoongatePersistence(new PostgreSqlPersistenceOptions());
+        container.RegisterMoongatePersistence(new());
 
         new MoongateUltimaPlugin().Register(container);
 
@@ -80,7 +78,7 @@ public sealed class AccountCommandTests
     {
         var accounts = new RecordingAccountService
         {
-            Result = new AccountCreateResult(false, AccountCreateResultType.UsernameAlreadyExists)
+            Result = new(false, AccountCreateResultType.UsernameAlreadyExists)
         };
 
         var output = await ExecuteAsync("account create alice synthetic-password", accounts);
@@ -94,8 +92,11 @@ public sealed class AccountCommandTests
     {
         var accounts = new RecordingAccountService
         {
-            Result = new AccountCreateResult(false, AccountCreateResultType.Error,
-                exception: new InvalidOperationException("synthetic-password must stay private"))
+            Result = new(
+                false,
+                AccountCreateResultType.Error,
+                exception: new InvalidOperationException("synthetic-password must stay private")
+            )
         };
 
         var output = await ExecuteAsync("account create alice synthetic-password", accounts);

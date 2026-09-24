@@ -5,6 +5,8 @@ namespace Moongate.Tests.Server.Services.Network;
 
 public sealed class ConnectionServiceTests
 {
+    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
+
     [Fact]
     public async Task DisconnectAsync_ExpectedConnection_DoesNotCloseReplacement()
     {
@@ -21,8 +23,6 @@ public sealed class ConnectionServiceTests
         Assert.True(replacement.IsConnected);
         await connections.StopAsync();
     }
-
-    private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     [Fact]
     public async Task DisconnectAsync_CloseFailureIsObservedAndRemainsVisibleAtStop()

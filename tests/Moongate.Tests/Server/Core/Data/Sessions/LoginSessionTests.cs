@@ -14,11 +14,17 @@ public sealed class LoginSessionTests
         var session = new LoginSession(connection);
         var key = Enumerable.Range(0, 32).Select(value => (byte)value).ToArray();
 
-        Assert.True(session.TrySetAccount(new Serial(42), AccountType.Regular, "Alice", key));
+        Assert.True(session.TrySetAccount(new(42), AccountType.Regular, "Alice", key));
         Array.Clear(key);
-        Assert.True(session.TryGetAuthenticatedAccount(out var accountId, out var accountType,
-            out var username, out var snapshot));
-        Assert.Equal(new Serial(42), accountId);
+        Assert.True(
+            session.TryGetAuthenticatedAccount(
+                out var accountId,
+                out var accountType,
+                out var username,
+                out var snapshot
+            )
+        );
+        Assert.Equal(new(42), accountId);
         Assert.Equal(AccountType.Regular, accountType);
         Assert.Equal("Alice", username);
         Assert.Equal(Enumerable.Range(0, 32).Select(value => (byte)value), snapshot);
@@ -33,7 +39,7 @@ public sealed class LoginSessionTests
     {
         using var connection = new ControlledNetworkConnection(1);
         var session = new LoginSession(connection);
-        Assert.True(session.TrySetAccount(new Serial(42), AccountType.Regular, "alice", new byte[32]));
+        Assert.True(session.TrySetAccount(new(42), AccountType.Regular, "alice", new byte[32]));
 
         session.ClearAccount();
 
@@ -46,12 +52,12 @@ public sealed class LoginSessionTests
     {
         using var connection = new ControlledNetworkConnection(1);
         var session = new LoginSession(connection);
-        Assert.True(session.TrySetAccount(new Serial(42), AccountType.Regular, "alice", new byte[32]));
+        Assert.True(session.TrySetAccount(new(42), AccountType.Regular, "alice", new byte[32]));
 
         session.Disconnect();
 
         Assert.False(session.TryGetAuthenticatedAccount(out _, out _, out _, out _));
-        Assert.False(session.TrySetAccount(new Serial(43), AccountType.Regular, "bob", new byte[32]));
+        Assert.False(session.TrySetAccount(new(43), AccountType.Regular, "bob", new byte[32]));
     }
 
     [Fact]
@@ -59,12 +65,12 @@ public sealed class LoginSessionTests
     {
         using var connection = new ControlledNetworkConnection(1);
         var session = new LoginSession(connection);
-        Assert.True(session.TrySetAccount(new Serial(42), AccountType.Regular, "alice", new byte[32]));
+        Assert.True(session.TrySetAccount(new(42), AccountType.Regular, "alice", new byte[32]));
 
-        Assert.True(session.TrySetAccount(new Serial(43), AccountType.Regular));
+        Assert.True(session.TrySetAccount(new(43), AccountType.Regular));
 
         Assert.False(session.TryGetAuthenticatedAccount(out _, out _, out _, out _));
-        Assert.Equal(new Serial(43), session.AccountId);
+        Assert.Equal(new(43), session.AccountId);
     }
 
     [Fact]

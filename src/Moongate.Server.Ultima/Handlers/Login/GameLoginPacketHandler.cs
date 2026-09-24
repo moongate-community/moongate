@@ -23,12 +23,16 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         _handoffs = handoffs;
     }
 
-    public async ValueTask HandleAsync(PacketContext context, GameLoginPacket packet,
-        CancellationToken cancellationToken)
+    public async ValueTask HandleAsync(
+        PacketContext context,
+        GameLoginPacket packet,
+        CancellationToken cancellationToken
+    )
     {
         if (packet.AuthKey == 0 || context.Seed != packet.AuthKey)
         {
             await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+
             return;
         }
 
@@ -36,8 +40,15 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
 
         try
         {
-            handoff = await _handoffs.RedeemAsync(_realm.Descriptor.RealmId, _realm.InstanceId,
-                packet.AuthKey, packet.Account, packet.Password, cancellationToken).ConfigureAwait(false);
+            handoff = await _handoffs.RedeemAsync(
+                                         _realm.Descriptor.RealmId,
+                                         _realm.InstanceId,
+                                         packet.AuthKey,
+                                         packet.Account,
+                                         packet.Password,
+                                         cancellationToken
+                                     )
+                                     .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -47,29 +58,37 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         {
             _logger.Warning("Game handoff lookup failed: {FailureType}", exception.GetType().Name);
             await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+
             return;
         }
 
-        if (handoff is null || !handoff.AccountId.IsValid ||
+        if (handoff is null ||
+            !handoff.AccountId.IsValid ||
             !StringComparer.Ordinal.Equals(handoff.RealmId, _realm.Descriptor.RealmId) ||
             handoff.InstanceId != _realm.InstanceId ||
             !StringComparer.Ordinal.Equals(handoff.Username, packet.Account))
         {
             await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+
             return;
         }
 
-        await context.RunOnGameLoopAsync(session =>
-        {
-            session.SetAccountId(handoff.AccountId);
-            session.SetAccountType(handoff.AccountType);
-            session.NetworkSession.SetState(NetworkSessionState.Authenticated);
-        }, cancellationToken).ConfigureAwait(false);
+        await context.RunOnGameLoopAsync(
+                         session =>
+                         {
+                             session.SetAccountId(handoff.AccountId);
+                             session.SetAccountType(handoff.AccountType);
+                             session.NetworkSession.SetState(NetworkSessionState.Authenticated);
+                         },
+                         cancellationToken
+                     )
+                     .ConfigureAwait(false);
     }
 
     private static async Task DenyAsync(PacketContext context, CancellationToken cancellationToken)
-    {
-        await context.SendAndDisconnectAsync(
-            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem), cancellationToken).ConfigureAwait(false);
-    }
+        => await context.SendAndDisconnectAsync(
+                            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem),
+                            cancellationToken
+                        )
+                        .ConfigureAwait(false);
 }

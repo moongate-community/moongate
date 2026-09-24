@@ -30,6 +30,7 @@ public sealed class DevelopmentMigrationOptions
     public MigrationCatalog Load(PersistenceDatabaseTarget target)
     {
         System.IO.Directory.CreateDirectory(Directory);
+
         return MigrationCatalog.Load(
             Directory,
             PluginsDirectory,

@@ -10,7 +10,7 @@ public sealed class MigrationCatalogTests
     [Fact]
     public void Load_ExposesStableComponentSourceDirectories()
     {
-        using var files = new Moongate.Migrations.Tests.TestSupport.MigrationFiles();
+        using var files = new MigrationFiles();
         files.Write("plugins/MyPlugin/migrations/manifest.json", "{\"id\":\"my-plugin\"}");
         var catalog = MigrationCatalog.Load(files.Core, files.Plugins, MigrationTarget.Auth);
         Assert.Equal(Path.GetFullPath(files.Core), catalog.SourceDirectories["core"]);
@@ -53,7 +53,8 @@ public sealed class MigrationCatalogTests
     {
         using var files = new MigrationFiles();
         files.Write("plugins/p/migrations/manifest.json", JsonSerializer.Serialize(new { id }));
-        Assert.Throws<InvalidOperationException>(() => MigrationCatalog.Load(
+        Assert.Throws<InvalidOperationException>(
+            () => MigrationCatalog.Load(
                 files.Core,
                 files.Plugins,
                 MigrationTarget.World
@@ -68,7 +69,8 @@ public sealed class MigrationCatalogTests
         using var files = new MigrationFiles();
         files.Write("migrations/world/0001_first.sql", "SELECT 1;");
         files.Write("migrations/world/" + name, "SELECT 2;");
-        Assert.Throws<InvalidOperationException>(() => MigrationCatalog.Load(
+        Assert.Throws<InvalidOperationException>(
+            () => MigrationCatalog.Load(
                 files.Core,
                 files.Plugins,
                 MigrationTarget.World
@@ -81,7 +83,8 @@ public sealed class MigrationCatalogTests
     {
         using var files = new MigrationFiles();
         files.Write("plugins/p/migrations/world/0001_first.sql", "SELECT 1;");
-        Assert.Throws<InvalidOperationException>(() => MigrationCatalog.Load(
+        Assert.Throws<InvalidOperationException>(
+            () => MigrationCatalog.Load(
                 files.Core,
                 files.Plugins,
                 MigrationTarget.World

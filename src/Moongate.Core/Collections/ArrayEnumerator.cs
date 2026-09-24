@@ -13,13 +13,6 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
     private readonly T[] _array;
     private int _index;
 
-    public ArrayEnumerator(T[] array)
-    {
-        _array = array;
-        _index = 0;
-        Current = default;
-    }
-
     public T? Current { get; private set; }
 
     object IEnumerator.Current
@@ -33,6 +26,13 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
 
             return Current!;
         }
+    }
+
+    public ArrayEnumerator(T[] array)
+    {
+        _array = array;
+        _index = 0;
+        Current = default;
     }
 
     public bool MoveNext()

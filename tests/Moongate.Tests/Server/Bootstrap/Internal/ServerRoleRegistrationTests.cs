@@ -3,6 +3,7 @@ using Moongate.Core.Directories;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Hosting;
@@ -30,11 +31,11 @@ public sealed class ServerRoleRegistrationTests
         config.Shard.ShardName = "Città di Luna";
         container.RegisterInstance(config);
         container.RegisterInstance(directories);
-        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterInstance(TimeProvider.System);
 
         ServerRoleRegistration.Register(container, config, directories);
 
-        Assert.Equal("Moongate", container.Resolve<Moongate.Server.Core.Data.Realms.RealmInstance>().Descriptor.Name);
+        Assert.Equal("Moongate", container.Resolve<RealmInstance>().Descriptor.Name);
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
@@ -44,7 +45,7 @@ public sealed class ServerRoleRegistrationTests
         var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
         using var container = new Container();
         var config = new MoongateServerConfig { Mode = mode };
-        config.Redis.HandoffSecret = new string('x', 32);
+        config.Redis.HandoffSecret = new('x', 32);
         container.RegisterInstance(config);
         container.RegisterInstance(directories);
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
@@ -68,12 +69,17 @@ public sealed class ServerRoleRegistrationTests
         Assert.True(container.IsRegistered<IGameHandoffStore>());
         Assert.IsType<HandoffProofService>(container.Resolve<IHandoffProofService>());
         Assert.IsType<RedisGameHandoffStore>(container.Resolve<IGameHandoffStore>());
+
         if (mode != ServerMode.Game)
         {
-            Assert.Contains(typeof(AccountLoginPacket),
-                container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys);
-            Assert.Contains(typeof(ServerSelectPacket),
-                container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys);
+            Assert.Contains(
+                typeof(AccountLoginPacket),
+                container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys
+            );
+            Assert.Contains(
+                typeof(ServerSelectPacket),
+                container.Resolve<LoginPacketHandlerRegistry>().Freeze().Keys
+            );
         }
 
         if (mode == ServerMode.Login)
@@ -82,13 +88,20 @@ public sealed class ServerRoleRegistrationTests
         }
         else
         {
-            Assert.DoesNotContain(typeof(AccountLoginPacket),
-                container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
-            Assert.DoesNotContain(typeof(ServerSelectPacket),
-                container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
-            Assert.Contains(typeof(LoginSeedPacket),
-                container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
+            Assert.DoesNotContain(
+                typeof(AccountLoginPacket),
+                container.Resolve<PacketHandlerRegistry>().Registrations.Keys
+            );
+            Assert.DoesNotContain(
+                typeof(ServerSelectPacket),
+                container.Resolve<PacketHandlerRegistry>().Registrations.Keys
+            );
+            Assert.Contains(
+                typeof(LoginSeedPacket),
+                container.Resolve<PacketHandlerRegistry>().Registrations.Keys
+            );
         }
+
         if (mode != ServerMode.Login)
         {
             Assert.Same(container.Resolve<IRealmCatalog>(), container.Resolve<IRealmPresenceService>());
@@ -108,7 +121,7 @@ public sealed class ServerRoleRegistrationTests
         };
         container.RegisterInstance(config);
         container.RegisterInstance(directories);
-        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterInstance(TimeProvider.System);
         container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: config.Mode));
 
         ServerRoleRegistration.Register(container, config, directories);

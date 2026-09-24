@@ -8,6 +8,12 @@ public class DirectoriesConfig
 
     private readonly string[] _directories;
 
+    public string Root { get; }
+
+    public string this[string directoryType] => GetPath(directoryType);
+
+    public string this[Enum directoryType] => GetPath(directoryType.ToString());
+
     public DirectoriesConfig(string rootDirectory, string[] directories)
     {
         _directories = directories;
@@ -15,12 +21,6 @@ public class DirectoriesConfig
 
         Init();
     }
-
-    public string Root { get; }
-
-    public string this[string directoryType] => GetPath(directoryType);
-
-    public string this[Enum directoryType] => GetPath(directoryType.ToString());
 
     public void CreateDirectoryIfNotExists(string directoryType)
     {

@@ -7,19 +7,11 @@ public sealed class FrameEdit
 {
     private const int _doubleXor = (0x200 << 22) | (0x200 << 12);
 
-    public struct Raw
-    {
-        public int run;
-        public int offsetX;
-        public int offsetY;
-        public byte[] data;
-    }
+    public readonly int Width;
+    public readonly int Height;
 
     public Raw[] RawData { get; }
     public SKPointI Center { get; set; }
-
-    public readonly int Width;
-    public readonly int Height;
 
     public FrameEdit(BinaryReader bin)
     {
@@ -130,6 +122,14 @@ public sealed class FrameEdit
         }
 
         RawData = tmp.ToArray();
+    }
+
+    public struct Raw
+    {
+        public int run;
+        public int offsetX;
+        public int offsetY;
+        public byte[] data;
     }
 
     public void ChangeCenter(int x, int y)

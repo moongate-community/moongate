@@ -1,5 +1,6 @@
 using Moongate.Core.Utils;
 using Moongate.Server.Admin.Data.Config;
+using Moongate.Server.Data.Config;
 
 namespace Moongate.Tests.Server.Admin;
 
@@ -8,11 +9,13 @@ public class AdminApiConfigTests
     [Fact]
     public void ServerConfig_AdminSection_BindsSnakeCaseAndValidates()
     {
-        var config = TomlUtils.Deserialize<Moongate.Server.Data.Config.MoongateServerConfig>("[admin_api]\nenabled=true\nport=2591\nallow_insecure_loopback=true")!;
+        var config = TomlUtils.Deserialize<MoongateServerConfig>(
+            "[admin_api]\nenabled=true\nport=2591\nallow_insecure_loopback=true"
+        )!;
         config.Validate();
         Assert.True(config.AdminApi.Enabled);
         Assert.Equal(2591, config.AdminApi.Port);
-        var copy = TomlUtils.Deserialize<Moongate.Server.Data.Config.MoongateServerConfig>(TomlUtils.Serialize(config))!;
+        var copy = TomlUtils.Deserialize<MoongateServerConfig>(TomlUtils.Serialize(config))!;
         Assert.Equal(2591, copy.AdminApi.Port);
         copy.AdminApi.Port = 0;
         Assert.Throws<InvalidOperationException>(copy.Validate);
@@ -67,10 +70,12 @@ public class AdminApiConfigTests
     [Fact]
     public void Validate_UnresolvedCertificateSecret_DoesNotResolve()
         => new AdminApiConfig { CertificatePassword = "${MISSING_ADMIN_TEST_PASSWORD}" }.Validate();
+
     [Fact]
     public void Toml_RoundTrip_PreservesConfiguration()
     {
-        const string toml = "enabled = true\nlisten_address = '::1'\nport = 2591\nallow_insecure_loopback = true\nsession_lifetime_minutes = 45\n";
+        const string toml =
+            "enabled = true\nlisten_address = '::1'\nport = 2591\nallow_insecure_loopback = true\nsession_lifetime_minutes = 45\n";
         var config = TomlUtils.Deserialize<AdminApiConfig>(toml)!;
         var copy = TomlUtils.Deserialize<AdminApiConfig>(TomlUtils.Serialize(config))!;
         copy.Validate();

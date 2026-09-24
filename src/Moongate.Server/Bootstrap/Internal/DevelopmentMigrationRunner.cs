@@ -13,6 +13,14 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
     private readonly string _runnerDirectory;
     private readonly ILogger _logger = Log.ForContext<DevelopmentMigrationRunner>();
 
+    private string ExecutablePath
+        => Path.Combine(
+            _runnerDirectory,
+            OperatingSystem.IsWindows() ? "Moongate.MigrationRunner.exe" : "Moongate.MigrationRunner"
+        );
+
+    private string AssemblyPath => Path.Combine(_runnerDirectory, "Moongate.MigrationRunner.dll");
+
     public DevelopmentMigrationRunner(string root, string migrations, string? plugins, string? runnerDirectory = null)
     {
         _root = Path.GetFullPath(root);
@@ -43,6 +51,7 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
             RedirectStandardError = true,
             CreateNoWindow = true
         };
+
         if (!useExecutable)
         {
             info.ArgumentList.Add(AssemblyPath);
@@ -67,6 +76,7 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
                             throw new InvalidOperationException("Could not start the migration runner.");
         var stdout = process.StandardOutput.ReadToEndAsync(CancellationToken.None);
         var stderr = process.StandardError.ReadToEndAsync(CancellationToken.None);
+
         try
         {
             await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
@@ -81,17 +91,17 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
                     process.Kill(true);
                 }
             }
-            catch (InvalidOperationException)
-            {
-            }
+            catch (InvalidOperationException) { }
 
             await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
             await Task.WhenAll(stdout, stderr).ConfigureAwait(false);
+
             throw;
         }
 
         var output = await stdout.ConfigureAwait(false);
         var error = await stderr.ConfigureAwait(false);
+
         if (process.ExitCode != 0)
         {
             throw new InvalidOperationException($"Migration runner failed for {target}: {error.Trim()}");
@@ -100,11 +110,4 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
         cancellationToken.ThrowIfCancellationRequested();
         _logger.Information("Development migrations for {Target}: {Result}", target, output.Trim());
     }
-
-    private string ExecutablePath => Path.Combine(
-        _runnerDirectory,
-        OperatingSystem.IsWindows() ? "Moongate.MigrationRunner.exe" : "Moongate.MigrationRunner"
-    );
-
-    private string AssemblyPath => Path.Combine(_runnerDirectory, "Moongate.MigrationRunner.dll");
 }

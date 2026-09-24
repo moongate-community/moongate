@@ -1,6 +1,5 @@
 using System.Net;
 using Moongate.Core.Primitives;
-using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
@@ -27,10 +26,13 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(context,
-            new GameLoginPacket(AuthKey, "user", "password"), CancellationToken.None);
+        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+            context,
+            new(AuthKey, "user", "password"),
+            CancellationToken.None
+        );
 
-        Assert.Equal(new Serial(42), session.AccountId);
+        Assert.Equal(new(42), session.AccountId);
         Assert.Equal(AccountType.GameMaster, session.AccountType);
         Assert.Equal(1, store.RedeemCalls);
         Assert.Equal("realm", store.RealmId);
@@ -38,9 +40,7 @@ public sealed class GameLoginPacketHandlerTests
         Assert.Equal(0, sender.SentCount);
     }
 
-    [Theory]
-    [InlineData(null, AuthKey)]
-    [InlineData(0x23456789u, AuthKey)]
+    [Theory, InlineData(null, AuthKey), InlineData(0x23456789u, AuthKey)]
     public async Task HandleAsync_MissingOrMismatchedSeed_ClosesWithoutRedeeming(uint? seed, uint packetKey)
     {
         await using var fixture = await SessionFixture.CreateAsync();
@@ -56,8 +56,11 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(context,
-            new GameLoginPacket(packetKey, "user", "password"), CancellationToken.None);
+        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+            context,
+            new(packetKey, "user", "password"),
+            CancellationToken.None
+        );
 
         Assert.Equal(0, store.RedeemCalls);
         Assert.Equal(Serial.Zero, session.AccountId);
@@ -76,8 +79,11 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(context,
-            new GameLoginPacket(AuthKey, "user", "wrong-password"), CancellationToken.None);
+        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+            context,
+            new(AuthKey, "user", "wrong-password"),
+            CancellationToken.None
+        );
 
         Assert.Equal(1, store.RedeemCalls);
         Assert.Equal(Serial.Zero, session.AccountId);
@@ -96,8 +102,11 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(context,
-            new GameLoginPacket(AuthKey, "user", "password"), CancellationToken.None);
+        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+            context,
+            new(AuthKey, "user", "password"),
+            CancellationToken.None
+        );
 
         Assert.Equal(Serial.Zero, session.AccountId);
         Assert.Equal(1, sender.SentCount);
@@ -105,11 +114,20 @@ public sealed class GameLoginPacketHandlerTests
     }
 
     private static RealmInstance Realm()
-        => new(new RealmDescriptor("realm", 1, "Realm", IPAddress.Loopback, 2595,
-            AccountType.Regular), Guid.Parse("74e13e2c-dab8-4acf-8613-362362b0e83a"));
+        => new(
+            new(
+                "realm",
+                1,
+                "Realm",
+                IPAddress.Loopback,
+                2595,
+                AccountType.Regular
+            ),
+            Guid.Parse("74e13e2c-dab8-4acf-8613-362362b0e83a")
+        );
 
     private static PendingHandoff Handoff()
-        => new(new Serial(42), AccountType.GameMaster, "user", "realm", Realm().InstanceId, "7.0.117");
+        => new(new(42), AccountType.GameMaster, "user", "realm", Realm().InstanceId, "7.0.117");
 
     private sealed class RecordingHandoffStore : IGameHandoffStore
     {
@@ -119,12 +137,21 @@ public sealed class GameLoginPacketHandlerTests
         public string? RealmId { get; private set; }
         public uint AuthKey { get; private set; }
 
-        public ValueTask<uint> IssueAsync(PendingHandoff handoff, ReadOnlyMemory<byte> credentialKey,
-            CancellationToken token = default)
+        public ValueTask<uint> IssueAsync(
+            PendingHandoff handoff,
+            ReadOnlyMemory<byte> credentialKey,
+            CancellationToken token = default
+        )
             => throw new NotSupportedException();
 
-        public ValueTask<PendingHandoff?> RedeemAsync(string realmId, Guid instanceId, uint authKey,
-            string username, string password, CancellationToken token = default)
+        public ValueTask<PendingHandoff?> RedeemAsync(
+            string realmId,
+            Guid instanceId,
+            uint authKey,
+            string username,
+            string password,
+            CancellationToken token = default
+        )
         {
             RedeemCalls++;
             RealmId = realmId;

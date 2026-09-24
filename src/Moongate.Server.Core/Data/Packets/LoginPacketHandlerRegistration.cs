@@ -10,8 +10,10 @@ public sealed class LoginPacketHandlerRegistration
 
     public Func<IResolverContext, Func<LoginSession, IPacket, CancellationToken, ValueTask>> Bind { get; }
 
-    public LoginPacketHandlerRegistration(Type packetType,
-        Func<IResolverContext, Func<LoginSession, IPacket, CancellationToken, ValueTask>> bind)
+    public LoginPacketHandlerRegistration(
+        Type packetType,
+        Func<IResolverContext, Func<LoginSession, IPacket, CancellationToken, ValueTask>> bind
+    )
     {
         PacketType = packetType;
         Bind = bind;

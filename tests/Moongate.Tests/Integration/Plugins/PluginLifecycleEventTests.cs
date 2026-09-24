@@ -110,16 +110,22 @@ public sealed class PluginLifecycleEventTests
             pluginContainer =>
             {
                 events.Add("plugin:register");
-                pluginContainer.OnEvent<PersistenceReadyEvent>((_, _) =>
-                {
-                    events.Add("persistence:ready");
-                    return Task.CompletedTask;
-                });
-                pluginContainer.OnEvent<PersistenceStoppedEvent>((_, _) =>
-                {
-                    events.Add("persistence:stopped");
-                    return Task.CompletedTask;
-                });
+                pluginContainer.OnEvent<PersistenceReadyEvent>(
+                    (_, _) =>
+                    {
+                        events.Add("persistence:ready");
+
+                        return Task.CompletedTask;
+                    }
+                );
+                pluginContainer.OnEvent<PersistenceStoppedEvent>(
+                    (_, _) =>
+                    {
+                        events.Add("persistence:stopped");
+
+                        return Task.CompletedTask;
+                    }
+                );
                 pluginContainer.AddMoongateService<IRecordingStartupService, RecordingStartupService>(service);
                 pluginContainer.OnEvent<MoongateStartedEvent>(
                     async (_, _) =>
@@ -161,7 +167,10 @@ public sealed class PluginLifecycleEventTests
         await bootstrap.StopAsync();
 
         Assert.Equal(
-            ["plugin:register", "persistence:ready", "start:plugin", "started", "stopping", "stop:plugin", "stopped", "persistence:stopped", "container:dispose"],
+            [
+                "plugin:register", "persistence:ready", "start:plugin", "started", "stopping", "stop:plugin", "stopped",
+                "persistence:stopped", "container:dispose"
+            ],
             events
         );
     }

@@ -1,6 +1,5 @@
 using System.Diagnostics;
 using Moongate.Server.Core.Types.Accounts;
-using Moongate.Server.Ultima.Data.Account;
 using Moongate.Tests.TestSupport.Admin;
 using Moongate.Tests.TestSupport.Persistence;
 
@@ -13,10 +12,13 @@ public sealed class AdminProtocolTests
     public async Task PythonClient_GeneratedFromRawContracts_CompletesCrossRoleWorkflow()
     {
         await using var fixture = await AdminHostFixture.CreateAsync();
-        await fixture.Backend.Accounts.Service.CreateAccountAsync(new AccountCreateOptions
-        {
-            Username = "admin", Password = fixture.Backend.Accounts.Password, AccountType = AccountType.Administrator, CanAccessApi = true
-        });
+        await fixture.Backend.Accounts.Service.CreateAccountAsync(
+            new()
+            {
+                Username = "admin", Password = fixture.Backend.Accounts.Password, AccountType = AccountType.Administrator,
+                CanAccessApi = true
+            }
+        );
         var start = new ProcessStartInfo(Environment.GetEnvironmentVariable("MOONGATE_ADMIN_PYTHON")!)
         {
             UseShellExecute = false, RedirectStandardOutput = true, RedirectStandardError = true

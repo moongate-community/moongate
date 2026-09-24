@@ -11,11 +11,13 @@ internal static class SchemaSqlReader
         List<string> tokens = [];
         List<int> offsets = [];
         var start = 0;
+
         for (var i = 0; i < sql.Length;)
         {
             if (char.IsWhiteSpace(sql[i]))
             {
                 i++;
+
                 continue;
             }
 
@@ -33,6 +35,7 @@ internal static class SchemaSqlReader
             {
                 var depth = 1;
                 i += 2;
+
                 while (i < sql.Length && depth > 0)
                 {
                     if (sql.AsSpan(i).StartsWith("/*"))
@@ -69,15 +72,18 @@ internal static class SchemaSqlReader
                 tokens.Clear();
                 offsets.Clear();
                 start = ++i;
+
                 continue;
             }
 
             offsets.Add(i - start);
+
             if (sql[i] is '\'' or '"')
             {
                 var begin = i;
                 var quote = sql[i++];
                 var closed = false;
+
                 while (i < sql.Length)
                 {
                     // Backslash escape interpretation depends on session options. Never guess.
@@ -94,10 +100,12 @@ internal static class SchemaSqlReader
                     if (i < sql.Length && sql[i] == quote)
                     {
                         i++;
+
                         continue;
                     }
 
                     closed = true;
+
                     break;
                 }
 
@@ -107,6 +115,7 @@ internal static class SchemaSqlReader
                 }
 
                 tokens.Add(sql[begin..i]);
+
                 continue;
             }
 
@@ -118,12 +127,14 @@ internal static class SchemaSqlReader
             if (char.IsAsciiLetterOrDigit(sql[i]) || sql[i] == '_')
             {
                 var begin = i++;
+
                 while (i < sql.Length && (char.IsAsciiLetterOrDigit(sql[i]) || sql[i] == '_'))
                 {
                     i++;
                 }
 
                 tokens.Add(sql[begin..i].ToUpperInvariant());
+
                 continue;
             }
 

@@ -33,20 +33,16 @@ public sealed class EnumValueSpecTests
 
         for (var i = 0; i < 50; i++)
         {
-            Assert.Contains(spec.Resolve(), (TemplateRarity[]) [TemplateRarity.Rare, TemplateRarity.Epic]);
+            Assert.Contains(spec.Resolve(), (TemplateRarity[])[TemplateRarity.Rare, TemplateRarity.Epic]);
         }
     }
 
     [Fact]
     public void FromCandidates_WithNoCandidates_ThrowsArgumentException()
-    {
-        Assert.Throws<ArgumentException>(() => EnumValueSpec<TemplateRarity>.FromCandidates([]));
-    }
+        => Assert.Throws<ArgumentException>(() => EnumValueSpec<TemplateRarity>.FromCandidates([]));
 
-    [Theory]
-    [InlineData("common", TemplateRarity.Common)]
-    [InlineData("EPIC", TemplateRarity.Epic)]
-    [InlineData("  rare  ", TemplateRarity.Rare)]
+    [Theory, InlineData("common", TemplateRarity.Common), InlineData("EPIC", TemplateRarity.Epic),
+     InlineData("  rare  ", TemplateRarity.Rare)]
     public void TryParse_AMemberName_ParsesAFixedValue(string text, TemplateRarity expected)
     {
         Assert.True(EnumValueSpec<TemplateRarity>.TryParse(text, out var spec));
@@ -71,17 +67,15 @@ public sealed class EnumValueSpecTests
 
         for (var i = 0; i < 50; i++)
         {
-            Assert.Contains(spec.Resolve(), (TemplateRarity[]) [TemplateRarity.Rare, TemplateRarity.Epic, TemplateRarity.Legendary]);
+            Assert.Contains(
+                spec.Resolve(),
+                (TemplateRarity[])[TemplateRarity.Rare, TemplateRarity.Epic, TemplateRarity.Legendary]
+            );
         }
     }
 
-    [Theory]
-    [InlineData(null)]
-    [InlineData("")]
-    [InlineData("   ")]
-    [InlineData("not_a_member")]
-    [InlineData("random_of:")]
-    [InlineData("random_of:rare,not_a_member")]
+    [Theory, InlineData(null), InlineData(""), InlineData("   "), InlineData("not_a_member"), InlineData("random_of:"),
+     InlineData("random_of:rare,not_a_member")]
     public void TryParse_InvalidText_ReturnsFalse(string? text)
     {
         Assert.False(EnumValueSpec<TemplateRarity>.TryParse(text, out var spec));

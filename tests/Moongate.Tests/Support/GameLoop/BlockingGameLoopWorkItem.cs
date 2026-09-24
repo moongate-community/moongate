@@ -9,11 +9,6 @@ public sealed class BlockingGameLoopWorkItem : IGameLoopWorkItem, IDisposable
 
     public Task Entered => _entered.Task;
 
-    public void Dispose()
-
-        // The loop may still be returning from Wait; do not dispose its gate concurrently.
-        => _release.Set();
-
     public void Execute()
     {
         _entered.TrySetResult();
@@ -25,5 +20,10 @@ public sealed class BlockingGameLoopWorkItem : IGameLoopWorkItem, IDisposable
     }
 
     public void Release()
+        => _release.Set();
+
+    public void Dispose()
+
+        // The loop may still be returning from Wait; do not dispose its gate concurrently.
         => _release.Set();
 }

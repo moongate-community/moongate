@@ -11,9 +11,11 @@ public class AccountEntity : IMoongateEntity
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
 
-    [Column(IsNullable = false)] public string Username { get; set; } = string.Empty;
+    [Column(IsNullable = false)]
+    public string Username { get; set; } = string.Empty;
 
-    [Column(IsNullable = false)] public string HashPassword { get; set; } = string.Empty;
+    [Column(IsNullable = false)]
+    public string HashPassword { get; set; } = string.Empty;
 
     public AccountType AccountType { get; set; }
 

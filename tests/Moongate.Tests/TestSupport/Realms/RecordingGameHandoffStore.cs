@@ -17,8 +17,11 @@ internal sealed class RecordingGameHandoffStore : IGameHandoffStore
     public TaskCompletionSource IssueEntered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public int IssueCount { get; private set; }
 
-    public async ValueTask<uint> IssueAsync(PendingHandoff handoff, ReadOnlyMemory<byte> credentialKey,
-        CancellationToken token = default)
+    public async ValueTask<uint> IssueAsync(
+        PendingHandoff handoff,
+        ReadOnlyMemory<byte> credentialKey,
+        CancellationToken token = default
+    )
     {
         IssueCount++;
         IssuedHandoff = handoff;
@@ -39,13 +42,20 @@ internal sealed class RecordingGameHandoffStore : IGameHandoffStore
         return NextAuthKey;
     }
 
-    public ValueTask<PendingHandoff?> RedeemAsync(string realmId, Guid instanceId, uint authKey,
-        string username, string password, CancellationToken token = default)
+    public ValueTask<PendingHandoff?> RedeemAsync(
+        string realmId,
+        Guid instanceId,
+        uint authKey,
+        string username,
+        string password,
+        CancellationToken token = default
+    )
         => throw new NotSupportedException();
 
     public ValueTask RevokeAsync(string realmId, uint authKey, CancellationToken token = default)
     {
         _revoked.Add((realmId, authKey));
+
         return ValueTask.CompletedTask;
     }
 }

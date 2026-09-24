@@ -1,6 +1,4 @@
 using System.Net;
-using Moongate.Core.Primitives;
-using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Data.Realms;
@@ -29,12 +27,14 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
         var sender = new RecordingLoginPacketSender();
         var handler = new LoginRoleServerSelectPacketHandler(sessions, catalog, store, sender);
 
-        await handler.HandleAsync(session, new ServerSelectPacket(1), CancellationToken.None);
+        await handler.HandleAsync(session, new(1), CancellationToken.None);
 
         Assert.Equal(0, store.IssueCount);
         Assert.Null(catalog.RequestedIndex);
-        Assert.Equal(LoginDeniedReason.InvalidCredentials,
-            Assert.IsType<LoginDeniedPacket>(Assert.Single(sender.Sent)).Reason);
+        Assert.Equal(
+            LoginDeniedReason.InvalidCredentials,
+            Assert.IsType<LoginDeniedPacket>(Assert.Single(sender.Sent)).Reason
+        );
         Assert.False(connection.IsConnected);
     }
 
@@ -49,13 +49,15 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
         var sender = new RecordingLoginPacketSender();
         var handler = new LoginRoleServerSelectPacketHandler(sessions, catalog, store, sender);
 
-        await handler.HandleAsync(session, new ServerSelectPacket(1), CancellationToken.None);
+        await handler.HandleAsync(session, new(1), CancellationToken.None);
 
         Assert.Equal((ushort)1, catalog.RequestedIndex);
         Assert.Equal(AccountType.Regular, catalog.RequestedAccountType);
         Assert.Equal(0, store.IssueCount);
-        Assert.Equal(LoginDeniedReason.CommunicationProblem,
-            Assert.IsType<LoginDeniedPacket>(Assert.Single(sender.Sent)).Reason);
+        Assert.Equal(
+            LoginDeniedReason.CommunicationProblem,
+            Assert.IsType<LoginDeniedPacket>(Assert.Single(sender.Sent)).Reason
+        );
         Assert.False(connection.IsConnected);
     }
 
@@ -70,11 +72,13 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
         var sender = new RecordingLoginPacketSender();
         var handler = new LoginRoleServerSelectPacketHandler(sessions, catalog, store, sender);
 
-        await handler.HandleAsync(session, new ServerSelectPacket(1), CancellationToken.None);
+        await handler.HandleAsync(session, new(1), CancellationToken.None);
 
         Assert.Equal(0, store.IssueCount);
-        Assert.Equal(LoginDeniedReason.CommunicationProblem,
-            Assert.IsType<LoginDeniedPacket>(Assert.Single(sender.Sent)).Reason);
+        Assert.Equal(
+            LoginDeniedReason.CommunicationProblem,
+            Assert.IsType<LoginDeniedPacket>(Assert.Single(sender.Sent)).Reason
+        );
     }
 
     [Fact]
@@ -90,14 +94,23 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
         var sender = new RecordingLoginPacketSender();
         var handler = new LoginRoleServerSelectPacketHandler(sessions, catalog, store, sender);
 
-        await handler.HandleAsync(session, new ServerSelectPacket(1), CancellationToken.None);
+        await handler.HandleAsync(session, new(1), CancellationToken.None);
 
         var redirect = Assert.IsType<ServerRedirectPacket>(Assert.Single(sender.Sent));
         Assert.Equal(realm.Descriptor.Address, redirect.Address);
         Assert.Equal(realm.Descriptor.Port, redirect.Port);
         Assert.Equal(store.NextAuthKey, redirect.AuthKey);
-        Assert.Equal(new PendingHandoff(new Serial(42), AccountType.Regular, "Alice", "realm-a",
-            realm.InstanceId, "7.0.117"), store.IssuedHandoff);
+        Assert.Equal(
+            new(
+                new(42),
+                AccountType.Regular,
+                "Alice",
+                "realm-a",
+                realm.InstanceId,
+                "7.0.117"
+            ),
+            store.IssuedHandoff
+        );
         Assert.Equal(Enumerable.Range(0, 32).Select(value => (byte)value), store.IssuedKeySnapshot);
         Assert.All(store.IssuedKeyBuffer.ToArray(), value => Assert.Equal((byte)0, value));
         Assert.Empty(store.Revoked);
@@ -115,7 +128,7 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
         var store = new RecordingGameHandoffStore();
         var sender = new RecordingLoginPacketSender();
         var handler = new LoginRoleServerSelectPacketHandler(sessions, catalog, store, sender);
-        var handling = handler.HandleAsync(original, new ServerSelectPacket(1), CancellationToken.None).AsTask();
+        var handling = handler.HandleAsync(original, new(1), CancellationToken.None).AsTask();
         await catalog.Entered.Task.WaitAsync(Timeout);
         Assert.True(sessions.Remove(original));
         using var replacementConnection = new ControlledNetworkConnection(1);
@@ -138,9 +151,13 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
         var gate = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var store = new RecordingGameHandoffStore { IssueGate = gate.Task };
         var sender = new RecordingLoginPacketSender();
-        var handler = new LoginRoleServerSelectPacketHandler(sessions,
-            new ControlledRealmCatalog { Result = Realm() }, store, sender);
-        var handling = handler.HandleAsync(original, new ServerSelectPacket(1), CancellationToken.None).AsTask();
+        var handler = new LoginRoleServerSelectPacketHandler(
+            sessions,
+            new ControlledRealmCatalog { Result = Realm() },
+            store,
+            sender
+        );
+        var handling = handler.HandleAsync(original, new(1), CancellationToken.None).AsTask();
         await store.IssueEntered.Task.WaitAsync(Timeout);
         Assert.True(sessions.Remove(original));
         using var replacementConnection = new ControlledNetworkConnection(1);
@@ -162,10 +179,14 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
         var session = Authenticate(sessions, connection);
         var store = new RecordingGameHandoffStore();
         var sender = new RecordingLoginPacketSender { TerminalResult = false };
-        var handler = new LoginRoleServerSelectPacketHandler(sessions,
-            new ControlledRealmCatalog { Result = Realm() }, store, sender);
+        var handler = new LoginRoleServerSelectPacketHandler(
+            sessions,
+            new ControlledRealmCatalog { Result = Realm() },
+            store,
+            sender
+        );
 
-        await handler.HandleAsync(session, new ServerSelectPacket(1), CancellationToken.None);
+        await handler.HandleAsync(session, new(1), CancellationToken.None);
 
         Assert.Equal(("realm-a", store.NextAuthKey), Assert.Single(store.Revoked));
         Assert.False(connection.IsConnected);
@@ -175,12 +196,22 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
     {
         var session = sessions.GetOrCreate(connection);
         var key = Enumerable.Range(0, 32).Select(value => (byte)value).ToArray();
-        Assert.True(session.TrySetAccount(new Serial(42), AccountType.Regular, "Alice", key));
+        Assert.True(session.TrySetAccount(new(42), AccountType.Regular, "Alice", key));
         Array.Clear(key);
+
         return session;
     }
 
     private static RealmInstance Realm(AccountType minimumAccountType = AccountType.Regular)
-        => new(new RealmDescriptor("realm-a", 1, "Realm A", IPAddress.Parse("127.0.0.9"), 2595,
-            minimumAccountType), Guid.Parse("234a81d2-c5d4-48cf-a05f-494e541c94d4"));
+        => new(
+            new(
+                "realm-a",
+                1,
+                "Realm A",
+                IPAddress.Parse("127.0.0.9"),
+                2595,
+                minimumAccountType
+            ),
+            Guid.Parse("234a81d2-c5d4-48cf-a05f-494e541c94d4")
+        );
 }

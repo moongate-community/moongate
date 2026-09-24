@@ -9,8 +9,10 @@ internal sealed class SyntheticSessionEntity : IMoongateEntity
 {
     [Column(IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
+
     public int SessionNumber { get; set; }
     public long Revision { get; set; }
+
     [Column(StringLength = 1024)]
     public string Payload { get; set; } = "";
 }

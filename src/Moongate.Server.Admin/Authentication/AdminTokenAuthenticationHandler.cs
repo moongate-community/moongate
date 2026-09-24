@@ -17,8 +17,12 @@ public sealed class AdminTokenAuthenticationHandler : AuthenticationHandler<Auth
 {
     private readonly IAdminSessionStore _sessions;
 
-    public AdminTokenAuthenticationHandler(IOptionsMonitor<AuthenticationSchemeOptions> options,
-        ILoggerFactory logger, UrlEncoder encoder, IAdminSessionStore sessions) : base(options, logger, encoder)
+    public AdminTokenAuthenticationHandler(
+        IOptionsMonitor<AuthenticationSchemeOptions> options,
+        ILoggerFactory logger,
+        UrlEncoder encoder,
+        IAdminSessionStore sessions
+    ) : base(options, logger, encoder)
     {
         _sessions = sessions;
     }
@@ -30,23 +34,31 @@ public sealed class AdminTokenAuthenticationHandler : AuthenticationHandler<Auth
         {
             return AuthenticateResult.NoResult();
         }
+
         if (!AdminToken.TryGetDigest(Request.Headers, out var digest))
         {
             return AuthenticateResult.Fail("Invalid administration credentials.");
         }
+
         try
         {
             var session = await _sessions.FindAsync(digest, Context.RequestAborted);
+
             if (session is null) { return AuthenticateResult.Fail("Invalid administration credentials."); }
-            var identity = new ClaimsIdentity([
-                new Claim(ClaimTypes.NameIdentifier, session.Identity.AccountId.Value.ToString(CultureInfo.InvariantCulture)),
-                new Claim(ClaimTypes.Role, session.Identity.AccountType.ToString())
-            ], Scheme.Name);
-            return AuthenticateResult.Success(new(new ClaimsPrincipal(identity), Scheme.Name));
+            var identity = new ClaimsIdentity(
+                [
+                    new(ClaimTypes.NameIdentifier, session.Identity.AccountId.Value.ToString(CultureInfo.InvariantCulture)),
+                    new(ClaimTypes.Role, session.Identity.AccountType.ToString())
+                ],
+                Scheme.Name
+            );
+
+            return AuthenticateResult.Success(new(new(identity), Scheme.Name));
         }
         catch (AdminDependencyUnavailableException)
         {
             Context.Items[AdminAuthorizationPolicies.DependencyFailure] = true;
+
             return AuthenticateResult.Fail("Administration unavailable.");
         }
     }
@@ -54,7 +66,9 @@ public sealed class AdminTokenAuthenticationHandler : AuthenticationHandler<Auth
     protected override Task HandleChallengeAsync(AuthenticationProperties properties)
     {
         Response.StatusCode = Context.Items.ContainsKey(AdminAuthorizationPolicies.DependencyFailure)
-            ? StatusCodes.Status503ServiceUnavailable : StatusCodes.Status401Unauthorized;
+                                  ? StatusCodes.Status503ServiceUnavailable
+                                  : StatusCodes.Status401Unauthorized;
+
         return Task.CompletedTask;
     }
 }

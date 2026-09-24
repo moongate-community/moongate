@@ -53,16 +53,16 @@ public sealed class LoginAccountFlow
         }
 
         var servers = available
-                                .Select(
-                                    realm => new GameServerEntry(
-                                        realm.ServerIndex,
-                                        realm.Name,
-                                        0,
-                                        0,
-                                        realm.Address
-                                    )
-                                )
-                                .ToArray();
+                      .Select(
+                          realm => new GameServerEntry(
+                              realm.ServerIndex,
+                              realm.Name,
+                              0,
+                              0,
+                              realm.Address
+                          )
+                      )
+                      .ToArray();
 
         return servers.Length == 0
                    ? new(LoginDeniedReason.CommunicationProblem)

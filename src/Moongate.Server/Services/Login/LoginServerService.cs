@@ -21,8 +21,13 @@ public sealed class LoginServerService : IMoongateStartupService
     private readonly HashSet<Task> _cleanups = new();
     private bool _stopping;
 
-    public LoginServerService(INetworkService network, IConnectionService connections,
-        ILoginSessionService sessions, LoginPacketDispatchService dispatcher, IPacketSendService sender)
+    public LoginServerService(
+        INetworkService network,
+        IConnectionService connections,
+        ILoginSessionService sessions,
+        LoginPacketDispatchService dispatcher,
+        IPacketSendService sender
+    )
     {
         _network = network;
         _connections = connections;
@@ -49,36 +54,46 @@ public sealed class LoginServerService : IMoongateStartupService
         lock (_gate)
         {
             _stopping = true;
-            return _lifecycle.StopAsync(async startup =>
-            {
-                if (startup is not null)
-                {
-                    await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-                }
 
-                await StopCoreAsync().ConfigureAwait(false);
-            });
+            return _lifecycle.StopAsync(
+                async startup =>
+                {
+                    if (startup is not null)
+                    {
+                        await startup.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+                    }
+
+                    await StopCoreAsync().ConfigureAwait(false);
+                }
+            );
         }
     }
 
     private void OnAccepted(object? sender, NetworkConnectionEventArgs args)
     {
         _sessions.GetOrCreate(args.Connection);
-        _logger.Information("Login client connected from {Address} with session {SessionId}",
-            args.Connection.RemoteEndPoint, args.Connection.SessionId);
+        _logger.Information(
+            "Login client connected from {Address} with session {SessionId}",
+            args.Connection.RemoteEndPoint,
+            args.Connection.SessionId
+        );
     }
 
     private void OnClosed(object? sender, NetworkConnectionEventArgs args)
     {
         if (!_sessions.TryGet(args.Connection.SessionId, out var session) ||
-            !ReferenceEquals(session.NetworkSession.Client, args.Connection) || !_sessions.Remove(session))
+            !ReferenceEquals(session.NetworkSession.Client, args.Connection) ||
+            !_sessions.Remove(session))
         {
             return;
         }
 
-        TrackCleanup(Task.WhenAll(
-            _dispatcher.DisconnectAsync(session),
-            _sender.DisconnectAsync(args.Connection.SessionId, args.Connection)));
+        TrackCleanup(
+            Task.WhenAll(
+                _dispatcher.DisconnectAsync(session),
+                _sender.DisconnectAsync(args.Connection.SessionId, args.Connection)
+            )
+        );
     }
 
     private void OnData(object? sender, NetworkDataEventArgs args)
@@ -95,8 +110,11 @@ public sealed class LoginServerService : IMoongateStartupService
             return;
         }
 
-        _logger.Warning("Rejected login packet from session {SessionId}, opcode 0x{OpCode:X2}",
-            args.Connection.SessionId, opCode);
+        _logger.Warning(
+            "Rejected login packet from session {SessionId}, opcode 0x{OpCode:X2}",
+            args.Connection.SessionId,
+            opCode
+        );
         TrackCleanup(_connections.DisconnectAsync(args.Connection.SessionId, args.Connection));
     }
 
@@ -105,6 +123,7 @@ public sealed class LoginServerService : IMoongateStartupService
         _network.ConnectionAccepted += OnAccepted;
         _network.ConnectionClosed += OnClosed;
         _network.DataReceived += OnData;
+
         try
         {
             await _network.StartAsync().ConfigureAwait(false);
@@ -112,6 +131,7 @@ public sealed class LoginServerService : IMoongateStartupService
         catch
         {
             await StopCoreAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+
             throw;
         }
     }
@@ -122,6 +142,7 @@ public sealed class LoginServerService : IMoongateStartupService
         {
             await _network.StopAsync().ConfigureAwait(false);
             Task[] pending;
+
             lock (_cleanupGate)
             {
                 pending = _cleanups.ToArray();

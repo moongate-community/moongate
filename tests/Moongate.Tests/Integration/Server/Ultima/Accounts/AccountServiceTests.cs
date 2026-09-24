@@ -7,7 +7,6 @@ using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima;
-using Moongate.Server.Ultima.Data.Account;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types;
 using Moongate.Tests.TestSupport.Persistence;
@@ -23,13 +22,16 @@ public sealed class AccountServiceTests
     public async Task ListAccountsPageAsync_KeysetPagination_PreservesOrderAndPrivileges()
     {
         await using var fixture = await AccountServiceFixture.CreateAsync();
+
         for (var i = 0; i < 4; i++)
         {
-            var result = await fixture.Service.CreateAccountAsync(new AccountCreateOptions
-            {
-                Username = $"user{i}", Password = fixture.Password,
-                AccountType = AccountType.Administrator, CanAccessApi = i == 0
-            });
+            var result = await fixture.Service.CreateAccountAsync(
+                             new()
+                             {
+                                 Username = $"user{i}", Password = fixture.Password,
+                                 AccountType = AccountType.Administrator, CanAccessApi = i == 0
+                             }
+                         );
             Assert.True(result.Success, result.Exception?.ToString());
         }
         var first = await fixture.Service.ListAccountsPageAsync(Serial.Zero, 2);
@@ -54,15 +56,21 @@ public sealed class AccountServiceTests
         await connection.OpenAsync();
         await using var transaction = await connection.BeginTransactionAsync();
         await using var command = new NpgsqlCommand(
-            "UPDATE auth.accounts SET account_type=0, is_locked=@locked WHERE id=42", connection, transaction);
+            "UPDATE auth.accounts SET account_type=0, is_locked=@locked WHERE id=42",
+            connection,
+            transaction
+        );
         command.Parameters.AddWithValue("locked", locked);
         await command.ExecuteNonQueryAsync();
         var login = fixture.Service.LoginAsync("alice", fixture.Password);
+
         try
         {
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+
             while (!await fixture.Database.ScalarAsync<bool>(
-                "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock')"))
+                        "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock')"
+                    ))
             {
                 await Task.Delay(10, deadline.Token);
             }
@@ -76,7 +84,9 @@ public sealed class AccountServiceTests
         finally
         {
             await transaction.DisposeAsync();
-            await ((Task)login).ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext);
+            await ((Task)login).ConfigureAwait(
+                ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+            );
         }
     }
 
@@ -91,7 +101,7 @@ public sealed class AccountServiceTests
     public async Task ListAccountsAsync_ReturnsAllAccountsIncludingLockedAsDetachedEntities()
     {
         await using var fixture = await AccountServiceFixture.CreateAsync();
-        var locked = await fixture.SeedAsync(locked: true);
+        var locked = await fixture.SeedAsync(true);
         var created = await fixture.Service.CreateAccountAsync("bob", fixture.Password);
         Assert.True(created.Success, created.Exception?.ToString());
 
@@ -113,7 +123,8 @@ public sealed class AccountServiceTests
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
         var exception = await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => fixture.Service.ListAccountsAsync(cancellation.Token));
+                            () => fixture.Service.ListAccountsAsync(cancellation.Token)
+                        );
         Assert.Equal(cancellation.Token, exception.CancellationToken);
     }
 
@@ -134,8 +145,8 @@ public sealed class AccountServiceTests
         Task request = operation switch
         {
             "login" => fixture.Service.LoginAsync("alice", fixture.Password, cancellation.Token),
-            "list" => fixture.Service.ListAccountsAsync(cancellation.Token),
-            _ => fixture.Service.CreateAccountAsync("alice", fixture.Password, cancellationToken: cancellation.Token)
+            "list"  => fixture.Service.ListAccountsAsync(cancellation.Token),
+            _       => fixture.Service.CreateAccountAsync("alice", fixture.Password, cancellationToken: cancellation.Token)
         };
 
         try
@@ -339,7 +350,7 @@ public sealed class AccountServiceTests
     public async Task LoginAsync_LockedAccount_RejectsCorrectPasswordWithoutUpdatingLastLogin()
     {
         await using var fixture = await AccountServiceFixture.CreateAsync();
-        var original = await fixture.SeedAsync(locked: true);
+        var original = await fixture.SeedAsync(true);
         var result = await fixture.Service.LoginAsync("alice", fixture.Password);
         Assert.Null(result);
         var stored = await fixture.Accounts.GetByIdAsync(original.Id);

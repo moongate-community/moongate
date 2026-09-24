@@ -1,4 +1,3 @@
-
 namespace Moongate.Server.Core.Data.Admin;
 
 /// <summary>Immutable administration accountgate snapshot.</summary>

@@ -1,18 +1,13 @@
 using System.Net;
-using Moongate.Core.Primitives;
-using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
-using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
-using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Handlers.Login;
-using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Login;
 using Moongate.Tests.TestSupport.Network;
@@ -28,17 +23,28 @@ public sealed class RedisHandoffFlowTests
     {
         var endpoint = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
                        throw new InvalidOperationException("MOONGATE_TEST_REDIS_CONNECTION_STRING is required.");
-        await using var redis = new RedisConnectionService(new RedisConfig
-        {
-            ConnectionString = endpoint,
-            HandoffSecret = new string('x', 32)
-        });
+        await using var redis = new RedisConnectionService(
+            new()
+            {
+                ConnectionString = endpoint,
+                HandoffSecret = new('x', 32)
+            }
+        );
         await redis.StartAsync();
         using var proof = new HandoffProofService(Enumerable.Range(0, 32).Select(value => (byte)value).ToArray());
         var prefix = $"test:handoff:realms:{Guid.NewGuid():N}:";
         var catalog = new RedisRealmDirectoryService(redis, prefix);
-        var realm = new RealmInstance(new RealmDescriptor("realm-a", 1, "Realm A", IPAddress.Loopback,
-            2595, AccountType.Regular), Guid.NewGuid());
+        var realm = new RealmInstance(
+            new(
+                "realm-a",
+                1,
+                "Realm A",
+                IPAddress.Loopback,
+                2595,
+                AccountType.Regular
+            ),
+            Guid.NewGuid()
+        );
         var handoffs = new RedisGameHandoffStore(redis, proof);
         await catalog.RegisterAsync(realm);
 
@@ -50,17 +56,28 @@ public sealed class RedisHandoffFlowTests
             var loginSender = new RecordingLoginPacketSender();
             var accounts = new RecordingAccountService
             {
-                LoginResult = new AccountEntity { Id = new Serial(42), AccountType = AccountType.GameMaster }
+                LoginResult = new() { Id = new(42), AccountType = AccountType.GameMaster }
             };
-            var loginHandler = new LoginRoleAccountPacketHandler(loginSessions, loginSender,
-                new LoginAccountFlow(accounts, catalog), proof);
-            await loginHandler.HandleAsync(loginSession,
-                new AccountLoginPacket("Alice", "password", 0xFF), CancellationToken.None);
+            var loginHandler = new LoginRoleAccountPacketHandler(
+                loginSessions,
+                loginSender,
+                new(accounts, catalog),
+                proof
+            );
+            await loginHandler.HandleAsync(
+                loginSession,
+                new("Alice", "password", 0xFF),
+                CancellationToken.None
+            );
             Assert.IsType<ServerListPacket>(Assert.Single(loginSender.Sent));
 
-            var selectHandler = new LoginRoleServerSelectPacketHandler(loginSessions, catalog,
-                handoffs, loginSender);
-            await selectHandler.HandleAsync(loginSession, new ServerSelectPacket(1), CancellationToken.None);
+            var selectHandler = new LoginRoleServerSelectPacketHandler(
+                loginSessions,
+                catalog,
+                handoffs,
+                loginSender
+            );
+            await selectHandler.HandleAsync(loginSession, new(1), CancellationToken.None);
             var redirect = Assert.IsType<ServerRedirectPacket>(loginSender.Sent[1]);
             Assert.Equal(IPAddress.Loopback, redirect.Address);
             Assert.Equal((ushort)2595, redirect.Port);
@@ -70,15 +87,29 @@ public sealed class RedisHandoffFlowTests
             var gameSessions = new SessionService(gameFixture.Loop);
             var gameSession = gameSessions.GetOrCreate(gameFixture.Client);
             gameSession.NetworkSession.SetSeed(redirect.AuthKey);
-            var gameContext = new PacketContext(gameSession, gameFixture.Loop, gameSessions,
-                new StubPacketSendService());
-            await new GameLoginPacketHandler(realm, handoffs).HandleAsync(gameContext,
-                new GameLoginPacket(redirect.AuthKey, "Alice", "password"), CancellationToken.None);
+            var gameContext = new PacketContext(
+                gameSession,
+                gameFixture.Loop,
+                gameSessions,
+                new StubPacketSendService()
+            );
+            await new GameLoginPacketHandler(realm, handoffs).HandleAsync(
+                gameContext,
+                new(redirect.AuthKey, "Alice", "password"),
+                CancellationToken.None
+            );
 
-            Assert.Equal(new Serial(42), gameSession.AccountId);
+            Assert.Equal(new(42), gameSession.AccountId);
             Assert.Equal(AccountType.GameMaster, gameSession.AccountType);
-            Assert.Null(await handoffs.RedeemAsync(realm.Descriptor.RealmId, realm.InstanceId,
-                redirect.AuthKey, "Alice", "password"));
+            Assert.Null(
+                await handoffs.RedeemAsync(
+                    realm.Descriptor.RealmId,
+                    realm.InstanceId,
+                    redirect.AuthKey,
+                    "Alice",
+                    "password"
+                )
+            );
         }
         finally
         {

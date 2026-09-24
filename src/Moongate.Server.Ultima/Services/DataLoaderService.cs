@@ -6,7 +6,7 @@ using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
 
-/// <inheritdoc cref="IDataLoaderService"/>
+/// <inheritdoc cref="IDataLoaderService" />
 public sealed class DataLoaderService : IDataLoaderService
 {
     private readonly IResolverContext _resolver;

@@ -1,23 +1,23 @@
 using System.Diagnostics.CodeAnalysis;
+using System.Net;
 using System.Text.Json.Nodes;
-using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Realms;
+using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
-using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
-using Moongate.Server.Core.Packets;
 using Moongate.Server.Ultima.Handlers.Login;
-using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
-using System.Net;
 
 namespace Moongate.Tests.Integration.Realms;
 
-[SuppressMessage("Design", "CA1001:Types that own disposable fields should be disposable",
-    Justification = "xUnit calls IAsyncLifetime.DisposeAsync after every test instance.")]
+[SuppressMessage(
+    "Design",
+    "CA1001:Types that own disposable fields should be disposable",
+    Justification = "xUnit calls IAsyncLifetime.DisposeAsync after every test instance."
+)]
 public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
 {
     private readonly string _realmId = $"test-handoff-{Guid.NewGuid():N}";
@@ -31,14 +31,16 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
     {
         var endpoint = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
                        throw new InvalidOperationException("MOONGATE_TEST_REDIS_CONNECTION_STRING is required.");
-        _redis = new RedisConnectionService(new RedisConfig
-        {
-            ConnectionString = endpoint,
-            HandoffSecret = new string('x', 32)
-        });
+        _redis = new(
+            new()
+            {
+                ConnectionString = endpoint,
+                HandoffSecret = new('x', 32)
+            }
+        );
         await _redis.StartAsync();
-        _proof = new HandoffProofService(Enumerable.Range(0, 32).Select(value => (byte)value).ToArray());
-        _store = new RedisGameHandoffStore(_redis, _proof);
+        _proof = new(Enumerable.Range(0, 32).Select(value => (byte)value).ToArray());
+        _store = new(_redis, _proof);
     }
 
     [Fact]
@@ -98,8 +100,13 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
     {
         var authKey = await IssueAsync();
 
-        var attempts = await Task.WhenAll(Enumerable.Range(0, 8)
-            .Select(_ => _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password").AsTask()));
+        var attempts = await Task.WhenAll(
+                           Enumerable.Range(0, 8)
+                                     .Select(
+                                         _ => _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password")
+                                                    .AsTask()
+                                     )
+                       );
 
         Assert.Single(attempts, result => result is not null);
     }
@@ -113,14 +120,26 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
         var session = sessions.GetOrCreate(fixture.Client);
         session.NetworkSession.SetSeed(authKey);
         var context = new PacketContext(session, fixture.Loop, sessions, new StubPacketSendService());
-        var realm = new RealmInstance(new RealmDescriptor(_realmId, 1, "Test Realm", IPAddress.Loopback,
-            2595, AccountType.Regular), _instanceId);
+        var realm = new RealmInstance(
+            new(
+                _realmId,
+                1,
+                "Test Realm",
+                IPAddress.Loopback,
+                2595,
+                AccountType.Regular
+            ),
+            _instanceId
+        );
         var handler = new GameLoginPacketHandler(realm, _store);
 
-        await handler.HandleAsync(context, new GameLoginPacket(authKey, "Alice", "password"),
-            CancellationToken.None);
+        await handler.HandleAsync(
+            context,
+            new(authKey, "Alice", "password"),
+            CancellationToken.None
+        );
 
-        Assert.Equal(new Serial(42), session.AccountId);
+        Assert.Equal(new(42), session.AccountId);
         Assert.Equal(AccountType.GameMaster, session.AccountType);
         Assert.Null(await _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password"));
     }
@@ -150,8 +169,15 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
         Assert.Null(await _store.RedeemAsync(_realmId, _instanceId, expired, "Alice", "password"));
 
         var malformed = await IssueAsync();
-        Assert.True(await _redis.Connection.GetDatabase().StringSetAsync(Key(malformed), "not-a-ticket",
-            TimeSpan.FromSeconds(30)));
+        Assert.True(
+            await _redis.Connection
+                        .GetDatabase()
+                        .StringSetAsync(
+                            Key(malformed),
+                            "not-a-ticket",
+                            TimeSpan.FromSeconds(30)
+                        )
+        );
         Assert.Null(await _store.RedeemAsync(_realmId, _instanceId, malformed, "Alice", "password"));
     }
 
@@ -165,6 +191,21 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
         Assert.Null(await _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password"));
     }
 
+    private PendingHandoff Handoff()
+        => new(new(42), AccountType.GameMaster, "Alice", _realmId, _instanceId, "7.0.117");
+
+    private async Task<uint> IssueAsync()
+    {
+        var credentialKey = _proof.DeriveCredentialKey("Alice", "password");
+        var key = await _store.IssueAsync(Handoff(), credentialKey);
+        _issuedKeys.Add(key);
+
+        return key;
+    }
+
+    private string Key(uint authKey)
+        => $"moongate:handoff:{_realmId}:{authKey:X8}";
+
     public async Task DisposeAsync()
     {
         foreach (var key in _issuedKeys)
@@ -175,18 +216,4 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
         _proof.Dispose();
         await _redis.DisposeAsync();
     }
-
-    private PendingHandoff Handoff()
-        => new(new Serial(42), AccountType.GameMaster, "Alice", _realmId, _instanceId, "7.0.117");
-
-    private async Task<uint> IssueAsync()
-    {
-        var credentialKey = _proof.DeriveCredentialKey("Alice", "password");
-        var key = await _store.IssueAsync(Handoff(), credentialKey);
-        _issuedKeys.Add(key);
-        return key;
-    }
-
-    private string Key(uint authKey)
-        => $"moongate:handoff:{_realmId}:{authKey:X8}";
 }

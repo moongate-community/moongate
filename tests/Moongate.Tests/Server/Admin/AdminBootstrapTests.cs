@@ -18,12 +18,21 @@ public sealed class AdminBootstrapTests
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var stoppedAcceptingBeforeEvent = false;
-        container.OnEvent<MoongateStartedEvent>(async (_, _) => { entered.SetResult(); await release.Task; });
-        container.OnEvent<MoongateStoppingEvent>((_, _) =>
-        {
-            stoppedAcceptingBeforeEvent = !api.Accepting;
-            return Task.CompletedTask;
-        });
+        container.OnEvent<MoongateStartedEvent>(
+            async (_, _) =>
+            {
+                entered.SetResult();
+                await release.Task;
+            }
+        );
+        container.OnEvent<MoongateStoppingEvent>(
+            (_, _) =>
+            {
+                stoppedAcceptingBeforeEvent = !api.Accepting;
+
+                return Task.CompletedTask;
+            }
+        );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         var start = bootstrap.StartAsync();
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(5));

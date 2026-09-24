@@ -16,45 +16,45 @@ namespace Moongate.Server.Services.Realms;
 public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceService
 {
     private const string ClaimScript = """
-        local owner = redis.call('HGET', KEYS[1], 'realm_id')
-        if owner and owner ~= ARGV[1] then return -1 end
-        if owner then
-            local instance = redis.call('HGET', KEYS[1], 'instance_id')
-            if ARGV[11] == 'heartbeat' and instance ~= ARGV[2] then return -4 end
-            if instance == ARGV[2] then
-                if redis.call('HGET', KEYS[1], 'name') ~= ARGV[4] or
-                   redis.call('HGET', KEYS[1], 'ipv4') ~= ARGV[5] or
-                   redis.call('HGET', KEYS[1], 'port') ~= ARGV[6] or
-                   redis.call('HGET', KEYS[1], 'minimum_account_type') ~= ARGV[7] then
-                    return -3
-                end
-            end
-        else
-            local cursor = '0'
-            local count = 0
-            repeat
-                local scan = redis.call('SCAN', cursor, 'MATCH', ARGV[8] .. '*', 'COUNT', 128)
-                cursor = scan[1]
-                count = count + #scan[2]
-                if count >= tonumber(ARGV[9]) then return -2 end
-            until cursor == '0'
-        end
-        redis.call('HSET', KEYS[1],
-            'realm_id', ARGV[1], 'instance_id', ARGV[2], 'server_index', ARGV[3],
-            'name', ARGV[4], 'ipv4', ARGV[5], 'port', ARGV[6],
-            'minimum_account_type', ARGV[7])
-        redis.call('EXPIRE', KEYS[1], tonumber(ARGV[10]))
-        if not owner and ARGV[11] == 'heartbeat' then return 2 end
-        return 1
-        """;
+                                       local owner = redis.call('HGET', KEYS[1], 'realm_id')
+                                       if owner and owner ~= ARGV[1] then return -1 end
+                                       if owner then
+                                           local instance = redis.call('HGET', KEYS[1], 'instance_id')
+                                           if ARGV[11] == 'heartbeat' and instance ~= ARGV[2] then return -4 end
+                                           if instance == ARGV[2] then
+                                               if redis.call('HGET', KEYS[1], 'name') ~= ARGV[4] or
+                                                  redis.call('HGET', KEYS[1], 'ipv4') ~= ARGV[5] or
+                                                  redis.call('HGET', KEYS[1], 'port') ~= ARGV[6] or
+                                                  redis.call('HGET', KEYS[1], 'minimum_account_type') ~= ARGV[7] then
+                                                   return -3
+                                               end
+                                           end
+                                       else
+                                           local cursor = '0'
+                                           local count = 0
+                                           repeat
+                                               local scan = redis.call('SCAN', cursor, 'MATCH', ARGV[8] .. '*', 'COUNT', 128)
+                                               cursor = scan[1]
+                                               count = count + #scan[2]
+                                               if count >= tonumber(ARGV[9]) then return -2 end
+                                           until cursor == '0'
+                                       end
+                                       redis.call('HSET', KEYS[1],
+                                           'realm_id', ARGV[1], 'instance_id', ARGV[2], 'server_index', ARGV[3],
+                                           'name', ARGV[4], 'ipv4', ARGV[5], 'port', ARGV[6],
+                                           'minimum_account_type', ARGV[7])
+                                       redis.call('EXPIRE', KEYS[1], tonumber(ARGV[10]))
+                                       if not owner and ARGV[11] == 'heartbeat' then return 2 end
+                                       return 1
+                                       """;
 
     private const string UnregisterScript = """
-        if redis.call('HGET', KEYS[1], 'realm_id') ~= ARGV[1] or
-           redis.call('HGET', KEYS[1], 'instance_id') ~= ARGV[2] then
-            return 0
-        end
-        return redis.call('DEL', KEYS[1])
-        """;
+                                            if redis.call('HGET', KEYS[1], 'realm_id') ~= ARGV[1] or
+                                               redis.call('HGET', KEYS[1], 'instance_id') ~= ARGV[2] then
+                                                return 0
+                                            end
+                                            return redis.call('DEL', KEYS[1])
+                                            """;
 
     private readonly RedisConnectionService _redis;
     private readonly string _prefix;
@@ -93,50 +93,6 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         }
     }
 
-    private async ValueTask<int> ClaimAsync(RealmInstance realm, bool heartbeat,
-        CancellationToken cancellationToken)
-    {
-        Validate(realm);
-        var descriptor = realm.Descriptor;
-        var result = await _redis.Connection.GetDatabase().ScriptEvaluateAsync(
-                         ClaimScript,
-                         [Key(descriptor.ServerIndex)],
-                         [
-                             descriptor.RealmId,
-                             realm.InstanceId.ToString("N"),
-                             descriptor.ServerIndex.ToString(CultureInfo.InvariantCulture),
-                             descriptor.Name,
-                             descriptor.Address.ToString(),
-                             descriptor.Port.ToString(CultureInfo.InvariantCulture),
-                             ((int)descriptor.MinimumAccountType).ToString(CultureInfo.InvariantCulture),
-                             _prefix,
-                             _maxRealms,
-                             _leaseSeconds,
-                             heartbeat ? "heartbeat" : "claim"
-                         ]
-                     ).WaitAsync(cancellationToken).ConfigureAwait(false);
-
-        return (int)result;
-    }
-
-    private static void ThrowClaimFailure(int result)
-    {
-        switch (result)
-        {
-            case -1:
-                throw new RealmDirectoryException(RealmRegistrationError.DuplicateIndex,
-                    "Realm server index is already registered.");
-            case -2:
-                throw new RealmDirectoryException(RealmRegistrationError.CapacityExceeded,
-                    "Realm directory capacity exceeded.");
-            case -3:
-                throw new RealmDirectoryException(RealmRegistrationError.InvalidDescriptor,
-                    "Realm metadata changed without a new instance ID.");
-            default:
-                throw new InvalidDataException("Redis returned an unknown realm registration result.");
-        }
-    }
-
     /// <inheritdoc />
     public async ValueTask<bool> RenewAsync(RealmInstance realm, CancellationToken cancellationToken = default)
     {
@@ -153,6 +109,7 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         }
 
         ThrowClaimFailure(result);
+
         return false;
     }
 
@@ -160,11 +117,15 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
     public async ValueTask UnregisterAsync(RealmInstance realm, CancellationToken cancellationToken = default)
     {
         Validate(realm);
-        await _redis.Connection.GetDatabase().ScriptEvaluateAsync(
-            UnregisterScript,
-            [Key(realm.Descriptor.ServerIndex)],
-            [realm.Descriptor.RealmId, realm.InstanceId.ToString("N")]
-        ).WaitAsync(cancellationToken).ConfigureAwait(false);
+        await _redis.Connection
+                    .GetDatabase()
+                    .ScriptEvaluateAsync(
+                        UnregisterScript,
+                        [Key(realm.Descriptor.ServerIndex)],
+                        [realm.Descriptor.RealmId, realm.InstanceId.ToString("N")]
+                    )
+                    .WaitAsync(cancellationToken)
+                    .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -180,10 +141,12 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
 
         var server = _redis.Connection.GetServer(_redis.Connection.GetEndPoints()[0]);
         var realms = new List<RealmDescriptor>();
+
         await foreach (var key in server.KeysAsync(pattern: _prefix + "*", pageSize: 128)
-                           .WithCancellation(cancellationToken))
+                                        .WithCancellation(cancellationToken))
         {
             var instance = await ReadAsync(key, cancellationToken).ConfigureAwait(false);
+
             if (instance is not null && accountType >= instance.Descriptor.MinimumAccountType)
             {
                 realms.Add(instance.Descriptor);
@@ -210,6 +173,63 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         return instance is not null && accountType >= instance.Descriptor.MinimumAccountType ? instance : null;
     }
 
+    private async ValueTask<int> ClaimAsync(
+        RealmInstance realm,
+        bool heartbeat,
+        CancellationToken cancellationToken
+    )
+    {
+        Validate(realm);
+        var descriptor = realm.Descriptor;
+        var result = await _redis.Connection
+                                 .GetDatabase()
+                                 .ScriptEvaluateAsync(
+                                     ClaimScript,
+                                     [Key(descriptor.ServerIndex)],
+                                     [
+                                         descriptor.RealmId,
+                                         realm.InstanceId.ToString("N"),
+                                         descriptor.ServerIndex.ToString(CultureInfo.InvariantCulture),
+                                         descriptor.Name,
+                                         descriptor.Address.ToString(),
+                                         descriptor.Port.ToString(CultureInfo.InvariantCulture),
+                                         ((int)descriptor.MinimumAccountType).ToString(CultureInfo.InvariantCulture),
+                                         _prefix,
+                                         _maxRealms,
+                                         _leaseSeconds,
+                                         heartbeat ? "heartbeat" : "claim"
+                                     ]
+                                 )
+                                 .WaitAsync(cancellationToken)
+                                 .ConfigureAwait(false);
+
+        return (int)result;
+    }
+
+    private static void ThrowClaimFailure(int result)
+    {
+        switch (result)
+        {
+            case -1:
+                throw new RealmDirectoryException(
+                    RealmRegistrationError.DuplicateIndex,
+                    "Realm server index is already registered."
+                );
+            case -2:
+                throw new RealmDirectoryException(
+                    RealmRegistrationError.CapacityExceeded,
+                    "Realm directory capacity exceeded."
+                );
+            case -3:
+                throw new RealmDirectoryException(
+                    RealmRegistrationError.InvalidDescriptor,
+                    "Realm metadata changed without a new instance ID."
+                );
+            default:
+                throw new InvalidDataException("Redis returned an unknown realm registration result.");
+        }
+    }
+
     private RedisKey Key(ushort index)
         => _prefix + index.ToString(CultureInfo.InvariantCulture);
 
@@ -219,8 +239,11 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
 
         try
         {
-            entries = await _redis.Connection.GetDatabase().HashGetAllAsync(key)
-                                  .WaitAsync(cancellationToken).ConfigureAwait(false);
+            entries = await _redis.Connection
+                                  .GetDatabase()
+                                  .HashGetAllAsync(key)
+                                  .WaitAsync(cancellationToken)
+                                  .ConfigureAwait(false);
         }
         catch (RedisServerException exception) when (exception.Message.StartsWith("WRONGTYPE", StringComparison.Ordinal))
         {
@@ -232,8 +255,12 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
             return null;
         }
 
-        var values = entries.ToDictionary(entry => (string)entry.Name!, entry => (string)entry.Value!,
-            StringComparer.Ordinal);
+        var values = entries.ToDictionary(
+            entry => (string)entry.Name!,
+            entry => (string)entry.Value!,
+            StringComparer.Ordinal
+        );
+
         if (!values.TryGetValue("realm_id", out var id) ||
             !values.TryGetValue("instance_id", out var instanceText) ||
             !Guid.TryParseExact(instanceText, "N", out var instanceId) ||
@@ -252,11 +279,12 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         }
 
         var descriptor = new RealmDescriptor(id, index, name, address, port, (AccountType)minimumNumber);
+
         try
         {
-            Validate(new RealmInstance(descriptor, instanceId));
+            Validate(new(descriptor, instanceId));
 
-            return new RealmInstance(descriptor, instanceId);
+            return new(descriptor, instanceId);
         }
         catch (Exception exception) when (exception is InvalidOperationException or ArgumentException)
         {
@@ -267,10 +295,14 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
     private static void Validate(RealmInstance realm)
     {
         var descriptor = realm.Descriptor;
-        if (realm.InstanceId == Guid.Empty || string.IsNullOrWhiteSpace(descriptor.RealmId) ||
-            descriptor.RealmId.Length > 128 || descriptor.Port == 0 ||
+
+        if (realm.InstanceId == Guid.Empty ||
+            string.IsNullOrWhiteSpace(descriptor.RealmId) ||
+            descriptor.RealmId.Length > 128 ||
+            descriptor.Port == 0 ||
             descriptor.Address.AddressFamily != AddressFamily.InterNetwork ||
-            descriptor.Address.Equals(IPAddress.Any) || descriptor.Address.GetAddressBytes()[0] >= 224 ||
+            descriptor.Address.Equals(IPAddress.Any) ||
+            descriptor.Address.GetAddressBytes()[0] >= 224 ||
             !Enum.IsDefined(descriptor.MinimumAccountType))
         {
             throw new InvalidOperationException("Realm descriptor is invalid.");

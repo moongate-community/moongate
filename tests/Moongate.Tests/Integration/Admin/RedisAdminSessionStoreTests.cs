@@ -17,6 +17,7 @@ public sealed class RedisAdminSessionStoreTests
         var digest = AdminRedisFixture.Digest();
         await fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMilliseconds(80));
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
         while (await fixture.Store.FindAsync(digest) is not null)
         {
             await Task.Delay(10, deadline.Token);
@@ -32,10 +33,15 @@ public sealed class RedisAdminSessionStoreTests
     {
         await using var fixture = await AdminRedisFixture.CreateAsync();
         await fixture.Redis.StopAsync();
+
         try
         {
-            await Assert.ThrowsAsync<AdminDependencyUnavailableException>(() => fixture.Store.FindAsync(AdminRedisFixture.Digest()));
-            await Assert.ThrowsAsync<AdminDependencyUnavailableException>(() => fixture.Throttle.TryAcquireAsync("127.0.0.1", "alice"));
+            await Assert.ThrowsAsync<AdminDependencyUnavailableException>(
+                () => fixture.Store.FindAsync(AdminRedisFixture.Digest())
+            );
+            await Assert.ThrowsAsync<AdminDependencyUnavailableException>(
+                () => fixture.Throttle.TryAcquireAsync("127.0.0.1", "alice")
+            );
         }
         finally
         {
@@ -49,10 +55,19 @@ public sealed class RedisAdminSessionStoreTests
         await using var fixture = await AdminRedisFixture.CreateAsync();
         var gate = await fixture.Store.ResetGateAsync(Identity.AccountId, false);
         var digest = AdminRedisFixture.Digest();
-        await Assert.ThrowsAsync<ArgumentException>(() => fixture.Store.IssueAsync(new(new(1), "admin", (AccountType)99), gate.Generation, digest, TimeSpan.FromMinutes(1)));
+        await Assert.ThrowsAsync<ArgumentException>(
+            () => fixture.Store.IssueAsync(
+                new(new(1), "admin", (AccountType)99),
+                gate.Generation,
+                digest,
+                TimeSpan.FromMinutes(1)
+            )
+        );
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1), cancellation.Token));
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(
+            () => fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1), cancellation.Token)
+        );
         Assert.Null(await fixture.Store.FindAsync(digest));
     }
 
@@ -76,11 +91,15 @@ public sealed class RedisAdminSessionStoreTests
         await using var fixture = await AdminRedisFixture.CreateAsync();
         var gate = await fixture.Store.ResetGateAsync(Identity.AccountId, true);
         var digest = AdminRedisFixture.Digest();
-        await Assert.ThrowsAsync<AdminSessionRejectedException>(() => fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1)));
+        await Assert.ThrowsAsync<AdminSessionRejectedException>(
+            () => fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1))
+        );
         Assert.Null(await fixture.Redis.Connection.GetDatabase().KeyTimeToLiveAsync(fixture.Prefix + "gate:1"));
         Assert.True(await fixture.Store.TryOpenGateAsync(Identity.AccountId, gate.Generation));
         await fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1));
-        await Assert.ThrowsAsync<AdminSessionRejectedException>(() => fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1)));
+        await Assert.ThrowsAsync<AdminSessionRejectedException>(
+            () => fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1))
+        );
         var next = await fixture.Store.ResetGateAsync(Identity.AccountId, true);
         Assert.NotEqual(gate.Generation, next.Generation);
         Assert.False(await fixture.Store.TryOpenGateAsync(Identity.AccountId, gate.Generation));
@@ -96,12 +115,25 @@ public sealed class RedisAdminSessionStoreTests
         await fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1));
         var database = fixture.Redis.Connection.GetDatabase();
         var key = fixture.Prefix + "session:" + digest;
+
         switch (kind)
         {
-            case "missing-gate": await database.KeyDeleteAsync(fixture.Prefix + "gate:1"); break;
-            case "expired": await database.HashSetAsync(key, "expires", 1); break;
-            case "unknown-role": await database.HashSetAsync(key, "role", 99); break;
-            default: await database.HashDeleteAsync(key, "username"); break;
+            case "missing-gate":
+                await database.KeyDeleteAsync(fixture.Prefix + "gate:1");
+
+                break;
+            case "expired":
+                await database.HashSetAsync(key, "expires", 1);
+
+                break;
+            case "unknown-role":
+                await database.HashSetAsync(key, "role", 99);
+
+                break;
+            default:
+                await database.HashDeleteAsync(key, "username");
+
+                break;
         }
         Assert.Null(await fixture.Store.FindAsync(digest));
     }
@@ -112,11 +144,14 @@ public sealed class RedisAdminSessionStoreTests
         await using var fixture = await AdminRedisFixture.CreateAsync();
         var gate = await fixture.Store.ResetGateAsync(Identity.AccountId, false);
         var digests = Enumerable.Range(0, 64).Select(_ => AdminRedisFixture.Digest()).ToArray();
+
         foreach (var digest in digests)
         {
             await fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1));
         }
-        await Assert.ThrowsAsync<AdminSessionLimitException>(() => fixture.Store.IssueAsync(Identity, gate.Generation, AdminRedisFixture.Digest(), TimeSpan.FromMinutes(1)));
+        await Assert.ThrowsAsync<AdminSessionLimitException>(
+            () => fixture.Store.IssueAsync(Identity, gate.Generation, AdminRedisFixture.Digest(), TimeSpan.FromMinutes(1))
+        );
         await fixture.Store.RemoveAsync(digests[0]);
         await fixture.Store.RemoveAsync(digests[0]);
         Assert.Null(await fixture.Store.FindAsync(digests[0]));
@@ -136,6 +171,7 @@ public sealed class RedisAdminSessionStoreTests
         var digest = AdminRedisFixture.Digest();
         var issue = fixture.Store.IssueAsync(Identity, gate.Generation, digest, TimeSpan.FromMinutes(1));
         await fixture.Store.ResetGateAsync(Identity.AccountId, false);
+
         try { await issue; }
         catch (AdminSessionRejectedException) { }
         Assert.Null(await fixture.Store.FindAsync(digest));

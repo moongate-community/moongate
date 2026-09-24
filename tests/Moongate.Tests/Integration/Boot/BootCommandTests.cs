@@ -21,7 +21,12 @@ public sealed class BootCommandTests
     {
         using var directory = new TemporaryDirectory();
         var root = Path.Combine(directory.Path, "server root");
-        var result = await BootProcess.RunAsync(root, "--generate-admin-certificate", "--admin-certificate-hosts", "login.example.test,192.0.2.10");
+        var result = await BootProcess.RunAsync(
+                         root,
+                         "--generate-admin-certificate",
+                         "--admin-certificate-hosts",
+                         "login.example.test,192.0.2.10"
+                     );
         Assert.True(result.ExitCode == 0, result.Output);
         var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(Path.Combine(root, "config/moongate.toml"))!;
         Assert.True(config.AdminApi.Enabled);
@@ -37,7 +42,9 @@ public sealed class BootCommandTests
         using var directory = new TemporaryDirectory();
         var result = await BootProcess.RunAsync(directory.Path);
         Assert.True(result.ExitCode == 0, result.Output);
-        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(Path.Combine(directory.Path, "config/moongate.toml"))!;
+        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(
+            Path.Combine(directory.Path, "config/moongate.toml")
+        )!;
         Assert.False(config.AdminApi.Enabled);
         Assert.False(Directory.Exists(Path.Combine(directory.Path, "certificates")));
     }
@@ -53,12 +60,13 @@ public sealed class BootCommandTests
         Assert.Contains("conflicts with bundled", result.Output);
     }
 
-    [Theory, InlineData("--unknown"), InlineData("--admin-certificate-hosts", "login.example.test"), InlineData("extra-root")]
+    [Theory, InlineData("--unknown"), InlineData("--admin-certificate-hosts", "login.example.test"),
+     InlineData("extra-root")]
     public async Task Run_InvalidArguments_FailsBeforeCreatingRoot(params string[] arguments)
     {
         using var directory = new TemporaryDirectory();
         var root = Path.Combine(directory.Path, "root");
-        var result = await BootProcess.RunAsync([root, ..arguments]);
+        var result = await BootProcess.RunAsync([root, .. arguments]);
         Assert.NotEqual(0, result.ExitCode);
         Assert.False(Directory.Exists(root));
     }

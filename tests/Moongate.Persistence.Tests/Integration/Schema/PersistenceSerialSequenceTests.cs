@@ -1,7 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Services;
-using Moongate.Persistence.Types.Persistence;
 using Moongate.Persistence.Tests.TestSupport.Persistence;
+using Moongate.Persistence.Types.Persistence;
 
 namespace Moongate.Persistence.Tests.Integration.Schema;
 
@@ -19,6 +19,7 @@ public sealed class PersistenceSerialSequenceTests
     public async Task PreviewAndSynchronize_RenamedIdColumn_PreserveOwnedSequenceAndReservations()
     {
         await using var database = await _postgres.CreateDatabaseAsync();
+
         await using (var original = FacadeFixture.Create(database))
         {
             var store = original.RegisterEntity<CharacterEntity>();
@@ -39,7 +40,7 @@ public sealed class PersistenceSerialSequenceTests
         Assert.Equal("existing", (await renamedStore.GetByIdAsync(new(42)))!.Name);
         var entity = new RenamedSerialEntity { Name = "after rename" };
         await renamedStore.UpsertAsync(entity);
-        Assert.Equal(new Serial(51), entity.Id);
+        Assert.Equal(new(51), entity.Id);
         Assert.Empty(await renamed.PreviewSchemaAsync());
     }
 
@@ -57,12 +58,12 @@ public sealed class PersistenceSerialSequenceTests
         await owner.InitializeAsync();
         var entity = new CharacterEntity();
         await store.UpsertAsync(entity);
-        Assert.Equal(new Serial(43), entity.Id);
+        Assert.Equal(new(43), entity.Id);
         await store.DeleteAsync(entity.Id);
         await owner.InitializeAsync();
         var next = new CharacterEntity();
         await store.UpsertAsync(next);
-        Assert.Equal(new Serial(44), next.Id);
+        Assert.Equal(new(44), next.Id);
         Assert.Empty(await owner.PreviewSchemaAsync());
     }
 
@@ -79,7 +80,7 @@ public sealed class PersistenceSerialSequenceTests
         );
         var last = new CharacterEntity { Name = "last" };
         await store.UpsertAsync(last);
-        Assert.Equal(new Serial(uint.MaxValue), last.Id);
+        Assert.Equal(new(uint.MaxValue), last.Id);
         var exhausted = new CharacterEntity { Name = "exhausted" };
         await Assert.ThrowsAnyAsync<Exception>(() => store.UpsertAsync(exhausted));
         Assert.Equal(Serial.Zero, exhausted.Id);

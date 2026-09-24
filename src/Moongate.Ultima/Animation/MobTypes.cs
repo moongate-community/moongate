@@ -45,12 +45,6 @@ public static class MobTypes
 
     private static readonly Dictionary<int, Entry> _entries = new();
 
-    private struct Entry
-    {
-        public MobType Type;
-        public uint Flags;
-    }
-
     public static bool IsLoaded { get; private set; }
 
     static MobTypes()
@@ -175,5 +169,11 @@ public static class MobTypes
         flags = 0;
 
         return false;
+    }
+
+    private struct Entry
+    {
+        public MobType Type;
+        public uint Flags;
     }
 }

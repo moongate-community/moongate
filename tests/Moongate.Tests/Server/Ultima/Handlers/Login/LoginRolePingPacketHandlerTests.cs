@@ -16,7 +16,7 @@ public sealed class LoginRolePingPacketHandlerTests
         var sender = new RecordingLoginPacketSender();
         var handler = new LoginRolePingPacketHandler(sender);
 
-        await handler.HandleAsync(session, new PingPacket(42), CancellationToken.None);
+        await handler.HandleAsync(session, new(42), CancellationToken.None);
 
         Assert.Equal(42, Assert.IsType<PingPacket>(Assert.Single(sender.Sent)).Sequence);
     }

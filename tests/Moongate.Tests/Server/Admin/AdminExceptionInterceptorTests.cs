@@ -9,7 +9,7 @@ public sealed class AdminExceptionInterceptorTests
     public void MapStatus_CanceledCallWithWrappedProviderFailure_ReturnsCanceled()
     {
         var exception = new InvalidOperationException("provider wrapper", new OperationCanceledException());
-        var status = AdminExceptionInterceptor.MapStatus(exception, new CancellationToken(true));
+        var status = AdminExceptionInterceptor.MapStatus(exception, new(true));
         Assert.Equal(StatusCode.Cancelled, status.StatusCode);
         Assert.DoesNotContain("provider", status.Detail);
     }

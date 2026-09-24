@@ -26,17 +26,26 @@ public sealed class LoginSession
 
     public Serial AccountId
     {
-        get { lock (_gate) { return _accountId; } }
+        get
+        {
+            lock (_gate) { return _accountId; }
+        }
     }
 
     public AccountType AccountType
     {
-        get { lock (_gate) { return _accountType; } }
+        get
+        {
+            lock (_gate) { return _accountType; }
+        }
     }
 
     public bool IsDisconnected
     {
-        get { lock (_gate) { return _disconnected; } }
+        get
+        {
+            lock (_gate) { return _disconnected; }
+        }
     }
 
     public LoginSession(INetworkConnection connection)
@@ -56,12 +65,17 @@ public sealed class LoginSession
             _accountId = accountId;
             _accountType = accountType;
             ClearCredentialKey();
+
             return true;
         }
     }
 
-    public bool TrySetAccount(Serial accountId, AccountType accountType, string username,
-        ReadOnlySpan<byte> credentialKey)
+    public bool TrySetAccount(
+        Serial accountId,
+        AccountType accountType,
+        string username,
+        ReadOnlySpan<byte> credentialKey
+    )
     {
         ArgumentException.ThrowIfNullOrEmpty(username);
 
@@ -82,13 +96,18 @@ public sealed class LoginSession
             _accountType = accountType;
             _username = username;
             _credentialKey = credentialKey.ToArray();
+
             return true;
         }
     }
 
     /// <summary>Returns an atomic account snapshot with a caller-owned key that must be cleared after use.</summary>
-    public bool TryGetAuthenticatedAccount(out Serial accountId, out AccountType accountType,
-        [NotNullWhen(true)] out string? username, [NotNullWhen(true)] out byte[]? credentialKey)
+    public bool TryGetAuthenticatedAccount(
+        out Serial accountId,
+        out AccountType accountType,
+        [NotNullWhen(true)] out string? username,
+        [NotNullWhen(true)] out byte[]? credentialKey
+    )
     {
         lock (_gate)
         {
@@ -96,6 +115,7 @@ public sealed class LoginSession
             accountType = _accountType;
             username = _username;
             credentialKey = _credentialKey?.ToArray();
+
             return !_disconnected && username is not null && credentialKey is not null;
         }
     }

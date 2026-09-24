@@ -24,8 +24,10 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
 
     private FrozenDictionary<Type, Action<GameSession, IPacket>> _handlers =
         FrozenDictionary<Type, Action<GameSession, IPacket>>.Empty;
+
     private FrozenDictionary<Type, Func<PacketContext, IPacket, CancellationToken, ValueTask>> _asyncHandlers =
         FrozenDictionary<Type, Func<PacketContext, IPacket, CancellationToken, ValueTask>>.Empty;
+
     private AsyncPacketExecutor? _asyncExecutor;
 
     private bool _everStarted;
@@ -55,50 +57,6 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         return cancellationFailure is null
                    ? retirement
                    : CompleteAfterCancellationFailureAsync(retirement, cancellationFailure);
-    }
-
-    private Task RetireSessionAsync(long sessionId)
-    {
-        lock (_gate)
-        {
-            if (!_everStarted || _gameLoop.IsOnLoopThread || _gameLoop.Completion.IsCompleted)
-            {
-                var retirement = new SessionRetirementWorkItem(_sessions, sessionId);
-                retirement.Execute();
-
-                return retirement.Completion;
-            }
-
-            if (_disconnects.TryGetValue(sessionId, out var pending))
-            {
-                return pending;
-            }
-
-            if (!_sessions.TryGet(sessionId, out _))
-            {
-                return Task.CompletedTask;
-            }
-
-            var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-            _disconnects.Add(sessionId, completion.Task);
-            _ = RetireAsync(sessionId, completion);
-
-            return completion.Task;
-        }
-    }
-
-    private static async Task CompleteAfterCancellationFailureAsync(Task retirement, Exception cancellationFailure)
-    {
-        try
-        {
-            await retirement.ConfigureAwait(false);
-        }
-        catch (Exception retirementFailure)
-        {
-            throw new AggregateException(cancellationFailure, retirementFailure);
-        }
-
-        throw new AggregateException("Async packet cancellation failed after session retirement.", cancellationFailure);
     }
 
     /// <inheritdoc />
@@ -144,6 +102,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         {
             _running = false;
             _stopped = true;
+
             return _stopTask ??= _asyncExecutor?.DisposeAsync().AsTask() ?? Task.CompletedTask;
         }
     }
@@ -193,6 +152,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
                 }
 
                 executor.Release(job!);
+
                 return false;
             }
 
@@ -209,6 +169,50 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
 
             return false;
         }
+    }
+
+    private Task RetireSessionAsync(long sessionId)
+    {
+        lock (_gate)
+        {
+            if (!_everStarted || _gameLoop.IsOnLoopThread || _gameLoop.Completion.IsCompleted)
+            {
+                var retirement = new SessionRetirementWorkItem(_sessions, sessionId);
+                retirement.Execute();
+
+                return retirement.Completion;
+            }
+
+            if (_disconnects.TryGetValue(sessionId, out var pending))
+            {
+                return pending;
+            }
+
+            if (!_sessions.TryGet(sessionId, out _))
+            {
+                return Task.CompletedTask;
+            }
+
+            var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+            _disconnects.Add(sessionId, completion.Task);
+            _ = RetireAsync(sessionId, completion);
+
+            return completion.Task;
+        }
+    }
+
+    private static async Task CompleteAfterCancellationFailureAsync(Task retirement, Exception cancellationFailure)
+    {
+        try
+        {
+            await retirement.ConfigureAwait(false);
+        }
+        catch (Exception retirementFailure)
+        {
+            throw new AggregateException(cancellationFailure, retirementFailure);
+        }
+
+        throw new AggregateException("Async packet cancellation failed after session retirement.", cancellationFailure);
     }
 
     private async Task RetireAsync(long sessionId, TaskCompletionSource completion)

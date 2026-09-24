@@ -1,5 +1,4 @@
 using DryIoc;
-using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Network.Packets.General;
@@ -8,7 +7,6 @@ using Moongate.Persistence.Extensions;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Plugins;
-using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Commands;
@@ -53,8 +51,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterCommand<AccountCommand>(
                 "account",
                 "Creates an account: account create <username> <password> [Regular|GameMaster|Administrator]. Console provisioning: account api-access <username> <on|off>.",
-                CommandSourceType.Console | CommandSourceType.InGame,
-                AccountType.Administrator
+                CommandSourceType.Console | CommandSourceType.InGame
             );
 
             container.RegisterLoginPacketHandler<PingPacket, LoginRolePingPacketHandler>();

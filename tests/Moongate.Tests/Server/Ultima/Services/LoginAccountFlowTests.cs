@@ -5,11 +5,10 @@ using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
-using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Services;
-using Moongate.Tests.TestSupport.Server.Ultima;
 using Moongate.Tests.TestSupport.Realms;
+using Moongate.Tests.TestSupport.Server.Ultima;
 
 namespace Moongate.Tests.Server.Ultima.Services;
 
@@ -25,7 +24,7 @@ public sealed class LoginAccountFlowTests
         var result = await flow.AuthenticateAsync("user", "password", CancellationToken.None);
 
         Assert.True(result.Success);
-        Assert.Equal(new Serial(42), result.AccountId);
+        Assert.Equal(new(42), result.AccountId);
         Assert.Equal([2], result.Servers.Select(server => server.ServerIndex));
     }
 
@@ -33,7 +32,9 @@ public sealed class LoginAccountFlowTests
     public async Task AuthenticateAsync_AdministratorSeesAllRealmsInIndexOrder()
     {
         var flow = new LoginAccountFlow(
-            new RecordingAccountService { LoginResult = Account(AccountType.Administrator) }, Directory());
+            new RecordingAccountService { LoginResult = Account(AccountType.Administrator) },
+            Directory()
+        );
 
         var result = await flow.AuthenticateAsync("admin", "password", CancellationToken.None);
 
@@ -44,10 +45,20 @@ public sealed class LoginAccountFlowTests
     [Fact]
     public async Task AuthenticateAsync_NoEligibleRealm_DeniesCommunicationProblem()
     {
-        var directory = new StubRealmCatalog(new RealmDescriptor("staff", 1, "Staff", IPAddress.Loopback, 2593,
-            AccountType.GameMaster));
+        var directory = new StubRealmCatalog(
+            new RealmDescriptor(
+                "staff",
+                1,
+                "Staff",
+                IPAddress.Loopback,
+                2593,
+                AccountType.GameMaster
+            )
+        );
         var flow = new LoginAccountFlow(
-            new RecordingAccountService { LoginResult = Account(AccountType.Regular) }, directory);
+            new RecordingAccountService { LoginResult = Account(AccountType.Regular) },
+            directory
+        );
 
         var result = await flow.AuthenticateAsync("user", "password", CancellationToken.None);
 
@@ -71,14 +82,18 @@ public sealed class LoginAccountFlowTests
     [Fact]
     public async Task AuthenticateAsync_UnavailableRealmCatalog_DeniesCommunicationProblem()
     {
-        await using var redis = new RedisConnectionService(new RedisConfig
-        {
-            ConnectionString = "127.0.0.1:1",
-            HandoffSecret = new string('x', 32)
-        });
+        await using var redis = new RedisConnectionService(
+            new()
+            {
+                ConnectionString = "127.0.0.1:1",
+                HandoffSecret = new('x', 32)
+            }
+        );
         var directory = new RedisRealmDirectoryService(redis);
         var flow = new LoginAccountFlow(
-            new RecordingAccountService { LoginResult = Account(AccountType.Regular) }, directory);
+            new RecordingAccountService { LoginResult = Account(AccountType.Regular) },
+            directory
+        );
 
         var result = await flow.AuthenticateAsync("user", "password", CancellationToken.None);
 
@@ -86,7 +101,7 @@ public sealed class LoginAccountFlowTests
     }
 
     private static AccountEntity Account(AccountType accountType)
-        => new() { Id = new Serial(42), Username = "user", AccountType = accountType };
+        => new() { Id = new(42), Username = "user", AccountType = accountType };
 
     private static StubRealmCatalog Directory()
         => new(

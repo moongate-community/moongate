@@ -5,7 +5,6 @@ using Moongate.Tests.Support.Serialization.Toml;
 using Moongate.Tests.TestSupport.Directories;
 using Tomlyn;
 using Tomlyn.Model;
-using Tomlyn.Serialization;
 
 namespace Moongate.Tests.Core.Utils;
 

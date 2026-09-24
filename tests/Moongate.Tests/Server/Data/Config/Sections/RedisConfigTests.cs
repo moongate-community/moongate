@@ -21,8 +21,10 @@ public sealed class RedisConfigTests
             Assert.Contains("[redis]", text);
             Assert.Contains("connection_string = \"$MOONGATE_REDIS_CONNECTION_STRING\"", text);
             Assert.Contains("handoff_secret = \"$MOONGATE_HANDOFF_SECRET\"", text);
-            Assert.Equal("$MOONGATE_REDIS_CONNECTION_STRING",
-                TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!.Redis.ConnectionString);
+            Assert.Equal(
+                "$MOONGATE_REDIS_CONNECTION_STRING",
+                TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!.Redis.ConnectionString
+            );
         }
         finally
         {
@@ -47,7 +49,7 @@ public sealed class RedisConfigTests
         var connectionName = "MOONGATE_REDIS_" + Guid.NewGuid().ToString("N");
         var secretName = "MOONGATE_HANDOFF_" + Guid.NewGuid().ToString("N");
         using var connection = new EnvironmentVariableScope(connectionName, "localhost:56379,password=synthetic-secret");
-        using var secret = new EnvironmentVariableScope(secretName, new string('a', 32));
+        using var secret = new EnvironmentVariableScope(secretName, new('a', 32));
         var config = new RedisConfig
         {
             ConnectionString = "$" + connectionName,
@@ -55,7 +57,7 @@ public sealed class RedisConfigTests
         };
 
         Assert.Equal("localhost:56379,password=synthetic-secret", config.ResolveConnectionString());
-        Assert.Equal(new string('a', 32), config.ResolveHandoffSecret());
+        Assert.Equal(new('a', 32), config.ResolveHandoffSecret());
     }
 
     [Fact]

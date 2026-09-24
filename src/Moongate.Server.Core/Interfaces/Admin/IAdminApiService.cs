@@ -7,6 +7,7 @@ public interface IAdminApiService : IMoongateStartupService
 {
     /// <summary>Accepts calls only after every startup subscriber and runtime activation has completed.</summary>
     void Activate();
+
     /// <summary>Rejects new calls before shutdown begins; StopAsync drains existing calls.</summary>
     void StopAccepting();
 }

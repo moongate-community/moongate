@@ -15,6 +15,7 @@ internal static class AdminApiConfigEditor
     {
         DocumentSyntax document;
         TomlTable model;
+
         try
         {
             document = SyntaxParser.ParseStrict(text);
@@ -25,15 +26,22 @@ internal static class AdminApiConfigEditor
             throw new InvalidDataException("Cannot update admin_api: configuration is not valid TOML.");
         }
         var tables = document.Tables.OfType<TableSyntax>().Where(table => IsKey(table.Name, "admin_api")).ToArray();
+
         if (model.TryGetValue("admin_api", out var existing) && (existing is not TomlTable || tables.Length != 1))
         {
-            throw new InvalidDataException("Certificate setup requires an explicit [admin_api] table; convert inline or dotted admin_api configuration first.");
+            throw new InvalidDataException(
+                "Certificate setup requires an explicit [admin_api] table; convert inline or dotted admin_api configuration first."
+            );
         }
         var config = existing is TomlTable tableModel
-            ? TomlUtils.Deserialize<AdminApiConfig>(TomlUtils.Serialize(tableModel))! : new AdminApiConfig();
+                         ? TomlUtils.Deserialize<AdminApiConfig>(TomlUtils.Serialize(tableModel))!
+                         : new();
+
         if (!string.IsNullOrEmpty(config.CertificatePath) && config.CertificatePath != "certificates/admin.pfx")
         {
-            throw new InvalidOperationException("admin_api already references a custom certificate. Preserve it or explicitly clear certificate_path before generating a new identity.");
+            throw new InvalidOperationException(
+                "admin_api already references a custom certificate. Preserve it or explicitly clear certificate_path before generating a new identity."
+            );
         }
         config.Enabled = true;
         config.AllowInsecureLoopback = false;
@@ -46,21 +54,29 @@ internal static class AdminApiConfigEditor
             ["certificate_path"] = "\"certificates/admin.pfx\"", ["certificate_password"] = "\"\""
         };
         var newline = text.Contains("\r\n", StringComparison.Ordinal) ? "\r\n" : "\n";
+
         if (tables.Length == 0)
         {
-            return text + newline + "[admin_api]" + newline + string.Concat(replacements.Select(pair => $"{pair.Key} = {pair.Value}{newline}"));
+            return text +
+                   newline +
+                   "[admin_api]" +
+                   newline +
+                   string.Concat(replacements.Select(pair => $"{pair.Key} = {pair.Value}{newline}"));
         }
         var table = tables[0];
         List<(int Offset, int Length, string Value)> edits = [];
+
         foreach (var (key, value) in replacements)
         {
             var entry = table.Items.SingleOrDefault(item => IsKey(item.Key, key));
+
             if (entry is not null)
             {
                 edits.Add((entry.Value!.Span.Offset, entry.Value.Span.Length, value));
             }
         }
         var missing = replacements.Where(pair => !table.Items.Any(item => IsKey(item.Key, pair.Key))).ToArray();
+
         if (missing.Length > 0)
         {
             var headerEnd = table.EndOfLineToken?.Span.End.Offset + 1 ?? table.CloseBracket!.Span.End.Offset + 1;
@@ -68,20 +84,25 @@ internal static class AdminApiConfigEditor
             edits.Add((headerEnd, 0, prefix + string.Concat(missing.Select(pair => $"{pair.Key} = {pair.Value}{newline}"))));
         }
         var result = new StringBuilder(text);
+
         foreach (var (offset, length, value) in edits.OrderByDescending(edit => edit.Offset))
         {
             result.Remove(offset, length).Insert(offset, value);
         }
         var updated = result.ToString();
         _ = TomlUtils.Deserialize<TomlTable>(updated);
+
         return updated;
     }
 
     private static bool IsKey(KeySyntax? key, string expected)
-        => key is not null && !key.DotKeys.Any() && (key.Key switch
-        {
-            BareKeySyntax bare => bare.Key?.Text,
-            StringValueSyntax quoted => quoted.Value,
-            _ => null
-        }) == expected;
+        => key is not null &&
+           !key.DotKeys.Any() &&
+           key.Key switch
+           {
+               BareKeySyntax bare       => bare.Key?.Text,
+               StringValueSyntax quoted => quoted.Value,
+               _                        => null
+           } ==
+           expected;
 }

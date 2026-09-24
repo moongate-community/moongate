@@ -7,12 +7,6 @@ internal sealed class BlockingConnectHandler : IDisposable
     public TaskCompletionSource Entered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
     public ManualResetEventSlim Release { get; } = new();
 
-    public void Dispose()
-    {
-        Release.Set();
-        Release.Dispose();
-    }
-
     public void Handle(object? sender, TcpClientEventArgs args)
     {
         Entered.TrySetResult();
@@ -21,5 +15,11 @@ internal sealed class BlockingConnectHandler : IDisposable
         {
             throw new TimeoutException("The connect handler was not released.");
         }
+    }
+
+    public void Dispose()
+    {
+        Release.Set();
+        Release.Dispose();
     }
 }

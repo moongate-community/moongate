@@ -12,9 +12,6 @@ public sealed class TemporaryScriptsDirectory : IDisposable
         Directory.CreateDirectory(Path);
     }
 
-    public void Dispose()
-        => Directory.Delete(Path, true);
-
     /// <summary>
     /// Writes a file under the directory, creating parent folders. Uses forward slashes in
     /// <paramref name="relativePath" />.
@@ -27,4 +24,7 @@ public sealed class TemporaryScriptsDirectory : IDisposable
 
         return full;
     }
+
+    public void Dispose()
+        => Directory.Delete(Path, true);
 }

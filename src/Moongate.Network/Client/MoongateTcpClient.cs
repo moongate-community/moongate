@@ -23,7 +23,6 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
 {
     private const int DefaultReceiveBufferSize = 8192;
     private const int DefaultMaxFrameLength = 1024 * 1024;
-    private static long _sessionIdSequence;
 
     private readonly CancellationTokenSource _internalCancellationTokenSource = new();
 
@@ -36,6 +35,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     private readonly Lock _lifecycleLock = new();
     private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
     private readonly TaskCompletionSource _sendsDrained = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    private static long _sessionIdSequence;
     private TcpClientState _state;
     private int _admittedSends;
     private ITransportCodec? _codec;
@@ -110,6 +110,27 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     public Task Completion => _completion.Task;
 
     /// <summary>
+    /// Raised when the client is fully connected and receive loop starts.
+    /// </summary>
+    public event EventHandler<TcpClientEventArgs>? OnConnected;
+
+    /// <summary>
+    /// Raised once when I/O has drained. Resource cleanup may still be running; await Completion outside callbacks.
+    /// </summary>
+    public event EventHandler<TcpClientEventArgs>? OnDisconnected;
+
+    /// <summary>
+    /// Raised synchronously with a stable payload copy after middleware and optional framing.
+    /// Callback failures close this connection; do not use async-void handlers.
+    /// </summary>
+    public event EventHandler<TcpDataReceivedEventArgs>? OnDataReceived;
+
+    /// <summary>
+    /// Raised when receive/send loops throw an exception.
+    /// </summary>
+    public event EventHandler<TcpExceptionEventArgs>? OnException;
+
+    /// <summary>
     /// Creates a client wrapper for an accepted socket.
     /// </summary>
     /// <param name="socket">Connected socket.</param>
@@ -175,27 +196,6 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         ReceiveBufferSize = receiveBufferSize;
         SessionId = Interlocked.Increment(ref _sessionIdSequence);
     }
-
-    /// <summary>
-    /// Raised when the client is fully connected and receive loop starts.
-    /// </summary>
-    public event EventHandler<TcpClientEventArgs>? OnConnected;
-
-    /// <summary>
-    /// Raised once when I/O has drained. Resource cleanup may still be running; await Completion outside callbacks.
-    /// </summary>
-    public event EventHandler<TcpClientEventArgs>? OnDisconnected;
-
-    /// <summary>
-    /// Raised synchronously with a stable payload copy after middleware and optional framing.
-    /// Callback failures close this connection; do not use async-void handlers.
-    /// </summary>
-    public event EventHandler<TcpDataReceivedEventArgs>? OnDataReceived;
-
-    /// <summary>
-    /// Raised when receive/send loops throw an exception.
-    /// </summary>
-    public event EventHandler<TcpExceptionEventArgs>? OnException;
 
     /// <summary>
     /// Adds a middleware component to this client pipeline.

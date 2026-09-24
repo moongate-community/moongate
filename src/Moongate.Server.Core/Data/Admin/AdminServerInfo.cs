@@ -12,7 +12,14 @@ public sealed class AdminServerInfo
     public string? RealmId { get; }
     public TimeSpan Uptime { get; }
 
-    public AdminServerInfo(string version, string codename, ServerMode mode, string instanceId, string? realmId, TimeSpan uptime)
+    public AdminServerInfo(
+        string version,
+        string codename,
+        ServerMode mode,
+        string instanceId,
+        string? realmId,
+        TimeSpan uptime
+    )
     {
         Version = version;
         Codename = codename;

@@ -194,9 +194,6 @@ public sealed class CoroutineSchedulerTests : IDisposable
         Assert.Equal(ScriptResultKind.Completed, _scheduler.Start(Define("g", "return 1"), "b.lua").Kind);
     }
 
-    public void Dispose()
-        => _state.Dispose();
-
     [Fact]
     public void Start_FromInsideARunningResume_IsRefused()
     {
@@ -377,4 +374,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
 
         return _state.Environment[name].Read<LuaFunction>();
     }
+
+    public void Dispose()
+        => _state.Dispose();
 }

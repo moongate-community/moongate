@@ -19,11 +19,11 @@ public sealed class MigrationDraftWriterTests
         Assert.Contains("SELECT 8;", File.ReadAllText(path));
         Assert.Empty(Directory.GetFiles(Path.GetDirectoryName(path)!, "*.tmp"));
         var world = await MigrationDraftWriter.WriteAsync(
-            MigrationCatalog.Load(files.Core, null, MigrationTarget.World),
-            "core",
-            "SELECT 1;",
-            false
-        );
+                        MigrationCatalog.Load(files.Core, null, MigrationTarget.World),
+                        "core",
+                        "SELECT 1;",
+                        false
+                    );
         Assert.EndsWith("0001_auto_schema.sql", world);
     }
 
@@ -47,8 +47,9 @@ public sealed class MigrationDraftWriterTests
         using var files = new MigrationFiles();
         files.Write("migrations/auth/9999_last.sql", "SELECT 1;");
         var catalog = MigrationCatalog.Load(files.Core, null, MigrationTarget.Auth);
-        await Assert.ThrowsAsync<InvalidOperationException>(() =>
-            MigrationDraftWriter.WriteAsync(catalog, "core", "SELECT 2;", false)
+        await Assert.ThrowsAsync<InvalidOperationException>(
+            () =>
+                MigrationDraftWriter.WriteAsync(catalog, "core", "SELECT 2;", false)
         );
         await Assert.ThrowsAsync<ArgumentException>(() => MigrationDraftWriter.WriteAsync(catalog, "core", " ", false));
     }
@@ -59,11 +60,11 @@ public sealed class MigrationDraftWriterTests
         using var files = new MigrationFiles();
         files.Write("plugins/Notes/migrations/manifest.json", "{\"id\":\"notes\"}");
         var path = await MigrationDraftWriter.WriteAsync(
-            MigrationCatalog.Load(files.Core, files.Plugins, MigrationTarget.World),
-            "notes",
-            "SELECT 1;",
-            false
-        );
+                       MigrationCatalog.Load(files.Core, files.Plugins, MigrationTarget.World),
+                       "notes",
+                       "SELECT 1;",
+                       false
+                   );
         Assert.Equal(Path.Combine(files.Plugins, "Notes/migrations/world/0001_auto_schema.sql"), path);
         Assert.Empty(Directory.GetFiles(Path.Combine(files.Core, "world")));
     }

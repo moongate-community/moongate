@@ -11,6 +11,8 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     private readonly StringWriter _output = new();
     private readonly StringWriter _error = new();
 
+    private string CombinedOutput => _output + _error.ToString();
+
     public UoxItemConverterCommandTests()
     {
         AppContext.SetSwitch("Tomlyn.TomlSerializer.IsReflectionEnabledByDefault", true);
@@ -18,18 +20,6 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
     }
-
-    private string CombinedOutput
-        => _output + _error.ToString();
-
-    private int Run(bool includeLootDestination = true)
-        => UoxItemConverterCommand.Run(
-            _dirs.SourceDirectory,
-            _dirs.DestinationDirectory,
-            includeLootDestination ? _dirs.LootDestinationDirectory : null,
-            _output,
-            _error
-        );
 
     [Fact]
     public void Run_ABlockWithItsOwnFields_ConvertsEveryMappedField()
@@ -51,9 +41,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_dirs.DestinationDirectory, "items.toml")
-        );
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
         var item = Assert.Single(file!.Item);
         Assert.Equal("base_torch", item.Id);
         Assert.Equal((uint)0x0f6b, item.ItemId.Value);
@@ -88,9 +76,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_dirs.DestinationDirectory, "items.toml")
-        );
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
         var wallTorch = file!.Item.Single(item => item.Id == "wall_torch");
         Assert.Equal("base_torch", wallTorch.BaseId);
     }
@@ -117,9 +103,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_dirs.DestinationDirectory, "items.toml")
-        );
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
         var item = Assert.Single(file!.Item);
         Assert.Equal("0x1441", item.Id);
         Assert.Null(item.BaseId);
@@ -146,9 +130,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_dirs.DestinationDirectory, "items.toml")
-        );
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
         var item = Assert.Single(file!.Item);
         Assert.Equal("base_torch", item.Id);
     }
@@ -173,9 +155,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_dirs.DestinationDirectory, "items.toml")
-        );
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
         var item = Assert.Single(file!.Item);
         Assert.Equal("0x1441_cutlass_ns", item.Id);
     }
@@ -199,9 +179,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_dirs.DestinationDirectory, "items.toml")
-        );
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
         var item = Assert.Single(file!.Item);
         Assert.Equal("0x1f9b_pitcher_of_wine", item.Id);
     }
@@ -229,9 +207,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_dirs.DestinationDirectory, "doors.toml")
-        );
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "doors.toml"));
         var ids = file!.Item.Select(item => item.Id).ToArray();
         Assert.Equal(2, ids.Distinct(StringComparer.Ordinal).Count());
     }
@@ -277,11 +253,13 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
+
         // Each loot table writes to its own file, named after its own Id, not the source .dfn's.
         var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
             Path.Combine(_dirs.LootDestinationDirectory, "earthele_loot.toml")
         );
         var loot = Assert.Single(file!.Loot);
+
         // Real LOOTLIST names are camelCase; the Id goes through ToSnakeCase like everything else.
         Assert.Equal("earthele_loot", loot.Id);
         Assert.Equal(2, loot.Entries.Count);
@@ -386,6 +364,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var exitCode = Run();
 
         Assert.True(exitCode == 0, CombinedOutput);
+
         // randomgems and eartheleLoot are two tables from the same source .dfn, but each still
         // writes to its own file: randomgems.toml and earthele_loot.toml.
         var file = TomlUtils.DeserializeFromFile<ConvertedLootFile>(
@@ -535,12 +514,10 @@ public sealed class UoxItemConverterCommandTests : IDisposable
             """
         );
 
-        var exitCode = Run(includeLootDestination: false);
+        var exitCode = Run(false);
 
         Assert.True(exitCode == 0, CombinedOutput);
-        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(
-            Path.Combine(_dirs.DestinationDirectory, "loot.toml")
-        );
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "loot.toml"));
         Assert.Single(file!.Item);
         Assert.False(Directory.Exists(_dirs.LootDestinationDirectory));
     }
@@ -603,6 +580,15 @@ public sealed class UoxItemConverterCommandTests : IDisposable
             StringComparison.Ordinal
         );
     }
+
+    private int Run(bool includeLootDestination = true)
+        => UoxItemConverterCommand.Run(
+            _dirs.SourceDirectory,
+            _dirs.DestinationDirectory,
+            includeLootDestination ? _dirs.LootDestinationDirectory : null,
+            _output,
+            _error
+        );
 
     public void Dispose()
     {

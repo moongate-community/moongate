@@ -20,8 +20,11 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
     private IReadOnlyDictionary<Type, Func<LoginSession, IPacket, CancellationToken, ValueTask>>? _handlers;
     private bool _running;
 
-    public LoginPacketDispatchService(ILoginSessionService sessions, LoginPacketHandlerRegistry registry,
-        IResolverContext resolver)
+    public LoginPacketDispatchService(
+        ILoginSessionService sessions,
+        LoginPacketHandlerRegistry registry,
+        IResolverContext resolver
+    )
     {
         _sessions = sessions;
         _registry = registry;
@@ -32,8 +35,11 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
     {
         lock (_gate)
         {
-            _handlers = _registry.Freeze().ToDictionary(entry => entry.Key,
-                entry => entry.Value.Bind(_resolver));
+            _handlers = _registry.Freeze()
+                                 .ToDictionary(
+                                     entry => entry.Key,
+                                     entry => entry.Value.Bind(_resolver)
+                                 );
             _running = true;
         }
 
@@ -44,8 +50,11 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
     {
         lock (_gate)
         {
-            if (!_running || _handlers is null || !_handlers.ContainsKey(packet.GetType()) ||
-                !_sessions.TryGet(sessionId, out var session) || !_sessions.IsCurrent(session))
+            if (!_running ||
+                _handlers is null ||
+                !_handlers.ContainsKey(packet.GetType()) ||
+                !_sessions.TryGet(sessionId, out var session) ||
+                !_sessions.IsCurrent(session))
             {
                 return false;
             }
@@ -69,6 +78,7 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
     public Task DisconnectAsync(LoginSession session)
     {
         LoginPacketMailbox? mailbox;
+
         lock (_gate)
         {
             if (!_mailboxes.Remove(session, out mailbox))
@@ -83,6 +93,7 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
     public async Task StopAsync()
     {
         LoginPacketMailbox[] mailboxes;
+
         lock (_gate)
         {
             _running = false;

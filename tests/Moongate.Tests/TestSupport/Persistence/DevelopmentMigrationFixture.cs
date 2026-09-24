@@ -26,13 +26,16 @@ public sealed class DevelopmentMigrationFixture : IDisposable
     }
 
     internal PersistenceSchemaCoordinator Create(
-        Type entity, PersistenceDatabaseTarget target = PersistenceDatabaseTarget.Realm
+        Type entity,
+        PersistenceDatabaseTarget target = PersistenceDatabaseTarget.Realm
     )
     {
         var registry = new PersistenceModuleRegistry();
         registry.RegisterEntity(entity, target);
+
         return new(Config.Persistence.ToOptions(Migrations, Plugins, rootDirectory: Root), registry);
     }
 
-    public void Dispose() => Directory.Delete(Root, true);
+    public void Dispose()
+        => Directory.Delete(Root, true);
 }

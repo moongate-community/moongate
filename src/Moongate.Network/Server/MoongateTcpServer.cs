@@ -18,18 +18,6 @@ namespace Moongate.Network.Server;
 /// </summary>
 public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDisposable
 {
-    /// <summary>Raised when an accepted client connects.</summary>
-    public event EventHandler<TcpClientEventArgs>? OnClientConnect;
-
-    /// <summary>Raised when a connection closes; resource cleanup may still be in progress.</summary>
-    public event EventHandler<TcpClientEventArgs>? OnClientDisconnect;
-
-    /// <summary>Raised synchronously for each received chunk or frame.</summary>
-    public event EventHandler<TcpDataReceivedEventArgs>? OnDataReceived;
-
-    /// <summary>Raised for accept, pipeline and connection errors.</summary>
-    public event EventHandler<TcpExceptionEventArgs>? OnException;
-
     private const int DefaultBacklog = 512;
     private const int AcceptRetryDelayMilliseconds = 50;
     private readonly Lock _lifecycleSync = new();
@@ -61,6 +49,18 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
     private Task _stopTask = Task.CompletedTask;
     private Task _acceptLoopTask = Task.CompletedTask;
     private Task? _admissionStopTask;
+
+    /// <summary>Raised when an accepted client connects.</summary>
+    public event EventHandler<TcpClientEventArgs>? OnClientConnect;
+
+    /// <summary>Raised when a connection closes; resource cleanup may still be in progress.</summary>
+    public event EventHandler<TcpClientEventArgs>? OnClientDisconnect;
+
+    /// <summary>Raised synchronously for each received chunk or frame.</summary>
+    public event EventHandler<TcpDataReceivedEventArgs>? OnDataReceived;
+
+    /// <summary>Raised for accept, pipeline and connection errors.</summary>
+    public event EventHandler<TcpExceptionEventArgs>? OnException;
 
     /// <summary>
     /// Gets a snapshot of the bound endpoint while running or draining, or the configured endpoint otherwise.

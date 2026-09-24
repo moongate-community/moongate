@@ -65,9 +65,6 @@ public sealed class SessionFixture : IAsyncDisposable
         }
     }
 
-    public async ValueTask DisposeAsync()
-        => await DisposeResourcesAsync(Client, _peer, Loop);
-
     public async Task ExecuteOnLoopAsync(Action action)
     {
         ArgumentNullException.ThrowIfNull(action);
@@ -159,4 +156,7 @@ public sealed class SessionFixture : IAsyncDisposable
             throw new AggregateException(failures);
         }
     }
+
+    public async ValueTask DisposeAsync()
+        => await DisposeResourcesAsync(Client, _peer, Loop);
 }

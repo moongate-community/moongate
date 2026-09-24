@@ -53,6 +53,7 @@ public class MoongateServerConfig
         }
 
         Redis.Validate();
+
         if (AdminApi is null) { throw new InvalidOperationException("The admin_api configuration section cannot be null."); }
         AdminApi.Validate();
 

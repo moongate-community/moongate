@@ -7,14 +7,13 @@ namespace Moongate.Ultima.Io;
 [StructLayout(LayoutKind.Sequential, Pack = 1)]
 public struct Entry6D : IEntry
 {
+    private int _extra1;
+    private int _extra2;
     public IEntry Invalid => new Entry6D();
 
     public int Lookup { get; set; }
 
     public int Length { get; set; }
-
-    private int _extra1;
-    private int _extra2;
 
     public int Extra
     {

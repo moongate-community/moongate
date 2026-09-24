@@ -10,16 +10,23 @@ public sealed class TileMatrix : IDisposable
 {
     private readonly LruBlockCache<HuedTile[][][]> _staticTiles;
     private readonly LruBlockCache<Tile[]> _landTiles;
+
+    private readonly string _mapPath;
+    private readonly string _indexPath;
+    private readonly string _staticsPath;
     private bool[][] _removedStaticBlock;
     private List<StaticTile>[][] _staticTilesToAdd;
-
-    public static Tile[] InvalidLandBlock { get; private set; }
-    public static HuedTile[][][] EmptyStaticBlock { get; private set; }
 
     private FileStream _map;
     private BinaryReader _uopReader;
     private FileStream _statics;
     private Entry3D[] _staticIndex;
+
+    private static HuedTileList[][] _lists;
+    private static byte[] _buffer;
+
+    public static Tile[] InvalidLandBlock { get; private set; }
+    public static HuedTile[][][] EmptyStaticBlock { get; private set; }
 
     public bool StaticIndexInit { get; set; }
 
@@ -33,9 +40,19 @@ public sealed class TileMatrix : IDisposable
 
     public int Height { get; }
 
-    private readonly string _mapPath;
-    private readonly string _indexPath;
-    private readonly string _staticsPath;
+    /*
+     * UOP map files support code, written by Wyatt (c) www.ruosi.org
+     * It's not possible if some entry has unknown hash. Thrown exception
+     * means that EA changed maps UOPs again.
+     */
+    public bool IsUOPFormat { get; set; }
+    public bool IsUOPAlreadyRead { get; set; }
+
+    private UopFile[] UOPFiles { get; set; }
+    private long UOPLength => _map.Length;
+
+    /// <summary>Blocks currently held, land and statics counted separately. Diagnostic.</summary>
+    public (int Land, int Statics) CachedBlockCount => (_landTiles.Count, _staticTiles.Count);
 
     public TileMatrix(int fileIndex, int mapId, int width, int height, string path)
     {
@@ -124,35 +141,6 @@ public sealed class TileMatrix : IDisposable
 
         Patch = new(this, mapId, path);
     }
-
-    private static HuedTileList[][] _lists;
-    private static byte[] _buffer;
-
-    /*
-     * UOP map files support code, written by Wyatt (c) www.ruosi.org
-     * It's not possible if some entry has unknown hash. Thrown exception
-     * means that EA changed maps UOPs again.
-     */
-    public bool IsUOPFormat { get; set; }
-    public bool IsUOPAlreadyRead { get; set; }
-
-    private readonly struct UopFile
-    {
-        public readonly long Offset;
-        public readonly int Length;
-
-        public UopFile(long offset, int length)
-        {
-            Offset = offset;
-            Length = length;
-        }
-    }
-
-    private UopFile[] UOPFiles { get; set; }
-    private long UOPLength => _map.Length;
-
-    /// <summary>Blocks currently held, land and statics counted separately. Diagnostic.</summary>
-    public (int Land, int Statics) CachedBlockCount => (_landTiles.Count, _staticTiles.Count);
 
     public void AddPendingStatic(int blockX, int blockY, StaticTile toAdd)
     {
@@ -321,6 +309,18 @@ public sealed class TileMatrix : IDisposable
         }
 
         _landTiles.Set(LruBlockCache<Tile[]>.Key(x, y), value);
+    }
+
+    private readonly struct UopFile
+    {
+        public readonly long Offset;
+        public readonly int Length;
+
+        public UopFile(long offset, int length)
+        {
+            Offset = offset;
+            Length = length;
+        }
     }
 
     private long CalculateOffsetFromUOP(long offset)

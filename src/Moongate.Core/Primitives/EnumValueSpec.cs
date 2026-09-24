@@ -19,6 +19,9 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
     private readonly TEnum[]? _candidates;
     private readonly TEnum _fixedValue;
 
+    /// <summary>Gets whether this resolves to a random pick rather than always the same value.</summary>
+    public bool IsRandom => _candidates is not null;
+
     private EnumValueSpec(TEnum fixedValue)
     {
         _fixedValue = fixedValue;
@@ -30,9 +33,6 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
         _fixedValue = default;
         _candidates = candidates;
     }
-
-    /// <summary>Gets whether this resolves to a random pick rather than always the same value.</summary>
-    public bool IsRandom => _candidates is not null;
 
     /// <summary>Creates a spec that always resolves to <paramref name="value" />.</summary>
     public static EnumValueSpec<TEnum> FromValue(TEnum value)
@@ -81,7 +81,7 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
         if (trimmed.StartsWith(prefix, StringComparison.OrdinalIgnoreCase))
         {
             var names = trimmed[prefix.Length..]
-                       .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
+                .Split(',', StringSplitOptions.TrimEntries | StringSplitOptions.RemoveEmptyEntries);
 
             if (names.Length == 0)
             {
@@ -92,7 +92,7 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
 
             for (var i = 0; i < names.Length; i++)
             {
-                if (!Enum.TryParse<TEnum>(names[i], ignoreCase: true, out var candidate))
+                if (!Enum.TryParse<TEnum>(names[i], true, out var candidate))
                 {
                     return false;
                 }
@@ -105,7 +105,7 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
             return true;
         }
 
-        if (!Enum.TryParse<TEnum>(trimmed, ignoreCase: true, out var value))
+        if (!Enum.TryParse<TEnum>(trimmed, true, out var value))
         {
             return false;
         }

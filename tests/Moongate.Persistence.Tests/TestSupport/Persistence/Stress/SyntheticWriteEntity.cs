@@ -9,6 +9,7 @@ internal sealed class SyntheticWriteEntity : IMoongateEntity
 {
     [Column(IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
+
     public int SessionNumber { get; set; }
     public long Revision { get; set; }
     public bool RolledBack { get; set; }

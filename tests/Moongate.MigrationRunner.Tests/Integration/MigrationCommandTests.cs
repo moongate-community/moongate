@@ -39,6 +39,7 @@ public sealed class MigrationCommandTests : IClassFixture<PostgreSqlFixture>
         await using var db = await _postgres.CreateDatabaseAsync();
         using var files = new MigrationFiles();
         var builder = new NpgsqlConnectionStringBuilder(db.ConnectionString);
+
         // PostgreSqlConnectionString.Normalize reads the port only from the URI's own authority
         // (defaulting to 5432 there), never from a query parameter, so a non-default port must ride
         // in the authority itself - "localhost" alone silently assumed 5432 whenever the real

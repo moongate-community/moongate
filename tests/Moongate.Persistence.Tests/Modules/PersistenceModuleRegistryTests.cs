@@ -26,7 +26,8 @@ public sealed class PersistenceModuleRegistryTests
             ["created_at", "display_label", "hash_password", "id", "username"],
             table.ColumnsByCs.Values.Select(column => column.Attribute.Name).Order(StringComparer.Ordinal)
         );
-        var sql = database.Orm.Select<ConventionNamedEntity>()
+        var sql = database.Orm
+                          .Select<ConventionNamedEntity>()
                           .Where(entity => entity.HashPassword == "test")
                           .ToSql();
         Assert.Contains("\"hash_password\"", sql, StringComparison.Ordinal);

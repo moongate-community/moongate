@@ -48,21 +48,13 @@ internal sealed class ScriptedInstall : IDisposable
     public void Corrupt(string version, string rid)
         => File.WriteAllText(ArchivePath(version, rid), "not an archive");
 
-    /// <summary>Deletes the temporary tree, releases and installation alike.</summary>
-    public void Dispose()
-    {
-        if (Directory.Exists(_root))
-        {
-            Directory.Delete(_root, true);
-        }
-    }
-
     /// <summary>Writes a release archive and its checksum, with the given text standing in for the server binary.</summary>
     public void Publish(string version, string rid, string binaryContent, bool includeMgboot = false)
     {
         var bundle = Path.Combine(_root, "staging-" + Guid.NewGuid().ToString("N"), "moongate-" + rid);
         Directory.CreateDirectory(bundle);
         File.WriteAllText(Path.Combine(bundle, "Moongate.Server"), binaryContent);
+
         if (includeMgboot)
         {
             File.WriteAllText(Path.Combine(bundle, "mgboot"), "boot payload");
@@ -132,4 +124,13 @@ internal sealed class ScriptedInstall : IDisposable
 
     private string ArchivePath(string version, string rid)
         => Path.Combine(ReleaseDirectory, "v" + version, $"moongate-{rid}-{version}.tar.gz");
+
+    /// <summary>Deletes the temporary tree, releases and installation alike.</summary>
+    public void Dispose()
+    {
+        if (Directory.Exists(_root))
+        {
+            Directory.Delete(_root, true);
+        }
+    }
 }

@@ -12,6 +12,9 @@ public sealed class StringList
     private int _header1;
     private short _header2;
 
+    private Dictionary<int, string> _stringTable;
+    private Dictionary<int, StringEntry> _entryTable;
+
     public List<StringEntry> Entries { get; private set; }
     public string Language { get; }
 
@@ -21,9 +24,6 @@ public sealed class StringList
     /// and how many entries were salvaged. Caller should surface this to the user.
     /// </summary>
     public string LoadWarning { get; private set; }
-
-    private Dictionary<int, string> _stringTable;
-    private Dictionary<int, StringEntry> _entryTable;
 
     /// <summary>
     /// Initialize <see cref="StringList" /> of Language
@@ -48,18 +48,6 @@ public sealed class StringList
         _decompress = decompress;
         Language = language;
         LoadEntry(path);
-    }
-
-    private struct ParseResult
-    {
-        public bool Success;
-        public int EntriesParsed;
-        public List<StringEntry> Entries;
-        public Dictionary<int, string> StringTable;
-        public Dictionary<int, StringEntry> EntryTable;
-        public int Header1;
-        public short Header2;
-        public string ErrorMessage;
     }
 
     public class NumberComparer : IComparer<StringEntry>
@@ -210,6 +198,18 @@ public sealed class StringList
 
             bin.Write(data);
         }
+    }
+
+    private struct ParseResult
+    {
+        public bool Success;
+        public int EntriesParsed;
+        public List<StringEntry> Entries;
+        public Dictionary<int, string> StringTable;
+        public Dictionary<int, StringEntry> EntryTable;
+        public int Header1;
+        public short Header2;
+        public string ErrorMessage;
     }
 
     private void Apply(ParseResult result)

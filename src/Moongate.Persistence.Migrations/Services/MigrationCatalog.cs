@@ -24,7 +24,9 @@ public sealed partial class MigrationCatalog
     public IReadOnlyDictionary<string, string> SourceDirectories { get; }
 
     private MigrationCatalog(
-        MigrationTarget target, List<MigrationScript> scripts, HashSet<string> components,
+        MigrationTarget target,
+        List<MigrationScript> scripts,
+        HashSet<string> components,
         IReadOnlyDictionary<string, string> sources
     )
     {
@@ -71,8 +73,8 @@ public sealed partial class MigrationCatalog
                 using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
                 var id = manifest.RootElement.TryGetProperty("id", out var property) &&
                          property.ValueKind == JsonValueKind.String
-                    ? property.GetString()
-                    : null;
+                             ? property.GetString()
+                             : null;
 
                 if (id is null || !ComponentPattern().IsMatch(id) || !components.Add(id))
                 {
@@ -93,6 +95,7 @@ public sealed partial class MigrationCatalog
         }
 
         sources.Add("core", Path.GetFullPath(directory));
+
         return new(target, scripts, components, sources);
     }
 
@@ -139,8 +142,8 @@ public sealed partial class MigrationCatalog
             }
 
             var sql = new UTF8Encoding(false, true).GetString(File.ReadAllBytes(file))
-                .TrimStart('\uFEFF')
-                .Replace("\r\n", "\n", StringComparison.Ordinal);
+                                                   .TrimStart('\uFEFF')
+                                                   .Replace("\r\n", "\n", StringComparison.Ordinal);
 
             if (string.IsNullOrWhiteSpace(sql))
             {

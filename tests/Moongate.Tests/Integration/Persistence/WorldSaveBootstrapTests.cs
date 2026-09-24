@@ -169,9 +169,7 @@ public sealed class WorldSaveBootstrapTests
 
         if (failCleanup)
         {
-            container.AddMoongateService(
-                new CallbackStartupService(() => Task.CompletedTask, () => throw cleanupFailure)
-            );
+            container.AddMoongateService(new CallbackStartupService(() => Task.CompletedTask, () => throw cleanupFailure));
         }
 
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);

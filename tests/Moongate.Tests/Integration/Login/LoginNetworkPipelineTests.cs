@@ -21,16 +21,20 @@ public sealed class LoginNetworkPipelineTests
         var network = new NetworkServiceStub(connections);
         var sessions = new LoginSessionService();
         var sender = new PacketSendService(connections);
-        var dispatcher = new LoginPacketDispatchService(sessions,
-            container.Resolve<LoginPacketHandlerRegistry>(), container);
+        var dispatcher = new LoginPacketDispatchService(
+            sessions,
+            container.Resolve<LoginPacketHandlerRegistry>(),
+            container
+        );
         var server = new LoginServerService(network, connections, sessions, dispatcher, sender);
         using var connection = new ControlledNetworkConnection(1);
         var received = new TaskCompletionSource<byte>(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<RecordingLoginPacketHandler>().OnHandle = (_, packet, _) =>
-        {
-            received.TrySetResult(packet.Sequence);
-            return ValueTask.CompletedTask;
-        };
+                                                                    {
+                                                                        received.TrySetResult(packet.Sequence);
+
+                                                                        return ValueTask.CompletedTask;
+                                                                    };
         await connections.StartAsync();
         await sender.StartAsync();
         await dispatcher.StartAsync();

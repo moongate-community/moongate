@@ -36,8 +36,10 @@ internal sealed class StubRealmCatalog : IRealmCatalog
     {
         cancellationToken.ThrowIfCancellationRequested();
 
-        return ValueTask.FromResult(_realms.FirstOrDefault(
-            realm => realm.Descriptor.ServerIndex == index && accountType >= realm.Descriptor.MinimumAccountType
-        ));
+        return ValueTask.FromResult(
+            _realms.FirstOrDefault(
+                realm => realm.Descriptor.ServerIndex == index && accountType >= realm.Descriptor.MinimumAccountType
+            )
+        );
     }
 }

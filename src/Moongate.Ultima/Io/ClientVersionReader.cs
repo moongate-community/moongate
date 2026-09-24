@@ -9,6 +9,9 @@ namespace Moongate.Ultima.Io;
 /// </summary>
 public static class ClientVersionReader
 {
+    // Signature (30 bytes) + 12 bytes to the fixed version fields.
+    private const int VersionFieldOffset = 42;
+
     // "VS_VERSION_INFO" in UTF-16 (15 chars x 2 bytes).
     private static ReadOnlySpan<byte> VersionInfoSignature
         =>
@@ -18,9 +21,6 @@ public static class ClientVersionReader
             0x4F, 0x00, 0x4E, 0x00, 0x5F, 0x00, 0x49, 0x00,
             0x4E, 0x00, 0x46, 0x00, 0x4F, 0x00
         ];
-
-    // Signature (30 bytes) + 12 bytes to the fixed version fields.
-    private const int VersionFieldOffset = 42;
 
     /// <summary>
     /// Reads the client version from the <c>client.exe</c> located in the UO client directory

@@ -18,6 +18,7 @@ public sealed class LoginRolePingPacketHandler : ILoginPacketHandler<PingPacket>
     public async ValueTask HandleAsync(LoginSession session, PingPacket packet, CancellationToken cancellationToken)
     {
         cancellationToken.ThrowIfCancellationRequested();
+
         if (session.NetworkSession.Client is not { } connection)
         {
             return;

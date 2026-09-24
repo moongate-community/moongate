@@ -139,9 +139,9 @@ public sealed class LuaModuleBinderTests : IDisposable
         Assert.Contains("argument #1", exception.Message, StringComparison.Ordinal);
     }
 
-    public void Dispose()
-        => _state.Dispose();
-
     private LuaValue[] Run(string source)
         => SyncValueTask.Run(_state.DoStringAsync(source, "test"));
+
+    public void Dispose()
+        => _state.Dispose();
 }

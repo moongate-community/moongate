@@ -43,7 +43,7 @@ public sealed class EnumValueSpecTomlConverterFactoryTests
         {
             Assert.Contains(
                 holder!.Rarity.Resolve(),
-                (TemplateRarity[]) [TemplateRarity.Rare, TemplateRarity.Legendary]
+                (TemplateRarity[])[TemplateRarity.Rare, TemplateRarity.Legendary]
             );
         }
     }

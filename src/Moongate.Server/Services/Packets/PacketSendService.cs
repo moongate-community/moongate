@@ -1,6 +1,6 @@
+using Moongate.Network.Interfaces.Client;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Serialization;
-using Moongate.Network.Interfaces.Client;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Services.Packets.Internal;
 using Serilog;
@@ -65,12 +65,14 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
     public Task DisconnectAsync(long sessionId, INetworkConnection expectedConnection)
     {
         ArgumentNullException.ThrowIfNull(expectedConnection);
+
         lock (_gate)
         {
             if (_outboxes.TryGetValue(sessionId, out var outbox) &&
                 ReferenceEquals(outbox.Connection, expectedConnection))
             {
                 outbox.Close();
+
                 return outbox.Completion;
             }
         }
@@ -119,6 +121,7 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
     public bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet)
     {
         ArgumentNullException.ThrowIfNull(expectedConnection);
+
         return TrySendCore(sessionId, packet, expectedConnection);
     }
 
@@ -135,7 +138,8 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
 
         lock (_gate)
         {
-            if (!_running || !_connections.TryGet(sessionId, out var connection, out var disconnectRequested) ||
+            if (!_running ||
+                !_connections.TryGet(sessionId, out var connection, out var disconnectRequested) ||
                 !ReferenceEquals(connection, expectedConnection))
             {
                 return Task.FromResult(false);
@@ -143,8 +147,12 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
 
             if (!_outboxes.TryGetValue(sessionId, out var outbox))
             {
-                outbox = new(connection, disconnectRequested, _capacity,
-                    id => _connections.DisconnectAsync(id, connection));
+                outbox = new(
+                    connection,
+                    disconnectRequested,
+                    _capacity,
+                    id => _connections.DisconnectAsync(id, connection)
+                );
                 _outboxes.Add(sessionId, outbox);
                 outbox.Start();
                 _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));
@@ -187,8 +195,12 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
 
             if (!_outboxes.TryGetValue(sessionId, out var outbox))
             {
-                outbox = new(connection, disconnectRequested, _capacity,
-                    id => _connections.DisconnectAsync(id, connection));
+                outbox = new(
+                    connection,
+                    disconnectRequested,
+                    _capacity,
+                    id => _connections.DisconnectAsync(id, connection)
+                );
                 _outboxes.Add(sessionId, outbox);
                 outbox.Start();
                 _cleanups.Add(sessionId, ObserveCleanupAsync(sessionId, outbox.Completion, outbox));
@@ -259,6 +271,7 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
     private static async Task<bool> WaitForTerminalAsync(SessionPacketOutbox outbox, CancellationToken cancellationToken)
     {
         await outbox.Completion.WaitAsync(cancellationToken).ConfigureAwait(false);
+
         return outbox.TerminalSent;
     }
 

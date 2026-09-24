@@ -1,5 +1,5 @@
-using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Interfaces.Client;
+using Moongate.Network.Packets.Interfaces;
 
 namespace Moongate.Server.Core.Interfaces.Services;
 

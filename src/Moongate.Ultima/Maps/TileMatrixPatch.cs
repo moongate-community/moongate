@@ -6,15 +6,14 @@ namespace Moongate.Ultima.Maps;
 
 public sealed class TileMatrixPatch
 {
-    public int LandBlocksCount { get; }
-    public int StaticBlocksCount { get; }
-    public Tile[][][] LandBlocks { get; }
-    public HuedTile[][][][][] StaticBlocks { get; }
-
     private readonly int _blockWidth;
     private readonly int _blockHeight;
 
     private static StaticTile[] _tileBuffer = new StaticTile[128];
+    public int LandBlocksCount { get; }
+    public int StaticBlocksCount { get; }
+    public Tile[][][] LandBlocks { get; }
+    public HuedTile[][][][][] StaticBlocks { get; }
 
     public TileMatrixPatch(TileMatrix matrix, int index, string path)
     {

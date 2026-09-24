@@ -29,25 +29,29 @@ internal sealed class AccountServiceFixture : IAsyncDisposable
 
     public static async Task<AccountServiceFixture> CreateAsync()
     {
-        var host = await HostPersistenceFixture.CreateAsync(autoSync: false, twoTargets: true);
+        var host = await HostPersistenceFixture.CreateAsync(false, true);
+
         try
         {
             new MoongateUltimaPlugin().Register(host.Container);
+
             foreach (var migration in Directory.GetFiles(
-                             Path.Combine(AppContext.BaseDirectory, "AccountMigrations"),
-                             "*.sql"
-                         )
-                         .Order())
+                                                   Path.Combine(AppContext.BaseDirectory, "AccountMigrations"),
+                                                   "*.sql"
+                                               )
+                                               .Order())
             {
                 await host.AccountsDatabase!.ExecuteAsync(await File.ReadAllTextAsync(migration));
             }
 
             await host.Owner.InitializeAsync();
-            return new AccountServiceFixture(host);
+
+            return new(host);
         }
         catch
         {
             await host.DisposeAsync();
+
             throw;
         }
     }
@@ -62,11 +66,10 @@ internal sealed class AccountServiceFixture : IAsyncDisposable
             UpdatedAt = new(2026, 1, 2, 3, 4, 5, DateTimeKind.Utc), IsLocked = locked
         };
         await Accounts.UpsertAsync(account);
+
         return account;
     }
 
     public async ValueTask DisposeAsync()
-    {
-        await _host.DisposeAsync();
-    }
+        => await _host.DisposeAsync();
 }

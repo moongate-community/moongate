@@ -17,12 +17,14 @@ internal sealed class RecordingLoginPacketSender : ILoginPacketSendService
     public bool TrySend(long sessionId, IOutgoingPacket packet)
     {
         _sent.Add(packet);
+
         return true;
     }
 
     public bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet)
     {
         _sent.Add(packet);
+
         return true;
     }
 
@@ -42,6 +44,7 @@ internal sealed class RecordingLoginPacketSender : ILoginPacketSendService
         }
 
         await expectedConnection.CloseAsync(cancellationToken);
+
         return true;
     }
 

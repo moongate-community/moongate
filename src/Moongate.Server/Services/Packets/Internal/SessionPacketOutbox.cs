@@ -120,7 +120,9 @@ internal sealed class SessionPacketOutbox
             }
         }
 
-        if (_terminalFrame is not null && Volatile.Read(ref _closed) == 0 && Connection.IsConnected &&
+        if (_terminalFrame is not null &&
+            Volatile.Read(ref _closed) == 0 &&
+            Connection.IsConnected &&
             await SendFrameAsync(_terminalFrame).ConfigureAwait(false))
         {
             Volatile.Write(ref _terminalSent, 1);
@@ -132,6 +134,7 @@ internal sealed class SessionPacketOutbox
         try
         {
             await Connection.SendAsync(frame, CancellationToken.None).ConfigureAwait(false);
+
             return true;
         }
         catch (Exception exception) when (_disconnectRequested.IsCompletedSuccessfully &&

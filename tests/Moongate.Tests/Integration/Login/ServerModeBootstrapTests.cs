@@ -1,6 +1,5 @@
 using DryIoc;
 using Moongate.Core.Directories;
-using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
@@ -28,13 +27,13 @@ public sealed class ServerModeBootstrapTests
             {
                 ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
                                    "localhost:6379",
-                HandoffSecret = new string('x', 32)
+                HandoffSecret = new('x', 32)
             }
         };
         container.RegisterInstance(config);
         container.RegisterInstance(directories);
-        container.RegisterInstance<TimeProvider>(TimeProvider.System);
-        container.RegisterMoongatePersistence(new PostgreSqlPersistenceOptions());
+        container.RegisterInstance(TimeProvider.System);
+        container.RegisterMoongatePersistence(new());
         ServerRoleRegistration.Register(container, config, directories);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 

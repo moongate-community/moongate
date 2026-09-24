@@ -24,7 +24,7 @@ public sealed class SerialTomlConverter : TomlConverter<Serial>
             return parsed;
         }
 
-        return new Serial((uint)reader.GetInt64());
+        return new((uint)reader.GetInt64());
     }
 
     /// <inheritdoc />

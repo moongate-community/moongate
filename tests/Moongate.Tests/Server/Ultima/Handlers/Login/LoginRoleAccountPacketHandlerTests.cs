@@ -1,7 +1,6 @@
 using System.Net;
 using System.Security.Cryptography;
 using Moongate.Core.Primitives;
-using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Data.Realms;
@@ -10,7 +9,6 @@ using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Handlers.Login;
-using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Login;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Realms;
@@ -27,15 +25,28 @@ public sealed class LoginRoleAccountPacketHandlerTests
         using var connection = new ControlledNetworkConnection(1);
         var session = sessions.GetOrCreate(connection);
         using var proof = new HandoffProofService(Enumerable.Range(0, 32).Select(value => (byte)value).ToArray());
-        var handler = new LoginRoleAccountPacketHandler(sessions, new RecordingLoginPacketSender(),
-            new LoginAccountFlow(new RecordingAccountService { LoginResult = Account() }, Directory()), proof);
+        var handler = new LoginRoleAccountPacketHandler(
+            sessions,
+            new RecordingLoginPacketSender(),
+            new(new RecordingAccountService { LoginResult = Account() }, Directory()),
+            proof
+        );
 
-        await handler.HandleAsync(session, new AccountLoginPacket("user", "password", 0xFF),
-            CancellationToken.None);
+        await handler.HandleAsync(
+            session,
+            new("user", "password", 0xFF),
+            CancellationToken.None
+        );
 
-        Assert.True(session.TryGetAuthenticatedAccount(out var accountId, out var accountType,
-            out var username, out var credentialKey));
-        Assert.Equal(new Serial(42), accountId);
+        Assert.True(
+            session.TryGetAuthenticatedAccount(
+                out var accountId,
+                out var accountType,
+                out var username,
+                out var credentialKey
+            )
+        );
+        Assert.Equal(new(42), accountId);
         Assert.Equal(AccountType.Regular, accountType);
         Assert.Equal("user", username);
         var expected = proof.DeriveCredentialKey("user", "password");
@@ -53,15 +64,22 @@ public sealed class LoginRoleAccountPacketHandlerTests
         var sender = new RecordingLoginPacketSender();
         var accounts = new RecordingAccountService { LoginResult = Account() };
         using var proof = new HandoffProofService(new byte[32]);
-        var handler = new LoginRoleAccountPacketHandler(sessions, sender,
-            new LoginAccountFlow(accounts, Directory()), proof);
+        var handler = new LoginRoleAccountPacketHandler(
+            sessions,
+            sender,
+            new(accounts, Directory()),
+            proof
+        );
 
-        await handler.HandleAsync(session, new AccountLoginPacket("user", "password", 0xFF),
-            CancellationToken.None);
+        await handler.HandleAsync(
+            session,
+            new("user", "password", 0xFF),
+            CancellationToken.None
+        );
 
         var list = Assert.IsType<ServerListPacket>(Assert.Single(sender.Sent));
         Assert.Equal((ushort)1, Assert.Single(list.Servers).ServerIndex);
-        Assert.Equal(new Serial(42), session.AccountId);
+        Assert.Equal(new(42), session.AccountId);
     }
 
     [Fact]
@@ -72,15 +90,26 @@ public sealed class LoginRoleAccountPacketHandlerTests
         var session = sessions.GetOrCreate(connection);
         var sender = new RecordingLoginPacketSender();
         using var proof = new HandoffProofService(new byte[32]);
-        var handler = new LoginRoleAccountPacketHandler(sessions, sender,
-            new LoginAccountFlow(new RecordingAccountService { LoginResult = Account() },
-                new StubRealmCatalog()), proof);
+        var handler = new LoginRoleAccountPacketHandler(
+            sessions,
+            sender,
+            new(
+                new RecordingAccountService { LoginResult = Account() },
+                new StubRealmCatalog()
+            ),
+            proof
+        );
 
-        await handler.HandleAsync(session, new AccountLoginPacket("user", "password", 0xFF),
-            CancellationToken.None);
+        await handler.HandleAsync(
+            session,
+            new("user", "password", 0xFF),
+            CancellationToken.None
+        );
 
-        Assert.Equal(LoginDeniedReason.CommunicationProblem,
-            Assert.IsType<LoginDeniedPacket>(Assert.Single(sender.Sent)).Reason);
+        Assert.Equal(
+            LoginDeniedReason.CommunicationProblem,
+            Assert.IsType<LoginDeniedPacket>(Assert.Single(sender.Sent)).Reason
+        );
         Assert.Equal(Serial.Zero, session.AccountId);
     }
 
@@ -93,10 +122,18 @@ public sealed class LoginRoleAccountPacketHandlerTests
         var accounts = new BlockingAccountService();
         var sender = new RecordingLoginPacketSender();
         using var proof = new HandoffProofService(new byte[32]);
-        var handler = new LoginRoleAccountPacketHandler(sessions, sender,
-            new LoginAccountFlow(accounts, Directory()), proof);
-        var pending = handler.HandleAsync(original, new AccountLoginPacket("user", "password", 0xFF),
-            CancellationToken.None).AsTask();
+        var handler = new LoginRoleAccountPacketHandler(
+            sessions,
+            sender,
+            new(accounts, Directory()),
+            proof
+        );
+        var pending = handler.HandleAsync(
+                                 original,
+                                 new("user", "password", 0xFF),
+                                 CancellationToken.None
+                             )
+                             .AsTask();
         await accounts.Entered.Task.WaitAsync(TimeSpan.FromSeconds(2));
         Assert.True(sessions.Remove(original));
         using var replacementConnection = new ControlledNetworkConnection(1);
@@ -110,9 +147,17 @@ public sealed class LoginRoleAccountPacketHandlerTests
     }
 
     private static AccountEntity Account()
-        => new() { Id = new Serial(42), AccountType = AccountType.Regular };
+        => new() { Id = new(42), AccountType = AccountType.Regular };
 
     private static StubRealmCatalog Directory()
-        => new(new RealmDescriptor("local", 1, "Local", IPAddress.Loopback, 2593,
-            AccountType.Regular));
+        => new(
+            new RealmDescriptor(
+                "local",
+                1,
+                "Local",
+                IPAddress.Loopback,
+                2593,
+                AccountType.Regular
+            )
+        );
 }

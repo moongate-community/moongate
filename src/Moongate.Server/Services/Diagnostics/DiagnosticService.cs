@@ -11,6 +11,7 @@ namespace Moongate.Server.Services.Diagnostics;
 /// <summary>Serially collects provider metrics and publishes the latest immutable snapshot.</summary>
 public sealed class DiagnosticService : IDiagnosticService, IDisposable
 {
+    public const int StartupPriority = 900;
     private readonly ILogger _logger = Log.ForContext<DiagnosticService>();
     private readonly (string Name, IMetricProvider Provider)[] _providers;
     private readonly DiagnosticOptions _options;
@@ -26,8 +27,6 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
     private long _sequence;
     private bool _stopping;
     private bool _disposed;
-
-    public const int StartupPriority = 900;
 
     public DiagnosticService(
         IEnumerable<IMetricProvider> providers,

@@ -10,9 +10,11 @@ namespace Moongate.Core.Buffers;
 /// </summary>
 public struct PooledArraySpanFormattable : ISpanFormattable, IDisposable
 {
-    private char[] _arrayToReturnToPool;
     private readonly int _pos;
+    private char[] _arrayToReturnToPool;
     private string _value;
+
+    public ReadOnlySpan<char> Chars => _arrayToReturnToPool.AsSpan(.._pos);
 
     public PooledArraySpanFormattable(char[] arrayToReturnToPool, int length)
     {
@@ -20,8 +22,6 @@ public struct PooledArraySpanFormattable : ISpanFormattable, IDisposable
         _pos = length;
         _value = null;
     }
-
-    public ReadOnlySpan<char> Chars => _arrayToReturnToPool.AsSpan(.._pos);
 
     public string ToString(string? format = null, IFormatProvider formatProvider = null)
     {

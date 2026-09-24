@@ -112,9 +112,9 @@ public sealed class LuaModuleBinderConstantsTests : IDisposable
         Assert.Contains(bound.Constants, constant => constant.LuaName == "version" && (string?)constant.Value == "1.2.3");
     }
 
-    public void Dispose()
-        => _state.Dispose();
-
     private LuaValue[] Run(string source)
         => SyncValueTask.Run(_state.DoStringAsync(source, "test"));
+
+    public void Dispose()
+        => _state.Dispose();
 }

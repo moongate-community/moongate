@@ -33,6 +33,17 @@ internal sealed class ManualDiagnosticTimer : ITimer
         }
     }
 
+    public void Tick()
+    {
+        lock (_gate)
+        {
+            if (!_disposed && DueTime != Timeout.InfiniteTimeSpan)
+            {
+                _callback(_state);
+            }
+        }
+    }
+
     public void Dispose()
     {
         lock (_gate)
@@ -46,16 +57,5 @@ internal sealed class ManualDiagnosticTimer : ITimer
         Dispose();
 
         return ValueTask.CompletedTask;
-    }
-
-    public void Tick()
-    {
-        lock (_gate)
-        {
-            if (!_disposed && DueTime != Timeout.InfiniteTimeSpan)
-            {
-                _callback(_state);
-            }
-        }
     }
 }

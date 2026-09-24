@@ -39,8 +39,8 @@ public sealed class DataLoaderServiceTests
         container.RegisterInstance(callLog);
         container.RegisterInstance<IReadOnlyList<int>>([1]);
         container.RegisterInstance<IReadOnlyList<string>>(["a"]);
-        container.AddUltimaDataLoader<FakeDataLoader<string>, string>(priority: 10);
-        container.AddUltimaDataLoader<FakeDataLoader<int>, int>(priority: -10);
+        container.AddUltimaDataLoader<FakeDataLoader<string>, string>(10);
+        container.AddUltimaDataLoader<FakeDataLoader<int>, int>(-10);
         container.Register<DataLoaderService>(Reuse.Singleton);
 
         await container.Resolve<DataLoaderService>().StartAsync();

@@ -10,23 +10,28 @@ internal sealed class MigrationDirectoryLock : IDisposable
     }
 
     public static async Task<MigrationDirectoryLock> AcquireAsync(
-        IEnumerable<string> directories, CancellationToken cancellationToken
+        IEnumerable<string> directories,
+        CancellationToken cancellationToken
     )
     {
         List<FileStream> files = [];
+
         try
         {
             foreach (var directory in directories.Select(Path.GetFullPath)
-                         .Distinct(StringComparer.Ordinal)
-                         .Order(StringComparer.Ordinal))
+                                                 .Distinct(StringComparer.Ordinal)
+                                                 .Order(StringComparer.Ordinal))
             {
                 var path = Path.Combine(directory, ".moongate-generation.lock");
+
                 while (true)
                 {
                     cancellationToken.ThrowIfCancellationRequested();
+
                     try
                     {
                         files.Add(new(path, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None));
+
                         break;
                     }
                     catch (IOException exception) when ((exception.HResult & 0xffff) is 11 or 32 or 33)

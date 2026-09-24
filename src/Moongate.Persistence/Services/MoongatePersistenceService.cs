@@ -85,7 +85,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                     throw new InvalidOperationException("The sequence returned a value outside the nonzero Serial range.");
                 }
 
-                return new Serial((uint)value);
+                return new((uint)value);
             },
             cancellationToken
         );
@@ -114,7 +114,10 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
             }
         );
 
-    /// <summary>Checks every configured runtime database, validates registrations and prepares schemas according to the configured policy.</summary>
+    /// <summary>
+    /// Checks every configured runtime database, validates registrations and prepares schemas according to the configured
+    /// policy.
+    /// </summary>
     public Task InitializeAsync(CancellationToken cancellationToken = default)
         => RunSchemaAsync(
             async () =>

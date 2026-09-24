@@ -1,4 +1,3 @@
-using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.GameLoop;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Sessions;

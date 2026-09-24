@@ -20,26 +20,17 @@ internal static class AnimationsUopLoader
 {
     internal const int _maxAnimActions = 80;
     private const int _maxDirections = 5;
-
-    private static FileStream[] _uopFiles = new FileStream[6];
     private static readonly Dictionary<ulong, UopEntry> _hashTable = new();
     private static readonly Dictionary<int, int[]> _sequenceReplacements = new();
 
-    private struct UopEntry
-    {
-        public int FileIndex;
-        public long Position;
-        public int CompressedSize;
-        public int DecompressedSize;
-        public short CompressionFlagType;
-    }
+    private static FileStream[] _uopFiles = new FileStream[6];
+
+    public static bool IsLoaded { get; private set; }
 
     static AnimationsUopLoader()
     {
         Initialize();
     }
-
-    public static bool IsLoaded { get; private set; }
 
     public static IEnumerable<int> GetAllMobTypeBodyIds()
         => MobTypes.GetDefinedBodies().OrderBy(id => id);
@@ -202,6 +193,15 @@ internal static class AnimationsUopLoader
         IsLoaded = false;
 
         Initialize();
+    }
+
+    private struct UopEntry
+    {
+        public int FileIndex;
+        public long Position;
+        public int CompressedSize;
+        public int DecompressedSize;
+        public short CompressionFlagType;
     }
 
     private static void BuildHashTable(FileStream fs, int fileIdx)

@@ -4,7 +4,6 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Services.Login;
-using Moongate.Server.Services.Network;
 using Moongate.Tests.TestSupport.Login;
 using Moongate.Tests.TestSupport.Network;
 
@@ -21,8 +20,11 @@ public sealed class LoginPacketDispatchServiceTests
         using var first = new ControlledNetworkConnection(1);
         using var replacement = new ControlledNetworkConnection(1);
         var oldSession = sessions.GetOrCreate(first);
-        var dispatcher = new LoginPacketDispatchService(sessions,
-            container.Resolve<LoginPacketHandlerRegistry>(), container);
+        var dispatcher = new LoginPacketDispatchService(
+            sessions,
+            container.Resolve<LoginPacketHandlerRegistry>(),
+            container
+        );
         await dispatcher.StartAsync();
 
         Assert.True(dispatcher.TryDispatch(1, new PingPacket(1)));
@@ -50,23 +52,29 @@ public sealed class LoginPacketDispatchServiceTests
         var observed = new List<(long SessionId, byte Sequence)>();
         var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<RecordingLoginPacketHandler>().OnHandle = async (session, packet, token) =>
-        {
-            if (session.SessionId == 1 && packet.Sequence == 1)
-            {
-                await gate.Task.WaitAsync(token);
-            }
+                                                                    {
+                                                                        if (session.SessionId == 1 && packet.Sequence == 1)
+                                                                        {
+                                                                            await gate.Task.WaitAsync(token);
+                                                                        }
 
-            lock (observed)
-            {
-                observed.Add((session.SessionId, packet.Sequence));
-                if (observed.Count == 3)
-                {
-                    completed.TrySetResult();
-                }
-            }
-        };
-        var dispatcher = new LoginPacketDispatchService(sessions,
-            container.Resolve<LoginPacketHandlerRegistry>(), container);
+                                                                        lock (observed)
+                                                                        {
+                                                                            observed.Add(
+                                                                                (session.SessionId, packet.Sequence)
+                                                                            );
+
+                                                                            if (observed.Count == 3)
+                                                                            {
+                                                                                completed.TrySetResult();
+                                                                            }
+                                                                        }
+                                                                    };
+        var dispatcher = new LoginPacketDispatchService(
+            sessions,
+            container.Resolve<LoginPacketHandlerRegistry>(),
+            container
+        );
         await dispatcher.StartAsync();
 
         Assert.True(dispatcher.TryDispatch(1, new PingPacket(1)));
@@ -90,15 +98,19 @@ public sealed class LoginPacketDispatchServiceTests
         sessions.GetOrCreate(connection);
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<RecordingLoginPacketHandler>().OnHandle = async (_, _, token) =>
-        {
-            entered.TrySetResult();
-            await Task.Delay(Timeout.InfiniteTimeSpan, token);
-        };
-        var dispatcher = new LoginPacketDispatchService(sessions,
-            container.Resolve<LoginPacketHandlerRegistry>(), container);
+                                                                    {
+                                                                        entered.TrySetResult();
+                                                                        await Task.Delay(Timeout.InfiniteTimeSpan, token);
+                                                                    };
+        var dispatcher = new LoginPacketDispatchService(
+            sessions,
+            container.Resolve<LoginPacketHandlerRegistry>(),
+            container
+        );
         await dispatcher.StartAsync();
         Assert.True(dispatcher.TryDispatch(1, new PingPacket(0)));
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(2));
+
         for (var i = 0; i < 128; i++)
         {
             Assert.True(dispatcher.TryDispatch(1, new PingPacket((byte)i)));

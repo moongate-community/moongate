@@ -12,13 +12,80 @@ public ref struct PooledRefList<T>
     private const int MaxLength = int.MaxValue;
     private const int DefaultCapacity = 4;
 
+#pragma warning disable CA1825
+    private static readonly T[] s_emptyArray = new T[0];
+#pragma warning restore CA1825
+
     internal T[] _items;
     internal int _size;
     private int _version;
 
-#pragma warning disable CA1825
-    private static readonly T[] s_emptyArray = new T[0];
-#pragma warning restore CA1825
+    public int Capacity
+    {
+        get => _items.Length;
+        set
+        {
+            if (value < _size)
+            {
+                throw new ArgumentOutOfRangeException(nameof(value));
+            }
+
+            if (value != _items.Length)
+            {
+                if (value > 0)
+                {
+                    var newItems = ArrayPool<T>.Shared.Rent(value);
+
+                    if (_size > 0)
+                    {
+                        Array.Copy(_items, newItems, _size);
+                    }
+
+                    if (_items.Length > 0)
+                    {
+                        Array.Clear(_items);
+                        ArrayPool<T>.Shared.Return(_items);
+                    }
+
+                    _items = newItems;
+                }
+                else
+                {
+                    Array.Clear(_items);
+                    ArrayPool<T>.Shared.Return(_items);
+                    _items = s_emptyArray;
+                }
+            }
+        }
+    }
+
+    public int Count => _size;
+
+    public T this[int index]
+    {
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        get
+        {
+            if ((uint)index >= (uint)_size)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            return _items[index];
+        }
+
+        [MethodImpl(MethodImplOptions.AggressiveInlining)]
+        set
+        {
+            if ((uint)index >= (uint)_size)
+            {
+                throw new ArgumentOutOfRangeException(nameof(index));
+            }
+
+            _items[index] = value;
+            _version++;
+        }
+    }
 
     public PooledRefList(int capacity, bool mt = false)
     {
@@ -90,87 +157,12 @@ public ref struct PooledRefList<T>
         }
     }
 
-    public int Capacity
-    {
-        get => _items.Length;
-        set
-        {
-            if (value < _size)
-            {
-                throw new ArgumentOutOfRangeException(nameof(value));
-            }
-
-            if (value != _items.Length)
-            {
-                if (value > 0)
-                {
-                    var newItems = ArrayPool<T>.Shared.Rent(value);
-
-                    if (_size > 0)
-                    {
-                        Array.Copy(_items, newItems, _size);
-                    }
-
-                    if (_items.Length > 0)
-                    {
-                        Array.Clear(_items);
-                        ArrayPool<T>.Shared.Return(_items);
-                    }
-
-                    _items = newItems;
-                }
-                else
-                {
-                    Array.Clear(_items);
-                    ArrayPool<T>.Shared.Return(_items);
-                    _items = s_emptyArray;
-                }
-            }
-        }
-    }
-
-    public int Count => _size;
-
-    public T this[int index]
-    {
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        get
-        {
-            if ((uint)index >= (uint)_size)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index));
-            }
-
-            return _items[index];
-        }
-
-        [MethodImpl(MethodImplOptions.AggressiveInlining)]
-        set
-        {
-            if ((uint)index >= (uint)_size)
-            {
-                throw new ArgumentOutOfRangeException(nameof(index));
-            }
-
-            _items[index] = value;
-            _version++;
-        }
-    }
-
     public ref struct Enumerator
     {
         private readonly PooledRefList<T> _list;
-        private int _index;
         private readonly int _version;
+        private int _index;
         private T? _current;
-
-        internal Enumerator(PooledRefList<T> list)
-        {
-            _list = list;
-            _index = 0;
-            _version = list._version;
-            _current = default;
-        }
 
         public T Current
         {
@@ -184,6 +176,14 @@ public ref struct PooledRefList<T>
 
                 return _current!;
             }
+        }
+
+        internal Enumerator(PooledRefList<T> list)
+        {
+            _list = list;
+            _index = 0;
+            _version = list._version;
+            _current = default;
         }
 
         public bool MoveNext()

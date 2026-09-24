@@ -13,13 +13,17 @@ internal sealed class ControlledRealmCatalog : IRealmCatalog
     public ushort? RequestedIndex { get; private set; }
     public AccountType? RequestedAccountType { get; private set; }
 
-    public ValueTask<IReadOnlyList<RealmDescriptor>> GetAvailableAsync(AccountType accountType,
-        CancellationToken cancellationToken = default)
-        => ValueTask.FromResult<IReadOnlyList<RealmDescriptor>>(
-            Result is null ? [] : [Result.Descriptor]);
+    public ValueTask<IReadOnlyList<RealmDescriptor>> GetAvailableAsync(
+        AccountType accountType,
+        CancellationToken cancellationToken = default
+    )
+        => ValueTask.FromResult<IReadOnlyList<RealmDescriptor>>(Result is null ? [] : [Result.Descriptor]);
 
-    public async ValueTask<RealmInstance?> FindByIndexAsync(ushort index, AccountType accountType,
-        CancellationToken cancellationToken = default)
+    public async ValueTask<RealmInstance?> FindByIndexAsync(
+        ushort index,
+        AccountType accountType,
+        CancellationToken cancellationToken = default
+    )
     {
         RequestedIndex = index;
         RequestedAccountType = accountType;

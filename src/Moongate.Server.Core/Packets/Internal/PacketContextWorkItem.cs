@@ -33,6 +33,7 @@ internal sealed class PacketContextWorkItem : IGameLoopWorkItem
         if (_cancellationToken.IsCancellationRequested)
         {
             _completion.TrySetCanceled(_cancellationToken);
+
             return;
         }
 
@@ -42,6 +43,7 @@ internal sealed class PacketContextWorkItem : IGameLoopWorkItem
             session.NetworkSession.Client is not { IsConnected: true })
         {
             _completion.TrySetResult(false);
+
             return;
         }
 

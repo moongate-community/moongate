@@ -168,11 +168,9 @@ public static class ContainerExtensions
         }
 
         public DirectoriesConfig GetDirectoriesConfig()
-        {
-            return !container.IsRegistered<DirectoriesConfig>()
-                       ? throw new InvalidOperationException("DirectoriesConfig is not registered in the container.")
-                       : container.Resolve<DirectoriesConfig>();
-        }
+            => !container.IsRegistered<DirectoriesConfig>()
+                   ? throw new InvalidOperationException("DirectoriesConfig is not registered in the container.")
+                   : container.Resolve<DirectoriesConfig>();
     }
 
     private static Container RecordRegistration(Container container, Type serviceType, Type implementationType, int priority)

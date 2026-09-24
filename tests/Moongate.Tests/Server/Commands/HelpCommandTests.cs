@@ -22,8 +22,10 @@ public sealed class HelpCommandTests
         var lines = await commands.ExecuteAsync("help");
 
         Assert.Equal(
-            ["Available commands:", "admin - Administrator action", "console-only - Console action",
-             "echo - Echoes arguments", "help - Lists commands"],
+            [
+                "Available commands:", "admin - Administrator action", "console-only - Console action",
+                "echo - Echoes arguments", "help - Lists commands"
+            ],
             lines.Select(line => line.Text).ToArray()
         );
         await commands.StopAsync();
@@ -38,8 +40,10 @@ public sealed class HelpCommandTests
         var lines = await commands.ExecuteAsync("help e");
 
         Assert.Equal(
-            ["Command: echo", "Description: Echoes arguments", "Aliases: echo, e",
-             "Sources: InGame, Console", "Minimum account level: Regular"],
+            [
+                "Command: echo", "Description: Echoes arguments", "Aliases: echo, e",
+                "Sources: InGame, Console", "Minimum account level: Regular"
+            ],
             lines.Select(line => line.Text).ToArray()
         );
         await commands.StopAsync();
@@ -56,8 +60,10 @@ public sealed class HelpCommandTests
         var lines = await commands.ExecuteAsync("help", CommandSourceType.InGame, session);
         var hidden = await commands.ExecuteAsync("help admin", CommandSourceType.InGame, session);
 
-        Assert.Equal(["Available commands:", "echo - Echoes arguments", "help - Lists commands"],
-            lines.Select(line => line.Text).ToArray());
+        Assert.Equal(
+            ["Available commands:", "echo - Echoes arguments", "help - Lists commands"],
+            lines.Select(line => line.Text).ToArray()
+        );
         Assert.Equal(CommandOutputLevel.Error, Assert.Single(hidden).Level);
         Assert.Equal("Unknown or unavailable command: admin", hidden[0].Text);
         await commands.StopAsync();
@@ -80,14 +86,29 @@ public sealed class HelpCommandTests
     private static Container CreateContainer()
     {
         var container = new Container();
-        container.RegisterCommand<HelpCommand>("help", "Lists commands", CommandSourceType.Console | CommandSourceType.InGame,
-            AccountType.Regular);
-        container.RegisterCommand<EchoCommand>("echo|e", "Echoes arguments", CommandSourceType.Console | CommandSourceType.InGame,
-            AccountType.Regular);
-        container.RegisterCommand<RecordingCommandExecutor>("admin", "Administrator action",
-            CommandSourceType.Console | CommandSourceType.InGame, AccountType.Administrator);
-        container.RegisterCommand<RecordingCommandExecutor>("console-only", "Console action", CommandSourceType.Console,
-            AccountType.Regular);
+        container.RegisterCommand<HelpCommand>(
+            "help",
+            "Lists commands",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Regular
+        );
+        container.RegisterCommand<EchoCommand>(
+            "echo|e",
+            "Echoes arguments",
+            CommandSourceType.Console | CommandSourceType.InGame,
+            AccountType.Regular
+        );
+        container.RegisterCommand<RecordingCommandExecutor>(
+            "admin",
+            "Administrator action",
+            CommandSourceType.Console | CommandSourceType.InGame
+        );
+        container.RegisterCommand<RecordingCommandExecutor>(
+            "console-only",
+            "Console action",
+            CommandSourceType.Console,
+            AccountType.Regular
+        );
 
         return container;
     }

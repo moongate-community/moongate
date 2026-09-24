@@ -21,17 +21,6 @@ internal sealed class DiagnosticTimeProvider : TimeProvider, IDisposable
         }
     }
 
-    public void Dispose()
-    {
-        ManualDiagnosticTimer? timer;
-
-        lock (_gate)
-        {
-            timer = _timer;
-        }
-        timer?.Dispose();
-    }
-
     public override long GetTimestamp()
     {
         lock (_gate)
@@ -65,5 +54,16 @@ internal sealed class DiagnosticTimeProvider : TimeProvider, IDisposable
         }
 
         timer?.Tick();
+    }
+
+    public void Dispose()
+    {
+        ManualDiagnosticTimer? timer;
+
+        lock (_gate)
+        {
+            timer = _timer;
+        }
+        timer?.Dispose();
     }
 }

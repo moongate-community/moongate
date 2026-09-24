@@ -42,11 +42,18 @@ public sealed class LoginPacketHandlerRegistry
                 container.Register<THandler>(Reuse.Singleton);
             }
 
-            _registrations.Add(typeof(TPacket), new(typeof(TPacket), resolver =>
-            {
-                var handler = resolver.Resolve<THandler>();
-                return (session, packet, token) => handler.HandleAsync(session, (TPacket)packet, token);
-            }));
+            _registrations.Add(
+                typeof(TPacket),
+                new(
+                    typeof(TPacket),
+                    resolver =>
+                    {
+                        var handler = resolver.Resolve<THandler>();
+
+                        return (session, packet, token) => handler.HandleAsync(session, (TPacket)packet, token);
+                    }
+                )
+            );
         }
     }
 }

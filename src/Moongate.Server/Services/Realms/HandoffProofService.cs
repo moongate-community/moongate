@@ -40,8 +40,11 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
 
         var usernameBytes = Encoding.UTF8.GetBytes(username);
         var passwordBytes = Encoding.UTF8.GetBytes(password);
-        var input = new byte[CredentialDomain.Length + LengthPrefixSize + usernameBytes.Length +
-                             LengthPrefixSize + passwordBytes.Length];
+        var input = new byte[CredentialDomain.Length +
+                             LengthPrefixSize +
+                             usernameBytes.Length +
+                             LengthPrefixSize +
+                             passwordBytes.Length];
 
         try
         {
@@ -76,16 +79,26 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
 
         if (!IsValid(handoff))
         {
-            throw new ArgumentException("The pending handoff must identify an account and realm instance.",
-                nameof(handoff));
+            throw new ArgumentException(
+                "The pending handoff must identify an account and realm instance.",
+                nameof(handoff)
+            );
         }
 
         var usernameBytes = Encoding.UTF8.GetBytes(handoff.Username);
         var realmBytes = Encoding.UTF8.GetBytes(handoff.RealmId);
         var versionBytes = handoff.ClientVersion is null ? null : Encoding.UTF8.GetBytes(handoff.ClientVersion);
-        var input = new byte[HandoffDomain.Length + AccountIdSize + AccountTypeSize +
-                             LengthPrefixSize + usernameBytes.Length + LengthPrefixSize + realmBytes.Length +
-                             InstanceIdSize + LengthPrefixSize + (versionBytes?.Length ?? 0) + RedirectKeySize];
+        var input = new byte[HandoffDomain.Length +
+                             AccountIdSize +
+                             AccountTypeSize +
+                             LengthPrefixSize +
+                             usernameBytes.Length +
+                             LengthPrefixSize +
+                             realmBytes.Length +
+                             InstanceIdSize +
+                             LengthPrefixSize +
+                             (versionBytes?.Length ?? 0) +
+                             RedirectKeySize];
 
         try
         {
@@ -125,11 +138,18 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
         }
     }
 
-    public bool Verify(string username, string password, PendingHandoff handoff, uint authKey,
-        ReadOnlySpan<byte> expected)
+    public bool Verify(
+        string username,
+        string password,
+        PendingHandoff handoff,
+        uint authKey,
+        ReadOnlySpan<byte> expected
+    )
     {
-        if (expected.Length != CredentialKeySize || string.IsNullOrEmpty(username) ||
-            handoff is null || !IsValid(handoff) ||
+        if (expected.Length != CredentialKeySize ||
+            string.IsNullOrEmpty(username) ||
+            handoff is null ||
+            !IsValid(handoff) ||
             !StringComparer.Ordinal.Equals(username, handoff.Username))
         {
             return false;
@@ -157,12 +177,12 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
     }
 
     private static bool IsValid(PendingHandoff handoff)
-        => handoff.AccountId.IsValid && Enum.IsDefined(handoff.AccountType) &&
-           !string.IsNullOrEmpty(handoff.Username) && !string.IsNullOrEmpty(handoff.RealmId) &&
+        => handoff.AccountId.IsValid &&
+           Enum.IsDefined(handoff.AccountType) &&
+           !string.IsNullOrEmpty(handoff.Username) &&
+           !string.IsNullOrEmpty(handoff.RealmId) &&
            handoff.InstanceId != Guid.Empty;
 
     public void Dispose()
-    {
-        CryptographicOperations.ZeroMemory(_secret);
-    }
+        => CryptographicOperations.ZeroMemory(_secret);
 }

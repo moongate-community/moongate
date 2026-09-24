@@ -9,6 +9,13 @@ namespace Moongate.Ultima.Graphics;
 
 public static class Art
 {
+    // User-edited bitmaps. Pinned (no eviction) so a Replace+Save round
+    // trip can never lose modifications regardless of LRU pressure.
+    private static readonly Dictionary<int, UltimaBitmap> _replaced = new();
+    private static readonly Dictionary<int, bool> _patched = new();
+
+    private static readonly byte[] _validBuffer = new byte[4];
+
     private static FileIndex _fileIndex = new(
         "Artidx.mul",
         "Art.mul",
@@ -24,21 +31,8 @@ public static class Art
     // Files.CacheCapacityArt so the host can tune for low-RAM machines.
     // User edits go in _replaced (below) — they are NOT subject to eviction.
     private static LruBitmapCache _cache;
-
-    // User-edited bitmaps. Pinned (no eviction) so a Replace+Save round
-    // trip can never lose modifications regardless of LRU pressure.
-    private static readonly Dictionary<int, UltimaBitmap> _replaced = new();
     private static bool[] _removed;
-    private static readonly Dictionary<int, bool> _patched = new();
     public static bool Modified;
-
-    private static readonly byte[] _validBuffer = new byte[4];
-
-    private struct ImageData
-    {
-        public int Position;
-        public int Length;
-    }
 
     // M3.5: dedup index keyed by xxHash128 of the bitmap pixels. Replaces
     // the previous List<ImageData> + SHA256-bytes-in-each-entry layout,
@@ -989,6 +983,12 @@ public static class Art
         const int maxUshorts = 65535;
 
         return estimatedSize <= maxUshorts;
+    }
+
+    private struct ImageData
+    {
+        public int Position;
+        public int Length;
     }
 
     private static unsafe UltimaBitmap LoadLand(Stream stream, int length)

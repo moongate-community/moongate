@@ -193,7 +193,7 @@ public static class TomlUtils
     {
         lock (RebuildLock)
         {
-            _defaultOptions = new TomlSerializerOptions
+            _defaultOptions = new()
             {
                 PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
                 Converters = Converters.ToArray()

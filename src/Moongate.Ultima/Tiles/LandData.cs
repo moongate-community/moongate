@@ -11,20 +11,6 @@ namespace Moongate.Ultima.Tiles;
 /// </summary>
 public struct LandData
 {
-    public unsafe LandData(NewLandTileDataMul mulStruct)
-    {
-        TextureId = mulStruct.texID;
-        Flags = (TileFlagType)mulStruct.flags;
-        Name = TileDataHelpers.ReadNameString(mulStruct.name);
-    }
-
-    public unsafe LandData(OldLandTileDataMul mulStruct)
-    {
-        TextureId = mulStruct.texID;
-        Flags = (TileFlagType)mulStruct.flags;
-        Name = TileDataHelpers.ReadNameString(mulStruct.name);
-    }
-
     /// <summary>
     /// Gets the name of this land tile.
     /// </summary>
@@ -39,6 +25,20 @@ public struct LandData
     /// Gets a bitfield representing the 32 individual flags of this land tile.
     /// </summary>
     public TileFlagType Flags { get; set; }
+
+    public unsafe LandData(NewLandTileDataMul mulStruct)
+    {
+        TextureId = mulStruct.texID;
+        Flags = (TileFlagType)mulStruct.flags;
+        Name = TileDataHelpers.ReadNameString(mulStruct.name);
+    }
+
+    public unsafe LandData(OldLandTileDataMul mulStruct)
+    {
+        TextureId = mulStruct.texID;
+        Flags = (TileFlagType)mulStruct.flags;
+        Name = TileDataHelpers.ReadNameString(mulStruct.name);
+    }
 
     public void ReadData(string[] split)
     {

@@ -38,12 +38,12 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
         return new(databaseName, _adminConnectionString, builder.ConnectionString);
     }
 
-    public Task DisposeAsync()
-        => Task.CompletedTask;
-
     public async Task InitializeAsync()
     {
         await using var connection = new NpgsqlConnection(_adminConnectionString);
         await connection.OpenAsync();
     }
+
+    public Task DisposeAsync()
+        => Task.CompletedTask;
 }

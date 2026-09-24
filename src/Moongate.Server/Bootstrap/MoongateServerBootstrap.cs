@@ -168,7 +168,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         try
         {
             _persistenceInitialized = await PersistencePreparation.InitializeAsync(_container, _cancellationToken)
-                                                                 .ConfigureAwait(false);
+                                                                  .ConfigureAwait(false);
 
             if (_persistenceInitialized)
             {

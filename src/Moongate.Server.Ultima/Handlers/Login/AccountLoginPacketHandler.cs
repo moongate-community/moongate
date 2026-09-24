@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Server.Core.Interfaces.Packets;
@@ -24,7 +25,7 @@ public sealed class AccountLoginPacketHandler : IAsyncPacketHandler<AccountLogin
         var result = await _flow.AuthenticateAsync(packet.Account, packet.Password, cancellationToken);
 
         await context.RunOnGameLoopAsync(
-            (session) =>
+            session =>
             {
                 if (!result.Success)
                 {
@@ -43,9 +44,10 @@ public sealed class AccountLoginPacketHandler : IAsyncPacketHandler<AccountLogin
 
                 if (!context.TrySend(new ServerListPacket(result.Servers)))
                 {
-                    session.SetAccountId(Moongate.Core.Primitives.Serial.Zero);
+                    session.SetAccountId(Serial.Zero);
                     session.SetAccountType(AccountType.Regular);
                     _ = session.NetworkSession.Client?.CloseAsync(cancellationToken);
+
                     return;
                 }
 

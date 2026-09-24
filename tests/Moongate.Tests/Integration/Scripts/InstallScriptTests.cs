@@ -12,7 +12,7 @@ public class InstallScriptTests
     public async Task Install_WithMgboot_LinksExecutableBesideServer()
     {
         using var install = new ScriptedInstall();
-        install.Publish("0.6.0", "linux-x64", "server", includeMgboot: true);
+        install.Publish("0.6.0", "linux-x64", "server", true);
         var result = await install.RunAsync("0.6.0", "linux-x64");
         Assert.True(result.ExitCode == 0, result.Output);
         var command = Path.Combine(install.BinDirectory, "mgboot");
@@ -25,7 +25,7 @@ public class InstallScriptTests
     public async Task Install_DowngradeWithoutMgboot_RemovesOwnedSymlink()
     {
         using var install = new ScriptedInstall();
-        install.Publish("0.6.0", "linux-x64", "new server", includeMgboot: true);
+        install.Publish("0.6.0", "linux-x64", "new server", true);
         install.Publish("0.5.0", "linux-x64", "old server");
         Assert.Equal(0, (await install.RunAsync("0.6.0", "linux-x64")).ExitCode);
         var result = await install.RunAsync("0.5.0", "linux-x64");

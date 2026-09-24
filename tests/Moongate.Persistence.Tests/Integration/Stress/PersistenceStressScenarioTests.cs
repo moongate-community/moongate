@@ -17,7 +17,7 @@ public sealed class PersistenceStressScenarioTests
     public async Task Run_SmallConcurrentWorkload_VerifiesCommittedAndRolledBackDataAfterReopen()
     {
         await using var database = await _postgres.CreateDatabaseAsync();
-        var result = await PersistenceStressScenario.RunAsync(database, 4, 2, 1, 0, operationsPerSession: 20);
+        var result = await PersistenceStressScenario.RunAsync(database, 4, 2, 1, 0, 20);
         Assert.True(result.Verified);
         Assert.Empty(result.Errors);
         Assert.Equal(4, result.Sessions);

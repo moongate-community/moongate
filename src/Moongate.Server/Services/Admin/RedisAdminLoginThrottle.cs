@@ -13,9 +13,7 @@ public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
     private readonly RedisConnectionService _redis;
     private readonly string _prefix;
 
-    public RedisAdminLoginThrottle(RedisConnectionService redis) : this(redis, "moongate:admin:")
-    {
-    }
+    public RedisAdminLoginThrottle(RedisConnectionService redis) : this(redis, "moongate:admin:") { }
 
     internal RedisAdminLoginThrottle(RedisConnectionService redis, string prefix)
     {
@@ -26,14 +24,25 @@ public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
     public async Task<bool> TryAcquireAsync(string peerAddress, string username, CancellationToken token = default)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(username);
+
         if (username.Length > 255 || !IPAddress.TryParse(peerAddress, out var peer))
         {
             throw new ArgumentException("Invalid administrative login throttle inputs.");
         }
-        var result = await AdminRedisOperation.EvaluateAsync(_redis, AdminRedisScripts.Throttle,
-            [_prefix + "throttle:user:" + Digest(username), _prefix + "throttle:peer:" + Digest(peer.MapToIPv6().ToString())], [], token);
+        var result = await AdminRedisOperation.EvaluateAsync(
+                         _redis,
+                         AdminRedisScripts.Throttle,
+                         [
+                             _prefix + "throttle:user:" + Digest(username),
+                             _prefix + "throttle:peer:" + Digest(peer.MapToIPv6().ToString())
+                         ],
+                         [],
+                         token
+                     );
+
         return (long)result == 1;
     }
 
-    private static string Digest(string value) => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+    private static string Digest(string value)
+        => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
 }

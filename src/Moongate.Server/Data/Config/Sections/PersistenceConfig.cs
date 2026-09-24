@@ -4,8 +4,8 @@ using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Migrations.Services;
 using Moongate.Persistence.Migrations.Types.Migrations;
 using Moongate.Persistence.Types.Persistence;
-using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Types.Hosting;
 
 namespace Moongate.Server.Data.Config.Sections;
 
@@ -51,7 +51,7 @@ public sealed class PersistenceConfig
         var databases = mode switch
         {
             ServerMode.Login => [Accounts.ToOptions(PersistenceDatabaseTarget.Accounts)],
-            ServerMode.Game => [Realm.ToOptions(PersistenceDatabaseTarget.Realm)],
+            ServerMode.Game  => [Realm.ToOptions(PersistenceDatabaseTarget.Realm)],
             ServerMode.Standalone => new[]
             {
                 Accounts.ToOptions(PersistenceDatabaseTarget.Accounts),

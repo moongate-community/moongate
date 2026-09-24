@@ -13,25 +13,30 @@ internal static class BootProcess
             UseShellExecute = false
         };
         start.ArgumentList.Add(Path.Combine(AppContext.BaseDirectory, "mgboot.dll"));
+
         foreach (var argument in arguments)
         {
             start.ArgumentList.Add(argument);
         }
-        start.Environment["MOONGATE_SERVER_EXECUTABLE"] = Path.Combine(AppContext.BaseDirectory,
-            OperatingSystem.IsWindows() ? "Moongate.Server.exe" : "Moongate.Server");
+        start.Environment["MOONGATE_SERVER_EXECUTABLE"] = Path.Combine(
+            AppContext.BaseDirectory,
+            OperatingSystem.IsWindows() ? "Moongate.Server.exe" : "Moongate.Server"
+        );
         using var process = Process.Start(start)!;
         var stdout = process.StandardOutput.ReadToEndAsync();
         var stderr = process.StandardError.ReadToEndAsync();
+
         try
         {
             await process.WaitForExitAsync().WaitAsync(TimeSpan.FromSeconds(30));
+
             return (process.ExitCode, await stdout + await stderr);
         }
         finally
         {
             if (!process.HasExited)
             {
-                process.Kill(entireProcessTree: true);
+                process.Kill(true);
                 await process.WaitForExitAsync();
             }
         }

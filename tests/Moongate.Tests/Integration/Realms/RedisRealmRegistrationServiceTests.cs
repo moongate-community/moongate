@@ -16,12 +16,13 @@ public sealed class RedisRealmRegistrationServiceTests
         var prefix = Prefix();
         var directory = new RedisRealmDirectoryService(redis, prefix, TimeSpan.FromSeconds(4));
         var realm = Realm();
-        await using var registration = new RedisRealmRegistrationService(
-            directory, realm, Config(), TimeProvider.System);
+        await using var registration = new RedisRealmRegistrationService(directory, realm, Config(), TimeProvider.System);
 
         await registration.StartAsync();
-        Assert.Equal(realm.InstanceId,
-            (await directory.FindByIndexAsync(5, AccountType.Regular))!.InstanceId);
+        Assert.Equal(
+            realm.InstanceId,
+            (await directory.FindByIndexAsync(5, AccountType.Regular))!.InstanceId
+        );
 
         await registration.StopAsync();
         Assert.Null(await directory.FindByIndexAsync(5, AccountType.Regular));
@@ -34,13 +35,14 @@ public sealed class RedisRealmRegistrationServiceTests
         var prefix = Prefix();
         var directory = new RedisRealmDirectoryService(redis, prefix, TimeSpan.FromSeconds(4));
         var realm = Realm();
-        await using var registration = new RedisRealmRegistrationService(
-            directory, realm, Config(), TimeProvider.System);
+        await using var registration = new RedisRealmRegistrationService(directory, realm, Config(), TimeProvider.System);
 
         await registration.StartAsync();
         await redis.Connection.GetDatabase().KeyDeleteAsync(prefix + "5");
-        await WaitForAsync(async () => (await directory.FindByIndexAsync(5, AccountType.Regular))?.InstanceId ==
-                                     realm.InstanceId);
+        await WaitForAsync(
+            async () => (await directory.FindByIndexAsync(5, AccountType.Regular))?.InstanceId ==
+                        realm.InstanceId
+        );
 
         await registration.StopAsync();
     }
@@ -53,16 +55,17 @@ public sealed class RedisRealmRegistrationServiceTests
         var directory = new RedisRealmDirectoryService(redis, prefix, TimeSpan.FromSeconds(4));
         var original = Realm();
         var successor = Realm();
-        await using var registration = new RedisRealmRegistrationService(
-            directory, original, Config(), TimeProvider.System);
+        await using var registration = new RedisRealmRegistrationService(directory, original, Config(), TimeProvider.System);
 
         try
         {
             await registration.StartAsync();
             await directory.RegisterAsync(successor);
             await Task.Delay(TimeSpan.FromSeconds(1.3));
-            Assert.Equal(successor.InstanceId,
-                (await directory.FindByIndexAsync(5, AccountType.Regular))!.InstanceId);
+            Assert.Equal(
+                successor.InstanceId,
+                (await directory.FindByIndexAsync(5, AccountType.Regular))!.InstanceId
+            );
             Assert.True(await redis.Connection.GetDatabase().KeyDeleteAsync(prefix + "5"));
             await Task.Delay(TimeSpan.FromSeconds(1.3));
             Assert.Null(await directory.FindByIndexAsync(5, AccountType.Regular));
@@ -78,20 +81,31 @@ public sealed class RedisRealmRegistrationServiceTests
         => new() { HeartbeatIntervalSeconds = 1, LeaseDurationSeconds = 4 };
 
     private static RealmInstance Realm()
-        => new(new RealmDescriptor("realm", 5, "Realm", IPAddress.Loopback, 2595,
-            AccountType.Regular), Guid.NewGuid());
+        => new(
+            new(
+                "realm",
+                5,
+                "Realm",
+                IPAddress.Loopback,
+                2595,
+                AccountType.Regular
+            ),
+            Guid.NewGuid()
+        );
 
     private static string Prefix()
         => $"moongate:test:registration:{Guid.NewGuid():N}:";
 
     private static async Task<RedisConnectionService> CreateConnectionAsync()
     {
-        var redis = new RedisConnectionService(new RedisConfig
-        {
-            ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                               "localhost:6379",
-            HandoffSecret = new string('x', 32)
-        });
+        var redis = new RedisConnectionService(
+            new()
+            {
+                ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
+                                   "localhost:6379",
+                HandoffSecret = new('x', 32)
+            }
+        );
         await redis.StartAsync();
 
         return redis;
@@ -100,6 +114,7 @@ public sealed class RedisRealmRegistrationServiceTests
     private static async Task WaitForAsync(Func<Task<bool>> condition)
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
         while (!await condition())
         {
             await Task.Delay(50, timeout.Token);

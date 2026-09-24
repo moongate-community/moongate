@@ -1,10 +1,17 @@
 using DryIoc;
+using Moongate.Core.Utils;
 using Moongate.Persistence.Extensions;
-using Moongate.Server.Bootstrap;
-using Moongate.Server.Core.Extensions;
-using Moongate.Server.Core.Data.Events;
 using Moongate.Persistence.Migrations.Services;
+using Moongate.Persistence.Types.Persistence;
+using Moongate.Server.Bootstrap;
+using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Data.Events;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Services.Plugins.Internal;
+using Moongate.Server.Ultima.Entities.Auth;
+using Moongate.Tests.Support.Server;
 using Moongate.Tests.TestSupport.Persistence;
+using Npgsql;
 
 namespace Moongate.Tests.Integration.Persistence;
 
@@ -20,13 +27,15 @@ public sealed class DevelopmentMigrationTests
         await db.ExecuteAsync("INSERT INTO sample_greeter.notes VALUES (42, 'existing')");
         var sequence = await File.ReadAllTextAsync(Path.Combine(migrations, "0002_note_serial_sequence.sql"));
         await db.ExecuteAsync(sequence);
-        Assert.Equal(43L, await db.ScalarAsync<long>(
-            "SELECT nextval(pg_get_serial_sequence('sample_greeter.notes', 'id'))"
-        ));
+        Assert.Equal(
+            43L,
+            await db.ScalarAsync<long>("SELECT nextval(pg_get_serial_sequence('sample_greeter.notes', 'id'))")
+        );
         await db.ExecuteAsync(sequence);
-        Assert.Equal(44L, await db.ScalarAsync<long>(
-            "SELECT nextval(pg_get_serial_sequence('sample_greeter.notes', 'id'))"
-        ));
+        Assert.Equal(
+            44L,
+            await db.ScalarAsync<long>("SELECT nextval(pg_get_serial_sequence('sample_greeter.notes', 'id'))")
+        );
     }
 
     [Fact]
@@ -34,11 +43,12 @@ public sealed class DevelopmentMigrationTests
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
+
         for (var startup = 0; startup < 2; startup++)
         {
             await using var coordinator = fixture.Create(
-                typeof(Moongate.Server.Ultima.Entities.Auth.AccountEntity),
-                Moongate.Persistence.Types.Persistence.PersistenceDatabaseTarget.Accounts
+                typeof(AccountEntity),
+                PersistenceDatabaseTarget.Accounts
             );
             await coordinator.InitializeAsync();
             Assert.True(coordinator.IsReady);
@@ -47,12 +57,15 @@ public sealed class DevelopmentMigrationTests
         var sqlFile = Assert.Single(Directory.GetFiles(Path.Combine(fixture.Migrations, "auth"), "*.sql"));
         Assert.DoesNotContain(MigrationReviewGuard.Marker, await File.ReadAllTextAsync(sqlFile));
         Assert.Equal(1L, await db.ScalarAsync<long>("SELECT count(*) FROM moongate_migrations.history"));
-        Assert.Equal("auth.accounts_id_seq", await db.ScalarAsync<string>(
-            "SELECT pg_get_serial_sequence('auth.accounts', 'id')"
-        ));
-        Assert.True(await db.ScalarAsync<bool>(
-            "SELECT indisunique FROM pg_index WHERE indexrelid = 'auth.ux_accounts_username'::regclass"
-        ));
+        Assert.Equal(
+            "auth.accounts_id_seq",
+            await db.ScalarAsync<string>("SELECT pg_get_serial_sequence('auth.accounts', 'id')")
+        );
+        Assert.True(
+            await db.ScalarAsync<bool>(
+                "SELECT indisunique FROM pg_index WHERE indexrelid = 'auth.ux_accounts_username'::regclass"
+            )
+        );
     }
 
     [Theory, InlineData(false), InlineData(true)]
@@ -60,6 +73,7 @@ public sealed class DevelopmentMigrationTests
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
+
         if (blocked)
         {
             Directory.CreateDirectory(Path.Combine(fixture.Migrations, "world"));
@@ -75,7 +89,8 @@ public sealed class DevelopmentMigrationTests
         );
         container.AddPersistenceWorld<TestEntity>();
         List<string> observed = [];
-        container.OnEvent<PersistenceReadyEvent>(async (_, _) =>
+        container.OnEvent<PersistenceReadyEvent>(
+            async (_, _) =>
             {
                 if (await db.ScalarAsync<long>("SELECT count(*) FROM moongate_migrations.history") == 1)
                 {
@@ -84,16 +99,18 @@ public sealed class DevelopmentMigrationTests
             }
         );
         container.AddMoongateService(
-            new Moongate.Tests.Support.Server.CallbackStartupService(
+            new CallbackStartupService(
                 () =>
                 {
                     observed.Add("service");
+
                     return Task.CompletedTask;
                 },
                 () => Task.CompletedTask
             )
         );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
+
         try
         {
             if (blocked)
@@ -117,7 +134,7 @@ public sealed class DevelopmentMigrationTests
     public void Runner_MissingBundleFailsBeforeStartingProcess()
     {
         var missing = Path.Combine(Path.GetTempPath(), "missing-runner-" + Guid.NewGuid().ToString("N"));
-        var runner = new Moongate.Server.Bootstrap.Internal.DevelopmentMigrationRunner(missing, missing, null, missing);
+        var runner = new DevelopmentMigrationRunner(missing, missing, null, missing);
         Assert.Throws<InvalidOperationException>(runner.ValidateAvailable);
     }
 
@@ -128,6 +145,7 @@ public sealed class DevelopmentMigrationTests
         using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
         var bundle = Path.Combine(fixture.Plugins, "PersistencePlugin");
         Directory.CreateDirectory(Path.Combine(bundle, "migrations"));
+
         foreach (var file in Directory.GetFiles(Path.Combine(AppContext.BaseDirectory, "PluginFixtures/PersistencePlugin")))
         {
             File.Copy(file, Path.Combine(bundle, Path.GetFileName(file)));
@@ -135,7 +153,8 @@ public sealed class DevelopmentMigrationTests
 
         File.WriteAllText(Path.Combine(bundle, "migrations/manifest.json"), "{\"id\":\"external-data\"}");
         var context =
-            new Moongate.Server.Services.Plugins.Internal.PluginLoadContext(Path.Combine(bundle, "PersistencePlugin.dll"));
+            new PluginLoadContext(Path.Combine(bundle, "PersistencePlugin.dll"));
+
         try
         {
             var assembly = context.LoadFromAssemblyPath(Path.Combine(bundle, "PersistencePlugin.dll"));
@@ -160,7 +179,7 @@ public sealed class DevelopmentMigrationTests
         using var firstFiles = new DevelopmentMigrationFixture(firstDb.ConnectionString);
         using var secondFiles = new DevelopmentMigrationFixture(secondDb.ConnectionString);
         secondFiles.Config.Persistence.MigrationsDirectory = firstFiles.Migrations;
-        Moongate.Core.Utils.TomlUtils.SerializeToFile(
+        TomlUtils.SerializeToFile(
             secondFiles.Config,
             Path.Combine(secondFiles.Root, "config/moongate.toml")
         );
@@ -177,10 +196,11 @@ public sealed class DevelopmentMigrationTests
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
-        await using (var connection = new Npgsql.NpgsqlConnection(db.ConnectionString))
+
+        await using (var connection = new NpgsqlConnection(db.ConnectionString))
         {
             await connection.OpenAsync();
-            await using var command = new Npgsql.NpgsqlCommand("SELECT pg_advisory_lock(1296516941)", connection);
+            await using var command = new NpgsqlCommand("SELECT pg_advisory_lock(1296516941)", connection);
             await command.ExecuteNonQueryAsync();
             await using var canceled = fixture.Create(typeof(TestEntity));
             using var cancellation = new CancellationTokenSource(TimeSpan.FromMilliseconds(200));
@@ -241,6 +261,7 @@ public sealed class DevelopmentMigrationTests
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
+
         await using (var first = fixture.Create(typeof(TestEntity)))
         {
             await first.InitializeAsync();
@@ -260,7 +281,7 @@ public sealed class DevelopmentMigrationTests
         using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
         await using var coordinator = fixture.Create(
             typeof(TestEntity),
-            Moongate.Persistence.Types.Persistence.PersistenceDatabaseTarget.Accounts
+            PersistenceDatabaseTarget.Accounts
         );
         await coordinator.InitializeAsync();
         Assert.Single(Directory.GetFiles(Path.Combine(fixture.Migrations, "auth"), "*.sql"));
@@ -281,9 +302,10 @@ public sealed class DevelopmentMigrationTests
         using var cancellation = new CancellationTokenSource();
         var initialization = coordinator.InitializeAsync(cancellation.Token);
         var deadline = DateTime.UtcNow.AddSeconds(10);
+
         while (!await db.ScalarAsync<bool>(
-                   "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND query LIKE '%pg_sleep(5)%' AND pid<>pg_backend_pid() AND state='active')"
-               ))
+                    "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND query LIKE '%pg_sleep(5)%' AND pid<>pg_backend_pid() AND state='active')"
+                ))
         {
             Assert.True(DateTime.UtcNow < deadline, "Runner did not begin its transaction.");
             await Task.Delay(30);
@@ -316,6 +338,7 @@ public sealed class DevelopmentMigrationTests
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
+
         await using (var first = fixture.Create(typeof(TestEntity)))
         {
             await first.InitializeAsync();
@@ -323,6 +346,7 @@ public sealed class DevelopmentMigrationTests
         }
 
         await db.ExecuteAsync("INSERT INTO host_test.items(id, name) VALUES (1, 'retained');");
+
         await using (var second = fixture.Create(typeof(DevelopmentItemV2)))
         {
             await second.InitializeAsync();
@@ -342,6 +366,7 @@ public sealed class DevelopmentMigrationTests
         await using var other = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var replay = new DevelopmentMigrationFixture(other.ConnectionString);
         Directory.CreateDirectory(Path.Combine(replay.Migrations, "world"));
+
         foreach (var file in Directory.GetFiles(Path.Combine(fixture.Migrations, "world"), "*.sql"))
         {
             File.Copy(file, Path.Combine(replay.Migrations, "world", Path.GetFileName(file)));
@@ -357,6 +382,7 @@ public sealed class DevelopmentMigrationTests
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
+
         await using (var first = fixture.Create(typeof(DevelopmentItemV2)))
         {
             await first.InitializeAsync();

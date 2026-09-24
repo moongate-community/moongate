@@ -1,4 +1,5 @@
 using Moongate.Core.Utils;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Helpers;
@@ -30,7 +31,9 @@ public sealed class ConfigHelperTests
     public void Load_RealmDirectory_RoundTripsSnakeCaseAndAccountType()
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("moongate.toml", """
+        var path = directory.CreateFile(
+            "moongate.toml",
+            """
             mode = "game"
             [realm_directory]
             realm_id = "realm-a"
@@ -42,7 +45,8 @@ public sealed class ConfigHelperTests
             heartbeat_interval_seconds = 5
             lease_duration_seconds = 15
             max_realms = 128
-            """);
+            """
+        );
 
         var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!;
 
@@ -50,7 +54,7 @@ public sealed class ConfigHelperTests
         Assert.Equal("Realm A", config.RealmDirectory.Name);
         Assert.Equal(7, config.RealmDirectory.ServerIndex);
         Assert.Equal("127.0.0.1", config.RealmDirectory.AdvertisedAddress);
-        Assert.Equal(Moongate.Server.Core.Types.Accounts.AccountType.GameMaster, config.RealmDirectory.MinimumAccountType);
+        Assert.Equal(AccountType.GameMaster, config.RealmDirectory.MinimumAccountType);
     }
 
     [Fact]

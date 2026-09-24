@@ -78,6 +78,15 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         return peer;
     }
 
+    public async Task StartAsync()
+    {
+        await Loop.StartAsync();
+        await Connections.StartAsync();
+        await Sender.StartAsync();
+        await Dispatcher.StartAsync();
+        await Game.StartAsync();
+    }
+
     public async ValueTask DisposeAsync()
     {
         List<Exception> failures = [];
@@ -101,14 +110,5 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         {
             throw new AggregateException(failures);
         }
-    }
-
-    public async Task StartAsync()
-    {
-        await Loop.StartAsync();
-        await Connections.StartAsync();
-        await Sender.StartAsync();
-        await Dispatcher.StartAsync();
-        await Game.StartAsync();
     }
 }

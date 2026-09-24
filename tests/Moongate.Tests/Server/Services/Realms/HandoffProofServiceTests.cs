@@ -1,4 +1,3 @@
-using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Realms;
@@ -35,8 +34,15 @@ public sealed class HandoffProofServiceTests
 
         Assert.Equal(32, proof.Length);
         Assert.True(service.Verify("alice", "password", handoff, 0x12345678, proof));
-        Assert.False(service.Verify("alice", "password", handoff with { RealmId = "realm-b" }, 0x12345678,
-            proof));
+        Assert.False(
+            service.Verify(
+                "alice",
+                "password",
+                handoff with { RealmId = "realm-b" },
+                0x12345678,
+                proof
+            )
+        );
         Assert.False(service.Verify("alice", "password", handoff, 0x12345679, proof));
         Assert.False(service.Verify("alice", "bad-password", handoff, 0x12345678, proof));
         Assert.False(service.Verify("Alice", "password", handoff, 0x12345678, proof));
@@ -50,14 +56,42 @@ public sealed class HandoffProofServiceTests
         var credentialKey = service.DeriveCredentialKey("alice", "password");
         var proof = service.Sign(credentialKey, handoff, 0x12345678);
 
-        Assert.False(service.Verify("alice", "password", handoff with { AccountId = new Serial(43) },
-            0x12345678, proof));
-        Assert.False(service.Verify("alice", "password", handoff with { AccountType = AccountType.Administrator },
-            0x12345678, proof));
-        Assert.False(service.Verify("alice", "password", handoff with { InstanceId = Guid.NewGuid() },
-            0x12345678, proof));
-        Assert.False(service.Verify("alice", "password", handoff with { ClientVersion = "7.0.118" },
-            0x12345678, proof));
+        Assert.False(
+            service.Verify(
+                "alice",
+                "password",
+                handoff with { AccountId = new(43) },
+                0x12345678,
+                proof
+            )
+        );
+        Assert.False(
+            service.Verify(
+                "alice",
+                "password",
+                handoff with { AccountType = AccountType.Administrator },
+                0x12345678,
+                proof
+            )
+        );
+        Assert.False(
+            service.Verify(
+                "alice",
+                "password",
+                handoff with { InstanceId = Guid.NewGuid() },
+                0x12345678,
+                proof
+            )
+        );
+        Assert.False(
+            service.Verify(
+                "alice",
+                "password",
+                handoff with { ClientVersion = "7.0.118" },
+                0x12345678,
+                proof
+            )
+        );
     }
 
     [Fact]
@@ -83,6 +117,12 @@ public sealed class HandoffProofServiceTests
     }
 
     private static PendingHandoff Handoff()
-        => new(new Serial(42), AccountType.Regular, "alice", "realm-a", Guid.Parse("2a2fc83d-eac8-4d65-b105-18154901bd3d"),
-            "7.0.117");
+        => new(
+            new(42),
+            AccountType.Regular,
+            "alice",
+            "realm-a",
+            Guid.Parse("2a2fc83d-eac8-4d65-b105-18154901bd3d"),
+            "7.0.117"
+        );
 }

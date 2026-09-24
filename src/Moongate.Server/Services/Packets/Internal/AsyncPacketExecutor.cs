@@ -14,9 +14,11 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
 
     private readonly Lock _gate = new();
     private readonly Dictionary<long, AsyncPacketJob> _jobs = new();
+
     private readonly Channel<AsyncPacketJob> _queue = Channel.CreateUnbounded<AsyncPacketJob>(
-        new UnboundedChannelOptions { SingleReader = false, SingleWriter = false, AllowSynchronousContinuations = false }
+        new() { SingleReader = false, SingleWriter = false, AllowSynchronousContinuations = false }
     );
+
     private readonly CancellationTokenSource _stopping = new();
     private readonly IGameLoopService _gameLoop;
     private readonly ISessionService _sessions;
@@ -53,11 +55,13 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
             if (!_accepting || _jobs.Count >= MaxInFlight || _jobs.ContainsKey(session.SessionId))
             {
                 job = null;
+
                 return false;
             }
 
-            job = new AsyncPacketJob(session, packet, handler, _stopping.Token);
+            job = new(session, packet, handler, _stopping.Token);
             _jobs.Add(session.SessionId, job);
+
             return true;
         }
     }
@@ -79,6 +83,7 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
             }
 
             job.Enqueued = true;
+
             return true;
         }
     }
@@ -86,13 +91,13 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
     public Exception? CancelSession(long sessionId)
     {
         AsyncPacketJob? job;
+
         lock (_gate)
         {
             if (!_jobs.TryGetValue(sessionId, out job))
             {
                 return null;
             }
-
         }
 
         Exception? cancellationFailure = null;

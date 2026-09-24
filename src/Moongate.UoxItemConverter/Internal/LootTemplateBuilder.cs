@@ -4,17 +4,21 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 
 namespace Moongate.UoxItemConverter.Internal;
 
-/// <summary>Builds a <see cref="LootTemplate" /> from one <c>[LOOTLIST name]</c> block, resolving each
-/// entry's item or nested-table reference against the same maps <see cref="ItemTemplateBuilder" /> uses.</summary>
+/// <summary>
+/// Builds a <see cref="LootTemplate" /> from one <c>[LOOTLIST name]</c> block, resolving each
+/// entry's item or nested-table reference against the same maps <see cref="ItemTemplateBuilder" /> uses.
+/// </summary>
 internal static class LootTemplateBuilder
 {
     private const string HeaderPrefix = "LOOTLIST ";
     private const string NestedLootPrefix = "LOOTLIST=";
     private const string NestedItemListPrefix = "ITEMLIST=";
 
-    /// <summary>True when <paramref name="header" /> names a loot block (<c>"LOOTLIST name"</c>),
+    /// <summary>
+    /// True when <paramref name="header" /> names a loot block (<c>"LOOTLIST name"</c>),
     /// with the table's own Id, everything after the prefix run through <see cref="StringUtils.ToSnakeCase" />
-    /// (real names are camelCase, "eartheleLoot"), as <paramref name="lootId" />.</summary>
+    /// (real names are camelCase, "eartheleLoot"), as <paramref name="lootId" />.
+    /// </summary>
     public static bool TryGetLootId(string header, out string lootId)
     {
         if (header.StartsWith(HeaderPrefix, StringComparison.OrdinalIgnoreCase))
@@ -55,7 +59,7 @@ internal static class LootTemplateBuilder
             entries.Add(entry);
         }
 
-        return new LootTemplate { Id = id, Entries = entries };
+        return new() { Id = id, Entries = entries };
     }
 
     private static LootEntry? ParseEntry(
@@ -93,7 +97,7 @@ internal static class LootTemplateBuilder
 
         if (reference.Equals("blank", StringComparison.OrdinalIgnoreCase))
         {
-            return new LootEntry { Weight = weight, Amount = amount };
+            return new() { Weight = weight, Amount = amount };
         }
 
         if (reference.StartsWith(NestedLootPrefix, StringComparison.OrdinalIgnoreCase))
@@ -120,7 +124,7 @@ internal static class LootTemplateBuilder
 
         itemNameById.TryGetValue(itemId, out var comment);
 
-        return new LootEntry { Weight = weight, ItemId = itemId, Comment = comment, Amount = amount };
+        return new() { Weight = weight, ItemId = itemId, Comment = comment, Amount = amount };
     }
 
     private static RangeValueSpec<int> ParseAmount(string? amountText)
@@ -137,6 +141,8 @@ internal static class LootTemplateBuilder
             return RangeValueSpec<int>.FromRange(min, max);
         }
 
-        return int.TryParse(parts[0], out var value) ? RangeValueSpec<int>.FromValue(value) : RangeValueSpec<int>.FromValue(1);
+        return int.TryParse(parts[0], out var value)
+                   ? RangeValueSpec<int>.FromValue(value)
+                   : RangeValueSpec<int>.FromValue(1);
     }
 }

@@ -1,6 +1,7 @@
 using System.Net;
 using Moongate.Core.Utils;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Network.Framing;
 
 namespace Moongate.Tests.Server.Bootstrap.Internal;
@@ -10,7 +11,7 @@ public sealed class UoNetworkOptionsFactoryTests
     [Fact]
     public void Create_DefaultPortsSeparateLoginAndGame()
     {
-        var config = new Moongate.Server.Data.Config.MoongateServerConfig();
+        var config = new MoongateServerConfig();
 
         Assert.Equal(2593, config.Network.LoginPort);
         Assert.Equal(2595, config.Network.GamePort);
@@ -19,7 +20,7 @@ public sealed class UoNetworkOptionsFactoryTests
     [Fact]
     public void Create_PreservesEndpointAndCreatesIndependentFramers()
     {
-        var config = new Moongate.Server.Data.Config.MoongateServerConfig
+        var config = new MoongateServerConfig
         {
             Network = new() { ListenAddress = "127.0.0.1", GamePort = 2594 }
         };
@@ -34,7 +35,7 @@ public sealed class UoNetworkOptionsFactoryTests
     [Fact]
     public void Create_WildcardPreservesLocalAddressExpansion()
     {
-        var config = new Moongate.Server.Data.Config.MoongateServerConfig
+        var config = new MoongateServerConfig
         {
             Network = new() { ListenAddress = "0.0.0.0", GamePort = 2593 }
         };
@@ -46,7 +47,7 @@ public sealed class UoNetworkOptionsFactoryTests
     [Fact]
     public void Create_LoginAndGameUseDistinctPortsForEveryLocalAddress()
     {
-        var config = new Moongate.Server.Data.Config.MoongateServerConfig
+        var config = new MoongateServerConfig
         {
             Network = new() { ListenAddress = "0.0.0.0", LoginPort = 4000, GamePort = 5000 }
         };

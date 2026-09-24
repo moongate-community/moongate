@@ -44,10 +44,13 @@ await ConsoleApp.RunAsync(
 
         rootDirectory = rootDirectory.ResolvePathAndEnvs();
 
-        if ((generateAdminCertificate && !initializeRoot) || (adminCertificateHosts is not null && !generateAdminCertificate))
+        if (generateAdminCertificate && !initializeRoot || adminCertificateHosts is not null && !generateAdminCertificate)
         {
-            await Console.Error.WriteLineAsync("Certificate options require --initialize-root and --generate-admin-certificate.");
+            await Console.Error.WriteLineAsync(
+                "Certificate options require --initialize-root and --generate-admin-certificate."
+            );
             Environment.ExitCode = 2;
+
             return;
         }
 
@@ -59,7 +62,7 @@ await ConsoleApp.RunAsync(
                     rootDirectory,
                     Path.Combine(AppContext.BaseDirectory, "migrations"),
                     Console.Out,
-                    generateAdminCertificate ? (adminCertificateHosts?.Split(',') ?? []) : null
+                    generateAdminCertificate ? adminCertificateHosts?.Split(',') ?? [] : null
                 );
             }
             catch (Exception exception)

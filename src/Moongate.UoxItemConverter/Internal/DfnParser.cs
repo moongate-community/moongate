@@ -1,11 +1,13 @@
 namespace Moongate.UoxItemConverter.Internal;
 
-/// <summary>Reads UOX3's <c>.dfn</c> block format: <c>// comment</c> lines, blank lines, a
+/// <summary>
+/// Reads UOX3's <c>.dfn</c> block format: <c>// comment</c> lines, blank lines, a
 /// <c>[header]</c> line, a bare <c>{</c>, one line per entry, and a bare <c>}</c>. A trailing
 /// <c>//comment</c> is stripped from every line first, real data has it glued straight onto a brace
 /// with no space (<c>{//approximately 1%</c>), which otherwise hides the whole block: the real
 /// engine (<c>oldstrutil::removeTrailing(sLine, "//")</c> in UOX3's own <c>ssection.cpp</c>) does the
-/// same, unconditionally, before looking at a line's content.</summary>
+/// same, unconditionally, before looking at a line's content.
+/// </summary>
 internal static class DfnParser
 {
     public static List<DfnBlock> Parse(IReadOnlyList<string> lines)
@@ -41,7 +43,7 @@ internal static class DfnParser
 
             if (line == "{")
             {
-                fields = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
+                fields = new(StringComparer.OrdinalIgnoreCase);
                 entries = [];
 
                 continue;
@@ -51,7 +53,7 @@ internal static class DfnParser
             {
                 if (header is not null && fields is not null && entries is not null)
                 {
-                    blocks.Add(new DfnBlock(header, fields, entries));
+                    blocks.Add(new(header, fields, entries));
                 }
 
                 header = null;

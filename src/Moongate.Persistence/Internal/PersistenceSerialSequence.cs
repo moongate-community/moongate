@@ -11,12 +11,15 @@ namespace Moongate.Persistence.Internal;
 internal static class PersistenceSerialSequence
 {
     public static async Task<string> CompareAsync(
-        PostgreSqlDatabase database, IEnumerable<Type> entityTypes, CancellationToken cancellationToken
+        PostgreSqlDatabase database,
+        IEnumerable<Type> entityTypes,
+        CancellationToken cancellationToken
     )
     {
         var sql = new StringBuilder();
         await using var connection = new NpgsqlConnection(database.SchemaConnectionString);
         await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
+
         foreach (var type in entityTypes)
         {
             var table = database.Orm.CodeFirst.GetTableByEntity(type);
@@ -32,16 +35,20 @@ internal static class PersistenceSerialSequence
                             AND attname IN (@column, @old_column)
                         ORDER BY (attname = @column) DESC LIMIT 1
                     ))::regclass END
-                """, connection
+                """,
+                connection
             );
             command.Parameters.AddWithValue("table", table.DbName);
             command.Parameters.AddWithValue("column", column.Attribute.Name);
             command.Parameters.AddWithValue("old_column", column.Attribute.OldName ?? column.Attribute.Name);
             await using var reader = await command.ExecuteReaderAsync(cancellationToken).ConfigureAwait(false);
+
             if (await reader.ReadAsync(cancellationToken).ConfigureAwait(false))
             {
-                if (reader.GetInt64(0) != 1 || reader.GetInt64(1) != uint.MaxValue ||
-                    reader.GetInt64(2) != 1 || reader.GetBoolean(3))
+                if (reader.GetInt64(0) != 1 ||
+                    reader.GetInt64(1) != uint.MaxValue ||
+                    reader.GetInt64(2) != 1 ||
+                    reader.GetBoolean(3))
                 {
                     throw new InvalidOperationException(
                         $"The Serial sequence for '{table.DbName}' must use MINVALUE 1, MAXVALUE {uint.MaxValue}, INCREMENT 1 and NO CYCLE."
@@ -53,6 +60,7 @@ internal static class PersistenceSerialSequence
 
             var parts = table.DbName.Split('.', 2);
             var name = parts[1] + "_" + column.Attribute.Name + "_seq";
+
             if (name.Length > 63)
             {
                 var suffix = Convert.ToHexStringLower(SHA256.HashData(Encoding.UTF8.GetBytes(name)))[..16];
@@ -62,41 +70,48 @@ internal static class PersistenceSerialSequence
             var sequence = Quote(parts[0]) + "." + Quote(name);
             var quotedTable = Quote(parts[0]) + "." + Quote(parts[1]);
             var quotedColumn = Quote(column.Attribute.Name);
+
             // A DO statement is atomic even in the legacy schema-sync path. Do not adopt unrelated existing objects.
-            sql.AppendLine($$"""
-                DO $moongate_serial$
-                DECLARE highest_id bigint;
-                BEGIN
-                    LOCK TABLE {{quotedTable}} IN SHARE ROW EXCLUSIVE MODE;
-                    SELECT COALESCE(MAX({{quotedColumn}}), 0) INTO highest_id FROM {{quotedTable}};
-                    IF highest_id < 0 OR highest_id > {{uint.MaxValue}} THEN
-                        RAISE EXCEPTION 'Existing identity is outside the Serial range';
-                    END IF;
-                    CREATE SEQUENCE {{sequence}} AS bigint MINVALUE 1 MAXVALUE {{uint.MaxValue}} START WITH 1 NO CYCLE;
-                    ALTER SEQUENCE {{sequence}} OWNED BY {{quotedTable}}.{{quotedColumn}};
-                    PERFORM setval('{{sequence.Replace("'", "''", StringComparison.Ordinal)}}'::regclass,
-                        GREATEST(highest_id, 1), highest_id > 0);
-                END
-                $moongate_serial$;
-                """);
+            sql.AppendLine(
+                $$"""
+                  DO $moongate_serial$
+                  DECLARE highest_id bigint;
+                  BEGIN
+                      LOCK TABLE {{quotedTable}} IN SHARE ROW EXCLUSIVE MODE;
+                      SELECT COALESCE(MAX({{quotedColumn}}), 0) INTO highest_id FROM {{quotedTable}};
+                      IF highest_id < 0 OR highest_id > {{uint.MaxValue}} THEN
+                          RAISE EXCEPTION 'Existing identity is outside the Serial range';
+                      END IF;
+                      CREATE SEQUENCE {{sequence}} AS bigint MINVALUE 1 MAXVALUE {{uint.MaxValue}} START WITH 1 NO CYCLE;
+                      ALTER SEQUENCE {{sequence}} OWNED BY {{quotedTable}}.{{quotedColumn}};
+                      PERFORM setval('{{sequence.Replace("'", "''", StringComparison.Ordinal)}}'::regclass,
+                          GREATEST(highest_id, 1), highest_id > 0);
+                  END
+                  $moongate_serial$;
+                  """
+            );
         }
 
         return sql.ToString();
     }
 
     public static async Task<Serial> ReserveAsync<T>(
-        IFreeSql orm, DbTransaction? transaction, CancellationToken cancellationToken
+        IFreeSql orm,
+        DbTransaction? transaction,
+        CancellationToken cancellationToken
     ) where T : class, IMoongateEntity
     {
         var table = orm.CodeFirst.GetTableByEntity(typeof(T));
         var column = table.ColumnsByCs[nameof(IMoongateEntity.Id)];
-        var value = await orm.Ado.CommandFluent(
-                "SELECT nextval(pg_get_serial_sequence(@table, @column)::regclass)",
-                new { table = table.DbName, column = column.Attribute.Name }
-            )
-            .WithTransaction(transaction)
-            .ExecuteScalarAsync(cancellationToken)
-            .ConfigureAwait(false);
+        var value = await orm.Ado
+                             .CommandFluent(
+                                 "SELECT nextval(pg_get_serial_sequence(@table, @column)::regclass)",
+                                 new { table = table.DbName, column = column.Attribute.Name }
+                             )
+                             .WithTransaction(transaction)
+                             .ExecuteScalarAsync(cancellationToken)
+                             .ConfigureAwait(false);
+
         if (value is null or DBNull)
         {
             throw new InvalidOperationException(
@@ -105,6 +120,7 @@ internal static class PersistenceSerialSequence
         }
 
         var serial = Convert.ToInt64(value);
+
         if (serial <= 0 || serial > uint.MaxValue)
         {
             throw new InvalidOperationException("The sequence returned a value outside the nonzero Serial range.");
@@ -113,5 +129,6 @@ internal static class PersistenceSerialSequence
         return new((uint)serial);
     }
 
-    private static string Quote(string identifier) => '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
+    private static string Quote(string identifier)
+        => '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
 }

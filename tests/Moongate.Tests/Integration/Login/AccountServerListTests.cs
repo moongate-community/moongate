@@ -12,14 +12,13 @@ using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Realms;
-using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Environment;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Realms;
 using Moongate.Tests.TestSupport.Server.Ultima;
-using Moongate.Tests.TestSupport.Environment;
 
 namespace Moongate.Tests.Integration.Login;
 
@@ -39,15 +38,19 @@ public sealed class AccountServerListTests
         using var proof = new HandoffProofService(new byte[32]);
         var directory = new StubRealmCatalog(
             new RealmDescriptor("visible", 1, "Visible", IPAddress.Loopback, 2595, AccountType.Regular),
-            new RealmDescriptor("hidden", 2, "Hidden", IPAddress.Loopback, 2596, AccountType.Administrator));
+            new RealmDescriptor("hidden", 2, "Hidden", IPAddress.Loopback, 2596, AccountType.Administrator)
+        );
         container.RegisterInstance<ILoginSessionService>(sessions);
         container.RegisterInstance<ILoginPacketSendService>(sender);
         container.RegisterInstance<IHandoffProofService>(proof);
         container.RegisterInstance(accountFixture.Service);
         container.RegisterInstance(new LoginAccountFlow(accountFixture.Service, directory));
         container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
-        var dispatcher = new LoginPacketDispatchService(sessions,
-            container.Resolve<LoginPacketHandlerRegistry>(), container);
+        var dispatcher = new LoginPacketDispatchService(
+            sessions,
+            container.Resolve<LoginPacketHandlerRegistry>(),
+            container
+        );
         var server = new LoginServerService(network, connections, sessions, dispatcher, sender);
         await connections.StartAsync();
         await sender.StartAsync();
@@ -76,8 +79,11 @@ public sealed class AccountServerListTests
     }
 
     [Theory, InlineData(true, 0xA8, 0x00), InlineData(false, 0x82, 0x04)]
-    public async Task LoginPacket_SendsServerListOrCommunicationProblem(bool available,
-        byte expectedOpcode, byte expectedReason)
+    public async Task LoginPacket_SendsServerListOrCommunicationProblem(
+        bool available,
+        byte expectedOpcode,
+        byte expectedReason
+    )
     {
         using var container = new Container();
         var connections = new ConnectionService();
@@ -86,14 +92,25 @@ public sealed class AccountServerListTests
         var sender = new PacketSendService(connections);
         using var proof = new HandoffProofService(new byte[32]);
         var directory = available
-                            ? new StubRealmCatalog(new RealmDescriptor("local", 1, "Local", IPAddress.Loopback,
-                                2593, AccountType.Regular))
+                            ? new StubRealmCatalog(
+                                new RealmDescriptor(
+                                    "local",
+                                    1,
+                                    "Local",
+                                    IPAddress.Loopback,
+                                    2593,
+                                    AccountType.Regular
+                                )
+                            )
                             : new StubRealmCatalog();
 
-        var accounts = new RecordingAccountService { LoginResult = new AccountEntity
+        var accounts = new RecordingAccountService
         {
-            Id = new Serial(42), AccountType = AccountType.Regular
-        } };
+            LoginResult = new()
+            {
+                Id = new(42), AccountType = AccountType.Regular
+            }
+        };
         container.RegisterInstance<ILoginSessionService>(sessions);
         container.RegisterInstance<ILoginPacketSendService>(sender);
         container.RegisterInstance<IHandoffProofService>(proof);
@@ -102,8 +119,11 @@ public sealed class AccountServerListTests
         container.RegisterLoginPacketHandler<LoginSeedPacket, LoginRoleSeedPacketHandler>();
         container.RegisterLoginPacketHandler<ClientVersionPacket, LoginRoleClientVersionPacketHandler>();
         container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
-        var dispatcher = new LoginPacketDispatchService(sessions,
-            container.Resolve<LoginPacketHandlerRegistry>(), container);
+        var dispatcher = new LoginPacketDispatchService(
+            sessions,
+            container.Resolve<LoginPacketHandlerRegistry>(),
+            container
+        );
         var server = new LoginServerService(network, connections, sessions, dispatcher, sender);
         await connections.StartAsync();
         await sender.StartAsync();
@@ -119,12 +139,13 @@ public sealed class AccountServerListTests
             var response = await connection.ReadSentAsync(timeout.Token);
 
             Assert.Equal(expectedOpcode, response[0]);
+
             if (available)
             {
                 Assert.Equal(1, response[5]);
                 Assert.Equal(1, response[7]);
                 Assert.Equal(new byte[] { 1, 0, 0, 127 }, response[42..46]);
-                Assert.Equal(new Serial(42), sessions.TryGet(1, out var session) ? session.AccountId : Serial.Zero);
+                Assert.Equal(new(42), sessions.TryGet(1, out var session) ? session.AccountId : Serial.Zero);
             }
             else
             {
@@ -149,6 +170,7 @@ public sealed class AccountServerListTests
         Encoding.ASCII.GetBytes(account).CopyTo(frame, 1);
         Encoding.ASCII.GetBytes(password).CopyTo(frame, 31);
         frame[^1] = 0xFF;
+
         return frame;
     }
 }

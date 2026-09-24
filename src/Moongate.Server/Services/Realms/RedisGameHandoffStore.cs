@@ -2,7 +2,6 @@ using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text.Json;
-using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Internal.Realms;
@@ -24,29 +23,37 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
     private readonly Func<uint> _generateAuthKey;
 
     public RedisGameHandoffStore(RedisConnectionService redis, IHandoffProofService proof)
-        : this(redis, proof, GenerateAuthKey)
-    {
-    }
+        : this(redis, proof, GenerateAuthKey) { }
 
-    internal RedisGameHandoffStore(RedisConnectionService redis, IHandoffProofService proof,
-        Func<uint> generateAuthKey)
+    internal RedisGameHandoffStore(
+        RedisConnectionService redis,
+        IHandoffProofService proof,
+        Func<uint> generateAuthKey
+    )
     {
         _redis = redis;
         _proof = proof;
         _generateAuthKey = generateAuthKey;
     }
 
-    public async ValueTask<uint> IssueAsync(PendingHandoff handoff, ReadOnlyMemory<byte> credentialKey,
-        CancellationToken token = default)
+    public async ValueTask<uint> IssueAsync(
+        PendingHandoff handoff,
+        ReadOnlyMemory<byte> credentialKey,
+        CancellationToken token = default
+    )
     {
         ArgumentNullException.ThrowIfNull(handoff);
 
-        if (!handoff.AccountId.IsValid || !Enum.IsDefined(handoff.AccountType) ||
-            string.IsNullOrEmpty(handoff.Username) || string.IsNullOrEmpty(handoff.RealmId) ||
+        if (!handoff.AccountId.IsValid ||
+            !Enum.IsDefined(handoff.AccountType) ||
+            string.IsNullOrEmpty(handoff.Username) ||
+            string.IsNullOrEmpty(handoff.RealmId) ||
             handoff.InstanceId == Guid.Empty)
         {
-            throw new ArgumentException("The pending handoff must identify an account and realm instance.",
-                nameof(handoff));
+            throw new ArgumentException(
+                "The pending handoff must identify an account and realm instance.",
+                nameof(handoff)
+            );
         }
 
         var database = _redis.Connection.GetDatabase();
@@ -65,8 +72,15 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
 
             try
             {
-                var ticket = new RedisHandoffTicket(handoff.AccountId.Value, handoff.AccountType,
-                    handoff.Username, handoff.RealmId, handoff.InstanceId, handoff.ClientVersion, proof);
+                var ticket = new RedisHandoffTicket(
+                    handoff.AccountId.Value,
+                    handoff.AccountType,
+                    handoff.Username,
+                    handoff.RealmId,
+                    handoff.InstanceId,
+                    handoff.ClientVersion,
+                    proof
+                );
                 var encoded = JsonSerializer.SerializeToUtf8Bytes(ticket);
 
                 try
@@ -104,11 +118,20 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
         throw new InvalidOperationException("Unable to issue a unique game redirect key.");
     }
 
-    public async ValueTask<PendingHandoff?> RedeemAsync(string realmId, Guid instanceId, uint authKey,
-        string username, string password, CancellationToken token = default)
+    public async ValueTask<PendingHandoff?> RedeemAsync(
+        string realmId,
+        Guid instanceId,
+        uint authKey,
+        string username,
+        string password,
+        CancellationToken token = default
+    )
     {
-        if (string.IsNullOrEmpty(realmId) || string.IsNullOrEmpty(username) ||
-            string.IsNullOrEmpty(password) || instanceId == Guid.Empty || authKey == 0)
+        if (string.IsNullOrEmpty(realmId) ||
+            string.IsNullOrEmpty(username) ||
+            string.IsNullOrEmpty(password) ||
+            instanceId == Guid.Empty ||
+            authKey == 0)
         {
             return null;
         }
@@ -139,8 +162,14 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
 
             try
             {
-                var handoff = new PendingHandoff(new Serial(ticket.AccountId), ticket.AccountType,
-                    ticket.Username, ticket.RealmId, ticket.InstanceId, ticket.ClientVersion);
+                var handoff = new PendingHandoff(
+                    new(ticket.AccountId),
+                    ticket.AccountType,
+                    ticket.Username,
+                    ticket.RealmId,
+                    ticket.InstanceId,
+                    ticket.ClientVersion
+                );
 
                 if (!StringComparer.Ordinal.Equals(ticket.RealmId, realmId) ||
                     !StringComparer.Ordinal.Equals(ticket.Username, username) ||
@@ -191,6 +220,7 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
     {
         Span<byte> bytes = stackalloc byte[sizeof(uint)];
         RandomNumberGenerator.Fill(bytes);
+
         return BinaryPrimitives.ReadUInt32BigEndian(bytes);
     }
 
@@ -205,9 +235,13 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
         {
             var parsed = JsonSerializer.Deserialize<RedisHandoffTicket>(encoded);
 
-            if (parsed is null || parsed.AccountId == 0 || !Enum.IsDefined(parsed.AccountType) ||
-                string.IsNullOrEmpty(parsed.Username) || string.IsNullOrEmpty(parsed.RealmId) ||
-                parsed.InstanceId == Guid.Empty || parsed.Proof is not { Length: ProofSize })
+            if (parsed is null ||
+                parsed.AccountId == 0 ||
+                !Enum.IsDefined(parsed.AccountType) ||
+                string.IsNullOrEmpty(parsed.Username) ||
+                string.IsNullOrEmpty(parsed.RealmId) ||
+                parsed.InstanceId == Guid.Empty ||
+                parsed.Proof is not { Length: ProofSize })
             {
                 if (parsed?.Proof is { } invalidProof)
                 {
@@ -218,6 +252,7 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
             }
 
             ticket = parsed;
+
             return true;
         }
         catch (JsonException)

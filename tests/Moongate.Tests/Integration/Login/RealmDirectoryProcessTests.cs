@@ -2,7 +2,6 @@ using System.Net;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
-using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
 
@@ -24,33 +23,46 @@ public sealed class RealmDirectoryProcessTests
         await using var registration = new RedisRealmRegistrationService(
             gameADirectory,
             liveRealm,
-            new RealmDirectoryConfig { HeartbeatIntervalSeconds = 1, LeaseDurationSeconds = 3 },
-            TimeProvider.System);
+            new() { HeartbeatIntervalSeconds = 1, LeaseDurationSeconds = 3 },
+            TimeProvider.System
+        );
 
         try
         {
             await registration.StartAsync();
             await gameBDirectory.RegisterAsync(lostRealm);
             IRealmCatalog catalog = new RedisRealmDirectoryService(login, prefix, TimeSpan.FromSeconds(3));
-            Assert.Equal([3, 7], (await catalog.GetAvailableAsync(AccountType.Regular))
-                .Select(realm => realm.ServerIndex));
+            Assert.Equal(
+                [3, 7],
+                (await catalog.GetAvailableAsync(AccountType.Regular))
+                .Select(realm => realm.ServerIndex)
+            );
 
             await login.StopAsync();
             await using var restartedLogin = await ConnectAsync();
             catalog = new RedisRealmDirectoryService(restartedLogin, prefix, TimeSpan.FromSeconds(3));
-            Assert.Equal([3, 7], (await catalog.GetAvailableAsync(AccountType.Regular))
-                .Select(realm => realm.ServerIndex));
+            Assert.Equal(
+                [3, 7],
+                (await catalog.GetAvailableAsync(AccountType.Regular))
+                .Select(realm => realm.ServerIndex)
+            );
 
             using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(5));
+
             while (await catalog.FindByIndexAsync(7, AccountType.Regular, timeout.Token) is not null)
             {
                 await Task.Delay(50, timeout.Token);
             }
 
-            Assert.Equal([3], (await catalog.GetAvailableAsync(AccountType.Regular))
-                .Select(realm => realm.ServerIndex));
-            Assert.Equal(liveRealm.InstanceId,
-                (await catalog.FindByIndexAsync(3, AccountType.Regular))!.InstanceId);
+            Assert.Equal(
+                [3],
+                (await catalog.GetAvailableAsync(AccountType.Regular))
+                .Select(realm => realm.ServerIndex)
+            );
+            Assert.Equal(
+                liveRealm.InstanceId,
+                (await catalog.FindByIndexAsync(3, AccountType.Regular))!.InstanceId
+            );
         }
         finally
         {
@@ -61,17 +73,21 @@ public sealed class RealmDirectoryProcessTests
     }
 
     private static RealmInstance CreateRealm(string id, ushort index)
-        => new(new RealmDescriptor(id, index, id, IPAddress.Loopback, 2595, AccountType.Regular),
-            Guid.NewGuid());
+        => new(
+            new(id, index, id, IPAddress.Loopback, 2595, AccountType.Regular),
+            Guid.NewGuid()
+        );
 
     private static async Task<RedisConnectionService> ConnectAsync()
     {
-        var redis = new RedisConnectionService(new RedisConfig
-        {
-            ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                               "localhost:6379",
-            HandoffSecret = new string('x', 32)
-        });
+        var redis = new RedisConnectionService(
+            new()
+            {
+                ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
+                                   "localhost:6379",
+                HandoffSecret = new('x', 32)
+            }
+        );
         await redis.StartAsync();
 
         return redis;

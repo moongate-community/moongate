@@ -13,6 +13,7 @@ public sealed class AsyncPingPacketHandler : IAsyncPacketHandler<PingPacket>
     public ValueTask HandleAsync(PacketContext context, PingPacket packet, CancellationToken cancellationToken)
     {
         LastSequence = packet.Sequence;
+
         return OnHandleAsync?.Invoke(context, packet, cancellationToken) ?? ValueTask.CompletedTask;
     }
 }

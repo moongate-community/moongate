@@ -26,10 +26,9 @@ namespace Moongate.Ultima.Io;
 
 public sealed class Verdata
 {
+    private static string _path;
     public static Stream Stream { get; private set; }
     public static Entry5D[] Patches { get; private set; }
-
-    private static string _path;
 
     static Verdata()
     {

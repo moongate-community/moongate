@@ -108,9 +108,6 @@ public sealed class TimerModuleTests : IDisposable
         Assert.False(_state.Environment["second"].Read<bool>());
     }
 
-    public void Dispose()
-        => _state.Dispose();
-
     [Fact]
     public void Every_RegistersARepeatingTimer()
     {
@@ -148,4 +145,7 @@ public sealed class TimerModuleTests : IDisposable
 
     private LuaValue[] Run(string source)
         => SyncValueTask.Run(_state.DoStringAsync(source, "test"));
+
+    public void Dispose()
+        => _state.Dispose();
 }

@@ -5,14 +5,13 @@ namespace Moongate.Tests.Ultima.Helpers;
 
 public class UopUtilsTests
 {
-    private static readonly byte[] _expectedData = "Moongate zlib compatibility."u8.ToArray();
-
     // Independent fixtures generated with Python's zlib.compress at levels 0, 6 and 9.
     private const string StoredZlibPayload =
         "7801011C00E3FF4D6F6F6E67617465207A6C696220636F6D7061746962696C6974792E9C7F0AD4";
 
     private const string ZlibPayload = "789CF3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D403009C7F0AD4";
     private const string BestZlibPayload = "78DAF3CDCFCF4B4F2C4955A8CAC94C5248CECF2D482CC94CCACCC92CA9D403009C7F0AD4";
+    private static readonly byte[] _expectedData = "Moongate zlib compatibility."u8.ToArray();
 
     [Fact]
     public void Compress_KnownPayload_ProducesCompleteZlibDataWithoutChangingInput()

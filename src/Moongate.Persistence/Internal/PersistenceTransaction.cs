@@ -38,27 +38,36 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
 
     public Task<T?> GetByIdForUpdateAsync<T>(Serial id, CancellationToken cancellationToken = default)
         where T : class, IMoongateEntity
-        => RunAsync<T?>(async (orm, transaction, token) =>
-        {
-            if (!id.IsValid)
+        => RunAsync<T?>(
+            async (orm, transaction, token) =>
             {
-                throw new ArgumentOutOfRangeException(nameof(id));
-            }
-            if (_owner.GetTarget(typeof(T)) != Target)
-            {
-                throw new InvalidOperationException("Transactions cannot cross database targets.");
-            }
-            try
-            {
-                return await orm.Select<T>().WithTransaction(transaction).Where(entity => entity.Id == id)
-                    .ForUpdate().ToOneAsync(token).ConfigureAwait(false);
-            }
-            catch (Exception exception) when (token.IsCancellationRequested)
-            {
-                // FreeSql wraps provider cancellation; preserve the public cancellation contract.
-                throw new OperationCanceledException("Row-lock read canceled.", exception, token);
-            }
-        }, cancellationToken);
+                if (!id.IsValid)
+                {
+                    throw new ArgumentOutOfRangeException(nameof(id));
+                }
+
+                if (_owner.GetTarget(typeof(T)) != Target)
+                {
+                    throw new InvalidOperationException("Transactions cannot cross database targets.");
+                }
+
+                try
+                {
+                    return await orm.Select<T>()
+                                    .WithTransaction(transaction)
+                                    .Where(entity => entity.Id == id)
+                                    .ForUpdate()
+                                    .ToOneAsync(token)
+                                    .ConfigureAwait(false);
+                }
+                catch (Exception exception) when (token.IsCancellationRequested)
+                {
+                    // FreeSql wraps provider cancellation; preserve the public cancellation contract.
+                    throw new OperationCanceledException("Row-lock read canceled.", exception, token);
+                }
+            },
+            cancellationToken
+        );
 
     public async Task CompleteCallbackAsync()
     {

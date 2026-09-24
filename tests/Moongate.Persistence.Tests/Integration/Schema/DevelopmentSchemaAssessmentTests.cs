@@ -1,6 +1,7 @@
 using Moongate.Persistence.Internal;
 using Moongate.Persistence.Tests.TestSupport.Persistence;
 using Moongate.Persistence.Types.Persistence;
+using Npgsql;
 
 namespace Moongate.Persistence.Tests.Integration.Schema;
 
@@ -23,15 +24,18 @@ public sealed class DevelopmentSchemaAssessmentTests
         var created = await DevelopmentSchemaAssessor.AssessAsync(database, entities, CancellationToken.None);
         Assert.False(created.RequiresReview, created.Ddl);
         await db.ExecuteAsync(created.Ddl);
-        Assert.Equal(3L, await db.ScalarAsync<long>(
-            "SELECT count(*) FROM pg_indexes WHERE schemaname = 'auth' AND indexname IN " +
-            "('ux_development_indexed_username', 'ix_development_indexed_lookup', 'ix_development_indexed_id')"
-        ));
+        Assert.Equal(
+            3L,
+            await db.ScalarAsync<long>(
+                "SELECT count(*) FROM pg_indexes WHERE schemaname = 'auth' AND indexname IN " +
+                "('ux_development_indexed_username', 'ix_development_indexed_lookup', 'ix_development_indexed_id')"
+            )
+        );
         await db.ExecuteAsync("INSERT INTO auth.development_indexed_accounts VALUES (1, 'same');");
-        var duplicate = await Assert.ThrowsAsync<Npgsql.PostgresException>(() => db.ExecuteAsync(
-            "INSERT INTO auth.development_indexed_accounts VALUES (2, 'same');"
-        ));
-        Assert.Equal(Npgsql.PostgresErrorCodes.UniqueViolation, duplicate.SqlState);
+        var duplicate = await Assert.ThrowsAsync<PostgresException>(
+                            () => db.ExecuteAsync("INSERT INTO auth.development_indexed_accounts VALUES (2, 'same');")
+                        );
+        Assert.Equal(PostgresErrorCodes.UniqueViolation, duplicate.SqlState);
         var unchanged = await DevelopmentSchemaAssessor.AssessAsync(database, entities, CancellationToken.None);
         Assert.False(unchanged.RequiresReview, unchanged.Ddl);
         Assert.True(string.IsNullOrWhiteSpace(unchanged.Ddl), unchanged.Ddl);
@@ -48,8 +52,8 @@ public sealed class DevelopmentSchemaAssessmentTests
         );
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         Type[] entities = includeNewTable
-            ? [typeof(DevelopmentIndexedAccountEntity), typeof(DevelopmentAccountEntity)]
-            : [typeof(DevelopmentIndexedAccountEntity)];
+                              ? [typeof(DevelopmentIndexedAccountEntity), typeof(DevelopmentAccountEntity)]
+                              : [typeof(DevelopmentIndexedAccountEntity)];
         var result = await DevelopmentSchemaAssessor.AssessAsync(database, entities, CancellationToken.None);
         Assert.Contains("CREATE UNIQUE INDEX", result.Ddl);
         Assert.True(result.RequiresReview, result.Ddl);
@@ -62,17 +66,17 @@ public sealed class DevelopmentSchemaAssessmentTests
         await using var db = await _fixture.CreateDatabaseAsync();
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var created = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentStringDefaultEntity)],
-            CancellationToken.None
-        );
+                          database,
+                          [typeof(DevelopmentStringDefaultEntity)],
+                          CancellationToken.None
+                      );
         Assert.False(created.RequiresReview, created.Ddl);
         await db.ExecuteAsync(created.Ddl);
         var unchanged = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentStringDefaultEntity)],
-            CancellationToken.None
-        );
+                            database,
+                            [typeof(DevelopmentStringDefaultEntity)],
+                            CancellationToken.None
+                        );
         Assert.False(unchanged.RequiresReview, unchanged.Ddl);
         Assert.True(string.IsNullOrWhiteSpace(unchanged.Ddl), unchanged.Ddl);
     }
@@ -83,7 +87,8 @@ public sealed class DevelopmentSchemaAssessmentTests
         await using var db = await _fixture.CreateDatabaseAsync();
         await db.ExecuteAsync(
             "CREATE SCHEMA auth; CREATE TABLE auth.development_defaults(id bigint PRIMARY KEY, level int4 NOT NULL " +
-            databaseDefault + "); INSERT INTO auth.development_defaults VALUES(1, 42);"
+            databaseDefault +
+            "); INSERT INTO auth.development_defaults VALUES(1, 42);"
         );
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         Type[] entities = [remove ? typeof(DevelopmentNoDefaultEntity) : typeof(DevelopmentDefaultEntity)];
@@ -106,20 +111,20 @@ public sealed class DevelopmentSchemaAssessmentTests
         );
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var result = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentRenamedEntity)],
-            CancellationToken.None
-        );
+                         database,
+                         [typeof(DevelopmentRenamedEntity)],
+                         CancellationToken.None
+                     );
         Assert.True(result.RequiresReview);
         Assert.Contains("RENAME COLUMN", result.Ddl);
         Assert.DoesNotContain("DROP COLUMN", result.Ddl);
         await db.ExecuteAsync(result.Ddl);
         Assert.Equal(42, await db.ScalarAsync<int>("SELECT level FROM auth.development_rename WHERE id=1"));
         var unchanged = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentRenamedEntity)],
-            CancellationToken.None
-        );
+                            database,
+                            [typeof(DevelopmentRenamedEntity)],
+                            CancellationToken.None
+                        );
         Assert.False(unchanged.RequiresReview);
         Assert.True(string.IsNullOrWhiteSpace(unchanged.Ddl), unchanged.Ddl);
     }
@@ -130,17 +135,17 @@ public sealed class DevelopmentSchemaAssessmentTests
         await using var db = await _fixture.CreateDatabaseAsync();
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var created = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentDefaultEntity)],
-            CancellationToken.None
-        );
+                          database,
+                          [typeof(DevelopmentDefaultEntity)],
+                          CancellationToken.None
+                      );
         Assert.False(created.RequiresReview);
         await db.ExecuteAsync(created.Ddl);
         var unchanged = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentDefaultEntity)],
-            CancellationToken.None
-        );
+                            database,
+                            [typeof(DevelopmentDefaultEntity)],
+                            CancellationToken.None
+                        );
         Assert.False(unchanged.RequiresReview, unchanged.Ddl);
         Assert.True(string.IsNullOrWhiteSpace(unchanged.Ddl), unchanged.Ddl);
     }
@@ -154,10 +159,10 @@ public sealed class DevelopmentSchemaAssessmentTests
         );
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var result = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentDefaultEntity)],
-            CancellationToken.None
-        );
+                         database,
+                         [typeof(DevelopmentDefaultEntity)],
+                         CancellationToken.None
+                     );
         Assert.False(result.RequiresReview, result.Ddl);
         await db.ExecuteAsync(result.Ddl);
         Assert.Equal(7, await db.ScalarAsync<int>("SELECT level FROM auth.development_defaults WHERE id=1"));
@@ -173,10 +178,10 @@ public sealed class DevelopmentSchemaAssessmentTests
         );
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var result = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentAccountEntity)],
-            CancellationToken.None
-        );
+                         database,
+                         [typeof(DevelopmentAccountEntity)],
+                         CancellationToken.None
+                     );
         Assert.True(result.RequiresReview, result.Ddl);
     }
 
@@ -187,10 +192,10 @@ public sealed class DevelopmentSchemaAssessmentTests
         await db.ExecuteAsync("CREATE SCHEMA auth; CREATE TABLE auth.development_required(id bigint NOT NULL PRIMARY KEY);");
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var result = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentRequiredEntity)],
-            CancellationToken.None
-        );
+                         database,
+                         [typeof(DevelopmentRequiredEntity)],
+                         CancellationToken.None
+                     );
         Assert.True(result.RequiresReview, result.Ddl);
     }
 
@@ -210,10 +215,10 @@ public sealed class DevelopmentSchemaAssessmentTests
         );
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var result = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentAccountEntity)],
-            CancellationToken.None
-        );
+                         database,
+                         [typeof(DevelopmentAccountEntity)],
+                         CancellationToken.None
+                     );
         Assert.False(result.RequiresReview);
         await db.ExecuteAsync(result.Ddl);
         Assert.Equal(
@@ -222,10 +227,10 @@ public sealed class DevelopmentSchemaAssessmentTests
         );
         Assert.Null(await db.ScalarAsync<object>("SELECT last_login_at FROM auth.development_accounts WHERE id = 1"));
         var unchanged = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentAccountEntity)],
-            CancellationToken.None
-        );
+                            database,
+                            [typeof(DevelopmentAccountEntity)],
+                            CancellationToken.None
+                        );
         Assert.False(unchanged.RequiresReview);
         Assert.True(string.IsNullOrWhiteSpace(unchanged.Ddl));
     }
@@ -234,6 +239,7 @@ public sealed class DevelopmentSchemaAssessmentTests
     public async Task AssessAsync_NewTableOrNullableColumn_IsAutomatic(bool existing)
     {
         await using var db = await _fixture.CreateDatabaseAsync();
+
         if (existing)
         {
             await db.ExecuteAsync(
@@ -243,10 +249,10 @@ public sealed class DevelopmentSchemaAssessmentTests
 
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var result = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentAccountEntity)],
-            CancellationToken.None
-        );
+                         database,
+                         [typeof(DevelopmentAccountEntity)],
+                         CancellationToken.None
+                     );
         Assert.False(result.RequiresReview, result.Ddl);
         Assert.NotEmpty(result.Ddl);
     }
@@ -260,10 +266,10 @@ public sealed class DevelopmentSchemaAssessmentTests
         );
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var result = await DevelopmentSchemaAssessor.AssessAsync(
-            database,
-            [typeof(DevelopmentAccountEntity)],
-            CancellationToken.None
-        );
+                         database,
+                         [typeof(DevelopmentAccountEntity)],
+                         CancellationToken.None
+                     );
         Assert.True(result.RequiresReview);
         Assert.Contains("old_name", result.Ddl);
     }

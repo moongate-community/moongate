@@ -4,8 +4,10 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 
 namespace Moongate.UoxItemConverter.Internal;
 
-/// <summary>Builds an <see cref="ItemTemplate" /> from one parsed block, resolving its <c>get=</c>
-/// target against a fully precomputed header-to-Id map.</summary>
+/// <summary>
+/// Builds an <see cref="ItemTemplate" /> from one parsed block, resolving its <c>get=</c>
+/// target against a fully precomputed header-to-Id map.
+/// </summary>
 internal static class ItemTemplateBuilder
 {
     /// <summary>

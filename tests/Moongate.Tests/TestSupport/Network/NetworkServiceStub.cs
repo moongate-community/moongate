@@ -6,13 +6,12 @@ namespace Moongate.Tests.TestSupport.Network;
 
 internal sealed class NetworkServiceStub : INetworkService
 {
-    public event EventHandler<NetworkConnectionEventArgs>? ConnectionAccepted;
-    public event EventHandler<NetworkConnectionEventArgs>? ConnectionClosed;
-    public event EventHandler<NetworkDataEventArgs>? DataReceived;
-
     private readonly IConnectionService _connections;
     private readonly Lock _gate = new();
     private readonly HashSet<ControlledNetworkConnection> _clients = [];
+    public event EventHandler<NetworkConnectionEventArgs>? ConnectionAccepted;
+    public event EventHandler<NetworkConnectionEventArgs>? ConnectionClosed;
+    public event EventHandler<NetworkDataEventArgs>? DataReceived;
 
     public Func<Task> OnStart { get; set; } = () => Task.CompletedTask;
     public Func<Task> OnStop { get; set; } = () => Task.CompletedTask;

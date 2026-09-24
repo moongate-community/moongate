@@ -37,10 +37,9 @@ public sealed class PacketHandlerRegistry
     internal void Register<TPacket, THandler>(Container container)
         where TPacket : class, IIncomingPacket<TPacket>
         where THandler : class, IPacketHandler<TPacket>
-    {
-        RegisterCore<TPacket, THandler>(
+        => RegisterCore<TPacket, THandler>(
             container,
-            new PacketHandlerRegistration(
+            new(
                 typeof(TPacket),
                 typeof(THandler),
                 resolver =>
@@ -51,15 +50,13 @@ public sealed class PacketHandlerRegistry
                 }
             )
         );
-    }
 
     internal void RegisterAsync<TPacket, THandler>(Container container)
         where TPacket : class, IIncomingPacket<TPacket>
         where THandler : class, IAsyncPacketHandler<TPacket>
-    {
-        RegisterCore<TPacket, THandler>(
+        => RegisterCore<TPacket, THandler>(
             container,
-            new PacketHandlerRegistration(
+            new(
                 typeof(TPacket),
                 typeof(THandler),
                 resolver =>
@@ -67,11 +64,10 @@ public sealed class PacketHandlerRegistry
                     var handler = resolver.Resolve<THandler>();
 
                     return (context, packet, cancellationToken) =>
-                        handler.HandleAsync(context, (TPacket)packet, cancellationToken);
+                               handler.HandleAsync(context, (TPacket)packet, cancellationToken);
                 }
             )
         );
-    }
 
     private void RegisterCore<TPacket, THandler>(Container container, PacketHandlerRegistration registration)
         where TPacket : class, IIncomingPacket<TPacket>

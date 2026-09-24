@@ -19,12 +19,6 @@ public sealed class ControlledSendMiddleware : INetMiddleware, IDisposable
         _release = new(!blocked);
     }
 
-    public void Dispose()
-    {
-        _release.Set();
-        _release.Dispose();
-    }
-
     public ValueTask<ReadOnlyMemory<byte>> ProcessAsync(
         MoongateTcpClient? client,
         ReadOnlyMemory<byte> data,
@@ -60,4 +54,10 @@ public sealed class ControlledSendMiddleware : INetMiddleware, IDisposable
 
     public void Release()
         => _release.Set();
+
+    public void Dispose()
+    {
+        _release.Set();
+        _release.Dispose();
+    }
 }

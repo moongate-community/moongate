@@ -26,7 +26,8 @@ public sealed class HelpCommand : ICommandExecutor
             return Task.CompletedTask;
         }
 
-        var available = _registry.Registrations.Values
+        var available = _registry.Registrations
+                                 .Values
                                  .Select(registration => registration.Definition)
                                  .Distinct()
                                  .Where(definition => IsAvailable(definition, context))
@@ -76,8 +77,8 @@ public sealed class HelpCommand : ICommandExecutor
         var level = context.Source switch
         {
             CommandSourceType.Console => AccountType.Administrator,
-            CommandSourceType.InGame => context.Session?.AccountType ?? AccountType.Regular,
-            _ => AccountType.Regular
+            CommandSourceType.InGame  => context.Session?.AccountType ?? AccountType.Regular,
+            _                         => AccountType.Regular
         };
 
         return level >= definition.MinimumAccountType;

@@ -13,18 +13,27 @@ public sealed class AccountEntityTests
     {
         await using var fixture = await AccountServiceFixture.CreateAsync();
         await fixture.SeedAsync();
-        await fixture.Database.ExecuteAsync("UPDATE auth.accounts SET can_access_api=true; ALTER TABLE auth.accounts ALTER COLUMN can_access_api SET DEFAULT true;");
-        var sql = await File.ReadAllTextAsync(Path.Combine(AppContext.BaseDirectory, "AccountMigrations", "0004_account_admin_api_access.sql"));
+        await fixture.Database.ExecuteAsync(
+            "UPDATE auth.accounts SET can_access_api=true; ALTER TABLE auth.accounts ALTER COLUMN can_access_api SET DEFAULT true;"
+        );
+        var sql = await File.ReadAllTextAsync(
+                      Path.Combine(AppContext.BaseDirectory, "AccountMigrations", "0004_account_admin_api_access.sql")
+                  );
         await fixture.Database.ExecuteAsync(sql);
         Assert.True((await fixture.Accounts.GetByIdAsync(new(42)))!.CanAccessApi);
-        Assert.Equal("false", await fixture.Database.ScalarAsync<string>("SELECT column_default FROM information_schema.columns WHERE table_schema='auth' AND table_name='accounts' AND column_name='can_access_api'"));
+        Assert.Equal(
+            "false",
+            await fixture.Database.ScalarAsync<string>(
+                "SELECT column_default FROM information_schema.columns WHERE table_schema='auth' AND table_name='accounts' AND column_name='can_access_api'"
+            )
+        );
     }
 
     [Fact]
     public async Task Persistence_RoundTripsAllAccountFieldsInAuthDatabase()
     {
         await using var fixture = await AccountServiceFixture.CreateAsync();
-        var account = await fixture.SeedAsync(locked: true);
+        var account = await fixture.SeedAsync(true);
         var stored = await fixture.Accounts.GetByIdAsync(account.Id);
         Assert.NotNull(stored);
         Assert.NotSame(account, stored);

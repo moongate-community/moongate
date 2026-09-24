@@ -13,8 +13,14 @@ public sealed class AdminAccountSnapshot
     public bool IsLocked { get; }
     public DateTime CreatedAt { get; }
 
-    public AdminAccountSnapshot(Serial accountId, string username, AccountType accountType,
-        bool canAccessApi, bool isLocked, DateTime createdAt)
+    public AdminAccountSnapshot(
+        Serial accountId,
+        string username,
+        AccountType accountType,
+        bool canAccessApi,
+        bool isLocked,
+        DateTime createdAt
+    )
     {
         AccountId = accountId;
         Username = username;

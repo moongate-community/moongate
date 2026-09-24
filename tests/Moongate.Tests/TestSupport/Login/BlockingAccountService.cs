@@ -16,22 +16,38 @@ internal sealed class BlockingAccountService : IAccountService
     public void Release(AccountEntity? account)
         => _result.TrySetResult(account);
 
-    public Task<AccountEntity?> LoginAsync(string username, string password,
-        CancellationToken cancellationToken = default)
+    public Task<AccountEntity?> LoginAsync(
+        string username,
+        string password,
+        CancellationToken cancellationToken = default
+    )
     {
         Entered.TrySetResult();
+
         return _result.Task;
     }
 
-    public Task<AccountCreateResult> CreateAccountAsync(string username, string password,
-        AccountType accountType = AccountType.Regular, CancellationToken cancellationToken = default)
+    public Task<AccountCreateResult> CreateAccountAsync(
+        string username,
+        string password,
+        AccountType accountType = AccountType.Regular,
+        CancellationToken cancellationToken = default
+    )
         => throw new NotSupportedException();
 
     public Task<IEnumerable<AccountEntity>> ListAccountsAsync(CancellationToken cancellationToken = default)
         => throw new NotSupportedException();
-    public Task<AccountCreateResult> CreateAccountAsync(AccountCreateOptions options, CancellationToken cancellationToken = default)
+
+    public Task<AccountCreateResult> CreateAccountAsync(
+        AccountCreateOptions options,
+        CancellationToken cancellationToken = default
+    )
         => throw new NotSupportedException();
 
-    public Task<AccountPage> ListAccountsPageAsync(Serial afterId, int pageSize = 50, CancellationToken cancellationToken = default)
+    public Task<AccountPage> ListAccountsPageAsync(
+        Serial afterId,
+        int pageSize = 50,
+        CancellationToken cancellationToken = default
+    )
         => throw new NotSupportedException();
 }

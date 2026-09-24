@@ -5,18 +5,14 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Channels;
 using DryIoc;
-using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Registry;
-using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Data.Network;
 using Moongate.Server.Core.Data.Realms;
-using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
-using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Login;
@@ -27,7 +23,6 @@ using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
-using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Server.Ultima;
@@ -43,11 +38,13 @@ public sealed class RedisTcpHandoffFlowTests
     {
         var endpoint = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
                        throw new InvalidOperationException("MOONGATE_TEST_REDIS_CONNECTION_STRING is required.");
-        await using var redis = new RedisConnectionService(new RedisConfig
-        {
-            ConnectionString = endpoint,
-            HandoffSecret = new string('x', 32)
-        });
+        await using var redis = new RedisConnectionService(
+            new()
+            {
+                ConnectionString = endpoint,
+                HandoffSecret = new('x', 32)
+            }
+        );
         await redis.StartAsync();
         using var proof = new HandoffProofService(RandomNumberGenerator.GetBytes(32));
         var catalog = new RedisRealmDirectoryService(redis, $"test:tcp:realms:{Guid.NewGuid():N}:");
@@ -56,10 +53,10 @@ public sealed class RedisTcpHandoffFlowTests
         using var gameContainer = new Container();
         var gameConnections = new ConnectionService();
         var gameSender = new PacketSendService(gameConnections);
-        var timers = new TimerWheelService(new TimerWheelOptions(), TimeProvider.System);
-        using var loop = new GameLoopService(new GameLoopOptions(), timers, TimeProvider.System);
+        var timers = new TimerWheelService(new(), TimeProvider.System);
+        using var loop = new GameLoopService(new(), timers, TimeProvider.System);
         var gameSessions = new SessionService(loop);
-        var gameNetwork = CreateNetwork(gameConnections, game: true);
+        var gameNetwork = CreateNetwork(gameConnections, true);
         var acceptedGameSessions = Channel.CreateUnbounded<long>();
         var gameFrames = Channel.CreateUnbounded<byte[]>();
         gameNetwork.ConnectionAccepted += (_, args) => acceptedGameSessions.Writer.TryWrite(args.Connection.SessionId);
@@ -70,24 +67,37 @@ public sealed class RedisTcpHandoffFlowTests
         await loop.StartAsync();
         await gameNetwork.StartAsync();
         var gameEndpoint = Assert.Single(gameNetwork.Listeners).Endpoint;
-        var realm = new RealmInstance(new RealmDescriptor($"tcp-{Guid.NewGuid():N}", 1, "Realm A",
-            IPAddress.Loopback, (ushort)gameEndpoint.Port, AccountType.Regular), Guid.NewGuid());
+        var realm = new RealmInstance(
+            new(
+                $"tcp-{Guid.NewGuid():N}",
+                1,
+                "Realm A",
+                IPAddress.Loopback,
+                (ushort)gameEndpoint.Port,
+                AccountType.Regular
+            ),
+            Guid.NewGuid()
+        );
         gameContainer.RegisterInstance<IPacketSendService>(gameSender);
         gameContainer.RegisterInstance(realm);
         gameContainer.RegisterInstance<IGameHandoffStore>(handoffs);
         gameContainer.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
-        var gameDispatcher = new PacketDispatchService(loop, gameSessions,
-            gameContainer.Resolve<PacketHandlerRegistry>(), gameContainer);
+        var gameDispatcher = new PacketDispatchService(
+            loop,
+            gameSessions,
+            gameContainer.Resolve<PacketHandlerRegistry>(),
+            gameContainer
+        );
         var gameServer = new GameServerService(gameNetwork, gameConnections, gameSessions, gameDispatcher, gameSender);
 
         using var loginContainer = new Container();
         var loginConnections = new ConnectionService();
         var loginSender = new PacketSendService(loginConnections);
         var loginSessions = new LoginSessionService();
-        var loginNetwork = CreateNetwork(loginConnections, game: false);
+        var loginNetwork = CreateNetwork(loginConnections, false);
         var accounts = new RecordingAccountService
         {
-            LoginResult = new AccountEntity { Id = new Serial(42), AccountType = AccountType.GameMaster }
+            LoginResult = new() { Id = new(42), AccountType = AccountType.GameMaster }
         };
         loginContainer.RegisterInstance<ILoginSessionService>(loginSessions);
         loginContainer.RegisterInstance<ILoginPacketSendService>(loginSender);
@@ -97,10 +107,18 @@ public sealed class RedisTcpHandoffFlowTests
         loginContainer.RegisterInstance<IGameHandoffStore>(handoffs);
         loginContainer.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
         loginContainer.RegisterLoginPacketHandler<ServerSelectPacket, LoginRoleServerSelectPacketHandler>();
-        var loginDispatcher = new LoginPacketDispatchService(loginSessions,
-            loginContainer.Resolve<LoginPacketHandlerRegistry>(), loginContainer);
-        var loginServer = new LoginServerService(loginNetwork, loginConnections, loginSessions,
-            loginDispatcher, loginSender);
+        var loginDispatcher = new LoginPacketDispatchService(
+            loginSessions,
+            loginContainer.Resolve<LoginPacketHandlerRegistry>(),
+            loginContainer
+        );
+        var loginServer = new LoginServerService(
+            loginNetwork,
+            loginConnections,
+            loginSessions,
+            loginDispatcher,
+            loginSender
+        );
 
         await catalog.RegisterAsync(realm);
 
@@ -130,8 +148,9 @@ public sealed class RedisTcpHandoffFlowTests
             var key = BinaryPrimitives.ReadUInt32BigEndian(redirect.AsSpan(7, 4));
             Assert.NotEqual(0u, key);
             Assert.Equal(0, await ReadEofAsync(loginStream));
-            Assert.True(await redis.Connection.GetDatabase().KeyExistsAsync(
-                $"moongate:handoff:{realm.Descriptor.RealmId}:{key:X8}"));
+            Assert.True(
+                await redis.Connection.GetDatabase().KeyExistsAsync($"moongate:handoff:{realm.Descriptor.RealmId}:{key:X8}")
+            );
 
             using var gameClient = new TcpClient();
             await gameClient.ConnectAsync(gameEndpoint);
@@ -151,10 +170,11 @@ public sealed class RedisTcpHandoffFlowTests
             Assert.Equal(key, acceptedSession.NetworkSession.Seed);
             await WaitForAccountAsync(gameSessions, firstGameId);
             Assert.True(gameSessions.TryGet(firstGameId, out var gameSession));
-            Assert.Equal(new Serial(42), gameSession.AccountId);
+            Assert.Equal(new(42), gameSession.AccountId);
             Assert.Equal(AccountType.GameMaster, gameSession.AccountType);
-            Assert.False(await redis.Connection.GetDatabase().KeyExistsAsync(
-                $"moongate:handoff:{realm.Descriptor.RealmId}:{key:X8}"));
+            Assert.False(
+                await redis.Connection.GetDatabase().KeyExistsAsync($"moongate:handoff:{realm.Descriptor.RealmId}:{key:X8}")
+            );
 
             using var replayClient = new TcpClient();
             await replayClient.ConnectAsync(gameEndpoint);
@@ -181,14 +201,17 @@ public sealed class RedisTcpHandoffFlowTests
     }
 
     private static NetworkService CreateNetwork(ConnectionService connections, bool game)
-        => new(new NetworkListenerOptions
-        {
-            Endpoints = [new IPEndPoint(IPAddress.Loopback, 0)],
-            ConnectionPipelineFactory = () => new()
+        => new(
+            new NetworkListenerOptions
             {
-                Framer = game ? new GameSeedFramer(PacketRegistry.Default) : new UoPacketFramer(PacketRegistry.Default)
-            }
-        }, connections);
+                Endpoints = [new(IPAddress.Loopback, 0)],
+                ConnectionPipelineFactory = () => new()
+                {
+                    Framer = game ? new GameSeedFramer(PacketRegistry.Default) : new UoPacketFramer(PacketRegistry.Default)
+                }
+            },
+            connections
+        );
 
     private static byte[] CreateAccountLogin()
     {
@@ -197,6 +220,7 @@ public sealed class RedisTcpHandoffFlowTests
         Encoding.ASCII.GetBytes("Alice", packet.AsSpan(1));
         Encoding.ASCII.GetBytes("password", packet.AsSpan(31));
         packet[61] = 0xFF;
+
         return packet;
     }
 
@@ -208,15 +232,18 @@ public sealed class RedisTcpHandoffFlowTests
         BinaryPrimitives.WriteUInt32BigEndian(packet.AsSpan(5), key);
         Encoding.ASCII.GetBytes("Alice", packet.AsSpan(9));
         Encoding.ASCII.GetBytes("password", packet.AsSpan(39));
+
         return packet;
     }
 
     private static async Task<byte[]> ReadPacketAsync(NetworkStream stream, byte opcode)
     {
         using var deadline = new CancellationTokenSource(Timeout);
-        var header = new byte[opcode == 0xA8 ? 3 : opcode == 0x8C ? 11 : 2];
+        var header = new byte[opcode == 0xA8 ? 3 :
+                              opcode == 0x8C ? 11 : 2];
         await stream.ReadExactlyAsync(header, deadline.Token);
         Assert.Equal(opcode, header[0]);
+
         if (opcode != 0xA8)
         {
             return header;
@@ -227,6 +254,7 @@ public sealed class RedisTcpHandoffFlowTests
         var packet = new byte[length];
         header.CopyTo(packet, 0);
         await stream.ReadExactlyAsync(packet.AsMemory(header.Length), deadline.Token);
+
         return packet;
     }
 
@@ -234,12 +262,14 @@ public sealed class RedisTcpHandoffFlowTests
     {
         using var deadline = new CancellationTokenSource(Timeout);
         var byteBuffer = new byte[1];
+
         return await stream.ReadAsync(byteBuffer, deadline.Token);
     }
 
     private static async Task WaitForAccountAsync(SessionService sessions, long sessionId)
     {
         using var deadline = new CancellationTokenSource(Timeout);
+
         while (!deadline.IsCancellationRequested)
         {
             if (sessions.TryGet(sessionId, out var session) && session.AccountId.IsValid)
@@ -252,5 +282,4 @@ public sealed class RedisTcpHandoffFlowTests
 
         throw new TimeoutException("Game session did not receive the handoff account.");
     }
-
 }

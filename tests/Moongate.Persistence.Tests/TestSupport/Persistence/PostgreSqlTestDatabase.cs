@@ -22,24 +22,6 @@ public sealed class PostgreSqlTestDatabase : IAsyncDisposable
         ConnectionString = connectionString;
     }
 
-    public async ValueTask DisposeAsync()
-    {
-        if (_disposed)
-        {
-            return;
-        }
-
-        _disposed = true;
-        var quotedDatabaseName = new NpgsqlCommandBuilder().QuoteIdentifier(_databaseName);
-        await using var connection = new NpgsqlConnection(_adminConnectionString);
-        await connection.OpenAsync();
-        await using var command = new NpgsqlCommand(
-            $"DROP DATABASE {quotedDatabaseName} WITH (FORCE)",
-            connection
-        );
-        await command.ExecuteNonQueryAsync();
-    }
-
     public async Task ExecuteAsync(string sql)
     {
         await using var connection = new NpgsqlConnection(ConnectionString);
@@ -56,5 +38,23 @@ public sealed class PostgreSqlTestDatabase : IAsyncDisposable
         var result = await command.ExecuteScalarAsync();
 
         return result is null or DBNull ? default : (T)result;
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        if (_disposed)
+        {
+            return;
+        }
+
+        _disposed = true;
+        var quotedDatabaseName = new NpgsqlCommandBuilder().QuoteIdentifier(_databaseName);
+        await using var connection = new NpgsqlConnection(_adminConnectionString);
+        await connection.OpenAsync();
+        await using var command = new NpgsqlCommand(
+            $"DROP DATABASE {quotedDatabaseName} WITH (FORCE)",
+            connection
+        );
+        await command.ExecuteNonQueryAsync();
     }
 }

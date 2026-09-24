@@ -44,11 +44,15 @@ public sealed class PacketSendServiceTests
             Assert.Equal(0, connection.CloseCalls);
 
             releaseSend.TrySetResult();
-            Assert.Equal(new byte[] { 0xA8, 0, 6, 0x5D, 0, 0 },
-                await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+            Assert.Equal(
+                new byte[] { 0xA8, 0, 6, 0x5D, 0, 0 },
+                await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout)
+            );
             Assert.Equal(new byte[] { 0x73, 2 }, await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
-            Assert.Equal(new byte[] { 0x8C, 127, 0, 0, 1, 0x0A, 0x23, 1, 2, 3, 4 },
-                await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+            Assert.Equal(
+                new byte[] { 0x8C, 127, 0, 0, 1, 0x0A, 0x23, 1, 2, 3, 4 },
+                await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout)
+            );
             await connection.CloseRequested.WaitAsync(Timeout);
             Assert.False(redirect.IsCompleted);
             connection.Complete();
@@ -174,8 +178,8 @@ public sealed class PacketSendServiceTests
         try
         {
             var error = await Assert.ThrowsAsync<AggregateException>(
-                () => sender.SendAndDisconnectAsync(9013, connection, new PingPacket(1)).WaitAsync(Timeout)
-            );
+                            () => sender.SendAndDisconnectAsync(9013, connection, new PingPacket(1)).WaitAsync(Timeout)
+                        );
             Assert.Contains(failure, error.Flatten().InnerExceptions);
             await connection.CloseRequested.WaitAsync(Timeout);
         }
@@ -204,8 +208,10 @@ public sealed class PacketSendServiceTests
             await sender.DisconnectAsync(9002, original).WaitAsync(Timeout);
             Assert.True(replacement.IsConnected);
             Assert.True(sender.TrySend(9002, replacement, new PingPacket(7)));
-            Assert.Equal(new byte[] { 0x73, 7 },
-                await replacement.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+            Assert.Equal(
+                new byte[] { 0x73, 7 },
+                await replacement.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout)
+            );
         }
         finally
         {

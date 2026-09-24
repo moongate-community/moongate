@@ -17,17 +17,22 @@ internal sealed class LoginPacketMailbox : IAsyncDisposable
 
     public LoginSession Session { get; }
 
-    public LoginPacketMailbox(LoginSession session,
+    public LoginPacketMailbox(
+        LoginSession session,
         IReadOnlyDictionary<Type, Func<LoginSession, IPacket, CancellationToken, ValueTask>> handlers,
-        ILogger logger, int capacity)
+        ILogger logger,
+        int capacity
+    )
     {
         Session = session;
         _handlers = handlers;
         _logger = logger;
-        _queue = Channel.CreateBounded<IPacket>(new BoundedChannelOptions(capacity)
-        {
-            SingleReader = true, SingleWriter = false, FullMode = BoundedChannelFullMode.Wait
-        });
+        _queue = Channel.CreateBounded<IPacket>(
+            new BoundedChannelOptions(capacity)
+            {
+                SingleReader = true, SingleWriter = false, FullMode = BoundedChannelFullMode.Wait
+            }
+        );
     }
 
     public void Start()
@@ -48,6 +53,7 @@ internal sealed class LoginPacketMailbox : IAsyncDisposable
     {
         _queue.Writer.TryComplete();
         await _cancellation.CancelAsync().ConfigureAwait(false);
+
         if (_worker is not null)
         {
             await _worker.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
@@ -70,13 +76,12 @@ internal sealed class LoginPacketMailbox : IAsyncDisposable
                 await handler(Session, packet, _cancellation.Token).ConfigureAwait(false);
             }
         }
-        catch (OperationCanceledException) when (_cancellation.IsCancellationRequested)
-        {
-        }
+        catch (OperationCanceledException) when (_cancellation.IsCancellationRequested) { }
         catch (Exception exception)
         {
             _logger.Error(exception, "Login packet handler failed for session {SessionId}", Session.SessionId);
             _queue.Writer.TryComplete(exception);
+
             if (Session.NetworkSession.Client is { } connection)
             {
                 await connection.CloseAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);

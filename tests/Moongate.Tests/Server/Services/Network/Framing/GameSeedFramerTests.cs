@@ -21,7 +21,7 @@ public sealed class GameSeedFramerTests
     public void TryReadFrame_RawSeedAndGameLoginInOneBuffer_SeparatesFrames()
     {
         var framer = new GameSeedFramer(PacketRegistry.Default);
-        byte[] bytes = new byte[69];
+        var bytes = new byte[69];
         bytes[0] = 0x73;
         bytes[1] = 0x12;
         bytes[2] = 0x34;
@@ -53,7 +53,7 @@ public sealed class GameSeedFramerTests
     public void TryReadFrame_DirectVersionSeed_RemainsAnOrdinaryPacket()
     {
         var framer = new GameSeedFramer(PacketRegistry.Default);
-        byte[] bytes = new byte[23];
+        var bytes = new byte[23];
         bytes[0] = 0xEF;
         bytes[1] = 0x11;
         bytes[21] = 0x73;

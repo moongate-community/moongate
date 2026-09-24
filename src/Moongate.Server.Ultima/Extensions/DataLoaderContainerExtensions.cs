@@ -5,12 +5,12 @@ using Moongate.Server.Ultima.Interfaces.Loaders;
 
 namespace Moongate.Server.Ultima.Extensions;
 
-/// <summary>Registers <see cref="IDataLoader{TEntity}"/> implementations for <see cref="Services.DataLoaderService"/>.</summary>
+/// <summary>Registers <see cref="IDataLoader{TEntity}" /> implementations for <see cref="Services.DataLoaderService" />.</summary>
 public static class DataLoaderContainerExtensions
 {
     /// <summary>
-    /// Registers <typeparamref name="TLoader"/> as the singleton <see cref="IDataLoader{TEntity}"/> for
-    /// <typeparamref name="TEntity"/>, and schedules it to run at the given priority when the shard starts.
+    /// Registers <typeparamref name="TLoader" /> as the singleton <see cref="IDataLoader{TEntity}" /> for
+    /// <typeparamref name="TEntity" />, and schedules it to run at the given priority when the shard starts.
     /// </summary>
     public static Container AddUltimaDataLoader<TLoader, TEntity>(this Container container, int priority = 0)
         where TLoader : class, IDataLoader<TEntity>

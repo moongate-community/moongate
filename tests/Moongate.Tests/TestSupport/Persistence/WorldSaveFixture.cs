@@ -15,11 +15,11 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
     private readonly HostPersistenceFixture _host;
     private NpgsqlConnection? _blocker;
     private NpgsqlTransaction? _blockingTransaction;
+    private PostgreSqlTestDatabase? _blockedDatabase;
+    private string _blockedTable = "host_test.items";
     public PostgreSqlTestDatabase Database => _host.Database;
     public PostgreSqlTestDatabase? AccountsDatabase => _host.AccountsDatabase;
     public PersistenceOperationBarrier Operations { get; } = new();
-    private PostgreSqlTestDatabase? _blockedDatabase;
-    private string _blockedTable = "host_test.items";
     public WorldSaveTimeProvider Clock { get; } = new();
     public MoongatePersistenceService Persistence => _host.Owner;
     public TimerWheelService Timers { get; }
@@ -102,14 +102,6 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
     public static async Task<WorldSaveFixture> CreateAsync(bool autosave = false, bool twoTargets = false)
         => new(await HostPersistenceFixture.CreateAsync(twoTargets: twoTargets), autosave);
 
-    public async ValueTask DisposeAsync()
-    {
-        await ReleaseWritesAsync();
-        await Saves.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
-        Loop.Dispose();
-        await _host.DisposeAsync();
-    }
-
     public async Task OnLoopAsync(Action action)
     {
         var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
@@ -173,5 +165,13 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
         {
             await Task.Delay(10, timeout.Token);
         }
+    }
+
+    public async ValueTask DisposeAsync()
+    {
+        await ReleaseWritesAsync();
+        await Saves.StopAsync().ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+        Loop.Dispose();
+        await _host.DisposeAsync();
     }
 }

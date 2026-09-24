@@ -19,7 +19,10 @@ public sealed class AdminPluginTests
         container.RegisterInstance(ServerMode.Game);
         container.RegisterInstance(new AdminApiConfig { CertificatePassword = "$ADMIN_UNDEFINED_TEST_ENV" });
         var plugin = new MoongateAdminPlugin();
-        Assert.Equal("com.github.moongate-community.moongate.plugins.ultima", Assert.Single(plugin.Metadata.Dependencies).Id);
+        Assert.Equal(
+            "com.github.moongate-community.moongate.plugins.ultima",
+            Assert.Single(plugin.Metadata.Dependencies).Id
+        );
         plugin.Register(container);
         var host = container.Resolve<IAdminApiService>();
         await host.StartAsync();

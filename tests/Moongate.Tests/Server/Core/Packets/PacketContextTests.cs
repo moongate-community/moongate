@@ -24,12 +24,14 @@ public sealed class PacketContextTests
         var ranOnLoop = false;
 
         var applied = await context.RunOnGameLoopAsync(
-            gameSession =>
-            {
-                ranOnLoop = fixture.Loop.IsOnLoopThread;
-                gameSession.SetAccountId(accountId);
-            }
-        ).AsTask().WaitAsync(Timeout);
+                                       gameSession =>
+                                       {
+                                           ranOnLoop = fixture.Loop.IsOnLoopThread;
+                                           gameSession.SetAccountId(accountId);
+                                       }
+                                   )
+                                   .AsTask()
+                                   .WaitAsync(Timeout);
 
         Assert.True(applied);
         Assert.True(ranOnLoop);
@@ -120,7 +122,7 @@ public sealed class PacketContextTests
         var context = new PacketContext(session, fixture.Loop, sessions, new StubPacketSendService());
         await fixture.Loop.StopAsync().WaitAsync(Timeout);
 
-        Assert.False(await context.RunOnGameLoopAsync(_ => throw new Exception("must not run")));
+        Assert.False(await context.RunOnGameLoopAsync(_ => throw new("must not run")));
     }
 
     [Fact]
@@ -168,8 +170,7 @@ public sealed class PacketContextTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        var sent = await context.SendAndDisconnectAsync(
-            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
+        var sent = await context.SendAndDisconnectAsync(new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
 
         Assert.True(sent);
         Assert.Equal(1, sender.SentCount);
@@ -188,8 +189,7 @@ public sealed class PacketContextTests
         Assert.True(sessions.Remove(original.SessionId));
         _ = sessions.GetOrCreate(fixture.Client);
 
-        var sent = await context.SendAndDisconnectAsync(
-            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
+        var sent = await context.SendAndDisconnectAsync(new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
 
         Assert.False(sent);
         Assert.Equal(0, sender.SentCount);
@@ -204,8 +204,7 @@ public sealed class PacketContextTests
         var sender = new StubPacketSendService { RejectTerminalSend = true };
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        var sent = await context.SendAndDisconnectAsync(
-            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
+        var sent = await context.SendAndDisconnectAsync(new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
 
         Assert.False(sent);
         Assert.Equal(0, sender.SentCount);

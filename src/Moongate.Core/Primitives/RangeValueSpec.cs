@@ -19,6 +19,9 @@ public readonly struct RangeValueSpec<T> where T : struct, INumber<T>
     private readonly T _min;
     private readonly T _max;
 
+    /// <summary>Gets whether this resolves to a fresh pick from a range rather than always the same value.</summary>
+    public bool IsRandom { get; }
+
     private RangeValueSpec(T fixedValue)
     {
         _fixedValue = fixedValue;
@@ -34,9 +37,6 @@ public readonly struct RangeValueSpec<T> where T : struct, INumber<T>
         _max = max;
         IsRandom = true;
     }
-
-    /// <summary>Gets whether this resolves to a fresh pick from a range rather than always the same value.</summary>
-    public bool IsRandom { get; }
 
     /// <summary>Creates a spec that always resolves to <paramref name="value" />.</summary>
     public static RangeValueSpec<T> FromValue(T value)

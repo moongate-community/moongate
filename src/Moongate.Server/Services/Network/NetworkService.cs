@@ -14,10 +14,6 @@ namespace Moongate.Server.Services.Network;
 /// <summary>Owns transport listeners and synchronous notifications independently of game state.</summary>
 public sealed class NetworkService : INetworkService, ILoginNetworkService
 {
-    public event EventHandler<NetworkConnectionEventArgs>? ConnectionAccepted;
-    public event EventHandler<NetworkConnectionEventArgs>? ConnectionClosed;
-    public event EventHandler<NetworkDataEventArgs>? DataReceived;
-
     private readonly ILogger _logger = Log.ForContext<NetworkService>();
     private readonly IConnectionService _connections;
     private readonly Lock _cleanupGate = new();
@@ -27,6 +23,9 @@ public sealed class NetworkService : INetworkService, ILoginNetworkService
     private readonly BootstrapLifecycleTasks _lifecycle = new();
     private readonly Lock _lifecycleGate = new();
     private bool _stopping;
+    public event EventHandler<NetworkConnectionEventArgs>? ConnectionAccepted;
+    public event EventHandler<NetworkConnectionEventArgs>? ConnectionClosed;
+    public event EventHandler<NetworkDataEventArgs>? DataReceived;
 
     internal IReadOnlyList<MoongateTcpServer> Listeners { get; }
 

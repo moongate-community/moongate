@@ -16,7 +16,6 @@ public interface IAccountService
         CancellationToken cancellationToken = default
     );
 
-
     /// <summary>Authenticates an unlocked account and records its last login.</summary>
     Task<AccountEntity?> LoginAsync(
         string username,
@@ -26,9 +25,17 @@ public interface IAccountService
 
     /// <summary>Returns all accounts for trusted local callers.</summary>
     Task<IEnumerable<AccountEntity>> ListAccountsAsync(CancellationToken cancellationToken = default);
+
     /// <summary>Creates an account with all initial access settings in one insert.</summary>
-    Task<AccountCreateResult> CreateAccountAsync(AccountCreateOptions options, CancellationToken cancellationToken = default);
+    Task<AccountCreateResult> CreateAccountAsync(
+        AccountCreateOptions options,
+        CancellationToken cancellationToken = default
+    );
 
     /// <summary>Returns at most 200 accounts ordered after the supplied ID; zero starts the first page.</summary>
-    Task<AccountPage> ListAccountsPageAsync(Serial afterId, int pageSize = 50, CancellationToken cancellationToken = default);
+    Task<AccountPage> ListAccountsPageAsync(
+        Serial afterId,
+        int pageSize = 50,
+        CancellationToken cancellationToken = default
+    );
 }

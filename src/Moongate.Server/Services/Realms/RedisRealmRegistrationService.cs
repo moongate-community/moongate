@@ -41,8 +41,11 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
         }
 
         await _presence.RegisterAsync(_realm).ConfigureAwait(false);
-        _logger.Information("Realm {RealmId} registered in Redis as index {ServerIndex}",
-            _realm.Descriptor.RealmId, _realm.Descriptor.ServerIndex);
+        _logger.Information(
+            "Realm {RealmId} registered in Redis as index {ServerIndex}",
+            _realm.Descriptor.RealmId,
+            _realm.Descriptor.ServerIndex
+        );
         _shutdown = new();
         _loop = Task.Run(() => RenewLoopAsync(_shutdown.Token));
     }
@@ -61,10 +64,13 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
             try
             {
                 await Task.Delay(interval, _clock, cancellationToken).ConfigureAwait(false);
+
                 if (!await _presence.RenewAsync(_realm, cancellationToken).ConfigureAwait(false))
                 {
-                    _logger.Warning("Realm {RealmId} was replaced by another process; lease renewal stopped",
-                        _realm.Descriptor.RealmId);
+                    _logger.Warning(
+                        "Realm {RealmId} was replaced by another process; lease renewal stopped",
+                        _realm.Descriptor.RealmId
+                    );
 
                     return;
                 }
@@ -77,8 +83,11 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
             }
             catch (Exception exception)
             {
-                _logger.Warning(exception, "Realm {RealmId} Redis lease renewal failed; retrying",
-                    _realm.Descriptor.RealmId);
+                _logger.Warning(
+                    exception,
+                    "Realm {RealmId} Redis lease renewal failed; retrying",
+                    _realm.Descriptor.RealmId
+                );
                 await Task.Delay(retry, _clock, cancellationToken).ConfigureAwait(false);
                 retry = TimeSpan.FromSeconds(Math.Min(retry.TotalSeconds * 2, 10));
             }
@@ -93,6 +102,7 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
         }
 
         await _shutdown.CancelAsync().ConfigureAwait(false);
+
         if (_loop is not null)
         {
             await _loop.ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
@@ -105,8 +115,11 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
         }
         catch (Exception exception)
         {
-            _logger.Warning(exception, "Realm {RealmId} could not remove its Redis lease at shutdown",
-                _realm.Descriptor.RealmId);
+            _logger.Warning(
+                exception,
+                "Realm {RealmId} could not remove its Redis lease at shutdown",
+                _realm.Descriptor.RealmId
+            );
         }
         finally
         {
@@ -116,7 +129,5 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
-    {
-        await StopAsync().ConfigureAwait(false);
-    }
+        => await StopAsync().ConfigureAwait(false);
 }

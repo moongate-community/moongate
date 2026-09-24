@@ -19,6 +19,9 @@ internal sealed class PersistenceLogCapture : ILogEventSink, IDisposable
         Log.Logger = _logger;
     }
 
+    public void Emit(LogEvent logEvent)
+        => Events.Enqueue(logEvent);
+
     public void Dispose()
     {
         if (_disposed)
@@ -30,7 +33,4 @@ internal sealed class PersistenceLogCapture : ILogEventSink, IDisposable
         Log.Logger = _previous;
         _logger.Dispose();
     }
-
-    public void Emit(LogEvent logEvent)
-        => Events.Enqueue(logEvent);
 }

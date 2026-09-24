@@ -56,8 +56,13 @@ public sealed class PacketContext
             return false;
         }
 
-        var sent = await _sender.SendAndDisconnectAsync(SessionId, connection, packet,
-            cancellationToken).ConfigureAwait(false);
+        var sent = await _sender.SendAndDisconnectAsync(
+                                    SessionId,
+                                    connection,
+                                    packet,
+                                    cancellationToken
+                                )
+                                .ConfigureAwait(false);
 
         if (!sent)
         {

@@ -81,7 +81,5 @@ public sealed class DirectoriesConfigTests : IDisposable
         => Path.GetRelativePath(_root.FullName, path).Split(Path.DirectorySeparatorChar);
 
     public void Dispose()
-    {
-        _root.Delete(true);
-    }
+        => _root.Delete(true);
 }

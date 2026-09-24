@@ -6,8 +6,10 @@ namespace Moongate.Server.Admin.Data.Config;
 public sealed class AdminApiConfig
 {
     public bool Enabled { get; set; }
+
     /// <summary>Gets or sets a literal bind address, or "*" for all IPv4 interfaces.</summary>
     public string ListenAddress { get; set; } = "127.0.0.1";
+
     public int Port { get; set; } = 2590;
     public int SessionLifetimeMinutes { get; set; } = 30;
     public int MaxReceiveMessageBytes { get; set; } = 65536;
@@ -20,12 +22,16 @@ public sealed class AdminApiConfig
     public void Validate()
     {
         var address = ResolveListenAddress();
+
         if (AllowInsecureLoopback && !IPAddress.IsLoopback(address))
         {
             throw new InvalidOperationException("admin_api.allow_insecure_loopback requires a loopback address.");
         }
-        if (Port is < 1 or > 65535 || SessionLifetimeMinutes is < 1 or > 1440 ||
-            MaxReceiveMessageBytes is < 1024 or > 1048576 || MaxConcurrentCalls is < 1 or > 1024)
+
+        if (Port is < 1 or > 65535 ||
+            SessionLifetimeMinutes is < 1 or > 1440 ||
+            MaxReceiveMessageBytes is < 1024 or > 1048576 ||
+            MaxConcurrentCalls is < 1 or > 1024)
         {
             throw new InvalidOperationException("admin_api numeric settings are outside their supported bounds.");
         }
@@ -37,10 +43,12 @@ public sealed class AdminApiConfig
         {
             return IPAddress.Any;
         }
+
         if (!IPAddress.TryParse(ListenAddress, out var address))
         {
             throw new InvalidOperationException("admin_api.listen_address must be a literal IP address or '*'.");
         }
+
         return address;
     }
 }
