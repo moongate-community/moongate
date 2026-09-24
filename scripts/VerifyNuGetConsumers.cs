@@ -11,6 +11,7 @@ internal static class VerifyNuGetConsumers
 {
     private static readonly Dictionary<string, string> ExpectedOutput = new(StringComparer.Ordinal)
     {
+        ["Moongate.Admin.Contracts"] = "moongate.admin.v1:portable",
         ["Moongate.Core"] = "0x00000001: 100, 200, 5",
         ["Moongate.Network"] = "TCP listener started and stopped.",
         ["Moongate.Network.Packets"] = "73:42",

@@ -9,6 +9,7 @@ using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Modules;
 using Moongate.Scripting.Services;
+using Moongate.Server.Commands;
 using Moongate.Server.Core.Data.GameLoop;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Data.Timing;
@@ -19,12 +20,11 @@ using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
-using Moongate.Server.Commands;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Persistence;
-using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Realms;
+using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Ultima;
@@ -39,6 +39,7 @@ internal static class ServerRoleRegistration
     public static Container Register(Container container, MoongateServerConfig config, DirectoriesConfig directories)
     {
         container.RegisterInstance(config.Mode);
+        AdminServiceRegistration.Register(container, config);
         container.RegisterDelegate<RealmDirectoryConfig>(
             resolver => resolver.Resolve<MoongateServerConfig>().RealmDirectory, Reuse.Singleton);
         container.RegisterDelegate<RedisConfig>(

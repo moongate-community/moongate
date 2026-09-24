@@ -2,8 +2,8 @@ using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
-using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.General;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
@@ -48,10 +48,11 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         {
             container.AddPersistenceAuth<AccountEntity>();
             container.AddMoongateService<IAccountService, AccountService>();
+            container.Register<IAccountAdminAccessService, AccountAdminAccessService>(Reuse.Singleton);
             container.Register<LoginAccountFlow>(Reuse.Singleton);
             container.RegisterCommand<AccountCommand>(
                 "account",
-                "Creates an account: account create <username> <password> [Regular|GameMaster|Administrator].",
+                "Creates an account: account create <username> <password> [Regular|GameMaster|Administrator]. Console provisioning: account api-access <username> <on|off>.",
                 CommandSourceType.Console | CommandSourceType.InGame,
                 AccountType.Administrator
             );

@@ -17,6 +17,8 @@ export const contentEntries = [
   { source: 'docs/persistence-operations.md', slug: 'server/persistence-operations', title: 'Operate PostgreSQL', group: 'Run a shard' },
   { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Run a shard' },
 
+  { source: 'docs/admin-api.md', slug: 'server/admin-api', title: 'Administration API', group: 'Run a shard' },
+
   // Scripting and content: shard content without C#.
   { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Scripting and content' },
   { source: 'docs/templates.md', slug: 'server/templates', title: 'Loading TOML templates', group: 'Scripting and content' },
@@ -37,7 +39,7 @@ export const contentEntries = [
   { source: 'docs/nuget-packaging.md', slug: 'reference/nuget-packaging', title: 'NuGet packages', group: 'Libraries' },
   { source: 'docs/network.md', slug: 'libraries/network-cookbook', title: 'Standalone TCP cookbook', group: 'Libraries' },
   ...[
-    ['Core', 'core'], ['Network', 'network'], ['Network.Packets', 'network-packets'],
+    ['Admin.Contracts', 'admin-contracts'], ['Core', 'core'], ['Network', 'network'], ['Network.Packets', 'network-packets'],
     ['Persistence', 'persistence'], ['Persistence.Migrations', 'persistence-migrations'],
     ['Server.Core', 'server-core'], ['Scripting', 'scripting'], ['Ultima', 'ultima'],
   ].map(([name, slug]) => ({

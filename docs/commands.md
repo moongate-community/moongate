@@ -68,3 +68,11 @@ from display and logs.
 
 Plugins can add commands through `RegisterCommand<TExecutor>`; see
 [Writing a plugin](plugins.md#console-commands).
+
+### Local API access provisioning
+
+```text
+account api-access <username> <on|off>
+```
+
+Available only in the Login/Standalone local console, even when the caller is an in-game Administrator. New accounts start with API access disabled. Enable an existing Administrator to provision the first panel user; disabling access revokes its administrative sessions across hosts. Game login is unaffected. See [Administration API](admin-api.md).

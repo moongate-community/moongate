@@ -87,3 +87,7 @@ See [Migrate from UOX3](uox3-migration.md) for what the converter does and its c
 - **Missing client data or unwritable root:** check the `/uo` read-only mount and `/data` ownership for the image's non-root user.
 
 See [First start](getting-started.md), [Configuration](server-configuration.md) and [Diagnostics](diagnostics.md) for server-level operation.
+
+## Private administration endpoint
+
+Port 2590 is reserved for optional gRPC administration and remains disabled in the default image/Compose configuration. Use server TLS on the private network; no mTLS or public port mapping is required. See the [administration guide](admin-api.md) and [opt-in Compose configuration](../examples/docker/login-realms/README.md#optional-administration-api).

@@ -1,5 +1,7 @@
 <Solution>
     <Folder Name="/src/">
+        <Project Path="src/Moongate.Admin.Contracts/Moongate.Admin.Contracts.csproj"/>
+        <Project Path="src/Moongate.Server.Admin/Moongate.Server.Admin.csproj"/>
         <Project Path="src/Moongate.Core/Moongate.Core.csproj"/>
         <Project Path="src/Moongate.Network/Moongate.Network.csproj"/>
         <Project Path="src/Moongate.Network.Packets/Moongate.Network.Packets.csproj"/>
@@ -12,6 +14,7 @@
         <Project Path="src/Moongate.Ultima/Moongate.Ultima.csproj"/>
     </Folder>
     <Folder Name="/samples/">
+        <Project Path="samples/Moongate.Admin.Client/Moongate.Admin.Client.csproj"/>
         <Project Path="samples/Moongate.Sample.Plugin/Moongate.Sample.Plugin.csproj"/>
     </Folder>
     <Folder Name="/tests/">

@@ -20,6 +20,7 @@ authentication reaches a game session, while character selection and a playable 
 | Accounts | `AccountEntity` in Accounts; `IAccountService` creates, lists and verifies login; console `account create`; game accepts a valid handoff without Accounts database access | No in-game command input yet |
 | Shared transient state | Private Redis with expiring, fenced realm leases and one-use handoff tickets; startup checks connectivity and rejects new handoffs during outages | General cache use and other cross-process features |
 | Templates | `ItemTemplate` and `LootTemplate` shapes, `EnumValueSpec`, `RangeValueSpec`, TOML converters, loader contract | A loader that reads `templates/`; nothing under it is loaded |
+| Administration | Embedded optional gRPC plugin, private server TLS, Redis sessions, account login/list/create/revoke and server info; [guide](admin-api.md) | Panel backend/UI and character operations |
 | Plugins | Assemblies under `plugins/` registering services, commands, Lua modules, metric providers, entities and SQL | |
 | Diagnostics | Periodic process metrics, plugin metric providers, snapshot events | |
 | Tools | Migration runner (0.6.0); `mgboot` and `mg-uoxconv` after 0.6.0 | |

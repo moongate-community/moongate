@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <OutputType>Exe</OutputType>
@@ -80,4 +80,7 @@
               DestinationFiles="@(_MigrationRunnerFiles->'$(OutDir)migration-runner/%(Filename)%(Extension)')"
               SkipUnchangedFiles="true"/>
     </Target>
+    <ItemGroup>
+        <ProjectReference Include="../Moongate.Server.Admin/Moongate.Server.Admin.csproj"/>
+    </ItemGroup>
 </Project>

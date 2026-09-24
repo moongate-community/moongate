@@ -25,3 +25,6 @@ handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 [realm_directory]
 lease_duration_seconds = 15
 max_realms = 128
+
+[admin_api]
+enabled = false

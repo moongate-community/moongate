@@ -5,6 +5,7 @@ using Moongate.Core.Extensions.Directories;
 using Moongate.Core.Types;
 using Moongate.Core.Utils;
 using Moongate.Persistence.Extensions;
+using Moongate.Server.Admin;
 using Moongate.Server.Bootstrap;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Bootstrap.Internal.Setup;
@@ -216,7 +217,8 @@ await ConsoleApp.RunAsync(
                             .AddMoongateService<IConsoleInputService, ConsoleInputService>(1000);
 
                     ServerRoleRegistration.Register(services, serverConfig, directoriesConfig);
-                    container.RegisterPlugin<MoongateUltimaPlugin>();
+                    container.RegisterPlugin<MoongateUltimaPlugin>()
+                             .RegisterPlugin<MoongateAdminPlugin>();
 
                     return services;
                 }

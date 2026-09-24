@@ -76,6 +76,12 @@ jobs:
         # Test projects share PostgreSQL and Redis services; run their hosts one at a time.
         run: dotnet test Moongate.slnx -c Release --no-build -m:1
 
+      - name: Verify portable administration client
+        run: |
+          apt-get update
+          apt-get install -y --no-install-recommends python3-venv
+          bash scripts/verify-admin-protos.sh
+
       - name: Verify NuGet packages and README examples
         run: bash scripts/verify-packages.sh
 

@@ -16,6 +16,87 @@ public sealed class PersistenceTransactionTests
         _postgres = postgres;
     }
 
+    [Fact]
+    public async Task GetByIdForUpdateAsync_InvalidOrEscapedFacade_RejectsAndPoisons()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        owner.RegisterEntity<CharacterEntity>();
+        owner.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+        IPersistenceTransaction? escaped = null;
+        await owner.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, async tx =>
+        {
+            escaped = tx;
+            Assert.Null(await tx.GetByIdForUpdateAsync<CharacterEntity>(new(1)));
+        });
+        await Assert.ThrowsAsync<InvalidOperationException>(() => escaped!.GetByIdForUpdateAsync<CharacterEntity>(new(1)));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, async tx =>
+        {
+            await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => tx.GetByIdForUpdateAsync<CharacterEntity>(new(0)));
+        }));
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, async tx =>
+        {
+            await Assert.ThrowsAsync<InvalidOperationException>(() => tx.GetByIdForUpdateAsync<AccountsSharedEntity>(new(1)));
+        }));
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task GetByIdForUpdateAsync_CompetingOwner_WaitsForCommitOrCancels(bool cancel)
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        await using var peer = FacadeFixture.Create(database);
+        var store = owner.RegisterEntity<CharacterEntity>();
+        owner.RegisterEntity<InventoryEntity>();
+        peer.RegisterEntity<CharacterEntity>();
+        peer.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+        await peer.InitializeAsync();
+        await store.UpsertAsync(new() { Id = new(1), Name = "before" });
+        var locked = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var first = owner.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, async tx =>
+        {
+            var entity = await tx.GetByIdForUpdateAsync<CharacterEntity>(new(1));
+            entity!.Name = "committed";
+            await tx.GetDataAccess<CharacterEntity>().UpsertAsync(entity);
+            locked.SetResult();
+            await release.Task;
+        });
+        await locked.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        using var cancellation = new CancellationTokenSource();
+        var second = peer.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, async tx =>
+        {
+            var entity = await tx.GetByIdForUpdateAsync<CharacterEntity>(new(1), cancellation.Token);
+            Assert.Equal("committed", entity!.Name);
+        }, cancellation.Token);
+        try
+        {
+            using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(10));
+            while (!await database.ScalarAsync<bool>(
+                "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock')"))
+            {
+                await Task.Delay(10, deadline.Token);
+            }
+            Assert.False(second.IsCompleted);
+            if (cancel)
+            {
+                cancellation.Cancel();
+                await Assert.ThrowsAnyAsync<OperationCanceledException>(() => second);
+            }
+        }
+        finally
+        {
+            release.TrySetResult();
+            await first;
+        }
+        if (!cancel)
+        {
+            await second.WaitAsync(TimeSpan.FromSeconds(10));
+        }
+    }
+
     [Theory, InlineData("dispose"), InlineData("initialize"), InlineData("preview"), InlineData("sync"), InlineData("save")]
     public async Task ExecuteInTransactionAsync_CaughtLifecycleReentry_PoisonsWithoutDeadlock(string operation)
     {
@@ -33,11 +114,11 @@ public sealed class PersistenceTransactionTests
                                await Assert.ThrowsAsync<InvalidOperationException>(
                                    () => operation switch
                                    {
-                                       "dispose"    => owner.DisposeAsync().AsTask(),
+                                       "dispose" => owner.DisposeAsync().AsTask(),
                                        "initialize" => owner.InitializeAsync(),
-                                       "preview"    => owner.PreviewSchemaAsync(),
-                                       "sync"       => owner.SynchronizeSchemaAsync(),
-                                       _            => owner.SaveAllAsync()
+                                       "preview" => owner.PreviewSchemaAsync(),
+                                       "sync" => owner.SynchronizeSchemaAsync(),
+                                       _ => owner.SaveAllAsync()
                                    }
                                );
                            }

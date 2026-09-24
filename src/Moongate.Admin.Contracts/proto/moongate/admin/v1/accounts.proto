@@ -1,0 +1,16 @@
+syntax = "proto3";
+package moongate.admin.v1;
+option csharp_namespace = "Moongate.Admin.Contracts.V1";
+import "moongate/admin/v1/common.proto";
+message ListAccountsRequest { uint32 page_size = 1; uint32 after_account_id = 2; }
+message ListAccountsResponse { repeated AccountSummary accounts = 1; uint32 next_after_account_id = 2; }
+message CreateAccountRequest {
+  string username = 1;
+  string password = 2;
+  optional AccountType account_type = 3;
+  bool can_access_api = 4;
+}
+service AdminAccounts {
+  rpc ListAccounts(ListAccountsRequest) returns (ListAccountsResponse);
+  rpc CreateAccount(CreateAccountRequest) returns (AccountSummary);
+}

@@ -26,4 +26,6 @@ public class AccountEntity : IMoongateEntity
     public DateTime UpdatedAt { get; set; }
 
     public bool IsLocked { get; set; }
+
+    public bool CanAccessApi { get; set; }
 }

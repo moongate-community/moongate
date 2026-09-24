@@ -28,3 +28,6 @@ name = "Moongate Realm 1"
 server_index = 1
 advertised_address = "127.0.0.1"
 advertised_port = 2595
+
+[admin_api]
+enabled = false

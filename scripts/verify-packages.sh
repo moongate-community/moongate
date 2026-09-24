@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Build the eight library packages and verify their contents and README examples.
+# Build the nine library packages and verify their contents and README examples.
 set -euo pipefail
 
 task_repository="$(cd -- "$(dirname -- "${BASH_SOURCE[0]}")/.." && pwd)"
@@ -11,4 +11,4 @@ printf 'Package output: %s\n' "$task_package_dir"
 dotnet pack Moongate.slnx -c Release -o "$task_package_dir" -p:ContinuousIntegrationBuild=true
 dotnet run --file scripts/VerifyNuGetPackages.cs -- "$task_repository" "$task_package_dir"
 dotnet run --file scripts/VerifyNuGetConsumers.cs -- "$task_repository" "$task_package_dir"
-printf 'Verified eight libraries and their consumers: %s\n' "$task_package_dir"
+printf 'Verified nine libraries and their consumers: %s\n' "$task_package_dir"

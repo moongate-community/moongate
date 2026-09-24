@@ -118,6 +118,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     private async Task<List<Exception>> ShutdownCoreAsync()
     {
         List<Exception> failures = [];
+        _services.StopAcceptingAdministration();
 
         await CaptureFailureAsync(
                 () => _eventBus.Value.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None),
@@ -194,6 +195,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             await _eventBus.Value.PublishAsync(new MoongateStartedEvent(), _cancellationToken).ConfigureAwait(false);
             _services.ActivateWorldSaving();
             _startupSucceeded = true;
+            _services.ActivateAdministration();
             _logger.Information("Moongate Server started.");
         }
         catch (Exception exception)
