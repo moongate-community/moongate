@@ -5,7 +5,7 @@
 ### Features
 
 * **admin:** embed optional gRPC administration on private port 2590 with TLS, shared Redis sessions, account permissions, console provisioning and portable protobuf clients.
-
+* **boot:** generate or reuse a self-signed administration TLS certificate offline with `mgboot --generate-admin-certificate`, configure endpoint DNS/IP names, and enable the administration endpoint in the root configuration.
 * **login:** discover live game realms through Redis leases and transfer authenticated clients with one-use `0x8C`/`0x91` handoff tickets.
 * **docker:** run one login and two game processes with private Redis, role-local PostgreSQL credentials and Compose secrets.
 

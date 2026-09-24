@@ -108,9 +108,9 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `persistence.accounts.connection_string` | Accounts/login PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Accounts. |
 | `persistence.realm.connection_string` | This realm's PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Realm. |
 | `redis.connection_string` | Shared Redis endpoint and password in StackExchange.Redis format, or a `$NAME` / `${NAME}` environment reference. Required by every runtime role. |
-| `redis.handoff_secret` | Separate cluster-wide proof secret or environment reference. Required by every runtime role; never reuse the Redis password. |
-| `realm_directory.realm_id` | Stable ID for a game realm and its Redis lease/ticket namespace. Standalone defaults to `local`. |
-| `realm_directory.name`, `server_index` | ASCII list name (at most 32 characters) and unique index (0–65535). Standalone defaults to the shard name and index zero. |
+| `redis.handoff_secret` | Separate cluster-wide proof secret or environment reference. Required by every runtime role; at least 32 bytes after UTF-8 encoding. Never reuse the Redis password. |
+| `realm_directory.realm_id` | Stable ID for a game realm and its Redis lease/ticket namespace. Standalone defaults to `local`; give each independently running realm a distinct ID. |
+| `realm_directory.name`, `server_index` | ASCII list name (at most 32 characters) and unique index (0–65535). Standalone defaults to the shard name and index zero; set a distinct index for each realm sharing Redis. |
 | `realm_directory.advertised_address`, `advertised_port` | Client-facing IPv4 literal and port. Required in game mode; standalone defaults to loopback and `network.game_port`. `0xA8` carries the address; `0x8C` carries the selected realm port. |
 | `realm_directory.minimum_account_type` | Lowest account level allowed to see the realm; `regular`, `game_master` or `administrator`. |
 | `realm_directory.heartbeat_interval_seconds`, `lease_duration_seconds`, `max_realms` | Defaults 5, 15 and 128. Lease duration must exceed two heartbeats; the Redis-backed directory caps realms at 128. |

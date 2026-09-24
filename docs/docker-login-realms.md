@@ -18,7 +18,7 @@ Each server has its own `/data` volume. PostgreSQL has a separate persistent vol
 
 `game-1` uses the Dockerfile's `sample-plugin` stage. Its plugin registers `sample_greeter.notes` in Realm 1; the schema jobs exercise the same plugin and reviewed SQL. `game-2` uses the ordinary image. Login has no Realm database credential, and games have no Accounts credential. All three share one Redis credential and a separate handoff secret; these servers are therefore one private trust domain. No peer certificate or per-realm ACL is needed.
 
-Inside the containers, login listens on port 2593 and each game listens on 2595. Compose maps game 2 to host port 2596, which its `realm_directory.advertised_port` also declares. The default advertised IPv4 address is `127.0.0.1` for a client on the Docker host. For remote clients, set both game TOMLs to a host-reachable IPv4 address and publish the client ports on that host address. The `0xA8` list has IPv4 addresses but no ports; `0x8C` supplies the selected realm's port.
+Inside the containers, login listens on port 2593 and each game listens on 2595. Compose maps game 2 to host port 2596, which its `realm_directory.advertised_port` also declares. The default advertised IPv4 address is `127.0.0.1` for a client on the Docker host. For remote clients, set `advertised_address` in both game TOMLs to a host-reachable IPv4 address and publish the client ports on that host address. Set the same address in `game-1-admin.toml` and `game-2-admin.toml` if you use the administration override. The `0xA8` list has IPv4 addresses but no ports; `0x8C` supplies the selected realm's port.
 
 ## Prepare configuration and secrets
 
@@ -29,7 +29,7 @@ cd examples/docker/login-realms
 cp .env.example .env
 ```
 
-Set `UO_DATA_PATH` in `.env` to an absolute host directory. Change host-facing ports or non-secret PostgreSQL names there if required. Keep passwords and handoff keys out of `.env`, TOML and the repository.
+Set `UO_DATA_PATH` in `.env` to an absolute host directory. Change host-facing ports or non-secret PostgreSQL names there if required. If you change `GAME_1_PORT` or `GAME_2_PORT`, set the matching `realm_directory.advertised_port` in `config/game-1.toml` or `config/game-2.toml` to that host port; update the corresponding `*-admin.toml` as well if you use the administration override. Otherwise the game redirect sends clients to the old port. Keep passwords and handoff keys out of `.env`, TOML and the repository.
 
 Create nine distinct secret records in Bitwarden: seven PostgreSQL passwords, a 64-character hexadecimal Redis password and an independent hexadecimal handoff secret of at least 64 characters. Export them in the shell that runs Compose, substituting your actual Bitwarden item names:
 

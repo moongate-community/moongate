@@ -53,6 +53,14 @@ docker volume create moongate-data
 docker run --rm --entrypoint /app/mgboot -v moongate-data:/data moongate:local /data
 ```
 
+For optional administration TLS in this root, append `--generate-admin-certificate`
+after `/data`, with `--admin-certificate-hosts` naming the DNS/IP used by clients.
+See [mgboot certificate setup](mgboot.md#generate-an-administration-certificate)
+for the generated files and client trust. The default bind remains loopback;
+configure a private interface before connecting from another container. The
+multi-process Compose override instead uses its mounted TOMLs and operator-provided
+certificates, as described in the [example README](../examples/docker/login-realms/README.md#optional-administration-api).
+
 Mount that same volume for the server and migration runner. Stop the affected runtime before applying new reviewed SQL. For the runner's targets and output, see [Generate, review and apply](persistence-migrations.md#generate-review-and-apply). A missing database, Redis connection or required migration fails startup; the server does not create databases or apply unreviewed SQL automatically.
 
 ## Ports, storage and updates

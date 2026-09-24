@@ -33,8 +33,10 @@ realm and `0x8C` supplies its IPv4 address, port and one-use key. The login send
 flushes `0x8C` before closing the login connection. On the new game connection
 the client sends that key as a raw four-byte seed, followed by `0x91` with the
 same key, username and password. The game checks the seed and atomically consumes
-the Redis ticket. A direct `0xEF` client-version seed still works on game
-listeners. Character selection and world entry are separate future work.
+the Redis ticket. The ticket expires 30 seconds after it is issued, so the game
+reconnect must complete within that time. A direct `0xEF` client-version seed
+still works on game listeners. Character selection and world entry are separate
+future work.
 
 `TryGetDescriptor(opCode, out descriptor)` prefers incoming, then outgoing;
 `descriptor.PacketType.Name` gives its class name. The overload accepting

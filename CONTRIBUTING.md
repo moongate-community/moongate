@@ -59,12 +59,25 @@ docs(plugins): clarify bundle deployment
 
 ## Verify your changes
 
+Solution tests require isolated PostgreSQL and Redis servers. Set these environment
+variables through your secret provider before running them:
+
+| Variable | Test dependency |
+| --- | --- |
+| `MOONGATE_TEST_POSTGRES_CONNECTION_STRING` | An administrative Npgsql connection to a disposable PostgreSQL server; the role must be able to create and drop test databases |
+| `MOONGATE_TEST_REDIS_CONNECTION_STRING` | A StackExchange.Redis connection string for a disposable Redis 7+ server configured with `maxmemory-policy noeviction` |
+
+Do not point these variables at a running shard's databases or Redis instance.
+Required integration tests fail when their connection configuration is missing;
+they do not silently skip. Run test projects serially with `-m:1`, as CI does,
+because their hosts share the database services.
+
 Run these commands from the repository root to match the solution checks in CI:
 
 ```sh
 dotnet restore Moongate.slnx
 dotnet build Moongate.slnx -c Release --no-restore
-dotnet test Moongate.slnx -c Release --no-build
+dotnet test Moongate.slnx -c Release --no-build -m:1
 ```
 
 For opt-in concurrent database load tests, see [Stress-test PostgreSQL persistence](docs/persistence-stress.md).
@@ -74,9 +87,13 @@ that demonstrates the failure. Follow the test layout in `CODE_CONVENTION.md` an
 keep assertions focused on observable behavior. Prose-only corrections do not
 need new C# tests.
 
-CI also verifies NuGet packages, runnable README examples, and third-party notices:
+CI also verifies the portable administration client, NuGet packages, runnable README
+examples, and third-party notices. The administration check uses the same test
+connections and requires Python 3 with `venv` support and access to install the
+dependencies in `samples/admin-python/requirements.txt`:
 
 ```sh
+bash scripts/verify-admin-protos.sh
 bash scripts/verify-packages.sh
 ./scripts/third-party-notices.sh
 git diff --exit-code -- THIRD-PARTY-NOTICES.md

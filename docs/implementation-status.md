@@ -23,7 +23,7 @@ authentication reaches a game session, while character selection and a playable 
 | Administration | Embedded optional gRPC plugin, private server TLS, Redis sessions, account login/list/create/revoke and server info; [guide](admin-api.md) | Panel backend/UI and character operations |
 | Plugins | Assemblies under `plugins/` registering services, commands, Lua modules, metric providers, entities and SQL | |
 | Diagnostics | Periodic process metrics, plugin metric providers, snapshot events | |
-| Tools | Migration runner (0.6.0); `mgboot` and `mg-uoxconv` after 0.6.0 | |
+| Tools | Migration runner (0.6.0); `mgboot` root preparation with optional [administration TLS certificate setup](mgboot.md#generate-an-administration-certificate), and `mg-uoxconv` after 0.6.0 | |
 | Docker | Source-built [one login and two game instances example](docker-login-realms.md) with role-local PostgreSQL credentials, private Redis and a lease smoke test | Character selection and world entry |
 
 Settings that exist only as a contract: `network.enable_ping_server`, and

@@ -60,8 +60,10 @@ The snippet uses `System.Net`, `Moongate.Server.Core.Data.Network`, and
 `Moongate.Server.Services.Network`. `ProcessOwnedBytes` and `applicationShutdown` are
 application-provided behavior. No framing factory means raw TCP chunks, which are not
 message boundaries. A protocol-specific listener supplies `ConnectionPipelineFactory`.
-The game host supplies a new `UoPacketFramer` for each connection. Options are snapshotted
-at construction, including endpoint objects.
+The game host supplies a new `GameSeedFramer` for each connection. It recognizes
+a raw four-byte reconnect seed or a versioned `0xEF` seed packet, then delegates
+subsequent packets to `UoPacketFramer`. Options are snapshotted at construction,
+including endpoint objects.
 
 ## Callback and shutdown rules
 
@@ -119,3 +121,13 @@ implementations. Always handle absent local metadata.
 `PacketSendService` takes `(IConnectionService, int capacity = 128)`. Custom hosts must
 add `GameServerService` if they need the UO session/dispatch path. Registering only the raw
 network service intentionally performs no packet decoding or game-session creation.
+
+The login/game split also changes public service contracts for custom hosts and plugins.
+Custom `IPacketSendService` implementations must implement
+`SendAndDisconnectAsync(sessionId, expectedConnection, packet, cancellationToken)`:
+send the final packet after queued frames, close that connection, and return `true`
+only when the final packet reached the transport before closure. The old
+`IRealmDirectoryService` is replaced by `IRealmCatalog` for asynchronous
+`GetAvailableAsync`/`FindByIndexAsync` reads and `IRealmPresenceService` for
+asynchronous `RegisterAsync`/`RenewAsync`/`UnregisterAsync` lease operations.
+Standalone now publishes its realm through Redis instead of `RegisterLocal`.

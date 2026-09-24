@@ -65,7 +65,7 @@ account api-access <username> on
 
 Replace placeholders with credentials from your secret store. Console arguments cannot contain spaces. `account api-access` rejects in-game invocation. Disable access with `account api-access <username> off`; this also revokes prior administrative sessions.
 
-`CanAccessApi` defaults to false. Migration `auth/0004_account_admin_api_access.sql` adds the column with that default; if an existing development schema already has the column, explicit true values are preserved. Apply pending SQL with the [migration workflow](persistence-migrations.md). Ordinary game login is independent of API access.
+Accounts created by `account create` have API access disabled. `CreateAccount` also disables it when `can_access_api` is omitted; an authorized caller can explicitly request access. These creation paths set the permission explicitly rather than relying on the entity initializer. Migration `auth/0004_account_admin_api_access.sql` adds the column with a database default of false; if an existing development schema already has the column, explicit true values are preserved. Apply pending SQL with the [migration workflow](persistence-migrations.md). Ordinary game login is independent of API access.
 
 ## Roles and permissions
 
@@ -97,7 +97,7 @@ Runnable examples: [C# client](../samples/Moongate.Admin.Client/README.md), [Pyt
 
 `ListAccounts` uses database keyset pagination: start with `after_account_id = 0`, send the returned `next_after_account_id` on the next call, stop when it is zero. Default page size is 50; maximum is 200. IDs are nonzero `uint32` for existing accounts. Summaries contain username, ID, role, access/lock flags and UTC creation time, never passwords, hashes or email.
 
-Omitting `CreateAccount.account_type` means Regular. Explicit `UNSPECIFIED` and unknown enum values fail. `can_access_api` defaults to false. Usernames must contain 1–255 characters; passwords are nonblank and at most 1024 UTF-8 bytes. NUL characters are rejected. Username matching retains existing case-sensitive account semantics.
+Omitting `CreateAccount.account_type` means Regular. Explicit `UNSPECIFIED` and unknown enum values fail. `can_access_api` defaults to false. Usernames must be nonblank and at most 255 characters; passwords are nonblank and at most 1024 UTF-8 bytes. NUL characters are rejected. Username matching retains existing case-sensitive account semantics.
 
 ## Sessions, revocation and failures
 
@@ -135,4 +135,4 @@ bash scripts/verify-admin-protos.sh
 bash examples/docker/login-realms/admin-smoke.sh
 ```
 
-The first requires the standard PostgreSQL/Redis test environment variables and uses a temporary Python environment plus real TLS fixtures. The second builds the server images, creates its own disposable Compose project and test CA, runs the Python client from the private Docker network, and removes only its own containers/volumes/certificates.
+The first requires `MOONGATE_TEST_POSTGRES_CONNECTION_STRING` and `MOONGATE_TEST_REDIS_CONNECTION_STRING` (see [Verify your changes](../CONTRIBUTING.md#verify-your-changes)); it uses a temporary Python environment plus real TLS fixtures. The second builds the server images, creates its own disposable Compose project and test CA, runs the Python client from the private Docker network, and removes only its own containers/volumes/certificates.

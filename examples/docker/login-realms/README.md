@@ -2,7 +2,7 @@
 
 This example builds one login server, two independent game servers, PostgreSQL with separate Accounts/Realm databases, and one private Redis instance. Redis holds expiring realm leases and one-use login handoff tickets. The UO client ports are 2593 for login and 2595/2596 for the two games; Redis is not published to the host.
 
-Copy `.env.example` to `.env`, set `UO_DATA_PATH`, and export the nine named secrets from Bitwarden into the invoking shell. The Redis password and handoff secret must be distinct hexadecimal values. Then run:
+Copy `.env.example` to `.env`, set `UO_DATA_PATH`, and export the nine named secrets from Bitwarden into the invoking shell. The Redis password and handoff secret must be distinct hexadecimal values. If you change `GAME_1_PORT` or `GAME_2_PORT`, set the matching `advertised_port` in `config/game-1.toml` or `config/game-2.toml` to the same host port (and in the matching `*-admin.toml` when using the administration override). Then run:
 
 ```sh
 docker compose config --quiet
@@ -17,7 +17,7 @@ See the [full setup and operations guide](../../../docs/docker-login-realms.md) 
 
 ## Optional administration API
 
-Provide an absolute `MOONGATE_ADMIN_CERT_DIRECTORY` containing `login.pfx`, `game-1.pfx`, and `game-2.pfx`, readable by the container service user. Each certificate needs a private key, server authentication usage, and DNS SAN matching the host the backend uses (for example `login`, `game-1`, `game-2` inside the Compose network). Give clients the issuing public CA certificate. Set `MOONGATE_ADMIN_CERTIFICATE_PASSWORD` from your secret store if the PFX files are protected, otherwise leave it empty.
+Provide an absolute `MOONGATE_ADMIN_CERT_DIRECTORY` containing `login.pfx`, `game-1.pfx`, and `game-2.pfx`, readable by the container service user. Each certificate needs a private key, server authentication usage, and DNS SAN matching the host the backend uses (for example `login`, `game-1`, `game-2` inside the Compose network). Give clients the issuing public CA certificate. The override passes one `MOONGATE_ADMIN_CERTIFICATE_PASSWORD` to all three services, so protected PFX files must share that password. Set it from your secret store, or leave it empty for passwordless PFX files.
 
 ```sh
 docker compose -f compose.yaml -f compose.admin.yaml up --build -d

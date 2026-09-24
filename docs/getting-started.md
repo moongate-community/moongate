@@ -62,6 +62,20 @@ use the documentation published for that version.
    database and no client files. [Prepare a root with mgboot](mgboot.md) describes
    what happens on a root that already exists.
 
+   To also enable optional administration with a self-signed TLS certificate, use:
+
+   ```sh
+   mgboot /srv/moongate --generate-admin-certificate \
+     --admin-certificate-hosts "login.example.test"
+   ```
+
+   Replace the example host with the DNS name or IP address your admin client uses;
+   omit `--admin-certificate-hosts` for localhost only. This creates
+   `certificates/admin.pfx` and public `certificates/admin.crt`, and explicitly
+   updates four `[admin_api]` settings. The default bind stays `127.0.0.1:2590`.
+   See [certificate setup](mgboot.md#generate-an-administration-certificate) for
+   client trust, private-network access and reuse of an existing identity.
+
    `mgboot` ships in releases after 0.6.0. On 0.6.0, start the server once instead:
    it writes the configuration and exits. Nothing else is needed, because on 0.6.0
    both the server and the migration runner read the core SQL from
@@ -92,7 +106,8 @@ use the documentation published for that version.
    Use an absolute client path; relative paths resolve from the process working
    directory, not from the root. Supply the two PostgreSQL URIs, the Redis
    connection string and a separate cluster-wide handoff secret through the
-   referenced environment variables. Read credentials from Bitwarden; do not
+   referenced environment variables. The secret must be at least 32 UTF-8 bytes.
+   Read credentials from Bitwarden; do not
    write their values in this file. Every login and game process in one deployment
    needs the same Redis endpoint, Redis password and handoff secret.
    The [configuration reference](server-configuration.md) lists every setting.
@@ -142,8 +157,11 @@ use the documentation published for that version.
    startup or a faulted game loop cannot promise that save. Do not terminate the
    process while it is waiting for one.
 
-To run a second instance, give it its own root, its own listener port and its own
-realm database. Never point two servers at one root or at one realm database.
+To run another standalone instance, give it its own root, distinct login and
+game listener ports, a distinct `realm_directory.realm_id` and `server_index`,
+and its own realm database. Reusing the default realm ID and index replaces the
+first instance's Redis lease. Never point two servers at one root or at one
+realm database.
 
 ## Files and process ownership
 
@@ -151,7 +169,8 @@ All server-managed paths below are relative to `--root-directory`:
 
 | Path | Purpose |
 | --- | --- |
-| `config/moongate.toml` | Server configuration; created once, never rewritten |
+| `config/moongate.toml` | Created if missing; normal startup preserves it, while explicit certificate setup updates four `[admin_api]` settings |
+| `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgboot` administration TLS identity: private server PFX and public PEM for client trust |
 | `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgboot` (releases after 0.6.0); plugins ship their own under `plugins/` |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `plugins/` | One assembly bundle per plugin directory |
