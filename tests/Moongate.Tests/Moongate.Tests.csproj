@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
     <PropertyGroup>
         <TargetFramework>net10.0</TargetFramework>
@@ -101,4 +101,7 @@
         <Copy SourceFiles="@(_IncompatiblePersistencePluginFiles)" DestinationFiles="@(_IncompatiblePersistencePluginFiles->'$(OutDir)PluginFixtures/IncompatiblePersistencePlugin/%(RecursiveDir)%(Filename)%(Extension)')" SkipUnchangedFiles="true"/>
     </Target>
 
+    <ItemGroup>
+        <ProjectReference Include="../../src/Moongate.Server.Admin/Moongate.Server.Admin.csproj"/>
+    </ItemGroup>
 </Project>

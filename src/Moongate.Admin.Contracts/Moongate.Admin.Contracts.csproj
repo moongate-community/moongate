@@ -1,0 +1,15 @@
+<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <IsPackable>true</IsPackable>
+        <DebugType Condition="'$(Configuration)' == 'Release'">portable</DebugType>
+        <Description>Versioned gRPC administration contracts and portable Protocol Buffer definitions for Moongate.</Description>
+        <PackageTags>moongate;grpc;protobuf;administration</PackageTags>
+    </PropertyGroup>
+    <ItemGroup>
+        <PackageReference Include="Google.Protobuf" Version="3.36.2"/>
+        <PackageReference Include="Grpc.Core.Api" Version="2.84.0"/>
+        <PackageReference Include="Grpc.Tools" Version="2.84.0" PrivateAssets="all"/>
+        <Protobuf Include="proto/**/*.proto" ProtoRoot="proto" GrpcServices="Both"/>
+        <None Update="proto/**/*.proto" Pack="true" PackagePath="proto/%(RecursiveDir)%(Filename)%(Extension)"/>
+    </ItemGroup>
+</Project>

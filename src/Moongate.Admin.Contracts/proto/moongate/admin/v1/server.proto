@@ -1,0 +1,14 @@
+syntax = "proto3";
+package moongate.admin.v1;
+option csharp_namespace = "Moongate.Admin.Contracts.V1";
+import "google/protobuf/empty.proto";
+import "moongate/admin/v1/common.proto";
+message GetServerInfoResponse {
+  string version = 1;
+  string codename = 2;
+  ServerMode mode = 3;
+  string instance_id = 4;
+  string realm_id = 5;
+  uint64 uptime_seconds = 6;
+}
+service AdminServer { rpc GetServerInfo(google.protobuf.Empty) returns (GetServerInfoResponse); }

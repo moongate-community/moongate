@@ -1,0 +1,16 @@
+syntax = "proto3";
+package moongate.admin.v1;
+option csharp_namespace = "Moongate.Admin.Contracts.V1";
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+import "moongate/admin/v1/common.proto";
+message LoginRequest { string username = 1; string password = 2; }
+message LoginResponse {
+  string access_token = 1;
+  google.protobuf.Timestamp expires_at = 2;
+  AccountSummary account = 3;
+}
+message RevokeAccountSessionsRequest { uint32 account_id = 1; }
+service AdminLogin { rpc Login(LoginRequest) returns (LoginResponse); }
+service AdminSession { rpc Logout(google.protobuf.Empty) returns (google.protobuf.Empty); }
+service AdminAccountSessions { rpc RevokeAccountSessions(RevokeAccountSessionsRequest) returns (google.protobuf.Empty); }
