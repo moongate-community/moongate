@@ -1,108 +1,34 @@
 # Changelog
 
-## Unreleased
-
-### Features
-
-* **admin:** embed optional gRPC administration on private port 2590 with TLS, shared Redis sessions, account permissions, console provisioning and portable protobuf clients.
-* **boot:** generate or reuse a self-signed administration TLS certificate offline with `mgboot --generate-admin-certificate`, configure endpoint DNS/IP names, and enable the administration endpoint in the root configuration.
-* **login:** discover live game realms through Redis leases and transfer authenticated clients with one-use `0x8C`/`0x91` handoff tickets.
-* **docker:** run one login and two game processes with private Redis, role-local PostgreSQL credentials and Compose secrets.
-
-### Architecture updates
-
-* **server:** remove the internal TCP API and `Moongate.Api` package. Runtime login, game and standalone roles now require Redis; PostgreSQL remains role-local.
-
 ## [0.7.0](https://github.com/moongate-community/moongate/compare/v0.6.0...v0.7.0) (2026-09-24)
 
-
 ### Features
 
-* **accounts:** add account listing and preserve formatting updates ([e1ccb60](https://github.com/moongate-community/moongate/commit/e1ccb60764a9049157ed66ab3bacce000d123c01))
-* **accounts:** add bounded administration operations and row locking ([900fac5](https://github.com/moongate-community/moongate/commit/900fac5f808992b5cb0ca9088042219b5e1862a4))
-* add account and help commands ([25e41a8](https://github.com/moongate-community/moongate/commit/25e41a826ba0238253774189d6a0bfd089ce4b2f))
-* add independent login packet pipeline ([7e5dc09](https://github.com/moongate-community/moongate/commit/7e5dc09b677d7085c43e3e16b3cf22bd70ca22ea))
-* add leased realm directory ([693848e](https://github.com/moongate-community/moongate/commit/693848e2f9e2f6477903fb560c5e808e088804db))
-* **admin:** accept wildcard IPv4 listen address ([4613544](https://github.com/moongate-community/moongate/commit/46135447fdc4f4bff343b5ad388981cd53f4c54f))
-* **admin:** add embedded gRPC administration with shared sessions ([1a4998a](https://github.com/moongate-community/moongate/commit/1a4998a119d5bdae7df5521f095c2a3f6576bd76))
-* **admin:** add revocable Redis sessions and bounded login throttling ([2055701](https://github.com/moongate-community/moongate/commit/205570142c1656b447589ba7b5412de736903ebf))
-* **admin:** add versioned gRPC contracts and configuration ([efda6e1](https://github.com/moongate-community/moongate/commit/efda6e15b8dc77f48886a73a4966dfc42fe0d632))
-* **admin:** coordinate account authentication and session revocation ([2b36121](https://github.com/moongate-community/moongate/commit/2b36121f8bcc365c29e7cfedc29f80e31b3b5366))
-* **admin:** expose authenticated account and server gRPC operations ([eaebe29](https://github.com/moongate-community/moongate/commit/eaebe29a4643e0fae2ce1cd9afb6d9fc3e17ae43))
-* **admin:** register embedded gRPC plugin with role-aware lifecycle ([8ed5dd9](https://github.com/moongate-community/moongate/commit/8ed5dd92a48faecba557e830b36d1b7a01ddf437))
-* **boot:** generate admin TLS certificates with ConsoleAppFramework ([31ac317](https://github.com/moongate-community/moongate/commit/31ac317bd9649331e1903c48e4beb7b900e010f7))
-* **boot:** prepare administration TLS certificates with mgboot ([78959d6](https://github.com/moongate-community/moongate/commit/78959d6365b4c5e3b89ada5a076347e31a893afc))
-* **bootstrap:** add bundled mgboot root initializer ([191c699](https://github.com/moongate-community/moongate/commit/191c6998328acb3a06ef8edd6396295fc08574d8))
-* compose login and game services by mode ([17ab3c6](https://github.com/moongate-community/moongate/commit/17ab3c6afd80b44c90389ff80a985ae0a18da581))
-* **core:** add EnumValueSpec&lt;TEnum&gt; and process-wide TOML converter registration ([fd195d9](https://github.com/moongate-community/moongate/commit/fd195d94a3ab357532b68d90d8f1bf5b071b3717))
-* **core:** add RangeValueSpec&lt;T&gt; for numeric template fields ([a3c0ea3](https://github.com/moongate-community/moongate/commit/a3c0ea3bac617e55d27a1c8b8f1f1045b002ebf2))
-* discover game realms and list them on login ([9c7d27e](https://github.com/moongate-community/moongate/commit/9c7d27e04522c5b423fabe8824dbcf6007cfd8d2))
-* dispatch asynchronous packets off game loop ([7793709](https://github.com/moongate-community/moongate/commit/77937091d75fcd14a4a0d52ded5b9e5a44117d2b))
-* **docker:** bundle mg-uoxconv in the server image ([d2a8c5e](https://github.com/moongate-community/moongate/commit/d2a8c5e89d24de1c6ccfc5024087b411567ac676))
-* **events:** add SubscribeAll to IMoongateEventBus ([26c1366](https://github.com/moongate-community/moongate/commit/26c13667c2d6cde3f57a42eccd2e87252658b26e))
-* **events:** add SubscribeAll to observe every published event ([356bdec](https://github.com/moongate-community/moongate/commit/356bdec507e629f88210f7ff5f2e4aa461d5dba8))
-* expose authenticated realm registration operations ([8319ed4](https://github.com/moongate-community/moongate/commit/8319ed45dd660d08d735cd16dd0d4544be198eb7))
-* **game:** parse reconnect seed before UO packets ([504a47b](https://github.com/moongate-community/moongate/commit/504a47b2e10a34ac785d78447538959cb38c5595))
-* **game:** redeem redirect ticket on 0x91 ([7e1768d](https://github.com/moongate-community/moongate/commit/7e1768da684d1f7c4b27981bdbe9017af92e4b9e))
-* **login:** derive and protect realm handoff proofs ([6c0c673](https://github.com/moongate-community/moongate/commit/6c0c673a5233f33e08785f241c52802f9ce3127e))
-* **login:** issue realm handoff on server selection ([05b798a](https://github.com/moongate-community/moongate/commit/05b798a6cd39ebd52014f45f4fc2461cd1bf375f))
-* **migrations:** write immutable drafts and enforce review markers ([d6c68a4](https://github.com/moongate-community/moongate/commit/d6c68a43de08d45d631bcce6ff76e4ac9a865ca4))
-* **network:** flush redirect before closing login connection ([0a633d6](https://github.com/moongate-community/moongate/commit/0a633d6c28116b095c910a92cb27dc9ee06869ed))
-* **persistence:** assess generated schema changes conservatively ([3c30abb](https://github.com/moongate-community/moongate/commit/3c30abb32a6d1d0d6c35682575f978503cb3c4f6))
-* **persistence:** assign serials automatically when inserting new entities ([4765073](https://github.com/moongate-community/moongate/commit/4765073949d8ef26d73e5f598bf0e37e3ccaeece))
-* **persistence:** define development migration configuration and sources ([2eb6d1e](https://github.com/moongate-community/moongate/commit/2eb6d1ed5fcf1d52c5f97f7c8786f13afef79da8))
-* **persistence:** generate and apply development migrations at startup ([03d61bf](https://github.com/moongate-community/moongate/commit/03d61bf0dbce1542b7ff18c2881fef5eda7925bb))
-* **persistence:** verify both PostgreSQL targets at startup ([f869bfd](https://github.com/moongate-community/moongate/commit/f869bfd332cf2de4f13bf5b07c16d44660d5b2a4))
-* **realms:** issue one-time Redis login handoffs ([57641dc](https://github.com/moongate-community/moongate/commit/57641dc61322cc02645a1596675442bd7b448d3f))
-* **realms:** publish and query fenced Redis leases ([3f68911](https://github.com/moongate-community/moongate/commit/3f68911a3ea7a4097d72d5135ec97e67dd611287))
-* **realms:** register role-specific realms through Redis ([d15acda](https://github.com/moongate-community/moongate/commit/d15acda7ae30ef7e2e2fb9be5534bcaca08727fc))
-* **redis:** add shared connection lifecycle and configuration ([5466fc7](https://github.com/moongate-community/moongate/commit/5466fc7382055e105b81dc1380a233ddc3a37caf))
-* register asynchronous packet handlers ([6b53586](https://github.com/moongate-community/moongate/commit/6b53586b1baf8de4afe3e447b05901268122de7d))
-* register game realms with login over mTLS ([a6b11f7](https://github.com/moongate-community/moongate/commit/a6b11f745dd83da68c93d4db6a8ea1f8f7b70274))
-* return asynchronous packet results to game loop ([3bcea60](https://github.com/moongate-community/moongate/commit/3bcea60f71096571d24c8a75fd65429155e91855))
-* scope persistence and directory config by server mode ([c3fef83](https://github.com/moongate-community/moongate/commit/c3fef83cd16e36972d572a73b739d0e8154dee55))
-* **scripts:** convert UOX3 item definitions into ItemTemplate TOML ([7d234d7](https://github.com/moongate-community/moongate/commit/7d234d70e3fbb6de5ddde4d67ce753bd3bbf0dd3))
-* **scripts:** convert UOX3 item definitions into ItemTemplate TOML ([cfacc66](https://github.com/moongate-community/moongate/commit/cfacc6629b336019686543fadf7590a322dd6ab6))
-* **scripts:** one file per loot table, add a human-readable Comment ([e01bed6](https://github.com/moongate-community/moongate/commit/e01bed6e664e99eaf79d70c52d66320ede4f1238))
-* **scripts:** verify every reference resolves in the converted output ([86ec6a4](https://github.com/moongate-community/moongate/commit/86ec6a4478699c3544317af8909cc9bb1852b256))
-* send realm list after account login ([34ce8f7](https://github.com/moongate-community/moongate/commit/34ce8f761cc6759118432905c014baf1bf3e8c65))
-* **server-ultima:** add LootTemplate and convert UOX3 LOOTLIST tables ([ae3d5bd](https://github.com/moongate-community/moongate/commit/ae3d5bde2b79c6f0d67d7c314267b768c3e64ade))
-* **server-ultima:** add LootTemplate and convert UOX3 LOOTLIST tables ([844379c](https://github.com/moongate-community/moongate/commit/844379cefb90c7eb93be7d9e0cd983977c3262e8))
-* **server-ultima:** add typed data loaders and their coordinating service ([feb2bd7](https://github.com/moongate-community/moongate/commit/feb2bd77ea256db7ad34a6e8de403fdb76c90b9f))
-* **server-ultima:** shape ItemTemplate and wire the templates directories ([800227c](https://github.com/moongate-community/moongate/commit/800227c6a6f9f6cc1c345463c5ed3dc243262e40))
-* **server-ultima:** typed value specs and the first ItemTemplate shape ([5a752de](https://github.com/moongate-community/moongate/commit/5a752de792818a9e447fe404407acbf012a7eacd))
-* **server:** publish persistence lifecycle events ([f5b8140](https://github.com/moongate-community/moongate/commit/f5b814089e9f6e18aa5b35886800a58bc9db9f43))
-* **server:** separate login and game TCP listeners ([1ce7dfb](https://github.com/moongate-community/moongate/commit/1ce7dfbacdd03fb90eb66fe69249d82617168bd7))
-* **ultima:** add account persistence and service implementation ([2aa6367](https://github.com/moongate-community/moongate/commit/2aa63676dea3c5ee2d890a52b51a2220fda26578))
-* verify realm discovery deployment and document roles ([59ce10b](https://github.com/moongate-community/moongate/commit/59ce10b587b735a58bc178db1d7121b1ca0cf3af))
+* **login and realms:** discover game servers through expiring Redis leases, filter the realm list by account level, and transfer authenticated clients with one-use `0x8C`/`0x91` handoff tickets.
+* **server:** run Login, Game or Standalone roles with separate login and game TCP listeners and role-local PostgreSQL databases.
+* **administration:** embed an optional gRPC plugin on port 2590 with server TLS, shared Redis sessions, bounded login throttling, account listing/creation, session revocation and server information. Ship portable protobuf contracts and C#/Python client examples.
+* **accounts and commands:** add account persistence, account listing, console account creation and API-access provisioning, plus command discovery through `help`. Administrative API access is disabled for new accounts unless explicitly granted.
+* **boot:** ship `mgboot` to prepare a root directory, default configuration and bundled migrations offline. Use `--generate-admin-certificate` to create or reuse a server TLS identity and enable the administration API without starting the server.
+* **packets:** register asynchronous packet handlers, perform asynchronous work outside the GameLoop and return game-state changes to its owning thread.
+* **persistence:** assign persistent serials automatically, map convention-based columns to snake_case, and generate reviewable development migrations at startup. Publish persistence readiness and shutdown events.
+* **events:** subscribe to all published events through `SubscribeAll`.
+* **templates and tools:** add item/loot template contracts, typed value specifications, data-loader registration and UOX3 conversion tooling with validated references and snake_case identifiers.
+* **deployment:** document one Login and two independent Game processes with private Redis, PostgreSQL, Compose secrets and administration TLS.
 
+### Fixes
 
-### Bug Fixes
+* Preserve delivered redirect tickets when closing login connections; handle cancellation and terminal packet replies safely.
+* Fence realm lease recovery, make heartbeat updates atomic and skip malformed directory entries.
+* Coordinate administrative account changes with session revocation, classify dependency failures and complete operation audits.
+* Preserve renamed persistence columns, detect default changes and allow indexes on newly created tables.
+* Serialize PostgreSQL integration test projects to avoid contention in CI, and verify generated administration clients across languages.
+* Normalize nested directory paths and improve item/loot conversion output and validation.
 
-* **accounts:** allocate persistent serials and enforce account safeguards ([d6e7b3b](https://github.com/moongate-community/moongate/commit/d6e7b3ba73776f5881d4c310b924005bce8a93d7))
-* **admin:** classify provider failures and complete operation audits ([a1c7b57](https://github.com/moongate-community/moongate/commit/a1c7b5787255e415a041a643362433c16ddb979c))
-* **ci:** serialize PostgreSQL integration test projects ([3966bf7](https://github.com/moongate-community/moongate/commit/3966bf78cea752a7e08a04aad68ad27bd608f7ba))
-* **core:** make DirectoriesConfig.GetPath split nested segments before snake-casing ([2f91bea](https://github.com/moongate-community/moongate/commit/2f91bea23d169f0e8c82d309bffd7d27ced6956e))
-* **login:** preserve delivered redirect ticket after terminal close ([f7273d2](https://github.com/moongate-community/moongate/commit/f7273d23e6eed1e36e13339d817d955fd1ed5e88))
-* **login:** propagate cancellation on failed packet sends ([2b2be5d](https://github.com/moongate-community/moongate/commit/2b2be5d85a5214a1f7d13ec8eadbacdaf5798d6e))
-* **persistence:** allow plain indexes on newly created tables ([a8876c4](https://github.com/moongate-community/moongate/commit/a8876c4e988d19bd88f7ed3bf25b9e5b326d5ec9))
-* **persistence:** detect default changes and preserve renamed columns ([d9a98cc](https://github.com/moongate-community/moongate/commit/d9a98ccdd63d0927e8a7a0a9371ac771964301f5))
-* **persistence:** map convention columns to snake case ([8edf4cd](https://github.com/moongate-community/moongate/commit/8edf4cdadcc446ec2ad2e432afc8f3222fed9827))
-* preserve async packet connection and shutdown safety ([38f122c](https://github.com/moongate-community/moongate/commit/38f122c679bd8f5efef94100e90fa636c06bdc8c))
-* **realms:** fence lease recovery and skip malformed entries ([42fedc2](https://github.com/moongate-community/moongate/commit/42fedc24468aa7b80c37a422eeef26fe283551eb))
-* **realms:** make lease heartbeat atomic ([7023c82](https://github.com/moongate-community/moongate/commit/7023c82fee40e642c2bb03c7a0da3dbb30293bcb))
-* **scripts:** normalize converted Ids to snake_case ([2360575](https://github.com/moongate-community/moongate/commit/2360575d8b74e1886d74f22de9cfdc04c0857a05))
-* **server-ultima:** remove a stray empty DataLoaderResult that slipped into the previous commit ([0a998bf](https://github.com/moongate-community/moongate/commit/0a998bf0f9cc38c90107a442ed33dd0776f89777))
-* **server-ultima:** rename DataLoaderService.Get to GetEntities, add logging ([f2be429](https://github.com/moongate-community/moongate/commit/f2be42942baa02e55fb9ce7586a636bbdabf2a15))
-* **server-ultima:** write loot templates to their own destination tree ([33998df](https://github.com/moongate-community/moongate/commit/33998dfcfb3890b76381d4576232d45a7ab916e8))
-* **tests:** carry the real port through the URI-style config test ([5fa2c9e](https://github.com/moongate-community/moongate/commit/5fa2c9ed42136d5d67cc31333e3a53e9975d02eb))
-* **tests:** register DirectoriesConfig before MoongateUltimaPlugin.Register ([445d601](https://github.com/moongate-community/moongate/commit/445d6019da8faaafad99f4f943355c843db158b3))
-* **tests:** serialize Postgres-backed tests to stop overwhelming CI's shared service ([8d55545](https://github.com/moongate-community/moongate/commit/8d555454b2d1afe4a82f6bef40af76a8b72aa5ce))
+### Architecture and operation
 
-
-### Miscellaneous Chores
-
-* **release:** prepare 0.7.0 ([91023bd](https://github.com/moongate-community/moongate/commit/91023bd8d570e7080e84339d5e431caad666df45))
+* Redis provides shared realm coordination and temporary login/session state in all runtime roles, including Standalone. PostgreSQL remains the durable store, scoped to Accounts on Login and Realm on Game.
+* The internal TCP API and `Moongate.Api` package are retired. Runtime peers coordinate through Redis; the optional administration endpoint uses standard gRPC with server TLS.
+* Character selection, live-world editing and a playable world remain outside the implemented feature set. See the implementation-status guide for current limits.
 
 ## [0.6.0](https://github.com/moongate-community/moongate/compare/v0.5.0...v0.6.0) (2026-09-21)
 
