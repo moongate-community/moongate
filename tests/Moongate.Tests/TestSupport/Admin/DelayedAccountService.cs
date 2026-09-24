@@ -10,6 +10,7 @@ internal sealed class DelayedAccountService : IAccountService
 {
     private readonly IAccountService _inner;
     public TaskCompletionSource Committed { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
+    public Exception? ListFailure { get; set; }
     public bool DelayResponse { get; set; } = true;
     public DelayedAccountService(IAccountService inner) { _inner = inner; }
     public async Task<AccountCreateResult> CreateAccountAsync(AccountCreateOptions options, CancellationToken cancellationToken = default)
@@ -29,5 +30,5 @@ internal sealed class DelayedAccountService : IAccountService
     public Task<IEnumerable<AccountEntity>> ListAccountsAsync(CancellationToken cancellationToken = default)
         => _inner.ListAccountsAsync(cancellationToken);
     public Task<AccountPage> ListAccountsPageAsync(Serial afterId, int pageSize = 50, CancellationToken cancellationToken = default)
-        => _inner.ListAccountsPageAsync(afterId, pageSize, cancellationToken);
+        => ListFailure is null ? _inner.ListAccountsPageAsync(afterId, pageSize, cancellationToken) : Task.FromException<AccountPage>(ListFailure);
 }

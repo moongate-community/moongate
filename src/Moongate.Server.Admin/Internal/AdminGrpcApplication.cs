@@ -1,5 +1,6 @@
 using System.Globalization;
 using System.Security.Claims;
+using Grpc.Core;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
@@ -46,26 +47,30 @@ internal static class AdminGrpcApplication
         app.Use(async (context, next) =>
         {
             var status = gate.TryEnter();
-            if (status != 0)
+            try
             {
-                context.Response.ContentType = "application/grpc";
-                context.Response.Headers["grpc-status"] = status.ToString(CultureInfo.InvariantCulture);
-                context.Response.Headers["grpc-message"] = "Administration endpoint unavailable or busy.";
-                return;
+                if (status != StatusCode.OK)
+                {
+                    context.Items["AdminStatus"] = status.ToString();
+                    context.Response.ContentType = "application/grpc";
+                    context.Response.Headers["grpc-status"] = ((int)status).ToString(CultureInfo.InvariantCulture);
+                    context.Response.Headers["grpc-message"] = "Administration endpoint unavailable or busy.";
+                    return;
+                }
+                using var deadline = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted);
+                deadline.CancelAfter(MaximumCallDuration);
+                context.RequestAborted = deadline.Token;
+                await next(context);
             }
-            using var deadline = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted);
-            deadline.CancelAfter(MaximumCallDuration);
-            context.RequestAborted = deadline.Token;
-            try { await next(context); }
             finally
             {
                 var operation = context.GetEndpoint()?.DisplayName ?? "unmapped";
                 Log.ForContext<AdminRequestGate>().Information(
                     "Admin operation {Operation} actor {ActorId} target {TargetId} status {Status} correlation {CorrelationId}",
-                    operation, context.User.FindFirstValue(ClaimTypes.NameIdentifier), context.Items["AdminTargetId"],
+                    operation, context.Items["AdminActorId"] ?? context.User.FindFirstValue(ClaimTypes.NameIdentifier), context.Items["AdminTargetId"],
                     context.Items["AdminStatus"] ?? context.Response.StatusCode.ToString(CultureInfo.InvariantCulture),
                     context.TraceIdentifier);
-                gate.Exit();
+                if (status == StatusCode.OK) { gate.Exit(); }
             }
         });
         app.UseAuthentication();

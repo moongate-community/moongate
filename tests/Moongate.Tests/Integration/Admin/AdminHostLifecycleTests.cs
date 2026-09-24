@@ -7,7 +7,7 @@ using Moongate.Core.Directories;
 using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Admin.Internal;
 using Moongate.Server.Admin.Services;
-using Moongate.Server.Core.Types.Hosting;
+using Moongate.Server.Core.Interfaces.Admin;
 using Moongate.Tests.TestSupport.Admin;
 using Moongate.Tests.TestSupport.Persistence;
 using ServerMode = Moongate.Server.Core.Types.Hosting.ServerMode;
@@ -51,11 +51,15 @@ public sealed class AdminHostLifecycleTests
         using var certificates = new AdminTestCertificates();
         using var directory = new TemporaryPersistenceDirectory();
         var port = FreePort();
+        using var provider = new TestAdminServerInfoProvider();
         await using var host = new AdminGrpcHostService(new()
         {
             Enabled = true, Port = port, CertificatePath = certificates.PfxPath
-        }, new(directory.Path, []), ServerMode.Game, services => AdminGrpcApplication.AddServices(services,
-            new(), backend.Store, backend.Throttle, new TestAdminServerInfoProvider(), null, null));
+        }, new(directory.Path, []), ServerMode.Game, services =>
+        {
+            AdminGrpcApplication.AddServices(services, new(), backend.Store, backend.Throttle, provider, null, null);
+            Assert.Same(provider, services.Single(descriptor => descriptor.ServiceType == typeof(IAdminServerInfoProvider)).ImplementationInstance);
+        });
         await host.StartAsync();
         using var channel = GrpcChannel.ForAddress($"https://localhost:{port}", new() { HttpHandler = certificates.CreateHandler() });
         var info = new AdminServer.AdminServerClient(channel);
@@ -69,6 +73,7 @@ public sealed class AdminHostLifecycleTests
         host.StopAccepting();
         Assert.Equal(StatusCode.Unavailable, (await Assert.ThrowsAsync<RpcException>(() => info.GetServerInfoAsync(new()).ResponseAsync)).StatusCode);
         await host.StopAsync();
+        Assert.Equal(0, provider.DisposeCount);
         Assert.True(backend.Redis.Connection.IsConnected);
         await backend.Store.ResetGateAsync(new(1), false);
     }
@@ -90,7 +95,7 @@ public sealed class AdminHostLifecycleTests
         Assert.True(backend.Redis.Connection.IsConnected);
     }
 
-    internal static int FreePort()
+    private static int FreePort()
     {
         using var listener = new TcpListener(IPAddress.Loopback, 0);
         listener.Start();

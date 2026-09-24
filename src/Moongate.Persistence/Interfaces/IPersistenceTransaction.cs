@@ -1,5 +1,5 @@
-using Moongate.Core.Primitives;
 using Moongate.Core.Interfaces.Entities;
+using Moongate.Core.Primitives;
 
 namespace Moongate.Persistence.Interfaces;
 

@@ -2,9 +2,9 @@ using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
-using Serilog;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Commands;
 

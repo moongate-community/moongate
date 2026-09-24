@@ -114,11 +114,11 @@ public sealed class PersistenceTransactionTests
                                await Assert.ThrowsAsync<InvalidOperationException>(
                                    () => operation switch
                                    {
-                                       "dispose"    => owner.DisposeAsync().AsTask(),
+                                       "dispose" => owner.DisposeAsync().AsTask(),
                                        "initialize" => owner.InitializeAsync(),
-                                       "preview"    => owner.PreviewSchemaAsync(),
-                                       "sync"       => owner.SynchronizeSchemaAsync(),
-                                       _            => owner.SaveAllAsync()
+                                       "preview" => owner.PreviewSchemaAsync(),
+                                       "sync" => owner.SynchronizeSchemaAsync(),
+                                       _ => owner.SaveAllAsync()
                                    }
                                );
                            }

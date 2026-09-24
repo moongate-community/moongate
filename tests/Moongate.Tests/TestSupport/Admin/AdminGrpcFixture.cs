@@ -1,5 +1,4 @@
 using System.Net;
-using Moongate.Server.Ultima.Interfaces;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -8,6 +7,7 @@ using Microsoft.Extensions.Logging;
 using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Admin.Internal;
 using Moongate.Server.Core.Types.Hosting;
+using Moongate.Server.Ultima.Interfaces;
 
 namespace Moongate.Tests.TestSupport.Admin;
 

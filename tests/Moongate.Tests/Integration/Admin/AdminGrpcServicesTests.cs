@@ -1,9 +1,11 @@
+using System.Net.Sockets;
 using Google.Protobuf.WellKnownTypes;
 using Grpc.Core;
 using Moongate.Admin.Contracts.V1;
 using Moongate.Server.Ultima.Data.Account;
 using Moongate.Tests.TestSupport.Admin;
 using Moongate.Tests.TestSupport.Persistence;
+using Npgsql;
 using DomainAccountType = Moongate.Server.Core.Types.Accounts.AccountType;
 
 namespace Moongate.Tests.Integration.Admin;
@@ -11,6 +13,22 @@ namespace Moongate.Tests.Integration.Admin;
 [Collection(PostgresTestCollection.Name)]
 public sealed class AdminGrpcServicesTests
 {
+    [Theory, InlineData(true, StatusCode.Unavailable), InlineData(false, StatusCode.Internal)]
+    public async Task ListAccounts_ProviderFailure_ReturnsSafeClassifiedStatus(bool transient, StatusCode expected)
+    {
+        DelayedAccountService? controlled = null;
+        await using var fixture = await AdminGrpcFixture.CreateAsync(decorateAccounts: service => controlled = new(service));
+        var headers = await LoginAsync(fixture, DomainAccountType.Administrator);
+        Exception provider = transient
+            ? new NpgsqlException("private provider details", new SocketException((int)SocketError.ConnectionRefused))
+            : new PostgresException("private SQL details", "ERROR", "ERROR", PostgresErrorCodes.UndefinedTable);
+        controlled!.ListFailure = new InvalidOperationException("private wrapper details", provider);
+        var error = await Assert.ThrowsAsync<RpcException>(() => new AdminAccounts.AdminAccountsClient(fixture.Channel)
+            .ListAccountsAsync(new(), headers).ResponseAsync);
+        Assert.Equal(expected, error.StatusCode);
+        Assert.DoesNotContain("private", error.ToString());
+    }
+
     [Fact]
     public async Task CreateAccount_CancellationAfterCommit_RetryIsDuplicate()
     {

@@ -1,3 +1,4 @@
+using System.Data.Common;
 using Grpc.Core;
 using Grpc.Core.Interceptors;
 using Moongate.Server.Core.Exceptions.Admin;
@@ -20,15 +21,7 @@ internal sealed class AdminExceptionInterceptor : Interceptor
         }
         catch (Exception exception)
         {
-            var status = exception switch
-            {
-                RpcException rpc => rpc.Status,
-                OperationCanceledException => new Status(StatusCode.Cancelled, "Administration call canceled."),
-                AdminSessionLimitException => new Status(StatusCode.ResourceExhausted, "Account session limit reached."),
-                AdminDependencyUnavailableException or AdminSessionRejectedException => new Status(StatusCode.Unavailable, "Administration dependency unavailable."),
-                KeyNotFoundException => new Status(StatusCode.NotFound, "Account not found."),
-                _ => new Status(StatusCode.Internal, "Administration operation failed.")
-            };
+            var status = MapStatus(exception, context.CancellationToken);
             context.GetHttpContext().Items["AdminStatus"] = status.StatusCode.ToString();
             if (status.StatusCode == StatusCode.Internal)
             {
@@ -37,5 +30,36 @@ internal sealed class AdminExceptionInterceptor : Interceptor
             }
             throw new RpcException(status);
         }
+    }
+
+    internal static Status MapStatus(Exception exception, CancellationToken cancellationToken)
+    {
+        if (cancellationToken.IsCancellationRequested)
+        {
+            return new(StatusCode.Cancelled, "Administration call canceled.");
+        }
+        return exception switch
+        {
+            RpcException rpc => rpc.Status,
+            OperationCanceledException => new(StatusCode.Cancelled, "Administration call canceled."),
+            AdminSessionLimitException => new(StatusCode.ResourceExhausted, "Account session limit reached."),
+            AdminDependencyUnavailableException or AdminSessionRejectedException => new(StatusCode.Unavailable, "Administration dependency unavailable."),
+            KeyNotFoundException => new(StatusCode.NotFound, "Account not found."),
+            _ when IsDependencyUnavailable(exception) => new(StatusCode.Unavailable, "Administration dependency unavailable."),
+            _ => new(StatusCode.Internal, "Administration operation failed.")
+        };
+    }
+
+    private static bool IsDependencyUnavailable(Exception exception)
+    {
+        // FreeSql can wrap provider failures; never classify by exception message text.
+        for (Exception? current = exception; current is not null; current = current.InnerException)
+        {
+            if (current is DbException { IsTransient: true } or TimeoutException)
+            {
+                return true;
+            }
+        }
+        return false;
     }
 }

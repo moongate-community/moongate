@@ -28,6 +28,7 @@ public sealed class AdminLoginGrpcService : AdminLogin.AdminLoginBase
         }
         var login = await _authority.LoginAsync(request.Username, request.Password, context.CancellationToken);
         if (login is null) { throw new RpcException(new(StatusCode.Unauthenticated, "Invalid administration credentials.")); }
+        context.GetHttpContext().Items["AdminActorId"] = login.Account.AccountId.Value;
         context.GetHttpContext().Items["AdminTargetId"] = login.Account.AccountId.Value;
         return new() { AccessToken = login.AccessToken, ExpiresAt = Timestamp.FromDateTimeOffset(login.ExpiresAt), Account = AdminAccountMapper.ToSummary(login.Account) };
     }

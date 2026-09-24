@@ -3,12 +3,12 @@ using Moongate.Core.Utils;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
-using Npgsql;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Account;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types;
+using Npgsql;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
@@ -102,10 +102,10 @@ public class AccountService : IAccountService
             throw new OperationCanceledException("Account creation canceled.", exception, cancellationToken);
         }
         catch (Exception exception) when (exception.GetBaseException() is PostgresException
-                                          {
-                                              SqlState: PostgresErrorCodes.UniqueViolation,
-                                              ConstraintName: "ux_accounts_username"
-                                          })
+        {
+            SqlState: PostgresErrorCodes.UniqueViolation,
+            ConstraintName: "ux_accounts_username"
+        })
         {
             return new(false, AccountCreateResultType.UsernameAlreadyExists);
         }
