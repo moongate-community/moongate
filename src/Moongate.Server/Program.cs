@@ -1,3 +1,4 @@
+using Moongate.Server.Admin;
 using ConsoleAppFramework;
 using DryIoc;
 using Moongate.Core.Directories;
@@ -216,7 +217,8 @@ await ConsoleApp.RunAsync(
                             .AddMoongateService<IConsoleInputService, ConsoleInputService>(1000);
 
                     ServerRoleRegistration.Register(services, serverConfig, directoriesConfig);
-                    container.RegisterPlugin<MoongateUltimaPlugin>();
+                    container.RegisterPlugin<MoongateUltimaPlugin>()
+                             .RegisterPlugin<MoongateAdminPlugin>();
 
                     return services;
                 }

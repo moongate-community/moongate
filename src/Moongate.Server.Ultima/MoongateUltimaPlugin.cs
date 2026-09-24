@@ -52,7 +52,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<LoginAccountFlow>(Reuse.Singleton);
             container.RegisterCommand<AccountCommand>(
                 "account",
-                "Creates an account: account create <username> <password> [Regular|GameMaster|Administrator].",
+                "Creates an account: account create <username> <password> [Regular|GameMaster|Administrator]. Console provisioning: account api-access <username> <on|off>.",
                 CommandSourceType.Console | CommandSourceType.InGame,
                 AccountType.Administrator
             );

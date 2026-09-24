@@ -1,3 +1,4 @@
+using Moongate.Server.Core.Interfaces.Admin;
 using System.Diagnostics;
 using DryIoc;
 using Moongate.Server.Core.Data.Services;
@@ -20,6 +21,16 @@ internal sealed class StartupServiceLifecycle
     public StartupServiceLifecycle(Container container)
     {
         _container = container;
+    }
+
+    public void ActivateAdministration()
+    {
+        foreach (var service in _startedServices.OfType<IAdminApiService>()) { service.Activate(); }
+    }
+
+    public void StopAcceptingAdministration()
+    {
+        foreach (var service in _startedServices.OfType<IAdminApiService>()) { service.StopAccepting(); }
     }
 
     public void ActivateWorldSaving()

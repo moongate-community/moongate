@@ -1,3 +1,4 @@
+using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Serialization.Config.Internal;
@@ -14,6 +15,8 @@ public class MoongateServerConfig
     public ShardConfig Shard { get; set; } = new();
 
     public NetworkConfig Network { get; set; } = new();
+
+    public AdminApiConfig AdminApi { get; set; } = new();
 
     public RedisConfig Redis { get; set; } = new();
 
@@ -50,6 +53,8 @@ public class MoongateServerConfig
         }
 
         Redis.Validate();
+        if (AdminApi is null) { throw new InvalidOperationException("The admin_api configuration section cannot be null."); }
+        AdminApi.Validate();
 
         if (Persistence is null)
         {

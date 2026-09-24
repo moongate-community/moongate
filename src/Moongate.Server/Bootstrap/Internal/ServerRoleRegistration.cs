@@ -39,6 +39,7 @@ internal static class ServerRoleRegistration
     public static Container Register(Container container, MoongateServerConfig config, DirectoriesConfig directories)
     {
         container.RegisterInstance(config.Mode);
+        AdminServiceRegistration.Register(container, config);
         container.RegisterDelegate<RealmDirectoryConfig>(
             resolver => resolver.Resolve<MoongateServerConfig>().RealmDirectory, Reuse.Singleton);
         container.RegisterDelegate<RedisConfig>(

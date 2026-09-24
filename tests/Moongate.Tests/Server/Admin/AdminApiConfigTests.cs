@@ -6,6 +6,19 @@ namespace Moongate.Tests.Server.Admin;
 public class AdminApiConfigTests
 {
     [Fact]
+    public void ServerConfig_AdminSection_BindsSnakeCaseAndValidates()
+    {
+        var config = TomlUtils.Deserialize<Moongate.Server.Data.Config.MoongateServerConfig>("[admin_api]\nenabled=true\nport=2591\nallow_insecure_loopback=true")!;
+        config.Validate();
+        Assert.True(config.AdminApi.Enabled);
+        Assert.Equal(2591, config.AdminApi.Port);
+        var copy = TomlUtils.Deserialize<Moongate.Server.Data.Config.MoongateServerConfig>(TomlUtils.Serialize(config))!;
+        Assert.Equal(2591, copy.AdminApi.Port);
+        copy.AdminApi.Port = 0;
+        Assert.Throws<InvalidOperationException>(copy.Validate);
+    }
+
+    [Fact]
     public void Defaults_DisableListenerAndUseApprovedPort()
     {
         var config = new AdminApiConfig();

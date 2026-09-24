@@ -1,3 +1,6 @@
+using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Types.Commands;
+using Moongate.Server.Ultima.Commands;
 using System.Security.Cryptography;
 using System.Text;
 using Moongate.Server.Core.Exceptions.Admin;
@@ -11,6 +14,18 @@ namespace Moongate.Tests.Integration.Admin;
 [Collection(PostgresTestCollection.Name)]
 public sealed class AccountAdminAccessServiceTests
 {
+    [Theory, InlineData(CommandSourceType.Console, true), InlineData(CommandSourceType.InGame, false)]
+    public async Task AccountCommand_ApiAccess_RequiresLocalConsole(CommandSourceType source, bool allowed)
+    {
+        await using var fixture = await AccountAdminFixture.CreateAsync();
+        var account = (await fixture.Accounts.Service.CreateAccountAsync("admin", fixture.Accounts.Password, AccountType.Administrator)).Account!;
+        var command = new AccountCommand(fixture.Accounts.Service, fixture.Authority);
+        var context = new CommandContext("account api-access admin on", "account", ["api-access", "admin", "on"], source, null);
+        await command.ExecuteAsync(context);
+        Assert.Equal(allowed, (await fixture.Accounts.Accounts.GetByIdAsync(account.Id))!.CanAccessApi);
+        Assert.Equal(allowed ? CommandOutputLevel.Information : CommandOutputLevel.Error, Assert.Single(context.Output).Level);
+    }
+
     [Theory, InlineData("unknown"), InlineData("wrong-password"), InlineData("locked"), InlineData("unknown-role")]
     public async Task LoginAsync_InvalidAccountState_DoesNotIssueOrRecordLogin(string state)
     {
