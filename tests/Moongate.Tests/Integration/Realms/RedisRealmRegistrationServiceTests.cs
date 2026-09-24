@@ -61,10 +61,12 @@ public sealed class RedisRealmRegistrationServiceTests
             await registration.StartAsync();
             await directory.RegisterAsync(successor);
             await Task.Delay(TimeSpan.FromSeconds(1.3));
-            await registration.StopAsync();
-
             Assert.Equal(successor.InstanceId,
                 (await directory.FindByIndexAsync(5, AccountType.Regular))!.InstanceId);
+            Assert.True(await redis.Connection.GetDatabase().KeyDeleteAsync(prefix + "5"));
+            await Task.Delay(TimeSpan.FromSeconds(1.3));
+            Assert.Null(await directory.FindByIndexAsync(5, AccountType.Regular));
+            await registration.StopAsync();
         }
         finally
         {

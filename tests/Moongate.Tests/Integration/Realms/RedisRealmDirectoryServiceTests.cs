@@ -80,32 +80,16 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
     }
 
     [Fact]
-    public async Task TryRestoreAsync_MissingLeaseRepublishesOriginalInstance()
+    public async Task RenewAsync_MissingLeaseRestoresItInTheSameRedisOperation()
     {
         var directory = Create();
-        var original = Realm("same", 11);
+        var original = Realm("same", 13);
         await directory.RegisterAsync(original);
-        Assert.True(await _redis.Connection.GetDatabase().KeyDeleteAsync(_prefix + "11"));
+        Assert.True(await _redis.Connection.GetDatabase().KeyDeleteAsync(_prefix + "13"));
 
-        Assert.True(await directory.TryRestoreAsync(original));
+        Assert.True(await directory.RenewAsync(original));
         Assert.Equal(original.InstanceId,
-            (await directory.FindByIndexAsync(11, AccountType.Regular))!.InstanceId);
-    }
-
-    [Fact]
-    public async Task TryRestoreAsync_ReplacementBetweenReadAndWriteKeepsNewInstance()
-    {
-        var directory = Create();
-        var original = Realm("same", 12);
-        var successor = Realm("same", 12);
-        await directory.RegisterAsync(original);
-        Assert.True(await _redis.Connection.GetDatabase().KeyDeleteAsync(_prefix + "12"));
-        Assert.Null(await directory.FindByIndexAsync(12, AccountType.Regular));
-        await directory.RegisterAsync(successor);
-
-        Assert.False(await directory.TryRestoreAsync(original));
-        Assert.Equal(successor.InstanceId,
-            (await directory.FindByIndexAsync(12, AccountType.Regular))!.InstanceId);
+            (await directory.FindByIndexAsync(13, AccountType.Regular))!.InstanceId);
     }
 
     [Fact]
@@ -125,7 +109,9 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
         await database.KeyExpireAsync(_prefix + "10", TimeSpan.FromMilliseconds(50));
         await Task.Delay(150);
         Assert.Empty(await directory.GetAvailableAsync(AccountType.Regular));
-        Assert.False(await directory.RenewAsync(realm));
+        Assert.True(await directory.RenewAsync(realm));
+        Assert.Equal(realm.InstanceId,
+            (await directory.FindByIndexAsync(10, AccountType.Regular))!.InstanceId);
     }
 
     [Fact]

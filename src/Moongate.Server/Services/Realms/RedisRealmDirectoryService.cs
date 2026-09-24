@@ -20,7 +20,7 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         if owner and owner ~= ARGV[1] then return -1 end
         if owner then
             local instance = redis.call('HGET', KEYS[1], 'instance_id')
-            if ARGV[11] == 'restore' and instance ~= ARGV[2] then return -4 end
+            if ARGV[11] == 'heartbeat' and instance ~= ARGV[2] then return -4 end
             if instance == ARGV[2] then
                 if redis.call('HGET', KEYS[1], 'name') ~= ARGV[4] or
                    redis.call('HGET', KEYS[1], 'ipv4') ~= ARGV[5] or
@@ -44,15 +44,7 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
             'name', ARGV[4], 'ipv4', ARGV[5], 'port', ARGV[6],
             'minimum_account_type', ARGV[7])
         redis.call('EXPIRE', KEYS[1], tonumber(ARGV[10]))
-        return 1
-        """;
-
-    private const string RenewScript = """
-        if redis.call('HGET', KEYS[1], 'realm_id') ~= ARGV[1] or
-           redis.call('HGET', KEYS[1], 'instance_id') ~= ARGV[2] then
-            return 0
-        end
-        redis.call('EXPIRE', KEYS[1], tonumber(ARGV[3]))
+        if not owner and ARGV[11] == 'heartbeat' then return 2 end
         return 1
         """;
 
@@ -101,26 +93,7 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         }
     }
 
-    /// <inheritdoc />
-    public async ValueTask<bool> TryRestoreAsync(RealmInstance realm,
-        CancellationToken cancellationToken = default)
-    {
-        var result = await ClaimAsync(realm, true, cancellationToken).ConfigureAwait(false);
-
-        if (result is -1 or -4)
-        {
-            return false;
-        }
-
-        if (result != 1)
-        {
-            ThrowClaimFailure(result);
-        }
-
-        return true;
-    }
-
-    private async ValueTask<int> ClaimAsync(RealmInstance realm, bool restoreOnly,
+    private async ValueTask<int> ClaimAsync(RealmInstance realm, bool heartbeat,
         CancellationToken cancellationToken)
     {
         Validate(realm);
@@ -139,7 +112,7 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
                              _prefix,
                              _maxRealms,
                              _leaseSeconds,
-                             restoreOnly ? "restore" : "claim"
+                             heartbeat ? "heartbeat" : "claim"
                          ]
                      ).WaitAsync(cancellationToken).ConfigureAwait(false);
 
@@ -167,14 +140,20 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
     /// <inheritdoc />
     public async ValueTask<bool> RenewAsync(RealmInstance realm, CancellationToken cancellationToken = default)
     {
-        Validate(realm);
-        var result = await _redis.Connection.GetDatabase().ScriptEvaluateAsync(
-                         RenewScript,
-                         [Key(realm.Descriptor.ServerIndex)],
-                         [realm.Descriptor.RealmId, realm.InstanceId.ToString("N"), _leaseSeconds]
-                     ).WaitAsync(cancellationToken).ConfigureAwait(false);
+        var result = await ClaimAsync(realm, true, cancellationToken).ConfigureAwait(false);
 
-        return (int)result == 1;
+        if (result is 1 or 2)
+        {
+            return true;
+        }
+
+        if (result is -1 or -4)
+        {
+            return false;
+        }
+
+        ThrowClaimFailure(result);
+        return false;
     }
 
     /// <inheritdoc />

@@ -61,14 +61,7 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
             try
             {
                 await Task.Delay(interval, _clock, cancellationToken).ConfigureAwait(false);
-                if (await _presence.RenewAsync(_realm, cancellationToken).ConfigureAwait(false))
-                {
-                    retry = TimeSpan.FromSeconds(1);
-
-                    continue;
-                }
-
-                if (!await _presence.TryRestoreAsync(_realm, cancellationToken).ConfigureAwait(false))
+                if (!await _presence.RenewAsync(_realm, cancellationToken).ConfigureAwait(false))
                 {
                     _logger.Warning("Realm {RealmId} was replaced by another process; lease renewal stopped",
                         _realm.Descriptor.RealmId);
@@ -76,7 +69,6 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
                     return;
                 }
 
-                _logger.Information("Realm {RealmId} republished its Redis lease", _realm.Descriptor.RealmId);
                 retry = TimeSpan.FromSeconds(1);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
