@@ -158,8 +158,8 @@ cancellation token and dispose any wrapper you create if preparation fails. Afte
 successful setup, transport owns the prepared stream and socket. Preparation runs
 only through the configured entry points, `MoongateTcpServer.CreateConfigured` and
 `MoongateTcpClient.ConnectConfiguredAsync` (from 0.4.0); the plain constructor and
-`ConnectAsync` have no preparation step. For the implemented authenticated API transport, see
-[Moongate.Api](../src/Moongate.Api/README.md).
+`ConnectAsync` have no preparation step. The server uses the transport for UO
+client listeners; realm coordination is backed by Redis.
 
 For graceful shutdown, stop producers and call `StopAcceptingAsync()` to close the
 listener/cancel unfinished setup while established connections remain available.

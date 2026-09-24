@@ -16,6 +16,9 @@ public sealed class PacketContext
 
     public long SessionId => _originalSession.SessionId;
 
+    /// <summary>The raw four-byte seed received from this game's TCP connection.</summary>
+    public uint? Seed => _originalSession.NetworkSession.Seed;
+
     public PacketContext(
         GameSession originalSession,
         IGameLoopService gameLoop,
@@ -37,6 +40,31 @@ public sealed class PacketContext
         return connection is not null &&
                IsOriginalSessionConnected() &&
                _sender.TrySend(SessionId, connection, packet);
+    }
+
+    /// <summary>Sends a final reply in order and closes only the original connection.</summary>
+    public async Task<bool> SendAndDisconnectAsync(
+        IOutgoingPacket packet,
+        CancellationToken cancellationToken = default
+    )
+    {
+        ArgumentNullException.ThrowIfNull(packet);
+        var connection = _originalSession.NetworkSession.Client;
+
+        if (connection is null || !IsOriginalSessionConnected())
+        {
+            return false;
+        }
+
+        var sent = await _sender.SendAndDisconnectAsync(SessionId, connection, packet,
+            cancellationToken).ConfigureAwait(false);
+
+        if (!sent)
+        {
+            await _sender.DisconnectAsync(SessionId, connection).ConfigureAwait(false);
+        }
+
+        return sent;
     }
 
     /// <summary>Runs one state change on the game loop; false means the original session is gone.</summary>

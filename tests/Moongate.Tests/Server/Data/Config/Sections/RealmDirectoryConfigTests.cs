@@ -50,7 +50,6 @@ public sealed class RealmDirectoryConfigTests
         => new()
         {
             RealmId = "realm-a", Name = "Realm A", ServerIndex = 1,
-            AdvertisedAddress = "127.0.0.1", AdvertisedPort = 2593,
-            LoginApiHost = "login", LoginApiPort = 2594, ExpectedLoginPeerId = "login"
+            AdvertisedAddress = "127.0.0.1", AdvertisedPort = 2593
         };
 }

@@ -20,4 +20,13 @@ public interface IPacketSendService : IMoongateStartupService
 
     /// <summary>Admits a packet only when the session ID still belongs to the expected connection.</summary>
     bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet);
+
+    /// <summary>Sends a final packet after queued frames, then closes the expected connection.</summary>
+    /// <returns>True only when the final packet reached the transport before it closed.</returns>
+    Task<bool> SendAndDisconnectAsync(
+        long sessionId,
+        INetworkConnection expectedConnection,
+        IOutgoingPacket packet,
+        CancellationToken cancellationToken = default
+    );
 }

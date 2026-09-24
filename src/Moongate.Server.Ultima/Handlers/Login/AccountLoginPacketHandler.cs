@@ -2,6 +2,7 @@ using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Packets;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Services;
 using Serilog;
 
@@ -31,7 +32,7 @@ public sealed class AccountLoginPacketHandler : IAsyncPacketHandler<AccountLogin
 
                     if (!context.TrySend(new LoginDeniedPacket(result.DenialReason!.Value)))
                     {
-                        _ = session.NetworkSession.Client?.CloseAsync();
+                        _ = session.NetworkSession.Client?.CloseAsync(cancellationToken);
                     }
 
                     return;
@@ -43,8 +44,8 @@ public sealed class AccountLoginPacketHandler : IAsyncPacketHandler<AccountLogin
                 if (!context.TrySend(new ServerListPacket(result.Servers)))
                 {
                     session.SetAccountId(Moongate.Core.Primitives.Serial.Zero);
-                    session.SetAccountType(Moongate.Server.Core.Types.Accounts.AccountType.Regular);
-                    _ = session.NetworkSession.Client?.CloseAsync();
+                    session.SetAccountType(AccountType.Regular);
+                    _ = session.NetworkSession.Client?.CloseAsync(cancellationToken);
                     return;
                 }
 

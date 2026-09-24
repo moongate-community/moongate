@@ -17,6 +17,7 @@ using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Network;
+using Moongate.Tests.TestSupport.Realms;
 using Moongate.Tests.TestSupport.Server.Ultima;
 using Moongate.Tests.TestSupport.Environment;
 
@@ -35,13 +36,13 @@ public sealed class AccountServerListTests
         var network = new NetworkServiceStub(connections);
         var sessions = new LoginSessionService();
         var sender = new PacketSendService(connections);
-        var directory = new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15));
-        directory.RegisterLocal(new RealmDescriptor("visible", 1, "Visible", IPAddress.Loopback,
-            2595, AccountType.Regular));
-        directory.RegisterLocal(new RealmDescriptor("hidden", 2, "Hidden", IPAddress.Loopback,
-            2596, AccountType.Administrator));
+        using var proof = new HandoffProofService(new byte[32]);
+        var directory = new StubRealmCatalog(
+            new RealmDescriptor("visible", 1, "Visible", IPAddress.Loopback, 2595, AccountType.Regular),
+            new RealmDescriptor("hidden", 2, "Hidden", IPAddress.Loopback, 2596, AccountType.Administrator));
         container.RegisterInstance<ILoginSessionService>(sessions);
         container.RegisterInstance<ILoginPacketSendService>(sender);
+        container.RegisterInstance<IHandoffProofService>(proof);
         container.RegisterInstance(accountFixture.Service);
         container.RegisterInstance(new LoginAccountFlow(accountFixture.Service, directory));
         container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
@@ -83,12 +84,11 @@ public sealed class AccountServerListTests
         var network = new NetworkServiceStub(connections);
         var sessions = new LoginSessionService();
         var sender = new PacketSendService(connections);
-        var directory = new RealmDirectoryService(TimeProvider.System, TimeSpan.FromSeconds(15));
-        if (available)
-        {
-            directory.RegisterLocal(new RealmDescriptor("local", 1, "Local", IPAddress.Loopback,
-                2593, AccountType.Regular));
-        }
+        using var proof = new HandoffProofService(new byte[32]);
+        var directory = available
+                            ? new StubRealmCatalog(new RealmDescriptor("local", 1, "Local", IPAddress.Loopback,
+                                2593, AccountType.Regular))
+                            : new StubRealmCatalog();
 
         var accounts = new RecordingAccountService { LoginResult = new AccountEntity
         {
@@ -96,6 +96,7 @@ public sealed class AccountServerListTests
         } };
         container.RegisterInstance<ILoginSessionService>(sessions);
         container.RegisterInstance<ILoginPacketSendService>(sender);
+        container.RegisterInstance<IHandoffProofService>(proof);
         container.RegisterInstance<IAccountService>(accounts);
         container.RegisterInstance(new LoginAccountFlow(accounts, directory));
         container.RegisterLoginPacketHandler<LoginSeedPacket, LoginRoleSeedPacketHandler>();

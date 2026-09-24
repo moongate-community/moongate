@@ -7,7 +7,7 @@ using Tomlyn.Serialization;
 
 namespace Moongate.Server.Data.Config.Sections;
 
-/// <summary>Configures local realm discovery and remote game registration.</summary>
+/// <summary>Configures the realm advertised through Redis discovery.</summary>
 public sealed class RealmDirectoryConfig
 {
     public string RealmId { get; set; } = "";
@@ -22,12 +22,6 @@ public sealed class RealmDirectoryConfig
 
     [TomlConverter(typeof(AccountTypeTomlConverter))]
     public AccountType MinimumAccountType { get; set; } = AccountType.Regular;
-
-    public string LoginApiHost { get; set; } = "";
-
-    public int LoginApiPort { get; set; } = 2594;
-
-    public string ExpectedLoginPeerId { get; set; } = "";
 
     public int HeartbeatIntervalSeconds { get; set; } = 5;
 
@@ -90,21 +84,6 @@ public sealed class RealmDirectoryConfig
         if (AdvertisedPort is < 1 or > 65535)
         {
             throw new InvalidOperationException("realm_directory.advertised_port must be between 1 and 65535.");
-        }
-
-        if (string.IsNullOrWhiteSpace(LoginApiHost))
-        {
-            throw new InvalidOperationException("realm_directory.login_api_host is required in game mode.");
-        }
-
-        if (LoginApiPort is < 1 or > 65535)
-        {
-            throw new InvalidOperationException("realm_directory.login_api_port must be between 1 and 65535.");
-        }
-
-        if (string.IsNullOrWhiteSpace(ExpectedLoginPeerId))
-        {
-            throw new InvalidOperationException("realm_directory.expected_login_peer_id is required in game mode.");
         }
     }
 }

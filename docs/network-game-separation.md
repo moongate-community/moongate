@@ -2,9 +2,9 @@
 
 The host separates TCP connection lifetime from game-session lifetime. `mode =
 "login"` runs a dedicated ordered async login packet pipeline, Accounts access and
-realm directory. `mode = "game"` runs the game loop, world services and an outbound
-realm registration client. `standalone` combines account and game services with a
-local realm entry, without mTLS registration traffic. Login and game own separate
+realm directory. `mode = "game"` runs the game loop, world services and Redis
+realm presence. `standalone` combines account and game services and publishes its
+local realm through Redis. Login and game own separate
 connection registries, senders, packet dispatchers and TCP listeners. The defaults
 are `network.login_port = 2593` and `network.game_port = 2595`; standalone rejects
 the same port for both roles. With `network.listen_address = "0.0.0.0"`, each role
@@ -19,7 +19,7 @@ address. The local realm advertises `network.game_port` unless
 | `PacketSendService` | Encoded snapshots, bounded FIFO queues and owned outgoing I/O |
 | `GameServerService` | Session creation, immediate packet decoding, dispatch and session retirement |
 | `LoginServerService` | Independent login connections and ordered async packet handling |
-| `RealmDirectoryService` | Local and leased realm entries exposed to account login |
+| `RedisRealmDirectoryService` | Redis-backed live realm entries exposed to account login |
 | `PacketDispatchService` / `GameLoopService` | Typed handlers, ordered game work and loop-owned state mutation |
 
 Transport and outgoing sends can run without `ISessionService` or `IGameLoopService`.

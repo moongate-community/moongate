@@ -11,22 +11,16 @@ namespace Moongate.Tests.Server.Helpers;
 public sealed class ConfigHelperTests
 {
     [Fact]
-    public void Load_ApiDefaults_PersistsDisabledListenerInSnakeCase()
+    public void Load_Defaults_PersistsRedisWithoutInternalApiSection()
     {
         using var directory = new TemporaryDirectory();
         var path = Path.Combine(directory.Path, "moongate.toml");
         var config = ConfigHelper.Load(path);
-        Assert.False(config.Api.Enabled);
-        Assert.Equal(2594, config.Api.Port);
         var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!;
-        var api = Assert.IsType<TomlTable>(document["api"]);
-        Assert.Equal(false, api["enabled"]);
-        Assert.Equal(false, api["auto_generate_certificate"]);
-        Assert.Equal(new[] { "localhost" }, Assert.IsType<TomlArray>(api["certificate_dns_names"]).Cast<string>());
-        Assert.Equal(new[] { "127.0.0.1", "::1" }, Assert.IsType<TomlArray>(api["certificate_ip_addresses"]).Cast<string>());
-        Assert.Equal(2594L, api["port"]);
-        Assert.Equal("0.0.0.0", api["listen_address"]);
-        Assert.Equal("MOONGATE_API_CERTIFICATE_PASSWORD", api["certificate_password_environment_variable"]);
+        Assert.False(document.ContainsKey("api"));
+        var redis = Assert.IsType<TomlTable>(document["redis"]);
+        Assert.Equal(config.Redis.ConnectionString, redis["connection_string"]);
+        Assert.Equal(config.Redis.HandoffSecret, redis["handoff_secret"]);
         var network = Assert.IsType<TomlTable>(document["network"]);
         Assert.Equal(2593L, network["login_port"]);
         Assert.Equal(2595L, network["game_port"]);
@@ -45,9 +39,6 @@ public sealed class ConfigHelperTests
             advertised_address = "127.0.0.1"
             advertised_port = 2593
             minimum_account_type = "game_master"
-            login_api_host = "login"
-            login_api_port = 2594
-            expected_login_peer_id = "login"
             heartbeat_interval_seconds = 5
             lease_duration_seconds = 15
             max_realms = 128
@@ -63,89 +54,13 @@ public sealed class ConfigHelperTests
     }
 
     [Fact]
-    public void Load_ApiOverrides_ReadsEndpointTlsAndPeerPermissions()
-    {
-        using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile(
-            "moongate.toml",
-            """
-            [api]
-            enabled = true
-            listen_address = "::1"
-            port = 4002
-            auto_generate_certificate = true
-            certificate_dns_names = ["realm.internal"]
-            certificate_ip_addresses = ["10.0.0.12"]
-            certificate_path = "certs/server.pfx"
-            certificate_password_environment_variable = "TEST_API_PASSWORD"
-            trusted_root_paths = ["certs/root.pem"]
-            [[api.peers]]
-            certificate_sha256 = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
-            peer_id = "admin"
-            allowed_operations = [100, 65535]
-            """
-        );
-        var api = ConfigHelper.Load(path).Api;
-        Assert.True(api.Enabled);
-        Assert.Equal("::1", api.ListenAddress);
-        Assert.Equal(4002, api.Port);
-        Assert.True(api.AutoGenerateCertificate);
-        Assert.Equal(["realm.internal"], api.CertificateDnsNames);
-        Assert.Equal(["10.0.0.12"], api.CertificateIpAddresses);
-        Assert.Equal("certs/server.pfx", api.CertificatePath);
-        Assert.Equal("TEST_API_PASSWORD", api.CertificatePasswordEnvironmentVariable);
-        Assert.Equal(["certs/root.pem"], api.TrustedRootPaths);
-        var peer = Assert.Single(api.Peers);
-        Assert.Equal("admin", peer.PeerId);
-        Assert.Equal(new ushort[] { 100, 65535 }, peer.AllowedOperations.OperationIds);
-    }
-
-    [Fact]
-    public void Load_ApiPeerFingerprint_ExpandsEnvironmentReferenceWithoutRewritingFile()
-    {
-        using var directory = new TemporaryDirectory();
-        var variable = $"MOONGATE_TEST_CERT_{Guid.NewGuid():N}";
-        var fingerprint = new string('A', 64);
-        var toml = $$"""
-                     [api]
-                     enabled = true
-                     certificate_path = "tls/server.pfx"
-                     trusted_root_paths = ["tls/peer.pem"]
-                     [[api.peers]]
-                     certificate_sha256 = "${{variable}}"
-                     peer_id = "realm-a"
-                     allowed_operations = [256, 257, 258]
-                     """;
-        var path = directory.CreateFile("moongate.toml", toml);
-        Environment.SetEnvironmentVariable(variable, fingerprint);
-        try
-        {
-            Assert.Equal(fingerprint, Assert.Single(ConfigHelper.Load(path).Api.Peers).CertificateSha256);
-            Assert.Equal(toml, File.ReadAllText(path));
-        }
-        finally
-        {
-            Environment.SetEnvironmentVariable(variable, null);
-        }
-    }
-
-    [Fact]
-    public void Load_EnabledApiWithoutTls_RejectsBeforeStartup()
-    {
-        using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("moongate.toml", "[api]\nenabled = true\n");
-        Assert.Throws<InvalidOperationException>(() => ConfigHelper.Load(path));
-    }
-
-    [Fact]
-    public void Load_ExistingFileWithoutApi_PreservesFileAndDefaultsToDisabled()
+    public void Load_ExistingFileWithoutRedis_PreservesFileAndKeepsRedisDefaults()
     {
         using var directory = new TemporaryDirectory();
         const string toml = "[network]\ngame_port = 4001\n";
         var path = directory.CreateFile("moongate.toml", toml);
         var config = ConfigHelper.Load(path);
-        Assert.False(config.Api.Enabled);
-        Assert.Equal(2594, config.Api.Port);
+        Assert.Equal("$MOONGATE_REDIS_CONNECTION_STRING", config.Redis.ConnectionString);
         Assert.Equal(2593, config.Network.LoginPort);
         Assert.Equal(4001, config.Network.GamePort);
         Assert.Equal(toml, File.ReadAllText(path));

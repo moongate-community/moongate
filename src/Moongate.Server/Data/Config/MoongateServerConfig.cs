@@ -15,7 +15,7 @@ public class MoongateServerConfig
 
     public NetworkConfig Network { get; set; } = new();
 
-    public ApiConfig Api { get; set; } = new();
+    public RedisConfig Redis { get; set; } = new();
 
     public UltimaConfig Ultima { get; set; } = new();
 
@@ -44,12 +44,12 @@ public class MoongateServerConfig
 
         Network.Validate(Mode);
 
-        if (Api is null)
+        if (Redis is null)
         {
-            throw new InvalidOperationException("The api configuration section cannot be null.");
+            throw new InvalidOperationException("The redis configuration section cannot be null.");
         }
 
-        Api.Validate();
+        Redis.Validate();
 
         if (Persistence is null)
         {
@@ -64,16 +64,6 @@ public class MoongateServerConfig
         }
 
         RealmDirectory.Validate(Mode);
-
-        if (Mode == ServerMode.Login && !Api.Enabled)
-        {
-            throw new InvalidOperationException("api.enabled must be true in login mode.");
-        }
-
-        if (Mode == ServerMode.Game)
-        {
-            Api.ValidateOutbound();
-        }
 
         if (WorldSave is null)
         {

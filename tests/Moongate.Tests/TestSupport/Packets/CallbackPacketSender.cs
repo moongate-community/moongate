@@ -29,4 +29,12 @@ internal sealed class CallbackPacketSender : IPacketSendService
 
     public bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet)
         => _inner.TrySend(sessionId, expectedConnection, packet);
+
+    public Task<bool> SendAndDisconnectAsync(
+        long sessionId,
+        INetworkConnection expectedConnection,
+        IOutgoingPacket packet,
+        CancellationToken cancellationToken = default
+    )
+        => _inner.SendAndDisconnectAsync(sessionId, expectedConnection, packet, cancellationToken);
 }

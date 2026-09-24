@@ -23,7 +23,7 @@ public sealed class RootDirectoryInitializerTests
         config.Validate();
         Assert.Equal(Path.Combine(root, "migrations"), config.Persistence.MigrationsDirectory);
         Assert.False(config.Persistence.AutoGenerateMigrations);
-        Assert.False(config.Api.Enabled);
+        Assert.NotNull(config.Redis);
         Assert.Equal(File.ReadAllBytes(Path.Combine(source, "auth/0001_base.sql")),
             File.ReadAllBytes(Path.Combine(root, "migrations/auth/0001_base.sql")));
         Assert.False(File.Exists(Path.Combine(root, "moongate.pid")));

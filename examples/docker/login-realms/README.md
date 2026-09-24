@@ -1,17 +1,16 @@
 # Login and realms Compose example
 
-This example builds one login-designated process, two game-designated processes,
-and one PostgreSQL 16 service with separate Accounts, Realm 1, and Realm 2
-databases. It also includes one-shot schema preview and versioned SQL status/apply jobs and a disposable
-end-to-end smoke test.
+This example builds one login server, two independent game servers, PostgreSQL with separate Accounts/Realm databases, and one private Redis instance. Redis holds expiring realm leases and one-use login handoff tickets. The UO client ports are 2593 for login and 2595/2596 for the two games; Redis is not published to the host.
 
-The login process checks Accounts and lists the two registered realms after a
-successful account login. Each game process checks only its own Realm database
-and maintains an mTLS lease with login. Realm selection, redirect and ticket
-handoff are not implemented yet. Keep passwords out of `.env`: export the
-required variables from Bitwarden or another process secret provider, provision
-the three certificates described in the guide, then run `docker compose config --quiet`.
+Copy `.env.example` to `.env`, set `UO_DATA_PATH`, and export the nine named secrets from Bitwarden into the invoking shell. The Redis password and handoff secret must be distinct hexadecimal values. Then run:
 
-See the [full setup and operations guide](../../../docs/docker-login-realms.md)
-for credential names, schema maintenance, privilege boundaries, world saves,
-ports, volumes, and `smoke.sh`.
+```sh
+docker compose config --quiet
+docker compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply migration-status
+docker compose up -d --wait postgres redis
+docker compose --profile schema run --rm auth-schema-apply
+docker compose --profile schema run --rm schema-apply
+docker compose up -d login game-1 game-2
+```
+
+See the [full setup and operations guide](../../../docs/docker-login-realms.md) for secret names, PostgreSQL privileges, advertised client addresses, realm leases, shutdown, and the disposable `smoke.sh` test.

@@ -217,8 +217,9 @@ The built-in Ultima plugin registers `AccountEntity` in the Accounts database an
 `IDataAccess<AccountEntity>` and lets `UpsertAsync` assign the new account's `Id`.
 `ListAccountsAsync` wraps `GetAllAsync`: an unbounded, detached snapshot of every
 account, for administration rather than per-request lookups. `LoginAsync` verifies
-the password hash and the lock state. A successful login now returns the filtered
-`0xA8` realm list, but selection and game handoff remain future work.
+the password hash and the lock state. A successful login returns a filtered
+`0xA8` realm list; selection issues a one-use Redis handoff ticket that the
+game verifies without direct Accounts database access.
 
 The built-in Ultima plugin also registers a command to create accounts:
 

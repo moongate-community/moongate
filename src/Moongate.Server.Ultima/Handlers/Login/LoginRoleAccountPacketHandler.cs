@@ -1,3 +1,4 @@
+using System.Security.Cryptography;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Server.Core.Data.Sessions;
@@ -13,23 +14,34 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
 {
     private readonly ILoginSessionService _sessions;
     private readonly ILoginPacketSendService _sender;
+    private readonly IHandoffProofService _proof;
     private readonly LoginAccountFlow _flow;
     private readonly ILogger _logger = Log.ForContext<LoginRoleAccountPacketHandler>();
 
-    public LoginRoleAccountPacketHandler(ILoginSessionService sessions, ILoginPacketSendService sender,
-        LoginAccountFlow flow)
+    public LoginRoleAccountPacketHandler(
+        ILoginSessionService sessions,
+        ILoginPacketSendService sender,
+        LoginAccountFlow flow,
+        IHandoffProofService proof
+    )
     {
         _sessions = sessions;
         _sender = sender;
         _flow = flow;
+        _proof = proof;
     }
 
-    public async ValueTask HandleAsync(LoginSession session, AccountLoginPacket packet,
-        CancellationToken cancellationToken)
+    public async ValueTask HandleAsync(
+        LoginSession session,
+        AccountLoginPacket packet,
+        CancellationToken cancellationToken
+    )
     {
         var result = await _flow.AuthenticateAsync(packet.Account, packet.Password, cancellationToken)
-            .ConfigureAwait(false);
-        if (cancellationToken.IsCancellationRequested || !_sessions.IsCurrent(session) ||
+                                .ConfigureAwait(false);
+
+        if (cancellationToken.IsCancellationRequested ||
+            !_sessions.IsCurrent(session) ||
             session.NetworkSession.Client is not { } connection)
         {
             return;
@@ -38,6 +50,7 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
         if (!result.Success)
         {
             _logger.Information("Login failed for account {Account}: {Reason}", packet.Account, result.DenialReason);
+
             if (!_sender.TrySend(session.SessionId, connection, new LoginDeniedPacket(result.DenialReason!.Value)))
             {
                 await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
@@ -46,25 +59,39 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
             return;
         }
 
-        if (!session.TrySetAccount(result.AccountId, result.AccountType))
-        {
-            return;
-        }
+        var credentialKey = _proof.DeriveCredentialKey(packet.Account, packet.Password);
 
-        if (!_sessions.IsCurrent(session))
+        try
         {
-            session.ClearAccount();
-            return;
-        }
+            if (!session.TrySetAccount(result.AccountId, result.AccountType, packet.Account, credentialKey))
+            {
+                return;
+            }
 
-        if (!_sender.TrySend(session.SessionId, connection, new ServerListPacket(result.Servers)))
+            if (!_sessions.IsCurrent(session))
+            {
+                session.ClearAccount();
+
+                return;
+            }
+
+            if (!_sender.TrySend(session.SessionId, connection, new ServerListPacket(result.Servers)))
+            {
+                session.ClearAccount();
+                await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
+
+                return;
+            }
+
+            _logger.Information(
+                "Login successful for account {Account}; {RealmCount} realms available",
+                packet.Account,
+                result.Servers.Count
+            );
+        }
+        finally
         {
-            session.ClearAccount();
-            await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
-            return;
+            CryptographicOperations.ZeroMemory(credentialKey);
         }
-
-        _logger.Information("Login successful for account {Account}; {RealmCount} realms available",
-            packet.Account, result.Servers.Count);
     }
 }

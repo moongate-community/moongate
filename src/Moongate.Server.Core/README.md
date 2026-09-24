@@ -52,7 +52,7 @@ exactly like `Subscribe<TEvent>`; disposing one never affects another.
 
 ## Dependencies and scope
 
-This package depends on `Moongate.Core`, `Moongate.Api`, `Moongate.Network`, and `Moongate.Network.Packets`. DryIoc is
+This package depends on `Moongate.Core`, `Moongate.Network`, and `Moongate.Network.Packets`. DryIoc is
 available through the dependency graph.
 
 The executable host and implementations of server runtime services are provided by `Moongate.Server`, which is not

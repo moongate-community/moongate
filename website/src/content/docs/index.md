@@ -4,15 +4,15 @@ description: Build, run, and extend the Moongate Ultima Online server and its re
 template: splash
 hero:
   title: Moongate documentation
-  tagline: An Ultima Online server, with reusable .NET libraries for networking, persistence, scripting, and internal APIs.
+  tagline: An Ultima Online server with reusable .NET libraries for networking, persistence and scripting, plus Redis-backed realm handoff.
   image:
     file: ../../../../images/moongate_logo.png
   actions:
     - text: Start here
       link: /start/getting-started/
       icon: right-arrow
-    - text: Internal API guide
-      link: /libraries/api/
+    - text: Docker login and realms
+      link: /server/docker-login-realms/
       variant: secondary
 ---
 

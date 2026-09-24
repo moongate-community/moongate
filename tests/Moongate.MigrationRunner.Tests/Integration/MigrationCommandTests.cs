@@ -46,7 +46,7 @@ public sealed class MigrationCommandTests : IClassFixture<PostgreSqlFixture>
         var uri =
             $"postgres://postgres@localhost:{builder.Port}/{builder.Database}?host={Uri.EscapeDataString(builder.Host!)}&pooling=false";
         var config =
-            "[api]\nenabled = false\n[persistence.accounts]\nconnection_string = '$ABSENT_AUTH_DATABASE'\n[persistence.realm]\nconnection_string = '" +
+            "[persistence.accounts]\nconnection_string = '$ABSENT_AUTH_DATABASE'\n[persistence.realm]\nconnection_string = '" +
             uri +
             "'\n";
         files.Write("config/moongate.toml", config);

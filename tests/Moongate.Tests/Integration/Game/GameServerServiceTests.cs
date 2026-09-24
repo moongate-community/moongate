@@ -9,6 +9,37 @@ public sealed class GameServerServiceTests
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
 
     [Fact]
+    public async Task RawSeed_IsStoredOnCurrentSessionWithoutPacketDispatch()
+    {
+        await using var fixture = new GameCoordinatorFixture();
+        await fixture.StartAsync();
+        using var connection = new ControlledNetworkConnection(1);
+        fixture.Network.Accept(connection);
+
+        fixture.Network.Receive(connection, new byte[] { 0x73, 0x12, 0x34, 0x56 });
+
+        var session = Assert.Single(fixture.Sessions.GetAll());
+        Assert.Equal(0x73123456u, session.NetworkSession.Seed);
+        Assert.Same(connection, session.NetworkSession.Client);
+    }
+
+    [Fact]
+    public async Task RawSeed_FromDifferentConnectionWithSameId_DoesNotChangeCurrentSession()
+    {
+        await using var fixture = new GameCoordinatorFixture();
+        await fixture.StartAsync();
+        using var current = new ControlledNetworkConnection(1);
+        using var stale = new ControlledNetworkConnection(1);
+        fixture.Network.Accept(current);
+
+        fixture.Network.Receive(stale, new byte[] { 0x73, 0x12, 0x34, 0x56 });
+
+        var session = Assert.Single(fixture.Sessions.GetAll());
+        Assert.Null(session.NetworkSession.Seed);
+        Assert.Same(current, session.NetworkSession.Client);
+    }
+
+    [Fact]
     public async Task BorrowedFrame_IsDecodedBeforeReturningToTransport()
     {
         await using var fixture = new GameCoordinatorFixture();

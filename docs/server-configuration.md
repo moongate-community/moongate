@@ -22,17 +22,9 @@ game_port = 2595
 listen_address = "0.0.0.0"
 enable_ping_server = true # Reserved: currently not consumed by the host.
 
-[api]
-enabled = false
-listen_address = "0.0.0.0"
-port = 2594
-auto_generate_certificate = false
-certificate_dns_names = ["localhost"]
-certificate_ip_addresses = ["127.0.0.1", "::1"]
-certificate_path = ""
-certificate_password_environment_variable = "MOONGATE_API_CERTIFICATE_PASSWORD"
-trusted_root_paths = []
-peers = []
+[redis]
+connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
+handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
 [ultima]
 ultima_path = "ChangeMe" # Replace with your client data directory.
@@ -53,9 +45,6 @@ server_index = 0
 advertised_address = ""
 advertised_port = 0
 minimum_account_type = "regular"
-login_api_host = ""
-login_api_port = 2594
-expected_login_peer_id = ""
 heartbeat_interval_seconds = 5
 lease_duration_seconds = 15
 max_realms = 128
@@ -86,7 +75,7 @@ to a secret-provider environment reference such as `$MOONGATE_ACCOUNTS_DATABASE`
 or `$MOONGATE_REALM_DATABASE`. Merely exporting those variables does not override
 a literal URI in the TOML file.
 
-`MoongatePersistenceService` opens each active database and runs `SELECT 1`. Each success
+`MoongatePersistenceService` opens each active database and runs `SELECT 1`. The Redis service also checks its connection before accepting clients. Each PostgreSQL success
 logs `Postgres connection successful` with the target and endpoint, without credentials.
 A connection or ping failure throws and prevents other services from starting.
 Moongate does not create missing databases; schema and migration checks run after
@@ -96,35 +85,23 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 
 | Setting | Meaning and limits |
 | --- | --- |
-| `mode` | `login`, `game` or `standalone`; default standalone. Login runs account authentication, a login packet listener and realm directory; Game runs world services and registers with login; Standalone runs both roles with a local directory entry. |
+| `mode` | `login`, `game` or `standalone`; default standalone. Login runs account authentication, a login packet listener and realm directory; Game runs world services and publishes its realm to Redis; Standalone runs both roles and publishes its local realm to Redis. |
 | `shard.shard_name` | Shard display metadata; used as the standalone list name when it fits the 32-character ASCII wire limit. Otherwise the local list name defaults to `Moongate`. |
 | `network.login_port` | Login TCP listener port; default 2593. Used in login and standalone modes. |
 | `network.game_port` | Game TCP listener port; default 2595. Used in game and standalone modes. Standalone rejects equal login and game ports. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create an endpoint for each active role on every address, including IPv6 addresses; it is not a single wildcard listener. Standalone therefore starts two listeners per address. Use a specific IP to restrict binding. |
 | `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
-| `api.enabled` | Enables the internal MessagePack/mTLS listener; default false. Required for `login`, optional for `game` (its outbound client still requires certificates and peer trust). Standalone can leave it disabled. |
-| `api.listen_address` | IPv4/IPv6 literal; default `0.0.0.0` binds one IPv4 wildcard listener. Unlike the game listener, it does not enumerate interfaces. |
-| `api.port` | TCP port from 1 through 65535; default 2594. |
-| `api.auto_generate_certificate` | Default false. Creates a missing PFX and exports its public `.pem` copy, even with `enabled = false`. Existing PFX files are never replaced. |
-| `api.certificate_dns_names` | DNS SANs for generation; default `["localhost"]`. No URLs or wildcards. |
-| `api.certificate_ip_addresses` | IP SANs for generation; default `["127.0.0.1", "::1"]`. No scope identifiers; at least one DNS name or IP is required across both arrays. |
-| `api.certificate_path` | Local PKCS#12/PFX file containing the server leaf certificate and private key. |
-| `api.certificate_password_environment_variable` | Name of the environment variable containing the PFX password. If named but unset, startup fails. An empty name permits an unencrypted PFX. Never put the password itself in TOML. |
-| `api.trusted_root_paths` | When enabled, a nonempty array of trusted private CA certificates or explicitly trusted self-signed peer certificates (PEM or DER). Relative certificate/root paths resolve under `<root>/config`, independent of working directory. |
-| `api.peers` | Nonempty array of allowed certificate identities; see the example below. Each fingerprint is unique ignoring case. |
-| `api.peers.certificate_sha256` | Exactly 64 hexadecimal characters identifying the peer's leaf certificate; no colons. In a loaded TOML file, `$NAME` / `${NAME}` environment references are expanded first. |
-| `api.peers.peer_id` | Nonblank local identity for this peer. Multiple certificates may map to one identity during rotation. |
-| `api.peers.allowed_operations` | `["*"]` grants all registered operations, including future additions. Otherwise use integer IDs from 1 through 65535. Empty or omitted denies all incoming operations; the wildcard must appear alone. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. |
 | `persistence.auto_sync_schema` | Defaults to false. Normal startup checks versioned SQL history; when false it also fails if registered entities require DDL. Generate and review SQL, then apply it with the separate migration runner. Enable only as an explicit development convenience. |
 | `persistence.accounts.connection_string` | Accounts/login PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Accounts. |
 | `persistence.realm.connection_string` | This realm's PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Realm. |
-| `realm_directory.realm_id` | Stable ID for a game realm. Must match its authenticated API `peer_id`. Standalone defaults to `local`. |
+| `redis.connection_string` | Shared Redis endpoint and password in StackExchange.Redis format, or a `$NAME` / `${NAME}` environment reference. Required by every runtime role. |
+| `redis.handoff_secret` | Separate cluster-wide proof secret or environment reference. Required by every runtime role; never reuse the Redis password. |
+| `realm_directory.realm_id` | Stable ID for a game realm and its Redis lease/ticket namespace. Standalone defaults to `local`. |
 | `realm_directory.name`, `server_index` | ASCII list name (at most 32 characters) and unique index (0–65535). Standalone defaults to the shard name and index zero. |
-| `realm_directory.advertised_address`, `advertised_port` | Client-facing IPv4 literal and port. Required in game mode; standalone defaults to loopback and `network.game_port`. The current `0xA8` list encodes the IPv4 address only. |
+| `realm_directory.advertised_address`, `advertised_port` | Client-facing IPv4 literal and port. Required in game mode; standalone defaults to loopback and `network.game_port`. `0xA8` carries the address; `0x8C` carries the selected realm port. |
 | `realm_directory.minimum_account_type` | Lowest account level allowed to see the realm; `regular`, `game_master` or `administrator`. |
-| `realm_directory.login_api_host`, `login_api_port`, `expected_login_peer_id` | Game's private login API DNS name, port and pinned TLS peer ID. Required in game mode. |
-| `realm_directory.heartbeat_interval_seconds`, `lease_duration_seconds`, `max_realms` | Defaults 5, 15 and 128. Lease duration must exceed two heartbeats; the directory caps realms at 128. |
+| `realm_directory.heartbeat_interval_seconds`, `lease_duration_seconds`, `max_realms` | Defaults 5, 15 and 128. Lease duration must exceed two heartbeats; the Redis-backed directory caps realms at 128. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
 | `diagnostics.enabled` | Starts the periodic diagnostic collector when true. |
@@ -137,88 +114,9 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 
-Full API validation applies when `api.enabled` is true; game mode validates its
-outbound certificate and peer trust even with the local listener disabled. Certificate provisioning
-settings are also validated when `api.auto_generate_certificate` is true. Invalid API configuration,
-missing/unreadable certificates, a local leaf outside its validity window, an explicit
-EKU excluding server authentication, a missing private key, a wrong password or an
-occupied port fail startup;
-services already started are stopped in reverse order. In standalone mode with
-both options false, incomplete API settings are ignored. Provisioning with the
-listener disabled does not require trust roots or peers unless the role is game.
-There is no plaintext fallback.
+Redis is required at runtime in all three modes, including standalone. `redis.connection_string` is a StackExchange.Redis configuration string or an environment reference resolved at startup; the Docker example uses `redis:6379,password=...` on its private bridge. `redis.handoff_secret` is an independent cluster-wide secret, also supplied through an environment reference. Give the login and every game process the same values. The Docker example reads both from separate Compose secrets; keep the actual values out of TOML and the repository. A Redis connection failure prevents startup. A later Redis outage stops new realm lists and handoffs while existing game sessions continue; pending tickets are lost on Redis restart and game processes republish their leases. Configure Redis with `maxmemory-policy noeviction`.
 
-Game-loop queue limits, timer-wheel resolution and packet dispatch limits use C#
-option objects rather than additional TOML sections. The hosted API uses the
-library's default `ApiOptions` limits and timeouts. See
-[Game loop and timers](game-loop-and-timers.md), [Packets](packets.md) and the
-[internal API library](../src/Moongate.Api/README.md).
-
-## Enable the internal API server
-
-API hosting ships from 0.4.0 and automatic certificate generation from 0.5.0.
-
-1. Provision certificates using the [API certificate guide](api-certificates.md).
-   It covers automatic self-signed generation with the port closed, public
-   certificate exchange, passwords, Docker and renewal. The example below uses
-   an externally issued PFX and private CA root.
-   The server needs `serverAuth` usage and a DNS name matching the client's TLS
-   target host; clients need `clientAuth`. Mount certificates read-only where
-   possible and allow the runtime user to read them.
-2. Replace the generated `[api]` section with this example. Substitute the
-   client leaf's SHA-256 fingerprint for the illustrative value:
-
-   ```toml
-   [api]
-   enabled = true
-   listen_address = "0.0.0.0"
-   port = 2594
-   certificate_path = "tls/server.pfx"
-   certificate_password_environment_variable = "MOONGATE_API_CERTIFICATE_PASSWORD"
-   trusted_root_paths = ["tls/root.pem"]
-
-   [[api.peers]]
-   certificate_sha256 = "0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF0123456789ABCDEF"
-   peer_id = "admin-console"
-   allowed_operations = ["*"]
-   ```
-
-   Use `["*"]` for a fully trusted peer, or an explicit list such as `[100, 200]`
-   to restrict its operations. `[]` and omission keep all operations denied.
-
-3. Inject `MOONGATE_API_CERTIFICATE_PASSWORD` from your credential provider into
-   the server environment and restart. A successful bind logs `API listener
-   started at ...` with the actual endpoint and contract/handler counts. The
-   default disabled state logs `API server is disabled` with activation guidance.
-
-The host registers `IApiServerService` as a singleton. It starts at priority 110,
-after game packet services, and drains/disposes the listener before they stop.
-`Endpoint` is the actual bound endpoint while accepting connections, otherwise
-null. A stopped host service is terminal: start a new host to reload configuration
-or certificate permissions.
-
-Register typed handlers in `Program.cs`'s `RegisterServices` callback or a plugin's
-`Register(Container)` method, before startup:
-
-```csharp
-// using Moongate.Server.Extensions;
-// IncrementHandler implements IApiHandler<IncrementRequest, IncrementResponse>.
-container.RegisterApiHandler<IncrementHandler>();
-```
-
-The [complete typed handler example](../src/Moongate.Api/README.md#handle-requests-and-open-a-channel)
-shows these request/response types. Plugin registration runs before the API registry
-freezes at startup; the same registry is used regardless of registration order.
-Handler service dependencies that require startup must start before priority 110.
-API handlers execute outside the game loop; explicitly marshal world changes to
-`IGameLoopService` as described in [Game loop and timers](game-loop-and-timers.md).
-
-The listener speaks **MessagePack over mutual TLS/TCP**, not HTTP. In login mode,
-the host registers realm operations 256 (register), 257 (renew) and 258
-(unregister). It checks the authenticated peer ID against the realm ID. A
-standalone instance uses a local realm entry and does not need these API calls.
-Other application handlers can be registered by the host or a plugin. See
-[Docker](docker.md#internal-api-port) for private-network deployment.
+Game-loop queue limits, timer-wheel resolution and packet dispatch limits use C# option objects rather than additional TOML sections. See [Game loop and timers](game-loop-and-timers.md), [Packets](packets.md) and the [Docker topology](docker-login-realms.md).
 
 ## Command line and root directory
 

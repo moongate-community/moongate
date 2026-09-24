@@ -13,7 +13,7 @@
 </p>
 
 An Ultima Online server written in C# on .NET 10, with reusable libraries for
-networking, persistence, scripting and internal APIs.
+networking, PostgreSQL persistence, Redis-backed realm handoff and scripting.
 
 ## Install on Linux
 
@@ -48,7 +48,7 @@ storage, Docker Compose, logs, and upgrades.
 ## Status
 
 Moongate is under active development. The transport, packet pipeline, scripting,
-persistence and internal API infrastructure are in place; account login, realm
+persistence and Redis-backed login-to-game handoff are in place; character
 selection and a playable world are not. [Implementation status](docs/implementation-status.md)
 lists what works today, area by area.
 

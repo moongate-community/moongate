@@ -60,11 +60,13 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterLoginPacketHandler<LoginSeedPacket, LoginRoleSeedPacketHandler>();
             container.RegisterLoginPacketHandler<ClientVersionPacket, LoginRoleClientVersionPacketHandler>();
             container.RegisterLoginPacketHandler<AccountLoginPacket, LoginRoleAccountPacketHandler>();
+            container.RegisterLoginPacketHandler<ServerSelectPacket, LoginRoleServerSelectPacketHandler>();
         }
 
         if ((mode & ServerMode.Game) != 0)
         {
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
+            container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);

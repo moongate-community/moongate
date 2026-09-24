@@ -1,4 +1,6 @@
+using System.Net;
 using Moongate.Network.Packets.General;
+using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
@@ -11,6 +13,178 @@ namespace Moongate.Tests.Integration.Packets;
 public sealed class PacketSendServiceTests
 {
     private static readonly TimeSpan Timeout = TimeSpan.FromSeconds(5);
+
+    [Fact]
+    public async Task SendAndDisconnectAsync_DrainsQueuedPacketsThenSendsTerminalPacketBeforeClose()
+    {
+        var releaseSend = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var connection = new ControlledNetworkConnection(9010)
+        {
+            SendGate = releaseSend.Task,
+            DelayCompletion = true
+        };
+        var connections = new ConnectionService();
+        await connections.StartAsync();
+        Assert.True(connections.TryRegister(connection));
+        var sender = new PacketSendService(connections, 1);
+        await sender.StartAsync();
+
+        try
+        {
+            Assert.True(sender.TrySend(9010, connection, new ServerListPacket([])));
+            await connection.SendStarted.WaitAsync(Timeout);
+            Assert.True(sender.TrySend(9010, connection, new PingPacket(2)));
+            var redirect = sender.SendAndDisconnectAsync(
+                9010,
+                connection,
+                new ServerRedirectPacket(IPAddress.Loopback, 2595, 0x01020304)
+            );
+            Assert.False(redirect.IsCompleted);
+            Assert.False(sender.TrySend(9010, connection, new PingPacket(4)));
+            Assert.Equal(0, connection.CloseCalls);
+
+            releaseSend.TrySetResult();
+            Assert.Equal(new byte[] { 0xA8, 0, 6, 0x5D, 0, 0 },
+                await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+            Assert.Equal(new byte[] { 0x73, 2 }, await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+            Assert.Equal(new byte[] { 0x8C, 127, 0, 0, 1, 0x0A, 0x23, 1, 2, 3, 4 },
+                await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+            await connection.CloseRequested.WaitAsync(Timeout);
+            Assert.False(redirect.IsCompleted);
+            connection.Complete();
+            Assert.True(await redirect.WaitAsync(Timeout));
+        }
+        finally
+        {
+            releaseSend.TrySetResult();
+            connection.Complete();
+            await sender.StopAsync().WaitAsync(Timeout);
+            await connections.StopAsync().WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
+    public async Task SendAndDisconnectAsync_RejectsReusedSessionIdWithoutClosingReplacement()
+    {
+        using var original = new ControlledNetworkConnection(9011);
+        using var replacement = new ControlledNetworkConnection(9011);
+        var connections = new ConnectionService();
+        await connections.StartAsync();
+        Assert.True(connections.TryRegister(original));
+        var sender = new PacketSendService(connections);
+        await sender.StartAsync();
+
+        try
+        {
+            await connections.DisconnectAsync(9011).WaitAsync(Timeout);
+            Assert.True(connections.TryRegister(replacement));
+            Assert.False(await sender.SendAndDisconnectAsync(9011, original, new PingPacket(1)));
+            Assert.True(replacement.IsConnected);
+            Assert.Equal(0, replacement.CloseCalls);
+            Assert.True(sender.TrySend(9011, replacement, new PingPacket(2)));
+            Assert.Equal(new byte[] { 0x73, 2 }, await replacement.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+        }
+        finally
+        {
+            await sender.StopAsync().WaitAsync(Timeout);
+            await connections.StopAsync().WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
+    public async Task SendAndDisconnectAsync_CallerCancellationDoesNotAbandonAdmittedTerminalPacket()
+    {
+        var releaseSend = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var connection = new ControlledNetworkConnection(9012) { SendGate = releaseSend.Task };
+        var connections = new ConnectionService();
+        await connections.StartAsync();
+        Assert.True(connections.TryRegister(connection));
+        var sender = new PacketSendService(connections);
+        await sender.StartAsync();
+        using var cancellation = new CancellationTokenSource();
+
+        try
+        {
+            Assert.True(sender.TrySend(9012, connection, new PingPacket(1)));
+            await connection.SendStarted.WaitAsync(Timeout);
+            var redirect = sender.SendAndDisconnectAsync(9012, connection, new PingPacket(2), cancellation.Token);
+            cancellation.Cancel();
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => redirect);
+            Assert.Equal(0, connection.CloseCalls);
+            releaseSend.TrySetResult();
+            Assert.Equal(new byte[] { 0x73, 1 }, await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+            Assert.Equal(new byte[] { 0x73, 2 }, await connection.ReadSentAsync(CancellationToken.None).WaitAsync(Timeout));
+            await connection.CloseRequested.WaitAsync(Timeout);
+        }
+        finally
+        {
+            releaseSend.TrySetResult();
+            await sender.StopAsync().WaitAsync(Timeout);
+            await connections.StopAsync().WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
+    public async Task SendAndDisconnectAsync_ExplicitDisconnectCompletesPendingRedirectWithoutDelivery()
+    {
+        var releaseSend = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        using var connection = new ControlledNetworkConnection(9014)
+        {
+            SendGate = releaseSend.Task,
+            DelayCompletion = true
+        };
+        var connections = new ConnectionService();
+        await connections.StartAsync();
+        Assert.True(connections.TryRegister(connection));
+        var sender = new PacketSendService(connections);
+        await sender.StartAsync();
+
+        try
+        {
+            Assert.True(sender.TrySend(9014, connection, new PingPacket(1)));
+            await connection.SendStarted.WaitAsync(Timeout);
+            var redirect = sender.SendAndDisconnectAsync(9014, connection, new PingPacket(2));
+            var closing = sender.DisconnectAsync(9014, connection);
+            await connection.CloseRequested.WaitAsync(Timeout);
+            releaseSend.TrySetResult();
+            connection.Complete();
+            await closing.WaitAsync(Timeout);
+            Assert.False(await redirect.WaitAsync(Timeout));
+        }
+        finally
+        {
+            releaseSend.TrySetResult();
+            connection.Complete();
+            await sender.StopAsync().WaitAsync(Timeout);
+            await connections.StopAsync().WaitAsync(Timeout);
+        }
+    }
+
+    [Fact]
+    public async Task SendAndDisconnectAsync_SendFailureDoesNotReportSuccess()
+    {
+        var failure = new IOException("terminal send failed");
+        using var connection = new ControlledNetworkConnection(9013) { SendFailure = failure };
+        var connections = new ConnectionService();
+        await connections.StartAsync();
+        Assert.True(connections.TryRegister(connection));
+        var sender = new PacketSendService(connections);
+        await sender.StartAsync();
+
+        try
+        {
+            var error = await Assert.ThrowsAsync<AggregateException>(
+                () => sender.SendAndDisconnectAsync(9013, connection, new PingPacket(1)).WaitAsync(Timeout)
+            );
+            Assert.Contains(failure, error.Flatten().InnerExceptions);
+            await connection.CloseRequested.WaitAsync(Timeout);
+        }
+        finally
+        {
+            await Assert.ThrowsAsync<AggregateException>(() => sender.StopAsync().WaitAsync(Timeout));
+            await connections.StopAsync().WaitAsync(Timeout);
+        }
+    }
 
     [Fact]
     public async Task DisconnectAsync_ExpectedConnection_DoesNotCloseReplacementWithSameId()

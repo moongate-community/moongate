@@ -1,6 +1,7 @@
 using System.Net;
+using System.Security.Cryptography;
+using System.Text;
 using DryIoc;
-using Moongate.Api.Interfaces.Client;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
@@ -18,11 +19,11 @@ using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Data.Config.Sections;
-using Moongate.Server.Services.Api.Internal;
 using Moongate.Server.Commands;
 using Moongate.Server.Services.Diagnostics.Providers;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Persistence;
+using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
@@ -40,24 +41,39 @@ internal static class ServerRoleRegistration
         container.RegisterInstance(config.Mode);
         container.RegisterDelegate<RealmDirectoryConfig>(
             resolver => resolver.Resolve<MoongateServerConfig>().RealmDirectory, Reuse.Singleton);
+        container.RegisterDelegate<RedisConfig>(
+            resolver => resolver.Resolve<MoongateServerConfig>().Redis, Reuse.Singleton);
+        container.AddMoongateService<RedisConnectionService>(-1000);
+        container.RegisterDelegate<RedisRealmDirectoryService>(
+            resolver => new RedisRealmDirectoryService(
+                resolver.Resolve<RedisConnectionService>(),
+                leaseDuration: TimeSpan.FromSeconds(config.RealmDirectory.LeaseDurationSeconds),
+                maxRealms: config.RealmDirectory.MaxRealms), Reuse.Singleton);
+        container.RegisterDelegate<IRealmCatalog>(
+            resolver => resolver.Resolve<RedisRealmDirectoryService>(), Reuse.Singleton);
+        container.RegisterDelegate<IHandoffProofService>(
+            resolver => CreateHandoffProof(resolver.Resolve<RedisConfig>()), Reuse.Singleton);
+        container.Register<IGameHandoffStore, RedisGameHandoffStore>(Reuse.Singleton);
+
+        if ((config.Mode & ServerMode.Game) != 0)
+        {
+            container.RegisterDelegate<IRealmPresenceService>(
+                resolver => resolver.Resolve<RedisRealmDirectoryService>(), Reuse.Singleton);
+            container.RegisterDelegate<RealmInstance>(
+                _ => new RealmInstance(CreateRealmDescriptor(config), Guid.NewGuid()), Reuse.Singleton);
+            container.AddMoongateService<RedisRealmRegistrationService>(
+                RedisRealmRegistrationService.StartupPriority);
+        }
 
         switch (config.Mode)
         {
             case ServerMode.Login:
-                RegisterDirectory(container, config);
                 LoginPacketPipelineRegistration.Register(container);
                 break;
             case ServerMode.Game:
                 RegisterGame(container, config, directories);
-                container.RegisterDelegate<IApiClient>(resolver => ApiClientFactory.Create(
-                    resolver.Resolve<MoongateServerConfig>().Api,
-                    resolver.Resolve<DirectoriesConfig>(),
-                    resolver.Resolve<TimeProvider>()), Reuse.Singleton);
-                container.AddMoongateService<RealmRegistrationService>(RealmRegistrationService.StartupPriority);
                 break;
             case ServerMode.Standalone:
-                RegisterDirectory(container, config);
-                RegisterLocalRealm(container, config);
                 RegisterGame(container, config, directories);
                 LoginPacketPipelineRegistration.Register(container, 110);
                 break;
@@ -65,16 +81,21 @@ internal static class ServerRoleRegistration
                 throw new InvalidOperationException("Unsupported server mode.");
         }
 
-        ApiServerRegistration.Register(container);
         return container;
     }
 
-    private static void RegisterDirectory(Container container, MoongateServerConfig config)
+    private static HandoffProofService CreateHandoffProof(RedisConfig config)
     {
-        container.RegisterDelegate<IRealmDirectoryService>(resolver => new RealmDirectoryService(
-            resolver.Resolve<TimeProvider>(),
-            TimeSpan.FromSeconds(config.RealmDirectory.LeaseDurationSeconds),
-            config.RealmDirectory.MaxRealms), Reuse.Singleton);
+        var secret = Encoding.UTF8.GetBytes(config.ResolveHandoffSecret());
+
+        try
+        {
+            return new HandoffProofService(secret);
+        }
+        finally
+        {
+            CryptographicOperations.ZeroMemory(secret);
+        }
     }
 
     private static void RegisterGame(Container container, MoongateServerConfig config, DirectoriesConfig directories)
@@ -105,7 +126,7 @@ internal static class ServerRoleRegistration
         PacketPipelineRegistration.Register(container);
     }
 
-    private static void RegisterLocalRealm(Container container, MoongateServerConfig config)
+    private static RealmDescriptor CreateRealmDescriptor(MoongateServerConfig config)
     {
         var settings = config.RealmDirectory;
         var address = string.IsNullOrWhiteSpace(settings.AdvertisedAddress)
@@ -116,13 +137,12 @@ internal static class ServerRoleRegistration
                           shardName.All(character => character is >= ' ' and <= '~')
                               ? shardName
                               : "Moongate";
-        var descriptor = new RealmDescriptor(
+        return new RealmDescriptor(
             string.IsNullOrWhiteSpace(settings.RealmId) ? "local" : settings.RealmId,
             checked((ushort)settings.ServerIndex),
             string.IsNullOrWhiteSpace(settings.Name) ? defaultName : settings.Name,
             address,
             checked((ushort)(settings.AdvertisedPort == 0 ? config.Network.GamePort : settings.AdvertisedPort)),
             settings.MinimumAccountType);
-        container.Resolve<IRealmDirectoryService>().RegisterLocal(descriptor);
     }
 }

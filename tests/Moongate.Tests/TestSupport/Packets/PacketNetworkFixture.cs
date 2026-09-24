@@ -22,6 +22,7 @@ namespace Moongate.Tests.TestSupport.Packets;
 internal sealed class PacketNetworkFixture : IAsyncDisposable
 {
     private readonly Container _container = new();
+    private readonly bool _sendRawSeedOnConnect;
     public bool AllowCleanupFailure { get; set; }
     public GameLoopService Loop { get; }
     public SessionService Sessions { get; }
@@ -37,6 +38,7 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         Func<long, Task>? disconnectSender = null
     )
     {
+        _sendRawSeedOnConnect = listeners is null;
         Loop = new(
             new(),
             new(new(), TimeProvider.System),
@@ -58,7 +60,7 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         var config = new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } };
         _container.RegisterInstance(config);
         Network = listeners is null
-                      ? new(UoNetworkOptionsFactory.Create(config, config.Network.GamePort), Connections)
+                      ? new(UoNetworkOptionsFactory.CreateGame(config), Connections)
                       : new NetworkService(listeners, Connections);
         Game = new(Network, Connections, Sessions, Dispatcher, networkSender);
     }
@@ -67,6 +69,11 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
     {
         var peer = new TcpClient();
         await peer.ConnectAsync(IPAddress.Loopback, Listeners[0].Port);
+
+        if (_sendRawSeedOnConnect)
+        {
+            await peer.GetStream().WriteAsync(new byte[] { 0x12, 0x34, 0x56, 0x78 });
+        }
 
         return peer;
     }

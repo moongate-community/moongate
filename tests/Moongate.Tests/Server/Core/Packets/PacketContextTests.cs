@@ -158,4 +158,57 @@ public sealed class PacketContextTests
         Assert.False(context.TrySend(denial));
         Assert.Equal(1, sender.SentCount);
     }
+
+    [Fact]
+    public async Task SendAndDisconnectAsync_ClosesOriginalConnectionAfterFinalPacket()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        var sender = new StubPacketSendService();
+        var context = new PacketContext(session, fixture.Loop, sessions, sender);
+
+        var sent = await context.SendAndDisconnectAsync(
+            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
+
+        Assert.True(sent);
+        Assert.Equal(1, sender.SentCount);
+        Assert.Same(fixture.Client, sender.ExpectedConnection);
+        Assert.False(fixture.Client.IsConnected);
+    }
+
+    [Fact]
+    public async Task SendAndDisconnectAsync_ReplacedSessionCannotReceiveFinalPacket()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var sessions = new SessionService(fixture.Loop);
+        var original = sessions.GetOrCreate(fixture.Client);
+        var sender = new StubPacketSendService();
+        var context = new PacketContext(original, fixture.Loop, sessions, sender);
+        Assert.True(sessions.Remove(original.SessionId));
+        _ = sessions.GetOrCreate(fixture.Client);
+
+        var sent = await context.SendAndDisconnectAsync(
+            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
+
+        Assert.False(sent);
+        Assert.Equal(0, sender.SentCount);
+    }
+
+    [Fact]
+    public async Task SendAndDisconnectAsync_RejectedTerminalPacketStillClosesConnection()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        var sender = new StubPacketSendService { RejectTerminalSend = true };
+        var context = new PacketContext(session, fixture.Loop, sessions, sender);
+
+        var sent = await context.SendAndDisconnectAsync(
+            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
+
+        Assert.False(sent);
+        Assert.Equal(0, sender.SentCount);
+        Assert.False(fixture.Client.IsConnected);
+    }
 }
