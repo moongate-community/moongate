@@ -7,6 +7,7 @@ using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Login;
+using Moongate.Server.Services.Realms;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Services;
