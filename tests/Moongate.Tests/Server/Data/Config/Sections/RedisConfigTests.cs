@@ -19,9 +19,10 @@ public sealed class RedisConfigTests
             var text = File.ReadAllText(path);
 
             Assert.Contains("[redis]", text);
-            Assert.Contains("connection_string = \"localhost:6379\"", text);
+            Assert.Contains("connection_string = \"$MOONGATE_REDIS_CONNECTION_STRING\"", text);
             Assert.Contains("handoff_secret = \"$MOONGATE_HANDOFF_SECRET\"", text);
-            Assert.Equal("localhost:6379", TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!.Redis.ConnectionString);
+            Assert.Equal("$MOONGATE_REDIS_CONNECTION_STRING",
+                TomlUtils.DeserializeFromFile<MoongateServerConfig>(path)!.Redis.ConnectionString);
         }
         finally
         {

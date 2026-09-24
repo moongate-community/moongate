@@ -43,7 +43,24 @@ internal static class ServerRoleRegistration
             resolver => resolver.Resolve<MoongateServerConfig>().RealmDirectory, Reuse.Singleton);
         container.RegisterDelegate<RedisConfig>(
             resolver => resolver.Resolve<MoongateServerConfig>().Redis, Reuse.Singleton);
-        container.Register<RedisConnectionService>(Reuse.Singleton);
+        container.AddMoongateService<RedisConnectionService>(-1000);
+        container.RegisterDelegate<RedisRealmDirectoryService>(
+            resolver => new RedisRealmDirectoryService(
+                resolver.Resolve<RedisConnectionService>(),
+                leaseDuration: TimeSpan.FromSeconds(config.RealmDirectory.LeaseDurationSeconds),
+                maxRealms: config.RealmDirectory.MaxRealms), Reuse.Singleton);
+        container.RegisterDelegate<IRealmCatalog>(
+            resolver => resolver.Resolve<RedisRealmDirectoryService>(), Reuse.Singleton);
+
+        if ((config.Mode & ServerMode.Game) != 0)
+        {
+            container.RegisterDelegate<IRealmPresenceService>(
+                resolver => resolver.Resolve<RedisRealmDirectoryService>(), Reuse.Singleton);
+            container.RegisterDelegate<RealmInstance>(
+                _ => new RealmInstance(CreateRealmDescriptor(config), Guid.NewGuid()), Reuse.Singleton);
+            container.AddMoongateService<RedisRealmRegistrationService>(
+                RedisRealmRegistrationService.StartupPriority);
+        }
 
         switch (config.Mode)
         {
@@ -79,8 +96,6 @@ internal static class ServerRoleRegistration
             resolver.Resolve<TimeProvider>(),
             TimeSpan.FromSeconds(config.RealmDirectory.LeaseDurationSeconds),
             config.RealmDirectory.MaxRealms), Reuse.Singleton);
-        container.RegisterDelegate<IRealmCatalog>(
-            resolver => (IRealmCatalog)resolver.Resolve<IRealmDirectoryService>(), Reuse.Singleton);
     }
 
     private static void RegisterGame(Container container, MoongateServerConfig config, DirectoriesConfig directories)
@@ -113,6 +128,11 @@ internal static class ServerRoleRegistration
 
     private static void RegisterLocalRealm(Container container, MoongateServerConfig config)
     {
+        container.Resolve<IRealmDirectoryService>().RegisterLocal(CreateRealmDescriptor(config));
+    }
+
+    private static RealmDescriptor CreateRealmDescriptor(MoongateServerConfig config)
+    {
         var settings = config.RealmDirectory;
         var address = string.IsNullOrWhiteSpace(settings.AdvertisedAddress)
                           ? IPAddress.Loopback
@@ -122,13 +142,12 @@ internal static class ServerRoleRegistration
                           shardName.All(character => character is >= ' ' and <= '~')
                               ? shardName
                               : "Moongate";
-        var descriptor = new RealmDescriptor(
+        return new RealmDescriptor(
             string.IsNullOrWhiteSpace(settings.RealmId) ? "local" : settings.RealmId,
             checked((ushort)settings.ServerIndex),
             string.IsNullOrWhiteSpace(settings.Name) ? defaultName : settings.Name,
             address,
             checked((ushort)(settings.AdvertisedPort == 0 ? config.Network.GamePort : settings.AdvertisedPort)),
             settings.MinimumAccountType);
-        container.Resolve<IRealmDirectoryService>().RegisterLocal(descriptor);
     }
 }

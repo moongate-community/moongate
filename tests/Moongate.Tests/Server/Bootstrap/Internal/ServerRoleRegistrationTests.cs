@@ -11,6 +11,8 @@ using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Services.Realms;
+using Moongate.Server.Services.Redis;
 using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -61,6 +63,10 @@ public sealed class ServerRoleRegistrationTests
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IDataLoaderService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IRealmDirectoryService>());
+        Assert.True(container.IsRegistered<RedisConnectionService>());
+        Assert.True(container.IsRegistered<IRealmCatalog>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IRealmPresenceService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<RedisRealmRegistrationService>());
         Assert.Equal(mode == ServerMode.Login ? 3 : 0, container.Resolve<ApiRegistry>().HandlerCount);
         if (mode != ServerMode.Game)
         {

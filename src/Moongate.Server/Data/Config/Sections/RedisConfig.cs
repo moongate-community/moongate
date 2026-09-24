@@ -6,7 +6,7 @@ namespace Moongate.Server.Data.Config.Sections;
 /// <summary>Configures the shared Redis connection and login handoff proof secret.</summary>
 public sealed class RedisConfig
 {
-    public string ConnectionString { get; set; } = "localhost:6379";
+    public string ConnectionString { get; set; } = "$MOONGATE_REDIS_CONNECTION_STRING";
 
     public string HandoffSecret { get; set; } = "$MOONGATE_HANDOFF_SECRET";
 
