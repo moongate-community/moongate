@@ -18,6 +18,16 @@ public class AdminApiConfigTests
         Assert.Throws<InvalidOperationException>(copy.Validate);
     }
 
+    [Theory, InlineData("*"), InlineData("0.0.0.0"), InlineData("::")]
+    public void Validate_TlsWildcardToml_PreservesAddress(string address)
+    {
+        var config = TomlUtils.Deserialize<AdminApiConfig>($"enabled = true\nlisten_address = '{address}'\n")!;
+        config.Validate();
+        var copy = TomlUtils.Deserialize<AdminApiConfig>(TomlUtils.Serialize(config))!;
+        Assert.Equal(address, copy.ListenAddress);
+        Assert.False(copy.AllowInsecureLoopback);
+    }
+
     [Fact]
     public void Defaults_DisableListenerAndUseApprovedPort()
     {
@@ -29,7 +39,7 @@ public class AdminApiConfigTests
         config.Validate();
     }
 
-    [Theory, InlineData("0.0.0.0"), InlineData("::"), InlineData("192.168.1.10"), InlineData("localhost")]
+    [Theory, InlineData("*"), InlineData("0.0.0.0"), InlineData("::"), InlineData("192.168.1.10"), InlineData("localhost")]
     public void Validate_InsecureNonLoopback_Rejects(string address)
     {
         var config = new AdminApiConfig { ListenAddress = address, AllowInsecureLoopback = true };

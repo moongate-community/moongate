@@ -1,4 +1,3 @@
-using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -60,7 +59,7 @@ public sealed class AdminGrpcHostService : IAdminApiService, IAsyncDisposable
             builder.WebHost.ConfigureKestrel(options =>
             {
                 options.Limits.MaxRequestBodySize = _config.MaxReceiveMessageBytes + 5L;
-                options.Listen(IPAddress.Parse(_config.ListenAddress), _config.Port, listen =>
+                options.Listen(_config.ResolveListenAddress(), _config.Port, listen =>
                 {
                     listen.Protocols = HttpProtocols.Http2;
                     if (_certificate is not null) { listen.UseHttps(_certificate); }

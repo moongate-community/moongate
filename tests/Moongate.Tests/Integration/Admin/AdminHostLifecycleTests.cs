@@ -44,8 +44,8 @@ public sealed class AdminHostLifecycleTests
         await host.StopAsync();
     }
 
-    [Fact]
-    public async Task StartAsync_TlsGameEndpoint_ReadinessRoleMappingAndTrustAreEnforced()
+    [Theory, InlineData("127.0.0.1"), InlineData("0.0.0.0"), InlineData("*")]
+    public async Task StartAsync_TlsGameEndpoint_ReadinessRoleMappingAndTrustAreEnforced(string address)
     {
         await using var backend = await AdminRedisFixture.CreateAsync();
         using var certificates = new AdminTestCertificates();
@@ -54,7 +54,7 @@ public sealed class AdminHostLifecycleTests
         using var provider = new TestAdminServerInfoProvider();
         await using var host = new AdminGrpcHostService(new()
         {
-            Enabled = true, Port = port, CertificatePath = certificates.PfxPath
+            Enabled = true, ListenAddress = address, Port = port, CertificatePath = certificates.PfxPath
         }, new(directory.Path, []), ServerMode.Game, services =>
         {
             AdminGrpcApplication.AddServices(services, new(), backend.Store, backend.Throttle, provider, null, null);

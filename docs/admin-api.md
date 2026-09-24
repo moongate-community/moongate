@@ -21,7 +21,7 @@ certificate_path = "certificates/admin.pfx"
 certificate_password = "$MOONGATE_ADMIN_CERTIFICATE_PASSWORD"
 ```
 
-Use the interface address reachable by the private panel backend, or `0.0.0.0` inside a private container network. Restrict network access to trusted hosts. Restart after configuration changes.
+Use the interface address reachable by the private panel backend. Both `listen_address = "*"` and `listen_address = "0.0.0.0"` bind all IPv4 interfaces; `"*"` is an alias for `"0.0.0.0"`, including inside a private container network. Use `"::"` to bind the IPv6 wildcard address. Wildcard binds require TLS. Restrict network access to trusted hosts. Restart after configuration changes.
 
 The endpoint uses standard server TLS over HTTP/2. It does not use mTLS, peer certificates or the Redis game-handoff secret. Obtain a server PFX from your private CA with a private key, server-authentication usage and DNS names matching the endpoints clients use. Put it at the configured path, readable only by the Moongate service account. Distribute the **public CA certificate**, not the server private key, to backend clients. Clients must validate both the trust chain and hostname.
 

@@ -28,6 +28,7 @@ handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
 [admin_api]
 enabled = false
+# Use "*" or "0.0.0.0" for all IPv4 interfaces (TLS required).
 listen_address = "127.0.0.1"
 port = 2590
 session_lifetime_minutes = 30
