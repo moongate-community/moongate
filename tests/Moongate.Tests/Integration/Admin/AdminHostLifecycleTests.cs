@@ -50,7 +50,7 @@ public sealed class AdminHostLifecycleTests
         await using var backend = await AdminRedisFixture.CreateAsync();
         using var certificates = new AdminTestCertificates();
         using var directory = new TemporaryPersistenceDirectory();
-        var port = FreePort();
+        var port = FreePort(address);
         using var provider = new TestAdminServerInfoProvider();
         await using var host = new AdminGrpcHostService(new()
         {
@@ -95,9 +95,12 @@ public sealed class AdminHostLifecycleTests
         Assert.True(backend.Redis.Connection.IsConnected);
     }
 
-    private static int FreePort()
+    private static int FreePort(string address)
     {
-        using var listener = new TcpListener(IPAddress.Loopback, 0);
+        // Probe the exact bind scope: a loopback-only probe can select a port
+        // already used on another interface, which cannot be bound by a wildcard listener.
+        var bindAddress = new AdminApiConfig { ListenAddress = address }.ResolveListenAddress();
+        using var listener = new TcpListener(bindAddress, 0);
         listener.Start();
         return ((IPEndPoint)listener.LocalEndpoint).Port;
     }
