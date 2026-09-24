@@ -80,6 +80,35 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
     }
 
     [Fact]
+    public async Task TryRestoreAsync_MissingLeaseRepublishesOriginalInstance()
+    {
+        var directory = Create();
+        var original = Realm("same", 11);
+        await directory.RegisterAsync(original);
+        Assert.True(await _redis.Connection.GetDatabase().KeyDeleteAsync(_prefix + "11"));
+
+        Assert.True(await directory.TryRestoreAsync(original));
+        Assert.Equal(original.InstanceId,
+            (await directory.FindByIndexAsync(11, AccountType.Regular))!.InstanceId);
+    }
+
+    [Fact]
+    public async Task TryRestoreAsync_ReplacementBetweenReadAndWriteKeepsNewInstance()
+    {
+        var directory = Create();
+        var original = Realm("same", 12);
+        var successor = Realm("same", 12);
+        await directory.RegisterAsync(original);
+        Assert.True(await _redis.Connection.GetDatabase().KeyDeleteAsync(_prefix + "12"));
+        Assert.Null(await directory.FindByIndexAsync(12, AccountType.Regular));
+        await directory.RegisterAsync(successor);
+
+        Assert.False(await directory.TryRestoreAsync(original));
+        Assert.Equal(successor.InstanceId,
+            (await directory.FindByIndexAsync(12, AccountType.Regular))!.InstanceId);
+    }
+
+    [Fact]
     public async Task RegisterAsync_ExpiresAfterLeaseAndRenewRefreshesTtl()
     {
         var directory = Create();
@@ -111,6 +140,34 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
 
         Assert.Equal([1], (await directory.GetAvailableAsync(AccountType.Regular))
             .Select(realm => realm.ServerIndex));
+    }
+
+    [Fact]
+    public async Task GetAvailableAsync_InvalidNameInOneLeaseDoesNotHideOtherRealms()
+    {
+        var directory = Create();
+        await directory.RegisterAsync(Realm("valid", 1));
+        var database = _redis.Connection.GetDatabase();
+        var entries = await database.HashGetAllAsync(_prefix + "1");
+        await database.HashSetAsync(_prefix + "2", entries);
+        await database.HashSetAsync(_prefix + "2", "server_index", "2");
+        await database.HashSetAsync(_prefix + "2", "name", new string('x', 40));
+
+        Assert.Equal([1], (await directory.GetAvailableAsync(AccountType.Regular))
+            .Select(realm => realm.ServerIndex));
+        Assert.Null(await directory.FindByIndexAsync(2, AccountType.Regular));
+    }
+
+    [Fact]
+    public async Task GetAvailableAsync_WrongRedisValueTypeDoesNotHideOtherRealms()
+    {
+        var directory = Create();
+        await directory.RegisterAsync(Realm("valid", 1));
+        await _redis.Connection.GetDatabase().StringSetAsync(_prefix + "2", "not-a-hash");
+
+        Assert.Equal([1], (await directory.GetAvailableAsync(AccountType.Regular))
+            .Select(realm => realm.ServerIndex));
+        Assert.Null(await directory.FindByIndexAsync(2, AccountType.Regular));
     }
 
     [Fact]

@@ -20,6 +20,7 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         if owner and owner ~= ARGV[1] then return -1 end
         if owner then
             local instance = redis.call('HGET', KEYS[1], 'instance_id')
+            if ARGV[11] == 'restore' and instance ~= ARGV[2] then return -4 end
             if instance == ARGV[2] then
                 if redis.call('HGET', KEYS[1], 'name') ~= ARGV[4] or
                    redis.call('HGET', KEYS[1], 'ipv4') ~= ARGV[5] or
@@ -92,6 +93,36 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
     /// <inheritdoc />
     public async ValueTask RegisterAsync(RealmInstance realm, CancellationToken cancellationToken = default)
     {
+        var result = await ClaimAsync(realm, false, cancellationToken).ConfigureAwait(false);
+
+        if (result != 1)
+        {
+            ThrowClaimFailure(result);
+        }
+    }
+
+    /// <inheritdoc />
+    public async ValueTask<bool> TryRestoreAsync(RealmInstance realm,
+        CancellationToken cancellationToken = default)
+    {
+        var result = await ClaimAsync(realm, true, cancellationToken).ConfigureAwait(false);
+
+        if (result is -1 or -4)
+        {
+            return false;
+        }
+
+        if (result != 1)
+        {
+            ThrowClaimFailure(result);
+        }
+
+        return true;
+    }
+
+    private async ValueTask<int> ClaimAsync(RealmInstance realm, bool restoreOnly,
+        CancellationToken cancellationToken)
+    {
         Validate(realm);
         var descriptor = realm.Descriptor;
         var result = await _redis.Connection.GetDatabase().ScriptEvaluateAsync(
@@ -107,14 +138,18 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
                              ((int)descriptor.MinimumAccountType).ToString(CultureInfo.InvariantCulture),
                              _prefix,
                              _maxRealms,
-                             _leaseSeconds
+                             _leaseSeconds,
+                             restoreOnly ? "restore" : "claim"
                          ]
                      ).WaitAsync(cancellationToken).ConfigureAwait(false);
 
-        switch ((int)result)
+        return (int)result;
+    }
+
+    private static void ThrowClaimFailure(int result)
+    {
+        switch (result)
         {
-            case 1:
-                return;
             case -1:
                 throw new RealmDirectoryException(RealmRegistrationError.DuplicateIndex,
                     "Realm server index is already registered.");
@@ -201,8 +236,18 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
 
     private async Task<RealmInstance?> ReadAsync(RedisKey key, CancellationToken cancellationToken)
     {
-        var entries = await _redis.Connection.GetDatabase().HashGetAllAsync(key)
-                                 .WaitAsync(cancellationToken).ConfigureAwait(false);
+        HashEntry[] entries;
+
+        try
+        {
+            entries = await _redis.Connection.GetDatabase().HashGetAllAsync(key)
+                                  .WaitAsync(cancellationToken).ConfigureAwait(false);
+        }
+        catch (RedisServerException exception) when (exception.Message.StartsWith("WRONGTYPE", StringComparison.Ordinal))
+        {
+            return null;
+        }
+
         if (entries.Length == 0)
         {
             return null;
@@ -234,7 +279,7 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
 
             return new RealmInstance(descriptor, instanceId);
         }
-        catch (InvalidOperationException)
+        catch (Exception exception) when (exception is InvalidOperationException or ArgumentException)
         {
             return null;
         }

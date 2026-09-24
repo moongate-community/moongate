@@ -1,6 +1,5 @@
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
-using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Data.Config.Sections;
 using Serilog;
 
@@ -12,7 +11,6 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
     public const int StartupPriority = 105;
 
     private readonly IRealmPresenceService _presence;
-    private readonly IRealmCatalog _catalog;
     private readonly RealmInstance _realm;
     private readonly RealmDirectoryConfig _config;
     private readonly TimeProvider _clock;
@@ -23,14 +21,12 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
 
     public RedisRealmRegistrationService(
         IRealmPresenceService presence,
-        IRealmCatalog catalog,
         RealmInstance realm,
         RealmDirectoryConfig config,
         TimeProvider clock
     )
     {
         _presence = presence;
-        _catalog = catalog;
         _realm = realm;
         _config = config;
         _clock = clock;
@@ -72,9 +68,7 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
                     continue;
                 }
 
-                var current = await _catalog.FindByIndexAsync(
-                    _realm.Descriptor.ServerIndex, AccountType.Administrator, cancellationToken).ConfigureAwait(false);
-                if (current is not null && current.InstanceId != _realm.InstanceId)
+                if (!await _presence.TryRestoreAsync(_realm, cancellationToken).ConfigureAwait(false))
                 {
                     _logger.Warning("Realm {RealmId} was replaced by another process; lease renewal stopped",
                         _realm.Descriptor.RealmId);
@@ -82,7 +76,6 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
                     return;
                 }
 
-                await _presence.RegisterAsync(_realm, cancellationToken).ConfigureAwait(false);
                 _logger.Information("Realm {RealmId} republished its Redis lease", _realm.Descriptor.RealmId);
                 retry = TimeSpan.FromSeconds(1);
             }

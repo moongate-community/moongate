@@ -19,7 +19,7 @@ address. The local realm advertises `network.game_port` unless
 | `PacketSendService` | Encoded snapshots, bounded FIFO queues and owned outgoing I/O |
 | `GameServerService` | Session creation, immediate packet decoding, dispatch and session retirement |
 | `LoginServerService` | Independent login connections and ordered async packet handling |
-| `RealmDirectoryService` | Redis-backed live realm entries exposed to account login |
+| `RedisRealmDirectoryService` | Redis-backed live realm entries exposed to account login |
 | `PacketDispatchService` / `GameLoopService` | Typed handlers, ordered game work and loop-owned state mutation |
 
 Transport and outgoing sends can run without `ISessionService` or `IGameLoopService`.

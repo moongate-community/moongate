@@ -23,7 +23,6 @@ public sealed class RealmDirectoryProcessTests
         var lostRealm = CreateRealm("lost", 7);
         await using var registration = new RedisRealmRegistrationService(
             gameADirectory,
-            gameADirectory,
             liveRealm,
             new RealmDirectoryConfig { HeartbeatIntervalSeconds = 1, LeaseDurationSeconds = 3 },
             TimeProvider.System);

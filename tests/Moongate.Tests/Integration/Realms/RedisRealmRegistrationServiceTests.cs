@@ -17,7 +17,7 @@ public sealed class RedisRealmRegistrationServiceTests
         var directory = new RedisRealmDirectoryService(redis, prefix, TimeSpan.FromSeconds(4));
         var realm = Realm();
         await using var registration = new RedisRealmRegistrationService(
-            directory, directory, realm, Config(), TimeProvider.System);
+            directory, realm, Config(), TimeProvider.System);
 
         await registration.StartAsync();
         Assert.Equal(realm.InstanceId,
@@ -35,7 +35,7 @@ public sealed class RedisRealmRegistrationServiceTests
         var directory = new RedisRealmDirectoryService(redis, prefix, TimeSpan.FromSeconds(4));
         var realm = Realm();
         await using var registration = new RedisRealmRegistrationService(
-            directory, directory, realm, Config(), TimeProvider.System);
+            directory, realm, Config(), TimeProvider.System);
 
         await registration.StartAsync();
         await redis.Connection.GetDatabase().KeyDeleteAsync(prefix + "5");
@@ -54,7 +54,7 @@ public sealed class RedisRealmRegistrationServiceTests
         var original = Realm();
         var successor = Realm();
         await using var registration = new RedisRealmRegistrationService(
-            directory, directory, original, Config(), TimeProvider.System);
+            directory, original, Config(), TimeProvider.System);
 
         try
         {
