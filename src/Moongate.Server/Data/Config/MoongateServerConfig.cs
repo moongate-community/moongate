@@ -17,6 +17,8 @@ public class MoongateServerConfig
 
     public ApiConfig Api { get; set; } = new();
 
+    public RedisConfig Redis { get; set; } = new();
+
     public UltimaConfig Ultima { get; set; } = new();
 
     public PersistenceConfig Persistence { get; set; } = new();
@@ -50,6 +52,13 @@ public class MoongateServerConfig
         }
 
         Api.Validate();
+
+        if (Redis is null)
+        {
+            throw new InvalidOperationException("The redis configuration section cannot be null.");
+        }
+
+        Redis.Validate();
 
         if (Persistence is null)
         {
