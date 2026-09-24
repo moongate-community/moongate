@@ -194,4 +194,21 @@ public sealed class PacketContextTests
         Assert.False(sent);
         Assert.Equal(0, sender.SentCount);
     }
+
+    [Fact]
+    public async Task SendAndDisconnectAsync_RejectedTerminalPacketStillClosesConnection()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        var sender = new StubPacketSendService { RejectTerminalSend = true };
+        var context = new PacketContext(session, fixture.Loop, sessions, sender);
+
+        var sent = await context.SendAndDisconnectAsync(
+            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem));
+
+        Assert.False(sent);
+        Assert.Equal(0, sender.SentCount);
+        Assert.False(fixture.Client.IsConnected);
+    }
 }
