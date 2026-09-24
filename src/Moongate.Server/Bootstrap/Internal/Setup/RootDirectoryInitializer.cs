@@ -9,11 +9,16 @@ namespace Moongate.Server.Bootstrap.Internal.Setup;
 /// <summary>Prepares a server data root offline, preserving existing configuration and migration history files.</summary>
 internal static class RootDirectoryInitializer
 {
-    public static void Initialize(string rootDirectory, string migrationsDirectory, TextWriter output)
+    public static void Initialize(string rootDirectory, string migrationsDirectory, TextWriter output, IReadOnlyList<string>? adminCertificateHosts = null)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootDirectory);
         ArgumentException.ThrowIfNullOrWhiteSpace(migrationsDirectory);
         ArgumentNullException.ThrowIfNull(output);
+        if (adminCertificateHosts is not null)
+        {
+            _ = AdminCertificateSetup.NormalizeHosts(adminCertificateHosts);
+        }
+
         var root = Path.GetFullPath(rootDirectory.ResolvePathAndEnvs());
         var source = new[] { MigrationTarget.Auth, MigrationTarget.World }
             .Select(target => MigrationCatalog.Load(migrationsDirectory, null, target)).ToArray();
@@ -66,6 +71,11 @@ internal static class RootDirectoryInitializer
                 CreateIfMissing(Path.Combine(destination, target, script.FileName),
                     File.ReadAllBytes(Path.Combine(migrationsDirectory, target, script.FileName)), output);
             }
+        }
+
+        if (adminCertificateHosts is not null)
+        {
+            AdminCertificateSetup.Configure(root, adminCertificateHosts, output);
         }
 
         output.WriteLine($"Root prepared: {root}");

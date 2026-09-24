@@ -6,7 +6,20 @@ Moongate embeds an optional gRPC plugin for private-network administration. It e
 
 ## Enable an endpoint
 
-Add this section to `<MOONGATE_ROOT>/config/moongate.toml`:
+For an offline, self-signed setup, run:
+
+```sh
+mgboot /srv/moongate --generate-admin-certificate \
+  --admin-certificate-hosts "login.example.test,192.0.2.10"
+```
+
+Use the actual endpoint names instead of these examples. This creates
+`certificates/admin.pfx` without a password, exports the public `admin.crt`, and
+sets `[admin_api].enabled = true` with TLS enabled. The existing bind address and
+port remain unchanged. Trust `admin.crt` in your backend clients and restart the
+server. See [certificate setup and renewal](mgboot.md#generate-an-administration-certificate).
+
+For an operator-provided certificate, configure `<MOONGATE_ROOT>/config/moongate.toml`:
 
 ```toml
 [admin_api]
@@ -25,7 +38,7 @@ Use the interface address reachable by the private panel backend. Both `listen_a
 
 The endpoint uses standard server TLS over HTTP/2. It does not use mTLS, peer certificates or the Redis game-handoff secret. Obtain a server PFX from your private CA with a private key, server-authentication usage and DNS names matching the endpoints clients use. Put it at the configured path, readable only by the Moongate service account. Distribute the **public CA certificate**, not the server private key, to backend clients. Clients must validate both the trust chain and hostname.
 
-A relative certificate path resolves against `MOONGATE_ROOT`; environment variables and `~` are supported. A passwordless PFX uses `certificate_password = ""`. Otherwise supply the password through an environment reference populated from your secret store. Certificates are not generated automatically. Missing/unreadable/expired certificates, missing environment variables or an occupied port fail enabled startup with a redacted error. Disabled endpoints neither load certificates nor resolve password variables.
+A relative certificate path resolves against `MOONGATE_ROOT`; environment variables and `~` are supported. A passwordless PFX uses `certificate_password = ""`. Otherwise supply the password through an environment reference populated from your secret store. Normal server startup does not generate certificates; use `mgboot --generate-admin-certificate` explicitly. Missing/unreadable/expired certificates, missing environment variables or an occupied port fail enabled startup with a redacted error. Disabled endpoints neither load certificates nor resolve password variables.
 
 For local development only:
 

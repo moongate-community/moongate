@@ -87,6 +87,20 @@ public sealed class RootDirectoryInitializerTests
         Assert.Equal(original, File.ReadAllBytes(path));
     }
 
+    [Fact]
+    public void Initialize_WithCertificate_EnablesAdminApiWithoutStartingServer()
+    {
+        using var directory = new TemporaryDirectory();
+        var source = CreateMigrations(directory);
+        var root = Path.Combine(directory.Path, "root");
+        RootDirectoryInitializer.Initialize(root, source, TextWriter.Null, ["login.example.test"]);
+        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(Path.Combine(root, "config/moongate.toml"))!;
+        Assert.True(config.AdminApi.Enabled);
+        Assert.False(config.AdminApi.AllowInsecureLoopback);
+        Assert.True(File.Exists(Path.Combine(root, config.AdminApi.CertificatePath)));
+        Assert.False(File.Exists(Path.Combine(root, "moongate.pid")));
+    }
+
     private static string CreateMigrations(TemporaryDirectory directory)
     {
         var source = Path.Combine(directory.Path, "distribution-migrations");

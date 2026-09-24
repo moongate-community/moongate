@@ -151,6 +151,9 @@ dotnet run --project src/Moongate.Server -c Release -- \
 | `--persistence-schema <mode>` | `None` | `preview` prints draft PostgreSQL DDL; `generate` writes a draft file. The old `apply` mode directs you to `Moongate.MigrationRunner` |
 | `--migration-target <target>` | Unset | Required by `generate`: `auth` or `world` |
 | `--migration-output <path>` | Unset | Required by `generate`: new `NNNN_description.sql` file; refuses overwrite |
+| `--initialize-root` | `false` | Prepare config/directories/bundled migrations offline, without starting the server |
+| `--generate-admin-certificate` | `false` | With `--initialize-root`, create or reuse the administration TLS identity and enable `[admin_api]` |
+| `--admin-certificate-hosts <names>` | Unset | Comma-separated DNS/IP SANs in addition to localhost; requires certificate generation |
 | `--version` | — | Prints executable version |
 | `-h`, `--help` | — | Prints usage |
 
@@ -177,4 +180,4 @@ it. See [Generate, review and apply](persistence-migrations.md#generate-review-a
 
 ## Administration endpoint
 
-`[admin_api]` configures the embedded gRPC plugin. It is disabled by default and uses server TLS on port 2590 when enabled. Certificate paths resolve relative to the root; password environment references are resolved only for enabled endpoints. See [Administration API](admin-api.md) for roles, permissions, first-admin provisioning and all limits.
+`[admin_api]` configures the embedded gRPC plugin. It is disabled by default and uses server TLS on port 2590 when enabled. Certificate paths resolve relative to the root; password environment references are resolved only for enabled endpoints. Use [mgboot certificate setup](mgboot.md#generate-an-administration-certificate) to generate a passwordless PFX and enable the endpoint offline. See [Administration API](admin-api.md) for roles, permissions, first-admin provisioning and all limits.
