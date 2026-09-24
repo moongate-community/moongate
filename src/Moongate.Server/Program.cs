@@ -36,12 +36,20 @@ await ConsoleApp.RunAsync(
         CancellationToken cancellationToken, LogLevelType logLevel = LogLevelType.Information, bool logToFile = true,
         bool logPackets = false, string? rootDirectory = null, bool showHeader = true, string pidFileName = "moongate.pid",
         PersistenceSchemaMode persistenceSchema = PersistenceSchemaMode.None,
-        string? migrationOutput = null, string? migrationTarget = null, bool initializeRoot = false
+        string? migrationOutput = null, string? migrationTarget = null, bool initializeRoot = false,
+        bool generateAdminCertificate = false, string? adminCertificateHosts = null
     ) =>
     {
         rootDirectory ??= Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory;
 
         rootDirectory = rootDirectory.ResolvePathAndEnvs();
+
+        if ((generateAdminCertificate && !initializeRoot) || (adminCertificateHosts is not null && !generateAdminCertificate))
+        {
+            await Console.Error.WriteLineAsync("Certificate options require --initialize-root and --generate-admin-certificate.");
+            Environment.ExitCode = 2;
+            return;
+        }
 
         if (initializeRoot)
         {
@@ -50,7 +58,8 @@ await ConsoleApp.RunAsync(
                 RootDirectoryInitializer.Initialize(
                     rootDirectory,
                     Path.Combine(AppContext.BaseDirectory, "migrations"),
-                    Console.Out
+                    Console.Out,
+                    generateAdminCertificate ? (adminCertificateHosts?.Split(',') ?? []) : null
                 );
             }
             catch (Exception exception)
