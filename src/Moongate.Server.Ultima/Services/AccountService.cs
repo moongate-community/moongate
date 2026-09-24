@@ -111,7 +111,7 @@ public class AccountService : IAccountService
         }
         catch (Exception ex)
         {
-            _logger.Error(ex, "Error creating account for username: {Username}", username);
+            _logger.Error("Account creation failed with {ExceptionType}", ex.GetType().Name);
 
             return new AccountCreateResult(
                 success: false,

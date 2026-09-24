@@ -1,4 +1,5 @@
 using System.Net;
+using Moongate.Server.Ultima.Interfaces;
 using Grpc.Net.Client;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
@@ -25,7 +26,7 @@ internal sealed class AdminGrpcFixture : IAsyncDisposable
         Channel = GrpcChannel.ForAddress(app.Urls.Single());
     }
 
-    public static async Task<AdminGrpcFixture> CreateAsync(ServerMode mode = ServerMode.Login, int concurrency = 64)
+    public static async Task<AdminGrpcFixture> CreateAsync(ServerMode mode = ServerMode.Login, int concurrency = 64, Func<IAccountService, IAccountService>? decorateAccounts = null)
     {
         var backend = await AccountAdminFixture.CreateAsync();
         var builder = WebApplication.CreateSlimBuilder();
@@ -34,7 +35,7 @@ internal sealed class AdminGrpcFixture : IAsyncDisposable
         var gate = new AdminRequestGate(concurrency);
         AdminGrpcApplication.AddServices(builder.Services, new AdminApiConfig(), backend.Redis.Store,
             backend.Redis.Throttle, new TestAdminServerInfoProvider(),
-            mode == ServerMode.Game ? null : backend.Accounts.Service,
+            mode == ServerMode.Game ? null : decorateAccounts?.Invoke(backend.Accounts.Service) ?? backend.Accounts.Service,
             mode == ServerMode.Game ? null : backend.Authority);
         var app = builder.Build();
         AdminGrpcApplication.Configure(app, mode, gate);

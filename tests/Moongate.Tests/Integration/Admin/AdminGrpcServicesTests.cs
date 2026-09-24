@@ -12,6 +12,24 @@ namespace Moongate.Tests.Integration.Admin;
 public sealed class AdminGrpcServicesTests
 {
     [Fact]
+    public async Task CreateAccount_CancellationAfterCommit_RetryIsDuplicate()
+    {
+        DelayedAccountService? delayed = null;
+        await using var fixture = await AdminGrpcFixture.CreateAsync(decorateAccounts: service => delayed = new(service));
+        var headers = await LoginAsync(fixture, DomainAccountType.Administrator);
+        var accounts = new AdminAccounts.AdminAccountsClient(fixture.Channel);
+        using var cancellation = new CancellationTokenSource();
+        var request = new CreateAccountRequest { Username = "committed", Password = fixture.Backend.Accounts.Password };
+        var call = accounts.CreateAccountAsync(request, headers, cancellationToken: cancellation.Token).ResponseAsync;
+        await delayed!.Committed.Task.WaitAsync(TimeSpan.FromSeconds(10));
+        cancellation.Cancel();
+        Assert.Equal(StatusCode.Cancelled, (await Assert.ThrowsAsync<RpcException>(() => call)).StatusCode);
+        delayed.DelayResponse = false;
+        Assert.Equal(StatusCode.AlreadyExists, (await Assert.ThrowsAsync<RpcException>(() => accounts.CreateAccountAsync(request, headers).ResponseAsync)).StatusCode);
+        Assert.Equal(2, (await accounts.ListAccountsAsync(new(), headers)).Accounts.Count);
+    }
+
+    [Fact]
     public async Task Calls_AtCapacityOrStopping_AreRejectedBeforeAuthentication()
     {
         await using var fixture = await AdminGrpcFixture.CreateAsync(concurrency: 1);
