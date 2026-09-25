@@ -32,9 +32,12 @@ public sealed class MoongateAdminPlugin : IMoongatePlugin
                 var config = container.Resolve<AdminApiConfig>();
                 var mode = container.Resolve<ServerMode>();
 
+                var directoriesConfig = container.Resolve<DirectoriesConfig>();
+                directoriesConfig.CreateDirectoryIfNotExists("certificates");
+
                 return new(
                     config,
-                    container.Resolve<DirectoriesConfig>(),
+                    directoriesConfig,
                     mode,
                     services =>
                         AdminGrpcApplication.AddServices(
