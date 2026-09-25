@@ -1,0 +1,28 @@
+[[item]]
+id = "0x0e76_bag"
+base_id = "base_item"
+item_id = 3702
+name = "bag"
+rarity = "common"
+movable = false
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "bagofsending"
+base_id = "base_item"
+item_id = 3702
+name = "bag of sending"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e7a_picnic_basket"
+base_id = "base_item"
+item_id = 3706
+name = "picnic basket"
+rarity = "common"
+movable = false
+hue = 0
+max_weight = 40000

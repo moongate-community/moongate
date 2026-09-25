@@ -1,0 +1,115 @@
+[[loot]]
+id = "lowlevelarmor"
+[[loot.entries]]
+weight = 2103
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13cd"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13cd"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13ce"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13ce"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13ce"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13d2"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x1dba"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x1dba"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13d3"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x1c01"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x1c09"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x1c0b"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13dc"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13dc"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13dd"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13dd"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13dd"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13e1"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x13e2"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x1c03"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x1c0d"
+amount = 1
+
+[[loot.entries]]
+weight = 149
+item_id = "0x140b"
+amount = 1

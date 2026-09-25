@@ -1,0 +1,42 @@
+[[item]]
+id = "0x45a4_gargish_cloth_wing_armor"
+base_id = "base_item"
+item_id = 17828
+name = "gargish cloth wing armor"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4002_gargish_fancy_robe"
+base_id = "base_item"
+item_id = 16386
+name = "gargish fancy robe"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4003"
+base_id = "0x4002_gargish_fancy_robe"
+item_id = 16387
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4000_gargish_robe"
+base_id = "base_item"
+item_id = 16384
+name = "gargish robe"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4001"
+base_id = "0x4000_gargish_robe"
+item_id = 16385
+rarity = "common"
+movable = false
+hue = 0

@@ -1,0 +1,11 @@
+[[loot]]
+id = "arcane_gems"
+[[loot.entries]]
+weight = 80
+amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "arcane_gem"
+comment = "arcane gem"
+amount = 1

@@ -1,0 +1,361 @@
+[[item]]
+id = "0x1ad3_donuts"
+item_id = 6867
+name = "donuts"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e1c_cooked_fish"
+item_id = 7708
+name = "cooked fish"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e1d_cooked_fish"
+item_id = 7709
+name = "cooked fish"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e1e_cooked_fish"
+item_id = 7710
+name = "cooked fish"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x097b_fish_steak"
+item_id = 2427
+name = "fish steak"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x097e_wheel_of_cheese"
+item_id = 2430
+name = "wheel of cheese"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x097c_wedge_of_cheese"
+item_id = 2428
+name = "wedge of cheese"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x097d_wedge_of_cheese"
+item_id = 2429
+name = "wedge of cheese"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x098c_french_bread"
+item_id = 2444
+name = "french bread"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09ea_muffin"
+item_id = 2538
+name = "muffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09eb_muffins"
+item_id = 2539
+name = "muffins"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09fa_muffins"
+item_id = 2554
+name = "muffins"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09e9_cake"
+item_id = 2537
+name = "cake"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09af_plate_of_food"
+item_id = 2479
+name = "plate of food"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x160b_pan_of_cookies"
+item_id = 5643
+name = "pan of cookies"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x160c_plate_of_cookies"
+item_id = 5644
+name = "plate of cookies"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09d8_plate_of_food"
+item_id = 2520
+name = "plate of food"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09d9_plate_of_food"
+item_id = 2521
+name = "plate of food"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09db_plate_of_food"
+item_id = 2523
+name = "plate of food"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09b6_fried_eggs"
+item_id = 2486
+name = "fried eggs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x103b_bread_loaf"
+item_id = 4155
+name = "bread loaf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x103c_bread_loaf"
+item_id = 4156
+name = "bread loaf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1040_pizza"
+item_id = 4160
+name = "pizza"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "sausage_pizza"
+item_id = 4160
+name = "sausage pizza"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "cheese_pizza"
+item_id = 4160
+name = "cheese pizza"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1041_baked_pie"
+item_id = 4161
+name = "baked pie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "baked_apple_pie"
+item_id = 4161
+name = "baked apple pie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "baked_pumpkin_pie"
+item_id = 4161
+name = "baked pumpkin pie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "baked_meat_pie"
+item_id = 4161
+name = "baked meat pie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "baked_fruit_pie"
+item_id = 4161
+name = "baked fruit pie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "baked_peach_cobbler"
+item_id = 4161
+name = "baked peach cobbler"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "baked_quiche"
+item_id = 4161
+name = "baked quiche"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x15f9_bowl_of_carrots"
+item_id = 5625
+name = "bowl of carrots"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x15fa_bowl_of_corn"
+item_id = 5626
+name = "bowl of corn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x15fb_bowl_of_lettuce"
+item_id = 5627
+name = "bowl of lettuce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x15fc_bowl_of_peas"
+item_id = 5628
+name = "bowl of peas"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x15fe_bowl_of_carrots"
+item_id = 5630
+name = "bowl of carrots"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x15ff_bowl_of_corn"
+item_id = 5631
+name = "bowl of corn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1600_bowl_of_lettuce"
+item_id = 5632
+name = "bowl of lettuce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1601_bowl_of_peas"
+item_id = 5633
+name = "bowl of peas"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1602_bowl_of_patatoes"
+item_id = 5634
+name = "bowl of patatoes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1604_bowl_of_stew"
+item_id = 5636
+name = "bowl of stew"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1606_tomato_soup"
+item_id = 5638
+name = "tomato soup"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09b4_eggshells"
+base_id = "base_item"
+item_id = 2484
+name = "eggshells"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x15f8_wooden_bowl"
+base_id = "base_item"
+item_id = 5624
+name = "wooden bowl"
+rarity = "common"
+movable = false
+hue = 0

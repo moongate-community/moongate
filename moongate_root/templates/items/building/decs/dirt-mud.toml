@@ -1,0 +1,278 @@
+[[item]]
+id = "0x1b27_dirt"
+base_id = "base_item"
+item_id = 6951
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b28_dirt"
+base_id = "base_item"
+item_id = 6952
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b29_dirt"
+base_id = "base_item"
+item_id = 6953
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b2a_dirt"
+base_id = "base_item"
+item_id = 6954
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b2b_dirt"
+base_id = "base_item"
+item_id = 6955
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b2c_dirt"
+base_id = "base_item"
+item_id = 6956
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b2d_dirt"
+base_id = "base_item"
+item_id = 6957
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b2e_dirt"
+base_id = "base_item"
+item_id = 6958
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b2f_dirt"
+base_id = "base_item"
+item_id = 6959
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b30_dirt"
+base_id = "base_item"
+item_id = 6960
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b31_dirt"
+base_id = "base_item"
+item_id = 6961
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b32_dirt"
+base_id = "base_item"
+item_id = 6962
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b33_dirt"
+base_id = "base_item"
+item_id = 6963
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b34_dirt"
+base_id = "base_item"
+item_id = 6964
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b35_dirt"
+base_id = "base_item"
+item_id = 6965
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b36_dirt"
+base_id = "base_item"
+item_id = 6966
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b37_dirt"
+base_id = "base_item"
+item_id = 6967
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b38_dirt"
+base_id = "base_item"
+item_id = 6968
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b39_dirt"
+base_id = "base_item"
+item_id = 6969
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b3a_dirt"
+base_id = "base_item"
+item_id = 6970
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b3b_dirt"
+base_id = "base_item"
+item_id = 6971
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b3c_dirt"
+base_id = "base_item"
+item_id = 6972
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b3d_dirt"
+base_id = "base_item"
+item_id = 6973
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b3e_dirt"
+base_id = "base_item"
+item_id = 6974
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b71_hole"
+base_id = "base_item"
+item_id = 7025
+name = "hole"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1dfd_dirt"
+base_id = "base_item"
+item_id = 7677
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1dfe_dirt"
+base_id = "base_item"
+item_id = 7678
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1dff_dirt"
+base_id = "base_item"
+item_id = 7679
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e00_dirt"
+base_id = "base_item"
+item_id = 7680
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e01_mud"
+base_id = "base_item"
+item_id = 7681
+name = "mud"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e02_mud"
+base_id = "base_item"
+item_id = 7682
+name = "mud"
+rarity = "common"
+movable = false
+hue = 0

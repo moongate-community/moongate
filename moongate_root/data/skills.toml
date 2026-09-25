@@ -1,0 +1,890 @@
+# ==============================================================================
+# Moongate - skills.toml
+#
+# What it is for:
+#   The skills of the shard and how they grow. The ids are the ones the client
+#   uses (0-57), so the ids and their order must not change. The server uses this
+#   file to validate the skills chosen at character creation and to decide which
+#   stats rise when a skill is used.
+#
+# Fields:
+#   id               the skill id used by the client
+#   name             the skill name
+#   title            the title of a character whose best skill is this one
+#   profession_name  the name used by the profession files
+#   primary_stat     the stat the skill depends on most: str, dex or int
+#   secondary_stat   the stat the skill depends on next: str, dex or int
+#   *_scale          the chance, in percent, that a skill gain also raises that stat
+#   *_gain           how much a skill gain favours that stat when it rises
+#   gain_factor      how fast the skill itself rises (1.0 is normal)
+# ==============================================================================
+
+[[skill]]
+id = 0
+name = "Alchemy"
+title = "Alchemist"
+profession_name = "Alchemy"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 5.0
+int_scale = 5.0
+str_gain = 0.0
+dex_gain = 0.5
+int_gain = 0.5
+gain_factor = 1.0
+
+[[skill]]
+id = 1
+name = "Anatomy"
+title = "Biologist"
+profession_name = "Anatomy"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.15
+dex_gain = 0.15
+int_gain = 0.7
+gain_factor = 1.0
+
+[[skill]]
+id = 2
+name = "Animal Lore"
+title = "Naturalist"
+profession_name = "AnimalLore"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 1.0
+gain_factor = 1.0
+
+[[skill]]
+id = 3
+name = "Item Identification"
+title = "Merchant"
+profession_name = "ItemID"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 1.0
+gain_factor = 1.0
+
+[[skill]]
+id = 4
+name = "Arms Lore"
+title = "Weapon Master"
+profession_name = "ArmsLore"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.75
+dex_gain = 0.15
+int_gain = 0.1
+gain_factor = 1.0
+
+[[skill]]
+id = 5
+name = "Parrying"
+title = "Duelist"
+profession_name = "Parrying"
+primary_stat = "dex"
+secondary_stat = "str"
+str_scale = 7.5
+dex_scale = 2.5
+int_scale = 0.0
+str_gain = 0.75
+dex_gain = 0.25
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 6
+name = "Begging"
+title = "Beggar"
+profession_name = "Begging"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 7
+name = "Blacksmithy"
+title = "Blacksmith"
+profession_name = "Blacksmith"
+primary_stat = "str"
+secondary_stat = "dex"
+str_scale = 10.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 1.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 8
+name = "Bowcraft/Fletching"
+title = "Bowyer"
+profession_name = "Bowcraft"
+primary_stat = "dex"
+secondary_stat = "str"
+str_scale = 6.0
+dex_scale = 16.0
+int_scale = 0.0
+str_gain = 0.6
+dex_gain = 1.6
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 9
+name = "Peacemaking"
+title = "Pacifier"
+profession_name = "Peacemaking"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 10
+name = "Camping"
+title = "Explorer"
+profession_name = "Camping"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 20.0
+dex_scale = 15.0
+int_scale = 15.0
+str_gain = 2.0
+dex_gain = 1.5
+int_gain = 1.5
+gain_factor = 1.0
+
+[[skill]]
+id = 11
+name = "Carpentry"
+title = "Carpenter"
+profession_name = "Carpentry"
+primary_stat = "str"
+secondary_stat = "dex"
+str_scale = 20.0
+dex_scale = 5.0
+int_scale = 0.0
+str_gain = 2.0
+dex_gain = 0.5
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 12
+name = "Cartography"
+title = "Cartographer"
+profession_name = "Cartography"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 7.5
+int_scale = 7.5
+str_gain = 0.0
+dex_gain = 0.75
+int_gain = 0.75
+gain_factor = 1.0
+
+[[skill]]
+id = 13
+name = "Cooking"
+title = "Chef"
+profession_name = "Cooking"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 20.0
+int_scale = 30.0
+str_gain = 0.0
+dex_gain = 2.0
+int_gain = 3.0
+gain_factor = 1.0
+
+[[skill]]
+id = 14
+name = "Detecting Hidden"
+title = "Scout"
+profession_name = "DetectingHidden"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.4
+int_gain = 0.6
+gain_factor = 1.0
+
+[[skill]]
+id = 15
+name = "Discordance"
+title = "Demoralizer"
+profession_name = "Enticement"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 2.5
+int_scale = 2.5
+str_gain = 0.0
+dex_gain = 0.25
+int_gain = 0.25
+gain_factor = 1.0
+
+[[skill]]
+id = 16
+name = "Evaluating Intelligence"
+title = "Scholar"
+profession_name = "EvaluateIntelligence"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 1.0
+gain_factor = 1.0
+
+[[skill]]
+id = 17
+name = "Healing"
+title = "Healer"
+profession_name = "Healing"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 6.0
+dex_scale = 6.0
+int_scale = 8.0
+str_gain = 0.6
+dex_gain = 0.6
+int_gain = 0.8
+gain_factor = 1.0
+
+[[skill]]
+id = 18
+name = "Fishing"
+title = "Fisherman"
+profession_name = "Fishing"
+primary_stat = "dex"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.5
+dex_gain = 0.5
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 19
+name = "Forensic Evaluation"
+title = "Detective"
+profession_name = "ForensicEvaluation"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.2
+int_gain = 0.8
+gain_factor = 1.0
+
+[[skill]]
+id = 20
+name = "Herding"
+title = "Shepherd"
+profession_name = "Herding"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 16.25
+dex_scale = 6.25
+int_scale = 2.5
+str_gain = 1.625
+dex_gain = 0.625
+int_gain = 0.25
+gain_factor = 1.0
+
+[[skill]]
+id = 21
+name = "Hiding"
+title = "Shade"
+profession_name = "Hiding"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.8
+int_gain = 0.2
+gain_factor = 1.0
+
+[[skill]]
+id = 22
+name = "Provocation"
+title = "Rouser"
+profession_name = "Provocation"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 4.5
+int_scale = 0.5
+str_gain = 0.0
+dex_gain = 0.45
+int_gain = 0.05
+gain_factor = 1.0
+
+[[skill]]
+id = 23
+name = "Inscription"
+title = "Scribe"
+profession_name = "Inscription"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 2.0
+int_scale = 8.0
+str_gain = 0.0
+dex_gain = 0.2
+int_gain = 0.8
+gain_factor = 1.0
+
+[[skill]]
+id = 24
+name = "Lockpicking"
+title = "Infiltrator"
+profession_name = "Lockpicking"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 25.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 2.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 25
+name = "Magery"
+title = "Mage"
+profession_name = "Magery"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 15.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 1.5
+gain_factor = 1.0
+
+[[skill]]
+id = 26
+name = "Resisting Spells"
+title = "Warder"
+profession_name = "ResistingSpells"
+primary_stat = "str"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.25
+dex_gain = 0.25
+int_gain = 0.5
+gain_factor = 1.0
+
+[[skill]]
+id = 27
+name = "Tactics"
+title = "Tactician"
+profession_name = "Tactics"
+primary_stat = "str"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 28
+name = "Snooping"
+title = "Spy"
+profession_name = "Snooping"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 25.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 2.5
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 29
+name = "Musicianship"
+title = "Bard"
+profession_name = "Musicianship"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.8
+int_gain = 0.2
+gain_factor = 1.0
+
+[[skill]]
+id = 30
+name = "Poisoning"
+title = "Assassin"
+profession_name = "Poisoning"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 4.0
+int_scale = 16.0
+str_gain = 0.0
+dex_gain = 0.4
+int_gain = 1.6
+gain_factor = 1.0
+
+[[skill]]
+id = 31
+name = "Archery"
+title = "Archer"
+profession_name = "Archery"
+primary_stat = "dex"
+secondary_stat = "str"
+str_scale = 2.5
+dex_scale = 7.5
+int_scale = 0.0
+str_gain = 0.25
+dex_gain = 0.75
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 32
+name = "Spirit Speak"
+title = "Medium"
+profession_name = "SpiritSpeak"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 1.0
+gain_factor = 1.0
+
+[[skill]]
+id = 33
+name = "Stealing"
+title = "Pickpocket"
+profession_name = "Stealing"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 10.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 1.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 34
+name = "Tailoring"
+title = "Tailor"
+profession_name = "Tailoring"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 3.75
+dex_scale = 16.25
+int_scale = 5.0
+str_gain = 0.38
+dex_gain = 1.63
+int_gain = 0.5
+gain_factor = 1.0
+
+[[skill]]
+id = 35
+name = "Animal Taming"
+title = "Tamer"
+profession_name = "AnimalTaming"
+primary_stat = "str"
+secondary_stat = "int"
+str_scale = 14.0
+dex_scale = 2.0
+int_scale = 4.0
+str_gain = 1.4
+dex_gain = 0.2
+int_gain = 0.4
+gain_factor = 1.0
+
+[[skill]]
+id = 36
+name = "Taste Identification"
+title = "Praegustator"
+profession_name = "TasteIdentification"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.2
+dex_gain = 0.0
+int_gain = 0.8
+gain_factor = 1.0
+
+[[skill]]
+id = 37
+name = "Tinkering"
+title = "Tinker"
+profession_name = "Tinkering"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 5.0
+dex_scale = 2.0
+int_scale = 3.0
+str_gain = 0.5
+dex_gain = 0.2
+int_gain = 0.3
+gain_factor = 1.0
+
+[[skill]]
+id = 38
+name = "Tracking"
+title = "Ranger"
+profession_name = "Tracking"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 0.0
+dex_scale = 12.5
+int_scale = 12.5
+str_gain = 0.0
+dex_gain = 1.25
+int_gain = 1.25
+gain_factor = 1.0
+
+[[skill]]
+id = 39
+name = "Veterinary"
+title = "Veterinarian"
+profession_name = "Veterinary"
+primary_stat = "int"
+secondary_stat = "dex"
+str_scale = 8.0
+dex_scale = 4.0
+int_scale = 8.0
+str_gain = 0.8
+dex_gain = 0.4
+int_gain = 0.8
+gain_factor = 1.0
+
+[[skill]]
+id = 40
+name = "Swordsmanship"
+title = "Swordsman"
+profession_name = "Swordsmanship"
+primary_stat = "str"
+secondary_stat = "dex"
+str_scale = 7.5
+dex_scale = 2.5
+int_scale = 0.0
+str_gain = 0.75
+dex_gain = 0.25
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 41
+name = "Mace Fighting"
+title = "Armsman"
+profession_name = "MaceFighting"
+primary_stat = "str"
+secondary_stat = "dex"
+str_scale = 9.0
+dex_scale = 1.0
+int_scale = 0.0
+str_gain = 0.9
+dex_gain = 0.1
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 42
+name = "Fencing"
+title = "Fencer"
+profession_name = "Fencing"
+primary_stat = "dex"
+secondary_stat = "str"
+str_scale = 4.5
+dex_scale = 5.5
+int_scale = 0.0
+str_gain = 0.45
+dex_gain = 0.55
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 43
+name = "Wrestling"
+title = "Wrestler"
+profession_name = "Wrestling"
+primary_stat = "str"
+secondary_stat = "dex"
+str_scale = 9.0
+dex_scale = 1.0
+int_scale = 0.0
+str_gain = 0.9
+dex_gain = 0.1
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 44
+name = "Lumberjacking"
+title = "Lumberjack"
+profession_name = "Lumberjacking"
+primary_stat = "str"
+secondary_stat = "dex"
+str_scale = 20.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 2.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 45
+name = "Mining"
+title = "Miner"
+profession_name = "Mining"
+primary_stat = "str"
+secondary_stat = "dex"
+str_scale = 20.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 2.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 46
+name = "Meditation"
+title = "Stoic"
+profession_name = "Meditation"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 47
+name = "Stealth"
+title = "Rogue"
+profession_name = "Stealth"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 48
+name = "Remove Trap"
+title = "Trap Specialist"
+profession_name = "Disarm"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 49
+name = "Necromancy"
+title = "Necromancer"
+profession_name = "Necromancy"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 50
+name = "Focus"
+title = "Driven"
+profession_name = "Focus"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 51
+name = "Chivalry"
+title = "Paladin"
+profession_name = "Chivalry"
+primary_stat = "str"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 52
+name = "Bushido"
+title = "Samurai"
+profession_name = "Bushido"
+primary_stat = "str"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 53
+name = "Ninjitsu"
+title = "Ninja"
+profession_name = "Ninjitsu"
+primary_stat = "dex"
+secondary_stat = "int"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 54
+name = "Spellweaving"
+title = "Arcanist"
+profession_name = "Spellweaving"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 55
+name = "Mysticism"
+title = "Mystic"
+profession_name = "Mysticism"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 56
+name = "Imbuing"
+title = "Artificer"
+profession_name = "Imbuing"
+primary_stat = "int"
+secondary_stat = "str"
+str_scale = 0.0
+dex_scale = 0.0
+int_scale = 0.0
+str_gain = 0.0
+dex_gain = 0.0
+int_gain = 0.0
+gain_factor = 1.0
+
+[[skill]]
+id = 57
+name = "Throwing"
+title = "Bladeweaver"
+profession_name = "Throwing"
+primary_stat = "dex"
+secondary_stat = "str"
+str_scale = 2.5
+dex_scale = 7.5
+int_scale = 0.0
+str_gain = 0.25
+dex_gain = 0.75
+int_gain = 0.0
+gain_factor = 1.0

@@ -1,0 +1,16 @@
+[[loot]]
+id = "earthele_loot"
+[[loot.entries]]
+weight = 40
+amount = 1
+
+[[loot.entries]]
+weight = 10
+loot_template_id = "randomgems"
+amount = 2
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0f81_fertile_dirt"
+comment = "fertile dirt"
+amount = 1

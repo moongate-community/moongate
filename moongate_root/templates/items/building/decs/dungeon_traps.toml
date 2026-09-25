@@ -1,0 +1,170 @@
+[[item]]
+id = "0x1108_wall_spikes"
+base_id = "base_item"
+item_id = 4360
+name = "wall spikes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x111b_wall_spikes"
+base_id = "base_item"
+item_id = 4379
+name = "wall spikes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x119a_floor_spikes"
+base_id = "base_item"
+item_id = 4506
+name = "floor spikes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11a0_floor_spikes"
+base_id = "base_item"
+item_id = 4512
+name = "floor spikes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1103_floor_saw"
+base_id = "base_item"
+item_id = 4355
+name = "floor saw"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1116_floor_saw"
+base_id = "base_item"
+item_id = 4374
+name = "floor saw"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11ac_floor_saw"
+base_id = "base_item"
+item_id = 4524
+name = "floor saw"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11b1_floor_saw"
+base_id = "base_item"
+item_id = 4529
+name = "floor saw"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11c0_crumbling_floor"
+base_id = "base_item"
+item_id = 4544
+name = "crumbling floor"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x113c_gas_trap"
+base_id = "base_item"
+item_id = 4412
+name = "gas trap"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1147_gas_trap"
+base_id = "base_item"
+item_id = 4423
+name = "gas trap"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11a8_gas_trap"
+base_id = "base_item"
+item_id = 4520
+name = "gas trap"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x10f5_stone_face"
+base_id = "base_item"
+item_id = 4341
+name = "stone face"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x10fc_stone_face"
+base_id = "base_item"
+item_id = 4348
+name = "stone face"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x110f_stone_face"
+base_id = "base_item"
+item_id = 4367
+name = "stone face"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1125_mushroom"
+base_id = "base_item"
+item_id = 4389
+name = "mushroom"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11c4_flame_spurt_trap_base"
+base_id = "base_item"
+item_id = 4548
+name = "FlameSpurtTrap_base"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "flame_spurt_trap_fx"
+base_id = "base_item"
+item_id = 14089
+name = "Fire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d99_giant_floor_spike"
+base_id = "base_item"
+item_id = 7577
+name = "giant floor spike"
+rarity = "common"
+movable = false
+hue = 0

@@ -1,0 +1,34 @@
+[[item]]
+id = "0x0fbb_tongs"
+base_id = "base_item"
+item_id = 4027
+name = "tongs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fbc_tongs"
+base_id = "base_item"
+item_id = 4028
+name = "tongs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0faf_anvil"
+base_id = "base_item"
+item_id = 4015
+name = "anvil"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fb0"
+base_id = "0x0faf_anvil"
+item_id = 4016
+rarity = "common"
+movable = false
+hue = 0

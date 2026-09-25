@@ -1,0 +1,89 @@
+[[item]]
+id = "0x1876_iron_wire"
+base_id = "base_item"
+item_id = 6262
+name = "iron wire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1877_silver_wire"
+base_id = "base_item"
+item_id = 6263
+name = "silver wire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1878_gold_wire"
+base_id = "base_item"
+item_id = 6264
+name = "gold wire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1879_copper_wire"
+base_id = "base_item"
+item_id = 6265
+name = "copper wire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x26b1_scale"
+base_id = "base_item"
+item_id = 9905
+name = "scale"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26b2_scale"
+base_id = "base_item"
+item_id = 9906
+name = "scale"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26b3_scale"
+base_id = "base_item"
+item_id = 9907
+name = "scale"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26b4_scale"
+base_id = "base_item"
+item_id = 9908
+name = "scale"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26b5_scale"
+base_id = "base_item"
+item_id = 9909
+name = "scale"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26b6_scale"
+base_id = "base_item"
+item_id = 9910
+name = "scale"
+rarity = "common"
+movable = true
+hue = 0

@@ -1,0 +1,520 @@
+[[item]]
+id = "0x1f2e_clumsy_scroll"
+item_id = 7982
+name = "clumsy scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f2f_create_food_scroll"
+item_id = 7983
+name = "create food scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f30_feeblemind_scroll"
+item_id = 7984
+name = "feeblemind scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f31_heal_scroll"
+item_id = 7985
+name = "heal scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f32_magic_arrow_scroll"
+item_id = 7986
+name = "magic arrow scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f33_night_sight_scroll"
+item_id = 7987
+name = "night sight scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f2d_reactive_armor_scroll"
+item_id = 7981
+name = "reactive armor scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f34_weaken_scroll"
+item_id = 7988
+name = "weaken scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f35_agility_scroll"
+item_id = 7989
+name = "agility scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f36_cunning_scroll"
+item_id = 7990
+name = "cunning scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f37_cure_scroll"
+item_id = 7991
+name = "cure scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f38_harm_scroll"
+item_id = 7992
+name = "harm scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f39_magic_trap_scroll"
+item_id = 7993
+name = "magic trap scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f3a_magic_untrap_scroll"
+item_id = 7994
+name = "magic untrap scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f3b_protection_scroll"
+item_id = 7995
+name = "protection scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f3c_strength_scroll"
+item_id = 7996
+name = "strength scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f3d_bless_scroll"
+item_id = 7997
+name = "bless scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f3e_fireball_scroll"
+item_id = 7998
+name = "fireball scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f3f_magic_lock_scroll"
+item_id = 7999
+name = "magic lock scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f40_poison_scroll"
+item_id = 8000
+name = "poison scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f41_telekinisis_scroll"
+item_id = 8001
+name = "telekinisis scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f42_teleport_scroll"
+item_id = 8002
+name = "teleport scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f43_unlock_scroll"
+item_id = 8003
+name = "unlock scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f44_wall_of_stone_scroll"
+item_id = 8004
+name = "wall of stone scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f45_archcure_scroll"
+item_id = 8005
+name = "archcure scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f46_archprotection_scroll"
+item_id = 8006
+name = "archprotection scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f47_curse_scroll"
+item_id = 8007
+name = "curse scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f48_fire_field_scroll"
+item_id = 8008
+name = "fire field scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f49_greater_heal_scroll"
+item_id = 8009
+name = "greater heal scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f4a_lightning_scroll"
+item_id = 8010
+name = "lightning scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f4b_mana_drain_scroll"
+item_id = 8011
+name = "mana drain scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f4c_recall_scroll"
+item_id = 8012
+name = "recall scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f4d_blade_spirits_scroll"
+item_id = 8013
+name = "blade spirits scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f4e_dispel_field_scroll"
+item_id = 8014
+name = "dispel field scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f4f_incognito_scroll"
+item_id = 8015
+name = "incognito scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f50_magic_reflection_scroll"
+item_id = 8016
+name = "magic reflection scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f51_mind_blast_scroll"
+item_id = 8017
+name = "mind blast scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f52_paralyze_scroll"
+item_id = 8018
+name = "paralyze scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f53_poison_field_scroll"
+item_id = 8019
+name = "poison field scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f54_summon_creature_scroll"
+item_id = 8020
+name = "summon creature scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f55_dispel_scroll"
+item_id = 8021
+name = "dispel scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f56_energy_bolt_scroll"
+item_id = 8022
+name = "energy bolt scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f57_explosion_scroll"
+item_id = 8023
+name = "explosion scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f58_invisibility_scroll"
+item_id = 8024
+name = "invisibility scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f59_mark_scroll"
+item_id = 8025
+name = "mark scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f5a_mass_curse_scroll"
+item_id = 8026
+name = "mass curse scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f5b_paralyze_field_scroll"
+item_id = 8027
+name = "paralyze field scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f5c_reveal_scroll"
+item_id = 8028
+name = "reveal scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f5d_chain_lightning_scroll"
+item_id = 8029
+name = "chain lightning scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f5e_energy_field_scroll"
+item_id = 8030
+name = "energy field scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f5f_flamestrike_scroll"
+item_id = 8031
+name = "flamestrike scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f60_gate_travel_scroll"
+item_id = 8032
+name = "gate travel scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f61_mana_vampire_scroll"
+item_id = 8033
+name = "mana vampire scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f62_mass_dispel_scroll"
+item_id = 8034
+name = "mass dispel scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f63_meteor_storm_scroll"
+item_id = 8035
+name = "meteor storm scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f64_polymorph_scroll"
+item_id = 8036
+name = "polymorph scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f65_earthquake_scroll"
+item_id = 8037
+name = "earthquake scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f66_energy_vortex_scroll"
+item_id = 8038
+name = "energy vortex scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f67_resurrection_scroll"
+item_id = 8039
+name = "resurrection scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f68_summon_air_elemental_scroll"
+item_id = 8040
+name = "summon air elemental scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f69_summon_daemon_scroll"
+item_id = 8041
+name = "summon daemon scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f6a_summon_earth_elemental_scroll"
+item_id = 8042
+name = "summon earth elemental scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f6b_summon_fire_elemental_scroll"
+item_id = 8043
+name = "summon fire elemental scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f6c_summon_water_elemental_scroll"
+item_id = 8044
+name = "summon water elemental scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f6d_all_spell_scroll"
+base_id = "base_item"
+item_id = 8045
+name = "All-Spell Scroll"
+rarity = "common"
+movable = false
+hue = 0

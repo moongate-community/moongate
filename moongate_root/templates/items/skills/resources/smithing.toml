@@ -1,0 +1,35 @@
+[[item]]
+id = "0x1bef_iron_ingot"
+base_id = "base_item"
+item_id = 7151
+name = "iron ingot"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1bf2_iron_ingot"
+base_id = "base_item"
+item_id = 7154
+name = "iron ingot"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fb7_forged_metal"
+base_id = "base_item"
+item_id = 4023
+name = "forged metal"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fb8_forged_metal"
+base_id = "base_item"
+item_id = 4024
+name = "forged metal"
+rarity = "common"
+movable = true
+hue = 0

@@ -1,0 +1,475 @@
+[[item]]
+id = "base_reagent"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7a_black_pearl"
+base_id = "base_reagent"
+item_id = 3962
+name = "black pearl"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7b_blood_moss"
+base_id = "base_reagent"
+item_id = 3963
+name = "blood moss"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f84_garlic"
+base_id = "base_reagent"
+item_id = 3972
+name = "garlic"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f85_ginseng"
+base_id = "base_reagent"
+item_id = 3973
+name = "ginseng"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f86_mandrake_root"
+base_id = "base_reagent"
+item_id = 3974
+name = "mandrake root"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f88_nightshade"
+base_id = "base_reagent"
+item_id = 3976
+name = "nightshade"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8c_sulfurous_ash"
+base_id = "base_reagent"
+item_id = 3980
+name = "sulfurous ash"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8d_spider_silk"
+base_id = "base_reagent"
+item_id = 3981
+name = "spider silk"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f78_bat_wing"
+base_id = "base_reagent"
+item_id = 3960
+name = "bat wing"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f79_blackmoore"
+base_id = "base_reagent"
+item_id = 3961
+name = "blackmoore"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7c_blood_spawn"
+base_id = "base_reagent"
+item_id = 3964
+name = "blood spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7e_bone"
+base_id = "base_reagent"
+item_id = 3966
+name = "bone"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7f_brimstone"
+base_id = "base_reagent"
+item_id = 3967
+name = "brimstone"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f80_daemon_bone"
+base_id = "base_reagent"
+item_id = 3968
+name = "daemon bone"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f90_dead_wood"
+base_id = "base_reagent"
+item_id = 3984
+name = "dead wood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f82_dragon's_blood"
+base_id = "base_reagent"
+item_id = 3970
+name = "dragon's blood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f83_executioner's_cap"
+base_id = "base_reagent"
+item_id = 3971
+name = "executioner's cap"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f87_eye_of_newt"
+base_id = "base_reagent"
+item_id = 3975
+name = "eye of newt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f81_fertile_dirt"
+base_id = "base_reagent"
+item_id = 3969
+name = "fertile dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f89_obsidian"
+base_id = "base_reagent"
+item_id = 3977
+name = "obsidian"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8a_pig_iron"
+base_id = "base_reagent"
+item_id = 3978
+name = "pig iron"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8b_pumice"
+base_id = "base_reagent"
+item_id = 3979
+name = "pumice"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8e_nox_crystal"
+base_id = "base_reagent"
+item_id = 3982
+name = "nox crystal"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7d_daemon_blood"
+base_id = "base_reagent"
+item_id = 3965
+name = "daemon blood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8f_grave_dust"
+base_id = "base_reagent"
+item_id = 3983
+name = "grave dust"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f91_wyrm's_heart"
+base_id = "base_reagent"
+item_id = 3985
+name = "wyrm's heart"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7a_10_black_pearl"
+base_id = "base_reagent"
+item_id = 3962
+name = "black pearl"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7b_10_blood_moss"
+base_id = "base_reagent"
+item_id = 3963
+name = "blood moss"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f84_10_garlic"
+base_id = "base_reagent"
+item_id = 3972
+name = "garlic"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f85_10_ginseng"
+base_id = "base_reagent"
+item_id = 3973
+name = "ginseng"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f86_10_mandrake_root"
+base_id = "base_reagent"
+item_id = 3974
+name = "mandrake root"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f88_10_nightshade"
+base_id = "base_reagent"
+item_id = 3976
+name = "nightshade"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8c_10_sulfurous_ash"
+base_id = "base_reagent"
+item_id = 3980
+name = "sulfurous ash"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8d_10_spider_silk"
+base_id = "base_reagent"
+item_id = 3981
+name = "spider silk"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f78_10_bat_wing"
+base_id = "base_reagent"
+item_id = 3960
+name = "bat wing"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f79_10_blackmoore"
+base_id = "base_reagent"
+item_id = 3961
+name = "blackmoore"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7c_10_blood_spawn"
+base_id = "base_reagent"
+item_id = 3964
+name = "blood spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7e_10_bone"
+base_id = "base_reagent"
+item_id = 3966
+name = "bone"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7f_10_brimstone"
+base_id = "base_reagent"
+item_id = 3967
+name = "brimstone"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f80_10_daemon_bone"
+base_id = "base_reagent"
+item_id = 3968
+name = "daemon bone"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f90_10_dead_wood"
+base_id = "base_reagent"
+item_id = 3984
+name = "dead wood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f82_10_dragon's_blood"
+base_id = "base_reagent"
+item_id = 3970
+name = "dragon's blood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f83_10_executioner's_cap"
+base_id = "base_reagent"
+item_id = 3971
+name = "executioner's cap"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f87_10_eye_of_newt"
+base_id = "base_reagent"
+item_id = 3975
+name = "eye of newt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f81_10_fertile_dirt"
+base_id = "base_reagent"
+item_id = 3969
+name = "fertile dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f89_10_obsidian"
+base_id = "base_reagent"
+item_id = 3977
+name = "obsidian"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8a_10_pig_iron"
+base_id = "base_reagent"
+item_id = 3978
+name = "pig iron"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8b_10_pumice"
+base_id = "base_reagent"
+item_id = 3979
+name = "pumice"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8e_10_nox_crystal"
+base_id = "base_reagent"
+item_id = 3982
+name = "nox crystal"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f7d_10_daemon_blood"
+base_id = "base_reagent"
+item_id = 3965
+name = "daemon blood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f8f_10_grave_dust"
+base_id = "base_reagent"
+item_id = 3983
+name = "grave dust"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f91_10_wyrm's_heart"
+base_id = "base_reagent"
+item_id = 3985
+name = "wyrm's heart"
+rarity = "common"
+movable = false
+hue = 0

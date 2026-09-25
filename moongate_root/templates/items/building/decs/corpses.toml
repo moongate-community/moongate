@@ -1,0 +1,152 @@
+[[item]]
+id = "0x1ce2_leg"
+base_id = "base_item"
+item_id = 7394
+name = "leg"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ced_heart"
+base_id = "base_item"
+item_id = 7405
+name = "heart"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1cee_liver"
+base_id = "base_item"
+item_id = 7406
+name = "liver"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1cef_entrails"
+base_id = "base_item"
+item_id = 7407
+name = "entrails"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1cf0_brain"
+base_id = "base_item"
+item_id = 7408
+name = "brain"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d9f_torso"
+base_id = "base_item"
+item_id = 7583
+name = "torso"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1da0_head"
+base_id = "base_item"
+item_id = 7584
+name = "head"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1da1_left_arm"
+base_id = "base_item"
+item_id = 7585
+name = "left arm"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1da2_right_arm"
+base_id = "base_item"
+item_id = 7586
+name = "right arm"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1da3_left_leg"
+base_id = "base_item"
+item_id = 7587
+name = "left leg"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1da4_right_leg"
+base_id = "base_item"
+item_id = 7588
+name = "right leg"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1dad_torso"
+base_id = "base_item"
+item_id = 7597
+name = "torso"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1dae_head"
+base_id = "base_item"
+item_id = 7598
+name = "head"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1daf_left_arm"
+base_id = "base_item"
+item_id = 7599
+name = "left arm"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1db0_right_arm"
+base_id = "base_item"
+item_id = 7600
+name = "right arm"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1db1_left_leg"
+base_id = "base_item"
+item_id = 7601
+name = "left leg"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1db2_right_leg"
+base_id = "base_item"
+item_id = 7602
+name = "right leg"
+rarity = "common"
+movable = false
+hue = 0

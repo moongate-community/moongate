@@ -1,0 +1,458 @@
+[[item]]
+id = "0x0f6c_blue_moongate"
+base_id = "base_item"
+item_id = 3948
+name = "blue moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f6d_blue_moongate"
+base_id = "base_item"
+item_id = 3949
+name = "blue moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f6e_blue_oongate"
+base_id = "base_item"
+item_id = 3950
+name = "blue oongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f6f_blue_moongate"
+base_id = "base_item"
+item_id = 3951
+name = "blue moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f70_blue_moongate"
+base_id = "base_item"
+item_id = 3952
+name = "blue moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fd4_black_moongate"
+base_id = "base_item"
+item_id = 8148
+name = "black moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fd5_black_moongate"
+base_id = "base_item"
+item_id = 8149
+name = "black moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fd6_black_moongate"
+base_id = "base_item"
+item_id = 8150
+name = "black moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fd7_black_moongate"
+base_id = "base_item"
+item_id = 8151
+name = "black moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fd8_black_moongate"
+base_id = "base_item"
+item_id = 8152
+name = "black moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ae5_summon_moongate"
+base_id = "base_item"
+item_id = 6885
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ae6_summon_moongate"
+base_id = "base_item"
+item_id = 6886
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ae7_summon_moongate"
+base_id = "base_item"
+item_id = 6887
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ae8_summon_moongate"
+base_id = "base_item"
+item_id = 6888
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ae9_summon_moongate"
+base_id = "base_item"
+item_id = 6889
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1aea_summon_moongate"
+base_id = "base_item"
+item_id = 6890
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1aeb_summon_moongate"
+base_id = "base_item"
+item_id = 6891
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1aec_summon_moongate"
+base_id = "base_item"
+item_id = 6892
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1aed_summon_moongate"
+base_id = "base_item"
+item_id = 6893
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1af3_summon_moongate"
+base_id = "base_item"
+item_id = 6899
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1af4_summon_moongate"
+base_id = "base_item"
+item_id = 6900
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1af5_summon_moongate"
+base_id = "base_item"
+item_id = 6901
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1af6_summon_moongate"
+base_id = "base_item"
+item_id = 6902
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1af7_summon_moongate"
+base_id = "base_item"
+item_id = 6903
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1af8_summon_moongate"
+base_id = "base_item"
+item_id = 6904
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1af9_summon_moongate"
+base_id = "base_item"
+item_id = 6905
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1afa_summon_moongate"
+base_id = "base_item"
+item_id = 6906
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1afb_summon_moongate"
+base_id = "base_item"
+item_id = 6907
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fcb_summon_moongate"
+base_id = "base_item"
+item_id = 8139
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fcc_summon_moongate"
+base_id = "base_item"
+item_id = 8140
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fcd_summon_moongate"
+base_id = "base_item"
+item_id = 8141
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fce_summon_moongate"
+base_id = "base_item"
+item_id = 8142
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fcf_summon_moongate"
+base_id = "base_item"
+item_id = 8143
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fd0_summon_moongate"
+base_id = "base_item"
+item_id = 8144
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fd1_summon_moongate"
+base_id = "base_item"
+item_id = 8145
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fd2_summon_moongate"
+base_id = "base_item"
+item_id = 8146
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fd3_summon_moongate"
+base_id = "base_item"
+item_id = 8147
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fde_summon_moongate"
+base_id = "base_item"
+item_id = 8158
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fdf_summon_moongate"
+base_id = "base_item"
+item_id = 8159
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe0_summon_moongate"
+base_id = "base_item"
+item_id = 8160
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe1_summon_moongate"
+base_id = "base_item"
+item_id = 8161
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe2_summon_moongate"
+base_id = "base_item"
+item_id = 8162
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe3_summon_moongate"
+base_id = "base_item"
+item_id = 8163
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe4_summon_moongate"
+base_id = "base_item"
+item_id = 8164
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe5_summon_moongate"
+base_id = "base_item"
+item_id = 8165
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe6_summon_moongate"
+base_id = "base_item"
+item_id = 8166
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe7_summon_moongate"
+base_id = "base_item"
+item_id = 8167
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe8_summon_moongate"
+base_id = "base_item"
+item_id = 8168
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fe9_summon_moongate"
+base_id = "base_item"
+item_id = 8169
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1fea_summon_moongate"
+base_id = "base_item"
+item_id = 8170
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1feb_summon_moongate"
+base_id = "base_item"
+item_id = 8171
+name = "summon moongate"
+rarity = "common"
+movable = false
+hue = 0

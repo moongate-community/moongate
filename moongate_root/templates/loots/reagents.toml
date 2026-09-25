@@ -1,0 +1,49 @@
+[[loot]]
+id = "reagents"
+[[loot.entries]]
+weight = 1
+item_id = "0x0f7a_black_pearl"
+comment = "black pearl"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f7b_blood_moss"
+comment = "blood moss"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f84_garlic"
+comment = "garlic"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f85_ginseng"
+comment = "ginseng"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f86_mandrake_root"
+comment = "mandrake root"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f88_nightshade"
+comment = "nightshade"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f8c_sulfurous_ash"
+comment = "sulfurous ash"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f8d_spider_silk"
+comment = "spider silk"
+amount = 1

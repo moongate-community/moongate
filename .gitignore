@@ -221,7 +221,10 @@ ecf/
 moongate_data/images/
 moongate.pid
 moongate.pid.lock
-moongate_root/
+# The local shard root: only its data files and templates are tracked.
+moongate_root/*
+!moongate_root/data/
+!moongate_root/templates/
 rcf/
 
 # Windows Store app package directories and files

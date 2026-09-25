@@ -1,0 +1,26 @@
+[[item]]
+id = "0x1bdd_log"
+base_id = "base_item"
+item_id = 7134
+name = "log"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1be0_log"
+base_id = "base_item"
+item_id = 7136
+name = "log"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0de1_kindling"
+base_id = "base_item"
+item_id = 3553
+name = "kindling"
+rarity = "common"
+movable = false
+hue = 0

@@ -1,0 +1,264 @@
+[[item]]
+id = "0x2649_jester_pants"
+base_id = "base_item"
+item_id = 9801
+name = "jester pants"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x264a"
+base_id = "0x2649_jester_pants"
+item_id = 9802
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x264d_haidate"
+base_id = "base_item"
+item_id = 9805
+name = "haidate"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x264e"
+base_id = "0x264d_haidate"
+item_id = 9806
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x264f_kobakama"
+base_id = "base_item"
+item_id = 9807
+name = "kobakama"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2650"
+base_id = "0x264f_kobakama"
+item_id = 9808
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2651_ninja_pants"
+base_id = "base_item"
+item_id = 9809
+name = "ninja pants"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2652"
+base_id = "0x2651_ninja_pants"
+item_id = 9810
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x265f_shirt"
+base_id = "base_item"
+item_id = 9823
+name = "shirt"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2660"
+base_id = "0x265f_shirt"
+item_id = 9824
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2661_shirt"
+base_id = "base_item"
+item_id = 9825
+name = "shirt"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2662"
+base_id = "0x2661_shirt"
+item_id = 9826
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2663_shirt"
+base_id = "base_item"
+item_id = 9827
+name = "shirt"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2664"
+base_id = "0x2663_shirt"
+item_id = 9828
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2665_shirt"
+base_id = "base_item"
+item_id = 9829
+name = "shirt"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2666"
+base_id = "0x2665_shirt"
+item_id = 9830
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2667_ninja_shirt"
+base_id = "base_item"
+item_id = 9831
+name = "ninja shirt"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2668"
+base_id = "0x2667_ninja_shirt"
+item_id = 9832
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x267b_fancy_dress"
+base_id = "base_item"
+item_id = 9851
+name = "fancy dress"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x267c"
+base_id = "0x267b_fancy_dress"
+item_id = 9852
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x267d_fancy_dress"
+base_id = "base_item"
+item_id = 9853
+name = "fancy dress"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x267e"
+base_id = "0x267d_fancy_dress"
+item_id = 9854
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x267f_long_dress"
+base_id = "base_item"
+item_id = 9855
+name = "long dress"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2680"
+base_id = "0x267f_long_dress"
+item_id = 9856
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2681_kimono"
+base_id = "base_item"
+item_id = 9857
+name = "kimono"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2682"
+base_id = "0x2681_kimono"
+item_id = 9858
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2685_death_shroud"
+base_id = "base_item"
+item_id = 9861
+name = "death shroud"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2686"
+base_id = "0x2685_death_shroud"
+item_id = 9862
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x26ad_arcane_cloak"
+base_id = "base_item"
+item_id = 9901
+name = "Arcane Cloak"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26ae_arcane_robe"
+base_id = "base_item"
+item_id = 9902
+name = "Arcane Robe"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26b0_arcane_gloves"
+base_id = "base_item"
+item_id = 9904
+name = "Arcane Gloves"
+rarity = "common"
+movable = true
+hue = 0

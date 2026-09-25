@@ -1,0 +1,17 @@
+[[item]]
+id = "0x2796_samurai_tabi"
+base_id = "base_item"
+item_id = 10134
+name = "samurai tabi"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2797_ninja_tall_tabi"
+base_id = "base_item"
+item_id = 10135
+name = "ninja tall tabi"
+rarity = "common"
+movable = false
+hue = 0

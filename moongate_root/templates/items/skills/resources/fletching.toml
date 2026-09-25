@@ -1,0 +1,44 @@
+[[item]]
+id = "0x1bd1_feather"
+base_id = "base_item"
+item_id = 7121
+name = "feather"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1bd4_shaft"
+base_id = "base_item"
+item_id = 7124
+name = "shaft"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1bd4_5_shaft"
+base_id = "base_item"
+item_id = 7124
+name = "shaft"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1bd4_20_shaft"
+base_id = "base_item"
+item_id = 7124
+name = "shaft"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1bd4_50_shaft"
+base_id = "base_item"
+item_id = 7124
+name = "shaft"
+rarity = "common"
+movable = false
+hue = 0

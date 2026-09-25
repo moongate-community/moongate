@@ -1,0 +1,60 @@
+[[item]]
+id = "0x0f39_a_shovel"
+base_id = "base_item"
+item_id = 3897
+name = "a shovel"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f3a"
+base_id = "0x0f39_a_shovel"
+item_id = 3898
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e85_pickaxe"
+base_id = "base_item"
+item_id = 3717
+name = "pickaxe"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e86"
+base_id = "0x0e85_pickaxe"
+item_id = 3718
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fb1_forge"
+base_id = "base_item"
+item_id = 4017
+name = "forge"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "sandminingbook"
+base_id = "base_item"
+item_id = 4084
+name = "Find Glass-Quality Sand"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "stoneminingbook"
+base_id = "base_item"
+item_id = 4030
+name = "Mining For Quality Stone"
+rarity = "common"
+movable = true
+hue = 0

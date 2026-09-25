@@ -1,0 +1,80 @@
+[[loot]]
+id = "highlevelarmor"
+[[loot.entries]]
+weight = 296
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1c05"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1417"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1417"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x141a"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1418"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1418"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1418"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1416"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1419"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1419"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1409"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x140d"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x140f"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1b75"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1b77"
+amount = 1

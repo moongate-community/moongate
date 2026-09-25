@@ -1,0 +1,8 @@
+[[item]]
+id = "mapmakerspen"
+base_id = "base_item"
+item_id = 4032
+name = "Mapmakers Pen"
+rarity = "common"
+movable = false
+hue = 0

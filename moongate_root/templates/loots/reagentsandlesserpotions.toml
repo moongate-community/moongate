@@ -1,0 +1,103 @@
+[[loot]]
+id = "reagentsandlesserpotions"
+[[loot.entries]]
+weight = 1
+item_id = "0x0f7a_black_pearl"
+comment = "black pearl"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f7b_blood_moss"
+comment = "blood moss"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f84_garlic"
+comment = "garlic"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f85_ginseng"
+comment = "ginseng"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f86_mandrake_root"
+comment = "mandrake root"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f88_nightshade"
+comment = "nightshade"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f8c_sulfurous_ash"
+comment = "sulfurous ash"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f8d_spider_silk"
+comment = "spider silk"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0d_purple_potion"
+comment = "purple potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0b_red_potion"
+comment = "red potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f06_black_potion"
+comment = "black potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f07_orange_potion"
+comment = "orange potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0c_yellow_potion"
+comment = "yellow potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0a_green_potion"
+comment = "green potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f08_blue_potion"
+comment = "blue potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f09_white_potion"
+comment = "white potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0e_empty_bottle"
+comment = "empty bottle"
+amount = 1

@@ -1,0 +1,231 @@
+[[item]]
+id = "0x0d39_turnip"
+item_id = 3385
+name = "turnip"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0d3a_turnip"
+item_id = 3386
+name = "turnip"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c61_turnip"
+item_id = 3169
+name = "turnip"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c62_turnip"
+item_id = 3170
+name = "turnip"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c63_turnip"
+item_id = 3171
+name = "turnip"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c64_gourd"
+item_id = 3172
+name = "gourd"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c65_gourd"
+item_id = 3173
+name = "gourd"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c66_gourd"
+item_id = 3174
+name = "gourd"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c67_gourd"
+item_id = 3175
+name = "gourd"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c6a_pumpkin"
+item_id = 3178
+name = "pumpkin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c6b_pumpkin"
+item_id = 3179
+name = "pumpkin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c6c_pumpkin"
+item_id = 3180
+name = "pumpkin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c6d_onion"
+item_id = 3181
+name = "onion"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c6e_onion"
+item_id = 3182
+name = "onion"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c70_head_of_lettuce"
+item_id = 3184
+name = "head of lettuce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c71_head_of_lettuce"
+item_id = 3185
+name = "head of lettuce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c72_squash"
+item_id = 3186
+name = "squash"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c73_squash"
+item_id = 3187
+name = "squash"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c74_honeydew_melon"
+item_id = 3188
+name = "honeydew melon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c75_honeydew_melon"
+item_id = 3189
+name = "honeydew melon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c77_carrot"
+item_id = 3191
+name = "carrot"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c78_carrot"
+item_id = 3192
+name = "carrot"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c79_canteloupe"
+item_id = 3193
+name = "canteloupe"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c7a_canteloupe"
+item_id = 3194
+name = "canteloupe"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c7b_head_of_cabbage"
+item_id = 3195
+name = "head of cabbage"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c7c_head_of_cabbage"
+item_id = 3196
+name = "head of cabbage"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c7f_ear_of_corn"
+item_id = 3199
+name = "ear of corn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c81_ear_of_corn"
+item_id = 3201
+name = "ear of corn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c82_ear_of_corn"
+item_id = 3202
+name = "ear of corn"
+rarity = "common"
+movable = false
+hue = 0

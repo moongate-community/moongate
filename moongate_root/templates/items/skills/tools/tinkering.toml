@@ -1,0 +1,17 @@
+[[item]]
+id = "0x1ebc_tinker's_tools"
+base_id = "base_item"
+item_id = 7868
+name = "tinker's tools"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1eb6_empty_tool_kit"
+base_id = "base_item"
+item_id = 7862
+name = "empty tool kit"
+rarity = "common"
+movable = false
+hue = 0

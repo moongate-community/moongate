@@ -1,0 +1,25 @@
+[[item]]
+id = "emptyplantbowl"
+base_id = "base_item"
+item_id = 5629
+name = "a plant bowl"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "plantbowl_ofdirt"
+base_id = "base_item"
+item_id = 5634
+name = "a bowl of dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_seed"
+base_id = "base_item"
+item_id = 3535
+rarity = "common"
+movable = false
+hue = 0

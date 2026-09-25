@@ -1,0 +1,11 @@
+[[loot]]
+id = "snowele_loot"
+[[loot.entries]]
+weight = 625
+amount = 1
+
+[[loot.entries]]
+weight = 125
+item_id = "0x0f7a_black_pearl"
+comment = "black pearl"
+amount = 1

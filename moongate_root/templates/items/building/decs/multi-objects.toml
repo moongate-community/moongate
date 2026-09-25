@@ -1,0 +1,35 @@
+[[item]]
+id = "0x1b9b_wood"
+base_id = "base_item"
+item_id = 7067
+name = "wood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b9c_wood"
+base_id = "base_item"
+item_id = 7068
+name = "wood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b9d_wood"
+base_id = "base_item"
+item_id = 7069
+name = "wood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b9e_wood"
+base_id = "base_item"
+item_id = 7070
+name = "wood"
+rarity = "common"
+movable = false
+hue = 0

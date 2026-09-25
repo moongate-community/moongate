@@ -1,0 +1,173 @@
+[[item]]
+id = "tribalpaint"
+base_id = "base_item"
+item_id = 2540
+name = "savage kin paint"
+rarity = "common"
+movable = false
+hue = 2101
+
+[[item]]
+id = "haironlydye"
+base_id = "base_item"
+item_id = 3839
+name = "a hair-only dye"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "beardonlydye"
+base_id = "base_item"
+item_id = 3839
+name = "a beard-only dye"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "hairdye"
+base_id = "base_item"
+item_id = 3839
+name = "a hair dye"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "specialhaironlydye"
+base_id = "base_item"
+item_id = 3839
+name = "a special hair-only dye"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "specialbeardonlydye"
+base_id = "base_item"
+item_id = 3839
+name = "a special beard-only dye"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "specialhairdye"
+base_id = "base_item"
+item_id = 3839
+name = "a special hair dye"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "manadraught"
+base_id = "base_item"
+item_id = 4091
+name = "mana draught"
+rarity = "common"
+movable = false
+hue = 1162
+
+[[item]]
+id = "seedoflife"
+base_id = "base_item"
+item_id = 5927
+name = "seed of life"
+rarity = "common"
+movable = false
+hue = 1169
+
+[[item]]
+id = "balmofprotection"
+item_id = 7192
+name = "balm of protection"
+rarity = "common"
+movable = false
+hue = 1177
+
+[[item]]
+id = "balmofstrength"
+item_id = 3835
+name = "balm of strength"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "balmofswiftness"
+item_id = 6216
+name = "balm of swiftness"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "balmofwisdom"
+item_id = 6215
+name = "balm of wisdom"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "lifeshieldlotion"
+item_id = 3836
+name = "life shield lotion"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "stoneskinlotion"
+item_id = 3837
+name = "stone skin lotion"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gemofsalvation"
+base_id = "base_item"
+item_id = 7955
+name = "gem of salvation"
+rarity = "common"
+movable = false
+hue = 286
+
+[[item]]
+id = "newplayerticket"
+base_id = "base_item"
+item_id = 5360
+name = "new player ticket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "elixirofmetalconversion"
+base_id = "base_item"
+item_id = 3628
+name = "Elixir of Metal Conversion"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "powderoftranslocation"
+base_id = "base_item"
+item_id = 9912
+name = "powder of translocation"
+rarity = "common"
+movable = false
+hue = 2101
+
+[[item]]
+id = "zoogifungus"
+base_id = "base_item"
+item_id = 9911
+name = "a zoogi fungus"
+rarity = "common"
+movable = false
+hue = 0

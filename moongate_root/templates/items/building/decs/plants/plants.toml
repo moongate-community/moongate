@@ -1,0 +1,1247 @@
+[[item]]
+id = "0xc4f_cotton"
+item_id = 3151
+name = "cotton"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc50_cotton"
+item_id = 3152
+name = "cotton"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc51_cotton"
+item_id = 3153
+name = "cotton"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc52_cotton"
+item_id = 3154
+name = "cotton"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc53_cotton"
+item_id = 3155
+name = "cotton"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc54_cotton"
+item_id = 3156
+name = "cotton"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc55_wheat"
+item_id = 3157
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc56_wheat"
+item_id = 3158
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc57_wheat"
+item_id = 3159
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc58_wheat"
+item_id = 3160
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc59_wheat"
+item_id = 3161
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc5a_wheat"
+item_id = 3162
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc5b_wheat"
+item_id = 3163
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc5e_vines"
+item_id = 3166
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc5f_vines"
+item_id = 3167
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc60_vines"
+item_id = 3168
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc68_sprouts"
+item_id = 3176
+name = "sprouts"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc69_sprouts"
+item_id = 3177
+name = "sprouts"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc6f_onions"
+item_id = 3183
+name = "onions"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc7d_corn_stalk"
+item_id = 3197
+name = "corn stalk"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc8f_hedge"
+item_id = 3215
+name = "hedge"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc90_hedge"
+item_id = 3216
+name = "hedge"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc91_untrimmed_hedge"
+item_id = 3217
+name = "untrimmed hedge"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc92_untrimmed_hedge"
+item_id = 3218
+name = "untrimmed hedge"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc93_blade_plant"
+item_id = 3219
+name = "blade plant"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc94_bulrushes"
+item_id = 3220
+name = "bulrushes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc97_elephant_ear_plant"
+item_id = 3223
+name = "elephant ear plant"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc98_fan_plant"
+item_id = 3224
+name = "fan plant"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc9f_fern"
+item_id = 3231
+name = "fern"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xca0_fern"
+item_id = 3232
+name = "fern"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xca1_large_fern"
+item_id = 3233
+name = "large fern"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xca2_fern"
+item_id = 3234
+name = "fern"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xca3_fern"
+item_id = 3235
+name = "fern"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xca4_fern"
+item_id = 3236
+name = "fern"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xca5_pampas_grass"
+item_id = 3237
+name = "pampas grass"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xca7_rushes"
+item_id = 3239
+name = "rushes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xca9_snake_plant"
+item_id = 3241
+name = "snake plant"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcac_grasses"
+item_id = 3244
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcad_grasses"
+item_id = 3245
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcae_grasses"
+item_id = 3246
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcaf_grasses"
+item_id = 3247
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb0_grasses"
+item_id = 3248
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb1_grasses"
+item_id = 3249
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb2_grasses"
+item_id = 3250
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb3_grasses"
+item_id = 3251
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb4_grasses"
+item_id = 3252
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb5_grasses"
+item_id = 3253
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb6_grasses"
+item_id = 3254
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb7_cattails"
+item_id = 3255
+name = "cattails"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb8_cattails"
+item_id = 3256
+name = "cattails"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcb9_grasses"
+item_id = 3257
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcba_grasses"
+item_id = 3258
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcbb_grasses"
+item_id = 3259
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcbc_grasses"
+item_id = 3260
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcbd_grasses"
+item_id = 3261
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcc3_muck"
+item_id = 3267
+name = "muck"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcc4_pampas_grass"
+item_id = 3268
+name = "pampas grass"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcc5_grasses"
+item_id = 3269
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcc6_grasses"
+item_id = 3270
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcc7_weed"
+item_id = 3271
+name = "weed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcc8_juniper_bush"
+item_id = 3272
+name = "juniper bush"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xceb_vines"
+item_id = 3307
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcec_vines"
+item_id = 3308
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xced_vines"
+item_id = 3309
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcee_vines"
+item_id = 3310
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcef_vines"
+item_id = 3311
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcf0_vines"
+item_id = 3312
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcf1_vines"
+item_id = 3313
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcf2_vines"
+item_id = 3314
+name = "vines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcf3_fallen_log"
+item_id = 3315
+name = "fallen log"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcf4_fallen_log"
+item_id = 3316
+name = "fallen log"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcf5_fallen_log"
+item_id = 3317
+name = "fallen log"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcf6_fallen_log"
+item_id = 3318
+name = "fallen log"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcf7_fallen_log"
+item_id = 3319
+name = "fallen log"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd04_water_plants"
+item_id = 3332
+name = "water plants"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd05_reeds"
+item_id = 3333
+name = "reeds"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd06_lilypad"
+item_id = 3334
+name = "lilypad"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd07_lilypad"
+item_id = 3335
+name = "lilypad"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd08_lilypad"
+item_id = 3336
+name = "lilypad"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd09_lilypad"
+item_id = 3337
+name = "lilypad"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd0a_lilypad"
+item_id = 3338
+name = "lilypad"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd0b_lilypads"
+item_id = 3339
+name = "lilypads"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd0c_mushrooms"
+item_id = 3340
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd0d_mushrooms"
+item_id = 3341
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd0e_mushrooms"
+item_id = 3342
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd0f_mushrooms"
+item_id = 3343
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd10_mushrooms"
+item_id = 3344
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd11_mushrooms"
+item_id = 3345
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd12_mushrooms"
+item_id = 3346
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd13_mushrooms"
+item_id = 3347
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd14_mushrooms"
+item_id = 3348
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd15_mushrooms"
+item_id = 3349
+name = "mushrooms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0d16_mushroom"
+item_id = 3350
+name = "mushroom"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0d17_mushroom"
+item_id = 3351
+name = "mushroom"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0d18_mushroom"
+item_id = 3352
+name = "mushroom"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0d19_mushroom"
+item_id = 3353
+name = "mushroom"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0xd1b_grapevines"
+item_id = 3355
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd1c_grapevines"
+item_id = 3356
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd1d_grapevines"
+item_id = 3357
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd1e_grapevines"
+item_id = 3358
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd1f_grapevines"
+item_id = 3359
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd20_grapevines"
+item_id = 3360
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd21_grapevines"
+item_id = 3361
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd22_grapevines"
+item_id = 3362
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd23_grapevines"
+item_id = 3363
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd24_grapevines"
+item_id = 3364
+name = "grapevines"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd25_cactus"
+item_id = 3365
+name = "cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd26_cactus"
+item_id = 3366
+name = "cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd27_cactus"
+item_id = 3367
+name = "cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd28_cactus"
+item_id = 3368
+name = "cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd2a_cactus"
+item_id = 3370
+name = "cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd2c_cactus"
+item_id = 3372
+name = "cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd2e_cactus"
+item_id = 3374
+name = "cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd30_century_plant"
+item_id = 3376
+name = "century plant"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd31_century_plant"
+item_id = 3377
+name = "century plant"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd32_grasses"
+item_id = 3378
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd33_grasses"
+item_id = 3379
+name = "grasses"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd34_morning_glories"
+item_id = 3380
+name = "morning glories"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd35_pipe_cactus"
+item_id = 3381
+name = "pipe cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd37_yucca"
+item_id = 3383
+name = "yucca"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd38_yucca"
+item_id = 3384
+name = "yucca"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd3f_brambles"
+item_id = 3391
+name = "brambles"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd40_brambles"
+item_id = 3392
+name = "brambles"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdae_wheat"
+item_id = 3502
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdaf_wheat"
+item_id = 3503
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdb8_hedge"
+item_id = 3512
+name = "hedge"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdb9_hedge"
+item_id = 3513
+name = "hedge"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdba_seaweed"
+item_id = 3514
+name = "seaweed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdbb_seaweed"
+item_id = 3515
+name = "seaweed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdbc_lilypad"
+item_id = 3516
+name = "lilypad"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdbd_lilypad"
+item_id = 3517
+name = "lilypad"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdbe_lilypads"
+item_id = 3518
+name = "lilypads"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdc1_water_lily"
+item_id = 3521
+name = "water lily"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdc2_water_lily"
+item_id = 3522
+name = "water lily"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xdc3_water_lily"
+item_id = 3523
+name = "water lily"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1865_dishing_stump"
+item_id = 6245
+name = "dishing stump"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1866_dishing_stump"
+item_id = 6246
+name = "dishing stump"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e0f_potted_cactus"
+item_id = 7695
+name = "potted cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e10_potted_cactus"
+item_id = 7696
+name = "potted cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e11_potted_cactus"
+item_id = 7697
+name = "potted cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e12_potted_cactus"
+item_id = 7698
+name = "potted cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e13_potted_cactus"
+item_id = 7699
+name = "potted cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e14_potted_cactus"
+item_id = 7700
+name = "potted cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a92_wheat"
+item_id = 6802
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a93_wheat"
+item_id = 6803
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a94_wheat"
+item_id = 6804
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a95_wheat"
+item_id = 6805
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a96_wheat"
+item_id = 6806
+name = "wheat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a99_flax"
+item_id = 6809
+name = "flax"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a9a_flax"
+item_id = 6810
+name = "flax"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a9b_flax"
+item_id = 6811
+name = "flax"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a9e_hops"
+item_id = 6814
+name = "hops"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1a9f_hops"
+item_id = 6815
+name = "hops"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1aa0_hops"
+item_id = 6816
+name = "hops"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1aa1_hops"
+item_id = 6817
+name = "hops"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1aa2_hoprs_cones"
+item_id = 6818
+name = "hoprs cones"
+rarity = "common"
+movable = false
+hue = 0

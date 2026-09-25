@@ -1,0 +1,224 @@
+[[item]]
+id = "0x0a92_folded_sheet"
+base_id = "base_item"
+item_id = 2706
+name = "folded sheet"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a93_folded_sheet"
+base_id = "base_item"
+item_id = 2707
+name = "folded sheet"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a94_folded_sheet"
+base_id = "base_item"
+item_id = 2708
+name = "folded sheet"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a95_folded_sheet"
+base_id = "base_item"
+item_id = 2709
+name = "folded sheet"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a6c_folded_blanket"
+base_id = "base_item"
+item_id = 2668
+name = "folded blanket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a6d_folded_blanket"
+base_id = "base_item"
+item_id = 2669
+name = "folded blanket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a6e_folded_blanket"
+base_id = "base_item"
+item_id = 2670
+name = "folded blanket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a6f_folded_blanket"
+base_id = "base_item"
+item_id = 2671
+name = "folded blanket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1397_pillow"
+base_id = "base_item"
+item_id = 5015
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13a4_pillow"
+base_id = "base_item"
+item_id = 5028
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13a5_pillow"
+base_id = "base_item"
+item_id = 5029
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13a6_pillow"
+base_id = "base_item"
+item_id = 5030
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13a7_pillow"
+base_id = "base_item"
+item_id = 5031
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13a8_pillow"
+base_id = "base_item"
+item_id = 5032
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13a9_pillow"
+base_id = "base_item"
+item_id = 5033
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13aa_pillow"
+base_id = "base_item"
+item_id = 5034
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13ab_pillow"
+base_id = "base_item"
+item_id = 5035
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13ac_pillow"
+base_id = "base_item"
+item_id = 5036
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13ad_pillow"
+base_id = "base_item"
+item_id = 5037
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13ae_pillow"
+base_id = "base_item"
+item_id = 5038
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x163a_pillow"
+base_id = "base_item"
+item_id = 5690
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x163b_pillow"
+base_id = "base_item"
+item_id = 5691
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x163c_pillow"
+base_id = "base_item"
+item_id = 5692
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1914_towel"
+base_id = "base_item"
+item_id = 6420
+name = "towel"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1915_pillow"
+base_id = "base_item"
+item_id = 6421
+name = "pillow"
+rarity = "common"
+movable = true
+hue = 0

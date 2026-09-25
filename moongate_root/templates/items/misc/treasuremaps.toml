@@ -1,0 +1,27 @@
+[[item]]
+id = "base_treasure_map"
+base_id = "base_item"
+item_id = 5356
+name = "a treasure map"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treasuredirt"
+base_id = "base_item"
+item_id = 2323
+name = "dirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_treasure_chest"
+base_id = "base_item"
+item_id = 3648
+name = "Treasure Chest"
+rarity = "common"
+movable = true
+hue = 0
+max_weight = 400000

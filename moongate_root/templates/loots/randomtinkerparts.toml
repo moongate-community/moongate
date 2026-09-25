@@ -1,0 +1,59 @@
+[[loot]]
+id = "randomtinkerparts"
+[[loot.entries]]
+weight = 250
+amount = 1
+
+[[loot.entries]]
+weight = 83
+item_id = "0x1bf2_iron_ingot"
+comment = "iron ingot"
+amount = 1
+
+[[loot.entries]]
+weight = 83
+item_id = "0x104f_clock_parts"
+comment = "clock parts"
+amount = 1
+
+[[loot.entries]]
+weight = 83
+item_id = "0x1051_axle_with_gears"
+comment = "axle with gears"
+amount = 1
+
+[[loot.entries]]
+weight = 83
+item_id = "0x1053_gears"
+comment = "gears"
+amount = 1
+
+[[loot.entries]]
+weight = 83
+item_id = "0x1055_hinge"
+comment = "hinge"
+amount = 1
+
+[[loot.entries]]
+weight = 83
+item_id = "0x1059_sextant_parts"
+comment = "sextant parts"
+amount = 1
+
+[[loot.entries]]
+weight = 83
+item_id = "0x105b_axle"
+comment = "axle"
+amount = 1
+
+[[loot.entries]]
+weight = 83
+item_id = "0x105d_springs"
+comment = "springs"
+amount = 1
+
+[[loot.entries]]
+weight = 83
+item_id = "0x1ebc_tinker's_tools"
+comment = "tinker's tools"
+amount = 1

@@ -1,0 +1,10 @@
+[[loot]]
+id = "magic_items_max_tier_1"
+[[loot.entries]]
+weight = 80
+amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "random_magic_item_1"
+amount = 1

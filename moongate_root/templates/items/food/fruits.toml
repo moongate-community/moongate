@@ -1,0 +1,210 @@
+[[item]]
+id = "0x09d0_apple"
+item_id = 2512
+name = "apple"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09d1_grape_bunch"
+item_id = 2513
+name = "grape bunch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0d1a_grape_bunch"
+item_id = 3354
+name = "grape bunch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09d2_peach"
+item_id = 2514
+name = "peach"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x172c_peach"
+item_id = 5932
+name = "peach"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0994_pear"
+item_id = 2452
+name = "pear"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x172d_pear"
+item_id = 5933
+name = "pear"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x172b_lemons"
+item_id = 5931
+name = "lemons"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x172a_lemon"
+item_id = 5930
+name = "lemon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1729_limes"
+item_id = 5929
+name = "limes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1728_lime"
+item_id = 5928
+name = "lime"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1727_bunch_of_dates"
+item_id = 5927
+name = "bunch of dates"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1726_coconut"
+item_id = 5926
+name = "coconut"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1725_coconut"
+item_id = 5925
+name = "coconut"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1724_coconut"
+item_id = 5924
+name = "coconut"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1723_coconut"
+item_id = 5923
+name = "coconut"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1722_bananas"
+base_id = "base_item"
+item_id = 5922
+name = "bananas"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1721_bananas"
+base_id = "base_item"
+item_id = 5921
+name = "bananas"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1720_banana"
+item_id = 5920
+name = "banana"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x171f_banana"
+item_id = 5919
+name = "banana"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x171e_banana"
+item_id = 5918
+name = "banana"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x171d_banana"
+item_id = 5917
+name = "banana"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c5c_watermelon"
+item_id = 3164
+name = "watermelon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c5d_watermelon"
+item_id = 3165
+name = "watermelon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0993_fruit_basket"
+item_id = 2451
+name = "fruit basket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tribalberry"
+base_id = "base_item"
+item_id = 2512
+name = "tribal berry"
+rarity = "common"
+movable = false
+hue = 0

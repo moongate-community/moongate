@@ -1,0 +1,63 @@
+[[item]]
+id = "0x4060"
+item_id = 16480
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x405f"
+item_id = 16479
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4062"
+item_id = 16482
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4061"
+item_id = 16481
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4066"
+item_id = 16486
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4065"
+item_id = 16485
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4064"
+item_id = 16484
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4063"
+item_id = 16483
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x45a5"
+base_id = "0x45a4_gargish_cloth_wing_armor"
+item_id = 17829
+rarity = "common"
+movable = false
+hue = 0

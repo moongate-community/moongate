@@ -1,0 +1,116 @@
+[[item]]
+id = "0x1223_pedistal"
+base_id = "base_item"
+item_id = 4643
+name = "pedistal"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x181d_alchemical_symbol"
+base_id = "base_item"
+item_id = 6173
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x181e_alchemical_symbol"
+base_id = "base_item"
+item_id = 6174
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x181f_alchemical_symbol"
+base_id = "base_item"
+item_id = 6175
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1820_alchemical_symbol"
+base_id = "base_item"
+item_id = 6176
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1821_alchemical_symbol"
+base_id = "base_item"
+item_id = 6177
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1822_alchemical_symbol"
+base_id = "base_item"
+item_id = 6178
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1823_alchemical_symbol"
+base_id = "base_item"
+item_id = 6179
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1824_alchemical_symbol"
+base_id = "base_item"
+item_id = 6180
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1825_alchemical_symbol"
+base_id = "base_item"
+item_id = 6181
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1826_alchemical_symbol"
+base_id = "base_item"
+item_id = 6182
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1827_alchemical_symbol"
+base_id = "base_item"
+item_id = 6183
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1828_alchemical_symbol"
+base_id = "base_item"
+item_id = 6184
+name = "alchemical symbol"
+rarity = "common"
+movable = false
+hue = 0

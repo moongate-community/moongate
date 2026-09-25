@@ -1,0 +1,59 @@
+[[item]]
+id = "0x0990_basket"
+base_id = "base_item"
+item_id = 2448
+name = "basket"
+rarity = "common"
+movable = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e77_barrel"
+base_id = "base_item"
+item_id = 3703
+name = "barrel"
+rarity = "common"
+movable = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e7f_keg"
+base_id = "base_item"
+item_id = 3711
+name = "keg"
+rarity = "common"
+movable = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e83_empty_tub"
+base_id = "base_item"
+item_id = 3715
+name = "empty tub"
+rarity = "common"
+movable = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x09ac_bushel"
+base_id = "base_item"
+item_id = 2476
+name = "bushel"
+rarity = "common"
+movable = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "trash_barrel"
+base_id = "0x0e77_barrel"
+item_id = 3703
+name = "trash barrel"
+rarity = "common"
+movable = false
+hue = 946
+max_weight = 40000

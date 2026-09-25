@@ -1,0 +1,11 @@
+[[loot]]
+id = "savage_shaman_loot"
+[[loot.entries]]
+weight = 900
+amount = 1
+
+[[loot.entries]]
+weight = 100
+item_id = "tribalberry"
+comment = "tribal berry"
+amount = 1

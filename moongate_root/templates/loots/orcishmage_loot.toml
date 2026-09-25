@@ -1,0 +1,11 @@
+[[loot]]
+id = "orcishmage_loot"
+[[loot.entries]]
+weight = 80
+amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "orcishkinmask"
+comment = "a mask of orcish kin"
+amount = 1

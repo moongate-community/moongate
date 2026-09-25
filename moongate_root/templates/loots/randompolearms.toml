@@ -1,0 +1,5 @@
+[[loot]]
+id = "randompolearms"
+[[loot.entries]]
+weight = 50
+amount = 1

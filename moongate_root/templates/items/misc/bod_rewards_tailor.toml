@@ -1,0 +1,8 @@
+[[item]]
+id = "clothing_bless_deed"
+base_id = "base_item"
+item_id = 5360
+name = "a clothing bless deed"
+rarity = "common"
+movable = false
+hue = 0

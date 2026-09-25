@@ -1,0 +1,728 @@
+[[item]]
+id = "0x0b45_large_vase"
+base_id = "base_item"
+item_id = 2885
+name = "large vase"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0b46_vase"
+base_id = "base_item"
+item_id = 2886
+name = "vase"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0b47_large_vase"
+base_id = "base_item"
+item_id = 2887
+name = "large vase"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0b48_vase"
+base_id = "base_item"
+item_id = 2888
+name = "vase"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dfe_cut_hair"
+base_id = "base_item"
+item_id = 3582
+name = "cut hair"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dff_wig"
+base_id = "base_item"
+item_id = 3583
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e00_wig"
+base_id = "base_item"
+item_id = 3584
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e01_wig"
+base_id = "base_item"
+item_id = 3585
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e02_wig"
+base_id = "base_item"
+item_id = 3586
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e03_wig"
+base_id = "base_item"
+item_id = 3587
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e04_wig"
+base_id = "base_item"
+item_id = 3588
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e05_wig"
+base_id = "base_item"
+item_id = 3589
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e06_wig"
+base_id = "base_item"
+item_id = 3590
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e07_wig_stand"
+base_id = "base_item"
+item_id = 3591
+name = "wig stand"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e08_wig_stand"
+base_id = "base_item"
+item_id = 3592
+name = "wig stand"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e09_wig_stand"
+base_id = "base_item"
+item_id = 3593
+name = "wig stand"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e0a_wig"
+base_id = "base_item"
+item_id = 3594
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e0b_wig"
+base_id = "base_item"
+item_id = 3595
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e0c_wig"
+base_id = "base_item"
+item_id = 3596
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e0d_wig"
+base_id = "base_item"
+item_id = 3597
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e0e_wig"
+base_id = "base_item"
+item_id = 3598
+name = "wig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e23_bloody_water"
+base_id = "base_item"
+item_id = 3619
+name = "bloody water"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e44_empty_jars"
+base_id = "base_item"
+item_id = 3652
+name = "empty jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e45_empty_jars"
+base_id = "base_item"
+item_id = 3653
+name = "empty jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e46_empty_jars"
+base_id = "base_item"
+item_id = 3654
+name = "empty jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e47_empty_jars"
+base_id = "base_item"
+item_id = 3655
+name = "empty jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e48_full_jars"
+base_id = "base_item"
+item_id = 3656
+name = "full jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e49_full_jars"
+base_id = "base_item"
+item_id = 3657
+name = "full jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e4a_full_jars"
+base_id = "base_item"
+item_id = 3658
+name = "full jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e4b_full_jars"
+base_id = "base_item"
+item_id = 3659
+name = "full jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e4c_jars"
+base_id = "base_item"
+item_id = 3660
+name = "jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e4d_jars"
+base_id = "base_item"
+item_id = 3661
+name = "jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e4e_jars"
+base_id = "base_item"
+item_id = 3662
+name = "jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e4f_jars"
+base_id = "base_item"
+item_id = 3663
+name = "jars"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e7b_water_tub"
+base_id = "base_item"
+item_id = 3707
+name = "water tub"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f3b_horse_dung"
+base_id = "base_item"
+item_id = 3899
+name = "horse dung"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f3c_horse_dung"
+base_id = "base_item"
+item_id = 3900
+name = "horse dung"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fb6_horse_shoes"
+base_id = "base_item"
+item_id = 4022
+name = "horse shoes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fc1_paints_and_brush"
+base_id = "base_item"
+item_id = 4033
+name = "paints and brush"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fc4_conch_shell"
+base_id = "base_item"
+item_id = 4036
+name = "conch shell"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fc5_shells"
+base_id = "base_item"
+item_id = 4037
+name = "shells"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fc6_shells"
+base_id = "base_item"
+item_id = 4038
+name = "shells"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fc7_nautilus"
+base_id = "base_item"
+item_id = 4039
+name = "nautilus"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fc8_shell"
+base_id = "base_item"
+item_id = 4040
+name = "shell"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fc9_shells"
+base_id = "base_item"
+item_id = 4041
+name = "shells"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fca_shells"
+base_id = "base_item"
+item_id = 4042
+name = "shells"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fcb_shell"
+base_id = "base_item"
+item_id = 4043
+name = "shell"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fcc_shell"
+base_id = "base_item"
+item_id = 4044
+name = "shell"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x11c6_flower_pot"
+base_id = "base_item"
+item_id = 4550
+name = "flower pot"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11c7_flower_pot"
+base_id = "base_item"
+item_id = 4551
+name = "flower pot"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1449_loose_grain"
+base_id = "base_item"
+item_id = 5193
+name = "loose grain"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x14e0_bucket"
+base_id = "base_item"
+item_id = 5344
+name = "bucket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x14fa_rope"
+base_id = "base_item"
+item_id = 5370
+name = "rope"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1514_serpent_crest"
+base_id = "base_item"
+item_id = 5396
+name = "Serpent Crest"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x154d_water_barrel"
+base_id = "base_item"
+item_id = 5453
+name = "water barrel"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x187e_spilled_flour"
+base_id = "base_item"
+item_id = 6270
+name = "spilled flour"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x187f_spilled_flour"
+base_id = "base_item"
+item_id = 6271
+name = "spilled flour"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1880_spilled_flour"
+base_id = "base_item"
+item_id = 6272
+name = "spilled flour"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1881_spilled_flour"
+base_id = "base_item"
+item_id = 6273
+name = "spilled flour"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b1f_leaves"
+base_id = "base_item"
+item_id = 6943
+name = "leaves"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b20_leaves"
+base_id = "base_item"
+item_id = 6944
+name = "leaves"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b21_leaves"
+base_id = "base_item"
+item_id = 6945
+name = "leaves"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b22_leaves"
+base_id = "base_item"
+item_id = 6946
+name = "leaves"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e9a_hook"
+base_id = "base_item"
+item_id = 7834
+name = "hook"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e9b_hook"
+base_id = "base_item"
+item_id = 7835
+name = "hook"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e9c_pullies"
+base_id = "base_item"
+item_id = 7836
+name = "pullies"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e9d_pullies"
+base_id = "base_item"
+item_id = 7837
+name = "pullies"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e9e_pulley"
+base_id = "base_item"
+item_id = 7838
+name = "pulley"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e9f_pulley"
+base_id = "base_item"
+item_id = 7839
+name = "pulley"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ea0_rope"
+base_id = "base_item"
+item_id = 7840
+name = "rope"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ea1_rope"
+base_id = "base_item"
+item_id = 7841
+name = "rope"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ea2_rope"
+base_id = "base_item"
+item_id = 7842
+name = "rope"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1036_hay"
+base_id = "base_item"
+item_id = 4150
+name = "hay"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1037_hay"
+base_id = "base_item"
+item_id = 4151
+name = "hay"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1038_wood_curls"
+base_id = "base_item"
+item_id = 4152
+name = "wood curls"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0377_patch"
+base_id = "base_item"
+item_id = 887
+name = "patch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0379_dagges"
+base_id = "base_item"
+item_id = 889
+name = "dagges"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f36_sheaf_of_hay"
+base_id = "base_item"
+item_id = 3894
+name = "sheaf of hay"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x100c_hay_sheave"
+base_id = "base_item"
+item_id = 4108
+name = "hay sheave"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x100d_hay_sheave"
+base_id = "base_item"
+item_id = 4109
+name = "hay sheave"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fakeflourbees"
+base_id = "base_item"
+item_id = 2331
+name = "flour"
+rarity = "common"
+movable = false
+hue = 0

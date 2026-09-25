@@ -1,0 +1,251 @@
+[[item]]
+id = "0x203b_short_hair"
+base_id = "base_item"
+item_id = 8251
+name = "Short Hair"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x203c_long_hair"
+base_id = "base_item"
+item_id = 8252
+name = "Long Hair"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x203d_pony_tail"
+base_id = "base_item"
+item_id = 8253
+name = "Pony Tail"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2044_mohawk"
+base_id = "base_item"
+item_id = 8260
+name = "Mohawk"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2045_pageboy"
+base_id = "base_item"
+item_id = 8261
+name = "Pageboy"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2046_buns"
+base_id = "base_item"
+item_id = 8262
+name = "Buns"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2047_afro"
+base_id = "base_item"
+item_id = 8263
+name = "Afro"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2048_receding_hair"
+base_id = "base_item"
+item_id = 8264
+name = "Receding Hair"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2049_pig_tails"
+base_id = "base_item"
+item_id = 8265
+name = "Pig Tails"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x204a_krisna_hair"
+base_id = "base_item"
+item_id = 8266
+name = "Krisna Hair"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x203e_long_beard"
+base_id = "base_item"
+item_id = 8254
+name = "Long Beard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x203f_short_beard"
+base_id = "base_item"
+item_id = 8255
+name = "Short Beard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2040_goatee"
+base_id = "base_item"
+item_id = 8256
+name = "Goatee"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2041_mustache"
+base_id = "base_item"
+item_id = 8257
+name = "Mustache"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x204b_medium_short_beard"
+base_id = "base_item"
+item_id = 8267
+name = "Medium Short Beard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x204c_long_short_beard"
+base_id = "base_item"
+item_id = 8268
+name = "Long Short Beard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x204d_vandyke"
+base_id = "base_item"
+item_id = 8269
+name = "Vandyke"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fbf_mid_long_elf"
+base_id = "base_item"
+item_id = 12223
+name = "Mid Long Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fc0_long_feather_elf"
+base_id = "base_item"
+item_id = 12224
+name = "Long Feather Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fc1_short_elf"
+base_id = "base_item"
+item_id = 12225
+name = "Short Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fc2_mullet_elf"
+base_id = "base_item"
+item_id = 12226
+name = "Mullet Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fcc_flower_elf"
+base_id = "base_item"
+item_id = 12236
+name = "Flower Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fcd_long_elf"
+base_id = "base_item"
+item_id = 12237
+name = "Long Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fce_topknot_elf"
+base_id = "base_item"
+item_id = 12238
+name = "Topknot Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fcf_long_braid_elf"
+base_id = "base_item"
+item_id = 12239
+name = "Long Braid Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fd0_buns_elf"
+base_id = "base_item"
+item_id = 12240
+name = "Buns Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fd1_spiked_elf"
+base_id = "base_item"
+item_id = 12241
+name = "Spiked Elf"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2fd2_long_elf"
+base_id = "base_item"
+item_id = 12242
+name = "Long Elf"
+rarity = "common"
+movable = false
+hue = 0

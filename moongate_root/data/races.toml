@@ -1,0 +1,61 @@
+# ==============================================================================
+# Moongate - races.toml
+#
+# What it is for:
+#   The races a player can pick at character creation and, for each gender, the
+#   body the character gets and the hair and beard styles allowed. The client
+#   sends the race, the gender and the chosen styles (packets 0xF8 and 0x8D); the
+#   server keeps a style only if it is listed here for that race and gender, so a
+#   modified client cannot pick a style it should not have. No hair or no beard
+#   (style 0) is always allowed and is not listed.
+#
+# Fields:
+#   race           the race: human, elf or gargoyle
+#   name           the race name
+#   [race.male] and [race.female], one section per gender:
+#     body         the body id of a living character of this race and gender
+#     hair         the item ids of the allowed hair styles
+#     beard        the item ids of the allowed beard styles (empty: no beard)
+# ==============================================================================
+
+[[race]]
+race = "human"
+name = "Human"
+
+[race.male]
+body = 400
+hair = [0x203B, 0x203C, 0x203D, 0x2044, 0x2045, 0x2047, 0x2048, 0x2049, 0x204A]
+beard = [0x203E, 0x203F, 0x2040, 0x2041, 0x204B, 0x204C, 0x204D]
+
+[race.female]
+body = 401
+hair = [0x203B, 0x203C, 0x203D, 0x2044, 0x2045, 0x2046, 0x2047, 0x2049, 0x204A]
+beard = []
+
+[[race]]
+race = "elf"
+name = "Elf"
+
+[race.male]
+body = 605
+hair = [0x2FBF, 0x2FC0, 0x2FC1, 0x2FC2, 0x2FCD, 0x2FCE, 0x2FCF, 0x2FD1]
+beard = []
+
+[race.female]
+body = 606
+hair = [0x2FC0, 0x2FC1, 0x2FC2, 0x2FCC, 0x2FCE, 0x2FCF, 0x2FD0, 0x2FD1]
+beard = []
+
+[[race]]
+race = "gargoyle"
+name = "Gargoyle"
+
+[race.male]
+body = 666
+hair = [0x4258, 0x4259, 0x425A, 0x425B, 0x425C, 0x425D, 0x425E, 0x425F]
+beard = [0x42AD, 0x42AE, 0x42AF, 0x42B0]
+
+[race.female]
+body = 667
+hair = [0x4261, 0x4262, 0x4273, 0x4274, 0x4275, 0x42AA, 0x42AB, 0x42B0, 0x42B1]
+beard = []

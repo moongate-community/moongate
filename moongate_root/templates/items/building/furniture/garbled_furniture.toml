@@ -1,0 +1,125 @@
+[[item]]
+id = "0x0c16_damaged_books"
+base_id = "base_item"
+item_id = 3094
+name = "damaged books"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c2d_debris"
+base_id = "base_item"
+item_id = 3117
+name = "debris"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c2e_debris"
+base_id = "base_item"
+item_id = 3118
+name = "debris"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c2f_debris"
+base_id = "base_item"
+item_id = 3119
+name = "debris"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0c30_debris"
+base_id = "base_item"
+item_id = 3120
+name = "debris"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1db3_broken_barrel"
+base_id = "base_item"
+item_id = 7603
+name = "broken barrel"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1db4_broken_barrel"
+base_id = "base_item"
+item_id = 7604
+name = "broken barrel"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1db5_broken_barrel"
+base_id = "base_item"
+item_id = 7605
+name = "broken barrel"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1db6_broken_barrel"
+base_id = "base_item"
+item_id = 7606
+name = "broken barrel"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x10e1_barrel_hoops"
+base_id = "base_item"
+item_id = 4321
+name = "barrel hoops"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x10e2_barrel_hoops"
+base_id = "base_item"
+item_id = 4322
+name = "barrel hoops"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e7f_stool"
+base_id = "base_item"
+item_id = 7807
+name = "stool"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1e82_lathe_work"
+base_id = "base_item"
+item_id = 7810
+name = "lathe work"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1eb5_unfinished_barrel"
+base_id = "base_item"
+item_id = 7861
+name = "unfinished barrel"
+rarity = "common"
+movable = true
+hue = 0

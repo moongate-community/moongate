@@ -1,0 +1,17 @@
+[[loot]]
+id = "golem_loot"
+[[loot.entries]]
+weight = 980
+amount = 1
+
+[[loot.entries]]
+weight = 15
+item_id = "clockwork_assembly"
+comment = "clockwork assembly"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "power_crystal"
+comment = "power crystal"
+amount = 1

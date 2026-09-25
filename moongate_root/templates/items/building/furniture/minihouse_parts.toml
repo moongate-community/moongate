@@ -1,0 +1,170 @@
+[[item]]
+id = "0x22c4_mini_house:_stone_and_plaster"
+base_id = "base_item"
+item_id = 8900
+name = "Mini House: Stone and Plaster"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x22de_mini_house:_field_stone"
+base_id = "base_item"
+item_id = 8926
+name = "Mini House: Field Stone"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x22df_mini_house:_small_brick"
+base_id = "base_item"
+item_id = 8927
+name = "Mini House: Small Brick"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x22c9_mini_house:_wooden"
+base_id = "base_item"
+item_id = 8905
+name = "Mini House: Wooden"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x22e0_mini_house:_wood_and_plaster"
+base_id = "base_item"
+item_id = 8928
+name = "Mini House: Wood and Plaster"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x22e1_mini_house:_thatched_roof_cottage"
+base_id = "base_item"
+item_id = 8929
+name = "Mini House: Thatched-Roof Cottage"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x22cd_mini_house:_brick_part_1"
+base_id = "base_item"
+item_id = 8909
+name = "Mini House: Brick Part 1"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x22cb_mini_house:_brick_part_2"
+base_id = "base_item"
+item_id = 8907
+name = "Mini House: Brick Part 2"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x22cc_mini_house:_brick_part_3"
+base_id = "base_item"
+item_id = 8908
+name = "Mini House: Brick Part 3"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x22ca_mini_house:_brick_part_4"
+base_id = "base_item"
+item_id = 8906
+name = "Mini House: Brick Part 4"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2301_mini_house:_two_story_wood_and_plaster_part_1"
+base_id = "base_item"
+item_id = 8961
+name = "Mini House: Two-Story Wood and Plaster Part 1"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2302_mini_house:_two_story_wood_and_plaster_part_2"
+base_id = "base_item"
+item_id = 8962
+name = "Mini House: Two-Story Wood and Plaster Part 2"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2304_mini_house:_two_story_wood_and_plaster_part_3"
+base_id = "base_item"
+item_id = 8964
+name = "Mini House: Two-Story Wood and Plaster Part 3"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2303_mini_house:_two_story_wood_and_plaster_part_4"
+base_id = "base_item"
+item_id = 8963
+name = "Mini House: Two-Story Wood and Plaster Part 4"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2316_mini_house:_malas_mountain_pass_part_1"
+base_id = "base_item"
+item_id = 8982
+name = "Mini House: Malas Mountain Pass Part 1"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2315_mini_house:_malas_mountain_pass_part_2"
+base_id = "base_item"
+item_id = 8981
+name = "Mini House: Malas Mountain Pass Part 2"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2314_mini_house:_malas_mountain_pass_part_3"
+base_id = "base_item"
+item_id = 8980
+name = "Mini House: Malas Mountain Pass Part 3"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2313_mini_house:_malas_mountain_pass_part_4"
+base_id = "base_item"
+item_id = 8979
+name = "Mini House: Malas Mountain Pass Part 4"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2318_mini_house:_church_at_night"
+base_id = "base_item"
+item_id = 8984
+name = "Mini House: Church at Night"
+rarity = "common"
+movable = true
+hue = 0

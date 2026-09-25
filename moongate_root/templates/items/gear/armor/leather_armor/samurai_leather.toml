@@ -1,0 +1,41 @@
+[[item]]
+id = "0x27c1"
+item_id = 10177
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27c5"
+item_id = 10181
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27c6"
+item_id = 10182
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27c9"
+item_id = 10185
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27d1"
+item_id = 10193
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27d5"
+item_id = 10197
+rarity = "common"
+movable = false
+hue = 0

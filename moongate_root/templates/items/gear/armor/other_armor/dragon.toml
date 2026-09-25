@@ -1,0 +1,27 @@
+[[item]]
+id = "0x2658"
+item_id = 9816
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2642"
+item_id = 9794
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2644"
+item_id = 9796
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2648"
+item_id = 9800
+rarity = "common"
+movable = false
+hue = 0

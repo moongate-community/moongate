@@ -1,0 +1,89 @@
+[[item]]
+id = "0x0efa_a_spellbook"
+base_id = "base_item"
+item_id = 3834
+name = "a spellbook"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f14_a_recall_rune"
+base_id = "base_item"
+item_id = 7956
+name = "a recall rune"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1f17_a_recall_rune"
+base_id = "base_item"
+item_id = 7959
+name = "a recall rune"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e2d_crystal_ball"
+base_id = "base_item"
+item_id = 3629
+name = "crystal ball"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "crystalballofpetsummoning"
+base_id = "base_item"
+item_id = 3630
+name = "crystal ball of pet summoning"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2252_paladin_spellbook"
+base_id = "base_item"
+item_id = 8786
+name = "paladin spellbook"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2253_necromancer_book"
+base_id = "base_item"
+item_id = 8787
+name = "necromancer book"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2d9d_mystic_book"
+base_id = "base_item"
+item_id = 11677
+name = "mystic book"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "moonstone"
+base_id = "base_item"
+item_id = 3979
+name = "moonstone"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "runebook"
+base_id = "base_item"
+item_id = 8901
+name = "a runebook"
+rarity = "common"
+movable = false
+hue = 1121

@@ -1,0 +1,431 @@
+[[item]]
+id = "base_cutlass"
+base_id = "base_item"
+item_id = 5184
+name = "cutlass"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1441"
+item_id = 5185
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_katana"
+base_id = "base_item"
+item_id = 5118
+name = "katana"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13ff"
+item_id = 5119
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_broadsword"
+base_id = "base_item"
+item_id = 3934
+name = "broadsword"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f5f"
+item_id = 3935
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_longsword"
+base_id = "base_item"
+item_id = 3936
+name = "longsword"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f61"
+item_id = 3937
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_long_sword"
+base_id = "base_item"
+item_id = 5047
+name = "long sword"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13b8"
+item_id = 5048
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_scimitar"
+base_id = "base_item"
+item_id = 5045
+name = "scimitar"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13b6"
+item_id = 5046
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_viking_sword"
+base_id = "base_item"
+item_id = 5049
+name = "viking sword"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13ba"
+item_id = 5050
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_bone_harvester"
+base_id = "base_item"
+item_id = 9915
+name = "bone harvester"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26c5"
+item_id = 9925
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_crescent_blade"
+base_id = "base_item"
+item_id = 9921
+name = "crescent blade"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26cb"
+item_id = 9931
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_paladin_sword"
+base_id = "base_item"
+item_id = 9934
+name = "paladin sword"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26cf"
+item_id = 9935
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_no_dachi"
+base_id = "base_item"
+item_id = 10146
+name = "no-dachi"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27ed"
+item_id = 10221
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_wakizashi"
+base_id = "base_item"
+item_id = 10148
+name = "wakizashi"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27ef"
+item_id = 10223
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_bokuto"
+base_id = "base_item"
+item_id = 10152
+name = "bokuto"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27f3"
+item_id = 10227
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_daisho"
+base_id = "base_item"
+item_id = 10153
+name = "daisho"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27f4"
+item_id = 10228
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_elven_machete"
+base_id = "base_item"
+item_id = 11561
+name = "elven machete"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2d35"
+item_id = 11573
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_radiant_scimitar"
+base_id = "base_item"
+item_id = 11561
+name = "radiant scimitar"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2d33"
+item_id = 11571
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_rune_blade"
+base_id = "base_item"
+item_id = 11558
+name = "rune blade"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2d32"
+item_id = 11570
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_dread_sword"
+base_id = "base_item"
+item_id = 2315
+name = "dread sword"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x4074"
+item_id = 16500
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_bone_harvester"
+base_id = "base_item"
+item_id = 18630
+name = "gargish bone harvester"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48c7"
+item_id = 18631
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_glass_sword"
+base_id = "base_item"
+item_id = 2316
+name = "glass sword"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x4073"
+item_id = 16499
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_cleaver"
+base_id = "base_item"
+item_id = 18606
+name = "gargish cleaver"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48af"
+item_id = 18607
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_katana"
+base_id = "base_item"
+item_id = 18618
+name = "gargish katana"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48bb"
+item_id = 18619
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_butcher_knife"
+base_id = "base_item"
+item_id = 18614
+name = "gargish butcher knife"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48b7"
+item_id = 18615
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_stone_war_sword"
+base_id = "base_item"
+item_id = 2304
+name = "stone war sword"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x4071"
+item_id = 16497
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_talwar"
+base_id = "base_item"
+item_id = 2312
+name = "gargish talwar"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x4075"
+item_id = 16501
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_daisho"
+base_id = "base_item"
+item_id = 18640
+name = "gargish daisho"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48d1"
+item_id = 18641
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_bladed_whip"
+base_id = "base_item"
+item_id = 41611
+name = "bladed whip"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0xa293"
+item_id = 41619
+rarity = "common"
+movable = false
+hue = 0

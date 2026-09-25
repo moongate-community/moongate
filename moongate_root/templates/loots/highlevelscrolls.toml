@@ -1,0 +1,91 @@
+[[loot]]
+id = "highlevelscrolls"
+[[loot.entries]]
+weight = 1
+item_id = "0x1f5d_chain_lightning_scroll"
+comment = "chain lightning scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f5e_energy_field_scroll"
+comment = "energy field scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f5f_flamestrike_scroll"
+comment = "flamestrike scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f60_gate_travel_scroll"
+comment = "gate travel scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f61_mana_vampire_scroll"
+comment = "mana vampire scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f62_mass_dispel_scroll"
+comment = "mass dispel scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f64_polymorph_scroll"
+comment = "polymorph scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f65_earthquake_scroll"
+comment = "earthquake scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f66_energy_vortex_scroll"
+comment = "energy vortex scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f67_resurrection_scroll"
+comment = "resurrection scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f68_summon_air_elemental_scroll"
+comment = "summon air elemental scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f69_summon_daemon_scroll"
+comment = "summon daemon scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f6a_summon_earth_elemental_scroll"
+comment = "summon earth elemental scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f6b_summon_fire_elemental_scroll"
+comment = "summon fire elemental scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f6c_summon_water_elemental_scroll"
+comment = "summon water elemental scroll"
+amount = 1

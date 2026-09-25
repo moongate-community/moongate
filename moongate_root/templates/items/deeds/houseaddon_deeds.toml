@@ -1,0 +1,431 @@
+[[item]]
+id = "pentagramdeed"
+item_id = 5360
+name = "pentagram deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "brownbearrugdeedeast"
+item_id = 5360
+name = "brown bear rug (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "brownbearrugdeedsouth"
+item_id = 5360
+name = "brown bear rug (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "polarbearrugdeedeast"
+item_id = 5360
+name = "polar bear rug (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "polarbearrugdeedsouth"
+item_id = 5360
+name = "polar bear rug (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "loomdeed"
+item_id = 5360
+name = "loom (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "loomdeedsouth"
+item_id = 5360
+name = "loom (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallforgedeed"
+item_id = 5360
+name = "small forge"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "anvildeedeast"
+item_id = 5360
+name = "anvil (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "anvildeedsouth"
+item_id = 5360
+name = "anvil (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "spinningwheeldeednorth"
+item_id = 5360
+name = "spinning wheel (north)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "spinningwheeldeedsouth"
+item_id = 5360
+name = "spinning wheel (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "spinningwheeldeedeast"
+item_id = 5360
+name = "spinning wheel (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "spinningwheeldeedwest"
+item_id = 5360
+name = "spinning wheel (west)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallbed1deedsouth"
+item_id = 5360
+name = "small bed 1 (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallbed2deedsouth"
+item_id = 5360
+name = "small bed 2 (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallbed1deedeast"
+item_id = 5360
+name = "small bed 1 (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallbed2deedeast"
+item_id = 5360
+name = "small bed 2 (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largebed1deedeast"
+item_id = 5360
+name = "large bed 1 (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largebed2deedeast"
+item_id = 5360
+name = "large bed 2 (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largebed1deedsouth"
+item_id = 5360
+name = "large bed 1 (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largebed2deedsouth"
+item_id = 5360
+name = "large bed 2 (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "trainingdummydeedeast"
+item_id = 5360
+name = "training dummy (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "trainingdummydeedsouth"
+item_id = 5360
+name = "training dummy (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pickpocketdipdeedeast"
+item_id = 5360
+name = "pickpocket dip (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pickpocketdipdeedsouth"
+item_id = 5360
+name = "pickpocket dip (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "dresserdeedeast"
+item_id = 5360
+name = "dresser (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "dresserdeedsouth"
+item_id = 5360
+name = "dresser (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "abattoirdeed"
+item_id = 5360
+name = "abattoir"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "flourmilldeedeast"
+item_id = 5360
+name = "flour mill (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "flourmilldeedsouth"
+item_id = 5360
+name = "flour mill (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "sandstoneovendeedeast"
+item_id = 5360
+name = "sandstone oven (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "sandstoneovendeedsouth"
+item_id = 5360
+name = "sandstone oven (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "brickovendeedeast"
+item_id = 5360
+name = "brick oven (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "brickovendeedsouth"
+item_id = 5360
+name = "brick oven (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largeforgedeedeast"
+item_id = 5360
+name = "large forge (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largeforgedeedwest"
+item_id = 5360
+name = "large forge (west)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largeforgedeednorth"
+item_id = 5360
+name = "large forge (north)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largeforgedeedsouth"
+item_id = 5360
+name = "large forge (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "waterthroughdeedeast"
+item_id = 5360
+name = "water trough (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "waterthroughdeedsouth"
+item_id = 5360
+name = "water trough (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "dartboarddeedeast"
+item_id = 5360
+name = "dart board (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "dartboarddeedsouth"
+item_id = 5360
+name = "dart board (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ballotboxdeedeast"
+item_id = 5360
+name = "ballot box (east)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ballotboxdeedsouth"
+item_id = 5360
+name = "ballot box (south)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "dc_anvil_deed"
+base_id = "base_item"
+item_id = 5360
+name = "dull copper anvil deed"
+rarity = "common"
+movable = false
+hue = 2419
+
+[[item]]
+id = "si_anvil_deed"
+base_id = "base_item"
+item_id = 5360
+name = "shadow iron anvil deed"
+rarity = "common"
+movable = false
+hue = 2406
+
+[[item]]
+id = "c_anvil_deed"
+base_id = "base_item"
+item_id = 5360
+name = "copper anvil deed"
+rarity = "common"
+movable = false
+hue = 2414
+
+[[item]]
+id = "b_anvil_deed"
+base_id = "base_item"
+item_id = 5360
+name = "bronze anvil deed"
+rarity = "common"
+movable = false
+hue = 1750
+
+[[item]]
+id = "g_anvil_deed"
+base_id = "base_item"
+item_id = 5360
+name = "gold anvil deed"
+rarity = "common"
+movable = false
+hue = 2213
+
+[[item]]
+id = "a_anvil_deed"
+base_id = "base_item"
+item_id = 5360
+name = "agapite anvil deed"
+rarity = "common"
+movable = false
+hue = 2425
+
+[[item]]
+id = "ve_anvil_deed"
+base_id = "base_item"
+item_id = 5360
+name = "verite anvil deed"
+rarity = "common"
+movable = false
+hue = 2207
+
+[[item]]
+id = "va_anvil_deed"
+base_id = "base_item"
+item_id = 5360
+name = "valorite anvil deed"
+rarity = "common"
+movable = false
+hue = 2219

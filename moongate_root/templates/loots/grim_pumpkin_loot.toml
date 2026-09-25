@@ -1,0 +1,55 @@
+[[loot]]
+id = "grim_pumpkin_loot"
+[[loot.entries]]
+weight = 500
+item_id = "pumpkin_carving_kit"
+comment = "Jack O' Lantern Carving Kit"
+amount = 1
+
+[[loot.entries]]
+weight = 500
+item_id = "pumpkin_carving_kit_east"
+amount = 1
+
+[[loot.entries]]
+weight = 500
+item_id = "carvable_pumpkin"
+comment = "Carvable Pumpkin"
+amount = 1
+
+[[loot.entries]]
+weight = 500
+item_id = "tallrottenpumpkin"
+comment = "rotten pumpkin"
+amount = 1
+
+[[loot.entries]]
+weight = 500
+item_id = "carvable_gord"
+comment = "Carvable Gord"
+amount = 1
+
+[[loot.entries]]
+weight = 100
+item_id = "painted_porcelain_mask"
+amount = 1
+
+[[loot.entries]]
+weight = 100
+item_id = "painted_evil_jester_mask"
+amount = 1
+
+[[loot.entries]]
+weight = 100
+item_id = "painted_plague_mask"
+amount = 1
+
+[[loot.entries]]
+weight = 100
+item_id = "painted_daemon_mask"
+amount = 1
+
+[[loot.entries]]
+weight = 100
+item_id = "painted_evil_clown_mask"
+amount = 1

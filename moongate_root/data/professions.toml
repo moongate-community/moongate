@@ -1,0 +1,133 @@
+# ==============================================================================
+# Moongate - professions.toml
+#
+# What it is for:
+#   The professions a player can pick at character creation. The client shows
+#   them and sends back the id of the one chosen (packet 0xF8), leaving skills and
+#   stats empty; the server then gives the character the skills and stats listed
+#   here. Id 0 is the "Advanced" choice, where the player picks everything, so it
+#   is not listed.
+#
+# Fields:
+#   id                  the profession id the client sends
+#   name                the profession name
+#   name_cliloc         the id of the localized name the client shows
+#   description_cliloc  the id of the localized description the client shows
+#   gump                the id of the gump image the client shows
+#   str, dex, int       the starting stats
+#   skills              the starting skills: the skill name, such as "Tactics" or
+#                       "SpiritSpeak" (no spaces), and its starting value; every
+#                       skill must also be listed in skills.toml
+# ==============================================================================
+
+[[profession]]
+id = 1
+name = "Warrior"
+name_cliloc = 1061180
+description_cliloc = 1061230
+gump = 5577
+str = 45
+dex = 35
+int = 10
+skills = [
+    { skill = "Tactics", value = 30 },
+    { skill = "Healing", value = 30 },
+    { skill = "Swordsmanship", value = 30 },
+    { skill = "Anatomy", value = 30 },
+]
+
+[[profession]]
+id = 2
+name = "Mage"
+name_cliloc = 1061179
+description_cliloc = 1061229
+gump = 5569
+str = 25
+dex = 20
+int = 45
+skills = [
+    { skill = "Magery", value = 30 },
+    { skill = "Meditation", value = 30 },
+    { skill = "EvaluatingIntelligence", value = 30 },
+    { skill = "Wrestling", value = 30 },
+]
+
+[[profession]]
+id = 3
+name = "Blacksmith"
+name_cliloc = 1061181
+description_cliloc = 1061231
+gump = 5555
+str = 60
+dex = 15
+int = 15
+skills = [
+    { skill = "Blacksmithy", value = 30 },
+    { skill = "Tinkering", value = 30 },
+    { skill = "Mining", value = 30 },
+    { skill = "Tailoring", value = 30 },
+]
+
+[[profession]]
+id = 4
+name = "Necromancer"
+name_cliloc = 1061178
+description_cliloc = 1061228
+gump = 5557
+str = 25
+dex = 20
+int = 45
+skills = [
+    { skill = "Necromancy", value = 30 },
+    { skill = "SpiritSpeak", value = 30 },
+    { skill = "Swordsmanship", value = 30 },
+    { skill = "Meditation", value = 30 },
+]
+
+[[profession]]
+id = 5
+name = "Paladin"
+name_cliloc = 1061177
+description_cliloc = 1061227
+gump = 5587
+str = 45
+dex = 20
+int = 25
+skills = [
+    { skill = "Chivalry", value = 30 },
+    { skill = "Tactics", value = 30 },
+    { skill = "Focus", value = 30 },
+    { skill = "Swordsmanship", value = 30 },
+]
+
+[[profession]]
+id = 6
+name = "Samurai"
+name_cliloc = 1062948
+description_cliloc = 1062950
+gump = 5591
+str = 40
+dex = 30
+int = 20
+skills = [
+    { skill = "Bushido", value = 30 },
+    { skill = "Swordsmanship", value = 30 },
+    { skill = "Focus", value = 30 },
+    { skill = "Parrying", value = 30 },
+]
+
+[[profession]]
+id = 7
+name = "Ninja"
+name_cliloc = 1062949
+description_cliloc = 1062951
+gump = 5589
+str = 40
+dex = 30
+int = 20
+skills = [
+    { skill = "Ninjitsu", value = 30 },
+    { skill = "Hiding", value = 30 },
+    { skill = "Fencing", value = 30 },
+    { skill = "Stealth", value = 30 },
+]

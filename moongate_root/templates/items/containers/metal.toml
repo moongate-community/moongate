@@ -1,0 +1,49 @@
+[[item]]
+id = "ballotbox_east"
+item_id = 3712
+name = "ballot box"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ballotbox_south"
+item_id = 2472
+name = "ballot box"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "puzzlechest"
+base_id = "base_item"
+item_id = 3649
+name = "metal chest"
+rarity = "common"
+movable = false
+hue = 2206
+
+[[item]]
+id = "puzzlechest_ns"
+base_id = "base_item"
+item_id = 3648
+name = "metal chest"
+rarity = "common"
+movable = false
+hue = 2206
+
+[[item]]
+id = "puzzlestrongbox"
+base_id = "puzzlechest"
+item_id = 2472
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "puzzlestrongbox_ns"
+base_id = "puzzlechest"
+item_id = 3712
+rarity = "common"
+movable = false
+hue = 0

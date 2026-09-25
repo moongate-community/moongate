@@ -1,0 +1,35 @@
+[[loot]]
+id = "daemonbonearmor"
+[[loot.entries]]
+weight = 918
+amount = 1
+
+[[loot.entries]]
+weight = 82
+item_id = "daemon_bone_arms"
+comment = "daemon bone arms"
+amount = 1
+
+[[loot.entries]]
+weight = 82
+item_id = "daemon_bone_chest"
+comment = "daemon bone armor"
+amount = 1
+
+[[loot.entries]]
+weight = 82
+item_id = "daemon_bone_gauntlets"
+comment = "daemon bone gauntlets"
+amount = 1
+
+[[loot.entries]]
+weight = 82
+item_id = "daemon_bone_helm"
+comment = "daemon bone helm"
+amount = 1
+
+[[loot.entries]]
+weight = 82
+item_id = "daemon_bone_legs"
+comment = "daemon bone legs"
+amount = 1

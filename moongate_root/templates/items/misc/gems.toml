@@ -1,0 +1,271 @@
+[[item]]
+id = "0x0f0f_star_sapphire"
+item_id = 3855
+name = "star sapphire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f10_emerald"
+item_id = 3856
+name = "emerald"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f11_sapphire"
+item_id = 3857
+name = "sapphire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f12_sapphire"
+item_id = 3858
+name = "sapphire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f13_#"
+item_id = 3859
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f14_#"
+item_id = 3860
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f15_citrine"
+item_id = 3861
+name = "citrine"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f16_amethyst"
+item_id = 3862
+name = "amethyst"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f17_amethyst"
+item_id = 3863
+name = "amethyst"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f18_tourmaline"
+item_id = 3864
+name = "tourmaline"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f19_sapphire"
+item_id = 3865
+name = "sapphire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f1a_#"
+item_id = 3866
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f1b_star_sapphire"
+item_id = 3867
+name = "star sapphire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f1c_#"
+item_id = 3868
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f1d_#"
+item_id = 3869
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f1e_tourmaline"
+item_id = 3870
+name = "tourmaline"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f1f_sapphire"
+item_id = 3871
+name = "sapphire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f20_tourmaline"
+item_id = 3872
+name = "tourmaline"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f21_star_sapphire"
+item_id = 3873
+name = "star sapphire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f22_amethyst"
+item_id = 3874
+name = "amethyst"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f23_citrine"
+item_id = 3875
+name = "citrine"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f24_citrine"
+item_id = 3876
+name = "citrine"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f25_#"
+item_id = 3877
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f26_diamond"
+item_id = 3878
+name = "diamond"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f27_diamond"
+item_id = 3879
+name = "diamond"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f28_diamond"
+item_id = 3880
+name = "diamond"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f29_diamond"
+item_id = 3881
+name = "diamond"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f2a_#"
+item_id = 3882
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f2b_#"
+item_id = 3883
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f2c_citrine"
+item_id = 3884
+name = "citrine"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f2d_tourmaline"
+item_id = 3885
+name = "tourmaline"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f2e_amethyst"
+item_id = 3886
+name = "amethyst"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f2f_emerald"
+item_id = 3887
+name = "emerald"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f30_diamond"
+item_id = 3888
+name = "diamond"
+rarity = "common"
+movable = false
+hue = 0

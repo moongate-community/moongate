@@ -1,0 +1,111 @@
+[[item]]
+id = "base_cleaver"
+base_id = "base_item"
+item_id = 3778
+name = "cleaver"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0ec3"
+item_id = 3779
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_skinning_knife"
+base_id = "base_item"
+item_id = 3780
+name = "skinning knife"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0ec5"
+item_id = 3781
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_dagger"
+base_id = "base_item"
+item_id = 3921
+name = "dagger"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0f52"
+item_id = 3922
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_butcher_knife"
+base_id = "base_item"
+item_id = 5110
+name = "butcher knife"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13f7"
+item_id = 5111
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_leafblade"
+base_id = "base_item"
+item_id = 11554
+name = "leafblade"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2d2e"
+item_id = 11566
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_assassin_spike"
+base_id = "base_item"
+item_id = 11553
+name = "assassin spike"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2d2d"
+item_id = 11565
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_dagger"
+base_id = "base_item"
+item_id = 2306
+name = "gargish dagger"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x406a"
+item_id = 16490
+rarity = "common"
+movable = false
+hue = 0

@@ -1,0 +1,17 @@
+[[loot]]
+id = "mummy_loot"
+[[loot.entries]]
+weight = 50
+amount = 1
+
+[[loot.entries]]
+weight = 25
+item_id = "0x0f84_garlic"
+comment = "garlic"
+amount = 1
+
+[[loot.entries]]
+weight = 25
+item_id = "0x0ee9_clean_bandage"
+comment = "clean bandage"
+amount = 1

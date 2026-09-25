@@ -1,0 +1,8 @@
+[[item]]
+id = "0x1296_post"
+base_id = "base_item"
+item_id = 4758
+name = "post"
+rarity = "common"
+movable = false
+hue = 0

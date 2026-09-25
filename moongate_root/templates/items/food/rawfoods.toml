@@ -1,0 +1,63 @@
+[[item]]
+id = "unbaked_quiche"
+item_id = 4162
+name = "unbaked quiche"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "unbaked_meat_pie"
+item_id = 4162
+name = "unbaked meat pie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "unbaked_fruit_pie"
+item_id = 4162
+name = "unbaked fruit pie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "unbaked_peach_cobbler"
+item_id = 4162
+name = "unbaked peach cobbler"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "unbaked_apple_pie"
+item_id = 4162
+name = "unbaked apple pie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "unbaked_pumpkin_pie"
+item_id = 4162
+name = "unbaked pumpkin pie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "uncooked_sausage_pizza"
+item_id = 4227
+name = "uncooked sausage pizza"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "uncooked_cheese_pizza"
+item_id = 4227
+name = "uncooked cheese pizza"
+rarity = "common"
+movable = false
+hue = 0

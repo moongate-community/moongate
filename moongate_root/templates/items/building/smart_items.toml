@@ -1,0 +1,93 @@
+[[item]]
+id = "smart_brazier"
+item_id = 7979
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_skullcandle"
+item_id = 6231
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_stonewall_0x01d0"
+item_id = 464
+name = "stone wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_cavefloor_0x053b_hidden"
+item_id = 1
+name = "cave floor"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_stonewall_0x01d0_hidden"
+item_id = 1
+name = "stone wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_teleporter_0x17dc"
+item_id = 6108
+name = "teleporter"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_teleporter_0x17ee"
+item_id = 6126
+name = "teleporter"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_sound_object_0x0102"
+item_id = 3762
+name = "smart sound object"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_sound_object_0x00f5"
+item_id = 3762
+name = "smart sound object"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_sound_object_0x0220"
+item_id = 3762
+name = "smart sound object"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_sound_object_0x0244"
+item_id = 3762
+name = "smart sound object"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smart_sound_object_0x0014"
+item_id = 3762
+name = "smart sound object"
+rarity = "common"
+movable = false
+hue = 0

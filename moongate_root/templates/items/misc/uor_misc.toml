@@ -1,0 +1,17 @@
+[[item]]
+id = "interiordecorator"
+base_id = "base_item"
+item_id = 4033
+name = "an interior decorator"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "taxidermykit"
+base_id = "base_item"
+item_id = 7866
+name = "a taxidermy kit"
+rarity = "common"
+movable = false
+hue = 0

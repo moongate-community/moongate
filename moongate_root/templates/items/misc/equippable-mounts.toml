@@ -1,0 +1,335 @@
+[[item]]
+id = "skeletalmount"
+item_id = 16059
+name = "a skeletal mount"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "darksteed"
+item_id = 16041
+name = "a dark steed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "etherealhorse"
+item_id = 16042
+name = "an ethereal horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "nightmare"
+item_id = 16053
+name = "a nightmare"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "silversteed"
+item_id = 16040
+name = "a silver steed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "britwarhorse"
+item_id = 16050
+name = "a war horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "comwarhorse"
+item_id = 16049
+name = "a war horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "minaxwarhorse"
+item_id = 16047
+name = "a war horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "slwarhorse"
+item_id = 16048
+name = "a war horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "unicorn"
+item_id = 16052
+name = "a unicorn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "kirin"
+item_id = 16045
+name = "a kirin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "seahorse"
+item_id = 16051
+name = "a sea horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "firebeetle"
+item_id = 16021
+name = "a fire beetle"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ethereal_llama"
+item_id = 16043
+name = "an ethereal llama"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "etherealostard"
+item_id = 16044
+name = "an ethereal ostard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "nightmare2"
+item_id = 16039
+name = "a nightmare"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "nightmare3"
+item_id = 16041
+name = "a nightmare"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tdnightmare"
+item_id = 16055
+name = "a nightmare"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ridgeback"
+item_id = 16056
+name = "a ridgeback"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "firesteed"
+item_id = 16030
+name = "a fire steed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "etherealkirin"
+item_id = 16028
+name = "an ethereal kirin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "horse1"
+item_id = 16034
+name = "a horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "etherealunicorn"
+item_id = 16052
+name = "an ethereal unicorn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "etherealridgeback"
+item_id = 16026
+name = "an ethereal ridgeback"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "etherealswampdragon"
+item_id = 16024
+name = "an ethereal swampdragon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "etherealbeetle"
+item_id = 16023
+name = "an ethereal beetle"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "horse2"
+item_id = 16031
+name = "a horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "desertostard"
+item_id = 16035
+name = "a desert ostard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "frenziedostard"
+item_id = 16036
+name = "a frenzied ostard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "forestostard"
+item_id = 16037
+name = "a forest ostard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "llama"
+item_id = 16038
+name = "a llama"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "horse3"
+item_id = 16032
+name = "a horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "horse4"
+item_id = 16033
+name = "a horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "hiryu"
+item_id = 16020
+name = "a hiryu"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "reptalon"
+item_id = 16016
+name = "a reptalon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "cusidhe"
+item_id = 16017
+name = "a cusidhe"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "mondainsteed"
+item_id = 16018
+name = "mondain's steed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "giantbeetle"
+item_id = 16060
+name = "a giant beetle"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "swampdragon"
+item_id = 16061
+name = "a swampdragon"
+rarity = "common"
+movable = false
+hue = 2129
+
+[[item]]
+id = "armorswampdragon"
+item_id = 16062
+name = "an armored swampdragon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "boura"
+item_id = 16070
+name = "a horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tiger"
+item_id = 16071
+name = "a tiger"
+rarity = "common"
+movable = false
+hue = 0

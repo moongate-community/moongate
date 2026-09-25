@@ -1,0 +1,26 @@
+[[item]]
+id = "house_key"
+base_id = "base_item"
+item_id = 4111
+name = "a house key"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tent_key"
+base_id = "base_item"
+item_id = 4112
+name = "a tent key"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "boat_key"
+base_id = "base_item"
+item_id = 4115
+name = "a ship key"
+rarity = "common"
+movable = false
+hue = 0

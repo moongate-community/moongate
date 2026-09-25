@@ -1,0 +1,19 @@
+[[loot]]
+id = "tavaras_journals"
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_3"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_7"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_11"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1

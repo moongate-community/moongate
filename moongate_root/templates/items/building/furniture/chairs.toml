@@ -1,0 +1,26 @@
+[[item]]
+id = "0x0a2b_a_stool"
+base_id = "base_item"
+item_id = 2603
+name = "a stool"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0b5e_foot_stool"
+base_id = "base_item"
+item_id = 2910
+name = "foot stool"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x11fc_bamboo_stool"
+base_id = "base_item"
+item_id = 4604
+name = "bamboo stool"
+rarity = "common"
+movable = true
+hue = 0

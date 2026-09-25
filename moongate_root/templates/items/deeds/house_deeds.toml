@@ -1,0 +1,191 @@
+[[item]]
+id = "smallsnphousedeed"
+item_id = 5360
+name = "small stone & plaster house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallstonehousedeed"
+item_id = 5360
+name = "small stone house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallbrickhousedeed"
+item_id = 5360
+name = "small brick house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallwoodhousedeed"
+item_id = 5360
+name = "small wood house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallwnphousedeed"
+item_id = 5360
+name = "small wood & plaster house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallwoodstrawhousedeed"
+item_id = 5360
+name = "small wood house with straw roof deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "bluetentdeed"
+item_id = 5360
+name = "blue tent deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "greententdeed"
+item_id = 5360
+name = "green tent deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "3roombrickhousedeed"
+item_id = 5360
+name = "3 room brick house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "2storywnphousedeed"
+item_id = 5360
+name = "2 story wood & plaster house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "2storysnphousedeed"
+item_id = 5360
+name = "2 story stone & plaster house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "towerdeed"
+item_id = 5360
+name = "tower deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "keepdeed"
+item_id = 5360
+name = "keep deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "castledeed"
+item_id = 5360
+name = "castle deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largeshoppatio"
+item_id = 5360
+name = "large patio deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largesmithydeed"
+item_id = 5360
+name = "large smithy deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smalltowerdeed"
+item_id = 5360
+name = "small tower deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallmarbleshopdeed"
+item_id = 5360
+name = "small marble shop deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallstoneshopdeed"
+item_id = 5360
+name = "small stone shop deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "2storyvilladeed"
+item_id = 5360
+name = "2 story villa deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "sandstonepatiohousedeed"
+item_id = 5360
+name = "standstone patio house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "2storylogcabindeed"
+item_id = 5360
+name = "2 story log cabin deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largemarblepatiohousedeed"
+item_id = 5360
+name = "large marble patio house deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "farmerscabindeed"
+item_id = 5360
+name = "farmer's cabin deed"
+rarity = "common"
+movable = false
+hue = 0

@@ -1,0 +1,583 @@
+[[item]]
+id = "0x04a1_wooden_planks"
+item_id = 1185
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04a2_wooden_planks"
+item_id = 1186
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04a3_wooden_planks"
+item_id = 1187
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04a4_wooden_planks"
+item_id = 1188
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04a5_wooden_boards"
+item_id = 1189
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04a6_wooden_boards"
+item_id = 1190
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04a7_wooden_boards"
+item_id = 1191
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04a8_wooden_boards"
+item_id = 1192
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04a9_wooden_boards"
+item_id = 1193
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04aa_wooden_boards"
+item_id = 1194
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04ab_wooden_boards"
+item_id = 1195
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04ad_wooden_boards"
+item_id = 1197
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04ae_wooden_boards"
+item_id = 1198
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04af_wooden_boards"
+item_id = 1199
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b0_wooden_boards"
+item_id = 1200
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b1_wooden_boards"
+item_id = 1201
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b2_wooden_boards"
+item_id = 1202
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b3_wooden_boards"
+item_id = 1203
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b4_wooden_boards"
+item_id = 1204
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b5_wooden_boards"
+item_id = 1205
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b6_wooden_boards"
+item_id = 1206
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b7_wooden_boards"
+item_id = 1207
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b8_wooden_boards"
+item_id = 1208
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04b9_wooden_boards"
+item_id = 1209
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04ba_wooden_boards"
+item_id = 1210
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04bb_wooden_boards"
+item_id = 1211
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04bc_wooden_boards"
+item_id = 1212
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04bd_wooden_boards"
+item_id = 1213
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04be_wooden_boards"
+item_id = 1214
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04bf_wooden_boards"
+item_id = 1215
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c0_wooden_boards"
+item_id = 1216
+name = "wooden boards"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c1_wooden_logs"
+item_id = 1217
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c2_wooden_logs"
+item_id = 1218
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c3_wooden_logs"
+item_id = 1219
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c4_wooden_logs"
+item_id = 1220
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c5_wooden_logs"
+item_id = 1221
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c6_wooden_planks"
+item_id = 1222
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c7_wooden_planks"
+item_id = 1223
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c8_wooden_planks"
+item_id = 1224
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04c9_wooden_planks"
+item_id = 1225
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04ca_wooden_planks"
+item_id = 1226
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04cb_wooden_planks"
+item_id = 1227
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04cc_wooden_planks"
+item_id = 1228
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04cd_wooden_planks"
+item_id = 1229
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04ce_wooden_planks"
+item_id = 1230
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04cf_wooden_planks"
+item_id = 1231
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d0_wooden_planks"
+item_id = 1232
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d1_wooden_planks"
+item_id = 1233
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d2_wooden_planks"
+item_id = 1234
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d3_wooden_planks"
+item_id = 1235
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d4_wooden_planks"
+item_id = 1236
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d5_wooden_planks"
+item_id = 1237
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d6_wooden_planks"
+item_id = 1238
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d7_wooden_planks"
+item_id = 1239
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d8_wooden_planks"
+item_id = 1240
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04d9_wooden_planks"
+item_id = 1241
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04da_wooden_planks"
+item_id = 1242
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04db_wooden_planks"
+item_id = 1243
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04dc_wooden_planks"
+item_id = 1244
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04dd_wooden_planks"
+item_id = 1245
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04de_wooden_planks"
+item_id = 1246
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04df_wooden_planks"
+item_id = 1247
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04e0_wooden_planks"
+item_id = 1248
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x04e1_wooden_planks"
+item_id = 1249
+name = "wooden planks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0504_wooden_logs"
+item_id = 1284
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0505_wooden_logs"
+item_id = 1285
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0506_wooden_logs"
+item_id = 1286
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0507_wooden_logs"
+item_id = 1287
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0508_wooden_logs"
+item_id = 1288
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0509_wooden_logs"
+item_id = 1289
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x050a_wooden_logs"
+item_id = 1290
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x050b_wooden_logs"
+item_id = 1291
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x050c_wooden_logs"
+item_id = 1292
+name = "wooden logs"
+rarity = "common"
+movable = false
+hue = 0

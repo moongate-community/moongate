@@ -1,0 +1,17 @@
+[[item]]
+id = "0x1022_fletcher's_tools"
+base_id = "base_item"
+item_id = 4130
+name = "fletcher's tools"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1023_fletcher's_tools"
+base_id = "base_item"
+item_id = 4131
+name = "fletcher's tools"
+rarity = "common"
+movable = true
+hue = 0

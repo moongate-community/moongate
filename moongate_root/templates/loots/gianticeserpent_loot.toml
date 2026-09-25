@@ -1,0 +1,5 @@
+[[loot]]
+id = "gianticeserpent_loot"
+[[loot.entries]]
+weight = 95
+amount = 1

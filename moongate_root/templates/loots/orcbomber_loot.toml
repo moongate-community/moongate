@@ -1,0 +1,41 @@
+[[loot]]
+id = "orcbomber_loot"
+[[loot.entries]]
+weight = 40
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x26ac_bola"
+comment = "bola"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x1bf2_iron_ingot"
+comment = "iron ingot"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0f8c_sulfurous_ash"
+comment = "sulfurous ash"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0f0d_purple_potion"
+comment = "purple potion"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0f0d_b_purple_potion"
+comment = "purple potion"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0f0d_c_purple_potion"
+comment = "purple potion"
+amount = 1

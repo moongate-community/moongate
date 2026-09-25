@@ -1,0 +1,658 @@
+[[item]]
+id = "happyholidays"
+base_id = "base_item"
+item_id = 3702
+name = "Happy Holidays!"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "seasongreetings"
+base_id = "base_item"
+item_id = 5360
+name = "Seasons Greetings"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "bottleofpinkchampaine"
+item_id = 2503
+name = "bottle of pink Champaine"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pinkchampaineflute"
+base_id = "base_item"
+item_id = 2458
+name = "a pink Champaine Flute"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "santagloves"
+base_id = "base_item"
+item_id = 5085
+name = "Santa Gloves"
+rarity = "common"
+movable = false
+hue = 4112
+
+[[item]]
+id = "naughtythisyear"
+base_id = "base_item"
+item_id = 3702
+name = "You were naughty this year!"
+rarity = "common"
+movable = false
+hue = 1882
+
+[[item]]
+id = "maybenextyear"
+base_id = "base_item"
+item_id = 5360
+name = "Maybe next year you will get a nicer gift"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "coal"
+item_id = 6585
+name = "Coal"
+rarity = "common"
+movable = false
+hue = 2405
+
+[[item]]
+id = "spam"
+item_id = 4164
+name = "Spam"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "holidaytreedeed"
+item_id = 5360
+name = "Holiday Tree Deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pottedplantdeed"
+base_id = "base_item"
+item_id = 5360
+name = "A deed for a potted plant"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2bdd_a_candy_cane"
+base_id = "base_item"
+item_id = 11229
+name = "a candy cane"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2bde"
+base_id = "0x2bdd_a_candy_cane"
+item_id = 11230
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2bdf_a_candy_cane"
+base_id = "base_item"
+item_id = 11231
+name = "a candy cane"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2be0"
+base_id = "0x2bdf_a_candy_cane"
+item_id = 11232
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2be1_a_ginger_bread_cookie"
+base_id = "base_item"
+item_id = 11233
+name = "a Ginger Bread Cookie"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2be2"
+base_id = "base_item"
+item_id = 11234
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "wreathdeed"
+base_id = "base_item"
+item_id = 5360
+name = "a holiday wreath deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x232d_a_wreath"
+base_id = "base_item"
+item_id = 9005
+name = "a wreath"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x232c"
+base_id = "0x232d_a_wreath"
+item_id = 9004
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2328"
+base_id = "base_item"
+item_id = 9000
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2329"
+base_id = "0x2328"
+item_id = 9001
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x232e_snowflake"
+base_id = "base_item"
+item_id = 9006
+name = "snowflake"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x232f_snowflake"
+base_id = "base_item"
+item_id = 9007
+name = "snowflake"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2330_poinsettia"
+base_id = "base_item"
+item_id = 9008
+name = "Poinsettia"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2331_poinsettia"
+base_id = "base_item"
+item_id = 9009
+name = "Poinsettia"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "wrist_watch"
+item_id = 4230
+name = "a wrist watch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x236e"
+base_id = "base_item"
+item_id = 9070
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "holiday_timepiece"
+item_id = 4230
+name = "a holiday timepiece"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "holidaybell"
+base_id = "base_item"
+item_id = 7186
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "snowpile"
+base_id = "base_item"
+item_id = 2323
+name = "a pile of snow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2377_a_snowy_tree"
+base_id = "base_item"
+item_id = 9079
+name = "A Snowy Tree"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2bd9_a_stocking"
+base_id = "base_item"
+item_id = 11225
+name = "a stocking"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2bda"
+base_id = "0x2bd9_a_stocking"
+item_id = 11226
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2bdb_a_stocking"
+base_id = "base_item"
+item_id = 11227
+name = "a stocking"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2bdc"
+base_id = "0x2bdb_a_stocking"
+item_id = 11228
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x232a_a_holiday_giftbox"
+base_id = "base_item"
+item_id = 9002
+name = "a Holiday Giftbox"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x232b"
+base_id = "0x232a_a_holiday_giftbox"
+item_id = 9003
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x_a12e"
+base_id = "base_item"
+item_id = 41262
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x_a12f"
+base_id = "0x_a12e"
+item_id = 41263
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x46fa_a_red_angel_decoration"
+base_id = "base_item"
+item_id = 18170
+name = "A red Angel Decoration"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x46fb"
+base_id = "0x46fa_a_red_angel_decoration"
+item_id = 18171
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4214_a_decorative_rocking_horse"
+base_id = "base_item"
+item_id = 16916
+name = "A decorative Rocking Horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4215"
+base_id = "0x4214_a_decorative_rocking_horse"
+item_id = 16917
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2376_a_festive_cactus"
+base_id = "base_item"
+item_id = 9078
+name = "A Festive Cactus"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2378_a_decorative_topiary"
+base_id = "base_item"
+item_id = 9080
+name = "A Decorative Topiary"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_snowglobe"
+base_id = "base_item"
+item_id = 3629
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "krampusminionboots"
+base_id = "0x170b_boots"
+item_id = 41613
+name = "krampus minion boots"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "krampusminionearrings"
+item_id = 41621
+name = "krampus minion earrings"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "krampusminionhat"
+base_id = "base_hat"
+item_id = 41615
+name = "krampus minion hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "krampusminiontalons"
+base_id = "0x170b_boots"
+item_id = 41620
+name = "krampus minion talons"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeneedles"
+item_id = 3287
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament1"
+item_id = 3855
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament2"
+item_id = 3856
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament3"
+item_id = 3858
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament4"
+item_id = 3859
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament5"
+item_id = 3860
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament6"
+item_id = 3861
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament7"
+item_id = 3862
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament8"
+item_id = 3863
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament9"
+item_id = 3864
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament10"
+item_id = 3865
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament11"
+item_id = 3872
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament12"
+item_id = 3874
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament13"
+item_id = 3875
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament14"
+item_id = 3876
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament15"
+item_id = 3878
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament16"
+item_id = 3879
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament17"
+item_id = 3881
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament18"
+item_id = 3888
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament19"
+item_id = 3866
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament20"
+item_id = 3867
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament21"
+item_id = 3868
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament22"
+item_id = 3870
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament23"
+item_id = 3871
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament24"
+item_id = 3882
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament25"
+item_id = 3883
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament26"
+item_id = 3887
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treeornament27"
+item_id = 3880
+name = "a tree ornament"
+rarity = "common"
+movable = false
+hue = 0

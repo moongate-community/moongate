@@ -1,0 +1,17 @@
+[[loot]]
+id = "juggernaut_loot"
+[[loot.entries]]
+weight = 960
+amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "clockwork_assembly"
+comment = "clockwork assembly"
+amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "power_crystal"
+comment = "power crystal"
+amount = 1

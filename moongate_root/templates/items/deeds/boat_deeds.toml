@@ -1,0 +1,47 @@
+[[item]]
+id = "smallshipdeed"
+item_id = 5360
+name = "small ship deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "mediumshipdeed"
+item_id = 5360
+name = "medium ship deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largeshipdeed"
+item_id = 5360
+name = "large ship deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smalldragonshipdeed"
+item_id = 5360
+name = "small dragon ship deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "mediumdragonshipdeed"
+item_id = 5360
+name = "medium dragon ship deed"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "largedragonshipdeed"
+item_id = 5360
+name = "large dragon ship deed"
+rarity = "common"
+movable = false
+hue = 0

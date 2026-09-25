@@ -1,0 +1,599 @@
+[[item]]
+id = "0x0006_wooden_wall"
+item_id = 6
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0007_wooden_wall"
+item_id = 7
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0008_wooden_wall"
+item_id = 8
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0009_wooden_post"
+item_id = 9
+name = "wooden post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x000a_wooden_wall"
+item_id = 10
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x000b_wooden_wall"
+item_id = 11
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x000c_wooden_wall"
+item_id = 12
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x000d_wooden_wall"
+item_id = 13
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x000e_window"
+item_id = 14
+name = "window"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x000f_window"
+item_id = 15
+name = "window"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0010_wooden_wall"
+item_id = 16
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0011_wooden_wall"
+item_id = 17
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0012_wooden_wall"
+item_id = 18
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0013_wooden_post"
+item_id = 19
+name = "wooden post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0014_wooden_wall"
+item_id = 20
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0015_wooden_wall"
+item_id = 21
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0016_wooden_wall"
+item_id = 22
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0017_wooden_post"
+item_id = 23
+name = "wooden post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0018_wooden_wall"
+item_id = 24
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0019_wooden_wall"
+item_id = 25
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0090_log_wall"
+item_id = 144
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0091_log_wall"
+item_id = 145
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0092_log_wall"
+item_id = 146
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0093_log_post"
+item_id = 147
+name = "log post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0094_log_wall"
+item_id = 148
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0095_log_wall"
+item_id = 149
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0096_log_wall"
+item_id = 150
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0097_log_wall"
+item_id = 151
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0098_window"
+item_id = 152
+name = "window"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0099_log_wall"
+item_id = 153
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x009a_log_wall"
+item_id = 154
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x009b_log_wall"
+item_id = 155
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x009c_log_wall"
+item_id = 156
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x009d_log_post"
+item_id = 157
+name = "log post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x009e_log_wall"
+item_id = 158
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x009f_log_wall"
+item_id = 159
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a0_log_wall"
+item_id = 160
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a1_log_wall"
+item_id = 161
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a2_log_wall"
+item_id = 162
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a3_log_wall"
+item_id = 163
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a4_log_wall"
+item_id = 164
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a5_log_wall"
+item_id = 165
+name = "log wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a6_wooden_wall"
+item_id = 166
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a7_wooden_wall"
+item_id = 167
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a8_wooden_wall"
+item_id = 168
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00a9_wooden_post"
+item_id = 169
+name = "wooden post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00aa_wooden_wall"
+item_id = 170
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00ab_wooden_wall"
+item_id = 171
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00ac_wooden_wall"
+item_id = 172
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00ad_wooden_wall"
+item_id = 173
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00ae_wooden_wall"
+item_id = 174
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00af_wooden_wall"
+item_id = 175
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b0_wooden_wall"
+item_id = 176
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b1_wooden_wall"
+item_id = 177
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b2_wooden_wall"
+item_id = 178
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b3_wooden_wall"
+item_id = 179
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b4_wooden_wall"
+item_id = 180
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b5_wooden_wall"
+item_id = 181
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b6_wooden_wall"
+item_id = 182
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b7_wooden_wall"
+item_id = 183
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b8_wooden_wall"
+item_id = 184
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00b9_wooden_wall"
+item_id = 185
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00ba_window"
+item_id = 186
+name = "window"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00bb_window"
+item_id = 187
+name = "window"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00bc_window"
+item_id = 188
+name = "window"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00bd_wooden_wall"
+item_id = 189
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00be_wooden_wall"
+item_id = 190
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00bf_wooden_wall"
+item_id = 191
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00c0_wooden_post"
+item_id = 192
+name = "wooden post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00c1_wooden_wall"
+item_id = 193
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00c2_wooden_wall"
+item_id = 194
+name = "wooden wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0145_log_post"
+item_id = 325
+name = "log post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0146_log_post"
+item_id = 326
+name = "log post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0147_log_post"
+item_id = 327
+name = "log post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0148_log_post"
+item_id = 328
+name = "log post"
+rarity = "common"
+movable = false
+hue = 0

@@ -1,0 +1,121 @@
+[[loot]]
+id = "randompotions"
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0d_purple_potion"
+comment = "purple potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0d_b_purple_potion"
+comment = "purple potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0d_c_purple_potion"
+comment = "purple potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0b_red_potion"
+comment = "red potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0b_b_red_potion"
+comment = "red potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f06_black_potion"
+comment = "black potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f07_orange_potion"
+comment = "orange potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f07_b_orange_potion"
+comment = "orange potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f07_c_orange_potion"
+comment = "orange potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f08_blue_potion"
+comment = "blue potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f08_b_blue_potion"
+comment = "blue potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f09_white_potion"
+comment = "white potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f09_b_white_potion"
+comment = "white potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0a_green_potion"
+comment = "green potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0a_b_green_potion"
+comment = "green potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0a_c_green_potion"
+comment = "green potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0a_d_green_potion"
+comment = "green potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0c_yellow_potion"
+comment = "yellow potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0c_b_yellow_potion"
+comment = "yellow potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0c_c_yellow_potion"
+comment = "yellow potion"
+amount = 1

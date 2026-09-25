@@ -1,0 +1,1204 @@
+[[item]]
+id = "base_spawner"
+base_id = "base_item"
+item_id = 7956
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "orcspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Orc Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "orclordspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Orc Lord Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "orccaptspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Orc Capt Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "orcmagespawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Orc Mage Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ettinspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Ettin Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "goatspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Goat Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "harpyspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Harpy Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "randorcspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Random Orc Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "randlizardspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Random Lizard Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "randratmanspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Random Ratman Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "randdragon"
+base_id = "base_spawner"
+item_id = 7956
+name = "Random Dragon Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "randbarn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Random Barn Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "airelemspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Air Elemental Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "earthelemspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Earth Elemental Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fireelemspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Fire Elemental Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "waterelemspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Water Elemental Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "poiselemspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Poison Elemental Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gserpentspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Giant Serpent Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gspiderspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Giant Spider Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gscorppawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Giant Scorpion Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "lichspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Lich Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "lichlordspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Lich Lord Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "bonemagespawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Bone Mage Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "boneknightspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Bone Knight Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "boneaxespawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Bone Axeman Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "arcticspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Arctic Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "cavespawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Cave Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "desertspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Desert Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "dungeonspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Dungeon Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "eeriespawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Eerie Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "farmspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Farm Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "forestspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Forest Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "junglespawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Jungle Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "mountainspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Mountain Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "oceanspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Ocean Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "swampspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Swamp Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "townspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Town Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "volcanicspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Volcanic Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "diablospawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Diablo Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "dogandcat"
+base_id = "base_spawner"
+item_id = 7956
+name = "Dog and Cat spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "allbears"
+base_id = "base_spawner"
+item_id = 7956
+name = "All Bear Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "swampcreatures"
+base_id = "base_spawner"
+item_id = 7956
+name = "Swamp Creature Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "junglecreatures"
+base_id = "base_spawner"
+item_id = 7956
+name = "Jungle Creature Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "livestock"
+base_id = "base_spawner"
+item_id = 7956
+name = "Livestock Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "allbirds"
+base_id = "base_spawner"
+item_id = 7956
+name = "All Birds Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "allanimals"
+base_id = "base_spawner"
+item_id = 7956
+name = "All Animals Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smallanimals"
+base_id = "base_spawner"
+item_id = 7956
+name = "Small Animal Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "prodanimals"
+base_id = "base_spawner"
+item_id = 7956
+name = "Productive Animal Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "strongundead"
+base_id = "base_spawner"
+item_id = 7956
+name = "Strong Undead Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "weakundead"
+base_id = "base_spawner"
+item_id = 7956
+name = "Weak Undead Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "allundead"
+base_id = "base_spawner"
+item_id = 7956
+name = "All Undead Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ettinsogres"
+base_id = "base_spawner"
+item_id = 7956
+name = "Ettins,Ogres and Trolls"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "weakorcs"
+base_id = "base_spawner"
+item_id = 7956
+name = "Weak Orc Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "strongorcs"
+base_id = "base_spawner"
+item_id = 7956
+name = "Strong Orc Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "orckin"
+base_id = "base_spawner"
+item_id = 7956
+name = "Orc Kin Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "daemons"
+base_id = "base_spawner"
+item_id = 7956
+name = "All Daemons Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "elemsdaemons"
+base_id = "base_spawner"
+item_id = 7956
+name = "Elemental & Daemon Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "elementals"
+base_id = "base_spawner"
+item_id = 7956
+name = "All Elementals Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "overworld"
+base_id = "base_spawner"
+item_id = 7956
+name = "All Overworld Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "alch_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Alchemist Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "anim_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Anim Trainer Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "armourer_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Armourer Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "architect_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Architect Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "baker_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Baker Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "banker_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Banker Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "bard_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Bard Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "smith_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Blacksmith Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "bee_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Beekeeper Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "bowyer_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Bowyer Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "butcher_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Butcher Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "carptenter_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Carpenter Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "cobbler_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Cobbler Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "cook_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Cook Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "farmer_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Farmer Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fisher_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Fisherman Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "healer_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Healer Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "whealer_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Wandering Healer Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "herbal_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Herbalist Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "innkeep_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Innkeeper Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tavernkeep_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Tavernkeeper Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "waiter_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Waiter Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "jewler_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Jewler Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "leather_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Leatherworker Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "furtrader_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Furtrader Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tanner_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Tanner Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "mage_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Mage Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "miner_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Miner Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "provision_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Provisioner Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "scribe_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Scribe Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "shipwright_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Shipwright Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "mapmaker_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Mapmaker Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "spinner_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Spinner Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tailor_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Tailor Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tinker_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Tinker Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "weaponsmith_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Weaponsmith Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "weaver_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Weaver Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "basichuman_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Basic Human Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "guard_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Guard Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "archmage_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Archmage Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pirate_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Pirate Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fighter_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Fighter Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ranger_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Ranger Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "sailor_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Sailor Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gambler_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Gambler Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "judge_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Judge Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "miller_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Miller Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "monk_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Monk Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "rancher_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Rancher Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "prisoner_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Prisoner Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "sculptor_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Sculptor Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "brigand_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Brigand Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "beggar_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Beggar Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "noble_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Noble Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "thief_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Thief Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "peasant_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Peasant Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gypsy_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Gypsy Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "seeker_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Seeker Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "jailer_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Jailer Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "towncrier_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Towncrier Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "artist_spawn"
+base_id = "base_spawner"
+item_id = 5015
+name = "Artist Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "escortspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Escort Spawn"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "carrotspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Carrot Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "onionspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Onion Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "turnipspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Turnip Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "cabbagespawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Cabbage Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "watermelonspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Watermelon Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gourdspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Gourd Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pumpkinspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Pumpkin Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "squashspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Squash Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "honeydewmelonspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Honeydew Melon Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "canteloupespawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Canteloupe Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "garlicspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Garlic Spawner"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "flaxspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Flax Spawner"
+rarity = "common"
+movable = false
+hue = 0

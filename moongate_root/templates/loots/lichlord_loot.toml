@@ -1,0 +1,10 @@
+[[loot]]
+id = "lichlord_loot"
+[[loot.entries]]
+weight = 50
+amount = 1
+
+[[loot.entries]]
+weight = 50
+item_id = "random_magic_wand_5"
+amount = 1
