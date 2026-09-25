@@ -183,10 +183,40 @@ public sealed class MobileEntityPersistenceTests
     }
 
     [Fact]
-    public void IsPlayer_FollowsTheAccount()
+    public void IsNpc_IsTrueOnlyWithoutAnAccount()
     {
-        Assert.False(new MobileEntity { AccountId = Serial.Zero }.IsPlayer);
-        Assert.True(new MobileEntity { AccountId = new(42) }.IsPlayer);
+        Assert.True(new MobileEntity().IsNpc);
+        Assert.False(new MobileEntity { AccountId = new(42) }.IsNpc);
+    }
+
+    [Fact]
+    public async Task AccountId_NullForAnNpcAndSetForAPlayer_RoundTrips()
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
+        await using var coordinator = fixture.Create(typeof(MobileEntity));
+        await coordinator.InitializeAsync();
+        var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
+
+        await orm.Insert(new MobileEntity { Id = new(1), Name = "a guard" }).ExecuteAffrowsAsync();
+        await orm.Insert(new MobileEntity { Id = new(2), Name = "Aria", AccountId = new(42) }).ExecuteAffrowsAsync();
+        var guardId = new Serial(1);
+        var ariaId = new Serial(2);
+        var guard = await orm.Select<MobileEntity>().Where(entity => entity.Id == guardId).FirstAsync();
+        var aria = await orm.Select<MobileEntity>().Where(entity => entity.Id == ariaId).FirstAsync();
+
+        Assert.Null(guard.AccountId);
+        Assert.True(guard.IsNpc);
+        Assert.Equal(new Serial(42), aria.AccountId);
+        Assert.False(aria.IsNpc);
+        Assert.True(await database.ScalarAsync<bool>("SELECT account_id IS NULL FROM world.mobiles WHERE id = 1"));
+        Assert.Equal(
+            "YES",
+            await database.ScalarAsync<string>(
+                "SELECT is_nullable FROM information_schema.columns WHERE table_schema = 'world' " +
+                "AND table_name = 'mobiles' AND column_name = 'account_id'"
+            )
+        );
     }
 
     [Fact]

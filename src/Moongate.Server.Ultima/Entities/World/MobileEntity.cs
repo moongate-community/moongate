@@ -8,8 +8,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Server.Ultima.Entities.World;
 
 /// <summary>
-///     A mobile of the world: a player character or an NPC. Both share the same serial range and the same state; a
-///     player character is the one with an <see cref="AccountId" />.
+///     A mobile of the world: a player character or an NPC. Both share the same serial range and the same state; an
+///     NPC is the one without an <see cref="AccountId" />.
 /// </summary>
 /// <remarks>
 ///     Names are not unique here, because NPCs repeat them; the uniqueness of player character names is checked when a
@@ -24,16 +24,16 @@ public class MobileEntity : IMoongateEntity
 
 
     /// <summary>
-    ///     The account of a player character; <see cref="Serial.Zero" /> for an NPC.
+    ///     The account of a player character; <see langword="null" /> for an NPC.
     /// </summary>
-    [Column(MapType = typeof(long))]
-    public Serial AccountId { get; set; }
+    [Column(MapType = typeof(long?), IsNullable = true)]
+    public Serial? AccountId { get; set; }
 
     /// <summary>
-    ///     Gets whether this mobile is a player character, that is, it belongs to an account.
+    ///     Gets whether this mobile is an NPC, that is, it belongs to no account.
     /// </summary>
     [Column(IsIgnore = true)]
-    public bool IsPlayer => AccountId.IsValid;
+    public bool IsNpc => AccountId is null;
 
     public string Name { get; set; }
 
