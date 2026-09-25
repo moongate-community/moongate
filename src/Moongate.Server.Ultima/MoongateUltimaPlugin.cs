@@ -13,6 +13,8 @@ using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Data.Professions;
+using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Handlers.Login;
@@ -77,6 +79,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         {
             container.AddUltimaDataLoader<MapLoader, MapContent>(0);
             container.AddUltimaDataLoader<StartingCitiesLoader, StartingCityContent>(1);
+            container.AddUltimaDataLoader<SkillsLoader, SkillContent>(2);
+            container.AddUltimaDataLoader<ProfessionsLoader, ProfessionContent>(3);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
