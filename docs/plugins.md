@@ -284,7 +284,7 @@ wired yet. Its future input path must protect the password as the console does.
 Build the plugin project in Release and copy its output, everything under
 `bin/Release/net10.0/` and not just the entry DLL, into `<root>/plugins/<BundleName>/`
 on the target server. `<root>` is resolved at startup from `--root-directory`, then
-`MOONGATE_ROOT`, then the executable's own directory.
+`MOONGATE_ROOT`; the server refuses to start with neither.
 
 A bundle is a directory under `<root>/plugins/`; its name is also the name the loader
 expects for its entry assembly. A bundle at `plugins/mymod/` must contain `mymod.dll`,

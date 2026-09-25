@@ -57,22 +57,52 @@ public sealed class ProgramTests
         Assert.False(Directory.Exists(Path.Combine(directory.Path, "save")));
     }
 
-    private static async Task<(int ExitCode, string Output)> RunServerAsync(string root)
+    [Fact]
+    public async Task Startup_RootIsTheBinaryDirectory_RefusesBeforeCreatingAnything()
     {
-        using var process = Process.Start(
-            new ProcessStartInfo
+        var binaryDirectory = Path.GetDirectoryName(typeof(MoongateServerBootstrap).Assembly.Location)!;
+
+        var (exitCode, output) = await RunServerAsync(binaryDirectory);
+
+        Assert.Equal(2, exitCode);
+        Assert.Contains("--root-directory", output, StringComparison.Ordinal);
+        Assert.False(File.Exists(Path.Combine(binaryDirectory, "moongate.pid.lock")));
+    }
+
+    [Fact]
+    public async Task Startup_WithoutARoot_RefusesBecauseTheDefaultIsTheBinaryDirectory()
+    {
+        var binaryDirectory = Path.GetDirectoryName(typeof(MoongateServerBootstrap).Assembly.Location)!;
+
+        var (exitCode, output) = await RunServerAsync(null);
+
+        Assert.Equal(2, exitCode);
+        Assert.Contains("--root-directory", output, StringComparison.Ordinal);
+        Assert.False(File.Exists(Path.Combine(binaryDirectory, "moongate.pid.lock")));
+    }
+
+    private static async Task<(int ExitCode, string Output)> RunServerAsync(string? root)
+    {
+        var startInfo = new ProcessStartInfo
+        {
+            FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
+            ArgumentList =
             {
-                FileName = Environment.GetEnvironmentVariable("DOTNET_HOST_PATH") ?? "dotnet",
-                ArgumentList =
-                {
-                    typeof(MoongateServerBootstrap).Assembly.Location,
-                    "--root-directory", root
-                },
-                RedirectStandardOutput = true,
-                RedirectStandardError = true,
-                UseShellExecute = false
-            }
-        )!;
+                typeof(MoongateServerBootstrap).Assembly.Location
+            },
+            RedirectStandardOutput = true,
+            RedirectStandardError = true,
+            UseShellExecute = false
+        };
+        startInfo.Environment.Remove("MOONGATE_ROOT");
+
+        if (root is not null)
+        {
+            startInfo.ArgumentList.Add("--root-directory");
+            startInfo.ArgumentList.Add(root);
+        }
+
+        using var process = Process.Start(startInfo)!;
         var stdout = process.StandardOutput.ReadToEndAsync();
         var stderr = process.StandardError.ReadToEndAsync();
 

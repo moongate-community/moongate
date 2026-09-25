@@ -44,6 +44,18 @@ await ConsoleApp.RunAsync(
 
         rootDirectory = rootDirectory.ResolvePathAndEnvs();
 
+        try
+        {
+            RootDirectoryGuard.EnsureNotBinaryDirectory(rootDirectory, AppContext.BaseDirectory);
+        }
+        catch (InvalidOperationException exception)
+        {
+            await Console.Error.WriteLineAsync($"Moongate startup aborted: {exception.Message}");
+            Environment.ExitCode = 2;
+
+            return;
+        }
+
         if (generateAdminCertificate && !initializeRoot || adminCertificateHosts is not null && !generateAdminCertificate)
         {
             await Console.Error.WriteLineAsync(

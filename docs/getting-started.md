@@ -144,8 +144,9 @@ use the documentation published for that version.
    moongate --root-directory /srv/moongate
    ```
 
-   Always pass `--root-directory`. Without it the server uses the directory the binary
-   sits in. A successful start logs `Postgres connection successful` once per
+   Always pass `--root-directory`. Without it, or with a root that is the directory the
+   binary sits in, the server refuses to start with exit code 2, because an upgrade
+   replaces that directory. A successful start logs `Postgres connection successful` once per
    database, then the loaded services and the bound endpoints. A missing
    `scripts/init.lua` is a warning and starts an empty scripting environment; a
    bootstrap script that exists but fails prevents startup. Add scripts with

@@ -142,7 +142,7 @@ dotnet run --project src/Moongate.Server -c Release -- \
 
 | Option | Default | Current behavior |
 | --- | --- | --- |
-| `--root-directory <path>` | Unset | Overrides `MOONGATE_ROOT`; otherwise the executable directory is used |
+| `--root-directory <path>` | Unset | Overrides `MOONGATE_ROOT`; with neither set the server refuses to start |
 | `--pid-file-name <name>` | `moongate.pid` | PID filename under the chosen root; use a plain filename |
 | `--log-level <level>` | `Information` | Parsed into server arguments, but currently not applied to the Serilog level policy |
 | `--log-to-file` | `true` | File logging is enabled; the generated parser only accepts this as a presence flag |
@@ -161,7 +161,11 @@ Although help displays `<bool>` for the default-true options, the current CLI
 does not accept `--show-header false`, `--show-header=false` or corresponding
 file-logging forms. There is no CLI switch to turn these two options off yet.
 
-Root precedence is **command line → `MOONGATE_ROOT` → executable directory**.
+Root precedence is **command line → `MOONGATE_ROOT`**. With neither set the root would
+be the directory holding the binary, and the server refuses to start with exit code 2,
+naming `--root-directory`. The same refusal applies when either resolves to that
+directory, because an upgrade replaces it wholesale and would delete `config/`, `logs/`,
+`save/` and `world-saves/` with it.
 The chosen root expands home/environment references and becomes an absolute path;
 a relative root starts from the working directory. Prefer explicit absolute paths
 in service managers and containers. Docker sets `MOONGATE_ROOT=/data` by default.
