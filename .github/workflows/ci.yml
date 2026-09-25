@@ -77,7 +77,7 @@ jobs:
 
       - name: Test
         # Test projects share PostgreSQL and Redis services; run their hosts one at a time.
-        run: dotnet test Moongate.slnx -c Release --no-build -m:1
+        run: bash scripts/test.sh all -c Release --no-build
 
       - name: Verify portable administration client
         run: |

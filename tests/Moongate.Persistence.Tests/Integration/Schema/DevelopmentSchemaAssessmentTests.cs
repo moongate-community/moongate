@@ -220,6 +220,7 @@ public sealed class DevelopmentSchemaAssessmentTests
             CancellationToken.None
         );
         Assert.False(result.RequiresReview);
+        Assert.NotEmpty(result.Ddl);
         await db.ExecuteAsync(result.Ddl);
         Assert.Equal(
             "existing",
@@ -235,18 +236,10 @@ public sealed class DevelopmentSchemaAssessmentTests
         Assert.True(string.IsNullOrWhiteSpace(unchanged.Ddl));
     }
 
-    [Theory, InlineData(false), InlineData(true)]
-    public async Task AssessAsync_NewTableOrNullableColumn_IsAutomatic(bool existing)
+    [Fact]
+    public async Task AssessAsync_NewTable_IsAutomatic()
     {
         await using var db = await _fixture.CreateDatabaseAsync();
-
-        if (existing)
-        {
-            await db.ExecuteAsync(
-                "CREATE SCHEMA auth; CREATE TABLE auth.development_accounts(id bigint NOT NULL PRIMARY KEY, username varchar(255));"
-            );
-        }
-
         using var database = PostgreSqlDatabase.Create(new(PersistenceDatabaseTarget.Accounts, db.ConnectionString));
         var result = await DevelopmentSchemaAssessor.AssessAsync(
             database,

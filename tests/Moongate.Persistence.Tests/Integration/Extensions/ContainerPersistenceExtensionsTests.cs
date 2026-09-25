@@ -7,7 +7,7 @@ using Moongate.Persistence.Services;
 using Moongate.Persistence.Tests.TestSupport.Persistence;
 using Moongate.Persistence.Types.Persistence;
 
-namespace Moongate.Persistence.Tests.Extensions;
+namespace Moongate.Persistence.Tests.Integration.Extensions;
 
 [Collection(PostgreSqlCollection.Name)]
 public sealed class ContainerPersistenceExtensionsTests

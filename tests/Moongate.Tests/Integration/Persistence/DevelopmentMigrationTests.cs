@@ -57,6 +57,8 @@ public sealed class DevelopmentMigrationTests
         var sqlFile = Assert.Single(Directory.GetFiles(Path.Combine(fixture.Migrations, "auth"), "*.sql"));
         Assert.DoesNotContain(MigrationReviewGuard.Marker, await File.ReadAllTextAsync(sqlFile));
         Assert.Equal(1L, await db.ScalarAsync<long>("SELECT count(*) FROM moongate_migrations.history"));
+        Assert.Equal("auth", await db.ScalarAsync<string>("SELECT target FROM moongate_migrations.history"));
+        Assert.False(Directory.Exists(Path.Combine(fixture.Migrations, "world")));
         Assert.Equal(
             "auth.accounts_id_seq",
             await db.ScalarAsync<string>("SELECT pg_get_serial_sequence('auth.accounts', 'id')")
@@ -271,21 +273,6 @@ public sealed class DevelopmentMigrationTests
         await using var second = fixture.Create(typeof(DevelopmentItemV2));
         await Assert.ThrowsAsync<InvalidOperationException>(() => second.InitializeAsync());
         Assert.Single(Directory.GetFiles(Path.Combine(fixture.Migrations, "world"), "*.sql"));
-    }
-
-    [Fact]
-    public async Task InitializeAsync_AuthUsesAuthDirectoryAndHistoryTarget()
-    {
-        await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
-        using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
-        await using var coordinator = fixture.Create(
-            typeof(TestEntity),
-            PersistenceDatabaseTarget.Accounts
-        );
-        await coordinator.InitializeAsync();
-        Assert.Single(Directory.GetFiles(Path.Combine(fixture.Migrations, "auth"), "*.sql"));
-        Assert.Equal("auth", await db.ScalarAsync<string>("SELECT target FROM moongate_migrations.history"));
-        Assert.False(Directory.Exists(Path.Combine(fixture.Migrations, "world")));
     }
 
     [Fact]

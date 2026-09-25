@@ -117,39 +117,42 @@ public sealed class JsonMapTests
         Assert.Equal(1L, await database.ScalarAsync<long>("SELECT count(*) FROM json_mapping.profiles"));
     }
 
-    [Theory, InlineData(false), InlineData(true)]
-    public async Task UpsertAsync_EmptyAndNullCollections_PreserveDistinctDatabaseValues(bool useNull)
+    [Fact]
+    public async Task UpsertAsync_EmptyAndNullCollections_PreserveDistinctDatabaseValues()
     {
         await using var database = await _postgres.CreateDatabaseAsync();
         await using var owner = CreateOwner(database);
         var store = owner.RegisterEntity<JsonProfileEntity>(target: PersistenceDatabaseTarget.Realm);
         await owner.InitializeAsync();
-        var entity = new JsonProfileEntity { QuestProgress = useNull ? null : [] };
-        await store.UpsertAsync(entity);
-        var loaded = Assert.IsType<JsonProfileEntity>(await store.GetByIdAsync(entity.Id));
-
-        if (useNull)
+        foreach (var useNull in new[] { false, true })
         {
-            Assert.Null(loaded.QuestProgress);
-        }
-        else
-        {
-            Assert.Empty(Assert.IsType<List<QuestProgressData>>(loaded.QuestProgress));
-        }
+            var entity = new JsonProfileEntity { QuestProgress = useNull ? null : [] };
+            await store.UpsertAsync(entity);
+            var loaded = Assert.IsType<JsonProfileEntity>(await store.GetByIdAsync(entity.Id));
 
-        Assert.Null(loaded.ActiveQuest);
-        Assert.Equal(
-            useNull,
-            await database.ScalarAsync<bool>(
-                "SELECT quest_progress IS NULL FROM json_mapping.profiles"
-            )
-        );
-        Assert.Equal(
-            useNull ? null : "[]",
-            await database.ScalarAsync<string>(
-                "SELECT quest_progress::text FROM json_mapping.profiles"
-            )
-        );
+            if (useNull)
+            {
+                Assert.Null(loaded.QuestProgress);
+            }
+            else
+            {
+                Assert.Empty(Assert.IsType<List<QuestProgressData>>(loaded.QuestProgress));
+            }
+
+            Assert.Null(loaded.ActiveQuest);
+            Assert.Equal(
+                useNull,
+                await database.ScalarAsync<bool>(
+                    $"SELECT quest_progress IS NULL FROM json_mapping.profiles WHERE id = {entity.Id.Value}"
+                )
+            );
+            Assert.Equal(
+                useNull ? null : "[]",
+                await database.ScalarAsync<string>(
+                    $"SELECT quest_progress::text FROM json_mapping.profiles WHERE id = {entity.Id.Value}"
+                )
+            );
+        }
     }
 
     [Fact]
