@@ -21,7 +21,7 @@
 #   guarded         whether guards protect the region
 #   housing         whether players may place houses
 #   instant_logout  whether a character with no fight in progress logs out at once
-#   recall_in, recall_out, gate_in, gate_out, mark
+#   recall_in, recall_out, gate_in, gate_out, mark, teleport_in, teleport_out
 #                   whether those travel spells work into, out of or in the region;
 #                   a travel spell is blocked when any region covering the place
 #                   blocks it, whatever its priority
@@ -49,6 +49,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "T2A Arena"
@@ -69,6 +71,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "The Heartwood"
@@ -86,6 +90,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = false
+teleport_out = false
 
 [[region]]
 name = "Sanctuary"
@@ -103,6 +109,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = false
+teleport_out = true
 
 [[region]]
 name = "The Painted Caves"
@@ -120,6 +128,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = false
+teleport_out = true
 
 [[region]]
 name = "The Prism of Light"
@@ -137,6 +147,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = false
+teleport_out = true
 
 [[region]]
 name = "Blighted Grove"
@@ -154,6 +166,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = false
+teleport_out = true
 
 [[region]]
 name = "The Palace of Paroxysmus"
@@ -171,6 +185,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = false
+teleport_out = true
 
 [[region]]
 name = "Bravehorn's drinking pool"
@@ -185,6 +201,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Huntsman's Forest"
@@ -199,6 +217,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Cove"
@@ -218,6 +238,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Britain"
@@ -241,6 +263,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -269,6 +293,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Wheatfield in Britain 1"
@@ -285,6 +311,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Wheatfield in Britain 2"
@@ -301,6 +329,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Wheatfield in Britain 3"
@@ -317,6 +347,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Carrot Field in Britain 1"
@@ -333,6 +365,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "An Onion Field in Britain 1"
@@ -349,6 +383,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Cabbage Field in Britain 1"
@@ -365,6 +401,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Turnip Field in Britain 1"
@@ -381,6 +419,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Wheatfield in Britain 4"
@@ -397,6 +437,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Wheatfield in Britain 5"
@@ -413,6 +455,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Turnip Field in Britain 2"
@@ -429,6 +473,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Carrot Field in Britain 2"
@@ -445,6 +491,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Britain Graveyard"
@@ -460,6 +508,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Jhelom Islands"
@@ -480,6 +530,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Jhelom"
@@ -500,6 +552,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "nohousing"
@@ -519,6 +573,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Minoc"
@@ -541,6 +597,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -559,6 +617,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Ocllo"
@@ -584,6 +644,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -602,6 +664,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Trinsic"
@@ -625,6 +689,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -646,6 +712,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Vesper"
@@ -667,6 +735,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -688,6 +758,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Yew"
@@ -711,6 +783,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -725,6 +799,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Field of Sheep in Yew 1"
@@ -742,6 +818,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Field of Sheep in Yew 2"
@@ -759,6 +837,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Farm in Yew"
@@ -776,6 +856,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Wheatfield in Yew 1"
@@ -793,6 +875,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Wheatfield in Yew 2"
@@ -810,6 +894,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Wind"
@@ -838,6 +924,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -860,6 +948,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Serpent's Hold"
@@ -876,6 +966,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -894,6 +986,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Skara Brae"
@@ -910,6 +1004,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -930,6 +1026,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Nujel'm"
@@ -946,6 +1044,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -974,6 +1074,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Moonglow"
@@ -1015,6 +1117,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -1036,6 +1140,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Magincia"
@@ -1058,6 +1164,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -1075,6 +1183,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Buccaneer's Den"
@@ -1094,6 +1204,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -1113,6 +1225,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Covetous"
@@ -1133,6 +1247,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Deceit"
@@ -1150,6 +1266,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Despise"
@@ -1167,6 +1285,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Destard"
@@ -1184,6 +1304,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Hythloth"
@@ -1201,6 +1323,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Khaldun"
@@ -1218,6 +1342,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Jail"
@@ -1233,6 +1359,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Green Acres"
@@ -1248,6 +1376,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Shame"
@@ -1268,6 +1398,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Wrong"
@@ -1285,6 +1417,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Cave 1"
@@ -1305,6 +1439,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Cave 2"
@@ -1320,6 +1456,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Cave 3"
@@ -1335,6 +1473,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Cave 4"
@@ -1350,6 +1490,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Britain Mine 1"
@@ -1365,6 +1507,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Britain Mine 2"
@@ -1380,6 +1524,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Minoc Cave 1"
@@ -1395,6 +1541,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Minoc Cave 2"
@@ -1410,6 +1558,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Minoc Cave 3"
@@ -1425,6 +1575,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Minoc Mine"
@@ -1443,6 +1595,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Avatar Isle Cave"
@@ -1458,6 +1612,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Ice Isle Cave 1"
@@ -1473,6 +1629,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Ice Isle Cave 2"
@@ -1491,6 +1649,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "North Territory Cave"
@@ -1506,6 +1666,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Yew Cave"
@@ -1521,6 +1683,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "North Territory Mine 1"
@@ -1536,6 +1700,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "North Territory Mine 2"
@@ -1551,6 +1717,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Mt Kendall"
@@ -1570,6 +1738,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Covetous Mine"
@@ -1589,6 +1759,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Terathan Keep"
@@ -1609,6 +1781,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Fire"
@@ -1626,6 +1800,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Ice"
@@ -1647,6 +1823,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Delucia"
@@ -1666,6 +1844,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -1680,6 +1860,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Papua"
@@ -1698,6 +1880,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -1712,6 +1896,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Wrong Entrance"
@@ -1728,6 +1914,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Covetous Entrance"
@@ -1744,6 +1932,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Despise Entrance"
@@ -1759,6 +1949,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Despise Passage"
@@ -1778,6 +1970,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Misc Dungeons"
@@ -1795,6 +1989,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Orc Cave"
@@ -1816,6 +2012,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Cotton Field in Moonglow"
@@ -1832,6 +2030,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Wheatfield in Skara Brae 1"
@@ -1848,6 +2048,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Carrot Field in Skara Brae"
@@ -1863,6 +2065,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "An Onion Field in Skara Brae"
@@ -1878,6 +2082,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Cabbage Field in Skara Brae 1"
@@ -1893,6 +2099,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Cabbage Field in Skara Brae 2"
@@ -1908,6 +2116,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Wheatfield in Skara Brae 2"
@@ -1923,6 +2133,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "A Cotton Field in Skara Brae"
@@ -1938,6 +2150,8 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+teleport_in = true
+teleport_out = true
 
 # ------------------------------------------------------------------------------
 # Travel zones: places where travel spells are limited, with no other rules.
@@ -1954,6 +2168,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 # Travel zone: Wind.
 [[region]]
@@ -1965,6 +2181,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 # Travel zone: the Solen hives.
 [[region]]
@@ -1976,3 +2194,5 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true

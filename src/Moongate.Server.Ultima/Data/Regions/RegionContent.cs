@@ -84,6 +84,16 @@ public class RegionContent
     public bool Mark { get; set; } = true;
 
     /// <summary>
+    ///     Whether the Teleport spell can move a character into the region.
+    /// </summary>
+    public bool TeleportIn { get; set; } = true;
+
+    /// <summary>
+    ///     Whether the Teleport spell can move a character out of the region.
+    /// </summary>
+    public bool TeleportOut { get; set; } = true;
+
+    /// <summary>
     ///     Returns whether the point is inside one of the region's areas.
     /// </summary>
     public bool Contains(int x, int y, int z)

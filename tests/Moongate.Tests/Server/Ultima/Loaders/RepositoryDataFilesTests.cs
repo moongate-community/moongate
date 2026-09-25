@@ -76,8 +76,15 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains(trammelWind, region => !region.RecallIn);
         Assert.DoesNotContain(trammelWind, region => !region.RecallOut);
         Assert.Contains(trammelWind, region => region.Name == "Wind" && region.Guarded);
+        var heartwood = Assert.Single(regions, region => region.Map == MapType.Felucca && region.Name == "The Heartwood");
+        Assert.False(heartwood.TeleportIn);
+        Assert.False(heartwood.TeleportOut);
+        var bedlam = Assert.Single(regions, region => region.Map == MapType.Malas && region.Name == "Bedlam");
+        Assert.False(bedlam.TeleportIn);
+        Assert.True(bedlam.TeleportOut);
+        Assert.True(britain.TeleportIn);
         var crystalCave = regions.Where(region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -90));
-        Assert.Single(crystalCave);
+        Assert.False(Assert.Single(crystalCave).TeleportOut);
         Assert.DoesNotContain(
             regions,
             region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -70) && !region.RecallOut &&

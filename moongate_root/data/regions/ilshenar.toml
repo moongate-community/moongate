@@ -21,7 +21,7 @@
 #   guarded         whether guards protect the region
 #   housing         whether players may place houses
 #   instant_logout  whether a character with no fight in progress logs out at once
-#   recall_in, recall_out, gate_in, gate_out, mark
+#   recall_in, recall_out, gate_in, gate_out, mark, teleport_in, teleport_out
 #                   whether those travel spells work into, out of or in the region;
 #                   a travel spell is blocked when any region covering the place
 #                   blocks it, whatever its priority
@@ -43,6 +43,8 @@ recall_out = false
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = false
+teleport_out = true
 
 [[region]]
 name = "Sheep Farm"
@@ -57,6 +59,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Shrine of Valor"
@@ -72,6 +76,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Chaos Shrine"
@@ -87,6 +93,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Shrine of Sacrifice"
@@ -102,6 +110,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Shrine of Honesty"
@@ -117,6 +127,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Shrine of Compassion"
@@ -132,6 +144,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Shrine of Spirituality"
@@ -147,6 +161,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Shrine of Humility"
@@ -162,6 +178,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Shrine of Honor"
@@ -177,6 +195,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Terort Skitas"
@@ -192,6 +212,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Gargoyle City"
@@ -212,6 +234,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -226,6 +250,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Pormir Harm"
@@ -242,6 +268,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Pormir Felwis"
@@ -257,6 +285,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Cyclops Temple"
@@ -272,6 +302,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Rat Fort"
@@ -287,6 +319,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Rat Fort Cellar"
@@ -302,6 +336,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance to Central Ilshenar 1"
@@ -317,6 +353,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance to Central Ilshenar 2"
@@ -332,6 +370,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Montor"
@@ -352,6 +392,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Termir Flam"
@@ -371,6 +413,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Ancient Citadel"
@@ -386,6 +430,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Alexandretta's Bowl"
@@ -401,6 +447,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance to Rock Dungeon"
@@ -416,6 +464,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Rock Dungeon"
@@ -435,6 +485,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Lenmir Anfinmotas"
@@ -450,6 +502,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance to Spider Cave"
@@ -465,6 +519,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Spider Cave"
@@ -484,6 +540,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Twin Oaks"
@@ -499,6 +557,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "base"
@@ -513,6 +573,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Reg Volon"
@@ -528,6 +590,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance Spectre Dungeon"
@@ -543,6 +607,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Spectre Dungeon"
@@ -559,6 +625,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance Blood Dungeon"
@@ -574,6 +642,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Blood Dungeon"
@@ -590,6 +660,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance Mushroom Cave"
@@ -605,6 +677,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Mushroom Cave"
@@ -620,6 +694,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Lake Shire"
@@ -635,6 +711,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance Rat Cave"
@@ -650,6 +728,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Rat Cave Territory"
@@ -665,6 +745,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Ratman Cave"
@@ -683,6 +765,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Bet-Lem Reg"
@@ -698,6 +782,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Mistas"
@@ -716,6 +802,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "town"
@@ -730,6 +818,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance Serpentine Passage"
@@ -745,6 +835,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Serpentine Passage"
@@ -760,6 +852,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Ankh Dungeon"
@@ -779,6 +873,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Kirin passage"
@@ -794,6 +890,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance Lizards Passage"
@@ -809,6 +907,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Wisp Dungeon"
@@ -835,6 +935,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Lizard Passage"
@@ -850,6 +952,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Exodus Dungeon"
@@ -866,6 +970,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Lizard Man's Huts"
@@ -881,6 +987,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Nox Tereg"
@@ -896,6 +1004,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Sorcerer's Dungeon"
@@ -918,6 +1028,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Entrance Ancient Lair"
@@ -933,6 +1045,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Ancient Lair"
@@ -949,6 +1063,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Gypsy Camp"
@@ -964,6 +1080,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Gypsy Camp 1"
@@ -979,6 +1097,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Gypsy Camp 2"
@@ -994,6 +1114,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "base"
@@ -1008,6 +1130,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Juka Camp"
@@ -1023,6 +1147,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Gypsy Camp 3"
@@ -1038,6 +1164,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Gypsy Camp 4"
@@ -1053,6 +1181,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Gypsy Camp 5"
@@ -1071,6 +1201,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Gypsy Camp 6"
@@ -1086,6 +1218,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Lord Blackthorn's Ilshenar Castle"
@@ -1104,6 +1238,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Shrine of the Virtues"
@@ -1119,6 +1255,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Pass of Karnaugh"
@@ -1141,6 +1279,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 name = "Vinculum Inn"
@@ -1156,6 +1296,8 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true
 
 [[region]]
 type = "base"
@@ -1170,3 +1312,5 @@ recall_out = true
 gate_in = false
 gate_out = false
 mark = false
+teleport_in = true
+teleport_out = true

@@ -64,6 +64,8 @@ public sealed class RegionsLoaderTests
         Assert.True(britain.Guarded);
         Assert.False(britain.Housing);
         Assert.True(britain.RecallIn);
+        Assert.True(britain.TeleportIn);
+        Assert.True(britain.TeleportOut);
         Assert.Single(result.Entities, region => region.Map == MapType.Felucca);
         var tavern = result.Entities.First(region => region.Name == "The Tavern");
         Assert.Equal("Britain", tavern.Parent);
