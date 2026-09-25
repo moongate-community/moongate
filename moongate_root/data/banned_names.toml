@@ -1,0 +1,57 @@
+# ==============================================================================
+# Moongate - banned_names.toml
+#
+# What it is for:
+#   The words a player character name may not use. At character creation the
+#   server checks the name the client sends; a name that uses a banned word is
+#   replaced with "Generic Player". Matching ignores case.
+#
+# Fields:
+#   starts_with  words a name may not start with, such as titles that would make
+#                a player look like staff ("gm" also bans "GMaria")
+#   words        words a name may not contain as a whole word ("mage" bans
+#                "Aria the Mage" but not "Magenta"); add any word you want to
+#                keep out of names, such as offensive ones
+# ==============================================================================
+
+starts_with = [
+    "admin",
+    "counselor",
+    "gm",
+    "lady",
+    "lord",
+    "seer",
+]
+
+words = [
+    "adept",
+    "apprentice",
+    "archer",
+    "beggar",
+    "blackthorn",
+    "blackthorne",
+    "british",
+    "carpenter",
+    "chef",
+    "expert",
+    "fisherman",
+    "frozen",
+    "gamemaster",
+    "grandmaster",
+    "invulnerable",
+    "journeyman",
+    "lb",
+    "mage",
+    "master",
+    "medium",
+    "merchant",
+    "neophyte",
+    "novice",
+    "origin",
+    "osi",
+    "rogue",
+    "scholar",
+    "smith",
+    "squelched",
+    "tailor",
+]

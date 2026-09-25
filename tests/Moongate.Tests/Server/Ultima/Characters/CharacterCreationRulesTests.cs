@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Characters;
+using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Ultima.Types;
 
@@ -8,6 +9,12 @@ namespace Moongate.Tests.Server.Ultima.Characters;
 
 public sealed class CharacterCreationRulesTests
 {
+    private static readonly BannedNamesContent BannedNames = new()
+    {
+        StartsWith = ["lord", "gm"],
+        Words = ["mage", "grandmaster"]
+    };
+
     private static readonly RaceContent Human = new()
     {
         Race = RaceType.Human,
@@ -106,10 +113,11 @@ public sealed class CharacterCreationRulesTests
      InlineData("Jean-Luc"),
      InlineData("St.Clair"),
      InlineData("Ab"),
-     InlineData("Abcdefghijklmnop")]
+     InlineData("Abcdefghijklmnop"),
+     InlineData("Magenta")]
     public void ValidateName_AllowedNames_AreKept(string name)
     {
-        Assert.Equal(name, CharacterCreationRules.ValidateName(name));
+        Assert.Equal(name, CharacterCreationRules.ValidateName(name, BannedNames));
     }
 
     [Theory,
@@ -125,16 +133,17 @@ public sealed class CharacterCreationRulesTests
      InlineData("Lord Aria"),
      InlineData("GMaria"),
      InlineData("Aria the Mage"),
-     InlineData("Grandmaster")]
+     InlineData("Grandmaster"),
+     InlineData("Lordaria")]
     public void ValidateName_NotAllowed_BecomesTheDefaultName(string? name)
     {
-        Assert.Equal(CharacterCreationRules.DefaultName, CharacterCreationRules.ValidateName(name));
+        Assert.Equal(CharacterCreationRules.DefaultName, CharacterCreationRules.ValidateName(name, BannedNames));
     }
 
     [Fact]
     public void ValidateName_SurroundingSpaces_AreTrimmed()
     {
-        Assert.Equal("Aria", CharacterCreationRules.ValidateName("  Aria  "));
+        Assert.Equal("Aria", CharacterCreationRules.ValidateName("  Aria  ", BannedNames));
     }
 
     [Theory,

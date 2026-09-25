@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Characters;
+using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Ultima.Types;
 
@@ -34,15 +35,7 @@ public static class CharacterCreationRules
         SkillType.Spellweaving
     ];
 
-    private static readonly string[] ReservedNamePrefixes = ["seer", "counselor", "gm", "admin", "lady", "lord"];
 
-    private static readonly string[] ReservedNameWords =
-    [
-        "tailor", "smith", "scholar", "rogue", "novice", "neophyte", "merchant", "medium", "master", "mage", "lb",
-        "journeyman", "grandmaster", "fisherman", "expert", "chef", "carpenter", "british", "blackthorne",
-        "blackthorn", "beggar", "archer", "apprentice", "adept", "gamemaster", "frozen", "squelched", "invulnerable",
-        "osi", "origin"
-    ];
 
     /// <summary>
     ///     Keeps the stats when each is between <see cref="MinStat" /> and <see cref="MaxStat" /> and they add up to
@@ -111,14 +104,16 @@ public static class CharacterCreationRules
 
     /// <summary>
     ///     Keeps a name of <see cref="MinNameLength" /> to <see cref="MaxNameLength" /> letters that may contain a space,
-    ///     dash, period or apostrophe, but not at the start and never two in a row, and uses no reserved word;
+    ///     dash, period or apostrophe, but not at the start and never two in a row, and uses no banned word;
     ///     otherwise returns <see cref="DefaultName" />.
     /// </summary>
-    public static string ValidateName(string? name)
+    public static string ValidateName(string? name, BannedNamesContent bannedNames)
     {
         var trimmed = name?.Trim() ?? string.Empty;
 
-        return IsValidName(trimmed) ? trimmed : DefaultName;
+        return IsValidName(trimmed) && !bannedNames.IsBanned(trimmed, NameSeparators.ToCharArray())
+            ? trimmed
+            : DefaultName;
     }
 
     /// <summary>
@@ -193,13 +188,6 @@ public static class CharacterCreationRules
             }
         }
 
-        if (ReservedNamePrefixes.Any(prefix => name.StartsWith(prefix, StringComparison.OrdinalIgnoreCase)))
-        {
-            return false;
-        }
-
-        var words = name.Split(NameSeparators.ToCharArray(), StringSplitOptions.RemoveEmptyEntries);
-
-        return !words.Any(word => ReservedNameWords.Contains(word, StringComparer.OrdinalIgnoreCase));
+        return true;
     }
 }
