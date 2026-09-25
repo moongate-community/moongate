@@ -72,9 +72,10 @@ Column names default to lowercase snake_case: `Username` maps to `username`,
 snake_case. Keep the schema-qualified `[Table(Name = "...")]` and identity
 mapping explicit.
 
-Keep the initial model scalar. For a property that must stay in memory, use
-`[Column(IsIgnore = true)]`. Complex properties need an explicit supported mapping
-or omission; an arbitrary object graph is not automatically serialized.
+The initial example uses scalar properties. For a property that must stay in memory,
+use `[Column(IsIgnore = true)]`. Custom values and collections can opt into JSONB
+with `[JsonMap]`; see [Store custom values as JSONB](#7-store-custom-values-as-jsonb).
+An unannotated object graph is not automatically serialized.
 
 ## 3. Register the entity and use its data access
 
@@ -320,3 +321,91 @@ the standalone migration runner for the reviewed files.
 See [automatic development migrations](persistence-migrations.md#automatic-development-migrations)
 for plugin directories, required-column defaults, existing database baselines and
 failure recovery.
+
+## 7. Store custom values as JSONB
+
+Use a JSONB column for small values owned by the entity, such as quest progress or
+preferences. Use separate entities/tables for objects with their own identity and
+lifecycle, such as inventory items with a Serial.
+
+Moongate includes `FreeSql.Extensions.JsonMap` and enables it before mapping each
+Accounts or Realm database. Add this property to `CharacterProfile`:
+
+```csharp
+[JsonMap, Column(Name = "quest_progress", DbType = "jsonb", IsNullable = true)]
+public List<QuestProgress>? QuestProgress { get; set; } = [];
+```
+
+`JsonMap` and `Column` use `FreeSql.DataAnnotations`. Create `QuestProgress.cs` in
+the tutorial project (use your plugin's `Data` namespace when moving it there):
+
+```csharp
+namespace EntityTutorial;
+
+public sealed class QuestProgress
+{
+    public int QuestId { get; set; }
+    public bool Completed { get; set; }
+    public List<int> Milestones { get; set; } = [];
+}
+```
+
+`QuestProgress` is a value inside the profile: it does not need `IMoongateEntity`,
+an ID, or its own persistence registration. The same attributes support a custom
+object property instead of a list.
+
+After applying the column migration, save through the existing data access:
+
+```csharp
+var profile = new CharacterProfile
+{
+    Name = "Mario",
+    QuestProgress =
+    [
+        new() { QuestId = 10, Completed = false, Milestones = [1, 2] },
+        new() { QuestId = 25, Completed = true }
+    ]
+};
+await profiles.UpsertAsync(profile);
+```
+
+The `quest_progress` column contains a JSON array, not separate child rows:
+
+```json
+[
+  { "QuestId": 10, "Completed": false, "Milestones": [1, 2] },
+  { "QuestId": 25, "Completed": true, "Milestones": [] }
+]
+```
+
+The extension uses Newtonsoft.Json. With the default serializer settings, JSON
+member names retain their C# casing; SQL's snake_case convention applies to the
+column name, not the members inside its document. Keep stored JSON names stable;
+changing a DTO member name does not generate a SQL column migration or transform
+existing documents automatically. Attributes from System.Text.Json do not configure
+this serializer.
+
+An empty list is stored as `[]`. With `IsNullable = true`, a null property is SQL
+`NULL` and reads back as null. `= []` initializes new C# instances; it is not a
+promise that database nulls are converted into empty lists.
+
+Reads reconstruct detached values. Changing a list or an element does not write
+to PostgreSQL until you call `UpsertAsync`, or a registered world save captures it.
+A normal upsert replaces the stored JSON value as a whole; there is no automatic
+per-element merge. Concurrent updates follow the usual last-writer-wins behavior.
+
+For live world saves, your snapshot callback must copy both the list and every
+mutable value inside it, including nested lists such as `Milestones`. Copying only
+the entity or using `new List<QuestProgress>(live.QuestProgress)` still shares the
+quest objects with the live world.
+
+The usual migration workflow also applies to JSONB columns. When development
+migration generation adds a nullable JSONB column without a declared SQL default,
+existing rows remain SQL `NULL`, even if the C# property starts with `= []`.
+Moongate removes FreeSql's implicit empty-object/array backfill in this case, so it
+does not fire update triggers on existing rows. Review SQL generated through other
+schema workflows before applying it.
+
+Adding or changing a column is a schema change; changing only the shape of its JSON payload requires an
+explicit compatibility strategy or a reviewed data migration. JSONB storage does
+not imply that every LINQ operation over nested collections translates to SQL.
