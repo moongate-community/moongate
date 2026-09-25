@@ -10,8 +10,8 @@
 #   starts_with  words a name may not start with, such as titles that would make
 #                a player look like staff ("gm" also bans "GMaria")
 #   words        words a name may not contain as a whole word ("mage" bans
-#                "Aria the Mage" but not "Magenta"); add any word you want to
-#                keep out of names, such as offensive ones
+#                "Aria the Mage" but not "Magenta"): reserved words first, then
+#                offensive words; add any word you want to keep out of names
 # ==============================================================================
 
 starts_with = [
@@ -54,4 +54,51 @@ words = [
     "smith",
     "squelched",
     "tailor",
+
+    # Offensive words
+    "ass",
+    "asshole",
+    "bitch",
+    "blowjob",
+    "chigaboo",
+    "chinc",
+    "chink",
+    "clit",
+    "clitoris",
+    "cock",
+    "cocksucker",
+    "cum",
+    "cunnilingus",
+    "cunt",
+    "dick",
+    "dildo",
+    "dyke",
+    "fag",
+    "felatio",
+    "fuck",
+    "goddamn",
+    "hitler",
+    "jackoff",
+    "jerkoff",
+    "jigaboo",
+    "jism",
+    "jiz",
+    "kike",
+    "klit",
+    "kunt",
+    "kyke",
+    "lesbo",
+    "lezbo",
+    "nigga",
+    "nigger",
+    "penis",
+    "piss",
+    "prick",
+    "pussy",
+    "shit",
+    "snatch",
+    "spic",
+    "tit",
+    "twat",
+    "wop",
 ]
