@@ -26,6 +26,7 @@ internal static class DevelopmentSchemaAssessor
         var hasExistingTables = false;
         var newTables = new HashSet<string>(StringComparer.Ordinal);
         var nullableAdditions = new HashSet<string>(StringComparer.Ordinal);
+        var nullableJsonAdditions = new HashSet<string>(StringComparer.Ordinal);
         var literalDefaults = new Dictionary<string, (string Value, bool Nullable)>(StringComparer.Ordinal);
         var removed = new StringBuilder();
         await using var connection = new NpgsqlConnection(database.RuntimeConnectionString);
@@ -67,7 +68,13 @@ internal static class DevelopmentSchemaAssessor
                          column.Attribute.IsNullable && !existing.ContainsKey(column.Attribute.Name)
                      ))
             {
-                nullableAdditions.Add(name + "." + Quote(column.Attribute.Name));
+                var key = name + "." + Quote(column.Attribute.Name);
+                nullableAdditions.Add(key);
+
+                if (string.Equals(column.Attribute.DbType?.Trim(), "jsonb", StringComparison.OrdinalIgnoreCase))
+                {
+                    nullableJsonAdditions.Add(key);
+                }
             }
 
             foreach (var column in columns.Where(column => !existing.ContainsKey(column.Attribute.Name)))
@@ -222,10 +229,13 @@ internal static class DevelopmentSchemaAssessor
                 tokens[0] == "UPDATE" &&
                 tokens[4] == "SET" &&
                 tokens[6] == "=" &&
-                tokens[7] == "NULL" &&
+                (tokens[7] == "NULL" ||
+                 tokens[7] is "'{}'" or "'[]'" &&
+                 nullableJsonAdditions.Contains(string.Concat(tokens.Skip(1).Take(3)) + "." + tokens[5])) &&
                 added.Contains(string.Concat(tokens.Skip(1).Take(3)) + "." + tokens[5]))
             {
                 // PostgreSQL initializes a new nullable column to NULL already. Avoid firing UPDATE triggers.
+                // FreeSql also emits implicit '{}' or '[]' JSONB backfills without a declared SQL default.
                 continue;
             }
 

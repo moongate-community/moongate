@@ -102,6 +102,24 @@ Auth/World helper, whose target must agree with the module, or with
 order does not matter. An explicit module owns its complete schema: include every
 registered entity in that schema in its declaration.
 
+## Custom values and collections as JSONB
+
+Annotate an owned custom value or `List<T>` with
+`[JsonMap, Column(DbType = "jsonb", IsNullable = true)]` from
+`FreeSql.DataAnnotations`. Moongate enables `FreeSql.Extensions.JsonMap` for both
+database targets; no extra registration is required for the nested value type.
+The extension uses Newtonsoft.Json and, with default settings, preserves JSON
+member casing independently of snake_case SQL column names.
+
+Empty collections round-trip as `[]`; nullable properties round-trip as SQL `NULL`.
+Reads are detached and an explicit upsert replaces the whole JSON value. JSON
+mapping does not add cascade saves, automatic change tracking, or per-element
+updates. Snapshot callbacks must deep-copy nested mutable values. Use separate
+entities for values with their own identity and lifecycle.
+
+Follow [the JSONB tutorial](persistence-entity-tutorial.md#7-store-custom-values-as-jsonb)
+for a complete collection example, migrations, and serializer limitations.
+
 ## Reads, writes and transactions
 
 Resolve `IDataAccess<T>` for independent operations:
