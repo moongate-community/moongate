@@ -1,12 +1,12 @@
 using Moongate.Ultima.Types;
 
-namespace Moongate.Server.Ultima.Data.Characters;
+namespace Moongate.Server.Ultima.Data.Mobiles;
 
 /// <summary>
-///     One skill of a character, stored in the character's JSONB skill list. Values are in tenths of a point, as the
+///     One skill of a mobile, stored in the mobile's JSONB skill list. Values are in tenths of a point, as the
 ///     client counts them: 500 is 50.0.
 /// </summary>
-public class CharacterSkill
+public class MobileSkill
 {
     public SkillType Skill { get; set; }
 

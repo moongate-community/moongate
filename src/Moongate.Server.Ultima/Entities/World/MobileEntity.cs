@@ -2,21 +2,38 @@ using FreeSql.DataAnnotations;
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
-using Moongate.Server.Ultima.Data.Characters;
+using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Entities.World;
 
-[Table(Name = "world.characters"), Index("ux_characters_name", nameof(Name), true)]
-public class CharacterEntity : IMoongateEntity
+/// <summary>
+///     A mobile of the world: a player character or an NPC. Both share the same serial range and the same state; a
+///     player character is the one with an <see cref="AccountId" />.
+/// </summary>
+/// <remarks>
+///     Names are not unique here, because NPCs repeat them; the uniqueness of player character names is checked when a
+///     character is created.
+/// </remarks>
+[Table(Name = "world.mobiles")]
+public class MobileEntity : IMoongateEntity
 {
 
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
 
 
+    /// <summary>
+    ///     The account of a player character; <see cref="Serial.Zero" /> for an NPC.
+    /// </summary>
     [Column(MapType = typeof(long))]
     public Serial AccountId { get; set; }
+
+    /// <summary>
+    ///     Gets whether this mobile is a player character, that is, it belongs to an account.
+    /// </summary>
+    [Column(IsIgnore = true)]
+    public bool IsPlayer => AccountId.IsValid;
 
     public string Name { get; set; }
 
@@ -54,10 +71,10 @@ public class CharacterEntity : IMoongateEntity
     public Hue BeardHue { get; set; }
 
     /// <summary>
-    ///     The skills the character has; a skill missing from the list is at 0 with the default cap and lock.
+    ///     The skills the mobile has; a skill missing from the list is at 0 with the default cap and lock.
     /// </summary>
     [JsonMap, Column(DbType = "jsonb", IsNullable = true)]
-    public List<CharacterSkill> Skills { get; set; } = [];
+    public List<MobileSkill> Skills { get; set; } = [];
 
     public DateTime CreatedAt { get; set; }
 

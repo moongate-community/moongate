@@ -1,7 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Types.Persistence;
-using Moongate.Server.Ultima.Data.Characters;
+using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Ultima.Types;
@@ -9,17 +9,17 @@ using Moongate.Ultima.Types;
 namespace Moongate.Tests.Integration.Server.Ultima.Entities;
 
 [Collection(PostgresTestCollection.Name)]
-public sealed class CharacterEntityPersistenceTests
+public sealed class MobileEntityPersistenceTests
 {
     [Fact]
     public async Task Location_And_Map_AreStoredAsIntegerColumnsAndReadBack()
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
-        await using var coordinator = fixture.Create(typeof(CharacterEntity));
+        await using var coordinator = fixture.Create(typeof(MobileEntity));
         await coordinator.InitializeAsync();
         var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
-        var character = new CharacterEntity
+        var character = new MobileEntity
         {
             Id = new(1),
             AccountId = new(42),
@@ -29,20 +29,20 @@ public sealed class CharacterEntityPersistenceTests
         };
 
         await orm.Insert(character).ExecuteAffrowsAsync();
-        var loaded = await orm.Select<CharacterEntity>().Where(entity => entity.Name == "Aria").FirstAsync();
+        var loaded = await orm.Select<MobileEntity>().Where(entity => entity.Name == "Aria").FirstAsync();
 
         Assert.NotNull(loaded);
         Assert.Equal(new Point3D(738, 3486, -19), loaded.Location);
         Assert.Equal(MapType.TerMur, loaded.Map);
-        Assert.Equal(5, await database.ScalarAsync<int>("SELECT map::int FROM world.characters"));
-        Assert.Equal(-19, await database.ScalarAsync<int>("SELECT z FROM world.characters"));
+        Assert.Equal(5, await database.ScalarAsync<int>("SELECT map::int FROM world.mobiles"));
+        Assert.Equal(-19, await database.ScalarAsync<int>("SELECT z FROM world.mobiles"));
 
         foreach (var column in new[] { "x", "y", "z", "map" })
         {
             Assert.Contains(
                 await database.ScalarAsync<string>(
                     "SELECT data_type FROM information_schema.columns WHERE table_schema = 'world' " +
-                    $"AND table_name = 'characters' AND column_name = '{column}'"
+                    $"AND table_name = 'mobiles' AND column_name = '{column}'"
                 ),
                 new[] { "integer", "smallint" }
             );
@@ -52,7 +52,7 @@ public sealed class CharacterEntityPersistenceTests
             0L,
             await database.ScalarAsync<long>(
                 "SELECT count(*) FROM information_schema.columns WHERE table_schema = 'world' " +
-                "AND table_name = 'characters' AND column_name = 'location'"
+                "AND table_name = 'mobiles' AND column_name = 'location'"
             )
         );
     }
@@ -62,11 +62,11 @@ public sealed class CharacterEntityPersistenceTests
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
-        await using var coordinator = fixture.Create(typeof(CharacterEntity));
+        await using var coordinator = fixture.Create(typeof(MobileEntity));
         await coordinator.InitializeAsync();
         var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
         var createdAt = new DateTime(2026, 9, 25, 12, 0, 0, DateTimeKind.Utc);
-        var character = new CharacterEntity
+        var character = new MobileEntity
         {
             Id = new(1),
             AccountId = new(42),
@@ -86,7 +86,7 @@ public sealed class CharacterEntityPersistenceTests
         };
 
         await orm.Insert(character).ExecuteAffrowsAsync();
-        var loaded = await orm.Select<CharacterEntity>().Where(entity => entity.Name == "Aria").FirstAsync();
+        var loaded = await orm.Select<MobileEntity>().Where(entity => entity.Name == "Aria").FirstAsync();
 
         Assert.NotNull(loaded);
         Assert.Equal(GenderType.Female, loaded.Gender);
@@ -100,19 +100,19 @@ public sealed class CharacterEntityPersistenceTests
         Assert.Equal(Hue.None, loaded.BeardHue);
         Assert.Equal(createdAt, loaded.CreatedAt);
         Assert.Equal(DateTimeKind.Utc, loaded.CreatedAt.Kind);
-        Assert.Equal(0x83EA, await database.ScalarAsync<int>("SELECT skin_hue FROM world.characters"));
+        Assert.Equal(0x83EA, await database.ScalarAsync<int>("SELECT skin_hue FROM world.mobiles"));
         Assert.Equal(
             "integer",
             await database.ScalarAsync<string>(
                 "SELECT data_type FROM information_schema.columns WHERE table_schema = 'world' " +
-                "AND table_name = 'characters' AND column_name = 'hair_hue'"
+                "AND table_name = 'mobiles' AND column_name = 'hair_hue'"
             )
         );
         Assert.Equal(
             "smallint",
             await database.ScalarAsync<string>(
                 "SELECT data_type FROM information_schema.columns WHERE table_schema = 'world' " +
-                "AND table_name = 'characters' AND column_name = 'race'"
+                "AND table_name = 'mobiles' AND column_name = 'race'"
             )
         );
     }
@@ -122,10 +122,10 @@ public sealed class CharacterEntityPersistenceTests
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
-        await using var coordinator = fixture.Create(typeof(CharacterEntity));
+        await using var coordinator = fixture.Create(typeof(MobileEntity));
         await coordinator.InitializeAsync();
         var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
-        var character = new CharacterEntity
+        var character = new MobileEntity
         {
             Id = new(1),
             Name = "Aria",
@@ -137,7 +137,7 @@ public sealed class CharacterEntityPersistenceTests
         };
 
         await orm.Insert(character).ExecuteAffrowsAsync();
-        var loaded = await orm.Select<CharacterEntity>().FirstAsync();
+        var loaded = await orm.Select<MobileEntity>().FirstAsync();
 
         Assert.Equal(
             [(SkillType.Magery, 500, 1000, SkillLockType.Up), (SkillType.Meditation, 300, 1200, SkillLockType.Locked)],
@@ -147,10 +147,10 @@ public sealed class CharacterEntityPersistenceTests
             "jsonb",
             await database.ScalarAsync<string>(
                 "SELECT data_type FROM information_schema.columns WHERE table_schema = 'world' " +
-                "AND table_name = 'characters' AND column_name = 'skills'"
+                "AND table_name = 'mobiles' AND column_name = 'skills'"
             )
         );
-        Assert.Equal(2, await database.ScalarAsync<int>("SELECT jsonb_array_length(skills) FROM world.characters"));
+        Assert.Equal(2, await database.ScalarAsync<int>("SELECT jsonb_array_length(skills) FROM world.mobiles"));
     }
 
     [Fact]
@@ -158,19 +158,41 @@ public sealed class CharacterEntityPersistenceTests
     {
         await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
         using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
-        await using var coordinator = fixture.Create(typeof(CharacterEntity));
+        await using var coordinator = fixture.Create(typeof(MobileEntity));
         await coordinator.InitializeAsync();
         var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
 
-        await orm.Insert(new CharacterEntity { Id = new(1), Name = "Aria" }).ExecuteAffrowsAsync();
+        await orm.Insert(new MobileEntity { Id = new(1), Name = "Aria" }).ExecuteAffrowsAsync();
 
-        Assert.Empty((await orm.Select<CharacterEntity>().FirstAsync()).Skills);
+        Assert.Empty((await orm.Select<MobileEntity>().FirstAsync()).Skills);
+    }
+
+    [Fact]
+    public async Task Npcs_WithTheSameName_AreStoredSideBySide()
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
+        await using var coordinator = fixture.Create(typeof(MobileEntity));
+        await coordinator.InitializeAsync();
+        var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
+
+        await orm.Insert(new MobileEntity { Id = new(1), Name = "a guard" }).ExecuteAffrowsAsync();
+        await orm.Insert(new MobileEntity { Id = new(2), Name = "a guard" }).ExecuteAffrowsAsync();
+
+        Assert.Equal(2L, await database.ScalarAsync<long>("SELECT count(*) FROM world.mobiles WHERE name = 'a guard'"));
+    }
+
+    [Fact]
+    public void IsPlayer_FollowsTheAccount()
+    {
+        Assert.False(new MobileEntity { AccountId = Serial.Zero }.IsPlayer);
+        Assert.True(new MobileEntity { AccountId = new(42) }.IsPlayer);
     }
 
     [Fact]
     public void Location_SetsAndReadsTheThreeCoordinates()
     {
-        var character = new CharacterEntity { Location = new(1, 2, 3) };
+        var character = new MobileEntity { Location = new(1, 2, 3) };
 
         Assert.Equal((1, 2, 3), (character.X, character.Y, character.Z));
 
