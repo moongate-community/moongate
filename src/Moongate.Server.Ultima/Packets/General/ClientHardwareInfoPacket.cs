@@ -1,5 +1,4 @@
 using System.Diagnostics.CodeAnalysis;
-using System.Text;
 using Moongate.Network.Packets.Attributes;
 using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
@@ -78,7 +77,7 @@ public sealed class ClientHardwareInfoPacket : BaseFixedPacket<ClientHardwareInf
             !reader.TryReadUInt32BigEndian(out var screenDepth) ||
             !reader.TryReadUInt16BigEndian(out var directXMajor) ||
             !reader.TryReadUInt16BigEndian(out var directXMinor) ||
-            !reader.TryReadBytes(VideoDescriptionLength, out var videoDescription) ||
+            !reader.TryReadFixedBigUnicode(VideoDescriptionLength, out var videoDescription) ||
             !reader.TryReadUInt32BigEndian(out var videoVendorId) ||
             !reader.TryReadUInt32BigEndian(out var videoDeviceId) ||
             !reader.TryReadUInt32BigEndian(out var videoMemoryMb) ||
@@ -86,7 +85,7 @@ public sealed class ClientHardwareInfoPacket : BaseFixedPacket<ClientHardwareInf
             !reader.TryReadByte(out var clientsRunning) ||
             !reader.TryReadByte(out var clientsInstalled) ||
             !reader.TryReadByte(out var partialInstalled) ||
-            !reader.TryReadBytes(LanguageCodeLength, out var languageCode) ||
+            !reader.TryReadFixedBigUnicode(LanguageCodeLength, out var languageCode) ||
             !reader.TryReadBytes(TrailingUnknownLength, out _))
         {
             return false;
@@ -110,7 +109,7 @@ public sealed class ClientHardwareInfoPacket : BaseFixedPacket<ClientHardwareInf
             ScreenDepth = screenDepth,
             DirectXMajor = directXMajor,
             DirectXMinor = directXMinor,
-            VideoDescription = DecodeText(videoDescription),
+            VideoDescription = videoDescription!,
             VideoVendorId = videoVendorId,
             VideoDeviceId = videoDeviceId,
             VideoMemoryMb = videoMemoryMb,
@@ -118,18 +117,10 @@ public sealed class ClientHardwareInfoPacket : BaseFixedPacket<ClientHardwareInf
             ClientsRunning = clientsRunning,
             ClientsInstalled = clientsInstalled,
             PartialInstalled = partialInstalled,
-            LanguageCode = DecodeText(languageCode)
+            LanguageCode = languageCode!
         };
 
 
         return true;
-    }
-
-    private static string DecodeText(ReadOnlySpan<byte> utf16BigEndian)
-    {
-        var text = Encoding.BigEndianUnicode.GetString(utf16BigEndian);
-        var terminator = text.IndexOf('\0');
-
-        return terminator < 0 ? text : text[..terminator];
     }
 }

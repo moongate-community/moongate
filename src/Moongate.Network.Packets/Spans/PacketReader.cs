@@ -85,6 +85,30 @@ public ref struct PacketReader
         return true;
     }
 
+    /// <summary>
+    ///     Reads a fixed-width field of UTF-16 big-endian text, such as the names and descriptions the client sends,
+    ///     and stops at the first NUL character. The whole field is consumed either way.
+    /// </summary>
+    /// <returns>
+    ///     False, without advancing, when the field is shorter than <paramref name="byteCount" /> or has an odd width.
+    /// </returns>
+    public bool TryReadFixedBigUnicode(int byteCount, out string? value)
+    {
+        value = null;
+
+        if (byteCount % 2 != 0 || !TryGetBytes(byteCount, out var bytes))
+        {
+            return false;
+        }
+
+        var text = Encoding.BigEndianUnicode.GetString(bytes);
+        var terminator = text.IndexOf('\0');
+        value = terminator < 0 ? text : text[..terminator];
+        Position += byteCount;
+
+        return true;
+    }
+
     public bool TryReadNullTerminatedAscii(int byteCount, out string? value)
     {
         value = null;
