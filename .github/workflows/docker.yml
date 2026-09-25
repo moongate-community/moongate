@@ -9,6 +9,10 @@ on:
     paths:
       - src/**
       - Directory.Build.props
+      - Directory.Build.targets
+      - global.json
+      - .editorconfig
+      - migrations/**
       # The image carries these, and .dockerignore decides what reaches the build
       # context at all, so a change to any of them can break or alter the image.
       - .dockerignore
@@ -56,6 +60,11 @@ jobs:
           # would be emulated through QEMU and take far longer to build.
           platforms: linux/amd64
           push: true
+          # Separate writers prevent development and release builds replacing each other's cache.
+          cache-from: |
+            type=registry,ref=ghcr.io/moongate-community/moongate:buildcache-develop
+            type=registry,ref=ghcr.io/moongate-community/moongate:buildcache-release
+          cache-to: type=registry,ref=ghcr.io/moongate-community/moongate:buildcache-develop,mode=max
           tags: |
             ghcr.io/moongate-community/moongate:develop
             ghcr.io/moongate-community/moongate:sha-${{ steps.commit.outputs.short_sha }}

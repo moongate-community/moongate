@@ -8,6 +8,35 @@ docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 
 The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships `mgboot`, the migration runner, the core SQL and `mg-uoxconv`. The `sample-plugin` build target adds the sample plugin bundle.
 
+## Build cache
+
+The Dockerfile restores dependencies before copying source files, then publishes each bundled
+executable with `--no-restore`. Restore and publish use the same configuration, target architecture
+and self-contained setting. There is no separate server build before publication.
+
+The build context includes source, core migrations, build settings, licenses and the sample plugin.
+Documentation, tests, the website, local `bin`/`obj` directories and environment files are excluded.
+Sample plugin source is copied only into its own build target. When adding a new image input,
+update `.dockerignore` and the relevant `COPY` instructions together.
+
+Development and release workflows export intermediate layers to GHCR under `buildcache-develop`
+and `buildcache-release`. Each workflow reads both caches but writes only its own tag. These tags
+contain build cache, not runnable server images. NuGet packages remain in the restore layer so
+fresh CI builders can recover them from the external cache. A first build without a cache still
+works normally.
+
+For a local build that also reads the development cache:
+
+```sh
+docker buildx build --load \
+  --cache-from type=registry,ref=ghcr.io/moongate-community/moongate:buildcache-develop \
+  -f src/Moongate.Server/Dockerfile -t moongate:local .
+```
+
+Repeat the build with `--progress=plain` to inspect cached steps. Documentation-only changes
+should leave restore and publish layers cached. Use `--pull` to check for updated .NET base
+images, or `--no-cache` to rebuild all steps. Published images remain Linux amd64.
+
 ## Recommended Compose example
 
 The [login and two game instances example](docker-login-realms.md) is a complete build-from-source deployment with:

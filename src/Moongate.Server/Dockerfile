@@ -13,10 +13,11 @@ EXPOSE 2595/tcp
 # Optional private administration endpoint; disabled by default.
 EXPOSE 2590/tcp
 
-FROM mcr.microsoft.com/dotnet/sdk:10.0 AS build
+FROM mcr.microsoft.com/dotnet/sdk:10.0 AS restore
 ARG BUILD_CONFIGURATION=Release
+ARG TARGETARCH
 WORKDIR /src
-COPY ["Directory.Build.props", "./"]
+COPY ["Directory.Build.props", "Directory.Build.targets", "global.json", "./"]
 COPY ["src/Moongate.Admin.Contracts/Moongate.Admin.Contracts.csproj", "src/Moongate.Admin.Contracts/"]
 COPY ["src/Moongate.Server.Admin/Moongate.Server.Admin.csproj", "src/Moongate.Server.Admin/"]
 COPY ["src/Moongate.Boot/Moongate.Boot.csproj", "src/Moongate.Boot/"]
@@ -32,37 +33,39 @@ COPY ["src/Moongate.Ultima/Moongate.Ultima.csproj", "src/Moongate.Ultima/"]
 COPY ["src/Moongate.Scripting/Moongate.Scripting.csproj", "src/Moongate.Scripting/"]
 COPY ["src/Moongate.Server/Moongate.Server.csproj", "src/Moongate.Server/"]
 COPY ["src/Moongate.UoxItemConverter/Moongate.UoxItemConverter.csproj", "src/Moongate.UoxItemConverter/"]
-RUN dotnet restore "src/Moongate.Server/Moongate.Server.csproj"
-RUN dotnet restore "src/Moongate.Boot/Moongate.Boot.csproj"
-RUN dotnet restore "src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj"
-RUN dotnet restore "src/Moongate.UoxItemConverter/Moongate.UoxItemConverter.csproj"
-COPY . .
-WORKDIR "/src/src/Moongate.Server"
-RUN dotnet build "./Moongate.Server.csproj" -c $BUILD_CONFIGURATION -o /app/build
+# Restore the same architecture and self-contained assets used by publish.
+# Keep NuGet packages in this layer so external CI caches carry them too.
+RUN dotnet restore "src/Moongate.Server/Moongate.Server.csproj" -a "$TARGETARCH" -p:Configuration="$BUILD_CONFIGURATION" -p:SelfContained=true \
+    && dotnet restore "src/Moongate.Boot/Moongate.Boot.csproj" -a "$TARGETARCH" -p:Configuration="$BUILD_CONFIGURATION" -p:SelfContained=true \
+    && dotnet restore "src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj" -a "$TARGETARCH" -p:Configuration="$BUILD_CONFIGURATION" -p:SelfContained=true \
+    && dotnet restore "src/Moongate.UoxItemConverter/Moongate.UoxItemConverter.csproj" -a "$TARGETARCH" -p:Configuration="$BUILD_CONFIGURATION" -p:SelfContained=true
+
+FROM restore AS build
+COPY [".editorconfig", "LICENSE", "THIRD-PARTY-NOTICES.md", "./"]
+COPY src/ src/
+COPY migrations/ migrations/
 
 FROM build AS publish
-ARG BUILD_CONFIGURATION=Release
-RUN dotnet publish "./Moongate.Server.csproj" -c $BUILD_CONFIGURATION -o /app/publish
+RUN dotnet publish "src/Moongate.Server/Moongate.Server.csproj" -c "$BUILD_CONFIGURATION" -a "$TARGETARCH" --self-contained true --no-restore -o /app/publish
 
 FROM build AS migration-runner-publish
-ARG BUILD_CONFIGURATION=Release
-WORKDIR "/src/src/Moongate.MigrationRunner"
-RUN dotnet publish "./Moongate.MigrationRunner.csproj" -c $BUILD_CONFIGURATION -o /app/migration-runner
+RUN dotnet publish "src/Moongate.MigrationRunner/Moongate.MigrationRunner.csproj" -c "$BUILD_CONFIGURATION" -a "$TARGETARCH" --self-contained true --no-restore -o /app/migration-runner
 
 FROM build AS mgboot-publish
-ARG BUILD_CONFIGURATION=Release
-WORKDIR "/src/src/Moongate.Boot"
-RUN dotnet publish "./Moongate.Boot.csproj" -c $BUILD_CONFIGURATION -o /app/mgboot
+RUN dotnet publish "src/Moongate.Boot/Moongate.Boot.csproj" -c "$BUILD_CONFIGURATION" -a "$TARGETARCH" --self-contained true --no-restore -o /app/mgboot
 
 FROM build AS uoxconv-publish
-ARG BUILD_CONFIGURATION=Release
-WORKDIR "/src/src/Moongate.UoxItemConverter"
-RUN dotnet publish "./Moongate.UoxItemConverter.csproj" -c $BUILD_CONFIGURATION -o /app/uoxconv
+RUN dotnet publish "src/Moongate.UoxItemConverter/Moongate.UoxItemConverter.csproj" -c "$BUILD_CONFIGURATION" -a "$TARGETARCH" --self-contained true --no-restore -o /app/uoxconv
 
-FROM build AS sample-plugin-publish
-ARG BUILD_CONFIGURATION=Release
-WORKDIR "/src/samples/Moongate.Sample.Plugin"
-RUN dotnet publish "./Moongate.Sample.Plugin.csproj" -c $BUILD_CONFIGURATION -o /app/sample-plugin
+FROM restore AS sample-plugin-restore
+COPY ["samples/Moongate.Sample.Plugin/Moongate.Sample.Plugin.csproj", "samples/Moongate.Sample.Plugin/"]
+RUN dotnet restore "samples/Moongate.Sample.Plugin/Moongate.Sample.Plugin.csproj" -a "$TARGETARCH" -p:Configuration="$BUILD_CONFIGURATION" -p:SelfContained=false
+
+FROM sample-plugin-restore AS sample-plugin-publish
+COPY [".editorconfig", "LICENSE", "THIRD-PARTY-NOTICES.md", "./"]
+COPY src/ src/
+COPY samples/Moongate.Sample.Plugin/ samples/Moongate.Sample.Plugin/
+RUN dotnet publish "samples/Moongate.Sample.Plugin/Moongate.Sample.Plugin.csproj" -c "$BUILD_CONFIGURATION" -a "$TARGETARCH" --self-contained false --no-restore -o /app/sample-plugin
 
 FROM base AS sample-plugin
 WORKDIR /app
