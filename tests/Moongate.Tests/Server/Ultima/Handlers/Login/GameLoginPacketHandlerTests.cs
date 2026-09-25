@@ -1,5 +1,6 @@
 using System.Net;
 using Moongate.Core.Primitives;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
@@ -35,6 +36,7 @@ public sealed class GameLoginPacketHandlerTests
 
         Assert.Equal(new(42), session.AccountId);
         Assert.Equal(AccountType.GameMaster, session.AccountType);
+        Assert.Equal(ClientVersion.Parse("7.0.117"), session.ClientVersion);
         Assert.Equal(1, store.RedeemCalls);
         Assert.Equal("realm", store.RealmId);
         Assert.Equal(AuthKey, store.AuthKey);
@@ -133,7 +135,7 @@ public sealed class GameLoginPacketHandlerTests
 
     private static PendingHandoff Handoff()
     {
-        return new(new(42), AccountType.GameMaster, "user", "realm", Realm().InstanceId, "7.0.117");
+        return new(new(42), AccountType.GameMaster, "user", "realm", Realm().InstanceId, ClientVersion.Parse("7.0.117"));
     }
 
     private sealed class RecordingHandoffStore : IGameHandoffStore

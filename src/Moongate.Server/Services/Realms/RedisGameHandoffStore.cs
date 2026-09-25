@@ -2,6 +2,7 @@ using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text.Json;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Internal.Realms;
@@ -82,7 +83,7 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
                     handoff.Username,
                     handoff.RealmId,
                     handoff.InstanceId,
-                    handoff.ClientVersion,
+                    handoff.ClientVersion?.ToString(),
                     proof
                 );
                 var encoded = JsonSerializer.SerializeToUtf8Bytes(ticket);
@@ -172,7 +173,7 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
                     ticket.Username,
                     ticket.RealmId,
                     ticket.InstanceId,
-                    ticket.ClientVersion
+                    ClientVersion.TryParse(ticket.ClientVersion, out var clientVersion) ? clientVersion : null
                 );
 
                 if (!StringComparer.Ordinal.Equals(ticket.RealmId, realmId) ||

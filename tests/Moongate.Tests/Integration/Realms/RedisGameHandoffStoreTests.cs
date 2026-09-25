@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text.Json.Nodes;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
@@ -193,7 +194,7 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
 
     private PendingHandoff Handoff()
     {
-        return new(new(42), AccountType.GameMaster, "Alice", _realmId, _instanceId, "7.0.117");
+        return new(new(42), AccountType.GameMaster, "Alice", _realmId, _instanceId, ClientVersion.Parse("7.0.117"));
     }
 
     private async Task<uint> IssueAsync()

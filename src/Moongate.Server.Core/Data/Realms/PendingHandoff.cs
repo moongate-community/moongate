@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Types.Accounts;
 
 namespace Moongate.Server.Core.Data.Realms;
@@ -12,5 +13,5 @@ public sealed record PendingHandoff(
     string Username,
     string RealmId,
     Guid InstanceId,
-    string? ClientVersion
+    ClientVersion? ClientVersion
 );

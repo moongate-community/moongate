@@ -1,5 +1,6 @@
 using System.Net;
 using Moongate.Network.Interfaces.Client;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Types.Sessions;
 
 namespace Moongate.Server.Core.Data.Sessions;
@@ -11,7 +12,7 @@ public sealed class NetworkSession
     private INetworkConnection? _client;
     private NetworkSessionState _state;
     private uint? _seed;
-    private string? _clientVersion;
+    private ClientVersion? _clientVersion;
     private bool _compressionEnabled;
 
     public long SessionId { get; }
@@ -57,7 +58,7 @@ public sealed class NetworkSession
         }
     }
 
-    public string? ClientVersion
+    public ClientVersion? ClientVersion
     {
         get
         {
@@ -119,12 +120,12 @@ public sealed class NetworkSession
         }
     }
 
-    public void SetClientVersion(string clientVersion)
+    public void SetClientVersion(ClientVersion clientVersion)
     {
         lock (_sync)
         {
             ThrowIfDisconnected();
-            ArgumentException.ThrowIfNullOrWhiteSpace(clientVersion);
+            ArgumentNullException.ThrowIfNull(clientVersion);
             _clientVersion = clientVersion;
         }
     }

@@ -15,7 +15,4 @@ public static class SessionKeys
 
     public static readonly SessionKey<AccountType> AccountType =
         new("AccountType");
-
-    public static readonly SessionKey<Version> ClientVersion =
-        new("ClientVersion");
 }

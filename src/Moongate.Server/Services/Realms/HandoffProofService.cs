@@ -89,7 +89,7 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
 
         var usernameBytes = Encoding.UTF8.GetBytes(handoff.Username);
         var realmBytes = Encoding.UTF8.GetBytes(handoff.RealmId);
-        var versionBytes = handoff.ClientVersion is null ? null : Encoding.UTF8.GetBytes(handoff.ClientVersion);
+        var versionBytes = handoff.ClientVersion is null ? null : Encoding.UTF8.GetBytes(handoff.ClientVersion.ToString());
         var input = new byte[HandoffDomain.Length +
                              AccountIdSize +
                              AccountTypeSize +

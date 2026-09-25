@@ -93,6 +93,12 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
                     session.Set(SessionKeys.AccountType, handoff.AccountType);
                     session.NetworkSession.SetState(NetworkSessionState.Authenticated);
 
+                    // The client reported its version to the login server only; the handoff carries it over.
+                    if (handoff.ClientVersion is { } clientVersion)
+                    {
+                        session.NetworkSession.SetClientVersion(clientVersion);
+                    }
+
                     // From here on the client expects everything the game server sends to be Huffman-compressed.
                     session.NetworkSession.EnableCompression();
                 },

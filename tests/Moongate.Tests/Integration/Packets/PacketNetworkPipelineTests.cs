@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using DryIoc;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Registry;
@@ -284,7 +285,7 @@ public sealed class PacketNetworkPipelineTests
         using var peer = await fixture.ConnectAsync();
         await peer.GetStream().WriteAsync(new byte[] { 0xBD, 0, 7, (byte)'7', (byte)'.', (byte)'0', 0, 0x73, 4 });
         Assert.Equal(new byte[] { 0x73, 4 }, await ReadAsync(peer, 2));
-        Assert.Equal("7.0", Assert.Single(fixture.Sessions.GetAll()).NetworkSession.ClientVersion);
+        Assert.Equal(ClientVersion.Parse("7.0"), Assert.Single(fixture.Sessions.GetAll()).NetworkSession.ClientVersion);
     }
 
     [Theory,

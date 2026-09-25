@@ -1,3 +1,4 @@
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Types.Sessions;
 using Moongate.Tests.Support.Sessions;
@@ -13,7 +14,7 @@ public sealed class NetworkSessionTests
         using var connection = new ControlledNetworkConnection(7);
         var session = new NetworkSession(connection);
         Assert.Same(connection, session.Client);
-        session.SetClientVersion("7.0.90.15");
+        session.SetClientVersion(ClientVersion.Parse("7.0.90.15"));
         session.DetachClient();
         Assert.Null(session.Client);
         Assert.Equal("127.0.0.1:5151", session.RemoteEndPoint);
@@ -58,15 +59,15 @@ public sealed class NetworkSessionTests
         Assert.True(fixture.Client.IsConnected);
     }
 
-    [Theory, InlineData(null), InlineData(""), InlineData(" \t ")]
-    public async Task InvalidMutatorInputs_AfterDetachReportTerminalState(string? invalidVersion)
+    [Fact]
+    public async Task InvalidMutatorInputs_AfterDetachReportTerminalState()
     {
         await using var fixture = await SessionFixture.CreateAsync();
         var session = new NetworkSession(fixture.Client);
         session.DetachClient();
 
         Assert.Throws<InvalidOperationException>(() => session.SetState((NetworkSessionState)int.MaxValue));
-        Assert.Throws<InvalidOperationException>(() => session.SetClientVersion(invalidVersion!));
+        Assert.Throws<InvalidOperationException>(() => session.SetClientVersion(null!));
 
         Assert.Equal(NetworkSessionState.Disconnected, session.State);
         Assert.Null(session.ClientVersion);
@@ -78,28 +79,28 @@ public sealed class NetworkSessionTests
         await using var fixture = await SessionFixture.CreateAsync();
         var session = new NetworkSession(fixture.Client);
         session.SetSeed(7);
-        session.SetClientVersion("7.0.90.15");
+        session.SetClientVersion(ClientVersion.Parse("7.0.90.15"));
         session.DetachClient();
 
         Assert.Throws<InvalidOperationException>(() => session.SetState(NetworkSessionState.Login));
         Assert.Throws<InvalidOperationException>(() => session.SetSeed(8));
-        Assert.Throws<InvalidOperationException>(() => session.SetClientVersion("7.0.91.0"));
+        Assert.Throws<InvalidOperationException>(() => session.SetClientVersion(ClientVersion.Parse("7.0.91.0")));
 
         Assert.Equal(NetworkSessionState.Disconnected, session.State);
         Assert.Equal(7u, session.Seed);
-        Assert.Equal("7.0.90.15", session.ClientVersion);
+        Assert.Equal(ClientVersion.Parse("7.0.90.15"), session.ClientVersion);
     }
 
-    [Theory, InlineData(null), InlineData(""), InlineData(" \t ")]
-    public async Task SetClientVersion_InvalidTextRejectedWithoutMutation(string? invalidVersion)
+    [Fact]
+    public async Task SetClientVersion_NullRejectedWithoutMutation()
     {
         await using var fixture = await SessionFixture.CreateAsync();
         var session = new NetworkSession(fixture.Client);
-        session.SetClientVersion(" 7.0.90.15 ");
+        session.SetClientVersion(ClientVersion.Parse("7.0.90.15"));
 
-        Assert.ThrowsAny<ArgumentException>(() => session.SetClientVersion(invalidVersion!));
+        Assert.Throws<ArgumentNullException>(() => session.SetClientVersion(null!));
 
-        Assert.Equal(" 7.0.90.15 ", session.ClientVersion);
+        Assert.Equal(ClientVersion.Parse("7.0.90.15"), session.ClientVersion);
     }
 
     [Fact]

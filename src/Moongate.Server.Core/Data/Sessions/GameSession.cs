@@ -1,6 +1,6 @@
 using System.Collections.Concurrent;
 using Moongate.Core.Primitives;
-using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 
@@ -21,7 +21,10 @@ public sealed class GameSession
 
     public AccountType AccountType => Get(SessionKeys.AccountType);
 
-    public Version ClientVersion => Get(SessionKeys.ClientVersion);
+    /// <summary>
+    ///     Gets the version the client reported, kept on the connection; <see langword="null" /> until it is known.
+    /// </summary>
+    public ClientVersion? ClientVersion => NetworkSession.ClientVersion;
 
 
     public GameSession(NetworkSession networkSession, IGameLoopService gameLoop)
