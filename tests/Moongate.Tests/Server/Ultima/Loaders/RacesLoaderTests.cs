@@ -1,4 +1,7 @@
 using Moongate.Core.Directories;
+using Moongate.Core.Primitives;
+using Moongate.Core.Serialization.Toml;
+using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Directories;
 using Moongate.Ultima.Types;
@@ -12,6 +15,8 @@ public sealed class RacesLoaderTests
                                  [[race]]
                                  race = "human"
                                  name = "Human"
+                                 skin_hues = ["0x03EA-0x0422"]
+                                 hair_hues = [0x044E, "0x0450-0x0460"]
 
                                  [race.male]
                                  body = 400
@@ -44,6 +49,8 @@ public sealed class RacesLoaderTests
         var human = Assert.Single(result.Entities);
         Assert.Equal(RaceType.Human, human.Race);
         Assert.Equal("Human", human.Name);
+        Assert.Equal([HueSpec.FromRange(0x03EA, 0x0422)], human.SkinHues);
+        Assert.Equal([HueSpec.FromValue(0x044E), HueSpec.FromRange(0x0450, 0x0460)], human.HairHues);
         Assert.Equal(400, human.Male.Body);
         Assert.Equal([0x203B, 0x203C], human.Male.Hair);
         Assert.Equal([0x203E], human.Male.Beard);
@@ -110,6 +117,11 @@ public sealed class RacesLoaderTests
         );
 
         await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+    }
+
+    public RacesLoaderTests()
+    {
+        TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
     }
 
     private static RacesLoader CreateLoader(TemporaryDirectory root)

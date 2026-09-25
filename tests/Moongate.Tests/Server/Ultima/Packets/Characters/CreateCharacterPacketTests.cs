@@ -23,6 +23,11 @@ public sealed class CreateCharacterPacketTests
         Assert.Equal(0xF8, packet.OpCode);
         Assert.Equal(106, packet.Length);
         Assert.Equal("Aria", packet.Name);
+        Assert.Equal(
+            ClientFlags.Felucca | ClientFlags.Trammel | ClientFlags.Ilshenar | ClientFlags.Malas |
+            ClientFlags.Tokuno | ClientFlags.TerMur,
+            packet.ClientFlags
+        );
         Assert.Equal(0, packet.Profession);
         Assert.Equal(GenderType.Female, packet.Gender);
         Assert.Equal(RaceType.Elf, packet.Race);
@@ -120,7 +125,7 @@ public sealed class CreateCharacterPacketTests
         BinaryPrimitives.WriteUInt32BigEndian(frame.AsSpan(5), 0xFFFFFFFF);
         frame[9] = 0x00;
         Encoding.ASCII.GetBytes("Aria").CopyTo(frame, 10);
-        BinaryPrimitives.WriteUInt32BigEndian(frame.AsSpan(42), 0x000000FF);
+        BinaryPrimitives.WriteUInt32BigEndian(frame.AsSpan(42), 0x0000003F);
         BinaryPrimitives.WriteUInt32BigEndian(frame.AsSpan(46), 0x01);
         frame[54] = 0;
         frame[70] = 5;

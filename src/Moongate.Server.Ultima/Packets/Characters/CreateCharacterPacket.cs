@@ -28,6 +28,11 @@ public sealed class CreateCharacterPacket : BaseFixedPacket<CreateCharacterPacke
     public required string Name { get; init; }
 
     /// <summary>
+    ///     What the client says it can show, mostly the maps it has installed.
+    /// </summary>
+    public required ClientFlags ClientFlags { get; init; }
+
+    /// <summary>
     ///     The profession id; 0 is the "Advanced" choice, where the player picked stats and skills.
     /// </summary>
     public required byte Profession { get; init; }
@@ -92,7 +97,9 @@ public sealed class CreateCharacterPacket : BaseFixedPacket<CreateCharacterPacke
 
         // After the name: 2 zero bytes, the client flags, 2 more integers, then 15 zero bytes after the profession.
         if (!reader.TryReadFixedAscii(NameLength, out var name) ||
-            !reader.TryReadBytes(14, out _) ||
+            !reader.TryReadBytes(2, out _) ||
+            !reader.TryReadUInt32BigEndian(out var clientFlags) ||
+            !reader.TryReadBytes(8, out _) ||
             !reader.TryReadByte(out var profession) ||
             !reader.TryReadBytes(15, out _) ||
             !reader.TryReadByte(out var genderRace) ||
@@ -132,6 +139,7 @@ public sealed class CreateCharacterPacket : BaseFixedPacket<CreateCharacterPacke
         packet = new()
         {
             Name = name!,
+            ClientFlags = (ClientFlags)clientFlags,
             Profession = profession,
             Gender = (GenderType)(genderRace % 2),
             Race = ToRace(genderRace),
