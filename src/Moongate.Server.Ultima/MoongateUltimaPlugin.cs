@@ -18,6 +18,7 @@ using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Extensions;
@@ -93,6 +94,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<BannedNamesLoader, BannedNamesContent>(5);
             container.AddUltimaDataLoader<ContainersLoader, ContainerContent>(6);
             container.AddUltimaDataLoader<BodiesLoader, BodyContent>(7);
+            container.AddUltimaDataLoader<RegionsLoader, RegionContent>(8);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();

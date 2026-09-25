@@ -1,0 +1,353 @@
+# ==============================================================================
+# Moongate - regions/malas.toml
+#
+# What it is for:
+#   The regions of Malas: towns, dungeons and other named areas, with the
+#   rules they apply. The map is the name of this file. Every rule is written out
+#   and already includes the rules of the region's parents, so a region can be
+#   read on its own. Where regions overlap, the highest priority applies.
+#
+# Fields:
+#   name            the region name (leave out for areas that only apply rules)
+#   type            base, town, dungeon, nohousing, guarded, jail or greenacres
+#   priority        where regions overlap, the highest one applies
+#   parent          the name of the region this one is part of, on this map
+#   areas           the rectangles of the region: x1 and y1 are included, x2
+#                   and y2 are not; z1 and z2 limit the height when present
+#   go_location     where a "go to region" command takes a character, "(x, y, z)"
+#   entrance        the entrance of the town or dungeon, "(x, y, z)"
+#   music           the music played in the region (see the music list)
+#   rune_name       the name of a rune marked here
+#   guarded         whether guards protect the region
+#   housing         whether players may place houses
+#   instant_logout  whether a character with no fight in progress logs out at once
+#   recall_in, recall_out, gate_in, gate_out, mark
+#                   whether those travel spells work into, out of or in the region
+# ==============================================================================
+
+[[region]]
+name = "Ilse of the Divide"
+type = "nohousing"
+priority = 50
+areas = [{ x1 = 1532, y1 = 857, x2 = 1832, y2 = 1057 }]
+go_location = "(1731, 981, -79)"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Bedlam"
+type = "dungeon"
+priority = 50
+areas = [{ x1 = 75, y1 = 1590, x2 = 210, y2 = 1760 }]
+go_location = "(117, 1681, 0)"
+entrance = "(2068, 1372, -75)"
+music = "GrizzleDungeon"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+
+[[region]]
+name = "The Citadel"
+type = "dungeon"
+priority = 50
+areas = [{ x1 = 60, y1 = 1855, x2 = 195, y2 = 1990 }]
+go_location = "(106, 1884, 0)"
+entrance = "(1349, 769, 14)"
+music = "Dungeon9"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+
+[[region]]
+name = "Luna"
+type = "town"
+priority = 50
+areas = [{ x1 = 945, y1 = 490, x2 = 1036, y2 = 551 }]
+go_location = "(989, 520, -50)"
+music = "Tavern04"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Luna"
+areas = [{ x1 = 986, y1 = 509, x2 = 1004, y2 = 530 }]
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Umbra"
+type = "town"
+priority = 50
+areas = [
+    { x1 = 2042, y1 = 1265, x2 = 2090, y2 = 1278 },
+    { x1 = 1960, y1 = 1278, x2 = 2106, y2 = 1413 },
+    { x1 = 2004, y1 = 1413, x2 = 2040, y2 = 1419 },
+]
+go_location = "(2049, 1344, -85)"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Umbra"
+areas = [{ x1 = 2031, y1 = 1311, x2 = 2046, y2 = 1325 }]
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Labyrinth"
+type = "dungeon"
+priority = 50
+areas = [{ x1 = 256, y1 = 1795, x2 = 499, y2 = 2025 }]
+go_location = "(336, 1970, 0)"
+entrance = "(1731, 981, -79)"
+music = "Dungeon9"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+
+[[region]]
+name = "Doom"
+type = "dungeon"
+priority = 50
+areas = [{ x1 = 256, y1 = 0, x2 = 512, y2 = 304 }]
+go_location = "(2366, 1268, -85)"
+entrance = "(2357, 1268, 0)"
+music = "Dungeon9"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Doom Gauntlet"
+type = "dungeon"
+priority = 50
+areas = [{ x1 = 256, y1 = 304, x2 = 512, y2 = 560 }]
+go_location = "(429, 340, -1)"
+entrance = "(2357, 1268, 0)"
+music = "Dungeon9"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Orc Fortress"
+type = "base"
+priority = 50
+areas = [{ x1 = 1295, y1 = 1189, x2 = 1395, y2 = 1294 }]
+go_location = "(1340, 1226, -90)"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Crystal Cave Entrance"
+type = "nohousing"
+priority = 50
+areas = [{ x1 = 1176, y1 = 509, x2 = 1219, y2 = 522 }]
+go_location = "(1195, 515, -90)"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Protected Island"
+type = "nohousing"
+priority = 50
+areas = [
+    { x1 = 1976, y1 = 101, x2 = 2448, y2 = 345 },
+    { x1 = 2051, y1 = 345, x2 = 2356, y2 = 382 },
+    { x1 = 2026, y1 = 345, x2 = 2051, y2 = 370 },
+    { x1 = 2069, y1 = 382, x2 = 2144, y2 = 396 },
+    { x1 = 2254, y1 = 382, x2 = 2352, y2 = 420 },
+    { x1 = 2222, y1 = 382, x2 = 2254, y2 = 402 },
+]
+go_location = "(2104, 380, -90)"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Grand Arena"
+type = "nohousing"
+priority = 50
+areas = [{ x1 = 919, y1 = 622, x2 = 962, y2 = 652 }]
+go_location = "(961, 637, -90)"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Hanse's Hostel"
+type = "base"
+priority = 50
+areas = [
+    { x1 = 1049, y1 = 1420, x2 = 1062, y2 = 1445 },
+    { x1 = 1062, y1 = 1420, x2 = 1065, y2 = 1431 },
+    { x1 = 1062, y1 = 1439, x2 = 1065, y2 = 1445 },
+]
+go_location = "(1063, 1435, -90)"
+guarded = false
+housing = true
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Yomotsu Mines"
+type = "dungeon"
+priority = 50
+areas = [{ x1 = 0, y1 = 0, x2 = 129, y2 = 129 }]
+go_location = "(6, 118, 0)"
+entrance = "(259, 783, 0)"
+music = "TokunoDungeon"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Fan Dancer's Dojo"
+type = "dungeon"
+priority = 50
+areas = [{ x1 = 40, y1 = 320, x2 = 210, y2 = 720 }]
+go_location = "(71, 337, 0)"
+entrance = "(977, 223, 0)"
+music = "TokunoDungeon"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Samurai start location"
+type = "base"
+priority = 50
+areas = [{ x1 = 320, y1 = 690, x2 = 435, y2 = 790 }]
+music = "Zento"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Ninja start location"
+type = "base"
+priority = 50
+areas = [{ x1 = 360, y1 = 795, x2 = 440, y2 = 835 }]
+music = "Zento"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Ninja cave"
+type = "base"
+priority = 50
+areas = [{ x1 = 360, y1 = 960, x2 = 460, y2 = 1175 }]
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true

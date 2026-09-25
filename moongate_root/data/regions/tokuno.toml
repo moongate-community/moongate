@@ -1,0 +1,104 @@
+# ==============================================================================
+# Moongate - regions/tokuno.toml
+#
+# What it is for:
+#   The regions of Tokuno: towns, dungeons and other named areas, with the
+#   rules they apply. The map is the name of this file. Every rule is written out
+#   and already includes the rules of the region's parents, so a region can be
+#   read on its own. Where regions overlap, the highest priority applies.
+#
+# Fields:
+#   name            the region name (leave out for areas that only apply rules)
+#   type            base, town, dungeon, nohousing, guarded, jail or greenacres
+#   priority        where regions overlap, the highest one applies
+#   parent          the name of the region this one is part of, on this map
+#   areas           the rectangles of the region: x1 and y1 are included, x2
+#                   and y2 are not; z1 and z2 limit the height when present
+#   go_location     where a "go to region" command takes a character, "(x, y, z)"
+#   entrance        the entrance of the town or dungeon, "(x, y, z)"
+#   music           the music played in the region (see the music list)
+#   rune_name       the name of a rune marked here
+#   guarded         whether guards protect the region
+#   housing         whether players may place houses
+#   instant_logout  whether a character with no fight in progress logs out at once
+#   recall_in, recall_out, gate_in, gate_out, mark
+#                   whether those travel spells work into, out of or in the region
+# ==============================================================================
+
+[[region]]
+name = "Moongates"
+type = "guarded"
+priority = 50
+areas = [
+    { x1 = 1167, y1 = 996, x2 = 1171, y2 = 1000 },
+    { x1 = 799, y1 = 1201, x2 = 805, y2 = 1207 },
+    { x1 = 267, y1 = 625, x2 = 274, y2 = 632 },
+]
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Zento"
+type = "town"
+priority = 50
+areas = [{ x1 = 656, y1 = 1192, x2 = 816, y2 = 1320 }]
+go_location = "(736, 1256, 30)"
+music = "Zento"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Zento"
+areas = [{ x1 = 674, y1 = 1203, x2 = 699, y2 = 1219 }]
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Fan Dancer's Dojo"
+type = "nohousing"
+priority = 50
+areas = [{ x1 = 969, y1 = 194, x2 = 992, y2 = 224 }]
+go_location = "(977, 223, 23)"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+
+[[region]]
+name = "Bushido Dojo"
+type = "nohousing"
+priority = 50
+areas = [{ x1 = 283, y1 = 361, x2 = 351, y2 = 463 }]
+go_location = "(320, 408, 32)"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true

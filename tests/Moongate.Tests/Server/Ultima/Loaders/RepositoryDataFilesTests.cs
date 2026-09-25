@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Geometry;
 using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
@@ -9,11 +10,13 @@ using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
+using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Loaders;
 
@@ -41,6 +44,7 @@ public sealed class RepositoryDataFilesTests
         container.AddUltimaDataLoader<BannedNamesLoader, BannedNamesContent>(5);
         container.AddUltimaDataLoader<ContainersLoader, ContainerContent>(6);
         container.AddUltimaDataLoader<BodiesLoader, BodyContent>(7);
+        container.AddUltimaDataLoader<RegionsLoader, RegionContent>(8);
         container.Register<IDataLoaderService, DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<IDataLoaderService>();
 
@@ -54,6 +58,16 @@ public sealed class RepositoryDataFilesTests
         Assert.NotEmpty(Assert.Single(service.GetEntities<BannedNamesContent>()).Words);
         Assert.Single(service.GetEntities<ContainerContent>(), entry => entry.Default);
         Assert.Equal(1045, service.GetEntities<BodyContent>().Count);
+
+        var regions = service.GetEntities<RegionContent>();
+        Assert.Equal(371, regions.Count);
+        var britain = Assert.Single(regions, region => region.Map == MapType.Trammel && region.Name == "Britain");
+        Assert.True(britain.Guarded);
+        Assert.False(britain.Housing);
+        Assert.Equal(MusicType.Britain1, britain.Music);
+        Assert.Equal(new Point3D(1495, 1629, 10), britain.GoLocation);
+        Assert.True(britain.Contains(1495, 1629, 10));
+        Assert.All(regions.Where(region => region.Map == MapType.Ilshenar), region => Assert.False(region.RecallIn));
     }
 
     private static string FindRepositoryRoot()
