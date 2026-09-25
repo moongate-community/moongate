@@ -19,5 +19,7 @@ public sealed class BidirectionalCollisionPacket
     }
 
     public void Write(ref PacketWriter writer)
-        => writer.WriteByte(OpCode);
+    {
+        writer.WriteByte(OpCode);
+    }
 }

@@ -14,14 +14,16 @@ public static class LogLevelExtensions
     /// <param name="logLevel">The log level to convert.</param>
     /// <returns>The corresponding Serilog log event level.</returns>
     public static LogEventLevel ToSerilogLogLevel(this LogLevelType logLevel)
-        => logLevel switch
+    {
+        return logLevel switch
         {
-            LogLevelType.Trace       => LogEventLevel.Verbose,
-            LogLevelType.Debug       => LogEventLevel.Debug,
+            LogLevelType.Trace => LogEventLevel.Verbose,
+            LogLevelType.Debug => LogEventLevel.Debug,
             LogLevelType.Information => LogEventLevel.Information,
-            LogLevelType.Warning     => LogEventLevel.Warning,
-            LogLevelType.Error       => LogEventLevel.Error,
-            LogLevelType.Critical    => LogEventLevel.Fatal,
-            _                        => LogEventLevel.Information
+            LogLevelType.Warning => LogEventLevel.Warning,
+            LogLevelType.Error => LogEventLevel.Error,
+            LogLevelType.Critical => LogEventLevel.Fatal,
+            _ => LogEventLevel.Information
         };
+    }
 }

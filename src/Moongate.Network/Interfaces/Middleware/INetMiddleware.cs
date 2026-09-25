@@ -55,5 +55,7 @@ public interface INetMiddleware
         ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-        => ValueTask.FromResult(data);
+    {
+        return ValueTask.FromResult(data);
+    }
 }

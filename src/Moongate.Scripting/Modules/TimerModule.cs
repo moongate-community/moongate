@@ -31,7 +31,9 @@ internal sealed class TimerModule
     /// <returns>A handle for <see cref="Cancel" />.</returns>
     [ScriptFunction(helpText: "Runs fn once after the given seconds. Returns a handle for cancel.")]
     public string After(double seconds, LuaValue fn)
-        => Schedule(seconds, fn, false);
+    {
+        return Schedule(seconds, fn, false);
+    }
 
     /// <summary>Cancels a pending timer by handle.</summary>
     /// <returns>False when no timer with that handle is pending.</returns>
@@ -47,7 +49,9 @@ internal sealed class TimerModule
     /// <returns>A handle for <see cref="Cancel" />.</returns>
     [ScriptFunction(helpText: "Runs fn every given seconds until cancelled. Returns a handle for cancel.")]
     public string Every(double seconds, LuaValue fn)
-        => Schedule(seconds, fn, true);
+    {
+        return Schedule(seconds, fn, true);
+    }
 
     private string Schedule(double seconds, LuaValue fn, bool repeat)
     {

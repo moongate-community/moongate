@@ -44,11 +44,13 @@ public sealed class DisposeMemberOrderTests
     }
 
     private static IEnumerable<string> EnumerateProductionSources(string root)
-        => Directory.EnumerateFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories)
-                    .Where(
-                        file => !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}") &&
-                                !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
-                    );
+    {
+        return Directory.EnumerateFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories)
+                        .Where(
+                            file => !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}") &&
+                                    !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
+                        );
+    }
 
     /// <summary>
     /// Names the top-level members declared after the last Dispose member of the file. Nesting depth keeps the

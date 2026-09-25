@@ -192,7 +192,9 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
     }
 
     private PendingHandoff Handoff()
-        => new(new(42), AccountType.GameMaster, "Alice", _realmId, _instanceId, "7.0.117");
+    {
+        return new(new(42), AccountType.GameMaster, "Alice", _realmId, _instanceId, "7.0.117");
+    }
 
     private async Task<uint> IssueAsync()
     {
@@ -204,7 +206,9 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
     }
 
     private string Key(uint authKey)
-        => $"moongate:handoff:{_realmId}:{authKey:X8}";
+    {
+        return $"moongate:handoff:{_realmId}:{authKey:X8}";
+    }
 
     public async Task DisposeAsync()
     {

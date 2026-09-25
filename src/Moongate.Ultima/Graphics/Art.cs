@@ -47,7 +47,9 @@ public static class Art
     }
 
     public static int GetIdxLength()
-        => (int)(_fileIndex.IdxLength / 12);
+    {
+        return (int)(_fileIndex.IdxLength / 12);
+    }
 
     /// <summary>
     /// Returns Bitmap of LandTile (with Cache)
@@ -55,7 +57,9 @@ public static class Art
     /// <param name="index"></param>
     /// <returns></returns>
     public static UltimaBitmap GetLand(int index)
-        => GetLand(index, out _);
+    {
+        return GetLand(index, out _);
+    }
 
     /// <summary>
     /// Returns Bitmap of LandTile (with Cache) and verdata bool
@@ -189,7 +193,9 @@ public static class Art
     /// <param name="checkMaxId"></param>
     /// <returns></returns>
     public static UltimaBitmap GetStatic(int index, bool checkMaxId = true)
-        => GetStatic(index, out _, checkMaxId);
+    {
+        return GetStatic(index, out _, checkMaxId);
+    }
 
     /// <summary>
     /// Returns Bitmap of Static (with Cache) and verdata bool
@@ -243,7 +249,9 @@ public static class Art
     }
 
     public static bool IsUOAHS()
-        => GetIdxLength() >= 0x13FDC;
+    {
+        return GetIdxLength() >= 0x13FDC;
+    }
 
     /// <summary>
     /// Tests if LandTile is defined
@@ -683,7 +691,9 @@ public static class Art
     /// more re-decodes during long browsing sessions.
     /// </summary>
     public static void SetCacheCapacity(int capacity)
-        => _cache.SetCapacity(capacity);
+    {
+        _cache.SetCapacity(capacity);
+    }
 
     /// <summary>
     /// Decodes a land tile into a caller-supplied 44x44 ushort buffer

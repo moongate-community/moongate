@@ -10,5 +10,7 @@ internal sealed class RecordingLoginPacketHandler : ILoginPacketHandler<PingPack
         (_, _, _) => ValueTask.CompletedTask;
 
     public ValueTask HandleAsync(LoginSession session, PingPacket packet, CancellationToken cancellationToken)
-        => OnHandle(session, packet, cancellationToken);
+    {
+        return OnHandle(session, packet, cancellationToken);
+    }
 }

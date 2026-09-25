@@ -152,5 +152,7 @@ internal sealed class PersistenceMutationGate : IDisposable
     }
 
     public void Dispose()
-        => _semaphore.Dispose();
+    {
+        _semaphore.Dispose();
+    }
 }

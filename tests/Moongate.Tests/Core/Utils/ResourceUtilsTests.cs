@@ -13,7 +13,9 @@ public sealed class ResourceUtilsTests
 
     [Theory, InlineData("Other.Root.file.txt", "Moongate.Tests"), InlineData("Moongate.Tests.NoExtension", "Moongate.Tests")]
     public void ConvertResourceNameToPath_InvalidName_ThrowsArgumentException(string resourceName, string prefix)
-        => Assert.Throws<ArgumentException>(() => ResourceUtils.ConvertResourceNameToPath(resourceName, prefix));
+    {
+        Assert.Throws<ArgumentException>(() => ResourceUtils.ConvertResourceNameToPath(resourceName, prefix));
+    }
 
     [Fact]
     public void ConvertResourceNameToPath_ValidName_PreservesFileExtension()
@@ -132,7 +134,9 @@ public sealed class ResourceUtilsTests
         string resourceName,
         string expected
     )
-        => Assert.Equal(expected, ResourceUtils.GetFileNameFromResourcePath(resourceName));
+    {
+        Assert.Equal(expected, ResourceUtils.GetFileNameFromResourcePath(resourceName));
+    }
 
     [Theory, InlineData("file.txt"), InlineData("extensionless")]
     public void ResourceComponentHelpers_NamesWithoutDirectory_ReturnEmptyDirectoryAndOriginalFileName(string name)

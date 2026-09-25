@@ -27,15 +27,17 @@ internal static class Cli
         string? pluginsDirectory = null,
         CancellationToken cancellationToken = default
     )
-        => MigrationCommand.StatusAsync(
-            target,
-            rootDirectory,
-            migrationsDirectory,
-            pluginsDirectory,
-            Console.Out,
-            Console.Error,
-            cancellationToken
-        );
+    {
+        return MigrationCommand.StatusAsync(
+                target,
+                rootDirectory,
+                migrationsDirectory,
+                pluginsDirectory,
+                Console.Out,
+                Console.Error,
+                cancellationToken
+            );
+    }
 
     /// <summary>Applies pending migrations for the selected target.</summary>
     /// <param name="target">auth (the shared account database) or world (an independent world database).</param>
@@ -55,13 +57,15 @@ internal static class Cli
         string? pluginsDirectory = null,
         CancellationToken cancellationToken = default
     )
-        => MigrationCommand.ApplyAsync(
-            target,
-            rootDirectory,
-            migrationsDirectory,
-            pluginsDirectory,
-            Console.Out,
-            Console.Error,
-            cancellationToken
-        );
+    {
+        return MigrationCommand.ApplyAsync(
+                target,
+                rootDirectory,
+                migrationsDirectory,
+                pluginsDirectory,
+                Console.Out,
+                Console.Error,
+                cancellationToken
+            );
+    }
 }

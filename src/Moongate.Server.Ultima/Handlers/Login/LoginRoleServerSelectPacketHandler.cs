@@ -180,7 +180,9 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
     }
 
     private bool IsCurrent(LoginSession session, INetworkConnection connection)
-        => _sessions.IsCurrent(session) && ReferenceEquals(session.NetworkSession.Client, connection);
+    {
+        return _sessions.IsCurrent(session) && ReferenceEquals(session.NetworkSession.Client, connection);
+    }
 
     private async Task RejectAsync(LoginSession session, INetworkConnection connection, LoginDeniedReason reason)
     {

@@ -26,7 +26,9 @@ internal static class MigrationCommand
         TextWriter error,
         CancellationToken cancellationToken = default
     )
-        => RunAsync(false, target, rootDirectory, migrationsDirectory, pluginsDirectory, output, error, cancellationToken);
+    {
+        return RunAsync(false, target, rootDirectory, migrationsDirectory, pluginsDirectory, output, error, cancellationToken);
+    }
 
     public static Task<int> ApplyAsync(
         MigrationTarget target,
@@ -37,7 +39,9 @@ internal static class MigrationCommand
         TextWriter error,
         CancellationToken cancellationToken = default
     )
-        => RunAsync(true, target, rootDirectory, migrationsDirectory, pluginsDirectory, output, error, cancellationToken);
+    {
+        return RunAsync(true, target, rootDirectory, migrationsDirectory, pluginsDirectory, output, error, cancellationToken);
+    }
 
     private static async Task<int> RunAsync(
         bool apply,

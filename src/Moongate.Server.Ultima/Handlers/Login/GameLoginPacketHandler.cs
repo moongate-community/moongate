@@ -86,9 +86,11 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
     }
 
     private static async Task DenyAsync(PacketContext context, CancellationToken cancellationToken)
-        => await context.SendAndDisconnectAsync(
-                            new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem),
-                            cancellationToken
-                        )
-                        .ConfigureAwait(false);
+    {
+        await context.SendAndDisconnectAsync(
+                                new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem),
+                                cancellationToken
+                            )
+                            .ConfigureAwait(false);
+    }
 }

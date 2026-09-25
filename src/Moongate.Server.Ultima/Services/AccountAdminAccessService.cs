@@ -148,16 +148,18 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
     }
 
     public Task RevokeSessionsAsync(Serial accountId, CancellationToken token = default)
-        => _persistence.ExecuteInTransactionAsync(
-            PersistenceDatabaseTarget.Accounts,
-            async tx =>
-            {
-                _ = await tx.GetByIdForUpdateAsync<AccountEntity>(accountId, token) ??
-                    throw new KeyNotFoundException("Account not found.");
-                await _sessions.ResetGateAsync(accountId, false, token);
-            },
-            token
-        );
+    {
+        return _persistence.ExecuteInTransactionAsync(
+                PersistenceDatabaseTarget.Accounts,
+                async tx =>
+                {
+                    _ = await tx.GetByIdForUpdateAsync<AccountEntity>(accountId, token) ??
+                        throw new KeyNotFoundException("Account not found.");
+                    await _sessions.ResetGateAsync(accountId, false, token);
+                },
+                token
+            );
+    }
 
     private async Task<Serial?> FindIdAsync(string username, CancellationToken token)
     {

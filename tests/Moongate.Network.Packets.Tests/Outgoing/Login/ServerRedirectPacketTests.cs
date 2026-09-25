@@ -9,7 +9,9 @@ public class ServerRedirectPacketTests
 {
     [Fact]
     public void Constructor_IPv6Address_ThrowsArgumentException()
-        => Assert.Throws<ArgumentException>(() => new ServerRedirectPacket(IPAddress.IPv6Loopback, 2593, 1));
+    {
+        Assert.Throws<ArgumentException>(() => new ServerRedirectPacket(IPAddress.IPv6Loopback, 2593, 1));
+    }
 
     [Fact]
     public void Encode_KnownAddressPortAndKey_MatchesNormalIpOrderFixture()

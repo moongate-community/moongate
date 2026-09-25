@@ -37,5 +37,7 @@ public static class PacketCodec
         [NotNullWhen(true)] out TPacket? packet
     )
         where TPacket : class, IIncomingPacket<TPacket>
-        => TPacket.TryParse(data, out packet);
+    {
+        return TPacket.TryParse(data, out packet);
+    }
 }

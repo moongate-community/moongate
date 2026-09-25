@@ -73,7 +73,9 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     }
 
     private static bool IsNoKey(ConsoleKeyInfo key)
-        => key.KeyChar == '\0' && key.Key == default && key.Modifiers == 0;
+    {
+        return key.KeyChar == '\0' && key.Key == default && key.Modifiers == 0;
+    }
 
     private static string MaskSensitiveInput(string input)
     {
@@ -251,5 +253,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     }
 
     public void Dispose()
-        => _lifetime.Dispose();
+    {
+        _lifetime.Dispose();
+    }
 }

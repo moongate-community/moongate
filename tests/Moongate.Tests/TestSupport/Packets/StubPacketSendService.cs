@@ -11,13 +11,19 @@ public sealed class StubPacketSendService : IPacketSendService
     public bool RejectTerminalSend { get; init; }
 
     public Task StartAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public Task StopAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public Task DisconnectAsync(long sessionId)
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public bool TrySend(long sessionId, IOutgoingPacket packet)
     {

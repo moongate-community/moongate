@@ -71,9 +71,11 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
     }
 
     public Task DisconnectAsync(long sessionId)
-        => _sessions.TryGet(sessionId, out var session)
-               ? DisconnectAsync(session)
-               : Task.CompletedTask;
+    {
+        return _sessions.TryGet(sessionId, out var session)
+                   ? DisconnectAsync(session)
+                   : Task.CompletedTask;
+    }
 
     public Task DisconnectAsync(LoginSession session)
     {

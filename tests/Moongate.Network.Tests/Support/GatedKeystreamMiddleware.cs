@@ -21,7 +21,9 @@ public sealed class GatedKeystreamMiddleware : INetMiddleware
         ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-        => ValueTask.FromResult(data);
+    {
+        return ValueTask.FromResult(data);
+    }
 
     public async ValueTask<ReadOnlyMemory<byte>> ProcessSendAsync(
         MoongateTcpClient? client,
@@ -51,7 +53,9 @@ public sealed class GatedKeystreamMiddleware : INetMiddleware
     }
 
     public void Release()
-        => _gate.TrySetResult();
+    {
+        _gate.TrySetResult();
+    }
 
     private static byte[] BuildKeystreamFrame(ReadOnlySpan<byte> payload, ref int position)
     {

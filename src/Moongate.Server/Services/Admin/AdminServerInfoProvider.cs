@@ -25,12 +25,14 @@ public sealed class AdminServerInfoProvider : IAdminServerInfoProvider
     }
 
     public AdminServerInfo GetSnapshot()
-        => new(
-            VersionUtils.GetVersion(typeof(AdminServerInfoProvider).Assembly),
-            VersionUtils.GetCodename(typeof(AdminServerInfoProvider).Assembly),
-            _mode,
-            _instanceId,
-            _realmId,
-            DateTime.UtcNow - _startedAt
-        );
+    {
+        return new(
+                VersionUtils.GetVersion(typeof(AdminServerInfoProvider).Assembly),
+                VersionUtils.GetCodename(typeof(AdminServerInfoProvider).Assembly),
+                _mode,
+                _instanceId,
+                _realmId,
+                DateTime.UtcNow - _startedAt
+            );
+    }
 }

@@ -31,5 +31,7 @@ public sealed class GameServerEntry
     }
 
     internal ReadOnlySpan<byte> GetAddressBytes()
-        => _addressBytes;
+    {
+        return _addressBytes;
+    }
 }

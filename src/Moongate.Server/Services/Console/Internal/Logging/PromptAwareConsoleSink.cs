@@ -18,8 +18,12 @@ internal sealed class PromptAwareConsoleSink : ILogEventSink, IDisposable
     }
 
     public void Emit(LogEvent logEvent)
-        => _prompt.RunWithPromptHidden(() => _inner.Write(logEvent));
+    {
+        _prompt.RunWithPromptHidden(() => _inner.Write(logEvent));
+    }
 
     public void Dispose()
-        => (_inner as IDisposable)?.Dispose();
+    {
+        (_inner as IDisposable)?.Dispose();
+    }
 }

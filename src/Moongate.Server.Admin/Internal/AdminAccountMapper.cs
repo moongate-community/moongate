@@ -56,19 +56,22 @@ internal static class AdminAccountMapper
     }
 
     public static AccountSummary ToSummary(AccountEntity account)
-        => ToSummary(
-            new AdminAccountSnapshot(
-                account.Id,
-                account.Username,
-                account.AccountType,
-                account.CanAccessApi,
-                account.IsLocked,
-                account.CreatedAt
-            )
-        );
+    {
+        return ToSummary(
+                new AdminAccountSnapshot(
+                    account.Id,
+                    account.Username,
+                    account.AccountType,
+                    account.CanAccessApi,
+                    account.IsLocked,
+                    account.CreatedAt
+                )
+            );
+    }
 
     public static AccountSummary ToSummary(AdminAccountSnapshot account)
-        => new()
+    {
+        return new()
         {
             AccountId = account.AccountId.Value, Username = account.Username,
             AccountType = account.AccountType switch
@@ -81,4 +84,5 @@ internal static class AdminAccountMapper
             CanAccessApi = account.CanAccessApi, IsLocked = account.IsLocked,
             CreatedAt = Timestamp.FromDateTime(DateTime.SpecifyKind(account.CreatedAt, DateTimeKind.Utc))
         };
+    }
 }

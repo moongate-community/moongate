@@ -46,7 +46,9 @@ public sealed class EnvExtensionsTests
 
     [Theory, InlineData(null), InlineData("")]
     public void ExpandEnvironmentVariables_NullOrEmpty_ReturnsInput(string? input)
-        => Assert.Equal(input, input!.ExpandEnvironmentVariables());
+    {
+        Assert.Equal(input, input!.ExpandEnvironmentVariables());
+    }
 
     [Fact]
     public void ExpandEnvironmentVariables_UnknownVariable_RemainsUnchanged()

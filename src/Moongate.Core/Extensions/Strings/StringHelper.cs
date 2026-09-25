@@ -76,7 +76,9 @@ public static class StringHelpers
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static string DefaultIfNullOrEmpty(this string value, string def)
-        => string.IsNullOrWhiteSpace(value) ? def : value;
+    {
+        return string.IsNullOrWhiteSpace(value) ? def : value;
+    }
 
     public static string IndentMultiline(this string str, string indent = "\t", string lineSeparator = "\n")
     {

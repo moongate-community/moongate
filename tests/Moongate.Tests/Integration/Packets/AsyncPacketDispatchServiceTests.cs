@@ -368,5 +368,7 @@ public sealed class AsyncPacketDispatchServiceTests
         SessionService sessions,
         Container container
     )
-        => new(fixture.Loop, sessions, container.Resolve<PacketHandlerRegistry>(), container);
+    {
+        return new(fixture.Loop, sessions, container.Resolve<PacketHandlerRegistry>(), container);
+    }
 }

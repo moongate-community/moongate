@@ -114,20 +114,24 @@ public sealed class GameLoginPacketHandlerTests
     }
 
     private static RealmInstance Realm()
-        => new(
-            new(
-                "realm",
-                1,
-                "Realm",
-                IPAddress.Loopback,
-                2595,
-                AccountType.Regular
-            ),
-            Guid.Parse("74e13e2c-dab8-4acf-8613-362362b0e83a")
-        );
+    {
+        return new(
+                new(
+                    "realm",
+                    1,
+                    "Realm",
+                    IPAddress.Loopback,
+                    2595,
+                    AccountType.Regular
+                ),
+                Guid.Parse("74e13e2c-dab8-4acf-8613-362362b0e83a")
+            );
+    }
 
     private static PendingHandoff Handoff()
-        => new(new(42), AccountType.GameMaster, "user", "realm", Realm().InstanceId, "7.0.117");
+    {
+        return new(new(42), AccountType.GameMaster, "user", "realm", Realm().InstanceId, "7.0.117");
+    }
 
     private sealed class RecordingHandoffStore : IGameHandoffStore
     {
@@ -142,7 +146,9 @@ public sealed class GameLoginPacketHandlerTests
             ReadOnlyMemory<byte> credentialKey,
             CancellationToken token = default
         )
-            => throw new NotSupportedException();
+        {
+            throw new NotSupportedException();
+        }
 
         public ValueTask<PendingHandoff?> RedeemAsync(
             string realmId,
@@ -166,6 +172,8 @@ public sealed class GameLoginPacketHandlerTests
         }
 
         public ValueTask RevokeAsync(string realmId, uint authKey, CancellationToken token = default)
-            => ValueTask.CompletedTask;
+        {
+            return ValueTask.CompletedTask;
+        }
     }
 }

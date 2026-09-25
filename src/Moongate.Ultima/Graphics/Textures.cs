@@ -13,7 +13,9 @@ public sealed class Textures
     private static bool[] _removed = new bool[0x4000];
 
     public static int GetIdxLength()
-        => (int)(_fileIndex.IdxLength / 12);
+    {
+        return (int)(_fileIndex.IdxLength / 12);
+    }
 
     /// <summary>
     /// Returns Bitmap of Texture
@@ -21,7 +23,9 @@ public sealed class Textures
     /// <param name="index"></param>
     /// <returns></returns>
     public static UltimaBitmap GetTexture(int index)
-        => GetTexture(index, out _);
+    {
+        return GetTexture(index, out _);
+    }
 
     /// <summary>
     /// Returns Bitmap of Texture with verdata bool
@@ -122,7 +126,9 @@ public sealed class Textures
     /// </summary>
     /// <param name="index"></param>
     public static void Remove(int index)
-        => _removed[index] = true;
+    {
+        _removed[index] = true;
+    }
 
     /// <summary>
     /// Replaces Texture
@@ -254,7 +260,9 @@ public sealed class Textures
     }
 
     private static int GetExtraFlag(int length)
+    {
 
         // length of 0x8000 == width 128x128 else 64x64
-        => length == 0x8000 ? 1 : 0;
+        return length == 0x8000 ? 1 : 0;
+    }
 }

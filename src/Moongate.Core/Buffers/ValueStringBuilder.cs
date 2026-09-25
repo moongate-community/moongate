@@ -105,7 +105,9 @@ public ref struct ValueStringBuilder
         [InterpolatedStringHandlerArgument("formatProvider")]
         scoped DefaultInterpolatedStringHandler handler
     )
-        => Append(handler);
+    {
+        Append(handler);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Append(string? s)
@@ -237,23 +239,33 @@ public ref struct ValueStringBuilder
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<char> AsSpan()
-        => _chars[..Length];
+    {
+        return _chars[..Length];
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<char> AsSpan(int start)
-        => _chars[start..Length];
+    {
+        return _chars[start..Length];
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public ReadOnlySpan<char> AsSpan(int start, int length)
-        => _chars.Slice(start, length);
+    {
+        return _chars.Slice(start, length);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueStringBuilder Create(int capacity = 64, bool mt = false)
-        => new(capacity, mt);
+    {
+        return new(capacity, mt);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static ValueStringBuilder CreateMT(int capacity = 64)
-        => new(capacity, true);
+    {
+        return new(capacity, true);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void EnsureCapacity(int capacity)
@@ -271,7 +283,9 @@ public ref struct ValueStringBuilder
     /// the explicit method call, and write eg "fixed (char* c = builder)"
     /// </summary>
     public ref char GetPinnableReference()
-        => ref MemoryMarshal.GetReference(_chars);
+    {
+        return ref MemoryMarshal.GetReference(_chars);
+    }
 
     /// <summary>
     /// Get a pinnable reference to the builder.
@@ -424,11 +438,15 @@ public ref struct ValueStringBuilder
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Reset()
-        => Length = 0;
+    {
+        Length = 0;
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public override string ToString()
-        => _chars[..Length].ToString();
+    {
+        return _chars[..Length].ToString();
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool TryCopyTo(Span<char> destination, out int charsWritten)

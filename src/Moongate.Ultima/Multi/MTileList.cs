@@ -12,16 +12,24 @@ public sealed class MTileList
     }
 
     public void Add(ushort id, sbyte z)
-        => _tiles.Add(new(id, z));
+    {
+        _tiles.Add(new(id, z));
+    }
 
     public void Add(ushort id, sbyte z, sbyte flag)
-        => _tiles.Add(new(id, z, flag));
+    {
+        _tiles.Add(new(id, z, flag));
+    }
 
     public void Add(ushort id, sbyte z, sbyte flag, int unk1)
-        => _tiles.Add(new(id, z, flag, unk1));
+    {
+        _tiles.Add(new(id, z, flag, unk1));
+    }
 
     public MTile Get(int i)
-        => _tiles[i];
+    {
+        return _tiles[i];
+    }
 
     public void Remove(int i)
     {

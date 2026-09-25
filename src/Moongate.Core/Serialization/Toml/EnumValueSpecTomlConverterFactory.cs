@@ -13,7 +13,9 @@ public sealed class EnumValueSpecTomlConverterFactory : TomlConverterFactory
 {
     /// <inheritdoc />
     public override bool CanConvert(Type typeToConvert)
-        => typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(EnumValueSpec<>);
+    {
+        return typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(EnumValueSpec<>);
+    }
 
     /// <inheritdoc />
     public override TomlConverter CreateConverter(Type typeToConvert, TomlSerializerOptions options)

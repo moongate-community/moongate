@@ -52,15 +52,21 @@ public sealed class CommandContext
 
     /// <summary>Writes an informational line.</summary>
     public void Print(string message, params object[] args)
-        => Write(message, args, CommandOutputLevel.Information);
+    {
+        Write(message, args, CommandOutputLevel.Information);
+    }
 
     /// <summary>Writes an error line.</summary>
     public void PrintError(string message, params object[] args)
-        => Write(message, args, CommandOutputLevel.Error);
+    {
+        Write(message, args, CommandOutputLevel.Error);
+    }
 
     /// <summary>Writes a warning line.</summary>
     public void PrintWarning(string message, params object[] args)
-        => Write(message, args, CommandOutputLevel.Warning);
+    {
+        Write(message, args, CommandOutputLevel.Warning);
+    }
 
     private void Write(string message, object[] args, CommandOutputLevel level)
     {

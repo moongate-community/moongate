@@ -27,5 +27,7 @@ public sealed class LoopThreadGuardTests
 
     [Fact]
     public void NoThreadGuard_AlwaysPasses()
-        => NoThreadGuard.Instance.EnsureScriptThread("anything");
+    {
+        NoThreadGuard.Instance.EnsureScriptThread("anything");
+    }
 }

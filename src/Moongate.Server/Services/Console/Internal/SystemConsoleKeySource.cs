@@ -8,5 +8,7 @@ internal sealed class SystemConsoleKeySource : IConsoleKeySource
     public bool KeyAvailable => System.Console.KeyAvailable;
 
     public ConsoleKeyInfo ReadKey()
-        => System.Console.ReadKey(true);
+    {
+        return System.Console.ReadKey(true);
+    }
 }

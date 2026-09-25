@@ -40,7 +40,9 @@ public readonly struct RangeValueSpec<T> where T : struct, INumber<T>
 
     /// <summary>Creates a spec that always resolves to <paramref name="value" />.</summary>
     public static RangeValueSpec<T> FromValue(T value)
-        => new(value);
+    {
+        return new(value);
+    }
 
     /// <summary>Creates a spec that resolves to a fresh pick in <c>[min, max]</c> on every call.</summary>
     public static RangeValueSpec<T> FromRange(T min, T max)
@@ -111,7 +113,9 @@ public readonly struct RangeValueSpec<T> where T : struct, INumber<T>
 
     /// <inheritdoc />
     public override string ToString()
-        => IsRandom
-               ? $"{_min.ToString(null, CultureInfo.InvariantCulture)}-{_max.ToString(null, CultureInfo.InvariantCulture)}"
-               : _fixedValue.ToString(null, CultureInfo.InvariantCulture) ?? string.Empty;
+    {
+        return IsRandom
+                   ? $"{_min.ToString(null, CultureInfo.InvariantCulture)}-{_max.ToString(null, CultureInfo.InvariantCulture)}"
+                   : _fixedValue.ToString(null, CultureInfo.InvariantCulture) ?? string.Empty;
+    }
 }

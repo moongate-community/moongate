@@ -463,8 +463,12 @@ public sealed class DiagnosticServiceTests
     }
 
     private static MetricSample Sample(string name = "value", double value = 42)
-        => new(name, value, "count", DiagnosticMetricType.Gauge);
+    {
+        return new(name, value, "count", DiagnosticMetricType.Gauge);
+    }
 
     private static TaskCompletionSource Signal()
-        => new(TaskCreationOptions.RunContinuationsAsynchronously);
+    {
+        return new(TaskCreationOptions.RunContinuationsAsynchronously);
+    }
 }

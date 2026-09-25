@@ -49,15 +49,21 @@ public sealed class PersistenceDatabaseOptions
 
     /// <inheritdoc />
     public override string ToString()
-        => $"PersistenceDatabaseOptions {{ Target = {Target}, SeparateSchemaConnection = {_hasSeparateSchemaConnection} }}";
+    {
+        return $"PersistenceDatabaseOptions {{ Target = {Target}, SeparateSchemaConnection = {_hasSeparateSchemaConnection} }}";
+    }
 
     internal string ResolveRuntimeConnectionString()
-        => ResolveConnectionString(_runtimeConnectionStringFactory, "runtime");
+    {
+        return ResolveConnectionString(_runtimeConnectionStringFactory, "runtime");
+    }
 
     internal string ResolveSchemaConnectionString(string runtimeConnectionString)
-        => _hasSeparateSchemaConnection
-               ? ResolveConnectionString(_schemaConnectionStringFactory, "schema")
-               : runtimeConnectionString;
+    {
+        return _hasSeparateSchemaConnection
+                   ? ResolveConnectionString(_schemaConnectionStringFactory, "schema")
+                   : runtimeConnectionString;
+    }
 
     internal void ValidateSameDatabaseEndpoint(string runtimeConnectionString, string schemaConnectionString)
     {

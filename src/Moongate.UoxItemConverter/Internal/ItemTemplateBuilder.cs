@@ -86,5 +86,7 @@ internal static class ItemTemplateBuilder
     }
 
     private static bool IsBareHex(string header)
-        => header.StartsWith("0x", StringComparison.OrdinalIgnoreCase);
+    {
+        return header.StartsWith("0x", StringComparison.OrdinalIgnoreCase);
+    }
 }

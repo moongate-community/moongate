@@ -351,7 +351,9 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
     }
 
     private void ThrowIfDisposed()
-        => ObjectDisposedException.ThrowIf(_disposed, this);
+    {
+        ObjectDisposedException.ThrowIf(_disposed, this);
+    }
 
     private async Task ValidateMigrationsAsync(CancellationToken cancellationToken)
     {

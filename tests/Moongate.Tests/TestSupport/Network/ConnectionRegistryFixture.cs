@@ -28,5 +28,7 @@ internal sealed class ConnectionRegistryFixture : IAsyncDisposable
     }
 
     public async ValueTask DisposeAsync()
-        => await Service.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));
+    {
+        await Service.StopAsync().WaitAsync(TimeSpan.FromSeconds(5));
+    }
 }

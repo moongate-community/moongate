@@ -103,10 +103,14 @@ public sealed class AdminGrpcHostService : IAdminApiService, IAsyncDisposable
     }
 
     public void Activate()
-        => _gate.Activate();
+    {
+        _gate.Activate();
+    }
 
     public void StopAccepting()
-        => _gate.StopAccepting();
+    {
+        _gate.StopAccepting();
+    }
 
     public async Task StopAsync()
     {
@@ -165,5 +169,7 @@ public sealed class AdminGrpcHostService : IAdminApiService, IAsyncDisposable
     }
 
     public async ValueTask DisposeAsync()
-        => await StopAsync();
+    {
+        await StopAsync();
+    }
 }

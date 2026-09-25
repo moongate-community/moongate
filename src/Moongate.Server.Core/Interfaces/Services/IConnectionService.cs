@@ -16,7 +16,9 @@ public interface IConnectionService : IMoongateStartupService
 
     /// <summary>Closes only the expected connection if its identifier has been reused.</summary>
     Task DisconnectAsync(long sessionId, INetworkConnection expectedConnection)
-        => expectedConnection.CloseAsync();
+    {
+        return expectedConnection.CloseAsync();
+    }
 
     /// <summary>Returns an independent membership snapshot, including connections with unfinished cleanup.</summary>
     IReadOnlyCollection<INetworkConnection> GetAll();

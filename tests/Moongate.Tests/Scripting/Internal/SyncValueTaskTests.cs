@@ -6,7 +6,9 @@ public sealed class SyncValueTaskTests
 {
     [Fact]
     public void Run_CompletedTask_ReturnsItsResult()
-        => Assert.Equal(7, SyncValueTask.Run(new ValueTask<int>(7)));
+    {
+        Assert.Equal(7, SyncValueTask.Run(new ValueTask<int>(7)));
+    }
 
     [Fact]
     public void Run_FaultedTask_RethrowsTheOriginalException()
@@ -31,7 +33,9 @@ public sealed class SyncValueTaskTests
 
     [Fact]
     public void Run_NonGenericCompleted_Passes()
-        => SyncValueTask.Run(ValueTask.CompletedTask);
+    {
+        SyncValueTask.Run(ValueTask.CompletedTask);
+    }
 
     [Fact]
     public void Run_TaskFaultedWithSeveralExceptions_RethrowsTheFirstOneUnwrapped()

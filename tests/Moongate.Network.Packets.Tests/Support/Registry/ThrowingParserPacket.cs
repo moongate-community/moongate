@@ -10,5 +10,7 @@ namespace Moongate.Network.Packets.Tests.Support.Registry;
 public sealed class ThrowingParserPacket : BaseFixedPacket<ThrowingParserPacket>, IIncomingPacket<ThrowingParserPacket>
 {
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out ThrowingParserPacket? packet)
-        => throw new InvalidOperationException("The parser must not be called for invalid framing.");
+    {
+        throw new InvalidOperationException("The parser must not be called for invalid framing.");
+    }
 }

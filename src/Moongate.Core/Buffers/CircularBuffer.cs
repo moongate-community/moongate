@@ -299,7 +299,9 @@ public class CircularBuffer<T> : IEnumerable<T>
     /// </summary>
     /// <returns>An IList with 2 segments corresponding to the buffer content.</returns>
     public IList<ArraySegment<T>> ToArraySegments()
-        => [ArrayOne(), ArrayTwo()];
+    {
+        return [ArrayOne(), ArrayTwo()];
+    }
 
     /// <summary>
     /// Decrements the provided index variable by one, wrapping
@@ -316,12 +318,14 @@ public class CircularBuffer<T> : IEnumerable<T>
         index--;
     }
 
-#region IEnumerable implementation
+    #region IEnumerable implementation
 
     IEnumerator IEnumerable.GetEnumerator()
-        => GetEnumerator();
+    {
+        return GetEnumerator();
+    }
 
-#endregion
+    #endregion
 
     /// <summary>
     /// Increments the provided index variable by one, wrapping
@@ -346,7 +350,9 @@ public class CircularBuffer<T> : IEnumerable<T>
     /// External index.
     /// </param>
     private int InternalIndex(int index)
-        => _start + (index < Capacity - _start ? index : index - Capacity);
+    {
+        return _start + (index < Capacity - _start ? index : index - Capacity);
+    }
 
     private void ThrowIfEmpty(string message = "Cannot access an empty buffer.")
     {

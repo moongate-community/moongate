@@ -16,19 +16,29 @@ internal sealed class CallbackPacketSender : IPacketSendService
     }
 
     public Task DisconnectAsync(long sessionId)
-        => _disconnect(sessionId);
+    {
+        return _disconnect(sessionId);
+    }
 
     public Task StartAsync()
-        => _inner.StartAsync();
+    {
+        return _inner.StartAsync();
+    }
 
     public Task StopAsync()
-        => _inner.StopAsync();
+    {
+        return _inner.StopAsync();
+    }
 
     public bool TrySend(long sessionId, IOutgoingPacket packet)
-        => _inner.TrySend(sessionId, packet);
+    {
+        return _inner.TrySend(sessionId, packet);
+    }
 
     public bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet)
-        => _inner.TrySend(sessionId, expectedConnection, packet);
+    {
+        return _inner.TrySend(sessionId, expectedConnection, packet);
+    }
 
     public Task<bool> SendAndDisconnectAsync(
         long sessionId,
@@ -36,5 +46,7 @@ internal sealed class CallbackPacketSender : IPacketSendService
         IOutgoingPacket packet,
         CancellationToken cancellationToken = default
     )
-        => _inner.SendAndDisconnectAsync(sessionId, expectedConnection, packet, cancellationToken);
+    {
+        return _inner.SendAndDisconnectAsync(sessionId, expectedConnection, packet, cancellationToken);
+    }
 }

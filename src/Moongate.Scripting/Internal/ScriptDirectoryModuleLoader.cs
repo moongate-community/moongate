@@ -14,7 +14,9 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
     }
 
     public bool Exists(string moduleName)
-        => TryResolve(moduleName, out var path) && File.Exists(path);
+    {
+        return TryResolve(moduleName, out var path) && File.Exists(path);
+    }
 
     public ValueTask<LuaModule> LoadAsync(string moduleName, CancellationToken cancellationToken)
     {
@@ -109,7 +111,9 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
     }
 
     private static string ToRelative(string moduleName)
-        => moduleName.Replace('.', '/') + ".lua";
+    {
+        return moduleName.Replace('.', '/') + ".lua";
+    }
 
     private bool TryResolve(string moduleName, out string path)
     {

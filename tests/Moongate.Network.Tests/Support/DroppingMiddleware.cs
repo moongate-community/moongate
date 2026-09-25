@@ -14,12 +14,16 @@ public sealed class DroppingMiddleware : INetMiddleware
         ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-        => ValueTask.FromResult(ReadOnlyMemory<byte>.Empty);
+    {
+        return ValueTask.FromResult(ReadOnlyMemory<byte>.Empty);
+    }
 
     public ValueTask<ReadOnlyMemory<byte>> ProcessSendAsync(
         MoongateTcpClient? client,
         ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-        => ValueTask.FromResult(ReadOnlyMemory<byte>.Empty);
+    {
+        return ValueTask.FromResult(ReadOnlyMemory<byte>.Empty);
+    }
 }

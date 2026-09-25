@@ -27,7 +27,9 @@ public static class VersionUtils
     /// </summary>
     /// <returns>The version declared for Moongate.Core, without build metadata.</returns>
     public static string GetVersion()
-        => GetVersion(typeof(VersionUtils).Assembly);
+    {
+        return GetVersion(typeof(VersionUtils).Assembly);
+    }
 
     /// <summary>
     /// Gets the informational version of the specified assembly, stripping any build metadata

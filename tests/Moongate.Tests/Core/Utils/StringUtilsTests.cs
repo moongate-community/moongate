@@ -19,7 +19,9 @@ public class StringUtilsTests
 
     [Fact]
     public void ToCamelCase_LeadingSeparators_LowercasesFirstWord()
-        => Assert.Equal("helloWorld", StringUtils.ToCamelCase("__hello world"));
+    {
+        Assert.Equal("helloWorld", StringUtils.ToCamelCase("__hello world"));
+    }
 
     [Theory,
      InlineData(null, ""),
@@ -30,7 +32,9 @@ public class StringUtilsTests
      InlineData("CAFÉ_münchen", "caféMünchen"),
      InlineData("_ -\t", "")]
     public void ToCamelCase_WordsAndSeparators_ProducesCamelCase(string? input, string expected)
-        => Assert.Equal(expected, StringUtils.ToCamelCase(input!));
+    {
+        Assert.Equal(expected, StringUtils.ToCamelCase(input!));
+    }
 
     [Theory,
      InlineData(null, ""),
@@ -41,7 +45,9 @@ public class StringUtilsTests
      InlineData("CAFÉ münchen", "café.münchen"),
      InlineData("_ -\t", "")]
     public void ToDotCase_WordsAndSeparators_ProducesDotCase(string? input, string expected)
-        => Assert.Equal(expected, StringUtils.ToDotCase(input!));
+    {
+        Assert.Equal(expected, StringUtils.ToDotCase(input!));
+    }
 
     [Theory,
      InlineData(null, ""),
@@ -52,7 +58,9 @@ public class StringUtilsTests
      InlineData("CAFÉ münchen", "café-münchen"),
      InlineData("_ -\t", "")]
     public void ToKebabCase_WordsAndSeparators_ProducesKebabCase(string? input, string expected)
-        => Assert.Equal(expected, StringUtils.ToKebabCase(input!));
+    {
+        Assert.Equal(expected, StringUtils.ToKebabCase(input!));
+    }
 
     [Theory,
      InlineData(null, ""),
@@ -63,7 +71,9 @@ public class StringUtilsTests
      InlineData("CAFÉ münchen", "CaféMünchen"),
      InlineData("_ -\t", "")]
     public void ToPascalCase_WordsAndSeparators_ProducesPascalCase(string? input, string expected)
-        => Assert.Equal(expected, StringUtils.ToPascalCase(input!));
+    {
+        Assert.Equal(expected, StringUtils.ToPascalCase(input!));
+    }
 
     [Theory,
      InlineData(null, ""),
@@ -74,7 +84,9 @@ public class StringUtilsTests
      InlineData("CAFÉ münchen", "café/münchen"),
      InlineData("_ -\t", "")]
     public void ToPathCase_WordsAndSeparators_ProducesPathCase(string? input, string expected)
-        => Assert.Equal(expected, StringUtils.ToPathCase(input!));
+    {
+        Assert.Equal(expected, StringUtils.ToPathCase(input!));
+    }
 
     [Theory,
      InlineData(null, ""),
@@ -85,7 +97,9 @@ public class StringUtilsTests
      InlineData("ÉCOLE MÜNCHEN", "École münchen"),
      InlineData("_ -\t", "")]
     public void ToSentenceCase_SpaceSeparatedWords_CapitalizesOnlyFirstWord(string? input, string expected)
-        => Assert.Equal(expected, StringUtils.ToSentenceCase(input!));
+    {
+        Assert.Equal(expected, StringUtils.ToSentenceCase(input!));
+    }
 
     [Theory,
      InlineData(null, ""),
@@ -96,7 +110,9 @@ public class StringUtilsTests
      InlineData("CAFÉ münchen", "café_münchen"),
      InlineData("_ -\t", "")]
     public void ToSnakeCase_WordsAndSeparators_ProducesSnakeCase(string? input, string expected)
-        => Assert.Equal(expected, StringUtils.ToSnakeCase(input!));
+    {
+        Assert.Equal(expected, StringUtils.ToSnakeCase(input!));
+    }
 
     [Theory,
      InlineData(null, ""),
@@ -107,7 +123,9 @@ public class StringUtilsTests
      InlineData("CAFÉ münchen", "Café München"),
      InlineData("_ -\t", "")]
     public void ToTitleCase_WordsAndSeparators_ProducesTitleCase(string? input, string expected)
-        => Assert.Equal(expected, StringUtils.ToTitleCase(input!));
+    {
+        Assert.Equal(expected, StringUtils.ToTitleCase(input!));
+    }
 
     [Theory,
      InlineData(null, ""),
@@ -118,9 +136,13 @@ public class StringUtilsTests
      InlineData("CAFÉ münchen", "Café-München"),
      InlineData("_ -\t", "")]
     public void ToTrainCase_WordsAndSeparators_ProducesTrainCase(string? input, string expected)
-        => Assert.Equal(expected, StringUtils.ToTrainCase(input!));
+    {
+        Assert.Equal(expected, StringUtils.ToTrainCase(input!));
+    }
 
     [Theory, InlineData("HTTPResponseID", "HTTP_RESPONSE_ID"), InlineData("café münchen", "CAFÉ_MÜNCHEN")]
     public void ToUpperSnakeCase_Words_UppercasesEachWord(string input, string expected)
-        => Assert.Equal(expected, StringUtils.ToUpperSnakeCase(input));
+    {
+        Assert.Equal(expected, StringUtils.ToUpperSnakeCase(input));
+    }
 }

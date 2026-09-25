@@ -74,7 +74,9 @@ public sealed class TimerModuleTests : IDisposable
 
     [Fact]
     public void After_WithANonFunction_RaisesALuaError()
-        => Assert.Throws<LuaRuntimeException>(() => Run("timer.after(1, 'nope')"));
+    {
+        Assert.Throws<LuaRuntimeException>(() => Run("timer.after(1, 'nope')"));
+    }
 
     [Theory, InlineData("0"), InlineData("-1"), InlineData("0/0")]
     public void After_WithANonPositiveDuration_RaisesALuaErrorAndLeavesTheWheelAlone(string seconds)
@@ -144,8 +146,12 @@ public sealed class TimerModuleTests : IDisposable
     }
 
     private LuaValue[] Run(string source)
-        => SyncValueTask.Run(_state.DoStringAsync(source, "test"));
+    {
+        return SyncValueTask.Run(_state.DoStringAsync(source, "test"));
+    }
 
     public void Dispose()
-        => _state.Dispose();
+    {
+        _state.Dispose();
+    }
 }

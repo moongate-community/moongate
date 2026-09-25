@@ -96,13 +96,15 @@ internal static class AdminApiConfigEditor
     }
 
     private static bool IsKey(KeySyntax? key, string expected)
-        => key is not null &&
-           !key.DotKeys.Any() &&
-           key.Key switch
-           {
-               BareKeySyntax bare       => bare.Key?.Text,
-               StringValueSyntax quoted => quoted.Value,
-               _                        => null
-           } ==
-           expected;
+    {
+        return key is not null &&
+               !key.DotKeys.Any() &&
+               key.Key switch
+               {
+                   BareKeySyntax bare => bare.Key?.Text,
+                   StringValueSyntax quoted => quoted.Value,
+                   _ => null
+               } ==
+               expected;
+    }
 }

@@ -376,5 +376,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
     }
 
     public void Dispose()
-        => _state.Dispose();
+    {
+        _state.Dispose();
+    }
 }

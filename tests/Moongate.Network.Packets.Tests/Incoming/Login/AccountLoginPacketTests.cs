@@ -9,7 +9,9 @@ public class AccountLoginPacketTests
 
     [Theory, InlineData("1234567890123456789012345678901", "b"), InlineData("é", "b"), InlineData("a", "b\0")]
     public void Constructor_InvalidCredential_ThrowsArgumentException(string account, string password)
-        => Assert.Throws<ArgumentException>(() => new AccountLoginPacket(account, password, 0xFF));
+    {
+        Assert.Throws<ArgumentException>(() => new AccountLoginPacket(account, password, 0xFF));
+    }
 
     [Fact]
     public void TryDecode_FullWidthCredentials_PreservesAllCharacters()

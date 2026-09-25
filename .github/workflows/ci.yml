@@ -69,6 +69,9 @@ jobs:
       - name: Restore
         run: dotnet restore Moongate.slnx
 
+      - name: Verify method body style
+        run: dotnet format style Moongate.slnx --diagnostics IDE0022 --severity warn --no-restore --verify-no-changes
+
       - name: Build
         run: dotnet build Moongate.slnx -c Release --no-restore
 

@@ -24,5 +24,7 @@ public sealed class WorldSaveConfig
 
     /// <summary>Rejects invalid intervals even when automatic saving is disabled.</summary>
     public void Validate()
-        => ArgumentOutOfRangeException.ThrowIfNegativeOrZero(IntervalSeconds);
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(IntervalSeconds);
+    }
 }

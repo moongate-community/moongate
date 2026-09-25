@@ -16,5 +16,7 @@ public sealed class RecordingTomlConverter : TomlConverter<RecordingTomlConverte
     }
 
     public override void Write(TomlWriter writer, Marker value)
-        => writer.WriteBooleanValue(true);
+    {
+        writer.WriteBooleanValue(true);
+    }
 }

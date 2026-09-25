@@ -111,7 +111,9 @@ public sealed class TileMatrixPatch
     }
 
     public Tile GetLandTile(int x, int y)
-        => GetLandBlock(x >> 3, y >> 3)[((y & 0x7) << 3) + (x & 0x7)];
+    {
+        return GetLandBlock(x >> 3, y >> 3)[((y & 0x7) << 3) + (x & 0x7)];
+    }
 
     public HuedTile[][][] GetStaticBlock(int x, int y)
     {
@@ -129,7 +131,9 @@ public sealed class TileMatrixPatch
     }
 
     public HuedTile[] GetStaticTiles(int x, int y)
-        => GetStaticBlock(x >> 3, y >> 3)[x & 0x7][y & 0x7];
+    {
+        return GetStaticBlock(x >> 3, y >> 3)[x & 0x7][y & 0x7];
+    }
 
     public bool IsLandBlockPatched(int x, int y)
     {

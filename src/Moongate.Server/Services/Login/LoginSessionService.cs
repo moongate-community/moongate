@@ -11,20 +11,26 @@ public sealed class LoginSessionService : ILoginSessionService
     private readonly ConcurrentDictionary<long, LoginSession> _sessions = new();
 
     public LoginSession GetOrCreate(INetworkConnection connection)
-        => _sessions.AddOrUpdate(
-            connection.SessionId,
-            _ => new(connection),
-            (_, current) => current.IsDisconnected ? new(connection) : current
-        );
+    {
+        return _sessions.AddOrUpdate(
+                connection.SessionId,
+                _ => new(connection),
+                (_, current) => current.IsDisconnected ? new(connection) : current
+            );
+    }
 
     public bool TryGet(long sessionId, [NotNullWhen(true)] out LoginSession? session)
-        => _sessions.TryGetValue(sessionId, out session);
+    {
+        return _sessions.TryGetValue(sessionId, out session);
+    }
 
     public bool IsCurrent(LoginSession session)
-        => _sessions.TryGetValue(session.SessionId, out var current) &&
-           ReferenceEquals(current, session) &&
-           !session.IsDisconnected &&
-           session.NetworkSession.Client is { IsConnected: true };
+    {
+        return _sessions.TryGetValue(session.SessionId, out var current) &&
+               ReferenceEquals(current, session) &&
+               !session.IsDisconnected &&
+               session.NetworkSession.Client is { IsConnected: true };
+    }
 
     public bool Remove(LoginSession session)
     {

@@ -12,10 +12,14 @@ public sealed class TileList
     }
 
     public void Add(ushort id, sbyte z)
-        => _tiles.Add(new(id, z));
+    {
+        _tiles.Add(new(id, z));
+    }
 
     public Tile Get(int i)
-        => _tiles[i];
+    {
+        return _tiles[i];
+    }
 
     public Tile[] ToArray()
     {

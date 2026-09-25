@@ -50,7 +50,9 @@ internal sealed class RecordingGameHandoffStore : IGameHandoffStore
         string password,
         CancellationToken token = default
     )
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public ValueTask RevokeAsync(string realmId, uint authKey, CancellationToken token = default)
     {

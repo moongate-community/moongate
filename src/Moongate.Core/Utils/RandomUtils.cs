@@ -80,27 +80,39 @@ public static class RandomUtils
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Random(int from, int count)
-        => BuiltInRng.Next(from, count);
+    {
+        return BuiltInRng.Next(from, count);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Random(int count)
-        => count < 0 ? -BuiltInRng.Next(-count) : BuiltInRng.Next(count);
+    {
+        return count < 0 ? -BuiltInRng.Next(-count) : BuiltInRng.Next(count);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long Random(long from, long count)
-        => BuiltInRng.Next(from, count);
+    {
+        return BuiltInRng.Next(from, count);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long Random(long count)
-        => count < 0 ? -BuiltInRng.Next(-count) : BuiltInRng.Next(count);
+    {
+        return count < 0 ? -BuiltInRng.Next(-count) : BuiltInRng.Next(count);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void RandomBytes(Span<byte> buffer)
-        => BuiltInRng.NextBytes(buffer);
+    {
+        BuiltInRng.NextBytes(buffer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double RandomDouble()
-        => BuiltInRng.NextDouble();
+    {
+        return BuiltInRng.NextDouble();
+    }
 
     public static TEntity RandomList<TEntity>(params TEntity[] entities)
     {

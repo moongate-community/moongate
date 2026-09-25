@@ -37,5 +37,7 @@ public sealed class DevelopmentMigrationFixture : IDisposable
     }
 
     public void Dispose()
-        => Directory.Delete(Root, true);
+    {
+        Directory.Delete(Root, true);
+    }
 }

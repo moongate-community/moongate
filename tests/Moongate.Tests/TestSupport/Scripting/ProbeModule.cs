@@ -10,34 +10,50 @@ public sealed class ProbeModule
 
     [ScriptFunction(helpText: "Adds two integers.")]
     public int Add(int left, int right)
-        => left + right;
+    {
+        return left + right;
+    }
 
     [ScriptFunction]
     public long Big(long value)
-        => value * 2;
+    {
+        return value * 2;
+    }
 
     [ScriptFunction]
     public int Count(LuaTable table)
-        => table.ArrayLength;
+    {
+        return table.ArrayLength;
+    }
 
     [ScriptFunction]
     public bool Flip(bool value)
-        => !value;
+    {
+        return !value;
+    }
 
     [ScriptFunction]
     public string Greet(string name)
-        => "Hello, " + name;
+    {
+        return "Hello, " + name;
+    }
 
     [ScriptFunction("scale")]
     public double Multiply(double value, double factor = 2)
-        => value * factor;
+    {
+        return value * factor;
+    }
 
     [ScriptFunction]
     public ProbeColour NextColour(ProbeColour colour)
-        => (ProbeColour)(((int)colour + 1) % 3);
+    {
+        return (ProbeColour)(((int)colour + 1) % 3);
+    }
 
     public int NotExposed()
-        => 0;
+    {
+        return 0;
+    }
 
     [ScriptFunction]
     public LuaTable Pair(string key, double value)
@@ -50,5 +66,7 @@ public sealed class ProbeModule
 
     [ScriptFunction]
     public void Record(string what, params object?[] extras)
-        => Calls.Add(what + ":" + string.Join(",", extras.Select(extra => extra?.ToString() ?? "nil")));
+    {
+        Calls.Add(what + ":" + string.Join(",", extras.Select(extra => extra?.ToString() ?? "nil")));
+    }
 }

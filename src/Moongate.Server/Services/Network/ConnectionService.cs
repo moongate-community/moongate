@@ -105,7 +105,9 @@ public sealed class ConnectionService : IConnectionService, ILoginConnectionServ
 
     /// <inheritdoc />
     public bool TryGet(long sessionId, [NotNullWhen(true)] out INetworkConnection? connection)
-        => TryGet(sessionId, out connection, out _);
+    {
+        return TryGet(sessionId, out connection, out _);
+    }
 
     /// <inheritdoc />
     public bool TryGet(

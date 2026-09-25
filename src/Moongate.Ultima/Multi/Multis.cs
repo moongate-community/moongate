@@ -20,7 +20,9 @@ public sealed class Multis
     public static bool HasUopFile => !string.IsNullOrEmpty(Files.GetFilePath("multicollection.uop"));
 
     public static void Add(int index, MultiComponentList comp)
-        => _components[index] = comp;
+    {
+        _components[index] = comp;
+    }
 
     /// <summary>
     /// Gets <see cref="MultiComponentList" /> of multi
@@ -251,7 +253,9 @@ public sealed class Multis
     }
 
     public static void Remove(int index)
-        => _components[index] = MultiComponentList.Empty;
+    {
+        _components[index] = MultiComponentList.Empty;
+    }
 
     public static void Save(string path)
     {

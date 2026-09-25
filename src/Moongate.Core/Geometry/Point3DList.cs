@@ -56,7 +56,9 @@ public class Point3DList
     }
 
     public void Clear()
-        => Count = 0;
+    {
+        Count = 0;
+    }
 
     /// <summary>
     /// Copies the accumulated points into an independent array and clears this list.

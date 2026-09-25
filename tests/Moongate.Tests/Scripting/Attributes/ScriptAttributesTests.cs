@@ -6,7 +6,9 @@ public sealed class ScriptAttributesTests
 {
     [Fact]
     public void ScriptConstant_DefaultsToNoOverride()
-        => Assert.Null(new ScriptConstantAttribute().Name);
+    {
+        Assert.Null(new ScriptConstantAttribute().Name);
+    }
 
     [Fact]
     public void ScriptFunction_DefaultsToNoOverride()
@@ -19,7 +21,9 @@ public sealed class ScriptAttributesTests
 
     [Fact]
     public void ScriptFunction_RejectsAnOverrideThatIsNotALuaIdentifier()
-        => Assert.Throws<ArgumentException>(() => new ScriptFunctionAttribute("bad name"));
+    {
+        Assert.Throws<ArgumentException>(() => new ScriptFunctionAttribute("bad name"));
+    }
 
     [Fact]
     public void ScriptModule_KeepsNameAndHelpText()
@@ -32,5 +36,7 @@ public sealed class ScriptAttributesTests
 
     [Theory, InlineData(""), InlineData(" "), InlineData("Log"), InlineData("my-module"), InlineData("1st")]
     public void ScriptModule_RejectsANameThatIsNotALuaIdentifierInLowerCase(string name)
-        => Assert.Throws<ArgumentException>(() => new ScriptModuleAttribute(name));
+    {
+        Assert.Throws<ArgumentException>(() => new ScriptModuleAttribute(name));
+    }
 }

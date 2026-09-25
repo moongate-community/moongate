@@ -85,9 +85,11 @@ public sealed class NetworkService : INetworkService, ILoginNetworkService
     }
 
     private static async Task CloseRejectedAsync(INetworkConnection connection)
+    {
 
         // A close request is distinct from actual completion; join both even when one fails.
-        => await Task.WhenAll(CaptureCloseAsync(connection), connection.Completion).ConfigureAwait(false);
+        await Task.WhenAll(CaptureCloseAsync(connection), connection.Completion).ConfigureAwait(false);
+    }
 
     private static MoongateTcpServer[] CreateListeners(NetworkListenerOptions options)
     {

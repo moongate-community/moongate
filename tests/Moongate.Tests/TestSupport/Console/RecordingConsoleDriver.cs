@@ -32,16 +32,24 @@ internal sealed class RecordingConsoleDriver : IConsoleDriver
     public IReadOnlyList<string> Operations => _operations;
 
     public void ResetColor()
-        => Record("reset");
+    {
+        Record("reset");
+    }
 
     public void SetCursorPosition(int left, int top)
-        => Record($"pos:{left},{top}");
+    {
+        Record($"pos:{left},{top}");
+    }
 
     public void Write(string value)
-        => Record($"write:{value}");
+    {
+        Record($"write:{value}");
+    }
 
     public void WriteLine(string value)
-        => Record($"writeline:{value}");
+    {
+        Record($"writeline:{value}");
+    }
 
     private void Record(string operation)
     {

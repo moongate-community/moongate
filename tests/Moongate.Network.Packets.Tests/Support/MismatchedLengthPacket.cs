@@ -9,5 +9,7 @@ internal sealed class MismatchedLengthPacket : IOutgoingPacket
     public int Length => 2;
 
     public void Write(ref PacketWriter writer)
-        => writer.WriteByte(OpCode);
+    {
+        writer.WriteByte(OpCode);
+    }
 }

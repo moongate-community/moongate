@@ -12,7 +12,9 @@ public sealed class HuedTileList
     }
 
     public void Add(ushort id, short hue, sbyte z)
-        => _tiles.Add(new(id, hue, z));
+    {
+        _tiles.Add(new(id, hue, z));
+    }
 
     public HuedTile[] ToArray()
     {

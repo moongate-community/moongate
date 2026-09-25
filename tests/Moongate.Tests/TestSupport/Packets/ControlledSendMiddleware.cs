@@ -24,7 +24,9 @@ public sealed class ControlledSendMiddleware : INetMiddleware, IDisposable
         ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-        => ValueTask.FromResult(data);
+    {
+        return ValueTask.FromResult(data);
+    }
 
     public ValueTask<ReadOnlyMemory<byte>> ProcessSendAsync(
         MoongateTcpClient? client,
@@ -50,10 +52,14 @@ public sealed class ControlledSendMiddleware : INetMiddleware, IDisposable
     }
 
     public Task<byte[]> ReadAsync()
-        => _frames.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+    {
+        return _frames.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+    }
 
     public void Release()
-        => _release.Set();
+    {
+        _release.Set();
+    }
 
     public void Dispose()
     {

@@ -17,14 +17,20 @@ public sealed class EventBusAdapter : IEventBusService
     /// <inheritdoc />
     public Task PublishAsync<TEvent>(TEvent message, CancellationToken cancellationToken = default)
         where TEvent : class, IMoongateEvent
-        => _bus.PublishAsync(message, cancellationToken);
+    {
+        return _bus.PublishAsync(message, cancellationToken);
+    }
 
     /// <inheritdoc />
     public IDisposable Subscribe<TEvent>(Func<TEvent, CancellationToken, Task> handler)
         where TEvent : class, IMoongateEvent
-        => _bus.Subscribe(handler);
+    {
+        return _bus.Subscribe(handler);
+    }
 
     /// <inheritdoc />
     public IDisposable SubscribeAll(Func<IMoongateEvent, CancellationToken, Task> handler)
-        => _bus.SubscribeAll(handler);
+    {
+        return _bus.SubscribeAll(handler);
+    }
 }

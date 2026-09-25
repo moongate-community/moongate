@@ -81,10 +81,14 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     }
 
     public Task StartAsync()
-        => _lifecycle.StartAsync(StartCoreAsync);
+    {
+        return _lifecycle.StartAsync(StartCoreAsync);
+    }
 
     public Task StopAsync()
-        => _lifecycle.StopAsync(StopAfterStartupAsync);
+    {
+        return _lifecycle.StopAsync(StopAfterStartupAsync);
+    }
 
     private static void CaptureFailure(Action operation, List<Exception> failures)
     {
@@ -111,9 +115,11 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     }
 
     private static bool ContainsFailure(Exception failure, Exception expected)
-        => ReferenceEquals(failure, expected) ||
-           failure is AggregateException aggregate &&
-           aggregate.InnerExceptions.Any(inner => ContainsFailure(inner, expected));
+    {
+        return ReferenceEquals(failure, expected) ||
+               failure is AggregateException aggregate &&
+               aggregate.InnerExceptions.Any(inner => ContainsFailure(inner, expected));
+    }
 
     private async Task<List<Exception>> ShutdownCoreAsync()
     {

@@ -10,7 +10,9 @@ public sealed class InvalidSpanFormattable : ISpanFormattable
     }
 
     public string ToString(string? format, IFormatProvider? formatProvider)
-        => throw new InvalidOperationException("The builder must use span formatting.");
+    {
+        throw new InvalidOperationException("The builder must use span formatting.");
+    }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
     {

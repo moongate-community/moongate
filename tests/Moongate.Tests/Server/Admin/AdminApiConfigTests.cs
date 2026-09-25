@@ -51,7 +51,9 @@ public class AdminApiConfigTests
 
     [Theory, InlineData("127.0.0.1"), InlineData("::1")]
     public void Validate_InsecureLiteralLoopback_Accepts(string address)
-        => new AdminApiConfig { ListenAddress = address, AllowInsecureLoopback = true }.Validate();
+    {
+        new AdminApiConfig { ListenAddress = address, AllowInsecureLoopback = true }.Validate();
+    }
 
     [Theory, InlineData(0, 30, 65536, 64), InlineData(65536, 30, 65536, 64),
      InlineData(2590, 0, 65536, 64), InlineData(2590, 1441, 65536, 64),
@@ -69,7 +71,9 @@ public class AdminApiConfigTests
 
     [Fact]
     public void Validate_UnresolvedCertificateSecret_DoesNotResolve()
-        => new AdminApiConfig { CertificatePassword = "${MISSING_ADMIN_TEST_PASSWORD}" }.Validate();
+    {
+        new AdminApiConfig { CertificatePassword = "${MISSING_ADMIN_TEST_PASSWORD}" }.Validate();
+    }
 
     [Fact]
     public void Toml_RoundTrip_PreservesConfiguration()

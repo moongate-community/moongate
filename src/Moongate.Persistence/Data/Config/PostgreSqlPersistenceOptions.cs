@@ -73,7 +73,9 @@ public sealed class PostgreSqlPersistenceOptions
 
     /// <inheritdoc />
     public override string ToString()
-        => $"PostgreSqlPersistenceOptions {{ AutoSynchronizeSchema = {AutoSynchronizeSchema}, ConfiguredTargets = {_databases.Count} }}";
+    {
+        return $"PostgreSqlPersistenceOptions {{ AutoSynchronizeSchema = {AutoSynchronizeSchema}, ConfiguredTargets = {_databases.Count} }}";
+    }
 
     internal PersistenceDatabaseOptions GetRequiredDatabase(PersistenceDatabaseTarget target)
     {

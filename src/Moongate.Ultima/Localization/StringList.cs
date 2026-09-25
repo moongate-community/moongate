@@ -120,16 +120,22 @@ public sealed class StringList
         }
 
         public int Compare(StringEntry x, StringEntry y)
-            => _sortDescending
-                   ? string.CompareOrdinal(y.Text, x.Text)
-                   : string.CompareOrdinal(x.Text, y.Text);
+        {
+            return _sortDescending
+                           ? string.CompareOrdinal(y.Text, x.Text)
+                           : string.CompareOrdinal(x.Text, y.Text);
+        }
     }
 
     public StringEntry GetEntry(int number)
-        => _entryTable?.ContainsKey(number) != true ? null : _entryTable[number];
+    {
+        return _entryTable?.ContainsKey(number) != true ? null : _entryTable[number];
+    }
 
     public string GetString(int number)
-        => _stringTable?.ContainsKey(number) != true ? null : _stringTable[number];
+    {
+        return _stringTable?.ContainsKey(number) != true ? null : _stringTable[number];
+    }
 
     /// <summary>
     /// Saves <see cref="SaveStringList" /> to fileName
@@ -222,7 +228,9 @@ public sealed class StringList
     }
 
     private static string FormatLabel(bool decompress)
-        => decompress ? "compressed" : "uncompressed";
+    {
+        return decompress ? "compressed" : "uncompressed";
+    }
 
     private void LoadEntry(string path)
     {

@@ -126,7 +126,9 @@ public sealed class ScriptDirectoryModuleLoaderTests
     [Theory, InlineData("common/dialogue.lua", "common.dialogue"), InlineData("init.lua", "init"),
      InlineData("ai/npc/guard.lua", "ai.npc.guard"), InlineData("data", "data")]
     public void ToModuleName_IsTheInverseOfTheNameToPathMapping(string normalizedRelativePath, string expected)
-        => Assert.Equal(expected, ScriptDirectoryModuleLoader.ToModuleName(normalizedRelativePath));
+    {
+        Assert.Equal(expected, ScriptDirectoryModuleLoader.ToModuleName(normalizedRelativePath));
+    }
 
     private static bool TryLink(string path, string target, bool directory = false)
     {

@@ -128,8 +128,10 @@ public sealed class PacketContext
     }
 
     private bool IsOriginalSessionConnected()
-        => _sessions.TryGet(SessionId, out var session) &&
-           ReferenceEquals(session, _originalSession) &&
-           session.NetworkSession.State != NetworkSessionState.Disconnected &&
-           session.NetworkSession.Client is { IsConnected: true };
+    {
+        return _sessions.TryGet(SessionId, out var session) &&
+               ReferenceEquals(session, _originalSession) &&
+               session.NetworkSession.State != NetworkSessionState.Disconnected &&
+               session.NetworkSession.Client is { IsConnected: true };
+    }
 }

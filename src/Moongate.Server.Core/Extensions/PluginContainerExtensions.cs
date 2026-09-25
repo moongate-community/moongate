@@ -45,6 +45,8 @@ public static class PluginContainerExtensions
         /// <returns>The container for chaining further registrations.</returns>
         public Container RegisterPlugin<TPlugin>()
             where TPlugin : class, IMoongatePlugin, new()
-            => container.RegisterMoongatePlugin<TPlugin>();
+        {
+            return container.RegisterMoongatePlugin<TPlugin>();
+        }
     }
 }

@@ -493,7 +493,9 @@ public sealed class Map
     /// <param name="height">8x8 Block</param>
     /// <param name="bmp">8x8 Block</param>
     public void GetImage(int x, int y, int width, int height, UltimaBitmap bmp)
-        => GetImage(x, y, width, height, bmp, true);
+    {
+        GetImage(x, y, width, height, bmp, true);
+    }
 
     /// <summary>
     /// Draws in given Bitmap
@@ -937,7 +939,9 @@ public sealed class Map
     }
 
     public static void StartUpSetDiff(bool value)
-        => _useDiff = value;
+    {
+        _useDiff = value;
+    }
 
     private void ClearAltitudeCaches()
     {

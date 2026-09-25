@@ -47,8 +47,12 @@ internal sealed class ControlledMetricProvider : IMetricProvider
     }
 
     public void Release()
-        => _release.TrySetResult();
+    {
+        _release.TrySetResult();
+    }
 
     public Task<int> WaitForEntryAsync()
-        => _entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+    {
+        return _entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+    }
 }

@@ -337,5 +337,7 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     }
 
     private static ScriptErrorInfo WithOwner(ScriptErrorInfo error, string owner)
-        => error.File.Length == 0 ? error with { File = owner } : error;
+    {
+        return error.File.Length == 0 ? error with { File = owner } : error;
+    }
 }

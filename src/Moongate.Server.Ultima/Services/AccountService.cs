@@ -33,13 +33,15 @@ public class AccountService : IAccountService
         AccountType accountType = AccountType.Regular,
         CancellationToken cancellationToken = default
     )
-        => CreateAccountAsync(
-            new()
-            {
-                Username = username, Password = password, AccountType = accountType
-            },
-            cancellationToken
-        );
+    {
+        return CreateAccountAsync(
+                new()
+                {
+                    Username = username, Password = password, AccountType = accountType
+                },
+                cancellationToken
+            );
+    }
 
     public async Task<AccountPage> ListAccountsPageAsync(
         Serial afterId,

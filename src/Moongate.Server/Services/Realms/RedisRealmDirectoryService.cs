@@ -231,7 +231,9 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
     }
 
     private RedisKey Key(ushort index)
-        => _prefix + index.ToString(CultureInfo.InvariantCulture);
+    {
+        return _prefix + index.ToString(CultureInfo.InvariantCulture);
+    }
 
     private async Task<RealmInstance?> ReadAsync(RedisKey key, CancellationToken cancellationToken)
     {

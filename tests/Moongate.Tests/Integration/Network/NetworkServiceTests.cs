@@ -15,7 +15,9 @@ public sealed class NetworkServiceTests
 
     [Fact]
     public void EmptyEndpoints_AreRejectedBeforeBinding()
-        => Assert.Throws<ArgumentException>(() => new NetworkService(new NetworkListenerOptions(), new ConnectionService()));
+    {
+        Assert.Throws<ArgumentException>(() => new NetworkService(new NetworkListenerOptions(), new ConnectionService()));
+    }
 
     [Fact]
     public async Task OptionsAreSnapshotted_AndFactoryRunsPerConnection()

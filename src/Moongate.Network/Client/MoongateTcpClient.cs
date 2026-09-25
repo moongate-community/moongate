@@ -356,14 +356,18 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     /// </summary>
     public bool ContainsMiddleware<TMiddleware>()
         where TMiddleware : INetMiddleware
-        => _middlewarePipeline.ContainsMiddleware<TMiddleware>();
+    {
+        return _middlewarePipeline.ContainsMiddleware<TMiddleware>();
+    }
 
     /// <summary>
     /// Removes all middleware components of the specified type from this client pipeline.
     /// </summary>
     public bool RemoveMiddleware<TMiddleware>()
         where TMiddleware : INetMiddleware
-        => _middlewarePipeline.RemoveMiddleware<TMiddleware>();
+    {
+        return _middlewarePipeline.RemoveMiddleware<TMiddleware>();
+    }
 
     /// <summary>
     /// Sends bytes, preserving transformation order on the wire. Keep the payload immutable until completion.
@@ -530,7 +534,9 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     /// </summary>
     /// <param name="codec">The new codec, or null to remove transport transformation.</param>
     public void SwapCodec(ITransportCodec? codec)
-        => Volatile.Write(ref _codec, codec);
+    {
+        Volatile.Write(ref _codec, codec);
+    }
 
     private static async Task AttemptAsync(Task task, List<Exception> failures)
     {
@@ -802,7 +808,9 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     /// <inheritdoc />
     /// <remarks>Requests cleanup without waiting, so it is safe inside synchronous callbacks.</remarks>
     public void Dispose()
-        => RequestClose();
+    {
+        RequestClose();
+    }
 
     /// <inheritdoc />
     /// <remarks>Do not synchronously wait for this task from a connection callback.</remarks>

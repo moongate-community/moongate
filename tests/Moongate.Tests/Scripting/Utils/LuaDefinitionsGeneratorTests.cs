@@ -217,7 +217,9 @@ public sealed class LuaDefinitionsGeneratorTests
     }
 
     private static List<BoundModule> BindProbeAndLogModules(LuaState state, LuaModuleBinder binder)
-        => [binder.Bind(state, new ProbeModule()), binder.Bind(state, new LogModule())];
+    {
+        return [binder.Bind(state, new ProbeModule()), binder.Bind(state, new LogModule())];
+    }
 
     private static List<BoundModule> Modules()
     {

@@ -34,7 +34,9 @@ internal sealed class AdminRedisFixture : IAsyncDisposable
     }
 
     public static string Digest()
-        => Convert.ToHexString(SHA256.HashData(RandomNumberGenerator.GetBytes(32)));
+    {
+        return Convert.ToHexString(SHA256.HashData(RandomNumberGenerator.GetBytes(32)));
+    }
 
     public async ValueTask DisposeAsync()
     {

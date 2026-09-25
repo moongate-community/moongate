@@ -12,5 +12,7 @@ public sealed class RecordingDisposable : IDisposable
     }
 
     public void Dispose()
-        => _events.Add(_eventName);
+    {
+        _events.Add(_eventName);
+    }
 }

@@ -45,5 +45,7 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
     }
 
     public Task DisposeAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 }

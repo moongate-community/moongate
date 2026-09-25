@@ -212,7 +212,9 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
 
     /// <summary>Disposes the engine, releasing the LuaState.</summary>
     public async Task StopAsync()
-        => await RunOnLoopAsync(Dispose, "stop").ConfigureAwait(false);
+    {
+        await RunOnLoopAsync(Dispose, "stop").ConfigureAwait(false);
+    }
 
     private void BindModules(LuaState state, CoroutineScheduler scheduler, ScriptOwnership ownership)
     {
@@ -303,17 +305,19 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     /// the results are joined with tabs, exactly as the standard <c>print</c> does.
     /// </summary>
     private LuaFunction CreatePrint(IScriptScheduler scheduler)
-        => new(
-            "print",
-            (context, _) =>
-            {
-                _guard.EnsureScriptThread("print");
-                var line = context.ArgumentCount == 0 ? "" : context.GetArgument<string>(0);
-                _scriptOutput.Information("{ScriptFile}: {Output}", scheduler.CurrentOwner ?? _options.BootstrapFile, line);
+    {
+        return new(
+                "print",
+                (context, _) =>
+                {
+                    _guard.EnsureScriptThread("print");
+                    var line = context.ArgumentCount == 0 ? "" : context.GetArgument<string>(0);
+                    _scriptOutput.Information("{ScriptFile}: {Output}", scheduler.CurrentOwner ?? _options.BootstrapFile, line);
 
-                return new(context.Return());
-            }
-        );
+                    return new(context.Return());
+                }
+            );
+    }
 
     /// <summary>
     /// Reads a string argument the way the string library does: strings as they are, numbers converted, anything else a
@@ -335,10 +339,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     private T Ready<T>(T? component) where T : class
-        => component ??
-           throw new InvalidOperationException(
-               _disposed ? "The script engine has been disposed." : "The script engine has not started."
-           );
+    {
+        return component ??
+               throw new InvalidOperationException(
+                   _disposed ? "The script engine has been disposed." : "The script engine has not started."
+               );
+    }
 
     /// <summary>Counts a refused <c>string.rep</c> and builds the script error that names the size and the cap.</summary>
     private LuaRuntimeException Refuse(LuaFunctionExecutionContext context, double size, int cap)

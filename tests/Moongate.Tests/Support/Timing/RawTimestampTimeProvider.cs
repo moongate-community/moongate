@@ -27,5 +27,7 @@ public sealed class RawTimestampTimeProvider : TimeProvider
     }
 
     public override long GetTimestamp()
-        => Interlocked.Read(ref _timestamp);
+    {
+        return Interlocked.Read(ref _timestamp);
+    }
 }

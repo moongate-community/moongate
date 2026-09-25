@@ -18,7 +18,9 @@ public static class HueHelpers
     // Canonical 8-bit RGB -> 15-bit hue. Uses bit-shift (>>3) packing with the rule:
     // input all-zero -> 0; else any lane that collapses to 0 -> 1.
     public static ushort ColorToHue(SKColor color)
-        => ColorToHueShift(color.Red, color.Green, color.Blue);
+    {
+        return ColorToHueShift(color.Red, color.Green, color.Blue);
+    }
 
     // Rounding alternative: ((c*31 + 127) / 255). Same clamp rule as the shift version.
     public static ushort ColorToHueRounded(int r8, int g8, int b8)
@@ -66,7 +68,9 @@ public static class HueHelpers
     // Canonical 5-bit -> 8-bit expansion: replicate top 3 bits into the low ones.
     // Equivalent to round(c5 * 255 / 31). 0->0, 31->255, monotonic.
     public static int Expand5To8(int c5)
-        => (c5 << 3) | (c5 >> 2);
+    {
+        return (c5 << 3) | (c5 >> 2);
+    }
 
     public static void HueExtract5(ushort hue, out int r5, out int g5, out int b5)
     {
@@ -78,18 +82,26 @@ public static class HueHelpers
     // Canonical 15-bit hue -> 32-bit ARGB, expanding 5-bit components via
     // (c<<3)|(c>>2) so 31 maps to 255 (not 248 as the previous *8 integer math did).
     public static SKColor HueToColor(ushort hue)
-        => new(
-            (byte)Expand5To8((hue & 0x7c00) >> 10),
-            (byte)Expand5To8((hue & 0x03e0) >> 5),
-            (byte)Expand5To8(hue & 0x001f)
-        );
+    {
+        return new(
+                (byte)Expand5To8((hue & 0x7c00) >> 10),
+                (byte)Expand5To8((hue & 0x03e0) >> 5),
+                (byte)Expand5To8(hue & 0x001f)
+            );
+    }
 
     public static int HueToColorB(ushort hue)
-        => Expand5To8(hue & 0x001f);
+    {
+        return Expand5To8(hue & 0x001f);
+    }
 
     public static int HueToColorG(ushort hue)
-        => Expand5To8((hue & 0x03e0) >> 5);
+    {
+        return Expand5To8((hue & 0x03e0) >> 5);
+    }
 
     public static int HueToColorR(ushort hue)
-        => Expand5To8((hue & 0x7c00) >> 10);
+    {
+        return Expand5To8((hue & 0x7c00) >> 10);
+    }
 }

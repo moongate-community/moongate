@@ -561,12 +561,14 @@ public sealed class PluginLifecycleEventTests
     }
 
     private static RecordingPlugin CreatePlugin(Action<Container> register)
-        => new(
-            new(
-                "com.github.moongate.tests.lifecycle",
-                "Lifecycle test",
-                new(1, 0, 0)
-            ),
-            register
-        );
+    {
+        return new(
+                new(
+                    "com.github.moongate.tests.lifecycle",
+                    "Lifecycle test",
+                    new(1, 0, 0)
+                ),
+                register
+            );
+    }
 }

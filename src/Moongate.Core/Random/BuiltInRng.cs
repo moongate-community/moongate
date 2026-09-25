@@ -9,36 +9,54 @@ public static class BuiltInRng
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Next()
-        => Generator.NextInt();
+    {
+        return Generator.NextInt();
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Next(int maxValue)
-        => Generator.NextInt(maxValue);
+    {
+        return Generator.NextInt(maxValue);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int Next(int minValue, int count)
-        => minValue + Generator.NextInt(count);
+    {
+        return minValue + Generator.NextInt(count);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long Next(long maxValue)
-        => Generator.NextLong(maxValue);
+    {
+        return Generator.NextLong(maxValue);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long Next(long minValue, long count)
-        => minValue + Generator.NextLong(count);
+    {
+        return minValue + Generator.NextLong(count);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static void NextBytes(Span<byte> buffer)
-        => Generator.NextBytes(buffer);
+    {
+        Generator.NextBytes(buffer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static double NextDouble()
-        => Generator.NextDouble();
+    {
+        return Generator.NextDouble();
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static long NextLong()
-        => Generator.NextLong();
+    {
+        return Generator.NextLong();
+    }
 
     public static void Reset()
-        => Generator = new MizuchiRandom();
+    {
+        Generator = new MizuchiRandom();
+    }
 }

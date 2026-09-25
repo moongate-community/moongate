@@ -80,13 +80,19 @@ public struct Point3D
     }
 
     public bool Equals(Point3D other)
-        => X == other.X && Y == other.Y && Z == other.Z;
+    {
+        return X == other.X && Y == other.Y && Z == other.Z;
+    }
 
     public bool Equals(IPoint3D? other)
-        => other != null && X == other.X && Y == other.Y && Z == other.Z;
+    {
+        return other != null && X == other.X && Y == other.Y && Z == other.Z;
+    }
 
     public override bool Equals(object? obj)
-        => obj is Point3D other && Equals(other);
+    {
+        return obj is Point3D other && Equals(other);
+    }
 
     /// <summary>
     /// Removes running flag from direction
@@ -94,7 +100,9 @@ public struct Point3D
     /// <param name="direction">Direction with or without running flag</param>
     /// <returns>Base direction without running flag</returns>
     public static DirectionType GetBaseDirection(DirectionType direction)
-        => (DirectionType)((byte)direction & ~(byte)DirectionType.Running);
+    {
+        return (DirectionType)((byte)direction & ~(byte)DirectionType.Running);
+    }
 
     /// <summary>
     /// Gets direction from current point to target point
@@ -177,7 +185,9 @@ public struct Point3D
     }
 
     public override int GetHashCode()
-        => HashCode.Combine(X, Y, Z);
+    {
+        return HashCode.Combine(X, Y, Z);
+    }
 
     /// <summary>
     /// Checks if another point is within the specified range of this point
@@ -265,7 +275,9 @@ public struct Point3D
     /// <param name="direction">Direction to check</param>
     /// <returns>True if running flag is set</returns>
     public static bool IsRunning(DirectionType direction)
-        => ((byte)direction & (byte)DirectionType.Running) != 0;
+    {
+        return ((byte)direction & (byte)DirectionType.Running) != 0;
+    }
 
     /// <summary>
     /// Adds a direction offset to current position
@@ -281,11 +293,15 @@ public struct Point3D
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point3D Parse(string s)
-        => Parse(s, null);
+    {
+        return Parse(s, null);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point3D Parse(string s, IFormatProvider? provider)
-        => Parse(s.AsSpan(), provider);
+    {
+        return Parse(s.AsSpan(), provider);
+    }
 
     public static Point3D Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
@@ -344,20 +360,30 @@ public struct Point3D
     /// <param name="direction">Base direction</param>
     /// <returns>Direction with running flag</returns>
     public static DirectionType SetRunning(DirectionType direction)
-        => (DirectionType)((byte)direction | (byte)DirectionType.Running);
+    {
+        return (DirectionType)((byte)direction | (byte)DirectionType.Running);
+    }
 
     public override string ToString()
-        => ToString(null, null);
+    {
+        return ToString(null, null);
+    }
 
     public string ToString(string? format, IFormatProvider? formatProvider)
-        => string.Create(formatProvider, $"({X}, {Y}, {Z})");
+    {
+        return string.Create(formatProvider, $"({X}, {Y}, {Z})");
+    }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-        => destination.TryWrite(provider, $"({X}, {Y}, {Z})", out charsWritten);
+    {
+        return destination.TryWrite(provider, $"({X}, {Y}, {Z})", out charsWritten);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryParse(string? s, IFormatProvider? provider, out Point3D result)
-        => TryParse(s.AsSpan(), provider, out result);
+    {
+        return TryParse(s.AsSpan(), provider, out result);
+    }
 
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Point3D result)
     {

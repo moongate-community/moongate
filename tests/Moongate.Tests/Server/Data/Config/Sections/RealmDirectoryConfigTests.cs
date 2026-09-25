@@ -7,7 +7,9 @@ public sealed class RealmDirectoryConfigTests
 {
     [Fact]
     public void Validate_StandaloneDefaults_AreUsable()
-        => new RealmDirectoryConfig().Validate(ServerMode.Standalone);
+    {
+        new RealmDirectoryConfig().Validate(ServerMode.Standalone);
+    }
 
     [Theory, InlineData(""), InlineData("0.0.0.0"), InlineData("224.0.0.1"), InlineData("::1")]
     public void Validate_GameRequiresClientFacingIpv4(string address)
@@ -58,12 +60,16 @@ public sealed class RealmDirectoryConfigTests
 
     [Fact]
     public void Validate_LoginIgnoresGameEndpoint()
-        => new RealmDirectoryConfig().Validate(ServerMode.Login);
+    {
+        new RealmDirectoryConfig().Validate(ServerMode.Login);
+    }
 
     private static RealmDirectoryConfig CreateGameConfig()
-        => new()
+    {
+        return new()
         {
             RealmId = "realm-a", Name = "Realm A", ServerIndex = 1,
             AdvertisedAddress = "127.0.0.1", AdvertisedPort = 2593
         };
+    }
 }

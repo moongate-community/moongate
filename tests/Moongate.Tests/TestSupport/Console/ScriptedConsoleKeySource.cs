@@ -21,10 +21,14 @@ internal sealed class ScriptedConsoleKeySource : IConsoleKeySource
     }
 
     public void Enqueue(char character)
-        => Enqueue(new ConsoleKeyInfo(character, ConsoleKey.A, false, false, false));
+    {
+        Enqueue(new ConsoleKeyInfo(character, ConsoleKey.A, false, false, false));
+    }
 
     public void Enqueue(ConsoleKey key)
-        => Enqueue(new ConsoleKeyInfo('\0', key, false, false, false));
+    {
+        Enqueue(new ConsoleKeyInfo('\0', key, false, false, false));
+    }
 
     public void Enqueue(ConsoleKeyInfo key)
     {

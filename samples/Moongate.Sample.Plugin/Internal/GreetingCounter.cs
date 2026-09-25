@@ -13,5 +13,7 @@ public sealed class GreetingCounter
 
     /// <summary>Records one greeting.</summary>
     public void Increment()
-        => Interlocked.Increment(ref _count);
+    {
+        Interlocked.Increment(ref _count);
+    }
 }

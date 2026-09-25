@@ -262,7 +262,9 @@ public ref struct PooledRefList<T>
     }
 
     public ReadOnlySpan<T> AsSpan()
-        => _items.AsSpan(0, _size);
+    {
+        return _items.AsSpan(0, _size);
+    }
 
     public int BinarySearch(int index, int count, T item, IComparer<T>? comparer)
     {
@@ -278,10 +280,14 @@ public ref struct PooledRefList<T>
     }
 
     public int BinarySearch(T item)
-        => BinarySearch(0, Count, item, null);
+    {
+        return BinarySearch(0, Count, item, null);
+    }
 
     public int BinarySearch(T item, IComparer<T>? comparer)
-        => BinarySearch(0, Count, item, comparer);
+    {
+        return BinarySearch(0, Count, item, comparer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public void Clear()
@@ -305,7 +311,9 @@ public ref struct PooledRefList<T>
     }
 
     public bool Contains(T item)
-        => _size != 0 && IndexOf(item) != -1;
+    {
+        return _size != 0 && IndexOf(item) != -1;
+    }
 
     public PooledRefList<TOutput> ConvertAll<TOutput>(Converter<T, TOutput> converter)
     {
@@ -324,7 +332,9 @@ public ref struct PooledRefList<T>
     }
 
     public void CopyTo(T[] array)
-        => CopyTo(array, 0);
+    {
+        CopyTo(array, 0);
+    }
 
     public void CopyTo(int index, T[] array, int arrayIndex, int count)
     {
@@ -337,15 +347,21 @@ public ref struct PooledRefList<T>
     }
 
     public void CopyTo(T[] array, int arrayIndex)
-        => Array.Copy(_items, 0, array, arrayIndex, _size);
+    {
+        Array.Copy(_items, 0, array, arrayIndex, _size);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PooledRefList<T> Create(int capacity = 32, bool mt = false)
-        => new(capacity, mt);
+    {
+        return new(capacity, mt);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static PooledRefList<T> CreateMT(int capacity = 32)
-        => new(capacity, true);
+    {
+        return new(capacity, true);
+    }
 
     public int EnsureCapacity(int capacity)
     {
@@ -361,7 +377,9 @@ public ref struct PooledRefList<T>
     }
 
     public bool Exists(Predicate<T> match)
-        => FindIndex(match) != -1;
+    {
+        return FindIndex(match) != -1;
+    }
 
     public T? Find(Predicate<T> match)
     {
@@ -405,10 +423,14 @@ public ref struct PooledRefList<T>
     }
 
     public int FindIndex(Predicate<T> match)
-        => FindIndex(0, _size, match);
+    {
+        return FindIndex(0, _size, match);
+    }
 
     public int FindIndex(int startIndex, Predicate<T> match)
-        => FindIndex(startIndex, _size - startIndex, match);
+    {
+        return FindIndex(startIndex, _size - startIndex, match);
+    }
 
     public int FindIndex(int startIndex, int count, Predicate<T> match)
     {
@@ -453,10 +475,14 @@ public ref struct PooledRefList<T>
     }
 
     public int FindLastIndex(Predicate<T> match)
-        => FindLastIndex(_size - 1, _size, match);
+    {
+        return FindLastIndex(_size - 1, _size, match);
+    }
 
     public int FindLastIndex(int startIndex, Predicate<T> match)
-        => FindLastIndex(startIndex, startIndex + 1, match);
+    {
+        return FindLastIndex(startIndex, startIndex + 1, match);
+    }
 
     public int FindLastIndex(int startIndex, int count, Predicate<T> match)
     {
@@ -515,7 +541,9 @@ public ref struct PooledRefList<T>
     }
 
     public Enumerator GetEnumerator()
-        => new(this);
+    {
+        return new(this);
+    }
 
     public PooledRefList<T> GetRange(int index, int count)
     {
@@ -535,7 +563,9 @@ public ref struct PooledRefList<T>
     }
 
     public int IndexOf(T item)
-        => Array.IndexOf(_items, item, 0, _size);
+    {
+        return Array.IndexOf(_items, item, 0, _size);
+    }
 
     public int IndexOf(T item, int index)
     {
@@ -784,7 +814,9 @@ public ref struct PooledRefList<T>
     }
 
     public void Reverse()
-        => Reverse(0, Count);
+    {
+        Reverse(0, Count);
+    }
 
     public void Reverse(int index, int count)
     {

@@ -48,6 +48,8 @@ Each bucket takes a domain subfolder once it holds more than a handful of types:
 - One `.cs` file must contain at most one primary type (`class`, `record`, or `enum`).
 - File name must match type name.
 - Use file-scoped namespaces.
+- Methods use block bodies (`{ }`), including single-statement methods. Do not use expression-bodied methods (`=>`).
+  This rule is enforced by `.editorconfig` (IDE0022) and the CI style check; lambda expressions and property/accessor styles are unchanged.
 - Do **not** use primary constructors.
 - Do **not** use expression-bodied constructors (`public X(...) => ...`); constructors must always have a body `{ }`.
 

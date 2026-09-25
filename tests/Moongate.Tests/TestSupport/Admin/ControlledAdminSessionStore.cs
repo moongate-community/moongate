@@ -19,7 +19,9 @@ internal sealed class ControlledAdminSessionStore : IAdminSessionStore
     }
 
     public Task<AdminAccountGate?> ReadGateAsync(Serial id, CancellationToken token = default)
-        => _inner.ReadGateAsync(id, token);
+    {
+        return _inner.ReadGateAsync(id, token);
+    }
 
     public async Task<AdminAccountGate> ResetGateAsync(Serial id, bool blocked, CancellationToken token = default)
     {
@@ -54,8 +56,12 @@ internal sealed class ControlledAdminSessionStore : IAdminSessionStore
     }
 
     public Task<AdminSession?> FindAsync(string hash, CancellationToken token = default)
-        => _inner.FindAsync(hash, token);
+    {
+        return _inner.FindAsync(hash, token);
+    }
 
     public Task RemoveAsync(string hash, CancellationToken token = default)
-        => _inner.RemoveAsync(hash, token);
+    {
+        return _inner.RemoveAsync(hash, token);
+    }
 }

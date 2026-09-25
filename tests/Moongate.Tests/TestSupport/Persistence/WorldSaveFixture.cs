@@ -100,7 +100,9 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
     }
 
     public static async Task<WorldSaveFixture> CreateAsync(bool autosave = false, bool twoTargets = false)
-        => new(await HostPersistenceFixture.CreateAsync(twoTargets: twoTargets), autosave);
+    {
+        return new(await HostPersistenceFixture.CreateAsync(twoTargets: twoTargets), autosave);
+    }
 
     public async Task OnLoopAsync(Action action)
     {
@@ -125,7 +127,9 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
     }
 
     public Task<string?> ReadSavedNameAsync()
-        => Database.ScalarAsync<string>("SELECT name FROM host_test.items WHERE id = 7");
+    {
+        return Database.ScalarAsync<string>("SELECT name FROM host_test.items WHERE id = 7");
+    }
 
     public async Task ReleaseWritesAsync()
     {

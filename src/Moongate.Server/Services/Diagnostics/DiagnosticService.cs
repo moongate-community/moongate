@@ -67,7 +67,9 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
 
     /// <inheritdoc />
     public DiagnosticSnapshot? GetSnapshot()
-        => Volatile.Read(ref _snapshot);
+    {
+        return Volatile.Read(ref _snapshot);
+    }
 
     /// <inheritdoc />
     public Task StartAsync()

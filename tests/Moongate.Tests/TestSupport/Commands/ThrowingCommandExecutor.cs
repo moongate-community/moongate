@@ -6,5 +6,7 @@ namespace Moongate.Tests.TestSupport.Commands;
 public sealed class ThrowingCommandExecutor : ICommandExecutor
 {
     public Task ExecuteAsync(CommandContext context)
-        => throw new InvalidOperationException("command executor failure");
+    {
+        throw new InvalidOperationException("command executor failure");
+    }
 }

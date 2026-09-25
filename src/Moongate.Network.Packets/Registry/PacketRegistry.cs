@@ -66,7 +66,9 @@ public sealed class PacketRegistry
 
     /// <summary>Tries to decode one complete incoming packet, including its opcode and header.</summary>
     public bool TryDecode(ReadOnlySpan<byte> data, [NotNullWhen(true)] out IPacket? packet)
-        => TryDecode(data, out packet, out _);
+    {
+        return TryDecode(data, out packet, out _);
+    }
 
     /// <summary>Tries to decode one complete incoming packet and returns its opcode even when decoding fails.</summary>
     /// <param name="data">The complete packet, including its opcode and header.</param>
@@ -94,8 +96,10 @@ public sealed class PacketRegistry
     /// <param name="descriptor">The matching descriptor, or null when the opcode is unknown.</param>
     /// <returns>True when a packet is registered for the opcode; otherwise, false.</returns>
     public bool TryGetDescriptor(byte opCode, [NotNullWhen(true)] out PacketDescriptor? descriptor)
-        => TryGetDescriptor(opCode, PacketDirection.Incoming, out descriptor) ||
-           TryGetDescriptor(opCode, PacketDirection.Outgoing, out descriptor);
+    {
+        return TryGetDescriptor(opCode, PacketDirection.Incoming, out descriptor) ||
+               TryGetDescriptor(opCode, PacketDirection.Outgoing, out descriptor);
+    }
 
     public bool TryGetDescriptor(
         byte opCode,
@@ -114,12 +118,14 @@ public sealed class PacketRegistry
     }
 
     private ReadOnlyCollection<PacketDescriptor> CreateSnapshot()
-        => Array.AsReadOnly(
-            _registeredPackets
-                .OrderBy(descriptor => descriptor.OpCode)
-                .ThenBy(descriptor => descriptor.Direction)
-                .ToArray()
-        );
+    {
+        return Array.AsReadOnly(
+                _registeredPackets
+                    .OrderBy(descriptor => descriptor.OpCode)
+                    .ThenBy(descriptor => descriptor.Direction)
+                    .ToArray()
+            );
+    }
 
     private void EnsureAvailable(
         PacketDescriptor descriptor,

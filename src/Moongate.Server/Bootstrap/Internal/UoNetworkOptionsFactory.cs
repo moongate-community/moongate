@@ -11,10 +11,14 @@ namespace Moongate.Server.Bootstrap.Internal;
 internal static class UoNetworkOptionsFactory
 {
     internal static NetworkListenerOptions CreateGame(MoongateServerConfig config)
-        => Create(config, config.Network.GamePort, () => new GameSeedFramer(PacketRegistry.Default));
+    {
+        return Create(config, config.Network.GamePort, () => new GameSeedFramer(PacketRegistry.Default));
+    }
 
     internal static NetworkListenerOptions CreateLogin(MoongateServerConfig config)
-        => Create(config, config.Network.LoginPort, () => new UoPacketFramer(PacketRegistry.Default));
+    {
+        return Create(config, config.Network.LoginPort, () => new UoPacketFramer(PacketRegistry.Default));
+    }
 
     private static NetworkListenerOptions Create(MoongateServerConfig config, int port, Func<INetFramer> framerFactory)
     {
