@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Network.Packets.General;
@@ -10,10 +11,14 @@ using Moongate.Server.Core.Interfaces.Plugins;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Commands;
+using Moongate.Server.Ultima.Data.Cities;
+using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Entities.Auth;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
 
 namespace Moongate.Server.Ultima;
@@ -31,10 +36,15 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
     public void Register(Container container)
     {
-        container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates");
-        container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates/mobiles/");
-        container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates/items/");
-        container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates/loots/");
+        var directoriesConfig = container.Resolve<DirectoriesConfig>();
+
+        // Configuration files
+        directoriesConfig.CreateDirectoryIfNotExists("data/");
+
+        directoriesConfig.CreateDirectoryIfNotExists("templates");
+        directoriesConfig.CreateDirectoryIfNotExists("templates/mobiles/");
+        directoriesConfig.CreateDirectoryIfNotExists("templates/items/");
+        directoriesConfig.CreateDirectoryIfNotExists("templates/loots/");
 
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
         TomlUtils.AddTomlConverter(new Point2DTomlConverter());
@@ -65,6 +75,9 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
         if ((mode & ServerMode.Game) != 0)
         {
+            container.AddUltimaDataLoader<MapLoader, MapContent>(0);
+            container.AddUltimaDataLoader<StartingCitiesLoader, StartingCityContent>(1);
+
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
 

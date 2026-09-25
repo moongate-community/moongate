@@ -1,6 +1,7 @@
 using System.Net;
 using Moongate.Core.Utils;
 using Moongate.Network.Interfaces.Framing;
+using Moongate.Network.Interfaces.Middleware;
 using Moongate.Network.Packets.Registry;
 using Moongate.Server.Core.Data.Network;
 using Moongate.Server.Data.Config;
@@ -10,9 +11,12 @@ namespace Moongate.Server.Bootstrap.Internal;
 
 internal static class UoNetworkOptionsFactory
 {
-    internal static NetworkListenerOptions CreateGame(MoongateServerConfig config)
+    internal static NetworkListenerOptions CreateGame(
+        MoongateServerConfig config,
+        IReadOnlyList<INetMiddleware> middlewares
+    )
     {
-        return Create(config, config.Network.GamePort, () => new GameSeedFramer(PacketRegistry.Default));
+        return Create(config, config.Network.GamePort, () => new GameSeedFramer(PacketRegistry.Default), middlewares);
     }
 
     internal static NetworkListenerOptions CreateLogin(MoongateServerConfig config)
@@ -20,7 +24,12 @@ internal static class UoNetworkOptionsFactory
         return Create(config, config.Network.LoginPort, () => new UoPacketFramer(PacketRegistry.Default));
     }
 
-    private static NetworkListenerOptions Create(MoongateServerConfig config, int port, Func<INetFramer> framerFactory)
+    private static NetworkListenerOptions Create(
+        MoongateServerConfig config,
+        int port,
+        Func<INetFramer> framerFactory,
+        IReadOnlyList<INetMiddleware>? middlewares = null
+    )
     {
         var addresses = config.Network.ListenAddress == "0.0.0.0"
             ? NetworkUtils.GetLocalIpAddresses().ToArray()
@@ -29,7 +38,7 @@ internal static class UoNetworkOptionsFactory
         return new()
         {
             Endpoints = addresses.Select(address => new IPEndPoint(address, port)).ToArray(),
-            ConnectionPipelineFactory = () => new() { Framer = framerFactory() }
+            ConnectionPipelineFactory = () => new() { Framer = framerFactory(), Middlewares = middlewares }
         };
     }
 }

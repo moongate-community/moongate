@@ -138,4 +138,28 @@ public sealed class NetworkSessionTests
         Assert.Equal(NetworkSessionState.AwaitingSeed, session.State);
         Assert.Same(fixture.Client, session.Client);
     }
+
+    [Fact]
+    public void EnableCompression_DefaultsToOffAndTurnsOn()
+    {
+        using var connection = new ControlledNetworkConnection(7);
+        var session = new NetworkSession(connection);
+
+        Assert.False(session.CompressionEnabled);
+
+        session.EnableCompression();
+
+        Assert.True(session.CompressionEnabled);
+    }
+
+    [Fact]
+    public void EnableCompression_DisconnectedSession_ThrowsAndStaysOff()
+    {
+        using var connection = new ControlledNetworkConnection(7);
+        var session = new NetworkSession(connection);
+        session.DetachClient();
+
+        Assert.Throws<InvalidOperationException>(() => session.EnableCompression());
+        Assert.False(session.CompressionEnabled);
+    }
 }

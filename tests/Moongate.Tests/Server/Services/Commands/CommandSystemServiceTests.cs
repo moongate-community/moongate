@@ -117,7 +117,7 @@ public sealed class CommandSystemServiceTests
         var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
         await service.StartAsync();
         var session = new GameSession(new(fixture.Client), fixture.Loop);
-        await fixture.ExecuteOnLoopAsync(() => session.SetAccountType(AccountType.GameMaster));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.AccountType, AccountType.GameMaster));
 
         var line = Assert.Single(await service.ExecuteAsync("echo hi", CommandSourceType.InGame, session));
 
@@ -143,7 +143,7 @@ public sealed class CommandSystemServiceTests
         var rejected = Assert.Single(await service.ExecuteAsync("echo hi", CommandSourceType.InGame, session));
         Assert.Equal(CommandOutputLevel.Error, rejected.Level);
 
-        await fixture.ExecuteOnLoopAsync(() => session.SetAccountType(AccountType.GameMaster));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.AccountType, AccountType.GameMaster));
         var allowed = Assert.Single(await service.ExecuteAsync("echo hi", CommandSourceType.InGame, session));
 
         Assert.Equal("ok", allowed.Text);

@@ -8,6 +8,7 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Login;
 
@@ -26,7 +27,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
             context,
             new(AuthKey, "user", "password"),
             CancellationToken.None
@@ -37,7 +38,9 @@ public sealed class GameLoginPacketHandlerTests
         Assert.Equal(1, store.RedeemCalls);
         Assert.Equal("realm", store.RealmId);
         Assert.Equal(AuthKey, store.AuthKey);
-        Assert.Equal(0, sender.SentCount);
+
+        // Supported features (0xB9) and the character list (0xA9).
+        Assert.Equal(2, sender.SentCount);
     }
 
     [Theory, InlineData(null, AuthKey), InlineData(0x23456789u, AuthKey)]
@@ -56,7 +59,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
             context,
             new(packetKey, "user", "password"),
             CancellationToken.None
@@ -79,7 +82,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
             context,
             new(AuthKey, "user", "wrong-password"),
             CancellationToken.None
@@ -102,7 +105,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
             context,
             new(AuthKey, "user", "password"),
             CancellationToken.None

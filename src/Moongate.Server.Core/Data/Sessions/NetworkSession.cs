@@ -12,6 +12,7 @@ public sealed class NetworkSession
     private NetworkSessionState _state;
     private uint? _seed;
     private string? _clientVersion;
+    private bool _compressionEnabled;
 
     public long SessionId { get; }
 
@@ -67,6 +68,21 @@ public sealed class NetworkSession
         }
     }
 
+    /// <summary>
+    ///     Gets whether everything the server sends on this connection is Huffman-compressed. It becomes true once
+    ///     the game login is accepted and never goes back.
+    /// </summary>
+    public bool CompressionEnabled
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _compressionEnabled;
+            }
+        }
+    }
+
     public NetworkSession(INetworkConnection client)
     {
         ArgumentNullException.ThrowIfNull(client);
@@ -87,6 +103,19 @@ public sealed class NetworkSession
         lock (_sync)
         {
             DetachClientUnsafe();
+        }
+    }
+
+    /// <summary>
+    ///     Compresses everything sent from now on. Call it before sending the first packet the client must read
+    ///     compressed, which is the first reply to the game login.
+    /// </summary>
+    public void EnableCompression()
+    {
+        lock (_sync)
+        {
+            ThrowIfDisconnected();
+            _compressionEnabled = true;
         }
     }
 

@@ -12,6 +12,7 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Services.Network.Middleware;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Handlers.General;
@@ -60,7 +61,7 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         var config = new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } };
         _container.RegisterInstance(config);
         Network = listeners is null
-            ? new(UoNetworkOptionsFactory.CreateGame(config), Connections)
+            ? new(UoNetworkOptionsFactory.CreateGame(config, [new UoCompressionMiddleware(Sessions)]), Connections)
             : new NetworkService(listeners, Connections);
         Game = new(Network, Connections, Sessions, Dispatcher, networkSender);
     }

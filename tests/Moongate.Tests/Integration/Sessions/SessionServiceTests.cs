@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Core.Primitives;
 using Moongate.Server.Bootstrap;
+using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Services.Sessions;
@@ -167,19 +168,19 @@ public sealed class SessionServiceTests
         Assert.False(service.TryGetByCharacterId(firstCharacterId, out var missingSession));
         Assert.Null(missingSession);
 
-        await fixture.ExecuteOnLoopAsync(() => session.SetCharacterId(firstCharacterId));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, firstCharacterId));
 
         Assert.True(service.TryGetByCharacterId(firstCharacterId, out var firstMatch));
         Assert.Same(session, firstMatch);
 
-        await fixture.ExecuteOnLoopAsync(() => session.SetCharacterId(secondCharacterId));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, secondCharacterId));
 
         Assert.False(service.TryGetByCharacterId(firstCharacterId, out var changedSession));
         Assert.Null(changedSession);
         Assert.True(service.TryGetByCharacterId(secondCharacterId, out var secondMatch));
         Assert.Same(session, secondMatch);
 
-        await fixture.ExecuteOnLoopAsync(() => session.SetCharacterId(Serial.Zero));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, Serial.Zero));
 
         Assert.False(service.TryGetByCharacterId(secondCharacterId, out var clearedSession));
         Assert.Null(clearedSession);

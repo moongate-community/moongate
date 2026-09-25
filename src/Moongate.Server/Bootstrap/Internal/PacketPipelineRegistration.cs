@@ -5,6 +5,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Services.Network.Middleware;
 using Moongate.Server.Services.Packets;
 
 namespace Moongate.Server.Bootstrap.Internal;
@@ -13,8 +14,12 @@ internal static class PacketPipelineRegistration
 {
     internal static Container Register(Container container)
     {
+        container.Register<UoCompressionMiddleware>(Reuse.Singleton);
         container.RegisterDelegate<NetworkListenerOptions>(
-            resolver => CreateGameNetworkOptions(resolver.Resolve<MoongateServerConfig>()),
+            resolver => UoNetworkOptionsFactory.CreateGame(
+                resolver.Resolve<MoongateServerConfig>(),
+                [resolver.Resolve<UoCompressionMiddleware>()]
+            ),
             Reuse.Singleton
         );
         container.Register<INetworkService, NetworkService>(Reuse.Singleton);
@@ -25,10 +30,5 @@ internal static class PacketPipelineRegistration
             .AddMoongateService<IPacketSendService, PacketSendService>(50)
             .AddMoongateService<IPacketDispatchService, PacketDispatchService>(60)
             .AddMoongateService<IGameServerService, GameServerService>(100);
-    }
-
-    private static NetworkListenerOptions CreateGameNetworkOptions(MoongateServerConfig config)
-    {
-        return UoNetworkOptionsFactory.CreateGame(config);
     }
 }

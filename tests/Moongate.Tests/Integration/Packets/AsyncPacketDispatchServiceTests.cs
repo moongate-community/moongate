@@ -1,5 +1,6 @@
 using DryIoc;
 using Moongate.Network.Packets.General;
+using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
@@ -36,7 +37,7 @@ public sealed class AsyncPacketDispatchServiceTests
             await release.Task.WaitAsync(cancellationToken);
             Assert.True(
                 await context.RunOnGameLoopAsync(
-                    gameSession => gameSession.SetAccountId(new(42)),
+                    gameSession => gameSession.Set(SessionKeys.AccountId, new(42)),
                     cancellationToken
                 )
             );

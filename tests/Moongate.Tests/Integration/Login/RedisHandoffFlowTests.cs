@@ -13,6 +13,7 @@ using Moongate.Tests.TestSupport.Login;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Server.Ultima;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Integration.Login;
 
@@ -93,7 +94,7 @@ public sealed class RedisHandoffFlowTests
                 gameSessions,
                 new StubPacketSendService()
             );
-            await new GameLoginPacketHandler(realm, handoffs).HandleAsync(
+            await new GameLoginPacketHandler(realm, handoffs, new StubDataLoaderService()).HandleAsync(
                 gameContext,
                 new(redirect.AuthKey, "Alice", "password"),
                 CancellationToken.None

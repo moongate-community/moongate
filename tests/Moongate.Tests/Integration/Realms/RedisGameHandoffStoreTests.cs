@@ -10,6 +10,7 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Integration.Realms;
 
@@ -130,7 +131,7 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
             ),
             _instanceId
         );
-        var handler = new GameLoginPacketHandler(realm, _store);
+        var handler = new GameLoginPacketHandler(realm, _store, new StubDataLoaderService());
 
         await handler.HandleAsync(
             context,

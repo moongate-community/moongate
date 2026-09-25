@@ -1,4 +1,6 @@
+using System.Collections.Concurrent;
 using Moongate.Core.Primitives;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 
@@ -7,48 +9,20 @@ namespace Moongate.Server.Core.Data.Sessions;
 public sealed class GameSession
 {
     private readonly IGameLoopService _gameLoop;
-    private readonly Lock _sync = new();
-
-    private Serial _accountId;
-    private Serial _characterId;
-    private AccountType _accountType = AccountType.Regular;
+    private readonly ConcurrentDictionary<object, object?> _values = new();
 
     public NetworkSession NetworkSession { get; }
 
     public long SessionId { get; }
 
-    public Serial AccountId
-    {
-        get
-        {
-            lock (_sync)
-            {
-                return _accountId;
-            }
-        }
-    }
+    public Serial AccountId => Get(SessionKeys.AccountId);
 
-    public Serial CharacterId
-    {
-        get
-        {
-            lock (_sync)
-            {
-                return _characterId;
-            }
-        }
-    }
+    public Serial CharacterId => Get(SessionKeys.CharacterId);
 
-    public AccountType AccountType
-    {
-        get
-        {
-            lock (_sync)
-            {
-                return _accountType;
-            }
-        }
-    }
+    public AccountType AccountType => Get(SessionKeys.AccountType);
+
+    public Version ClientVersion => Get(SessionKeys.ClientVersion);
+
 
     public GameSession(NetworkSession networkSession, IGameLoopService gameLoop)
     {
@@ -59,34 +33,30 @@ public sealed class GameSession
         _gameLoop = gameLoop;
     }
 
-    public void SetAccountId(Serial accountId)
+    /// <summary>
+    ///     Gets the value stored for <paramref name="key" />, or the key's default while nothing has been set.
+    ///     Any thread may read.
+    /// </summary>
+    public T Get<T>(SessionKey<T> key)
     {
-        EnsureLoopThread();
+        ArgumentNullException.ThrowIfNull(key);
 
-        lock (_sync)
-        {
-            _accountId = accountId;
-        }
+        return _values.TryGetValue(key, out var value) ? (T)value! : key.Default;
     }
 
-    public void SetAccountType(AccountType accountType)
+    /// <summary>
+    ///     Stores <paramref name="value" /> for <paramref name="key" />. Only the game loop thread writes; to clear a
+    ///     value, set it back to the key's default.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    ///     Called off the game loop thread.
+    /// </exception>
+    public void Set<T>(SessionKey<T> key, T value)
     {
+        ArgumentNullException.ThrowIfNull(key);
         EnsureLoopThread();
 
-        lock (_sync)
-        {
-            _accountType = accountType;
-        }
-    }
-
-    public void SetCharacterId(Serial characterId)
-    {
-        EnsureLoopThread();
-
-        lock (_sync)
-        {
-            _characterId = characterId;
-        }
+        _values[key] = value;
     }
 
     private void EnsureLoopThread()

@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Types.Login;
+using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Services.Sessions;
 using Moongate.Tests.Support.GameLoop;
@@ -26,7 +27,7 @@ public sealed class PacketContextTests
         var applied = await context.RunOnGameLoopAsync(gameSession =>
                 {
                     ranOnLoop = fixture.Loop.IsOnLoopThread;
-                    gameSession.SetAccountId(accountId);
+                    gameSession.Set(SessionKeys.AccountId, accountId);
                 }
             )
             .AsTask()

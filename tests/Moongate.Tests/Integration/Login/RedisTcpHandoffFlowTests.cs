@@ -24,8 +24,10 @@ using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Ultima.Handlers.Login;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Server.Ultima;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Integration.Login;
 
@@ -81,6 +83,7 @@ public sealed class RedisTcpHandoffFlowTests
         gameContainer.RegisterInstance<IPacketSendService>(gameSender);
         gameContainer.RegisterInstance(realm);
         gameContainer.RegisterInstance<IGameHandoffStore>(handoffs);
+        gameContainer.RegisterInstance<IDataLoaderService>(new StubDataLoaderService());
         gameContainer.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
         var gameDispatcher = new PacketDispatchService(
             loop,
