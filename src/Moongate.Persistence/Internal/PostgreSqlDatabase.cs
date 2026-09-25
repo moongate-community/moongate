@@ -39,6 +39,7 @@ internal sealed class PostgreSqlDatabase : IDisposable
         var schemaConnectionString = options.ResolveSchemaConnectionString(runtimeConnectionString);
         options.ValidateSameDatabaseEndpoint(runtimeConnectionString, schemaConnectionString);
         SerialTypeHandler.EnsureRegistered();
+        HueTypeHandler.EnsureRegistered();
         var orm = new FreeSqlBuilder()
             .UseConnectionString(DataType.PostgreSQL, runtimeConnectionString)
             .UseNameConvert(NameConvertType.PascalCaseToUnderscoreWithLower)
