@@ -62,9 +62,9 @@ internal static class ItemTemplateBuilder
             template.Name = displayName;
         }
 
-        if (block.Fields.TryGetValue("color", out var colorText) && Serial.TryParse(colorText, out var color))
+        if (block.Fields.TryGetValue("color", out var colorText) && HueSpec.TryParse(colorText, out var hue))
         {
-            template.Hue = RangeValueSpec<int>.FromValue((int)color.Value);
+            template.Hue = hue;
         }
 
         if (block.Fields.TryGetValue("weightmax", out var weightMaxText) && int.TryParse(weightMaxText, out var weightMax))

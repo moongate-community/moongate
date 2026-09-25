@@ -87,7 +87,7 @@ public class ItemTemplate
     ///     The hue to apply over the graphic's own art, or a range to pick a fresh one from on every spawn.
     ///     0, the default, means the art's native coloring: no override.
     /// </summary>
-    public RangeValueSpec<int> Hue { get; set; } = RangeValueSpec<int>.FromValue(0);
+    public HueSpec Hue { get; set; } = HueSpec.FromValue(0);
 
     /// <summary>
     ///     Maximum item count for a container template; null for anything that is not a container.

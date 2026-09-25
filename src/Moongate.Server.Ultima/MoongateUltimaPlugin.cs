@@ -14,6 +14,7 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Professions;
+using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Extensions;
@@ -51,6 +52,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
         TomlUtils.AddTomlConverter(new Point2DTomlConverter());
         TomlUtils.AddTomlConverter(new Point3DTomlConverter());
+        TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
 
@@ -81,6 +83,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<StartingCitiesLoader, StartingCityContent>(1);
             container.AddUltimaDataLoader<SkillsLoader, SkillContent>(2);
             container.AddUltimaDataLoader<ProfessionsLoader, ProfessionContent>(3);
+            container.AddUltimaDataLoader<RacesLoader, RaceContent>(4);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();

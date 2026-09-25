@@ -35,6 +35,7 @@ internal static class UoxItemConverterCommand
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
         TomlUtils.AddTomlConverter(new Point2DTomlConverter());
         TomlUtils.AddTomlConverter(new Point3DTomlConverter());
+        TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
 
