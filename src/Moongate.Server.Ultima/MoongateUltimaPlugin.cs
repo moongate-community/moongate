@@ -11,6 +11,7 @@ using Moongate.Server.Core.Interfaces.Plugins;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Commands;
+using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Maps;
@@ -91,6 +92,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<RacesLoader, RaceContent>(4);
             container.AddUltimaDataLoader<BannedNamesLoader, BannedNamesContent>(5);
             container.AddUltimaDataLoader<ContainersLoader, ContainerContent>(6);
+            container.AddUltimaDataLoader<BodiesLoader, BodyContent>(7);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
