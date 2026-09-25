@@ -8,6 +8,7 @@
 #   a container not listed uses the entry marked as the default.
 #
 # Fields:
+#   name        a label for people reading this file and for logs (optional)
 #   gump        the id of the gump the client opens
 #   bounds      the area where items can be placed, as "(x, y)+(width, height)"
 #   drop_sound  the sound played when an item is dropped in (leave out: none)
@@ -16,6 +17,7 @@
 # ==============================================================================
 
 [[container]]
+name = "default"
 gump = 0x003C
 bounds = "(44, 65)+(142, 94)"
 drop_sound = 0x0048
@@ -25,108 +27,126 @@ items = []
 # Containers
 
 [[container]]
+name = "corpse"
 gump = 0x0009
 bounds = "(20, 85)+(104, 111)"
 drop_sound = 0x0042
 items = [0x2006, 0x0ECA, 0x0ECB, 0x0ECC, 0x0ECD, 0x0ECE, 0x0ECF, 0x0ED0, 0x0ED1, 0x0ED2]
 
 [[container]]
+name = "bag"
 gump = 0x003D
 bounds = "(29, 34)+(108, 94)"
 drop_sound = 0x0048
 items = [0x0E76, 0x2256, 0x2257]
 
 [[container]]
+name = "barrel"
 gump = 0x003E
 bounds = "(33, 36)+(109, 112)"
 drop_sound = 0x0042
 items = [0x0E77, 0x0E7F]
 
 [[container]]
+name = "picnic basket"
 gump = 0x003F
 bounds = "(19, 47)+(163, 76)"
 drop_sound = 0x004F
 items = [0x0E7A, 0x24D5, 0x24D6, 0x24D9, 0x24DA]
 
 [[container]]
+name = "basket"
 gump = 0x0041
 bounds = "(35, 38)+(110, 78)"
 drop_sound = 0x004F
 items = [0x0990, 0x09AC, 0x09B1, 0x24D7, 0x24D8, 0x24DD]
 
 [[container]]
+name = "metal golden chest"
 gump = 0x0042
 bounds = "(18, 105)+(144, 73)"
 drop_sound = 0x0042
 items = [0x0E40, 0x0E41]
 
 [[container]]
+name = "wooden box"
 gump = 0x0043
 bounds = "(16, 51)+(168, 73)"
 drop_sound = 0x0042
 items = [0x0E7D, 0x09AA]
 
 [[container]]
+name = "crate"
 gump = 0x0044
 bounds = "(20, 10)+(150, 90)"
 drop_sound = 0x0042
 items = [0x0E7E, 0x09A9, 0x0E3C, 0x0E3D, 0x0E3E, 0x0E3F]
 
 [[container]]
+name = "fancy chest of drawers"
 gump = 0x0048
 bounds = "(76, 12)+(64, 56)"
 drop_sound = 0x0042
 items = [0x0A30, 0x0A38]
 
 [[container]]
+name = "wooden chest"
 gump = 0x0049
 bounds = "(18, 105)+(144, 73)"
 drop_sound = 0x0042
 items = [0x0E42, 0x0E43]
 
 [[container]]
+name = "metal chest"
 gump = 0x004A
 bounds = "(18, 105)+(144, 73)"
 drop_sound = 0x0042
 items = [0x0E7C, 0x09AB]
 
 [[container]]
+name = "metal box"
 gump = 0x004B
 bounds = "(16, 51)+(168, 73)"
 drop_sound = 0x0042
 items = [0x0E80, 0x09A8]
 
 [[container]]
+name = "ship hatch"
 gump = 0x004C
 bounds = "(46, 74)+(150, 110)"
 drop_sound = 0x0042
 items = [0x3E65, 0x3E93, 0x3EAE, 0x3EB9]
 
 [[container]]
+name = "bookcase"
 gump = 0x004D
 bounds = "(76, 12)+(64, 56)"
 drop_sound = 0x0042
 items = [0x0A97, 0x0A98, 0x0A99, 0x0A9A, 0x0A9B, 0x0A9C, 0x0A9D, 0x0A9E]
 
 [[container]]
+name = "armoire"
 gump = 0x004E
 bounds = "(24, 96)+(74, 56)"
 drop_sound = 0x0042
 items = [0x0A4C, 0x0A4D, 0x0A50, 0x0A51]
 
 [[container]]
+name = "fancy armoire"
 gump = 0x004F
 bounds = "(24, 96)+(74, 56)"
 drop_sound = 0x0042
 items = [0x0A4E, 0x0A4F, 0x0A52, 0x0A53]
 
 [[container]]
+name = "chest of drawers"
 gump = 0x0051
 bounds = "(16, 10)+(138, 84)"
 drop_sound = 0x0042
 items = [0x0A2C, 0x0A34]
 
 [[container]]
+name = "bulletin board"
 gump = 0x0052
 bounds = "(0, 0)+(110, 62)"
 drop_sound = 0x0042
@@ -135,11 +155,13 @@ items = [0x1E5E]
 # Game Boards
 
 [[container]]
+name = "chess board"
 gump = 0x091A
 bounds = "(0, 0)+(282, 210)"
 items = [0x0FA6]
 
 [[container]]
+name = "backgammon board"
 gump = 0x092E
 bounds = "(0, 0)+(282, 230)"
 items = [0x0E1C, 0x0FAD]
@@ -147,6 +169,7 @@ items = [0x0E1C, 0x0FAD]
 # Gift Box
 
 [[container]]
+name = "gift box"
 gump = 0x0102
 bounds = "(35, 10)+(155, 85)"
 drop_sound = 0x0042
@@ -155,54 +178,63 @@ items = [0x232A, 0x232B]
 # SE Containers
 
 [[container]]
+name = "tokuno armoire"
 gump = 0x0105
 bounds = "(10, 10)+(150, 95)"
 drop_sound = 0x0042
 items = [0x2857, 0x2858]
 
 [[container]]
+name = "tokuno red armoire"
 gump = 0x0106
 bounds = "(10, 10)+(150, 95)"
 drop_sound = 0x0042
 items = [0x285B, 0x285C]
 
 [[container]]
+name = "tokuno cherry armoire"
 gump = 0x0107
 bounds = "(10, 10)+(150, 95)"
 drop_sound = 0x0042
 items = [0x285D, 0x285E, 0x2859, 0x285A]
 
 [[container]]
+name = "tokuno basket"
 gump = 0x0108
 bounds = "(10, 10)+(116, 71)"
 drop_sound = 0x004F
 items = [0x24DB, 0x24DC]
 
 [[container]]
+name = "tokuno wooden chest"
 gump = 0x0109
 bounds = "(10, 10)+(150, 95)"
 drop_sound = 0x0042
 items = [0x280B, 0x280C]
 
 [[container]]
+name = "tokuno plain chest"
 gump = 0x010A
 bounds = "(10, 10)+(150, 95)"
 drop_sound = 0x0042
 items = [0x280F, 0x2810]
 
 [[container]]
+name = "tokuno ornate chest"
 gump = 0x010B
 bounds = "(10, 10)+(150, 95)"
 drop_sound = 0x0042
 items = [0x280D, 0x280E]
 
 [[container]]
+name = "tokuno cabinet"
 gump = 0x010C
 bounds = "(10, 10)+(150, 95)"
 drop_sound = 0x0042
 items = [0x2811, 0x2812, 0x2815, 0x2816, 0x2817, 0x2818]
 
 [[container]]
+name = "tokuno drawer chest"
 gump = 0x010D
 bounds = "(10, 10)+(150, 95)"
 drop_sound = 0x0042
@@ -211,6 +243,7 @@ items = [0x2813, 0x2814]
 # Heart Shaped
 
 [[container]]
+name = "heart shaped box"
 gump = 0x0120
 bounds = "(56, 30)+(102, 74)"
 drop_sound = 0x0042

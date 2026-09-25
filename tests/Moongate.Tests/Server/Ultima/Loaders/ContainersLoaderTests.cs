@@ -21,6 +21,7 @@ public sealed class ContainersLoaderTests
 
     private const string Backpack = """
                                     [[container]]
+                                    name = "backpack"
                                     gump = 0x3C
                                     bounds = "(44, 65)+(142, 94)"
                                     drop_sound = 0x48
@@ -62,6 +63,8 @@ public sealed class ContainersLoaderTests
         Assert.Equal(0x3C, fallback.Gump);
         Assert.Equal(new Rectangle2D(44, 65, 142, 94), fallback.Bounds);
         Assert.Equal(0x48, fallback.DropSound);
+        Assert.Null(fallback.Name);
+        Assert.Equal("backpack", result.Entities[1].Name);
         Assert.Equal([0x0E75, 0x09B2], result.Entities[1].Items);
         Assert.Null(result.Entities[2].DropSound);
     }

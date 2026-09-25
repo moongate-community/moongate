@@ -9,6 +9,11 @@ namespace Moongate.Server.Ultima.Data.Containers;
 public class ContainerContent
 {
     /// <summary>
+    ///     A label for the entry, such as <c>wooden chest</c>, for people reading the file and for logs.
+    /// </summary>
+    public string? Name { get; set; }
+
+    /// <summary>
     ///     The id of the gump the client opens.
     /// </summary>
     public int Gump { get; set; }
