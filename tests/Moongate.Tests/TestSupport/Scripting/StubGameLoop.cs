@@ -23,7 +23,9 @@ public sealed class StubGameLoop : IGameLoopService
     public bool ThrowOnPost { get; set; }
 
     public GameLoopMetricsSnapshot GetMetricsSnapshot()
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public ValueTask PostAsync(IGameLoopWorkItem workItem, CancellationToken cancellationToken = default)
     {
@@ -57,19 +59,27 @@ public sealed class StubGameLoop : IGameLoopService
     }
 
     public Task StartAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public Task StopAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public Task StopAsync(IGameLoopWorkItem finalWorkItem)
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public Task StopWithFinalWorkAsync(
         Func<Func<IGameLoopWorkItem, Task>, CancellationToken, Task> finalWorkAsync,
         CancellationToken cancellationToken = default
     )
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public bool TryPost(IGameLoopWorkItem workItem)
     {

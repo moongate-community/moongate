@@ -168,21 +168,23 @@ public sealed class ConsolePromptService : IConsolePromptService
 
     /// <inheritdoc />
     public void WriteOutputLine(string text, CommandOutputLevel level)
-        => RunWithPromptHidden(
-            () =>
-            {
-                if (level == CommandOutputLevel.Information)
+    {
+        RunWithPromptHidden(
+                () =>
                 {
+                    if (level == CommandOutputLevel.Information)
+                    {
+                        _driver.WriteLine(text);
+
+                        return;
+                    }
+
+                    _driver.ForegroundColor = level == CommandOutputLevel.Error ? ConsoleColor.Red : ConsoleColor.Yellow;
                     _driver.WriteLine(text);
-
-                    return;
+                    _driver.ResetColor();
                 }
-
-                _driver.ForegroundColor = level == CommandOutputLevel.Error ? ConsoleColor.Red : ConsoleColor.Yellow;
-                _driver.WriteLine(text);
-                _driver.ResetColor();
-            }
-        );
+            );
+    }
 
     private void ClearPromptRow()
     {
@@ -208,7 +210,9 @@ public sealed class ConsolePromptService : IConsolePromptService
     }
 
     private int GetPromptRow()
-        => Math.Clamp(_driver.WindowTop + _driver.WindowHeight - 1, 0, _driver.BufferHeight - 1);
+    {
+        return Math.Clamp(_driver.WindowTop + _driver.WindowHeight - 1, 0, _driver.BufferHeight - 1);
+    }
 
     private static bool IsInteractiveTerminal()
     {

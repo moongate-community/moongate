@@ -19,11 +19,15 @@ public class PingPacketTests
 
     [Fact]
     public void Encode_Ping_MatchesWireFixture()
-        => Assert.Equal(new byte[] { 0x73, 0x2A }, PacketCodec.Encode(new PingPacket(42)));
+    {
+        Assert.Equal(new byte[] { 0x73, 0x2A }, PacketCodec.Encode(new PingPacket(42)));
+    }
 
     [Theory, InlineData(""), InlineData("73"), InlineData("732A00"), InlineData("742A")]
     public void TryDecode_InvalidCompleteFrame_ReturnsFalse(string hex)
-        => Assert.False(PacketCodec.TryDecode<PingPacket>(Convert.FromHexString(hex), out _));
+    {
+        Assert.False(PacketCodec.TryDecode<PingPacket>(Convert.FromHexString(hex), out _));
+    }
 
     [Fact]
     public void TryDecode_KnownPingBytes_ReadsSequence()

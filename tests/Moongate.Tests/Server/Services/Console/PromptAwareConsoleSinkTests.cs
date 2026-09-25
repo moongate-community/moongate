@@ -43,11 +43,13 @@ public sealed class PromptAwareConsoleSinkTests
     }
 
     private static LogEvent CreateEvent(string message)
-        => new(
-            DateTimeOffset.UtcNow,
-            LogEventLevel.Information,
-            null,
-            new(message, [new TextToken(message)]),
-            []
-        );
+    {
+        return new(
+                DateTimeOffset.UtcNow,
+                LogEventLevel.Information,
+                null,
+                new(message, [new TextToken(message)]),
+                []
+            );
+    }
 }

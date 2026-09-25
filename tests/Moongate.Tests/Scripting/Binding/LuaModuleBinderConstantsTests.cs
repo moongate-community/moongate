@@ -75,7 +75,9 @@ public sealed class LuaModuleBinderConstantsTests : IDisposable
 
     [Fact]
     public void Bind_ConstantThatIsNotStatic_IsABindingError()
-        => Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new InstanceConstantModule()));
+    {
+        Assert.Throws<InvalidOperationException>(() => _binder.Bind(_state, new InstanceConstantModule()));
+    }
 
     [Fact]
     public void Bind_ConstantWhoseGetterThrows_NamesTheMemberAndKeepsTheCause()
@@ -113,8 +115,12 @@ public sealed class LuaModuleBinderConstantsTests : IDisposable
     }
 
     private LuaValue[] Run(string source)
-        => SyncValueTask.Run(_state.DoStringAsync(source, "test"));
+    {
+        return SyncValueTask.Run(_state.DoStringAsync(source, "test"));
+    }
 
     public void Dispose()
-        => _state.Dispose();
+    {
+        _state.Dispose();
+    }
 }

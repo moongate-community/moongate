@@ -34,7 +34,9 @@ public sealed class CleanupExecutionContextGate
     }
 
     public void Release()
-        => _release.TrySetResult();
+    {
+        _release.TrySetResult();
+    }
 
     private void OnContextChanged(AsyncLocalValueChangedArgs<MoongateTcpClient?> change)
     {

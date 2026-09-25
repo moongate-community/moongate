@@ -78,8 +78,12 @@ public sealed class DirectoriesConfigTests : IDisposable
     }
 
     private string[] RelativeSegments(string path)
-        => Path.GetRelativePath(_root.FullName, path).Split(Path.DirectorySeparatorChar);
+    {
+        return Path.GetRelativePath(_root.FullName, path).Split(Path.DirectorySeparatorChar);
+    }
 
     public void Dispose()
-        => _root.Delete(true);
+    {
+        _root.Delete(true);
+    }
 }

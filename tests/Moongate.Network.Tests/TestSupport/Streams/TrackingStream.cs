@@ -22,25 +22,39 @@ internal sealed class TrackingStream : Stream
     }
 
     public override void Flush()
-        => _inner.Flush();
+    {
+        _inner.Flush();
+    }
 
     public override int Read(byte[] buffer, int offset, int count)
-        => _inner.Read(buffer, offset, count);
+    {
+        return _inner.Read(buffer, offset, count);
+    }
 
     public override ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
-        => _inner.ReadAsync(buffer, cancellationToken);
+    {
+        return _inner.ReadAsync(buffer, cancellationToken);
+    }
 
     public override long Seek(long offset, SeekOrigin origin)
-        => _inner.Seek(offset, origin);
+    {
+        return _inner.Seek(offset, origin);
+    }
 
     public override void SetLength(long value)
-        => _inner.SetLength(value);
+    {
+        _inner.SetLength(value);
+    }
 
     public override void Write(byte[] buffer, int offset, int count)
-        => _inner.Write(buffer, offset, count);
+    {
+        _inner.Write(buffer, offset, count);
+    }
 
     public override ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
-        => _inner.WriteAsync(buffer, cancellationToken);
+    {
+        return _inner.WriteAsync(buffer, cancellationToken);
+    }
 
     protected override void Dispose(bool disposing)
     {

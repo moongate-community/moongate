@@ -175,7 +175,8 @@ public sealed class SystemMetricsProviderTests
     }
 
     private static ProcessMetricsReading CreateReading(DateTimeOffset startedAtUtc)
-        => new()
+    {
+        return new()
         {
             ProcessId = 1234,
             ProcessorCount = 4,
@@ -189,4 +190,5 @@ public sealed class SystemMetricsProviderTests
             GcGen1Collections = 5,
             GcGen2Collections = 6
         };
+    }
 }

@@ -58,10 +58,14 @@ internal sealed class NetworkServiceStub : INetworkService
     }
 
     public void Receive(INetworkConnection connection, ReadOnlyMemory<byte> data)
-        => DataReceived?.Invoke(this, new(connection, data));
+    {
+        DataReceived?.Invoke(this, new(connection, data));
+    }
 
     public Task StartAsync()
-        => OnStart();
+    {
+        return OnStart();
+    }
 
     public async Task StopAsync()
     {

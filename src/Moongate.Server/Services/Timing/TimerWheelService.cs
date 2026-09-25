@@ -396,7 +396,9 @@ public sealed class TimerWheelService : ITimerService
     }
 
     private void AddToWheel(TimerEntry entry)
-        => entry.Node = _wheel[(int)(entry.DueTick % _wheel.Length)].AddLast(entry);
+    {
+        entry.Node = _wheel[(int)(entry.DueTick % _wheel.Length)].AddLast(entry);
+    }
 
     private void ClearTimers()
     {

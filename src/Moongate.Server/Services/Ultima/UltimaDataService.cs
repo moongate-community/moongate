@@ -36,5 +36,7 @@ public class UltimaDataService : IUltimaDataService
     }
 
     public Task StopAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 }

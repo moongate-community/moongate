@@ -43,7 +43,9 @@ public sealed class DataLoaderService : IDataLoaderService
 
     /// <inheritdoc />
     public Task StopAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     /// <inheritdoc />
     public IReadOnlyList<TEntity> GetEntities<TEntity>()

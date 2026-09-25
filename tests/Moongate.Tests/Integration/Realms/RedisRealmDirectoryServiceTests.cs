@@ -22,7 +22,9 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
     );
 
     public async Task InitializeAsync()
-        => await _redis.StartAsync();
+    {
+        await _redis.StartAsync();
+    }
 
     [Fact]
     public async Task RegisterAsync_PublishesTwoLiveRealmsSortedAndFilteredByAccountLevel()
@@ -182,10 +184,14 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
     }
 
     private RedisRealmDirectoryService Create()
-        => new(_redis, _prefix, TimeSpan.FromSeconds(15));
+    {
+        return new(_redis, _prefix, TimeSpan.FromSeconds(15));
+    }
 
     private static RealmInstance Realm(string id, ushort index, AccountType minimum = AccountType.Regular)
-        => new(new(id, index, id, IPAddress.Loopback, 2595, minimum), Guid.NewGuid());
+    {
+        return new(new(id, index, id, IPAddress.Loopback, 2595, minimum), Guid.NewGuid());
+    }
 
     public async Task DisposeAsync()
     {
@@ -201,5 +207,7 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
     }
 
     ValueTask IAsyncDisposable.DisposeAsync()
-        => new(DisposeAsync());
+    {
+        return new(DisposeAsync());
+    }
 }

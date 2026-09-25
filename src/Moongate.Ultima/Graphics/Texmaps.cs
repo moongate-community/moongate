@@ -22,7 +22,9 @@ public static class Texmaps
 
     /// <summary>Number of texture entries in the index.</summary>
     public static int GetCount()
-        => (int)(_fileIndex.IdxLength / 12);
+    {
+        return (int)(_fileIndex.IdxLength / 12);
+    }
 
     /// <summary>Returns the raw 16-bit pixel bytes of texture <paramref name="index" /> and its square side.</summary>
     public static byte[] GetRawTexmap(int index, out int size)

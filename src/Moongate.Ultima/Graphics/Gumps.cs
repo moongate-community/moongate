@@ -46,7 +46,9 @@ public sealed class Gumps
     }
 
     public static int GetCount()
-        => _indexLength;
+    {
+        return _indexLength;
+    }
 
     /// <summary>
     /// Returns Bitmap of index and applies Hue
@@ -240,7 +242,9 @@ public sealed class Gumps
     /// <param name="index"></param>
     /// <returns></returns>
     public static UltimaBitmap GetGump(int index)
-        => GetGump(index, out _);
+    {
+        return GetGump(index, out _);
+    }
 
     /// <summary>
     /// Returns Bitmap of index and if verdata patched
@@ -730,7 +734,9 @@ public sealed class Gumps
     /// </summary>
     /// <param name="index"></param>
     public static void RemoveGump(int index)
-        => _removed[index] = true;
+    {
+        _removed[index] = true;
+    }
 
     /// <summary>
     /// Replaces Gump <see cref="_replaced" />
@@ -835,7 +841,9 @@ public sealed class Gumps
     /// <see cref="Files.CacheCapacityGumps" /> for the default.
     /// </summary>
     public static void SetCacheCapacity(int capacity)
-        => _cache.SetCapacity(capacity);
+    {
+        _cache.SetCapacity(capacity);
+    }
 
     /// <summary>
     /// Returns the dimensions of a gump without decoding pixel data.

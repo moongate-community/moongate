@@ -28,5 +28,7 @@ internal static class PacketPipelineRegistration
     }
 
     private static NetworkListenerOptions CreateGameNetworkOptions(MoongateServerConfig config)
-        => UoNetworkOptionsFactory.CreateGame(config);
+    {
+        return UoNetworkOptionsFactory.CreateGame(config);
+    }
 }

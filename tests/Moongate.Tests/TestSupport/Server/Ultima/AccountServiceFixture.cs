@@ -71,5 +71,7 @@ internal sealed class AccountServiceFixture : IAsyncDisposable
     }
 
     public async ValueTask DisposeAsync()
-        => await _host.DisposeAsync();
+    {
+        await _host.DisposeAsync();
+    }
 }

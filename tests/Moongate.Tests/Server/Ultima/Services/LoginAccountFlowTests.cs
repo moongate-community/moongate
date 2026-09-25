@@ -101,12 +101,16 @@ public sealed class LoginAccountFlowTests
     }
 
     private static AccountEntity Account(AccountType accountType)
-        => new() { Id = new(42), Username = "user", AccountType = accountType };
+    {
+        return new() { Id = new(42), Username = "user", AccountType = accountType };
+    }
 
     private static StubRealmCatalog Directory()
-        => new(
-            new RealmDescriptor("admin", 4, "Admin", IPAddress.Loopback, 2595, AccountType.Administrator),
-            new RealmDescriptor("regular", 2, "Regular", IPAddress.Loopback, 2593, AccountType.Regular),
-            new RealmDescriptor("staff", 1, "Staff", IPAddress.Loopback, 2594, AccountType.GameMaster)
-        );
+    {
+        return new(
+                new RealmDescriptor("admin", 4, "Admin", IPAddress.Loopback, 2595, AccountType.Administrator),
+                new RealmDescriptor("regular", 2, "Regular", IPAddress.Loopback, 2593, AccountType.Regular),
+                new RealmDescriptor("staff", 1, "Staff", IPAddress.Loopback, 2594, AccountType.GameMaster)
+            );
+    }
 }

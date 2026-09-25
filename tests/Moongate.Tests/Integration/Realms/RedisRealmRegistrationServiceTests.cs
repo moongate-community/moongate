@@ -78,23 +78,29 @@ public sealed class RedisRealmRegistrationServiceTests
     }
 
     private static RealmDirectoryConfig Config()
-        => new() { HeartbeatIntervalSeconds = 1, LeaseDurationSeconds = 4 };
+    {
+        return new() { HeartbeatIntervalSeconds = 1, LeaseDurationSeconds = 4 };
+    }
 
     private static RealmInstance Realm()
-        => new(
-            new(
-                "realm",
-                5,
-                "Realm",
-                IPAddress.Loopback,
-                2595,
-                AccountType.Regular
-            ),
-            Guid.NewGuid()
-        );
+    {
+        return new(
+                new(
+                    "realm",
+                    5,
+                    "Realm",
+                    IPAddress.Loopback,
+                    2595,
+                    AccountType.Regular
+                ),
+                Guid.NewGuid()
+            );
+    }
 
     private static string Prefix()
-        => $"moongate:test:registration:{Guid.NewGuid():N}:";
+    {
+        return $"moongate:test:registration:{Guid.NewGuid():N}:";
+    }
 
     private static async Task<RedisConnectionService> CreateConnectionAsync()
     {

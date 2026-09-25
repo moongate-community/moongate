@@ -225,7 +225,9 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
     }
 
     private static RedisKey Key(string realmId, uint authKey)
-        => $"moongate:handoff:{realmId}:{authKey:X8}";
+    {
+        return $"moongate:handoff:{realmId}:{authKey:X8}";
+    }
 
     private static bool TryReadTicket(byte[] encoded, [NotNullWhen(true)] out RedisHandoffTicket? ticket)
     {

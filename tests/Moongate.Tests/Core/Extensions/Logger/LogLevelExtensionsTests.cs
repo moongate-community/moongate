@@ -16,5 +16,7 @@ public sealed class LogLevelExtensionsTests
      InlineData(LogLevelType.None, LogEventLevel.Information),
      InlineData((LogLevelType)255, LogEventLevel.Information)]
     public void ToSerilogLogLevel_MapsSeverityAndDefaults(LogLevelType level, LogEventLevel expected)
-        => Assert.Equal(expected, level.ToSerilogLogLevel());
+    {
+        Assert.Equal(expected, level.ToSerilogLogLevel());
+    }
 }

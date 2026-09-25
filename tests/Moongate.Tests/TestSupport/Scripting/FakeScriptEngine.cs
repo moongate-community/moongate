@@ -20,15 +20,21 @@ public sealed class FakeScriptEngine : IScriptEngine
 
     /// <inheritdoc />
     public ScriptResult Call(string functionName, params object?[] args)
-        => ScriptResult.Completed([]);
+    {
+        return ScriptResult.Completed([]);
+    }
 
     /// <inheritdoc />
     public ScriptExecutionMetrics GetMetrics()
-        => Metrics ?? new ScriptExecutionMetrics(Loaded.Count, 0, 0, 0, 0, 0, 0, 0);
+    {
+        return Metrics ?? new ScriptExecutionMetrics(Loaded.Count, 0, 0, 0, 0, 0, 0, 0);
+    }
 
     /// <inheritdoc />
     public void Invalidate(string relativePath)
-        => Invalidated.Add(relativePath);
+    {
+        Invalidated.Add(relativePath);
+    }
 
     /// <inheritdoc />
     public void LoadFile(string relativePath)

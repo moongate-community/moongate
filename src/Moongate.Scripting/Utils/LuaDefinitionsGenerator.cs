@@ -257,21 +257,25 @@ internal static class LuaDefinitionsGenerator
     }
 
     private static bool IsNullableValueType(Type type)
-        => Nullable.GetUnderlyingType(type) is not null;
+    {
+        return Nullable.GetUnderlyingType(type) is not null;
+    }
 
     private static string LuaLiteral(object? value, Type type)
-        => value switch
+    {
+        return value switch
         {
-            null        => "nil",
+            null => "nil",
             string text => "\"" + EscapeLuaString(text) + "\"",
-            bool flag   => flag ? "true" : "false",
+            bool flag => flag ? "true" : "false",
             _ when type.IsEnum => Convert.ToInt64(value, CultureInfo.InvariantCulture)
                                          .ToString(CultureInfo.InvariantCulture),
-            double number       => DoubleLiteral(number),
-            float number        => DoubleLiteral(number),
+            double number => DoubleLiteral(number),
+            float number => DoubleLiteral(number),
             IFormattable number => number.ToString(null, CultureInfo.InvariantCulture),
-            _                   => "nil"
+            _ => "nil"
         };
+    }
 
     private static string LuaTypeName(Type type)
     {

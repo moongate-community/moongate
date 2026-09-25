@@ -37,5 +37,7 @@ public sealed class PluginDirectoryFixture : IDisposable
     }
 
     public void Dispose()
-        => Directory.Delete(Directories.Root, true);
+    {
+        Directory.Delete(Directories.Root, true);
+    }
 }

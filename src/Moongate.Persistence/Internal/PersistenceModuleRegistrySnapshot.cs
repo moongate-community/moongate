@@ -20,7 +20,9 @@ internal sealed class PersistenceModuleRegistrySnapshot
     }
 
     public IReadOnlyList<PersistenceModuleRegistration> GetModules(PersistenceDatabaseTarget target)
-        => Modules.Where(module => module.Module.DatabaseTarget == target).ToArray();
+    {
+        return Modules.Where(module => module.Module.DatabaseTarget == target).ToArray();
+    }
 
     public IPersistenceModule GetOwner(Type entityType)
     {

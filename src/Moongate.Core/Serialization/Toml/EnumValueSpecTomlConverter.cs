@@ -21,5 +21,7 @@ public sealed class EnumValueSpecTomlConverter<TEnum> : TomlConverter<EnumValueS
 
     /// <inheritdoc />
     public override void Write(TomlWriter writer, EnumValueSpec<TEnum> value)
-        => writer.WriteStringValue(value.ToString());
+    {
+        writer.WriteStringValue(value.ToString());
+    }
 }

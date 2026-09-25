@@ -36,7 +36,9 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
 
     /// <summary>Creates a spec that always resolves to <paramref name="value" />.</summary>
     public static EnumValueSpec<TEnum> FromValue(TEnum value)
-        => new(value);
+    {
+        return new(value);
+    }
 
     /// <summary>Creates a spec that resolves to a random pick among <paramref name="candidates" />.</summary>
     public static EnumValueSpec<TEnum> FromCandidates(IReadOnlyList<TEnum> candidates)
@@ -51,7 +53,9 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
 
     /// <summary>Creates a spec that resolves to a random pick among every member of <typeparamref name="TEnum" />.</summary>
     public static EnumValueSpec<TEnum> Random()
-        => new(Enum.GetValues<TEnum>());
+    {
+        return new(Enum.GetValues<TEnum>());
+    }
 
     /// <summary>
     /// Parses the text a template writer would use: a bare member name, <c>random_of</c>, or
@@ -117,11 +121,15 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
 
     /// <summary>Resolves the value: the fixed value, or a fresh random pick among the candidates.</summary>
     public TEnum Resolve()
-        => IsRandom ? _candidates![BuiltInRng.Next(_candidates.Length)] : _fixedValue;
+    {
+        return IsRandom ? _candidates![BuiltInRng.Next(_candidates.Length)] : _fixedValue;
+    }
 
     /// <inheritdoc />
     public override string ToString()
-        => IsRandom
-               ? $"{RandomOfPrefix}:{string.Join(',', _candidates!.Select(candidate => candidate.ToString().ToSnakeCase()))}"
-               : _fixedValue.ToString().ToSnakeCase();
+    {
+        return IsRandom
+                   ? $"{RandomOfPrefix}:{string.Join(',', _candidates!.Select(candidate => candidate.ToString().ToSnakeCase()))}"
+                   : _fixedValue.ToString().ToSnakeCase();
+    }
 }

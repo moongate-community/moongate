@@ -37,7 +37,9 @@ internal sealed class RecordingPromptService : IConsolePromptService
     }
 
     public void RunWithPromptHidden(Action write)
-        => write();
+    {
+        write();
+    }
 
     public void ShowPrompt()
     {

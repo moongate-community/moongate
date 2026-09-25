@@ -22,5 +22,7 @@ internal sealed class StubProcessMetricsReader : IProcessMetricsReader
     }
 
     public void Dispose()
-        => IsDisposed = true;
+    {
+        IsDisposed = true;
+    }
 }

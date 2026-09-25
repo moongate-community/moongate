@@ -13,7 +13,9 @@ public interface IPacketSendService : IMoongateStartupService
 
     /// <summary>Closes only the expected connection when a session ID has been reused.</summary>
     Task DisconnectAsync(long sessionId, INetworkConnection expectedConnection)
-        => expectedConnection.CloseAsync();
+    {
+        return expectedConnection.CloseAsync();
+    }
 
     /// <summary>Encodes and queues a packet without waiting for socket I/O; returns false when unavailable or full.</summary>
     bool TrySend(long sessionId, IOutgoingPacket packet);

@@ -29,7 +29,9 @@ public static class NetworkUtils
     /// Includes loopback addresses and does not filter interfaces by operational status or remove duplicates.
     /// </remarks>
     public static IEnumerable<IPAddress> GetLocalIpAddresses()
-        => NetworkInterface.GetAllNetworkInterfaces()
-                           .SelectMany(adapter => adapter.GetIPProperties().UnicastAddresses)
-                           .Select(address => address.Address);
+    {
+        return NetworkInterface.GetAllNetworkInterfaces()
+                               .SelectMany(adapter => adapter.GetIPProperties().UnicastAddresses)
+                               .Select(address => address.Address);
+    }
 }

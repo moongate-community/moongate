@@ -37,7 +37,9 @@ public static class Sounds
     /// <param name="soundId"></param>
     /// <returns></returns>
     public static UoSound GetSound(int soundId)
-        => GetSound(soundId, out _);
+    {
+        return GetSound(soundId, out _);
+    }
 
     /// <summary>
     /// Returns <see cref="UoSound" /> of ID with bool translated in .def
@@ -212,7 +214,9 @@ public static class Sounds
     }
 
     public static bool IsRemovedSound(int soundId)
-        => soundId < 0 || _removed[soundId];
+    {
+        return soundId < 0 || _removed[soundId];
+    }
 
     /// <summary>
     /// Returns Sound name and tests if valid
@@ -507,27 +511,29 @@ public static class Sounds
     }
 
     private static int[] WaveHeader(int length)
+    {
         /* ====================
-         * = WAVE File layout =
-         * ====================
-         * char[4] = 'RIFF' \
-         * int - chunk size |- Riff Header
-         * char[4] = 'WAVE' /
-         * char[4] = 'fmt ' \
-         * int - chunk size |
-         * short - format	|
-         * short - channels	|
-         * int - samples p/s|- Format header
-         * int - avg bytes	|
-         * short - align	|
-         * short - bits p/s /
-         * char[4] - data	\
-         * int - chunk size | - Data header
-         * short[..] - data /
-         * ====================
-         * */
-        => new[]
+    * = WAVE File layout =
+    * ====================
+    * char[4] = 'RIFF' \
+    * int - chunk size |- Riff Header
+    * char[4] = 'WAVE' /
+    * char[4] = 'fmt ' \
+    * int - chunk size |
+    * short - format	|
+    * short - channels	|
+    * int - samples p/s|- Format header
+    * int - avg bytes	|
+    * short - align	|
+    * short - bits p/s /
+    * char[4] - data	\
+    * int - chunk size | - Data header
+    * short[..] - data /
+    * ====================
+    * */
+        return new[]
         {
             0x46464952, length + 36, 0x45564157, 0x20746D66, 0x10, 0x010001, 0x5622, 0xAC44, 0x100002, 0x61746164, length
         };
+    }
 }

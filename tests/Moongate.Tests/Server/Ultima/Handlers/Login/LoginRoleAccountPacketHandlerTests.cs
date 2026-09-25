@@ -147,17 +147,21 @@ public sealed class LoginRoleAccountPacketHandlerTests
     }
 
     private static AccountEntity Account()
-        => new() { Id = new(42), AccountType = AccountType.Regular };
+    {
+        return new() { Id = new(42), AccountType = AccountType.Regular };
+    }
 
     private static StubRealmCatalog Directory()
-        => new(
-            new RealmDescriptor(
-                "local",
-                1,
-                "Local",
-                IPAddress.Loopback,
-                2593,
-                AccountType.Regular
-            )
-        );
+    {
+        return new(
+                new RealmDescriptor(
+                    "local",
+                    1,
+                    "Local",
+                    IPAddress.Loopback,
+                    2593,
+                    AccountType.Regular
+                )
+            );
+    }
 }

@@ -29,22 +29,30 @@ public sealed class LogModule
     /// <summary>Writes a Debug event; <paramref name="message" /> is a Serilog template filled by <paramref name="args" />.</summary>
     [ScriptFunction(helpText: "Logs at DEBUG.")]
     public void Debug(string message, params object?[] args)
-        => Write(LogEventLevel.Debug, message, args);
+    {
+        Write(LogEventLevel.Debug, message, args);
+    }
 
     /// <summary>Writes an Error event; <paramref name="message" /> is a Serilog template filled by <paramref name="args" />.</summary>
     [ScriptFunction(helpText: "Logs at ERROR.")]
     public void Error(string message, params object?[] args)
-        => Write(LogEventLevel.Error, message, args);
+    {
+        Write(LogEventLevel.Error, message, args);
+    }
 
     /// <summary>Writes an Information event; <paramref name="message" /> is a Serilog template filled by <paramref name="args" />.</summary>
     [ScriptFunction(helpText: "Logs at INFO.")]
     public void Info(string message, params object?[] args)
-        => Write(LogEventLevel.Information, message, args);
+    {
+        Write(LogEventLevel.Information, message, args);
+    }
 
     /// <summary>Writes a Warning event; <paramref name="message" /> is a Serilog template filled by <paramref name="args" />.</summary>
     [ScriptFunction(helpText: "Logs at WARNING.")]
     public void Warning(string message, params object?[] args)
-        => Write(LogEventLevel.Warning, message, args);
+    {
+        Write(LogEventLevel.Warning, message, args);
+    }
 
     private void Write(LogEventLevel level, string message, object?[] args)
     {

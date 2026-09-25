@@ -9,20 +9,26 @@ namespace Moongate.Network.Packets.Internal;
 internal static class PacketValidation
 {
     public static bool HasFixedHeader(ReadOnlySpan<byte> data, byte opCode, int expectedLength)
-        => data.Length == expectedLength && !data.IsEmpty && data[0] == opCode;
+    {
+        return data.Length == expectedLength && !data.IsEmpty && data[0] == opCode;
+    }
 
     public static bool HasValidHeader(ReadOnlySpan<byte> data, PacketDescriptor descriptor)
-        => descriptor.Sizing switch
+    {
+        return descriptor.Sizing switch
         {
             PacketSizing.Fixed when descriptor.FixedLength is int length => HasFixedHeader(data, descriptor.OpCode, length),
             PacketSizing.Variable => HasVariableHeader(data, descriptor.OpCode, descriptor.MinimumLength),
             _ => false
         };
+    }
 
     public static bool HasVariableHeader(ReadOnlySpan<byte> data, byte opCode, int minimumLength)
-        => data.Length >= minimumLength &&
-           data[0] == opCode &&
-           BinaryPrimitives.ReadUInt16BigEndian(data[1..3]) == data.Length;
+    {
+        return data.Length >= minimumLength &&
+               data[0] == opCode &&
+               BinaryPrimitives.ReadUInt16BigEndian(data[1..3]) == data.Length;
+    }
 
     public static byte[] SnapshotIPv4(IPAddress address, string parameterName)
     {

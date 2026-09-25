@@ -135,16 +135,24 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
     }
 
     public async Task RemoveAsync(string tokenHash, CancellationToken token = default)
-        => await EvalAsync(AdminRedisScripts.Remove, [Session(tokenHash)], [_prefix], token);
+    {
+        await EvalAsync(AdminRedisScripts.Remove, [Session(tokenHash)], [_prefix], token);
+    }
 
     private Task<RedisResult> EvalAsync(string script, RedisKey[] keys, RedisValue[] values, CancellationToken token)
-        => AdminRedisOperation.EvaluateAsync(_redis, script, keys, values, token);
+    {
+        return AdminRedisOperation.EvaluateAsync(_redis, script, keys, values, token);
+    }
 
     private string Gate(Serial id)
-        => _prefix + "gate:" + id.Value.ToString(CultureInfo.InvariantCulture);
+    {
+        return _prefix + "gate:" + id.Value.ToString(CultureInfo.InvariantCulture);
+    }
 
     private string Index(Serial id)
-        => _prefix + "index:" + id.Value.ToString(CultureInfo.InvariantCulture);
+    {
+        return _prefix + "index:" + id.Value.ToString(CultureInfo.InvariantCulture);
+    }
 
     private string Session(string digest)
     {

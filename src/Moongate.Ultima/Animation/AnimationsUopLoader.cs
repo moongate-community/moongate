@@ -33,12 +33,16 @@ internal static class AnimationsUopLoader
     }
 
     public static IEnumerable<int> GetAllMobTypeBodyIds()
-        => MobTypes.GetDefinedBodies().OrderBy(id => id);
+    {
+        return MobTypes.GetDefinedBodies().OrderBy(id => id);
+    }
 
     public static IEnumerable<int> GetAllUopBodyIds()
-        => MobTypes.GetDefinedBodies()
-                   .Where(id => (MobTypes.GetFlags(id) & 0x10000u) != 0)
-                   .OrderBy(id => id);
+    {
+        return MobTypes.GetDefinedBodies()
+                       .Where(id => (MobTypes.GetFlags(id) & 0x10000u) != 0)
+                       .OrderBy(id => id);
+    }
 
     public static AnimationFrame[] GetAnimation(
         int body,
@@ -114,7 +118,9 @@ internal static class AnimationsUopLoader
     }
 
     public static int GetAnimationType(int body)
-        => MobTypes.TryGet(body, out var type, out _) ? (int)type : 0;
+    {
+        return MobTypes.TryGet(body, out var type, out _) ? (int)type : 0;
+    }
 
     public static List<int> GetDefinedActions(int body)
     {

@@ -14,7 +14,9 @@ public static class ContainerPersistenceExtensions
     {
         /// <summary>Registers an entity in the shared authentication database.</summary>
         public Container AddPersistenceAuth<T>() where T : class, IMoongateEntity
-            => RegisterEntity<T>(container, null, null, PersistenceDatabaseTarget.Accounts);
+        {
+            return RegisterEntity<T>(container, null, null, PersistenceDatabaseTarget.Accounts);
+        }
 
         /// <summary>Registers authentication entities with an explicit detached snapshot function.</summary>
         public Container AddPersistenceAuth<T>(Func<IEnumerable<T>> source, Func<T, T> snapshot)
@@ -28,7 +30,9 @@ public static class ContainerPersistenceExtensions
 
         /// <summary>Registers a singleton typed facade whose module ownership is resolved after the full batch.</summary>
         public Container AddPersistenceEntity<T>() where T : class, IMoongateEntity
-            => RegisterEntity<T>(container, null, null);
+        {
+            return RegisterEntity<T>(container, null, null);
+        }
 
         /// <summary>Registers a live source with an explicit detached snapshot function.</summary>
         /// <remarks>
@@ -64,7 +68,9 @@ public static class ContainerPersistenceExtensions
 
         /// <summary>Registers an entity in this world's database.</summary>
         public Container AddPersistenceWorld<T>() where T : class, IMoongateEntity
-            => RegisterEntity<T>(container, null, null, PersistenceDatabaseTarget.Realm);
+        {
+            return RegisterEntity<T>(container, null, null, PersistenceDatabaseTarget.Realm);
+        }
 
         /// <summary>Registers world entities with an explicit detached snapshot function.</summary>
         public Container AddPersistenceWorld<T>(Func<IEnumerable<T>> source, Func<T, T> snapshot)

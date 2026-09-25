@@ -24,16 +24,18 @@ public sealed class GameLoopServiceTests
 
     [Theory, InlineData(0, 1), InlineData(-1, 1), InlineData(1, 0), InlineData(1, -1)]
     public void Constructor_NonPositiveLimits_RejectsInvalidConfiguration(int capacity, int batch)
-        => Assert.Throws<ArgumentOutOfRangeException>(
-            () => new GameLoopService(
-                new()
-                {
-                    QueueCapacity = capacity, MaxWorkItemsPerBatch = batch
-                },
-                new(new(), TimeProvider.System),
-                TimeProvider.System
-            )
-        );
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(
+                () => new GameLoopService(
+                    new()
+                    {
+                        QueueCapacity = capacity, MaxWorkItemsPerBatch = batch
+                    },
+                    new(new(), TimeProvider.System),
+                    TimeProvider.System
+                )
+            );
+    }
 
     [Fact]
     public async Task Dispose_RacingProducers_DrainsAcceptedItemsAndDoesNotThrowFromDisposedSignal()
@@ -666,17 +668,21 @@ public sealed class GameLoopServiceTests
 
     [Theory, InlineData(0), InlineData(-1)]
     public void WorkItemBudget_NonPositive_RejectsInvalidConfiguration(int milliseconds)
-        => Assert.Throws<ArgumentOutOfRangeException>(
-            () => new GameLoopOptions
-            {
-                WorkItemBudget = TimeSpan.FromMilliseconds(milliseconds)
-            }
-        );
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(
+                () => new GameLoopOptions
+                {
+                    WorkItemBudget = TimeSpan.FromMilliseconds(milliseconds)
+                }
+            );
+    }
 
     private static GameLoopService Create(int capacity = 16, int batch = 4)
-        => new(
-            new() { QueueCapacity = capacity, MaxWorkItemsPerBatch = batch },
-            new(new(), TimeProvider.System),
-            TimeProvider.System
-        );
+    {
+        return new(
+                new() { QueueCapacity = capacity, MaxWorkItemsPerBatch = batch },
+                new(new(), TimeProvider.System),
+                TimeProvider.System
+            );
+    }
 }

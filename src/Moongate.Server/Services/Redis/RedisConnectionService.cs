@@ -73,5 +73,7 @@ public sealed class RedisConnectionService : IMoongateStartupService, IAsyncDisp
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
-        => await StopAsync().ConfigureAwait(false);
+    {
+        await StopAsync().ConfigureAwait(false);
+    }
 }

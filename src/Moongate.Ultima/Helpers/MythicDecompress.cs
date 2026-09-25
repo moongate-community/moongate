@@ -10,7 +10,9 @@ public static class MythicDecompress
     private const int FrequencyHeaderSize = 1024; // 256 ints
 
     public static byte[] Decompress(byte[] buffer)
-        => Decompress(buffer, 0, buffer.Length);
+    {
+        return Decompress(buffer, 0, buffer.Length);
+    }
 
     /// <summary>
     /// Decompresses a slice of <paramref name="buffer" />. Lets callers pass
@@ -36,7 +38,9 @@ public static class MythicDecompress
     }
 
     public static byte[] Detransform(byte[] buffer)
-        => InternalDecompress(MoveToFrontCoding.Decode(buffer));
+    {
+        return InternalDecompress(MoveToFrontCoding.Decode(buffer));
+    }
 
     public static byte[] InternalCompress(Span<byte> input)
     {
@@ -178,7 +182,9 @@ public static class MythicDecompress
     }
 
     public static byte[] Transform(byte[] buffer)
-        => MoveToFrontCoding.Encode(InternalCompress(buffer));
+    {
+        return MoveToFrontCoding.Encode(InternalCompress(buffer));
+    }
 
     /// <summary>
     /// Pooled-friendly decompression. Reads the header, MTF-decodes the

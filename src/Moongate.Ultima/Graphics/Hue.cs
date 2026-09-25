@@ -194,7 +194,9 @@ public sealed class Hue
     }
 
     public SKColor GetColor(int index)
-        => HueToColor(Colors[index]);
+    {
+        return HueToColor(Colors[index]);
+    }
 
     public void Import(string fileName)
     {

@@ -76,12 +76,16 @@ public sealed class PersistenceConfig
     }
 
     public string? ResolveMigrationsDirectory(string? fallback = null)
-        => string.IsNullOrWhiteSpace(MigrationsDirectory)
-               ? fallback
-               : MigrationsDirectory.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
+    {
+        return string.IsNullOrWhiteSpace(MigrationsDirectory)
+                   ? fallback
+                   : MigrationsDirectory.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
+    }
 
     public void Validate()
-        => Validate(ServerMode.Standalone);
+    {
+        Validate(ServerMode.Standalone);
+    }
 
     public void Validate(ServerMode mode)
     {

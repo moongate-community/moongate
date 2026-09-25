@@ -105,5 +105,7 @@ public sealed class SystemMetricsProvider : IMetricProvider, IDisposable
     }
 
     public void Dispose()
-        => _reader.Dispose();
+    {
+        _reader.Dispose();
+    }
 }

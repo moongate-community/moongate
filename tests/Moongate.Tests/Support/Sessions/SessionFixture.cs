@@ -158,5 +158,7 @@ public sealed class SessionFixture : IAsyncDisposable
     }
 
     public async ValueTask DisposeAsync()
-        => await DisposeResourcesAsync(Client, _peer, Loop);
+    {
+        await DisposeResourcesAsync(Client, _peer, Loop);
+    }
 }

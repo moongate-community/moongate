@@ -138,7 +138,9 @@ public sealed class Light
     /// </summary>
     /// <param name="index"></param>
     public static void Remove(int index)
-        => _removed[index] = true;
+    {
+        _removed[index] = true;
+    }
 
     /// <summary>
     /// Replaces Light

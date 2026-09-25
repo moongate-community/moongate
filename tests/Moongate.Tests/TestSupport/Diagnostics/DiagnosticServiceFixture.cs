@@ -41,7 +41,9 @@ internal sealed class DiagnosticServiceFixture : IDisposable
     }
 
     public Task<DiagnosticSnapshot> NextAsync()
-        => _snapshots.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+    {
+        return _snapshots.Reader.ReadAsync().AsTask().WaitAsync(TimeSpan.FromSeconds(5));
+    }
 
     public void Dispose()
     {

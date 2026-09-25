@@ -28,7 +28,9 @@ public sealed class RecordingTimerService : ITimerService
     }
 
     public TimerMetricsSnapshot GetMetricsSnapshot()
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public string RegisterTimer(string name, TimeSpan interval, Action callback, TimeSpan? delay = null, bool repeat = false)
     {
@@ -44,13 +46,19 @@ public sealed class RecordingTimerService : ITimerService
     }
 
     public Task StartAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public Task StopAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public void UnregisterAllTimers()
-        => Timers.Clear();
+    {
+        Timers.Clear();
+    }
 
     public bool UnregisterTimer(string timerId)
     {
@@ -60,5 +68,7 @@ public sealed class RecordingTimerService : ITimerService
     }
 
     public int UnregisterTimersByName(string name)
-        => Timers.RemoveAll(timer => timer.Name == name);
+    {
+        return Timers.RemoveAll(timer => timer.Name == name);
+    }
 }

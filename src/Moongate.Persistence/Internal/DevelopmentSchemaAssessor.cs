@@ -342,7 +342,9 @@ internal static class DevelopmentSchemaAssessor
     }
 
     private static bool DefaultsMatch(string? declared, string? actual)
-        => NormalizeDefault(declared).SequenceEqual(NormalizeDefault(actual));
+    {
+        return NormalizeDefault(declared).SequenceEqual(NormalizeDefault(actual));
+    }
 
     private static string[] NormalizeDefault(string? value)
     {
@@ -439,5 +441,7 @@ internal static class DevelopmentSchemaAssessor
     }
 
     private static string Quote(string identifier)
-        => '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
+    {
+        return '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
+    }
 }

@@ -20,14 +20,22 @@ internal sealed class SystemConsoleDriver : IConsoleDriver
     }
 
     public void ResetColor()
-        => System.Console.ResetColor();
+    {
+        System.Console.ResetColor();
+    }
 
     public void SetCursorPosition(int left, int top)
-        => System.Console.SetCursorPosition(left, top);
+    {
+        System.Console.SetCursorPosition(left, top);
+    }
 
     public void Write(string value)
-        => System.Console.Write(value);
+    {
+        System.Console.Write(value);
+    }
 
     public void WriteLine(string value)
-        => System.Console.WriteLine(value);
+    {
+        System.Console.WriteLine(value);
+    }
 }

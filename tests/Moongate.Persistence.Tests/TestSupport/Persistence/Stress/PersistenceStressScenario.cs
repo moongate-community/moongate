@@ -287,20 +287,26 @@ internal static class PersistenceStressScenario
     }
 
     private static StressOperationReport Snapshot(LatencyHistogram histogram)
-        => new(histogram.Count, histogram.Percentile(0.50), histogram.Percentile(0.95), histogram.Percentile(0.99));
+    {
+        return new(histogram.Count, histogram.Percentile(0.50), histogram.Percentile(0.95), histogram.Percentile(0.99));
+    }
 
     private static string Payload(int session, long revision)
-        => $"session:{session};revision:{revision};{new('x', 256)}";
+    {
+        return $"session:{session};revision:{revision};{new('x', 256)}";
+    }
 
     private static void AssertState(SyntheticSessionEntity expected, SyntheticSessionEntity? actual)
-        => Require(
-            actual is not null &&
-            actual.Id == expected.Id &&
-            actual.SessionNumber == expected.SessionNumber &&
-            actual.Revision == expected.Revision &&
-            actual.Payload == expected.Payload,
-            "Session data mismatch"
-        );
+    {
+        Require(
+                actual is not null &&
+                actual.Id == expected.Id &&
+                actual.SessionNumber == expected.SessionNumber &&
+                actual.Revision == expected.Revision &&
+                actual.Payload == expected.Payload,
+                "Session data mismatch"
+            );
+    }
 
     private static void Require(bool condition, string message)
     {

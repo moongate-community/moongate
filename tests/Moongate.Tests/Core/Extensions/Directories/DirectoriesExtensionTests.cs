@@ -21,7 +21,9 @@ public sealed class DirectoriesExtensionTests
 
     [Theory, InlineData(null), InlineData(""), InlineData(" ")]
     public void ResolvePathAndEnvs_NullOrWhitespace_ReturnsNull(string? path)
-        => Assert.Null(path!.ResolvePathAndEnvs());
+    {
+        Assert.Null(path!.ResolvePathAndEnvs());
+    }
 
     [Fact]
     public void ResolvePathAndEnvs_TildePath_UsesUserProfileAndReturnsAbsolutePath()

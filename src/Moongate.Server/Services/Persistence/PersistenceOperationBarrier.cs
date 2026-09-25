@@ -73,7 +73,9 @@ public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
     }
 
     internal Task RunSaveAsync(Func<Task> save, bool finalSave = false)
-        => AdmitAsync(save, false, finalSave);
+    {
+        return AdmitAsync(save, false, finalSave);
+    }
 
     private Task AdmitAsync(Func<Task> operation, bool critical, bool allowClosed)
     {

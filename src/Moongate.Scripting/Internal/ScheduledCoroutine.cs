@@ -35,5 +35,7 @@ internal sealed class ScheduledCoroutine : IDisposable
     }
 
     public void Dispose()
-        => Budget.Dispose();
+    {
+        Budget.Dispose();
+    }
 }

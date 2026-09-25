@@ -29,7 +29,8 @@ public class AltitudeShadingSettings
     /// Gets preset configuration
     /// </summary>
     public static AltitudeShadingSettings GetPreset(AltitudeShadingPresetType preset)
-        => preset switch
+    {
+        return preset switch
         {
             AltitudeShadingPresetType.Sharp => new()
             {
@@ -51,4 +52,5 @@ public class AltitudeShadingSettings
             },
             _ => new() // Default to Soft
         };
+    }
 }

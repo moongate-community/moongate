@@ -13,5 +13,7 @@ public sealed class EnvironmentVariableScope : IDisposable
     }
 
     public void Dispose()
-        => System.Environment.SetEnvironmentVariable(_name, _originalValue);
+    {
+        System.Environment.SetEnvironmentVariable(_name, _originalValue);
+    }
 }

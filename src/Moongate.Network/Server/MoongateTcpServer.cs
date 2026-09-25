@@ -851,9 +851,13 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
 
     /// <summary>Requests terminal shutdown without blocking the current callback.</summary>
     public void Dispose()
-        => _ = GetOrStartStopTask(true);
+    {
+        _ = GetOrStartStopTask(true);
+    }
 
     /// <summary>Requests terminal shutdown and waits for all owned resources.</summary>
     public async ValueTask DisposeAsync()
-        => await GetOrStartStopTask(true).ConfigureAwait(false);
+    {
+        await GetOrStartStopTask(true).ConfigureAwait(false);
+    }
 }

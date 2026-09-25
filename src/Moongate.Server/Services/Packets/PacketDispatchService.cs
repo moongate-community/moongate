@@ -266,5 +266,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
     }
 
     public ValueTask DisposeAsync()
-        => new(StopAsync());
+    {
+        return new(StopAsync());
+    }
 }

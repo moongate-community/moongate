@@ -69,5 +69,7 @@ internal static class PacketMetadata
     }
 
     private static InvalidOperationException Error(Type packetType, string message)
-        => new($"Packet type '{packetType.FullName}' {message}.");
+    {
+        return new($"Packet type '{packetType.FullName}' {message}.");
+    }
 }

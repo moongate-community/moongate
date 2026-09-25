@@ -25,7 +25,9 @@ public class InsensitiveStringHelpersTests
      InlineData(null, "", -1),
      InlineData("", null, 1)]
     public void InsensitiveCompare_TextAndNulls_OrdersValuesIgnoringCase(string? left, string? right, int expected)
-        => Assert.Equal(expected, Math.Sign(left!.InsensitiveCompare(right!)));
+    {
+        Assert.Equal(expected, Math.Sign(left!.InsensitiveCompare(right!)));
+    }
 
     [Fact]
     public void InsensitiveComparisons_TurkishCulture_KeepOrdinalUnicodeRules()
@@ -92,9 +94,13 @@ public class InsensitiveStringHelpersTests
 
     [Fact]
     public void InsensitiveRemove_SubstringMatches_RemovesEachCompleteMatch()
-        => Assert.Equal("abc", "aXXbxxc".AsSpan().InsensitiveRemove("xx".AsSpan()));
+    {
+        Assert.Equal("abc", "aXXbxxc".AsSpan().InsensitiveRemove("xx".AsSpan()));
+    }
 
     [Fact]
     public void InsensitiveReplace_MixedCaseMatches_ReplacesWholeWords()
-        => Assert.Equal("gate and gate", "Door and DOOR".InsensitiveReplace("door", "gate"));
+    {
+        Assert.Equal("gate and gate", "Door and DOOR".InsensitiveReplace("door", "gate"));
+    }
 }

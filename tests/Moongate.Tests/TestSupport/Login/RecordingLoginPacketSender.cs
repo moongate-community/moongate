@@ -12,7 +12,9 @@ internal sealed class RecordingLoginPacketSender : ILoginPacketSendService
     public bool TerminalResult { get; set; } = true;
 
     public Task DisconnectAsync(long sessionId)
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public bool TrySend(long sessionId, IOutgoingPacket packet)
     {
@@ -49,8 +51,12 @@ internal sealed class RecordingLoginPacketSender : ILoginPacketSendService
     }
 
     public Task StartAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public Task StopAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 }

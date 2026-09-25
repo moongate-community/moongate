@@ -147,22 +147,24 @@ public class ValueStringBuilderTests
 
     [Theory, InlineData(false), InlineData(true)]
     public void Append_SpanFormatterReportsInvalidCount_ThrowsWithoutAdvancingLength(bool negativeCount)
-        => Assert.Throws<FormatException>(
-            () =>
-            {
-                using var builder = new ValueStringBuilder(new char[16].AsSpan());
-                builder.Append("prefix");
+    {
+        Assert.Throws<FormatException>(
+                () =>
+                {
+                    using var builder = new ValueStringBuilder(new char[16].AsSpan());
+                    builder.Append("prefix");
 
-                try
-                {
-                    builder.Append(new InvalidSpanFormattable(negativeCount));
+                    try
+                    {
+                        builder.Append(new InvalidSpanFormattable(negativeCount));
+                    }
+                    finally
+                    {
+                        Assert.Equal("prefix", builder.ToString());
+                    }
                 }
-                finally
-                {
-                    Assert.Equal("prefix", builder.ToString());
-                }
-            }
-        );
+            );
+    }
 
     [Fact]
     public void Append_StackBufferGrows_PreservesWrittenCharactersAndEdits()

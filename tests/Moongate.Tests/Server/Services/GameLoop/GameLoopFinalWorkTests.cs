@@ -245,9 +245,11 @@ public sealed class GameLoopFinalWorkTests
     }
 
     private static GameLoopService Create()
-        => new(
-            new(),
-            new(new(), TimeProvider.System),
-            TimeProvider.System
-        );
+    {
+        return new(
+                new(),
+                new(new(), TimeProvider.System),
+                TimeProvider.System
+            );
+    }
 }

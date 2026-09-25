@@ -53,9 +53,11 @@ internal sealed class SessionPacketOutbox
     }
 
     public void Start()
+    {
 
         // Middleware can block synchronously: one worker per connection, never per packet.
-        => Completion = Task.Run(RunAsync);
+        Completion = Task.Run(RunAsync);
+    }
 
     public bool TryWrite(byte[] frame)
     {

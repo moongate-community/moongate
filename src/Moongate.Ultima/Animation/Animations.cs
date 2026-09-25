@@ -76,10 +76,14 @@ public static class Animations
     }
 
     public static IEnumerable<int> GetAllMobTypeBodies()
-        => AnimationsUopLoader.GetAllMobTypeBodyIds();
+    {
+        return AnimationsUopLoader.GetAllMobTypeBodyIds();
+    }
 
     public static IEnumerable<int> GetAllUopBodies()
-        => AnimationsUopLoader.GetAllUopBodyIds();
+    {
+        return AnimationsUopLoader.GetAllUopBodyIds();
+    }
 
     /// <summary>
     /// Returns Animation count in given anim file
@@ -351,10 +355,14 @@ public static class Animations
     }
 
     public static int GetUopAnimationType(int body)
-        => AnimationsUopLoader.GetAnimationType(body);
+    {
+        return AnimationsUopLoader.GetAnimationType(body);
+    }
 
     public static List<int> GetUopDefinedActions(int body)
-        => AnimationsUopLoader.GetDefinedActions(body);
+    {
+        return AnimationsUopLoader.GetDefinedActions(body);
+    }
 
     /// <summary>
     /// Is Body with action and direction defined
@@ -412,7 +420,9 @@ public static class Animations
     }
 
     public static bool IsUopBody(int body)
-        => AnimationsUopLoader.IsUopBody(body);
+    {
+        return AnimationsUopLoader.IsUopBody(body);
+    }
 
     /// <summary>
     /// Rereads AnimX files and bodyconv, body.def
@@ -451,7 +461,9 @@ public static class Animations
     /// more re-decodes during long browsing sessions.
     /// </summary>
     public static void SetCacheCapacity(int capacity)
-        => Cache.SetCapacity(capacity);
+    {
+        Cache.SetCapacity(capacity);
+    }
 
     /// <summary>
     /// Translates body (body.def)
@@ -525,16 +537,20 @@ public static class Animations
         int hue,
         bool isUop
     )
-        => (uint)(body & 0xFFFFF) |
-           ((long)(action & 0x7F) << 20) |
-           ((long)(direction & 0x7) << 27) |
-           ((long)(fileType & 0x7) << 30) |
-           ((firstFrame ? 1L : 0L) << 33) |
-           ((long)(hue & 0xFFFF) << 34) |
-           ((isUop ? 1L : 0L) << 50);
+    {
+        return (uint)(body & 0xFFFFF) |
+               ((long)(action & 0x7F) << 20) |
+               ((long)(direction & 0x7) << 27) |
+               ((long)(fileType & 0x7) << 30) |
+               ((firstFrame ? 1L : 0L) << 33) |
+               ((long)(hue & 0xFFFF) << 34) |
+               ((isUop ? 1L : 0L) << 50);
+    }
 
     private static int GetAnimLengthLegacy(int body, int fileType)
-        => MobTypes.GetActionCount(LegacyRangeToMobType(body, fileType));
+    {
+        return MobTypes.GetActionCount(LegacyRangeToMobType(body, fileType));
+    }
 
     /// <summary>
     /// Gets files index index based on fileType, body, action and direction

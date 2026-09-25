@@ -60,25 +60,39 @@ public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
     }
 
     public bool Contains(Point3D p)
-        => p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y && p.Z >= _start.Z && p.Z < _end.Z;
+    {
+        return p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y && p.Z >= _start.Z && p.Z < _end.Z;
+    }
 
     public bool Contains(Point2D p)
-        => p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y;
+    {
+        return p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y;
+    }
 
     public bool Contains(IPoint2D p)
-        => p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y;
+    {
+        return p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y;
+    }
 
     public bool Contains(IPoint3D p)
-        => p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y && p.Z >= _start.Z && p.Z < _end.Z;
+    {
+        return p.X >= _start.X && p.X < _end.X && p.Y >= _start.Y && p.Y < _end.Y && p.Z >= _start.Z && p.Z < _end.Z;
+    }
 
     public bool Equals(Rectangle3D other)
-        => _start == other._start && _end == other._end;
+    {
+        return _start == other._start && _end == other._end;
+    }
 
     public override bool Equals(object? obj)
-        => obj is Rectangle3D other && Equals(other);
+    {
+        return obj is Rectangle3D other && Equals(other);
+    }
 
     public override int GetHashCode()
-        => HashCode.Combine(_start, _end);
+    {
+        return HashCode.Combine(_start, _end);
+    }
 
     public void MakeHold(Rectangle3D r)
     {
@@ -115,11 +129,15 @@ public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rectangle3D Parse(string s)
-        => Parse(s, null);
+    {
+        return Parse(s, null);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Rectangle3D Parse(string s, IFormatProvider? provider)
-        => Parse(s.AsSpan(), provider);
+    {
+        return Parse(s.AsSpan(), provider);
+    }
 
     public static Rectangle3D Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
@@ -132,17 +150,25 @@ public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
     }
 
     public override string ToString()
-        => ToString(null, null);
+    {
+        return ToString(null, null);
+    }
 
     public string ToString(string? format, IFormatProvider? formatProvider)
-        => string.Create(formatProvider, $"({X}, {Y}, {Z})+({Width}, {Height}, {Depth})");
+    {
+        return string.Create(formatProvider, $"({X}, {Y}, {Z})+({Width}, {Height}, {Depth})");
+    }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-        => destination.TryWrite(provider, $"({X}, {Y}, {Z})+({Width}, {Height}, {Depth})", out charsWritten);
+    {
+        return destination.TryWrite(provider, $"({X}, {Y}, {Z})+({Width}, {Height}, {Depth})", out charsWritten);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryParse(string? s, IFormatProvider? provider, out Rectangle3D result)
-        => TryParse(s.AsSpan(), provider, out result);
+    {
+        return TryParse(s.AsSpan(), provider, out result);
+    }
 
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Rectangle3D result)
     {

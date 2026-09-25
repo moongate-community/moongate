@@ -163,7 +163,9 @@ public sealed class TileMatrix : IDisposable
     }
 
     public bool AllFilesExist()
-        => _mapPath != null && _indexPath != null && _staticsPath != null;
+    {
+        return _mapPath != null && _indexPath != null && _staticsPath != null;
+    }
 
     public void CloseStreams()
     {
@@ -190,10 +192,14 @@ public sealed class TileMatrix : IDisposable
     }
 
     public Tile GetLandTile(int x, int y, bool patch)
-        => GetLandBlock(x >> 3, y >> 3, patch)[((y & 0x7) << 3) + (x & 0x7)];
+    {
+        return GetLandBlock(x >> 3, y >> 3, patch)[((y & 0x7) << 3) + (x & 0x7)];
+    }
 
     public Tile GetLandTile(int x, int y)
-        => GetLandBlock(x >> 3, y >> 3)[((y & 0x7) << 3) + (x & 0x7)];
+    {
+        return GetLandBlock(x >> 3, y >> 3)[((y & 0x7) << 3) + (x & 0x7)];
+    }
 
     public StaticTile[] GetPendingStatics(int blockX, int blockY)
     {
@@ -244,10 +250,14 @@ public sealed class TileMatrix : IDisposable
     }
 
     public HuedTile[] GetStaticTiles(int x, int y, bool patch)
-        => GetStaticBlock(x >> 3, y >> 3, patch)[x & 0x7][y & 0x7];
+    {
+        return GetStaticBlock(x >> 3, y >> 3, patch)[x & 0x7][y & 0x7];
+    }
 
     public HuedTile[] GetStaticTiles(int x, int y)
-        => GetStaticBlock(x >> 3, y >> 3)[x & 0x7][y & 0x7];
+    {
+        return GetStaticBlock(x >> 3, y >> 3)[x & 0x7][y & 0x7];
+    }
 
     public bool IsStaticBlockRemoved(int blockX, int blockY)
     {
@@ -560,5 +570,7 @@ public sealed class TileMatrix : IDisposable
     }
 
     public void Dispose()
-        => CloseStreams();
+    {
+        CloseStreams();
+    }
 }

@@ -13,5 +13,7 @@ internal static class Cli
     /// [LOOTLIST ...] block unconverted.
     /// </param>
     public static int Run(string source, string destination, string? lootDestination = null)
-        => UoxItemConverterCommand.Run(source, destination, lootDestination, Console.Out, Console.Error);
+    {
+        return UoxItemConverterCommand.Run(source, destination, lootDestination, Console.Out, Console.Error);
+    }
 }

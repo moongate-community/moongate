@@ -374,7 +374,9 @@ public static class ResourceUtils
     /// <param name="resourceName">Full resource name</param>
     /// <returns>File name without path</returns>
     public static string GetFileNameFromResourcePath(string resourceName)
-        => GetFileNameFromResourceName(resourceName);
+    {
+        return GetFileNameFromResourceName(resourceName);
+    }
 
     /// <summary>
     /// Reads the content of an embedded resource as a string.

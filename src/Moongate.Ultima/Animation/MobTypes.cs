@@ -60,23 +60,31 @@ public static class MobTypes
     }
 
     public static IEnumerable<int> GetDefinedBodies()
-        => _entries.Keys;
+    {
+        return _entries.Keys;
+    }
 
     public static uint GetFlags(int body)
-        => _entries.TryGetValue(body, out var entry) ? entry.Flags : 0u;
+    {
+        return _entries.TryGetValue(body, out var entry) ? entry.Flags : 0u;
+    }
 
     /// <summary>
     /// idx records per body for a given category (5 directions × action count).
     /// </summary>
     public static int GetIdxStride(MobType type)
-        => GetActionCount(type) * 5;
+    {
+        return GetActionCount(type) * 5;
+    }
 
     /// <summary>
     /// Returns the mobtype for a body, or <see cref="MobType.Monster" /> if
     /// the body has no entry (per user-confirmed plan choice).
     /// </summary>
     public static MobType GetTypeOrDefault(int body)
-        => _entries.TryGetValue(body, out var entry) ? entry.Type : MobType.Monster;
+    {
+        return _entries.TryGetValue(body, out var entry) ? entry.Type : MobType.Monster;
+    }
 
     public static void Reload()
     {

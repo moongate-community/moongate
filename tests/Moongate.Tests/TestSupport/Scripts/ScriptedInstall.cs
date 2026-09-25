@@ -46,7 +46,9 @@ internal sealed class ScriptedInstall : IDisposable
 
     /// <summary>Replaces the archive's bytes and leaves its checksum file untouched.</summary>
     public void Corrupt(string version, string rid)
-        => File.WriteAllText(ArchivePath(version, rid), "not an archive");
+    {
+        File.WriteAllText(ArchivePath(version, rid), "not an archive");
+    }
 
     /// <summary>Writes a release archive and its checksum, with the given text standing in for the server binary.</summary>
     public void Publish(string version, string rid, string binaryContent, bool includeMgboot = false)
@@ -123,7 +125,9 @@ internal sealed class ScriptedInstall : IDisposable
     }
 
     private string ArchivePath(string version, string rid)
-        => Path.Combine(ReleaseDirectory, "v" + version, $"moongate-{rid}-{version}.tar.gz");
+    {
+        return Path.Combine(ReleaseDirectory, "v" + version, $"moongate-{rid}-{version}.tar.gz");
+    }
 
     /// <summary>Deletes the temporary tree, releases and installation alike.</summary>
     public void Dispose()

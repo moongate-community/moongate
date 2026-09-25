@@ -252,19 +252,23 @@ public sealed class GameLoopTimingTests
     }
 
     private static GameLoopService CreateLoop(TimerWheelService timers, TimeProvider clock, int commandBatch = 4)
-        => new(
-            new() { QueueCapacity = 8, MaxWorkItemsPerBatch = commandBatch },
-            timers,
-            clock
-        );
+    {
+        return new(
+                new() { QueueCapacity = 8, MaxWorkItemsPerBatch = commandBatch },
+                timers,
+                clock
+            );
+    }
 
     private static TimerWheelService CreateTimers(TimeProvider clock, int timerBatch = 4)
-        => new(
-            new()
-            {
-                TickDuration = TimeSpan.FromMilliseconds(1), WheelSize = 8,
-                MaxCallbacksPerBatch = timerBatch, CallbackBudget = TimeSpan.FromMilliseconds(5)
-            },
-            clock
-        );
+    {
+        return new(
+                new()
+                {
+                    TickDuration = TimeSpan.FromMilliseconds(1), WheelSize = 8,
+                    MaxCallbacksPerBatch = timerBatch, CallbackBudget = TimeSpan.FromMilliseconds(5)
+                },
+                clock
+            );
+    }
 }

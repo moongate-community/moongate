@@ -203,7 +203,9 @@ public sealed class Files
     public delegate void FileSaveHandler();
 
     public static void FireFileSaveEvent()
-        => FileSaveEvent?.Invoke();
+    {
+        FileSaveEvent?.Invoke();
+    }
 
     /// <summary>
     /// Looks up a given <paramref name="file" /> in <see cref="Files.MulPath" />

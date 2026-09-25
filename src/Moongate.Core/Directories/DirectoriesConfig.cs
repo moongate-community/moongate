@@ -33,7 +33,9 @@ public class DirectoriesConfig
     }
 
     public string GetPath<TEnum>(TEnum value) where TEnum : struct, Enum
-        => GetPath(Enum.GetName(value));
+    {
+        return GetPath(Enum.GetName(value));
+    }
 
     public string GetPath(string directoryType)
     {
@@ -58,7 +60,9 @@ public class DirectoriesConfig
     }
 
     public override string ToString()
-        => Root;
+    {
+        return Root;
+    }
 
     private void Init()
     {

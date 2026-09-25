@@ -50,19 +50,29 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
     }
 
     public int CompareTo(Serial other)
-        => Value.CompareTo(other.Value);
+    {
+        return Value.CompareTo(other.Value);
+    }
 
     public bool Equals(Serial other)
-        => Value == other.Value;
+    {
+        return Value == other.Value;
+    }
 
     public override bool Equals(object? obj)
-        => obj is Serial other && Equals(other);
+    {
+        return obj is Serial other && Equals(other);
+    }
 
     public override int GetHashCode()
-        => Value.GetHashCode();
+    {
+        return Value.GetHashCode();
+    }
 
     public override string ToString()
-        => $"0x{Value:X8}";
+    {
+        return $"0x{Value:X8}";
+    }
 
     /// <summary>
     /// Reads a serial written the way <see cref="ToString" /> writes it — <c>0x40000001</c> — or as

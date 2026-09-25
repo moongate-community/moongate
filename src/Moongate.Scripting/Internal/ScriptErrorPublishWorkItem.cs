@@ -18,5 +18,7 @@ internal sealed class ScriptErrorPublishWorkItem : IGameLoopWorkItem
     }
 
     public void Execute()
-        => _ = _eventBus.PublishAsync(new ScriptErrorEvent(_error));
+    {
+        _ = _eventBus.PublishAsync(new ScriptErrorEvent(_error));
+    }
 }

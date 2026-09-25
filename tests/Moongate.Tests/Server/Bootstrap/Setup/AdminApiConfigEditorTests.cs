@@ -43,11 +43,15 @@ public sealed class AdminApiConfigEditorTests
 
     [Theory, InlineData("[invalid"), InlineData("admin_api = { enabled = false }"), InlineData("admin_api.enabled = false")]
     public void EnableGeneratedCertificate_UnsupportedConfig_ReportsFailure(string source)
-        => Assert.Throws<InvalidDataException>(() => AdminApiConfigEditor.EnableGeneratedCertificate(source));
+    {
+        Assert.Throws<InvalidDataException>(() => AdminApiConfigEditor.EnableGeneratedCertificate(source));
+    }
 
     [Fact]
     public void EnableGeneratedCertificate_CustomIdentity_RefusesReplacement()
-        => Assert.Throws<InvalidOperationException>(
-            () => AdminApiConfigEditor.EnableGeneratedCertificate("[admin_api]\ncertificate_path = 'operator.pfx'\n")
-        );
+    {
+        Assert.Throws<InvalidOperationException>(
+                () => AdminApiConfigEditor.EnableGeneratedCertificate("[admin_api]\ncertificate_path = 'operator.pfx'\n")
+            );
+    }
 }

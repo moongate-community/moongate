@@ -40,7 +40,9 @@ public sealed class Animdata
     /// </summary>
     /// <param name="id"></param>
     public static AnimdataEntry GetAnimData(int id)
-        => AnimData.TryGetValue(id, out var value) ? value : null;
+    {
+        return AnimData.TryGetValue(id, out var value) ? value : null;
+    }
 
     /// <summary>
     /// Reads animdata.mul and fills <see cref="AnimData" />

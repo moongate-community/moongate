@@ -21,5 +21,7 @@ public sealed class SchemaSqlReaderTests
     [Theory, InlineData("SELECT $body$ unsafe $body$;"), InlineData("SELECT 'unterminated"), InlineData("/* unterminated"),
      InlineData("SELECT E'back\\slash';")]
     public void TryRead_UnsupportedOrUnterminatedConstructs_FailsClosed(string sql)
-        => Assert.False(SchemaSqlReader.TryRead(sql, out _));
+    {
+        Assert.False(SchemaSqlReader.TryRead(sql, out _));
+    }
 }

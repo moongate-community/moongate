@@ -21,14 +21,18 @@ public sealed class AppendingMiddleware : INetMiddleware
         ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-        => ValueTask.FromResult<ReadOnlyMemory<byte>>(Append(data));
+    {
+        return ValueTask.FromResult<ReadOnlyMemory<byte>>(Append(data));
+    }
 
     public ValueTask<ReadOnlyMemory<byte>> ProcessSendAsync(
         MoongateTcpClient? client,
         ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-        => ValueTask.FromResult<ReadOnlyMemory<byte>>(Append(data));
+    {
+        return ValueTask.FromResult<ReadOnlyMemory<byte>>(Append(data));
+    }
 
     private byte[] Append(ReadOnlyMemory<byte> data)
     {

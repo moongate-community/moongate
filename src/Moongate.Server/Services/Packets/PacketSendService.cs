@@ -115,7 +115,9 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
 
     /// <inheritdoc />
     public bool TrySend(long sessionId, IOutgoingPacket packet)
-        => TrySendCore(sessionId, packet, null);
+    {
+        return TrySendCore(sessionId, packet, null);
+    }
 
     /// <inheritdoc />
     public bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet)

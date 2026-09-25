@@ -43,7 +43,9 @@ internal static class HashHelpers
     }
 
     public static ulong GetFastModMultiplier(uint divisor)
-        => ulong.MaxValue / divisor + 1;
+    {
+        return ulong.MaxValue / divisor + 1;
+    }
 
     public static int GetPrime(int min)
     {

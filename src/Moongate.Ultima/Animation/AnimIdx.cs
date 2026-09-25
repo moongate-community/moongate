@@ -96,7 +96,9 @@ public sealed class AnimIdx
     }
 
     public void ClearFrames()
-        => Frames?.Clear();
+    {
+        Frames?.Clear();
+    }
 
     public void ExportPalette(string filename, int type)
     {
@@ -251,7 +253,9 @@ public sealed class AnimIdx
     }
 
     public void ReplacePalette(ushort[] palette)
-        => Palette = palette;
+    {
+        Palette = palette;
+    }
 
     public void Save(BinaryWriter bin, BinaryWriter idx)
     {

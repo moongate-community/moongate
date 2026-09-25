@@ -22,7 +22,9 @@ internal sealed class GameLoopFinalWorkSession
     }
 
     public Task CloseAsync()
-        => CloseAsync(null);
+    {
+        return CloseAsync(null);
+    }
 
     public async Task CloseAsync(Exception? callbackFailure)
     {

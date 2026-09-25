@@ -10,7 +10,9 @@ public class ClientVersionPacketTests
      InlineData(" "), InlineData("\t"), InlineData("\n"), InlineData("\v"), InlineData("\f"), InlineData("\r"),
      InlineData(" \t\n\v\f\r")]
     public void Constructor_InvalidVersion_ThrowsArgumentException(string version)
-        => Assert.Throws<ArgumentException>(() => new ClientVersionPacket(version));
+    {
+        Assert.Throws<ArgumentException>(() => new ClientVersionPacket(version));
+    }
 
     [Fact]
     public void TryDecode_EveryProperPrefixOfValidFrames_ReturnsFalse()
@@ -43,7 +45,9 @@ public class ClientVersionPacketTests
      InlineData("BD000480"),
      InlineData("BC000441")]
     public void TryDecode_InvalidHeaderOrText_ReturnsFalse(string hex)
-        => Assert.False(PacketCodec.TryDecode<ClientVersionPacket>(Convert.FromHexString(hex), out _));
+    {
+        Assert.False(PacketCodec.TryDecode<ClientVersionPacket>(Convert.FromHexString(hex), out _));
+    }
 
     [Theory,
      InlineData("BD000420"), InlineData("BD00052000"),

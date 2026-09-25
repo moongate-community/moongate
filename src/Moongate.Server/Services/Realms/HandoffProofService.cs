@@ -177,12 +177,16 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
     }
 
     private static bool IsValid(PendingHandoff handoff)
-        => handoff.AccountId.IsValid &&
-           Enum.IsDefined(handoff.AccountType) &&
-           !string.IsNullOrEmpty(handoff.Username) &&
-           !string.IsNullOrEmpty(handoff.RealmId) &&
-           handoff.InstanceId != Guid.Empty;
+    {
+        return handoff.AccountId.IsValid &&
+               Enum.IsDefined(handoff.AccountType) &&
+               !string.IsNullOrEmpty(handoff.Username) &&
+               !string.IsNullOrEmpty(handoff.RealmId) &&
+               handoff.InstanceId != Guid.Empty;
+    }
 
     public void Dispose()
-        => CryptographicOperations.ZeroMemory(_secret);
+    {
+        CryptographicOperations.ZeroMemory(_secret);
+    }
 }

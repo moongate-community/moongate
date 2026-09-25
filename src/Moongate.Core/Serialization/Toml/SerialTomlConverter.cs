@@ -29,5 +29,7 @@ public sealed class SerialTomlConverter : TomlConverter<Serial>
 
     /// <inheritdoc />
     public override void Write(TomlWriter writer, Serial value)
-        => writer.WriteIntegerValue(value.Value);
+    {
+        writer.WriteIntegerValue(value.Value);
+    }
 }

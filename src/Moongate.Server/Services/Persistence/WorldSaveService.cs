@@ -111,7 +111,9 @@ public sealed class WorldSaveService : IWorldSaveService
 
     /// <summary>Drains active saving and the loop without publishing a final capture.</summary>
     public Task StopAsync()
-        => StopAsync(false);
+    {
+        return StopAsync(false);
+    }
 
     /// <inheritdoc />
     public Task StopAsync(bool saveFinal)

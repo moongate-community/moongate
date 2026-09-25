@@ -26,5 +26,7 @@ public sealed class TemporaryScriptsDirectory : IDisposable
     }
 
     public void Dispose()
-        => Directory.Delete(Path, true);
+    {
+        Directory.Delete(Path, true);
+    }
 }

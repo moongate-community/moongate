@@ -14,7 +14,9 @@ public sealed class RangeValueSpecTomlConverterFactory : TomlConverterFactory
 {
     /// <inheritdoc />
     public override bool CanConvert(Type typeToConvert)
-        => typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(RangeValueSpec<>);
+    {
+        return typeToConvert.IsGenericType && typeToConvert.GetGenericTypeDefinition() == typeof(RangeValueSpec<>);
+    }
 
     /// <inheritdoc />
     public override TomlConverter CreateConverter(Type typeToConvert, TomlSerializerOptions options)

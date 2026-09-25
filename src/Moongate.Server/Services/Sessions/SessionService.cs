@@ -20,10 +20,14 @@ public sealed class SessionService : ISessionService
     }
 
     public void Clear()
-        => _sessions.Clear();
+    {
+        _sessions.Clear();
+    }
 
     public IReadOnlyCollection<GameSession> GetAll()
-        => _sessions.Values.ToArray();
+    {
+        return _sessions.Values.ToArray();
+    }
 
     public GameSession GetOrCreate(INetworkConnection client)
     {
@@ -36,10 +40,14 @@ public sealed class SessionService : ISessionService
     }
 
     public bool Remove(long sessionId)
-        => _sessions.TryRemove(sessionId, out _);
+    {
+        return _sessions.TryRemove(sessionId, out _);
+    }
 
     public bool TryGet(long sessionId, [NotNullWhen(true)] out GameSession? session)
-        => _sessions.TryGetValue(sessionId, out session);
+    {
+        return _sessions.TryGetValue(sessionId, out session);
+    }
 
     public bool TryGetByCharacterId(Serial characterId, [NotNullWhen(true)] out GameSession? session)
     {

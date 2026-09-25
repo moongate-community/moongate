@@ -22,54 +22,62 @@ public sealed class DataAccess<T> : IDataAccess<T> where T : class, IMoongateEnt
 
     /// <inheritdoc />
     public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
-        => RunAsync(
-            true,
-            async (orm, transaction, token) =>
-            {
-                ValidateId(id);
+    {
+        return RunAsync(
+                true,
+                async (orm, transaction, token) =>
+                {
+                    ValidateId(id);
 
-                return await orm.Delete<T>()
-                                .WithTransaction(transaction)
-                                .Where(entity => entity.Id == id)
-                                .ExecuteAffrowsAsync(token)
-                                .ConfigureAwait(false) !=
-                       0;
-            },
-            cancellationToken
-        );
+                    return await orm.Delete<T>()
+                                    .WithTransaction(transaction)
+                                    .Where(entity => entity.Id == id)
+                                    .ExecuteAffrowsAsync(token)
+                                    .ConfigureAwait(false) !=
+                           0;
+                },
+                cancellationToken
+            );
+    }
 
     /// <inheritdoc />
     public Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
-        => RunAsync<IReadOnlyList<T>>(
-            false,
-            async (orm, transaction, token) =>
-                await orm.Select<T>().WithTransaction(transaction).ToListAsync(token).ConfigureAwait(false),
-            cancellationToken
-        );
+    {
+        return RunAsync<IReadOnlyList<T>>(
+                false,
+                async (orm, transaction, token) =>
+                    await orm.Select<T>().WithTransaction(transaction).ToListAsync(token).ConfigureAwait(false),
+                cancellationToken
+            );
+    }
 
     /// <inheritdoc />
     public Task<T?> GetByIdAsync(Serial id, CancellationToken cancellationToken = default)
-        => RunAsync(
-            false,
-            async (orm, transaction, token) =>
-            {
-                ValidateId(id);
+    {
+        return RunAsync(
+                false,
+                async (orm, transaction, token) =>
+                {
+                    ValidateId(id);
 
-                return await orm.Select<T>()
-                                .WithTransaction(transaction)
-                                .Where(entity => entity.Id == id)
-                                .ToOneAsync(token)
-                                .ConfigureAwait(false);
-            },
-            cancellationToken
-        );
+                    return await orm.Select<T>()
+                                    .WithTransaction(transaction)
+                                    .Where(entity => entity.Id == id)
+                                    .ToOneAsync(token)
+                                    .ConfigureAwait(false);
+                },
+                cancellationToken
+            );
+    }
 
     /// <inheritdoc />
     public Task<IReadOnlyList<T>> QueryAsync(
         Expression<Func<T, bool>> predicate,
         CancellationToken cancellationToken = default
     )
-        => QueryCoreAsync(predicate, null, null, cancellationToken);
+    {
+        return QueryCoreAsync(predicate, null, null, cancellationToken);
+    }
 
     /// <inheritdoc />
     public Task<IReadOnlyList<T>> QueryAsync(
@@ -78,67 +86,71 @@ public sealed class DataAccess<T> : IDataAccess<T> where T : class, IMoongateEnt
         int take,
         CancellationToken cancellationToken = default
     )
-        => QueryCoreAsync(predicate, skip, take, cancellationToken);
+    {
+        return QueryCoreAsync(predicate, skip, take, cancellationToken);
+    }
 
     /// <inheritdoc />
     public async Task UpsertAsync(T entity, CancellationToken cancellationToken = default)
-        => await RunAsync(
-                   true,
-                   async (orm, transaction, token) =>
-                   {
-                       ArgumentNullException.ThrowIfNull(entity);
-
-                       if (entity.Id == Serial.Zero)
+    {
+        await RunAsync(
+                       true,
+                       async (orm, transaction, token) =>
                        {
-                           var idProperty = typeof(T).GetProperty(nameof(IMoongateEntity.Id));
+                           ArgumentNullException.ThrowIfNull(entity);
 
-                           if (idProperty?.SetMethod?.IsPublic != true)
+                           if (entity.Id == Serial.Zero)
                            {
-                               throw new InvalidOperationException(
-                                   "Automatic Serial assignment requires a public Id setter."
-                               );
+                               var idProperty = typeof(T).GetProperty(nameof(IMoongateEntity.Id));
+
+                               if (idProperty?.SetMethod?.IsPublic != true)
+                               {
+                                   throw new InvalidOperationException(
+                                       "Automatic Serial assignment requires a public Id setter."
+                                   );
+                               }
+
+                               Serial id;
+
+                               do
+                               {
+                                   token.ThrowIfCancellationRequested();
+                                   id = await PersistenceSerialSequence.ReserveAsync<T>(orm, transaction, token)
+                                                                       .ConfigureAwait(false);
+                               } while (await orm.Select<T>()
+                                                 .WithTransaction(transaction)
+                                                 .Where(value => value.Id == id)
+                                                 .AnyAsync(token)
+                                                 .ConfigureAwait(false));
+
+                               idProperty.SetValue(entity, id);
+
+                               try
+                               {
+                                   // An allocated identity must never turn a concurrent explicit insert into an update.
+                                   return await orm.Insert(entity)
+                                                   .WithTransaction(transaction)
+                                                   .ExecuteAffrowsAsync(token)
+                                                   .ConfigureAwait(false);
+                               }
+                               catch
+                               {
+                                   idProperty.SetValue(entity, Serial.Zero);
+
+                                   throw;
+                               }
                            }
 
-                           Serial id;
-
-                           do
-                           {
-                               token.ThrowIfCancellationRequested();
-                               id = await PersistenceSerialSequence.ReserveAsync<T>(orm, transaction, token)
-                                                                   .ConfigureAwait(false);
-                           } while (await orm.Select<T>()
-                                             .WithTransaction(transaction)
-                                             .Where(value => value.Id == id)
-                                             .AnyAsync(token)
-                                             .ConfigureAwait(false));
-
-                           idProperty.SetValue(entity, id);
-
-                           try
-                           {
-                               // An allocated identity must never turn a concurrent explicit insert into an update.
-                               return await orm.Insert(entity)
-                                               .WithTransaction(transaction)
-                                               .ExecuteAffrowsAsync(token)
-                                               .ConfigureAwait(false);
-                           }
-                           catch
-                           {
-                               idProperty.SetValue(entity, Serial.Zero);
-
-                               throw;
-                           }
-                       }
-
-                       return await orm.InsertOrUpdate<T>()
-                                       .WithTransaction(transaction)
-                                       .SetSource(entity)
-                                       .ExecuteAffrowsAsync(token)
-                                       .ConfigureAwait(false);
-                   },
-                   cancellationToken
-               )
-               .ConfigureAwait(false);
+                           return await orm.InsertOrUpdate<T>()
+                                           .WithTransaction(transaction)
+                                           .SetSource(entity)
+                                           .ExecuteAffrowsAsync(token)
+                                           .ConfigureAwait(false);
+                       },
+                       cancellationToken
+                   )
+                   .ConfigureAwait(false);
+    }
 
     private Task<IReadOnlyList<T>> QueryCoreAsync(
         Expression<Func<T, bool>> predicate,
@@ -146,50 +158,54 @@ public sealed class DataAccess<T> : IDataAccess<T> where T : class, IMoongateEnt
         int? take,
         CancellationToken cancellationToken
     )
-        => RunAsync<IReadOnlyList<T>>(
-            false,
-            async (orm, transaction, token) =>
-            {
-                ArgumentNullException.ThrowIfNull(predicate);
-
-                if (skip < 0)
+    {
+        return RunAsync<IReadOnlyList<T>>(
+                false,
+                async (orm, transaction, token) =>
                 {
-                    throw new ArgumentOutOfRangeException(nameof(skip));
-                }
+                    ArgumentNullException.ThrowIfNull(predicate);
 
-                if (take <= 0)
-                {
-                    throw new ArgumentOutOfRangeException(nameof(take));
-                }
+                    if (skip < 0)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(skip));
+                    }
 
-                var normalized = (Expression<Func<T, bool>>)new SerialConstantExpressionVisitor().Visit(predicate)!;
-                var query = orm.Select<T>().WithTransaction(transaction).Where(normalized);
+                    if (take <= 0)
+                    {
+                        throw new ArgumentOutOfRangeException(nameof(take));
+                    }
 
-                if (skip.HasValue)
-                {
-                    query = query.OrderBy(entity => entity.Id).Skip(skip.Value).Limit(take!.Value);
-                }
+                    var normalized = (Expression<Func<T, bool>>)new SerialConstantExpressionVisitor().Visit(predicate)!;
+                    var query = orm.Select<T>().WithTransaction(transaction).Where(normalized);
 
-                var sql = query.ToSql();
+                    if (skip.HasValue)
+                    {
+                        query = query.OrderBy(entity => entity.Id).Skip(skip.Value).Limit(take!.Value);
+                    }
 
-                if (!sql.Contains("WHERE", StringComparison.OrdinalIgnoreCase))
-                {
-                    throw new NotSupportedException("The predicate did not produce a SQL filter.");
-                }
+                    var sql = query.ToSql();
 
-                return await query.ToListAsync(token).ConfigureAwait(false);
-            },
-            cancellationToken
-        );
+                    if (!sql.Contains("WHERE", StringComparison.OrdinalIgnoreCase))
+                    {
+                        throw new NotSupportedException("The predicate did not produce a SQL filter.");
+                    }
+
+                    return await query.ToListAsync(token).ConfigureAwait(false);
+                },
+                cancellationToken
+            );
+    }
 
     private Task<TResult> RunAsync<TResult>(
         bool mutation,
         Func<IFreeSql, DbTransaction?, CancellationToken, Task<TResult>> operation,
         CancellationToken cancellationToken
     )
-        => _transaction is null
-               ? _owner.RunOperationAsync<T, TResult>(mutation, operation, cancellationToken)
-               : _transaction.RunAsync(operation, cancellationToken);
+    {
+        return _transaction is null
+                   ? _owner.RunOperationAsync<T, TResult>(mutation, operation, cancellationToken)
+                   : _transaction.RunAsync(operation, cancellationToken);
+    }
 
     private static void ValidateId(Serial id)
     {

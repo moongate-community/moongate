@@ -17,14 +17,16 @@ public static class TextEncoding
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetByteLengthForEncoding(this Encoding encoding)
-        => encoding.BodyName switch
+    {
+        return encoding.BodyName switch
         {
             "utf-16BE" => 2,
-            "utf-16"   => 2,
+            "utf-16" => 2,
             "utf-32BE" => 4,
-            "utf-32"   => 4,
-            _          => 1
+            "utf-32" => 4,
+            _ => 1
         };
+    }
 
     // Unlike the one built into the encoder, this avoids local init
     public static byte[] GetBytes(ReadOnlySpan<char> str, Encoding encoding)
@@ -56,67 +58,99 @@ public static class TextEncoding
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytesAscii(this string str)
-        => GetBytes(str, Encoding.ASCII);
+    {
+        return GetBytes(str, Encoding.ASCII);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytesAscii(this ReadOnlySpan<char> str)
-        => GetBytes(str, Encoding.ASCII);
+    {
+        return GetBytes(str, Encoding.ASCII);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetBytesAscii(this string str, Span<byte> buffer)
-        => Encoding.ASCII.GetBytes(str, buffer);
+    {
+        return Encoding.ASCII.GetBytes(str, buffer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetBytesAscii(this ReadOnlySpan<char> str, Span<byte> buffer)
-        => Encoding.ASCII.GetBytes(str, buffer);
+    {
+        return Encoding.ASCII.GetBytes(str, buffer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytesBigUni(this string str)
-        => GetBytes(str, Unicode);
+    {
+        return GetBytes(str, Unicode);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytesBigUni(this ReadOnlySpan<char> str)
-        => GetBytes(str, Unicode);
+    {
+        return GetBytes(str, Unicode);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetBytesBigUni(this string str, Span<byte> buffer)
-        => Unicode.GetBytes(str, buffer);
+    {
+        return Unicode.GetBytes(str, buffer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetBytesBigUni(this ReadOnlySpan<char> str, Span<byte> buffer)
-        => Unicode.GetBytes(str, buffer);
+    {
+        return Unicode.GetBytes(str, buffer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytesLittleUni(this string str)
-        => GetBytes(str, UnicodeLE);
+    {
+        return GetBytes(str, UnicodeLE);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytesLittleUni(this ReadOnlySpan<char> str)
-        => GetBytes(str, UnicodeLE);
+    {
+        return GetBytes(str, UnicodeLE);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetBytesLittleUni(this string str, Span<byte> buffer)
-        => UnicodeLE.GetBytes(str, buffer);
+    {
+        return UnicodeLE.GetBytes(str, buffer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetBytesLittleUni(this ReadOnlySpan<char> str, Span<byte> buffer)
-        => UnicodeLE.GetBytes(str, buffer);
+    {
+        return UnicodeLE.GetBytes(str, buffer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytesUtf8(this string str)
-        => GetBytes(str, UTF8);
+    {
+        return GetBytes(str, UTF8);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static byte[] GetBytesUtf8(this ReadOnlySpan<char> str)
-        => GetBytes(str, UTF8);
+    {
+        return GetBytes(str, UTF8);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetBytesUtf8(this string str, Span<byte> buffer)
-        => UTF8.GetBytes(str, buffer);
+    {
+        return UTF8.GetBytes(str, buffer);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static int GetBytesUtf8(this ReadOnlySpan<char> str, Span<byte> buffer)
-        => UTF8.GetBytes(str, buffer);
+    {
+        return UTF8.GetBytes(str, buffer);
+    }
 
     public static string GetString(ReadOnlySpan<byte> span, Encoding encoding, bool safeString = false)
     {

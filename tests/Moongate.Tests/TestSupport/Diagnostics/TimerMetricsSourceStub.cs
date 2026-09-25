@@ -27,20 +27,32 @@ internal sealed class TimerMetricsSourceStub : ITimerService
         TimeSpan? delay = null,
         bool repeat = false
     )
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public Task StartAsync()
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public Task StopAsync()
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public void UnregisterAllTimers()
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public bool UnregisterTimer(string timerId)
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public int UnregisterTimersByName(string name)
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 }

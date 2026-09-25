@@ -36,10 +36,14 @@ internal sealed class LoginPacketMailbox : IAsyncDisposable
     }
 
     public void Start()
-        => _worker = Task.Run(RunAsync);
+    {
+        _worker = Task.Run(RunAsync);
+    }
 
     public bool TryWrite(IPacket packet)
-        => !_cancellation.IsCancellationRequested && _queue.Writer.TryWrite(packet);
+    {
+        return !_cancellation.IsCancellationRequested && _queue.Writer.TryWrite(packet);
+    }
 
     public Task StopAsync()
     {
@@ -90,5 +94,7 @@ internal sealed class LoginPacketMailbox : IAsyncDisposable
     }
 
     public ValueTask DisposeAsync()
-        => new(StopAsync());
+    {
+        return new(StopAsync());
+    }
 }

@@ -67,5 +67,7 @@ public sealed class GameLoopPumpTests
     }
 
     private static void Write(Channel<QueuedGameLoopWorkItem> channel, IGameLoopWorkItem workItem)
-        => channel.Writer.TryWrite(new(workItem, 0));
+    {
+        channel.Writer.TryWrite(new(workItem, 0));
+    }
 }

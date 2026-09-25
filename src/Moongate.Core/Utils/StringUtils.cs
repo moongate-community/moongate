@@ -433,7 +433,9 @@ public static partial class StringUtils
     /// "user-id" becomes "USER_ID"
     /// </example>
     public static string ToUpperSnakeCase(string text)
-        => ToSnakeCase(text).ToUpperInvariant();
+    {
+        return ToSnakeCase(text).ToUpperInvariant();
+    }
 
     [GeneratedRegex(@"[\s_-]|(?<=[a-z])(?=[A-Z])|(?<=[A-Z])(?=[A-Z][a-z])")]
     private static partial Regex WordSplitter();

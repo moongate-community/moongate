@@ -39,7 +39,9 @@ public sealed class EnumValueSpecTests
 
     [Fact]
     public void FromCandidates_WithNoCandidates_ThrowsArgumentException()
-        => Assert.Throws<ArgumentException>(() => EnumValueSpec<TemplateRarity>.FromCandidates([]));
+    {
+        Assert.Throws<ArgumentException>(() => EnumValueSpec<TemplateRarity>.FromCandidates([]));
+    }
 
     [Theory, InlineData("common", TemplateRarity.Common), InlineData("EPIC", TemplateRarity.Epic),
      InlineData("  rare  ", TemplateRarity.Rare)]

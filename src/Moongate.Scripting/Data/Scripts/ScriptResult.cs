@@ -34,7 +34,9 @@ public sealed class ScriptResult
     /// <param name="values">The values it returned, converted to CLR types.</param>
     /// <returns>A <see cref="ScriptResultKind.Completed" /> result carrying <paramref name="values" />.</returns>
     public static ScriptResult Completed(IReadOnlyList<object?> values)
-        => new(ScriptResultKind.Completed, values, null);
+    {
+        return new(ScriptResultKind.Completed, values, null);
+    }
 
     /// <summary>
     /// Creates the result of a function that failed. The failure has already been logged and published when the engine
@@ -43,5 +45,7 @@ public sealed class ScriptResult
     /// <param name="error">The file, line, message and Lua traceback of the failure.</param>
     /// <returns>A <see cref="ScriptResultKind.Failed" /> result carrying <paramref name="error" />.</returns>
     public static ScriptResult Failed(ScriptErrorInfo error)
-        => new(ScriptResultKind.Failed, [], error);
+    {
+        return new(ScriptResultKind.Failed, [], error);
+    }
 }

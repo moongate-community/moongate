@@ -130,5 +130,7 @@ internal static class PersistenceSerialSequence
     }
 
     private static string Quote(string identifier)
-        => '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
+    {
+        return '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
+    }
 }

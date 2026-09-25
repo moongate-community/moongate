@@ -44,5 +44,7 @@ public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
     }
 
     private static string Digest(string value)
-        => Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+    {
+        return Convert.ToHexString(SHA256.HashData(Encoding.UTF8.GetBytes(value)));
+    }
 }

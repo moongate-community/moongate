@@ -201,17 +201,19 @@ public sealed class RedisTcpHandoffFlowTests
     }
 
     private static NetworkService CreateNetwork(ConnectionService connections, bool game)
-        => new(
-            new NetworkListenerOptions
-            {
-                Endpoints = [new(IPAddress.Loopback, 0)],
-                ConnectionPipelineFactory = () => new()
+    {
+        return new(
+                new NetworkListenerOptions
                 {
-                    Framer = game ? new GameSeedFramer(PacketRegistry.Default) : new UoPacketFramer(PacketRegistry.Default)
-                }
-            },
-            connections
-        );
+                    Endpoints = [new(IPAddress.Loopback, 0)],
+                    ConnectionPipelineFactory = () => new()
+                    {
+                        Framer = game ? new GameSeedFramer(PacketRegistry.Default) : new UoPacketFramer(PacketRegistry.Default)
+                    }
+                },
+                connections
+            );
+    }
 
     private static byte[] CreateAccountLogin()
     {

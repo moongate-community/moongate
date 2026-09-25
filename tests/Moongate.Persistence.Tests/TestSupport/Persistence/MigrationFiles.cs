@@ -21,5 +21,7 @@ public sealed class MigrationFiles : IDisposable
     }
 
     public void Dispose()
-        => Directory.Delete(Root, true);
+    {
+        Directory.Delete(Root, true);
+    }
 }

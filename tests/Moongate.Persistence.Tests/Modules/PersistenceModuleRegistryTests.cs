@@ -36,10 +36,12 @@ public sealed class PersistenceModuleRegistryTests
 
     [Fact]
     public void PersistenceModuleContract_DoesNotExposeMappingMutationCallback()
-        => Assert.DoesNotContain(
-            typeof(IPersistenceModule).GetMethods(),
-            method => string.Equals(method.Name, "Configure", StringComparison.Ordinal)
-        );
+    {
+        Assert.DoesNotContain(
+                typeof(IPersistenceModule).GetMethods(),
+                method => string.Equals(method.Name, "Configure", StringComparison.Ordinal)
+            );
+    }
 
     [Fact]
     public void RegisterEntity_DuplicateRegistration_RejectsImmediately()
@@ -388,7 +390,9 @@ public sealed class PersistenceModuleRegistryTests
     }
 
     private static PostgreSqlDatabase CreateDatabase(PersistenceDatabaseTarget target = PersistenceDatabaseTarget.Realm)
-        => PostgreSqlDatabase.Create(new(target, UnitConnectionString));
+    {
+        return PostgreSqlDatabase.Create(new(target, UnitConnectionString));
+    }
 
     private static TestPersistenceModule Module(
         string id,
@@ -396,7 +400,9 @@ public sealed class PersistenceModuleRegistryTests
         Type entityType,
         PersistenceDatabaseTarget target = PersistenceDatabaseTarget.Realm
     )
-        => new(id, schema, target, [entityType]);
+    {
+        return new(id, schema, target, [entityType]);
+    }
 
     private static PersistenceModuleRegistry Registry(params TestPersistenceModule[] modules)
     {

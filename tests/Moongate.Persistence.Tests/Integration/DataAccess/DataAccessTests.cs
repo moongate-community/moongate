@@ -225,5 +225,7 @@ public sealed class DataAccessTests
     }
 
     private static bool Unsupported(string value)
-        => throw new InvalidOperationException("Must not evaluate rows on the client.");
+    {
+        throw new InvalidOperationException("Must not evaluate rows on the client.");
+    }
 }

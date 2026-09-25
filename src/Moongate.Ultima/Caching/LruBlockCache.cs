@@ -120,7 +120,9 @@ public sealed class LruBlockCache<TValue> where TValue : class
 
     /// <summary>Packs block coordinates into one key. Block counts are well under 2^31 on every facet.</summary>
     public static long Key(int x, int y)
-        => ((long)x << 32) | (uint)y;
+    {
+        return ((long)x << 32) | (uint)y;
+    }
 
     /// <summary>Inserts or replaces a block, as the patch and block-removal paths do.</summary>
     public void Set(long key, TValue value)
