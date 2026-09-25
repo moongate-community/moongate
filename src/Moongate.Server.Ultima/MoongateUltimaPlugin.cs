@@ -90,6 +90,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
             container.RegisterIncomingPacket<ClientHardwareInfoPacket>();
+            container.RegisterIncomingPacket<CreateCharacterPacket>();
             container.RegisterIncomingPacket<CreateCharacterEnhancedPacket>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
