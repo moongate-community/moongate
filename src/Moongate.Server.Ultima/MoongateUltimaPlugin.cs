@@ -12,6 +12,7 @@ using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Cities;
+using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Professions;
@@ -56,6 +57,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         TomlUtils.AddTomlConverter(new Point2DTomlConverter());
         TomlUtils.AddTomlConverter(new Point3DTomlConverter());
         TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
+        TomlUtils.AddTomlConverter(new Rectangle2DTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
 
@@ -88,6 +90,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<ProfessionsLoader, ProfessionContent>(3);
             container.AddUltimaDataLoader<RacesLoader, RaceContent>(4);
             container.AddUltimaDataLoader<BannedNamesLoader, BannedNamesContent>(5);
+            container.AddUltimaDataLoader<ContainersLoader, ContainerContent>(6);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
