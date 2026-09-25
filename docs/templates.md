@@ -152,6 +152,8 @@ type is ignored. Registration is global and process-wide. Register once, at star
 
 ```csharp
 TomlUtils.AddTomlConverter(new SerialTomlConverter());
+TomlUtils.AddTomlConverter(new Point2DTomlConverter());
+TomlUtils.AddTomlConverter(new Point3DTomlConverter());
 TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
 TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
 ```
@@ -192,6 +194,21 @@ public sealed class SerialTomlConverter : TomlConverter<Serial>
         => writer.WriteIntegerValue(value.Value);
 }
 ```
+
+### Worked example: `Point2D` and `Point3D`
+
+Points are written as the quoted text their `ToString()` produces, the same form the
+server prints in logs and commands, so a value copied from there pastes straight into a
+file. `Point2DTomlConverter` and `Point3DTomlConverter` read and write it with the
+invariant culture, so a file reads the same on every machine:
+
+```toml
+position = "(1495, 1629)"
+location = "(1495, 1629, 10)"
+```
+
+Anything else, including a bare number or the wrong number of coordinates, fails with a
+`TomlException` naming the offending text.
 
 A converter for a type of your own follows the same shape: subclass
 `TomlConverter<T>` for one closed type, or `TomlConverterFactory` when the type is

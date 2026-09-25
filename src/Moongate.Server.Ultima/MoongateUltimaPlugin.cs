@@ -37,6 +37,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         container.GetDirectoriesConfig().CreateDirectoryIfNotExists("templates/loots/");
 
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
+        TomlUtils.AddTomlConverter(new Point2DTomlConverter());
+        TomlUtils.AddTomlConverter(new Point3DTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
 

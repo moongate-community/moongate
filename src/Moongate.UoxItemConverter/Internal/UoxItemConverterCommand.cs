@@ -33,6 +33,8 @@ internal static class UoxItemConverterCommand
 
         AppContext.SetSwitch("Tomlyn.TomlSerializer.IsReflectionEnabledByDefault", true);
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
+        TomlUtils.AddTomlConverter(new Point2DTomlConverter());
+        TomlUtils.AddTomlConverter(new Point3DTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
 
