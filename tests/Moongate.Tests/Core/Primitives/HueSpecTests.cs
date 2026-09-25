@@ -10,8 +10,8 @@ public sealed class HueSpecTests
         var spec = HueSpec.FromValue(1150);
 
         Assert.False(spec.IsRange);
-        Assert.Equal(1150, spec.Resolve());
-        Assert.Equal(1150, spec.Resolve());
+        Assert.Equal(new Hue(1150), spec.Resolve());
+        Assert.Equal(new Hue(1150), spec.Resolve());
     }
 
     [Fact]
@@ -22,7 +22,7 @@ public sealed class HueSpecTests
 
         for (var i = 0; i < 200; i++)
         {
-            var hue = spec.Resolve();
+            var hue = spec.Resolve().Value;
             Assert.InRange(hue, 1150, 1152);
             seen.Add(hue);
         }

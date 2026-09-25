@@ -121,9 +121,9 @@ public readonly struct HueSpec : IEquatable<HueSpec>
     /// <summary>
     ///     Resolves the hue: the fixed hue, or a fresh pick in the range.
     /// </summary>
-    public int Resolve()
+    public Hue Resolve()
     {
-        return IsRange ? BuiltInRng.Next(Min, Max - Min + 1) : Min;
+        return new((ushort)(IsRange ? BuiltInRng.Next(Min, Max - Min + 1) : Min));
     }
 
     public bool Equals(HueSpec other)

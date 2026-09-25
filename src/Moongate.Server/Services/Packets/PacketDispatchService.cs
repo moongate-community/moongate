@@ -16,6 +16,7 @@ namespace Moongate.Server.Services.Packets;
 /// </summary>
 public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDisposable
 {
+    private readonly PacketRegistry _packets;
     private readonly Lock _gate = new();
     private readonly IGameLoopService _gameLoop;
     private readonly ISessionService _sessions;
@@ -41,9 +42,11 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         IGameLoopService gameLoop,
         ISessionService sessions,
         PacketHandlerRegistry registry,
-        IResolverContext resolver
+        IResolverContext resolver,
+        PacketRegistry? packets = null
     )
     {
+        _packets = packets ?? PacketRegistry.Default;
         _gameLoop = gameLoop;
         _sessions = sessions;
         _registry = registry;
@@ -88,7 +91,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
                 _running = true;
                 _logger.Information(
                     "Packet dispatcher started with {PacketCount} registered packets and {HandlerCount} registered handlers",
-                    PacketRegistry.Default.RegisteredPackets.Count,
+                    _packets.RegisteredPackets.Count,
                     _handlers.Count + _asyncHandlers.Count
                 );
             }

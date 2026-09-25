@@ -44,7 +44,6 @@ public class PacketRegistryTests
                 (0xB9, typeof(SupportFeaturesPacket), PacketSizing.Fixed, 5, 5, PacketDirection.Outgoing),
                 (0xBD, typeof(ClientVersionRequestPacket), PacketSizing.Fixed, 3, 3, PacketDirection.Outgoing),
                 (0xBD, typeof(ClientVersionPacket), PacketSizing.Variable, null, 4, PacketDirection.Incoming),
-                (0xD9, typeof(ClientHardwareInfoPacket), PacketSizing.Fixed, 268, 268, PacketDirection.Incoming),
                 (0xEF, typeof(LoginSeedPacket), PacketSizing.Fixed, 21, 21, PacketDirection.Incoming)
             };
 

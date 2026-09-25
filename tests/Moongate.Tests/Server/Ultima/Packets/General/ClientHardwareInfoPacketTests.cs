@@ -1,11 +1,9 @@
-using Moongate.Network.Packets.General;
-using Moongate.Network.Packets.Registry;
 using Moongate.Network.Packets.Serialization;
-using Moongate.Network.Packets.Types.Packets;
+using Moongate.Server.Ultima.Packets.General;
 
-namespace Moongate.Network.Packets.Tests.General;
+namespace Moongate.Tests.Server.Ultima.Packets.General;
 
-public class ClientHardwareInfoPacketTests
+public sealed class ClientHardwareInfoPacketTests
 {
     private const int VideoDescriptionOffset = 52;
     private const int VideoDescriptionLength = 128;
@@ -26,16 +24,6 @@ public class ClientHardwareInfoPacketTests
         "0045004E00550000" +
         Repeat("AB", 64)
     );
-
-    [Fact]
-    public void Registry_KnowsItAsAFixedIncomingPacket()
-    {
-        var registry = PacketTable.CreateRegistry();
-
-        Assert.True(registry.TryGetDescriptor(0xD9, PacketDirection.Incoming, out var descriptor));
-        Assert.Equal(PacketSizing.Fixed, descriptor.Sizing);
-        Assert.Equal(268, descriptor.FixedLength);
-    }
 
     [Fact]
     public void TryDecode_FullWidthVideoDescription_ReadsAllCharacters()

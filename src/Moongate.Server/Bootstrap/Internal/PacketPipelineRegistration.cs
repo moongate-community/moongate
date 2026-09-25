@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Network.Packets.Registry;
 using Moongate.Server.Core.Data.Network;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
@@ -14,10 +15,12 @@ internal static class PacketPipelineRegistration
 {
     internal static Container Register(Container container)
     {
+        PacketRegistryFactory.Register(container);
         container.Register<UoCompressionMiddleware>(Reuse.Singleton);
         container.RegisterDelegate<NetworkListenerOptions>(
             resolver => UoNetworkOptionsFactory.CreateGame(
                 resolver.Resolve<MoongateServerConfig>(),
+                resolver.Resolve<PacketRegistry>(),
                 [resolver.Resolve<UoCompressionMiddleware>()]
             ),
             Reuse.Singleton

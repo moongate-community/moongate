@@ -1,5 +1,7 @@
 using DryIoc;
+using Moongate.Core.Extensions.Container;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Server.Core.Data.Packets;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Packets;
 
@@ -40,6 +42,20 @@ public static class PacketHandlerContainerExtensions
         }
 
         container.Resolve<PacketHandlerRegistry>().RegisterAsync<TPacket, THandler>(container);
+
+        return container;
+    }
+
+    /// <summary>
+    ///     Adds an incoming packet type to the server's packet registry, so the server can frame and decode it. Use it
+    ///     for packets a plugin defines; the built-in login and network packets are always registered.
+    /// </summary>
+    public static Container RegisterIncomingPacket<TPacket>(this Container container)
+        where TPacket : class, IIncomingPacket<TPacket>
+    {
+        container.AddToRegisterTypedList(
+            new IncomingPacketRegistration(typeof(TPacket), registry => registry.RegisterIncoming<TPacket>())
+        );
 
         return container;
     }

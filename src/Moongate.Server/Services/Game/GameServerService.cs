@@ -12,6 +12,7 @@ namespace Moongate.Server.Services.Game;
 /// </summary>
 public sealed class GameServerService : IGameServerService
 {
+    private readonly PacketRegistry _packets;
     private readonly INetworkService _network;
     private readonly IConnectionService _connections;
     private readonly ISessionService _sessions;
@@ -30,9 +31,11 @@ public sealed class GameServerService : IGameServerService
         IConnectionService connections,
         ISessionService sessions,
         IPacketDispatchService dispatcher,
-        IPacketSendService sender
+        IPacketSendService sender,
+        PacketRegistry? packets = null
     )
     {
+        _packets = packets ?? PacketRegistry.Default;
         _network = network;
         _connections = connections;
         _sessions = sessions;
@@ -121,13 +124,13 @@ public sealed class GameServerService : IGameServerService
         }
 
         // Decode now: transport memory is borrowed only until this callback returns.
-        if (PacketRegistry.Default.TryDecode(args.Data.Span, out var packet, out var opCode) &&
+        if (_packets.TryDecode(args.Data.Span, out var packet, out var opCode) &&
             _dispatcher.TryDispatch(args.Connection.SessionId, packet))
         {
             return;
         }
 
-        var packetName = PacketRegistry.Default.TryGetDescriptor(opCode, out var descriptor)
+        var packetName = _packets.TryGetDescriptor(opCode, out var descriptor)
             ? descriptor.PacketType.Name
             : "Unknown";
         _logger.Warning(

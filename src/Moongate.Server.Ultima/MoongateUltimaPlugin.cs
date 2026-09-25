@@ -22,6 +22,8 @@ using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Loaders;
+using Moongate.Server.Ultima.Packets.Characters;
+using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
 
 namespace Moongate.Server.Ultima;
@@ -87,6 +89,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
+            container.RegisterIncomingPacket<ClientHardwareInfoPacket>();
+            container.RegisterIncomingPacket<CreateCharacterEnhancedPacket>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);

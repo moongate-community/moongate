@@ -38,7 +38,6 @@ public static class PacketTable
         registry.RegisterIncoming<GameLoginPacket>();
         registry.RegisterIncoming<ServerSelectPacket>();
         registry.RegisterIncoming<ClientVersionPacket>();
-        registry.RegisterIncoming<ClientHardwareInfoPacket>();
 
         // Outgoing only.
         registry.RegisterOutgoing<LoginDeniedPacket>();

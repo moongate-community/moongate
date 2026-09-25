@@ -13,15 +13,16 @@ internal static class UoNetworkOptionsFactory
 {
     internal static NetworkListenerOptions CreateGame(
         MoongateServerConfig config,
+        PacketRegistry packets,
         IReadOnlyList<INetMiddleware> middlewares
     )
     {
-        return Create(config, config.Network.GamePort, () => new GameSeedFramer(PacketRegistry.Default), middlewares);
+        return Create(config, config.Network.GamePort, () => new GameSeedFramer(packets), middlewares);
     }
 
-    internal static NetworkListenerOptions CreateLogin(MoongateServerConfig config)
+    internal static NetworkListenerOptions CreateLogin(MoongateServerConfig config, PacketRegistry packets)
     {
-        return Create(config, config.Network.LoginPort, () => new UoPacketFramer(PacketRegistry.Default));
+        return Create(config, config.Network.LoginPort, () => new UoPacketFramer(packets));
     }
 
     private static NetworkListenerOptions Create(

@@ -6,7 +6,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Spans;
 using Moongate.Network.Packets.Types.Packets;
 
-namespace Moongate.Network.Packets.General;
+namespace Moongate.Server.Ultima.Packets.General;
 
 /// <summary>
 ///     Hardware and operating system information the client sends once connected to the game server ("Spy on
@@ -120,6 +120,7 @@ public sealed class ClientHardwareInfoPacket : BaseFixedPacket<ClientHardwareInf
             PartialInstalled = partialInstalled,
             LanguageCode = DecodeText(languageCode)
         };
+
 
         return true;
     }

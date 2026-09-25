@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.UoxItemConverter.Internal;
@@ -47,7 +48,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.Equal((uint)0x0f6b, item.ItemId.Value);
         Assert.Equal("torch", item.Name);
         Assert.True(item.Movable);
-        Assert.Equal(0x0010, item.Hue.Resolve());
+        Assert.Equal(new Hue(0x0010), item.Hue.Resolve());
         Assert.Equal(10, item.MaxWeight);
         Assert.Null(item.BaseId);
     }
