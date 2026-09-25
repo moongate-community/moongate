@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Types.Persistence;
+using Moongate.Server.Ultima.Data.Characters;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Ultima.Types;
@@ -114,6 +115,56 @@ public sealed class CharacterEntityPersistenceTests
                 "AND table_name = 'characters' AND column_name = 'race'"
             )
         );
+    }
+
+    [Fact]
+    public async Task Skills_RoundTripAsAJsonbList()
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
+        await using var coordinator = fixture.Create(typeof(CharacterEntity));
+        await coordinator.InitializeAsync();
+        var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
+        var character = new CharacterEntity
+        {
+            Id = new(1),
+            Name = "Aria",
+            Skills =
+            [
+                new() { Skill = SkillType.Magery, Base = 500 },
+                new() { Skill = SkillType.Meditation, Base = 300, Cap = 1200, Lock = SkillLockType.Locked }
+            ]
+        };
+
+        await orm.Insert(character).ExecuteAffrowsAsync();
+        var loaded = await orm.Select<CharacterEntity>().FirstAsync();
+
+        Assert.Equal(
+            [(SkillType.Magery, 500, 1000, SkillLockType.Up), (SkillType.Meditation, 300, 1200, SkillLockType.Locked)],
+            loaded.Skills.Select(skill => (skill.Skill, skill.Base, skill.Cap, skill.Lock))
+        );
+        Assert.Equal(
+            "jsonb",
+            await database.ScalarAsync<string>(
+                "SELECT data_type FROM information_schema.columns WHERE table_schema = 'world' " +
+                "AND table_name = 'characters' AND column_name = 'skills'"
+            )
+        );
+        Assert.Equal(2, await database.ScalarAsync<int>("SELECT jsonb_array_length(skills) FROM world.characters"));
+    }
+
+    [Fact]
+    public async Task Skills_EmptyList_RoundTripsAsEmpty()
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
+        await using var coordinator = fixture.Create(typeof(CharacterEntity));
+        await coordinator.InitializeAsync();
+        var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
+
+        await orm.Insert(new CharacterEntity { Id = new(1), Name = "Aria" }).ExecuteAffrowsAsync();
+
+        Assert.Empty((await orm.Select<CharacterEntity>().FirstAsync()).Skills);
     }
 
     [Fact]

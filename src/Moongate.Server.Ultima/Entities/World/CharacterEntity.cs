@@ -2,6 +2,7 @@ using FreeSql.DataAnnotations;
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Characters;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Entities.World;
@@ -51,6 +52,12 @@ public class CharacterEntity : IMoongateEntity
     public int BeardStyle { get; set; }
 
     public Hue BeardHue { get; set; }
+
+    /// <summary>
+    ///     The skills the character has; a skill missing from the list is at 0 with the default cap and lock.
+    /// </summary>
+    [JsonMap, Column(DbType = "jsonb", IsNullable = true)]
+    public List<CharacterSkill> Skills { get; set; } = [];
 
     public DateTime CreatedAt { get; set; }
 
