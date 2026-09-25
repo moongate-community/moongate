@@ -22,7 +22,9 @@
 #   housing         whether players may place houses
 #   instant_logout  whether a character with no fight in progress logs out at once
 #   recall_in, recall_out, gate_in, gate_out, mark
-#                   whether those travel spells work into, out of or in the region
+#                   whether those travel spells work into, out of or in the region;
+#                   a travel spell is blocked when any region covering the place
+#                   blocks it, whatever its priority
 # ==============================================================================
 
 [[region]]

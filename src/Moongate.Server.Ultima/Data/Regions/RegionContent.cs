@@ -7,6 +7,11 @@ namespace Moongate.Server.Ultima.Data.Regions;
 ///     One region of a <c>data/regions/&lt;map&gt;.toml</c> file. Every rule is written out, already combined with the
 ///     region's parents, so a region is read on its own.
 /// </summary>
+/// <remarks>
+///     Where regions overlap, the one with the highest <see cref="Priority" /> gives the name, music, guards,
+///     housing and logout rules. Travel is different: a travel spell is blocked when any region covering the place
+///     blocks it. Travel zones use this: they are unnamed regions of priority 0 that only limit travel.
+/// </remarks>
 public class RegionContent
 {
     /// <summary>

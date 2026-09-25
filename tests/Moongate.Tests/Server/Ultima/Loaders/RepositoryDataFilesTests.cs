@@ -60,7 +60,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Equal(1045, service.GetEntities<BodyContent>().Count);
 
         var regions = service.GetEntities<RegionContent>();
-        Assert.Equal(371, regions.Count);
+        Assert.Equal(382, regions.Count);
         var britain = Assert.Single(regions, region => region.Map == MapType.Trammel && region.Name == "Britain");
         Assert.True(britain.Guarded);
         Assert.False(britain.Housing);
@@ -68,6 +68,21 @@ public sealed class RepositoryDataFilesTests
         Assert.Equal(new Point3D(1495, 1629, 10), britain.GoLocation);
         Assert.True(britain.Contains(1495, 1629, 10));
         Assert.All(regions.Where(region => region.Map == MapType.Ilshenar), region => Assert.False(region.RecallIn));
+
+        // Travel zones: Felucca's Lost Lands block recalling out; Trammel's Wind allows it but blocks recalling in.
+        var lostLands = regions.Where(region => region.Map == MapType.Felucca && region.Contains(5500, 3000, 0)).ToList();
+        Assert.Contains(lostLands, region => !region.RecallOut);
+        var trammelWind = regions.Where(region => region.Map == MapType.Trammel && region.Contains(5300, 100, 0)).ToList();
+        Assert.Contains(trammelWind, region => !region.RecallIn);
+        Assert.DoesNotContain(trammelWind, region => !region.RecallOut);
+        Assert.Contains(trammelWind, region => region.Name == "Wind" && region.Guarded);
+        var crystalCave = regions.Where(region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -90));
+        Assert.Single(crystalCave);
+        Assert.DoesNotContain(
+            regions,
+            region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -70) && !region.RecallOut &&
+                      region.Areas.Any(area => area.Z2 == -80)
+        );
     }
 
     private static string FindRepositoryRoot()

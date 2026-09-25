@@ -22,7 +22,9 @@
 #   housing         whether players may place houses
 #   instant_logout  whether a character with no fight in progress logs out at once
 #   recall_in, recall_out, gate_in, gate_out, mark
-#                   whether those travel spells work into, out of or in the region
+#                   whether those travel spells work into, out of or in the region;
+#                   a travel spell is blocked when any region covering the place
+#                   blocks it, whatever its priority
 # ==============================================================================
 
 [[region]]
@@ -1936,3 +1938,41 @@ recall_out = true
 gate_in = true
 gate_out = true
 mark = true
+
+# ------------------------------------------------------------------------------
+# Travel zones: places where travel spells are limited, with no other rules.
+# Their priority is 0, so the rules of any other region covering them still apply.
+# ------------------------------------------------------------------------------
+
+# Travel zone: the Lost Lands.
+[[region]]
+type = "base"
+priority = 0
+areas = [{ x1 = 5120, y1 = 2304, x2 = 6144, y2 = 4096 }]
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+
+# Travel zone: Wind.
+[[region]]
+type = "base"
+priority = 0
+areas = [{ x1 = 5120, y1 = 0, x2 = 5376, y2 = 256 }]
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+
+# Travel zone: the Solen hives.
+[[region]]
+type = "base"
+priority = 0
+areas = [{ x1 = 5640, y1 = 1776, x2 = 5935, y2 = 2039 }]
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
