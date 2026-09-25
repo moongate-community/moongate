@@ -55,6 +55,7 @@ internal sealed class PostgreSqlDatabase : IDisposable
             }
         };
         orm.UseJsonMap();
+        UtcDateTimeConvention.Apply(orm);
 
         return new(options.Target, runtimeConnectionString, schemaConnectionString, orm);
     }

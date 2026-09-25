@@ -97,8 +97,8 @@ public sealed class CharacterEntityPersistenceTests
         Assert.Equal(new Hue(0xFFFF), loaded.HairHue);
         Assert.Equal(0, loaded.BeardStyle);
         Assert.Equal(Hue.None, loaded.BeardHue);
-        // The column keeps the wall-clock time; FreeSql reads it back as local time, so compare the value only.
-        Assert.Equal(createdAt.Ticks, loaded.CreatedAt.Ticks);
+        Assert.Equal(createdAt, loaded.CreatedAt);
+        Assert.Equal(DateTimeKind.Utc, loaded.CreatedAt.Kind);
         Assert.Equal(0x83EA, await database.ScalarAsync<int>("SELECT skin_hue FROM world.characters"));
         Assert.Equal(
             "integer",
