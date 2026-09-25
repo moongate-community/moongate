@@ -68,6 +68,39 @@ public sealed class LuaModuleBinderTests : IDisposable
     }
 
     [Fact]
+    public void Bind_FunctionThatIsGeneric_IsABindingErrorNamingTheMember()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => _binder.Bind(_state, new GenericFunctionModule())
+        );
+
+        Assert.Contains("GenericFunctionModule.Count", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("[ScriptFunction]", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_FunctionThatIsNotPublic_IsABindingErrorNamingTheMember()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => _binder.Bind(_state, new PrivateFunctionModule())
+        );
+
+        Assert.Contains("PrivateFunctionModule.Hidden", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("[ScriptFunction]", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_FunctionThatIsStatic_IsABindingErrorNamingTheMember()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => _binder.Bind(_state, new StaticFunctionModule())
+        );
+
+        Assert.Contains("StaticFunctionModule.Twice", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("[ScriptFunction]", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Bind_HonoursTheNameOverride()
     {
         Assert.Equal(6, Run("return probe.scale(3)")[0].Read<double>());

@@ -55,9 +55,9 @@ public sealed class LuaModuleBinder
     ///     The bound module: its Lua table, and every function and constant published on it.
     /// </returns>
     /// <exception cref="InvalidOperationException">
-    ///     <paramref name="moduleInstance" />'s type carries no [ScriptModule], two of its [ScriptFunction] methods resolve to the
-    ///     same
-    ///     Lua name, or a method's signature uses a parameter or return type the converter cannot bind.
+    ///     <paramref name="moduleInstance" />'s type carries no [ScriptModule], a [ScriptFunction] sits on a static, non-public
+    ///     or generic method, two of its [ScriptFunction] methods resolve to the same Lua name, or a method's signature uses a
+    ///     parameter or return type the converter cannot bind.
     /// </exception>
     public BoundModule Bind(LuaState state, object moduleInstance)
     {
@@ -71,7 +71,11 @@ public sealed class LuaModuleBinder
         var seen = new HashSet<string>(StringComparer.Ordinal);
 
         foreach (var method in moduleType.GetMethods(
-                     BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly
+                     BindingFlags.Public |
+                     BindingFlags.NonPublic |
+                     BindingFlags.Static |
+                     BindingFlags.Instance |
+                     BindingFlags.DeclaredOnly
                  ))
         {
             var attribute = method.GetCustomAttribute<ScriptFunctionAttribute>(false);
@@ -79,6 +83,13 @@ public sealed class LuaModuleBinder
             if (attribute is null)
             {
                 continue;
+            }
+
+            if (!method.IsPublic || method.IsStatic || method.IsGenericMethodDefinition)
+            {
+                throw new InvalidOperationException(
+                    $"{moduleType.FullName}.{method.Name}: a [ScriptFunction] must be a public, non-generic instance method."
+                );
             }
 
             var luaName = attribute.Name ?? ToSnakeCase(method.Name);
