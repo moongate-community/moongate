@@ -15,11 +15,14 @@ public static class AsciiText
     }
 
     /// <summary>
-    /// Draws Text with font in Bitmap and returns
+    ///     Draws Text with font in Bitmap and returns
     /// </summary>
-    /// <param name="fontId"></param>
-    /// <param name="text"></param>
-    /// <returns></returns>
+    /// <param name="fontId">
+    /// </param>
+    /// <param name="text">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UltimaBitmap DrawText(int fontId, string text)
     {
         var font = AsciiFont.GetFixed(fontId, Fonts);
@@ -39,7 +42,7 @@ public static class AsciiText
     }
 
     /// <summary>
-    /// Reads fonts.mul
+    ///     Reads fonts.mul
     /// </summary>
     public static unsafe void Initialize()
     {

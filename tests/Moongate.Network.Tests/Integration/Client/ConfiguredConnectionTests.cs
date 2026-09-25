@@ -22,12 +22,12 @@ public sealed class ConfiguredConnectionTests
                 Pipeline = new()
                 {
                     PrepareStreamAsync = async (stream, token) =>
-                                         {
-                                             entered.TrySetResult();
-                                             await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                    {
+                        entered.TrySetResult();
+                        await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
 
-                                             return stream;
-                                         }
+                        return stream;
+                    }
                 }
             },
             cancellation.Token
@@ -51,7 +51,7 @@ public sealed class ConfiguredConnectionTests
                 Pipeline = new()
                 {
                     ConfigureClient = client =>
-                                          client.OnDataReceived += (_, args) => received.TrySetResult(args.Data.Span[0])
+                        client.OnDataReceived += (_, args) => received.TrySetResult(args.Data.Span[0])
                 }
             }
         );
@@ -74,11 +74,11 @@ public sealed class ConfiguredConnectionTests
                 Pipeline = new()
                 {
                     PrepareStreamAsync = async (stream, token) =>
-                                         {
-                                             await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                    {
+                        await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
 
-                                             return stream;
-                                         },
+                        return stream;
+                    },
                     ConfigureClient = _ => configured = true
                 }
             }
@@ -100,11 +100,11 @@ public sealed class ConfiguredConnectionTests
                 Pipeline = new()
                 {
                     PrepareStreamAsync = (stream, _) =>
-                                         {
-                                             input = stream;
+                    {
+                        input = stream;
 
-                                             return ValueTask.FromException<Stream>(new IOException("preparation failed"));
-                                         }
+                        return ValueTask.FromException<Stream>(new IOException("preparation failed"));
+                    }
                 }
             }
         );
@@ -128,12 +128,12 @@ public sealed class ConfiguredConnectionTests
                 {
                     PrepareStreamAsync = (stream, _) => ValueTask.FromResult<Stream>(wrapper = new(stream)),
                     ConfigureClient = _ =>
-                                      {
-                                          if (configurationThrows)
-                                          {
-                                              throw new IOException("configuration failed");
-                                          }
-                                      }
+                    {
+                        if (configurationThrows)
+                        {
+                            throw new IOException("configuration failed");
+                        }
+                    }
                 }
             }
         );

@@ -129,11 +129,11 @@ public sealed class LoginRoleAccountPacketHandlerTests
             proof
         );
         var pending = handler.HandleAsync(
-                                 original,
-                                 new("user", "password", 0xFF),
-                                 CancellationToken.None
-                             )
-                             .AsTask();
+                original,
+                new("user", "password", 0xFF),
+                CancellationToken.None
+            )
+            .AsTask();
         await accounts.Entered.Task.WaitAsync(TimeSpan.FromSeconds(2));
         Assert.True(sessions.Remove(original));
         using var replacementConnection = new ControlledNetworkConnection(1);
@@ -154,14 +154,14 @@ public sealed class LoginRoleAccountPacketHandlerTests
     private static StubRealmCatalog Directory()
     {
         return new(
-                new RealmDescriptor(
-                    "local",
-                    1,
-                    "Local",
-                    IPAddress.Loopback,
-                    2593,
-                    AccountType.Regular
-                )
-            );
+            new RealmDescriptor(
+                "local",
+                1,
+                "Local",
+                IPAddress.Loopback,
+                2593,
+                AccountType.Regular
+            )
+        );
     }
 }

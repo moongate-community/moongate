@@ -12,7 +12,9 @@ using Moongate.Server.Ultima.Interfaces;
 
 namespace Moongate.Server.Admin;
 
-/// <summary>Registers the administration listener embedded in the server distribution.</summary>
+/// <summary>
+///     Registers the administration listener embedded in the server distribution.
+/// </summary>
 public sealed class MoongateAdminPlugin : IMoongatePlugin
 {
     public MoongatePluginData Metadata
@@ -28,31 +30,31 @@ public sealed class MoongateAdminPlugin : IMoongatePlugin
     public void Register(Container container)
     {
         container.AddMoongateService<IAdminApiService, AdminGrpcHostService>(
-                () =>
-                {
-                    var config = container.Resolve<AdminApiConfig>();
-                    var mode = container.Resolve<ServerMode>();
+            () =>
+            {
+                var config = container.Resolve<AdminApiConfig>();
+                var mode = container.Resolve<ServerMode>();
 
-                    var directoriesConfig = container.Resolve<DirectoriesConfig>();
-                    directoriesConfig.CreateDirectoryIfNotExists("certificates");
+                var directoriesConfig = container.Resolve<DirectoriesConfig>();
+                directoriesConfig.CreateDirectoryIfNotExists("certificates");
 
-                    return new(
-                        config,
-                        directoriesConfig,
-                        mode,
-                        services =>
-                            AdminGrpcApplication.AddServices(
-                                services,
-                                config,
-                                container.Resolve<IAdminSessionStore>(),
-                                container.Resolve<IAdminLoginThrottle>(),
-                                container.Resolve<IAdminServerInfoProvider>(),
-                                (mode & ServerMode.Login) != 0 ? container.Resolve<IAccountService>() : null,
-                                (mode & ServerMode.Login) != 0 ? container.Resolve<IAccountAdminAccessService>() : null
-                            )
-                    );
-                },
-                AdminGrpcHostService.StartupPriority
-            );
+                return new(
+                    config,
+                    directoriesConfig,
+                    mode,
+                    services =>
+                        AdminGrpcApplication.AddServices(
+                            services,
+                            config,
+                            container.Resolve<IAdminSessionStore>(),
+                            container.Resolve<IAdminLoginThrottle>(),
+                            container.Resolve<IAdminServerInfoProvider>(),
+                            (mode & ServerMode.Login) != 0 ? container.Resolve<IAccountService>() : null,
+                            (mode & ServerMode.Login) != 0 ? container.Resolve<IAccountAdminAccessService>() : null
+                        )
+                );
+            },
+            AdminGrpcHostService.StartupPriority
+        );
     }
 }

@@ -1,6 +1,8 @@
 namespace Moongate.Server.Interfaces.Internal.Console;
 
-/// <summary>Terminal operations the prompt needs, isolated so rendering can be tested.</summary>
+/// <summary>
+///     Terminal operations the prompt needs, isolated so rendering can be tested.
+/// </summary>
 internal interface IConsoleDriver
 {
     int WindowWidth { get; }

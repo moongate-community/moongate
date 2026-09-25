@@ -4,8 +4,12 @@ using System.Runtime.CompilerServices;
 
 namespace Moongate.Core.Collections;
 
-/// <summary>A disposable list backed by the shared array pool.</summary>
-/// <remarks>The legacy mt arguments are retained for compatibility; both modes use the shared pool.</remarks>
+/// <summary>
+///     A disposable list backed by the shared array pool.
+/// </summary>
+/// <remarks>
+///     The legacy mt arguments are retained for compatibility; both modes use the shared pool.
+/// </remarks>
 [DebuggerDisplay("Count = {Count}")]
 public ref struct PooledRefList<T>
 {
@@ -94,10 +98,10 @@ public ref struct PooledRefList<T>
         _items = capacity switch
         {
             < 0 => throw new ArgumentOutOfRangeException(
-                       nameof(capacity),
-                       capacity,
-                       CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum
-                   ),
+                nameof(capacity),
+                capacity,
+                CollectionThrowStrings.ArgumentOutOfRange_NeedNonNegNum
+            ),
             0 => Array.Empty<T>(),
             _ => ArrayPool<T>.Shared.Rent(capacity)
         };
@@ -889,8 +893,12 @@ public ref struct PooledRefList<T>
         return array;
     }
 
-    /// <summary>Copies the items into a buffer rented from ArrayPool&lt;T&gt;.Shared.</summary>
-    /// <remarks>The caller must return a nonempty buffer to that pool when finished.</remarks>
+    /// <summary>
+    ///     Copies the items into a buffer rented from ArrayPool&lt;T&gt;.Shared.
+    /// </summary>
+    /// <remarks>
+    ///     The caller must return a nonempty buffer to that pool when finished.
+    /// </remarks>
     public T[] ToPooledArray()
     {
         if (_size == 0)

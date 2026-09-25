@@ -3,8 +3,8 @@ using Moongate.Scripting.Attributes.Scripts;
 namespace Moongate.Tests.TestSupport.Scripting;
 
 /// <summary>
-/// Functions whose signatures put an enum in the optional, nullable and vararg positions, for the definitions
-/// generator.
+///     Functions whose signatures put an enum in the optional, nullable and vararg positions, for the definitions
+///     generator.
 /// </summary>
 [ScriptModule("palette")]
 public sealed class EnumSignaturesModule

@@ -59,8 +59,7 @@ public sealed class DiagnosticBootstrapTests
         var time = new DiagnosticTimeProvider();
         var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
-            .RegisterServices(
-                services =>
+            .RegisterServices(services =>
                 {
                     services.AddMoongateService<IRecordingStartupService, RecordingStartupService>(
                         new RecordingStartupService("timer", events),
@@ -72,14 +71,13 @@ public sealed class DiagnosticBootstrapTests
                     );
                     RegisterCollector(services, time, [provider]);
                     services.Resolve<IEventBusService>()
-                            .Subscribe<DiagnosticSnapshotCollectedEvent>(
-                                (_, _) =>
-                                {
-                                    firstSnapshot.TrySetResult();
+                        .Subscribe<DiagnosticSnapshotCollectedEvent>((_, _) =>
+                            {
+                                firstSnapshot.TrySetResult();
 
-                                    return Task.CompletedTask;
-                                }
-                            );
+                                return Task.CompletedTask;
+                            }
+                        );
 
                     return services;
                 }
@@ -106,8 +104,7 @@ public sealed class DiagnosticBootstrapTests
         var provider = new ControlledMetricProvider();
         var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
-            .RegisterServices(
-                services => RegisterCollector(
+            .RegisterServices(services => RegisterCollector(
                     services,
                     time,
                     [provider],
@@ -138,20 +135,18 @@ public sealed class DiagnosticBootstrapTests
         var failure = new InvalidOperationException("controlled priority 950 failure");
         var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
-            .RegisterServices(
-                services =>
+            .RegisterServices(services =>
                 {
                     RegisterCollector(services, time, [provider]);
                     services.Resolve<IEventBusService>()
-                            .Subscribe<DiagnosticSnapshotCollectedEvent>(
-                                (_, _) =>
-                                {
-                                    Interlocked.Increment(ref events);
-                                    snapshotCollected.TrySetResult();
+                        .Subscribe<DiagnosticSnapshotCollectedEvent>((_, _) =>
+                            {
+                                Interlocked.Increment(ref events);
+                                snapshotCollected.TrySetResult();
 
-                                    return Task.CompletedTask;
-                                }
-                            );
+                                return Task.CompletedTask;
+                            }
+                        );
 
                     return services.AddMoongateService(
                         new CallbackStartupService(
@@ -191,8 +186,7 @@ public sealed class DiagnosticBootstrapTests
             .RegisterServices(services => RegisterDiagnosticHost(services, time, plugin));
         var bus = container.Resolve<IEventBusService>();
         var observed = new TaskCompletionSource<DiagnosticSnapshot>(TaskCreationOptions.RunContinuationsAsynchronously);
-        using var subscription = bus.Subscribe<DiagnosticSnapshotCollectedEvent>(
-            (message, _) =>
+        using var subscription = bus.Subscribe<DiagnosticSnapshotCollectedEvent>((message, _) =>
             {
                 observed.TrySetResult(message.Snapshot);
 
@@ -231,8 +225,7 @@ public sealed class DiagnosticBootstrapTests
         var time = new DiagnosticTimeProvider();
         var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
-            .RegisterServices(
-                services => RegisterCollector(
+            .RegisterServices(services => RegisterCollector(
                     services,
                     time,
                     [],
@@ -280,9 +273,9 @@ public sealed class DiagnosticBootstrapTests
         services.RegisterInstance<ISessionService>(new SessionCountSourceStub(0));
         services.AddMoongateService<IEventBusService, EventBusService>();
         services.AddMetricProvider<SystemMetricsProvider>()
-                .AddMetricProvider<GameLoopMetricsProvider>()
-                .AddMetricProvider<TimerMetricsProvider>()
-                .AddMetricProvider<SessionMetricsProvider>();
+            .AddMetricProvider<GameLoopMetricsProvider>()
+            .AddMetricProvider<TimerMetricsProvider>()
+            .AddMetricProvider<SessionMetricsProvider>();
         services.AddMoongateService<IDiagnosticService, DiagnosticService>(DiagnosticService.StartupPriority);
 
         return services;

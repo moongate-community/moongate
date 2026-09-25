@@ -11,7 +11,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Packets;
 
-/// <summary>Dispatches typed handlers through the existing bounded game loop inbox.</summary>
+/// <summary>
+///     Dispatches typed handlers through the existing bounded game loop inbox.
+/// </summary>
 public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDisposable
 {
     private readonly Lock _gate = new();
@@ -55,8 +57,8 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         var retirement = RetireSessionAsync(sessionId);
 
         return cancellationFailure is null
-                   ? retirement
-                   : CompleteAfterCancellationFailureAsync(retirement, cancellationFailure);
+            ? retirement
+            : CompleteAfterCancellationFailureAsync(retirement, cancellationFailure);
     }
 
     /// <inheritdoc />
@@ -73,9 +75,9 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
             {
                 var registrations = _registry.Freeze();
                 _handlers = registrations.Where(pair => !pair.Value.IsAsync)
-                                         .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.Bind(_resolver));
+                    .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.Bind(_resolver));
                 _asyncHandlers = registrations.Where(pair => pair.Value.IsAsync)
-                                              .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.BindAsync(_resolver));
+                    .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.BindAsync(_resolver));
 
                 if (_asyncHandlers.Count > 0)
                 {

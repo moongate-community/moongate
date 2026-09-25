@@ -286,8 +286,8 @@ public sealed class MoongatePluginRegistryTests
     )
     {
         return new(
-                new(id, id, version ?? new Version(1, 0, 0), dependencies: dependencies),
-                register
-            );
+            new(id, id, version ?? new Version(1, 0, 0), dependencies: dependencies),
+            register
+        );
     }
 }

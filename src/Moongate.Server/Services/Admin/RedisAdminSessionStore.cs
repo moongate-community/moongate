@@ -10,13 +10,17 @@ using StackExchange.Redis;
 
 namespace Moongate.Server.Services.Admin;
 
-/// <summary>Atomically validates opaque administrative sessions against Redis authorization gates.</summary>
+/// <summary>
+///     Atomically validates opaque administrative sessions against Redis authorization gates.
+/// </summary>
 public sealed class RedisAdminSessionStore : IAdminSessionStore
 {
     private readonly RedisConnectionService _redis;
     private readonly string _prefix;
 
-    public RedisAdminSessionStore(RedisConnectionService redis) : this(redis, "moongate:admin:") { }
+    public RedisAdminSessionStore(RedisConnectionService redis) : this(redis, "moongate:admin:")
+    {
+    }
 
     internal RedisAdminSessionStore(RedisConnectionService redis, string prefix)
     {
@@ -32,8 +36,8 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
         return result is { Length: 2 } &&
                Guid.TryParseExact((string?)result[0], "N", out var generation) &&
                (string?)result[1] is "0" or "1"
-                   ? new(generation, (string?)result[1] == "1")
-                   : null;
+            ? new(generation, (string?)result[1] == "1")
+            : null;
     }
 
     public async Task<AdminAccountGate> ResetGateAsync(Serial accountId, bool blocked, CancellationToken token = default)
@@ -77,16 +81,17 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
         {
             throw new ArgumentException("Invalid administration session values.");
         }
+
         var expires = (long)await EvalAsync(
-                                AdminRedisScripts.Issue,
-                                [Gate(identity.AccountId), Index(identity.AccountId), Session(tokenHash)],
-                                [
-                                    generation.ToString("N"), identity.AccountId.Value, identity.Username,
-                                    (int)identity.AccountType,
-                                    checked((long)Math.Ceiling(lifetime.TotalMilliseconds))
-                                ],
-                                token
-                            );
+            AdminRedisScripts.Issue,
+            [Gate(identity.AccountId), Index(identity.AccountId), Session(tokenHash)],
+            [
+                generation.ToString("N"), identity.AccountId.Value, identity.Username,
+                (int)identity.AccountType,
+                checked((long)Math.Ceiling(lifetime.TotalMilliseconds))
+            ],
+            token
+        );
 
         if (expires == -2)
         {
@@ -109,6 +114,7 @@ public sealed class RedisAdminSessionStore : IAdminSessionStore
         {
             return null;
         }
+
         var values = (RedisResult[]?)result;
 
         if (values is not { Length: 5 } ||

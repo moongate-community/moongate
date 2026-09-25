@@ -26,27 +26,26 @@ internal static class PersistenceStressScenario
         ArgumentOutOfRangeException.ThrowIfLessThan(seconds, 1);
         ArgumentOutOfRangeException.ThrowIfNegative(thinkMilliseconds);
         var states = Enumerable.Range(0, sessions)
-                               .Select(
-                                   number => new SyntheticSessionEntity
-                                   {
-                                       SessionNumber = number,
-                                       Payload = Payload(number, 0)
-                                   }
-                               )
-                               .ToArray();
+            .Select(number => new SyntheticSessionEntity
+                {
+                    SessionNumber = number,
+                    Payload = Payload(number, 0)
+                }
+            )
+            .ToArray();
         var committedRevisions = Enumerable.Range(0, sessions).Select(_ => new List<long>()).ToArray();
         var measurements = new[] { "read", "query", "update", "commit", "rollback" }
             .ToDictionary(name => name, _ => new LatencyHistogram());
         var admission = new LatencyHistogram();
         var errors = new ConcurrentDictionary<string, long>();
         long commits = 0,
-             rollbacks = 0;
+            rollbacks = 0;
         double elapsed,
-               cpuSeconds;
+            cpuSeconds;
         DateTimeOffset startedAtUtc,
-                       finishedAtUtc;
+            finishedAtUtc;
         long allocated,
-             workingSet;
+            workingSet;
         using var permits = new SemaphoreSlim(concurrency);
         using var process = Process.GetCurrentProcess();
 
@@ -92,9 +91,9 @@ internal static class PersistenceStressScenario
                     var operation = step % 10;
                     var rollback = operation == 9 && step / 10 % 2 == 1;
                     var name = operation < 5 ? "read" :
-                               operation < 7 ? "query" :
-                               operation < 9 ? "update" :
-                               rollback ? "rollback" : "commit";
+                        operation < 7 ? "query" :
+                        operation < 9 ? "update" :
+                        rollback ? "rollback" : "commit";
                     var queued = Stopwatch.GetTimestamp();
                     var entered = false;
                     using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(30));
@@ -145,10 +144,10 @@ internal static class PersistenceStressScenario
                                                 RolledBack = rollback
                                             };
                                             await transaction.GetDataAccess<SyntheticWriteEntity>()
-                                                             .UpsertAsync(entry, timeout.Token);
+                                                .UpsertAsync(entry, timeout.Token);
                                             Require(entry.Id.IsValid, "Unassigned transaction identity");
                                             await transaction.GetDataAccess<SyntheticSessionEntity>()
-                                                             .UpsertAsync(next, timeout.Token);
+                                                .UpsertAsync(next, timeout.Token);
 
                                             if (rollback)
                                             {
@@ -180,8 +179,8 @@ internal static class PersistenceStressScenario
                     {
                         var category = exception is OperationCanceledException or TimeoutException ||
                                        timeout.IsCancellationRequested
-                                           ? "timeout"
-                                           : exception.GetType().Name;
+                            ? "timeout"
+                            : exception.GetType().Name;
                         errors.AddOrUpdate(category, 1, (_, count) => count + 1);
 
                         break; // A commit acknowledgement can be ambiguous: never retry or claim a known state.
@@ -278,10 +277,10 @@ internal static class PersistenceStressScenario
         };
         var container = new Container();
         container.RegisterMoongatePersistence(
-                     new([new(PersistenceDatabaseTarget.Realm, connection.ConnectionString)], synchronize)
-                 )
-                 .AddPersistenceWorld<SyntheticSessionEntity>()
-                 .AddPersistenceWorld<SyntheticWriteEntity>();
+                new([new(PersistenceDatabaseTarget.Realm, connection.ConnectionString)], synchronize)
+            )
+            .AddPersistenceWorld<SyntheticSessionEntity>()
+            .AddPersistenceWorld<SyntheticWriteEntity>();
 
         return container;
     }
@@ -299,13 +298,13 @@ internal static class PersistenceStressScenario
     private static void AssertState(SyntheticSessionEntity expected, SyntheticSessionEntity? actual)
     {
         Require(
-                actual is not null &&
-                actual.Id == expected.Id &&
-                actual.SessionNumber == expected.SessionNumber &&
-                actual.Revision == expected.Revision &&
-                actual.Payload == expected.Payload,
-                "Session data mismatch"
-            );
+            actual is not null &&
+            actual.Id == expected.Id &&
+            actual.SessionNumber == expected.SessionNumber &&
+            actual.Revision == expected.Revision &&
+            actual.Payload == expected.Payload,
+            "Session data mismatch"
+        );
     }
 
     private static void Require(bool condition, string message)

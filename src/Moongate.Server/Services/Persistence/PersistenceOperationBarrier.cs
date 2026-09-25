@@ -3,7 +3,9 @@ using Moongate.Server.Core.Interfaces.Persistence;
 
 namespace Moongate.Server.Services.Persistence;
 
-/// <summary>Serializes critical owner operations and saves, retaining unsafe owner-application failures.</summary>
+/// <summary>
+///     Serializes critical owner operations and saves, retaining unsafe owner-application failures.
+/// </summary>
 public sealed class PersistenceOperationBarrier : IPersistenceOperationBarrier
 {
     private readonly Lock _gate = new();

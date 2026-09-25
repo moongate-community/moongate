@@ -6,7 +6,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Login;
 
-/// <summary>Connects the login transport to login-owned sessions and ordered packet dispatch.</summary>
+/// <summary>
+///     Connects the login transport to login-owned sessions and ordered packet dispatch.
+/// </summary>
 public sealed class LoginServerService : IMoongateStartupService
 {
     private readonly INetworkService _network;
@@ -55,8 +57,7 @@ public sealed class LoginServerService : IMoongateStartupService
         {
             _stopping = true;
 
-            return _lifecycle.StopAsync(
-                async startup =>
+            return _lifecycle.StopAsync(async startup =>
                 {
                     if (startup is not null)
                     {

@@ -9,9 +9,9 @@ using Moongate.Ultima.Types;
 namespace Moongate.Ultima.Rendering;
 
 /// <summary>
-/// Stateless paperdoll compositor over <see cref="Gumps" />, <see cref="Hues" /> and
-/// <see cref="TileData" />: background, hued body, hair/beard and worn equipment,
-/// blitted in <see cref="PaperdollDrawOrder" /> priority.
+///     Stateless paperdoll compositor over <see cref="Gumps" />, <see cref="Hues" /> and
+///     <see cref="TileData" />: background, hued body, hair/beard and worn equipment,
+///     blitted in <see cref="PaperdollDrawOrder" /> priority.
 /// </summary>
 public sealed class PaperdollComposer : IPaperdollComposer
 {

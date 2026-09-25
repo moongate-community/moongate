@@ -141,62 +141,62 @@ public sealed class Files
     public static event FileSaveHandler FileSaveEvent;
 
     /// <summary>
-    /// Should loaded Data be cached
+    ///     Should loaded Data be cached
     /// </summary>
     public static bool CacheData { get; set; } = true;
 
     /// <summary>
-    /// Initial LRU capacity for the Art read cache (statics + land
-    /// tiles share the same cache). Default 4096 — bounds the worst-case
-    /// working set to a few hundred MB of bitmaps even after a full
-    /// 0x14000-id scan, while keeping recent thumbnails warm. Reading
-    /// happens at static-ctor time so set this before first use, or call
-    /// <see cref="Moongate.Ultima.Graphics.Art.SetCacheCapacity" /> at runtime.
+    ///     Initial LRU capacity for the Art read cache (statics + land
+    ///     tiles share the same cache). Default 4096 — bounds the worst-case
+    ///     working set to a few hundred MB of bitmaps even after a full
+    ///     0x14000-id scan, while keeping recent thumbnails warm. Reading
+    ///     happens at static-ctor time so set this before first use, or call
+    ///     <see cref="Moongate.Ultima.Graphics.Art.SetCacheCapacity" /> at runtime.
     /// </summary>
     public static int CacheCapacityArt { get; set; } = 4096;
 
     /// <summary>
-    /// Initial LRU capacity for the Gumps read cache. Default 2048 —
-    /// gumps are larger on average than statics, so the cap is lower
-    /// to keep total memory comparable. Adjust via
-    /// <see cref="Moongate.Ultima.Graphics.Gumps.SetCacheCapacity" /> at runtime.
+    ///     Initial LRU capacity for the Gumps read cache. Default 2048 —
+    ///     gumps are larger on average than statics, so the cap is lower
+    ///     to keep total memory comparable. Adjust via
+    ///     <see cref="Moongate.Ultima.Graphics.Gumps.SetCacheCapacity" /> at runtime.
     /// </summary>
     public static int CacheCapacityGumps { get; set; } = 2048;
 
     /// <summary>
-    /// Initial LRU capacity for the Animations frame cache (the only major
-    /// file format previously without a decode cache). Counts whole
-    /// AnimationFrame[] entries — thumbnails are 1 frame, player directions
-    /// a handful. Default 1024 keeps the visible grid + scroll working set
-    /// warm. Adjust via <see cref="Moongate.Ultima.Animation.Animations.SetCacheCapacity" /> at
-    /// runtime.
+    ///     Initial LRU capacity for the Animations frame cache (the only major
+    ///     file format previously without a decode cache). Counts whole
+    ///     AnimationFrame[] entries — thumbnails are 1 frame, player directions
+    ///     a handful. Default 1024 keeps the visible grid + scroll working set
+    ///     warm. Adjust via <see cref="Moongate.Ultima.Animation.Animations.SetCacheCapacity" /> at
+    ///     runtime.
     /// </summary>
     public static int CacheCapacityAnimations { get; set; } = 1024;
 
     /// <summary>
-    /// Initial LRU capacity for each map's land and statics block caches, counted in 8x8-tile blocks
-    /// and applied to both caches of every facet. Default 4096 — a contiguous 512x512-tile region,
-    /// which is far more than gameplay ever needs (a player sees roughly 18 tiles, so 25 blocks) and
-    /// enough that panning the web map viewer around one area does not thrash. Bounding matters most
-    /// for that viewer: it streams tiles across a whole facet, and Felucca alone is 393216 blocks that
-    /// the previous unbounded arrays would all have kept. Set this before a map is first read, or call
-    /// <see cref="Moongate.Ultima.Maps.TileMatrix.SetCacheCapacity" /> at runtime.
+    ///     Initial LRU capacity for each map's land and statics block caches, counted in 8x8-tile blocks
+    ///     and applied to both caches of every facet. Default 4096 — a contiguous 512x512-tile region,
+    ///     which is far more than gameplay ever needs (a player sees roughly 18 tiles, so 25 blocks) and
+    ///     enough that panning the web map viewer around one area does not thrash. Bounding matters most
+    ///     for that viewer: it streams tiles across a whole facet, and Felucca alone is 393216 blocks that
+    ///     the previous unbounded arrays would all have kept. Set this before a map is first read, or call
+    ///     <see cref="Moongate.Ultima.Maps.TileMatrix.SetCacheCapacity" /> at runtime.
     /// </summary>
     public static int CacheCapacityMapBlocks { get; set; } = 4096;
 
     /// <summary>
-    /// Contains the path infos
+    ///     Contains the path infos
     /// </summary>
     public static Dictionary<string, string> MulPath { get; set; }
 
     /// <summary>
-    /// Gets the path to the client's data files directory. Must be set explicitly
-    /// via <see cref="SetDirectory" /> or <see cref="SetMulPath(string)" /> before use.
+    ///     Gets the path to the client's data files directory. Must be set explicitly
+    ///     via <see cref="SetDirectory" /> or <see cref="SetMulPath(string)" /> before use.
     /// </summary>
     public static string Directory { get; private set; }
 
     /// <summary>
-    /// Contains the rootDir (so relative values are possible for <see cref="MulPath" />
+    ///     Contains the rootDir (so relative values are possible for <see cref="MulPath" />
     /// </summary>
     public static string RootDir { get; set; }
 
@@ -208,10 +208,14 @@ public sealed class Files
     }
 
     /// <summary>
-    /// Looks up a given <paramref name="file" /> in <see cref="Files.MulPath" />
+    ///     Looks up a given <paramref name="file" /> in <see cref="Files.MulPath" />
     /// </summary>
     /// <returns>
-    /// The absolute path to <paramref name="file" /> -or- <c>null</c> if <paramref name="file" /> was not found.
+    ///     The absolute path to <paramref name="file" /> -or-
+    ///     <c>
+    ///         null
+    ///     </c>
+    ///     if <paramref name="file" /> was not found.
     /// </returns>
     public static string GetFilePath(string file)
     {
@@ -241,9 +245,9 @@ public sealed class Files
     }
 
     /// <summary>
-    /// Fills <see cref="MulPath" /> with <see cref="Files.Directory" />. File names are
-    /// resolved case-insensitively so mixed-case client files (e.g. map0LegacyMUL.uop)
-    /// are found on case-sensitive filesystems.
+    ///     Fills <see cref="MulPath" /> with <see cref="Files.Directory" />. File names are
+    ///     resolved case-insensitively so mixed-case client files (e.g. map0LegacyMUL.uop)
+    ///     are found on case-sensitive filesystems.
     /// </summary>
     public static void LoadMulPath()
     {
@@ -259,9 +263,11 @@ public sealed class Files
     }
 
     /// <summary>
-    /// Sets the client data directory explicitly and reloads <see cref="MulPath" /> from it.
+    ///     Sets the client data directory explicitly and reloads <see cref="MulPath" /> from it.
     /// </summary>
-    /// <param name="path">Absolute path to the UO client files directory.</param>
+    /// <param name="path">
+    ///     Absolute path to the UO client files directory.
+    /// </param>
     public static void SetDirectory(string path)
     {
         Directory = path;
@@ -269,9 +275,10 @@ public sealed class Files
     }
 
     /// <summary>
-    /// ReSets <see cref="MulPath" /> with given path
+    ///     ReSets <see cref="MulPath" /> with given path
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="path">
+    /// </param>
     public static void SetMulPath(string path)
     {
         RootDir = path;
@@ -308,10 +315,12 @@ public sealed class Files
     }
 
     /// <summary>
-    /// Sets <see cref="MulPath" /> key to path
+    ///     Sets <see cref="MulPath" /> key to path
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="key"></param>
+    /// <param name="path">
+    /// </param>
+    /// <param name="key">
+    /// </param>
     public static void SetMulPath(string path, string key)
     {
         MulPath ??= new(StringComparer.OrdinalIgnoreCase);
@@ -319,8 +328,8 @@ public sealed class Files
     }
 
     /// <summary>
-    /// Maps lowercase file names to their actual on-disk names for <paramref name="directory" />,
-    /// enabling case-insensitive lookups on case-sensitive filesystems.
+    ///     Maps lowercase file names to their actual on-disk names for <paramref name="directory" />,
+    ///     enabling case-insensitive lookups on case-sensitive filesystems.
     /// </summary>
     private static Dictionary<string, string> BuildCaseInsensitiveFileMap(string directory)
     {

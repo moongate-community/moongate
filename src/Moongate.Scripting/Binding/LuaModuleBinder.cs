@@ -10,8 +10,8 @@ using Moongate.Scripting.Internal;
 namespace Moongate.Scripting.Binding;
 
 /// <summary>
-/// Turns a [ScriptModule] instance into a Lua table. Reflection runs here, once; the delegates it builds never
-/// reflect.
+///     Turns a [ScriptModule] instance into a Lua table. Reflection runs here, once; the delegates it builds never
+///     reflect.
 /// </summary>
 public sealed class LuaModuleBinder
 {
@@ -20,31 +20,44 @@ public sealed class LuaModuleBinder
     private readonly List<Type> _publishedEnums = [];
 
     /// <summary>
-    /// Gets every enum type seen so far as a parameter or return type of a bound function, in the order they were first
-    /// encountered.
+    ///     Gets every enum type seen so far as a parameter or return type of a bound function, in the order they were first
+    ///     encountered.
     /// </summary>
     public IReadOnlyList<Type> DiscoveredEnums => _discoveredEnums;
 
-    /// <summary>Gets every enum type published as a global table via <see cref="BindEnum" />, in the order it was published.</summary>
+    /// <summary>
+    ///     Gets every enum type published as a global table via <see cref="BindEnum" />, in the order it was published.
+    /// </summary>
     public IReadOnlyList<Type> PublishedEnums => _publishedEnums;
 
-    /// <summary>Initializes a new instance of the <see cref="LuaModuleBinder" /> class.</summary>
-    /// <param name="guard">The thread guard called before every bound function invocation.</param>
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="LuaModuleBinder" /> class.
+    /// </summary>
+    /// <param name="guard">
+    ///     The thread guard called before every bound function invocation.
+    /// </param>
     public LuaModuleBinder(IScriptThreadGuard guard)
     {
         _guard = guard;
     }
 
     /// <summary>
-    /// Reflects <paramref name="moduleInstance" /> once, publishing a read-only Lua table under its [ScriptModule] name
-    /// with one LuaFunction per [ScriptFunction] method.
+    ///     Reflects <paramref name="moduleInstance" /> once, publishing a read-only Lua table under its [ScriptModule] name
+    ///     with one LuaFunction per [ScriptFunction] method.
     /// </summary>
-    /// <param name="state">The Lua state to publish the module's table into.</param>
-    /// <param name="moduleInstance">The [ScriptModule]-attributed instance to bind.</param>
-    /// <returns>The bound module: its Lua table, and every function and constant published on it.</returns>
+    /// <param name="state">
+    ///     The Lua state to publish the module's table into.
+    /// </param>
+    /// <param name="moduleInstance">
+    ///     The [ScriptModule]-attributed instance to bind.
+    /// </param>
+    /// <returns>
+    ///     The bound module: its Lua table, and every function and constant published on it.
+    /// </returns>
     /// <exception cref="InvalidOperationException">
-    /// <paramref name="moduleInstance" />'s type carries no [ScriptModule], two of its [ScriptFunction] methods resolve to the same
-    /// Lua name, or a method's signature uses a parameter or return type the converter cannot bind.
+    ///     <paramref name="moduleInstance" />'s type carries no [ScriptModule], two of its [ScriptFunction] methods resolve to the
+    ///     same
+    ///     Lua name, or a method's signature uses a parameter or return type the converter cannot bind.
     /// </exception>
     public BoundModule Bind(LuaState state, object moduleInstance)
     {
@@ -90,10 +103,18 @@ public sealed class LuaModuleBinder
         return new(moduleAttribute.Name, moduleAttribute.HelpText, moduleType, table, functions, constants);
     }
 
-    /// <summary>Publishes an enum as a read-only global table named after the type, keyed by member name with numeric values.</summary>
-    /// <param name="state">The Lua state to publish the enum's table into.</param>
-    /// <param name="enumType">The enum type to publish.</param>
-    /// <exception cref="ArgumentException"><paramref name="enumType" /> is not an enum.</exception>
+    /// <summary>
+    ///     Publishes an enum as a read-only global table named after the type, keyed by member name with numeric values.
+    /// </summary>
+    /// <param name="state">
+    ///     The Lua state to publish the enum's table into.
+    /// </param>
+    /// <param name="enumType">
+    ///     The enum type to publish.
+    /// </param>
+    /// <exception cref="ArgumentException">
+    ///     <paramref name="enumType" /> is not an enum.
+    /// </exception>
     public void BindEnum(LuaState state, Type enumType)
     {
         ArgumentNullException.ThrowIfNull(state);
@@ -169,8 +190,8 @@ public sealed class LuaModuleBinder
             {
                 FieldInfo field => (field.FieldType, field.IsStatic && field.IsInitOnly && field.IsPublic),
                 PropertyInfo property => (property.PropertyType,
-                                          property.GetMethod is { IsStatic: true, IsPublic: true } &&
-                                          property.SetMethod is null),
+                    property.GetMethod is { IsStatic: true, IsPublic: true } &&
+                    property.SetMethod is null),
                 _ => (typeof(void), false)
             };
 
@@ -295,8 +316,8 @@ public sealed class LuaModuleBinder
                 }
 
                 return returnsVoid
-                           ? new(context.Return())
-                           : new ValueTask<int>(context.Return(LuaValueConverter.ToLua(result, method.ReturnType)));
+                    ? new(context.Return())
+                    : new ValueTask<int>(context.Return(LuaValueConverter.ToLua(result, method.ReturnType)));
             }
         );
     }
@@ -310,8 +331,8 @@ public sealed class LuaModuleBinder
     }
 
     /// <summary>
-    /// Reads a validated constant; a getter that throws becomes a binding error naming the member, with the getter's
-    /// exception as the cause.
+    ///     Reads a validated constant; a getter that throws becomes a binding error naming the member, with the getter's
+    ///     exception as the cause.
     /// </summary>
     private static object? ReadConstant(Type moduleType, MemberInfo member)
     {

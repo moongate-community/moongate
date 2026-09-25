@@ -49,6 +49,7 @@ internal sealed class AdminRedisFixture : IAsyncDisposable
                 await database.KeyDeleteAsync(key);
             }
         }
+
         await Redis.DisposeAsync();
     }
 }

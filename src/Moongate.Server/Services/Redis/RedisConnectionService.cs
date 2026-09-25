@@ -4,7 +4,9 @@ using StackExchange.Redis;
 
 namespace Moongate.Server.Services.Redis;
 
-/// <summary>Owns one Redis multiplexer for the process lifetime.</summary>
+/// <summary>
+///     Owns one Redis multiplexer for the process lifetime.
+/// </summary>
 public sealed class RedisConnectionService : IMoongateStartupService, IAsyncDisposable
 {
     private readonly RedisConfig _config;

@@ -7,7 +7,9 @@ using Tomlyn.Serialization;
 
 namespace Moongate.Server.Data.Config.Sections;
 
-/// <summary>Configures the realm advertised through Redis discovery.</summary>
+/// <summary>
+///     Configures the realm advertised through Redis discovery.
+/// </summary>
 public sealed class RealmDirectoryConfig
 {
     public string RealmId { get; set; } = "";

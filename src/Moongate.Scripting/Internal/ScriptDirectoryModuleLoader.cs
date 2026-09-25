@@ -2,7 +2,9 @@ using Lua;
 
 namespace Moongate.Scripting.Internal;
 
-/// <summary>Serves require() from the scripts directory only. "common.dialogue" maps to "common/dialogue.lua".</summary>
+/// <summary>
+///     Serves require() from the scripts directory only. "common.dialogue" maps to "common/dialogue.lua".
+/// </summary>
 internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
 {
     private readonly string _root;
@@ -31,13 +33,20 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
     }
 
     /// <summary>
-    /// Resolves a relative script path to an absolute one, refusing anything that escapes the directory, symbolic links
-    /// included.
+    ///     Resolves a relative script path to an absolute one, refusing anything that escapes the directory, symbolic links
+    ///     included.
     /// </summary>
     /// <remarks>
-    /// The path is used exactly as written, so a file named <c>100%25.lua</c> is that file and not
-    /// <c>100%.lua</c>. Every existing entry along the path that is a link is followed to its final
-    /// target, which must also lie inside the scripts directory.
+    ///     The path is used exactly as written, so a file named
+    ///     <c>
+    ///         100%25.lua
+    ///     </c>
+    ///     is that file and not
+    ///     <c>
+    ///         100%.lua
+    ///     </c>
+    ///     . Every existing entry along the path that is a link is followed to its final
+    ///     target, which must also lie inside the scripts directory.
     /// </remarks>
     public static string ResolvePath(string scriptsDirectory, string relativePath)
     {
@@ -65,22 +74,22 @@ internal sealed class ScriptDirectoryModuleLoader : ILuaModuleLoader
     }
 
     /// <summary>
-    /// Maps a normalized relative path back to the require() name it is served under: "common/dialogue.lua" becomes
-    /// "common.dialogue". The inverse of the name-to-path mapping.
+    ///     Maps a normalized relative path back to the require() name it is served under: "common/dialogue.lua" becomes
+    ///     "common.dialogue". The inverse of the name-to-path mapping.
     /// </summary>
     public static string ToModuleName(string normalizedRelativePath)
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(normalizedRelativePath);
         var withoutExtension = normalizedRelativePath.EndsWith(".lua", StringComparison.Ordinal)
-                                   ? normalizedRelativePath[..^4]
-                                   : normalizedRelativePath;
+            ? normalizedRelativePath[..^4]
+            : normalizedRelativePath;
 
         return withoutExtension.Replace('/', '.');
     }
 
     /// <summary>
-    /// Follows every link along <paramref name="full" /> below the root and refuses one whose final target leaves the
-    /// directory.
+    ///     Follows every link along <paramref name="full" /> below the root and refuses one whose final target leaves the
+    ///     directory.
     /// </summary>
     private static void EnsureNoLinkEscapes(string root, string rootWithSeparator, string full, string relativePath)
     {

@@ -84,14 +84,14 @@ public sealed class StatefulFramerTests
         var second = new TaskCompletionSource<bool>(TaskCreationOptions.RunContinuationsAsynchronously);
 
         receiver.OnDataReceived += (_, e) =>
-                                   {
-                                       frames.Add(e.Data.ToArray());
+        {
+            frames.Add(e.Data.ToArray());
 
-                                       if (frames.Count == 2)
-                                       {
-                                           second.TrySetResult(true);
-                                       }
-                                   };
+            if (frames.Count == 2)
+            {
+                second.TrySetResult(true);
+            }
+        };
 
         try
         {

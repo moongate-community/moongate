@@ -4,8 +4,16 @@ using Tomlyn.Serialization;
 namespace Moongate.Core.Serialization.Toml;
 
 /// <summary>
-/// Reads a <see cref="Serial" /> from a bare TOML integer, such as <c>item_id = 0x0FEF</c>, or from a
-/// quoted string in the same notation, such as <c>item_id = "0x0FEF"</c>. Always writes a bare integer.
+///     Reads a <see cref="Serial" /> from a bare TOML integer, such as
+///     <c>
+///         item_id = 0x0FEF
+///     </c>
+///     , or from a
+///     quoted string in the same notation, such as
+///     <c>
+///         item_id = "0x0FEF"
+///     </c>
+///     . Always writes a bare integer.
 /// </summary>
 public sealed class SerialTomlConverter : TomlConverter<Serial>
 {

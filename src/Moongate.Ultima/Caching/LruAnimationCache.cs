@@ -12,18 +12,21 @@ using Moongate.Ultima.Animation;
 namespace Moongate.Ultima.Caching;
 
 /// <summary>
-/// Bounded LRU cache for decoded animation frame sets. The sibling of
-/// <see cref="LruBitmapCache" />, but keyed by a packed <see cref="long" />
-/// (body/action/direction/hue/firstFrame) and storing whole
-/// <see cref="AnimationFrame" /> arrays instead of a single bitmap, since
-/// <c>Animations.GetAnimation</c> returns all frames of a direction at once.
-/// Eviction policy mirrors <see cref="LruBitmapCache" />: by default the
-/// evicted array's bitmaps are NOT disposed — the SDK cannot know whether
-/// the UI still holds a reference, and disposing an in-use GDI handle
-/// crashes the renderer. Consumers borrow the returned bitmaps and must not
-/// dispose them. <see cref="Dispose" /> always disposes every owned bitmap;
-/// <see cref="AnimationFrame.Empty" /> is never disposed (shared singleton).
-/// Thread safety: every public member is guarded by a single lock.
+///     Bounded LRU cache for decoded animation frame sets. The sibling of
+///     <see cref="LruBitmapCache" />, but keyed by a packed <see cref="long" />
+///     (body/action/direction/hue/firstFrame) and storing whole
+///     <see cref="AnimationFrame" /> arrays instead of a single bitmap, since
+///     <c>
+///         Animations.GetAnimation
+///     </c>
+///     returns all frames of a direction at once.
+///     Eviction policy mirrors <see cref="LruBitmapCache" />: by default the
+///     evicted array's bitmaps are NOT disposed — the SDK cannot know whether
+///     the UI still holds a reference, and disposing an in-use GDI handle
+///     crashes the renderer. Consumers borrow the returned bitmaps and must not
+///     dispose them. <see cref="Dispose" /> always disposes every owned bitmap;
+///     <see cref="AnimationFrame.Empty" /> is never disposed (shared singleton).
+///     Thread safety: every public member is guarded by a single lock.
 /// </summary>
 public sealed class LruAnimationCache : IDisposable
 {
@@ -60,9 +63,9 @@ public sealed class LruAnimationCache : IDisposable
     }
 
     /// <summary>
-    /// If true, frame arrays evicted by the LRU policy or by <see cref="Clear" />
-    /// have their bitmaps disposed before being dropped. Off by default —
-    /// see class remarks.
+    ///     If true, frame arrays evicted by the LRU policy or by <see cref="Clear" />
+    ///     have their bitmaps disposed before being dropped. Off by default —
+    ///     see class remarks.
     /// </summary>
     public bool DisposeOnEvict { get; set; }
 
@@ -89,8 +92,8 @@ public sealed class LruAnimationCache : IDisposable
     }
 
     /// <summary>
-    /// Drops every entry. Disposes the bitmaps iff <see cref="DisposeOnEvict" />
-    /// is true. Use for soft resets where consumers may still hold references.
+    ///     Drops every entry. Disposes the bitmaps iff <see cref="DisposeOnEvict" />
+    ///     is true. Use for soft resets where consumers may still hold references.
     /// </summary>
     public void Clear()
     {

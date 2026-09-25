@@ -6,7 +6,9 @@ using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Server.Services.Realms;
 
-/// <summary>Creates domain-separated HMAC proofs for the login-to-game handoff.</summary>
+/// <summary>
+///     Creates domain-separated HMAC proofs for the login-to-game handoff.
+/// </summary>
 public sealed class HandoffProofService : IHandoffProofService, IDisposable
 {
     private const int CredentialKeySize = 32;

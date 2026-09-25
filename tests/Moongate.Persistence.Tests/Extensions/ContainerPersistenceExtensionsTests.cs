@@ -65,7 +65,7 @@ public sealed class ContainerPersistenceExtensionsTests
 
         await owner.InitializeAsync();
         await container.Resolve<IDataAccess<AccountsSharedEntity>>()
-                       .UpsertAsync(new() { Id = new(1) });
+            .UpsertAsync(new() { Id = new(1) });
         await owner.SaveAllAsync();
 
         Assert.Same(container.Resolve<DataAccess<CharacterEntity>>(), container.Resolve<IDataAccess<CharacterEntity>>());

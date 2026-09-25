@@ -3,16 +3,22 @@ using System.Reflection;
 namespace Moongate.Core.Utils;
 
 /// <summary>
-/// Provides utilities for working with embedded resources.
+///     Provides utilities for working with embedded resources.
 /// </summary>
 public static class ResourceUtils
 {
     /// <summary>
-    /// Converts a resource name to a file path format.
+    ///     Converts a resource name to a file path format.
     /// </summary>
-    /// <param name="resourceName">The resource name to convert.</param>
-    /// <param name="baseNamespace">The base namespace to remove.</param>
-    /// <returns>The file path.</returns>
+    /// <param name="resourceName">
+    ///     The resource name to convert.
+    /// </param>
+    /// <param name="baseNamespace">
+    ///     The base namespace to remove.
+    /// </param>
+    /// <returns>
+    ///     The file path.
+    /// </returns>
     /// <summary>
     /// </summary>
     public static string ConvertResourceNameToPath(string resourceName, string baseNamespace)
@@ -38,10 +44,14 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Copies all embedded resources from an assembly to a destination directory
+    ///     Copies all embedded resources from an assembly to a destination directory
     /// </summary>
-    /// <param name="assembly">The assembly containing the embedded resources</param>
-    /// <param name="destinationDirectory">The directory where resources will be copied</param>
+    /// <param name="assembly">
+    ///     The assembly containing the embedded resources
+    /// </param>
+    /// <param name="destinationDirectory">
+    ///     The directory where resources will be copied
+    /// </param>
     public static void CopyEmbeddedToDirectory(Assembly assembly, string destinationDirectory)
     {
         if (!Directory.Exists(destinationDirectory))
@@ -72,11 +82,17 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Converts an embedded resource name to a file path format
+    ///     Converts an embedded resource name to a file path format
     /// </summary>
-    /// <param name="resourceName">The full embedded resource name</param>
-    /// <param name="assemblyPrefix">The assembly prefix to remove from the resource name</param>
-    /// <returns>A file path representation of the resource name</returns>
+    /// <param name="resourceName">
+    ///     The full embedded resource name
+    /// </param>
+    /// <param name="assemblyPrefix">
+    ///     The assembly prefix to remove from the resource name
+    /// </param>
+    /// <returns>
+    ///     A file path representation of the resource name
+    /// </returns>
     public static string EmbeddedNameToPath(string resourceName, string assemblyPrefix)
     {
         if (resourceName.StartsWith(assemblyPrefix + ".", StringComparison.Ordinal))
@@ -88,11 +104,17 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Converts an embedded resource name to a directory path structure
+    ///     Converts an embedded resource name to a directory path structure
     /// </summary>
-    /// <param name="resourceName">The embedded resource name (e.g., "Assets.Fonts.DefaultUiFont.ttf")</param>
-    /// <param name="baseNamespace">Optional base namespace to remove from the beginning</param>
-    /// <returns>The directory path (e.g., "Assets/Fonts")</returns>
+    /// <param name="resourceName">
+    ///     The embedded resource name (e.g., "Assets.Fonts.DefaultUiFont.ttf")
+    /// </param>
+    /// <param name="baseNamespace">
+    ///     Optional base namespace to remove from the beginning
+    /// </param>
+    /// <returns>
+    ///     The directory path (e.g., "Assets/Fonts")
+    /// </returns>
     public static string GetDirectoryPathFromResourceName(string resourceName, string? baseNamespace = null)
     {
         ArgumentNullException.ThrowIfNull(resourceName);
@@ -128,12 +150,20 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Gets an embedded resource as a byte array wrapped in Memory
+    ///     Gets an embedded resource as a byte array wrapped in Memory
     /// </summary>
-    /// <param name="assembly">The assembly containing the resource</param>
-    /// <param name="resourceName">The full resource name</param>
-    /// <returns>A Memory containing the resource bytes</returns>
-    /// <exception cref="FileNotFoundException">Thrown when the resource cannot be found</exception>
+    /// <param name="assembly">
+    ///     The assembly containing the resource
+    /// </param>
+    /// <param name="resourceName">
+    ///     The full resource name
+    /// </param>
+    /// <returns>
+    ///     A Memory containing the resource bytes
+    /// </returns>
+    /// <exception cref="FileNotFoundException">
+    ///     Thrown when the resource cannot be found
+    /// </exception>
     public static Memory<byte> GetEmbeddedResourceByteArray(Assembly assembly, string resourceName)
     {
         ArgumentNullException.ThrowIfNull(assembly);
@@ -145,8 +175,7 @@ public static class ResourceUtils
         {
             // Try to find a partial match
             var resourceNames = assembly.GetManifestResourceNames();
-            var matchingResource = resourceNames.FirstOrDefault(
-                n => n.EndsWith(
+            var matchingResource = resourceNames.FirstOrDefault(n => n.EndsWith(
                     resourceName.Replace('/', '.').Replace('\\', '.'),
                     StringComparison.Ordinal
                 )
@@ -173,11 +202,17 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Reads the content of an embedded resource as a byte array
+    ///     Reads the content of an embedded resource as a byte array
     /// </summary>
-    /// <param name="resourcePath">Resource path (e.g. "Assets/Templates/welcome.scriban")</param>
-    /// <param name="assembly">The assembly to search in (if null, uses current assembly)</param>
-    /// <returns>The content of the resource as a byte array</returns>
+    /// <param name="resourcePath">
+    ///     Resource path (e.g. "Assets/Templates/welcome.scriban")
+    /// </param>
+    /// <param name="assembly">
+    ///     The assembly to search in (if null, uses current assembly)
+    /// </param>
+    /// <returns>
+    ///     The content of the resource as a byte array
+    /// </returns>
     public static byte[] GetEmbeddedResourceContent(string resourcePath, Assembly assembly = null)
     {
         assembly ??= Assembly.GetExecutingAssembly();
@@ -221,11 +256,17 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Gets a list of all files in a specific embedded directory
+    ///     Gets a list of all files in a specific embedded directory
     /// </summary>
-    /// <param name="assembly">The assembly to search in (if null, uses current assembly)</param>
-    /// <param name="directoryPath">Directory path to search (e.g. "Assets/Templates")</param>
-    /// <returns>A list of file names (without the full path)</returns>
+    /// <param name="assembly">
+    ///     The assembly to search in (if null, uses current assembly)
+    /// </param>
+    /// <param name="directoryPath">
+    ///     Directory path to search (e.g. "Assets/Templates")
+    /// </param>
+    /// <returns>
+    ///     A list of file names (without the full path)
+    /// </returns>
     public static List<string> GetEmbeddedResourceFileNames(
         Assembly assembly = null,
         string directoryPath = "Assets/Templates"
@@ -255,11 +296,17 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Gets a list of all embedded resources that match a given pattern
+    ///     Gets a list of all embedded resources that match a given pattern
     /// </summary>
-    /// <param name="assembly">The assembly to search in (if null, uses current assembly)</param>
-    /// <param name="directoryPath">Directory path to search (e.g. "Assets.Templates")</param>
-    /// <returns>A list of resource names found</returns>
+    /// <param name="assembly">
+    ///     The assembly to search in (if null, uses current assembly)
+    /// </param>
+    /// <param name="directoryPath">
+    ///     Directory path to search (e.g. "Assets.Templates")
+    /// </param>
+    /// <returns>
+    ///     A list of resource names found
+    /// </returns>
     public static string[] GetEmbeddedResourceNames(Assembly assembly = null, string directoryPath = null)
     {
         // If no assembly is specified, use the current one
@@ -288,12 +335,20 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Gets a stream for an embedded resource
+    ///     Gets a stream for an embedded resource
     /// </summary>
-    /// <param name="assembly">The assembly containing the resource</param>
-    /// <param name="resourceName">The full resource name</param>
-    /// <returns>A stream for the resource</returns>
-    /// <exception cref="FileNotFoundException">Thrown when the resource cannot be found</exception>
+    /// <param name="assembly">
+    ///     The assembly containing the resource
+    /// </param>
+    /// <param name="resourceName">
+    ///     The full resource name
+    /// </param>
+    /// <returns>
+    ///     A stream for the resource
+    /// </returns>
+    /// <exception cref="FileNotFoundException">
+    ///     Thrown when the resource cannot be found
+    /// </exception>
     public static Stream GetEmbeddedResourceStream(Assembly assembly, string resourceName)
     {
         ArgumentNullException.ThrowIfNull(assembly);
@@ -305,8 +360,7 @@ public static class ResourceUtils
         {
             // Try to find a partial match
             var resourceNames = assembly.GetManifestResourceNames();
-            var matchingResource = resourceNames.FirstOrDefault(
-                n => n.EndsWith(
+            var matchingResource = resourceNames.FirstOrDefault(n => n.EndsWith(
                     resourceName.Replace('/', '.').Replace('\\', '.'),
                     StringComparison.Ordinal
                 )
@@ -339,11 +393,15 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Converts an embedded resource name to a proper file name by extracting the last part after the final dot
-    /// and treating everything before it as directory structure
+    ///     Converts an embedded resource name to a proper file name by extracting the last part after the final dot
+    ///     and treating everything before it as directory structure
     /// </summary>
-    /// <param name="resourceName">The embedded resource name (e.g., "Assets.Fonts.DefaultUiFont.ttf")</param>
-    /// <returns>The file name with extension (e.g., "DefaultUiFont.ttf")</returns>
+    /// <param name="resourceName">
+    ///     The embedded resource name (e.g., "Assets.Fonts.DefaultUiFont.ttf")
+    /// </param>
+    /// <returns>
+    ///     The file name with extension (e.g., "DefaultUiFont.ttf")
+    /// </returns>
     public static string GetFileNameFromResourceName(string resourceName)
     {
         ArgumentNullException.ThrowIfNull(resourceName);
@@ -369,33 +427,45 @@ public static class ResourceUtils
     }
 
     /// <summary>
-    /// Extracts the file name from an embedded resource path
+    ///     Extracts the file name from an embedded resource path
     /// </summary>
-    /// <param name="resourceName">Full resource name</param>
-    /// <returns>File name without path</returns>
+    /// <param name="resourceName">
+    ///     Full resource name
+    /// </param>
+    /// <returns>
+    ///     File name without path
+    /// </returns>
     public static string GetFileNameFromResourcePath(string resourceName)
     {
         return GetFileNameFromResourceName(resourceName);
     }
 
     /// <summary>
-    /// Reads the content of an embedded resource as a string.
+    ///     Reads the content of an embedded resource as a string.
     /// </summary>
-    /// <param name="resourceName">The name of the resource to read.</param>
-    /// <param name="assembly">The assembly containing the resource.</param>
-    /// <returns>The content of the resource as a string.</returns>
-    /// <exception cref="Exception">Thrown when the resource cannot be found in the specified assembly.</exception>
+    /// <param name="resourceName">
+    ///     The name of the resource to read.
+    /// </param>
+    /// <param name="assembly">
+    ///     The assembly containing the resource.
+    /// </param>
+    /// <returns>
+    ///     The content of the resource as a string.
+    /// </returns>
+    /// <exception cref="Exception">
+    ///     Thrown when the resource cannot be found in the specified assembly.
+    /// </exception>
     /// <remarks>
-    /// This method handles resource names that may contain either forward slashes (/) or
-    /// backslashes (\) by converting them to dots, which is the standard separator for
-    /// resource names in .NET assemblies.
+    ///     This method handles resource names that may contain either forward slashes (/) or
+    ///     backslashes (\) by converting them to dots, which is the standard separator for
+    ///     resource names in .NET assemblies.
     /// </remarks>
     public static string? ReadEmbeddedResource(string resourceName, Assembly assembly)
     {
         var resourcePath = resourceName.Replace('/', '.').Replace('\\', '.');
 
         var fullResourceName = assembly.GetManifestResourceNames()
-                                       .FirstOrDefault(name => name.EndsWith(resourcePath, StringComparison.Ordinal));
+            .FirstOrDefault(name => name.EndsWith(resourcePath, StringComparison.Ordinal));
 
         if (fullResourceName == null)
         {

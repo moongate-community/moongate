@@ -7,9 +7,9 @@ using Moongate.Server.Core.Interfaces.Services;
 namespace Moongate.Scripting.Internal;
 
 /// <summary>
-/// Runs Lua functions as coroutines and parks a coroutine that yields ("wait", seconds) on the timer
-/// wheel. There is no run queue: the wheel's callback, already on the loop thread, resumes the coroutine.
-/// Nothing thrown by Lua leaves this class; every failure becomes a ScriptResult and an onError call.
+///     Runs Lua functions as coroutines and parks a coroutine that yields ("wait", seconds) on the timer
+///     wheel. There is no run queue: the wheel's callback, already on the loop thread, resumes the coroutine.
+///     Nothing thrown by Lua leaves this class; every failure becomes a ScriptResult and an onError call.
 /// </summary>
 internal sealed class CoroutineScheduler : IScriptScheduler
 {
@@ -35,8 +35,8 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     public long BudgetAborts { get; private set; }
 
     /// <summary>
-    /// Gets the owner of the code executing right now: the running coroutine's owner during a resume, otherwise the file
-    /// being loaded; null when neither applies.
+    ///     Gets the owner of the code executing right now: the running coroutine's owner during a resume, otherwise the file
+    ///     being loaded; null when neither applies.
     /// </summary>
     public string? CurrentOwner => _current?.Owner ?? _currentOwner();
 
@@ -58,10 +58,14 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     }
 
     /// <summary>
-    /// Cancels every pending timer and coroutine regardless of owner, and makes every later <see cref="Start" />
-    /// fail instead of touching the Lua state. Called once, right before the engine disposes the state: a
-    /// periodic timer callback that fires after that point must not reach <c>CreateCoroutine</c> on a disposed
-    /// state.
+    ///     Cancels every pending timer and coroutine regardless of owner, and makes every later <see cref="Start" />
+    ///     fail instead of touching the Lua state. Called once, right before the engine disposes the state: a
+    ///     periodic timer callback that fires after that point must not reach
+    ///     <c>
+    ///         CreateCoroutine
+    ///     </c>
+    ///     on a disposed
+    ///     state.
     /// </summary>
     public void CancelAll()
     {
@@ -86,8 +90,8 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     }
 
     /// <summary>
-    /// Cancels every pending coroutine and timer the owner file created. Running code is never interrupted; only future
-    /// resumes are dropped.
+    ///     Cancels every pending coroutine and timer the owner file created. Running code is never interrupted; only future
+    ///     resumes are dropped.
     /// </summary>
     public void CancelOwned(string owner)
     {
@@ -113,11 +117,15 @@ internal sealed class CoroutineScheduler : IScriptScheduler
     }
 
     /// <summary>
-    /// Starts <paramref name="function" /> as a coroutine owned by <paramref name="owner" /> and runs it until it returns,
-    /// waits, or fails.
+    ///     Starts <paramref name="function" /> as a coroutine owned by <paramref name="owner" /> and runs it until it returns,
+    ///     waits, or fails.
     /// </summary>
-    /// <exception cref="InvalidCastException">An argument has no Lua representation; nothing is registered.</exception>
-    /// <exception cref="InvalidOperationException">Called while another resume is running on this scheduler.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     An argument has no Lua representation; nothing is registered.
+    /// </exception>
+    /// <exception cref="InvalidOperationException">
+    ///     Called while another resume is running on this scheduler.
+    /// </exception>
     public ScriptResult Start(LuaFunction function, string owner, params object?[] args)
     {
         if (_stopped)
@@ -174,7 +182,9 @@ internal sealed class CoroutineScheduler : IScriptScheduler
         return ScriptResult.Failed(error);
     }
 
-    /// <summary>Drops a finished or failed coroutine and releases its budget source; the entry is never resumed again.</summary>
+    /// <summary>
+    ///     Drops a finished or failed coroutine and releases its budget source; the entry is never resumed again.
+    /// </summary>
     private void Forget(ScheduledCoroutine entry)
     {
         _active.Remove(entry.Id);

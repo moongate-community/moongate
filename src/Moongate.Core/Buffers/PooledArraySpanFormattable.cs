@@ -3,10 +3,10 @@ using System.Buffers;
 namespace Moongate.Core.Buffers;
 
 /// <summary>
-/// Wrapper for char buffers rented from ArrayPool&lt;char&gt;.Shared that will be used in InterpolatedStringHandlers.
-/// The wrapper prevents intermediate strings from being created unnecessarily.
-/// Note: TryFormat can only be called once. Using the PooledArraySpanFormattable after calling TryFormat will throw.
-/// To use the span multiple times, use the Chars property directly instead.
+///     Wrapper for char buffers rented from ArrayPool&lt;char&gt;.Shared that will be used in InterpolatedStringHandlers.
+///     The wrapper prevents intermediate strings from being created unnecessarily.
+///     Note: TryFormat can only be called once. Using the PooledArraySpanFormattable after calling TryFormat will throw.
+///     To use the span multiple times, use the Chars property directly instead.
 /// </summary>
 public struct PooledArraySpanFormattable : ISpanFormattable, IDisposable
 {

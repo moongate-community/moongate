@@ -4,26 +4,30 @@ using Serilog.Events;
 namespace Moongate.Core.Extensions.Logger;
 
 /// <summary>
-/// Extension methods for converting log levels between different logging frameworks.
+///     Extension methods for converting log levels between different logging frameworks.
 /// </summary>
 public static class LogLevelExtensions
 {
     /// <summary>
-    /// Converts a LogLevelType to a Serilog LogEventLevel.
+    ///     Converts a LogLevelType to a Serilog LogEventLevel.
     /// </summary>
-    /// <param name="logLevel">The log level to convert.</param>
-    /// <returns>The corresponding Serilog log event level.</returns>
+    /// <param name="logLevel">
+    ///     The log level to convert.
+    /// </param>
+    /// <returns>
+    ///     The corresponding Serilog log event level.
+    /// </returns>
     public static LogEventLevel ToSerilogLogLevel(this LogLevelType logLevel)
     {
         return logLevel switch
         {
-            LogLevelType.Trace => LogEventLevel.Verbose,
-            LogLevelType.Debug => LogEventLevel.Debug,
+            LogLevelType.Trace       => LogEventLevel.Verbose,
+            LogLevelType.Debug       => LogEventLevel.Debug,
             LogLevelType.Information => LogEventLevel.Information,
-            LogLevelType.Warning => LogEventLevel.Warning,
-            LogLevelType.Error => LogEventLevel.Error,
-            LogLevelType.Critical => LogEventLevel.Fatal,
-            _ => LogEventLevel.Information
+            LogLevelType.Warning     => LogEventLevel.Warning,
+            LogLevelType.Error       => LogEventLevel.Error,
+            LogLevelType.Critical    => LogEventLevel.Fatal,
+            _                        => LogEventLevel.Information
         };
     }
 }

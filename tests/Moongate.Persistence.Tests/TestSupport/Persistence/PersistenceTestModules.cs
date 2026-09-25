@@ -15,21 +15,21 @@ internal static class PersistenceTestModules
     public static TestPersistenceModule CharacterShared()
     {
         return new(
-                "plugin.characters",
-                "plugin_characters",
-                PersistenceDatabaseTarget.Realm,
-                [typeof(CharacterSharedEntity)]
-            );
+            "plugin.characters",
+            "plugin_characters",
+            PersistenceDatabaseTarget.Realm,
+            [typeof(CharacterSharedEntity)]
+        );
     }
 
     public static TestPersistenceModule FailingSchema()
     {
         return new(
-                "plugin.failing",
-                "plugin_failing",
-                PersistenceDatabaseTarget.Realm,
-                [typeof(FailingSchemaEntity)]
-            );
+            "plugin.failing",
+            "plugin_failing",
+            PersistenceDatabaseTarget.Realm,
+            [typeof(FailingSchemaEntity)]
+        );
     }
 
     public static TestPersistenceModule Inventory(
@@ -43,11 +43,11 @@ internal static class PersistenceTestModules
     public static TestPersistenceModule InventoryShared()
     {
         return new(
-                "plugin.inventory",
-                "plugin_inventory",
-                PersistenceDatabaseTarget.Realm,
-                [typeof(InventorySharedEntity)]
-            );
+            "plugin.inventory",
+            "plugin_inventory",
+            PersistenceDatabaseTarget.Realm,
+            [typeof(InventorySharedEntity)]
+        );
     }
 
     public static TestPersistenceModule UpgradeV1()
@@ -68,10 +68,10 @@ internal static class PersistenceTestModules
     private static TestPersistenceModule Upgrade(Type entityType)
     {
         return new(
-                "plugin.upgrade",
-                "plugin_upgrade",
-                PersistenceDatabaseTarget.Realm,
-                [entityType]
-            );
+            "plugin.upgrade",
+            "plugin_upgrade",
+            PersistenceDatabaseTarget.Realm,
+            [entityType]
+        );
     }
 }

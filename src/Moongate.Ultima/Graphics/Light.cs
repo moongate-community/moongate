@@ -11,9 +11,10 @@ public sealed class Light
     private static bool[] _removed = new bool[100];
 
     /// <summary>
-    /// Gets count of defined lights
+    ///     Gets count of defined lights
     /// </summary>
-    /// <returns></returns>
+    /// <returns>
+    /// </returns>
     public static int GetCount()
     {
         var idxPath = Files.GetFilePath("lightidx.mul");
@@ -29,10 +30,12 @@ public sealed class Light
     }
 
     /// <summary>
-    /// Returns Bitmap of given index
+    ///     Returns Bitmap of given index
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static unsafe UltimaBitmap GetLight(int index)
     {
         if (_removed[index])
@@ -124,7 +127,7 @@ public sealed class Light
     }
 
     /// <summary>
-    /// ReReads light.mul
+    ///     ReReads light.mul
     /// </summary>
     public static void Reload()
     {
@@ -134,19 +137,22 @@ public sealed class Light
     }
 
     /// <summary>
-    /// Removes Light <see cref="_removed" />
+    ///     Removes Light <see cref="_removed" />
     /// </summary>
-    /// <param name="index"></param>
+    /// <param name="index">
+    /// </param>
     public static void Remove(int index)
     {
         _removed[index] = true;
     }
 
     /// <summary>
-    /// Replaces Light
+    ///     Replaces Light
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="bmp"></param>
+    /// <param name="index">
+    /// </param>
+    /// <param name="bmp">
+    /// </param>
     public static void Replace(int index, UltimaBitmap bmp)
     {
         _cache[index] = bmp;
@@ -235,10 +241,12 @@ public sealed class Light
     }
 
     /// <summary>
-    /// Tests if given index is valid
+    ///     Tests if given index is valid
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool TestLight(int index)
     {
         if (_removed[index])

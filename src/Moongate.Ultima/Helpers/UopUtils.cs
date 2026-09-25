@@ -5,9 +5,11 @@ namespace Moongate.Ultima.Helpers;
 public static class UopUtils
 {
     /// <summary>
-    /// Method for compressing zlib byte arrays inside .uop
+    ///     Method for compressing zlib byte arrays inside .uop
     /// </summary>
-    /// <returns>compressed byte[] data</returns>
+    /// <returns>
+    ///     compressed byte[] data
+    /// </returns>
     public static (bool success, byte[] compressedData) Compress(byte[] rawData)
     {
         if (rawData == null || rawData.Length == 0)
@@ -33,10 +35,14 @@ public static class UopUtils
     }
 
     /// <summary>
-    /// Method for decompressing zlib byte arrays inside .uop
+    ///     Method for decompressing zlib byte arrays inside .uop
     /// </summary>
-    /// <param name="compressedData">Input compressed array of bytes</param>
-    /// <returns>decompressed byte[] data</returns>
+    /// <param name="compressedData">
+    ///     Input compressed array of bytes
+    /// </param>
+    /// <returns>
+    ///     decompressed byte[] data
+    /// </returns>
     public static (bool success, byte[] data) Decompress(byte[] compressedData)
     {
         if (compressedData == null || compressedData.Length == 0)
@@ -62,19 +68,21 @@ public static class UopUtils
     }
 
     /// <summary>
-    /// Method for calculating entry hash by its name.
-    /// Taken from Mythic.Package.dll
+    ///     Method for calculating entry hash by its name.
+    ///     Taken from Mythic.Package.dll
     /// </summary>
-    /// <param name="s"></param>
-    /// <returns></returns>
+    /// <param name="s">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static ulong HashFileName(string s)
     {
         uint eax,
-             ecx,
-             edx,
-             ebx,
-             esi,
-             edi;
+            ecx,
+            edx,
+            ebx,
+            esi,
+            edi;
 
         eax = ecx = edx = ebx = esi = edi = 0;
         ebx = edi = esi = (uint)s.Length + 0xDEADBEEF;
@@ -159,14 +167,14 @@ public static class UopUtils
     }
 
     /// <summary>
-    /// Decompresses zlib UOP-entry bytes into a caller-supplied buffer
-    /// instead of allocating a fresh byte[]. Pair with ArrayPool to make
-    /// per-call allocations effectively zero on the hot decode paths.
-    /// <paramref name="destinationBuffer" /> must be at least as large as
-    /// the entry's declared decompressed length (see Entry6D.DecompressedLength).
-    /// Returns false if decompression fails OR the destination is too
-    /// small to hold the full payload — in the latter case the caller
-    /// should retry with a larger buffer.
+    ///     Decompresses zlib UOP-entry bytes into a caller-supplied buffer
+    ///     instead of allocating a fresh byte[]. Pair with ArrayPool to make
+    ///     per-call allocations effectively zero on the hot decode paths.
+    ///     <paramref name="destinationBuffer" /> must be at least as large as
+    ///     the entry's declared decompressed length (see Entry6D.DecompressedLength).
+    ///     Returns false if decompression fails OR the destination is too
+    ///     small to hold the full payload — in the latter case the caller
+    ///     should retry with a larger buffer.
     /// </summary>
     public static bool TryDecompressInto(
         byte[] compressedData,

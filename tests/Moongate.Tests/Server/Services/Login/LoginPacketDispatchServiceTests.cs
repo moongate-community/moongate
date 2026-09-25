@@ -52,24 +52,24 @@ public sealed class LoginPacketDispatchServiceTests
         var observed = new List<(long SessionId, byte Sequence)>();
         var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<RecordingLoginPacketHandler>().OnHandle = async (session, packet, token) =>
-                                                                    {
-                                                                        if (session.SessionId == 1 && packet.Sequence == 1)
-                                                                        {
-                                                                            await gate.Task.WaitAsync(token);
-                                                                        }
+        {
+            if (session.SessionId == 1 && packet.Sequence == 1)
+            {
+                await gate.Task.WaitAsync(token);
+            }
 
-                                                                        lock (observed)
-                                                                        {
-                                                                            observed.Add(
-                                                                                (session.SessionId, packet.Sequence)
-                                                                            );
+            lock (observed)
+            {
+                observed.Add(
+                    (session.SessionId, packet.Sequence)
+                );
 
-                                                                            if (observed.Count == 3)
-                                                                            {
-                                                                                completed.TrySetResult();
-                                                                            }
-                                                                        }
-                                                                    };
+                if (observed.Count == 3)
+                {
+                    completed.TrySetResult();
+                }
+            }
+        };
         var dispatcher = new LoginPacketDispatchService(
             sessions,
             container.Resolve<LoginPacketHandlerRegistry>(),
@@ -98,10 +98,10 @@ public sealed class LoginPacketDispatchServiceTests
         sessions.GetOrCreate(connection);
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<RecordingLoginPacketHandler>().OnHandle = async (_, _, token) =>
-                                                                    {
-                                                                        entered.TrySetResult();
-                                                                        await Task.Delay(Timeout.InfiniteTimeSpan, token);
-                                                                    };
+        {
+            entered.TrySetResult();
+            await Task.Delay(Timeout.InfiniteTimeSpan, token);
+        };
         var dispatcher = new LoginPacketDispatchService(
             sessions,
             container.Resolve<LoginPacketHandlerRegistry>(),

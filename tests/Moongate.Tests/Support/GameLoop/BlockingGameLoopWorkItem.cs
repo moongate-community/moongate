@@ -26,7 +26,6 @@ public sealed class BlockingGameLoopWorkItem : IGameLoopWorkItem, IDisposable
 
     public void Dispose()
     {
-
         // The loop may still be returning from Wait; do not dispose its gate concurrently.
         _release.Set();
     }

@@ -24,8 +24,8 @@ internal static class MigrationComponentResolver
         var comparison = OperatingSystem.IsWindows() ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
 
         return catalog.SourceDirectories
-                      .SingleOrDefault(source => source.Key != "core" && string.Equals(source.Value, directory, comparison))
-                      .Key ??
+                   .SingleOrDefault(source => source.Key != "core" && string.Equals(source.Value, directory, comparison))
+                   .Key ??
                throw new InvalidOperationException(
                    $"Plugin entity '{entity.FullName}' needs a migrations/manifest.json with a stable component ID."
                );

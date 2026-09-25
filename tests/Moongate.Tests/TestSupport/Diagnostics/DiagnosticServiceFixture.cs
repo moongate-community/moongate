@@ -30,8 +30,7 @@ internal sealed class DiagnosticServiceFixture : IDisposable
         Time = new();
         Service = new(providers, options ?? new DiagnosticOptions(), Bus, Time);
         _snapshots = Channel.CreateUnbounded<DiagnosticSnapshot>();
-        _subscription = Bus.Subscribe<DiagnosticSnapshotCollectedEvent>(
-            (message, _) =>
+        _subscription = Bus.Subscribe<DiagnosticSnapshotCollectedEvent>((message, _) =>
             {
                 _snapshots.Writer.TryWrite(message.Snapshot);
 

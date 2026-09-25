@@ -80,6 +80,7 @@ internal sealed class AdminHostFixture : IAsyncDisposable
             container.RegisterInstance<IAccountService>(Backend.Accounts.Service);
             container.RegisterInstance<IAccountAdminAccessService>(Backend.Authority);
         }
+
         new MoongateAdminPlugin().Register(container);
         var host = container.Resolve<IAdminApiService>();
         await host.StartAsync();
@@ -92,9 +93,14 @@ internal sealed class AdminHostFixture : IAsyncDisposable
     {
         foreach (var container in new[] { _game, _login })
         {
-            if (container.IsRegistered<IAdminApiService>()) { await container.Resolve<IAdminApiService>().StopAsync(); }
+            if (container.IsRegistered<IAdminApiService>())
+            {
+                await container.Resolve<IAdminApiService>().StopAsync();
+            }
+
             container.Dispose();
         }
+
         LoginChannel?.Dispose();
         GameChannel?.Dispose();
         Certificates.Dispose();

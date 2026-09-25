@@ -10,7 +10,9 @@ using Serilog;
 
 namespace Moongate.Server.Ultima.Handlers.Login;
 
-/// <summary>Redeems a one-time login redirect before associating a game session with its account.</summary>
+/// <summary>
+///     Redeems a one-time login redirect before associating a game session with its account.
+/// </summary>
 public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket>
 {
     private readonly RealmInstance _realm;
@@ -41,14 +43,14 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         try
         {
             handoff = await _handoffs.RedeemAsync(
-                                         _realm.Descriptor.RealmId,
-                                         _realm.InstanceId,
-                                         packet.AuthKey,
-                                         packet.Account,
-                                         packet.Password,
-                                         cancellationToken
-                                     )
-                                     .ConfigureAwait(false);
+                    _realm.Descriptor.RealmId,
+                    _realm.InstanceId,
+                    packet.AuthKey,
+                    packet.Account,
+                    packet.Password,
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -74,23 +76,23 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         }
 
         await context.RunOnGameLoopAsync(
-                         session =>
-                         {
-                             session.SetAccountId(handoff.AccountId);
-                             session.SetAccountType(handoff.AccountType);
-                             session.NetworkSession.SetState(NetworkSessionState.Authenticated);
-                         },
-                         cancellationToken
-                     )
-                     .ConfigureAwait(false);
+                session =>
+                {
+                    session.SetAccountId(handoff.AccountId);
+                    session.SetAccountType(handoff.AccountType);
+                    session.NetworkSession.SetState(NetworkSessionState.Authenticated);
+                },
+                cancellationToken
+            )
+            .ConfigureAwait(false);
     }
 
     private static async Task DenyAsync(PacketContext context, CancellationToken cancellationToken)
     {
         await context.SendAndDisconnectAsync(
-                                new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem),
-                                cancellationToken
-                            )
-                            .ConfigureAwait(false);
+                new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem),
+                cancellationToken
+            )
+            .ConfigureAwait(false);
     }
 }

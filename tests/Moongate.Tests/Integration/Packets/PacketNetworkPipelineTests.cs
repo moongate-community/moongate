@@ -58,7 +58,7 @@ public sealed class PacketNetworkPipelineTests
         container.AddMoongateService<ISessionService, SessionService>();
         container.RegisterInstance<IPluginLoaderService>(new DeferredPacketPluginLoader(container));
         container.RegisterPacketHandler<PingPacket, PingPacketHandler>()
-                 .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
+            .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
         PacketPipelineRegistration.Register(container);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
@@ -106,8 +106,7 @@ public sealed class PacketNetworkPipelineTests
 
         using (var pause = new CancellationTokenSource(TimeSpan.FromMilliseconds(100)))
         {
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(
-                async () =>
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () =>
                 {
                     _ = await peer.GetStream().ReadAsync(new byte[1], pause.Token);
                 }
@@ -149,9 +148,9 @@ public sealed class PacketNetworkPipelineTests
         var first = new MoongateTcpServer(
             new(IPAddress.Loopback, 0),
             connectionPipelineFactory: () => new(
-                                           middlewares: [new FailingCleanupMiddleware()],
-                                           framer: new UoPacketFramer(PacketRegistry.Default)
-                                       )
+                middlewares: [new FailingCleanupMiddleware()],
+                framer: new UoPacketFramer(PacketRegistry.Default)
+            )
         );
         var second = new MoongateTcpServer(
             new(IPAddress.Loopback, 0),
@@ -214,16 +213,16 @@ public sealed class PacketNetworkPipelineTests
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         await using var fixture = new PacketNetworkFixture(
                 disconnectSender: _ =>
-                                  {
-                                      entered.TrySetResult();
+                {
+                    entered.TrySetResult();
 
-                                      if (failSender)
-                                      {
-                                          throw new IOException("Controlled sender cleanup failure.");
-                                      }
+                    if (failSender)
+                    {
+                        throw new IOException("Controlled sender cleanup failure.");
+                    }
 
-                                      return release.Task;
-                                  }
+                    return release.Task;
+                }
             )
             { AllowCleanupFailure = failSender };
         await fixture.StartAsync();

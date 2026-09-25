@@ -16,9 +16,9 @@ public sealed class FileIndex : IDisposable
     }
 
     /// <summary>
-    /// Absolute path to the .mul or .uop file backing this index, or null
-    /// if no client file was located. Exposed so parallel preloaders can
-    /// open their own per-thread FileStreams (FileShare.Read).
+    ///     Absolute path to the .mul or .uop file backing this index, or null
+    ///     if no client file was located. Exposed so parallel preloaders can
+    ///     open their own per-thread FileStreams (FileShare.Read).
     /// </summary>
     public string MulPath { get; }
 
@@ -31,7 +31,9 @@ public sealed class FileIndex : IDisposable
         ".dat",
         -1,
         false
-    ) { }
+    )
+    {
+    }
 
     public FileIndex(
         string idxFile,
@@ -449,10 +451,10 @@ public sealed class FileIndex : IDisposable
     }
 
     /// <summary>
-    /// Returns the cached FileAccessor.Stream, re-opening it only when
-    /// genuinely required (null or disposed). Replaces the per-call
-    /// CanRead/CanSeek probe that previously re-instantiated the
-    /// FileStream every time a downstream caller had Close()'d it.
+    ///     Returns the cached FileAccessor.Stream, re-opening it only when
+    ///     genuinely required (null or disposed). Replaces the per-call
+    ///     CanRead/CanSeek probe that previously re-instantiated the
+    ///     FileStream every time a downstream caller had Close()'d it.
     /// </summary>
     private FileStream EnsureOpen()
     {
@@ -477,10 +479,10 @@ public sealed class FileIndex : IDisposable
     }
 
     /// <summary>
-    /// Releases the underlying .mul / .uop FileStream so the next access
-    /// re-opens fresh. Additive — existing code paths that ignore the
-    /// disposable contract keep working because EnsureOpen handles a
-    /// disposed FileAccessor.Stream gracefully.
+    ///     Releases the underlying .mul / .uop FileStream so the next access
+    ///     re-opens fresh. Additive — existing code paths that ignore the
+    ///     disposable contract keep working because EnsureOpen handles a
+    ///     disposed FileAccessor.Stream gracefully.
     /// </summary>
     public void Dispose()
     {

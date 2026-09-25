@@ -12,8 +12,7 @@ public sealed class MigrationHistoryTests
         using var files = new MigrationFiles();
         files.Write("migrations/world/0001_first.sql", "SELECT 1;");
         var catalog = MigrationCatalog.Load(files.Core, null, MigrationTarget.World);
-        Assert.Throws<InvalidOperationException>(
-            () => MigrationHistory.Validate(
+        Assert.Throws<InvalidOperationException>(() => MigrationHistory.Validate(
                 catalog,
                 [new(catalog.Scripts[0].Name, "changed")]
             )
@@ -25,8 +24,7 @@ public sealed class MigrationHistoryTests
     {
         using var files = new MigrationFiles();
         var catalog = MigrationCatalog.Load(files.Core, null, MigrationTarget.World);
-        Assert.Throws<InvalidOperationException>(
-            () => MigrationHistory.Validate(
+        Assert.Throws<InvalidOperationException>(() => MigrationHistory.Validate(
                 catalog,
                 [new("core/0001_missing.sql", "checksum")]
             )
@@ -41,8 +39,7 @@ public sealed class MigrationHistoryTests
         var before = MigrationCatalog.Load(files.Core, null, MigrationTarget.World);
         files.Write("migrations/world/0001_first.sql", "SELECT 1;");
         var after = MigrationCatalog.Load(files.Core, null, MigrationTarget.World);
-        Assert.Throws<InvalidOperationException>(
-            () => MigrationHistory.Validate(
+        Assert.Throws<InvalidOperationException>(() => MigrationHistory.Validate(
                 after,
                 [new(before.Scripts[0].Name, before.Scripts[0].Checksum)]
             )

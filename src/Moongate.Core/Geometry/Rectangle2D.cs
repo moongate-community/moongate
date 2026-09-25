@@ -3,7 +3,7 @@ using System.Runtime.CompilerServices;
 namespace Moongate.Core.Geometry;
 
 /// <summary>
-/// Represents Rectangle2D.
+///     Represents Rectangle2D.
 /// </summary>
 public struct Rectangle2D : IEquatable<Rectangle2D>, ISpanFormattable, ISpanParsable<Rectangle2D>
 {

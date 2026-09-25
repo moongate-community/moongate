@@ -80,7 +80,9 @@ internal sealed class LoginPacketMailbox : IAsyncDisposable
                 await handler(Session, packet, _cancellation.Token).ConfigureAwait(false);
             }
         }
-        catch (OperationCanceledException) when (_cancellation.IsCancellationRequested) { }
+        catch (OperationCanceledException) when (_cancellation.IsCancellationRequested)
+        {
+        }
         catch (Exception exception)
         {
             _logger.Error(exception, "Login packet handler failed for session {SessionId}", Session.SessionId);

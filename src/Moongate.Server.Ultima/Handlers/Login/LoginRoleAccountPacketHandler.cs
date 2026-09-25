@@ -9,7 +9,9 @@ using Serilog;
 
 namespace Moongate.Server.Ultima.Handlers.Login;
 
-/// <summary>Authenticates on the login pipeline and sends one current realm snapshot.</summary>
+/// <summary>
+///     Authenticates on the login pipeline and sends one current realm snapshot.
+/// </summary>
 public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountLoginPacket>
 {
     private readonly ILoginSessionService _sessions;
@@ -38,7 +40,7 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
     )
     {
         var result = await _flow.AuthenticateAsync(packet.Account, packet.Password, cancellationToken)
-                                .ConfigureAwait(false);
+            .ConfigureAwait(false);
 
         if (cancellationToken.IsCancellationRequested ||
             !_sessions.IsCurrent(session) ||

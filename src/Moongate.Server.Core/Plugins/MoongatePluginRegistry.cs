@@ -6,7 +6,9 @@ using Serilog;
 
 namespace Moongate.Server.Core.Plugins;
 
-/// <summary>Registers explicit plugins in dependency order before server startup.</summary>
+/// <summary>
+///     Registers explicit plugins in dependency order before server startup.
+/// </summary>
 public sealed class MoongatePluginRegistry
 {
     private readonly Container _container;
@@ -49,20 +51,19 @@ public sealed class MoongatePluginRegistry
 
         try
         {
-            var candidates = plugins.Select(
-                                        plugin =>
-                                        {
-                                            ArgumentNullException.ThrowIfNull(plugin);
-                                            var metadata =
-                                                plugin.Metadata ??
-                                                throw new InvalidOperationException(
-                                                    $"Plugin '{plugin.GetType().FullName}' returned null metadata."
-                                                );
+            var candidates = plugins.Select(plugin =>
+                    {
+                        ArgumentNullException.ThrowIfNull(plugin);
+                        var metadata =
+                            plugin.Metadata ??
+                            throw new InvalidOperationException(
+                                $"Plugin '{plugin.GetType().FullName}' returned null metadata."
+                            );
 
-                                            return (Plugin: plugin, Metadata: metadata);
-                                        }
-                                    )
-                                    .ToArray();
+                        return (Plugin: plugin, Metadata: metadata);
+                    }
+                )
+                .ToArray();
             var ordered = ValidateAndOrder(candidates.Select(entry => entry.Metadata).ToArray());
             var instances = candidates.ToDictionary(
                 entry => entry.Metadata.Id,

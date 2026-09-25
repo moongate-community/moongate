@@ -1,6 +1,8 @@
 namespace Moongate.Server.Data.Timing.Internal;
 
-/// <summary>A live registration, physically retained in one wheel bucket or the ready set.</summary>
+/// <summary>
+///     A live registration, physically retained in one wheel bucket or the ready set.
+/// </summary>
 internal sealed class TimerEntry
 {
     internal required string Id { get; init; }

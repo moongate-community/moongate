@@ -57,9 +57,8 @@ public sealed class RootDirectoryInitializerTests
         Directory.CreateDirectory(Path.Combine(root, "migrations/auth"));
         var conflicting = Path.Combine(root, "migrations/auth", name);
         File.WriteAllText(conflicting, sql);
-        var exception = Assert.Throws<InvalidOperationException>(
-            () =>
-                RootDirectoryInitializer.Initialize(root, source, TextWriter.Null)
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RootDirectoryInitializer.Initialize(root, source, TextWriter.Null)
         );
         Assert.Contains(name, exception.Message);
         Assert.Equal(sql, File.ReadAllText(conflicting));
@@ -71,8 +70,8 @@ public sealed class RootDirectoryInitializerTests
     {
         using var directory = new TemporaryDirectory();
         var root = Path.Combine(directory.Path, "root");
-        Assert.ThrowsAny<Exception>(
-            () => RootDirectoryInitializer.Initialize(root, Path.Combine(directory.Path, "missing"), TextWriter.Null)
+        Assert.ThrowsAny<Exception>(() =>
+            RootDirectoryInitializer.Initialize(root, Path.Combine(directory.Path, "missing"), TextWriter.Null)
         );
         Assert.False(Directory.Exists(root));
     }

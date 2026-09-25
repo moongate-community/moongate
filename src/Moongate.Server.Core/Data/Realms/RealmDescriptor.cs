@@ -3,7 +3,9 @@ using Moongate.Server.Core.Types.Accounts;
 
 namespace Moongate.Server.Core.Data.Realms;
 
-/// <summary>An immutable client-facing realm snapshot.</summary>
+/// <summary>
+///     An immutable client-facing realm snapshot.
+/// </summary>
 public sealed class RealmDescriptor
 {
     private readonly byte[] _addressBytes;

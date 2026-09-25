@@ -18,21 +18,26 @@ public sealed class Textures
     }
 
     /// <summary>
-    /// Returns Bitmap of Texture
+    ///     Returns Bitmap of Texture
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UltimaBitmap GetTexture(int index)
     {
         return GetTexture(index, out _);
     }
 
     /// <summary>
-    /// Returns Bitmap of Texture with verdata bool
+    ///     Returns Bitmap of Texture with verdata bool
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="patched"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <param name="patched">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static unsafe UltimaBitmap GetTexture(int index, out bool patched)
     {
         patched = _patched.ContainsKey(index) && _patched[index];
@@ -111,7 +116,7 @@ public sealed class Textures
     }
 
     /// <summary>
-    /// ReReads texmaps
+    ///     ReReads texmaps
     /// </summary>
     public static void Reload()
     {
@@ -122,19 +127,22 @@ public sealed class Textures
     }
 
     /// <summary>
-    /// Removes Texture <see cref="_removed" />
+    ///     Removes Texture <see cref="_removed" />
     /// </summary>
-    /// <param name="index"></param>
+    /// <param name="index">
+    /// </param>
     public static void Remove(int index)
     {
         _removed[index] = true;
     }
 
     /// <summary>
-    /// Replaces Texture
+    ///     Replaces Texture
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="bmp"></param>
+    /// <param name="index">
+    /// </param>
+    /// <param name="bmp">
+    /// </param>
     public static void Replace(int index, UltimaBitmap bmp)
     {
         _cache[index] = bmp;
@@ -229,10 +237,12 @@ public sealed class Textures
     }
 
     /// <summary>
-    /// Tests if index is valid Texture
+    ///     Tests if index is valid Texture
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool TestTexture(int index)
     {
         index &= 0x3FFF;
@@ -261,7 +271,6 @@ public sealed class Textures
 
     private static int GetExtraFlag(int length)
     {
-
         // length of 0x8000 == width 128x128 else 64x64
         return length == 0x8000 ? 1 : 0;
     }

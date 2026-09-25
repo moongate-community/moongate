@@ -7,8 +7,12 @@ namespace Moongate.Core.Buffers;
 // Licensed to the .NET Foundation under one or more agreements.
 // The .NET Foundation licenses this file to you under the MIT license.
 
-/// <summary>Builds text in a caller-provided span, growing into the shared array pool when necessary.</summary>
-/// <remarks>The legacy mt arguments are retained for compatibility; both modes use the shared pool.</remarks>
+/// <summary>
+///     Builds text in a caller-provided span, growing into the shared array pool when necessary.
+/// </summary>
+/// <remarks>
+///     The legacy mt arguments are retained for compatibility; both modes use the shared pool.
+/// </remarks>
 public ref struct ValueStringBuilder
 {
     private char[] _arrayToReturnToPool;
@@ -20,7 +24,9 @@ public ref struct ValueStringBuilder
 
     public ref char this[int index] => ref _chars[index];
 
-    /// <summary>Returns the underlying storage of the builder.</summary>
+    /// <summary>
+    ///     Returns the underlying storage of the builder.
+    /// </summary>
     public Span<char> RawChars => _chars;
 
     // If this ctor is used, you cannot pass in stackalloc ROS for append/replace.
@@ -85,8 +91,12 @@ public ref struct ValueStringBuilder
         }
     }
 
-    /// <summary>Appends the formatted text and releases the handler's rented buffer.</summary>
-    /// <remarks>The handler is consumed and must not be reused after this call.</remarks>
+    /// <summary>
+    ///     Appends the formatted text and releases the handler's rented buffer.
+    /// </summary>
+    /// <remarks>
+    ///     The handler is consumed and must not be reused after this call.
+    /// </remarks>
     public void Append(scoped DefaultInterpolatedStringHandler handler)
     {
         try
@@ -223,9 +233,11 @@ public ref struct ValueStringBuilder
     }
 
     /// <summary>
-    /// Returns a span around the contents of the builder.
+    ///     Returns a span around the contents of the builder.
     /// </summary>
-    /// <param name="terminate">Ensures that the builder has a null char after <see cref="Length" /></param>
+    /// <param name="terminate">
+    ///     Ensures that the builder has a null char after <see cref="Length" />
+    /// </param>
     public ReadOnlySpan<char> AsSpan(bool terminate)
     {
         if (terminate)
@@ -277,10 +289,10 @@ public ref struct ValueStringBuilder
     }
 
     /// <summary>
-    /// Get a pinnable reference to the builder.
-    /// Does not ensure there is a null char after <see cref="Length" />
-    /// This overload is pattern matched in the C# 7.3+ compiler so you can omit
-    /// the explicit method call, and write eg "fixed (char* c = builder)"
+    ///     Get a pinnable reference to the builder.
+    ///     Does not ensure there is a null char after <see cref="Length" />
+    ///     This overload is pattern matched in the C# 7.3+ compiler so you can omit
+    ///     the explicit method call, and write eg "fixed (char* c = builder)"
     /// </summary>
     public ref char GetPinnableReference()
     {
@@ -288,9 +300,11 @@ public ref struct ValueStringBuilder
     }
 
     /// <summary>
-    /// Get a pinnable reference to the builder.
+    ///     Get a pinnable reference to the builder.
     /// </summary>
-    /// <param name="terminate">Ensures that the builder has a null char after <see cref="Length" /></param>
+    /// <param name="terminate">
+    ///     Ensures that the builder has a null char after <see cref="Length" />
+    /// </param>
     public ref char GetPinnableReference(bool terminate)
     {
         if (terminate)
@@ -478,12 +492,12 @@ public ref struct ValueStringBuilder
     }
 
     /// <summary>
-    /// Resize the internal buffer either by doubling current buffer size or
-    /// by adding <paramref name="additionalCapacityBeyondPos" /> to
-    /// <see cref="Length" /> whichever is greater.
+    ///     Resize the internal buffer either by doubling current buffer size or
+    ///     by adding <paramref name="additionalCapacityBeyondPos" /> to
+    ///     <see cref="Length" /> whichever is greater.
     /// </summary>
     /// <param name="additionalCapacityBeyondPos">
-    /// Number of chars requested beyond current position.
+    ///     Number of chars requested beyond current position.
     /// </param>
     [MethodImpl(MethodImplOptions.NoInlining)]
     private void Grow(int additionalCapacityBeyondPos)

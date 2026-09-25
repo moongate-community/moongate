@@ -108,9 +108,9 @@ public sealed class LoginAccountFlowTests
     private static StubRealmCatalog Directory()
     {
         return new(
-                new RealmDescriptor("admin", 4, "Admin", IPAddress.Loopback, 2595, AccountType.Administrator),
-                new RealmDescriptor("regular", 2, "Regular", IPAddress.Loopback, 2593, AccountType.Regular),
-                new RealmDescriptor("staff", 1, "Staff", IPAddress.Loopback, 2594, AccountType.GameMaster)
-            );
+            new RealmDescriptor("admin", 4, "Admin", IPAddress.Loopback, 2595, AccountType.Administrator),
+            new RealmDescriptor("regular", 2, "Regular", IPAddress.Loopback, 2593, AccountType.Regular),
+            new RealmDescriptor("staff", 1, "Staff", IPAddress.Loopback, 2594, AccountType.GameMaster)
+        );
     }
 }

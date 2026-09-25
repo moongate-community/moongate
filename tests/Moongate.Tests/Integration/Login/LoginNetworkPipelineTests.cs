@@ -30,11 +30,11 @@ public sealed class LoginNetworkPipelineTests
         using var connection = new ControlledNetworkConnection(1);
         var received = new TaskCompletionSource<byte>(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<RecordingLoginPacketHandler>().OnHandle = (_, packet, _) =>
-                                                                    {
-                                                                        received.TrySetResult(packet.Sequence);
+        {
+            received.TrySetResult(packet.Sequence);
 
-                                                                        return ValueTask.CompletedTask;
-                                                                    };
+            return ValueTask.CompletedTask;
+        };
         await connections.StartAsync();
         await sender.StartAsync();
         await dispatcher.StartAsync();

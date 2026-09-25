@@ -14,7 +14,7 @@ using Serilog;
 namespace Moongate.Network.Server;
 
 /// <summary>
-/// TCP listener with serialized, restartable generations and owned connection cleanup.
+///     TCP listener with serialized, restartable generations and owned connection cleanup.
 /// </summary>
 public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDisposable
 {
@@ -50,21 +50,29 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
     private Task _acceptLoopTask = Task.CompletedTask;
     private Task? _admissionStopTask;
 
-    /// <summary>Raised when an accepted client connects.</summary>
+    /// <summary>
+    ///     Raised when an accepted client connects.
+    /// </summary>
     public event EventHandler<TcpClientEventArgs>? OnClientConnect;
 
-    /// <summary>Raised when a connection closes; resource cleanup may still be in progress.</summary>
+    /// <summary>
+    ///     Raised when a connection closes; resource cleanup may still be in progress.
+    /// </summary>
     public event EventHandler<TcpClientEventArgs>? OnClientDisconnect;
 
-    /// <summary>Raised synchronously for each received chunk or frame.</summary>
+    /// <summary>
+    ///     Raised synchronously for each received chunk or frame.
+    /// </summary>
     public event EventHandler<TcpDataReceivedEventArgs>? OnDataReceived;
 
-    /// <summary>Raised for accept, pipeline and connection errors.</summary>
+    /// <summary>
+    ///     Raised for accept, pipeline and connection errors.
+    /// </summary>
     public event EventHandler<TcpExceptionEventArgs>? OnException;
 
     /// <summary>
-    /// Gets a snapshot of the bound endpoint while running or draining, or the configured endpoint otherwise.
-    /// An ephemeral port is resolved after startup. Changes to the snapshot do not affect the listener.
+    ///     Gets a snapshot of the bound endpoint while running or draining, or the configured endpoint otherwise.
+    ///     An ephemeral port is resolved after startup. Changes to the snapshot do not affect the listener.
     /// </summary>
     public IPEndPoint Endpoint
     {
@@ -73,8 +81,8 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
             lock (_lifecycleSync)
             {
                 var endpoint = _state == TcpServerState.Running && _boundEndPoint is { } boundEndPoint
-                                   ? boundEndPoint
-                                   : _endPoint;
+                    ? boundEndPoint
+                    : _endPoint;
 
                 return (IPEndPoint)endpoint.Create(endpoint.Serialize());
             }
@@ -93,7 +101,9 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         }
     }
 
-    /// <summary>Gets whether the listener is accepting connections; false during graceful drain.</summary>
+    /// <summary>
+    ///     Gets whether the listener is accepting connections; false during graceful drain.
+    /// </summary>
     public bool IsRunning
     {
         get
@@ -106,8 +116,8 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
     }
 
     /// <summary>
-    /// Creates a listener. Shared middleware and framers must be stateless or thread-safe;
-    /// use the pipeline factory for connection-specific state.
+    ///     Creates a listener. Shared middleware and framers must be stateless or thread-safe;
+    ///     use the pipeline factory for connection-specific state.
     /// </summary>
     public MoongateTcpServer(
         IPEndPoint endPoint,
@@ -149,7 +159,9 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         _configuredOptions = options;
     }
 
-    /// <summary>Registers middleware in execution order.</summary>
+    /// <summary>
+    ///     Registers middleware in execution order.
+    /// </summary>
     public MoongateTcpServer AddMiddleware(INetMiddleware middleware)
     {
         lock (_middlewareSync)
@@ -160,7 +172,9 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         return this;
     }
 
-    /// <summary>Creates a listener with bounded, asynchronous stream preparation.</summary>
+    /// <summary>
+    ///     Creates a listener with bounded, asynchronous stream preparation.
+    /// </summary>
     public static MoongateTcpServer CreateConfigured(IPEndPoint endpoint, TcpServerOptions options)
     {
         ArgumentNullException.ThrowIfNull(endpoint);
@@ -216,8 +230,12 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         }
     }
 
-    /// <summary>Closes the listener and cancels pending preparation while keeping established clients usable.</summary>
-    /// <remarks>Call StopAsync before restarting. Caller cancellation only cancels the wait.</remarks>
+    /// <summary>
+    ///     Closes the listener and cancels pending preparation while keeping established clients usable.
+    /// </summary>
+    /// <remarks>
+    ///     Call StopAsync before restarting. Caller cancellation only cancels the wait.
+    /// </remarks>
     public Task StopAcceptingAsync(CancellationToken cancellationToken = default)
     {
         Task stop;
@@ -843,19 +861,23 @@ public sealed class MoongateTcpServer : INetworkServer, IAsyncDisposable, IDispo
         client.OnDataReceived += (_, args) => OnDataReceived?.Invoke(this, args);
         client.OnException += (_, args) => ReportException(args);
         client.OnDisconnected += (_, args) =>
-                                 {
-                                     _ = GetOrStartClientCleanup(client);
-                                     InvokeSafely(OnClientDisconnect, args);
-                                 };
+        {
+            _ = GetOrStartClientCleanup(client);
+            InvokeSafely(OnClientDisconnect, args);
+        };
     }
 
-    /// <summary>Requests terminal shutdown without blocking the current callback.</summary>
+    /// <summary>
+    ///     Requests terminal shutdown without blocking the current callback.
+    /// </summary>
     public void Dispose()
     {
         _ = GetOrStartStopTask(true);
     }
 
-    /// <summary>Requests terminal shutdown and waits for all owned resources.</summary>
+    /// <summary>
+    ///     Requests terminal shutdown and waits for all owned resources.
+    /// </summary>
     public async ValueTask DisposeAsync()
     {
         await GetOrStartStopTask(true).ConfigureAwait(false);

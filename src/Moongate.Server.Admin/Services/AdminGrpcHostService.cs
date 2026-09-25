@@ -17,7 +17,9 @@ using ILogger = Serilog.ILogger;
 
 namespace Moongate.Server.Admin.Services;
 
-/// <summary>Hosts the optional embedded HTTP/2 endpoint without owning Moongate application services.</summary>
+/// <summary>
+///     Hosts the optional embedded HTTP/2 endpoint without owning Moongate application services.
+/// </summary>
 public sealed class AdminGrpcHostService : IAdminApiService, IAsyncDisposable
 {
     public const int StartupPriority = 110;
@@ -47,7 +49,11 @@ public sealed class AdminGrpcHostService : IAdminApiService, IAsyncDisposable
 
     public async Task StartAsync()
     {
-        if (_app is not null) { return; }
+        if (_app is not null)
+        {
+            return;
+        }
+
         _config.Validate();
 
         if (!_config.Enabled)
@@ -57,16 +63,21 @@ public sealed class AdminGrpcHostService : IAdminApiService, IAsyncDisposable
             return;
         }
 
-        if (!_config.AllowInsecureLoopback) { _certificate = LoadCertificate(); }
-        else { _logger.Warning("Administration gRPC uses plaintext HTTP/2 on explicit loopback only"); }
+        if (!_config.AllowInsecureLoopback)
+        {
+            _certificate = LoadCertificate();
+        }
+        else
+        {
+            _logger.Warning("Administration gRPC uses plaintext HTTP/2 on explicit loopback only");
+        }
 
         try
         {
             var builder = WebApplication.CreateSlimBuilder(new WebApplicationOptions { Args = [] });
             builder.Logging.ClearProviders();
             builder.Services.Configure<HostOptions>(options => options.ShutdownTimeout = ShutdownTimeout);
-            builder.WebHost.ConfigureKestrel(
-                options =>
+            builder.WebHost.ConfigureKestrel(options =>
                 {
                     options.Limits.MaxRequestBodySize = _config.MaxReceiveMessageBytes + 5L;
                     options.Listen(
@@ -76,7 +87,10 @@ public sealed class AdminGrpcHostService : IAdminApiService, IAsyncDisposable
                         {
                             listen.Protocols = HttpProtocols.Http2;
 
-                            if (_certificate is not null) { listen.UseHttps(_certificate); }
+                            if (_certificate is not null)
+                            {
+                                listen.UseHttps(_certificate);
+                            }
                         }
                     );
                 }
@@ -124,8 +138,15 @@ public sealed class AdminGrpcHostService : IAdminApiService, IAsyncDisposable
             {
                 using var deadline = new CancellationTokenSource(ShutdownTimeout);
 
-                try { await app.StopAsync(deadline.Token); }
-                finally { await app.DisposeAsync(); }
+                try
+                {
+                    await app.StopAsync(deadline.Token);
+                }
+                finally
+                {
+                    await app.DisposeAsync();
+                }
+
                 _logger.Information("Administration gRPC endpoint stopped");
             }
         }
@@ -142,10 +163,14 @@ public sealed class AdminGrpcHostService : IAdminApiService, IAsyncDisposable
         {
             var template = _config.CertificatePath.ExpandEnvironmentVariables(true);
 
-            if (string.IsNullOrWhiteSpace(template)) { throw new InvalidOperationException(); }
+            if (string.IsNullOrWhiteSpace(template))
+            {
+                throw new InvalidOperationException();
+            }
+
             var path = template.StartsWith('~') || Path.IsPathRooted(template)
-                           ? template.ResolvePathAndEnvs()
-                           : Path.Combine(_directories.Root, template).ResolvePathAndEnvs();
+                ? template.ResolvePathAndEnvs()
+                : Path.Combine(_directories.Root, template).ResolvePathAndEnvs();
             var password = _config.CertificatePassword.ExpandEnvironmentVariables(true);
             var certificate = X509CertificateLoader.LoadPkcs12FromFile(path, password, X509KeyStorageFlags.EphemeralKeySet);
 

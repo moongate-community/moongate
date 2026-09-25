@@ -61,8 +61,8 @@ public static class TileDataHelpers
     }
 
     /// <summary>
-    /// Reads a NUL-padded ASCII name from the start of <paramref name="buffer" />,
-    /// up to 20 bytes. Lets callers avoid pinning + Marshal.PtrToStructure.
+    ///     Reads a NUL-padded ASCII name from the start of <paramref name="buffer" />,
+    ///     up to 20 bytes. Lets callers avoid pinning + Marshal.PtrToStructure.
     /// </summary>
     public static string ReadNameString(ReadOnlySpan<byte> buffer)
     {

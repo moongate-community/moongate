@@ -10,8 +10,7 @@ public sealed class PersistenceOperationBarrierTests
         var barrier = new PersistenceOperationBarrier();
         Exception failure = cancel ? new OperationCanceledException() : new IOException("post-commit apply failed");
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var operation = barrier.ExecuteAsync(
-            async _ =>
+        var operation = barrier.ExecuteAsync(async _ =>
             {
                 await release.Task;
 
@@ -19,8 +18,7 @@ public sealed class PersistenceOperationBarrierTests
             }
         );
         var ran = false;
-        var queued = barrier.ExecuteAsync(
-            _ =>
+        var queued = barrier.ExecuteAsync(_ =>
             {
                 ran = true;
 
@@ -66,8 +64,7 @@ public sealed class PersistenceOperationBarrierTests
         var barrier = new PersistenceOperationBarrier();
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var operation = barrier.ExecuteAsync(
-            async _ =>
+        var operation = barrier.ExecuteAsync(async _ =>
             {
                 entered.SetResult();
                 await release.Task;
@@ -75,8 +72,7 @@ public sealed class PersistenceOperationBarrierTests
         );
         await entered.Task;
         var captured = false;
-        var save = barrier.RunSaveAsync(
-            () =>
+        var save = barrier.RunSaveAsync(() =>
             {
                 captured = true;
 
@@ -96,8 +92,7 @@ public sealed class PersistenceOperationBarrierTests
     public async Task ExecuteAsync_PreCanceledAndSaveFailure_DoNotPoison()
     {
         var barrier = new PersistenceOperationBarrier();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => barrier.ExecuteAsync(
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => barrier.ExecuteAsync(
                 _ => Task.CompletedTask,
                 new(true)
             )
@@ -111,9 +106,8 @@ public sealed class PersistenceOperationBarrierTests
     public async Task ExecuteAsync_Reentry_RejectsWithoutDeadlock()
     {
         var barrier = new PersistenceOperationBarrier();
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () =>
-                barrier.ExecuteAsync(token => barrier.ExecuteAsync(_ => Task.CompletedTask, token))
+        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            barrier.ExecuteAsync(token => barrier.ExecuteAsync(_ => Task.CompletedTask, token))
         );
     }
 }

@@ -32,11 +32,11 @@ public sealed class NetworkServiceTests
             {
                 Endpoints = endpoints,
                 ConnectionPipelineFactory = () =>
-                                            {
-                                                Interlocked.Increment(ref calls);
+                {
+                    Interlocked.Increment(ref calls);
 
-                                                return new();
-                                            }
+                    return new();
+                }
             },
             registry.Service
         );
@@ -103,13 +103,13 @@ public sealed class NetworkServiceTests
         {
             middleware.Release();
             await network.StopAsync()
-                         .ConfigureAwait(
-                             ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                         );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
             await registry.StopAsync()
-                          .ConfigureAwait(
-                              ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                          );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -146,13 +146,13 @@ public sealed class NetworkServiceTests
         finally
         {
             await network.StopAsync()
-                         .ConfigureAwait(
-                             ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                         );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
             await registry.StopAsync()
-                          .ConfigureAwait(
-                              ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                          );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -167,11 +167,11 @@ public sealed class NetworkServiceTests
         var received = Channel.CreateUnbounded<byte[]>();
         var accepted = new TaskCompletionSource<long>(TaskCreationOptions.RunContinuationsAsynchronously);
         network.ConnectionAccepted += (_, e) =>
-                                      {
-                                          Assert.True(registry.Service.TryGet(e.Connection.SessionId, out var found));
-                                          Assert.Same(e.Connection, found);
-                                          accepted.TrySetResult(e.Connection.SessionId);
-                                      };
+        {
+            Assert.True(registry.Service.TryGet(e.Connection.SessionId, out var found));
+            Assert.Same(e.Connection, found);
+            accepted.TrySetResult(e.Connection.SessionId);
+        };
         network.DataReceived += (_, e) => received.Writer.TryWrite(e.Data.ToArray());
 
         try

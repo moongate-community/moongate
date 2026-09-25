@@ -5,7 +5,9 @@ using Serilog.Events;
 
 namespace Moongate.Server.Services.Console.Internal.Logging;
 
-/// <summary>Delivers Serilog events to an inner console logger while the prompt row is hidden.</summary>
+/// <summary>
+///     Delivers Serilog events to an inner console logger while the prompt row is hidden.
+/// </summary>
 internal sealed class PromptAwareConsoleSink : ILogEventSink, IDisposable
 {
     private readonly IConsolePromptService _prompt;

@@ -8,7 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Persistence;
 
-/// <summary>Coordinates periodic and terminal captures with durable world persistence.</summary>
+/// <summary>
+///     Coordinates periodic and terminal captures with durable world persistence.
+/// </summary>
 public sealed class WorldSaveService : IWorldSaveService
 {
     public const int StartupPriority = 40;
@@ -109,7 +111,9 @@ public sealed class WorldSaveService : IWorldSaveService
         }
     }
 
-    /// <summary>Drains active saving and the loop without publishing a final capture.</summary>
+    /// <summary>
+    ///     Drains active saving and the loop without publishing a final capture.
+    /// </summary>
     public Task StopAsync()
     {
         return StopAsync(false);
@@ -142,8 +146,7 @@ public sealed class WorldSaveService : IWorldSaveService
 
     private async Task CaptureAsync(Action capture, Func<IGameLoopWorkItem, Task>? finalDispatch = null)
     {
-        var item = new WorldSaveCaptureWorkItem(
-            () =>
+        var item = new WorldSaveCaptureWorkItem(() =>
             {
                 var startedAt = _timeProvider.GetTimestamp();
                 _operations.Capture(capture);
@@ -255,16 +258,16 @@ public sealed class WorldSaveService : IWorldSaveService
             if (finalSave)
             {
                 await _gameLoop.StopWithFinalWorkAsync(
-                                   (dispatch, token) =>
-                                       _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture, dispatch), token),
-                                   CancellationToken.None
-                               )
-                               .ConfigureAwait(false);
+                        (dispatch, token) =>
+                            _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture, dispatch), token),
+                        CancellationToken.None
+                    )
+                    .ConfigureAwait(false);
             }
             else
             {
                 await _persistence.SaveAllAsync((capture, _) => CaptureAsync(capture), CancellationToken.None)
-                                  .ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
 
             _logger.Information(

@@ -61,8 +61,8 @@ public sealed class SessionPacketOutboxTests
     {
         await using var registry = await ConnectionRegistryFixture.CreateAsync();
         Exception failure = canceled
-                                ? new OperationCanceledException("independent cancellation")
-                                : new IOException("send failure");
+            ? new OperationCanceledException("independent cancellation")
+            : new IOException("send failure");
         var releaseFailure = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         using var connection = new ControlledNetworkConnection(17)
         {

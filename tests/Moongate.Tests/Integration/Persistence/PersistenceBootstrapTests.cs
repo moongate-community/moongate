@@ -167,9 +167,9 @@ public sealed class PersistenceBootstrapTests
         };
         using var container = new Container();
         container.RegisterMoongatePersistence(
-                     config.ToOptions(files.Directories["migrations"], files.Directories["plugins"], ServerMode.Game)
-                 )
-                 .AddPersistenceAuth<TestEntity>();
+                config.ToOptions(files.Directories["migrations"], files.Directories["plugins"], ServerMode.Game)
+            )
+            .AddPersistenceAuth<TestEntity>();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
         var error = await Assert.ThrowsAsync<InvalidOperationException>(bootstrap.StartAsync);
         Assert.Contains("Accounts", error.Message);

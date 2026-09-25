@@ -12,7 +12,9 @@ using Moongate.Server.Core.Interfaces.Admin;
 
 namespace Moongate.Server.Admin.Authentication;
 
-/// <summary>Authenticates opaque administration tokens against the shared session store.</summary>
+/// <summary>
+///     Authenticates opaque administration tokens against the shared session store.
+/// </summary>
 public sealed class AdminTokenAuthenticationHandler : AuthenticationHandler<AuthenticationSchemeOptions>
 {
     private readonly IAdminSessionStore _sessions;
@@ -44,7 +46,11 @@ public sealed class AdminTokenAuthenticationHandler : AuthenticationHandler<Auth
         {
             var session = await _sessions.FindAsync(digest, Context.RequestAborted);
 
-            if (session is null) { return AuthenticateResult.Fail("Invalid administration credentials."); }
+            if (session is null)
+            {
+                return AuthenticateResult.Fail("Invalid administration credentials.");
+            }
+
             var identity = new ClaimsIdentity(
                 [
                     new(ClaimTypes.NameIdentifier, session.Identity.AccountId.Value.ToString(CultureInfo.InvariantCulture)),
@@ -66,8 +72,8 @@ public sealed class AdminTokenAuthenticationHandler : AuthenticationHandler<Auth
     protected override Task HandleChallengeAsync(AuthenticationProperties properties)
     {
         Response.StatusCode = Context.Items.ContainsKey(AdminAuthorizationPolicies.DependencyFailure)
-                                  ? StatusCodes.Status503ServiceUnavailable
-                                  : StatusCodes.Status401Unauthorized;
+            ? StatusCodes.Status503ServiceUnavailable
+            : StatusCodes.Status401Unauthorized;
 
         return Task.CompletedTask;
     }

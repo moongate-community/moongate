@@ -39,9 +39,8 @@ public sealed class RedisRealmRegistrationServiceTests
 
         await registration.StartAsync();
         await redis.Connection.GetDatabase().KeyDeleteAsync(prefix + "5");
-        await WaitForAsync(
-            async () => (await directory.FindByIndexAsync(5, AccountType.Regular))?.InstanceId ==
-                        realm.InstanceId
+        await WaitForAsync(async () => (await directory.FindByIndexAsync(5, AccountType.Regular))?.InstanceId ==
+                                       realm.InstanceId
         );
 
         await registration.StopAsync();
@@ -85,16 +84,16 @@ public sealed class RedisRealmRegistrationServiceTests
     private static RealmInstance Realm()
     {
         return new(
-                new(
-                    "realm",
-                    5,
-                    "Realm",
-                    IPAddress.Loopback,
-                    2595,
-                    AccountType.Regular
-                ),
-                Guid.NewGuid()
-            );
+            new(
+                "realm",
+                5,
+                "Realm",
+                IPAddress.Loopback,
+                2595,
+                AccountType.Regular
+            ),
+            Guid.NewGuid()
+        );
     }
 
     private static string Prefix()

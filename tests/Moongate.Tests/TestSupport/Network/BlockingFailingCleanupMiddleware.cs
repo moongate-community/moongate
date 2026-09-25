@@ -16,8 +16,7 @@ internal sealed class BlockingFailingCleanupMiddleware : INetMiddleware, IDispos
         CancellationToken cancellationToken = default
     )
     {
-        cancellationToken.Register(
-            () =>
+        cancellationToken.Register(() =>
             {
                 _entered.TrySetResult();
 

@@ -84,10 +84,10 @@ public static class HueHelpers
     public static SKColor HueToColor(ushort hue)
     {
         return new(
-                (byte)Expand5To8((hue & 0x7c00) >> 10),
-                (byte)Expand5To8((hue & 0x03e0) >> 5),
-                (byte)Expand5To8(hue & 0x001f)
-            );
+            (byte)Expand5To8((hue & 0x7c00) >> 10),
+            (byte)Expand5To8((hue & 0x03e0) >> 5),
+            (byte)Expand5To8(hue & 0x001f)
+        );
     }
 
     public static int HueToColorB(ushort hue)

@@ -4,7 +4,9 @@ using Moongate.Server.Core.Data.Sessions;
 
 namespace Moongate.Server.Core.Interfaces.Services;
 
-/// <summary>Tracks login connections without creating game sessions.</summary>
+/// <summary>
+///     Tracks login connections without creating game sessions.
+/// </summary>
 public interface ILoginSessionService
 {
     LoginSession GetOrCreate(INetworkConnection connection);

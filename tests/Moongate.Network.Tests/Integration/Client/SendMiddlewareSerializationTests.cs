@@ -8,9 +8,9 @@ using Moongate.Network.Tests.Support;
 namespace Moongate.Network.Tests.Integration.Client;
 
 /// <summary>
-/// The send path must be serialized per connection end to end. A protocol that encrypts only part of
-/// a packet header has nowhere but a send middleware to do it, so a
-/// stateful send middleware must consume its keystream in exactly the order the bytes hit the wire.
+///     The send path must be serialized per connection end to end. A protocol that encrypts only part of
+///     a packet header has nowhere but a send middleware to do it, so a
+///     stateful send middleware must consume its keystream in exactly the order the bytes hit the wire.
 /// </summary>
 public sealed class SendMiddlewareSerializationTests
 {
@@ -121,8 +121,8 @@ public sealed class SendMiddlewareSerializationTests
     }
 
     /// <summary>
-    /// Takes the next framed message and reverses the middleware keystream with a receive-side
-    /// position that advances in arrival order, the way a real peer's decryptor does.
+    ///     Takes the next framed message and reverses the middleware keystream with a receive-side
+    ///     position that advances in arrival order, the way a real peer's decryptor does.
     /// </summary>
     private (byte Tag, byte[] Payload) DecodeNext(BlockingCollection<byte[]> frames)
     {

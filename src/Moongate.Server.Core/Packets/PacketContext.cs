@@ -6,7 +6,9 @@ using Moongate.Server.Core.Types.Sessions;
 
 namespace Moongate.Server.Core.Packets;
 
-/// <summary>Provides session-scoped operations to an asynchronous packet handler.</summary>
+/// <summary>
+///     Provides session-scoped operations to an asynchronous packet handler.
+/// </summary>
 public sealed class PacketContext
 {
     private readonly GameSession _originalSession;
@@ -16,7 +18,9 @@ public sealed class PacketContext
 
     public long SessionId => _originalSession.SessionId;
 
-    /// <summary>The raw four-byte seed received from this game's TCP connection.</summary>
+    /// <summary>
+    ///     The raw four-byte seed received from this game's TCP connection.
+    /// </summary>
     public uint? Seed => _originalSession.NetworkSession.Seed;
 
     public PacketContext(
@@ -32,7 +36,9 @@ public sealed class PacketContext
         _sender = sender;
     }
 
-    /// <summary>Queues an outgoing packet only while the original session remains connected.</summary>
+    /// <summary>
+    ///     Queues an outgoing packet only while the original session remains connected.
+    /// </summary>
     public bool TrySend(IOutgoingPacket packet)
     {
         var connection = _originalSession.NetworkSession.Client;
@@ -42,7 +48,9 @@ public sealed class PacketContext
                _sender.TrySend(SessionId, connection, packet);
     }
 
-    /// <summary>Sends a final reply in order and closes only the original connection.</summary>
+    /// <summary>
+    ///     Sends a final reply in order and closes only the original connection.
+    /// </summary>
     public async Task<bool> SendAndDisconnectAsync(
         IOutgoingPacket packet,
         CancellationToken cancellationToken = default
@@ -57,12 +65,12 @@ public sealed class PacketContext
         }
 
         var sent = await _sender.SendAndDisconnectAsync(
-                                    SessionId,
-                                    connection,
-                                    packet,
-                                    cancellationToken
-                                )
-                                .ConfigureAwait(false);
+                SessionId,
+                connection,
+                packet,
+                cancellationToken
+            )
+            .ConfigureAwait(false);
 
         if (!sent)
         {
@@ -72,7 +80,9 @@ public sealed class PacketContext
         return sent;
     }
 
-    /// <summary>Runs one state change on the game loop; false means the original session is gone.</summary>
+    /// <summary>
+    ///     Runs one state change on the game loop; false means the original session is gone.
+    /// </summary>
     public async ValueTask<bool> RunOnGameLoopAsync(
         Action<GameSession> action,
         CancellationToken cancellationToken = default

@@ -3,7 +3,9 @@ using Tomlyn.Serialization;
 
 namespace Moongate.Core.Serialization.Toml;
 
-/// <summary>Reads and writes an <see cref="EnumValueSpec{TEnum}" /> as the text it documents.</summary>
+/// <summary>
+///     Reads and writes an <see cref="EnumValueSpec{TEnum}" /> as the text it documents.
+/// </summary>
 public sealed class EnumValueSpecTomlConverter<TEnum> : TomlConverter<EnumValueSpec<TEnum>> where TEnum : struct, Enum
 {
     /// <inheritdoc />

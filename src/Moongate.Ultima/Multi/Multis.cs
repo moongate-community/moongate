@@ -25,10 +25,12 @@ public sealed class Multis
     }
 
     /// <summary>
-    /// Gets <see cref="MultiComponentList" /> of multi
+    ///     Gets <see cref="MultiComponentList" /> of multi
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static MultiComponentList GetComponents(int index)
     {
         MultiComponentList mcl;
@@ -237,7 +239,7 @@ public sealed class Multis
     }
 
     /// <summary>
-    /// ReReads multi.mul
+    ///     ReReads multi.mul
     /// </summary>
     public static void Reload()
     {

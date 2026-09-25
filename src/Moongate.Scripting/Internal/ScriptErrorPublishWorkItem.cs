@@ -5,7 +5,9 @@ using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Scripting.Internal;
 
-/// <summary>Publishes a ScriptErrorEvent from the loop thread, outside any coroutine resume.</summary>
+/// <summary>
+///     Publishes a ScriptErrorEvent from the loop thread, outside any coroutine resume.
+/// </summary>
 internal sealed class ScriptErrorPublishWorkItem : IGameLoopWorkItem
 {
     private readonly IEventBusService _eventBus;

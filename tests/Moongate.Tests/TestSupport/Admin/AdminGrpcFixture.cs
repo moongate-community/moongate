@@ -34,8 +34,11 @@ internal sealed class AdminGrpcFixture : IAsyncDisposable
         var backend = await AccountAdminFixture.CreateAsync();
         var builder = WebApplication.CreateSlimBuilder();
         builder.Logging.ClearProviders();
-        builder.WebHost.ConfigureKestrel(
-            options => options.Listen(IPAddress.Loopback, 0, listen => listen.Protocols = HttpProtocols.Http2)
+        builder.WebHost.ConfigureKestrel(options => options.Listen(
+                IPAddress.Loopback,
+                0,
+                listen => listen.Protocols = HttpProtocols.Http2
+            )
         );
         var gate = new AdminRequestGate(concurrency);
         AdminGrpcApplication.AddServices(

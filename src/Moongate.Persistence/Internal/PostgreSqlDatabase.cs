@@ -38,11 +38,11 @@ internal sealed class PostgreSqlDatabase : IDisposable
         options.ValidateSameDatabaseEndpoint(runtimeConnectionString, schemaConnectionString);
         SerialTypeHandler.EnsureRegistered();
         var orm = new FreeSqlBuilder()
-                  .UseConnectionString(DataType.PostgreSQL, runtimeConnectionString)
-                  .UseNameConvert(NameConvertType.PascalCaseToUnderscoreWithLower)
-                  .UseAutoSyncStructure(false)
-                  .UseNoneCommandParameter(false)
-                  .Build();
+            .UseConnectionString(DataType.PostgreSQL, runtimeConnectionString)
+            .UseNameConvert(NameConvertType.PascalCaseToUnderscoreWithLower)
+            .UseAutoSyncStructure(false)
+            .UseNoneCommandParameter(false)
+            .Build();
 
         return new(options.Target, runtimeConnectionString, schemaConnectionString, orm);
     }

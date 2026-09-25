@@ -8,8 +8,8 @@ namespace Moongate.Core.Text;
 public static class TextEncoding
 {
     private static Encoding m_UTF8,
-                            m_Unicode,
-                            m_UnicodeLE;
+        m_Unicode,
+        m_UnicodeLE;
 
     public static Encoding UTF8 => m_UTF8 ??= new UTF8Encoding(false, false);
     public static Encoding Unicode => m_Unicode ??= new UnicodeEncoding(true, false, false);
@@ -21,10 +21,10 @@ public static class TextEncoding
         return encoding.BodyName switch
         {
             "utf-16BE" => 2,
-            "utf-16" => 2,
+            "utf-16"   => 2,
             "utf-32BE" => 4,
-            "utf-32" => 4,
-            _ => 1
+            "utf-32"   => 4,
+            _          => 1
         };
     }
 
@@ -163,8 +163,8 @@ public static class TextEncoding
 
         char[] rentedChars = null;
         var chars = charCount <= 256
-                        ? stackalloc char[charCount]
-                        : rentedChars = ArrayPool<char>.Shared.Rent(charCount);
+            ? stackalloc char[charCount]
+            : rentedChars = ArrayPool<char>.Shared.Rent(charCount);
 
         try
         {
@@ -179,8 +179,8 @@ public static class TextEncoding
             }
 
             using var sb = charCount <= 256
-                               ? new(stackalloc char[charCount])
-                               : ValueStringBuilder.Create(charCount);
+                ? new(stackalloc char[charCount])
+                : ValueStringBuilder.Create(charCount);
 
             while (index != -1)
             {

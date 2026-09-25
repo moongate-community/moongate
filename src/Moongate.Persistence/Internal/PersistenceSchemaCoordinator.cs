@@ -43,8 +43,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         Prepare();
 
         return _databases.TryGetValue(target, out var database)
-                   ? database
-                   : throw new InvalidOperationException($"Persistence target '{target}' is not active.");
+            ? database
+            : throw new InvalidOperationException($"Persistence target '{target}' is not active.");
     }
 
     public IPersistenceModule GetOwner(Type entityType)
@@ -69,8 +69,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             if (_options.DevelopmentMigrations is not null)
             {
                 await new DevelopmentMigrationCoordinator(_options.DevelopmentMigrations, _logger)
-                      .RunAsync(_databases, _snapshot!, cancellationToken)
-                      .ConfigureAwait(false);
+                    .RunAsync(_databases, _snapshot!, cancellationToken)
+                    .ConfigureAwait(false);
                 IsReady = true;
 
                 return;
@@ -146,8 +146,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         {
             cancellationToken.ThrowIfCancellationRequested();
             var connectionString = _databases.TryGetValue(target, out var database)
-                                       ? database.RuntimeConnectionString
-                                       : _options.GetRequiredDatabase(target).ResolveRuntimeConnectionString();
+                ? database.RuntimeConnectionString
+                : _options.GetRequiredDatabase(target).ResolveRuntimeConnectionString();
             await using var connection = new NpgsqlConnection(connectionString);
 
             try
@@ -190,7 +190,7 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         {
             var ddl = await comparison.WaitAsync(cancellationToken).ConfigureAwait(false);
             var sequences = await PersistenceSerialSequence.CompareAsync(database, module.EntityTypes, cancellationToken)
-                                                           .ConfigureAwait(false);
+                .ConfigureAwait(false);
 
             return ddl + sequences;
         }
@@ -249,8 +249,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
                     }
 
                     var expected = target == PersistenceDatabaseTarget.Accounts
-                                       ? MigrationTarget.Auth
-                                       : MigrationTarget.World;
+                        ? MigrationTarget.Auth
+                        : MigrationTarget.World;
 
                     if (catalog.Target != expected)
                     {
@@ -320,11 +320,11 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
         {
             var database = _databases[targetGroup.Key];
             await using var schemaLock = await PostgreSqlSchemaLock.AcquireAsync(
-                                                                       database.SchemaConnectionString,
-                                                                       targetGroup.Key,
-                                                                       cancellationToken
-                                                                   )
-                                                                   .ConfigureAwait(false);
+                    database.SchemaConnectionString,
+                    targetGroup.Key,
+                    cancellationToken
+                )
+                .ConfigureAwait(false);
 
             foreach (var module in targetGroup)
             {
@@ -367,8 +367,8 @@ internal sealed class PersistenceSchemaCoordinator : IAsyncDisposable
             await using var connection = new NpgsqlConnection(database.RuntimeConnectionString);
             await connection.OpenAsync(cancellationToken).ConfigureAwait(false);
             var applied = await MigrationHistory
-                                .ReadAsync(() => connection.CreateCommand(), catalog.Target, cancellationToken)
-                                .ConfigureAwait(false);
+                .ReadAsync(() => connection.CreateCommand(), catalog.Target, cancellationToken)
+                .ConfigureAwait(false);
             var pending = MigrationHistory.Validate(catalog, applied);
 
             if (pending.Count > 0)

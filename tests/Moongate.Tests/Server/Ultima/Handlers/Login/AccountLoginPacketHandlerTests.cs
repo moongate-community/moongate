@@ -128,14 +128,14 @@ public sealed class AccountLoginPacketHandlerTests
     private static StubRealmCatalog Directory()
     {
         return new(
-                new RealmDescriptor(
-                    "local",
-                    1,
-                    "Local",
-                    IPAddress.Loopback,
-                    2593,
-                    AccountType.Regular
-                )
-            );
+            new RealmDescriptor(
+                "local",
+                1,
+                "Local",
+                IPAddress.Loopback,
+                2593,
+                AccountType.Regular
+            )
+        );
     }
 }

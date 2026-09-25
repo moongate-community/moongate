@@ -32,6 +32,7 @@ internal sealed class ControlledMetricProvider : IMetricProvider
         {
             _maximumConcurrency = Math.Max(active, _maximumConcurrency);
         }
+
         _entered.TrySetResult(Interlocked.Increment(ref _calls));
 
         try

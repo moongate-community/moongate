@@ -9,7 +9,9 @@ using Moongate.Server.Core.Types.Hosting;
 
 namespace Moongate.Server.Data.Config.Sections;
 
-/// <summary>Configures lazy PostgreSQL target connections and explicit schema synchronization.</summary>
+/// <summary>
+///     Configures lazy PostgreSQL target connections and explicit schema synchronization.
+/// </summary>
 public sealed class PersistenceConfig
 {
     public bool AutoSyncSchema { get; set; }
@@ -35,18 +37,18 @@ public sealed class PersistenceConfig
         migrationsDirectory = ResolveMigrationsDirectory(migrationsDirectory);
 
         var development = AutoGenerateMigrations
-                              ? new DevelopmentMigrationOptions(
-                                  migrationsDirectory!,
-                                  pluginsDirectory,
-                                  new DevelopmentMigrationRunner(
-                                      rootDirectory ??
-                                      Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory,
-                                      migrationsDirectory!,
-                                      pluginsDirectory
-                                  ),
-                                  MigrationComponentResolver.Resolve
-                              )
-                              : null;
+            ? new DevelopmentMigrationOptions(
+                migrationsDirectory!,
+                pluginsDirectory,
+                new DevelopmentMigrationRunner(
+                    rootDirectory ??
+                    Environment.GetEnvironmentVariable("MOONGATE_ROOT") ?? AppContext.BaseDirectory,
+                    migrationsDirectory!,
+                    pluginsDirectory
+                ),
+                MigrationComponentResolver.Resolve
+            )
+            : null;
 
         var databases = mode switch
         {
@@ -66,10 +68,10 @@ public sealed class PersistenceConfig
             migrationsDirectory is null
                 ? null
                 : target => MigrationCatalog.Load(
-                      migrationsDirectory,
-                      pluginsDirectory,
-                      target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World
-                  ),
+                    migrationsDirectory,
+                    pluginsDirectory,
+                    target == PersistenceDatabaseTarget.Accounts ? MigrationTarget.Auth : MigrationTarget.World
+                ),
             target => (mode & (target == PersistenceDatabaseTarget.Accounts ? ServerMode.Login : ServerMode.Game)) != 0,
             development
         );
@@ -78,8 +80,8 @@ public sealed class PersistenceConfig
     public string? ResolveMigrationsDirectory(string? fallback = null)
     {
         return string.IsNullOrWhiteSpace(MigrationsDirectory)
-                   ? fallback
-                   : MigrationsDirectory.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
+            ? fallback
+            : MigrationsDirectory.ExpandEnvironmentVariables(true).ResolvePathAndEnvs();
     }
 
     public void Validate()

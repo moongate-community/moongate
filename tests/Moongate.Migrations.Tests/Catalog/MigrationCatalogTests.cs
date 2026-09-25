@@ -53,8 +53,7 @@ public sealed class MigrationCatalogTests
     {
         using var files = new MigrationFiles();
         files.Write("plugins/p/migrations/manifest.json", JsonSerializer.Serialize(new { id }));
-        Assert.Throws<InvalidOperationException>(
-            () => MigrationCatalog.Load(
+        Assert.Throws<InvalidOperationException>(() => MigrationCatalog.Load(
                 files.Core,
                 files.Plugins,
                 MigrationTarget.World
@@ -69,8 +68,7 @@ public sealed class MigrationCatalogTests
         using var files = new MigrationFiles();
         files.Write("migrations/world/0001_first.sql", "SELECT 1;");
         files.Write("migrations/world/" + name, "SELECT 2;");
-        Assert.Throws<InvalidOperationException>(
-            () => MigrationCatalog.Load(
+        Assert.Throws<InvalidOperationException>(() => MigrationCatalog.Load(
                 files.Core,
                 files.Plugins,
                 MigrationTarget.World
@@ -83,8 +81,7 @@ public sealed class MigrationCatalogTests
     {
         using var files = new MigrationFiles();
         files.Write("plugins/p/migrations/world/0001_first.sql", "SELECT 1;");
-        Assert.Throws<InvalidOperationException>(
-            () => MigrationCatalog.Load(
+        Assert.Throws<InvalidOperationException>(() => MigrationCatalog.Load(
                 files.Core,
                 files.Plugins,
                 MigrationTarget.World

@@ -49,8 +49,7 @@ public sealed class GameLoopPumpTests
         var executed = new List<int>();
         Write(
             channel,
-            new ActionGameLoopWorkItem(
-                () =>
+            new ActionGameLoopWorkItem(() =>
                 {
                     executed.Add(1);
                     clock.Advance(TimeSpan.FromMilliseconds(5));

@@ -10,7 +10,9 @@ using StackExchange.Redis;
 
 namespace Moongate.Server.Services.Realms;
 
-/// <summary>Stores short-lived redirect tickets in the shared Redis instance.</summary>
+/// <summary>
+///     Stores short-lived redirect tickets in the shared Redis instance.
+/// </summary>
 public sealed class RedisGameHandoffStore : IGameHandoffStore
 {
     private const int MaxIssueAttempts = 32;
@@ -23,7 +25,9 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
     private readonly Func<uint> _generateAuthKey;
 
     public RedisGameHandoffStore(RedisConnectionService redis, IHandoffProofService proof)
-        : this(redis, proof, GenerateAuthKey) { }
+        : this(redis, proof, GenerateAuthKey)
+    {
+    }
 
     internal RedisGameHandoffStore(
         RedisConnectionService redis,
@@ -87,7 +91,7 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
                 {
                     var key = Key(handoff.RealmId, authKey);
                     var issued = await database.StringSetAsync(key, encoded, TicketLifetime, When.NotExists)
-                                               .ConfigureAwait(false);
+                        .ConfigureAwait(false);
 
                     if (token.IsCancellationRequested)
                     {
@@ -187,8 +191,8 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
                 {
                     return consumedBytes is not null &&
                            CryptographicOperations.FixedTimeEquals(candidateBytes, consumedBytes)
-                               ? handoff
-                               : null;
+                        ? handoff
+                        : null;
                 }
                 finally
                 {

@@ -6,7 +6,9 @@ using Moongate.Server.Core.Types.Accounts;
 
 namespace Moongate.Server.Core.Data.Sessions;
 
-/// <summary>Login-only connection state with a generation independent of the numeric session slot.</summary>
+/// <summary>
+///     Login-only connection state with a generation independent of the numeric session slot.
+/// </summary>
 public sealed class LoginSession
 {
     private const int CredentialKeySize = 32;
@@ -28,7 +30,10 @@ public sealed class LoginSession
     {
         get
         {
-            lock (_gate) { return _accountId; }
+            lock (_gate)
+            {
+                return _accountId;
+            }
         }
     }
 
@@ -36,7 +41,10 @@ public sealed class LoginSession
     {
         get
         {
-            lock (_gate) { return _accountType; }
+            lock (_gate)
+            {
+                return _accountType;
+            }
         }
     }
 
@@ -44,7 +52,10 @@ public sealed class LoginSession
     {
         get
         {
-            lock (_gate) { return _disconnected; }
+            lock (_gate)
+            {
+                return _disconnected;
+            }
         }
     }
 
@@ -101,7 +112,9 @@ public sealed class LoginSession
         }
     }
 
-    /// <summary>Returns an atomic account snapshot with a caller-owned key that must be cleared after use.</summary>
+    /// <summary>
+    ///     Returns an atomic account snapshot with a caller-owned key that must be cleared after use.
+    /// </summary>
     public bool TryGetAuthenticatedAccount(
         out Serial accountId,
         out AccountType accountType,

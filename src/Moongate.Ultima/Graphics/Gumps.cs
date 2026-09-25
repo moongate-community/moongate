@@ -51,13 +51,18 @@ public sealed class Gumps
     }
 
     /// <summary>
-    /// Returns Bitmap of index and applies Hue
+    ///     Returns Bitmap of index and applies Hue
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="hue"></param>
-    /// <param name="onlyHueGrayPixels"></param>
-    /// <param name="patched"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <param name="hue">
+    /// </param>
+    /// <param name="onlyHueGrayPixels">
+    /// </param>
+    /// <param name="patched">
+    /// </param>
+    /// <returns>
+    /// </returns>
 
     // TODO: Currently unused and may be broken because of recent UOP changes. Needs verdata `patched` checks and compression handling
     public static unsafe UltimaBitmap GetGump(int index, Hue hue, bool onlyHueGrayPixels, out bool patched)
@@ -144,7 +149,7 @@ public sealed class Gumps
                         var pPixelEnd = pPixel + width;
 
                         ushort color,
-                               count;
+                            count;
 
                         if (onlyHueGrayPixels)
                         {
@@ -237,21 +242,26 @@ public sealed class Gumps
     }
 
     /// <summary>
-    /// Returns Bitmap of index
+    ///     Returns Bitmap of index
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UltimaBitmap GetGump(int index)
     {
         return GetGump(index, out _);
     }
 
     /// <summary>
-    /// Returns Bitmap of index and if verdata patched
+    ///     Returns Bitmap of index and if verdata patched
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="patched"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <param name="patched">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static unsafe UltimaBitmap GetGump(int index, out bool patched)
     {
         patched = _patched.ContainsKey(index) && _patched[index];
@@ -573,10 +583,12 @@ public sealed class Gumps
     }
 
     /// <summary>
-    /// Tests if index is defined
+    ///     Tests if index is defined
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool IsValidIndex(int index)
     {
         if (_fileIndex == null)
@@ -616,15 +628,15 @@ public sealed class Gumps
     }
 
     /// <summary>
-    /// Preloads all gumps in parallel, populating the LRU bitmap cache.
-    /// Each worker opens its own FileStream against the .uop / .mul so the
-    /// expensive part — zlib + Mythic decompression and RLE decode — runs
-    /// concurrently across CPU cores. Per-bitmap work is unchanged; only
-    /// the orchestration is parallel.
-    /// Set <paramref name="parallelism" /> to 0 to use ProcessorCount.
-    /// <paramref name="progressCallback" /> is invoked from worker threads
-    /// with the cumulative count of completed gumps; the caller is
-    /// responsible for marshalling to the UI thread if needed.
+    ///     Preloads all gumps in parallel, populating the LRU bitmap cache.
+    ///     Each worker opens its own FileStream against the .uop / .mul so the
+    ///     expensive part — zlib + Mythic decompression and RLE decode — runs
+    ///     concurrently across CPU cores. Per-bitmap work is unchanged; only
+    ///     the orchestration is parallel.
+    ///     Set <paramref name="parallelism" /> to 0 to use ProcessorCount.
+    ///     <paramref name="progressCallback" /> is invoked from worker threads
+    ///     with the cumulative count of completed gumps; the caller is
+    ///     responsible for marshalling to the UI thread if needed.
     /// </summary>
     public static void PreloadParallel(int parallelism, Action<int> progressCallback)
     {
@@ -698,7 +710,7 @@ public sealed class Gumps
     }
 
     /// <summary>
-    /// ReReads gumpart
+    ///     ReReads gumpart
     /// </summary>
     public static void Reload()
     {
@@ -730,19 +742,22 @@ public sealed class Gumps
     }
 
     /// <summary>
-    /// Removes Gumpindex <see cref="_removed" />
+    ///     Removes Gumpindex <see cref="_removed" />
     /// </summary>
-    /// <param name="index"></param>
+    /// <param name="index">
+    /// </param>
     public static void RemoveGump(int index)
     {
         _removed[index] = true;
     }
 
     /// <summary>
-    /// Replaces Gump <see cref="_replaced" />
+    ///     Replaces Gump <see cref="_replaced" />
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="bmp"></param>
+    /// <param name="index">
+    /// </param>
+    /// <param name="bmp">
+    /// </param>
     public static void ReplaceGump(int index, UltimaBitmap bmp)
     {
         _replaced[index] = bmp;
@@ -837,8 +852,8 @@ public sealed class Gumps
     }
 
     /// <summary>
-    /// Override the LRU cap for the Gumps read cache. See
-    /// <see cref="Files.CacheCapacityGumps" /> for the default.
+    ///     Override the LRU cap for the Gumps read cache. See
+    ///     <see cref="Files.CacheCapacityGumps" /> for the default.
     /// </summary>
     public static void SetCacheCapacity(int capacity)
     {
@@ -846,11 +861,11 @@ public sealed class Gumps
     }
 
     /// <summary>
-    /// Returns the dimensions of a gump without decoding pixel data.
-    /// Cheaper than TryGetGumpPixels when the caller only needs to size a
-    /// destination buffer. For UOP-compressed entries we still have to
-    /// decompress to recover width/height — those are paid for on the
-    /// first hit and cached via entry.Extra1/Extra2.
+    ///     Returns the dimensions of a gump without decoding pixel data.
+    ///     Cheaper than TryGetGumpPixels when the caller only needs to size a
+    ///     destination buffer. For UOP-compressed entries we still have to
+    ///     decompress to recover width/height — those are paid for on the
+    ///     first hit and cached via entry.Extra1/Extra2.
     /// </summary>
     public static bool TryGetGumpDimensions(int index, out int width, out int height)
     {
@@ -885,19 +900,19 @@ public sealed class Gumps
     }
 
     /// <summary>
-    /// Decodes a gump into a caller-supplied pixel buffer. Lets the caller
-    /// reuse a single shared destination across many decodes (e.g. a
-    /// listview rendering thumbnails) instead of paying the per-call
-    /// `new Bitmap(...)` + GDI handle + LockBits cost.
-    /// `destination` must be at least <paramref name="width" /> *
-    /// <paramref name="height" /> ushorts; the buffer is filled with
-    /// Format16bppArgb1555 pixels. Returns false if the gump is missing,
-    /// removed, the entry has invalid dimensions, or the buffer is too
-    /// small. width / height are out parameters and are filled even when
-    /// the buffer is too small, so callers can resize and retry.
-    /// Cache semantics: this method does not write to or read from
-    /// _cache — every call decodes from disk. Use GetGump when you want
-    /// the standard bitmap cache.
+    ///     Decodes a gump into a caller-supplied pixel buffer. Lets the caller
+    ///     reuse a single shared destination across many decodes (e.g. a
+    ///     listview rendering thumbnails) instead of paying the per-call
+    ///     `new Bitmap(...)` + GDI handle + LockBits cost.
+    ///     `destination` must be at least <paramref name="width" /> *
+    ///     <paramref name="height" /> ushorts; the buffer is filled with
+    ///     Format16bppArgb1555 pixels. Returns false if the gump is missing,
+    ///     removed, the entry has invalid dimensions, or the buffer is too
+    ///     small. width / height are out parameters and are filled even when
+    ///     the buffer is too small, so callers can resize and retry.
+    ///     Cache semantics: this method does not write to or read from
+    ///     _cache — every call decodes from disk. Use GetGump when you want
+    ///     the standard bitmap cache.
     /// </summary>
     public static unsafe bool TryGetGumpPixels(
         int index,

@@ -104,9 +104,9 @@ public sealed class PacketSendWithoutGameTests
         {
             release.TrySetResult();
             await sender.StopAsync()
-                        .ConfigureAwait(
-                            ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                        );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 

@@ -18,10 +18,10 @@ public sealed class AccountAdminAccessServiceTests
     {
         await using var fixture = await AccountAdminFixture.CreateAsync();
         var account = (await fixture.Accounts.Service.CreateAccountAsync(
-                           "admin",
-                           fixture.Accounts.Password,
-                           AccountType.Administrator
-                       )).Account!;
+            "admin",
+            fixture.Accounts.Password,
+            AccountType.Administrator
+        )).Account!;
         var command = new AccountCommand(fixture.Accounts.Service, fixture.Authority);
         var context = new CommandContext(
             "account api-access admin on",
@@ -43,15 +43,19 @@ public sealed class AccountAdminAccessServiceTests
     {
         await using var fixture = await AccountAdminFixture.CreateAsync();
         var result = await fixture.Accounts.Service.CreateAccountAsync(
-                         new()
-                         {
-                             Username = "admin", Password = fixture.Accounts.Password, CanAccessApi = true
-                         }
-                     );
+            new()
+            {
+                Username = "admin", Password = fixture.Accounts.Password, CanAccessApi = true
+            }
+        );
         var account = result.Account!;
         account.IsLocked = state == "locked";
 
-        if (state == "unknown-role") { account.AccountType = (AccountType)99; }
+        if (state == "unknown-role")
+        {
+            account.AccountType = (AccountType)99;
+        }
+
         await fixture.Accounts.Accounts.UpsertAsync(account);
         Assert.Null(
             await fixture.Authority.LoginAsync(
@@ -68,10 +72,10 @@ public sealed class AccountAdminAccessServiceTests
     {
         await using var fixture = await AccountAdminFixture.CreateAsync();
         var result = await fixture.Accounts.Service.CreateAccountAsync(
-                         "admin",
-                         fixture.Accounts.Password,
-                         AccountType.Administrator
-                     );
+            "admin",
+            fixture.Accounts.Password,
+            AccountType.Administrator
+        );
         await fixture.Authority.SetApiAccessAsync("admin", true);
         Assert.NotNull(await fixture.Authority.LoginAsync("admin", fixture.Accounts.Password));
         var digest = fixture.Store.LastDigest!;
@@ -100,20 +104,20 @@ public sealed class AccountAdminAccessServiceTests
     {
         await using var fixture = await AccountAdminFixture.CreateAsync();
         var created = await fixture.Accounts.Service.CreateAccountAsync(
-                          new()
-                          {
-                              Username = "admin", Password = fixture.Accounts.Password,
-                              AccountType = AccountType.Administrator, CanAccessApi = true
-                          }
-                      );
+            new()
+            {
+                Username = "admin", Password = fixture.Accounts.Password,
+                AccountType = AccountType.Administrator, CanAccessApi = true
+            }
+        );
         var account = created.Account!;
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         fixture.Store.BeforeIssue = async () =>
-                                    {
-                                        entered.TrySetResult();
-                                        await release.Task;
-                                    };
+        {
+            entered.TrySetResult();
+            await release.Task;
+        };
         var login = fixture.Authority.LoginAsync("admin", fixture.Accounts.Password);
         await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
         var newPassword = Guid.NewGuid().ToString("N");
@@ -136,13 +140,17 @@ public sealed class AccountAdminAccessServiceTests
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(10));
 
             while (!await fixture.Accounts.Database.ScalarAsync<bool>(
-                        "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock')"
-                    ))
+                       "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock')"
+                   ))
             {
                 await Task.Delay(10, deadline.Token);
             }
         }
-        finally { release.TrySetResult(); }
+        finally
+        {
+            release.TrySetResult();
+        }
+
         var result = await login.WaitAsync(TimeSpan.FromSeconds(10));
         await mutation.WaitAsync(TimeSpan.FromSeconds(10));
         Assert.NotNull(result);
@@ -152,11 +160,14 @@ public sealed class AccountAdminAccessServiceTests
         Assert.Null(await fixture.Redis.Store.FindAsync(digest));
         fixture.Store.BeforeIssue = null;
         var next = await fixture.Authority.LoginAsync(
-                       "admin",
-                       change == "password" ? newPassword : fixture.Accounts.Password
-                   );
+            "admin",
+            change == "password" ? newPassword : fixture.Accounts.Password
+        );
 
-        if (change is "locked" or "disabled") { Assert.Null(next); }
+        if (change is "locked" or "disabled")
+        {
+            Assert.Null(next);
+        }
         else
         {
             Assert.NotNull(next);
@@ -169,19 +180,25 @@ public sealed class AccountAdminAccessServiceTests
     {
         await using var fixture = await AccountAdminFixture.CreateAsync();
         var created = await fixture.Accounts.Service.CreateAccountAsync(
-                          new()
-                          {
-                              Username = "admin", Password = fixture.Accounts.Password,
-                              AccountType = AccountType.Administrator, CanAccessApi = true
-                          }
-                      );
+            new()
+            {
+                Username = "admin", Password = fixture.Accounts.Password,
+                AccountType = AccountType.Administrator, CanAccessApi = true
+            }
+        );
         var login = await fixture.Authority.LoginAsync("admin", fixture.Accounts.Password);
         var digest = fixture.Store.LastDigest!;
 
-        if (afterCommit) { fixture.Store.BeforeOpen = () => throw new AdminDependencyUnavailableException(); }
-        else { fixture.Store.AfterReset = () => throw new AdminDependencyUnavailableException(); }
-        await Assert.ThrowsAsync<AdminDependencyUnavailableException>(
-            () => fixture.Authority.UpdateAccessAsync(
+        if (afterCommit)
+        {
+            fixture.Store.BeforeOpen = () => throw new AdminDependencyUnavailableException();
+        }
+        else
+        {
+            fixture.Store.AfterReset = () => throw new AdminDependencyUnavailableException();
+        }
+
+        await Assert.ThrowsAsync<AdminDependencyUnavailableException>(() => fixture.Authority.UpdateAccessAsync(
                 created.Account!.Id,
                 new() { AccountType = AccountType.Regular, CanAccessApi = true }
             )

@@ -64,6 +64,7 @@ internal sealed class DiagnosticTimeProvider : TimeProvider, IDisposable
         {
             timer = _timer;
         }
+
         timer?.Dispose();
     }
 }

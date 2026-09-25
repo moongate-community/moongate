@@ -19,17 +19,19 @@ public sealed class StringList
     public string Language { get; }
 
     /// <summary>
-    /// Non-null when the file was loaded but parsing did not consume the full file cleanly
-    /// (e.g. a malformed entry). Contains a human-readable description of where parsing failed
-    /// and how many entries were salvaged. Caller should surface this to the user.
+    ///     Non-null when the file was loaded but parsing did not consume the full file cleanly
+    ///     (e.g. a malformed entry). Contains a human-readable description of where parsing failed
+    ///     and how many entries were salvaged. Caller should surface this to the user.
     /// </summary>
     public string LoadWarning { get; private set; }
 
     /// <summary>
-    /// Initialize <see cref="StringList" /> of Language
+    ///     Initialize <see cref="StringList" /> of Language
     /// </summary>
-    /// <param name="language"></param>
-    /// <param name="decompress"></param>
+    /// <param name="language">
+    /// </param>
+    /// <param name="decompress">
+    /// </param>
     public StringList(string language, bool decompress)
     {
         _decompress = decompress;
@@ -38,11 +40,14 @@ public sealed class StringList
     }
 
     /// <summary>
-    /// Initialize <see cref="StringList" /> of Language from path
+    ///     Initialize <see cref="StringList" /> of Language from path
     /// </summary>
-    /// <param name="language"></param>
-    /// <param name="path"></param>
-    /// <param name="decompress"></param>
+    /// <param name="language">
+    /// </param>
+    /// <param name="path">
+    /// </param>
+    /// <param name="decompress">
+    /// </param>
     public StringList(string language, string path, bool decompress)
     {
         _decompress = decompress;
@@ -122,8 +127,8 @@ public sealed class StringList
         public int Compare(StringEntry x, StringEntry y)
         {
             return _sortDescending
-                           ? string.CompareOrdinal(y.Text, x.Text)
-                           : string.CompareOrdinal(x.Text, y.Text);
+                ? string.CompareOrdinal(y.Text, x.Text)
+                : string.CompareOrdinal(x.Text, y.Text);
         }
     }
 
@@ -138,9 +143,10 @@ public sealed class StringList
     }
 
     /// <summary>
-    /// Saves <see cref="SaveStringList" /> to fileName
+    ///     Saves <see cref="SaveStringList" /> to fileName
     /// </summary>
-    /// <param name="fileName"></param>
+    /// <param name="fileName">
+    /// </param>
     public void SaveStringList(string fileName)
     {
         using var memoryStream = new MemoryStream();

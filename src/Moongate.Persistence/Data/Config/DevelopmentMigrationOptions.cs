@@ -5,7 +5,9 @@ using Moongate.Persistence.Types.Persistence;
 
 namespace Moongate.Persistence.Data.Config;
 
-/// <summary>Explicit development-only file sources and isolated execution policy.</summary>
+/// <summary>
+///     Explicit development-only file sources and isolated execution policy.
+/// </summary>
 public sealed class DevelopmentMigrationOptions
 {
     public string Directory { get; }

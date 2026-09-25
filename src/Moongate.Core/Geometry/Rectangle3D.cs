@@ -4,7 +4,7 @@ using Moongate.Core.Interfaces.Geometry;
 namespace Moongate.Core.Geometry;
 
 /// <summary>
-/// Represents Rectangle3D.
+///     Represents Rectangle3D.
 /// </summary>
 public struct Rectangle3D : IEquatable<Rectangle3D>, ISpanFormattable
 {

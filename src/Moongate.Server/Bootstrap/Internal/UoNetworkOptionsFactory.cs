@@ -23,8 +23,8 @@ internal static class UoNetworkOptionsFactory
     private static NetworkListenerOptions Create(MoongateServerConfig config, int port, Func<INetFramer> framerFactory)
     {
         var addresses = config.Network.ListenAddress == "0.0.0.0"
-                            ? NetworkUtils.GetLocalIpAddresses().ToArray()
-                            : new[] { IPAddress.Parse(config.Network.ListenAddress) };
+            ? NetworkUtils.GetLocalIpAddresses().ToArray()
+            : new[] { IPAddress.Parse(config.Network.ListenAddress) };
 
         return new()
         {

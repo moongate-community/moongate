@@ -7,13 +7,17 @@ using Moongate.Server.Services.Redis;
 
 namespace Moongate.Server.Services.Admin;
 
-/// <summary>Shares bounded username and direct-peer login attempt windows across hosts.</summary>
+/// <summary>
+///     Shares bounded username and direct-peer login attempt windows across hosts.
+/// </summary>
 public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
 {
     private readonly RedisConnectionService _redis;
     private readonly string _prefix;
 
-    public RedisAdminLoginThrottle(RedisConnectionService redis) : this(redis, "moongate:admin:") { }
+    public RedisAdminLoginThrottle(RedisConnectionService redis) : this(redis, "moongate:admin:")
+    {
+    }
 
     internal RedisAdminLoginThrottle(RedisConnectionService redis, string prefix)
     {
@@ -29,16 +33,17 @@ public sealed class RedisAdminLoginThrottle : IAdminLoginThrottle
         {
             throw new ArgumentException("Invalid administrative login throttle inputs.");
         }
+
         var result = await AdminRedisOperation.EvaluateAsync(
-                         _redis,
-                         AdminRedisScripts.Throttle,
-                         [
-                             _prefix + "throttle:user:" + Digest(username),
-                             _prefix + "throttle:peer:" + Digest(peer.MapToIPv6().ToString())
-                         ],
-                         [],
-                         token
-                     );
+            _redis,
+            AdminRedisScripts.Throttle,
+            [
+                _prefix + "throttle:user:" + Digest(username),
+                _prefix + "throttle:peer:" + Digest(peer.MapToIPv6().ToString())
+            ],
+            [],
+            token
+        );
 
         return (long)result == 1;
     }

@@ -1,21 +1,29 @@
 namespace Moongate.Ultima.Caching;
 
 /// <summary>
-/// Bounded LRU cache for map blocks, replacing the unbounded jagged arrays that previously kept every
-/// block a caller ever touched for the lifetime of the process. Keyed by the block's packed
-/// coordinates — see <see cref="Key" />.
-/// <para>
-/// Unlike <see cref="LruBitmapCache" /> there is no disposal to arrange: a block is a plain array, so
-/// a caller still holding one that has been evicted simply keeps it alive through the garbage
-/// collector. Eviction here can never pull the rug from under a reader, which is what forced that
-/// cache to leave <c>DisposeOnEvict</c> off by default.
-/// </para>
-/// <para>
-/// Thread safety: every public member is guarded by a single lock. The arrays this replaces were read
-/// with an unsynchronized read-modify-write (<c>_landTiles[x][y] ??= Read(x, y)</c>) from both the
-/// game loop and the HTTP threads that serve map tiles, so two readers could race on the same block.
-/// A miss costs a file read, which dwarfs the lock; a hit costs tens of nanoseconds.
-/// </para>
+///     Bounded LRU cache for map blocks, replacing the unbounded jagged arrays that previously kept every
+///     block a caller ever touched for the lifetime of the process. Keyed by the block's packed
+///     coordinates — see <see cref="Key" />.
+///     <para>
+///         Unlike <see cref="LruBitmapCache" /> there is no disposal to arrange: a block is a plain array, so
+///         a caller still holding one that has been evicted simply keeps it alive through the garbage
+///         collector. Eviction here can never pull the rug from under a reader, which is what forced that
+///         cache to leave
+///         <c>
+///             DisposeOnEvict
+///         </c>
+///         off by default.
+///     </para>
+///     <para>
+///         Thread safety: every public member is guarded by a single lock. The arrays this replaces were read
+///         with an unsynchronized read-modify-write (
+///         <c>
+///             _landTiles[x][y] ??= Read(x, y)
+///         </c>
+///         ) from both the
+///         game loop and the HTTP threads that serve map tiles, so two readers could race on the same block.
+///         A miss costs a file read, which dwarfs the lock; a hit costs tens of nanoseconds.
+///     </para>
 /// </summary>
 public sealed class LruBlockCache<TValue> where TValue : class
 {
@@ -28,7 +36,9 @@ public sealed class LruBlockCache<TValue> where TValue : class
     private int _capacity;
     private int _evictedCount;
 
-    /// <summary>Maximum number of blocks held. Lowering it evicts down to the new cap immediately.</summary>
+    /// <summary>
+    ///     Maximum number of blocks held. Lowering it evicts down to the new cap immediately.
+    /// </summary>
     public int Capacity
     {
         get
@@ -52,8 +62,8 @@ public sealed class LruBlockCache<TValue> where TValue : class
     }
 
     /// <summary>
-    /// Total blocks evicted since construction. Diagnostic, and what a test asserts to prove the
-    /// bounding actually happens rather than merely being configured.
+    ///     Total blocks evicted since construction. Diagnostic, and what a test asserts to prove the
+    ///     bounding actually happens rather than merely being configured.
     /// </summary>
     public int EvictedCount
     {
@@ -87,9 +97,9 @@ public sealed class LruBlockCache<TValue> where TValue : class
     }
 
     /// <summary>
-    /// The cached block, or the one <paramref name="read" /> produces — stored and returned. The read
-    /// runs while the lock is held, so a block is never decoded twice concurrently; that is the whole
-    /// point of routing misses through here rather than filling the cache from outside.
+    ///     The cached block, or the one <paramref name="read" /> produces — stored and returned. The read
+    ///     runs while the lock is held, so a block is never decoded twice concurrently; that is the whole
+    ///     point of routing misses through here rather than filling the cache from outside.
     /// </summary>
     public TValue GetOrAdd(long key, Func<TValue> read)
     {
@@ -118,13 +128,17 @@ public sealed class LruBlockCache<TValue> where TValue : class
         }
     }
 
-    /// <summary>Packs block coordinates into one key. Block counts are well under 2^31 on every facet.</summary>
+    /// <summary>
+    ///     Packs block coordinates into one key. Block counts are well under 2^31 on every facet.
+    /// </summary>
     public static long Key(int x, int y)
     {
         return ((long)x << 32) | (uint)y;
     }
 
-    /// <summary>Inserts or replaces a block, as the patch and block-removal paths do.</summary>
+    /// <summary>
+    ///     Inserts or replaces a block, as the patch and block-removal paths do.
+    /// </summary>
     public void Set(long key, TValue value)
     {
         lock (_lock)

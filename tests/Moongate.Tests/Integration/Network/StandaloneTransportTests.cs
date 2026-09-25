@@ -42,18 +42,18 @@ public sealed class StandaloneTransportTests
         gameNetwork.ConnectionAccepted += (_, args) => gameAccepted.TrySetResult(args.Connection.SessionId);
         loginNetwork.DataReceived += (_, args) => loginReceived.TrySetResult(args.Data.ToArray());
         gameNetwork.DataReceived += (_, args) =>
-                                    {
-                                        var frame = args.Data.ToArray();
+        {
+            var frame = args.Data.ToArray();
 
-                                        if (frame.Length == 4)
-                                        {
-                                            gameSeedReceived.TrySetResult(frame);
-                                        }
-                                        else
-                                        {
-                                            gamePacketReceived.TrySetResult(frame);
-                                        }
-                                    };
+            if (frame.Length == 4)
+            {
+                gameSeedReceived.TrySetResult(frame);
+            }
+            else
+            {
+                gamePacketReceived.TrySetResult(frame);
+            }
+        };
 
         await Task.WhenAll(loginConnections.StartAsync(), gameConnections.StartAsync());
 
@@ -98,7 +98,7 @@ public sealed class StandaloneTransportTests
         {
             await Task.WhenAll(loginNetwork.StopAsync(), gameNetwork.StopAsync()).WaitAsync(TimeSpan.FromSeconds(5));
             await Task.WhenAll(loginConnections.StopAsync(), gameConnections.StopAsync())
-                      .WaitAsync(TimeSpan.FromSeconds(5));
+                .WaitAsync(TimeSpan.FromSeconds(5));
         }
     }
 }

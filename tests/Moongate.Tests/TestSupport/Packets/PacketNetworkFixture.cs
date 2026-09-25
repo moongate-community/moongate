@@ -50,8 +50,8 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         _container.RegisterInstance<IConnectionService>(Connections);
         _container.RegisterInstance<ISessionService>(Sessions);
         var networkSender = disconnectSender is null
-                                ? (IPacketSendService)Sender
-                                : new CallbackPacketSender(Sender, disconnectSender);
+            ? (IPacketSendService)Sender
+            : new CallbackPacketSender(Sender, disconnectSender);
         _container.RegisterInstance(networkSender);
         _container.RegisterPacketHandler<PingPacket, PingPacketHandler>();
         _container.RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
@@ -60,8 +60,8 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         var config = new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } };
         _container.RegisterInstance(config);
         Network = listeners is null
-                      ? new(UoNetworkOptionsFactory.CreateGame(config), Connections)
-                      : new NetworkService(listeners, Connections);
+            ? new(UoNetworkOptionsFactory.CreateGame(config), Connections)
+            : new NetworkService(listeners, Connections);
         Game = new(Network, Connections, Sessions, Dispatcher, networkSender);
     }
 

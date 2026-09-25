@@ -5,10 +5,14 @@ using Moongate.Server.Core.Packets;
 
 namespace Moongate.Server.Core.Extensions;
 
-/// <summary>Registers container-owned singleton packet handlers without resolving dependencies.</summary>
+/// <summary>
+///     Registers container-owned singleton packet handlers without resolving dependencies.
+/// </summary>
 public static class PacketHandlerContainerExtensions
 {
-    /// <summary>Registers one typed handler and its deferred binder before dispatcher startup.</summary>
+    /// <summary>
+    ///     Registers one typed handler and its deferred binder before dispatcher startup.
+    /// </summary>
     public static Container RegisterPacketHandler<TPacket, THandler>(this Container container)
         where TPacket : class, IIncomingPacket<TPacket>
         where THandler : class, IPacketHandler<TPacket>
@@ -23,7 +27,9 @@ public static class PacketHandlerContainerExtensions
         return container;
     }
 
-    /// <summary>Registers an asynchronous typed handler and its deferred binder.</summary>
+    /// <summary>
+    ///     Registers an asynchronous typed handler and its deferred binder.
+    /// </summary>
     public static Container RegisterAsyncPacketHandler<TPacket, THandler>(this Container container)
         where TPacket : class, IIncomingPacket<TPacket>
         where THandler : class, IAsyncPacketHandler<TPacket>

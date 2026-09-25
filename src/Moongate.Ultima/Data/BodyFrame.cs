@@ -1,6 +1,8 @@
 namespace Moongate.Ultima.Data;
 
-/// <summary>One decoded animation frame encoded as PNG, with its anchor point.</summary>
+/// <summary>
+///     One decoded animation frame encoded as PNG, with its anchor point.
+/// </summary>
 public sealed record BodyFrame
 {
     public required Stream Png { get; init; }

@@ -29,7 +29,7 @@ internal sealed class PersistenceModuleRegistrySnapshot
         ArgumentNullException.ThrowIfNull(entityType);
 
         return _entityOwners.TryGetValue(entityType, out var owner)
-                   ? owner
-                   : throw new InvalidOperationException($"Persistence entity '{entityType.FullName}' has no module owner.");
+            ? owner
+            : throw new InvalidOperationException($"Persistence entity '{entityType.FullName}' has no module owner.");
     }
 }

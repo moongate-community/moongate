@@ -203,16 +203,16 @@ public sealed class RedisTcpHandoffFlowTests
     private static NetworkService CreateNetwork(ConnectionService connections, bool game)
     {
         return new(
-                new NetworkListenerOptions
+            new NetworkListenerOptions
+            {
+                Endpoints = [new(IPAddress.Loopback, 0)],
+                ConnectionPipelineFactory = () => new()
                 {
-                    Endpoints = [new(IPAddress.Loopback, 0)],
-                    ConnectionPipelineFactory = () => new()
-                    {
-                        Framer = game ? new GameSeedFramer(PacketRegistry.Default) : new UoPacketFramer(PacketRegistry.Default)
-                    }
-                },
-                connections
-            );
+                    Framer = game ? new GameSeedFramer(PacketRegistry.Default) : new UoPacketFramer(PacketRegistry.Default)
+                }
+            },
+            connections
+        );
     }
 
     private static byte[] CreateAccountLogin()
@@ -242,7 +242,7 @@ public sealed class RedisTcpHandoffFlowTests
     {
         using var deadline = new CancellationTokenSource(Timeout);
         var header = new byte[opcode == 0xA8 ? 3 :
-                              opcode == 0x8C ? 11 : 2];
+            opcode == 0x8C ? 11 : 2];
         await stream.ReadExactlyAsync(header, deadline.Token);
         Assert.Equal(opcode, header[0]);
 

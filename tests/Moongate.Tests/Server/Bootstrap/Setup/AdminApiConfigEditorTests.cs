@@ -50,8 +50,8 @@ public sealed class AdminApiConfigEditorTests
     [Fact]
     public void EnableGeneratedCertificate_CustomIdentity_RefusesReplacement()
     {
-        Assert.Throws<InvalidOperationException>(
-                () => AdminApiConfigEditor.EnableGeneratedCertificate("[admin_api]\ncertificate_path = 'operator.pfx'\n")
-            );
+        Assert.Throws<InvalidOperationException>(() =>
+            AdminApiConfigEditor.EnableGeneratedCertificate("[admin_api]\ncertificate_path = 'operator.pfx'\n")
+        );
     }
 }

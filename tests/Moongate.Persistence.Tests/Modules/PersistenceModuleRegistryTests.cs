@@ -27,9 +27,9 @@ public sealed class PersistenceModuleRegistryTests
             table.ColumnsByCs.Values.Select(column => column.Attribute.Name).Order(StringComparer.Ordinal)
         );
         var sql = database.Orm
-                          .Select<ConventionNamedEntity>()
-                          .Where(entity => entity.HashPassword == "test")
-                          .ToSql();
+            .Select<ConventionNamedEntity>()
+            .Where(entity => entity.HashPassword == "test")
+            .ToSql();
         Assert.Contains("\"hash_password\"", sql, StringComparison.Ordinal);
         Assert.Contains("\"display_label\"", sql, StringComparison.Ordinal);
     }
@@ -38,9 +38,9 @@ public sealed class PersistenceModuleRegistryTests
     public void PersistenceModuleContract_DoesNotExposeMappingMutationCallback()
     {
         Assert.DoesNotContain(
-                typeof(IPersistenceModule).GetMethods(),
-                method => string.Equals(method.Name, "Configure", StringComparison.Ordinal)
-            );
+            typeof(IPersistenceModule).GetMethods(),
+            method => string.Equals(method.Name, "Configure", StringComparison.Ordinal)
+        );
     }
 
     [Fact]
@@ -117,9 +117,8 @@ public sealed class PersistenceModuleRegistryTests
         var before = firstDatabase.Orm.Select<CharacterEntity>().ToSql();
         var invalidRegistry = Registry(Module("plugin.characters", "plugin_wrong", typeof(CharacterEntity)));
 
-        var exception = Assert.Throws<InvalidOperationException>(
-            () =>
-                invalidRegistry.ValidateAndFreeze([invalidDatabase])
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            invalidRegistry.ValidateAndFreeze([invalidDatabase])
         );
 
         Assert.Contains("plugin_wrong", exception.Message, StringComparison.Ordinal);

@@ -2,7 +2,9 @@ using Moongate.Server.Core.Data.Admin;
 
 namespace Moongate.Server.Ultima.Data.Account;
 
-/// <summary>A newly issued token returned only after account transaction commit.</summary>
+/// <summary>
+///     A newly issued token returned only after account transaction commit.
+/// </summary>
 public sealed class AdminLoginResult
 {
     public string AccessToken { get; }

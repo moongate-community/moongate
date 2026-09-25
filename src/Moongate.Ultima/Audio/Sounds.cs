@@ -32,21 +32,26 @@ public static class Sounds
     }
 
     /// <summary>
-    /// Returns <see cref="UoSound" /> of ID
+    ///     Returns <see cref="UoSound" /> of ID
     /// </summary>
-    /// <param name="soundId"></param>
-    /// <returns></returns>
+    /// <param name="soundId">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UoSound GetSound(int soundId)
     {
         return GetSound(soundId, out _);
     }
 
     /// <summary>
-    /// Returns <see cref="UoSound" /> of ID with bool translated in .def
+    ///     Returns <see cref="UoSound" /> of ID with bool translated in .def
     /// </summary>
-    /// <param name="soundId"></param>
-    /// <param name="translated"></param>
-    /// <returns></returns>
+    /// <param name="soundId">
+    /// </param>
+    /// <param name="translated">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UoSound GetSound(int soundId, out bool translated)
     {
         translated = false;
@@ -122,10 +127,12 @@ public static class Sounds
     }
 
     /// <summary>
-    /// Returns length of SoundID
+    ///     Returns length of SoundID
     /// </summary>
-    /// <param name="soundId"></param>
-    /// <returns></returns>
+    /// <param name="soundId">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static double GetSoundLength(int soundId)
     {
         if (soundId < 0)
@@ -175,7 +182,7 @@ public static class Sounds
     }
 
     /// <summary>
-    /// Reads Sounds and def
+    ///     Reads Sounds and def
     /// </summary>
     public static void Initialize()
     {
@@ -219,12 +226,16 @@ public static class Sounds
     }
 
     /// <summary>
-    /// Returns Sound name and tests if valid
+    ///     Returns Sound name and tests if valid
     /// </summary>
-    /// <param name="soundId"></param>
-    /// <param name="name"></param>
-    /// <param name="translated"></param>
-    /// <returns></returns>
+    /// <param name="soundId">
+    /// </param>
+    /// <param name="name">
+    /// </param>
+    /// <param name="translated">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool IsValidSound(int soundId, out string name, out bool translated)
     {
         translated = false;
@@ -513,24 +524,24 @@ public static class Sounds
     private static int[] WaveHeader(int length)
     {
         /* ====================
-    * = WAVE File layout =
-    * ====================
-    * char[4] = 'RIFF' \
-    * int - chunk size |- Riff Header
-    * char[4] = 'WAVE' /
-    * char[4] = 'fmt ' \
-    * int - chunk size |
-    * short - format	|
-    * short - channels	|
-    * int - samples p/s|- Format header
-    * int - avg bytes	|
-    * short - align	|
-    * short - bits p/s /
-    * char[4] - data	\
-    * int - chunk size | - Data header
-    * short[..] - data /
-    * ====================
-    * */
+         * = WAVE File layout =
+         * ====================
+         * char[4] = 'RIFF' \
+         * int - chunk size |- Riff Header
+         * char[4] = 'WAVE' /
+         * char[4] = 'fmt ' \
+         * int - chunk size |
+         * short - format	|
+         * short - channels	|
+         * int - samples p/s|- Format header
+         * int - avg bytes	|
+         * short - align	|
+         * short - bits p/s /
+         * char[4] - data	\
+         * int - chunk size | - Data header
+         * short[..] - data /
+         * ====================
+         * */
         return new[]
         {
             0x46464952, length + 36, 0x45564157, 0x20746D66, 0x10, 0x010001, 0x5622, 0xAC44, 0x100002, 0x61746164, length

@@ -18,15 +18,13 @@ public sealed class AdminBootstrapTests
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var stoppedAcceptingBeforeEvent = false;
-        container.OnEvent<MoongateStartedEvent>(
-            async (_, _) =>
+        container.OnEvent<MoongateStartedEvent>(async (_, _) =>
             {
                 entered.SetResult();
                 await release.Task;
             }
         );
-        container.OnEvent<MoongateStoppingEvent>(
-            (_, _) =>
+        container.OnEvent<MoongateStoppingEvent>((_, _) =>
             {
                 stoppedAcceptingBeforeEvent = !api.Accepting;
 

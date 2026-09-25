@@ -28,8 +28,7 @@ public sealed class TomlUtilsTests
 
         if (asynchronous)
         {
-            await Assert.ThrowsAsync<FileNotFoundException>(
-                () => TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path)
+            await Assert.ThrowsAsync<FileNotFoundException>(() => TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path)
             );
         }
         else
@@ -45,12 +44,12 @@ public sealed class TomlUtilsTests
         var key = customNaming ? "serverName" : "server_name";
         var path = directory.CreateFile("settings.toml", $"{key} = \"Città di Luna\"\n[network]\nport = 4000\n");
         var options = customNaming
-                          ? new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
-                          : null;
+            ? new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+            : null;
 
         var settings = asynchronous
-                           ? await TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, options)
-                           : TomlUtils.DeserializeFromFile<TomlTestSettings>(path, options);
+            ? await TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, options)
+            : TomlUtils.DeserializeFromFile<TomlTestSettings>(path, options);
 
         Assert.NotNull(settings);
         Assert.Equal("Città di Luna", settings.ServerName);
@@ -97,13 +96,11 @@ public sealed class TomlUtilsTests
         var parent = Path.Combine(directory.Path, "nested");
         var path = Path.Combine(parent, "settings.toml");
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () =>
-                TomlUtils.SerializeToFileAsync(new TomlTestSettings(), path, cancellationToken: cancellation.Token)
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            TomlUtils.SerializeToFileAsync(new TomlTestSettings(), path, cancellationToken: cancellation.Token)
         );
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () =>
-                TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, cancellationToken: cancellation.Token)
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, cancellationToken: cancellation.Token)
         );
 
         Assert.False(Directory.Exists(parent));

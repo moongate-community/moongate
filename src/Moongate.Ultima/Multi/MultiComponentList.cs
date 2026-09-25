@@ -720,9 +720,10 @@ public sealed class MultiComponentList
     }
 
     /// <summary>
-    /// Punt's multi tool csv format
+    ///     Punt's multi tool csv format
     /// </summary>
-    /// <param name="fileName"></param>
+    /// <param name="fileName">
+    /// </param>
     public void ExportToCsvFile(string fileName)
     {
         using var tex = new StreamWriter(
@@ -833,10 +834,12 @@ public sealed class MultiComponentList
     }
 
     /// <summary>
-    /// Returns Bitmap of Multi to maximumHeight
+    ///     Returns Bitmap of Multi to maximumHeight
     /// </summary>
-    /// <param name="maximumHeight"></param>
-    /// <returns></returns>
+    /// <param name="maximumHeight">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public UltimaBitmap GetImage(int maximumHeight = 300)
     {
         if (Width == 0 || Height == 0)

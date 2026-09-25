@@ -10,15 +10,11 @@ internal sealed class SupportedMappingEntity : IMoongateEntity
     [Column(Name = "id", IsPrimary = true)]
     public Serial Id { get; set; }
 
-    [Column(Name = "scores")]
-    public int[] Scores { get; set; } = [];
+    [Column(Name = "scores")] public int[] Scores { get; set; } = [];
 
-    [Column(IsIgnore = true)]
-    public MappingPosition Position { get; set; } = new();
+    [Column(IsIgnore = true)] public MappingPosition Position { get; set; } = new();
 
-    [Column(Name = "character_id")]
-    public Serial CharacterId { get; set; }
+    [Column(Name = "character_id")] public Serial CharacterId { get; set; }
 
-    [Navigate(nameof(CharacterId))]
-    public CharacterEntity? Character { get; set; }
+    [Navigate(nameof(CharacterId))] public CharacterEntity? Character { get; set; }
 }

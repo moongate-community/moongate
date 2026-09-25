@@ -7,8 +7,8 @@ internal static class DatabaseBarrier
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(8));
 
         while (!await database.ScalarAsync<bool>(
-                    "SELECT EXISTS (SELECT 1 FROM pg_locks WHERE relation = 'plugin_characters.characters'::regclass AND NOT granted)"
-                ))
+                   "SELECT EXISTS (SELECT 1 FROM pg_locks WHERE relation = 'plugin_characters.characters'::regclass AND NOT granted)"
+               ))
         {
             await Task.Delay(10, timeout.Token);
         }

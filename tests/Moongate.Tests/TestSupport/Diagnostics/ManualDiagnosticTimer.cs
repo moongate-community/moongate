@@ -26,6 +26,7 @@ internal sealed class ManualDiagnosticTimer : ITimer
             {
                 return false;
             }
+
             DueTime = dueTime;
             Period = period;
 

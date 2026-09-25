@@ -13,8 +13,8 @@ public sealed class TemporaryScriptsDirectory : IDisposable
     }
 
     /// <summary>
-    /// Writes a file under the directory, creating parent folders. Uses forward slashes in
-    /// <paramref name="relativePath" />.
+    ///     Writes a file under the directory, creating parent folders. Uses forward slashes in
+    ///     <paramref name="relativePath" />.
     /// </summary>
     public string Write(string relativePath, string content)
     {

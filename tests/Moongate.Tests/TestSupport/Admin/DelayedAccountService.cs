@@ -61,7 +61,7 @@ internal sealed class DelayedAccountService : IAccountService
     )
     {
         return ListFailure is null
-                   ? _inner.ListAccountsPageAsync(afterId, pageSize, cancellationToken)
-                   : Task.FromException<AccountPage>(ListFailure);
+            ? _inner.ListAccountsPageAsync(afterId, pageSize, cancellationToken)
+            : Task.FromException<AccountPage>(ListFailure);
     }
 }

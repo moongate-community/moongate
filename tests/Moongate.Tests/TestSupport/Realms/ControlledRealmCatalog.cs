@@ -37,7 +37,7 @@ internal sealed class ControlledRealmCatalog : IRealmCatalog
         }
 
         return PendingResult is null
-                   ? Result
-                   : await PendingResult.Task.WaitAsync(cancellationToken);
+            ? Result
+            : await PendingResult.Task.WaitAsync(cancellationToken);
     }
 }

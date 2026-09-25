@@ -89,8 +89,7 @@ public sealed class DevelopmentMigrationTests
         );
         container.AddPersistenceWorld<TestEntity>();
         List<string> observed = [];
-        container.OnEvent<PersistenceReadyEvent>(
-            async (_, _) =>
+        container.OnEvent<PersistenceReadyEvent>(async (_, _) =>
             {
                 if (await db.ScalarAsync<long>("SELECT count(*) FROM moongate_migrations.history") == 1)
                 {
@@ -304,8 +303,8 @@ public sealed class DevelopmentMigrationTests
         var deadline = DateTime.UtcNow.AddSeconds(10);
 
         while (!await db.ScalarAsync<bool>(
-                    "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND query LIKE '%pg_sleep(5)%' AND pid<>pg_backend_pid() AND state='active')"
-                ))
+                   "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND query LIKE '%pg_sleep(5)%' AND pid<>pg_backend_pid() AND state='active')"
+               ))
         {
             Assert.True(DateTime.UtcNow < deadline, "Runner did not begin its transaction.");
             await Task.Delay(30);

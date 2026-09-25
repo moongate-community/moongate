@@ -30,7 +30,7 @@ public static class UnicodeFonts
     }
 
     /// <summary>
-    /// Reads unifont*.mul
+    ///     Reads unifont*.mul
     /// </summary>
     public static void Initialize()
     {
@@ -80,11 +80,14 @@ public static class UnicodeFonts
     }
 
     /// <summary>
-    /// Saves Font and returns string Filename
+    ///     Saves Font and returns string Filename
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="fileType"></param>
-    /// <returns></returns>
+    /// <param name="path">
+    /// </param>
+    /// <param name="fileType">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static string Save(string path, int fileType)
     {
         var fileName = Path.Combine(path, _files[fileType]);
@@ -118,11 +121,14 @@ public static class UnicodeFonts
     }
 
     /// <summary>
-    /// Draws Text with font in Bitmap and returns
+    ///     Draws Text with font in Bitmap and returns
     /// </summary>
-    /// <param name="fontId"></param>
-    /// <param name="text"></param>
-    /// <returns></returns>
+    /// <param name="fontId">
+    /// </param>
+    /// <param name="text">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UltimaBitmap WriteText(int fontId, string text)
     {
         var result = new UltimaBitmap(Fonts[fontId].GetWidth(text) + 2, Fonts[fontId].GetHeight(text) + 2);

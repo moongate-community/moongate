@@ -27,8 +27,7 @@ public sealed class PersistenceSaveTests
         await owner.InitializeAsync();
         var captured = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var save = owner.SaveAllAsync(
-            async (capture, _) =>
+        var save = owner.SaveAllAsync(async (capture, _) =>
             {
                 capture();
                 captured.SetResult();
@@ -67,7 +66,9 @@ public sealed class PersistenceSaveTests
                 {
                     owner.PreviewSchemaAsync().GetAwaiter().GetResult();
                 }
-                catch (InvalidOperationException) { }
+                catch (InvalidOperationException)
+                {
+                }
 
                 return [new() { Id = new(1) }];
             },
@@ -75,9 +76,7 @@ public sealed class PersistenceSaveTests
         );
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => owner.SaveAllAsync(
-                (capture, _) =>
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.SaveAllAsync((capture, _) =>
                 {
                     using (ExecutionContext.SuppressFlow())
                     {
@@ -103,8 +102,7 @@ public sealed class PersistenceSaveTests
         await owner.InitializeAsync();
         var captured = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var save = owner.SaveAllAsync(
-            async (capture, _) =>
+        var save = owner.SaveAllAsync(async (capture, _) =>
             {
                 capture();
                 captured.SetResult();
@@ -139,8 +137,7 @@ public sealed class PersistenceSaveTests
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
         Action? deferred = null;
-        await owner.SaveAllAsync(
-            (capture, _) =>
+        await owner.SaveAllAsync((capture, _) =>
             {
                 deferred = capture;
                 capture();
@@ -302,16 +299,14 @@ public sealed class PersistenceSaveTests
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
         Action? deferred = null;
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => owner.SaveAllAsync(
-                           (capture, _) =>
-                           {
-                               deferred = capture;
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.SaveAllAsync((capture, _) =>
+                {
+                    deferred = capture;
 
-                               return Task.CompletedTask;
-                           }
-                       )
-                       .WaitAsync(TimeSpan.FromSeconds(10))
+                    return Task.CompletedTask;
+                }
+            )
+            .WaitAsync(TimeSpan.FromSeconds(10))
         );
         Assert.Throws<InvalidOperationException>(() => deferred!());
         Assert.Equal(0, calls);
@@ -390,9 +385,7 @@ public sealed class PersistenceSaveTests
             e => new() { Id = e.Id }
         );
         await owner.InitializeAsync();
-        await Assert.ThrowsAnyAsync<Exception>(
-            () => owner.SaveAllAsync(
-                async (capture, _) =>
+        await Assert.ThrowsAnyAsync<Exception>(() => owner.SaveAllAsync(async (capture, _) =>
                 {
                     if (failure == "no_capture")
                     {
@@ -407,7 +400,9 @@ public sealed class PersistenceSaveTests
                         {
                             capture();
                         }
-                        catch (InvalidOperationException) { }
+                        catch (InvalidOperationException)
+                        {
+                        }
                     }
 
                     if (failure == "caught_reentry")
@@ -427,10 +422,9 @@ public sealed class PersistenceSaveTests
         await using var database = await _postgres.CreateDatabaseAsync();
         await using var owner = FacadeFixture.Create(database);
         var values = Enumerable.Range(1, 260)
-                               .Select(
-                                   i => new CharacterEntity { Id = new((uint)i), Name = i == 260 ? new('x', 200) : "valid" }
-                               )
-                               .ToArray();
+            .Select(i => new CharacterEntity { Id = new((uint)i), Name = i == 260 ? new('x', 200) : "valid" }
+            )
+            .ToArray();
         var store = owner.RegisterEntity(
             () => values,
             e => new() { Id = e.Id, Name = e.Name }
@@ -482,8 +476,7 @@ public sealed class PersistenceSaveTests
         );
         await owner.InitializeAsync();
         using var cancellation = new CancellationTokenSource();
-        await Assert.ThrowsAnyAsync<Exception>(
-            () => owner.SaveAllAsync(
+        await Assert.ThrowsAnyAsync<Exception>(() => owner.SaveAllAsync(
                 (capture, _) =>
                 {
                     capture();
@@ -572,8 +565,7 @@ public sealed class PersistenceSaveTests
             e => new() { Id = e.Id, Payload = e.Payload.ToArray() }
         );
         await owner.InitializeAsync();
-        await owner.SaveAllAsync(
-            (capture, _) =>
+        await owner.SaveAllAsync((capture, _) =>
             {
                 capture();
                 live.Payload[0] = 99;

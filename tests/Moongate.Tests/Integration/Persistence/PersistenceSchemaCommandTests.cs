@@ -17,15 +17,14 @@ public sealed class PersistenceSchemaCommandTests
         await using var fixture = await HostPersistenceFixture.CreateAsync(false);
         fixture.RegisterEntity();
         using var output = new StringWriter();
-        var error = await Assert.ThrowsAsync<InvalidOperationException>(
-                        () =>
-                            PersistenceSchemaCommand.RunAsync(
-                                fixture.Container,
-                                PersistenceSchemaMode.Apply,
-                                output,
-                                CancellationToken.None
-                            )
-                    );
+        var error = await Assert.ThrowsAsync<InvalidOperationException>(() =>
+            PersistenceSchemaCommand.RunAsync(
+                fixture.Container,
+                PersistenceSchemaMode.Apply,
+                output,
+                CancellationToken.None
+            )
+        );
         Assert.Contains("Moongate.MigrationRunner", error.Message);
         Assert.False(await fixture.Database.ScalarAsync<bool>("SELECT to_regclass('host_test.items') IS NOT NULL"));
     }
@@ -52,8 +51,7 @@ public sealed class PersistenceSchemaCommandTests
             var sql = await File.ReadAllTextAsync(path);
             Assert.Contains("CREATE TABLE", sql, StringComparison.OrdinalIgnoreCase);
             Assert.False(await fixture.Database.ScalarAsync<bool>("SELECT to_regclass('host_test.items') IS NOT NULL"));
-            await Assert.ThrowsAsync<IOException>(
-                () => PersistenceSchemaCommand.RunAsync(
+            await Assert.ThrowsAsync<IOException>(() => PersistenceSchemaCommand.RunAsync(
                     fixture.Container,
                     PersistenceSchemaMode.Generate,
                     output,

@@ -4,7 +4,9 @@ using Moongate.Persistence.Types.Persistence;
 
 namespace Moongate.Server.Data.Config.Sections;
 
-/// <summary>Configures a PostgreSQL connection, optionally containing environment variable references.</summary>
+/// <summary>
+///     Configures a PostgreSQL connection, optionally containing environment variable references.
+/// </summary>
 public sealed class PersistenceDatabaseConfig
 {
     public string ConnectionString { get; set; } = "";

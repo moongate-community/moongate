@@ -101,12 +101,11 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
         var authKey = await IssueAsync();
 
         var attempts = await Task.WhenAll(
-                           Enumerable.Range(0, 8)
-                                     .Select(
-                                         _ => _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password")
-                                                    .AsTask()
-                                     )
-                       );
+            Enumerable.Range(0, 8)
+                .Select(_ => _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password")
+                    .AsTask()
+                )
+        );
 
         Assert.Single(attempts, result => result is not null);
     }
@@ -171,12 +170,12 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
         var malformed = await IssueAsync();
         Assert.True(
             await _redis.Connection
-                        .GetDatabase()
-                        .StringSetAsync(
-                            Key(malformed),
-                            "not-a-ticket",
-                            TimeSpan.FromSeconds(30)
-                        )
+                .GetDatabase()
+                .StringSetAsync(
+                    Key(malformed),
+                    "not-a-ticket",
+                    TimeSpan.FromSeconds(30)
+                )
         );
         Assert.Null(await _store.RedeemAsync(_realmId, _instanceId, malformed, "Alice", "password"));
     }

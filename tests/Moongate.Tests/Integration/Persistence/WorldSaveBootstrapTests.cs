@@ -83,15 +83,13 @@ public sealed class WorldSaveBootstrapTests
         using var container = CreateContainer(fixture);
         using var cancellation = new CancellationTokenSource();
         var firstRan = false;
-        container.OnEvent<MoongateStartedEvent>(
-            async (_, _) =>
+        container.OnEvent<MoongateStartedEvent>(async (_, _) =>
             {
                 await fixture.OnLoopAsync(() => fixture.Entities[0].Name = "partial startup");
                 firstRan = true;
             }
         );
-        container.OnEvent<MoongateStartedEvent>(
-            (_, _) =>
+        container.OnEvent<MoongateStartedEvent>((_, _) =>
             {
                 cancellation.Cancel();
 
@@ -114,8 +112,7 @@ public sealed class WorldSaveBootstrapTests
     {
         await using var fixture = await WorldSaveFixture.CreateAsync(true);
         using var container = CreateContainer(fixture);
-        container.OnEvent<MoongateStartedEvent>(
-            async (_, _) =>
+        container.OnEvent<MoongateStartedEvent>(async (_, _) =>
             {
                 Assert.Equal(0, fixture.Timers.GetMetricsSnapshot().ActiveTimers);
                 await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Saves.SaveAsync());
@@ -137,8 +134,7 @@ public sealed class WorldSaveBootstrapTests
         using var container = CreateContainer(fixture);
         container.OnEvent<MoongateStartedEvent>((_, _) => throw new ApplicationException("isolated observer"));
         var lastRan = false;
-        container.OnEvent<MoongateStartedEvent>(
-            async (_, _) =>
+        container.OnEvent<MoongateStartedEvent>(async (_, _) =>
             {
                 Assert.Equal(0, fixture.Timers.GetMetricsSnapshot().ActiveTimers);
                 await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Saves.SaveAsync());
@@ -163,8 +159,8 @@ public sealed class WorldSaveBootstrapTests
         await using var fixture = await WorldSaveFixture.CreateAsync();
         using var container = CreateContainer(fixture);
         Exception failure = aggregateLoopFailure
-                                ? new AggregateException(new ApplicationException("fatal command"))
-                                : new ApplicationException("fatal command");
+            ? new AggregateException(new ApplicationException("fatal command"))
+            : new ApplicationException("fatal command");
         var cleanupFailure = new IOException("owner cleanup failed");
 
         if (failCleanup)

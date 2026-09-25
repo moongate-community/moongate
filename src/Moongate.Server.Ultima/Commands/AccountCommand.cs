@@ -8,7 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.Ultima.Commands;
 
-/// <summary>Creates accounts through an authorized command source.</summary>
+/// <summary>
+///     Creates accounts through an authorized command source.
+/// </summary>
 public sealed class AccountCommand : ICommandExecutor
 {
     private const string Usage = "Usage: account create <username> <password> [Regular|GameMaster|Administrator]";
@@ -55,11 +57,11 @@ public sealed class AccountCommand : ICommandExecutor
 
         var username = arguments[1];
         var result = await _accounts.CreateAccountAsync(
-                         username,
-                         arguments[2],
-                         accountType,
-                         context.CancellationToken
-                     );
+            username,
+            arguments[2],
+            accountType,
+            context.CancellationToken
+        );
 
         if (result.Success)
         {
@@ -109,8 +111,14 @@ public sealed class AccountCommand : ICommandExecutor
             _logger.Information("Console updated account API access for {Username}; enabled {Enabled}", args[1], enabled);
             context.Print("Account API access updated.");
         }
-        catch (KeyNotFoundException) { context.PrintError("Account not found."); }
-        catch (OperationCanceledException) { throw; }
+        catch (KeyNotFoundException)
+        {
+            context.PrintError("Account not found.");
+        }
+        catch (OperationCanceledException)
+        {
+            throw;
+        }
         catch (Exception)
         {
             _logger.Warning("Console account API access update failed");

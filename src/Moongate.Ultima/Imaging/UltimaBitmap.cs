@@ -13,11 +13,19 @@ using SkiaSharp;
 namespace Moongate.Ultima.Imaging;
 
 /// <summary>
-/// A 16-bit ARGB1555 pixel surface backed by native memory, mirroring the layout of the
-/// GDI+ <c>Format16bppArgb1555</c> bitmaps used by the original Ultima SDK. <see cref="Scan0" />
-/// and <see cref="Stride" /> follow the same semantics as System.Drawing's <c>BitmapData</c>,
-/// so the SDK's unsafe pixel loops port unchanged. Convert with <see cref="ToImage" />
-/// only when rendering or exporting is needed.
+///     A 16-bit ARGB1555 pixel surface backed by native memory, mirroring the layout of the
+///     GDI+
+///     <c>
+///         Format16bppArgb1555
+///     </c>
+///     bitmaps used by the original Ultima SDK. <see cref="Scan0" />
+///     and <see cref="Stride" /> follow the same semantics as System.Drawing's
+///     <c>
+///         BitmapData
+///     </c>
+///     ,
+///     so the SDK's unsafe pixel loops port unchanged. Convert with <see cref="ToImage" />
+///     only when rendering or exporting is needed.
 /// </summary>
 public sealed unsafe class UltimaBitmap : IDisposable
 {
@@ -26,16 +34,28 @@ public sealed unsafe class UltimaBitmap : IDisposable
     private nint _scan0;
     private bool _disposed;
 
-    /// <summary>Surface width in pixels.</summary>
+    /// <summary>
+    ///     Surface width in pixels.
+    /// </summary>
     public int Width { get; }
 
-    /// <summary>Surface height in pixels.</summary>
+    /// <summary>
+    ///     Surface height in pixels.
+    /// </summary>
     public int Height { get; }
 
-    /// <summary>Row stride in bytes (always <c>Width * 2</c>, no padding).</summary>
+    /// <summary>
+    ///     Row stride in bytes (always
+    ///     <c>
+    ///         Width * 2
+    ///     </c>
+    ///     , no padding).
+    /// </summary>
     public int Stride { get; }
 
-    /// <summary>Pointer to the first pixel of the first row.</summary>
+    /// <summary>
+    ///     Pointer to the first pixel of the first row.
+    /// </summary>
     public nint Scan0
     {
         get
@@ -57,7 +77,9 @@ public sealed unsafe class UltimaBitmap : IDisposable
         _scan0 = (nint)NativeMemory.AllocZeroed((nuint)(Stride * height));
     }
 
-    /// <summary>Creates a deep copy of this surface.</summary>
+    /// <summary>
+    ///     Creates a deep copy of this surface.
+    /// </summary>
     public UltimaBitmap Clone()
     {
         ObjectDisposedException.ThrowIf(_disposed, this);
@@ -69,9 +91,12 @@ public sealed unsafe class UltimaBitmap : IDisposable
     }
 
     /// <summary>
-    /// Blits this surface onto <paramref name="dest" /> at (<paramref name="dx" />, <paramref name="dy" />),
-    /// skipping fully transparent pixels (alpha bit unset). Replaces the GDI+
-    /// <c>Graphics.DrawImage</c> compositing used by the original SDK.
+    ///     Blits this surface onto <paramref name="dest" /> at (<paramref name="dx" />, <paramref name="dy" />),
+    ///     skipping fully transparent pixels (alpha bit unset). Replaces the GDI+
+    ///     <c>
+    ///         Graphics.DrawImage
+    ///     </c>
+    ///     compositing used by the original SDK.
     /// </summary>
     public void DrawInto(UltimaBitmap dest, int dx, int dy)
     {
@@ -109,7 +134,9 @@ public sealed unsafe class UltimaBitmap : IDisposable
         }
     }
 
-    /// <summary>Decodes an image file (PNG, BMP, JPEG, ...) into an ARGB1555 surface.</summary>
+    /// <summary>
+    ///     Decodes an image file (PNG, BMP, JPEG, ...) into an ARGB1555 surface.
+    /// </summary>
     public static UltimaBitmap FromFile(string fileName)
     {
         using var stream = File.OpenRead(fileName);
@@ -128,8 +155,8 @@ public sealed unsafe class UltimaBitmap : IDisposable
     }
 
     /// <summary>
-    /// Converts a SkiaSharp bitmap to an ARGB1555 surface. Pixels with alpha below 128
-    /// become fully transparent (alpha bit unset). The caller retains ownership of the source.
+    ///     Converts a SkiaSharp bitmap to an ARGB1555 surface. Pixels with alpha below 128
+    ///     become fully transparent (alpha bit unset). The caller retains ownership of the source.
     /// </summary>
     public static UltimaBitmap FromImage(SKBitmap source)
     {
@@ -167,8 +194,8 @@ public sealed unsafe class UltimaBitmap : IDisposable
     }
 
     /// <summary>
-    /// Encodes the surface to <paramref name="fileName" />; the format is picked from the
-    /// file extension (.png, .jpg, .jpeg or .webp).
+    ///     Encodes the surface to <paramref name="fileName" />; the format is picked from the
+    ///     file extension (.png, .jpg, .jpeg or .webp).
     /// </summary>
     public void Save(string fileName, bool opaque = false)
     {
@@ -191,9 +218,9 @@ public sealed unsafe class UltimaBitmap : IDisposable
     }
 
     /// <summary>
-    /// Converts the ARGB1555 surface to a caller-owned 32-bit BGRA bitmap. Pass
-    /// <paramref name="opaque" /> = true for surfaces produced without the alpha bit
-    /// (e.g. map renders, originally RGB555): every pixel is emitted fully opaque.
+    ///     Converts the ARGB1555 surface to a caller-owned 32-bit BGRA bitmap. Pass
+    ///     <paramref name="opaque" /> = true for surfaces produced without the alpha bit
+    ///     (e.g. map renders, originally RGB555): every pixel is emitted fully opaque.
     /// </summary>
     public SKBitmap ToImage(bool opaque = false)
     {

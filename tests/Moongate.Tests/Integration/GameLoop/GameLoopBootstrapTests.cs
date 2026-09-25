@@ -34,8 +34,7 @@ public sealed class GameLoopBootstrapTests
         try
         {
             await loop.PostAsync(
-                new ActionGameLoopWorkItem(
-                    () =>
+                new ActionGameLoopWorkItem(() =>
                     {
                         entered.SetResult();
 
@@ -63,9 +62,9 @@ public sealed class GameLoopBootstrapTests
             release.Set();
             cancellation.Cancel();
             await run.WaitAsync(TestTimeout)
-                     .ConfigureAwait(
-                         ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                     );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -77,10 +76,10 @@ public sealed class GameLoopBootstrapTests
     {
         using var container = CreateContainer();
         Exception loopFailure = aggregateHandlerFailure
-                                    ? new AggregateException(
-                                        new InvalidOperationException("game command failed before external shutdown")
-                                    )
-                                    : new InvalidOperationException("game command failed before external shutdown");
+            ? new AggregateException(
+                new InvalidOperationException("game command failed before external shutdown")
+            )
+            : new InvalidOperationException("game command failed before external shutdown");
         var cleanupFailure = new IOException("other service failed to stop");
 
         if (failOtherService)
@@ -125,8 +124,7 @@ public sealed class GameLoopBootstrapTests
         try
         {
             await loop.PostAsync(
-                new ActionGameLoopWorkItem(
-                    () =>
+                new ActionGameLoopWorkItem(() =>
                     {
                         entered.SetResult();
 
@@ -139,8 +137,7 @@ public sealed class GameLoopBootstrapTests
             );
             await entered.Task.WaitAsync(TestTimeout);
             await loop.PostAsync(
-                new ActionGameLoopWorkItem(
-                    () =>
+                new ActionGameLoopWorkItem(() =>
                     {
                         Assert.False(container.IsDisposed);
                         Interlocked.Increment(ref ran);
@@ -162,9 +159,9 @@ public sealed class GameLoopBootstrapTests
             release.Set();
             cancellation.Cancel();
             await run.WaitAsync(TestTimeout)
-                     .ConfigureAwait(
-                         ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                     );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -212,9 +209,9 @@ public sealed class GameLoopBootstrapTests
         {
             cancellation.Cancel();
             await run.WaitAsync(TestTimeout)
-                     .ConfigureAwait(
-                         ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                     );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -240,9 +237,9 @@ public sealed class GameLoopBootstrapTests
         {
             cancellation.Cancel();
             await run.WaitAsync(TestTimeout)
-                     .ConfigureAwait(
-                         ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                     );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -271,9 +268,9 @@ public sealed class GameLoopBootstrapTests
         {
             cancellation.Cancel();
             await run.WaitAsync(TestTimeout)
-                     .ConfigureAwait(
-                         ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                     );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
@@ -290,8 +287,7 @@ public sealed class GameLoopBootstrapTests
                 async () =>
                 {
                     await loop.PostAsync(
-                        new ActionGameLoopWorkItem(
-                            () =>
+                        new ActionGameLoopWorkItem(() =>
                             {
                                 blocker.Execute();
 
@@ -313,10 +309,9 @@ public sealed class GameLoopBootstrapTests
         );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
-        var actual = await Assert.ThrowsAsync<AggregateException>(
-                         () =>
-                             MoongateServerRunner.RunAsync(bootstrap).WaitAsync(TestTimeout)
-                     );
+        var actual = await Assert.ThrowsAsync<AggregateException>(() =>
+            MoongateServerRunner.RunAsync(bootstrap).WaitAsync(TestTimeout)
+        );
 
         Assert.Equal([startupFailure, loopFailure], actual.InnerExceptions);
         Assert.True(container.IsDisposed);

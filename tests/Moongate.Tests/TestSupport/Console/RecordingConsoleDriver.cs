@@ -26,7 +26,9 @@ internal sealed class RecordingConsoleDriver : IConsoleDriver
         }
     }
 
-    /// <summary>Index of the operation that should throw an IOException, or -1 to never throw.</summary>
+    /// <summary>
+    ///     Index of the operation that should throw an IOException, or -1 to never throw.
+    /// </summary>
     public int ThrowOnOperation { get; set; } = -1;
 
     public IReadOnlyList<string> Operations => _operations;

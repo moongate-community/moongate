@@ -6,7 +6,9 @@ using Moongate.Server.Core.Types.Accounts;
 
 namespace Moongate.Server.Ultima.Data.Login;
 
-/// <summary>Verified account identity and its single eligible realm snapshot.</summary>
+/// <summary>
+///     Verified account identity and its single eligible realm snapshot.
+/// </summary>
 public sealed class LoginAccountResult
 {
     public bool Success => DenialReason is null;

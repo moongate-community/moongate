@@ -16,10 +16,10 @@ internal static class DevelopmentSchemaAssessor
 
         // FreeSql comparison is synchronous; wait for settlement before releasing any schema lock.
         var ddl = await Task.Run(
-                                () => database.Orm.CodeFirst.GetComparisonDDLStatements(entityTypes),
-                                CancellationToken.None
-                            )
-                            .ConfigureAwait(false) ??
+                          () => database.Orm.CodeFirst.GetComparisonDDLStatements(entityTypes),
+                          CancellationToken.None
+                      )
+                      .ConfigureAwait(false) ??
                   "";
         cancellationToken.ThrowIfCancellationRequested();
         var parsed = SchemaSqlReader.TryRead(ddl, out var statements);
@@ -63,9 +63,8 @@ internal static class DevelopmentSchemaAssessor
 
             var columns = table.ColumnsByCs.Values.ToArray();
 
-            foreach (var column in columns.Where(
-                         column =>
-                             column.Attribute.IsNullable && !existing.ContainsKey(column.Attribute.Name)
+            foreach (var column in columns.Where(column =>
+                         column.Attribute.IsNullable && !existing.ContainsKey(column.Attribute.Name)
                      ))
             {
                 nullableAdditions.Add(name + "." + Quote(column.Attribute.Name));
@@ -89,15 +88,14 @@ internal static class DevelopmentSchemaAssessor
                 var oldName = attribute.OldName;
                 var isRename = parsed &&
                                !string.IsNullOrEmpty(oldName) &&
-                               statements.Any(
-                                   statement =>
-                                       statement.Tokens.SequenceEqual(
-                                           new[]
-                                           {
-                                               "ALTER", "TABLE", Quote(parts[0]), ".", Quote(parts[1]), "RENAME", "COLUMN",
-                                               Quote(oldName), "TO", Quote(attribute.Name)
-                                           }
-                                       )
+                               statements.Any(statement =>
+                                   statement.Tokens.SequenceEqual(
+                                       new[]
+                                       {
+                                           "ALTER", "TABLE", Quote(parts[0]), ".", Quote(parts[1]), "RENAME", "COLUMN",
+                                           Quote(oldName), "TO", Quote(attribute.Name)
+                                       }
+                                   )
                                );
 
                 if (isRename)
@@ -124,11 +122,11 @@ internal static class DevelopmentSchemaAssessor
             }
 
             foreach (var column in existing.Keys
-                                           .Except(
-                                               columns.Select(column => column.Attribute.Name),
-                                               StringComparer.Ordinal
-                                           )
-                                           .Except(renamed))
+                         .Except(
+                             columns.Select(column => column.Attribute.Name),
+                             StringComparer.Ordinal
+                         )
+                         .Except(renamed))
             {
                 // FreeSql retains unmapped database columns; make the removal explicit and review-required.
                 removed.AppendLine($"ALTER TABLE {name} DROP COLUMN {Quote(column)};");
@@ -251,7 +249,7 @@ internal static class DevelopmentSchemaAssessor
         accepted.Append(removed);
         accepted.Append(
             await PersistenceSerialSequence.CompareAsync(database, entityTypes, cancellationToken)
-                                           .ConfigureAwait(false)
+                .ConfigureAwait(false)
         );
 
         return new(accepted.ToString(), requiresReview, hasExistingTables);
@@ -401,43 +399,43 @@ internal static class DevelopmentSchemaAssessor
 
         return IsPlainNullableType(prefix.ToArray()) &&
                (value is "TRUE" or "FALSE" || value.All(char.IsAsciiDigit) || value.StartsWith('\''))
-                   ? value
-                   : null;
+            ? value
+            : null;
     }
 
     private static bool IsPlainNullableType(string[] tokens)
     {
         if (tokens.Length == 0 ||
             tokens[0] is not ("INT2" or
-                              "INT4" or
-                              "INT8" or
-                              "SMALLINT" or
-                              "INTEGER" or
-                              "BIGINT" or
-                              "BOOL" or
-                              "BOOLEAN" or
-                              "VARCHAR" or
-                              "CHAR" or
-                              "TEXT" or
-                              "TIMESTAMP" or
-                              "TIMESTAMPTZ" or
-                              "DATE" or
-                              "TIME" or
-                              "NUMERIC" or
-                              "DECIMAL" or
-                              "FLOAT4" or
-                              "FLOAT8" or
-                              "REAL" or
-                              "UUID" or
-                              "BYTEA" or
-                              "JSON" or
-                              "JSONB"))
+                "INT4" or
+                "INT8" or
+                "SMALLINT" or
+                "INTEGER" or
+                "BIGINT" or
+                "BOOL" or
+                "BOOLEAN" or
+                "VARCHAR" or
+                "CHAR" or
+                "TEXT" or
+                "TIMESTAMP" or
+                "TIMESTAMPTZ" or
+                "DATE" or
+                "TIME" or
+                "NUMERIC" or
+                "DECIMAL" or
+                "FLOAT4" or
+                "FLOAT8" or
+                "REAL" or
+                "UUID" or
+                "BYTEA" or
+                "JSON" or
+                "JSONB"))
         {
             return false;
         }
 
         return tokens.Skip(1)
-                     .All(token => token is "(" or ")" or "," or "[" or "]" or "NULL" || token.All(char.IsAsciiDigit));
+            .All(token => token is "(" or ")" or "," or "[" or "]" or "NULL" || token.All(char.IsAsciiDigit));
     }
 
     private static string Quote(string identifier)

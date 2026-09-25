@@ -41,6 +41,7 @@ public sealed class AdminCertificateSetupTests
         {
             Assert.True(certificate.MatchesHostname(host, false, false), host);
         }
+
         Assert.True(certificate.NotAfter.ToUniversalTime() > DateTime.UtcNow.AddDays(360));
         Assert.False(certificate.Extensions.OfType<X509BasicConstraintsExtension>().Single().CertificateAuthority);
         Assert.Contains(
@@ -103,8 +104,8 @@ public sealed class AdminCertificateSetupTests
         var configPath = CreateConfig(directory.Path);
         AdminCertificateSetup.Configure(directory.Path, [], TextWriter.Null);
         var original = File.ReadAllBytes(configPath);
-        Assert.Throws<InvalidOperationException>(
-            () => AdminCertificateSetup.Configure(directory.Path, ["new.example.test"], TextWriter.Null)
+        Assert.Throws<InvalidOperationException>(() =>
+            AdminCertificateSetup.Configure(directory.Path, ["new.example.test"], TextWriter.Null)
         );
         Assert.Equal(original, File.ReadAllBytes(configPath));
     }

@@ -7,7 +7,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Game;
 
-/// <summary>Bridges synchronous transport notifications to owned game work and session retirement.</summary>
+/// <summary>
+///     Bridges synchronous transport notifications to owned game work and session retirement.
+/// </summary>
 public sealed class GameServerService : IGameServerService
 {
     private readonly INetworkService _network;
@@ -57,8 +59,7 @@ public sealed class GameServerService : IGameServerService
         {
             _stopping = true;
 
-            return _lifecycle.StopAsync(
-                async startup =>
+            return _lifecycle.StopAsync(async startup =>
                 {
                     if (startup is not null)
                     {
@@ -88,12 +89,11 @@ public sealed class GameServerService : IGameServerService
 
     private void OnClosed(object? sender, NetworkConnectionEventArgs args)
     {
-        TrackCleanup(
-                () => Task.WhenAll(
-                    CaptureCleanup(() => _sender.DisconnectAsync(args.Connection.SessionId)),
-                    CaptureCleanup(() => _dispatcher.DisconnectAsync(args.Connection.SessionId))
-                )
-            );
+        TrackCleanup(() => Task.WhenAll(
+                CaptureCleanup(() => _sender.DisconnectAsync(args.Connection.SessionId)),
+                CaptureCleanup(() => _dispatcher.DisconnectAsync(args.Connection.SessionId))
+            )
+        );
     }
 
     private void OnData(object? sender, NetworkDataEventArgs args)
@@ -128,8 +128,8 @@ public sealed class GameServerService : IGameServerService
         }
 
         var packetName = PacketRegistry.Default.TryGetDescriptor(opCode, out var descriptor)
-                             ? descriptor.PacketType.Name
-                             : "Unknown";
+            ? descriptor.PacketType.Name
+            : "Unknown";
         _logger.Warning(
             "Rejected packet from session {SessionId}, opcode {OpCode}, name {PacketName}",
             args.Connection.SessionId,

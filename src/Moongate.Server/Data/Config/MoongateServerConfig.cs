@@ -8,7 +8,9 @@ namespace Moongate.Server.Data.Config;
 
 public class MoongateServerConfig
 {
-    /// <summary>Gets or sets the configured server roles, defaulting to both login and game.</summary>
+    /// <summary>
+    ///     Gets or sets the configured server roles, defaulting to both login and game.
+    /// </summary>
     [TomlConverter(typeof(ServerModeTomlConverter))]
     public ServerMode Mode { get; set; } = ServerMode.Standalone;
 
@@ -32,7 +34,9 @@ public class MoongateServerConfig
 
     public ScriptingConfig Scripting { get; set; } = new();
 
-    /// <summary>Validates configuration before server services begin startup.</summary>
+    /// <summary>
+    ///     Validates configuration before server services begin startup.
+    /// </summary>
     public void Validate()
     {
         if (Mode is not (ServerMode.Login or ServerMode.Game or ServerMode.Standalone))
@@ -54,7 +58,11 @@ public class MoongateServerConfig
 
         Redis.Validate();
 
-        if (AdminApi is null) { throw new InvalidOperationException("The admin_api configuration section cannot be null."); }
+        if (AdminApi is null)
+        {
+            throw new InvalidOperationException("The admin_api configuration section cannot be null.");
+        }
+
         AdminApi.Validate();
 
         if (Persistence is null)

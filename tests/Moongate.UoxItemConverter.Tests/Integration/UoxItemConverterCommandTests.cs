@@ -584,12 +584,12 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     private int Run(bool includeLootDestination = true)
     {
         return UoxItemConverterCommand.Run(
-                _dirs.SourceDirectory,
-                _dirs.DestinationDirectory,
-                includeLootDestination ? _dirs.LootDestinationDirectory : null,
-                _output,
-                _error
-            );
+            _dirs.SourceDirectory,
+            _dirs.DestinationDirectory,
+            includeLootDestination ? _dirs.LootDestinationDirectory : null,
+            _output,
+            _error
+        );
     }
 
     public void Dispose()

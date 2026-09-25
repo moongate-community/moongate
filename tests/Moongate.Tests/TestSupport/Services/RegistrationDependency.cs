@@ -1,3 +1,5 @@
 namespace Moongate.Tests.TestSupport.Services;
 
-public class RegistrationDependency { }
+public class RegistrationDependency
+{
+}

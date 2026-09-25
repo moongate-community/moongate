@@ -27,14 +27,20 @@ internal sealed class ControlledAdminSessionStore : IAdminSessionStore
     {
         var gate = await _inner.ResetGateAsync(id, blocked, token);
 
-        if (AfterReset is not null) { await AfterReset(); }
+        if (AfterReset is not null)
+        {
+            await AfterReset();
+        }
 
         return gate;
     }
 
     public async Task<bool> TryOpenGateAsync(Serial id, Guid generation, CancellationToken token = default)
     {
-        if (BeforeOpen is not null) { await BeforeOpen(); }
+        if (BeforeOpen is not null)
+        {
+            await BeforeOpen();
+        }
 
         return await _inner.TryOpenGateAsync(id, generation, token);
     }
@@ -47,7 +53,11 @@ internal sealed class ControlledAdminSessionStore : IAdminSessionStore
         CancellationToken token = default
     )
     {
-        if (BeforeIssue is not null) { await BeforeIssue(); }
+        if (BeforeIssue is not null)
+        {
+            await BeforeIssue();
+        }
+
         LastDigest = hash;
         var session = await _inner.IssueAsync(identity, generation, hash, lifetime, token);
         IssuedCount++;

@@ -116,16 +116,16 @@ public sealed class GameLoginPacketHandlerTests
     private static RealmInstance Realm()
     {
         return new(
-                new(
-                    "realm",
-                    1,
-                    "Realm",
-                    IPAddress.Loopback,
-                    2595,
-                    AccountType.Regular
-                ),
-                Guid.Parse("74e13e2c-dab8-4acf-8613-362362b0e83a")
-            );
+            new(
+                "realm",
+                1,
+                "Realm",
+                IPAddress.Loopback,
+                2595,
+                AccountType.Regular
+            ),
+            Guid.Parse("74e13e2c-dab8-4acf-8613-362362b0e83a")
+        );
     }
 
     private static PendingHandoff Handoff()

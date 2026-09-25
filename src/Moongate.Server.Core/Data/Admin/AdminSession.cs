@@ -1,6 +1,8 @@
 namespace Moongate.Server.Core.Data.Admin;
 
-/// <summary>Immutable administration session snapshot.</summary>
+/// <summary>
+///     Immutable administration session snapshot.
+/// </summary>
 public sealed class AdminSession
 {
     public AdminIdentity Identity { get; }

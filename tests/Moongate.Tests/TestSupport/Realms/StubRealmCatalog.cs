@@ -20,10 +20,10 @@ internal sealed class StubRealmCatalog : IRealmCatalog
     {
         cancellationToken.ThrowIfCancellationRequested();
         IReadOnlyList<RealmDescriptor> realms = _realms
-                                                .Where(realm => accountType >= realm.Descriptor.MinimumAccountType)
-                                                .Select(realm => realm.Descriptor)
-                                                .OrderBy(realm => realm.ServerIndex)
-                                                .ToArray();
+            .Where(realm => accountType >= realm.Descriptor.MinimumAccountType)
+            .Select(realm => realm.Descriptor)
+            .OrderBy(realm => realm.ServerIndex)
+            .ToArray();
 
         return ValueTask.FromResult(realms);
     }
@@ -37,8 +37,8 @@ internal sealed class StubRealmCatalog : IRealmCatalog
         cancellationToken.ThrowIfCancellationRequested();
 
         return ValueTask.FromResult(
-            _realms.FirstOrDefault(
-                realm => realm.Descriptor.ServerIndex == index && accountType >= realm.Descriptor.MinimumAccountType
+            _realms.FirstOrDefault(realm =>
+                realm.Descriptor.ServerIndex == index && accountType >= realm.Descriptor.MinimumAccountType
             )
         );
     }

@@ -17,8 +17,8 @@ public sealed class AccountSerialTests
             "ALTER SEQUENCE auth.accounts_id_seq OWNED BY auth.accounts.id;"
         );
         var migration = await File.ReadAllTextAsync(
-                            Path.Combine(AppContext.BaseDirectory, "AccountMigrations", "0003_account_serial_ownership.sql")
-                        );
+            Path.Combine(AppContext.BaseDirectory, "AccountMigrations", "0003_account_serial_ownership.sql")
+        );
         await fixture.Database.ExecuteAsync(migration);
         var created = await fixture.Service.CreateAccountAsync("development", fixture.Password);
         Assert.True(created.Success, created.Exception?.ToString());
@@ -35,8 +35,8 @@ public sealed class AccountSerialTests
         await using var fixture = await AccountServiceFixture.CreateAsync();
         await fixture.SeedAsync();
         var sql = await File.ReadAllTextAsync(
-                      Path.Combine(AppContext.BaseDirectory, "AccountMigrations", "0001_account_id_sequence.sql")
-                  );
+            Path.Combine(AppContext.BaseDirectory, "AccountMigrations", "0001_account_id_sequence.sql")
+        );
         await fixture.Database.ExecuteAsync(sql);
         var first = await fixture.Service.CreateAccountAsync("bob", fixture.Password);
         Assert.True(first.Success, first.Exception?.ToString());
@@ -78,9 +78,8 @@ public sealed class AccountSerialTests
         await using var fixture = await AccountServiceFixture.CreateAsync();
         using var cancellation = new CancellationTokenSource();
         cancellation.Cancel();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () =>
-                fixture.Persistence.ReserveSerialAsync<AccountEntity>("auth.account_id_seq", cancellation.Token)
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            fixture.Persistence.ReserveSerialAsync<AccountEntity>("auth.account_id_seq", cancellation.Token)
         );
         Assert.Equal(1U, (await fixture.Persistence.ReserveSerialAsync<AccountEntity>("auth.account_id_seq")).Value);
     }

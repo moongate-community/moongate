@@ -106,8 +106,7 @@ public sealed class DiagnosticServiceTests
         container.RegisterMoongateEventBus();
         var first = new ControlledMetricProvider();
         var second = new ControlledMetricProvider();
-        Assert.Throws<ArgumentException>(
-            () => new DiagnosticService(
+        Assert.Throws<ArgumentException>(() => new DiagnosticService(
                 [first, second],
                 new(),
                 new EventBusService(container.Resolve<IMoongateEventBus>()),
@@ -141,8 +140,7 @@ public sealed class DiagnosticServiceTests
         using var container = new Container();
         container.RegisterMoongateEventBus();
         var provider = new ControlledMetricProvider(name);
-        Assert.Throws<ArgumentException>(
-            () => new DiagnosticService(
+        Assert.Throws<ArgumentException>(() => new DiagnosticService(
                 [provider],
                 new(),
                 new EventBusService(container.Resolve<IMoongateEventBus>()),
@@ -210,8 +208,7 @@ public sealed class DiagnosticServiceTests
         provider.Release();
         using var fixture = new DiagnosticServiceFixture([provider]);
         var rejected = Signal();
-        using var subscription = fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>(
-            async (_, _) =>
+        using var subscription = fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>(async (_, _) =>
             {
                 await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Service.StopAsync());
                 rejected.TrySetResult();
@@ -232,9 +229,8 @@ public sealed class DiagnosticServiceTests
         provider.Release();
         using var fixture = new DiagnosticServiceFixture([provider]);
         using var failing =
-            fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>(
-                (_, _) =>
-                    throw new InvalidOperationException("observer failed")
+            fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>((_, _) =>
+                throw new InvalidOperationException("observer failed")
             );
         await fixture.Service.StartAsync();
         Assert.Equal(1, (await fixture.NextAsync()).Sequence);
@@ -251,14 +247,12 @@ public sealed class DiagnosticServiceTests
         var provider = new ControlledMetricProvider();
         using var fixture = new DiagnosticServiceFixture([provider]);
         var starts = await Task.WhenAll(
-                         Enumerable.Range(0, 20)
-                                   .Select(
-                                       _ => Task.Run(
-                                           () =>
-                                               new[] { fixture.Service.StartAsync() }
-                                       )
-                                   )
-                     );
+            Enumerable.Range(0, 20)
+                .Select(_ => Task.Run(() =>
+                        new[] { fixture.Service.StartAsync() }
+                    )
+                )
+        );
         Assert.All(starts, start => Assert.Same(starts[0][0], start[0]));
         await Task.WhenAll(starts.Select(start => start[0]));
         await provider.WaitForEntryAsync();
@@ -300,8 +294,7 @@ public sealed class DiagnosticServiceTests
         var provider = new ControlledMetricProvider();
         using var fixture = new DiagnosticServiceFixture([provider]);
         var received = new TaskCompletionSource<DiagnosticSnapshot>(TaskCreationOptions.RunContinuationsAsynchronously);
-        using var subscription = fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>(
-            (message, _) =>
+        using var subscription = fixture.Bus.Subscribe<DiagnosticSnapshotCollectedEvent>((message, _) =>
             {
                 Assert.Same(message.Snapshot, fixture.Service.GetSnapshot());
                 received.TrySetResult(message.Snapshot);
@@ -447,6 +440,7 @@ public sealed class DiagnosticServiceTests
                 {
                     await Assert.ThrowsAsync<InvalidOperationException>(() => service!.StopAsync());
                 }
+
                 rejection.TrySetResult();
 
                 return [Sample()];

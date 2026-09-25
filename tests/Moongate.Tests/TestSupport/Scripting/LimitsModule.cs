@@ -13,6 +13,5 @@ public sealed class LimitsModule
 
     [ScriptConstant] public static readonly ProbeColour DEFAULT_COLOUR = ProbeColour.Green;
 
-    [ScriptConstant("version")]
-    public static string Version => "1.2.3";
+    [ScriptConstant("version")] public static string Version => "1.2.3";
 }

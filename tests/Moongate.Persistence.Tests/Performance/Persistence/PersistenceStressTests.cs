@@ -25,9 +25,9 @@ public sealed class PersistenceStressTests
     public async Task VirtualSessions_ConcurrentPersistence_PreservesCommittedData()
     {
         var counts = (Environment.GetEnvironmentVariable("MOONGATE_STRESS_SESSIONS") ?? "100,500,1000")
-                     .Split(',')
-                     .Select(value => int.Parse(value, CultureInfo.InvariantCulture))
-                     .ToArray();
+            .Split(',')
+            .Select(value => int.Parse(value, CultureInfo.InvariantCulture))
+            .ToArray();
         Assert.All(counts, count => Assert.InRange(count, 1, 10_000));
         var concurrency = ReadInt("MOONGATE_STRESS_CONCURRENCY", 32, 1, 256);
         var seconds = ReadInt("MOONGATE_STRESS_SECONDS", 30, 1, 600);

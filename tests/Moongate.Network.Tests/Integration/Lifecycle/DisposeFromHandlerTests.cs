@@ -6,10 +6,13 @@ using Moongate.Network.Server;
 namespace Moongate.Network.Tests.Integration.Lifecycle;
 
 /// <summary>
-/// Handlers run on a connection's receive loop, so kicking a client from inside <c>OnDataReceived</c>
-/// disposes the very object whose loop is executing. The synchronous dispose path must therefore
-/// never wait on that loop. Every wait here is bounded so a regression fails fast instead of hanging
-/// the suite.
+///     Handlers run on a connection's receive loop, so kicking a client from inside
+///     <c>
+///         OnDataReceived
+///     </c>
+///     disposes the very object whose loop is executing. The synchronous dispose path must therefore
+///     never wait on that loop. Every wait here is bounded so a regression fails fast instead of hanging
+///     the suite.
 /// </summary>
 public sealed class DisposeFromHandlerTests
 {
@@ -23,10 +26,10 @@ public sealed class DisposeFromHandlerTests
         var disposed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
 
         receiver.OnDataReceived += (_, e) =>
-                                   {
-                                       e.Client.Dispose();
-                                       disposed.TrySetResult();
-                                   };
+        {
+            e.Client.Dispose();
+            disposed.TrySetResult();
+        };
 
         try
         {
@@ -51,16 +54,16 @@ public sealed class DisposeFromHandlerTests
         var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
         MoongateTcpClient? accepted = null;
         server.OnDataReceived += (_, args) =>
-                                 {
-                                     accepted = args.Client;
-                                     server.Dispose();
-                                     disposed.TrySetResult();
+        {
+            accepted = args.Client;
+            server.Dispose();
+            disposed.TrySetResult();
 
-                                     if (!release.Wait(Timeout))
-                                     {
-                                         throw new TimeoutException("Data handler was not released.");
-                                     }
-                                 };
+            if (!release.Wait(Timeout))
+            {
+                throw new TimeoutException("Data handler was not released.");
+            }
+        };
         await server.StartAsync(CancellationToken.None);
         using var peer = new TcpClient();
 

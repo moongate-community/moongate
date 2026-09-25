@@ -3,7 +3,7 @@ using Moongate.Network.Interfaces.Framing;
 namespace Moongate.Network.Tests.Support;
 
 /// <summary>
-/// Reports a configured length as soon as any byte is available.
+///     Reports a configured length as soon as any byte is available.
 /// </summary>
 public sealed class BogusLengthFramer : INetFramer
 {

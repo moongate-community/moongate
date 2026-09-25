@@ -120,7 +120,7 @@ public sealed class SpeechList
     }
 
     /// <summary>
-    /// Loads speech.mul in <see cref="SpeechList.Entries" />
+    ///     Loads speech.mul in <see cref="SpeechList.Entries" />
     /// </summary>
     public static void Initialize()
     {
@@ -162,9 +162,10 @@ public sealed class SpeechList
     }
 
     /// <summary>
-    /// Saves speech.mul to <paramref name="fileName" />
+    ///     Saves speech.mul to <paramref name="fileName" />
     /// </summary>
-    /// <param name="fileName"></param>
+    /// <param name="fileName">
+    /// </param>
     public static void SaveSpeechList(string fileName)
     {
         Entries.Sort(new OrderComparer());

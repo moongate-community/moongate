@@ -31,17 +31,17 @@ public sealed class AsyncPacketDispatchServiceTests
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var completed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         handler.OnHandleAsync = async (context, _, cancellationToken) =>
-                                {
-                                    entered.TrySetResult(fixture.Loop.IsOnLoopThread);
-                                    await release.Task.WaitAsync(cancellationToken);
-                                    Assert.True(
-                                        await context.RunOnGameLoopAsync(
-                                            gameSession => gameSession.SetAccountId(new(42)),
-                                            cancellationToken
-                                        )
-                                    );
-                                    completed.TrySetResult();
-                                };
+        {
+            entered.TrySetResult(fixture.Loop.IsOnLoopThread);
+            await release.Task.WaitAsync(cancellationToken);
+            Assert.True(
+                await context.RunOnGameLoopAsync(
+                    gameSession => gameSession.SetAccountId(new(42)),
+                    cancellationToken
+                )
+            );
+            completed.TrySetResult();
+        };
         var dispatcher = new PacketDispatchService(
             fixture.Loop,
             sessions,
@@ -95,11 +95,11 @@ public sealed class AsyncPacketDispatchServiceTests
         var handler = container.Resolve<AsyncPingPacketHandler>();
         var invoked = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         handler.OnHandleAsync = (_, _, _) =>
-                                {
-                                    invoked.TrySetResult();
+        {
+            invoked.TrySetResult();
 
-                                    throw new InvalidOperationException("test fault");
-                                };
+            throw new InvalidOperationException("test fault");
+        };
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         await dispatcher.StartAsync();
 
@@ -120,23 +120,23 @@ public sealed class AsyncPacketDispatchServiceTests
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var canceled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, _, cancellationToken) =>
-                                                                    {
-                                                                        entered.TrySetResult();
+        {
+            entered.TrySetResult();
 
-                                                                        try
-                                                                        {
-                                                                            await Task.Delay(
-                                                                                System.Threading.Timeout.InfiniteTimeSpan,
-                                                                                cancellationToken
-                                                                            );
-                                                                        }
-                                                                        catch (OperationCanceledException)
-                                                                        {
-                                                                            canceled.TrySetResult();
+            try
+            {
+                await Task.Delay(
+                    System.Threading.Timeout.InfiniteTimeSpan,
+                    cancellationToken
+                );
+            }
+            catch (OperationCanceledException)
+            {
+                canceled.TrySetResult();
 
-                                                                            throw;
-                                                                        }
-                                                                    };
+                throw;
+            }
+        };
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         await dispatcher.StartAsync();
         Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));
@@ -155,7 +155,7 @@ public sealed class AsyncPacketDispatchServiceTests
         var sessions = new SessionService(fixture.Loop);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, _, cancellationToken) =>
-                                                                        await release.Task.WaitAsync(cancellationToken);
+            await release.Task.WaitAsync(cancellationToken);
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         var connections = Enumerable.Range(1, 65).Select(id => new ControlledNetworkConnection(10_000 + id)).ToArray();
 
@@ -199,23 +199,23 @@ public sealed class AsyncPacketDispatchServiceTests
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var canceled = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, _, cancellationToken) =>
-                                                                    {
-                                                                        entered.TrySetResult();
+        {
+            entered.TrySetResult();
 
-                                                                        try
-                                                                        {
-                                                                            await Task.Delay(
-                                                                                System.Threading.Timeout.InfiniteTimeSpan,
-                                                                                cancellationToken
-                                                                            );
-                                                                        }
-                                                                        catch (OperationCanceledException)
-                                                                        {
-                                                                            canceled.TrySetResult();
+            try
+            {
+                await Task.Delay(
+                    System.Threading.Timeout.InfiniteTimeSpan,
+                    cancellationToken
+                );
+            }
+            catch (OperationCanceledException)
+            {
+                canceled.TrySetResult();
 
-                                                                            throw;
-                                                                        }
-                                                                    };
+                throw;
+            }
+        };
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         await dispatcher.StartAsync();
         Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));
@@ -237,10 +237,10 @@ public sealed class AsyncPacketDispatchServiceTests
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, _, _) =>
-                                                                    {
-                                                                        entered.TrySetResult();
-                                                                        await release.Task;
-                                                                    };
+        {
+            entered.TrySetResult();
+            await release.Task;
+        };
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         await dispatcher.StartAsync();
         Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));
@@ -264,26 +264,25 @@ public sealed class AsyncPacketDispatchServiceTests
         var registered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, _, cancellationToken) =>
-                                                                    {
-                                                                        using var callback = cancellationToken.Register(
-                                                                            () => throw new InvalidOperationException(
-                                                                                      "cancel callback"
-                                                                                  )
-                                                                        );
-                                                                        registered.TrySetResult();
+        {
+            using var callback = cancellationToken.Register(() => throw new InvalidOperationException(
+                    "cancel callback"
+                )
+            );
+            registered.TrySetResult();
 
-                                                                        try
-                                                                        {
-                                                                            await Task.Delay(
-                                                                                System.Threading.Timeout.InfiniteTimeSpan,
-                                                                                cancellationToken
-                                                                            );
-                                                                        }
-                                                                        finally
-                                                                        {
-                                                                            finished.TrySetResult();
-                                                                        }
-                                                                    };
+            try
+            {
+                await Task.Delay(
+                    System.Threading.Timeout.InfiniteTimeSpan,
+                    cancellationToken
+                );
+            }
+            finally
+            {
+                finished.TrySetResult();
+            }
+        };
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         await dispatcher.StartAsync();
         Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));
@@ -309,27 +308,26 @@ public sealed class AsyncPacketDispatchServiceTests
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var finished = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, packet, cancellationToken) =>
-                                                                    {
-                                                                        if (packet.Sequence == 2)
-                                                                        {
-                                                                            secondEntered.TrySetResult();
-                                                                            await release.Task;
-                                                                            finished.TrySetResult();
+        {
+            if (packet.Sequence == 2)
+            {
+                secondEntered.TrySetResult();
+                await release.Task;
+                finished.TrySetResult();
 
-                                                                            return;
-                                                                        }
+                return;
+            }
 
-                                                                        using var callback = cancellationToken.Register(
-                                                                            () => throw new InvalidOperationException(
-                                                                                      "cancel callback"
-                                                                                  )
-                                                                        );
-                                                                        registered.TrySetResult();
-                                                                        await Task.Delay(
-                                                                            System.Threading.Timeout.InfiniteTimeSpan,
-                                                                            cancellationToken
-                                                                        );
-                                                                    };
+            using var callback = cancellationToken.Register(() => throw new InvalidOperationException(
+                    "cancel callback"
+                )
+            );
+            registered.TrySetResult();
+            await Task.Delay(
+                System.Threading.Timeout.InfiniteTimeSpan,
+                cancellationToken
+            );
+        };
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         await dispatcher.StartAsync();
         Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));

@@ -20,6 +20,7 @@ public sealed class AdminAccountSessionsGrpcService : AdminAccountSessions.Admin
         {
             throw new RpcException(new(StatusCode.InvalidArgument, "Account ID must be nonzero."));
         }
+
         context.GetHttpContext().Items["AdminTargetId"] = request.AccountId;
         await _authority.RevokeSessionsAsync(new(request.AccountId), context.CancellationToken);
 

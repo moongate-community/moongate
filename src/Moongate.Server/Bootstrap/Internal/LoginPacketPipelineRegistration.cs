@@ -29,20 +29,20 @@ internal static class LoginPacketPipelineRegistration
         container.RegisterInstance(new LoginPacketHandlerRegistry());
 
         return container.AddMoongateService<ILoginConnectionService, ConnectionService>(40)
-                        .AddMoongateService<ILoginPacketSendService, PacketSendService>(
-                            resolver => new(resolver.Resolve<ILoginConnectionService>()),
-                            50
-                        )
-                        .AddMoongateService<LoginPacketDispatchService>(60)
-                        .AddMoongateService<LoginServerService>(
-                            resolver => new(
-                                resolver.Resolve<ILoginNetworkService>(),
-                                resolver.Resolve<ILoginConnectionService>(),
-                                resolver.Resolve<ILoginSessionService>(),
-                                resolver.Resolve<LoginPacketDispatchService>(),
-                                resolver.Resolve<ILoginPacketSendService>()
-                            ),
-                            listenerPriority
-                        );
+            .AddMoongateService<ILoginPacketSendService, PacketSendService>(
+                resolver => new(resolver.Resolve<ILoginConnectionService>()),
+                50
+            )
+            .AddMoongateService<LoginPacketDispatchService>(60)
+            .AddMoongateService<LoginServerService>(
+                resolver => new(
+                    resolver.Resolve<ILoginNetworkService>(),
+                    resolver.Resolve<ILoginConnectionService>(),
+                    resolver.Resolve<ILoginSessionService>(),
+                    resolver.Resolve<LoginPacketDispatchService>(),
+                    resolver.Resolve<ILoginPacketSendService>()
+                ),
+                listenerPriority
+            );
     }
 }

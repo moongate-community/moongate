@@ -31,17 +31,18 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         _services = new(container);
     }
 
-    /// <summary>Configures services immediately and returns this bootstrap for fluent composition.</summary>
+    /// <summary>
+    ///     Configures services immediately and returns this bootstrap for fluent composition.
+    /// </summary>
     /// <remarks>
-    /// Call before starting or stopping the bootstrap. The callback must return the supplied container
-    /// and must not reenter registration or lifecycle methods. Exceptions propagate to the caller;
-    /// registrations already applied by the callback are not rolled back.
+    ///     Call before starting or stopping the bootstrap. The callback must return the supplied container
+    ///     and must not reenter registration or lifecycle methods. Exceptions propagate to the caller;
+    ///     registrations already applied by the callback are not rolled back.
     /// </remarks>
     public MoongateServerBootstrap RegisterServices(Func<Container, Container> registerServices)
     {
         ArgumentNullException.ThrowIfNull(registerServices);
-        _lifecycle.Configure(
-            () =>
+        _lifecycle.Configure(() =>
             {
                 if (!ReferenceEquals(registerServices(_container), _container))
                 {
@@ -174,24 +175,23 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         try
         {
             _persistenceInitialized = await PersistencePreparation.InitializeAsync(_container, _cancellationToken)
-                                                                  .ConfigureAwait(false);
+                .ConfigureAwait(false);
 
             if (_persistenceInitialized)
             {
                 await _eventBus.Value.PublishAsync(new PersistenceReadyEvent(), _cancellationToken).ConfigureAwait(false);
             }
 
-            await _services.StartAsync(
-                               service =>
-                               {
-                                   if (service is IGameLoopService gameLoop)
-                                   {
-                                       // Capture after priority-ordered resolution, even if a later startup step fails.
-                                       _gameLoopCompletion = gameLoop.Completion;
-                                   }
-                               }
-                           )
-                           .ConfigureAwait(false);
+            await _services.StartAsync(service =>
+                    {
+                        if (service is IGameLoopService gameLoop)
+                        {
+                            // Capture after priority-ordered resolution, even if a later startup step fails.
+                            _gameLoopCompletion = gameLoop.Completion;
+                        }
+                    }
+                )
+                .ConfigureAwait(false);
 
             if (_gameLoopCompletion is { IsCompleted: true })
             {

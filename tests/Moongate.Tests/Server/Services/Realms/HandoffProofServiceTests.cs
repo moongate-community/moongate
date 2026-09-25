@@ -119,12 +119,12 @@ public sealed class HandoffProofServiceTests
     private static PendingHandoff Handoff()
     {
         return new(
-                new(42),
-                AccountType.Regular,
-                "alice",
-                "realm-a",
-                Guid.Parse("2a2fc83d-eac8-4d65-b105-18154901bd3d"),
-                "7.0.117"
-            );
+            new(42),
+            AccountType.Regular,
+            "alice",
+            "realm-a",
+            Guid.Parse("2a2fc83d-eac8-4d65-b105-18154901bd3d"),
+            "7.0.117"
+        );
     }
 }

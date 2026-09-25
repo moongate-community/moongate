@@ -11,7 +11,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Commands;
 
-/// <summary>Dispatches registered commands on the calling thread and collects their output.</summary>
+/// <summary>
+///     Dispatches registered commands on the calling thread and collects their output.
+/// </summary>
 public sealed class CommandSystemService : ICommandSystemService
 {
     private readonly Lock _gate = new();
@@ -110,10 +112,10 @@ public sealed class CommandSystemService : ICommandSystemService
         }
 
         return commands.Values
-                       .Select(command => command.Definition)
-                       .Distinct()
-                       .OrderBy(definition => definition.Name, StringComparer.OrdinalIgnoreCase)
-                       .ToArray();
+            .Select(command => command.Definition)
+            .Distinct()
+            .OrderBy(definition => definition.Name, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
     }
 
     /// <inheritdoc />

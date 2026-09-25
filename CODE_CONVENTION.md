@@ -53,6 +53,21 @@ Each bucket takes a domain subfolder once it holds more than a handful of types:
 - Do **not** use primary constructors.
 - Do **not** use expression-bodied constructors (`public X(...) => ...`); constructors must always have a body `{ }`.
 
+### 3.1 Indentation
+
+C# uses spaces with an indentation size and tab width of **4**, as defined in `.editorconfig`.
+Continuation lines use a single indentation level rather than alignment to the preceding expression,
+argument or declaration. The ReSharper alignment settings are explicit in `.editorconfig` and the
+solution's shared `.DotSettings` layer so Rider's formatter, inspections and the `jb` command-line
+tools use the same indentation regardless of personal alignment preferences.
+Keep Rider's indentation inspections enabled and fix the source when they report a mismatch.
+Use the shared **CSharp formatting only** profile to apply indentation, spacing, line wrapping and
+XML documentation formatting without code cleanup or member reordering:
+
+```sh
+jb cleanupcode Moongate.slnx --profile="CSharp formatting only" --include="**/*.cs" --no-build
+```
+
 ## 4. Class Layout Order
 
 Inside a type, use this order:
@@ -92,6 +107,25 @@ rule lives in `Moongate.slnx.DotSettings` — Rider's *Rearrange Members* reads 
   builds emit the documentation file and the NuGet packages ship it, so these comments are the public
   reference for the libraries, not notes for the next reader of the source.
 - Interface names must use `I` prefix and clear domain naming.
+
+### 5.1 XML Documentation Layout
+
+Use separate lines for opening tags, documentation text and closing tags. This applies to XML
+documentation throughout the codebase, not only interfaces. Keep self-closing references such as
+`<see cref="IDisposable" />`, `<paramref name="value" />` and `<inheritdoc />` intact.
+
+```csharp
+/// <summary>
+///     Numeric value of the Debug level.
+/// </summary>
+```
+
+The XMLDOC rules in `.editorconfig` control this layout in Rider/ReSharper. To apply them without
+reformatting code or rearranging members, use the shared **XML documentation only** cleanup profile:
+
+```sh
+jb cleanupcode Moongate.slnx --profile="XML documentation only" --no-build
+```
 
 ## 6. Enums
 

@@ -46,9 +46,8 @@ public class ContainerExtensionsTests
     {
         using var container = new Container();
 
-        Assert.Throws<ArgumentException>(
-            () =>
-                container.AddMoongateService(typeof(object), implementationType, () => new())
+        Assert.Throws<ArgumentException>(() =>
+            container.AddMoongateService(typeof(object), implementationType, () => new())
         );
 
         Assert.False(container.IsRegistered<object>());
@@ -61,9 +60,7 @@ public class ContainerExtensionsTests
         using var container = new Container();
         var calls = 0;
 
-        Assert.Throws<ArgumentException>(
-            () => container.AddMoongateService<IRegistrationService>(
-                () =>
+        Assert.Throws<ArgumentException>(() => container.AddMoongateService<IRegistrationService>(() =>
                 {
                     calls++;
 
@@ -244,7 +241,7 @@ public class ContainerExtensionsTests
         container.RegisterInstance(new RegistrationDependency());
 
         container.AddMoongateService<RegistrationService>()
-                 .AddMoongateService<StartupRegistrationService>(10);
+            .AddMoongateService<StartupRegistrationService>(10);
 
         Assert.Collection(
             container.Resolve<List<ServiceRegistrationData>>(),
@@ -271,17 +268,14 @@ public class ContainerExtensionsTests
     {
         using var container = new Container();
 
-        Assert.Throws<ArgumentNullException>(
-            () =>
-                container.AddMoongateService((RegistrationService)null!)
+        Assert.Throws<ArgumentNullException>(() =>
+            container.AddMoongateService((RegistrationService)null!)
         );
-        Assert.Throws<ArgumentNullException>(
-            () =>
-                container.AddMoongateService((Func<RegistrationService>)null!)
+        Assert.Throws<ArgumentNullException>(() =>
+            container.AddMoongateService((Func<RegistrationService>)null!)
         );
-        Assert.Throws<ArgumentNullException>(
-            () =>
-                container.AddMoongateService((Func<IResolverContext, RegistrationService>)null!)
+        Assert.Throws<ArgumentNullException>(() =>
+            container.AddMoongateService((Func<IResolverContext, RegistrationService>)null!)
         );
         Assert.False(container.IsRegistered<RegistrationService>());
         Assert.False(container.IsRegistered<List<ServiceRegistrationData>>());

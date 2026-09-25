@@ -7,7 +7,9 @@ using Moongate.Server.Data.Config;
 
 namespace Moongate.Server.Bootstrap.Internal.Setup;
 
-/// <summary>Prepares a server data root offline, preserving existing configuration and migration history files.</summary>
+/// <summary>
+///     Prepares a server data root offline, preserving existing configuration and migration history files.
+/// </summary>
 internal static class RootDirectoryInitializer
 {
     public static void Initialize(
@@ -28,8 +30,8 @@ internal static class RootDirectoryInitializer
 
         var root = Path.GetFullPath(rootDirectory.ResolvePathAndEnvs());
         var source = new[] { MigrationTarget.Auth, MigrationTarget.World }
-                     .Select(target => MigrationCatalog.Load(migrationsDirectory, null, target))
-                     .ToArray();
+            .Select(target => MigrationCatalog.Load(migrationsDirectory, null, target))
+            .ToArray();
 
         if (source.All(catalog => catalog.Scripts.Count == 0))
         {

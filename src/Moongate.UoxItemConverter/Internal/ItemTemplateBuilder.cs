@@ -5,15 +5,18 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-/// Builds an <see cref="ItemTemplate" /> from one parsed block, resolving its <c>get=</c>
-/// target against a fully precomputed header-to-Id map.
+///     Builds an <see cref="ItemTemplate" /> from one parsed block, resolving its
+///     <c>
+///         get=
+///     </c>
+///     target against a fully precomputed header-to-Id map.
 /// </summary>
 internal static class ItemTemplateBuilder
 {
     /// <summary>
-    /// Computes a block's Id and item Serial, with no dependency on any other block. Used both to
-    /// precompute the full header-to-Id map up front and, once that map exists, by <see cref="Build" />.
-    /// False for a block with no id= of its own (a get=a b alias, or a non-item block).
+    ///     Computes a block's Id and item Serial, with no dependency on any other block. Used both to
+    ///     precompute the full header-to-Id map up front and, once that map exists, by <see cref="Build" />.
+    ///     False for a block with no id= of its own (a get=a b alias, or a non-item block).
     /// </summary>
     public static bool TryComputeId(DfnBlock block, out string id, out Serial itemId)
     {

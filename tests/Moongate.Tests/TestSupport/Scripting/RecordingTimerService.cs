@@ -3,7 +3,9 @@ using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Tests.TestSupport.Scripting;
 
-/// <summary>An ITimerService that records registrations and fires them on demand, on the calling thread.</summary>
+/// <summary>
+///     An ITimerService that records registrations and fires them on demand, on the calling thread.
+/// </summary>
 public sealed class RecordingTimerService : ITimerService
 {
     private int _next;
@@ -11,10 +13,14 @@ public sealed class RecordingTimerService : ITimerService
     public List<RegisteredTimer> Timers { get; } = [];
     public List<string> Unregistered { get; } = [];
 
-    /// <summary>When true, RegisterTimer throws instead of registering, as the real wheel does at capacity or once closed.</summary>
+    /// <summary>
+    ///     When true, RegisterTimer throws instead of registering, as the real wheel does at capacity or once closed.
+    /// </summary>
     public bool ThrowOnRegister { get; set; }
 
-    /// <summary>Runs the callback of a registered timer; a one-shot timer is removed first, as the wheel would.</summary>
+    /// <summary>
+    ///     Runs the callback of a registered timer; a one-shot timer is removed first, as the wheel would.
+    /// </summary>
     public void Fire(string id)
     {
         var timer = Timers.Single(candidate => candidate.Id == id);

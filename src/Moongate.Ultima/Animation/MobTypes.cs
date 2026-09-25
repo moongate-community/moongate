@@ -16,12 +16,16 @@ using Moongate.Ultima.Types;
 namespace Moongate.Ultima.Animation;
 
 /// <summary>
-/// Single source of truth for <c>mobtypes.txt</c>.
-/// The client uses this file (when present) to decide a body's category
-/// (MONSTER / ANIMAL / SEA_MONSTER / HUMAN / EQUIPMENT) and per-body
-/// optional-action flags. Without it, UOFiddler falls back to the
-/// historical body-id range convention (0–199 = monster, 200–399 = animal,
-/// 400+ = human/equipment).
+///     Single source of truth for
+///     <c>
+///         mobtypes.txt
+///     </c>
+///     .
+///     The client uses this file (when present) to decide a body's category
+///     (MONSTER / ANIMAL / SEA_MONSTER / HUMAN / EQUIPMENT) and per-body
+///     optional-action flags. Without it, UOFiddler falls back to the
+///     historical body-id range convention (0–199 = monster, 200–399 = animal,
+///     400+ = human/equipment).
 /// </summary>
 public static class MobTypes
 {
@@ -70,7 +74,7 @@ public static class MobTypes
     }
 
     /// <summary>
-    /// idx records per body for a given category (5 directions × action count).
+    ///     idx records per body for a given category (5 directions × action count).
     /// </summary>
     public static int GetIdxStride(MobType type)
     {
@@ -78,8 +82,8 @@ public static class MobTypes
     }
 
     /// <summary>
-    /// Returns the mobtype for a body, or <see cref="MobType.Monster" /> if
-    /// the body has no entry (per user-confirmed plan choice).
+    ///     Returns the mobtype for a body, or <see cref="MobType.Monster" /> if
+    ///     the body has no entry (per user-confirmed plan choice).
     /// </summary>
     public static MobType GetTypeOrDefault(int body)
     {

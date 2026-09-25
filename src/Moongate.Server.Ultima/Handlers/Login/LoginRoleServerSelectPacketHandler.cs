@@ -11,7 +11,9 @@ using Serilog;
 
 namespace Moongate.Server.Ultima.Handlers.Login;
 
-/// <summary>Issues a one-time realm ticket and redirects an authenticated login connection.</summary>
+/// <summary>
+///     Issues a one-time realm ticket and redirects an authenticated login connection.
+/// </summary>
 public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<ServerSelectPacket>
 {
     private readonly ILoginSessionService _sessions;
@@ -64,7 +66,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
             try
             {
                 realm = await _catalog.FindByIndexAsync(packet.ServerIndex, accountType, cancellationToken)
-                                      .ConfigureAwait(false);
+                    .ConfigureAwait(false);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -132,12 +134,12 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
 
                     // The expected close cancels the login mailbox token; delivery must finish before revocation is decided.
                     delivered = await _sender.SendAndDisconnectAsync(
-                                                 session.SessionId,
-                                                 connection,
-                                                 redirect,
-                                                 CancellationToken.None
-                                             )
-                                             .ConfigureAwait(false);
+                            session.SessionId,
+                            connection,
+                            redirect,
+                            CancellationToken.None
+                        )
+                        .ConfigureAwait(false);
                 }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -155,7 +157,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
                     try
                     {
                         await _handoffs.RevokeAsync(realm.Descriptor.RealmId, authKey, CancellationToken.None)
-                                       .ConfigureAwait(false);
+                            .ConfigureAwait(false);
                     }
                     catch (Exception exception)
                     {
@@ -194,12 +196,12 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
         try
         {
             if (await _sender.SendAndDisconnectAsync(
-                                 session.SessionId,
-                                 connection,
-                                 new LoginDeniedPacket(reason),
-                                 CancellationToken.None
-                             )
-                             .ConfigureAwait(false))
+                        session.SessionId,
+                        connection,
+                        new LoginDeniedPacket(reason),
+                        CancellationToken.None
+                    )
+                    .ConfigureAwait(false))
             {
                 return;
             }

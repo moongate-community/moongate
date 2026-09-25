@@ -205,15 +205,15 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
     private static RealmInstance Realm(AccountType minimumAccountType = AccountType.Regular)
     {
         return new(
-                new(
-                    "realm-a",
-                    1,
-                    "Realm A",
-                    IPAddress.Parse("127.0.0.9"),
-                    2595,
-                    minimumAccountType
-                ),
-                Guid.Parse("234a81d2-c5d4-48cf-a05f-494e541c94d4")
-            );
+            new(
+                "realm-a",
+                1,
+                "Realm A",
+                IPAddress.Parse("127.0.0.9"),
+                2595,
+                minimumAccountType
+            ),
+            Guid.Parse("234a81d2-c5d4-48cf-a05f-494e541c94d4")
+        );
     }
 }

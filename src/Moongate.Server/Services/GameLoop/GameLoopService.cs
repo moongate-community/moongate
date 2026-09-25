@@ -11,7 +11,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.GameLoop;
 
-/// <summary>Executes bounded, synchronous work on one dedicated thread.</summary>
+/// <summary>
+///     Executes bounded, synchronous work on one dedicated thread.
+/// </summary>
 public sealed class GameLoopService : IGameLoopService, IDisposable
 {
     private readonly Lock _gate = new();
@@ -45,7 +47,9 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
     /// <inheritdoc />
     public Task Completion => _completion.Task;
 
-    /// <summary>Creates a stopped inbox; StartAsync must complete before producers can post work.</summary>
+    /// <summary>
+    ///     Creates a stopped inbox; StartAsync must complete before producers can post work.
+    /// </summary>
     public GameLoopService(GameLoopOptions options, TimerWheelService timers, TimeProvider timeProvider)
     {
         _inbox = Channel.CreateBounded<QueuedGameLoopWorkItem>(
@@ -71,8 +75,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         {
             var depth = _inbox.Reader.Count;
             var age = depth > 0 && _inbox.Reader.TryPeek(out var oldest)
-                          ? _timeProvider.GetElapsedTime(oldest.EnqueuedAt)
-                          : TimeSpan.Zero;
+                ? _timeProvider.GetElapsedTime(oldest.EnqueuedAt)
+                : TimeSpan.Zero;
 
             return _pump.GetMetricsSnapshot() with
             {
@@ -100,8 +104,12 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         return WaitForAdmissionAsync(workItem, cancellationToken);
     }
 
-    /// <summary>Starts the dedicated thread and completes only after its identity is established.</summary>
-    /// <exception cref="InvalidOperationException">This instance has already stopped and cannot restart.</exception>
+    /// <summary>
+    ///     Starts the dedicated thread and completes only after its identity is established.
+    /// </summary>
+    /// <exception cref="InvalidOperationException">
+    ///     This instance has already stopped and cannot restart.
+    /// </exception>
     public Task StartAsync()
     {
         lock (_gate)
@@ -153,12 +161,16 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         }
     }
 
-    /// <summary>Closes admission, drains accepted work and waits for the dedicated thread to exit.</summary>
+    /// <summary>
+    ///     Closes admission, drains accepted work and waits for the dedicated thread to exit.
+    /// </summary>
     /// <remarks>
-    /// Cleanup succeeds after a handler fault; Completion retains the original failure for the host to observe.
-    /// Synchronous handlers cannot be preempted, so this operation has no forced shutdown timeout.
+    ///     Cleanup succeeds after a handler fault; Completion retains the original failure for the host to observe.
+    ///     Synchronous handlers cannot be preempted, so this operation has no forced shutdown timeout.
     /// </remarks>
-    /// <exception cref="InvalidOperationException">The caller is executing on the loop thread.</exception>
+    /// <exception cref="InvalidOperationException">
+    ///     The caller is executing on the loop thread.
+    /// </exception>
     public Task StopAsync()
     {
         RejectLoopThreadWait();
@@ -379,8 +391,8 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
                     // Ceil the wait: truncating a sub-millisecond remainder would busy-spin.
                     var delay = _timers.GetNextDelay();
                     var waitMilliseconds = delay is null
-                                               ? Timeout.Infinite
-                                               : (int)Math.Min(int.MaxValue, Math.Ceiling(delay.Value.TotalMilliseconds));
+                        ? Timeout.Infinite
+                        : (int)Math.Min(int.MaxValue, Math.Ceiling(delay.Value.TotalMilliseconds));
                     _wake.WaitOne(waitMilliseconds);
                 }
             }
@@ -497,7 +509,9 @@ public sealed class GameLoopService : IGameLoopService, IDisposable
         }
     }
 
-    /// <summary>Drains the loop and releases its wake handle. Calls on the loop thread are rejected.</summary>
+    /// <summary>
+    ///     Drains the loop and releases its wake handle. Calls on the loop thread are rejected.
+    /// </summary>
     public void Dispose()
     {
         RejectLoopThreadWait();

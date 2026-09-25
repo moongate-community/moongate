@@ -238,8 +238,12 @@ public static class StringHelpers
         }
     }
 
-    /// <summary>Copies the string into a buffer rented from ArrayPool&lt;char&gt;.Shared.</summary>
-    /// <remarks>The caller must return the buffer to that pool when finished.</remarks>
+    /// <summary>
+    ///     Copies the string into a buffer rented from ArrayPool&lt;char&gt;.Shared.
+    /// </summary>
+    /// <remarks>
+    ///     The caller must return the buffer to that pool when finished.
+    /// </remarks>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static char[] ToPooledArray(this string str)
     {

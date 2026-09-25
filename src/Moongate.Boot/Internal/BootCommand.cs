@@ -5,11 +5,21 @@ namespace Moongate.Boot.Internal;
 
 internal static class BootCommand
 {
-    /// <summary>Prepare a server root offline using the matching Moongate.Server distribution.</summary>
-    /// <param name="rootDirectory">Root directory to initialize.</param>
-    /// <param name="generateAdminCertificate">Create or reuse a TLS certificate and enable the administration API.</param>
-    /// <param name="adminCertificateHosts">Comma-separated additional DNS names or IP addresses for the certificate.</param>
-    /// <param name="cancellationToken">Cancellation for the initialization process.</param>
+    /// <summary>
+    ///     Prepare a server root offline using the matching Moongate.Server distribution.
+    /// </summary>
+    /// <param name="rootDirectory">
+    ///     Root directory to initialize.
+    /// </param>
+    /// <param name="generateAdminCertificate">
+    ///     Create or reuse a TLS certificate and enable the administration API.
+    /// </param>
+    /// <param name="adminCertificateHosts">
+    ///     Comma-separated additional DNS names or IP addresses for the certificate.
+    /// </param>
+    /// <param name="cancellationToken">
+    ///     Cancellation for the initialization process.
+    /// </param>
     public static async Task<int> RunAsync(
         [Argument] string rootDirectory,
         bool generateAdminCertificate = false,
@@ -25,6 +35,7 @@ internal static class BootCommand
 
             return 2;
         }
+
         var server = Environment.GetEnvironmentVariable("MOONGATE_SERVER_EXECUTABLE") ??
                      Path.Combine(
                          AppContext.BaseDirectory,
@@ -40,6 +51,7 @@ internal static class BootCommand
                     server
                 );
             }
+
             var start = new ProcessStartInfo(server) { UseShellExecute = false };
             start.ArgumentList.Add("--initialize-root");
             start.ArgumentList.Add("--root-directory");
@@ -55,6 +67,7 @@ internal static class BootCommand
                 start.ArgumentList.Add("--admin-certificate-hosts");
                 start.ArgumentList.Add(adminCertificateHosts);
             }
+
             using var process = Process.Start(start) ??
                                 throw new InvalidOperationException("Could not start root initialization.");
 
@@ -70,6 +83,7 @@ internal static class BootCommand
                 {
                     process.Kill(true);
                 }
+
                 await process.WaitForExitAsync(CancellationToken.None);
 
                 return 130;

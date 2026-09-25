@@ -1,6 +1,8 @@
 namespace Moongate.Scripting.Internal;
 
-/// <summary>Remembers which script file created each timer and coroutine, so invalidating a file can cancel exactly its work.</summary>
+/// <summary>
+///     Remembers which script file created each timer and coroutine, so invalidating a file can cancel exactly its work.
+/// </summary>
 internal sealed class ScriptOwnership
 {
     private readonly Dictionary<string, HashSet<string>> _timersByOwner = new(StringComparer.Ordinal);
@@ -8,7 +10,9 @@ internal sealed class ScriptOwnership
     private readonly Dictionary<string, string> _ownerByTimer = new(StringComparer.Ordinal);
     private readonly Dictionary<Guid, string> _ownerByCoroutine = new();
 
-    /// <summary>Empties every map: timers, coroutines and their owners.</summary>
+    /// <summary>
+    ///     Empties every map: timers, coroutines and their owners.
+    /// </summary>
     public void Clear()
     {
         _timersByOwner.Clear();
@@ -33,7 +37,9 @@ internal sealed class ScriptOwnership
         }
     }
 
-    /// <summary>Releases and returns every tracked timer id, regardless of owner, clearing both timer maps.</summary>
+    /// <summary>
+    ///     Releases and returns every tracked timer id, regardless of owner, clearing both timer maps.
+    /// </summary>
     public IReadOnlyList<string> ReleaseAllTimers()
     {
         var ids = _ownerByTimer.Keys.ToArray();

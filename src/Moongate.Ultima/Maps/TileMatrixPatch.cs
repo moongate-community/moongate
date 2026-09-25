@@ -22,7 +22,7 @@ public sealed class TileMatrixPatch
 
         LandBlocksCount = StaticBlocksCount = 0;
         string mapDataPath,
-               mapIndexPath;
+            mapIndexPath;
 
         if (path == null)
         {
@@ -53,8 +53,8 @@ public sealed class TileMatrixPatch
         }
 
         string staDataPath,
-               staIndexPath,
-               staLookupPath;
+            staIndexPath,
+            staLookupPath;
 
         if (path == null)
         {
@@ -211,7 +211,7 @@ public sealed class TileMatrixPatch
         using var fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         using var fsLookup = new FileStream(lookupPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         using BinaryReader indexReader = new(fsIndex),
-                           lookupReader = new(fsLookup);
+            lookupReader = new(fsLookup);
         var count = Math.Min(
             (int)(indexReader.BaseStream.Length / 4),
             (int)(lookupReader.BaseStream.Length / 12)

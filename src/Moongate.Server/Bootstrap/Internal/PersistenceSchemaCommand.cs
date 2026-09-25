@@ -13,7 +13,9 @@ using Moongate.Server.Types.Persistence;
 
 namespace Moongate.Server.Bootstrap.Internal;
 
-/// <summary>Composes only registration prerequisites and executes schema administration without host startup.</summary>
+/// <summary>
+///     Composes only registration prerequisites and executes schema administration without host startup.
+/// </summary>
 internal static class PersistenceSchemaCommand
 {
     public static async Task ExecuteAsync(
@@ -114,7 +116,7 @@ internal static class PersistenceSchemaCommand
             try
             {
                 await File.WriteAllTextAsync(temporary, sql, new UTF8Encoding(false), cancellationToken)
-                          .ConfigureAwait(false);
+                    .ConfigureAwait(false);
                 cancellationToken.ThrowIfCancellationRequested();
                 File.Move(temporary, path, false);
             }

@@ -74,7 +74,7 @@ public sealed class AdminHostLifecycleTests
                 Assert.Same(
                     provider,
                     services.Single(descriptor => descriptor.ServiceType == typeof(IAdminServerInfoProvider))
-                            .ImplementationInstance
+                        .ImplementationInstance
                 );
             }
         );
@@ -95,18 +95,18 @@ public sealed class AdminHostLifecycleTests
         );
         Assert.Equal(
             StatusCode.Unimplemented,
-            (await Assert.ThrowsAsync<RpcException>(
-                 () => new AdminLogin.AdminLoginClient(channel).LoginAsync(new()).ResponseAsync
-             )).StatusCode
+            (await Assert.ThrowsAsync<RpcException>(() =>
+                new AdminLogin.AdminLoginClient(channel).LoginAsync(new()).ResponseAsync
+            )).StatusCode
         );
         using var wrongName = GrpcChannel.ForAddress(
             $"https://127.0.0.1:{port}",
             new() { HttpHandler = certificates.CreateHandler() }
         );
-        var invalidCertificate = await Assert.ThrowsAsync<RpcException>(
-                                     () => new AdminServer.AdminServerClient(wrongName).GetServerInfoAsync(new())
-                                         .ResponseAsync
-                                 );
+        var invalidCertificate = await Assert.ThrowsAsync<RpcException>(() =>
+            new AdminServer.AdminServerClient(wrongName).GetServerInfoAsync(new())
+                .ResponseAsync
+        );
         Assert.Contains("RemoteCertificateNameMismatch", invalidCertificate.ToString(), StringComparison.Ordinal);
         host.StopAccepting();
         Assert.Equal(

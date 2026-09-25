@@ -12,22 +12,37 @@ using Moongate.Ultima.Imaging;
 namespace Moongate.Ultima.Caching;
 
 /// <summary>
-/// Bounded LRU cache for decoded bitmaps, replacing the unbounded
-/// <c>Bitmap[0x14000]</c> / <c>Bitmap[0xFFFF]</c> arrays that previously
-/// pinned every decoded item for the lifetime of the process.
-/// Eviction policy: when <c>Set</c> would push <c>Count</c> past
-/// <see cref="Capacity" />, the least-recently-used entry is removed.
-/// By default the evicted <see cref="UltimaBitmap" /> is NOT disposed — the SDK
-/// has no way to know whether the UI is still holding a reference to it,
-/// and disposing an in-use GDI handle crashes the renderer. Consumers
-/// that own the bitmap lifecycle exclusively can opt in via
-/// <see cref="DisposeOnEvict" />. <see cref="Dispose" /> always disposes
-/// every entry — call it only on shutdown or when the consumer guarantees
-/// no stale references survive.
-/// Thread safety: every public member is guarded by a single lock. The
-/// previous array-backed cache was lock-free and racy; the lock cost
-/// (~tens of ns per op) is dwarfed by decode cost on a miss, and on a
-/// hit it preserves SDK behavior that consumers already accept.
+///     Bounded LRU cache for decoded bitmaps, replacing the unbounded
+///     <c>
+///         Bitmap[0x14000]
+///     </c>
+///     /
+///     <c>
+///         Bitmap[0xFFFF]
+///     </c>
+///     arrays that previously
+///     pinned every decoded item for the lifetime of the process.
+///     Eviction policy: when
+///     <c>
+///         Set
+///     </c>
+///     would push
+///     <c>
+///         Count
+///     </c>
+///     past
+///     <see cref="Capacity" />, the least-recently-used entry is removed.
+///     By default the evicted <see cref="UltimaBitmap" /> is NOT disposed — the SDK
+///     has no way to know whether the UI is still holding a reference to it,
+///     and disposing an in-use GDI handle crashes the renderer. Consumers
+///     that own the bitmap lifecycle exclusively can opt in via
+///     <see cref="DisposeOnEvict" />. <see cref="Dispose" /> always disposes
+///     every entry — call it only on shutdown or when the consumer guarantees
+///     no stale references survive.
+///     Thread safety: every public member is guarded by a single lock. The
+///     previous array-backed cache was lock-free and racy; the lock cost
+///     (~tens of ns per op) is dwarfed by decode cost on a miss, and on a
+///     hit it preserves SDK behavior that consumers already accept.
 /// </summary>
 public sealed class LruBitmapCache : IDisposable
 {
@@ -43,8 +58,8 @@ public sealed class LruBitmapCache : IDisposable
     private bool _disposed;
 
     /// <summary>
-    /// Maximum number of bitmaps held by the cache. Setting this lower
-    /// than the current Count evicts down to the new cap immediately.
+    ///     Maximum number of bitmaps held by the cache. Setting this lower
+    ///     than the current Count evicts down to the new cap immediately.
     /// </summary>
     public int Capacity
     {
@@ -69,17 +84,17 @@ public sealed class LruBitmapCache : IDisposable
     }
 
     /// <summary>
-    /// If true, bitmaps evicted by the LRU policy or by <see cref="Clear" />
-    /// are <see cref="IDisposable.Dispose" />'d before being dropped. Off
-    /// by default — see class remarks. <see cref="Dispose" /> ignores this
-    /// flag and always disposes everything it owns.
+    ///     If true, bitmaps evicted by the LRU policy or by <see cref="Clear" />
+    ///     are <see cref="IDisposable.Dispose" />'d before being dropped. Off
+    ///     by default — see class remarks. <see cref="Dispose" /> ignores this
+    ///     flag and always disposes everything it owns.
     /// </summary>
     public bool DisposeOnEvict { get; set; }
 
     /// <summary>
-    /// Diagnostic counter — total bitmaps evicted by LRU policy since
-    /// the cache was constructed. Useful in tests/benchmarks to assert
-    /// that bounding is actually happening.
+    ///     Diagnostic counter — total bitmaps evicted by LRU policy since
+    ///     the cache was constructed. Useful in tests/benchmarks to assert
+    ///     that bounding is actually happening.
     /// </summary>
     public int EvictedCount
     {
@@ -93,9 +108,13 @@ public sealed class LruBitmapCache : IDisposable
     }
 
     /// <summary>
-    /// Diagnostic counter — total bitmaps that were <c>Dispose</c>'d via
-    /// either <see cref="DisposeOnEvict" /> or <see cref="Dispose" /> /
-    /// <see cref="Clear" />.
+    ///     Diagnostic counter — total bitmaps that were
+    ///     <c>
+    ///         Dispose
+    ///     </c>
+    ///     'd via
+    ///     either <see cref="DisposeOnEvict" /> or <see cref="Dispose" /> /
+    ///     <see cref="Clear" />.
     /// </summary>
     public int DisposedCount
     {
@@ -120,10 +139,10 @@ public sealed class LruBitmapCache : IDisposable
     }
 
     /// <summary>
-    /// Drops every entry. Disposes the bitmaps iff
-    /// <see cref="DisposeOnEvict" /> is true. Use this for soft resets
-    /// where consumers may still hold references; use <see cref="Dispose" />
-    /// when you own the lifecycle outright.
+    ///     Drops every entry. Disposes the bitmaps iff
+    ///     <see cref="DisposeOnEvict" /> is true. Use this for soft resets
+    ///     where consumers may still hold references; use <see cref="Dispose" />
+    ///     when you own the lifecycle outright.
     /// </summary>
     public void Clear()
     {
@@ -167,10 +186,10 @@ public sealed class LruBitmapCache : IDisposable
     }
 
     /// <summary>
-    /// Insert or update an entry. If the key already exists, updates the
-    /// existing entry and moves it to MRU; the displaced previous bitmap
-    /// is disposed iff <see cref="DisposeOnEvict" /> is true. Capacity 0
-    /// is a no-op (the bitmap is not retained and not disposed).
+    ///     Insert or update an entry. If the key already exists, updates the
+    ///     existing entry and moves it to MRU; the displaced previous bitmap
+    ///     is disposed iff <see cref="DisposeOnEvict" /> is true. Capacity 0
+    ///     is a no-op (the bitmap is not retained and not disposed).
     /// </summary>
     public void Set(int key, UltimaBitmap value)
     {

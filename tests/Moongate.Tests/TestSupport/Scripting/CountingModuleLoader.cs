@@ -2,7 +2,9 @@ using Lua;
 
 namespace Moongate.Tests.TestSupport.Scripting;
 
-/// <summary>Serves one module named "m" from a source factory and lets tests count how often it was loaded.</summary>
+/// <summary>
+///     Serves one module named "m" from a source factory and lets tests count how often it was loaded.
+/// </summary>
 public sealed class CountingModuleLoader : ILuaModuleLoader
 {
     private readonly Func<string> _source;

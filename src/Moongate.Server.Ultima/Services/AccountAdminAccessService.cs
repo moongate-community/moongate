@@ -14,7 +14,9 @@ using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
 
-/// <summary>Serializes administrative authorization changes across processes using account row locks.</summary>
+/// <summary>
+///     Serializes administrative authorization changes across processes using account row locks.
+/// </summary>
 public sealed class AccountAdminAccessService : IAccountAdminAccessService
 {
     private readonly ILogger _logger = Log.ForContext<AccountAdminAccessService>();
@@ -40,7 +42,11 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
     {
         var id = await FindIdAsync(username, token);
 
-        if (id is null) { return null; }
+        if (id is null)
+        {
+            return null;
+        }
+
         string? digest = null;
         AdminLoginResult? result = null;
 
@@ -61,6 +67,7 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
                     {
                         return;
                     }
+
                     var gate = await _sessions.ReadGateAsync(account.Id, token);
 
                     if (gate is null || gate.Blocked)
@@ -69,15 +76,16 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
                         // Rotate instead of reopening any generation that could have issued an old token.
                         gate = await _sessions.ResetGateAsync(account.Id, false, token);
                     }
+
                     var rawToken = Convert.ToHexString(RandomNumberGenerator.GetBytes(32));
                     digest = Convert.ToHexString(SHA256.HashData(Encoding.ASCII.GetBytes(rawToken)));
                     var session = await _sessions.IssueAsync(
-                                      new(account.Id, account.Username, account.AccountType),
-                                      gate.Generation,
-                                      digest,
-                                      _options.Lifetime,
-                                      token
-                                  );
+                        new(account.Id, account.Username, account.AccountType),
+                        gate.Generation,
+                        digest,
+                        _options.Lifetime,
+                        token
+                    );
                     account.LastLoginAt = DateTime.UtcNow;
                     await tx.GetDataAccess<AccountEntity>().UpsertAsync(account, token);
                     result = new(
@@ -102,7 +110,10 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
         {
             if (digest is not null)
             {
-                try { await _sessions.RemoveAsync(digest, CancellationToken.None); }
+                try
+                {
+                    await _sessions.RemoveAsync(digest, CancellationToken.None);
+                }
                 catch (Exception)
                 {
                     // The undisclosed random token still has a strict absolute expiry.
@@ -126,7 +137,10 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
     {
         ArgumentNullException.ThrowIfNull(options);
 
-        if (!Enum.IsDefined(options.AccountType)) { throw new ArgumentOutOfRangeException(nameof(options)); }
+        if (!Enum.IsDefined(options.AccountType))
+        {
+            throw new ArgumentOutOfRangeException(nameof(options));
+        }
 
         return MutateAsync(
             accountId,
@@ -150,15 +164,15 @@ public sealed class AccountAdminAccessService : IAccountAdminAccessService
     public Task RevokeSessionsAsync(Serial accountId, CancellationToken token = default)
     {
         return _persistence.ExecuteInTransactionAsync(
-                PersistenceDatabaseTarget.Accounts,
-                async tx =>
-                {
-                    _ = await tx.GetByIdForUpdateAsync<AccountEntity>(accountId, token) ??
-                        throw new KeyNotFoundException("Account not found.");
-                    await _sessions.ResetGateAsync(accountId, false, token);
-                },
-                token
-            );
+            PersistenceDatabaseTarget.Accounts,
+            async tx =>
+            {
+                _ = await tx.GetByIdForUpdateAsync<AccountEntity>(accountId, token) ??
+                    throw new KeyNotFoundException("Account not found.");
+                await _sessions.ResetGateAsync(accountId, false, token);
+            },
+            token
+        );
     }
 
     private async Task<Serial?> FindIdAsync(string username, CancellationToken token)

@@ -6,7 +6,9 @@ using Moongate.Server.Core.Interfaces.Packets;
 
 namespace Moongate.Server.Core.Packets;
 
-/// <summary>Collects login-only handlers before the listener starts.</summary>
+/// <summary>
+///     Collects login-only handlers before the listener starts.
+/// </summary>
 public sealed class LoginPacketHandlerRegistry
 {
     private readonly Lock _gate = new();

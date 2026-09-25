@@ -3,11 +3,12 @@ using System.Collections;
 namespace Moongate.Core.Collections;
 
 /// <summary>
-/// Non-thread safe, non-guarded enumerator for classes that have internal arrays.
-/// Recommended to copy this and use it as a nested struct.
-/// Recommend adding version checking to properly guard against modification during enumeration.
+///     Non-thread safe, non-guarded enumerator for classes that have internal arrays.
+///     Recommended to copy this and use it as a nested struct.
+///     Recommend adding version checking to properly guard against modification during enumeration.
 /// </summary>
-/// <typeparam name="T"></typeparam>
+/// <typeparam name="T">
+/// </typeparam>
 public struct ArrayEnumerator<T> : IEnumerator<T>
 {
     private readonly T[] _array;
@@ -58,5 +59,7 @@ public struct ArrayEnumerator<T> : IEnumerator<T>
         Current = default;
     }
 
-    public void Dispose() { }
+    public void Dispose()
+    {
+    }
 }

@@ -37,10 +37,10 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
     public static async Task<HostPersistenceFixture> CreateAsync(bool autoSync = true, bool twoTargets = false)
     {
         return new(
-                await new PostgreSqlFixture().CreateDatabaseAsync(),
-                twoTargets ? await new PostgreSqlFixture().CreateDatabaseAsync() : null,
-                autoSync
-            );
+            await new PostgreSqlFixture().CreateDatabaseAsync(),
+            twoTargets ? await new PostgreSqlFixture().CreateDatabaseAsync() : null,
+            autoSync
+        );
     }
 
     public void RegisterEntity()

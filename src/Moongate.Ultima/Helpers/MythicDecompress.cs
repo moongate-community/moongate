@@ -15,10 +15,10 @@ public static class MythicDecompress
     }
 
     /// <summary>
-    /// Decompresses a slice of <paramref name="buffer" />. Lets callers pass
-    /// pooled buffers that may be larger than the actual payload — the
-    /// original Decompress(byte[]) overload reads BaseStream.Length, which
-    /// would walk into uninitialized tail bytes when the input is pooled.
+    ///     Decompresses a slice of <paramref name="buffer" />. Lets callers pass
+    ///     pooled buffers that may be larger than the actual payload — the
+    ///     original Decompress(byte[]) overload reads BaseStream.Length, which
+    ///     would walk into uninitialized tail bytes when the input is pooled.
     /// </summary>
     public static byte[] Decompress(byte[] buffer, int offset, int length)
     {
@@ -69,7 +69,7 @@ public static class MythicDecompress
         var output = new byte[input.Length + nonZeroCount + 1024];
 
         for (int i = 0,
-                 m = 0;
+             m = 0;
              i < nonZeroCount;
              ++i)
         {
@@ -121,7 +121,7 @@ public static class MythicDecompress
         } while (count >= 0);
 
         for (int i = 0,
-                 m = 0;
+             m = 0;
              i < nonZeroCount;
              ++i)
         {
@@ -166,10 +166,10 @@ public static class MythicDecompress
     }
 
     /// <summary>
-    /// Reads the embedded decompressed length from the 4-byte XOR-obfuscated
-    /// header at the start of a Mythic payload. Lets callers size an
-    /// <see cref="ArrayPool{T}" /> rent exactly before calling
-    /// <see cref="TryDecompress" />.
+    ///     Reads the embedded decompressed length from the 4-byte XOR-obfuscated
+    ///     header at the start of a Mythic payload. Lets callers size an
+    ///     <see cref="ArrayPool{T}" /> rent exactly before calling
+    ///     <see cref="TryDecompress" />.
     /// </summary>
     public static uint PeekDecompressedLength(ReadOnlySpan<byte> source)
     {
@@ -187,10 +187,10 @@ public static class MythicDecompress
     }
 
     /// <summary>
-    /// Pooled-friendly decompression. Reads the header, MTF-decodes the
-    /// payload into a rented scratch span, and writes the final output
-    /// into <paramref name="destination" />. Returns false if the
-    /// destination is too small or the payload is malformed.
+    ///     Pooled-friendly decompression. Reads the header, MTF-decodes the
+    ///     payload into a rented scratch span, and writes the final output
+    ///     into <paramref name="destination" />. Returns false if the
+    ///     destination is too small or the payload is malformed.
     /// </summary>
     public static bool TryDecompress(ReadOnlySpan<byte> source, Span<byte> destination, out int written)
     {
@@ -231,9 +231,9 @@ public static class MythicDecompress
     }
 
     /// <summary>
-    /// Mythic stage 2: turns the MTF-decoded payload into the original
-    /// bytes, writing into <paramref name="destination" />. Returns false
-    /// if the destination is too small or the input is malformed.
+    ///     Mythic stage 2: turns the MTF-decoded payload into the original
+    ///     bytes, writing into <paramref name="destination" />. Returns false
+    ///     if the destination is too small or the input is malformed.
     /// </summary>
     public static bool TryInternalDecompress(ReadOnlySpan<byte> input, Span<byte> destination, out int written)
     {
@@ -291,7 +291,7 @@ public static class MythicDecompress
             Frequency(partialInput, frequency);
 
             for (int i = 0,
-                     m = 0;
+                 m = 0;
                  i < nonZeroCount;
                  ++i)
             {

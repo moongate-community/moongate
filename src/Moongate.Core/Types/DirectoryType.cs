@@ -1,7 +1,7 @@
 namespace Moongate.Core.Types;
 
 /// <summary>
-/// Represents DirectoryType.
+///     Represents DirectoryType.
 /// </summary>
 public enum DirectoryType
 {

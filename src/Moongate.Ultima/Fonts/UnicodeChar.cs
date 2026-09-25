@@ -11,10 +11,12 @@ public sealed class UnicodeChar
     public int Width { get; set; }
 
     /// <summary>
-    /// Gets Bitmap of Char with Background -1
+    ///     Gets Bitmap of Char with Background -1
     /// </summary>
-    /// <param name="fill"></param>
-    /// <returns></returns>
+    /// <param name="fill">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public unsafe UltimaBitmap GetImage(bool fill = false)
     {
         if (Width == 0 || Height == 0)
@@ -47,9 +49,10 @@ public sealed class UnicodeChar
     }
 
     /// <summary>
-    /// Resets Buffer with Bitmap
+    ///     Resets Buffer with Bitmap
     /// </summary>
-    /// <param name="bmp"></param>
+    /// <param name="bmp">
+    /// </param>
     public unsafe void SetBuffer(UltimaBitmap bmp)
     {
         Bytes = new byte[bmp.Height * ((bmp.Width - 1) / 8 + 1)];

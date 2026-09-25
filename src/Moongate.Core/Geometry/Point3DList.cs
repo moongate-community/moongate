@@ -1,7 +1,7 @@
 namespace Moongate.Core.Geometry;
 
 /// <summary>
-/// Represents Point3DList.
+///     Represents Point3DList.
 /// </summary>
 public class Point3DList
 {
@@ -15,8 +15,8 @@ public class Point3DList
 
     public Point3D Last
         => Count > 0
-               ? _list[Count - 1]
-               : throw new InvalidOperationException("The point list is empty.");
+            ? _list[Count - 1]
+            : throw new InvalidOperationException("The point list is empty.");
 
     public Point3D this[int index]
     {
@@ -61,7 +61,7 @@ public class Point3DList
     }
 
     /// <summary>
-    /// Copies the accumulated points into an independent array and clears this list.
+    ///     Copies the accumulated points into an independent array and clears this list.
     /// </summary>
     public Point3D[] ToArray()
     {

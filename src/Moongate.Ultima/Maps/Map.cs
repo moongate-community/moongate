@@ -9,7 +9,9 @@ namespace Moongate.Ultima.Maps;
 
 public sealed class Map
 {
-    /// <summary>The ARGB1555 "visible" bit, set on every rendered map pixel so it decodes opaque.</summary>
+    /// <summary>
+    ///     The ARGB1555 "visible" bit, set on every rendered map pixel so it decodes opaque.
+    /// </summary>
     private const ushort OpaqueBit = 0x8000;
 
     private readonly int _mapId;
@@ -72,8 +74,8 @@ public sealed class Map
     private ushort[][][] _litCacheNoStaticsNoPatch;
 
     /// <summary>
-    /// Controls the intensity of altitude-based shading (1-20, lower = more contrast)
-    /// Default is 15 for subtle effect
+    ///     Controls the intensity of altitude-based shading (1-20, lower = more contrast)
+    ///     Default is 15 for subtle effect
     /// </summary>
     public static int AltitudeIntensity
     {
@@ -91,7 +93,7 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Current altitude shading preset
+    ///     Current altitude shading preset
     /// </summary>
     public static AltitudeShadingPresetType ShadingPreset
     {
@@ -109,7 +111,7 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Custom altitude shading settings (used when ShadingPreset is Custom)
+    ///     Custom altitude shading settings (used when ShadingPreset is Custom)
     /// </summary>
     public static AltitudeShadingSettings CustomShadingSettings
     {
@@ -467,14 +469,25 @@ public sealed class Map
     //}
 
     /// <summary>
-    /// Returns Bitmap
+    ///     Returns Bitmap
     /// </summary>
-    /// <param name="x">8x8 Block</param>
-    /// <param name="y">8x8 Block</param>
-    /// <param name="width">8x8 Block</param>
-    /// <param name="height">8x8 Block</param>
-    /// <param name="statics">8x8 Block</param>
-    /// <returns></returns>
+    /// <param name="x">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="y">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="width">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="height">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="statics">
+    ///     8x8 Block
+    /// </param>
+    /// <returns>
+    /// </returns>
     public UltimaBitmap GetImage(int x, int y, int width, int height, bool statics)
     {
         var bmp = new UltimaBitmap(width << 3, height << 3);
@@ -485,27 +498,47 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Draws in given Bitmap with Statics
+    ///     Draws in given Bitmap with Statics
     /// </summary>
-    /// <param name="x">8x8 Block</param>
-    /// <param name="y">8x8 Block</param>
-    /// <param name="width">8x8 Block</param>
-    /// <param name="height">8x8 Block</param>
-    /// <param name="bmp">8x8 Block</param>
+    /// <param name="x">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="y">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="width">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="height">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="bmp">
+    ///     8x8 Block
+    /// </param>
     public void GetImage(int x, int y, int width, int height, UltimaBitmap bmp)
     {
         GetImage(x, y, width, height, bmp, true);
     }
 
     /// <summary>
-    /// Draws in given Bitmap
+    ///     Draws in given Bitmap
     /// </summary>
-    /// <param name="x">8x8 Block</param>
-    /// <param name="y">8x8 Block</param>
-    /// <param name="width">8x8 Block</param>
-    /// <param name="height">8x8 Block</param>
-    /// <param name="bmp"></param>
-    /// <param name="statics"></param>
+    /// <param name="x">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="y">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="width">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="height">
+    ///     8x8 Block
+    /// </param>
+    /// <param name="bmp">
+    /// </param>
+    /// <param name="statics">
+    /// </param>
     public unsafe void GetImage(int x, int y, int width, int height, UltimaBitmap bmp, bool statics)
     {
         var stride = bmp.Stride;
@@ -514,7 +547,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-                 by = y;
+             by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -528,7 +561,7 @@ public sealed class Map
             var pRow7 = (int*)(pStart + 7 * stride);
 
             for (int ox = 0,
-                     bx = x;
+                 bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -583,8 +616,8 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Renders the requested block region into a half-resolution bitmap (4x4 px per block).
-    /// Bitmap must be sized (width*4, height*4).
+    ///     Renders the requested block region into a half-resolution bitmap (4x4 px per block).
+    ///     Bitmap must be sized (width*4, height*4).
     /// </summary>
     public unsafe void GetImageHalf(int x, int y, int width, int height, UltimaBitmap bmp, bool statics)
     {
@@ -594,7 +627,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-                 by = y;
+             by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -604,7 +637,7 @@ public sealed class Map
             var pRow3 = (int*)(pStart + 3 * stride);
 
             for (int ox = 0,
-                     bx = x;
+                 bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -628,8 +661,8 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Renders the requested block region into a quarter-resolution bitmap (2x2 px per block).
-    /// Bitmap must be sized (width*2, height*2).
+    ///     Renders the requested block region into a quarter-resolution bitmap (2x2 px per block).
+    ///     Bitmap must be sized (width*2, height*2).
     /// </summary>
     public unsafe void GetImageQuarter(int x, int y, int width, int height, UltimaBitmap bmp, bool statics)
     {
@@ -639,7 +672,7 @@ public sealed class Map
         var pStart = (byte*)bmp.Scan0;
 
         for (int oy = 0,
-                 by = y;
+             by = y;
              oy < height;
              ++oy, ++by, pStart += blockStride)
         {
@@ -647,7 +680,7 @@ public sealed class Map
             var pRow1 = (int*)(pStart + 1 * stride);
 
             for (int ox = 0,
-                     bx = x;
+                 bx = x;
                  ox < width;
                  ++ox, ++bx)
             {
@@ -664,8 +697,8 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Clears the cached altitude-shaded color blocks across all map instances.
-    /// Call after changing any shading parameter so the next paint re-shades.
+    ///     Clears the cached altitude-shaded color blocks across all map instances.
+    ///     Call after changing any shading parameter so the next paint re-shades.
     /// </summary>
     public static void InvalidateAltitudeShadingCache()
     {
@@ -688,8 +721,8 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Marks the chosen color cache as fully preloaded. Call once after a full
-    /// PreloadRenderedBlock sweep so IsCached(statics) reports true.
+    ///     Marks the chosen color cache as fully preloaded. Call once after a full
+    ///     PreloadRenderedBlock sweep so IsCached(statics) reports true.
     /// </summary>
     public void MarkPreloaded(bool statics)
     {
@@ -742,7 +775,7 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Sets cache-vars to null
+    ///     Sets cache-vars to null
     /// </summary>
     public static void Reload()
     {
@@ -1503,18 +1536,32 @@ public sealed class Map
         return data;
     }
 
-#region Altitude Map Rendering
+    #region Altitude Map Rendering
 
     /// <summary>
-    /// Returns Bitmap with altitude rendering mode support
+    ///     Returns Bitmap with altitude rendering mode support
     /// </summary>
-    /// <param name="x">8x8 Block X</param>
-    /// <param name="y">8x8 Block Y</param>
-    /// <param name="width">Width in 8x8 Blocks</param>
-    /// <param name="height">Height in 8x8 Blocks</param>
-    /// <param name="statics">Include statics in rendering</param>
-    /// <param name="altitudeMode">Altitude rendering mode</param>
-    /// <returns>Rendered bitmap</returns>
+    /// <param name="x">
+    ///     8x8 Block X
+    /// </param>
+    /// <param name="y">
+    ///     8x8 Block Y
+    /// </param>
+    /// <param name="width">
+    ///     Width in 8x8 Blocks
+    /// </param>
+    /// <param name="height">
+    ///     Height in 8x8 Blocks
+    /// </param>
+    /// <param name="statics">
+    ///     Include statics in rendering
+    /// </param>
+    /// <param name="altitudeMode">
+    ///     Altitude rendering mode
+    /// </param>
+    /// <returns>
+    ///     Rendered bitmap
+    /// </returns>
     public UltimaBitmap GetImageWithAltitude(
         int x,
         int y,
@@ -1532,15 +1579,29 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Draws in given Bitmap with altitude rendering mode support
+    ///     Draws in given Bitmap with altitude rendering mode support
     /// </summary>
-    /// <param name="x">8x8 Block X</param>
-    /// <param name="y">8x8 Block Y</param>
-    /// <param name="width">Width in 8x8 Blocks</param>
-    /// <param name="height">Height in 8x8 Blocks</param>
-    /// <param name="bmp">Target bitmap</param>
-    /// <param name="statics">Include statics in rendering</param>
-    /// <param name="altitudeMode">Altitude rendering mode</param>
+    /// <param name="x">
+    ///     8x8 Block X
+    /// </param>
+    /// <param name="y">
+    ///     8x8 Block Y
+    /// </param>
+    /// <param name="width">
+    ///     Width in 8x8 Blocks
+    /// </param>
+    /// <param name="height">
+    ///     Height in 8x8 Blocks
+    /// </param>
+    /// <param name="bmp">
+    ///     Target bitmap
+    /// </param>
+    /// <param name="statics">
+    ///     Include statics in rendering
+    /// </param>
+    /// <param name="altitudeMode">
+    ///     Altitude rendering mode
+    /// </param>
     public unsafe void GetImageWithAltitude(
         int x,
         int y,
@@ -1560,7 +1621,7 @@ public sealed class Map
         {
             // Grayscale altitude mode (formerly 8bpp indexed with a gray palette)
             for (int oy = 0,
-                     by = y;
+                 by = y;
                  oy < height;
                  ++oy, ++by, pStart += blockStride)
             {
@@ -1574,7 +1635,7 @@ public sealed class Map
                 var pRow7 = (ushort*)(pStart + 7 * stride);
 
                 for (int ox = 0,
-                         bx = x;
+                     bx = x;
                      ox < width;
                      ++ox, ++bx)
                 {
@@ -1633,7 +1694,7 @@ public sealed class Map
             var withAltitude = altitudeMode == MapAltitudeModeType.NormalWithAltitude;
 
             for (int oy = 0,
-                     by = y;
+                 by = y;
                  oy < height;
                  ++oy, ++by, pStart += blockStride)
             {
@@ -1647,13 +1708,13 @@ public sealed class Map
                 var pRow7 = (ushort*)(pStart + 7 * stride);
 
                 for (int ox = 0,
-                         bx = x;
+                     bx = x;
                      ox < width;
                      ++ox, ++bx)
                 {
                     var colorData = withAltitude
-                                        ? GetLitBlock(bx, by, statics)
-                                        : GetRenderedBlock(bx, by, statics);
+                        ? GetLitBlock(bx, by, statics)
+                        : GetRenderedBlock(bx, by, statics);
 
                     fixed (ushort* pData = colorData)
                     {
@@ -1705,8 +1766,8 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Maps an altitude value (-128..127) to an opaque ARGB1555 gray pixel.
-    /// Replaces the former 8bpp indexed grayscale palette (0..255 -> 5-bit gray).
+    ///     Maps an altitude value (-128..127) to an opaque ARGB1555 gray pixel.
+    ///     Replaces the former 8bpp indexed grayscale palette (0..255 -> 5-bit gray).
     /// </summary>
     private static ushort AltitudeToGray(sbyte altitude)
     {
@@ -1716,7 +1777,7 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Gets altitude data for an 8x8 block
+    ///     Gets altitude data for an 8x8 block
     /// </summary>
     private sbyte[] GetAltitudeBlock(int x, int y, bool drawStatics)
     {
@@ -1819,14 +1880,14 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Process colors with altitude-based shading (translates Pascal ProcessBlock/ProcessQuad/ProcessColor)
+    ///     Process colors with altitude-based shading (translates Pascal ProcessBlock/ProcessQuad/ProcessColor)
     /// </summary>
     private static ushort[] ProcessBlockWithAltitude(ushort[] colors, sbyte[] altitudes)
     {
         // Get current shading settings based on preset
         var settings = ShadingPreset == AltitudeShadingPresetType.Custom
-                           ? CustomShadingSettings
-                           : AltitudeShadingSettings.GetPreset(ShadingPreset);
+            ? CustomShadingSettings
+            : AltitudeShadingSettings.GetPreset(ShadingPreset);
 
         // Use configurable intensity (lower = more contrast, higher = softer)
         var maxSlope = Math.Clamp(AltitudeIntensity, 1, 20);
@@ -1888,7 +1949,7 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Get altitude difference in a specific direction, with bounds checking and averaging
+    ///     Get altitude difference in a specific direction, with bounds checking and averaging
     /// </summary>
     private static float GetAltitudeDifference(sbyte[] altitudes, int x, int y, int dx, int dy, float smoothing)
     {
@@ -1904,7 +1965,7 @@ public sealed class Map
     }
 
     /// <summary>
-    /// Apply lighting multiplier to a color
+    ///     Apply lighting multiplier to a color
     /// </summary>
     private static ushort ApplyLighting(ushort color, float multiplier)
     {
@@ -1927,5 +1988,5 @@ public sealed class Map
         return (ushort)(OpaqueBit | (red << 10) | (green << 5) | blue);
     }
 
-#endregion
+    #endregion
 }

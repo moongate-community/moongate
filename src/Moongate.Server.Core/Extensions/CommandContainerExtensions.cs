@@ -6,10 +6,14 @@ using Moongate.Server.Core.Types.Commands;
 
 namespace Moongate.Server.Core.Extensions;
 
-/// <summary>Registers container-owned singleton command executors without resolving dependencies.</summary>
+/// <summary>
+///     Registers container-owned singleton command executors without resolving dependencies.
+/// </summary>
 public static class CommandContainerExtensions
 {
-    /// <summary>Registers one command, its aliases and its deferred binder before command system startup.</summary>
+    /// <summary>
+    ///     Registers one command, its aliases and its deferred binder before command system startup.
+    /// </summary>
     public static Container RegisterCommand<TExecutor>(
         this Container container,
         string commandName,
@@ -25,7 +29,7 @@ public static class CommandContainerExtensions
         }
 
         container.Resolve<CommandRegistry>()
-                 .Register<TExecutor>(container, commandName, description, source, minimumAccountType);
+            .Register<TExecutor>(container, commandName, description, source, minimumAccountType);
 
         return container;
     }

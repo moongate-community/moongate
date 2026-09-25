@@ -5,8 +5,12 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-/// Builds a <see cref="LootTemplate" /> from one <c>[LOOTLIST name]</c> block, resolving each
-/// entry's item or nested-table reference against the same maps <see cref="ItemTemplateBuilder" /> uses.
+///     Builds a <see cref="LootTemplate" /> from one
+///     <c>
+///         [LOOTLIST name]
+///     </c>
+///     block, resolving each
+///     entry's item or nested-table reference against the same maps <see cref="ItemTemplateBuilder" /> uses.
 /// </summary>
 internal static class LootTemplateBuilder
 {
@@ -15,9 +19,13 @@ internal static class LootTemplateBuilder
     private const string NestedItemListPrefix = "ITEMLIST=";
 
     /// <summary>
-    /// True when <paramref name="header" /> names a loot block (<c>"LOOTLIST name"</c>),
-    /// with the table's own Id, everything after the prefix run through <see cref="StringUtils.ToSnakeCase" />
-    /// (real names are camelCase, "eartheleLoot"), as <paramref name="lootId" />.
+    ///     True when <paramref name="header" /> names a loot block (
+    ///     <c>
+    ///         "LOOTLIST name"
+    ///     </c>
+    ///     ),
+    ///     with the table's own Id, everything after the prefix run through <see cref="StringUtils.ToSnakeCase" />
+    ///     (real names are camelCase, "eartheleLoot"), as <paramref name="lootId" />.
     /// </summary>
     public static bool TryGetLootId(string header, out string lootId)
     {
@@ -105,8 +113,8 @@ internal static class LootTemplateBuilder
             var nestedId = StringUtils.ToSnakeCase(reference[NestedLootPrefix.Length..].Trim());
 
             return knownLootIds.Contains(nestedId)
-                       ? new LootEntry { Weight = weight, LootTemplateId = nestedId, Amount = amount }
-                       : null;
+                ? new LootEntry { Weight = weight, LootTemplateId = nestedId, Amount = amount }
+                : null;
         }
 
         // ITEMLIST=, UOX3's "spawn everything in this list" sibling to LOOTLIST=, has no home in
@@ -142,7 +150,7 @@ internal static class LootTemplateBuilder
         }
 
         return int.TryParse(parts[0], out var value)
-                   ? RangeValueSpec<int>.FromValue(value)
-                   : RangeValueSpec<int>.FromValue(1);
+            ? RangeValueSpec<int>.FromValue(value)
+            : RangeValueSpec<int>.FromValue(1);
     }
 }

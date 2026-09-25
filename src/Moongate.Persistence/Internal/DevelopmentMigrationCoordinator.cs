@@ -41,18 +41,18 @@ internal sealed class DevelopmentMigrationCoordinator
                 var requiresReview = false;
 
                 using (await MigrationDirectoryLock.AcquireAsync(catalog.SourceDirectories.Values, cancellationToken)
-                                                   .ConfigureAwait(false))
+                           .ConfigureAwait(false))
                 {
                     await using (var databaseLock =
                                  await AcquireDatabaseLockAsync(database, cancellationToken).ConfigureAwait(false))
                     {
                         catalog = _options.Load(target);
                         var history = await MigrationHistory.ReadAsync(
-                                                                () => databaseLock.CreateCommand(),
-                                                                catalog.Target,
-                                                                cancellationToken
-                                                            )
-                                                            .ConfigureAwait(false);
+                                () => databaseLock.CreateCommand(),
+                                catalog.Target,
+                                cancellationToken
+                            )
+                            .ConfigureAwait(false);
                         var pending = MigrationHistory.Validate(catalog, history);
                         MigrationReviewGuard.Validate(pending);
 
@@ -63,9 +63,9 @@ internal sealed class DevelopmentMigrationCoordinator
                             foreach (var module in snapshot.Modules.Where(module => module.Module.DatabaseTarget == target))
                             {
                                 var owners = module.EntityTypes
-                                                   .Select(type => _options.ResolveComponent(type, catalog))
-                                                   .Distinct(StringComparer.Ordinal)
-                                                   .ToArray();
+                                    .Select(type => _options.ResolveComponent(type, catalog))
+                                    .Distinct(StringComparer.Ordinal)
+                                    .ToArray();
 
                                 if (owners.Length != 1 || !catalog.SourceDirectories.ContainsKey(owners[0]))
                                 {
@@ -87,8 +87,8 @@ internal sealed class DevelopmentMigrationCoordinator
                             foreach (var (component, types) in groups)
                             {
                                 var assessment = await DevelopmentSchemaAssessor
-                                                       .AssessAsync(database, types.ToArray(), cancellationToken)
-                                                       .ConfigureAwait(false);
+                                    .AssessAsync(database, types.ToArray(), cancellationToken)
+                                    .ConfigureAwait(false);
 
                                 if (assessment.HasExistingTables &&
                                     !catalog.Scripts.Any(script => script.Component == component))
@@ -125,13 +125,13 @@ internal sealed class DevelopmentMigrationCoordinator
                                      ))
                             {
                                 var file = await MigrationDraftWriter.WriteAsync(
-                                                                         catalog,
-                                                                         component,
-                                                                         assessment.Ddl,
-                                                                         requiresReview,
-                                                                         cancellationToken
-                                                                     )
-                                                                     .ConfigureAwait(false);
+                                        catalog,
+                                        component,
+                                        assessment.Ddl,
+                                        requiresReview,
+                                        cancellationToken
+                                    )
+                                    .ConfigureAwait(false);
                                 _logger.Information(
                                     "Generated {Target} SQL migration for {Component}: {MigrationFile}; requires review: {RequiresReview}",
                                     target,

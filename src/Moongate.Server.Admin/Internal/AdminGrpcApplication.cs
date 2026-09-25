@@ -34,11 +34,17 @@ internal static class AdminGrpcApplication
         services.AddSingleton(throttle);
         services.AddSingleton(info);
 
-        if (accounts is not null) { services.AddSingleton(accounts); }
+        if (accounts is not null)
+        {
+            services.AddSingleton(accounts);
+        }
 
-        if (authority is not null) { services.AddSingleton(authority); }
-        services.AddGrpc(
-            options =>
+        if (authority is not null)
+        {
+            services.AddSingleton(authority);
+        }
+
+        services.AddGrpc(options =>
             {
                 options.MaxReceiveMessageSize = config.MaxReceiveMessageBytes;
                 options.EnableDetailedErrors = false;
@@ -46,12 +52,11 @@ internal static class AdminGrpcApplication
             }
         );
         services.AddAuthentication(AdminAuthorizationPolicies.Scheme)
-                .AddScheme<AuthenticationSchemeOptions, AdminTokenAuthenticationHandler>(
-                    AdminAuthorizationPolicies.Scheme,
-                    _ => { }
-                );
-        services.AddAuthorization(
-            options => options.AddPolicy(
+            .AddScheme<AuthenticationSchemeOptions, AdminTokenAuthenticationHandler>(
+                AdminAuthorizationPolicies.Scheme,
+                _ => { }
+            );
+        services.AddAuthorization(options => options.AddPolicy(
                 AdminAuthorizationPolicies.AccountAdministration,
                 policy => policy.RequireAuthenticatedUser().RequireRole(AdminAuthorizationPolicies.AdministratorRole)
             )
@@ -63,8 +68,7 @@ internal static class AdminGrpcApplication
         app.UseRouting();
 
         // Admission precedes authentication, bounding Redis/password work as well as RPC bodies.
-        app.Use(
-            async (context, next) =>
+        app.Use(async (context, next) =>
             {
                 var status = gate.TryEnter();
 
@@ -79,6 +83,7 @@ internal static class AdminGrpcApplication
 
                         return;
                     }
+
                     using var deadline = CancellationTokenSource.CreateLinkedTokenSource(context.RequestAborted);
                     deadline.CancelAfter(MaximumCallDuration);
                     context.RequestAborted = deadline.Token;
@@ -88,17 +93,20 @@ internal static class AdminGrpcApplication
                 {
                     var operation = context.GetEndpoint()?.DisplayName ?? "unmapped";
                     Log.ForContext<AdminRequestGate>()
-                       .Information(
-                           "Admin operation {Operation} actor {ActorId} target {TargetId} status {Status} correlation {CorrelationId}",
-                           operation,
-                           context.Items["AdminActorId"] ?? context.User.FindFirstValue(ClaimTypes.NameIdentifier),
-                           context.Items["AdminTargetId"],
-                           context.Items["AdminStatus"] ??
-                           context.Response.StatusCode.ToString(CultureInfo.InvariantCulture),
-                           context.TraceIdentifier
-                       );
+                        .Information(
+                            "Admin operation {Operation} actor {ActorId} target {TargetId} status {Status} correlation {CorrelationId}",
+                            operation,
+                            context.Items["AdminActorId"] ?? context.User.FindFirstValue(ClaimTypes.NameIdentifier),
+                            context.Items["AdminTargetId"],
+                            context.Items["AdminStatus"] ??
+                            context.Response.StatusCode.ToString(CultureInfo.InvariantCulture),
+                            context.TraceIdentifier
+                        );
 
-                    if (status == StatusCode.OK) { gate.Exit(); }
+                    if (status == StatusCode.OK)
+                    {
+                        gate.Exit();
+                    }
                 }
             }
         );
@@ -111,9 +119,9 @@ internal static class AdminGrpcApplication
         {
             app.MapGrpcService<AdminLoginGrpcService>().AllowAnonymous();
             app.MapGrpcService<AdminAccountsGrpcService>()
-               .RequireAuthorization(AdminAuthorizationPolicies.AccountAdministration);
+                .RequireAuthorization(AdminAuthorizationPolicies.AccountAdministration);
             app.MapGrpcService<AdminAccountSessionsGrpcService>()
-               .RequireAuthorization(AdminAuthorizationPolicies.AccountAdministration);
+                .RequireAuthorization(AdminAuthorizationPolicies.AccountAdministration);
         }
     }
 }

@@ -3,7 +3,9 @@ using System.Runtime.Loader;
 
 namespace Moongate.Server.Services.Plugins.Internal;
 
-/// <summary>Shares host assemblies and resolves private dependencies within one plugin bundle.</summary>
+/// <summary>
+///     Shares host assemblies and resolves private dependencies within one plugin bundle.
+/// </summary>
 internal sealed class PluginLoadContext : AssemblyLoadContext
 {
     private readonly AssemblyDependencyResolver _resolver;
@@ -20,12 +22,12 @@ internal sealed class PluginLoadContext : AssemblyLoadContext
     protected override Assembly? Load(AssemblyName assemblyName)
     {
         if (assemblyName.Name is "Moongate.Core" or
-                                 "Moongate.Server.Core" or
-                                 "Moongate.Persistence" or
-                                 "Moongate.Persistence.Migrations" or
-                                 "FreeSql" or
-                                 "FreeSql.Provider.PostgreSQL" or
-                                 "Npgsql")
+            "Moongate.Server.Core" or
+            "Moongate.Persistence" or
+            "Moongate.Persistence.Migrations" or
+            "FreeSql" or
+            "FreeSql.Provider.PostgreSQL" or
+            "Npgsql")
         {
             Assembly host;
 

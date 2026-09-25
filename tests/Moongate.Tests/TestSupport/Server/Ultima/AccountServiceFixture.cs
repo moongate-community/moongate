@@ -36,10 +36,10 @@ internal sealed class AccountServiceFixture : IAsyncDisposable
             new MoongateUltimaPlugin().Register(host.Container);
 
             foreach (var migration in Directory.GetFiles(
-                                                   Path.Combine(AppContext.BaseDirectory, "AccountMigrations"),
-                                                   "*.sql"
-                                               )
-                                               .Order())
+                             Path.Combine(AppContext.BaseDirectory, "AccountMigrations"),
+                             "*.sql"
+                         )
+                         .Order())
             {
                 await host.AccountsDatabase!.ExecuteAsync(await File.ReadAllTextAsync(migration));
             }

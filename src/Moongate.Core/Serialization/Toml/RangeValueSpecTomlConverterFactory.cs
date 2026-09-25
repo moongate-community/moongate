@@ -5,10 +5,10 @@ using Tomlyn.Serialization;
 namespace Moongate.Core.Serialization.Toml;
 
 /// <summary>
-/// Builds a <see cref="RangeValueSpecTomlConverter{T}" /> for whichever closed
-/// <see cref="RangeValueSpec{T}" /> Tomlyn asks for, so one registration through
-/// <see cref="Moongate.Core.Utils.TomlUtils.AddTomlConverter" /> covers every numeric type a template
-/// uses it for.
+///     Builds a <see cref="RangeValueSpecTomlConverter{T}" /> for whichever closed
+///     <see cref="RangeValueSpec{T}" /> Tomlyn asks for, so one registration through
+///     <see cref="Moongate.Core.Utils.TomlUtils.AddTomlConverter" /> covers every numeric type a template
+///     uses it for.
 /// </summary>
 public sealed class RangeValueSpecTomlConverterFactory : TomlConverterFactory
 {

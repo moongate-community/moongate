@@ -49,9 +49,9 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
         var directory = Create();
         await directory.RegisterAsync(Realm("first", 7));
 
-        var exception = await Assert.ThrowsAsync<RealmDirectoryException>(
-                            () => directory.RegisterAsync(Realm("second", 7)).AsTask()
-                        );
+        var exception =
+            await Assert.ThrowsAsync<RealmDirectoryException>(() => directory.RegisterAsync(Realm("second", 7)).AsTask()
+            );
 
         Assert.Equal(RealmRegistrationError.DuplicateIndex, exception.Error);
         Assert.Equal("first", (await directory.FindByIndexAsync(7, AccountType.Regular))!.Descriptor.RealmId);
@@ -175,9 +175,9 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
             await directory.RegisterAsync(Realm($"realm-{index}", index));
         }
 
-        var exception = await Assert.ThrowsAsync<RealmDirectoryException>(
-                            () => directory.RegisterAsync(Realm("overflow", 128)).AsTask()
-                        );
+        var exception =
+            await Assert.ThrowsAsync<RealmDirectoryException>(() => directory.RegisterAsync(Realm("overflow", 128)).AsTask()
+            );
 
         Assert.Equal(RealmRegistrationError.CapacityExceeded, exception.Error);
         Assert.Equal(128, (await directory.GetAvailableAsync(AccountType.Regular)).Count);

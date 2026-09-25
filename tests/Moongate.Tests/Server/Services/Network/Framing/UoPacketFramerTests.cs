@@ -10,10 +10,9 @@ public sealed class UoPacketFramerTests
     [Theory, InlineData(0), InlineData(-1), InlineData(65536)]
     public void Constructor_InvalidMaximumFrameLength_ThrowsArgumentOutOfRangeException(int maxFrameLength)
     {
-        Assert.Throws<ArgumentOutOfRangeException>(
-                () =>
-                    new UoPacketFramer(PacketRegistry.Default, maxFrameLength)
-            );
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new UoPacketFramer(PacketRegistry.Default, maxFrameLength)
+        );
     }
 
     [Fact]

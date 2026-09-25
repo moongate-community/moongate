@@ -23,7 +23,9 @@ public sealed class Animdata
         public byte FrameStart { get; set; }
 
         // Empty constructor needed for deserialization.
-        public AnimdataEntry() { }
+        public AnimdataEntry()
+        {
+        }
 
         public AnimdataEntry(sbyte[] frame, byte unk, byte frameCount, byte frameInterval, byte frameStart)
         {
@@ -36,16 +38,17 @@ public sealed class Animdata
     }
 
     /// <summary>
-    /// Gets Animation <see cref="AnimdataEntry" />
+    ///     Gets Animation <see cref="AnimdataEntry" />
     /// </summary>
-    /// <param name="id"></param>
+    /// <param name="id">
+    /// </param>
     public static AnimdataEntry GetAnimData(int id)
     {
         return AnimData.TryGetValue(id, out var value) ? value : null;
     }
 
     /// <summary>
-    /// Reads animdata.mul and fills <see cref="AnimData" />
+    ///     Reads animdata.mul and fills <see cref="AnimData" />
     /// </summary>
     public static void Initialize()
     {

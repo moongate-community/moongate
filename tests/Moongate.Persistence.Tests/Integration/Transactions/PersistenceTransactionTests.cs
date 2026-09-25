@@ -34,24 +34,22 @@ public sealed class PersistenceTransactionTests
             }
         );
         await Assert.ThrowsAsync<InvalidOperationException>(() => escaped!.GetByIdForUpdateAsync<CharacterEntity>(new(1)));
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => owner.ExecuteInTransactionAsync(
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExecuteInTransactionAsync(
                 PersistenceDatabaseTarget.Realm,
                 async tx =>
                 {
-                    await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
-                        () => tx.GetByIdForUpdateAsync<CharacterEntity>(new(0))
+                    await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() =>
+                        tx.GetByIdForUpdateAsync<CharacterEntity>(new(0))
                     );
                 }
             )
         );
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => owner.ExecuteInTransactionAsync(
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExecuteInTransactionAsync(
                 PersistenceDatabaseTarget.Realm,
                 async tx =>
                 {
-                    await Assert.ThrowsAsync<InvalidOperationException>(
-                        () => tx.GetByIdForUpdateAsync<AccountsSharedEntity>(new(1))
+                    await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                        tx.GetByIdForUpdateAsync<AccountsSharedEntity>(new(1))
                     );
                 }
             )
@@ -101,11 +99,12 @@ public sealed class PersistenceTransactionTests
             using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(10));
 
             while (!await database.ScalarAsync<bool>(
-                        "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock')"
-                    ))
+                       "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND wait_event_type='Lock')"
+                   ))
             {
                 await Task.Delay(10, deadline.Token);
             }
+
             Assert.False(second.IsCompleted);
 
             if (cancel)
@@ -134,25 +133,23 @@ public sealed class PersistenceTransactionTests
         var store = owner.RegisterEntity<CharacterEntity>();
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => owner.ExecuteInTransactionAsync(
-                           PersistenceDatabaseTarget.Realm,
-                           async tx =>
-                           {
-                               await tx.GetDataAccess<CharacterEntity>().UpsertAsync(new() { Id = new(1) });
-                               await Assert.ThrowsAsync<InvalidOperationException>(
-                                   () => operation switch
-                                   {
-                                       "dispose"    => owner.DisposeAsync().AsTask(),
-                                       "initialize" => owner.InitializeAsync(),
-                                       "preview"    => owner.PreviewSchemaAsync(),
-                                       "sync"       => owner.SynchronizeSchemaAsync(),
-                                       _            => owner.SaveAllAsync()
-                                   }
-                               );
-                           }
-                       )
-                       .WaitAsync(TimeSpan.FromSeconds(10))
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExecuteInTransactionAsync(
+                PersistenceDatabaseTarget.Realm,
+                async tx =>
+                {
+                    await tx.GetDataAccess<CharacterEntity>().UpsertAsync(new() { Id = new(1) });
+                    await Assert.ThrowsAsync<InvalidOperationException>(() => operation switch
+                        {
+                            "dispose"    => owner.DisposeAsync().AsTask(),
+                            "initialize" => owner.InitializeAsync(),
+                            "preview"    => owner.PreviewSchemaAsync(),
+                            "sync"       => owner.SynchronizeSchemaAsync(),
+                            _            => owner.SaveAllAsync()
+                        }
+                    );
+                }
+            )
+            .WaitAsync(TimeSpan.FromSeconds(10))
         );
         Assert.Empty(await store.GetAllAsync());
     }
@@ -315,7 +312,7 @@ public sealed class PersistenceTransactionTests
         {
             await entered.Task.WaitAsync(TimeSpan.FromSeconds(10));
             await accountStore.UpsertAsync(new() { Id = new(1) })
-                              .WaitAsync(TimeSpan.FromSeconds(10));
+                .WaitAsync(TimeSpan.FromSeconds(10));
             Assert.Single(await accountStore.GetAllAsync());
             Assert.Empty(await realmStore.GetAllAsync());
         }
@@ -338,15 +335,14 @@ public sealed class PersistenceTransactionTests
         var inventory = owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
         using var cancellation = new CancellationTokenSource();
-        await Assert.ThrowsAnyAsync<Exception>(
-            () => owner.ExecuteInTransactionAsync(
+        await Assert.ThrowsAnyAsync<Exception>(() => owner.ExecuteInTransactionAsync(
                 PersistenceDatabaseTarget.Realm,
                 async tx =>
                 {
                     await tx.GetDataAccess<CharacterEntity>()
-                            .UpsertAsync(new() { Id = new(1), Name = "rollback" });
+                        .UpsertAsync(new() { Id = new(1), Name = "rollback" });
                     await tx.GetDataAccess<InventoryEntity>()
-                            .UpsertAsync(new() { Id = new(2), Balance = 5 });
+                        .UpsertAsync(new() { Id = new(2), Balance = 5 });
 
                     if (failure == "callback")
                     {
@@ -358,9 +354,11 @@ public sealed class PersistenceTransactionTests
                         try
                         {
                             await tx.GetDataAccess<CharacterEntity>()
-                                    .UpsertAsync(new() { Id = new(3), Name = new('x', 200) });
+                                .UpsertAsync(new() { Id = new(3), Name = new('x', 200) });
                         }
-                        catch when (failure == "caught_constraint") { }
+                        catch when (failure == "caught_constraint")
+                        {
+                        }
                     }
 
                     if (failure == "standalone")
@@ -370,9 +368,8 @@ public sealed class PersistenceTransactionTests
 
                     if (failure == "nested")
                     {
-                        await Assert.ThrowsAsync<InvalidOperationException>(
-                            () =>
-                                owner.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, _ => Task.CompletedTask)
+                        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                            owner.ExecuteInTransactionAsync(PersistenceDatabaseTarget.Realm, _ => Task.CompletedTask)
                         );
                     }
 
@@ -457,23 +454,22 @@ public sealed class PersistenceTransactionTests
         await owner.InitializeAsync();
         var original = new InvalidOperationException("original callback error");
         var calls = 0;
-        var observed = await Assert.ThrowsAsync<InvalidOperationException>(
-                           () => owner.ExecuteInTransactionAsync(
-                               PersistenceDatabaseTarget.Realm,
-                               async tx =>
-                               {
-                                   calls++;
-                                   await tx.GetDataAccess<CharacterEntity>().UpsertAsync(new() { Id = new(1) });
-                                   Assert.True(
-                                       await database.ScalarAsync<bool>(
-                                           "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND state = 'idle in transaction' AND pid <> pg_backend_pid()"
-                                       )
-                                   );
+        var observed = await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExecuteInTransactionAsync(
+                PersistenceDatabaseTarget.Realm,
+                async tx =>
+                {
+                    calls++;
+                    await tx.GetDataAccess<CharacterEntity>().UpsertAsync(new() { Id = new(1) });
+                    Assert.True(
+                        await database.ScalarAsync<bool>(
+                            "SELECT pg_terminate_backend(pid) FROM pg_stat_activity WHERE datname = current_database() AND state = 'idle in transaction' AND pid <> pg_backend_pid()"
+                        )
+                    );
 
-                                   throw original;
-                               }
-                           )
-                       );
+                    throw original;
+                }
+            )
+        );
         Assert.Same(original, observed);
         Assert.Equal(1, calls);
         Assert.Empty(await store.GetAllAsync());
@@ -495,7 +491,7 @@ public sealed class PersistenceTransactionTests
                 escaped = tx.GetDataAccess<CharacterEntity>();
                 await escaped.UpsertAsync(new() { Id = new(1), Name = "committed" });
                 await tx.GetDataAccess<InventoryEntity>()
-                        .UpsertAsync(new() { Id = new(2), Balance = 5 });
+                    .UpsertAsync(new() { Id = new(2), Balance = 5 });
                 Assert.Equal("committed", (await escaped.GetByIdAsync(new(1)))!.Name);
                 Assert.Equal(0L, await database.ScalarAsync<long>("SELECT count(*) FROM plugin_characters.characters"));
             }

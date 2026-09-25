@@ -22,8 +22,8 @@ internal sealed class PersistenceMutationGate : IDisposable
 
             _closing = true;
             var drained = _acceptedOperations == 0
-                              ? Task.CompletedTask
-                              : (_drained = new(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
+                ? Task.CompletedTask
+                : (_drained = new(TaskCreationOptions.RunContinuationsAsynchronously)).Task;
             _closeTask = CloseCoreAsync(drained, close);
 
             return _closeTask;

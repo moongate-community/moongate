@@ -75,9 +75,11 @@ public static class Hues
     }
 
     /// <summary>
-    /// Exports list of all hue names and id (as hex)
+    ///     Exports list of all hue names and id (as hex)
     /// </summary>
-    /// <param name="fileName">Output file name</param>
+    /// <param name="fileName">
+    ///     Output file name
+    /// </param>
     public static void ExportHueList(string fileName)
     {
         var sb = new StringBuilder(90_0000);
@@ -91,10 +93,12 @@ public static class Hues
     }
 
     /// <summary>
-    /// Returns <see cref="Hue" />
+    ///     Returns <see cref="Hue" />
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static Hue GetHue(int index)
     {
         index &= 0x3FFF;
@@ -108,7 +112,7 @@ public static class Hues
     }
 
     /// <summary>
-    /// Reads hues.mul and fills <see cref="List" />
+    ///     Reads hues.mul and fills <see cref="List" />
     /// </summary>
     public static void Initialize()
     {

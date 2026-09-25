@@ -17,8 +17,8 @@ public sealed class AccountEntityTests
             "UPDATE auth.accounts SET can_access_api=true; ALTER TABLE auth.accounts ALTER COLUMN can_access_api SET DEFAULT true;"
         );
         var sql = await File.ReadAllTextAsync(
-                      Path.Combine(AppContext.BaseDirectory, "AccountMigrations", "0004_account_admin_api_access.sql")
-                  );
+            Path.Combine(AppContext.BaseDirectory, "AccountMigrations", "0004_account_admin_api_access.sql")
+        );
         await fixture.Database.ExecuteAsync(sql);
         Assert.True((await fixture.Accounts.GetByIdAsync(new(42)))!.CanAccessApi);
         Assert.Equal(

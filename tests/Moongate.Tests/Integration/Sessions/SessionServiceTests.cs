@@ -34,8 +34,8 @@ public sealed class SessionServiceTests
         ISessionService service = new SessionService(fixture.Loop);
 
         var sessions = await Task.WhenAll(
-                           Enumerable.Range(0, 32).Select(_ => Task.Run(() => service.GetOrCreate(fixture.Client)))
-                       );
+            Enumerable.Range(0, 32).Select(_ => Task.Run(() => service.GetOrCreate(fixture.Client)))
+        );
 
         Assert.All(sessions, session => Assert.Same(sessions[0], session));
         Assert.Equal(1, service.Count);
@@ -97,8 +97,8 @@ public sealed class SessionServiceTests
             ISessionService service = new SessionService(fixtures[0].Loop);
 
             var sessions = await Task.WhenAll(
-                               fixtures.Select(fixture => Task.Run(() => service.GetOrCreate(fixture.Client)))
-                           );
+                fixtures.Select(fixture => Task.Run(() => service.GetOrCreate(fixture.Client)))
+            );
 
             Assert.Equal(fixtures.Count, service.Count);
 
@@ -119,8 +119,7 @@ public sealed class SessionServiceTests
         await using var fixture = await SessionFixture.CreateAsync();
         using var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        bootstrap.RegisterServices(
-            services =>
+        bootstrap.RegisterServices(services =>
             {
                 services.RegisterInstance<IGameLoopService>(fixture.Loop);
 

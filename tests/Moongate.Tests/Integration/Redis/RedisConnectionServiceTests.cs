@@ -35,9 +35,9 @@ public sealed class RedisConnectionServiceTests
             }
         );
 
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-                            () => service.StartAsync().WaitAsync(TimeSpan.FromSeconds(5))
-                        );
+        var exception =
+            await Assert.ThrowsAsync<InvalidOperationException>(() => service.StartAsync().WaitAsync(TimeSpan.FromSeconds(5))
+            );
 
         Assert.Contains("redis.connection_string", exception.Message);
         Assert.DoesNotContain("not-for-errors", exception.ToString());

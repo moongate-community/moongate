@@ -41,9 +41,9 @@ public sealed class SerialTomlConverterTests
     [Fact]
     public void Deserialize_AQuotedTextThatIsNotASerial_ThrowsTomlException()
     {
-        var exception = Assert.Throws<TomlException>(
-            () => TomlUtils.Deserialize<SerialHolder>("item_id = \"not-a-serial\"\n", Options)
-        );
+        var exception =
+            Assert.Throws<TomlException>(() => TomlUtils.Deserialize<SerialHolder>("item_id = \"not-a-serial\"\n", Options)
+            );
 
         Assert.Contains("not-a-serial", exception.Message, StringComparison.Ordinal);
     }

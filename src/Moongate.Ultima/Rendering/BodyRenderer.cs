@@ -5,7 +5,9 @@ using Moongate.Ultima.Interfaces;
 
 namespace Moongate.Ultima.Rendering;
 
-/// <summary>Stateless facade over <see cref="Animations" />.</summary>
+/// <summary>
+///     Stateless facade over <see cref="Animations" />.
+/// </summary>
 public sealed class BodyRenderer : IBodyRenderer
 {
     public IReadOnlyList<BodyFrame> GetBodyFrames(int body, int action, int direction, ushort hue = 0)

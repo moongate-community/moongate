@@ -88,8 +88,7 @@ public sealed class MoongateTcpClientTests
     {
         using var socket = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
 
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () => new MoongateTcpClient(
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new MoongateTcpClient(
                 socket,
                 Stream.Null,
                 receiveBufferSize: receiveBufferSize,
@@ -174,8 +173,8 @@ public sealed class MoongateTcpClientTests
         await stream.WriteEntered.Task.WaitAsync(Timeout);
         using var waiterCancellation = new CancellationTokenSource();
         var waiters = Enumerable.Range(0, 20)
-                                .Select(_ => pair.Sender.SendAsync(new byte[] { 2 }, waiterCancellation.Token))
-                                .ToArray();
+            .Select(_ => pair.Sender.SendAsync(new byte[] { 2 }, waiterCancellation.Token))
+            .ToArray();
         var firstDispose = pair.Sender.DisposeAsync().AsTask();
         var secondDispose = pair.Sender.DisposeAsync().AsTask();
 
@@ -227,11 +226,11 @@ public sealed class MoongateTcpClientTests
         var completionFinishedInsideCallback = true;
         var disposeCountInsideCallback = -1;
         pair.Sender.OnConnected += (_, _) =>
-                                   {
-                                       pair.Sender.Dispose();
-                                       completionFinishedInsideCallback = pair.Sender.Completion.IsCompleted;
-                                       disposeCountInsideCallback = stream.DisposeCount;
-                                   };
+        {
+            pair.Sender.Dispose();
+            completionFinishedInsideCallback = pair.Sender.Completion.IsCompleted;
+            disposeCountInsideCallback = stream.DisposeCount;
+        };
         await pair.Sender.StartAsync(CancellationToken.None);
         await pair.Sender.Completion.WaitAsync(Timeout);
         Assert.False(completionFinishedInsideCallback);
@@ -261,16 +260,16 @@ public sealed class MoongateTcpClientTests
         var failed = new TaskCompletionSource<MoongateTcpClient>(TaskCreationOptions.RunContinuationsAsynchronously);
         var received = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
         server.OnDataReceived += (_, args) =>
-                                 {
-                                     if (args.Data.Span[0] == 1)
-                                     {
-                                         failed.TrySetResult(args.Client);
+        {
+            if (args.Data.Span[0] == 1)
+            {
+                failed.TrySetResult(args.Client);
 
-                                         throw new InvalidOperationException("data callback");
-                                     }
+                throw new InvalidOperationException("data callback");
+            }
 
-                                     received.TrySetResult(args.Data.ToArray());
-                                 };
+            received.TrySetResult(args.Data.ToArray());
+        };
         await server.StartAsync(CancellationToken.None);
         await using var first = await MoongateTcpClient.ConnectAsync(new(IPAddress.Loopback, server.Port));
         await first.SendAsync(new byte[] { 1 }, CancellationToken.None);
@@ -286,11 +285,11 @@ public sealed class MoongateTcpClientTests
     public async Task ReceiveAsync_FramedMiddlewareExpansionBeyondPendingBudget_ClosesWithoutDispatch()
     {
         await using var pair = await LoopbackPair.CreateAsync(
-                                   receiverMiddlewares: [new AppendingMiddleware(0xAA), new AppendingMiddleware(0xBB)],
-                                   receiverFramer: new BogusLengthFramer(1),
-                                   receiverBufferSize: 1,
-                                   receiverMaxFrameLength: 1
-                               );
+            receiverMiddlewares: [new AppendingMiddleware(0xAA), new AppendingMiddleware(0xBB)],
+            receiverFramer: new BogusLengthFramer(1),
+            receiverBufferSize: 1,
+            receiverMaxFrameLength: 1
+        );
         var outcome = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
         pair.Receiver.OnException += (_, args) => outcome.TrySetResult(args.Exception);
         pair.Receiver.OnDataReceived += (_, args) => outcome.TrySetResult(args.Data.ToArray());
@@ -305,21 +304,21 @@ public sealed class MoongateTcpClientTests
     public async Task ReceiveAsync_MultipleFramesWhoseCombinedLengthExceedsFrameCap_DeliversEveryFrame()
     {
         await using var pair = await LoopbackPair.CreateAsync(
-                                   receiverFramer: new BogusLengthFramer(1),
-                                   receiverBufferSize: 4,
-                                   receiverMaxFrameLength: 1
-                               );
+            receiverFramer: new BogusLengthFramer(1),
+            receiverBufferSize: 4,
+            receiverMaxFrameLength: 1
+        );
         var received = new List<byte>();
         var allReceived = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         pair.Receiver.OnDataReceived += (_, args) =>
-                                        {
-                                            received.Add(args.Data.Span[0]);
+        {
+            received.Add(args.Data.Span[0]);
 
-                                            if (received.Count == 4)
-                                            {
-                                                allReceived.TrySetResult();
-                                            }
-                                        };
+            if (received.Count == 4)
+            {
+                allReceived.TrySetResult();
+            }
+        };
 
         await pair.Sender.SendAsync(new byte[] { 1, 2, 3, 4 }, CancellationToken.None);
         await allReceived.Task.WaitAsync(Timeout);
@@ -340,16 +339,16 @@ public sealed class MoongateTcpClientTests
         );
         var eventCount = 0;
         pair.Receiver.OnDataReceived += (_, args) =>
-                                        {
-                                            if (Interlocked.Increment(ref eventCount) == 1)
-                                            {
-                                                firstReceived.TrySetResult(args.Data);
-                                            }
-                                            else
-                                            {
-                                                secondReceived.TrySetResult(args.Data);
-                                            }
-                                        };
+        {
+            if (Interlocked.Increment(ref eventCount) == 1)
+            {
+                firstReceived.TrySetResult(args.Data);
+            }
+            else
+            {
+                secondReceived.TrySetResult(args.Data);
+            }
+        };
 
         await pair.Sender.SendAsync(new byte[] { 0x11 }, CancellationToken.None);
         var first = await firstReceived.Task.WaitAsync(Timeout);
@@ -364,9 +363,9 @@ public sealed class MoongateTcpClientTests
     public async Task ReceiveAsync_RawMiddlewareExpansionBeyondReceiveBudget_ClosesWithoutDispatch()
     {
         await using var pair = await LoopbackPair.CreateAsync(
-                                   receiverMiddlewares: [new AppendingMiddleware(0xAA)],
-                                   receiverBufferSize: 1
-                               );
+            receiverMiddlewares: [new AppendingMiddleware(0xAA)],
+            receiverBufferSize: 1
+        );
         var outcome = new TaskCompletionSource<object>(TaskCreationOptions.RunContinuationsAsynchronously);
         pair.Receiver.OnException += (_, args) => outcome.TrySetResult(args.Exception);
         pair.Receiver.OnDataReceived += (_, args) => outcome.TrySetResult(args.Data.ToArray());
@@ -455,8 +454,7 @@ public sealed class MoongateTcpClientTests
         await using var pair = await LoopbackPair.CreateAsync();
         await pair.Receiver.CloseAsync();
         await Assert.ThrowsAsync<IOException>(() => pair.Receiver.SendAsync(new byte[] { 0x42 }, CancellationToken.None));
-        await Assert.ThrowsAsync<IOException>(
-            () => pair.Receiver.SendAsync(
+        await Assert.ThrowsAsync<IOException>(() => pair.Receiver.SendAsync(
                 ReadOnlyMemory<byte>.Empty,
                 CancellationToken.None
             )
@@ -470,14 +468,14 @@ public sealed class MoongateTcpClientTests
         var received = new TaskCompletionSource<byte[]>(TaskCreationOptions.RunContinuationsAsynchronously);
         var bytes = new List<byte>();
         pair.Receiver.OnDataReceived += (_, args) =>
-                                        {
-                                            bytes.AddRange(args.Data.ToArray());
+        {
+            bytes.AddRange(args.Data.ToArray());
 
-                                            if (bytes.Count == 3)
-                                            {
-                                                received.TrySetResult(bytes.ToArray());
-                                            }
-                                        };
+            if (bytes.Count == 3)
+            {
+                received.TrySetResult(bytes.ToArray());
+            }
+        };
         var payload = new byte[] { 1, 2, 3 };
         await pair.Sender.SendAsync(payload, CancellationToken.None);
         Assert.Equal(new byte[] { 1, 2, 3 }, payload);

@@ -3,12 +3,16 @@ using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Server.Services.Events;
 
-/// <summary>Delegates injectable event operations to the container-owned event bus.</summary>
+/// <summary>
+///     Delegates injectable event operations to the container-owned event bus.
+/// </summary>
 public sealed class EventBusService : IEventBusService
 {
     private readonly IMoongateEventBus _eventBus;
 
-    /// <summary>Creates an adapter over the shared event bus.</summary>
+    /// <summary>
+    ///     Creates an adapter over the shared event bus.
+    /// </summary>
     public EventBusService(IMoongateEventBus eventBus)
     {
         _eventBus = eventBus;

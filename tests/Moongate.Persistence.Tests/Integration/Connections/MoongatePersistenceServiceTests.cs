@@ -67,26 +67,25 @@ public sealed class MoongatePersistenceServiceTests
         await owner.SaveAllAsync();
 
         var successes = logs.Events
-                            .Where(
-                                e =>
-                                    e.MessageTemplate.Text.StartsWith(
-                                        "Postgres connection successful",
-                                        StringComparison.Ordinal
-                                    )
-                            )
-                            .ToArray();
+            .Where(e =>
+                e.MessageTemplate.Text.StartsWith(
+                    "Postgres connection successful",
+                    StringComparison.Ordinal
+                )
+            )
+            .ToArray();
         Assert.Equal(2, successes.Length);
         Assert.Contains(
             successes,
             e => e.RenderMessage().Contains("Accounts", StringComparison.Ordinal) &&
                  e.RenderMessage()
-                  .Contains(new NpgsqlConnectionStringBuilder(auth.ConnectionString).Database!, StringComparison.Ordinal)
+                     .Contains(new NpgsqlConnectionStringBuilder(auth.ConnectionString).Database!, StringComparison.Ordinal)
         );
         Assert.Contains(
             successes,
             e => e.RenderMessage().Contains("Realm", StringComparison.Ordinal) &&
                  e.RenderMessage()
-                  .Contains(new NpgsqlConnectionStringBuilder(world.ConnectionString).Database!, StringComparison.Ordinal)
+                     .Contains(new NpgsqlConnectionStringBuilder(world.ConnectionString).Database!, StringComparison.Ordinal)
         );
 
         foreach (var database in new[] { auth, world })

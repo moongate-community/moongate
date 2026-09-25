@@ -4,8 +4,8 @@ using Moongate.Network.Interfaces.Middleware;
 namespace Moongate.Network.Tests.Support;
 
 /// <summary>
-/// Test middleware that appends a marker byte to every payload, on both receive and send paths.
-/// Used to verify pipeline ordering and transformation.
+///     Test middleware that appends a marker byte to every payload, on both receive and send paths.
+///     Used to verify pipeline ordering and transformation.
 /// </summary>
 public sealed class AppendingMiddleware : INetMiddleware
 {

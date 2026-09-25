@@ -33,20 +33,23 @@ internal static class AdminAccountMapper
         {
             Username = request.Username, Password = request.Password, CanAccessApi = request.CanAccessApi,
             AccountType = !request.HasAccountType
-                              ? DomainAccountType.Regular
-                              : request.AccountType switch
-                              {
-                                  AccountType.Regular => DomainAccountType.Regular,
-                                  AccountType.GameMaster => DomainAccountType.GameMaster,
-                                  AccountType.Administrator => DomainAccountType.Administrator,
-                                  _ => throw new RpcException(new(StatusCode.InvalidArgument, "Unknown account type."))
-                              }
+                ? DomainAccountType.Regular
+                : request.AccountType switch
+                {
+                    AccountType.Regular => DomainAccountType.Regular,
+                    AccountType.GameMaster => DomainAccountType.GameMaster,
+                    AccountType.Administrator => DomainAccountType.Administrator,
+                    _ => throw new RpcException(new(StatusCode.InvalidArgument, "Unknown account type."))
+                }
         };
     }
 
     public static AccountSummary ToCreateResponse(AccountCreateResult result)
     {
-        if (result.Success && result.Account is not null) { return ToSummary(result.Account); }
+        if (result.Success && result.Account is not null)
+        {
+            return ToSummary(result.Account);
+        }
 
         throw new RpcException(
             result.ResultType == AccountCreateResultType.UsernameAlreadyExists
@@ -58,15 +61,15 @@ internal static class AdminAccountMapper
     public static AccountSummary ToSummary(AccountEntity account)
     {
         return ToSummary(
-                new AdminAccountSnapshot(
-                    account.Id,
-                    account.Username,
-                    account.AccountType,
-                    account.CanAccessApi,
-                    account.IsLocked,
-                    account.CreatedAt
-                )
-            );
+            new AdminAccountSnapshot(
+                account.Id,
+                account.Username,
+                account.AccountType,
+                account.CanAccessApi,
+                account.IsLocked,
+                account.CreatedAt
+            )
+        );
     }
 
     public static AccountSummary ToSummary(AdminAccountSnapshot account)

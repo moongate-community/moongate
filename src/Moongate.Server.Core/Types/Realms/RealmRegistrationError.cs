@@ -1,6 +1,8 @@
 namespace Moongate.Server.Core.Types.Realms;
 
-/// <summary>Stable registration rejection codes returned over the internal API.</summary>
+/// <summary>
+///     Stable registration rejection codes returned over the internal API.
+/// </summary>
 public enum RealmRegistrationError : byte
 {
     None = 0,

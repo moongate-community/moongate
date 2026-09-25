@@ -6,7 +6,11 @@ namespace Moongate.Tests.TestSupport.Packets;
 
 public sealed class DependentPacketHandler : IPacketHandler<PingPacket>
 {
-    public DependentPacketHandler(RecordingPacketHandler dependency) { }
+    public DependentPacketHandler(RecordingPacketHandler dependency)
+    {
+    }
 
-    public void Handle(GameSession session, PingPacket packet) { }
+    public void Handle(GameSession session, PingPacket packet)
+    {
+    }
 }

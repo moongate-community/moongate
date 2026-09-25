@@ -108,8 +108,8 @@ public sealed class PersistenceSchemaCliTests
             Directory.CreateDirectory(configDirectory);
             var configPath = Path.Combine(configDirectory, "moongate.toml");
             var config = File.Exists(configPath)
-                             ? TomlUtils.DeserializeFromFile<MoongateServerConfig>(configPath)!
-                             : new();
+                ? TomlUtils.DeserializeFromFile<MoongateServerConfig>(configPath)!
+                : new();
             config.Persistence.Realm.ConnectionString = "$MOONGATE_REALM_DATABASE";
             TomlUtils.SerializeToFile(config, configPath);
         }

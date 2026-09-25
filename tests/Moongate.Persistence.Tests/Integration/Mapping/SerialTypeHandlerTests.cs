@@ -24,13 +24,12 @@ public sealed class SerialTypeHandlerTests
         await coordinator.SynchronizeAsync();
         await database.ExecuteAsync("INSERT INTO plugin_characters.characters (id, name) VALUES (4294967296, 'invalid')");
 
-        var exception = await Record.ExceptionAsync(
-                            () =>
-                                coordinator.GetDatabase(PersistenceDatabaseTarget.Realm)
-                                           .Orm
-                                           .Select<CharacterEntity>()
-                                           .ToListAsync()
-                        );
+        var exception = await Record.ExceptionAsync(() =>
+            coordinator.GetDatabase(PersistenceDatabaseTarget.Realm)
+                .Orm
+                .Select<CharacterEntity>()
+                .ToListAsync()
+        );
 
         Assert.NotNull(exception);
         Assert.IsType<OverflowException>(exception.GetBaseException());

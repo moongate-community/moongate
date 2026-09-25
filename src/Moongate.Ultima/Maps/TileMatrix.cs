@@ -51,7 +51,9 @@ public sealed class TileMatrix : IDisposable
     private UopFile[] UOPFiles { get; set; }
     private long UOPLength => _map.Length;
 
-    /// <summary>Blocks currently held, land and statics counted separately. Diagnostic.</summary>
+    /// <summary>
+    ///     Blocks currently held, land and statics counted separately. Diagnostic.
+    /// </summary>
     public (int Land, int Statics) CachedBlockCount => (_landTiles.Count, _staticTiles.Count);
 
     public TileMatrix(int fileIndex, int mapId, int width, int height, string path)
@@ -302,8 +304,8 @@ public sealed class TileMatrix : IDisposable
     }
 
     /// <summary>
-    /// Resizes both block caches after construction. Lowering the cap evicts down to it at once, so a
-    /// host can give memory back without restarting.
+    ///     Resizes both block caches after construction. Lowering the cap evicts down to it at once, so a
+    ///     host can give memory back without restarting.
     /// </summary>
     public void SetCacheCapacity(int capacity)
     {
@@ -382,8 +384,8 @@ public sealed class TileMatrix : IDisposable
         if (_map?.CanRead != true || !_map.CanSeek)
         {
             _map = _mapPath == null
-                       ? null
-                       : new FileStream(_mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                ? null
+                : new FileStream(_mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             if (IsUOPFormat && _mapPath != null && !IsUOPAlreadyRead)
             {
@@ -426,8 +428,8 @@ public sealed class TileMatrix : IDisposable
         if (_statics?.CanRead != true || !_statics.CanSeek)
         {
             _statics = _staticsPath == null
-                           ? null
-                           : new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                ? null
+                : new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
         if (_statics == null)

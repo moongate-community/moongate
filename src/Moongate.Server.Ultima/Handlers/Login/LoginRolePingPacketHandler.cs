@@ -5,7 +5,9 @@ using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Server.Ultima.Handlers.Login;
 
-/// <summary>Echoes login keepalive pings on the originating connection.</summary>
+/// <summary>
+///     Echoes login keepalive pings on the originating connection.
+/// </summary>
 public sealed class LoginRolePingPacketHandler : ILoginPacketHandler<PingPacket>
 {
     private readonly ILoginPacketSendService _sender;

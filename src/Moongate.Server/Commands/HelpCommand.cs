@@ -6,7 +6,9 @@ using Moongate.Server.Core.Types.Commands;
 
 namespace Moongate.Server.Commands;
 
-/// <summary>Lists commands available to the caller and describes a command by name or alias.</summary>
+/// <summary>
+///     Lists commands available to the caller and describes a command by name or alias.
+/// </summary>
 public sealed class HelpCommand : ICommandExecutor
 {
     private readonly CommandRegistry _registry;
@@ -27,12 +29,12 @@ public sealed class HelpCommand : ICommandExecutor
         }
 
         var available = _registry.Registrations
-                                 .Values
-                                 .Select(registration => registration.Definition)
-                                 .Distinct()
-                                 .Where(definition => IsAvailable(definition, context))
-                                 .OrderBy(definition => definition.Name, StringComparer.OrdinalIgnoreCase)
-                                 .ToArray();
+            .Values
+            .Select(registration => registration.Definition)
+            .Distinct()
+            .Where(definition => IsAvailable(definition, context))
+            .OrderBy(definition => definition.Name, StringComparer.OrdinalIgnoreCase)
+            .ToArray();
 
         if (context.Arguments.Length == 0)
         {
@@ -47,9 +49,9 @@ public sealed class HelpCommand : ICommandExecutor
         }
 
         var name = context.Arguments[0];
-        var command = available.FirstOrDefault(
-            definition => definition.Aliases.Contains(name, StringComparer.OrdinalIgnoreCase)
-        );
+        var command =
+            available.FirstOrDefault(definition => definition.Aliases.Contains(name, StringComparer.OrdinalIgnoreCase)
+            );
 
         if (command is null)
         {

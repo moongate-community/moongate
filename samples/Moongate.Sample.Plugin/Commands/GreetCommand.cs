@@ -5,17 +5,21 @@ using Moongate.Server.Core.Interfaces.Commands;
 
 namespace Moongate.Sample.Plugin.Commands;
 
-/// <summary>"greet &lt;name&gt; [plain|warm|formal]": prints a greeting on the console through the same module scripts use.</summary>
+/// <summary>
+///     "greet &lt;name&gt; [plain|warm|formal]": prints a greeting on the console through the same module scripts use.
+/// </summary>
 public sealed class GreetCommand : ICommandExecutor
 {
     private const string Usage = "Usage: greet <name> [plain|warm|formal]";
 
     private readonly GreeterModule _greeter;
 
-    /// <summary>Initializes a new instance of the <see cref="GreetCommand" /> class.</summary>
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="GreetCommand" /> class.
+    /// </summary>
     /// <param name="greeter">
-    /// The module singleton the script engine binds; its method is plain C#, safe to call from the console
-    /// thread.
+    ///     The module singleton the script engine binds; its method is plain C#, safe to call from the console
+    ///     thread.
     /// </param>
     public GreetCommand(GreeterModule greeter)
     {

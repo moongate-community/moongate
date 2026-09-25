@@ -6,7 +6,9 @@ using System.Text;
 
 namespace Moongate.Server.Bootstrap.Internal.Setup;
 
-/// <summary>Prepares an offline administration TLS identity while the root initializer owns its lock.</summary>
+/// <summary>
+///     Prepares an offline administration TLS identity while the root initializer owns its lock.
+/// </summary>
 internal static class AdminCertificateSetup
 {
     public static void Configure(string root, IReadOnlyList<string> hosts, TextWriter output)
@@ -56,6 +58,7 @@ internal static class AdminCertificateSetup
                         san.AddDnsName(name);
                     }
                 }
+
                 request.CertificateExtensions.Add(san.Build());
                 using var certificate = request.CreateSelfSigned(
                     DateTimeOffset.UtcNow.AddMinutes(-5),
@@ -94,6 +97,7 @@ internal static class AdminCertificateSetup
 
             throw;
         }
+
         output.WriteLine($"Administration TLS configured and enabled: {pfxPath}");
         output.WriteLine($"Trust this public certificate in administration clients: {publicPath}");
     }
@@ -115,6 +119,7 @@ internal static class AdminCertificateSetup
                         nameof(hosts)
                     );
                 }
+
                 name = address.ToString();
             }
             else if (Uri.CheckHostName(name) != UriHostNameType.Dns || name.Contains('*'))
@@ -176,19 +181,17 @@ internal static class AdminCertificateSetup
     private static bool SupportsServerAuthentication(X509Certificate2 certificate)
     {
         return certificate.Extensions
-                          .OfType<X509EnhancedKeyUsageExtension>()
-                          .All(
-                              extension =>
-                                  extension.EnhancedKeyUsages
-                                           .Cast<Oid>()
-                                           .Any(oid => oid.Value is "1.3.6.1.5.5.7.3.1" or "2.5.29.37.0")
-                          ) &&
+                   .OfType<X509EnhancedKeyUsageExtension>()
+                   .All(extension =>
+                       extension.EnhancedKeyUsages
+                           .Cast<Oid>()
+                           .Any(oid => oid.Value is "1.3.6.1.5.5.7.3.1" or "2.5.29.37.0")
+                   ) &&
                certificate.Extensions
-                          .OfType<X509KeyUsageExtension>()
-                          .All(
-                              extension =>
-                                  (extension.KeyUsages & X509KeyUsageFlags.DigitalSignature) != 0
-                          );
+                   .OfType<X509KeyUsageExtension>()
+                   .All(extension =>
+                       (extension.KeyUsages & X509KeyUsageFlags.DigitalSignature) != 0
+                   );
     }
 
     private static void WriteNew(string path, byte[] contents, UnixFileMode mode, List<string> created)
@@ -199,6 +202,7 @@ internal static class AdminCertificateSetup
         {
             options.UnixCreateMode = mode;
         }
+
         using var stream = new FileStream(path, options);
         created.Add(path);
         stream.Write(contents);

@@ -92,17 +92,17 @@ public sealed class AccountServerListTests
         var sender = new PacketSendService(connections);
         using var proof = new HandoffProofService(new byte[32]);
         var directory = available
-                            ? new StubRealmCatalog(
-                                new RealmDescriptor(
-                                    "local",
-                                    1,
-                                    "Local",
-                                    IPAddress.Loopback,
-                                    2593,
-                                    AccountType.Regular
-                                )
-                            )
-                            : new StubRealmCatalog();
+            ? new StubRealmCatalog(
+                new RealmDescriptor(
+                    "local",
+                    1,
+                    "Local",
+                    IPAddress.Loopback,
+                    2593,
+                    AccountType.Regular
+                )
+            )
+            : new StubRealmCatalog();
 
         var accounts = new RecordingAccountService
         {

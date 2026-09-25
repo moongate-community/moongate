@@ -16,8 +16,8 @@ using Moongate.Server.Core.Types.Commands;
 namespace Moongate.Sample.Plugin;
 
 /// <summary>
-/// The sample plugin: registers a Lua module and enum, a console command, a metric provider and a persistence schema.
-/// Registration only; nothing starts here.
+///     The sample plugin: registers a Lua module and enum, a console command, a metric provider and a persistence schema.
+///     Registration only; nothing starts here.
 /// </summary>
 public sealed class SamplePlugin : IMoongatePlugin
 {

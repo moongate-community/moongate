@@ -6,11 +6,11 @@ using Moongate.Core.Types.Geometry;
 namespace Moongate.Core.Geometry;
 
 /// <summary>
-/// Represents Point3D.
+///     Represents Point3D.
 /// </summary>
 public struct Point3D
     : IPoint3D, IComparable<Point3D>, IComparable<IPoint3D>, IEquatable<object>, IEquatable<Point3D>,
-      IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>
+        IEquatable<IPoint3D>, ISpanFormattable, ISpanParsable<Point3D>
 {
     public static readonly Point3D Zero = new(0, 0, 0);
 
@@ -21,13 +21,19 @@ public struct Point3D
     public int Z { get; set; }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point3D(IPoint3D p) : this(p.X, p.Y, p.Z) { }
+    public Point3D(IPoint3D p) : this(p.X, p.Y, p.Z)
+    {
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point3D(Point3D p) : this(p.X, p.Y, p.Z) { }
+    public Point3D(Point3D p) : this(p.X, p.Y, p.Z)
+    {
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point3D(Point2D p, int z) : this(p.X, p.Y, z) { }
+    public Point3D(Point2D p, int z) : this(p.X, p.Y, z)
+    {
+    }
 
     public Point3D(int x, int y, int z)
     {
@@ -95,20 +101,28 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Removes running flag from direction
+    ///     Removes running flag from direction
     /// </summary>
-    /// <param name="direction">Direction with or without running flag</param>
-    /// <returns>Base direction without running flag</returns>
+    /// <param name="direction">
+    ///     Direction with or without running flag
+    /// </param>
+    /// <returns>
+    ///     Base direction without running flag
+    /// </returns>
     public static DirectionType GetBaseDirection(DirectionType direction)
     {
         return (DirectionType)((byte)direction & ~(byte)DirectionType.Running);
     }
 
     /// <summary>
-    /// Gets direction from current point to target point
+    ///     Gets direction from current point to target point
     /// </summary>
-    /// <param name="target">Target point</param>
-    /// <returns>Direction to target</returns>
+    /// <param name="target">
+    ///     Target point
+    /// </param>
+    /// <returns>
+    ///     Direction to target
+    /// </returns>
     public DirectionType GetDirectionTo(Point3D target)
     {
         var delta = new Point3D(target.X.CompareTo(X), target.Y.CompareTo(Y), 0);
@@ -117,10 +131,14 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Gets the 2D distance to another point (ignoring Z coordinate)
+    ///     Gets the 2D distance to another point (ignoring Z coordinate)
     /// </summary>
-    /// <param name="target">Target point</param>
-    /// <returns>Distance in tiles as double</returns>
+    /// <param name="target">
+    ///     Target point
+    /// </param>
+    /// <returns>
+    ///     Distance in tiles as double
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public double GetDistance(Point3D target)
     {
@@ -131,10 +149,14 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Gets the 2D distance to another point (ignoring Z coordinate)
+    ///     Gets the 2D distance to another point (ignoring Z coordinate)
     /// </summary>
-    /// <param name="target">Target point</param>
-    /// <returns>Distance in tiles as double</returns>
+    /// <param name="target">
+    ///     Target point
+    /// </param>
+    /// <returns>
+    ///     Distance in tiles as double
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public double GetDistance(IPoint3D? target)
     {
@@ -150,10 +172,14 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Gets the 3D distance to another point (including Z coordinate)
+    ///     Gets the 3D distance to another point (including Z coordinate)
     /// </summary>
-    /// <param name="target">Target point</param>
-    /// <returns>Distance in tiles as double</returns>
+    /// <param name="target">
+    ///     Target point
+    /// </param>
+    /// <returns>
+    ///     Distance in tiles as double
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public double GetDistance3D(Point3D target)
     {
@@ -165,10 +191,14 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Gets the 3D distance to another point (including Z coordinate)
+    ///     Gets the 3D distance to another point (including Z coordinate)
     /// </summary>
-    /// <param name="target">Target point</param>
-    /// <returns>Distance in tiles as double</returns>
+    /// <param name="target">
+    ///     Target point
+    /// </param>
+    /// <returns>
+    ///     Distance in tiles as double
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public double GetDistance3D(IPoint3D? target)
     {
@@ -190,12 +220,18 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Checks if another point is within the specified range of this point
-    /// Uses Euclidean 2D distance, ignoring Z. Negative ranges never contain a point.
+    ///     Checks if another point is within the specified range of this point
+    ///     Uses Euclidean 2D distance, ignoring Z. Negative ranges never contain a point.
     /// </summary>
-    /// <param name="target">Target point to check distance to</param>
-    /// <param name="range">Maximum range in tiles</param>
-    /// <returns>True if target is within range, false otherwise</returns>
+    /// <param name="target">
+    ///     Target point to check distance to
+    /// </param>
+    /// <param name="range">
+    ///     Maximum range in tiles
+    /// </param>
+    /// <returns>
+    ///     True if target is within range, false otherwise
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool InRange(Point3D target, int range)
     {
@@ -207,12 +243,18 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Checks if another point is within the specified range of this point
-    /// Uses Euclidean 2D distance, ignoring Z. Negative ranges never contain a point.
+    ///     Checks if another point is within the specified range of this point
+    ///     Uses Euclidean 2D distance, ignoring Z. Negative ranges never contain a point.
     /// </summary>
-    /// <param name="target">Target point to check distance to</param>
-    /// <param name="range">Maximum range in tiles</param>
-    /// <returns>True if target is within range, false otherwise</returns>
+    /// <param name="target">
+    ///     Target point to check distance to
+    /// </param>
+    /// <param name="range">
+    ///     Maximum range in tiles
+    /// </param>
+    /// <returns>
+    ///     True if target is within range, false otherwise
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool InRange(IPoint3D? target, int range)
     {
@@ -229,12 +271,18 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Checks if another point is within the specified range of this point
-    /// Uses Euclidean 3D distance. Negative ranges never contain a point.
+    ///     Checks if another point is within the specified range of this point
+    ///     Uses Euclidean 3D distance. Negative ranges never contain a point.
     /// </summary>
-    /// <param name="target">Target point to check distance to</param>
-    /// <param name="range">Maximum range in tiles</param>
-    /// <returns>True if target is within 3D range, false otherwise</returns>
+    /// <param name="target">
+    ///     Target point to check distance to
+    /// </param>
+    /// <param name="range">
+    ///     Maximum range in tiles
+    /// </param>
+    /// <returns>
+    ///     True if target is within 3D range, false otherwise
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool InRange3D(Point3D target, int range)
     {
@@ -247,12 +295,18 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Checks if another point is within the specified range of this point
-    /// Uses Euclidean 3D distance. Negative ranges never contain a point.
+    ///     Checks if another point is within the specified range of this point
+    ///     Uses Euclidean 3D distance. Negative ranges never contain a point.
     /// </summary>
-    /// <param name="target">Target point to check distance to</param>
-    /// <param name="range">Maximum range in tiles</param>
-    /// <returns>True if target is within 3D range, false otherwise</returns>
+    /// <param name="target">
+    ///     Target point to check distance to
+    /// </param>
+    /// <param name="range">
+    ///     Maximum range in tiles
+    /// </param>
+    /// <returns>
+    ///     True if target is within 3D range, false otherwise
+    /// </returns>
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public bool InRange3D(IPoint3D? target, int range)
     {
@@ -270,20 +324,28 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Checks if a direction includes running flag
+    ///     Checks if a direction includes running flag
     /// </summary>
-    /// <param name="direction">Direction to check</param>
-    /// <returns>True if running flag is set</returns>
+    /// <param name="direction">
+    ///     Direction to check
+    /// </param>
+    /// <returns>
+    ///     True if running flag is set
+    /// </returns>
     public static bool IsRunning(DirectionType direction)
     {
         return ((byte)direction & (byte)DirectionType.Running) != 0;
     }
 
     /// <summary>
-    /// Adds a direction offset to current position
+    ///     Adds a direction offset to current position
     /// </summary>
-    /// <param name="direction">Direction to move</param>
-    /// <returns>New Point3D with offset applied</returns>
+    /// <param name="direction">
+    ///     Direction to move
+    /// </param>
+    /// <returns>
+    ///     New Point3D with offset applied
+    /// </returns>
     public Point3D Move(DirectionType direction)
     {
         Point3D offset = direction; // Uses implicit conversion
@@ -355,10 +417,14 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Adds running flag to direction
+    ///     Adds running flag to direction
     /// </summary>
-    /// <param name="direction">Base direction</param>
-    /// <returns>Direction with running flag</returns>
+    /// <param name="direction">
+    ///     Base direction
+    /// </param>
+    /// <returns>
+    ///     Direction with running flag
+    /// </returns>
     public static DirectionType SetRunning(DirectionType direction)
     {
         return (DirectionType)((byte)direction | (byte)DirectionType.Running);
@@ -451,14 +517,14 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Addition operator for Point3D
+    ///     Addition operator for Point3D
     /// </summary>
     public static Point3D operator +(Point3D a, Point3D b)
         => new(a.X + b.X, a.Y + b.Y, a.Z + b.Z);
 
     /// <summary>
-    /// Addition operator for Point3D + DirectionType
-    /// Moves the point in the specified direction
+    ///     Addition operator for Point3D + DirectionType
+    ///     Moves the point in the specified direction
     /// </summary>
     public static Point3D operator +(Point3D point, DirectionType direction)
     {
@@ -468,8 +534,8 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Addition operator for DirectionType + Point3D
-    /// Moves the point in the specified direction (commutative)
+    ///     Addition operator for DirectionType + Point3D
+    ///     Moves the point in the specified direction (commutative)
     /// </summary>
     public static Point3D operator +(DirectionType direction, Point3D point)
         => point + direction;
@@ -494,11 +560,15 @@ public struct Point3D
         => !ReferenceEquals(r, null) && l.X >= r.X && l.Y >= r.Y && l.Z >= r.Z;
 
     /// <summary>
-    /// Implicit conversion from DirectionType to Point3D offset
-    /// Converts direction to movement offset coordinates
+    ///     Implicit conversion from DirectionType to Point3D offset
+    ///     Converts direction to movement offset coordinates
     /// </summary>
-    /// <param name="direction">Direction to convert</param>
-    /// <returns>Point3D with offset coordinates</returns>
+    /// <param name="direction">
+    ///     Direction to convert
+    /// </param>
+    /// <returns>
+    ///     Point3D with offset coordinates
+    /// </returns>
     public static implicit operator Point3D(DirectionType direction)
     {
         // Remove running flag to get base direction
@@ -519,11 +589,15 @@ public struct Point3D
     }
 
     /// <summary>
-    /// Implicit conversion from Point3D to DirectionType
-    /// Converts movement offset to direction (ignores Z coordinate)
+    ///     Implicit conversion from Point3D to DirectionType
+    ///     Converts movement offset to direction (ignores Z coordinate)
     /// </summary>
-    /// <param name="point">Point3D offset to convert</param>
-    /// <returns>DirectionType representing the movement direction</returns>
+    /// <param name="point">
+    ///     Point3D offset to convert
+    /// </param>
+    /// <returns>
+    ///     DirectionType representing the movement direction
+    /// </returns>
     public static implicit operator DirectionType(Point3D point)
     {
         // Normalize the coordinates to -1, 0, or 1
@@ -563,14 +637,14 @@ public struct Point3D
         => !ReferenceEquals(r, null) && l.X <= r.X && l.Y <= r.Y && l.Z <= r.Z;
 
     /// <summary>
-    /// Subtraction operator for Point3D
+    ///     Subtraction operator for Point3D
     /// </summary>
     public static Point3D operator -(Point3D a, Point3D b)
         => new(a.X - b.X, a.Y - b.Y, a.Z - b.Z);
 
     /// <summary>
-    /// Subtraction operator for Point3D - DirectionType
-    /// Moves the point in the opposite direction
+    ///     Subtraction operator for Point3D - DirectionType
+    ///     Moves the point in the opposite direction
     /// </summary>
     public static Point3D operator -(Point3D point, DirectionType direction)
     {

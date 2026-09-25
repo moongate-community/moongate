@@ -12,7 +12,9 @@ using StackExchange.Redis;
 
 namespace Moongate.Server.Services.Realms;
 
-/// <summary>Publishes fenced, expiring realm leases and reads live realm snapshots from Redis.</summary>
+/// <summary>
+///     Publishes fenced, expiring realm leases and reads live realm snapshots from Redis.
+/// </summary>
 public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceService
 {
     private const string ClaimScript = """
@@ -118,14 +120,14 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
     {
         Validate(realm);
         await _redis.Connection
-                    .GetDatabase()
-                    .ScriptEvaluateAsync(
-                        UnregisterScript,
-                        [Key(realm.Descriptor.ServerIndex)],
-                        [realm.Descriptor.RealmId, realm.InstanceId.ToString("N")]
-                    )
-                    .WaitAsync(cancellationToken)
-                    .ConfigureAwait(false);
+            .GetDatabase()
+            .ScriptEvaluateAsync(
+                UnregisterScript,
+                [Key(realm.Descriptor.ServerIndex)],
+                [realm.Descriptor.RealmId, realm.InstanceId.ToString("N")]
+            )
+            .WaitAsync(cancellationToken)
+            .ConfigureAwait(false);
     }
 
     /// <inheritdoc />
@@ -143,7 +145,7 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         var realms = new List<RealmDescriptor>();
 
         await foreach (var key in server.KeysAsync(pattern: _prefix + "*", pageSize: 128)
-                                        .WithCancellation(cancellationToken))
+                           .WithCancellation(cancellationToken))
         {
             var instance = await ReadAsync(key, cancellationToken).ConfigureAwait(false);
 
@@ -182,26 +184,26 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         Validate(realm);
         var descriptor = realm.Descriptor;
         var result = await _redis.Connection
-                                 .GetDatabase()
-                                 .ScriptEvaluateAsync(
-                                     ClaimScript,
-                                     [Key(descriptor.ServerIndex)],
-                                     [
-                                         descriptor.RealmId,
-                                         realm.InstanceId.ToString("N"),
-                                         descriptor.ServerIndex.ToString(CultureInfo.InvariantCulture),
-                                         descriptor.Name,
-                                         descriptor.Address.ToString(),
-                                         descriptor.Port.ToString(CultureInfo.InvariantCulture),
-                                         ((int)descriptor.MinimumAccountType).ToString(CultureInfo.InvariantCulture),
-                                         _prefix,
-                                         _maxRealms,
-                                         _leaseSeconds,
-                                         heartbeat ? "heartbeat" : "claim"
-                                     ]
-                                 )
-                                 .WaitAsync(cancellationToken)
-                                 .ConfigureAwait(false);
+            .GetDatabase()
+            .ScriptEvaluateAsync(
+                ClaimScript,
+                [Key(descriptor.ServerIndex)],
+                [
+                    descriptor.RealmId,
+                    realm.InstanceId.ToString("N"),
+                    descriptor.ServerIndex.ToString(CultureInfo.InvariantCulture),
+                    descriptor.Name,
+                    descriptor.Address.ToString(),
+                    descriptor.Port.ToString(CultureInfo.InvariantCulture),
+                    ((int)descriptor.MinimumAccountType).ToString(CultureInfo.InvariantCulture),
+                    _prefix,
+                    _maxRealms,
+                    _leaseSeconds,
+                    heartbeat ? "heartbeat" : "claim"
+                ]
+            )
+            .WaitAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         return (int)result;
     }
@@ -242,10 +244,10 @@ public sealed class RedisRealmDirectoryService : IRealmCatalog, IRealmPresenceSe
         try
         {
             entries = await _redis.Connection
-                                  .GetDatabase()
-                                  .HashGetAllAsync(key)
-                                  .WaitAsync(cancellationToken)
-                                  .ConfigureAwait(false);
+                .GetDatabase()
+                .HashGetAllAsync(key)
+                .WaitAsync(cancellationToken)
+                .ConfigureAwait(false);
         }
         catch (RedisServerException exception) when (exception.Message.StartsWith("WRONGTYPE", StringComparison.Ordinal))
         {

@@ -24,7 +24,7 @@ public sealed class PluginContainerExtensionsTests
         );
 
         var result = container.RegisterMoongatePlugins(app, root)
-                              .RegisterMoongatePlugin<DefaultRegistrationPlugin>();
+            .RegisterMoongatePlugin<DefaultRegistrationPlugin>();
 
         Assert.Same(container, result);
         Assert.Equal(

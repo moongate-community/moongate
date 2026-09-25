@@ -3,12 +3,12 @@ using Moongate.Network.Client;
 namespace Moongate.Network.Data.Events;
 
 /// <summary>
-/// Event payload containing a network client instance.
+///     Event payload containing a network client instance.
 /// </summary>
 public sealed class TcpClientEventArgs : EventArgs
 {
     /// <summary>
-    /// Connected or disconnected client.
+    ///     Connected or disconnected client.
     /// </summary>
     public MoongateTcpClient Client { get; }
 

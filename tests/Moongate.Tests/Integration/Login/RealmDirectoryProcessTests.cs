@@ -75,9 +75,9 @@ public sealed class RealmDirectoryProcessTests
     private static RealmInstance CreateRealm(string id, ushort index)
     {
         return new(
-                new(id, index, id, IPAddress.Loopback, 2595, AccountType.Regular),
-                Guid.NewGuid()
-            );
+            new(id, index, id, IPAddress.Loopback, 2595, AccountType.Regular),
+            Guid.NewGuid()
+        );
     }
 
     private static async Task<RedisConnectionService> ConnectAsync()

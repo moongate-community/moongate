@@ -16,8 +16,8 @@ using Serilog;
 namespace Moongate.Network.Client;
 
 /// <summary>
-/// Represents a connected TCP client with async send/receive loops,
-/// middleware processing and lifecycle events.
+///     Represents a connected TCP client with async send/receive loops,
+///     middleware processing and lifecycle events.
 /// </summary>
 public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, IDisposable
 {
@@ -44,12 +44,12 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     private Task? _receiveLoopTask;
 
     /// <summary>
-    /// Receives payload chunk size in bytes.
+    ///     Receives payload chunk size in bytes.
     /// </summary>
     public int ReceiveBufferSize { get; }
 
     /// <summary>
-    /// Local endpoint used for this connection, when available.
+    ///     Local endpoint used for this connection, when available.
     /// </summary>
     public EndPoint? LocalEndPoint
     {
@@ -67,7 +67,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Unique session identifier for this client connection.
+    ///     Unique session identifier for this client connection.
     /// </summary>
     public long SessionId { get; }
 
@@ -75,7 +75,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     public INetFramer? Framer { get; }
 
     /// <summary>
-    /// Client remote endpoint, when connected.
+    ///     Client remote endpoint, when connected.
     /// </summary>
     public EndPoint? RemoteEndPoint
     {
@@ -93,7 +93,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// True when the underlying socket is connected and client not closed.
+    ///     True when the underlying socket is connected and client not closed.
     /// </summary>
     public bool IsConnected
     {
@@ -110,36 +110,42 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     public Task Completion => _completion.Task;
 
     /// <summary>
-    /// Raised when the client is fully connected and receive loop starts.
+    ///     Raised when the client is fully connected and receive loop starts.
     /// </summary>
     public event EventHandler<TcpClientEventArgs>? OnConnected;
 
     /// <summary>
-    /// Raised once when I/O has drained. Resource cleanup may still be running; await Completion outside callbacks.
+    ///     Raised once when I/O has drained. Resource cleanup may still be running; await Completion outside callbacks.
     /// </summary>
     public event EventHandler<TcpClientEventArgs>? OnDisconnected;
 
     /// <summary>
-    /// Raised synchronously with a stable payload copy after middleware and optional framing.
-    /// Callback failures close this connection; do not use async-void handlers.
+    ///     Raised synchronously with a stable payload copy after middleware and optional framing.
+    ///     Callback failures close this connection; do not use async-void handlers.
     /// </summary>
     public event EventHandler<TcpDataReceivedEventArgs>? OnDataReceived;
 
     /// <summary>
-    /// Raised when receive/send loops throw an exception.
+    ///     Raised when receive/send loops throw an exception.
     /// </summary>
     public event EventHandler<TcpExceptionEventArgs>? OnException;
 
     /// <summary>
-    /// Creates a client wrapper for an accepted socket.
+    ///     Creates a client wrapper for an accepted socket.
     /// </summary>
-    /// <param name="socket">Connected socket.</param>
-    /// <param name="middlewares">Optional middleware list.</param>
-    /// <param name="framer">
-    /// Optional framer. When supplied, the receive loop accumulates middleware output and
-    /// emits <see cref="OnDataReceived" /> once per complete frame instead of once per socket read.
+    /// <param name="socket">
+    ///     Connected socket.
     /// </param>
-    /// <param name="receiveBufferSize">Receive chunk size in bytes.</param>
+    /// <param name="middlewares">
+    ///     Optional middleware list.
+    /// </param>
+    /// <param name="framer">
+    ///     Optional framer. When supplied, the receive loop accumulates middleware output and
+    ///     emits <see cref="OnDataReceived" /> once per complete frame instead of once per socket read.
+    /// </param>
+    /// <param name="receiveBufferSize">
+    ///     Receive chunk size in bytes.
+    /// </param>
     public MoongateTcpClient(
         Socket socket,
         IEnumerable<INetMiddleware>? middlewares = null,
@@ -157,10 +163,12 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         receiveBufferSize,
         maxFrameLength,
         noDelay
-    ) { }
+    )
+    {
+    }
 
     /// <summary>
-    /// Creates a client wrapper for an accepted socket using the supplied transport stream.
+    ///     Creates a client wrapper for an accepted socket using the supplied transport stream.
     /// </summary>
     internal MoongateTcpClient(
         Socket socket,
@@ -198,7 +206,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Adds a middleware component to this client pipeline.
+    ///     Adds a middleware component to this client pipeline.
     /// </summary>
     public MoongateTcpClient AddMiddleware(INetMiddleware middleware)
     {
@@ -208,7 +216,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Requests connection closure without waiting for callbacks or resource cleanup.
+    ///     Requests connection closure without waiting for callbacks or resource cleanup.
     /// </summary>
     public Task CloseAsync(CancellationToken cancellationToken = default)
     {
@@ -218,7 +226,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Creates an outbound client and connects to the specified endpoint.
+    ///     Creates an outbound client and connects to the specified endpoint.
     /// </summary>
     [SuppressMessage(
         "Design",
@@ -260,7 +268,9 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
         }
     }
 
-    /// <summary>Connects and installs a prepared stream and callbacks before receiving any data.</summary>
+    /// <summary>
+    ///     Connects and installs a prepared stream and callbacks before receiving any data.
+    /// </summary>
     public static async Task<MoongateTcpClient> ConnectConfiguredAsync(
         IPEndPoint endpoint,
         TcpClientOptions options,
@@ -352,7 +362,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Checks whether this client pipeline contains at least one middleware instance of the specified type.
+    ///     Checks whether this client pipeline contains at least one middleware instance of the specified type.
     /// </summary>
     public bool ContainsMiddleware<TMiddleware>()
         where TMiddleware : INetMiddleware
@@ -361,7 +371,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Removes all middleware components of the specified type from this client pipeline.
+    ///     Removes all middleware components of the specified type from this client pipeline.
     /// </summary>
     public bool RemoveMiddleware<TMiddleware>()
         where TMiddleware : INetMiddleware
@@ -370,7 +380,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Sends bytes, preserving transformation order on the wire. Keep the payload immutable until completion.
+    ///     Sends bytes, preserving transformation order on the wire. Keep the payload immutable until completion.
     /// </summary>
     public async Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
     {
@@ -415,7 +425,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
                 try
                 {
                     var processed = await _middlewarePipeline.ExecuteSendAsync(this, payload, sendToken)
-                                                             .ConfigureAwait(false);
+                        .ConfigureAwait(false);
 
                     if (processed.IsEmpty)
                     {
@@ -437,7 +447,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
                             processed.Span.CopyTo(rented);
                             codec.Encode(rented.AsSpan(0, processed.Length));
                             await _stream.WriteAsync(rented.AsMemory(0, processed.Length), sendToken)
-                                         .ConfigureAwait(false);
+                                .ConfigureAwait(false);
                         }
                         finally
                         {
@@ -477,7 +487,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Starts the receive loop and raises connect event.
+    ///     Starts the receive loop and raises connect event.
     /// </summary>
     public Task StartAsync(CancellationToken cancellationToken)
     {
@@ -529,10 +539,12 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <summary>
-    /// Atomically swaps the transport codec for this connection. The new codec takes effect from the next
-    /// socket read; the caller must trigger the swap at a read boundary (no old-regime bytes still pending).
+    ///     Atomically swaps the transport codec for this connection. The new codec takes effect from the next
+    ///     socket read; the caller must trigger the swap at a read boundary (no old-regime bytes still pending).
     /// </summary>
-    /// <param name="codec">The new codec, or null to remove transport transformation.</param>
+    /// <param name="codec">
+    ///     The new codec, or null to remove transport transformation.
+    /// </param>
     public void SwapCodec(ITransportCodec? codec)
     {
         Volatile.Write(ref _codec, codec);
@@ -714,7 +726,7 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
             while (!receiveToken.IsCancellationRequested && IsConnected)
             {
                 var received = await _stream.ReadAsync(buffer.AsMemory(0, ReceiveBufferSize), receiveToken)
-                                            .ConfigureAwait(false);
+                    .ConfigureAwait(false);
 
                 if (received == 0)
                 {
@@ -723,11 +735,11 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
 
                 Volatile.Read(ref _codec)?.Decode(buffer.AsSpan(0, received));
                 var processed = await _middlewarePipeline.ExecuteAsync(
-                                                             this,
-                                                             buffer.AsMemory(0, received),
-                                                             receiveToken
-                                                         )
-                                                         .ConfigureAwait(false);
+                        this,
+                        buffer.AsMemory(0, received),
+                        receiveToken
+                    )
+                    .ConfigureAwait(false);
 
                 if (processed.IsEmpty)
                 {
@@ -806,14 +818,18 @@ public sealed class MoongateTcpClient : INetworkConnection, IAsyncDisposable, ID
     }
 
     /// <inheritdoc />
-    /// <remarks>Requests cleanup without waiting, so it is safe inside synchronous callbacks.</remarks>
+    /// <remarks>
+    ///     Requests cleanup without waiting, so it is safe inside synchronous callbacks.
+    /// </remarks>
     public void Dispose()
     {
         RequestClose();
     }
 
     /// <inheritdoc />
-    /// <remarks>Do not synchronously wait for this task from a connection callback.</remarks>
+    /// <remarks>
+    ///     Do not synchronously wait for this task from a connection callback.
+    /// </remarks>
     public ValueTask DisposeAsync()
     {
         RequestClose();

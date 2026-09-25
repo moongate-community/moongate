@@ -19,11 +19,10 @@ public sealed class RealmDirectoryConfigTests
 
         Assert.Contains(
             "advertised_address",
-            Assert.Throws<InvalidOperationException>(
-                      () =>
-                          config.Validate(ServerMode.Game)
-                  )
-                  .Message
+            Assert.Throws<InvalidOperationException>(() =>
+                    config.Validate(ServerMode.Game)
+                )
+                .Message
         );
     }
 
@@ -35,11 +34,10 @@ public sealed class RealmDirectoryConfigTests
 
         Assert.Contains(
             "advertised_port",
-            Assert.Throws<InvalidOperationException>(
-                      () =>
-                          config.Validate(ServerMode.Game)
-                  )
-                  .Message
+            Assert.Throws<InvalidOperationException>(() =>
+                    config.Validate(ServerMode.Game)
+                )
+                .Message
         );
     }
 
@@ -50,11 +48,10 @@ public sealed class RealmDirectoryConfigTests
 
         Assert.Contains(
             "lease_duration_seconds",
-            Assert.Throws<InvalidOperationException>(
-                      () =>
-                          config.Validate(ServerMode.Standalone)
-                  )
-                  .Message
+            Assert.Throws<InvalidOperationException>(() =>
+                    config.Validate(ServerMode.Standalone)
+                )
+                .Message
         );
     }
 

@@ -8,7 +8,7 @@ using Moongate.Network.Packets.Types.Packets;
 namespace Moongate.Network.Packets.Outgoing.Login;
 
 /// <summary>
-/// Enables client capabilities using the 32-bit feature mask supported by ClassicUO 7.x.
+///     Enables client capabilities using the 32-bit feature mask supported by ClassicUO 7.x.
 /// </summary>
 [PacketHandler(0xB9, PacketSizing.Fixed, Length = 5, Description = "Enable Locked Client Features")]
 public sealed class SupportFeaturesPacket : BaseFixedPacket<SupportFeaturesPacket>, IOutgoingPacket

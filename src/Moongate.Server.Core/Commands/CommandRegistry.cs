@@ -7,14 +7,18 @@ using Moongate.Server.Core.Types.Commands;
 
 namespace Moongate.Server.Core.Commands;
 
-/// <summary>Collects command metadata by alias until command system startup freezes registrations.</summary>
+/// <summary>
+///     Collects command metadata by alias until command system startup freezes registrations.
+/// </summary>
 public sealed class CommandRegistry
 {
     private readonly Lock _gate = new();
     private readonly Dictionary<string, CommandRegistration> _registrations = new(StringComparer.OrdinalIgnoreCase);
     private FrozenDictionary<string, CommandRegistration>? _frozen;
 
-    /// <summary>Gets an immutable snapshot keyed by every registered alias.</summary>
+    /// <summary>
+    ///     Gets an immutable snapshot keyed by every registered alias.
+    /// </summary>
     public IReadOnlyDictionary<string, CommandRegistration> Registrations
     {
         get
@@ -26,7 +30,9 @@ public sealed class CommandRegistry
         }
     }
 
-    /// <summary>Closes registration and returns stable, read-only metadata without resolving executors.</summary>
+    /// <summary>
+    ///     Closes registration and returns stable, read-only metadata without resolving executors.
+    /// </summary>
     public IReadOnlyDictionary<string, CommandRegistration> Freeze()
     {
         lock (_gate)
@@ -110,9 +116,9 @@ public sealed class CommandRegistry
         }
 
         var aliases = commandName
-                      .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-                      .Select(alias => alias.ToLowerInvariant())
-                      .ToArray();
+            .Split('|', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
+            .Select(alias => alias.ToLowerInvariant())
+            .ToArray();
 
         if (aliases.Length == 0)
         {

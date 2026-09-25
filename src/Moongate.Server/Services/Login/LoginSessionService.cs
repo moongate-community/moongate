@@ -13,10 +13,10 @@ public sealed class LoginSessionService : ILoginSessionService
     public LoginSession GetOrCreate(INetworkConnection connection)
     {
         return _sessions.AddOrUpdate(
-                connection.SessionId,
-                _ => new(connection),
-                (_, current) => current.IsDisconnected ? new(connection) : current
-            );
+            connection.SessionId,
+            _ => new(connection),
+            (_, current) => current.IsDisconnected ? new(connection) : current
+        );
     }
 
     public bool TryGet(long sessionId, [NotNullWhen(true)] out LoginSession? session)

@@ -28,7 +28,9 @@ public sealed class GatedWriteStream : Stream
         set => throw new NotSupportedException();
     }
 
-    public override void Flush() { }
+    public override void Flush()
+    {
+    }
 
     public override Task FlushAsync(CancellationToken cancellationToken)
     {
@@ -42,8 +44,7 @@ public sealed class GatedWriteStream : Stream
 
     public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        using var registration = cancellationToken.Register(
-            () =>
+        using var registration = cancellationToken.Register(() =>
             {
                 if (CancellationFailure is not null)
                 {

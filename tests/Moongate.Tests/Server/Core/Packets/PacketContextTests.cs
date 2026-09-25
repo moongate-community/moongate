@@ -23,15 +23,14 @@ public sealed class PacketContextTests
         var accountId = new Serial(42);
         var ranOnLoop = false;
 
-        var applied = await context.RunOnGameLoopAsync(
-                                       gameSession =>
-                                       {
-                                           ranOnLoop = fixture.Loop.IsOnLoopThread;
-                                           gameSession.SetAccountId(accountId);
-                                       }
-                                   )
-                                   .AsTask()
-                                   .WaitAsync(Timeout);
+        var applied = await context.RunOnGameLoopAsync(gameSession =>
+                {
+                    ranOnLoop = fixture.Loop.IsOnLoopThread;
+                    gameSession.SetAccountId(accountId);
+                }
+            )
+            .AsTask()
+            .WaitAsync(Timeout);
 
         Assert.True(applied);
         Assert.True(ranOnLoop);
@@ -89,8 +88,8 @@ public sealed class PacketContextTests
         await cancellation.CancelAsync();
         var ran = false;
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => context.RunOnGameLoopAsync(_ => ran = true, cancellation.Token).AsTask()
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            context.RunOnGameLoopAsync(_ => ran = true, cancellation.Token).AsTask()
         );
         Assert.False(ran);
     }
@@ -106,8 +105,7 @@ public sealed class PacketContextTests
 
         Assert.Same(
             failure,
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () => context.RunOnGameLoopAsync(_ => throw failure).AsTask()
+            await Assert.ThrowsAsync<InvalidOperationException>(() => context.RunOnGameLoopAsync(_ => throw failure).AsTask()
             )
         );
         Assert.False(fixture.Loop.Completion.IsCompleted);
@@ -133,8 +131,7 @@ public sealed class PacketContextTests
         var session = sessions.GetOrCreate(fixture.Client);
         var context = new PacketContext(session, fixture.Loop, sessions, new StubPacketSendService());
 
-        await fixture.ExecuteOnLoopAsync(
-            () =>
+        await fixture.ExecuteOnLoopAsync(() =>
             {
                 var result = context.RunOnGameLoopAsync(_ => { }).AsTask();
                 Assert.True(result.IsFaulted);

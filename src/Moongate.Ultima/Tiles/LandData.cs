@@ -5,24 +5,24 @@ using Moongate.Ultima.Types;
 namespace Moongate.Ultima.Tiles;
 
 /// <summary>
-/// Represents land tile data.
-/// <seealso cref="ItemData" />
-/// <seealso cref="LandData" />
+///     Represents land tile data.
+///     <seealso cref="ItemData" />
+///     <seealso cref="LandData" />
 /// </summary>
 public struct LandData
 {
     /// <summary>
-    /// Gets the name of this land tile.
+    ///     Gets the name of this land tile.
     /// </summary>
     public string Name { get; set; }
 
     /// <summary>
-    /// Gets the texture id of this land tile.
+    ///     Gets the texture id of this land tile.
     /// </summary>
     public ushort TextureId { get; set; }
 
     /// <summary>
-    /// Gets a bitfield representing the 32 individual flags of this land tile.
+    ///     Gets a bitfield representing the 32 individual flags of this land tile.
     /// </summary>
     public TileFlagType Flags { get; set; }
 

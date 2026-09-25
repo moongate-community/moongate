@@ -17,12 +17,10 @@ public sealed class GameLoopFinalWorkTests
         var callbackFailure = new IOException("callback failed");
         Exception captureFailure = sameFailure ? callbackFailure : new InvalidOperationException("capture failed");
         Task? capture = null;
-        var stopping = loop.StopWithFinalWorkAsync(
-            async (dispatch, _) =>
+        var stopping = loop.StopWithFinalWorkAsync(async (dispatch, _) =>
             {
                 capture = dispatch(
-                    new ActionGameLoopWorkItem(
-                        () =>
+                    new ActionGameLoopWorkItem(() =>
                         {
                             entered.SetResult();
                             release.Wait();
@@ -80,8 +78,7 @@ public sealed class GameLoopFinalWorkTests
         Task? capture = null;
         Exception failure =
             exit == "cancel" ? new OperationCanceledException() : new IOException("terminal callback failed");
-        var stopping = loop.StopWithFinalWorkAsync(
-            async (dispatch, _) =>
+        var stopping = loop.StopWithFinalWorkAsync(async (dispatch, _) =>
             {
                 capture = dispatch(blocker);
                 await blocker.Entered.WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None);
@@ -108,9 +105,8 @@ public sealed class GameLoopFinalWorkTests
         Exception failure = cancel ? new OperationCanceledException() : new IOException("database failure");
         Assert.Same(
             failure,
-            await Record.ExceptionAsync(
-                () =>
-                    loop.StopWithFinalWorkAsync((_, _) => throw failure).WaitAsync(TimeSpan.FromSeconds(10))
+            await Record.ExceptionAsync(() =>
+                loop.StopWithFinalWorkAsync((_, _) => throw failure).WaitAsync(TimeSpan.FromSeconds(10))
             )
         );
         Assert.True(loop.Completion.IsCompletedSuccessfully);
@@ -122,8 +118,7 @@ public sealed class GameLoopFinalWorkTests
         using var loop = Create();
         await loop.StartAsync();
         using var cancellation = new CancellationTokenSource();
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => loop.StopWithFinalWorkAsync(
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => loop.StopWithFinalWorkAsync(
                 async (dispatch, token) =>
                 {
                     await dispatch(new ActionGameLoopWorkItem(() => { }));
@@ -144,25 +139,22 @@ public sealed class GameLoopFinalWorkTests
         var first = new IOException("first capture failed");
         var second = new InvalidOperationException("second capture failed");
         var succeeded = false;
-        var observed = await Record.ExceptionAsync(
-                           () => loop.StopWithFinalWorkAsync(
-                                         async (dispatch, _) =>
-                                         {
-                                             foreach (var failure in new Exception[] { first, second, first })
-                                             {
-                                                 Assert.Same(
-                                                     failure,
-                                                     await Record.ExceptionAsync(
-                                                         () => dispatch(new ActionGameLoopWorkItem(() => throw failure))
-                                                     )
-                                                 );
-                                             }
+        var observed = await Record.ExceptionAsync(() => loop.StopWithFinalWorkAsync(async (dispatch, _) =>
+                {
+                    foreach (var failure in new Exception[] { first, second, first })
+                    {
+                        Assert.Same(
+                            failure,
+                            await Record.ExceptionAsync(() => dispatch(new ActionGameLoopWorkItem(() => throw failure))
+                            )
+                        );
+                    }
 
-                                             await dispatch(new ActionGameLoopWorkItem(() => succeeded = true));
-                                         }
-                                     )
-                                     .WaitAsync(TimeSpan.FromSeconds(10))
-                       );
+                    await dispatch(new ActionGameLoopWorkItem(() => succeeded = true));
+                }
+            )
+            .WaitAsync(TimeSpan.FromSeconds(10))
+        );
         var aggregate = Assert.IsType<AggregateException>(observed);
         Assert.Collection(
             aggregate.InnerExceptions,
@@ -179,28 +171,26 @@ public sealed class GameLoopFinalWorkTests
         using var loop = Create();
         await loop.StartAsync();
         using var item = new BlockingGameLoopWorkItem();
-        await loop.StopWithFinalWorkAsync(
-                      async (dispatch, _) =>
-                      {
-                          var first = dispatch(item);
-                          await item.Entered.WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None);
+        await loop.StopWithFinalWorkAsync(async (dispatch, _) =>
+                {
+                    var first = dispatch(item);
+                    await item.Entered.WaitAsync(TimeSpan.FromSeconds(10), CancellationToken.None);
 
-                          try
-                          {
-                              await Assert.ThrowsAsync<InvalidOperationException>(
-                                  () =>
-                                      dispatch(new ActionGameLoopWorkItem(() => { }))
-                              );
-                          }
-                          finally
-                          {
-                              item.Release();
-                          }
+                    try
+                    {
+                        await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                            dispatch(new ActionGameLoopWorkItem(() => { }))
+                        );
+                    }
+                    finally
+                    {
+                        item.Release();
+                    }
 
-                          await first;
-                      }
-                  )
-                  .WaitAsync(TimeSpan.FromSeconds(10));
+                    await first;
+                }
+            )
+            .WaitAsync(TimeSpan.FromSeconds(10));
     }
 
     [Fact]
@@ -211,34 +201,31 @@ public sealed class GameLoopFinalWorkTests
         var values = new List<int>();
         await loop.PostAsync(new ActionGameLoopWorkItem(() => values.Add(1)));
         Func<IGameLoopWorkItem, Task>? escaped = null;
-        await loop.StopWithFinalWorkAsync(
-                      async (dispatch, _) =>
-                      {
-                          escaped = dispatch;
-                          Assert.False(loop.IsOnLoopThread);
-                          await dispatch(
-                              new ActionGameLoopWorkItem(
-                                  () =>
-                                  {
-                                      Assert.True(loop.IsOnLoopThread);
-                                      values.Add(2);
-                                  }
-                              )
-                          );
-                          Assert.False(loop.TryPost(new ActionGameLoopWorkItem(() => values.Add(99))));
-                          await Task.Yield();
-                          await dispatch(
-                              new ActionGameLoopWorkItem(
-                                  () =>
-                                  {
-                                      Assert.True(loop.IsOnLoopThread);
-                                      values.Add(3);
-                                  }
-                              )
-                          );
-                      }
-                  )
-                  .WaitAsync(TimeSpan.FromSeconds(10));
+        await loop.StopWithFinalWorkAsync(async (dispatch, _) =>
+                {
+                    escaped = dispatch;
+                    Assert.False(loop.IsOnLoopThread);
+                    await dispatch(
+                        new ActionGameLoopWorkItem(() =>
+                            {
+                                Assert.True(loop.IsOnLoopThread);
+                                values.Add(2);
+                            }
+                        )
+                    );
+                    Assert.False(loop.TryPost(new ActionGameLoopWorkItem(() => values.Add(99))));
+                    await Task.Yield();
+                    await dispatch(
+                        new ActionGameLoopWorkItem(() =>
+                            {
+                                Assert.True(loop.IsOnLoopThread);
+                                values.Add(3);
+                            }
+                        )
+                    );
+                }
+            )
+            .WaitAsync(TimeSpan.FromSeconds(10));
         Assert.Equal([1, 2, 3], values);
         Assert.True(loop.Completion.IsCompletedSuccessfully);
         await Assert.ThrowsAsync<InvalidOperationException>(() => escaped!(new ActionGameLoopWorkItem(() => { })));
@@ -247,9 +234,9 @@ public sealed class GameLoopFinalWorkTests
     private static GameLoopService Create()
     {
         return new(
-                new(),
-                new(new(), TimeProvider.System),
-                TimeProvider.System
-            );
+            new(),
+            new(new(), TimeProvider.System),
+            TimeProvider.System
+        );
     }
 }

@@ -4,7 +4,9 @@ using Moongate.Server.Core.Plugins;
 
 namespace Moongate.Server.Core.Extensions;
 
-/// <summary>Provides explicit plugin registration for the server container.</summary>
+/// <summary>
+///     Provides explicit plugin registration for the server container.
+/// </summary>
 public static class PluginContainerExtensions
 {
     extension(Container container)
@@ -40,9 +42,15 @@ public static class PluginContainerExtensions
             return container;
         }
 
-        /// <summary>Registers an internal plugin and its services in the shared plugin registry.</summary>
-        /// <typeparam name="TPlugin">The plugin type with a public parameterless constructor.</typeparam>
-        /// <returns>The container for chaining further registrations.</returns>
+        /// <summary>
+        ///     Registers an internal plugin and its services in the shared plugin registry.
+        /// </summary>
+        /// <typeparam name="TPlugin">
+        ///     The plugin type with a public parameterless constructor.
+        /// </typeparam>
+        /// <returns>
+        ///     The container for chaining further registrations.
+        /// </returns>
         public Container RegisterPlugin<TPlugin>()
             where TPlugin : class, IMoongatePlugin, new()
         {

@@ -5,7 +5,13 @@ using Moongate.Server.Core.Types.Diagnostics;
 
 namespace Moongate.Sample.Plugin.Diagnostics;
 
-/// <summary>Reports how many greetings the plugin produced; the diagnostics service publishes it as <c>greeter.hello_calls</c>.</summary>
+/// <summary>
+///     Reports how many greetings the plugin produced; the diagnostics service publishes it as
+///     <c>
+///         greeter.hello_calls
+///     </c>
+///     .
+/// </summary>
 public sealed class GreetingMetricProvider : IMetricProvider
 {
     private readonly GreetingCounter _counter;
@@ -13,8 +19,12 @@ public sealed class GreetingMetricProvider : IMetricProvider
     /// <inheritdoc />
     public string ProviderName => "greeter";
 
-    /// <summary>Initializes a new instance of the <see cref="GreetingMetricProvider" /> class.</summary>
-    /// <param name="counter">The counter the module increments.</param>
+    /// <summary>
+    ///     Initializes a new instance of the <see cref="GreetingMetricProvider" /> class.
+    /// </summary>
+    /// <param name="counter">
+    ///     The counter the module increments.
+    /// </param>
     public GreetingMetricProvider(GreetingCounter counter)
     {
         _counter = counter;

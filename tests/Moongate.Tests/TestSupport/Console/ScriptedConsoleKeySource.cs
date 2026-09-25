@@ -6,7 +6,9 @@ internal sealed class ScriptedConsoleKeySource : IConsoleKeySource
 {
     private readonly Queue<ConsoleKeyInfo> _keys = new();
 
-    /// <summary>When set, the next <see cref="ReadKey" /> throws this exception instead of returning a key.</summary>
+    /// <summary>
+    ///     When set, the next <see cref="ReadKey" /> throws this exception instead of returning a key.
+    /// </summary>
     public Exception? ThrowOnNextRead { get; set; }
 
     public bool KeyAvailable

@@ -2,12 +2,16 @@ using System.Net;
 
 namespace Moongate.Server.Admin.Data.Config;
 
-/// <summary>Configures the optional embedded administration endpoint.</summary>
+/// <summary>
+///     Configures the optional embedded administration endpoint.
+/// </summary>
 public sealed class AdminApiConfig
 {
     public bool Enabled { get; set; }
 
-    /// <summary>Gets or sets a literal bind address, or "*" for all IPv4 interfaces.</summary>
+    /// <summary>
+    ///     Gets or sets a literal bind address, or "*" for all IPv4 interfaces.
+    /// </summary>
     public string ListenAddress { get; set; } = "127.0.0.1";
 
     public int Port { get; set; } = 2590;
@@ -18,7 +22,9 @@ public sealed class AdminApiConfig
     public string CertificatePath { get; set; } = "";
     public string CertificatePassword { get; set; } = "";
 
-    /// <summary>Validates scalar settings without resolving paths or secrets.</summary>
+    /// <summary>
+    ///     Validates scalar settings without resolving paths or secrets.
+    /// </summary>
     public void Validate()
     {
         var address = ResolveListenAddress();

@@ -40,35 +40,35 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         where T : class, IMoongateEntity
     {
         return RunAsync<T?>(
-                async (orm, transaction, token) =>
+            async (orm, transaction, token) =>
+            {
+                if (!id.IsValid)
                 {
-                    if (!id.IsValid)
-                    {
-                        throw new ArgumentOutOfRangeException(nameof(id));
-                    }
+                    throw new ArgumentOutOfRangeException(nameof(id));
+                }
 
-                    if (_owner.GetTarget(typeof(T)) != Target)
-                    {
-                        throw new InvalidOperationException("Transactions cannot cross database targets.");
-                    }
+                if (_owner.GetTarget(typeof(T)) != Target)
+                {
+                    throw new InvalidOperationException("Transactions cannot cross database targets.");
+                }
 
-                    try
-                    {
-                        return await orm.Select<T>()
-                                        .WithTransaction(transaction)
-                                        .Where(entity => entity.Id == id)
-                                        .ForUpdate()
-                                        .ToOneAsync(token)
-                                        .ConfigureAwait(false);
-                    }
-                    catch (Exception exception) when (token.IsCancellationRequested)
-                    {
-                        // FreeSql wraps provider cancellation; preserve the public cancellation contract.
-                        throw new OperationCanceledException("Row-lock read canceled.", exception, token);
-                    }
-                },
-                cancellationToken
-            );
+                try
+                {
+                    return await orm.Select<T>()
+                        .WithTransaction(transaction)
+                        .Where(entity => entity.Id == id)
+                        .ForUpdate()
+                        .ToOneAsync(token)
+                        .ConfigureAwait(false);
+                }
+                catch (Exception exception) when (token.IsCancellationRequested)
+                {
+                    // FreeSql wraps provider cancellation; preserve the public cancellation contract.
+                    throw new OperationCanceledException("Row-lock read canceled.", exception, token);
+                }
+            },
+            cancellationToken
+        );
     }
 
     public async Task CompleteCallbackAsync()
@@ -184,17 +184,17 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
         where T : class, IMoongateEntity
     {
         return RunAsync(
-                (orm, transaction, token) =>
+            (orm, transaction, token) =>
+            {
+                if (_owner.GetTarget(typeof(T)) != Target)
                 {
-                    if (_owner.GetTarget(typeof(T)) != Target)
-                    {
-                        throw new InvalidOperationException("Snapshots cannot cross database targets.");
-                    }
+                    throw new InvalidOperationException("Snapshots cannot cross database targets.");
+                }
 
-                    return orm.InsertOrUpdate<T>().WithTransaction(transaction).SetSource(snapshots).ExecuteAffrowsAsync(token);
-                },
-                cancellationToken
-            );
+                return orm.InsertOrUpdate<T>().WithTransaction(transaction).SetSource(snapshots).ExecuteAffrowsAsync(token);
+            },
+            cancellationToken
+        );
     }
 
     private void EnsureUsable()

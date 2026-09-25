@@ -98,12 +98,12 @@ public sealed class MigrationReadinessTests
                 new(PersistenceDatabaseTarget.Accounts, db.ConnectionString)
             ],
             migrationCatalogFactory: target => MigrationCatalog.Load(
-                                         files.Core,
-                                         null,
-                                         target == PersistenceDatabaseTarget.Accounts
-                                             ? MigrationTarget.Auth
-                                             : MigrationTarget.World
-                                     )
+                files.Core,
+                null,
+                target == PersistenceDatabaseTarget.Accounts
+                    ? MigrationTarget.Auth
+                    : MigrationTarget.World
+            )
         );
 
         return new(options, new());

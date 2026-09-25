@@ -3,10 +3,10 @@ using System.Globalization;
 namespace Moongate.Core.Primitives;
 
 /// <summary>
-/// The identity of a UO entity on the wire. Mobiles live in
-/// [<see cref="MinMobile" />, <see cref="MaxMobile" />], items in
-/// [<see cref="MinItem" />, <see cref="MaxItem" />], and virtual entities in
-/// [<see cref="MinVirtual" />, <see cref="MaxVirtual" />]; zero is "no entity".
+///     The identity of a UO entity on the wire. Mobiles live in
+///     [<see cref="MinMobile" />, <see cref="MaxMobile" />], items in
+///     [<see cref="MinItem" />, <see cref="MaxItem" />], and virtual entities in
+///     [<see cref="MinVirtual" />, <see cref="MaxVirtual" />]; zero is "no entity".
 /// </summary>
 public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
 {
@@ -15,14 +15,14 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
     public const uint MinItem = 0x40000000;
 
     /// <summary>
-    /// The last serial a real item may take. It stops short of the top of the item range on purpose:
-    /// everything above is reserved for virtual entities. ModernUO draws the same line, at the same place.
+    ///     The last serial a real item may take. It stops short of the top of the item range on purpose:
+    ///     everything above is reserved for virtual entities. ModernUO draws the same line, at the same place.
     /// </summary>
     public const uint MaxItem = 0x7EEEEEEE;
 
     /// <summary>
-    /// Start of the band reserved for virtual entities — things the client must be able to identify but
-    /// that are not entities on the server, such as hair. No real item is ever allocated here.
+    ///     Start of the band reserved for virtual entities — things the client must be able to identify but
+    ///     that are not entities on the server, such as hair. No real item is ever allocated here.
     /// </summary>
     public const uint MinVirtual = 0x7EEEEEEF;
 
@@ -37,8 +37,8 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
     public bool IsItem => Value is >= MinItem and <= MaxItem;
 
     /// <summary>
-    /// True for a serial handed out for a virtual entity. The client treats these as items; the server
-    /// has nothing behind them, so looking one up in the item store finds nothing.
+    ///     True for a serial handed out for a virtual entity. The client treats these as items; the server
+    ///     has nothing behind them, so looking one up in the item store finds nothing.
     /// </summary>
     public bool IsVirtual => Value is >= MinVirtual and <= MaxVirtual;
 
@@ -75,13 +75,25 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
     }
 
     /// <summary>
-    /// Reads a serial written the way <see cref="ToString" /> writes it — <c>0x40000001</c> — or as
-    /// plain decimal. The <c>0x</c> prefix is what picks the base: without it the text is decimal,
-    /// so <c>40000001</c> is forty million and not the first item serial.
+    ///     Reads a serial written the way <see cref="ToString" /> writes it —
+    ///     <c>
+    ///         0x40000001
+    ///     </c>
+    ///     — or as
+    ///     plain decimal. The
+    ///     <c>
+    ///         0x
+    ///     </c>
+    ///     prefix is what picks the base: without it the text is decimal,
+    ///     so
+    ///     <c>
+    ///         40000001
+    ///     </c>
+    ///     is forty million and not the first item serial.
     /// </summary>
     /// <returns>
-    /// False, with <paramref name="serial" /> set to <see cref="Zero" />, when the text is
-    /// not a serial.
+    ///     False, with <paramref name="serial" /> set to <see cref="Zero" />, when the text is
+    ///     not a serial.
     /// </returns>
     public static bool TryParse(string? text, out Serial serial)
     {
@@ -95,8 +107,8 @@ public readonly struct Serial : IEquatable<Serial>, IComparable<Serial>
         var span = text.AsSpan().Trim();
 
         var parsed = span.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
-                         ? uint.TryParse(span[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var value)
-                         : uint.TryParse(span, NumberStyles.None, CultureInfo.InvariantCulture, out value);
+            ? uint.TryParse(span[2..], NumberStyles.HexNumber, CultureInfo.InvariantCulture, out var value)
+            : uint.TryParse(span, NumberStyles.None, CultureInfo.InvariantCulture, out value);
 
         if (!parsed)
         {

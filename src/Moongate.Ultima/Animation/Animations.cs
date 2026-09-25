@@ -35,12 +35,12 @@ public static class Animations
     internal static LruAnimationCache Cache { get; } = new(Files.CacheCapacityAnimations);
 
     /// <summary>
-    /// Maximum number of action slots physically reserved for <paramref name="body" />
-    /// in the given anim file. This is the idx stride (records per body) divided
-    /// by the 5 stored directions and mirrors the id-range branches in
-    /// <see cref="GetFileIndex" /> exactly. It is the hard upper bound for any
-    /// action index, independent of the body's mobtype category, and exists so
-    /// action enumeration can never cross a body boundary.
+    ///     Maximum number of action slots physically reserved for <paramref name="body" />
+    ///     in the given anim file. This is the idx stride (records per body) divided
+    ///     by the 5 stored directions and mirrors the id-range branches in
+    ///     <see cref="GetFileIndex" /> exactly. It is the hard upper bound for any
+    ///     action index, independent of the body's mobtype category, and exists so
+    ///     action enumeration can never cross a body boundary.
     /// </summary>
     public static int GetActionCapacity(int body, int fileType)
     {
@@ -86,10 +86,12 @@ public static class Animations
     }
 
     /// <summary>
-    /// Returns Animation count in given anim file
+    ///     Returns Animation count in given anim file
     /// </summary>
-    /// <param name="fileType"></param>
-    /// <returns></returns>
+    /// <param name="fileType">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static int GetAnimCount(int fileType)
     {
         switch (fileType)
@@ -111,14 +113,21 @@ public static class Animations
     }
 
     /// <summary>
-    /// Action count of given Body in given anim file.
-    /// When <c>mobtypes.txt</c> is loaded, the count is taken from the
-    /// body's mobtype category; otherwise falls back to the historical
-    /// body-id range heuristic.
+    ///     Action count of given Body in given anim file.
+    ///     When
+    ///     <c>
+    ///         mobtypes.txt
+    ///     </c>
+    ///     is loaded, the count is taken from the
+    ///     body's mobtype category; otherwise falls back to the historical
+    ///     body-id range heuristic.
     /// </summary>
-    /// <param name="body"></param>
-    /// <param name="fileType"></param>
-    /// <returns></returns>
+    /// <param name="body">
+    /// </param>
+    /// <param name="fileType">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static int GetAnimLength(int body, int fileType)
     {
         // The physical idx block reserved for a body is fixed by the id-range
@@ -138,17 +147,26 @@ public static class Animations
     }
 
     /// <summary>
-    /// Returns animation frames
+    ///     Returns animation frames
     /// </summary>
-    /// <param name="body"></param>
-    /// <param name="action"></param>
-    /// <param name="direction"></param>
-    /// <param name="hue"></param>
-    /// <param name="preserveHue">
-    /// No Hue override <c>bodydev</c>
+    /// <param name="body">
     /// </param>
-    /// <param name="firstFrame"></param>
-    /// <returns></returns>
+    /// <param name="action">
+    /// </param>
+    /// <param name="direction">
+    /// </param>
+    /// <param name="hue">
+    /// </param>
+    /// <param name="preserveHue">
+    ///     No Hue override
+    ///     <c>
+    ///         bodydev
+    ///     </c>
+    /// </param>
+    /// <param name="firstFrame">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static AnimationFrame[] GetAnimation(
         int body,
         int action,
@@ -313,11 +331,14 @@ public static class Animations
     }
 
     /// <summary>
-    /// Returns the mobtype category for a body in the given file. When
-    /// <c>mobtypes.txt</c> is loaded, the server body id is recovered via
-    /// <see cref="BodyConverter.GetTrueBody" /> for anim2..anim6 reverse
-    /// lookup; falls back to the legacy id-range heuristic if either the
-    /// reverse-mapping or the mobtypes lookup misses.
+    ///     Returns the mobtype category for a body in the given file. When
+    ///     <c>
+    ///         mobtypes.txt
+    ///     </c>
+    ///     is loaded, the server body id is recovered via
+    ///     <see cref="BodyConverter.GetTrueBody" /> for anim2..anim6 reverse
+    ///     lookup; falls back to the legacy id-range heuristic if either the
+    ///     reverse-mapping or the mobtypes lookup misses.
     /// </summary>
     public static MobType GetBodyMobType(int body, int fileType)
     {
@@ -337,10 +358,13 @@ public static class Animations
     }
 
     /// <summary>
-    /// Returns Filename body is in
+    ///     Returns Filename body is in
     /// </summary>
-    /// <param name="body"></param>
-    /// <returns>anim{0}.mul</returns>
+    /// <param name="body">
+    /// </param>
+    /// <returns>
+    ///     anim{0}.mul
+    /// </returns>
     public static string GetFileName(int body)
     {
         if (AnimationsUopLoader.IsUopBody(body))
@@ -365,12 +389,16 @@ public static class Animations
     }
 
     /// <summary>
-    /// Is Body with action and direction defined
+    ///     Is Body with action and direction defined
     /// </summary>
-    /// <param name="body"></param>
-    /// <param name="action"></param>
-    /// <param name="direction"></param>
-    /// <returns></returns>
+    /// <param name="body">
+    /// </param>
+    /// <param name="action">
+    /// </param>
+    /// <param name="direction">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool IsActionDefined(int body, int action, int direction)
     {
         if (AnimationsUopLoader.IsUopBody(body))
@@ -396,13 +424,18 @@ public static class Animations
     }
 
     /// <summary>
-    /// Is Animation in given anim file defined
+    ///     Is Animation in given anim file defined
     /// </summary>
-    /// <param name="body"></param>
-    /// <param name="action"></param>
-    /// <param name="dir"></param>
-    /// <param name="fileType"></param>
-    /// <returns></returns>
+    /// <param name="body">
+    /// </param>
+    /// <param name="action">
+    /// </param>
+    /// <param name="dir">
+    /// </param>
+    /// <param name="fileType">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool IsAnimDefined(int body, int action, int dir, int fileType)
     {
         if (action < 0 || action >= GetActionCapacity(body, fileType))
@@ -425,7 +458,7 @@ public static class Animations
     }
 
     /// <summary>
-    /// Rereads AnimX files and bodyconv, body.def
+    ///     Rereads AnimX files and bodyconv, body.def
     /// </summary>
     public static void Reload()
     {
@@ -456,9 +489,9 @@ public static class Animations
     }
 
     /// <summary>
-    /// Override the LRU cap for the animation decode cache. Lower values
-    /// bound the working set on memory-constrained machines at the cost of
-    /// more re-decodes during long browsing sessions.
+    ///     Override the LRU cap for the animation decode cache. Lower values
+    ///     bound the working set on memory-constrained machines at the cost of
+    ///     more re-decodes during long browsing sessions.
     /// </summary>
     public static void SetCacheCapacity(int capacity)
     {
@@ -466,9 +499,10 @@ public static class Animations
     }
 
     /// <summary>
-    /// Translates body (body.def)
+    ///     Translates body (body.def)
     /// </summary>
-    /// <param name="body"></param>
+    /// <param name="body">
+    /// </param>
     public static void Translate(ref int body)
     {
         if (_table == null)
@@ -487,10 +521,12 @@ public static class Animations
     }
 
     /// <summary>
-    /// Translates body and hue (body.def)
+    ///     Translates body and hue (body.def)
     /// </summary>
-    /// <param name="body"></param>
-    /// <param name="hue"></param>
+    /// <param name="body">
+    /// </param>
+    /// <param name="hue">
+    /// </param>
     public static void Translate(ref int body, ref int hue)
     {
         if (_table == null)
@@ -523,10 +559,10 @@ public static class Animations
     }
 
     /// <summary>
-    /// Packs the parameters that uniquely identify a decoded frame set into
-    /// a single cache key. For the MUL path pass the post-Translate body,
-    /// fileType and resolved hue; for the UOP path pass the raw body with
-    /// <paramref name="isUop" /> set (fileType is irrelevant there).
+    ///     Packs the parameters that uniquely identify a decoded frame set into
+    ///     a single cache key. For the MUL path pass the post-Translate body,
+    ///     fileType and resolved hue; for the UOP path pass the raw body with
+    ///     <paramref name="isUop" /> set (fileType is irrelevant there).
     /// </summary>
     internal static long BuildAnimationKey(
         int body,
@@ -553,14 +589,21 @@ public static class Animations
     }
 
     /// <summary>
-    /// Gets files index index based on fileType, body, action and direction
+    ///     Gets files index index based on fileType, body, action and direction
     /// </summary>
-    /// <param name="body"></param>
-    /// <param name="action"></param>
-    /// <param name="direction"></param>
-    /// <param name="fileType">animX</param>
-    /// <param name="fileIndex"></param>
-    /// <param name="index"></param>
+    /// <param name="body">
+    /// </param>
+    /// <param name="action">
+    /// </param>
+    /// <param name="direction">
+    /// </param>
+    /// <param name="fileType">
+    ///     animX
+    /// </param>
+    /// <param name="fileIndex">
+    /// </param>
+    /// <param name="index">
+    /// </param>
     private static void GetFileIndex(
         int body,
         int action,

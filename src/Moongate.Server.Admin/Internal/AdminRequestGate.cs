@@ -16,21 +16,34 @@ internal sealed class AdminRequestGate
 
     public void Activate()
     {
-        lock (_sync) { _accepting = true; }
+        lock (_sync)
+        {
+            _accepting = true;
+        }
     }
 
     public void StopAccepting()
     {
-        lock (_sync) { _accepting = false; }
+        lock (_sync)
+        {
+            _accepting = false;
+        }
     }
 
     public StatusCode TryEnter()
     {
         lock (_sync)
         {
-            if (!_accepting) { return StatusCode.Unavailable; }
+            if (!_accepting)
+            {
+                return StatusCode.Unavailable;
+            }
 
-            if (_active == _capacity) { return StatusCode.ResourceExhausted; }
+            if (_active == _capacity)
+            {
+                return StatusCode.ResourceExhausted;
+            }
+
             _active++;
 
             return StatusCode.OK;
@@ -39,6 +52,9 @@ internal sealed class AdminRequestGate
 
     public void Exit()
     {
-        lock (_sync) { _active--; }
+        lock (_sync)
+        {
+            _active--;
+        }
     }
 }

@@ -20,15 +20,13 @@ public sealed class PluginLoaderServiceTests
         using var container = new Container();
         List<string> events = [];
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None)
-            .RegisterServices(
-                services =>
+            .RegisterServices(services =>
                 {
                     services.RegisterInstance(events);
                     services.RegisterInstance(files.Directories);
 
-                    return services.AddMoongateService<IPluginLoaderService, PluginLoaderService>(
-                        () =>
-                            new(services, files.Directories)
+                    return services.AddMoongateService<IPluginLoaderService, PluginLoaderService>(() =>
+                        new(services, files.Directories)
                     );
                 }
             );
@@ -55,9 +53,8 @@ public sealed class PluginLoaderServiceTests
         List<string> events = [];
         container.RegisterInstance(events);
         container.RegisterInstance(files.Directories);
-        container.AddMoongateService<IPluginLoaderService, PluginLoaderService>(
-            () =>
-                new(container, files.Directories)
+        container.AddMoongateService<IPluginLoaderService, PluginLoaderService>(() =>
+            new(container, files.Directories)
         );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 

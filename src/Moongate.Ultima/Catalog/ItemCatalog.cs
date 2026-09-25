@@ -9,7 +9,7 @@ using SkiaSharp;
 namespace Moongate.Ultima.Catalog;
 
 /// <summary>
-/// Stateless facade over <see cref="TileData" />, <see cref="Art" /> and <see cref="Hues" />.
+///     Stateless facade over <see cref="TileData" />, <see cref="Art" /> and <see cref="Hues" />.
 /// </summary>
 public sealed class ItemCatalog : IItemCatalog
 {

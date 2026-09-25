@@ -43,9 +43,7 @@ public class MoongateServerBootstrapTests
         }
 
         var invoked = false;
-        Assert.Throws<InvalidOperationException>(
-            () => bootstrap.RegisterServices(
-                services =>
+        Assert.Throws<InvalidOperationException>(() => bootstrap.RegisterServices(services =>
                 {
                     invoked = true;
 
@@ -65,9 +63,7 @@ public class MoongateServerBootstrapTests
         var failure = new InvalidOperationException("registration failed");
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
-        var actual = Assert.Throws<InvalidOperationException>(
-            () => bootstrap.RegisterServices(
-                services =>
+        var actual = Assert.Throws<InvalidOperationException>(() => bootstrap.RegisterServices(services =>
                 {
                     services.AddMoongateService<IRecordingStartupService, RecordingStartupService>(
                         new RecordingStartupService("custom", events)
@@ -92,15 +88,13 @@ public class MoongateServerBootstrapTests
         var calls = 0;
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
-        var result = bootstrap.RegisterServices(
-            services =>
+        var result = bootstrap.RegisterServices(services =>
             {
                 Assert.Same(container, services);
                 calls++;
                 events.Add("register");
 
-                return services.AddMoongateService<IRecordingStartupService, RecordingStartupService>(
-                    () =>
+                return services.AddMoongateService<IRecordingStartupService, RecordingStartupService>(() =>
                     {
                         events.Add("construct");
 
@@ -128,16 +122,14 @@ public class MoongateServerBootstrapTests
         busContainer.RegisterMoongateEventBus();
         var eventBus = busContainer.Resolve<IMoongateEventBus>();
         var events = new List<string>();
-        eventBus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        eventBus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 events.Add("started");
 
                 return Task.CompletedTask;
             }
         );
-        eventBus.Subscribe<MoongateStoppedEvent>(
-            (_, _) =>
+        eventBus.Subscribe<MoongateStoppedEvent>((_, _) =>
             {
                 events.Add("stopped");
 
@@ -145,8 +137,7 @@ public class MoongateServerBootstrapTests
             }
         );
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        bootstrap.RegisterServices(
-            services =>
+        bootstrap.RegisterServices(services =>
             {
                 services.RegisterInstance(eventBus, IfAlreadyRegistered.Replace);
 
@@ -182,11 +173,9 @@ public class MoongateServerBootstrapTests
         using var container = new Container();
         var events = new List<string>();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        bootstrap.RegisterServices(
-            services =>
+        bootstrap.RegisterServices(services =>
             {
-                Assert.Throws<InvalidOperationException>(
-                    () =>
+                Assert.Throws<InvalidOperationException>(() =>
                     {
                         switch (operation)
                         {
@@ -362,7 +351,7 @@ public class MoongateServerBootstrapTests
         var failing = new RecordingStartupService("failing", events, startFailure);
         var container = new Container();
         container.AddMoongateService<IRecordingStartupService, RecordingStartupService>(early, -1)
-                 .AddMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(failing);
+            .AddMoongateService<ISecondaryRecordingStartupService, RecordingStartupService>(failing);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
         var failure = await Assert.ThrowsAsync<AggregateException>(() => bootstrap.StartAsync());

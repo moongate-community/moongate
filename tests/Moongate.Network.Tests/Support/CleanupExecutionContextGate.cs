@@ -3,7 +3,7 @@ using Moongate.Network.Client;
 namespace Moongate.Network.Tests.Support;
 
 /// <summary>
-/// Holds the cleanup worker before its first instruction without adding a production test hook.
+///     Holds the cleanup worker before its first instruction without adding a production test hook.
 /// </summary>
 public sealed class CleanupExecutionContextGate
 {

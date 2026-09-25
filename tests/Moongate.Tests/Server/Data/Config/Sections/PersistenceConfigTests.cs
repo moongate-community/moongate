@@ -151,7 +151,7 @@ public sealed class PersistenceConfigTests
 
         var parsed = new NpgsqlConnectionStringBuilder(
             options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-                   .ResolveRuntimeConnectionString()
+                .ResolveRuntimeConnectionString()
         );
 
         Assert.Equal("localhost", parsed.Host);
@@ -169,12 +169,11 @@ public sealed class PersistenceConfigTests
         Assert.Contains(
             "Database=accounts",
             options.GetRequiredDatabase(PersistenceDatabaseTarget.Accounts)
-                   .ResolveRuntimeConnectionString()
+                .ResolveRuntimeConnectionString()
         );
-        var error = Assert.Throws<InvalidOperationException>(
-            () =>
-                options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
-                       .ResolveRuntimeConnectionString()
+        var error = Assert.Throws<InvalidOperationException>(() =>
+            options.GetRequiredDatabase(PersistenceDatabaseTarget.Realm)
+                .ResolveRuntimeConnectionString()
         );
         Assert.Contains("is not defined", error.Message);
     }

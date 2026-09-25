@@ -9,7 +9,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Plugins;
 
-/// <summary>Loads plugin bundles before the bootstrap captures startup service registrations.</summary>
+/// <summary>
+///     Loads plugin bundles before the bootstrap captures startup service registrations.
+/// </summary>
 public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
 {
     private readonly Lock _sync = new();
@@ -101,15 +103,14 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
             var context = new PluginLoadContext(path);
             _contexts.Add(context);
             var types = context.LoadFromAssemblyPath(path)
-                               .GetExportedTypes()
-                               .Where(
-                                   type => type.IsClass &&
-                                           !type.IsAbstract &&
-                                           !type.ContainsGenericParameters &&
-                                           typeof(IMoongatePlugin).IsAssignableFrom(type)
-                               )
-                               .OrderBy(type => type.FullName, StringComparer.Ordinal)
-                               .ToArray();
+                .GetExportedTypes()
+                .Where(type => type.IsClass &&
+                               !type.IsAbstract &&
+                               !type.ContainsGenericParameters &&
+                               typeof(IMoongatePlugin).IsAssignableFrom(type)
+                )
+                .OrderBy(type => type.FullName, StringComparer.Ordinal)
+                .ToArray();
 
             if (types.Length == 0)
             {
@@ -156,7 +157,9 @@ public sealed class PluginLoaderService : IPluginLoaderService, IDisposable
         return failures;
     }
 
-    /// <summary>Releases plugin load contexts after their services and subscriptions have stopped.</summary>
+    /// <summary>
+    ///     Releases plugin load contexts after their services and subscriptions have stopped.
+    /// </summary>
     public void Dispose()
     {
         lock (_sync)

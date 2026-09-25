@@ -13,6 +13,5 @@ internal sealed class SyntheticSessionEntity : IMoongateEntity
     public int SessionNumber { get; set; }
     public long Revision { get; set; }
 
-    [Column(StringLength = 1024)]
-    public string Payload { get; set; } = "";
+    [Column(StringLength = 1024)] public string Payload { get; set; } = "";
 }

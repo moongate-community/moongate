@@ -32,7 +32,9 @@ using Moongate.Server.Ultima.Handlers.Login;
 
 namespace Moongate.Server.Bootstrap.Internal;
 
-/// <summary>Composes login, game, or combined services in a single host process.</summary>
+/// <summary>
+///     Composes login, game, or combined services in a single host process.
+/// </summary>
 internal static class ServerRoleRegistration
 {
     public static Container Register(Container container, MoongateServerConfig config, DirectoriesConfig directories)
@@ -125,21 +127,21 @@ internal static class ServerRoleRegistration
             Reuse.Singleton
         );
         container.AddMoongateService<TimerWheelService>(-900)
-                 .AddMoongateService<IGameLoopService, GameLoopService>(-800)
-                 .AddMoongateService<IUltimaDataService, UltimaDataService>(-10)
-                 .AddMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
-                 .AddMoongateService<ISessionService, SessionService>()
-                 .AddMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority)
-                 .AddScriptModule<LogModule>()
-                 .RegisterCommand<ScriptCommand>(
-                     "script",
-                     "Reloads a script file or prints the engine's counters: script reload <file> | script metrics."
-                 )
-                 .RegisterPacketHandler<PingPacket, PingPacketHandler>()
-                 .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
+            .AddMoongateService<IGameLoopService, GameLoopService>(-800)
+            .AddMoongateService<IUltimaDataService, UltimaDataService>(-10)
+            .AddMoongateService<IWorldSaveService, WorldSaveService>(WorldSaveService.StartupPriority)
+            .AddMoongateService<ISessionService, SessionService>()
+            .AddMoongateService<IScriptEngine, LuaScriptEngineService>(LuaScriptEngineService.StartupPriority)
+            .AddScriptModule<LogModule>()
+            .RegisterCommand<ScriptCommand>(
+                "script",
+                "Reloads a script file or prints the engine's counters: script reload <file> | script metrics."
+            )
+            .RegisterPacketHandler<PingPacket, PingPacketHandler>()
+            .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
         container.AddMetricProvider<GameLoopMetricsProvider>()
-                 .AddMetricProvider<TimerMetricsProvider>()
-                 .AddMetricProvider<SessionMetricsProvider>();
+            .AddMetricProvider<TimerMetricsProvider>()
+            .AddMetricProvider<SessionMetricsProvider>();
         PacketPipelineRegistration.Register(container);
     }
 
@@ -147,13 +149,13 @@ internal static class ServerRoleRegistration
     {
         var settings = config.RealmDirectory;
         var address = string.IsNullOrWhiteSpace(settings.AdvertisedAddress)
-                          ? IPAddress.Loopback
-                          : IPAddress.Parse(settings.AdvertisedAddress);
+            ? IPAddress.Loopback
+            : IPAddress.Parse(settings.AdvertisedAddress);
         var shardName = config.Shard.ShardName;
         var defaultName = shardName is { Length: > 0 and <= 32 } &&
                           shardName.All(character => character is >= ' ' and <= '~')
-                              ? shardName
-                              : "Moongate";
+            ? shardName
+            : "Moongate";
 
         return new(
             string.IsNullOrWhiteSpace(settings.RealmId) ? "local" : settings.RealmId,

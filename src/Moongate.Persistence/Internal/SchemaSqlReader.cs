@@ -2,7 +2,9 @@ using Moongate.Persistence.Data.Internal;
 
 namespace Moongate.Persistence.Internal;
 
-/// <summary>Lexes only the SQL subset accepted for automatic schema changes; unsupported quoting fails closed.</summary>
+/// <summary>
+///     Lexes only the SQL subset accepted for automatic schema changes; unsupported quoting fails closed.
+/// </summary>
 internal static class SchemaSqlReader
 {
     public static bool TryRead(string sql, out List<SchemaSqlStatement> statements)

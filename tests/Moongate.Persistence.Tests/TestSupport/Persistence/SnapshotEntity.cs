@@ -10,6 +10,5 @@ internal sealed class SnapshotEntity : IMoongateEntity
     [Column(Name = "id", IsPrimary = true)]
     public Serial Id { get; set; }
 
-    [Column(Name = "payload")]
-    public byte[] Payload { get; set; } = [];
+    [Column(Name = "payload")] public byte[] Payload { get; set; } = [];
 }

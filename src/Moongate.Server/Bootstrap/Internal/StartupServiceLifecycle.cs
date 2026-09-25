@@ -8,8 +8,8 @@ using Serilog;
 namespace Moongate.Server.Bootstrap.Internal;
 
 /// <summary>
-/// Resolves autostart services in priority order and stops attempted services in reverse order.
-/// Lifecycle task coordination is owned by the bootstrap.
+///     Resolves autostart services in priority order and stops attempted services in reverse order.
+///     Lifecycle task coordination is owned by the bootstrap.
 /// </summary>
 internal sealed class StartupServiceLifecycle
 {
@@ -25,12 +25,18 @@ internal sealed class StartupServiceLifecycle
 
     public void ActivateAdministration()
     {
-        foreach (var service in _startedServices.OfType<IAdminApiService>()) { service.Activate(); }
+        foreach (var service in _startedServices.OfType<IAdminApiService>())
+        {
+            service.Activate();
+        }
     }
 
     public void StopAcceptingAdministration()
     {
-        foreach (var service in _startedServices.OfType<IAdminApiService>()) { service.StopAccepting(); }
+        foreach (var service in _startedServices.OfType<IAdminApiService>())
+        {
+            service.StopAccepting();
+        }
     }
 
     public void ActivateWorldSaving()
@@ -44,11 +50,11 @@ internal sealed class StartupServiceLifecycle
     public async Task StartAsync(Action<IMoongateStartupService>? onStarting = null)
     {
         var registrations = (_container.IsRegistered<List<ServiceRegistrationData>>()
-                                 ? _container.Resolve<List<ServiceRegistrationData>>()
-                                 : [])
-                            .Where(registration => registration.IsAutostart)
-                            .OrderBy(registration => registration.Priority)
-                            .ToArray();
+                ? _container.Resolve<List<ServiceRegistrationData>>()
+                : [])
+            .Where(registration => registration.IsAutostart)
+            .OrderBy(registration => registration.Priority)
+            .ToArray();
 
         foreach (var registration in registrations)
         {
