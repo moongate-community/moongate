@@ -76,7 +76,7 @@ internal static class UoxMobileConverter
             dictionary,
             items,
             blocksByHeader.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase),
-            new Dictionary<int, HueSpec?>(),
+            UoxColorLists.Load(Path.Combine(mobileSource, "colors", "colors.dfn")),
             new Dictionary<int, MobileSounds>(),
             report
         );

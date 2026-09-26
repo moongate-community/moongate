@@ -59,6 +59,7 @@ internal static class MobileTemplateBuilder
         ApplyInheritance(block, template, context);
         ApplyIdentity(block, template, context);
         ApplyNumbers(block, template, context);
+        ApplyEquipmentAndLoot(block, template, context);
 
         return template;
     }
@@ -288,6 +289,151 @@ internal static class MobileTemplateBuilder
 
                     break;
             }
+        }
+    }
+
+    // Hair and beard item lists: the race gives hair and beard instead.
+    private static readonly HashSet<int> HairItemLists = [13, 14, 15];
+
+    // EQUIPITEM opens an entry; COLOR, COLOUR and COLORLIST after it colour that entry, as UOX3 colours the last item
+    // it created.
+    private static void ApplyEquipmentAndLoot(DfnBlock block, MobileTemplate template, MobileBuildContext context)
+    {
+        MobileEquipmentEntry? last = null;
+
+        foreach (var entry in block.Entries)
+        {
+            var separator = entry.IndexOf('=');
+
+            if (separator < 0)
+            {
+                continue;
+            }
+
+            var key = entry[..separator].Trim().ToUpperInvariant();
+            var value = entry[(separator + 1)..].Trim();
+
+            switch (key)
+            {
+                case "EQUIPITEM":
+                    last = BuildEquipment(value, context);
+
+                    if (last is not null)
+                    {
+                        (template.Equipment ??= []).Add(last);
+                    }
+
+                    break;
+                case "COLOR" or "COLOUR" when last is not null:
+                    if (HueSpec.TryParse(value, out var hue))
+                    {
+                        last.Hue = hue;
+                    }
+
+                    break;
+                case "COLORLIST" or "COLOURLIST" when last is not null:
+                    ApplyColorList(value, context, hue => last.Hue = hue);
+
+                    break;
+                case "SKIN" when template.Race is null:
+                    if (HueSpec.TryParse(value, out var skin))
+                    {
+                        template.SkinHue = skin;
+                    }
+
+                    break;
+                case "SKINLIST" when template.Race is null:
+                    ApplyColorList(value, context, hue => template.SkinHue = hue);
+
+                    break;
+                case "LOOT":
+                    ApplyLoot(value, template, context);
+
+                    break;
+            }
+        }
+    }
+
+    private static MobileEquipmentEntry? BuildEquipment(string value, MobileBuildContext context)
+    {
+        List<string> headers;
+
+        if (value.StartsWith("listobject", StringComparison.OrdinalIgnoreCase) &&
+            int.TryParse(value["listobject".Length..], out var listNumber))
+        {
+            if (HairItemLists.Contains(listNumber))
+            {
+                return null;
+            }
+
+            if (!context.Items.ItemBlocksByHeader.TryGetValue($"ITEMLIST {listNumber}", out var list))
+            {
+                context.Report.Count("unresolved item list");
+
+                return null;
+            }
+
+            headers = list.Entries.Select(line => line.Split(' ', 2)[0].Trim()).ToList();
+        }
+        else
+        {
+            headers = [value];
+        }
+
+        var items = new List<string>();
+
+        foreach (var header in headers)
+        {
+            if (context.Items.ItemIdByHeader.TryGetValue(header, out var id))
+            {
+                items.Add(id);
+            }
+            else
+            {
+                context.Report.Count("unresolved item");
+            }
+        }
+
+        return items.Count == 0 ? null : new MobileEquipmentEntry { Items = items };
+    }
+
+    private static void ApplyColorList(string value, MobileBuildContext context, Action<HueSpec> apply)
+    {
+        if (!int.TryParse(value, out var number) || !context.ColorLists.TryGetValue(number, out var hue))
+        {
+            context.Report.Count("unresolved colour list");
+
+            return;
+        }
+
+        if (hue is null)
+        {
+            context.Report.Count("colour list not a range");
+
+            return;
+        }
+
+        apply(hue.Value);
+    }
+
+    // LOOT=name, LOOT=name,count or LOOT=name,min max: the loot table, count times.
+    private static void ApplyLoot(string value, MobileTemplate template, MobileBuildContext context)
+    {
+        var parts = value.Split(',', 2, StringSplitOptions.TrimEntries);
+
+        if (!LootTemplateBuilder.TryGetLootId("LOOTLIST " + parts[0], out var lootId) ||
+            !context.Items.LootIds.Contains(lootId))
+        {
+            context.Report.Count("unresolved loot");
+
+            return;
+        }
+
+        var count = parts.Length == 2 && int.TryParse(parts[1].Split(' ')[0], out var times) && times > 0 ? times : 1;
+
+        for (var i = 0; i < count; i++)
+        {
+            (template.Loot ??= []).Add(lootId);
         }
     }
 

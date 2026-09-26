@@ -168,6 +168,77 @@ public sealed class UoxMobileConverterTests : IDisposable
         x.Validate();
     }
 
+    [Fact]
+    public void Run_EquipmentColoursAndLootResolveAgainstTheItems()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [0x13e4]
+            {
+            id=0x13e4
+            }
+            [0x1517]
+            {
+            id=0x1517
+            }
+            [ITEMLIST 20]
+            {
+            0x1517
+            0x13e4
+            }
+            [ITEMLIST 13]
+            {
+            0x203b
+            }
+            [LOOTLIST orcLoot]
+            {
+            0x13e4
+            }
+            """
+        );
+        WriteNames();
+        _dirs.WriteMobileSource(
+            "colors/colors.dfn",
+            "[RANDOMCOLOR 11]\n{\n0x0835\n0x0836\n}\n[RANDOMCOLOR 33]\n{\n0x0003\n0x0059\n}\n"
+        );
+        _dirs.WriteMobileSource(
+            "npc/a.dfn",
+            """
+            [x]
+            {
+            COLOR=0x0010
+            ID=0x0190
+            EQUIPITEM=listobject13
+            EQUIPITEM=0x13e4
+            COLOR=0x0455
+            EQUIPITEM=listobject20
+            COLORLIST=11
+            EQUIPITEM=0x1f13
+            EQUIPITEM=0x13e4
+            COLORLIST=33
+            LOOT=orcLoot,2
+            LOOT=nothing
+            }
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var x = ReadMobiles("a.toml")["x"];
+        var equipment = x.Equipment!;
+        Assert.Equal(3, equipment.Count);
+        Assert.Equal(["0x13e4"], equipment[0].Items);
+        Assert.Equal("0x0455", equipment[0].Hue.ToString());
+        Assert.Equal(["0x1517", "0x13e4"], equipment[1].Items);
+        Assert.Equal("0x0835-0x0836", equipment[1].Hue.ToString());
+        Assert.Null(equipment[2].Hue);
+        Assert.Equal(["orc_loot", "orc_loot"], x.Loot);
+        Assert.Contains("unresolved item", CombinedOutput);
+        Assert.Contains("unresolved loot", CombinedOutput);
+        Assert.Contains("colour list not a range", CombinedOutput);
+    }
+
     private void WriteItemsAndNames()
     {
         _dirs.WriteSource("items.dfn", "[0x0eed]\n{\nid=0x0eed\n}\n");
