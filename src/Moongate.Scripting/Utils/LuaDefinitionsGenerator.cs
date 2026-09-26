@@ -189,7 +189,10 @@ internal static class LuaDefinitionsGenerator
         if (function.Method.ReturnType != typeof(void))
         {
             var returnType = function.Method.ReturnType;
-            var optional = IsNullableValueType(returnType) ? "?" : "";
+            var nullableReference = !returnType.IsValueType &&
+                                    new NullabilityInfoContext().Create(function.Method.ReturnParameter).ReadState ==
+                                    NullabilityState.Nullable;
+            var optional = IsNullableValueType(returnType) || nullableReference ? "?" : "";
             builder.Append("---@return ").Append(LuaTypeName(returnType)).Append(optional).Append('\n');
         }
 

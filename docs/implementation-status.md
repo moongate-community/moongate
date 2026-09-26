@@ -20,7 +20,7 @@ authentication reaches a game session, while character selection and a playable 
 | Accounts | `AccountEntity` in Accounts; `IAccountService` creates, lists and verifies login; console `account create`; game accepts a valid handoff without Accounts database access | No in-game command input yet |
 | Shared transient state | Private Redis with expiring, fenced realm leases and one-use handoff tickets; startup checks connectivity and rejects new handoffs during outages | General cache use and other cross-process features |
 | Templates | `ItemTemplate` and `LootTemplate` shapes, `EnumValueSpec`, `RangeValueSpec`, TOML converters, loader contract | A loader that reads `templates/`; nothing under it is loaded |
-| Localization | `localization.language`, message files in 8 languages ported from UOX3 with English fallback, startup validation, `ILocalizationService`; [guide](localization.md) | Per-player language; no code sends these messages yet |
+| Localization | `localization.language`, message files in 8 languages ported from UOX3 with English fallback, startup validation, `ILocalizationService` and the `localization` Lua module; [guide](localization.md) | Per-player language; no code sends these messages yet |
 | Administration | Embedded optional gRPC plugin, private server TLS, Redis sessions, account login/list/create/revoke and server info; [guide](admin-api.md) | Panel backend/UI and character operations |
 | Plugins | Assemblies under `plugins/` registering services, commands, Lua modules, metric providers, entities and SQL | |
 | Diagnostics | Periodic process metrics, plugin metric providers, snapshot events | |

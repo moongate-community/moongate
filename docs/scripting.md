@@ -57,8 +57,11 @@ exists but fails compilation/execution aborts server startup.
 | `timer.every(seconds, fn)` | Repeating callbacks with a positive interval; returns a handle |
 | `timer.cancel(handle)` | Cancels a pending registration; returns false if no timer remains |
 | `wait(seconds)` | Parks the current scheduled coroutine, then resumes it on the loop |
+| `localization.get(id, ...)` | Message `id` of `data/messages` in the server language, with `{0}`, `{1}`, ... filled by the extra arguments; see [Localization](localization.md#read-a-message-from-lua) |
+| `localization.text(id)`, `localization.language()` | The raw text of a message, or `nil`; the server language code |
 
 The default host registers `log`; the engine supplies `engine`, `timer` and `wait`.
+The Ultima plugin registers `localization` in game and standalone modes.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.

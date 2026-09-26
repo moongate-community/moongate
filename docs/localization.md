@@ -2,7 +2,8 @@
 
 The texts the server sends to players come from one language per server, chosen in
 `moongate.toml`. The texts live in TOML files under `data/messages/` in the server
-root; code reads them through `ILocalizationService` in `Moongate.Server.Ultima`.
+root; C# code reads them through `ILocalizationService` in `Moongate.Server.Ultima`,
+and Lua scripts through the `localization` module.
 
 Texts that the client already has in its own localized files (cliloc numbers) do not
 need this service: the server sends the number and the client shows it in the
@@ -120,6 +121,35 @@ host's regional settings.
 The service is registered by the Ultima plugin in game and standalone modes. It reads
 the messages the first time a text is asked for, after `IDataLoaderService` has run
 the loaders at startup; asking earlier fails because the messages are not loaded yet.
+
+## Read a message from Lua
+
+Scripts use the `localization` module, which calls `ILocalizationService`:
+
+```lua
+local text = localization.get(691, 'Bob', 'un drago')
+-- "Bob è stato ucciso da un drago! [Terremoto]\n"
+
+local raw = localization.text(691)    -- "{0} è stato ucciso da {1}! [Terremoto]\n"
+local missing = localization.text(99999) -- nil
+
+log.info('Server language: {Language}', localization.language()) -- "ita"
+```
+
+| Function | What it does |
+| --- | --- |
+| `localization.get(id, ...)` | The message with `{0}`, `{1}`, ... replaced by the extra arguments. A whole Lua number is passed as an integer, so `{0:x}` works on it; `nil` is written as `nil`. An unknown id or too few arguments raise a Lua error, which a script can catch with `pcall`. |
+| `localization.text(id)` | The text as written in the file, or `nil` for an unknown id. Use it to check whether a message exists. |
+| `localization.language()` | The server language code, such as `ita`. |
+
+```lua
+local ok, err = pcall(localization.get, 99999)
+-- ok is false, err contains "No message has id 99999."
+```
+
+The Ultima plugin registers the module in game and standalone modes, with the
+other data services. `definitions.lua` declares it for editor completion, with
+`localization.text` returning `string?`.
 
 ## Add or change a text
 

@@ -27,7 +27,9 @@ using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Ultima.Loaders;
+using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
@@ -107,6 +109,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterIncomingPacket<CreateCharacterEnhancedPacket>();
 
             container.Register<ILocalizationService, LocalizationService>(Reuse.Singleton);
+            container.AddScriptModule<LocalizationModule>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
