@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Realms;
 
@@ -31,8 +32,7 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        var endpoint = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                       throw new InvalidOperationException("MOONGATE_TEST_REDIS_CONNECTION_STRING is required.");
+        var endpoint = RedisTestServer.ConnectionString;
         _redis = new(
             new()
             {

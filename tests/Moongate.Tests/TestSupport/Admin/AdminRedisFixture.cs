@@ -1,6 +1,7 @@
 using System.Security.Cryptography;
 using Moongate.Server.Services.Admin;
 using Moongate.Server.Services.Redis;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.TestSupport.Admin;
 
@@ -20,8 +21,7 @@ internal sealed class AdminRedisFixture : IAsyncDisposable
 
     public static async Task<AdminRedisFixture> CreateAsync()
     {
-        var endpoint = System.Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                       throw new InvalidOperationException("MOONGATE_TEST_REDIS_CONNECTION_STRING is required.");
+        var endpoint = RedisTestServer.ConnectionString;
         var redis = new RedisConnectionService(
             new()
             {

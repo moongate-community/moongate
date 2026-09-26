@@ -4,6 +4,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Login;
 
@@ -85,8 +86,7 @@ public sealed class RealmDirectoryProcessTests
         var redis = new RedisConnectionService(
             new()
             {
-                ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                                   "localhost:6379",
+                ConnectionString = RedisTestServer.ConnectionString,
                 HandoffSecret = new('x', 32)
             }
         );

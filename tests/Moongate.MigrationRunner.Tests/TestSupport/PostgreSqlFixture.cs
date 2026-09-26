@@ -1,3 +1,4 @@
+using Moongate.MigrationRunner.Tests.TestSupport.Containers;
 using Npgsql;
 
 namespace Moongate.MigrationRunner.Tests.TestSupport;
@@ -8,10 +9,7 @@ public sealed class PostgreSqlFixture : IAsyncLifetime
 
     public PostgreSqlFixture()
     {
-        _adminConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_POSTGRES_CONNECTION_STRING") ??
-                                 throw new InvalidOperationException(
-                                     "MOONGATE_TEST_POSTGRES_CONNECTION_STRING is required for PostgreSQL integration tests."
-                                 );
+        _adminConnectionString = PostgreSqlTestServer.AdminConnectionString;
     }
 
     public async Task<PostgreSqlTestDatabase> CreateDatabaseAsync()

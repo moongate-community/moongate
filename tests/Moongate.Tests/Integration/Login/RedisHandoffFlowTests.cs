@@ -14,6 +14,7 @@ using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Server.Ultima;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Login;
 
@@ -22,8 +23,7 @@ public sealed class RedisHandoffFlowTests
     [Fact]
     public async Task LoginSelectionAndGameLogin_TransferAccountThroughOneTimeRedisTicket()
     {
-        var endpoint = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                       throw new InvalidOperationException("MOONGATE_TEST_REDIS_CONNECTION_STRING is required.");
+        var endpoint = RedisTestServer.ConnectionString;
         await using var redis = new RedisConnectionService(
             new()
             {

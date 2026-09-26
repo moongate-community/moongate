@@ -135,4 +135,4 @@ bash scripts/verify-admin-protos.sh
 bash examples/docker/login-realms/admin-smoke.sh
 ```
 
-The first requires `MOONGATE_TEST_POSTGRES_CONNECTION_STRING` and `MOONGATE_TEST_REDIS_CONNECTION_STRING` (see [Verify your changes](../CONTRIBUTING.md#verify-your-changes)); it uses a temporary Python environment plus real TLS fixtures. The second builds the server images, creates its own disposable Compose project and test CA, runs the Python client from the private Docker network, and removes only its own containers/volumes/certificates.
+The first needs PostgreSQL and Redis: Docker, or `MOONGATE_TEST_POSTGRES_CONNECTION_STRING` and `MOONGATE_TEST_REDIS_CONNECTION_STRING` (see [Verify your changes](../CONTRIBUTING.md#verify-your-changes)); it uses a temporary Python environment plus real TLS fixtures. The second builds the server images, creates its own disposable Compose project and test CA, runs the Python client from the private Docker network, and removes only its own containers/volumes/certificates.

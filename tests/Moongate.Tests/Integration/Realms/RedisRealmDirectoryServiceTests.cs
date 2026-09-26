@@ -5,6 +5,7 @@ using Moongate.Server.Core.Types.Realms;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Realms.Internal;
 using Moongate.Server.Services.Redis;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Realms;
 
@@ -15,8 +16,7 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
     private readonly RedisConnectionService _redis = new(
         new()
         {
-            ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                               "localhost:6379",
+            ConnectionString = RedisTestServer.ConnectionString,
             HandoffSecret = new('x', 32)
         }
     );

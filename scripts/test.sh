@@ -14,8 +14,9 @@ for a release build, or --no-build only after building the same configuration.
 Additional dotnet test options are forwarded; --filter narrows either mode.
 Use -- before inline runsettings, as with dotnet test.
 
-The all mode requires MOONGATE_TEST_POSTGRES_CONNECTION_STRING and
-MOONGATE_TEST_REDIS_CONNECTION_STRING. Existing opt-in persistence stress and
+The all mode uses MOONGATE_TEST_POSTGRES_CONNECTION_STRING and
+MOONGATE_TEST_REDIS_CONNECTION_STRING when set; otherwise it needs Docker, and
+the tests start PostgreSQL and Redis containers themselves. Existing opt-in persistence stress and
 Python administration protocol tests keep their own environment requirements.
 
 Examples:
