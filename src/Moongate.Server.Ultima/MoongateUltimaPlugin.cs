@@ -114,6 +114,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
+            // After the loaders: the maps come from data/maps.toml.
+            container.AddMoongateService<IMapService, MapService>(-4);
         }
     }
 }

@@ -31,7 +31,7 @@ it.
 
 | File | Content type | Loaded after / depends on | Used at runtime |
 | --- | --- | --- | --- |
-| `maps.toml` | `MapContent` | first; its `weather` is checked by the regions loader | No |
+| `maps.toml` | `MapContent` | first; its `weather` is checked by the regions loader | Yes, `IMapService` opens the client files of each map |
 | `starting_cities.toml` | `StartingCityContent` | maps | Yes, in the character list |
 | `skills.toml` | `SkillContent` | starting cities | No |
 | `professions.toml` | `ProfessionContent` | skills (every starting skill must exist) | No |
@@ -81,7 +81,7 @@ weather = "temperate"
 | Field | Meaning |
 | --- | --- |
 | `map` | The map id sent to the client: `felucca`, `trammel`, `ilshenar`, `malas`, `tokuno` or `termur` (`MapType`). |
-| `file_index` | The number of the client map files (`map0.mul` is 0). |
+| `file_index` | The number of the client map files: `map{n}.mul` or `map{n}LegacyMUL.uop`, `staidx{n}.mul` and `statics{n}.mul`. |
 | `name` | The name shown in logs and commands. |
 | `size` | Width and height in tiles, a `Point2D`. |
 | `rules` | The name of the rule set of the map. |
@@ -101,7 +101,26 @@ The server stops when:
 
 - `maps.toml` does not exist;
 - a map's `weather` is not a profile of `weather.toml`. The regions loader makes
-  this check, since maps load before the weather profiles.
+  this check, since maps load before the weather profiles;
+- the client directory lacks the map, `staidx` or `statics` file of a map's
+  `file_index`. `IMapService` makes this check after the loaders; remove the map
+  from `maps.toml` when the client has no files for it.
+
+### Read the map from code
+
+`IMapService` gives the terrain and the static objects of each cell:
+
+```csharp
+var land = mapService.GetLand(MapType.Felucca, 1602, 1591);    // cobblestones, Z 20
+var statics = mapService.GetStatics(MapType.Felucca, 1400, 1500); // willow tree and leaves, Z 10
+var name = tileDataService.GetItem(statics[0].Id).Name;
+```
+
+`GetLand` returns the land graphic id and Z; `GetStatics` returns each object's
+item graphic id, Z and hue. Look the ids up in `ITileDataService` for names, flags
+and heights. Blocks of 8x8 cells are read the first time they are asked for and
+kept in a bounded cache. Call the service from the game loop only: the client-file
+readers share their buffers.
 
 ## Starting cities
 

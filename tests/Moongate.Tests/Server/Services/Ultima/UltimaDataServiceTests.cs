@@ -1,9 +1,11 @@
 using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Ultima;
 using Moongate.Tests.TestSupport.Directories;
+using Moongate.Tests.TestSupport.Ultima.Files;
 
 namespace Moongate.Tests.Server.Services.Ultima;
 
+[Collection(UltimaFilesCollection.Name)]
 public sealed class UltimaDataServiceTests
 {
     [Fact]
