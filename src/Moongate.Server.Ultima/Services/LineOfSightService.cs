@@ -32,15 +32,15 @@ public class LineOfSightService : ILineOfSightService
             throw new KeyNotFoundException($"Map {map} is not loaded.");
         }
 
-        if (origin == target)
-        {
-            return true;
-        }
-
         if (!_mapService.Contains(map, origin.X, origin.Y) || !_mapService.Contains(map, target.X, target.Y) ||
             Math.Max(Math.Abs(target.X - origin.X), Math.Abs(target.Y - origin.Y)) > _config.MaxDistance)
         {
             return false;
+        }
+
+        if (origin == target)
+        {
+            return true;
         }
 
         // Walk from the smaller point by X, then Y, then Z, so A to B and B to A test the same cells.
@@ -188,8 +188,12 @@ public class LineOfSightService : ILineOfSightService
             return true;
         }
 
-        foreach (var tile in cell.Statics)
+        // An index loop: foreach over the IReadOnlyList interface would allocate an enumerator for every cell.
+        var statics = cell.Statics;
+
+        for (var i = 0; i < statics.Count; i++)
         {
+            var tile = statics[i];
             var item = _tileDataService.GetItem(tile.Id);
 
             if ((item.Flags & SightBlockers) == 0)

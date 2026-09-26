@@ -123,6 +123,32 @@ public sealed class LineOfSightServiceTests
         Assert.Throws<KeyNotFoundException>(() => Service().HasLineOfSight(MapType.Trammel, new(2, 5, 14), new(10, 5, 14)));
     }
 
+    [Fact]
+    public void HasLineOfSight_SamePointOutsideTheMap_IsNotVisible()
+    {
+        Assert.False(Service().HasLineOfSight(MapType.Felucca, new(-1, 5, 14), new(-1, 5, 14)));
+    }
+
+    [Fact]
+    public void HasLineOfSight_CellsWithStatics_AllocatesNothing()
+    {
+        // Statics that do not block, so every cell's list is walked to the end.
+        for (var x = 3; x < 10; x++)
+        {
+            _map.AddStatic(x, 5, 0x65, 0);
+        }
+
+        var service = Service();
+        service.HasLineOfSight(MapType.Felucca, new(2, 5, 14), new(10, 5, 14));
+
+        var before = GC.GetAllocatedBytesForCurrentThread();
+        var visible = service.HasLineOfSight(MapType.Felucca, new(2, 5, 14), new(10, 5, 14));
+        var allocated = GC.GetAllocatedBytesForCurrentThread() - before;
+
+        Assert.True(visible);
+        Assert.Equal(0, allocated);
+    }
+
     private void AssertBothWays(bool visible, Point3D a, Point3D b)
     {
         Assert.Equal(visible, Service().HasLineOfSight(MapType.Felucca, a, b));

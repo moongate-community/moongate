@@ -13,7 +13,7 @@ public sealed class FakeMapService : IMapService
     private readonly int _height;
     private readonly ushort[,] _landIds;
     private readonly sbyte[,] _landZ;
-    private readonly Dictionary<(int X, int Y), List<MapStaticTile>> _statics = new();
+    private readonly Dictionary<(int X, int Y), MapStaticTile[]> _statics = new();
 
     public IReadOnlyList<MapType> Maps { get; } = [MapType.Felucca];
 
@@ -62,12 +62,9 @@ public sealed class FakeMapService : IMapService
 
     public FakeMapService AddStatic(int x, int y, ushort id, sbyte z)
     {
-        if (!_statics.TryGetValue((x, y), out var list))
-        {
-            _statics[(x, y)] = list = [];
-        }
-
-        list.Add(new() { Id = id, Z = z });
+        // Keep one array per cell, as a map block cache would, so reads allocate nothing.
+        var list = _statics.TryGetValue((x, y), out var existing) ? existing : [];
+        _statics[(x, y)] = [.. list, new() { Id = id, Z = z }];
 
         return this;
     }
@@ -88,7 +85,7 @@ public sealed class FakeMapService : IMapService
     {
         Check(map, x, y);
 
-        return _statics.TryGetValue((x, y), out var list) ? list.ToArray() : [];
+        return _statics.TryGetValue((x, y), out var list) ? list : [];
     }
 
     public Task StartAsync()
