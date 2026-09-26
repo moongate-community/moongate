@@ -1,2365 +1,3041 @@
 [[item]]
 id = "0x01a4_battlement"
+base_id = "base_item"
 item_id = 420
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x001a_stone_wall"
+base_id = "base_item"
 item_id = 26
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x001b_stone_wall"
+base_id = "base_item"
 item_id = 27
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x001c_stone_wall"
+base_id = "base_item"
 item_id = 28
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x001d_stone_wall"
+base_id = "base_item"
 item_id = 29
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x001e_stone_wall"
+base_id = "base_item"
 item_id = 30
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x001f_stone_wall"
+base_id = "base_item"
 item_id = 31
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0020_stone_wall"
+base_id = "base_item"
 item_id = 32
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0021_stone_wall"
+base_id = "base_item"
 item_id = 33
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0022_window"
+base_id = "base_item"
 item_id = 34
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0023_window"
+base_id = "base_item"
 item_id = 35
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0024_stone_wall"
+base_id = "base_item"
 item_id = 36
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0025_stone_wall"
+base_id = "base_item"
 item_id = 37
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0026_stone_wall"
+base_id = "base_item"
 item_id = 38
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0027_stone_wall"
+base_id = "base_item"
 item_id = 39
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0028_stone_arch"
+base_id = "base_item"
 item_id = 40
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0029_stone_arch"
+base_id = "base_item"
 item_id = 41
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x002a_stone_arch"
+base_id = "base_item"
 item_id = 42
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x002b_stone_arch"
+base_id = "base_item"
 item_id = 43
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x002c_stone_arch"
+base_id = "base_item"
 item_id = 44
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x002d_stone_wall"
+base_id = "base_item"
 item_id = 45
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x002f_stone_wall"
+base_id = "base_item"
 item_id = 47
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0030_stone_wall"
+base_id = "base_item"
 item_id = 48
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0031_stone_wall"
+base_id = "base_item"
 item_id = 49
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0032_stone_wall"
+base_id = "base_item"
 item_id = 50
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0033_brick_wall"
+base_id = "base_item"
 item_id = 51
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0034_brick_wall"
+base_id = "base_item"
 item_id = 52
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0035_brick_wall"
+base_id = "base_item"
 item_id = 53
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0036_brick_wall"
+base_id = "base_item"
 item_id = 54
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0037_brick_wall"
+base_id = "base_item"
 item_id = 55
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0038_brick_wall"
+base_id = "base_item"
 item_id = 56
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0039_brick_wall"
+base_id = "base_item"
 item_id = 57
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x003a_brick_wall"
+base_id = "base_item"
 item_id = 58
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x003b_window"
+base_id = "base_item"
 item_id = 59
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x003c_window"
+base_id = "base_item"
 item_id = 60
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x003d_brick_wall"
+base_id = "base_item"
 item_id = 61
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x003e_brick_wall"
+base_id = "base_item"
 item_id = 62
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x003f_brick_wall"
+base_id = "base_item"
 item_id = 63
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0040_brick_wall"
+base_id = "base_item"
 item_id = 64
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0041_brick_wall"
+base_id = "base_item"
 item_id = 65
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0042_brick_wall"
+base_id = "base_item"
 item_id = 66
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0043_brick_wall"
+base_id = "base_item"
 item_id = 67
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0044_brick_wall"
+base_id = "base_item"
 item_id = 68
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0045_brick_arch"
+base_id = "base_item"
 item_id = 69
 name = "brick arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0046_brick_arch"
+base_id = "base_item"
 item_id = 70
 name = "brick arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0047_brick_arch"
+base_id = "base_item"
 item_id = 71
 name = "brick arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0048_brick_arch"
+base_id = "base_item"
 item_id = 72
 name = "brick arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0049_brick_arch"
+base_id = "base_item"
 item_id = 73
 name = "brick arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x004a_brick_wall"
+base_id = "base_item"
 item_id = 74
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x004b_brick_wall"
+base_id = "base_item"
 item_id = 75
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x004c_brick_wall"
+base_id = "base_item"
 item_id = 76
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x004d_brick_wall"
+base_id = "base_item"
 item_id = 77
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x004e_brick_wall"
+base_id = "base_item"
 item_id = 78
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x004f_brick_wall"
+base_id = "base_item"
 item_id = 79
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0050_brick_wall"
+base_id = "base_item"
 item_id = 80
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0051_brick_wall"
+base_id = "base_item"
 item_id = 81
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0052_brick_wall"
+base_id = "base_item"
 item_id = 82
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0053_brick_wall"
+base_id = "base_item"
 item_id = 83
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0054_brick_wall"
+base_id = "base_item"
 item_id = 84
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0055_brick_wall"
+base_id = "base_item"
 item_id = 85
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0056_brick_wall"
+base_id = "base_item"
 item_id = 86
 name = "brick wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0057_stone_wall"
+base_id = "base_item"
 item_id = 87
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0058_stone_wall"
+base_id = "base_item"
 item_id = 88
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0059_stone_wall"
+base_id = "base_item"
 item_id = 89
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x005a_stone_wall"
+base_id = "base_item"
 item_id = 90
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x005b_arrow_loop"
+base_id = "base_item"
 item_id = 91
 name = "arrow loop"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x005c_arrow_loop"
+base_id = "base_item"
 item_id = 92
 name = "arrow loop"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x005d_window"
+base_id = "base_item"
 item_id = 93
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x005e_window"
+base_id = "base_item"
 item_id = 94
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x005f_stone_wall"
+base_id = "base_item"
 item_id = 95
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0060_stone_wall"
+base_id = "base_item"
 item_id = 96
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0061_stone_wall"
+base_id = "base_item"
 item_id = 97
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0062_stone_wall"
+base_id = "base_item"
 item_id = 98
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0063_stone_wall"
+base_id = "base_item"
 item_id = 99
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0064_stone_wall"
+base_id = "base_item"
 item_id = 100
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0065_stone_wall"
+base_id = "base_item"
 item_id = 101
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0066_stone_wall"
+base_id = "base_item"
 item_id = 102
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0067_stone_wall"
+base_id = "base_item"
 item_id = 103
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0068_stone_wall"
+base_id = "base_item"
 item_id = 104
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0069_stone_wall"
+base_id = "base_item"
 item_id = 105
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x006a_stone_wall"
+base_id = "base_item"
 item_id = 106
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x006b_stone_wall"
+base_id = "base_item"
 item_id = 107
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x006c_stone_wall"
+base_id = "base_item"
 item_id = 108
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0072_battlement"
+base_id = "base_item"
 item_id = 114
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0073_battlement"
+base_id = "base_item"
 item_id = 115
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0074_battlement"
+base_id = "base_item"
 item_id = 116
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0075_battlement"
+base_id = "base_item"
 item_id = 117
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0076_battlement"
+base_id = "base_item"
 item_id = 118
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x006d_stone_arch"
+base_id = "base_item"
 item_id = 109
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x006e_stone_arch"
+base_id = "base_item"
 item_id = 110
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x006f_stone_arch"
+base_id = "base_item"
 item_id = 111
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0070_stone_arch"
+base_id = "base_item"
 item_id = 112
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0071_stone_arch"
+base_id = "base_item"
 item_id = 113
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0077_stone_column"
+base_id = "base_item"
 item_id = 119
 name = "stone column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0078_stone_wall"
+base_id = "base_item"
 item_id = 120
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0079_stone_wall"
+base_id = "base_item"
 item_id = 121
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x007a_stone_arch"
+base_id = "base_item"
 item_id = 122
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x007b_stone_arch"
+base_id = "base_item"
 item_id = 123
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x007c_stone_arch"
+base_id = "base_item"
 item_id = 124
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x007d_stone_arch"
+base_id = "base_item"
 item_id = 125
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x007e_stone_arch"
+base_id = "base_item"
 item_id = 126
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x007f_stone_arch"
+base_id = "base_item"
 item_id = 127
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0080_stone_wall"
+base_id = "base_item"
 item_id = 128
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0081_stone_wall"
+base_id = "base_item"
 item_id = 129
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0082_stone_wall"
+base_id = "base_item"
 item_id = 130
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0083_window"
+base_id = "base_item"
 item_id = 131
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0084_stone_wall"
+base_id = "base_item"
 item_id = 132
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0085_window"
+base_id = "base_item"
 item_id = 133
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0086_stone_arch"
+base_id = "base_item"
 item_id = 134
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0087_stone_arch"
+base_id = "base_item"
 item_id = 135
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0088_stone_wall"
+base_id = "base_item"
 item_id = 136
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0089_stone_wall"
+base_id = "base_item"
 item_id = 137
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x008a_stone_arch"
+base_id = "base_item"
 item_id = 138
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x008b_stone_arch"
+base_id = "base_item"
 item_id = 139
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x008c_stone_wall"
+base_id = "base_item"
 item_id = 140
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x008d_window"
+base_id = "base_item"
 item_id = 141
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x008e_stone_wall"
+base_id = "base_item"
 item_id = 142
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x008f_window"
+base_id = "base_item"
 item_id = 143
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00c5_stone_wall"
+base_id = "base_item"
 item_id = 197
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00c6_stone_arch"
+base_id = "base_item"
 item_id = 198
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00c7_stone_wall"
+base_id = "base_item"
 item_id = 199
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00c8_stone_wall"
+base_id = "base_item"
 item_id = 200
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00c9_stone_wall"
+base_id = "base_item"
 item_id = 201
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00ca_arrow_loop"
+base_id = "base_item"
 item_id = 202
 name = "arrow loop"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00cb_arrow_loop"
+base_id = "base_item"
 item_id = 203
 name = "arrow loop"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00cc_stone_post"
+base_id = "base_item"
 item_id = 204
 name = "stone post"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00cd_stone_arch"
+base_id = "base_item"
 item_id = 205
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00ce_stone_arch"
+base_id = "base_item"
 item_id = 206
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00cf_stone_arch"
+base_id = "base_item"
 item_id = 207
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d0_stone_arch"
+base_id = "base_item"
 item_id = 208
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d1_stone_arch"
+base_id = "base_item"
 item_id = 209
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d2_stone_buttress"
+base_id = "base_item"
 item_id = 210
 name = "stone buttress"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d3_stone_buttress"
+base_id = "base_item"
 item_id = 211
 name = "stone buttress"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d4_stone_arch"
+base_id = "base_item"
 item_id = 212
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d5_stone_arch"
+base_id = "base_item"
 item_id = 213
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d6_stone_arch"
+base_id = "base_item"
 item_id = 214
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d7_stone_arch"
+base_id = "base_item"
 item_id = 215
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d8_stone_arch"
+base_id = "base_item"
 item_id = 216
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00d9_stone_arch"
+base_id = "base_item"
 item_id = 217
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00da_stone_arch"
+base_id = "base_item"
 item_id = 218
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00db_stone_pillar"
+base_id = "base_item"
 item_id = 219
 name = "stone pillar"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00dc_stone_wall"
+base_id = "base_item"
 item_id = 220
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00dd_stone_wall"
+base_id = "base_item"
 item_id = 221
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00de_stone_wall"
+base_id = "base_item"
 item_id = 222
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00df_stone_post"
+base_id = "base_item"
 item_id = 223
 name = "stone post"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00e0_stone_arch"
+base_id = "base_item"
 item_id = 224
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00e1_stone_arch"
+base_id = "base_item"
 item_id = 225
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00e2_stone_arch"
+base_id = "base_item"
 item_id = 226
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00e3_stone_arch"
+base_id = "base_item"
 item_id = 227
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00e4_stone_arch"
+base_id = "base_item"
 item_id = 228
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00e5_stone_arch"
+base_id = "base_item"
 item_id = 229
 name = "stone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00e6_stone_wall"
+base_id = "base_item"
 item_id = 230
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00e7_stone_wall"
+base_id = "base_item"
 item_id = 231
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00f8_marble_wall"
+base_id = "base_item"
 item_id = 248
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00f9_marble_wall"
+base_id = "base_item"
 item_id = 249
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00fa_marble_wall"
+base_id = "base_item"
 item_id = 250
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00fb_marble_wall"
+base_id = "base_item"
 item_id = 251
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00fc_window"
+base_id = "base_item"
 item_id = 252
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00fd_marble_wall"
+base_id = "base_item"
 item_id = 253
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00fe_marble_wall"
+base_id = "base_item"
 item_id = 254
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x00ff_marble_wall"
+base_id = "base_item"
 item_id = 255
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0100_marble_wall"
+base_id = "base_item"
 item_id = 256
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0101_marble_wall"
+base_id = "base_item"
 item_id = 257
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x102_window"
+base_id = "base_item"
 item_id = 258
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0103_window"
+base_id = "base_item"
 item_id = 259
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x104_marble_wall"
+base_id = "base_item"
 item_id = 260
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0105_marble_wall"
+base_id = "base_item"
 item_id = 261
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0106_marble_wall"
+base_id = "base_item"
 item_id = 262
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0107_marble_wall"
+base_id = "base_item"
 item_id = 263
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0108_window"
+base_id = "base_item"
 item_id = 264
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0109_marble_wall"
+base_id = "base_item"
 item_id = 265
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x010a_marble_wall"
+base_id = "base_item"
 item_id = 266
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x010b_marble_wall"
+base_id = "base_item"
 item_id = 267
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x010c_marble_wall"
+base_id = "base_item"
 item_id = 268
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x010d_marble_wall"
+base_id = "base_item"
 item_id = 269
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x010e_marble_wall"
+base_id = "base_item"
 item_id = 270
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x010f_marble_wall"
+base_id = "base_item"
 item_id = 271
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0110_marble_wall"
+base_id = "base_item"
 item_id = 272
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0111_marble_wall"
+base_id = "base_item"
 item_id = 273
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0112_marble_arch"
+base_id = "base_item"
 item_id = 274
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0113_marble_arch"
+base_id = "base_item"
 item_id = 275
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0114_marble_arch"
+base_id = "base_item"
 item_id = 276
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0115_marble_arch"
+base_id = "base_item"
 item_id = 277
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0116_marble_arch"
+base_id = "base_item"
 item_id = 278
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0117_marble_wall"
+base_id = "base_item"
 item_id = 279
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0118_marble_wall"
+base_id = "base_item"
 item_id = 280
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0119_marble_wall"
+base_id = "base_item"
 item_id = 281
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x011a_marble_wall"
+base_id = "base_item"
 item_id = 282
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x011b_marble_column"
+base_id = "base_item"
 item_id = 283
 name = "marble column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x011c_marble_column"
+base_id = "base_item"
 item_id = 284
 name = "marble column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x011d_marble_column"
+base_id = "base_item"
 item_id = 285
 name = "marble column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x011e_marble_column"
+base_id = "base_item"
 item_id = 286
 name = "marble column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x011f_marble_column"
+base_id = "base_item"
 item_id = 287
 name = "marble column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0120_marble_column"
+base_id = "base_item"
 item_id = 288
 name = "marble column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0121_marble_arch"
+base_id = "base_item"
 item_id = 289
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0122_marble_arch"
+base_id = "base_item"
 item_id = 290
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0123_marble_arch"
+base_id = "base_item"
 item_id = 291
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0124_marble_arch"
+base_id = "base_item"
 item_id = 292
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0125_marble_wall"
+base_id = "base_item"
 item_id = 293
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0126_marble_wall"
+base_id = "base_item"
 item_id = 294
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03b7_stone_ruins"
+base_id = "base_item"
 item_id = 951
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03b8_stone_ruins"
+base_id = "base_item"
 item_id = 952
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03b9_stone_ruins"
+base_id = "base_item"
 item_id = 953
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03ba_stone_ruins"
+base_id = "base_item"
 item_id = 954
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03bb_stone_ruins"
+base_id = "base_item"
 item_id = 955
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03bc_stone_ruins"
+base_id = "base_item"
 item_id = 956
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03bd_stone_ruins"
+base_id = "base_item"
 item_id = 957
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03be_stone_wall"
+base_id = "base_item"
 item_id = 958
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03bf_stone_ruins"
+base_id = "base_item"
 item_id = 959
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c0_stone_wall"
+base_id = "base_item"
 item_id = 960
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c1_stone_wall"
+base_id = "base_item"
 item_id = 961
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c2_stone_wall"
+base_id = "base_item"
 item_id = 962
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c3_stone_ruins"
+base_id = "base_item"
 item_id = 963
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c4_stone_ruins"
+base_id = "base_item"
 item_id = 964
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c5_stone_ruins"
+base_id = "base_item"
 item_id = 965
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c6_stone_ruins"
+base_id = "base_item"
 item_id = 966
 name = "stone ruins"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c7_stone_wall"
+base_id = "base_item"
 item_id = 967
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c8_stone_wall"
+base_id = "base_item"
 item_id = 968
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03c9_stone_wall"
+base_id = "base_item"
 item_id = 969
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03ca_stone_wall"
+base_id = "base_item"
 item_id = 970
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03cb_stone_wall"
+base_id = "base_item"
 item_id = 971
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03cc_stone_wall"
+base_id = "base_item"
 item_id = 972
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03cd_stone_wall"
+base_id = "base_item"
 item_id = 973
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03ce_stone_wall"
+base_id = "base_item"
 item_id = 974
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03cf_stone_wall"
+base_id = "base_item"
 item_id = 975
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d0_stone_wall"
+base_id = "base_item"
 item_id = 976
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d1_stone_wall"
+base_id = "base_item"
 item_id = 977
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d2_stone_wall"
+base_id = "base_item"
 item_id = 978
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d3_stone_wall"
+base_id = "base_item"
 item_id = 979
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d4_stone_wall"
+base_id = "base_item"
 item_id = 980
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d5_stone_wall"
+base_id = "base_item"
 item_id = 981
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d6_stone_wall"
+base_id = "base_item"
 item_id = 982
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d7_stone_wall"
+base_id = "base_item"
 item_id = 983
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d8_stone_wall"
+base_id = "base_item"
 item_id = 984
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03d9_stone_wall"
+base_id = "base_item"
 item_id = 985
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03da_stone_wall"
+base_id = "base_item"
 item_id = 986
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03db_stone_wall"
+base_id = "base_item"
 item_id = 987
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03dc_stone_wall"
+base_id = "base_item"
 item_id = 988
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03dd_window"
+base_id = "base_item"
 item_id = 989
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03de_window"
+base_id = "base_item"
 item_id = 990
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03e0_stone_wall"
+base_id = "base_item"
 item_id = 992
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03e1_stone_wall"
+base_id = "base_item"
 item_id = 993
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x03e2_stone_wall"
+base_id = "base_item"
 item_id = 994
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0438_marble_arch"
+base_id = "base_item"
 item_id = 1080
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0439_marble_arch"
+base_id = "base_item"
 item_id = 1081
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x043a_marble_arch"
+base_id = "base_item"
 item_id = 1082
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x043b_marble_arch"
+base_id = "base_item"
 item_id = 1083
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x043c_marble_arch"
+base_id = "base_item"
 item_id = 1084
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x043d_marble_arch"
+base_id = "base_item"
 item_id = 1085
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x043e_marble_arch"
+base_id = "base_item"
 item_id = 1086
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x043f_marble_arch"
+base_id = "base_item"
 item_id = 1087
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0440_marble_arch"
+base_id = "base_item"
 item_id = 1088
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0441_marble_arch"
+base_id = "base_item"
 item_id = 1089
 name = "marble arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0442_marble_wall"
+base_id = "base_item"
 item_id = 1090
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0443_marble_wall"
+base_id = "base_item"
 item_id = 1091
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0444_marble_wall"
+base_id = "base_item"
 item_id = 1092
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0445_marble_wall"
+base_id = "base_item"
 item_id = 1093
 name = "marble wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0446_arch"
+base_id = "base_item"
 item_id = 1094
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0447_arch"
+base_id = "base_item"
 item_id = 1095
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0448_arch"
+base_id = "base_item"
 item_id = 1096
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0449_arch"
+base_id = "base_item"
 item_id = 1097
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x044a_arch"
+base_id = "base_item"
 item_id = 1098
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x044b_arch"
+base_id = "base_item"
 item_id = 1099
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x044c_arch"
+base_id = "base_item"
 item_id = 1100
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x044d_arch"
+base_id = "base_item"
 item_id = 1101
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x044e_arch"
+base_id = "base_item"
 item_id = 1102
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x044f_arch"
+base_id = "base_item"
 item_id = 1103
 name = "arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0450_wall"
+base_id = "base_item"
 item_id = 1104
 name = "wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0451_wall"
+base_id = "base_item"
 item_id = 1105
 name = "wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0452_wall"
+base_id = "base_item"
 item_id = 1106
 name = "wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0453_wall"
+base_id = "base_item"
 item_id = 1107
 name = "wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x3127_stone_wall"
+base_id = "base_item"
 item_id = 12583
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x253f_stone_wall"
+base_id = "base_item"
 item_id = 9535
 name = "stone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0158_sandstone_wall"
+base_id = "base_item"
 item_id = 344
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0159_sandstone_wall"
+base_id = "base_item"
 item_id = 345
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x015a_sandstone_wall"
+base_id = "base_item"
 item_id = 346
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x015b_sandstone_post"
+base_id = "base_item"
 item_id = 347
 name = "sandstone post"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x015c_window"
+base_id = "base_item"
 item_id = 348
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x015d_window"
+base_id = "base_item"
 item_id = 349
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x015e_sandstone_wall"
+base_id = "base_item"
 item_id = 350
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x015f_sandstone_wall"
+base_id = "base_item"
 item_id = 351
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0160_sandstone_wall"
+base_id = "base_item"
 item_id = 352
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0161_sandstone_post"
+base_id = "base_item"
 item_id = 353
 name = "sandstone post"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0162_window"
+base_id = "base_item"
 item_id = 354
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0163_window"
+base_id = "base_item"
 item_id = 355
 name = "window"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0164_sandstone_wall"
+base_id = "base_item"
 item_id = 356
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0165_sandstone_wall"
+base_id = "base_item"
 item_id = 357
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0166_sandstone_wall"
+base_id = "base_item"
 item_id = 358
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0167_sandstone_post"
+base_id = "base_item"
 item_id = 359
 name = "sandstone post"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0168_sandstone_wall"
+base_id = "base_item"
 item_id = 360
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0169_sandstone_wall"
+base_id = "base_item"
 item_id = 361
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x016a_sandstone_wall"
+base_id = "base_item"
 item_id = 362
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x016b_sandstone_wall"
+base_id = "base_item"
 item_id = 363
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x016c_sandstone_arch"
+base_id = "base_item"
 item_id = 364
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x016d_sandstone_arch"
+base_id = "base_item"
 item_id = 365
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x016e_sandstone_arch"
+base_id = "base_item"
 item_id = 366
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x016f_sandstone_arch"
+base_id = "base_item"
 item_id = 367
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0170_sandstone_arch"
+base_id = "base_item"
 item_id = 368
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0171_sandstone_wall"
+base_id = "base_item"
 item_id = 369
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0172_sandstone_wall"
+base_id = "base_item"
 item_id = 370
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0173_battlement"
+base_id = "base_item"
 item_id = 371
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0174_sandstone_wall"
+base_id = "base_item"
 item_id = 372
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0175_sandstone_wall"
+base_id = "base_item"
 item_id = 373
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0176_sandstone_wall"
+base_id = "base_item"
 item_id = 374
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0177_sandstone_wall"
+base_id = "base_item"
 item_id = 375
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0179_battlement"
+base_id = "base_item"
 item_id = 377
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x017a_battlement"
+base_id = "base_item"
 item_id = 378
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x017b_battlement"
+base_id = "base_item"
 item_id = 379
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x017c_battlement"
+base_id = "base_item"
 item_id = 380
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x017d_battlement"
+base_id = "base_item"
 item_id = 381
 name = "battlement"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x017e_sandstone_wall"
+base_id = "base_item"
 item_id = 382
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x017f_sandstone_wall"
+base_id = "base_item"
 item_id = 383
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0180_sandstone_wall"
+base_id = "base_item"
 item_id = 384
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0181_sandstone_wall"
+base_id = "base_item"
 item_id = 385
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0182_sandstone_wall"
+base_id = "base_item"
 item_id = 386
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0183_sandstone_wall"
+base_id = "base_item"
 item_id = 387
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0184_sandstone_wall"
+base_id = "base_item"
 item_id = 388
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0185_sandstone_wall"
+base_id = "base_item"
 item_id = 389
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0186_sandstone_wall"
+base_id = "base_item"
 item_id = 390
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0187_sandstone_wall"
+base_id = "base_item"
 item_id = 391
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0188_sandstone_wall"
+base_id = "base_item"
 item_id = 392
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0189_sandstone_wall"
+base_id = "base_item"
 item_id = 393
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x018a_sandstone_arch"
+base_id = "base_item"
 item_id = 394
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x018b_sandstone_arch"
+base_id = "base_item"
 item_id = 395
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x018c_sandstone_arch"
+base_id = "base_item"
 item_id = 396
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x018d_sandstone_arch"
+base_id = "base_item"
 item_id = 397
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x018e_sandstone_arch"
+base_id = "base_item"
 item_id = 398
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x018f_sandstone_arch"
+base_id = "base_item"
 item_id = 399
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0190_sandstone_arch"
+base_id = "base_item"
 item_id = 400
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0191_sandstone_arch"
+base_id = "base_item"
 item_id = 401
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0192_sandstone_arch"
+base_id = "base_item"
 item_id = 402
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0193_sandstone_arch"
+base_id = "base_item"
 item_id = 403
 name = "sandstone arch"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0194_sandstone_column"
+base_id = "base_item"
 item_id = 404
 name = "sandstone column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0195_sandstone_column"
+base_id = "base_item"
 item_id = 405
 name = "sandstone column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0196_sandstone_column"
+base_id = "base_item"
 item_id = 406
 name = "sandstone column"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0197_sandstone_wall"
+base_id = "base_item"
 item_id = 407
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0198_sandstone_wall"
+base_id = "base_item"
 item_id = 408
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0199_sandstone_wall"
+base_id = "base_item"
 item_id = 409
 name = "sandstone wall"
 rarity = "common"
+movable = false
 hue = 0

@@ -1334,119 +1334,170 @@ hue = 0
 
 [[item]]
 id = "base_bronze_shield"
+base_id = "base_item"
 item_id = 7026
 name = "bronze shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_buckler"
+base_id = "base_item"
 item_id = 7027
 name = "buckler"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_metal_kite_shield"
+base_id = "base_item"
 item_id = 7028
 name = "metal kite shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_heater_shield"
+base_id = "base_item"
 item_id = 7030
 name = "heater shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_metal_shield"
+base_id = "base_item"
 item_id = 7035
 name = "metal shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_wooden_kite_shield"
+base_id = "base_item"
 item_id = 7032
 name = "kite shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_wooden_shield"
+base_id = "base_item"
 item_id = 7034
 name = "wooden shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_order_shield"
+base_id = "base_item"
 item_id = 7108
 name = "order shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_chaos_shield"
+base_id = "base_item"
 item_id = 7107
 name = "chaos shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_gargish_chaos_shield"
+base_id = "base_item"
 item_id = 16936
 name = "gargish chaos shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_gargish_kite_shield"
+base_id = "base_item"
 item_id = 16897
 name = "gargish kite shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_gargish_order_shield"
+base_id = "base_item"
 item_id = 16938
 name = "gargish order shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_large_plate_shield"
+base_id = "base_item"
 item_id = 16900
 name = "large plate shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_large_stone_shield"
+base_id = "base_item"
 item_id = 16901
 name = "large stone shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_medium_plate_shield"
+base_id = "base_item"
 item_id = 16899
 name = "medium plate shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_small_plate_shield"
+base_id = "base_item"
 item_id = 16898
 name = "small plate shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "base_gargish_wooden_shield"
+base_id = "base_item"
 item_id = 16896
 name = "gargish wooden shield"
 rarity = "common"
+movable = true
+decays = true
 hue = 0

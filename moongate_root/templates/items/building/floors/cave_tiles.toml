@@ -1,300 +1,386 @@
 [[item]]
 id = "0x040b_cave_floor"
+base_id = "base_item"
 item_id = 1035
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x040c_cave_floor"
+base_id = "base_item"
 item_id = 1036
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x040d_cave_floor"
+base_id = "base_item"
 item_id = 1037
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x040e_cave_floor"
+base_id = "base_item"
 item_id = 1038
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x040f_cave_floor"
+base_id = "base_item"
 item_id = 1039
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0410_cave_floor"
+base_id = "base_item"
 item_id = 1040
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0411_cave_floor"
+base_id = "base_item"
 item_id = 1041
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0412_cave_floor"
+base_id = "base_item"
 item_id = 1042
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0413_cave_floor"
+base_id = "base_item"
 item_id = 1043
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0414_cave_floor"
+base_id = "base_item"
 item_id = 1044
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0415_cave_floor"
+base_id = "base_item"
 item_id = 1045
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0416_cave_floor"
+base_id = "base_item"
 item_id = 1046
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0417_cave_floor"
+base_id = "base_item"
 item_id = 1047
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0418_cave_floor"
+base_id = "base_item"
 item_id = 1048
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0419_cave_floor"
+base_id = "base_item"
 item_id = 1049
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x041a_cave_floor"
+base_id = "base_item"
 item_id = 1050
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x041b_cave_floor"
+base_id = "base_item"
 item_id = 1051
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x041c_cave_floor"
+base_id = "base_item"
 item_id = 1052
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x041d_cave_floor"
+base_id = "base_item"
 item_id = 1053
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x041e_cave_floor"
+base_id = "base_item"
 item_id = 1054
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x053b_cave_floor"
+base_id = "base_item"
 item_id = 1339
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x053d_cave_floor"
+base_id = "base_item"
 item_id = 1341
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x053e_cave_floor"
+base_id = "base_item"
 item_id = 1342
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x053f_cave_floor"
+base_id = "base_item"
 item_id = 1343
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0540_cave_floor"
+base_id = "base_item"
 item_id = 1344
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0541_cave_floor"
+base_id = "base_item"
 item_id = 1345
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0542_cave_floor"
+base_id = "base_item"
 item_id = 1346
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0543_cave_floor"
+base_id = "base_item"
 item_id = 1347
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0544_cave_floor"
+base_id = "base_item"
 item_id = 1348
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0545_cave_floor"
+base_id = "base_item"
 item_id = 1349
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0546_cave_floor"
+base_id = "base_item"
 item_id = 1350
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0547_cave_floor"
+base_id = "base_item"
 item_id = 1351
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0548_cave_floor"
+base_id = "base_item"
 item_id = 1352
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0549_cave_floor"
+base_id = "base_item"
 item_id = 1353
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x054a_cave_floor"
+base_id = "base_item"
 item_id = 1354
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x054b_cave_floor"
+base_id = "base_item"
 item_id = 1355
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x054c_cave_floor"
+base_id = "base_item"
 item_id = 1356
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x054d_cave_floor"
+base_id = "base_item"
 item_id = 1357
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x054e_cave_floor"
+base_id = "base_item"
 item_id = 1358
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x054f_cave_floor"
+base_id = "base_item"
 item_id = 1359
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0551_cave_floor"
+base_id = "base_item"
 item_id = 1361
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0552_cave_floor"
+base_id = "base_item"
 item_id = 1362
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0
 
 [[item]]
 id = "0x0553_cave_floor"
+base_id = "base_item"
 item_id = 1363
 name = "cave floor"
 rarity = "common"
+movable = false
 hue = 0

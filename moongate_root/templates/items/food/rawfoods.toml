@@ -1,79 +1,95 @@
 [[item]]
 id = "unbaked_quiche"
+base_id = "base_item"
 item_id = 4162
 name = "unbaked quiche"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0
 
 [[item]]
 id = "unbaked_meat_pie"
+base_id = "base_item"
 item_id = 4162
 name = "unbaked meat pie"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0
 
 [[item]]
 id = "unbaked_fruit_pie"
+base_id = "base_item"
 item_id = 4162
 name = "unbaked fruit pie"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0
 
 [[item]]
 id = "unbaked_peach_cobbler"
+base_id = "base_item"
 item_id = 4162
 name = "unbaked peach cobbler"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0
 
 [[item]]
 id = "unbaked_apple_pie"
+base_id = "base_item"
 item_id = 4162
 name = "unbaked apple pie"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0
 
 [[item]]
 id = "unbaked_pumpkin_pie"
+base_id = "base_item"
 item_id = 4162
 name = "unbaked pumpkin pie"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0
 
 [[item]]
 id = "uncooked_sausage_pizza"
+base_id = "base_item"
 item_id = 4227
 name = "uncooked sausage pizza"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0
 
 [[item]]
 id = "uncooked_cheese_pizza"
+base_id = "base_item"
 item_id = 4227
 name = "uncooked cheese pizza"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0

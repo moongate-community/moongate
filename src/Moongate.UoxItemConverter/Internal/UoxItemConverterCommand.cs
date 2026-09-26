@@ -52,6 +52,7 @@ internal static class UoxItemConverterCommand
 
         var blocksByFile = new Dictionary<string, List<DfnBlock>>(StringComparer.Ordinal);
         var blocksByHeader = new Dictionary<string, DfnBlock>(StringComparer.OrdinalIgnoreCase);
+        var flatByHeader = new Dictionary<string, DfnBlock>(StringComparer.OrdinalIgnoreCase);
 
         foreach (var file in sourceFiles)
         {
@@ -69,6 +70,21 @@ internal static class UoxItemConverterCommand
             }
         }
 
+        // Inlined before any Id is computed: an inherited name= can be part of a bare-hex block's Id.
+        foreach (var blocks in blocksByFile.Values)
+        {
+            for (var i = 0; i < blocks.Count; i++)
+            {
+                var isKept = ReferenceEquals(blocksByHeader[blocks[i].Header], blocks[i]);
+                blocks[i] = DfnBlockFlattener.Flatten(blocks[i], blocksByHeader);
+
+                if (isKept)
+                {
+                    flatByHeader[blocks[i].Header] = blocks[i];
+                }
+            }
+        }
+
         // Every block's own Id is computed once, up front, from the block alone - never from another
         // block's Id - so a get= chain or a loot entry resolves the same way no matter which order
         // the source files happen to scan in.
@@ -78,7 +94,7 @@ internal static class UoxItemConverterCommand
         var lootIdByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var knownLootIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var block in blocksByHeader.Values)
+        foreach (var block in flatByHeader.Values)
         {
             if (convertLoot && LootTemplateBuilder.TryGetLootId(block.Header, out var lootId))
             {
@@ -120,7 +136,7 @@ internal static class UoxItemConverterCommand
                 // it must also lose the conversion, or the same Id comes out of two different
                 // files (real UOX3 data does this: food/rawfoods.dfn and misc/rawfoods.dfn both
                 // define [0x1e15]).
-                if (!ReferenceEquals(blocksByHeader[block.Header], block))
+                if (!ReferenceEquals(flatByHeader[block.Header], block))
                 {
                     skippedDuplicate++;
 

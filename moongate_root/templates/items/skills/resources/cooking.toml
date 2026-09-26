@@ -74,9 +74,11 @@ hue = 0
 
 [[item]]
 id = "0x0a1e_bowl_of_flour"
+base_id = "base_item"
 item_id = 2590
 name = "bowl of flour"
 rarity = "common"
+movable = true
 weight = 4.0
 buy_price = 8
 sell_price = 4

@@ -24,79 +24,107 @@ pumpkin = "1"
 
 [[item]]
 id = "red_licorice"
+base_id = "base_item"
 item_id = 3978
 name = "Red Licorice"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 hue = 0
 
 [[item]]
 id = "caramel_apple"
+base_id = "base_item"
 item_id = 2512
 name = "Caramel Apple"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 hue = 0
 
 [[item]]
 id = "rock_candy"
+base_id = "base_item"
 item_id = 4189
 name = "Rock Candy"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 hue = 0
 
 [[item]]
 id = "candied_apple"
+base_id = "base_item"
 item_id = 2512
 name = "Candied Apple"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 hue = 0
 
 [[item]]
 id = "brightlycoloredrockcandy"
+base_id = "base_item"
 item_id = 4189
 name = "Rock Candy"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 hue = 0
 
 [[item]]
 id = "black_licorice"
+base_id = "base_item"
 item_id = 3978
 name = "Black Licorice"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 hue = 0
 
 [[item]]
 id = "mr_plains_cookies"
+base_id = "base_item"
 item_id = 5644
 name = "Mr Plain's Cookies"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 hue = 0
 
 [[item]]
 id = "pumpkinpizza"
+base_id = "base_item"
 item_id = 4160
 name = "Pumpkin Pizza"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 hue = 0
 
 [[item]]
 id = "creepy_cake"
+base_id = "base_item"
 item_id = 2537
 name = "Creepy Cake"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 decays = true
 hue = 0
 
 [[item]]
 id = "harvest_wine"
+base_id = "base_item"
 item_id = 2503
 name = "Harvest Wine"
 rarity = "common"
@@ -105,6 +133,7 @@ hue = 0
 
 [[item]]
 id = "murky_milk"
+base_id = "base_item"
 item_id = 2477
 name = "Murky Milk"
 rarity = "common"
@@ -130,9 +159,12 @@ hue = 0
 
 [[item]]
 id = "lollipop1"
+base_id = "base_item"
 item_id = 18061
 name = "lollipop"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 decays = true
 hue = 0
@@ -153,36 +185,48 @@ hue = 0
 
 [[item]]
 id = "wrappedcandy"
+base_id = "base_item"
 item_id = 18078
 name = "wrapped candy"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 decays = true
 hue = 0
 
 [[item]]
 id = "jellybeans"
+base_id = "base_item"
 item_id = 18060
 name = "jellybeans"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 decays = true
 hue = 0
 
 [[item]]
 id = "taffy"
+base_id = "base_item"
 item_id = 18077
 name = "taffy"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 decays = true
 hue = 0
 
 [[item]]
 id = "nougatswirl"
+base_id = "base_item"
 item_id = 18064
 name = "nougat swirl"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 decays = true
 hue = 0

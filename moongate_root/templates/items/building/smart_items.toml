@@ -1,7 +1,10 @@
 [[item]]
 id = "smart_brazier"
+base_id = "base_item"
 item_id = 7979
 rarity = "common"
+movable = false
+decays = false
 hue = 0
 [item.tags]
 inactiveID = "0x1f2b"
@@ -9,8 +12,11 @@ activeID = "0x19bb"
 
 [[item]]
 id = "smart_skullcandle"
+base_id = "base_item"
 item_id = 6231
 rarity = "common"
+movable = false
+decays = false
 hue = 0
 [item.tags]
 inactiveID = "0x1857"
@@ -18,9 +24,12 @@ activeID = "0x1858"
 
 [[item]]
 id = "smart_stonewall_0x01d0"
+base_id = "base_item"
 item_id = 464
 name = "stone wall"
 rarity = "common"
+movable = false
+decays = false
 hue = 0
 [item.tags]
 inactiveID = "0x01d0"
@@ -28,9 +37,12 @@ activeID = "0x1"
 
 [[item]]
 id = "smart_cavefloor_0x053b_hidden"
+base_id = "base_item"
 item_id = 1
 name = "cave floor"
 rarity = "common"
+movable = false
+decays = false
 hue = 0
 [item.tags]
 inactiveID = "0x0001"
@@ -38,9 +50,12 @@ activeID = "0x053b"
 
 [[item]]
 id = "smart_stonewall_0x01d0_hidden"
+base_id = "base_item"
 item_id = 1
 name = "stone wall"
 rarity = "common"
+movable = false
+decays = false
 hue = 0
 [item.tags]
 inactiveID = "0x0001"
@@ -48,9 +63,12 @@ activeID = "0x1d0"
 
 [[item]]
 id = "smart_teleporter_0x17dc"
+base_id = "base_item"
 item_id = 6108
 name = "teleporter"
 rarity = "common"
+movable = false
+decays = false
 hue = 0
 [item.tags]
 inactiveID = "0x17dc"
@@ -58,9 +76,12 @@ activeID = "0x17ee"
 
 [[item]]
 id = "smart_teleporter_0x17ee"
+base_id = "base_item"
 item_id = 6126
 name = "teleporter"
 rarity = "common"
+movable = false
+decays = false
 hue = 0
 [item.tags]
 inactiveID = "0x17ee"
@@ -68,9 +89,12 @@ activeID = "0x17dc"
 
 [[item]]
 id = "smart_sound_object_0x0102"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
+movable = false
+decays = false
 visibility = "game_master"
 hue = 0
 [item.tags]
@@ -78,9 +102,12 @@ inRangeSFX = "0x0102"
 
 [[item]]
 id = "smart_sound_object_0x00f5"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
+movable = false
+decays = false
 visibility = "game_master"
 hue = 0
 [item.tags]
@@ -88,9 +115,12 @@ inRangeSFX = "0x00f5"
 
 [[item]]
 id = "smart_sound_object_0x0220"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
+movable = false
+decays = false
 visibility = "game_master"
 hue = 0
 [item.tags]
@@ -98,9 +128,12 @@ inRangeSFX = "0x0220"
 
 [[item]]
 id = "smart_sound_object_0x0244"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
+movable = false
+decays = false
 visibility = "game_master"
 hue = 0
 [item.tags]
@@ -108,9 +141,12 @@ inRangeSFX = "0x0244"
 
 [[item]]
 id = "smart_sound_object_0x0014"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
+movable = false
+decays = false
 visibility = "game_master"
 hue = 0
 [item.tags]

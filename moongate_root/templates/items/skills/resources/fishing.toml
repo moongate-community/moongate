@@ -1,7 +1,9 @@
 [[item]]
 id = "base_magic_fish"
+base_id = "base_item"
 item_id = 3542
 rarity = "common"
+movable = true
 weight = 1.0
 stackable = true
 hue = 0

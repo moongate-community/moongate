@@ -1,73 +1,109 @@
 [[item]]
 id = "0x0eed_gold_coin"
+base_id = "base_item"
 item_id = 3821
 name = "gold coin"
 rarity = "common"
+weight = 0.02
 amount = 1
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0eed_4_gold_coin"
+base_id = "base_item"
 item_id = 3821
 name = "gold coin"
 rarity = "common"
+weight = 0.02
 amount = 4
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "0xeed_20_gold_coin"
+base_id = "base_item"
 item_id = 3821
 name = "gold coin"
 rarity = "common"
+weight = 0.02
 amount = 20
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0ef2_silver_coin"
+base_id = "base_item"
 item_id = 3826
 name = "silver coin"
 rarity = "common"
+weight = 0.02
 amount = 1
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0ef2_4_silver_coin"
+base_id = "base_item"
 item_id = 3826
 name = "silver coin"
 rarity = "common"
+weight = 0.02
 amount = 4
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0ef2_20_silver_coin"
+base_id = "base_item"
 item_id = 3826
 name = "silver coin"
 rarity = "common"
+weight = 0.02
 amount = 20
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0eea_copper_coin"
+base_id = "base_item"
 item_id = 3818
 name = "copper coin"
 rarity = "common"
+weight = 0.02
 amount = 1
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0eea_4_copper_coin"
+base_id = "base_item"
 item_id = 3819
 name = "copper coin"
 rarity = "common"
+weight = 0.02
 amount = 4
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0eea_20_copper_coin"
+base_id = "base_item"
 item_id = 3820
 name = "copper coin"
 rarity = "common"
+weight = 0.02
 amount = 20
+stackable = true
+decays = true
 hue = 0
 
 [[item]]

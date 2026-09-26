@@ -20,6 +20,7 @@ hue = 0
 
 [[item]]
 id = "bottleofpinkchampaine"
+base_id = "base_item"
 item_id = 2503
 name = "bottle of pink Champaine"
 rarity = "common"
@@ -255,9 +256,14 @@ hue = 0
 
 [[item]]
 id = "wrist_watch"
+base_id = "base_item"
 item_id = 4230
 name = "a wrist watch"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 loot_type = "newbied"
 hue = 0
 
@@ -274,9 +280,14 @@ hue = 0
 
 [[item]]
 id = "holiday_timepiece"
+base_id = "base_item"
 item_id = 4230
 name = "a holiday timepiece"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 loot_type = "newbied"
 hue = 0
 
@@ -465,9 +476,14 @@ hue = 0
 
 [[item]]
 id = "krampusminionearrings"
+base_id = "base_item"
 item_id = 41621
 name = "krampus minion earrings"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 hue = 0
 
 [[item]]

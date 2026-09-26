@@ -199,6 +199,89 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_AGetTargetWithNoIdOfItsOwn_IsFlattenedIntoTheChild()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [base_item]
+            {
+            id=0x0000
+            }
+
+            [base_metal]
+            {
+            get=base_item
+            weight=50
+            custominttag=Metal 1
+            }
+
+            [base_coin]
+            {
+            get=base_metal
+            weight=2
+            pileable=1
+            decay=1
+            custominttag=Coin 1
+            }
+
+            [0x0eed]
+            {
+            get=base_coin
+            name=gold coin
+            id=0x0eed
+            decay=0
+            }
+            """
+        );
+
+        var exitCode = Run();
+
+        Assert.True(exitCode == 0, CombinedOutput);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
+        Assert.DoesNotContain(file!.Item, item => item.Id is "base_coin" or "base_metal");
+        var coin = file.Item.Single(item => item.Id == "0x0eed_gold_coin");
+        Assert.Equal(0.02m, coin.Weight);
+        Assert.True(coin.Stackable);
+        Assert.False(coin.Decays);
+        Assert.Equal("base_item", coin.BaseId);
+        Assert.Equal(("1", "1"), (coin.Tags!["Metal"], coin.Tags["Coin"]));
+    }
+
+    [Fact]
+    public void Run_AGetCycleBetweenBlocksWithNoId_StopsWithoutLooping()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [base_a]
+            {
+            get=base_b
+            weight=1
+            }
+
+            [base_b]
+            {
+            get=base_a
+            weight=2
+            }
+
+            [lamp]
+            {
+            get=base_a
+            id=0x0a22
+            }
+            """
+        );
+
+        var exitCode = Run();
+
+        Assert.True(exitCode == 0, CombinedOutput);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
+        Assert.Equal(0.01m, Assert.Single(file!.Item).Weight);
+    }
+
+    [Fact]
     public void Run_AGetTargetThatNeverConverted_LeavesBaseIdUnset()
     {
         _dirs.WriteSource(

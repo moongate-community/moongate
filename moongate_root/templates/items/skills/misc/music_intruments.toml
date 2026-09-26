@@ -1,89 +1,116 @@
 [[item]]
 id = "0x0e9c_drum"
+base_id = "base_item"
 item_id = 3740
 name = "drum"
 rarity = "common"
+movable = true
 weight = 3.0
 buy_price = 25
 sell_price = 12
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0eb1_standing_harp"
+base_id = "base_item"
 item_id = 3761
 name = "standing harp"
 rarity = "common"
+movable = true
 weight = 20.0
 buy_price = 50
 sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0eb2_lap_harp"
+base_id = "base_item"
 item_id = 3762
 name = "lap harp"
 rarity = "common"
+movable = true
 weight = 10.0
 buy_price = 25
 sell_price = 12
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0eb3_lute"
+base_id = "base_item"
 item_id = 3763
 name = "lute"
 rarity = "common"
+movable = true
 weight = 5.0
 buy_price = 24
 sell_price = 12
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0eb4_lute"
+base_id = "base_item"
 item_id = 3764
 name = "lute"
 rarity = "common"
+movable = true
 weight = 5.0
 buy_price = 24
 sell_price = 12
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0e9d_tambourine"
+base_id = "base_item"
 item_id = 3741
 name = "tambourine"
 rarity = "common"
+movable = true
 weight = 1.0
 buy_price = 24
 sell_price = 12
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0e9e_tambourine"
+base_id = "base_item"
 item_id = 3742
 name = "tambourine"
 rarity = "common"
+movable = true
 weight = 1.0
 buy_price = 24
 sell_price = 12
+decays = true
 hue = 0
 
 [[item]]
 id = "0x2805_bamboo_flute"
+base_id = "base_item"
 item_id = 10245
 name = "bamboo flute"
 rarity = "common"
+movable = true
 weight = 1.0
 buy_price = 24
 sell_price = 12
+decays = true
 hue = 0
 
 [[item]]
 id = "0x2807_bamboo_flute"
+base_id = "base_item"
 item_id = 10247
 name = "bamboo flute"
 rarity = "common"
+movable = true
 weight = 1.0
 buy_price = 24
 sell_price = 12
+decays = true
 hue = 0

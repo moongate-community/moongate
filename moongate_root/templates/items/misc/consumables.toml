@@ -101,54 +101,72 @@ consumableID = "2"
 
 [[item]]
 id = "balmofprotection"
+base_id = "base_item"
 item_id = 7192
 name = "balm of protection"
 rarity = "common"
+weight = 1.0
+decays = true
 hue = 1177
 [item.tags]
 consumableID = "3"
 
 [[item]]
 id = "balmofstrength"
+base_id = "base_item"
 item_id = 3835
 name = "balm of strength"
 rarity = "common"
+weight = 1.0
+decays = true
 hue = 0
 [item.tags]
 consumableID = "4"
 
 [[item]]
 id = "balmofswiftness"
+base_id = "base_item"
 item_id = 6216
 name = "balm of swiftness"
 rarity = "common"
+weight = 1.0
+decays = true
 hue = 0
 [item.tags]
 consumableID = "5"
 
 [[item]]
 id = "balmofwisdom"
+base_id = "base_item"
 item_id = 6215
 name = "balm of wisdom"
 rarity = "common"
+weight = 1.0
+decays = true
 hue = 0
 [item.tags]
 consumableID = "6"
 
 [[item]]
 id = "lifeshieldlotion"
+base_id = "base_item"
 item_id = 3836
 name = "life shield lotion"
 rarity = "common"
+weight = 1.0
+decays = true
 hue = 0
 [item.tags]
 consumableID = "7"
 
 [[item]]
 id = "stoneskinlotion"
+base_id = "base_item"
 item_id = 3837
 name = "stone skin lotion"
 rarity = "common"
+weight = 1.0
+decays = true
 hue = 0
 [item.tags]
 consumableID = "8"

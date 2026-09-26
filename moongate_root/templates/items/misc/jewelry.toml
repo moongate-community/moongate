@@ -1,48 +1,83 @@
 [[item]]
 id = "0x1085_necklace"
+base_id = "base_item"
 item_id = 4229
 name = "necklace"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 hue = 0
 
 [[item]]
 id = "0x1086_bracelet"
+base_id = "base_item"
 item_id = 4230
 name = "bracelet"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 hue = 0
 
 [[item]]
 id = "0x1087_earrings"
+base_id = "base_item"
 item_id = 4231
 name = "earrings"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 hue = 0
 
 [[item]]
 id = "0x1088_necklace"
+base_id = "base_item"
 item_id = 4232
 name = "necklace"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 hue = 0
 
 [[item]]
 id = "0x1089_necklace"
+base_id = "base_item"
 item_id = 4233
 name = "necklace"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 hue = 0
 
 [[item]]
 id = "0x108a_ring"
+base_id = "base_item"
 item_id = 4234
 name = "ring"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 hue = 0
 
 [[item]]
 id = "0x108b_beads"
+base_id = "base_item"
 item_id = 4235
 name = "beads"
 rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
 hue = 0

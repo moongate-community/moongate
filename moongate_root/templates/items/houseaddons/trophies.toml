@@ -1,48 +1,69 @@
 [[item]]
 id = "brownbeartrophy"
+base_id = "base_item"
 item_id = 7776
 name = "a brown bear trophy"
 rarity = "common"
+movable = false
+decays = true
 hue = 0
 
 [[item]]
 id = "stagtrophy"
+base_id = "base_item"
 item_id = 7777
 name = "a stag trophy"
 rarity = "common"
+movable = false
+decays = true
 hue = 0
 
 [[item]]
 id = "bigfishtrophy"
+base_id = "base_item"
 item_id = 7778
 name = "a big fish trophy"
 rarity = "common"
+movable = false
+decays = true
 hue = 0
 
 [[item]]
 id = "gorillatrophy"
+base_id = "base_item"
 item_id = 7779
 name = "a gorilla trophy"
 rarity = "common"
+movable = false
+decays = true
 hue = 0
 
 [[item]]
 id = "orctrophy"
+base_id = "base_item"
 item_id = 7780
 name = "an orc trophy"
 rarity = "common"
+movable = false
+decays = true
 hue = 0
 
 [[item]]
 id = "polarbeartrophy"
+base_id = "base_item"
 item_id = 7781
 name = "a polar bear trophy"
 rarity = "common"
+movable = false
+decays = true
 hue = 0
 
 [[item]]
 id = "trolltrophy"
+base_id = "base_item"
 item_id = 7782
 name = "a troll trophy"
 rarity = "common"
+movable = false
+decays = true
 hue = 0

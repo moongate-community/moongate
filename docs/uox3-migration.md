@@ -57,8 +57,10 @@ Everything else has no home in `ItemTemplate` yet and is dropped: the combat sta
 fields, `colorlist`, `script=`, and the multi and geometry fields. `BaseId` is a pointer only: the
 converter does not flatten a parent's fields into its children; the loader will
 resolve the chain once it exists. A parent block with no `id=` of its own, such as
-`[base_coin]`, is not converted, so its fields (a coin's `weight=2`, `pileable=1`) do not
-reach the children that `get=` it; those children fall back to tiledata.
+`[base_coin]`, is not converted on its own: the converter inlines its lines into every
+child that `get=` it, as UOX3 does, with the child's own lines winning. A coin so gets
+`weight = 0.02` and `stackable = true`, and its `base_id` is the first ancestor that has
+an `id=` (`base_item`). An inherited `name=` also counts towards a `0x…` block's id.
 
 ## Loot tables
 

@@ -1,5 +1,6 @@
 [[item]]
 id = "0x1f9e_pitcher_of_water"
+base_id = "base_item"
 item_id = 8094
 name = "pitcher of water"
 rarity = "common"
@@ -10,6 +11,7 @@ hue = 0
 
 [[item]]
 id = "0x1f9d_pitcher_of_water"
+base_id = "base_item"
 item_id = 8093
 name = "pitcher of water"
 rarity = "common"
@@ -20,6 +22,7 @@ hue = 0
 
 [[item]]
 id = "0x1f9c_pitcher_of_wine"
+base_id = "base_item"
 item_id = 8092
 name = "pitcher of wine"
 rarity = "common"
@@ -30,6 +33,7 @@ hue = 0
 
 [[item]]
 id = "0x1f9b_pitcher_of_wine"
+base_id = "base_item"
 item_id = 8091
 name = "pitcher of wine"
 rarity = "common"
@@ -40,6 +44,7 @@ hue = 0
 
 [[item]]
 id = "0x1f9a_pitcher_of_liquor"
+base_id = "base_item"
 item_id = 8090
 name = "pitcher of liquor"
 rarity = "common"
@@ -50,6 +55,7 @@ hue = 0
 
 [[item]]
 id = "0x1f99_pitcher_of_liquor"
+base_id = "base_item"
 item_id = 8089
 name = "pitcher of liquor"
 rarity = "common"
@@ -60,6 +66,7 @@ hue = 0
 
 [[item]]
 id = "0x1f98_pitcher_of_ale"
+base_id = "base_item"
 item_id = 8088
 name = "pitcher of ale"
 rarity = "common"
@@ -70,6 +77,7 @@ hue = 0
 
 [[item]]
 id = "0x1f97_pitcher_of_ale"
+base_id = "base_item"
 item_id = 8087
 name = "pitcher of ale"
 rarity = "common"
@@ -80,6 +88,7 @@ hue = 0
 
 [[item]]
 id = "0x1f96_pitcher_of_ale"
+base_id = "base_item"
 item_id = 8086
 name = "pitcher of ale"
 rarity = "common"
@@ -90,6 +99,7 @@ hue = 0
 
 [[item]]
 id = "0x1f95_pitcher_of_ale"
+base_id = "base_item"
 item_id = 8085
 name = "pitcher of ale"
 rarity = "common"
@@ -100,6 +110,7 @@ hue = 0
 
 [[item]]
 id = "0x1f94_glass_of_water"
+base_id = "base_item"
 item_id = 8084
 name = "glass of water"
 rarity = "common"
@@ -110,6 +121,7 @@ hue = 0
 
 [[item]]
 id = "0x1f93_glass_of_water"
+base_id = "base_item"
 item_id = 8083
 name = "glass of water"
 rarity = "common"
@@ -120,6 +132,7 @@ hue = 0
 
 [[item]]
 id = "0x1f92_glass_of_water"
+base_id = "base_item"
 item_id = 8082
 name = "glass of water"
 rarity = "common"
@@ -130,6 +143,7 @@ hue = 0
 
 [[item]]
 id = "0x1f91_glass_of_water"
+base_id = "base_item"
 item_id = 8081
 name = "glass of water"
 rarity = "common"
@@ -140,6 +154,7 @@ hue = 0
 
 [[item]]
 id = "0x1f90_glass_of_wine"
+base_id = "base_item"
 item_id = 8080
 name = "glass of wine"
 rarity = "common"
@@ -150,6 +165,7 @@ hue = 0
 
 [[item]]
 id = "0x1f8f_glass_of_wine"
+base_id = "base_item"
 item_id = 8079
 name = "glass of wine"
 rarity = "common"
@@ -160,6 +176,7 @@ hue = 0
 
 [[item]]
 id = "0x1f8e_glass_of_wine"
+base_id = "base_item"
 item_id = 8078
 name = "glass of wine"
 rarity = "common"
@@ -170,6 +187,7 @@ hue = 0
 
 [[item]]
 id = "0x1f8d_glass_of_wine"
+base_id = "base_item"
 item_id = 8077
 name = "glass of wine"
 rarity = "common"
@@ -180,6 +198,7 @@ hue = 0
 
 [[item]]
 id = "0x1f8c_glass_of_milk"
+base_id = "base_item"
 item_id = 8076
 name = "glass of milk"
 rarity = "common"
@@ -190,6 +209,7 @@ hue = 0
 
 [[item]]
 id = "0x1f8b_glass_of_milk"
+base_id = "base_item"
 item_id = 8075
 name = "glass of milk"
 rarity = "common"
@@ -200,6 +220,7 @@ hue = 0
 
 [[item]]
 id = "0x1f8a_glass_of_milk"
+base_id = "base_item"
 item_id = 8074
 name = "glass of milk"
 rarity = "common"
@@ -210,6 +231,7 @@ hue = 0
 
 [[item]]
 id = "0x1f89_glass_of_milk"
+base_id = "base_item"
 item_id = 8073
 name = "glass of milk"
 rarity = "common"
@@ -220,6 +242,7 @@ hue = 0
 
 [[item]]
 id = "0x1f88_glass_of_liquor"
+base_id = "base_item"
 item_id = 8072
 name = "glass of liquor"
 rarity = "common"
@@ -230,6 +253,7 @@ hue = 0
 
 [[item]]
 id = "0x1f87_glass_of_liquor"
+base_id = "base_item"
 item_id = 8071
 name = "glass of liquor"
 rarity = "common"
@@ -240,6 +264,7 @@ hue = 0
 
 [[item]]
 id = "0x1f86_glass_of_liquor"
+base_id = "base_item"
 item_id = 8070
 name = "glass of liquor"
 rarity = "common"
@@ -250,6 +275,7 @@ hue = 0
 
 [[item]]
 id = "0x1f85_glass_of_liquor"
+base_id = "base_item"
 item_id = 8069
 name = "glass of liquor"
 rarity = "common"
@@ -260,6 +286,7 @@ hue = 0
 
 [[item]]
 id = "0x1f80_glass_of_cider"
+base_id = "base_item"
 item_id = 8064
 name = "glass of cider"
 rarity = "common"
@@ -270,6 +297,7 @@ hue = 0
 
 [[item]]
 id = "0x1f7f_glass_of_cider"
+base_id = "base_item"
 item_id = 8063
 name = "glass of cider"
 rarity = "common"
@@ -280,6 +308,7 @@ hue = 0
 
 [[item]]
 id = "0x1f7e_glass_of_cider"
+base_id = "base_item"
 item_id = 8062
 name = "glass of cider"
 rarity = "common"
@@ -290,6 +319,7 @@ hue = 0
 
 [[item]]
 id = "0x1f7d_glass_of_cider"
+base_id = "base_item"
 item_id = 8061
 name = "glass of cider"
 rarity = "common"
@@ -300,6 +330,7 @@ hue = 0
 
 [[item]]
 id = "0x099b_bottle_of_liquor"
+base_id = "base_item"
 item_id = 2459
 name = "bottle of liquor"
 rarity = "common"
@@ -310,6 +341,7 @@ hue = 0
 
 [[item]]
 id = "0x099c_bottles_of_liquor"
+base_id = "base_item"
 item_id = 2460
 name = "bottles of liquor"
 rarity = "common"
@@ -320,6 +352,7 @@ hue = 0
 
 [[item]]
 id = "0x099d_bottles_of_liquor"
+base_id = "base_item"
 item_id = 2461
 name = "bottles of liquor"
 rarity = "common"
@@ -330,6 +363,7 @@ hue = 0
 
 [[item]]
 id = "0x099e_bottles_of_liquor"
+base_id = "base_item"
 item_id = 2462
 name = "bottles of liquor"
 rarity = "common"
@@ -340,6 +374,7 @@ hue = 0
 
 [[item]]
 id = "0x099f_bottle_of_ale"
+base_id = "base_item"
 item_id = 2463
 name = "bottle of ale"
 rarity = "common"
@@ -350,6 +385,7 @@ hue = 0
 
 [[item]]
 id = "0x09a0_bottles_of_ale"
+base_id = "base_item"
 item_id = 2464
 name = "bottles of ale"
 rarity = "common"
@@ -360,6 +396,7 @@ hue = 0
 
 [[item]]
 id = "0x09a1_bottles_of_ale"
+base_id = "base_item"
 item_id = 2465
 name = "bottles of ale"
 rarity = "common"
@@ -370,6 +407,7 @@ hue = 0
 
 [[item]]
 id = "0x09a2_bottles_of_ale"
+base_id = "base_item"
 item_id = 2466
 name = "bottles of ale"
 rarity = "common"
@@ -380,6 +418,7 @@ hue = 0
 
 [[item]]
 id = "0x09ad_pitcher_of_milk"
+base_id = "base_item"
 item_id = 2477
 name = "pitcher of milk"
 rarity = "common"
@@ -390,6 +429,7 @@ hue = 0
 
 [[item]]
 id = "0x0ff8_pitcher_of_water"
+base_id = "base_item"
 item_id = 4088
 name = "pitcher of water"
 rarity = "common"
@@ -400,6 +440,7 @@ hue = 0
 
 [[item]]
 id = "0x0ff9_pitcher_of_water"
+base_id = "base_item"
 item_id = 4089
 name = "pitcher of water"
 rarity = "common"
@@ -410,6 +451,7 @@ hue = 0
 
 [[item]]
 id = "0x09c7_bottle_of_wine"
+base_id = "base_item"
 item_id = 2503
 name = "bottle of wine"
 rarity = "common"
@@ -420,6 +462,7 @@ hue = 0
 
 [[item]]
 id = "0x09c6_bottles_of_wine"
+base_id = "base_item"
 item_id = 2502
 name = "bottles of wine"
 rarity = "common"
@@ -430,6 +473,7 @@ hue = 0
 
 [[item]]
 id = "0x09c5_bottles_of_wine"
+base_id = "base_item"
 item_id = 2501
 name = "bottles of wine"
 rarity = "common"
@@ -440,6 +484,7 @@ hue = 0
 
 [[item]]
 id = "0x09c4_bottles_of_wine"
+base_id = "base_item"
 item_id = 2500
 name = "bottles of wine"
 rarity = "common"
@@ -450,6 +495,7 @@ hue = 0
 
 [[item]]
 id = "0x09c8_jug_of_cider"
+base_id = "base_item"
 item_id = 2504
 name = "jug of cider"
 rarity = "common"
@@ -460,6 +506,7 @@ hue = 0
 
 [[item]]
 id = "0x09ec_jar_of_honey"
+base_id = "base_item"
 item_id = 2540
 name = "jar of honey"
 rarity = "common"
@@ -471,6 +518,7 @@ hue = 0
 
 [[item]]
 id = "0x09f0_pitcher_of_milk"
+base_id = "base_item"
 item_id = 2544
 name = "pitcher of milk"
 rarity = "common"
@@ -481,6 +529,7 @@ hue = 0
 
 [[item]]
 id = "0x09ee_mug_of_ale"
+base_id = "base_item"
 item_id = 2542
 name = "mug of ale"
 rarity = "common"
@@ -491,6 +540,7 @@ hue = 0
 
 [[item]]
 id = "0x09ef_mug_of_ale"
+base_id = "base_item"
 item_id = 2543
 name = "mug of ale"
 rarity = "common"
@@ -501,6 +551,7 @@ hue = 0
 
 [[item]]
 id = "0x098d_jugs_of_cider"
+base_id = "base_item"
 item_id = 2445
 name = "jugs of cider"
 rarity = "common"
@@ -511,6 +562,7 @@ hue = 0
 
 [[item]]
 id = "0x098e_jugs_of_cider"
+base_id = "base_item"
 item_id = 2446
 name = "jugs of cider"
 rarity = "common"

@@ -1,239 +1,287 @@
 [[item]]
 id = "0x09f1_cut_of_raw_ribs"
+base_id = "base_item"
 item_id = 2545
 name = "cut of raw ribs"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 8
 sell_price = 4
 hue = 0
 
 [[item]]
 id = "0x1e15_raw_fish"
+base_id = "base_item"
 item_id = 7701
 name = "raw fish"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x1e16_raw_fish"
+base_id = "base_item"
 item_id = 7702
 name = "raw fish"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x1e17_raw_fish"
+base_id = "base_item"
 item_id = 7703
 name = "raw fish"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x1e18_raw_fish"
+base_id = "base_item"
 item_id = 7704
 name = "raw fish"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x1e19_fish_head"
+base_id = "base_item"
 item_id = 7705
 name = "fish head"
 rarity = "common"
 weight = 0.5
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x1e1b_fish_heads"
+base_id = "base_item"
 item_id = 7707
 name = "fish heads"
 rarity = "common"
 weight = 1.5
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x1e1a_fish_head"
+base_id = "base_item"
 item_id = 7706
 name = "fish head"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x1609_raw_leg_of_lamb"
+base_id = "base_item"
 item_id = 5641
 name = "raw leg of lamb"
 rarity = "common"
 weight = 2.0
+stackable = true
 buy_price = 8
 sell_price = 4
 hue = 0
 
 [[item]]
 id = "0x1607_raw_chicken_leg"
+base_id = "base_item"
 item_id = 5639
 name = "raw chicken leg"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x1042_unbaked_pie"
+base_id = "base_item"
 item_id = 4162
 name = "unbaked pie"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0
 
 [[item]]
 id = "0x097a_raw_fish_steak"
+base_id = "base_item"
 item_id = 2426
 name = "raw fish steak"
 rarity = "common"
 weight = 0.1
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x09b9_raw_bird"
+base_id = "base_item"
 item_id = 2489
 name = "raw bird"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x09ba_raw_bird"
+base_id = "base_item"
 item_id = 2490
 name = "raw bird"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x09cc_fish"
+base_id = "base_item"
 item_id = 2508
 name = "fish"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x09cd_fish"
+base_id = "base_item"
 item_id = 2509
 name = "fish"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x09ce_fish"
+base_id = "base_item"
 item_id = 2510
 name = "fish"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x09cf_fish"
+base_id = "base_item"
 item_id = 2511
 name = "fish"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0
 
 [[item]]
 id = "0x0dd6_small_fish"
+base_id = "base_item"
 item_id = 3542
 name = "small fish"
 rarity = "common"
 weight = 5.0
+stackable = true
 buy_price = 6
 sell_price = 3
 hue = 0
 
 [[item]]
 id = "0x0dd7_small_fish"
+base_id = "base_item"
 item_id = 3543
 name = "small fish"
 rarity = "common"
 weight = 5.0
+stackable = true
 buy_price = 6
 sell_price = 3
 hue = 0
 
 [[item]]
 id = "0x0dd8_small_fish"
+base_id = "base_item"
 item_id = 3544
 name = "small fish"
 rarity = "common"
 weight = 5.0
+stackable = true
 buy_price = 6
 sell_price = 3
 hue = 0
 
 [[item]]
 id = "0x0dd9_small_fish"
+base_id = "base_item"
 item_id = 3545
 name = "small fish"
 rarity = "common"
 weight = 5.0
+stackable = true
 buy_price = 6
 sell_price = 3
 hue = 0
 
 [[item]]
 id = "0x1083_uncooked_pizza"
+base_id = "base_item"
 item_id = 4227
 name = "uncooked pizza"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 4
 sell_price = 2
 hue = 0
 
 [[item]]
 id = "0x09b5_eggs"
+base_id = "base_item"
 item_id = 2485
 name = "eggs"
 rarity = "common"
 weight = 1.0
+stackable = true
 buy_price = 2
 sell_price = 1
 hue = 0

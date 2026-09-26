@@ -1,8 +1,11 @@
 [[item]]
 id = "0x09d0_apple"
+base_id = "base_item"
 item_id = 2512
 name = "apple"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -10,9 +13,12 @@ hue = 0
 
 [[item]]
 id = "0x09d1_grape_bunch"
+base_id = "base_item"
 item_id = 2513
 name = "grape bunch"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -20,9 +26,12 @@ hue = 0
 
 [[item]]
 id = "0x0d1a_grape_bunch"
+base_id = "base_item"
 item_id = 3354
 name = "grape bunch"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -30,9 +39,12 @@ hue = 0
 
 [[item]]
 id = "0x09d2_peach"
+base_id = "base_item"
 item_id = 2514
 name = "peach"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -40,9 +52,12 @@ hue = 0
 
 [[item]]
 id = "0x172c_peach"
+base_id = "base_item"
 item_id = 5932
 name = "peach"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -50,9 +65,12 @@ hue = 0
 
 [[item]]
 id = "0x0994_pear"
+base_id = "base_item"
 item_id = 2452
 name = "pear"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -60,9 +78,12 @@ hue = 0
 
 [[item]]
 id = "0x172d_pear"
+base_id = "base_item"
 item_id = 5933
 name = "pear"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -70,9 +91,12 @@ hue = 0
 
 [[item]]
 id = "0x172b_lemons"
+base_id = "base_item"
 item_id = 5931
 name = "lemons"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -80,9 +104,12 @@ hue = 0
 
 [[item]]
 id = "0x172a_lemon"
+base_id = "base_item"
 item_id = 5930
 name = "lemon"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -90,9 +117,12 @@ hue = 0
 
 [[item]]
 id = "0x1729_limes"
+base_id = "base_item"
 item_id = 5929
 name = "limes"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -100,9 +130,12 @@ hue = 0
 
 [[item]]
 id = "0x1728_lime"
+base_id = "base_item"
 item_id = 5928
 name = "lime"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -110,9 +143,12 @@ hue = 0
 
 [[item]]
 id = "0x1727_bunch_of_dates"
+base_id = "base_item"
 item_id = 5927
 name = "bunch of dates"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -120,9 +156,11 @@ hue = 0
 
 [[item]]
 id = "0x1726_coconut"
+base_id = "base_item"
 item_id = 5926
 name = "coconut"
 rarity = "common"
+movable = true
 weight = 2.0
 stackable = true
 buy_price = 12
@@ -131,9 +169,11 @@ hue = 0
 
 [[item]]
 id = "0x1725_coconut"
+base_id = "base_item"
 item_id = 5925
 name = "coconut"
 rarity = "common"
+movable = true
 weight = 2.0
 stackable = true
 buy_price = 12
@@ -142,9 +182,11 @@ hue = 0
 
 [[item]]
 id = "0x1724_coconut"
+base_id = "base_item"
 item_id = 5924
 name = "coconut"
 rarity = "common"
+movable = true
 weight = 2.0
 stackable = true
 buy_price = 12
@@ -153,9 +195,11 @@ hue = 0
 
 [[item]]
 id = "0x1723_coconut"
+base_id = "base_item"
 item_id = 5923
 name = "coconut"
 rarity = "common"
+movable = true
 weight = 2.0
 stackable = true
 buy_price = 12
@@ -188,9 +232,11 @@ hue = 0
 
 [[item]]
 id = "0x1720_banana"
+base_id = "base_item"
 item_id = 5920
 name = "banana"
 rarity = "common"
+movable = true
 weight = 1.0
 stackable = true
 buy_price = 3
@@ -199,9 +245,11 @@ hue = 0
 
 [[item]]
 id = "0x171f_banana"
+base_id = "base_item"
 item_id = 5919
 name = "banana"
 rarity = "common"
+movable = true
 weight = 1.0
 stackable = true
 buy_price = 3
@@ -210,9 +258,11 @@ hue = 0
 
 [[item]]
 id = "0x171e_banana"
+base_id = "base_item"
 item_id = 5918
 name = "banana"
 rarity = "common"
+movable = true
 weight = 1.0
 stackable = true
 buy_price = 3
@@ -221,9 +271,12 @@ hue = 0
 
 [[item]]
 id = "0x171d_banana"
+base_id = "base_item"
 item_id = 5917
 name = "banana"
 rarity = "common"
+movable = true
+weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
@@ -231,9 +284,11 @@ hue = 0
 
 [[item]]
 id = "0x0c5c_watermelon"
+base_id = "base_item"
 item_id = 3164
 name = "watermelon"
 rarity = "common"
+movable = true
 weight = 5.0
 stackable = true
 buy_price = 8
@@ -242,9 +297,11 @@ hue = 0
 
 [[item]]
 id = "0x0c5d_watermelon"
+base_id = "base_item"
 item_id = 3165
 name = "watermelon"
 rarity = "common"
+movable = true
 weight = 5.0
 stackable = true
 buy_price = 8
@@ -253,9 +310,11 @@ hue = 0
 
 [[item]]
 id = "0x0993_fruit_basket"
+base_id = "base_item"
 item_id = 2451
 name = "fruit basket"
 rarity = "common"
+movable = true
 weight = 5.0
 buy_price = 100
 sell_price = 50
