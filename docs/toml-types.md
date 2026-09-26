@@ -274,14 +274,12 @@ rarity = "random_of"                       # any member, picked on each resolve
 rarity = "random_of:rare,epic,legendary"   # one of these members, picked on each resolve
 ```
 
-Member names ignore case (`"Epic"` and `"epic"` are the same), and spaces around the
-names in the list are ignored.
+Member names ignore case and underscores: `"Epic"` and `"epic"` are the same, and so
+are `"north_east"`, `"NorthEast"` and `"northeast"`. Spaces around the names in the
+list are ignored. Only names are accepted, never numbers.
 
-Written form: lowercase snake_case, `"rare"` or `"random_of:rare,epic"`.
-
-Only use it with one-word members. A member such as `TerMur` is written as
-`"ter_mur"`, and reading ignores case but not the underscore, so `"ter_mur"` is
-rejected. `ItemRarityType`, the only enum that uses it today, has one-word members.
+Written form: lowercase snake_case, `"rare"`, `"north_east"` or
+`"random_of:rare,epic"`; it always reads back.
 
 Errors:
 
@@ -289,10 +287,8 @@ Errors:
 | --- | --- |
 | `rarity = "not-a-member"` | `'not-a-member' is not a valid ItemRarityType value or random_of spec.` |
 | `rarity = "random_of:"` | the same message, naming `random_of:` |
+| `rarity = "3"` | `'3' is not a valid ItemRarityType value or random_of spec.` |
 | `rarity = 1` | `Expected token String but was Integer.` |
-
-.NET enum parsing also accepts a number in the text, such as `rarity = "3"`, even
-one with no member. Write member names.
 
 Used by: `rarity` in item templates. See
 [Fields that resolve randomly](templates.md#fields-that-resolve-randomly).

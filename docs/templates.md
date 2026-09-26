@@ -100,9 +100,9 @@ As text, the three forms are:
 | `rarity = "random_of"` | Any member of the enum, picked fresh each `Resolve()` |
 | `rarity = "random_of:rare,epic,legendary"` | One of exactly these three, picked fresh each `Resolve()` |
 
-Parsing member names is case-insensitive; writing always lowercases them, so
-`FromValue(ItemRarityType.Epic).ToString()` is `"epic"`, matching how a designer
-types it. Use it only with one-word members: see
+Parsing member names ignores case and underscores; writing uses lowercase
+snake_case, so `FromValue(ItemRarityType.Epic).ToString()` is `"epic"`, matching how
+a designer types it, and what is written always reads back. See
 [EnumValueSpec](toml-types.md#enumvaluespec) for every accepted form and error. A
 field declares this by its type, nothing else:
 

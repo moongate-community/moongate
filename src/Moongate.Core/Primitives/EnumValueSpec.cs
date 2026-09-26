@@ -125,7 +125,7 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
 
             for (var i = 0; i < names.Length; i++)
             {
-                if (!Enum.TryParse<TEnum>(names[i], true, out var candidate))
+                if (!TryParseName(names[i], out var candidate))
                 {
                     return false;
                 }
@@ -138,7 +138,7 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
             return true;
         }
 
-        if (!Enum.TryParse<TEnum>(trimmed, true, out var value))
+        if (!TryParseName(trimmed, out var value))
         {
             return false;
         }
@@ -154,6 +154,27 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
     public TEnum Resolve()
     {
         return IsRandom ? _candidates![BuiltInRng.Next(_candidates.Length)] : _fixedValue;
+    }
+
+    // Matches a member by name only, ignoring case and underscores, so the snake_case form ToString writes reads back;
+    // Enum.TryParse would also take numbers, even ones no member has.
+    private static bool TryParseName(string text, out TEnum value)
+    {
+        var name = text.Replace("_", string.Empty);
+
+        foreach (var member in Enum.GetValues<TEnum>())
+        {
+            if (string.Equals(member.ToString(), name, StringComparison.OrdinalIgnoreCase))
+            {
+                value = member;
+
+                return true;
+            }
+        }
+
+        value = default;
+
+        return false;
     }
 
     /// <inheritdoc />
