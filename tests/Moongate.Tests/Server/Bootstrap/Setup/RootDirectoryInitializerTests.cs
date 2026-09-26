@@ -13,7 +13,7 @@ public sealed class RootDirectoryInitializerTests
         using var directory = new TemporaryDirectory();
         var source = CreateMigrations(directory);
         var root = Path.Combine(directory.Path, "new root");
-        RootDirectoryInitializer.Initialize(root, source, TextWriter.Null);
+        RootDirectoryInitializer.Initialize(root, source, CreateData(directory), TextWriter.Null);
 
         foreach (var folder in new[] { "config", "logs", "plugins", "scripts", "migrations/auth", "migrations/world" })
         {
@@ -38,12 +38,12 @@ public sealed class RootDirectoryInitializerTests
         using var directory = new TemporaryDirectory();
         var source = CreateMigrations(directory);
         var root = Path.Combine(directory.Path, "root");
-        RootDirectoryInitializer.Initialize(root, source, TextWriter.Null);
+        RootDirectoryInitializer.Initialize(root, source, CreateData(directory), TextWriter.Null);
         var path = Path.Combine(root, "config/moongate.toml");
         var original = File.ReadAllText(path) + "\n# user customization\n";
         File.WriteAllText(path, original);
         File.WriteAllText(Path.Combine(root, "scripts/custom.lua"), "return 42");
-        RootDirectoryInitializer.Initialize(root, source, TextWriter.Null);
+        RootDirectoryInitializer.Initialize(root, source, CreateData(directory), TextWriter.Null);
         Assert.Equal(original, File.ReadAllText(path));
         Assert.Equal("return 42", File.ReadAllText(Path.Combine(root, "scripts/custom.lua")));
     }
@@ -58,7 +58,7 @@ public sealed class RootDirectoryInitializerTests
         var conflicting = Path.Combine(root, "migrations/auth", name);
         File.WriteAllText(conflicting, sql);
         var exception = Assert.Throws<InvalidOperationException>(() =>
-            RootDirectoryInitializer.Initialize(root, source, TextWriter.Null)
+            RootDirectoryInitializer.Initialize(root, source, CreateData(directory), TextWriter.Null)
         );
         Assert.Contains(name, exception.Message);
         Assert.Equal(sql, File.ReadAllText(conflicting));
@@ -71,7 +71,12 @@ public sealed class RootDirectoryInitializerTests
         using var directory = new TemporaryDirectory();
         var root = Path.Combine(directory.Path, "root");
         Assert.ThrowsAny<Exception>(() =>
-            RootDirectoryInitializer.Initialize(root, Path.Combine(directory.Path, "missing"), TextWriter.Null)
+            RootDirectoryInitializer.Initialize(
+                root,
+                Path.Combine(directory.Path, "missing"),
+                CreateData(directory),
+                TextWriter.Null
+            )
         );
         Assert.False(Directory.Exists(root));
     }
@@ -88,7 +93,7 @@ public sealed class RootDirectoryInitializerTests
         var path = Path.Combine(root, "config/moongate.toml");
         TomlUtils.SerializeToFile(config, path);
         var original = File.ReadAllBytes(path);
-        RootDirectoryInitializer.Initialize(root, source, TextWriter.Null);
+        RootDirectoryInitializer.Initialize(root, source, CreateData(directory), TextWriter.Null);
         Assert.Equal(original, File.ReadAllBytes(path));
     }
 
@@ -98,12 +103,73 @@ public sealed class RootDirectoryInitializerTests
         using var directory = new TemporaryDirectory();
         var source = CreateMigrations(directory);
         var root = Path.Combine(directory.Path, "root");
-        RootDirectoryInitializer.Initialize(root, source, TextWriter.Null, ["login.example.test"]);
+        RootDirectoryInitializer.Initialize(root, source, CreateData(directory), TextWriter.Null, ["login.example.test"]);
         var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(Path.Combine(root, "config/moongate.toml"))!;
         Assert.True(config.AdminApi.Enabled);
         Assert.False(config.AdminApi.AllowInsecureLoopback);
         Assert.True(File.Exists(Path.Combine(root, config.AdminApi.CertificatePath)));
         Assert.False(File.Exists(Path.Combine(root, "moongate.pid")));
+    }
+
+    [Fact]
+    public void Initialize_NewRoot_CopiesShardDataFiles()
+    {
+        using var directory = new TemporaryDirectory();
+        var source = CreateMigrations(directory);
+        var data = CreateData(directory);
+        var root = Path.Combine(directory.Path, "root");
+        RootDirectoryInitializer.Initialize(root, source, data, TextWriter.Null);
+        Assert.Equal(
+            File.ReadAllText(Path.Combine(data, "maps.toml")),
+            File.ReadAllText(Path.Combine(root, "data/maps.toml"))
+        );
+        Assert.Equal(
+            File.ReadAllText(Path.Combine(data, "regions/felucca.toml")),
+            File.ReadAllText(Path.Combine(root, "data/regions/felucca.toml"))
+        );
+    }
+
+    [Fact]
+    public void Initialize_RepeatedRun_PreservesEditedDataAndAddsNewFiles()
+    {
+        using var directory = new TemporaryDirectory();
+        var source = CreateMigrations(directory);
+        var data = CreateData(directory);
+        var root = Path.Combine(directory.Path, "root");
+        RootDirectoryInitializer.Initialize(root, source, data, TextWriter.Null);
+        var edited = Path.Combine(root, "data/maps.toml");
+        File.WriteAllText(edited, "# edited\n");
+        File.WriteAllText(Path.Combine(data, "weather.toml"), "# new\n");
+        RootDirectoryInitializer.Initialize(root, source, data, TextWriter.Null);
+        Assert.Equal("# edited\n", File.ReadAllText(edited));
+        Assert.Equal("# new\n", File.ReadAllText(Path.Combine(root, "data/weather.toml")));
+    }
+
+    [Fact]
+    public void Initialize_MissingDistributionData_FailsBeforeCreatingRoot()
+    {
+        using var directory = new TemporaryDirectory();
+        var source = CreateMigrations(directory);
+        var root = Path.Combine(directory.Path, "root");
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            RootDirectoryInitializer.Initialize(root, source, Path.Combine(directory.Path, "missing"), TextWriter.Null)
+        );
+        Assert.Contains("shard data", exception.Message);
+        Assert.False(Directory.Exists(root));
+    }
+
+    private static string CreateData(TemporaryDirectory directory)
+    {
+        var data = Path.Combine(directory.Path, "distribution-data");
+
+        if (!Directory.Exists(data))
+        {
+            Directory.CreateDirectory(Path.Combine(data, "regions"));
+            File.WriteAllText(Path.Combine(data, "maps.toml"), "[[maps]]\n");
+            File.WriteAllText(Path.Combine(data, "regions/felucca.toml"), "[[regions]]\n");
+        }
+
+        return data;
     }
 
     private static string CreateMigrations(TemporaryDirectory directory)

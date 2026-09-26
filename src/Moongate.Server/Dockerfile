@@ -44,6 +44,7 @@ FROM restore AS build
 COPY [".editorconfig", "LICENSE", "THIRD-PARTY-NOTICES.md", "./"]
 COPY src/ src/
 COPY migrations/ migrations/
+COPY moongate_root/data/ moongate_root/data/
 
 FROM build AS publish
 RUN dotnet publish "src/Moongate.Server/Moongate.Server.csproj" -c "$BUILD_CONFIGURATION" -a "$TARGETARCH" --self-contained true --no-restore -o /app/publish

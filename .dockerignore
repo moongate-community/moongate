@@ -10,6 +10,9 @@
 !src/**
 !migrations/
 !migrations/**
+!moongate_root/
+!moongate_root/data/
+!moongate_root/data/**
 !samples/
 !samples/Moongate.Sample.Plugin/
 !samples/Moongate.Sample.Plugin/**

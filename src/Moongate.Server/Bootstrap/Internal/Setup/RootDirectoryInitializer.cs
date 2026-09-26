@@ -8,19 +8,21 @@ using Moongate.Server.Data.Config;
 namespace Moongate.Server.Bootstrap.Internal.Setup;
 
 /// <summary>
-///     Prepares a server data root offline, preserving existing configuration and migration history files.
+///     Prepares a server data root offline, preserving existing configuration, migration history and shard data files.
 /// </summary>
 internal static class RootDirectoryInitializer
 {
     public static void Initialize(
         string rootDirectory,
         string migrationsDirectory,
+        string dataDirectory,
         TextWriter output,
         IReadOnlyList<string>? adminCertificateHosts = null
     )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootDirectory);
         ArgumentException.ThrowIfNullOrWhiteSpace(migrationsDirectory);
+        ArgumentException.ThrowIfNullOrWhiteSpace(dataDirectory);
         ArgumentNullException.ThrowIfNull(output);
 
         if (adminCertificateHosts is not null)
@@ -36,6 +38,15 @@ internal static class RootDirectoryInitializer
         if (source.All(catalog => catalog.Scripts.Count == 0))
         {
             throw new InvalidOperationException("The Moongate distribution contains no base SQL migrations.");
+        }
+
+        var dataFiles = Directory.Exists(dataDirectory)
+                            ? Directory.GetFiles(dataDirectory, "*", SearchOption.AllDirectories)
+                            : [];
+
+        if (dataFiles.Length == 0)
+        {
+            throw new InvalidOperationException("The Moongate distribution contains no shard data files.");
         }
 
         Directory.CreateDirectory(root);
@@ -99,6 +110,14 @@ internal static class RootDirectoryInitializer
                     output
                 );
             }
+        }
+
+        // Copy only missing files, so data the operator edited survives a later run.
+        foreach (var file in dataFiles.Order(StringComparer.Ordinal))
+        {
+            var path = Path.Combine(root, "data", Path.GetRelativePath(dataDirectory, file));
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            CreateIfMissing(path, File.ReadAllBytes(file), output);
         }
 
         if (adminCertificateHosts is not null)

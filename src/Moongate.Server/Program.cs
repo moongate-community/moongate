@@ -73,6 +73,7 @@ await ConsoleApp.RunAsync(
                 RootDirectoryInitializer.Initialize(
                     rootDirectory,
                     Path.Combine(AppContext.BaseDirectory, "migrations"),
+                    Path.Combine(AppContext.BaseDirectory, "data"),
                     Console.Out,
                     generateAdminCertificate ? adminCertificateHosts?.Split(',') ?? [] : null
                 );
