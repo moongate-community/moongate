@@ -1,4 +1,3 @@
-using System.Collections.Concurrent;
 using System.Text.Json;
 using Tomlyn;
 using Tomlyn.Serialization;
@@ -16,8 +15,11 @@ namespace Moongate.Core.Utils;
 /// </remarks>
 public static class TomlUtils
 {
-    private static readonly ConcurrentBag<TomlConverter> Converters = new();
-    private static readonly Lock RebuildLock = new();
+    // Every change builds a new converter array and new options under this lock and publishes them together, so a
+    // reader never sees a registry half-way through an add or a remove.
+    private static readonly Lock RegistryLock = new();
+
+    private static volatile TomlConverter[] _converters = [];
 
     private static volatile TomlSerializerOptions _defaultOptions = new()
     {
@@ -34,13 +36,15 @@ public static class TomlUtils
 
         var converterType = converter.GetType();
 
-        if (Converters.Any(existing => existing.GetType() == converterType))
+        lock (RegistryLock)
         {
-            return;
-        }
+            if (Array.Exists(_converters, existing => existing.GetType() == converterType))
+            {
+                return;
+            }
 
-        Converters.Add(converter);
-        RebuildDefaultOptions();
+            Publish([.. _converters, converter]);
+        }
     }
 
     /// <summary>
@@ -88,10 +92,7 @@ public static class TomlUtils
     /// </summary>
     public static IReadOnlyList<TomlConverter> GetTomlConverters()
     {
-        var snapshot = new TomlConverter[Converters.Count];
-        Converters.CopyTo(snapshot, 0);
-
-        return Array.AsReadOnly(snapshot);
+        return Array.AsReadOnly(_converters);
     }
 
     /// <summary>
@@ -102,36 +103,19 @@ public static class TomlUtils
     /// </returns>
     public static bool RemoveTomlConverter<T>() where T : TomlConverter
     {
-        var removed = false;
-        var kept = new ConcurrentBag<TomlConverter>();
-
-        foreach (var converter in Converters)
+        lock (RegistryLock)
         {
-            if (converter is T)
+            var kept = Array.FindAll(_converters, converter => converter is not T);
+
+            if (kept.Length == _converters.Length)
             {
-                removed = true;
+                return false;
             }
-            else
-            {
-                kept.Add(converter);
-            }
+
+            Publish(kept);
+
+            return true;
         }
-
-        if (!removed)
-        {
-            return false;
-        }
-
-        Converters.Clear();
-
-        foreach (var converter in kept)
-        {
-            Converters.Add(converter);
-        }
-
-        RebuildDefaultOptions();
-
-        return true;
     }
 
     /// <summary>
@@ -195,15 +179,14 @@ public static class TomlUtils
         }
     }
 
-    private static void RebuildDefaultOptions()
+    // Called under RegistryLock with a fresh array that is never changed afterwards.
+    private static void Publish(TomlConverter[] converters)
     {
-        lock (RebuildLock)
+        _converters = converters;
+        _defaultOptions = new()
         {
-            _defaultOptions = new()
-            {
-                PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-                Converters = Converters.ToArray()
-            };
-        }
+            PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
+            Converters = converters
+        };
     }
 }

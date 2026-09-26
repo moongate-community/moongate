@@ -255,4 +255,54 @@ public sealed class TomlUtilsTests
             TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
         }
     }
+
+    [Fact]
+    public void RemoveTomlConverter_WhileOthersRead_NeverHidesAnotherConverter()
+    {
+        TomlUtils.AddTomlConverter(new RegistryTomlConverter<StableRegistryMarker>());
+        var missing = 0;
+        using var stop = new CancellationTokenSource();
+
+        var reader = Task.Run(() =>
+            {
+                while (!stop.IsCancellationRequested)
+                {
+                    if (!TomlUtils.GetTomlConverters().OfType<RegistryTomlConverter<StableRegistryMarker>>().Any())
+                    {
+                        Interlocked.Increment(ref missing);
+                    }
+                }
+            }
+        );
+
+        for (var i = 0; i < 20000; i++)
+        {
+            TomlUtils.AddTomlConverter(new RecordingTomlConverter());
+            TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
+        }
+
+        stop.Cancel();
+        reader.Wait();
+
+        Assert.Equal(0, missing);
+    }
+
+    [Fact]
+    public void AddTomlConverter_SameTypeFromManyThreads_RegistersOnce()
+    {
+        try
+        {
+            for (var round = 0; round < 200; round++)
+            {
+                TomlUtils.RemoveTomlConverter<RegistryTomlConverter<ParallelRegistryMarker>>();
+                Parallel.For(0, 16, _ => TomlUtils.AddTomlConverter(new RegistryTomlConverter<ParallelRegistryMarker>()));
+
+                Assert.Single(TomlUtils.GetTomlConverters().OfType<RegistryTomlConverter<ParallelRegistryMarker>>());
+            }
+        }
+        finally
+        {
+            TomlUtils.RemoveTomlConverter<RegistryTomlConverter<ParallelRegistryMarker>>();
+        }
+    }
 }
