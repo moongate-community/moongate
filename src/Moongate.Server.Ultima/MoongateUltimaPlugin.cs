@@ -116,6 +116,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
             // After the loaders: the maps come from data/maps.toml.
             container.AddMoongateService<IMapService, MapService>(-4);
+            // After IUltimaDataService: the multis come from the client directory.
+            container.AddMoongateService<IMultiService, MultiService>(-4);
         }
     }
 }

@@ -202,6 +202,7 @@ for schema operations and world saves see
 | Exits right after writing `config/moongate.toml` | Expected on a fresh root: `ultima_path` is still `ChangeMe`. Continue with step 2 |
 | Client path error | Set `ultima.ultima_path` to readable, real client data |
 | `Map ... needs map{n}.mul or map{n}LegacyMUL.uop, staidx{n}.mul and statics{n}.mul` | The client lacks that map. Use a complete client, or remove the map from `data/maps.toml` |
+| `The Ultima path has neither MultiCollection.uop nor multi.idx and multi.mul` | The client directory is incomplete. Point `ultima.ultima_path` at a full client installation |
 | `tiledata.mul not found in the Ultima path` | The client directory is incomplete or is not a client directory. Point `ultima.ultima_path` at a full client installation |
 | TOML parse or validation error | Fix the named field; existing files are not silently replaced |
 | `Postgres connection` failure | The database does not exist, the host is wrong, or the role cannot log in. Inside a container, `localhost` is the container itself |
