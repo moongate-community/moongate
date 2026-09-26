@@ -24,12 +24,20 @@ public sealed class CharacterListPacket : BasePacket<CharacterListPacket>, IOutg
 
     private const int SlotNameLength = 30;
     private const int SlotEntryLength = 60;
-    private const int CityTextLength = 32;
     private const int CityEntryLength = 89;
-    private const int MaximumCityCount = byte.MaxValue;
     private const ushort NoLastCharacterSlot = 0xFFFF;
 
     private static readonly int[] SupportedSlotCounts = [1, 5, 6, 7];
+
+    /// <summary>
+    ///     The most ASCII characters a city town or description can have.
+    /// </summary>
+    public const int CityTextLength = 32;
+
+    /// <summary>
+    ///     The most cities the list can carry: the count is one byte.
+    /// </summary>
+    public const int MaximumCityCount = byte.MaxValue;
 
     public override int Length { get; }
 

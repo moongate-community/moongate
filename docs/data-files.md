@@ -124,10 +124,14 @@ cliloc = 1150168
 | `map` | The map of `location`. |
 | `cliloc` | The id of the localized description the client shows. |
 
-The loader only checks that the file exists. The limits of the packet are checked
-when the character list is built, at each game login: `town` and `description` must
-be ASCII and at most 32 characters, and the list may hold at most 255 cities. A
-city that breaks them does not stop the server; the character list fails instead.
+### Validation at startup
+
+The loader checks the limits of the character list packet, so a bad city stops the
+server at startup instead of failing at each game login. It stops when:
+
+- the file does not exist;
+- it has no `[[starting_city]]` entries, or more than 255;
+- a `town` or `description` is empty, longer than 32 characters or not ASCII.
 
 ## Skills
 

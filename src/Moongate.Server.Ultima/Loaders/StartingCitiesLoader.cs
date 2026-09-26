@@ -1,8 +1,10 @@
+using System.Text;
 using Moongate.Core.Directories;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Packets.Characters;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Loaders;
@@ -35,11 +37,38 @@ public class StartingCitiesLoader : IDataLoader<StartingCityContent>
         var startingCitiesFile =
             await TomlUtils.DeserializeFromFileAsync<StartingCityFile>(startingCitiesFilePath, null, cancellationToken);
 
-        _logger.Information("Found {Count} starting cities", startingCitiesFile?.StartingCity.Count);
+        var cities = startingCitiesFile?.StartingCity ?? [];
+
+        // The character list (0xA9) carries these cities, so check its limits here instead of at game login.
+        if (cities.Count is 0 or > CharacterListPacket.MaximumCityCount)
+        {
+            throw new InvalidDataException(
+                $"{startingCitiesFilePath} needs from 1 to {CharacterListPacket.MaximumCityCount} [[starting_city]] entries, found {cities.Count}."
+            );
+        }
+
+        foreach (var city in cities)
+        {
+            if (!IsCityText(city.Town) || !IsCityText(city.Description))
+            {
+                throw new InvalidDataException(
+                    $"{startingCitiesFilePath}: city '{city.Town}' needs a town and a description of 1 to {CharacterListPacket.CityTextLength} ASCII characters."
+                );
+            }
+        }
+
+        _logger.Information("Found {Count} starting cities", cities.Count);
 
         return new DataLoaderResult<StartingCityContent>()
         {
-            Entities = startingCitiesFile.StartingCity
+            Entities = cities
         };
+    }
+
+    private static bool IsCityText(string? text)
+    {
+        return !string.IsNullOrWhiteSpace(text) &&
+               text.Length <= CharacterListPacket.CityTextLength &&
+               Ascii.IsValid(text);
     }
 }
