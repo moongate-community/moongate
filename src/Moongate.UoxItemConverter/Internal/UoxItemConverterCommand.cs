@@ -18,8 +18,24 @@ namespace Moongate.UoxItemConverter.Internal;
 /// </summary>
 internal static class UoxItemConverterCommand
 {
-    public static int Run(string source, string destination, string? lootDestination, TextWriter output, TextWriter error)
+    public static int Run(
+        string source,
+        string destination,
+        string? lootDestination,
+        TextWriter output,
+        TextWriter error,
+        string? mobileSource = null,
+        string? mobileDestination = null,
+        string? namesDestination = null
+    )
     {
+        if ((mobileSource is null) != (mobileDestination is null) || (mobileSource is null) != (namesDestination is null))
+        {
+            error.WriteLine("--mobile-source, --mobile-destination and --names-destination go together: give all three or none.");
+
+            return 2;
+        }
+
         source = Path.GetFullPath(source);
         destination = Path.GetFullPath(destination);
         lootDestination = lootDestination is null ? null : Path.GetFullPath(lootDestination);
@@ -235,7 +251,21 @@ internal static class UoxItemConverterCommand
             "no duplicate ids, every BaseId and loot reference resolves."
         );
 
-        return 0;
+        if (mobileSource is null)
+        {
+            return 0;
+        }
+
+        var items = new ItemIndex(idByHeader, blocksByHeader, knownLootIds);
+
+        return UoxMobileConverter.Run(
+            Path.GetFullPath(mobileSource),
+            Path.GetFullPath(mobileDestination!),
+            Path.GetFullPath(namesDestination!),
+            items,
+            output,
+            error
+        );
     }
 
     /// <summary>

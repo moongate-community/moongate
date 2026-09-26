@@ -18,8 +18,24 @@ internal static class Cli
     ///     Directory to write the converted LootTemplate .toml files under. Omit it to leave every
     ///     [LOOTLIST ...] block unconverted.
     /// </param>
-    public static int Run(string source, string destination, string? lootDestination = null)
+    public static int Run(
+        string source,
+        string destination,
+        string? lootDestination = null,
+        string? mobileSource = null,
+        string? mobileDestination = null,
+        string? namesDestination = null
+    )
     {
-        return UoxItemConverterCommand.Run(source, destination, lootDestination, Console.Out, Console.Error);
+        return UoxItemConverterCommand.Run(
+            source,
+            destination,
+            lootDestination,
+            Console.Out,
+            Console.Error,
+            mobileSource,
+            mobileDestination,
+            namesDestination
+        );
     }
 }

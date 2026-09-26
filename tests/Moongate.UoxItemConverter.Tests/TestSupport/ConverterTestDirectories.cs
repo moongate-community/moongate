@@ -8,6 +8,9 @@ internal sealed class ConverterTestDirectories : IDisposable
     public string SourceDirectory { get; }
     public string DestinationDirectory { get; }
     public string LootDestinationDirectory { get; }
+    public string MobileSourceDirectory { get; }
+    public string MobileDestinationDirectory { get; }
+    public string NamesDestinationPath { get; }
 
     public ConverterTestDirectories()
     {
@@ -15,6 +18,9 @@ internal sealed class ConverterTestDirectories : IDisposable
         SourceDirectory = Path.Combine(root, "source");
         DestinationDirectory = Path.Combine(root, "destination");
         LootDestinationDirectory = Path.Combine(root, "loot-destination");
+        MobileSourceDirectory = Path.Combine(root, "dfndata");
+        MobileDestinationDirectory = Path.Combine(root, "mobile-destination");
+        NamesDestinationPath = Path.Combine(root, "names", "names.toml");
         Directory.CreateDirectory(SourceDirectory);
     }
 
@@ -28,6 +34,15 @@ internal sealed class ConverterTestDirectories : IDisposable
     public string WriteSource(string relativePath, string content)
     {
         var path = Path.Combine(SourceDirectory, relativePath);
+        Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+        File.WriteAllText(path, content);
+
+        return path;
+    }
+
+    public string WriteMobileSource(string relativePath, string content)
+    {
+        var path = Path.GetFullPath(Path.Combine(MobileSourceDirectory, relativePath));
         Directory.CreateDirectory(Path.GetDirectoryName(path)!);
         File.WriteAllText(path, content);
 
