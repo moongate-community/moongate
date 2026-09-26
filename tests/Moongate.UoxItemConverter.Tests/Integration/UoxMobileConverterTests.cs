@@ -262,6 +262,66 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Equal(((int?)null, (int?)0x15C), (mobiles["man"].Sounds!.Idle, mobiles["man"].Sounds!.Death));
     }
 
+    [Fact]
+    public void Run_AMaleFemalePair_BecomesOneRandomGenderTemplate_AndOtherPairsAreSkipped()
+    {
+        _dirs.WriteSource("items.dfn", "[0x13e4]\n{\nid=0x13e4\n}\n[0x1517]\n{\nid=0x1517\n}\n[0x1516]\n{\nid=0x1516\n}\n");
+        WriteNames();
+        _dirs.WriteMobileSource(
+            "npc/a.dfn",
+            """
+            [basehuman]
+            {
+            FLAG=INNOCENT
+            }
+            [m_guard]
+            {
+            GET=basehuman
+            NAMELIST=1
+            ID=0x0190
+            DEF=20
+            EQUIPITEM=0x13e4
+            EQUIPITEM=0x1517
+            }
+            [f_guard]
+            {
+            GET=basehuman
+            NAMELIST=2
+            ID=0x0191
+            DEF=100
+            EQUIPITEM=0x13e4
+            EQUIPITEM=0x1516
+            }
+            [guard]
+            {
+            GET=m_guard f_guard
+            }
+            [dragon]
+            {
+            GET=m_guard basehuman
+            }
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var mobiles = ReadMobiles("a.toml");
+        var guard = mobiles["guard"];
+        Assert.Equal(
+            ((MobileGenderType?)MobileGenderType.Random, (RaceType?)RaceType.Human, "{gender}", "basehuman"),
+            (guard.Gender, guard.Race, guard.NameList, guard.BaseId)
+        );
+        Assert.Equal(20, guard.Armor!.Value.Roll());
+        Assert.Equal(
+            ["0x13e4:", "0x1517:Male", "0x1516:Female"],
+            guard.Equipment!.Select(entry => $"{string.Join(",", entry.Items)}:{entry.Gender}")
+        );
+        Assert.True(mobiles.ContainsKey("m_guard"));
+        Assert.False(mobiles.ContainsKey("dragon"));
+        Assert.Contains("differs between the male and female", CombinedOutput);
+        Assert.Contains("not a gender pair", CombinedOutput);
+    }
+
     private void WriteItemsAndNames()
     {
         _dirs.WriteSource("items.dfn", "[0x0eed]\n{\nid=0x0eed\n}\n");

@@ -2,6 +2,8 @@ using Moongate.Core.Utils;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Ultima.Types;
 
 namespace Moongate.UoxItemConverter.Internal;
 
@@ -82,12 +84,24 @@ internal static class UoxMobileConverter
         );
         var written = 0;
 
-        foreach (var (file, blocks) in blocksByFile)
+        // First every single template, so a pair can resolve both halves wherever they are defined.
+        var builtByFile = blocksByFile.Select(
+                                          pair => (pair.File, Built: pair.Blocks
+                                                                        .Where(block => ReferenceEquals(blocksByHeader.GetValueOrDefault(block.Header), block))
+                                                                        .Select(block => (Block: block, Template: MobileTemplateBuilder.Build(block, context)))
+                                                                        .ToList())
+                                      )
+                                      .ToList();
+        var byHeader = builtByFile.SelectMany(pair => pair.Built)
+                                  .Where(built => built.Template is not null)
+                                  .ToDictionary(built => built.Block.Header, built => built.Template!, StringComparer.OrdinalIgnoreCase);
+        var byId = byHeader.Values.ToDictionary(template => template.Id);
+
+        foreach (var (file, built) in builtByFile)
         {
-            var templates = blocks.Where(block => ReferenceEquals(blocksByHeader.GetValueOrDefault(block.Header), block))
-                                  .Select(block => MobileTemplateBuilder.Build(block, context))
-                                  .OfType<MobileTemplate>()
-                                  .ToList();
+            var templates = built.Select(pair => pair.Template ?? MergePair(pair.Block, byHeader, byId, report))
+                                 .OfType<MobileTemplate>()
+                                 .ToList();
 
             if (templates.Count == 0)
             {
@@ -110,6 +124,56 @@ internal static class UoxMobileConverter
         }
 
         return 0;
+    }
+
+    // GET=a b: one template from a male/female pair; any other pair is skipped.
+    private static MobileTemplate? MergePair(
+        DfnBlock block,
+        Dictionary<string, MobileTemplate> byHeader,
+        Dictionary<string, MobileTemplate> byId,
+        ConversionReport report
+    )
+    {
+        var targets = MobileTemplateBuilder.GetTargets(block);
+
+        if (MobileTemplateBuilder.IsSpecialSection(block.Header) || targets.Length != 2)
+        {
+            return null;
+        }
+
+        if (!byHeader.TryGetValue(targets[0], out var first) || !byHeader.TryGetValue(targets[1], out var second))
+        {
+            report.Count("two-target get, unresolved");
+
+            return null;
+        }
+
+        return GenderPairMerger.TryMerge(
+            StringUtils.ToSnakeCase(block.Header),
+            first,
+            second,
+            template => Resolve(template, byId),
+            report,
+            out var merged
+        )
+            ? merged
+            : null;
+    }
+
+    // Race and gender may come from a base: walk the base_id chain until each is found.
+    private static (RaceType? Race, MobileGenderType? Gender) Resolve(MobileTemplate template, Dictionary<string, MobileTemplate> byId)
+    {
+        RaceType? race = null;
+        MobileGenderType? gender = null;
+        var seen = new HashSet<string>();
+
+        for (var current = template; current is not null && seen.Add(current.Id); current = current.BaseId is null ? null : byId.GetValueOrDefault(current.BaseId))
+        {
+            race ??= current.Race;
+            gender ??= current.Gender;
+        }
+
+        return (race, gender);
     }
 
     // Name lists are converted on their own; npclists are spawn lists, not npcs.
