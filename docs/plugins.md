@@ -187,6 +187,8 @@ service takes a lower priority than the services that depend on it. Built-in val
 | -900 | `TimerWheelService` |
 | -800 | `IGameLoopService` (`GameLoopService`) |
 | -10 | `IUltimaDataService` (`UltimaDataService`) |
+| -5 | `IDataLoaderService` (`DataLoaderService`; game and standalone) |
+| -4 | `IMapService` (`MapService`), `IMultiService` (`MultiService`); game and standalone, see [Client files and world queries](world-queries.md) |
 | 0 (default) | `ISessionService`, `IEventBusService`, `IPluginLoaderService`, `ICommandSystemService`, and any registration that omits `priority` |
 | 40 | `IWorldSaveService` (`WorldSaveService`), `IConnectionService` |
 | 50 | `IPacketSendService` |

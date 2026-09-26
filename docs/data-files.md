@@ -108,46 +108,9 @@ The server stops when:
 
 ### Read the map from code
 
-`IMapService` gives the terrain and the static objects of each cell:
-
-```csharp
-var land = mapService.GetLand(MapType.Felucca, 1602, 1591);    // cobblestones, Z 20
-var statics = mapService.GetStatics(MapType.Felucca, 1400, 1500); // willow tree and leaves, Z 10
-var name = tileDataService.GetItem(statics[0].Id).Name;
-```
-
-`GetLand` returns the land graphic id and Z; `GetStatics` returns each object's
-item graphic id, Z and hue. Look the ids up in `ITileDataService` for names, flags
-and heights. Blocks of 8x8 cells are read the first time they are asked for and
-kept in a bounded cache. Call the service from the game loop only: the client-file
-readers share their buffers.
-
-`IMovementService` checks one step with the same rules as the client: a mover is 16
-units tall, climbs at most 2 units per step, stands on half the height of a bridge
-such as a stair, and a diagonal step needs both cells beside it free:
-
-```csharp
-if (movementService.CheckMovement(MapType.Felucca, from, DirectionType.East,
-        MovementAbilityType.Walk, out var newZ))
-{
-    // the step is allowed; the mover lands at newZ
-}
-```
-
-`MovementAbilityType.Swim` lets a mover enter water. World items, mobiles and placed
-multis are not part of the check yet.
-
-`ILineOfSightService` checks whether one point sees another. Pass both points at eye or
-target height; a mobile's eye is its Z plus 14:
-
-```csharp
-var visible = lineOfSightService.HasLineOfSight(MapType.Felucca,
-    new Point3D(1602, 1591, 20 + 14), new Point3D(1610, 1591, 20 + 14));
-```
-
-Statics flagged `Window` or `NoShoot` and terrain block the line; a blocker at the
-target's cell and height does not. Points farther than `line_of_sight.max_distance`
-(default 25) along X or Y are never in sight.
+`IMapService` reads the terrain and statics of these maps, and `IMovementService` and
+`ILineOfSightService` answer movement and sight questions on them; see
+[Client files and world queries](world-queries.md).
 
 ## Starting cities
 
@@ -180,7 +143,7 @@ server at startup instead of failing at each game login. It stops when:
 
 - the file does not exist;
 - it has no `[[starting_city]]` entries, or more than 255;
-- a `town` or `description` is empty, longer than 32 characters or not ASCII.
+- a `town` or `description` is empty or blank, longer than 32 characters or not ASCII.
 
 ## Skills
 

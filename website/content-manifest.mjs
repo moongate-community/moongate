@@ -35,6 +35,7 @@ export const contentEntries = [
   { source: 'docs/persistence-migrations.md', slug: 'server/persistence-migrations', title: 'Migrations: generate, review and apply', group: 'Extend with C#', subgroup: 'Persistence' },
   { source: 'docs/packets.md', slug: 'server/packets', title: 'Packets and handlers', group: 'Extend with C#', subgroup: 'Network and game loop' },
   { source: 'docs/network-game-separation.md', slug: 'server/network-game-separation', title: 'Transport and game ownership', group: 'Extend with C#', subgroup: 'Network and game loop' },
+  { source: 'docs/world-queries.md', slug: 'server/world-queries', title: 'Client files and world queries', group: 'Extend with C#', subgroup: 'Network and game loop' },
   { source: 'docs/game-loop-and-timers.md', slug: 'server/game-loop-and-timers', title: 'Game loop and timers', group: 'Extend with C#', subgroup: 'Network and game loop' },
 
   // Libraries: the NuGet packages, usable without the server.

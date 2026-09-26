@@ -48,7 +48,8 @@ storage, Docker Compose, logs, and upgrades.
 ## Status
 
 Moongate is under active development. The transport, packet pipeline, scripting,
-persistence, shard data files and Redis-backed login-to-game handoff are in place, and
+persistence, shard data files, client-file readers (tiledata, maps, multis) with movement
+and line-of-sight checks, and Redis-backed login-to-game handoff are in place, and
 the game sends an empty character list after login; character creation, selection and
 a playable world are not. [Implementation status](docs/implementation-status.md)
 lists what works today, area by area.
@@ -108,6 +109,7 @@ Start with [Writing Lua scripts](docs/scripting.md). The
 - [Registering a metric provider](docs/metric-providers.md): an `IMetricProvider` whose samples join the diagnostics snapshot.
 - [Localization](docs/localization.md): the server language, the `data/messages` files and `ILocalizationService`.
 - [Shard data files](docs/data-files.md): the TOML files under `data/` (maps, regions, races, skills and the rest), their fields and the checks that stop the server at startup.
+- [Client files and world queries](docs/world-queries.md): `ITileDataService`, `IMapService` and `IMultiService` over the client files, plus `IMovementService` and `ILineOfSightService` for steps and sight.
 - [Loading TOML templates](docs/templates.md): an `IDataLoader<TEntity>` that reads shard content once at startup, plus `EnumValueSpec<TEnum>` for fields that resolve randomly.
 
 The first three are shown by one compiled sample, [samples/Moongate.Sample.Plugin](samples/Moongate.Sample.Plugin/), which the test suite loads through the real plugin loader.

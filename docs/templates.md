@@ -124,14 +124,17 @@ public readonly struct RangeValueSpec<T> where T : struct, INumber<T>
 }
 ```
 
-As text, a bare number (`hue = 1150`) is fixed; a quoted `min-max` (`hue = "1150-1200"`)
+As text, a bare number (`amount = 5`) is fixed; a quoted `min-max` (`amount = "5-10"`)
 picks a fresh value in that inclusive range on every `Resolve()`. A quoted bare
-number (`hue = "1150"`) is accepted too. Writing a fixed value emits a bare number;
+number (`amount = "5"`) is accepted too. Writing a fixed value emits a bare number;
 writing a range emits the quoted form.
 
 ```csharp
-public RangeValueSpec<int> Hue { get; set; } = RangeValueSpec<int>.FromValue(0);
+public RangeValueSpec<int> Amount { get; set; } = RangeValueSpec<int>.FromValue(1);
 ```
+
+Hues have their own type, `HueSpec`, with the same fixed-or-range text form and hex
+values such as `"0x03EA-0x0422"`; `ItemTemplate.Hue` uses it.
 
 ## Registering a TOML converter
 
@@ -149,8 +152,11 @@ public static bool RemoveTomlConverter<T>() where T : TomlConverter;
 public static IReadOnlyList<TomlConverter> GetTomlConverters();
 ```
 
-`AddTomlConverter` is thread-safe and idempotent: a second converter of the same
-type is ignored. Registration is global and process-wide. Register once, at startup:
+`AddTomlConverter` and `RemoveTomlConverter` are thread-safe: each change replaces the
+converter list and the default options together, so a concurrent call sees the old
+set or the new one, never a mix. A second converter of the same type is ignored;
+`RemoveTomlConverter<T>` removes every converter of type `T`, and `GetTomlConverters`
+returns the current set. Registration is global and process-wide. Register once, at startup:
 
 ```csharp
 TomlUtils.AddTomlConverter(new SerialTomlConverter());
@@ -247,7 +253,7 @@ itself generic, and register the instance once with `TomlUtils.AddTomlConverter`
 | `ScriptId` | Names the Lua module handling this template's behaviour |
 | `Movable` | Tiledata carries no such flag, so this is explicit |
 | `Visibility` | The lowest account type that sees the item: `regular`, `game_master` or `administrator`, as `realm_directory.minimum_account_type`. Unset by default, so a template inherits it through `BaseId`; an item with none anywhere is visible to everyone. `IsVisibleTo(accountType)` answers for one viewer |
-| `Hue` | `RangeValueSpec<int>`, `0` meaning the art's native coloring |
+| `Hue` | `HueSpec`, `0` meaning the art's native coloring; a quoted `"min-max"` range picks one per spawn |
 | `MaxItems`, `MaxWeight` | Nullable; set only on a container template |
 
 Spawners, for example, are for staff only, and their children inherit it:
