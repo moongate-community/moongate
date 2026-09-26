@@ -111,4 +111,36 @@ public sealed class MobileTemplateTests
             Assert.DoesNotContain($"[{key}]", toml);
         }
     }
+
+    [Theory,
+     InlineData("strength = \"1d6-10\"\n", "strength"),
+     InlineData("hits = -1\n", "hits"),
+     InlineData("gold = -5\n", "gold"),
+     InlineData("[skills]\nnot_a_skill = 50\n", "skills"),
+     InlineData("[skills]\ntactics = \"1d30+100\"\n", "skills"),
+     InlineData("[resistances]\nfire = 101\n", "resistances"),
+     InlineData("[sounds]\ndeath = -1\n", "sounds"),
+     InlineData("[tags]\n\" \" = \"x\"\n", "tags"),
+     InlineData("[[equipment]]\nitems = []\n", "equipment"),
+     InlineData("[[equipment]]\nitems = [\"\"]\n", "equipment")]
+    public void Validate_ABadValue_NamesTheTemplateAndField(string fields, string field)
+    {
+        var template = TomlUtils.Deserialize<MobileTemplate>("id = \"orc\"\n" + fields)!;
+
+        var error = Assert.Throws<InvalidDataException>(template.Validate);
+
+        Assert.StartsWith($"Mobile template 'orc': {field} ", error.Message);
+    }
+
+    [Fact]
+    public void Validate_NegativeKarma_Passes()
+    {
+        TomlUtils.Deserialize<MobileTemplate>("id = \"orc\"\nkarma = -2500\n")!.Validate();
+    }
+
+    [Fact]
+    public void Validate_AValidTemplate_Passes()
+    {
+        TomlUtils.Deserialize<MobileTemplate>("id = \"orc\"\nstrength = \"1d25+95\"\n[skills]\ntactics = 80\n[[equipment]]\nitems = [\"club\"]\n")!.Validate();
+    }
 }

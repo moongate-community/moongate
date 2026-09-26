@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
@@ -184,4 +185,68 @@ public class MobileTemplate
     ///     Free values for scripts. A child template's tags add to and override its base's.
     /// </summary>
     public Dictionary<string, string>? Tags { get; set; }
+
+    /// <summary>
+    ///     Checks the values a template author can get wrong; the template loader calls it for every template.
+    /// </summary>
+    /// <exception cref="InvalidDataException">A value is out of range; the message names the template and the field.</exception>
+    public void Validate()
+    {
+        foreach (var (field, dice) in new (string, DiceSpec?)[]
+                 {
+                     ("strength", Strength), ("dexterity", Dexterity), ("intelligence", Intelligence), ("hits", Hits),
+                     ("mana", Mana), ("stamina", Stamina), ("damage", Damage), ("armor", Armor), ("fame", Fame),
+                     ("gold", Gold)
+                 })
+        {
+            if (dice is { Min: < 0 })
+            {
+                throw Invalid(field, "must not roll below 0");
+            }
+        }
+
+        if (Skills is not null)
+        {
+            foreach (var (name, dice) in Skills)
+            {
+                if (!EnumNameUtils.TryParse<SkillType>(name, out _))
+                {
+                    throw Invalid("skills", $"has '{name}', which is not a skill");
+                }
+
+                if (dice.Min < 0 || dice.Max > 120)
+                {
+                    throw Invalid("skills", $"'{name}' must roll between 0 and 120");
+                }
+            }
+        }
+
+        if (Resistances is not null &&
+            new[] { Resistances.Physical, Resistances.Fire, Resistances.Cold, Resistances.Poison, Resistances.Energy }
+                .Any(dice => dice is { } value && (value.Min < 0 || value.Max > 100)))
+        {
+            throw Invalid("resistances", "must roll between 0 and 100");
+        }
+
+        if (Sounds is not null &&
+            new[] { Sounds.StartAttack, Sounds.Idle, Sounds.Attack, Sounds.Hurt, Sounds.Death }.Any(sound => sound < 0))
+        {
+            throw Invalid("sounds", "must be 0 or more");
+        }
+
+        if (Equipment is not null && Equipment.Any(entry => entry.Items.Count == 0 || entry.Items.Any(string.IsNullOrWhiteSpace)))
+        {
+            throw Invalid("equipment", "must name at least one item and no empty item id");
+        }
+
+        if (Tags is not null && Tags.Keys.Any(string.IsNullOrWhiteSpace))
+        {
+            throw Invalid("tags", "must not have an empty key");
+        }
+    }
+
+    private InvalidDataException Invalid(string field, string rule)
+    {
+        return new($"Mobile template '{Id}': {field} {rule}.");
+    }
 }
