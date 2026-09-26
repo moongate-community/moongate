@@ -130,7 +130,7 @@ too.
 | skill tags (`MAGERY=500 700`) | `[mobile.skills]` | tenths to points, capped at 120; `MAGICRESISTANCE` is `resisting_spells` |
 | `KARMA`, `FAME`, `GOLD` | `karma`, `fame`, `gold` | dice |
 | `FLAG=INNOCENT/NEUTRAL/EVIL` | `notoriety` innocent / attackable / murderer | |
-| `EQUIPITEM=x`, `EQUIPITEM=listobjectN` | `[[mobile.equipment]]` | a list gives every item of `[ITEMLIST N]`, one picked at random; its weights and `blank` lines are dropped; the hair and beard lists 13–15 are skipped |
+| `EQUIPITEM=x`, `EQUIPITEM=listobjectN` | `[[mobile.equipment]]` | a list gives every item of `[ITEMLIST N]`, one picked at random; its weights and `blank` lines are dropped; the hair and beard lists 13–15 are skipped. An item block with no `id=` of its own is followed: `getlbr=x` gives x, `get=a b` gives both |
 | `COLOR`, `COLORLIST` after an `EQUIPITEM` | that entry's `hue` | a colour list only when it is one unbroken run of hues |
 | `LOOT=list,n` | `loot` | the loot table, n times |
 | `CUSTOMINTTAG`, `CUSTOMSTRINGTAG` | `tags` | |
@@ -138,8 +138,9 @@ too.
 
 `GET=m_guard f_guard`, a male and a female of the same race, becomes one `guard` with
 `gender = "random"`, `name_list = "{gender}"` and the equipment only one of them wears
-filtered by `gender`. A field the two set differently takes the male value and is
-reported; in UOX3's data that is mostly the death sound of humans. Any other two-target
+filtered by `gender`. Sounds the two set differently (humans die with a male or a female
+scream) are left unset rather than giving a female the male sound; any other field set
+differently takes the male value and is reported. Any other two-target
 `GET` (`graydragon reddragon`) is skipped.
 
 Dropped, no home yet: AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),

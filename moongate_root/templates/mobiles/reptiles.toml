@@ -208,6 +208,8 @@ idle = 635
 attack = 636
 hurt = 637
 death = 638
+[[mobile.equipment]]
+items = ["base_halberd", "base_bardiche"]
 
 [[mobile]]
 id = "ophenforcer"
@@ -235,6 +237,8 @@ idle = 635
 attack = 636
 hurt = 637
 death = 638
+[[mobile.equipment]]
+items = ["base_halberd", "base_bardiche"]
 
 [[mobile]]
 id = "ophknight"
@@ -262,6 +266,8 @@ idle = 635
 attack = 636
 hurt = 637
 death = 638
+[[mobile.equipment]]
+items = ["base_halberd", "base_bardiche"]
 
 [[mobile]]
 id = "ophavenger"
@@ -290,6 +296,8 @@ idle = 635
 attack = 636
 hurt = 637
 death = 638
+[[mobile.equipment]]
+items = ["base_halberd", "base_bardiche"]
 
 [[mobile]]
 id = "ophapprentice"

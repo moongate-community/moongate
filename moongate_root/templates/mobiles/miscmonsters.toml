@@ -82,6 +82,8 @@ idle = 680
 attack = 681
 hurt = 682
 death = 683
+[[mobile.equipment]]
+items = ["base_bow"]
 
 [[mobile]]
 id = "ethwarrior"
@@ -458,6 +460,8 @@ idle = 467
 attack = 468
 hurt = 469
 death = 470
+[[mobile.equipment]]
+items = ["0x1647_a_lightsource"]
 
 [[mobile]]
 id = "shadowwisp"
@@ -483,6 +487,8 @@ idle = 467
 attack = 468
 hurt = 469
 death = 470
+[[mobile.equipment]]
+items = ["0x1647_a_lightsource"]
 
 [[mobile]]
 id = "darkwisp"
@@ -509,6 +515,8 @@ idle = 467
 attack = 468
 hurt = 469
 death = 470
+[[mobile.equipment]]
+items = ["0x1647_a_lightsource"]
 
 [[mobile]]
 id = "evilmage"

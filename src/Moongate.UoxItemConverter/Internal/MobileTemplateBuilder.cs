@@ -420,17 +420,38 @@ internal static class MobileTemplateBuilder
 
         foreach (var header in headers)
         {
-            if (context.Items.ItemIdByHeader.TryGetValue(header, out var id))
-            {
-                items.Add(id);
-            }
-            else
+            var resolved = ResolveItemIds(header, context.Items, 0);
+
+            if (resolved.Count == 0)
             {
                 context.Report.Count("unresolved item");
             }
+
+            items.AddRange(resolved.Where(id => !items.Contains(id)));
         }
 
         return items.Count == 0 ? null : new MobileEquipmentEntry { Items = items };
+    }
+
+    // An item block without an id of its own is an alias: getlbr=x is x in UOX3's default era, get=a b is a or b.
+    // Items already picks one evenly, so a random get becomes every target.
+    private static List<string> ResolveItemIds(string header, ItemIndex items, int depth)
+    {
+        if (items.ItemIdByHeader.TryGetValue(header, out var id))
+        {
+            return [id];
+        }
+
+        if (depth > 8 || !items.ItemBlocksByHeader.TryGetValue(header, out var block))
+        {
+            return [];
+        }
+
+        var targets = block.Fields.TryGetValue("GETLBR", out var eraTarget)
+            ? [eraTarget.Trim()]
+            : GetTargets(block);
+
+        return targets.SelectMany(target => ResolveItemIds(target, items, depth + 1)).Distinct().ToList();
     }
 
     private static void ApplyColorList(string value, MobileBuildContext context, Action<HueSpec> apply)

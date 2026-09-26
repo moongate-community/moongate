@@ -357,7 +357,7 @@ tactics = "1d24+44"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["0x13b2", "0x13fd"]
+items = ["base_crossbow", "0x13b2", "0x13fd"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -421,6 +421,9 @@ death = 348
 items = ["0x13cd"]
 
 [[mobile.equipment]]
+items = ["base_skinning_knife"]
+
+[[mobile.equipment]]
 items = ["0x13d2"]
 
 [[mobile.equipment]]
@@ -428,6 +431,9 @@ items = ["0x13d3"]
 
 [[mobile.equipment]]
 items = ["0x13ce"]
+
+[[mobile.equipment]]
+items = ["base_leather_gorget"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -448,6 +454,9 @@ resisting_spells = "1d24+64"
 wrestling = "1d33+35"
 [mobile.sounds]
 death = 348
+[[mobile.equipment]]
+items = ["base_black_staff"]
+
 [[mobile.equipment]]
 items = ["0x1718_wizard's_hat"]
 hue = "0x0515-0x054A"
@@ -694,6 +703,9 @@ taste_identification = "1d33+35"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
+items = ["base_pitchfork"]
+
+[[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
 hue = "0x0835-0x0852"
 
@@ -758,6 +770,9 @@ animal_taming = "1d11+89"
 veterinary = "1d24+64"
 [mobile.sounds]
 death = 348
+[[mobile.equipment]]
+items = ["base_shepherds_crook"]
+
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
 hue = "0x0835-0x0852"
@@ -988,8 +1003,6 @@ intelligence = "1d26+49"
 damage = "1d13+2"
 armor = 10
 notoriety = "innocent"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x203b_short_hair"]
 
@@ -1162,6 +1175,9 @@ items = ["0x1544"]
 items = ["0x13cd"]
 
 [[mobile.equipment]]
+items = ["base_skinning_knife"]
+
+[[mobile.equipment]]
 items = ["0x13d2"]
 
 [[mobile.equipment]]
@@ -1169,6 +1185,9 @@ items = ["0x13d3"]
 
 [[mobile.equipment]]
 items = ["0x13ce"]
+
+[[mobile.equipment]]
+items = ["base_leather_gorget"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -1191,6 +1210,9 @@ items = ["0x1544"]
 items = ["0x13cd"]
 
 [[mobile.equipment]]
+items = ["base_skinning_knife"]
+
+[[mobile.equipment]]
 items = ["0x13d2"]
 
 [[mobile.equipment]]
@@ -1198,6 +1220,9 @@ items = ["0x13d3"]
 
 [[mobile.equipment]]
 items = ["0x13ce"]
+
+[[mobile.equipment]]
+items = ["base_leather_gorget"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -1281,6 +1306,9 @@ veterinary = "1d24+59"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
+items = ["base_shepherds_crook"]
+
+[[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
 hue = "0x0835-0x0852"
 
@@ -1318,6 +1346,9 @@ taste_identification = "1d37+63"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
+items = ["base_shepherds_crook"]
+
+[[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
 hue = "0x0835-0x0852"
 
@@ -1351,6 +1382,9 @@ animal_taming = "1d11+89"
 veterinary = "1d24+64"
 [mobile.sounds]
 death = 348
+[[mobile.equipment]]
+items = ["base_shepherds_crook"]
+
 [[mobile.equipment]]
 items = ["0x1517_shirt"]
 

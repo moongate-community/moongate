@@ -17,7 +17,7 @@ internal static class GenderPairMerger
     private static readonly HashSet<string> MergedProperties =
     [
         nameof(MobileTemplate.Id), nameof(MobileTemplate.BaseId), nameof(MobileTemplate.Gender),
-        nameof(MobileTemplate.NameList), nameof(MobileTemplate.Equipment)
+        nameof(MobileTemplate.NameList), nameof(MobileTemplate.Equipment), nameof(MobileTemplate.Sounds)
     ];
 
     public static bool TryMerge(
@@ -67,6 +67,16 @@ internal static class GenderPairMerger
             {
                 report.Count($"field differs between the male and female: {StringUtils.ToSnakeCase(property.Name)}");
             }
+        }
+
+        // A male sound on a female mobile is wrong, not just imprecise (humans die with gendered screams): when the
+        // two differ, neither is kept.
+        var soundsProperty = typeof(MobileTemplate).GetProperty(nameof(MobileTemplate.Sounds))!;
+
+        if (Describe(soundsProperty, male) != Describe(soundsProperty, female))
+        {
+            merged.Sounds = null;
+            report.Count("sounds differ between the male and female, left unset");
         }
 
         merged.Equipment = MergeEquipment(male.Equipment ?? [], female.Equipment ?? []);

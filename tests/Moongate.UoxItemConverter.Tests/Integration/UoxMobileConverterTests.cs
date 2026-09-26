@@ -344,6 +344,62 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Contains("Mobile template 'x': armor", CombinedOutput);
     }
 
+    [Fact]
+    public void Run_APairWithDifferentSounds_LeavesTheSoundsUnset()
+    {
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource(
+            "creatures/creatures.dfn",
+            "[CREATURE 0x190]\n{\nSOUND_DIE=0x15c\n}\n[CREATURE 0x191]\n{\nSOUND_DIE=0x151\n}\n"
+        );
+        _dirs.WriteMobileSource(
+            "npc/a.dfn",
+            "[m_guard]\n{\nID=0x0190\n}\n[f_guard]\n{\nID=0x0191\n}\n[guard]\n{\nGET=m_guard f_guard\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Null(ReadMobiles("a.toml")["guard"].Sounds);
+    }
+
+    [Fact]
+    public void Run_EquipmentThroughAnItemAlias_FollowsItsEraOrRandomGet()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [0x170b]
+            {
+            id=0x170b
+            }
+            [0x170c]
+            {
+            id=0x170c
+            }
+            [boots]
+            {
+            get=0x170b 0x170c
+            }
+            [0x13bb_lbr]
+            {
+            id=0x13bb
+            }
+            [0x13bb]
+            {
+            getlbr=0x13bb_lbr
+            }
+            """
+        );
+        WriteNames();
+        _dirs.WriteMobileSource("npc/a.dfn", "[x]\n{\nID=0x0011\nEQUIPITEM=boots\nEQUIPITEM=0x13bb\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var equipment = ReadMobiles("a.toml")["x"].Equipment!;
+        Assert.Equal(["0x170b", "0x170c"], equipment[0].Items);
+        Assert.Equal(["0x13bb_lbr"], equipment[1].Items);
+    }
+
     private void WriteItemsAndNames()
     {
         _dirs.WriteSource("items.dfn", "[0x0eed]\n{\nid=0x0eed\n}\n");

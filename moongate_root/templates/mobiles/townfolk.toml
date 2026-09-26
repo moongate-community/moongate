@@ -13,8 +13,6 @@ karma = 1200
 fame = 400
 [mobile.skills]
 anatomy = "1d33+35"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]
 hue = "0x0835-0x0852"
@@ -83,8 +81,6 @@ snooping = "1d24+44"
 swordsmanship = "1d24+34"
 tactics = "1d24+34"
 wrestling = "1d24+14"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 
@@ -109,12 +105,20 @@ items = ["0x13d3"]
 gender = "male"
 
 [[mobile.equipment]]
+items = ["base_spear"]
+gender = "male"
+
+[[mobile.equipment]]
+items = ["base_leather_gorget"]
+gender = "male"
+
+[[mobile.equipment]]
 items = ["0x1fa1_tunic", "0x1f03_robe"]
 hue = "0x0835-0x0852"
 gender = "male"
 
 [[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+items = ["0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress"]
 hue = "0x0835-0x0852"
 gender = "female"
 
@@ -135,8 +139,6 @@ snooping = "1d24+64"
 stealing = "1d24+59"
 tactics = "1d24+4"
 wrestling = "1d24+4"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x1517_shirt"]
 hue = "0x0835-0x0852"
@@ -174,8 +176,6 @@ intelligence = "1d15+15"
 tactics = "1d24+4"
 swordsmanship = "1d24+4"
 wrestling = "1d24+4"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
 hue = "0x0835-0x0852"
@@ -231,8 +231,33 @@ parrying = "1d14+82"
 swordsmanship = "1d10+82"
 tactics = "1d8+78"
 wrestling = 10
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["0x2645_dragon_helm", "0x2646_dragon_helm"]
+
+[[mobile.equipment]]
+items = ["base_dragon_leggings", "0x2648"]
+
+[[mobile.equipment]]
+items = ["base_dragon_gloves", "0x2644"]
+
+[[mobile.equipment]]
+items = ["base_dragon_breastplate", "0x2642"]
+
+[[mobile.equipment]]
+items = ["base_dragon_sleeves", "0x2658"]
+
+[[mobile.equipment]]
+items = ["0x1517_shirt", "0x1518"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170c"]
+
+[[mobile.equipment]]
+items = ["base_kryss", "0x1401", "base_broadsword", "0x0f5f", "base_katana", "0x13ff"]
+
+[[mobile.equipment]]
+items = ["base_chaos_shield"]
+
 [[mobile.equipment]]
 items = ["swampdragon"]
 
@@ -261,8 +286,33 @@ parrying = "1d16+84"
 swordsmanship = "1d16+84"
 tactics = 89
 wrestling = 10
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["0x2645_dragon_helm", "0x2646_dragon_helm"]
+
+[[mobile.equipment]]
+items = ["base_dragon_leggings", "0x2648"]
+
+[[mobile.equipment]]
+items = ["base_dragon_gloves", "0x2644"]
+
+[[mobile.equipment]]
+items = ["base_dragon_breastplate", "0x2642"]
+
+[[mobile.equipment]]
+items = ["base_dragon_sleeves", "0x2658"]
+
+[[mobile.equipment]]
+items = ["0x1517_shirt", "0x1518"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170c"]
+
+[[mobile.equipment]]
+items = ["base_kryss", "0x1401", "base_broadsword", "0x0f5f", "base_katana", "0x13ff"]
+
+[[mobile.equipment]]
+items = ["base_chaos_shield"]
+
 [[mobile.equipment]]
 items = ["armorswampdragon"]
 
@@ -294,8 +344,6 @@ remove_trap = "1d33+35"
 stealing = "1d24+59"
 swordsmanship = 120
 tactics = 120
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x1ffd_surcoat"]
 hue = "0x0641-0x0676"
@@ -337,8 +385,9 @@ parrying = "1d24+59"
 swordsmanship = "1d37+63"
 tactics = "1d33+35"
 wrestling = "1d24+24"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["base_chain_coif"]
+
 [[mobile.equipment]]
 items = ["0x13ed"]
 
@@ -347,6 +396,9 @@ items = ["0x13ef"]
 
 [[mobile.equipment]]
 items = ["0x13e1"]
+
+[[mobile.equipment]]
+items = ["base_wooden_shield"]
 
 [[mobile.equipment]]
 items = ["0x13b8"]
@@ -370,10 +422,8 @@ fencing = "1d33+35"
 item_identification = "1d24+74"
 snooping = "1d33+35"
 stealing = "1d24+59"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
-items = ["0x1401", "0x1405"]
+items = ["base_dagger", "0x1401", "0x1405"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -425,8 +475,21 @@ meditation = "1d23+52"
 parrying = "1d24+64"
 tactics = "1d24+64"
 wrestling = "1d24+64"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["0x26ad_arcane_cloak"]
+hue = 2117
+
+[[mobile.equipment]]
+items = ["0x26ae_arcane_robe"]
+hue = 2117
+
+[[mobile.equipment]]
+items = ["0x26b0_arcane_gloves"]
+hue = 2117
+
+[[mobile.equipment]]
+items = ["0x26af_arcane_thigh_boots"]
+hue = 2117
 
 [[mobile]]
 id = "guard"
@@ -453,17 +516,28 @@ parrying = "1d11+89"
 swordsmanship = "1d11+89"
 tactics = "1d11+89"
 wrestling = "1d11+89"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["guardhalberd"]
+
+[[mobile.equipment]]
+items = ["base_plate_gloves"]
+
+[[mobile.equipment]]
+items = ["base_plate_gorget"]
 
 [[mobile.equipment]]
 items = ["0x141a"]
 
 [[mobile.equipment]]
+items = ["base_plate_arms"]
+
+[[mobile.equipment]]
 items = ["0x1416"]
 gender = "male"
+
+[[mobile.equipment]]
+items = ["base_fem_plate"]
+gender = "female"
 
 [[mobile]]
 id = "gypsy"
@@ -486,8 +560,9 @@ snooping = "1d24+44"
 stealing = "1d24+44"
 tactics = "1d34+34"
 tinkering = "1d24+44"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["base_kryss"]
+
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
 hue = "0x0835-0x0852"
@@ -515,7 +590,7 @@ hue = "0x0835-0x0852"
 gender = "female"
 
 [[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+items = ["0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress"]
 hue = "0x0835-0x0852"
 gender = "female"
 
@@ -534,8 +609,9 @@ mace_fighting = "1d24+64"
 parrying = "1d33+35"
 swordsmanship = "1d24+44"
 wrestling = "1d24+59"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["base_plate_gloves"]
+
 [[mobile.equipment]]
 items = ["0x13c4"]
 
@@ -543,7 +619,20 @@ items = ["0x13c4"]
 items = ["0x13c3"]
 
 [[mobile.equipment]]
+items = ["base_chain_coif"]
+
+[[mobile.equipment]]
+items = ["base_plate_arms"]
+
+[[mobile.equipment]]
+items = ["base_bronze_shield"]
+
+[[mobile.equipment]]
 items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["base_broadsword"]
+gender = "male"
 
 [[mobile]]
 id = "judge"
@@ -558,8 +647,9 @@ intelligence = "1d16+74"
 [mobile.skills]
 evaluating_intelligence = "1d24+74"
 forensic_evaluation = "1d24+59"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["base_smiths_hammer"]
+
 [[mobile.equipment]]
 items = ["0x1517_shirt"]
 hue = "0x0835-0x0852"
@@ -594,8 +684,6 @@ intelligence = "1d16+49"
 [mobile.skills]
 evaluating_intelligence = "1d33+35"
 peacemaking = "1d33+35"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]
 hue = "0x0835-0x0852"
@@ -639,8 +727,6 @@ meditation = "1d33+35"
 resisting_spells = "1d37+63"
 tactics = "1d24+59"
 wrestling = "1d24+74"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x170d_sandals"]
 
@@ -672,8 +758,6 @@ resisting_spells = "1d23+77"
 meditation = "1d23+27"
 tactics = "1d24+64"
 wrestling = "1d61+19"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x1718_wizard's_hat"]
 hue = "0x0641-0x0676"
@@ -712,8 +796,9 @@ gold = 400
 parrying = "1d33+35"
 swordsmanship = "1d33+35"
 tactics = "1d33+35"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["base_broadsword"]
+
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]
 hue = "0x0835-0x0852"
@@ -774,10 +859,37 @@ parrying = "1d11+89"
 resisting_spells = "1d24+74"
 swordsmanship = "1d24+64"
 tactics = "1d24+74"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["base_close_helm"]
+
+[[mobile.equipment]]
+items = ["base_plate_arms"]
+
+[[mobile.equipment]]
+items = ["base_plate_leggings"]
+
+[[mobile.equipment]]
+items = ["base_plate_gorget"]
+
+[[mobile.equipment]]
+items = ["base_plate_gloves"]
+
+[[mobile.equipment]]
+items = ["base_viking_sword"]
+
+[[mobile.equipment]]
+items = ["base_bronze_shield"]
+
 [[mobile.equipment]]
 items = ["0x1515_cloak"]
+
+[[mobile.equipment]]
+items = ["base_plate_chest"]
+gender = "male"
+
+[[mobile.equipment]]
+items = ["base_fem_plate"]
+gender = "female"
 
 [[mobile]]
 id = "pirate"
@@ -796,8 +908,6 @@ parrying = "1d24+24"
 swordsmanship = "1d37+63"
 tactics = "1d24+64"
 wrestling = "1d33+25"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x13b6"]
 
@@ -876,10 +986,8 @@ swordsmanship = "1d24+34"
 tactics = "1d24+64"
 tracking = "1d24+64"
 wrestling = "1d24+14"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
-items = ["0x0f61", "0x13b4", "0x13b6", "0x13b8", "0x13b0", "0x13ff", "0x1401", "0x1405", "0x1407", "0x143b", "0x1441"]
+items = ["base_mace", "base_broadsword", "0x0f61", "0x13b4", "0x13b6", "0x13b8", "0x13b0", "0x13ff", "0x1401", "0x1405", "0x1407", "0x143b", "0x1441"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -888,6 +996,12 @@ hue = "0x0835-0x0852"
 [[mobile.equipment]]
 items = ["0x1517_shirt"]
 hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["base_leather_tunic"]
+
+[[mobile.equipment]]
+items = ["base_leather_leggings"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -903,8 +1017,6 @@ race = "human"
 strength = "1d16+9"
 dexterity = "1d16+9"
 intelligence = "1d16+29"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x152e_short_pants"]
 
@@ -925,8 +1037,9 @@ parrying = "1d24+14"
 swordsmanship = "1d24+74"
 wrestling = "1d33+35"
 tactics = "1d24+64"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["base_kryss"]
+
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
 hue = "0x0835-0x0852"
@@ -961,8 +1074,6 @@ dexterity = "1d16+24"
 intelligence = "1d16+19"
 [mobile.skills]
 anatomy = "1d24+44"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]
 hue = "0x0835-0x0852"
@@ -1009,13 +1120,14 @@ resisting_spells = "1d21+39"
 parrying = "1d21+39"
 swordsmanship = "1d24+44"
 tactics = "1d21+39"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x13c4"]
 
 [[mobile.equipment]]
 items = ["0x13c3"]
+
+[[mobile.equipment]]
+items = ["base_chain_coif"]
 
 [[mobile.equipment]]
 items = ["0x13dd"]
@@ -1032,7 +1144,15 @@ items = ["0x13b8"]
 gender = "male"
 
 [[mobile.equipment]]
+items = ["base_bronze_shield"]
+gender = "male"
+
+[[mobile.equipment]]
 items = ["0x13ba"]
+gender = "female"
+
+[[mobile.equipment]]
+items = ["base_buckler"]
 gender = "female"
 
 [[mobile]]
@@ -1055,8 +1175,9 @@ resisting_spells = "1d33+35"
 swordsmanship = "1d16+84"
 wrestling = "1d24+24"
 tactics = "1d24+74"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["base_chain_coif"]
+
 [[mobile.equipment]]
 items = ["0x13ed"]
 
@@ -1067,7 +1188,10 @@ items = ["0x13ef"]
 items = ["0x13e1"]
 
 [[mobile.equipment]]
-items = ["0x0f61", "0x13b6", "0x13b8", "0x13ff"]
+items = ["base_wooden_shield"]
+
+[[mobile.equipment]]
+items = ["base_broadsword", "0x0f61", "0x13b6", "0x13b8", "0x13ff"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots"]
@@ -1095,10 +1219,8 @@ snooping = "1d37+63"
 stealing = "1d37+63"
 stealth = "1d24+64"
 tactics = "1d33+25"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
-items = ["0x1401", "0x1405"]
+items = ["base_dagger", "0x1401", "0x1405"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -1156,8 +1278,9 @@ remove_trap = "1d24+59"
 snooping = "1d37+63"
 stealing = "1d37+63"
 stealth = "1d24+64"
-[mobile.sounds]
-death = 348
+[[mobile.equipment]]
+items = ["base_kryss"]
+
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
 hue = "0x0835-0x0852"
@@ -1189,7 +1312,7 @@ hue = "0x0835-0x0852"
 gender = "female"
 
 [[mobile.equipment]]
-items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+items = ["0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress"]
 hue = "0x0835-0x0852"
 gender = "female"
 
@@ -1216,8 +1339,6 @@ resisting_spells = "1d11+89"
 swordsmanship = "1d11+89"
 tactics = "1d11+89"
 wrestling = "1d11+89"
-[mobile.sounds]
-death = 348
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]
 hue = "0x0835-0x0852"

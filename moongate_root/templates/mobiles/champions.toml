@@ -394,6 +394,10 @@ items = ["skeletalmount"]
 items = ["0x2684_hooded_shroud_of_shadows"]
 hue = 1109
 
+[[mobile.equipment]]
+items = ["base_scimitar"]
+hue = 32
+
 [[mobile]]
 id = "rikktor"
 name = "Rikktor"

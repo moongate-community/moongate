@@ -28,6 +28,14 @@ parrying = "1d10+60"
 swordsmanship = "1d23+62"
 tactics = "1d23+62"
 wrestling = "1d23+62"
+[[mobile.equipment]]
+items = ["base_bone_arms"]
+
+[[mobile.equipment]]
+items = ["base_bone_legs"]
+
+[[mobile.equipment]]
+items = ["0x1547_deer_mask", "0x1548"]
 
 [[mobile]]
 id = "m_savagewarrior"
@@ -56,6 +64,17 @@ poisoning = "1d24+59"
 swordsmanship = "1d24+59"
 tactics = "1d24+59"
 wrestling = "1d23+62"
+[[mobile.equipment]]
+items = ["base_spear", "0x0f63"]
+
+[[mobile.equipment]]
+items = ["base_bone_arms"]
+
+[[mobile.equipment]]
+items = ["base_bone_legs"]
+
+[[mobile.equipment]]
+items = ["0x154b_tribal_mask", "0x154c"]
 
 [[mobile]]
 id = "f_savagewarrior"
@@ -84,6 +103,17 @@ poisoning = "1d24+59"
 swordsmanship = "1d24+59"
 tactics = "1d24+59"
 wrestling = "1d23+62"
+[[mobile.equipment]]
+items = ["base_spear", "0x0f63"]
+
+[[mobile.equipment]]
+items = ["base_bone_arms"]
+
+[[mobile.equipment]]
+items = ["base_bone_legs"]
+
+[[mobile.equipment]]
+items = ["0x154b_tribal_mask", "0x154c"]
 
 [[mobile]]
 id = "savagerider"
@@ -107,5 +137,17 @@ parrying = "1d10+53"
 swordsmanship = "1d23+62"
 tactics = "1d24+59"
 wrestling = "1d23+62"
+[[mobile.equipment]]
+items = ["base_spear"]
+
+[[mobile.equipment]]
+items = ["base_bone_arms"]
+
+[[mobile.equipment]]
+items = ["base_bone_legs"]
+
+[[mobile.equipment]]
+items = ["0x154b_tribal_mask", "0x154c"]
+
 [[mobile.equipment]]
 items = ["ridgeback"]
