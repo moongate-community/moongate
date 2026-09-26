@@ -147,11 +147,13 @@ server at startup instead of failing at each game login. It stops when:
 
 ## Skills
 
-`skills.toml` lists the 58 skills, with the ids the client uses (0 to 57):
+`skills.toml` lists the 58 skills. Each `id` names a `SkillType`, whose value is the
+number the client uses (0 to 57), so the entries stay in that order, from `alchemy` to
+`throwing`:
 
 ```toml
 [[skill]]
-id = 0
+id = "alchemy"
 name = "Alchemy"
 title = "Alchemist"
 profession_name = "Alchemy"
@@ -168,7 +170,7 @@ gain_factor = 1.0
 
 | Field | Meaning |
 | --- | --- |
-| `id` | The skill id of the client (`SkillType`). |
+| `id` | The skill, by `SkillType` name; its value is the client's skill id. |
 | `name` | The skill name. |
 | `title` | The title of a character whose best skill is this one. |
 | `profession_name` | The name the profession files use for the skill. |
@@ -184,8 +186,9 @@ No skill gain system reads this file yet.
 The server stops when:
 
 - `skills.toml` does not exist or has no `[[skill]]` entries;
-- the ids do not start at 0 and follow the order of the file without gaps: entry
-  0 must have id 0, entry 1 id 1, and so on.
+- the ids are not in `SkillType` order without gaps: entry 0 must be `alchemy`
+  (value 0), entry 1 `anatomy` (value 1), and so on;
+- an id is a number or not a `SkillType` name.
 
 ## Professions
 

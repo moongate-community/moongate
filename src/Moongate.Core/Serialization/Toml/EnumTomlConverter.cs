@@ -6,29 +6,13 @@ namespace Moongate.Core.Serialization.Toml;
 
 /// <summary>
 ///     Reads and writes a <typeparamref name="TEnum" /> as its snake_case name, or names joined by <c>|</c> for flags,
-///     through <see cref="EnumNameUtils" />. Numbers are never written; a bare integer is read only when a member has
-///     that exact value, and a number in a string never.
+///     through <see cref="EnumNameUtils" />. Numbers are never written and never accepted.
 /// </summary>
 public sealed class EnumTomlConverter<TEnum> : TomlConverter<TEnum> where TEnum : struct, Enum
 {
     /// <inheritdoc />
     public override TEnum Read(TomlReader reader)
     {
-        // A bare integer is read only when a member has exactly that value, for data keyed by number such as skill ids;
-        // it is still written back as the name.
-        if (reader.TokenType == TomlTokenType.Integer)
-        {
-            var number = reader.GetInt64();
-            var member = (TEnum)Enum.ToObject(typeof(TEnum), number);
-
-            if (!Enum.IsDefined(member))
-            {
-                throw reader.CreateException($"{number} is not a {typeof(TEnum).Name} value; write its name.");
-            }
-
-            return member;
-        }
-
         if (reader.TokenType != TomlTokenType.String)
         {
             throw reader.CreateException($"Expected a {typeof(TEnum).Name} name as a string, such as \"{Example()}\".");

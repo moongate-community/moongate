@@ -345,9 +345,9 @@ music = "mountn_a"                     # MusicType.Mountn_a
 - **Reading** ignores case and underscores: `"game_master"`, `"GameMaster"` and
   `"gamemaster"` are the same, and `"termur"` reads `MapType.TerMur`.
 - **Writing** uses the lowercase snake_case name, which always reads back.
-- **Numbers:** a bare integer is read only when a member has exactly that value, for
-  data keyed by number such as `id = 0` in `skills.toml`; it is written back as the
-  name. A number inside a string, such as `"1"`, is never accepted.
+- **Numbers** are never accepted, bare or in a string: write the name. Data keyed by
+  the client's numbers, such as `skills.toml`, names the member instead
+  (`id = "alchemy"` is `SkillType.Alchemy`, value 0).
 
 **Flags.** A `[Flags]` enum writes a value that has its own name as that name, and
 any other combination as names joined by `|`; reading combines the names:
@@ -370,7 +370,7 @@ Errors:
 | --- | --- |
 | `minimum_account_type = "gm"` | `'gm' is not a AccountType; use one of regular, game_master, administrator.` |
 | `minimum_account_type = "1"` | the same message, naming `1` |
-| `minimum_account_type = 7` | `7 is not a AccountType value; write its name.` |
+| `minimum_account_type = 1` | `Expected a AccountType name as a string, such as "regular".` |
 | `minimum_account_type = true` | `Expected a AccountType name as a string, such as "regular".` |
 
 A value is still checked by the code that loads it: `mode = "none"` reads, then the

@@ -2,13 +2,14 @@
 # Moongate - skills.toml
 #
 # What it is for:
-#   The skills of the shard and how they grow. The ids are the ones the client
-#   uses (0-57), so the ids and their order must not change. The server uses this
+#   The skills of the shard and how they grow. Each id names a SkillType, whose
+#   value is the number the client uses (0-57), so the entries must stay in that
+#   order: the first is alchemy (0), the last is throwing (57). The server uses this
 #   file to validate the skills chosen at character creation and to decide which
 #   stats rise when a skill is used.
 #
 # Fields:
-#   id               the skill id used by the client
+#   id               the skill, by name; its SkillType value is the client id
 #   name             the skill name
 #   title            the title of a character whose best skill is this one
 #   profession_name  the name used by the profession files
@@ -20,7 +21,7 @@
 # ==============================================================================
 
 [[skill]]
-id = 0
+id = "alchemy"
 name = "Alchemy"
 title = "Alchemist"
 profession_name = "Alchemy"
@@ -35,7 +36,7 @@ int_gain = 0.5
 gain_factor = 1.0
 
 [[skill]]
-id = 1
+id = "anatomy"
 name = "Anatomy"
 title = "Biologist"
 profession_name = "Anatomy"
@@ -50,7 +51,7 @@ int_gain = 0.7
 gain_factor = 1.0
 
 [[skill]]
-id = 2
+id = "animal_lore"
 name = "Animal Lore"
 title = "Naturalist"
 profession_name = "AnimalLore"
@@ -65,7 +66,7 @@ int_gain = 1.0
 gain_factor = 1.0
 
 [[skill]]
-id = 3
+id = "item_identification"
 name = "Item Identification"
 title = "Merchant"
 profession_name = "ItemID"
@@ -80,7 +81,7 @@ int_gain = 1.0
 gain_factor = 1.0
 
 [[skill]]
-id = 4
+id = "arms_lore"
 name = "Arms Lore"
 title = "Weapon Master"
 profession_name = "ArmsLore"
@@ -95,7 +96,7 @@ int_gain = 0.1
 gain_factor = 1.0
 
 [[skill]]
-id = 5
+id = "parrying"
 name = "Parrying"
 title = "Duelist"
 profession_name = "Parrying"
@@ -110,7 +111,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 6
+id = "begging"
 name = "Begging"
 title = "Beggar"
 profession_name = "Begging"
@@ -125,7 +126,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 7
+id = "blacksmithy"
 name = "Blacksmithy"
 title = "Blacksmith"
 profession_name = "Blacksmith"
@@ -140,7 +141,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 8
+id = "bowcraft_fletching"
 name = "Bowcraft/Fletching"
 title = "Bowyer"
 profession_name = "Bowcraft"
@@ -155,7 +156,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 9
+id = "peacemaking"
 name = "Peacemaking"
 title = "Pacifier"
 profession_name = "Peacemaking"
@@ -170,7 +171,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 10
+id = "camping"
 name = "Camping"
 title = "Explorer"
 profession_name = "Camping"
@@ -185,7 +186,7 @@ int_gain = 1.5
 gain_factor = 1.0
 
 [[skill]]
-id = 11
+id = "carpentry"
 name = "Carpentry"
 title = "Carpenter"
 profession_name = "Carpentry"
@@ -200,7 +201,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 12
+id = "cartography"
 name = "Cartography"
 title = "Cartographer"
 profession_name = "Cartography"
@@ -215,7 +216,7 @@ int_gain = 0.75
 gain_factor = 1.0
 
 [[skill]]
-id = 13
+id = "cooking"
 name = "Cooking"
 title = "Chef"
 profession_name = "Cooking"
@@ -230,7 +231,7 @@ int_gain = 3.0
 gain_factor = 1.0
 
 [[skill]]
-id = 14
+id = "detecting_hidden"
 name = "Detecting Hidden"
 title = "Scout"
 profession_name = "DetectingHidden"
@@ -245,7 +246,7 @@ int_gain = 0.6
 gain_factor = 1.0
 
 [[skill]]
-id = 15
+id = "discordance"
 name = "Discordance"
 title = "Demoralizer"
 profession_name = "Enticement"
@@ -260,7 +261,7 @@ int_gain = 0.25
 gain_factor = 1.0
 
 [[skill]]
-id = 16
+id = "evaluating_intelligence"
 name = "Evaluating Intelligence"
 title = "Scholar"
 profession_name = "EvaluateIntelligence"
@@ -275,7 +276,7 @@ int_gain = 1.0
 gain_factor = 1.0
 
 [[skill]]
-id = 17
+id = "healing"
 name = "Healing"
 title = "Healer"
 profession_name = "Healing"
@@ -290,7 +291,7 @@ int_gain = 0.8
 gain_factor = 1.0
 
 [[skill]]
-id = 18
+id = "fishing"
 name = "Fishing"
 title = "Fisherman"
 profession_name = "Fishing"
@@ -305,7 +306,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 19
+id = "forensic_evaluation"
 name = "Forensic Evaluation"
 title = "Detective"
 profession_name = "ForensicEvaluation"
@@ -320,7 +321,7 @@ int_gain = 0.8
 gain_factor = 1.0
 
 [[skill]]
-id = 20
+id = "herding"
 name = "Herding"
 title = "Shepherd"
 profession_name = "Herding"
@@ -335,7 +336,7 @@ int_gain = 0.25
 gain_factor = 1.0
 
 [[skill]]
-id = 21
+id = "hiding"
 name = "Hiding"
 title = "Shade"
 profession_name = "Hiding"
@@ -350,7 +351,7 @@ int_gain = 0.2
 gain_factor = 1.0
 
 [[skill]]
-id = 22
+id = "provocation"
 name = "Provocation"
 title = "Rouser"
 profession_name = "Provocation"
@@ -365,7 +366,7 @@ int_gain = 0.05
 gain_factor = 1.0
 
 [[skill]]
-id = 23
+id = "inscription"
 name = "Inscription"
 title = "Scribe"
 profession_name = "Inscription"
@@ -380,7 +381,7 @@ int_gain = 0.8
 gain_factor = 1.0
 
 [[skill]]
-id = 24
+id = "lockpicking"
 name = "Lockpicking"
 title = "Infiltrator"
 profession_name = "Lockpicking"
@@ -395,7 +396,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 25
+id = "magery"
 name = "Magery"
 title = "Mage"
 profession_name = "Magery"
@@ -410,7 +411,7 @@ int_gain = 1.5
 gain_factor = 1.0
 
 [[skill]]
-id = 26
+id = "resisting_spells"
 name = "Resisting Spells"
 title = "Warder"
 profession_name = "ResistingSpells"
@@ -425,7 +426,7 @@ int_gain = 0.5
 gain_factor = 1.0
 
 [[skill]]
-id = 27
+id = "tactics"
 name = "Tactics"
 title = "Tactician"
 profession_name = "Tactics"
@@ -440,7 +441,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 28
+id = "snooping"
 name = "Snooping"
 title = "Spy"
 profession_name = "Snooping"
@@ -455,7 +456,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 29
+id = "musicianship"
 name = "Musicianship"
 title = "Bard"
 profession_name = "Musicianship"
@@ -470,7 +471,7 @@ int_gain = 0.2
 gain_factor = 1.0
 
 [[skill]]
-id = 30
+id = "poisoning"
 name = "Poisoning"
 title = "Assassin"
 profession_name = "Poisoning"
@@ -485,7 +486,7 @@ int_gain = 1.6
 gain_factor = 1.0
 
 [[skill]]
-id = 31
+id = "archery"
 name = "Archery"
 title = "Archer"
 profession_name = "Archery"
@@ -500,7 +501,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 32
+id = "spirit_speak"
 name = "Spirit Speak"
 title = "Medium"
 profession_name = "SpiritSpeak"
@@ -515,7 +516,7 @@ int_gain = 1.0
 gain_factor = 1.0
 
 [[skill]]
-id = 33
+id = "stealing"
 name = "Stealing"
 title = "Pickpocket"
 profession_name = "Stealing"
@@ -530,7 +531,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 34
+id = "tailoring"
 name = "Tailoring"
 title = "Tailor"
 profession_name = "Tailoring"
@@ -545,7 +546,7 @@ int_gain = 0.5
 gain_factor = 1.0
 
 [[skill]]
-id = 35
+id = "animal_taming"
 name = "Animal Taming"
 title = "Tamer"
 profession_name = "AnimalTaming"
@@ -560,7 +561,7 @@ int_gain = 0.4
 gain_factor = 1.0
 
 [[skill]]
-id = 36
+id = "taste_identification"
 name = "Taste Identification"
 title = "Praegustator"
 profession_name = "TasteIdentification"
@@ -575,7 +576,7 @@ int_gain = 0.8
 gain_factor = 1.0
 
 [[skill]]
-id = 37
+id = "tinkering"
 name = "Tinkering"
 title = "Tinker"
 profession_name = "Tinkering"
@@ -590,7 +591,7 @@ int_gain = 0.3
 gain_factor = 1.0
 
 [[skill]]
-id = 38
+id = "tracking"
 name = "Tracking"
 title = "Ranger"
 profession_name = "Tracking"
@@ -605,7 +606,7 @@ int_gain = 1.25
 gain_factor = 1.0
 
 [[skill]]
-id = 39
+id = "veterinary"
 name = "Veterinary"
 title = "Veterinarian"
 profession_name = "Veterinary"
@@ -620,7 +621,7 @@ int_gain = 0.8
 gain_factor = 1.0
 
 [[skill]]
-id = 40
+id = "swordsmanship"
 name = "Swordsmanship"
 title = "Swordsman"
 profession_name = "Swordsmanship"
@@ -635,7 +636,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 41
+id = "mace_fighting"
 name = "Mace Fighting"
 title = "Armsman"
 profession_name = "MaceFighting"
@@ -650,7 +651,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 42
+id = "fencing"
 name = "Fencing"
 title = "Fencer"
 profession_name = "Fencing"
@@ -665,7 +666,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 43
+id = "wrestling"
 name = "Wrestling"
 title = "Wrestler"
 profession_name = "Wrestling"
@@ -680,7 +681,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 44
+id = "lumberjacking"
 name = "Lumberjacking"
 title = "Lumberjack"
 profession_name = "Lumberjacking"
@@ -695,7 +696,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 45
+id = "mining"
 name = "Mining"
 title = "Miner"
 profession_name = "Mining"
@@ -710,7 +711,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 46
+id = "meditation"
 name = "Meditation"
 title = "Stoic"
 profession_name = "Meditation"
@@ -725,7 +726,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 47
+id = "stealth"
 name = "Stealth"
 title = "Rogue"
 profession_name = "Stealth"
@@ -740,7 +741,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 48
+id = "remove_trap"
 name = "Remove Trap"
 title = "Trap Specialist"
 profession_name = "Disarm"
@@ -755,7 +756,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 49
+id = "necromancy"
 name = "Necromancy"
 title = "Necromancer"
 profession_name = "Necromancy"
@@ -770,7 +771,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 50
+id = "focus"
 name = "Focus"
 title = "Driven"
 profession_name = "Focus"
@@ -785,7 +786,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 51
+id = "chivalry"
 name = "Chivalry"
 title = "Paladin"
 profession_name = "Chivalry"
@@ -800,7 +801,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 52
+id = "bushido"
 name = "Bushido"
 title = "Samurai"
 profession_name = "Bushido"
@@ -815,7 +816,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 53
+id = "ninjitsu"
 name = "Ninjitsu"
 title = "Ninja"
 profession_name = "Ninjitsu"
@@ -830,7 +831,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 54
+id = "spellweaving"
 name = "Spellweaving"
 title = "Arcanist"
 profession_name = "Spellweaving"
@@ -845,7 +846,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 55
+id = "mysticism"
 name = "Mysticism"
 title = "Mystic"
 profession_name = "Mysticism"
@@ -860,7 +861,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 56
+id = "imbuing"
 name = "Imbuing"
 title = "Artificer"
 profession_name = "Imbuing"
@@ -875,7 +876,7 @@ int_gain = 0.0
 gain_factor = 1.0
 
 [[skill]]
-id = 57
+id = "throwing"
 name = "Throwing"
 title = "Bladeweaver"
 profession_name = "Throwing"

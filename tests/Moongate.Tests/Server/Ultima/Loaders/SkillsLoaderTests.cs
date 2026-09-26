@@ -9,7 +9,7 @@ public sealed class SkillsLoaderTests
 {
     private const string Alchemy = """
                                    [[skill]]
-                                   id = 0
+                                   id = "alchemy"
                                    name = "Alchemy"
                                    title = "Alchemist"
                                    profession_name = "Alchemy"
@@ -27,7 +27,7 @@ public sealed class SkillsLoaderTests
 
     private const string Anatomy = """
                                    [[skill]]
-                                   id = 1
+                                   id = "anatomy"
                                    name = "Anatomy"
                                    title = "Biologist"
                                    profession_name = "Anatomy"
