@@ -137,6 +137,18 @@ if (movementService.CheckMovement(MapType.Felucca, from, DirectionType.East,
 `MovementAbilityType.Swim` lets a mover enter water. World items, mobiles and placed
 multis are not part of the check yet.
 
+`ILineOfSightService` checks whether one point sees another. Pass both points at eye or
+target height; a mobile's eye is its Z plus 14:
+
+```csharp
+var visible = lineOfSightService.HasLineOfSight(MapType.Felucca,
+    new Point3D(1602, 1591, 20 + 14), new Point3D(1610, 1591, 20 + 14));
+```
+
+Statics flagged `Window` or `NoShoot` and terrain block the line; a blocker at the
+target's cell and height does not. Points farther than `line_of_sight.max_distance`
+(default 25) along X or Y are never in sight.
+
 ## Starting cities
 
 `starting_cities.toml` lists the cities a new character can start in. The game

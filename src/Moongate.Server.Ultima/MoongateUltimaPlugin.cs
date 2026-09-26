@@ -111,6 +111,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ILocalizationService, LocalizationService>(Reuse.Singleton);
             container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
             container.Register<IMovementService, MovementService>(Reuse.Singleton);
+            container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
             container.AddScriptModule<LocalizationModule>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
