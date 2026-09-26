@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Ultima.Types;
 
@@ -27,7 +28,7 @@ public class MovementService : IMovementService
 
     public int GetAverageZ(MapType map, int x, int y)
     {
-        GetAverageZ(map, x, y, out _, out var average, out _);
+        LandHeights.Get(_mapService, map, x, y, out _, out var average, out _);
 
         return average;
     }
@@ -78,20 +79,6 @@ public class MovementService : IMovementService
         return moveIsOk;
     }
 
-    private void GetAverageZ(MapType map, int x, int y, out int lowest, out int average, out int highest)
-    {
-        var zTop = GetLandZ(map, x, y);
-        var zLeft = GetLandZ(map, x, y + 1);
-        var zRight = GetLandZ(map, x + 1, y);
-        var zBottom = GetLandZ(map, x + 1, y + 1);
-
-        lowest = Math.Min(Math.Min(zTop, zLeft), Math.Min(zRight, zBottom));
-        highest = Math.Max(Math.Max(zTop, zLeft), Math.Max(zRight, zBottom));
-        average = Math.Abs(zTop - zBottom) > Math.Abs(zLeft - zRight)
-                      ? FloorAverage(zLeft, zRight)
-                      : FloorAverage(zTop, zBottom);
-    }
-
     // ModernUO MovementImpl.GetStartZ: the surface the mover stands on (zLow) and the top of what it stands in (zTop).
     private void GetStartZ(MapType map, Point3D from, MovementAbilityType ability, out int zLow, out int zTop)
     {
@@ -100,9 +87,9 @@ public class MovementService : IMovementService
         var land = _mapService.GetLand(map, from.X, from.Y);
         var landBlocks = LandBlocks(land, canSwim, cantWalk);
 
-        GetAverageZ(map, from.X, from.Y, out var landZ, out var landCenter, out var landTop);
+        LandHeights.Get(_mapService, map, from.X, from.Y, out var landZ, out var landCenter, out var landTop);
 
-        var considerLand = !IsIgnoredLand(land.Id);
+        var considerLand = !LandHeights.IsIgnored(land.Id);
         var zCenter = zLow = zTop = 0;
         var isSet = false;
 
@@ -172,10 +159,10 @@ public class MovementService : IMovementService
         var cantWalk = (ability & MovementAbilityType.Walk) == 0;
         var land = _mapService.GetLand(map, x, y);
         var landBlocks = LandBlocks(land, canSwim, cantWalk);
-        var considerLand = !IsIgnoredLand(land.Id);
+        var considerLand = !LandHeights.IsIgnored(land.Id);
         var statics = _mapService.GetStatics(map, x, y);
 
-        GetAverageZ(map, x, y, out var landZ, out var landCenter, out _);
+        LandHeights.Get(_mapService, map, x, y, out var landZ, out var landCenter, out _);
 
         var moveIsOk = false;
         var stepTop = startTop + StepHeight;
@@ -303,33 +290,5 @@ public class MovementService : IMovementService
         var impassable = (flags & TileFlagType.Impassable) != 0;
 
         return (cantWalk || impassable) && !(impassable && canSwim && (flags & TileFlagType.Wet) != 0);
-    }
-
-    // Land ids the client does not draw, such as the black void under caves; only the statics on them count.
-    private static bool IsIgnoredLand(ushort id)
-    {
-        return id is 2 or 0x1DB or >= 0x1AE and <= 0x1B5;
-    }
-
-    private int GetLandZ(MapType map, int x, int y)
-    {
-        if (!_mapService.Maps.Contains(map))
-        {
-            throw new KeyNotFoundException($"Map {map} is not loaded.");
-        }
-
-        return _mapService.Contains(map, x, y) ? _mapService.GetLand(map, x, y).Z : 0;
-    }
-
-    private static int FloorAverage(int a, int b)
-    {
-        var sum = a + b;
-
-        if (sum < 0)
-        {
-            --sum;
-        }
-
-        return sum / 2;
     }
 }
