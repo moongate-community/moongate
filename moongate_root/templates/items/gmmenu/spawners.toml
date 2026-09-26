@@ -4,6 +4,7 @@ base_id = "base_item"
 item_id = 7956
 rarity = "common"
 movable = false
+visibility = "game_master"
 hue = 0
 
 [[item]]

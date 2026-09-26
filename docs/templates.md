@@ -246,8 +246,25 @@ itself generic, and register the instance once with `TomlUtils.AddTomlConverter`
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
 | `ScriptId` | Names the Lua module handling this template's behaviour |
 | `Movable` | Tiledata carries no such flag, so this is explicit |
+| `Visibility` | The lowest account type that sees the item: `regular`, `game_master` or `administrator`, as `realm_directory.minimum_account_type`. Unset by default, so a template inherits it through `BaseId`; an item with none anywhere is visible to everyone. `IsVisibleTo(accountType)` answers for one viewer |
 | `Hue` | `RangeValueSpec<int>`, `0` meaning the art's native coloring |
 | `MaxItems`, `MaxWeight` | Nullable; set only on a container template |
+
+Spawners, for example, are for staff only, and their children inherit it:
+
+```toml
+[[item]]
+id = "base_spawner"
+base_id = "base_item"
+item_id = 7956
+visibility = "game_master"
+
+[[item]]
+id = "orcspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Orc Spawner"
+```
 
 `LootTemplate` and `LootEntry` are the same kind of shape:
 

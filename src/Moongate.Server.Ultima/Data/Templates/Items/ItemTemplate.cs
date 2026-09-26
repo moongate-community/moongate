@@ -1,5 +1,8 @@
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Serialization.Toml;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Types.Templates;
+using Tomlyn.Serialization;
 
 namespace Moongate.Server.Ultima.Data.Templates.Items;
 
@@ -84,6 +87,14 @@ public class ItemTemplate
     public bool Movable { get; set; } = true;
 
     /// <summary>
+    ///     The lowest account type that sees the item, such as <see cref="AccountType.GameMaster" /> for spawners,
+    ///     which players never see. Null, the default, is unset: the template inherits it through
+    ///     <see cref="BaseId" />, and an item with none anywhere is visible to everyone.
+    /// </summary>
+    [TomlConverter(typeof(NullableAccountTypeTomlConverter))]
+    public AccountType? Visibility { get; set; }
+
+    /// <summary>
     ///     The hue to apply over the graphic's own art, or a range to pick a fresh one from on every spawn.
     ///     0, the default, means the art's native coloring: no override.
     /// </summary>
@@ -98,4 +109,13 @@ public class ItemTemplate
     ///     Maximum carried weight for a container template; null for anything that is not a container.
     /// </summary>
     public int? MaxWeight { get; set; }
+
+    /// <summary>
+    ///     Gets whether an account of type <paramref name="viewer" /> sees items made from this template: it must be at
+    ///     least <see cref="Visibility" />, and everyone sees an item without one.
+    /// </summary>
+    public bool IsVisibleTo(AccountType viewer)
+    {
+        return viewer >= (Visibility ?? AccountType.Regular);
+    }
 }

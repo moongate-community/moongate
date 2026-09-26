@@ -5,6 +5,7 @@ item_id = 5035
 name = "healer camp"
 rarity = "common"
 movable = false
+visibility = "game_master"
 hue = 0
 
 [[item]]
@@ -14,6 +15,7 @@ item_id = 5035
 name = "orc camp"
 rarity = "common"
 movable = false
+visibility = "game_master"
 hue = 0
 
 [[item]]
@@ -23,6 +25,7 @@ item_id = 5035
 name = "banker camp"
 rarity = "common"
 movable = false
+visibility = "game_master"
 hue = 0
 
 [[item]]
@@ -32,6 +35,7 @@ item_id = 5035
 name = "mage camp"
 rarity = "common"
 movable = false
+visibility = "game_master"
 hue = 0
 
 [[item]]
@@ -41,4 +45,5 @@ item_id = 5035
 name = "orc camp"
 rarity = "common"
 movable = false
+visibility = "game_master"
 hue = 0

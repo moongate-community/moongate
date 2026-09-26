@@ -2,7 +2,7 @@ using System.Net;
 using System.Net.Sockets;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Hosting;
-using Moongate.Server.Serialization.Config.Internal;
+using Moongate.Server.Core.Serialization.Toml;
 using Tomlyn.Serialization;
 
 namespace Moongate.Server.Data.Config.Sections;

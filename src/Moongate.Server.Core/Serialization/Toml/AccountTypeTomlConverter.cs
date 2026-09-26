@@ -2,9 +2,13 @@ using Moongate.Server.Core.Types.Accounts;
 using Tomlyn;
 using Tomlyn.Serialization;
 
-namespace Moongate.Server.Serialization.Config.Internal;
+namespace Moongate.Server.Core.Serialization.Toml;
 
-internal sealed class AccountTypeTomlConverter : TomlConverter<AccountType>
+/// <summary>
+///     Reads and writes an <see cref="AccountType" /> as <c>regular</c>, <c>game_master</c> or <c>administrator</c>, the
+///     form used by <c>moongate.toml</c> and the item templates. Reading ignores case.
+/// </summary>
+public sealed class AccountTypeTomlConverter : TomlConverter<AccountType>
 {
     public override AccountType Read(TomlReader reader)
     {

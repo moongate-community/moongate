@@ -1,5 +1,6 @@
 using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Templates.Items;
 
 namespace Moongate.UoxItemConverter.Internal;
@@ -56,6 +57,14 @@ internal static class ItemTemplateBuilder
             ItemId = itemId,
             Movable = block.Fields.TryGetValue("movable", out var movable) && movable == "1"
         };
+
+        // UOX3's visible= is 0 for everyone; 1 (hidden), 2 (magically invisible) and 3 (GM hidden) all keep the
+        // item from players, the closest being visible to staff only.
+        if (block.Fields.TryGetValue("visible", out var visibleText) && int.TryParse(visibleText, out var visible) &&
+            visible is >= 1 and <= 3)
+        {
+            template.Visibility = AccountType.GameMaster;
+        }
 
         if (block.Fields.TryGetValue("name", out var displayName) && displayName.Length > 0)
         {

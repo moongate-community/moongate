@@ -43,6 +43,7 @@ Verified against real UOX3 data:
 | `movable=1` | `Movable` | Anything else, including absent, is `false` |
 | `color=` | `Hue` | A fixed value, not a range |
 | `weightmax=` | `MaxWeight` | |
+| `visible=1`, `2` or `3` | `Visibility = game_master` | Hidden, magically invisible or GM hidden all keep the item from players; `visible=0` or absent leaves it unset, visible to everyone |
 
 Everything else has no home in `ItemTemplate` yet and is dropped: weight, value,
 layer, the combat stat fields, `colorlist`, `pileable` (tiledata already carries it),

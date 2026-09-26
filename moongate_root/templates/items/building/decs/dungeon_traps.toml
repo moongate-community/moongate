@@ -149,6 +149,7 @@ item_id = 4548
 name = "FlameSpurtTrap_base"
 rarity = "common"
 movable = false
+visibility = "game_master"
 hue = 0
 
 [[item]]
