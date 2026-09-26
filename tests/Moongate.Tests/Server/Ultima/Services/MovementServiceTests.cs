@@ -148,6 +148,23 @@ public sealed class MovementServiceTests
         Assert.Equal(4, newZ);
     }
 
+    [Fact]
+    public void CheckMovement_DiagonalWithFreeSides_IsAllowed()
+    {
+        Assert.True(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.NorthEast, MovementAbilityType.Walk, out var newZ));
+        Assert.Equal(0, newZ);
+    }
+
+    [Theory, InlineData(5, 4), InlineData(6, 5)]
+    public void CheckMovement_DiagonalWithOneSideBlocked_IsBlocked(int x, int y)
+    {
+        // North-east from (5, 5) lands on (6, 4); its sides are north (5, 4) and east (6, 5).
+        _tiles.Item(0x64, TileFlagType.Impassable, 20);
+        _map.AddStatic(x, y, 0x64, 0);
+
+        Assert.False(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.NorthEast, MovementAbilityType.Walk, out _));
+    }
+
     private MovementService CreateService()
     {
         return new(_map, _tiles);

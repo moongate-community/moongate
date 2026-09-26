@@ -122,6 +122,21 @@ and heights. Blocks of 8x8 cells are read the first time they are asked for and
 kept in a bounded cache. Call the service from the game loop only: the client-file
 readers share their buffers.
 
+`IMovementService` checks one step with the same rules as the client: a mover is 16
+units tall, climbs at most 2 units per step, stands on half the height of a bridge
+such as a stair, and a diagonal step needs both cells beside it free:
+
+```csharp
+if (movementService.CheckMovement(MapType.Felucca, from, DirectionType.East,
+        MovementAbilityType.Walk, out var newZ))
+{
+    // the step is allowed; the mover lands at newZ
+}
+```
+
+`MovementAbilityType.Swim` lets a mover enter water. World items, mobiles and placed
+multis are not part of the check yet.
+
 ## Starting cities
 
 `starting_cities.toml` lists the cities a new character can start in. The game

@@ -59,6 +59,16 @@ public class MovementService : IMovementService
 
         var moveIsOk = Check(map, forward.X, forward.Y, from.Z, startZ, startTop, ability, out newZ);
 
+        // A diagonal step also needs both cells beside it; they lie inside the map because forward does.
+        if (moveIsOk && ((byte)baseDirection & 0x1) == 0x1)
+        {
+            var left = from.Move((DirectionType)(((byte)baseDirection - 1) & 0x7));
+            var right = from.Move((DirectionType)(((byte)baseDirection + 1) & 0x7));
+
+            moveIsOk = Check(map, left.X, left.Y, from.Z, startZ, startTop, ability, out _) &&
+                       Check(map, right.X, right.Y, from.Z, startZ, startTop, ability, out _);
+        }
+
         if (!moveIsOk)
         {
             newZ = startZ;
