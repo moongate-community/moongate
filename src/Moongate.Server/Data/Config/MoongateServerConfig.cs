@@ -37,6 +37,8 @@ public class MoongateServerConfig
 
     public LocalizationConfig Localization { get; set; } = new();
 
+    public LineOfSightConfig LineOfSight { get; set; } = new();
+
     /// <summary>
     ///     Validates configuration before server services begin startup.
     /// </summary>
@@ -109,5 +111,12 @@ public class MoongateServerConfig
         }
 
         Localization.Validate();
+
+        if (LineOfSight is null)
+        {
+            throw new InvalidOperationException("The line of sight configuration section cannot be null.");
+        }
+
+        LineOfSight.Validate();
     }
 }
