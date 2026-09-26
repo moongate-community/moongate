@@ -51,7 +51,25 @@ public sealed class DiceSpecTests
         Assert.Equal((min, max), (spec.Min, spec.Max));
     }
 
-    [Theory, InlineData(""), InlineData("abc"), InlineData("2d"), InlineData(null)]
+    [Theory,
+     InlineData("10-1d4", 6, 9),
+     InlineData("1d4-1d6", -5, 3),
+     InlineData("20/1d4", 5, 20),
+     InlineData("(2d6+1)-3", 0, 10),
+     InlineData("(1d6)-1", 0, 5),
+     InlineData("2d6 + 3", 5, 15),
+     InlineData("2 - 3", -1, -1)]
+    public void Parse_DiceOnEitherSideOfAnOperator_HaveExactBounds(string text, int min, int max)
+    {
+        var spec = DiceSpec.Parse(text);
+
+        Assert.Equal((min, max), (spec.Min, spec.Max));
+        Assert.All(Enumerable.Range(0, 500), _ => Assert.InRange(spec.Roll(), min, max));
+    }
+
+    [Theory, InlineData(""), InlineData("abc"), InlineData("2d"), InlineData(null),
+     InlineData("1d6 fire"), InlineData("5 apples"), InlineData("(1d6"), InlineData("1d6)"), InlineData("1d2O"),
+     InlineData("5/0"), InlineData("1d6/(1d2-1)"), InlineData("100000*100000")]
     public void TryParse_BadText_ReturnsFalseAndParseThrows(string? text)
     {
         Assert.False(DiceSpec.TryParse(text, out _));

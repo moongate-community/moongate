@@ -219,7 +219,7 @@ to 120; a constant is a bare integer.
 | `Hits`, `Mana`, `Stamina` | Dice; unset is the strength, the intelligence and the dexterity |
 | `Damage`, `Armor` | Dice for an unarmed hit and the natural armour; unset is `1d4` and 0 |
 | `Resistances` | `[mobile.resistances]` with `physical`, `fire`, `cold`, `poison`, `energy`, dice in percent; unset is 0 |
-| `Skills` | `[mobile.skills]`, skill names such as `magic_resistance`, dice in whole points 0 to 120 |
+| `Skills` | `[mobile.skills]`, skill names such as `resisting_spells` or `tactics`, dice in whole points 0 to 120 |
 | `Notoriety` | `innocent`, `ally`, `attackable`, `criminal`, `enemy`, `murderer` or `invulnerable`, the name colour; unset is `innocent` |
 | `Karma`, `Fame` | Dice; karma may be negative |
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |

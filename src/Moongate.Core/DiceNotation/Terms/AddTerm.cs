@@ -43,6 +43,15 @@ public class AddTerm : ITerm
     /// Converts to a parenthesized string.
     /// </summary>
     /// <returns>A parenthesized string representing the term.</returns>
+    /// <inheritdoc />
+    public (int Min, int Max) GetBounds()
+    {
+        var (min1, max1) = Term1.GetBounds();
+        var (min2, max2) = Term2.GetBounds();
+
+        return (checked(min1 + min2), checked(max1 + max2));
+    }
+
     public override string ToString()
     {
         return $"({Term1}+{Term2})";

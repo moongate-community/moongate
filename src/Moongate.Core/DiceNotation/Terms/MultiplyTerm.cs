@@ -43,6 +43,16 @@ public class MultiplyTerm : ITerm
     /// Returns a parenthesized string representing the term.
     /// </summary>
     /// <returns>A parenthesized string representing the term.</returns>
+    /// <inheritdoc />
+    public (int Min, int Max) GetBounds()
+    {
+        var (min1, max1) = Term1.GetBounds();
+        var (min2, max2) = Term2.GetBounds();
+        int[] products = [checked(min1 * min2), checked(min1 * max2), checked(max1 * min2), checked(max1 * max2)];
+
+        return (products.Min(), products.Max());
+    }
+
     public override string ToString()
     {
         return $"({Term1}*{Term2})";

@@ -43,6 +43,15 @@ public class SubtractTerm : ITerm
     /// Returns a parenthesized string representing the operation.
     /// </summary>
     /// <returns>A parenthesized string representing the operation.</returns>
+    /// <inheritdoc />
+    public (int Min, int Max) GetBounds()
+    {
+        var (min1, max1) = Term1.GetBounds();
+        var (min2, max2) = Term2.GetBounds();
+
+        return (checked(min1 - max2), checked(max1 - min2));
+    }
+
     public override string ToString()
     {
         return $"({Term1}-{Term2})";

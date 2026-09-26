@@ -32,7 +32,7 @@ public class DiceExpression
     /// <returns>The maximum possible result of the dice expression.</returns>
     public int MaxRoll()
     {
-        return Roll(MaxRandom.Instance);
+        return RootTerm.GetBounds().Max;
     }
 
     /// <summary>
@@ -41,7 +41,7 @@ public class DiceExpression
     /// <returns>The minimum possible result of the dice expression.</returns>
     public int MinRoll()
     {
-        return Roll(MinRandom.Instance);
+        return RootTerm.GetBounds().Min;
     }
 
     /// <summary>

@@ -36,6 +36,12 @@ public class ConstantTerm : ITerm
     /// Returns a string representation of this constant.
     /// </summary>
     /// <returns>The numerical constant being represented, as a string.</returns>
+    /// <inheritdoc />
+    public (int Min, int Max) GetBounds()
+    {
+        return (Value, Value);
+    }
+
     public override string ToString()
     {
         return Value.ToString();

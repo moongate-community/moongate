@@ -1,98 +1,85 @@
-using Moongate.Core.Interfaces.DiceNotation;
 using Moongate.Core.DiceNotation.Exceptions;
+using Moongate.Core.Interfaces.DiceNotation;
 using ShaiRandom.Generators;
 
 namespace Moongate.Core.DiceNotation.Terms;
 
 /// <summary>
-/// Represents a dice term, eg 1d4 or 2d6.
+///     Rolls <see cref="Multiplicity" /> dice of <see cref="Sides" /> sides and sums them. Keeps no state between
+///     rolls, so one parsed expression can be rolled from many threads.
 /// </summary>
 public class DiceTerm : ITerm
 {
-    private readonly List<int> _diceResults;
+    /// <summary>
+    ///     How many dice to roll.
+    /// </summary>
+    public ITerm Multiplicity { get; }
 
     /// <summary>
-    /// Constructor. Takes the terms representing multiplicity and number of sides.
+    ///     How many sides each die has.
     /// </summary>
-    /// <param name="multiplicity">
-    /// Term representing the number of dice being rolled -- 2d6 has multiplicity 2.
-    /// </param>
-    /// <param name="sides">
-    /// Term representing the number of sides the dice have -- 2d6 has 6 sides.
-    /// </param>
+    public ITerm Sides { get; }
+
     public DiceTerm(ITerm multiplicity, ITerm sides)
     {
         Multiplicity = multiplicity;
         Sides = sides;
-
-        _diceResults = [];
     }
 
-    /// <summary>
-    /// An enumerable of integers representing the result of each dice roll. The expression 2d6
-    /// rolls 2 dice, and as such this enumerable would be of length 2 and contain the result of
-    /// each individual die.
-    /// </summary>
-    public IEnumerable<int> DiceResults => _diceResults;
-
-    /// <summary>
-    /// The result of evaluating the <see cref="Multiplicity" /> term that was used during the last call to
-    /// <see cref="GetResult(IEnhancedRandom)" />.
-    /// </summary>
-    public int LastMultiplicity { get; private set; }
-
-    /// <summary>
-    /// The result of evaluating the <see cref="Sides" /> term that was used during the last call to
-    /// <see cref="GetResult(IEnhancedRandom)" />.
-    /// </summary>
-    public int LastSidedness { get; private set; }
-
-    /// <summary>
-    /// Term representing the number of dice being rolled -- 2d6 has multiplicity 2.
-    /// </summary>
-    public readonly ITerm Multiplicity;
-
-    /// <summary>
-    /// Term representing the number of sides the dice have -- 2d6 has 6 sides.
-    /// </summary>
-    public readonly ITerm Sides;
-
-    /// <summary>
-    /// Rolls the dice, returning the sum.
-    /// </summary>
-    /// <param name="rng">The RNG to use for rolling,</param>
-    /// <returns>The sum of the roll.</returns>
+    /// <inheritdoc />
     public int GetResult(IEnhancedRandom rng)
     {
-        _diceResults.Clear();
-        var sum = 0;
-        LastMultiplicity = Multiplicity.GetResult(rng);
-        LastSidedness = Sides.GetResult(rng);
+        return RollDice(rng).Sum();
+    }
 
-        if (LastMultiplicity < 0)
+    /// <inheritdoc />
+    public (int Min, int Max) GetBounds()
+    {
+        var (minCount, maxCount) = Multiplicity.GetBounds();
+        var (minSides, maxSides) = Sides.GetBounds();
+
+        if (minCount < 0)
         {
             throw new InvalidMultiplicityException();
         }
 
-        if (LastSidedness <= 0)
+        if (minSides <= 0)
         {
             throw new ImpossibleDieException();
         }
 
-        for (var i = 0; i < LastMultiplicity; i++)
-        {
-            var diceVal = rng.NextInt(1, LastSidedness + 1);
-            sum += diceVal;
-            _diceResults.Add(diceVal);
-        }
-
-        return sum;
+        return (minCount, checked(maxCount * maxSides));
     }
 
     /// <summary>
-    /// Gets a parenthesized string representation of the dice term, eg (2d6).
+    ///     Rolls every die and returns each result, for <see cref="KeepTerm" /> to pick the highest from.
     /// </summary>
-    /// <returns>A parenthesized representation of the term.</returns>
+    public List<int> RollDice(IEnhancedRandom rng)
+    {
+        var count = Multiplicity.GetResult(rng);
+        var sides = Sides.GetResult(rng);
+
+        if (count < 0)
+        {
+            throw new InvalidMultiplicityException();
+        }
+
+        if (sides <= 0)
+        {
+            throw new ImpossibleDieException();
+        }
+
+        var results = new List<int>(count);
+
+        for (var i = 0; i < count; i++)
+        {
+            results.Add(rng.NextInt(1, sides + 1));
+        }
+
+        return results;
+    }
+
+    /// <inheritdoc />
     public override string ToString()
     {
         return $"({Multiplicity}d{Sides})";

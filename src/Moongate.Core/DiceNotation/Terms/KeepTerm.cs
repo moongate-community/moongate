@@ -1,68 +1,67 @@
-using Moongate.Core.Interfaces.DiceNotation;
 using Moongate.Core.DiceNotation.Exceptions;
+using Moongate.Core.Interfaces.DiceNotation;
 using ShaiRandom.Generators;
 
 namespace Moongate.Core.DiceNotation.Terms;
 
 /// <summary>
-/// Term representing the keep operator -- keeping only the n highest dice from a dice term.
+///     Rolls a <see cref="DiceTerm" /> and keeps the highest <see cref="Keep" /> dice, such as <c>4d6k3</c>.
 /// </summary>
 public class KeepTerm : ITerm
 {
     /// <summary>
-    /// The dice term to operate on.
+    ///     The dice to roll.
     /// </summary>
-    public readonly DiceTerm DiceTerm;
+    public DiceTerm DiceTerm { get; }
 
     /// <summary>
-    /// The number of dice to keep.
+    ///     How many of the highest dice to keep.
     /// </summary>
-    public readonly ITerm Keep;
+    public ITerm Keep { get; }
 
-    /// <summary>
-    /// Constructor. Takes a term representing the number of dice to keep, and the dice term to
-    /// operate on.
-    /// </summary>
-    /// <param name="keep">Term representing the number of dice to keep.</param>
-    /// <param name="diceTerm">The dice term to operate on.</param>
     public KeepTerm(ITerm keep, DiceTerm diceTerm)
     {
         DiceTerm = diceTerm;
         Keep = keep;
     }
 
-    /// <summary>
-    /// Evaluates the term (as well as the dice expression), returning the sum of the highest n
-    /// rolls in the dice term.
-    /// </summary>
-    /// <param name="rng">The rng to use -- passed to the dice term being operated on.</param>
-    /// <returns>
-    /// The sum of the highest n rolls of the dice term being operated on, where n is equal to
-    /// the value of the keep variable taken in the constructor.
-    /// </returns>
+    /// <inheritdoc />
     public int GetResult(IEnhancedRandom rng)
     {
-        var keepVal = Keep.GetResult(rng);
+        var keep = Keep.GetResult(rng);
 
-        if (keepVal < 0)
+        if (keep < 0)
         {
             throw new InvalidChooseException();
         }
 
-        DiceTerm.GetResult(rng); // Roll so we can check chooses
+        var results = DiceTerm.RollDice(rng);
 
-        if (keepVal > DiceTerm.LastMultiplicity)
+        if (keep > results.Count)
         {
             throw new InvalidChooseException();
         }
 
-        return DiceTerm.DiceResults.OrderByDescending(value => value).Take(keepVal).Sum();
+        return results.OrderByDescending(value => value).Take(keep).Sum();
     }
 
-    /// <summary>
-    /// Returns a parenthesized string representing the term -- eg (4d6k3) or (2d6k2)
-    /// </summary>
-    /// <returns>A parenthesized string representing the term</returns>
+    /// <inheritdoc />
+    public (int Min, int Max) GetBounds()
+    {
+        var (minKeep, maxKeep) = Keep.GetBounds();
+        var (minCount, _) = DiceTerm.Multiplicity.GetBounds();
+        var (_, maxSides) = DiceTerm.Sides.GetBounds();
+        DiceTerm.GetBounds();
+
+        if (minKeep < 0 || maxKeep > minCount)
+        {
+            throw new InvalidChooseException();
+        }
+
+        return (minKeep, checked(maxKeep * maxSides));
+    }
+
+    /// <inheritdoc />
     public override string ToString()
     {
         return $"({DiceTerm}k{Keep})";

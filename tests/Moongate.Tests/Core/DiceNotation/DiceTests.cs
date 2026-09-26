@@ -61,4 +61,27 @@ public sealed class DiceTests
     {
         Assert.Throws<InvalidMultiplicityException>(() => Dice.Roll("-1d6"));
     }
+
+    [Fact]
+    public void Roll_OneKeepExpressionFromManyThreads_StaysWithinBounds()
+    {
+        var expression = Dice.Parse("4d6k3");
+        var outOfRange = 0;
+
+        Parallel.For(
+            0,
+            200_000,
+            _ =>
+            {
+                var roll = expression.Roll();
+
+                if (roll is < 3 or > 18)
+                {
+                    Interlocked.Increment(ref outOfRange);
+                }
+            }
+        );
+
+        Assert.Equal(0, outOfRange);
+    }
 }

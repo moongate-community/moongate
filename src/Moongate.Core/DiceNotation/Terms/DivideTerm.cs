@@ -36,15 +36,41 @@ public class DivideTerm : ITerm
     /// <returns>The result of evaluating <see cref="Term1" /> / <see cref="Term2" />.</returns>
     public int GetResult(IEnhancedRandom rng)
     {
-        return (int)Math.Round((double)Term1.GetResult(rng) / Term2.GetResult(rng));
+        return Divide(Term1.GetResult(rng), Term2.GetResult(rng));
     }
 
     /// <summary>
     /// Returns a parenthesized string representing the operation.
     /// </summary>
     /// <returns>A parenthesized string representing the operation.</returns>
+    /// <inheritdoc />
+    /// <exception cref="DivideByZeroException">The divisor can be 0.</exception>
+    public (int Min, int Max) GetBounds()
+    {
+        var (min1, max1) = Term1.GetBounds();
+        var (min2, max2) = Term2.GetBounds();
+
+        if (min2 <= 0 && max2 >= 0)
+        {
+            throw new DivideByZeroException($"The divisor {Term2} can be 0.");
+        }
+
+        // Rounding is monotonic, so the extremes are at the corners of both ranges.
+        int[] quotients =
+        [
+            Divide(min1, min2), Divide(min1, max2), Divide(max1, min2), Divide(max1, max2)
+        ];
+
+        return (quotients.Min(), quotients.Max());
+    }
+
     public override string ToString()
     {
         return $"({Term1}/{Term2})";
+    }
+
+    private static int Divide(int dividend, int divisor)
+    {
+        return (int)Math.Round((double)dividend / divisor);
     }
 }

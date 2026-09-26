@@ -39,6 +39,9 @@ public class Parser : IParser
         var postfix = ToPostfix(expression);
         var lastTerm = EvaluatePostfix(postfix);
 
+        // Fails now on what a roll would reject later, such as "1d0" or "5/0".
+        lastTerm.GetBounds();
+
         return new(lastTerm);
     }
 
@@ -132,6 +135,14 @@ public class Parser : IParser
 
         while (charIndex < infix.Length)
         {
+            // Spaces separate tokens and change nothing else: "2 - 3" is a subtraction.
+            if (char.IsWhiteSpace(infix[charIndex]))
+            {
+                charIndex++;
+
+                continue;
+            }
+
             if (char.IsDigit(infix[charIndex]) || lastWasOperator && infix[charIndex] == '-') // Is an operand
             {
                 lastWasOperator = false;
@@ -160,6 +171,11 @@ public class Parser : IParser
                         break;
                     case ')':
                         {
+                            if (!operators.Contains('('))
+                            {
+                                throw new InvalidSyntaxException();
+                            }
+
                             var op = operators.Pop();
 
                             while (op != '(')
@@ -167,6 +183,9 @@ public class Parser : IParser
                                 output.Add(op.ToString());
                                 op = operators.Pop();
                             }
+
+                            // A closed group is an operand: a '-' after it subtracts.
+                            lastWasOperator = false;
 
                             break;
                         }
@@ -183,6 +202,10 @@ public class Parser : IParser
 
                                 operators.Push(infix[charIndex]);
                             }
+                            else
+                            {
+                                throw new InvalidSyntaxException();
+                            }
 
                             break;
                         }
@@ -194,7 +217,14 @@ public class Parser : IParser
 
         while (operators.Count != 0)
         {
-            output.Add(operators.Pop().ToString());
+            var op = operators.Pop();
+
+            if (op == '(')
+            {
+                throw new InvalidSyntaxException();
+            }
+
+            output.Add(op.ToString());
         }
 
         return output;
