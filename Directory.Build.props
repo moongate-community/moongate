@@ -46,6 +46,11 @@
     <PropertyGroup Condition="'$(Configuration)' == 'Release'">
         <DebugType>embedded</DebugType>
         <Optimize>true</Optimize>
+    </PropertyGroup>
+
+    <!-- Every configuration: FreeSql reads the XML docs of [Column] properties as column comments, so Debug and
+         Release must see the same schema. -->
+    <PropertyGroup>
         <GenerateDocumentationFile>true</GenerateDocumentationFile>
     </PropertyGroup>
 
