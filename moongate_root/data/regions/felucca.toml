@@ -1,0 +1,2343 @@
+# ==============================================================================
+# Moongate - regions/felucca.toml
+#
+# What it is for:
+#   The regions of Felucca: towns, dungeons and other named areas, with the
+#   rules they apply. The map is the name of this file. Every rule is written out
+#   and already includes the rules of the region's parents, so a region can be
+#   read on its own. Where regions overlap, the highest priority applies.
+#
+# Fields:
+#   name            the region name (leave out for areas that only apply rules)
+#   type            base, town, dungeon, nohousing, guarded, jail or greenacres
+#   priority        where regions overlap, the highest one applies
+#   parent          the name of the region this one is part of, on this map
+#   areas           rectangles as "(x1, y1)..(x2, y2)": first corner included,
+#                   second corner excluded; these are corners, not sizes
+#                   example: areas = ["(1330, 1991)..(1343, 2004)"]
+#                   with height: { bounds = "(2200, 1110)..(2250, 1160)", z1 = 0, z2 = 128 }
+#                   z1 is included, z2 excluded; omit either for no limit
+#                   without z1 and z2 the rectangle covers every height
+#   go_location     where a "go to region" command takes a character, "(x, y, z)"
+#   entrance        the entrance of the town or dungeon, "(x, y, z)"
+#   music           the music played in the region (see the music list)
+#   weather         the weather profile of weather.toml the region uses
+#   rune_name       the name of a rune marked here
+#   guarded         whether guards protect the region
+#   housing         whether players may place houses
+#   instant_logout  whether a character with no fight in progress logs out at once
+#   recall_in, recall_out, gate_in, gate_out, mark, teleport_in, teleport_out
+#                   whether those travel spells work into, out of or in the region;
+#                   a travel spell is blocked when any region covering the place
+#                   blocks it, whatever its priority
+# ==============================================================================
+
+[[region]]
+name = "Moongates"
+type = "guarded"
+priority = 50
+areas = [
+    "(1330, 1991)..(1343, 2004)",
+    "(1494, 3767)..(1506, 3778)",
+    "(2694, 685)..(2709, 701)",
+    "(1823, 2943)..(1834, 2954)",
+    "(761, 741)..(780, 762)",
+    "(638, 2062)..(650, 2073)",
+    "(4459, 1276)..(4475, 1292)",
+    "(3554, 2132)..(3572, 2150)",
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "T2A Arena"
+type = "guarded"
+priority = 50
+areas = [
+    "(2396, 197)..(2407, 220)",
+    "(5717, 428)..(5755, 456)",
+    "(6085, 3674)..(6108, 3698)",
+    "(6063, 3698)..(6111, 3750)",
+]
+go_location = "(6103, 3724, 25)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "The Heartwood"
+type = "town"
+priority = 50
+areas = ["(6911, 255)..(7168, 512)"]
+go_location = "(6984, 337, 0)"
+entrance = "(535, 995, 0)"
+music = "ElfCity"
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = false
+
+[[region]]
+name = "Sanctuary"
+type = "dungeon"
+priority = 50
+areas = ["(6144, 0)..(6399, 255)"]
+go_location = "(6174, 23, 0)"
+entrance = "(762, 1645, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = true
+
+[[region]]
+name = "The Painted Caves"
+type = "dungeon"
+priority = 50
+areas = ["(6240, 850)..(6315, 920)"]
+go_location = "(6308, 892, -1)"
+entrance = "(1716, 892, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = true
+
+[[region]]
+name = "The Prism of Light"
+type = "dungeon"
+priority = 50
+areas = ["(6400, 0)..(6621, 255)"]
+go_location = "(6474, 188, 0)"
+entrance = "(3784, 1097, 14)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = true
+
+[[region]]
+name = "Blighted Grove"
+type = "dungeon"
+priority = 50
+areas = ["(6440, 820)..(6600, 970)"]
+go_location = "(6478, 863, 11)"
+entrance = "(587, 1641, -1)"
+music = "MelisandesLair"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = true
+
+[[region]]
+name = "The Palace of Paroxysmus"
+type = "dungeon"
+priority = 50
+areas = ["(6191, 311)..(6561, 671)"]
+go_location = "(6222, 335, 60)"
+entrance = "(5574, 3024, 31)"
+music = "ParoxysmusLair"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = true
+
+[[region]]
+name = "Bravehorn's drinking pool"
+type = "base"
+priority = 50
+areas = ["(1302, 2331)..(1340, 2353)"]
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Huntsman's Forest"
+type = "base"
+priority = 50
+areas = ["(1595, 550)..(1715, 670)"]
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Cove"
+type = "town"
+priority = 50
+areas = [
+    "(2200, 1110)..(2250, 1160)",
+    "(2200, 1160)..(2286, 1246)",
+]
+go_location = "(2275, 1210, 0)"
+music = "Cove"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Britain"
+type = "town"
+priority = 50
+areas = [
+    { bounds = "(1416, 1498)..(1740, 1777)", z1 = -10, z2 = 128 },
+    { bounds = "(1500, 1408)..(1546, 1498)", z1 = 0, z2 = 128 },
+    { bounds = "(1385, 1538)..(1416, 1777)", z1 = -10, z2 = 128 },
+    { bounds = "(1416, 1777)..(1740, 1837)", z1 = 0, z2 = 128 },
+    { bounds = "(1385, 1777)..(1416, 1907)", z1 = 0, z2 = 128 },
+    { bounds = "(1093, 1538)..(1385, 1907)", z1 = 0, z2 = 128 },
+]
+go_location = "(1495, 1629, 10)"
+music = "Britain1"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Britain"
+areas = [
+    { bounds = "(1492, 1602)..(1500, 1621)", z1 = 0, z2 = 128 },
+    { bounds = "(1500, 1610)..(1508, 1626)", z1 = 0, z2 = 128 },
+    { bounds = "(1576, 1584)..(1600, 1600)", z1 = 0, z2 = 128 },
+    { bounds = "(1456, 1512)..(1472, 1528)", z1 = 0, z2 = 128 },
+    { bounds = "(1472, 1512)..(1480, 1520)", z1 = 0, z2 = 128 },
+    { bounds = "(1486, 1684)..(1494, 1692)", z1 = 0, z2 = 128 },
+    { bounds = "(1494, 1676)..(1502, 1700)", z1 = 0, z2 = 128 },
+    { bounds = "(1424, 1712)..(1432, 1736)", z1 = 0, z2 = 128 },
+    { bounds = "(1432, 1712)..(1440, 1724)", z1 = 0, z2 = 128 },
+    { bounds = "(1608, 1584)..(1632, 1592)", z1 = 0, z2 = 128 },
+    { bounds = "(1616, 1576)..(1624, 1584)", z1 = 0, z2 = 128 },
+    { bounds = "(1544, 1760)..(1560, 1776)", z1 = 0, z2 = 128 },
+    { bounds = "(1560, 1760)..(1568, 1768)", z1 = 0, z2 = 128 },
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Wheatfield in Britain 1"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1120, 1776)..(1152, 1808)"]
+go_location = "(1135, 1791, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Wheatfield in Britain 2"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1184, 1808)..(1216, 1840)"]
+go_location = "(1199, 1823, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Wheatfield in Britain 3"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1216, 1872)..(1248, 1904)"]
+go_location = "(1231, 1887, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Carrot Field in Britain 1"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1208, 1712)..(1224, 1736)"]
+go_location = "(1215, 1723, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "An Onion Field in Britain 1"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1224, 1712)..(1240, 1736)"]
+go_location = "(1231, 1723, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Cabbage Field in Britain 1"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1176, 1672)..(1192, 1695)"]
+go_location = "(1183, 1683, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Turnip Field in Britain 1"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1192, 1672)..(1208, 1696)"]
+go_location = "(1199, 1683, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Wheatfield in Britain 4"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1104, 1608)..(1136, 1640)"]
+go_location = "(1120, 1624, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Wheatfield in Britain 5"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1136, 1560)..(1168, 1592)"]
+go_location = "(1152, 1576, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Turnip Field in Britain 2"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1208, 1592)..(1224, 1616)"]
+go_location = "(1216, 1604, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Carrot Field in Britain 2"
+type = "town"
+priority = 50
+parent = "Britain"
+areas = ["(1224, 1592)..(1240, 1616)"]
+go_location = "(1232, 1604, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Britain Graveyard"
+type = "nohousing"
+priority = 50
+areas = ["(1333, 1441)..(1417, 1523)"]
+go_location = "(1384, 1492, 10)"
+weather = "temperate"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Jhelom Islands"
+type = "nohousing"
+priority = 50
+areas = [
+    "(1111, 3567)..(1144, 3588)",
+    "(1078, 3588)..(1202, 3709)",
+    "(1224, 3592)..(1533, 4065)",
+]
+go_location = "(1383, 3815, 0)"
+music = "Jhelom"
+weather = "temperate"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Jhelom"
+type = "town"
+priority = 50
+parent = "Jhelom Islands"
+areas = [
+    { bounds = "(1303, 3670)..(1492, 3895)", z1 = -20, z2 = 128 },
+    { bounds = "(1338, 3895)..(1412, 3923)", z1 = -20, z2 = 128 },
+    { bounds = "(1383, 3951)..(1492, 4045)", z1 = -20, z2 = 128 },
+]
+go_location = "(1383, 3815, 0)"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "nohousing"
+priority = 50
+parent = "Jhelom"
+areas = [
+    { bounds = "(1352, 3800)..(1368, 3832)", z1 = -20, z2 = 128 },
+    { bounds = "(1368, 3808)..(1376, 3824)", z1 = -20, z2 = 128 },
+    { bounds = "(1432, 3768)..(1464, 3776)", z1 = -20, z2 = 128 },
+    { bounds = "(1440, 3776)..(1464, 3784)", z1 = -20, z2 = 128 },
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Minoc"
+type = "town"
+priority = 50
+areas = [
+    "(2411, 366)..(2546, 607)",
+    "(2548, 495)..(2620, 550)",
+    "(2564, 585)..(2567, 627)",
+    "(2567, 585)..(2628, 646)",
+    "(2499, 627)..(2567, 690)",
+]
+go_location = "(2466, 544, 0)"
+music = "Minoc"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Minoc"
+areas = [
+    "(2457, 397)..(2497, 405)",
+    "(2465, 405)..(2473, 413)",
+    "(2481, 405)..(2489, 413)",
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Ocllo"
+type = "town"
+priority = 50
+areas = [
+    "(3587, 2456)..(3706, 2555)",
+    "(3706, 2460)..(3708, 2555)",
+    "(3587, 2555)..(3693, 2628)",
+    "(3590, 2628)..(3693, 2686)",
+    "(3693, 2555)..(3754, 2699)",
+    "(3754, 2558)..(3761, 2699)",
+    { bounds = "(3761, 2555)..(3768, 2699)", z1 = -128, z2 = 50 },
+    "(3695, 2699)..(3761, 2712)",
+]
+go_location = "(3650, 2519, 0)"
+music = "Ocllo"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Ocllo"
+areas = [
+    "(3664, 2608)..(3680, 2624)",
+    "(3664, 2640)..(3672, 2656)",
+    "(3672, 2648)..(3680, 2656)",
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Trinsic"
+type = "town"
+priority = 50
+areas = [
+    "(1856, 2636)..(1931, 2664)",
+    "(1816, 2664)..(2099, 2895)",
+    "(2099, 2782)..(2117, 2807)",
+    "(1970, 2895)..(2017, 2927)",
+    { bounds = "(1796, 2696)..(1816, 2763)", z1 = 0, z2 = 128 },
+    { bounds = "(1800, 2796)..(1816, 2848)", z1 = 0, z2 = 128 },
+]
+go_location = "(1867, 2780, 0)"
+music = "Trinsic"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Trinsic"
+areas = [
+    "(1834, 2728)..(1856, 2744)",
+    "(2024, 2784)..(2040, 2804)",
+    "(2026, 2804)..(2040, 2806)",
+    "(2024, 2806)..(2040, 2813)",
+    "(1923, 2786)..(1935, 2808)",
+    "(1935, 2786)..(1942, 2800)",
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Vesper"
+type = "town"
+priority = 50
+areas = [
+    "(2893, 598)..(3014, 648)",
+    "(2816, 648)..(3065, 1013)",
+    "(2734, 944)..(2816, 948)",
+    "(2728, 948)..(2816, 1001)",
+]
+go_location = "(2899, 676, 0)"
+music = "Vesper"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Vesper"
+areas = [
+    "(2952, 864)..(2968, 896)",
+    "(2968, 872)..(2976, 888)",
+    "(2776, 952)..(2792, 984)",
+    "(2768, 960)..(2776, 976)",
+    "(2892, 901)..(2908, 920)",
+    "(2908, 904)..(2916, 912)",
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Yew"
+type = "town"
+priority = 50
+areas = [
+    { bounds = "(92, 656)..(441, 881)", z1 = 0, z2 = 39 },
+    { bounds = "(441, 746)..(657, 881)", z1 = 0, z2 = 39 },
+    { bounds = "(258, 881)..(657, 1261)", z1 = 0, z2 = 39 },
+    { bounds = "(657, 922)..(699, 1229)", z1 = 0, z2 = 39 },
+    { bounds = "(657, 806)..(674, 834)", z1 = 0, z2 = 39 },
+    { bounds = "(718, 874)..(756, 896)", z1 = 0, z2 = 39 },
+]
+go_location = "(546, 992, 0)"
+music = "Yew"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Yew"
+areas = [{ bounds = "(600, 808)..(624, 832)", z1 = 0, z2 = 39 }]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Field of Sheep in Yew 1"
+type = "town"
+priority = 50
+parent = "Yew"
+areas = ["(664, 928)..(686, 950)"]
+go_location = "(675, 939, 0)"
+rune_name = "A Field of Sheep in Yew"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Field of Sheep in Yew 2"
+type = "town"
+priority = 50
+parent = "Yew"
+areas = ["(664, 1168)..(686, 1190)"]
+go_location = "(675, 1179, 0)"
+rune_name = "A Field of Sheep in Yew"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Farm in Yew"
+type = "town"
+priority = 50
+parent = "Yew"
+areas = ["(560, 1088)..(582, 1110)"]
+go_location = "(571, 1099, 0)"
+rune_name = "A Farm in Yew"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Wheatfield in Yew 1"
+type = "town"
+priority = 50
+parent = "Yew"
+areas = ["(560, 1232)..(576, 1248)"]
+go_location = "(567, 1239, 0)"
+rune_name = "A Wheatfield in Yew"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Wheatfield in Yew 2"
+type = "town"
+priority = 50
+parent = "Yew"
+areas = ["(368, 1176)..(382, 1208)"]
+go_location = "(375, 1191, 0)"
+rune_name = "A Wheatfield in Yew"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Wind"
+type = "town"
+priority = 50
+areas = [
+    "(5294, 19)..(5366, 139)",
+    "(5132, 58)..(5213, 126)",
+    "(5197, 126)..(5252, 204)",
+    "(5132, 3)..(5202, 58)",
+    "(5252, 112)..(5294, 170)",
+    "(5213, 98)..(5252, 126)",
+    "(5279, 57)..(5294, 112)",
+    "(5252, 170)..(5284, 178)",
+    "(5286, 25)..(5294, 57)",
+    "(5252, 178)..(5272, 183)",
+    "(5252, 183)..(5262, 193)",
+]
+go_location = "(5223, 190, 5)"
+music = "Wind"
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Wind"
+areas = [
+    "(5159, 15)..(5184, 24)",
+    "(5159, 24)..(5168, 40)",
+    "(5175, 24)..(5184, 32)",
+    "(5212, 159)..(5221, 183)",
+    "(5221, 171)..(5228, 183)",
+    "(5206, 164)..(5212, 179)",
+    "(5303, 28)..(5319, 42)",
+]
+weather = "none"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Serpent's Hold"
+type = "town"
+priority = 50
+areas = [{ bounds = "(2868, 3324)..(3073, 3519)", z1 = 0, z2 = 128 }]
+go_location = "(3010, 3371, 15)"
+music = "Serpents"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Serpent's Hold"
+areas = [
+    { bounds = "(2960, 3400)..(2976, 3416)", z1 = 0, z2 = 128 },
+    { bounds = "(2968, 3416)..(2976, 3432)", z1 = 0, z2 = 128 },
+    { bounds = "(3008, 3450)..(3022, 3464)", z1 = 0, z2 = 128 },
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Skara Brae"
+type = "town"
+priority = 50
+areas = ["(538, 2107)..(688, 2297)"]
+go_location = "(632, 2233, 0)"
+music = "Skarabra"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Skara Brae"
+areas = [
+    "(600, 2232)..(616, 2256)",
+    "(592, 2240)..(600, 2256)",
+    "(616, 2240)..(624, 2256)",
+    "(552, 2168)..(568, 2192)",
+    "(568, 2168)..(576, 2176)",
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Nujel'm"
+type = "town"
+priority = 50
+areas = [{ bounds = "(3475, 1000)..(3835, 1435)", z1 = 0, z2 = 128 }]
+go_location = "(3732, 1279, 0)"
+music = "Nujelm"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Nujel'm"
+areas = [
+    { bounds = "(3736, 1184)..(3752, 1207)", z1 = 0, z2 = 128 },
+    { bounds = "(3728, 1192)..(3736, 1207)", z1 = 0, z2 = 128 },
+    { bounds = "(3728, 1288)..(3751, 1303)", z1 = 0, z2 = 128 },
+    { bounds = "(3728, 1303)..(3744, 1312)", z1 = 0, z2 = 128 },
+    { bounds = "(3728, 1312)..(3740, 1320)", z1 = 0, z2 = 128 },
+    { bounds = "(3728, 1320)..(3744, 1343)", z1 = 0, z2 = 128 },
+    { bounds = "(3744, 1328)..(3751, 1343)", z1 = 0, z2 = 128 },
+    { bounds = "(3760, 1216)..(3772, 1240)", z1 = 0, z2 = 128 },
+    { bounds = "(3772, 1220)..(3776, 1236)", z1 = 0, z2 = 128 },
+    { bounds = "(3776, 1224)..(3784, 1232)", z1 = 0, z2 = 128 },
+    { bounds = "(3728, 1248)..(3744, 1272)", z1 = 0, z2 = 128 },
+    { bounds = "(3744, 1264)..(3752, 1272)", z1 = 0, z2 = 128 },
+    { bounds = "(3744, 1248)..(3752, 1256)", z1 = 0, z2 = 128 },
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Moonglow"
+type = "town"
+priority = 50
+areas = [
+    { bounds = "(4535, 844)..(4555, 847)", z1 = 0, z2 = 128 },
+    { bounds = "(4530, 847)..(4561, 908)", z1 = 0, z2 = 128 },
+    { bounds = "(4521, 914)..(4577, 963)", z1 = 0, z2 = 128 },
+    { bounds = "(4278, 915)..(4332, 934)", z1 = 0, z2 = 128 },
+    { bounds = "(4283, 944)..(4336, 1017)", z1 = 0, z2 = 128 },
+    { bounds = "(4377, 1015)..(4436, 1052)", z1 = -10, z2 = 128 },
+    { bounds = "(4367, 1050)..(4509, 1195)", z1 = 0, z2 = 128 },
+    { bounds = "(4539, 1036)..(4566, 1054)", z1 = 0, z2 = 128 },
+    { bounds = "(4517, 1053)..(4540, 1075)", z1 = 0, z2 = 128 },
+    { bounds = "(4389, 1198)..(4436, 1237)", z1 = 0, z2 = 128 },
+    { bounds = "(4466, 1211)..(4498, 1236)", z1 = 0, z2 = 128 },
+    { bounds = "(4700, 1108)..(4717, 1126)", z1 = 0, z2 = 128 },
+    { bounds = "(4656, 1127)..(4682, 1140)", z1 = 0, z2 = 128 },
+    { bounds = "(4678, 1162)..(4703, 1187)", z1 = 0, z2 = 128 },
+    { bounds = "(4613, 1196)..(4636, 1218)", z1 = 0, z2 = 128 },
+    { bounds = "(4646, 1212)..(4660, 1229)", z1 = 0, z2 = 128 },
+    { bounds = "(4677, 1214)..(4703, 1236)", z1 = 0, z2 = 128 },
+    { bounds = "(4622, 1316)..(4644, 1340)", z1 = 0, z2 = 128 },
+    { bounds = "(4487, 1353)..(4546, 1374)", z1 = 0, z2 = 128 },
+    { bounds = "(4477, 1374)..(4546, 1409)", z1 = 0, z2 = 128 },
+    { bounds = "(4659, 1387)..(4699, 1427)", z1 = 0, z2 = 128 },
+    { bounds = "(4549, 1482)..(4578, 1509)", z1 = 0, z2 = 128 },
+    { bounds = "(4405, 1451)..(4428, 1474)", z1 = 0, z2 = 128 },
+    { bounds = "(4483, 1468)..(4504, 1481)", z1 = 0, z2 = 128 },
+]
+go_location = "(4442, 1172, 0)"
+music = "Moonglow"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Moonglow"
+areas = [
+    { bounds = "(4384, 1152)..(4392, 1176)", z1 = 0, z2 = 128 },
+    { bounds = "(4392, 1160)..(4408, 1168)", z1 = 0, z2 = 128 },
+    { bounds = "(4400, 1152)..(4408, 1160)", z1 = 0, z2 = 128 },
+    { bounds = "(4480, 1056)..(4488, 1072)", z1 = 0, z2 = 128 },
+    { bounds = "(4488, 1060)..(4492, 1068)", z1 = 0, z2 = 128 },
+    { bounds = "(4476, 1060)..(4480, 1068)", z1 = 0, z2 = 128 },
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Magincia"
+type = "town"
+priority = 50
+areas = [
+    "(3653, 2046)..(3680, 2094)",
+    "(3752, 2046)..(3804, 2094)",
+    "(3680, 2045)..(3752, 2094)",
+    "(3652, 2094)..(3812, 2274)",
+    "(3649, 2256)..(3703, 2303)",
+]
+go_location = "(3714, 2220, 20)"
+music = "Magincia"
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Magincia"
+areas = [
+    "(3680, 2152)..(3704, 2160)",
+    "(3720, 2216)..(3736, 2232)",
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Buccaneer's Den"
+type = "town"
+priority = 50
+areas = [
+    "(2612, 2057)..(2776, 2267)",
+    { bounds = "(2604, 2065)..(2612, 2254)", z1 = 0, z2 = 128 },
+]
+go_location = "(2706, 2163, 0)"
+music = "Bucsden"
+weather = "temperate"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Buccaneer's Den"
+areas = [
+    "(2712, 2080)..(2728, 2096)",
+    "(2712, 2096)..(2720, 2104)",
+    "(2664, 2232)..(2688, 2240)",
+    "(2672, 2240)..(2688, 2248)",
+]
+weather = "temperate"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Covetous"
+type = "dungeon"
+priority = 50
+areas = [
+    "(5376, 1793)..(5577, 2048)",
+    "(5576, 1791)..(5633, 2048)",
+]
+go_location = "(5456, 1862, 0)"
+entrance = "(2499, 916, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Deceit"
+type = "dungeon"
+priority = 50
+areas = ["(5122, 518)..(5370, 770)"]
+go_location = "(5187, 635, 0)"
+entrance = "(4111, 429, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Despise"
+type = "dungeon"
+priority = 50
+areas = ["(5377, 516)..(5631, 1022)"]
+go_location = "(5501, 570, 59)"
+entrance = "(1296, 1082, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Destard"
+type = "dungeon"
+priority = 50
+areas = ["(5120, 770)..(5371, 1028)"]
+go_location = "(5243, 1004, 0)"
+entrance = "(1176, 2635, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Hythloth"
+type = "dungeon"
+priority = 50
+areas = ["(5898, 2)..(6136, 246)"]
+go_location = "(5905, 22, 44)"
+entrance = "(4722, 3814, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Khaldun"
+type = "dungeon"
+priority = 50
+areas = ["(5381, 1284)..(5628, 1509)"]
+go_location = "(5571, 1302, 0)"
+entrance = "(5882, 3819, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Jail"
+type = "jail"
+priority = 50
+areas = ["(5271, 1159)..(5312, 1192)"]
+go_location = "(5275, 1163, 0)"
+weather = "none"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Green Acres"
+type = "greenacres"
+priority = 1
+areas = ["(5376, 512)..(6143, 1279)"]
+go_location = "(5445, 1153, 0)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Shame"
+type = "dungeon"
+priority = 50
+areas = [
+    "(5377, 2)..(5634, 262)",
+    "(5635, 2)..(5895, 126)",
+]
+go_location = "(5395, 126, 0)"
+entrance = "(512, 1559, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Wrong"
+type = "dungeon"
+priority = 50
+areas = ["(5633, 511)..(5886, 1021)"]
+go_location = "(5825, 599, 0)"
+entrance = "(2042, 226, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Cave 1"
+type = "base"
+priority = 50
+areas = [
+    "(2373, 900)..(2395, 928)",
+    "(2395, 903)..(2409, 919)",
+    "(2373, 928)..(2383, 937)",
+    "(2359, 927)..(2373, 945)",
+]
+go_location = "(2367, 942, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Cave 2"
+type = "base"
+priority = 50
+areas = ["(1887, 354)..(1920, 377)"]
+go_location = "(1903, 365, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Cave 3"
+type = "base"
+priority = 50
+areas = ["(1925, 307)..(1943, 325)"]
+go_location = "(1934, 316, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Cave 4"
+type = "base"
+priority = 50
+areas = ["(2323, 809)..(2368, 851)"]
+go_location = "(2345, 830, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Britain Mine 1"
+type = "base"
+priority = 50
+areas = ["(1436, 1215)..(1465, 1252)"]
+go_location = "(1443, 1228, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Britain Mine 2"
+type = "base"
+priority = 50
+areas = ["(1611, 1175)..(1662, 1204)"]
+go_location = "(1629, 1189, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Minoc Cave 1"
+type = "base"
+priority = 50
+areas = ["(2406, 168)..(2428, 184)"]
+go_location = "(2426, 177, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Minoc Cave 2"
+type = "base"
+priority = 50
+areas = ["(2418, 81)..(2442, 113)"]
+go_location = "(2440, 94, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Minoc Cave 3"
+type = "base"
+priority = 50
+areas = ["(2447, 39)..(2489, 67)"]
+go_location = "(2471, 64, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Minoc Mine"
+type = "base"
+priority = 50
+areas = [
+    "(2556, 501)..(2562, 504)",
+    "(2556, 474)..(2582, 501)",
+]
+go_location = "(2558, 499, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Avatar Isle Cave"
+type = "base"
+priority = 50
+areas = ["(4594, 3807)..(4617, 3824)"]
+go_location = "(4605, 3815, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Ice Isle Cave 1"
+type = "base"
+priority = 50
+areas = ["(4018, 421)..(4067, 470)"]
+go_location = "(4054, 440, 3)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Ice Isle Cave 2"
+type = "base"
+priority = 50
+areas = [
+    "(4002, 310)..(4045, 351)",
+    "(4005, 298)..(4027, 310)",
+]
+go_location = "(4030, 325, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "North Territory Cave"
+type = "base"
+priority = 50
+areas = ["(1973, 251)..(1994, 274)"]
+go_location = "(1984, 262, 8)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Yew Cave"
+type = "base"
+priority = 50
+areas = ["(766, 1683)..(778, 1697)"]
+go_location = "(773, 1684, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "North Territory Mine 1"
+type = "base"
+priority = 50
+areas = ["(1713, 1055)..(1753, 1080)"]
+go_location = "(1723, 1065, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "North Territory Mine 2"
+type = "base"
+priority = 50
+areas = ["(1604, 958)..(1650, 1009)"]
+go_location = "(1638, 974, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Mt Kendall"
+type = "base"
+priority = 50
+areas = [
+    "(2552, 448)..(2623, 507)",
+    "(2547, 380)..(2590, 448)",
+    "(2590, 413)..(2623, 448)",
+]
+go_location = "(2593, 477, 60)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Covetous Mine"
+type = "base"
+priority = 50
+areas = [
+    "(2429, 866)..(2448, 911)",
+    "(2448, 879)..(2475, 907)",
+    "(2456, 907)..(2475, 941)",
+]
+go_location = "(2445, 880, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Terathan Keep"
+type = "dungeon"
+priority = 50
+areas = [
+    "(5404, 3099)..(5481, 3167)",
+    "(5120, 1530)..(5374, 1788)",
+]
+go_location = "(5451, 3143, -60)"
+entrance = "(5426, 3120, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Fire"
+type = "dungeon"
+priority = 50
+areas = ["(5635, 1285)..(5880, 1520)"]
+go_location = "(5760, 2908, 15)"
+entrance = "(2922, 3402, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Ice"
+type = "dungeon"
+priority = 50
+areas = [
+    "(5668, 130)..(5888, 268)",
+    "(5800, 319)..(5863, 384)",
+    "(5654, 300)..(5708, 340)",
+]
+go_location = "(5210, 2322, 30)"
+entrance = "(1996, 80, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Delucia"
+type = "town"
+priority = 50
+areas = [
+    "(5123, 3942)..(5315, 4064)",
+    "(5147, 4064)..(5272, 4084)",
+    "(5235, 3930)..(5315, 3942)",
+]
+go_location = "(5228, 3978, 37)"
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Delucia"
+areas = ["(5194, 4053)..(5204, 4073)"]
+weather = "none"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Papua"
+type = "town"
+priority = 50
+areas = [
+    "(5639, 3095)..(5831, 3318)",
+    "(5831, 3237)..(5851, 3267)",
+]
+go_location = "(5769, 3176, 0)"
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Papua"
+areas = ["(5757, 3150)..(5781, 3174)"]
+weather = "none"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Wrong Entrance"
+type = "nohousing"
+priority = 50
+areas = ["(1939, 215)..(2073, 352)"]
+go_location = "(2043, 236, 13)"
+music = "Mountn_a"
+weather = "temperate"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Covetous Entrance"
+type = "nohousing"
+priority = 50
+areas = ["(2433, 846)..(2561, 974)"]
+go_location = "(2499, 918, 0)"
+music = "Vesper"
+weather = "temperate"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Despise Entrance"
+type = "nohousing"
+priority = 50
+areas = ["(1289, 1064)..(1321, 1101)"]
+go_location = "(1298, 1081, 0)"
+weather = "temperate"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Despise Passage"
+type = "nohousing"
+priority = 50
+areas = [
+    "(1338, 1060)..(1389, 1122)",
+    "(1354, 1122)..(1396, 1243)",
+    "(1349, 1122)..(1354, 1224)",
+]
+go_location = "(1380, 1114, 0)"
+weather = "temperate"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Misc Dungeons"
+type = "dungeon"
+priority = 50
+areas = ["(5886, 1281)..(6143, 1535)"]
+go_location = "(6032, 1499, 0)"
+entrance = "(1492, 1641, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Orc Cave"
+type = "dungeon"
+priority = 50
+areas = [
+    "(5281, 1283)..(5373, 1386)",
+    "(5267, 1955)..(5364, 2046)",
+    "(5127, 1941)..(5164, 2024)",
+]
+go_location = "(5137, 2015, 0)"
+entrance = "(1014, 1434, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Cotton Field in Moonglow"
+type = "base"
+priority = 50
+areas = ["(4557, 1471)..(4577, 1481)"]
+go_location = "(4567, 1475, 0)"
+rune_name = "A Cotton Field in Moonglow"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Wheatfield in Skara Brae 1"
+type = "base"
+priority = 50
+areas = ["(796, 2152)..(832, 2176)"]
+go_location = "(813, 2163, 0)"
+rune_name = "A Wheatfield in Skara Brae"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Carrot Field in Skara Brae"
+type = "base"
+priority = 50
+areas = ["(816, 2251)..(832, 2259)"]
+go_location = "(823, 2254, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "An Onion Field in Skara Brae"
+type = "base"
+priority = 50
+areas = ["(816, 2261)..(832, 2269)"]
+go_location = "(823, 2264, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Cabbage Field in Skara Brae 1"
+type = "base"
+priority = 50
+areas = ["(816, 2271)..(832, 2279)"]
+go_location = "(823, 2264, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Cabbage Field in Skara Brae 2"
+type = "base"
+priority = 50
+areas = ["(816, 2281)..(832, 2289)"]
+go_location = "(823, 2274, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Wheatfield in Skara Brae 2"
+type = "base"
+priority = 50
+areas = ["(835, 2344)..(851, 2360)"]
+go_location = "(843, 2352, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "A Cotton Field in Skara Brae"
+type = "base"
+priority = 50
+areas = ["(816, 2344)..(832, 2368)"]
+go_location = "(823, 2355, 0)"
+weather = "temperate"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+# ------------------------------------------------------------------------------
+# Travel zones: places where travel spells are limited, with no other rules.
+# Their priority is 0, so the rules of any other region covering them still apply.
+# ------------------------------------------------------------------------------
+
+# Travel zone: the Lost Lands.
+[[region]]
+type = "base"
+priority = 0
+areas = ["(5120, 2304)..(6144, 4096)"]
+weather = "none"
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+# Travel zone: Wind.
+[[region]]
+type = "base"
+priority = 0
+areas = ["(5120, 0)..(5376, 256)"]
+weather = "none"
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+# Travel zone: the Solen hives.
+[[region]]
+type = "base"
+priority = 0
+areas = ["(5640, 1776)..(5935, 2039)"]
+weather = "none"
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+# ------------------------------------------------------------------------------
+# Weather zones: places with their own weather, with no other rules.
+# Their priority is 0, so any other region covering them keeps its own weather.
+# ------------------------------------------------------------------------------
+
+# Weather zone: Ice Isle.
+[[region]]
+type = "base"
+priority = 0
+areas = [
+    "(3850, 160)..(4240, 480)",
+    "(3900, 480)..(4280, 660)",
+    "(4160, 660)..(4310, 770)",
+]
+weather = "snowy"
+
+# Weather zone: around the Covetous entrance, between Vesper and Minoc.
+[[region]]
+type = "base"
+priority = 0
+areas = ["(2425, 725)..(2675, 975)"]
+weather = "mild"
+
+# Weather zone: around the Despise entrance, north of Britain.
+[[region]]
+type = "base"
+priority = 0
+areas = ["(1245, 1045)..(1495, 1295)"]
+weather = "mild"

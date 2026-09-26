@@ -4,6 +4,7 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Realms;
 
@@ -39,9 +40,8 @@ public sealed class RedisRealmRegistrationServiceTests
 
         await registration.StartAsync();
         await redis.Connection.GetDatabase().KeyDeleteAsync(prefix + "5");
-        await WaitForAsync(
-            async () => (await directory.FindByIndexAsync(5, AccountType.Regular))?.InstanceId ==
-                        realm.InstanceId
+        await WaitForAsync(async () => (await directory.FindByIndexAsync(5, AccountType.Regular))?.InstanceId ==
+                                       realm.InstanceId
         );
 
         await registration.StopAsync();
@@ -78,10 +78,13 @@ public sealed class RedisRealmRegistrationServiceTests
     }
 
     private static RealmDirectoryConfig Config()
-        => new() { HeartbeatIntervalSeconds = 1, LeaseDurationSeconds = 4 };
+    {
+        return new() { HeartbeatIntervalSeconds = 1, LeaseDurationSeconds = 4 };
+    }
 
     private static RealmInstance Realm()
-        => new(
+    {
+        return new(
             new(
                 "realm",
                 5,
@@ -92,17 +95,19 @@ public sealed class RedisRealmRegistrationServiceTests
             ),
             Guid.NewGuid()
         );
+    }
 
     private static string Prefix()
-        => $"moongate:test:registration:{Guid.NewGuid():N}:";
+    {
+        return $"moongate:test:registration:{Guid.NewGuid():N}:";
+    }
 
     private static async Task<RedisConnectionService> CreateConnectionAsync()
     {
         var redis = new RedisConnectionService(
             new()
             {
-                ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                                   "localhost:6379",
+                ConnectionString = RedisTestServer.ConnectionString,
                 HandoffSecret = new('x', 32)
             }
         );

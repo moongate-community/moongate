@@ -13,7 +13,9 @@ public class OrdinalStringHelpersTests
      InlineData(null, "", -1),
      InlineData("", null, 1)]
     public void CompareOrdinal_TextAndNulls_OrdersValuesByCodeUnit(string? left, string? right, int expected)
-        => Assert.Equal(expected, Math.Sign(left!.CompareOrdinal(right!)));
+    {
+        Assert.Equal(expected, Math.Sign(left!.CompareOrdinal(right!)));
+    }
 
     [Theory, InlineData("Door", true), InlineData("door", false), InlineData("", true)]
     public void ContainsOrdinal_Substring_RequiresExactCase(string search, bool expected)
@@ -108,5 +110,7 @@ public class OrdinalStringHelpersTests
 
     [Fact]
     public void ReplaceOrdinal_MixedCaseMatches_ReplacesOnlyExactMatches()
-        => Assert.Equal("gate DOOR gate", "door DOOR door".ReplaceOrdinal("door", "gate"));
+    {
+        Assert.Equal("gate DOOR gate", "door DOOR door".ReplaceOrdinal("door", "gate"));
+    }
 }

@@ -1,0 +1,11 @@
+[[loot]]
+id = "betrayer_loot"
+[[loot.entries]]
+weight = 750
+amount = 1
+
+[[loot.entries]]
+weight = 50
+item_id = "power_crystal"
+comment = "power crystal"
+amount = 1

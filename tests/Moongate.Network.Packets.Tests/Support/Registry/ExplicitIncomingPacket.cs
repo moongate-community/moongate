@@ -23,8 +23,8 @@ public sealed class ExplicitIncomingPacket : IIncomingPacket<ExplicitIncomingPac
     )
     {
         packet = data.Length == 2 && data[0] == 0xD1 && data[1] != 0
-                     ? new ExplicitIncomingPacket(data[1])
-                     : null;
+            ? new ExplicitIncomingPacket(data[1])
+            : null;
 
         return packet is not null;
     }

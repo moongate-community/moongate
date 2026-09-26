@@ -1,6 +1,8 @@
 namespace Moongate.Server.Core.Data.Plugins;
 
-/// <summary>Declares a required plugin and an optional inclusive minimum version.</summary>
+/// <summary>
+///     Declares a required plugin and an optional inclusive minimum version.
+/// </summary>
 public sealed record MoongatePluginDependencyData
 {
     public string Id { get; }

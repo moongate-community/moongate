@@ -6,5 +6,7 @@ namespace Moongate.Network.Packets.Tests.Support.Metadata;
 
 public sealed class MissingMetadataPacket : BaseFixedPacket<MissingMetadataPacket>, IOutgoingPacket
 {
-    public void Write(ref PacketWriter writer) { }
+    public void Write(ref PacketWriter writer)
+    {
+    }
 }

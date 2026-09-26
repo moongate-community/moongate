@@ -51,8 +51,8 @@ public sealed class CommandContainerExtensionsTests
         using var container = new Container();
 
         var returned = container
-                       .RegisterCommand<RecordingCommandExecutor>("echo")
-                       .RegisterCommand<ThrowingCommandExecutor>("boom");
+            .RegisterCommand<RecordingCommandExecutor>("echo")
+            .RegisterCommand<ThrowingCommandExecutor>("boom");
 
         Assert.Same(container, returned);
     }

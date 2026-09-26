@@ -3,6 +3,7 @@ using System.Net.Sockets;
 using DryIoc;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Registry;
 using Moongate.Network.Server;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Extensions;
@@ -12,6 +13,7 @@ using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Network;
+using Moongate.Server.Services.Network.Middleware;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Handlers.General;
@@ -50,8 +52,8 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         _container.RegisterInstance<IConnectionService>(Connections);
         _container.RegisterInstance<ISessionService>(Sessions);
         var networkSender = disconnectSender is null
-                                ? (IPacketSendService)Sender
-                                : new CallbackPacketSender(Sender, disconnectSender);
+            ? (IPacketSendService)Sender
+            : new CallbackPacketSender(Sender, disconnectSender);
         _container.RegisterInstance(networkSender);
         _container.RegisterPacketHandler<PingPacket, PingPacketHandler>();
         _container.RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
@@ -60,8 +62,8 @@ internal sealed class PacketNetworkFixture : IAsyncDisposable
         var config = new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1", GamePort = 0 } };
         _container.RegisterInstance(config);
         Network = listeners is null
-                      ? new(UoNetworkOptionsFactory.CreateGame(config), Connections)
-                      : new NetworkService(listeners, Connections);
+            ? new(UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, [new UoCompressionMiddleware(Sessions)]), Connections)
+            : new NetworkService(listeners, Connections);
         Game = new(Network, Connections, Sessions, Dispatcher, networkSender);
     }
 

@@ -25,8 +25,7 @@ public sealed class ContainerEventExtensionsTests
         using var container = new Container();
         var received = 0;
 
-        var result = container.OnEvent<MoongateStartedEvent>(
-            (message, token) =>
+        var result = container.OnEvent<MoongateStartedEvent>((message, token) =>
             {
                 received++;
 

@@ -16,9 +16,8 @@ public sealed class ScriptDirectoryModuleLoaderTests
         state.OpenModuleLibrary();
         state.ModuleLoader = new ScriptDirectoryModuleLoader(scripts.Path);
 
-        Assert.Throws<LuaRuntimeException>(
-            () =>
-                SyncValueTask.Run(state.DoStringAsync("return require('nope')", "t"))
+        Assert.Throws<LuaRuntimeException>(() =>
+            SyncValueTask.Run(state.DoStringAsync("return require('nope')", "t"))
         );
     }
 
@@ -77,8 +76,7 @@ public sealed class ScriptDirectoryModuleLoaderTests
         }
 
         var exception =
-            Assert.Throws<InvalidOperationException>(
-                () => ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "leak.lua")
+            Assert.Throws<InvalidOperationException>(() => ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "leak.lua")
             );
 
         Assert.Contains("through a link", exception.Message, StringComparison.Ordinal);
@@ -96,9 +94,8 @@ public sealed class ScriptDirectoryModuleLoaderTests
             return;
         }
 
-        Assert.Throws<InvalidOperationException>(
-            () =>
-                ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "shared/util.lua")
+        Assert.Throws<InvalidOperationException>(() =>
+            ScriptDirectoryModuleLoader.ResolvePath(scripts.Path, "shared/util.lua")
         );
     }
 
@@ -126,7 +123,9 @@ public sealed class ScriptDirectoryModuleLoaderTests
     [Theory, InlineData("common/dialogue.lua", "common.dialogue"), InlineData("init.lua", "init"),
      InlineData("ai/npc/guard.lua", "ai.npc.guard"), InlineData("data", "data")]
     public void ToModuleName_IsTheInverseOfTheNameToPathMapping(string normalizedRelativePath, string expected)
-        => Assert.Equal(expected, ScriptDirectoryModuleLoader.ToModuleName(normalizedRelativePath));
+    {
+        Assert.Equal(expected, ScriptDirectoryModuleLoader.ToModuleName(normalizedRelativePath));
+    }
 
     private static bool TryLink(string path, string target, bool directory = false)
     {
@@ -144,8 +143,8 @@ public sealed class ScriptDirectoryModuleLoaderTests
             return true;
         }
         catch (Exception exception) when (exception is IOException or
-                                                       UnauthorizedAccessException or
-                                                       PlatformNotSupportedException)
+                                              UnauthorizedAccessException or
+                                              PlatformNotSupportedException)
         {
             // Creating links needs a privilege on some platforms; the containment check is then untestable here.
             return false;

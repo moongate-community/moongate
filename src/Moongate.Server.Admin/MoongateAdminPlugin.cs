@@ -12,7 +12,9 @@ using Moongate.Server.Ultima.Interfaces;
 
 namespace Moongate.Server.Admin;
 
-/// <summary>Registers the administration listener embedded in the server distribution.</summary>
+/// <summary>
+///     Registers the administration listener embedded in the server distribution.
+/// </summary>
 public sealed class MoongateAdminPlugin : IMoongatePlugin
 {
     public MoongatePluginData Metadata
@@ -26,15 +28,19 @@ public sealed class MoongateAdminPlugin : IMoongatePlugin
         );
 
     public void Register(Container container)
-        => container.AddMoongateService<IAdminApiService, AdminGrpcHostService>(
+    {
+        container.AddMoongateService<IAdminApiService, AdminGrpcHostService>(
             () =>
             {
                 var config = container.Resolve<AdminApiConfig>();
                 var mode = container.Resolve<ServerMode>();
 
+                var directoriesConfig = container.Resolve<DirectoriesConfig>();
+                directoriesConfig.CreateDirectoryIfNotExists("certificates");
+
                 return new(
                     config,
-                    container.Resolve<DirectoriesConfig>(),
+                    directoriesConfig,
                     mode,
                     services =>
                         AdminGrpcApplication.AddServices(
@@ -50,4 +56,5 @@ public sealed class MoongateAdminPlugin : IMoongatePlugin
             },
             AdminGrpcHostService.StartupPriority
         );
+    }
 }

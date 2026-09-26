@@ -7,9 +7,12 @@ using Serilog;
 
 namespace Moongate.Server.Services.Game;
 
-/// <summary>Bridges synchronous transport notifications to owned game work and session retirement.</summary>
+/// <summary>
+///     Bridges synchronous transport notifications to owned game work and session retirement.
+/// </summary>
 public sealed class GameServerService : IGameServerService
 {
+    private readonly PacketRegistry _packets;
     private readonly INetworkService _network;
     private readonly IConnectionService _connections;
     private readonly ISessionService _sessions;
@@ -28,9 +31,11 @@ public sealed class GameServerService : IGameServerService
         IConnectionService connections,
         ISessionService sessions,
         IPacketDispatchService dispatcher,
-        IPacketSendService sender
+        IPacketSendService sender,
+        PacketRegistry? packets = null
     )
     {
+        _packets = packets ?? PacketRegistry.Default;
         _network = network;
         _connections = connections;
         _sessions = sessions;
@@ -57,8 +62,7 @@ public sealed class GameServerService : IGameServerService
         {
             _stopping = true;
 
-            return _lifecycle.StopAsync(
-                async startup =>
+            return _lifecycle.StopAsync(async startup =>
                 {
                     if (startup is not null)
                     {
@@ -72,7 +76,9 @@ public sealed class GameServerService : IGameServerService
     }
 
     private static async Task CaptureCleanup(Func<Task> cleanup)
-        => await cleanup().ConfigureAwait(false);
+    {
+        await cleanup().ConfigureAwait(false);
+    }
 
     private void OnAccepted(object? sender, NetworkConnectionEventArgs args)
     {
@@ -85,12 +91,13 @@ public sealed class GameServerService : IGameServerService
     }
 
     private void OnClosed(object? sender, NetworkConnectionEventArgs args)
-        => TrackCleanup(
-            () => Task.WhenAll(
+    {
+        TrackCleanup(() => Task.WhenAll(
                 CaptureCleanup(() => _sender.DisconnectAsync(args.Connection.SessionId)),
                 CaptureCleanup(() => _dispatcher.DisconnectAsync(args.Connection.SessionId))
             )
         );
+    }
 
     private void OnData(object? sender, NetworkDataEventArgs args)
     {
@@ -117,15 +124,15 @@ public sealed class GameServerService : IGameServerService
         }
 
         // Decode now: transport memory is borrowed only until this callback returns.
-        if (PacketRegistry.Default.TryDecode(args.Data.Span, out var packet, out var opCode) &&
+        if (_packets.TryDecode(args.Data.Span, out var packet, out var opCode) &&
             _dispatcher.TryDispatch(args.Connection.SessionId, packet))
         {
             return;
         }
 
-        var packetName = PacketRegistry.Default.TryGetDescriptor(opCode, out var descriptor)
-                             ? descriptor.PacketType.Name
-                             : "Unknown";
+        var packetName = _packets.TryGetDescriptor(opCode, out var descriptor)
+            ? descriptor.PacketType.Name
+            : "Unknown";
         _logger.Warning(
             "Rejected packet from session {SessionId}, opcode {OpCode}, name {PacketName}",
             args.Connection.SessionId,

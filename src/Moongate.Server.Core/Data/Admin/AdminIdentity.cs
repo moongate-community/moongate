@@ -3,7 +3,9 @@ using Moongate.Server.Core.Types.Accounts;
 
 namespace Moongate.Server.Core.Data.Admin;
 
-/// <summary>Immutable administration identity snapshot.</summary>
+/// <summary>
+///     Immutable administration identity snapshot.
+/// </summary>
 public sealed class AdminIdentity
 {
     public Serial AccountId { get; }

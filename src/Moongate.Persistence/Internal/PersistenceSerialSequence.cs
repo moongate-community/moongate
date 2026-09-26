@@ -7,7 +7,9 @@ using Npgsql;
 
 namespace Moongate.Persistence.Internal;
 
-/// <summary>Manages serial sequences through schema migrations and resolves them through column ownership.</summary>
+/// <summary>
+///     Manages serial sequences through schema migrations and resolves them through column ownership.
+/// </summary>
 internal static class PersistenceSerialSequence
 {
     public static async Task<string> CompareAsync(
@@ -104,13 +106,13 @@ internal static class PersistenceSerialSequence
         var table = orm.CodeFirst.GetTableByEntity(typeof(T));
         var column = table.ColumnsByCs[nameof(IMoongateEntity.Id)];
         var value = await orm.Ado
-                             .CommandFluent(
-                                 "SELECT nextval(pg_get_serial_sequence(@table, @column)::regclass)",
-                                 new { table = table.DbName, column = column.Attribute.Name }
-                             )
-                             .WithTransaction(transaction)
-                             .ExecuteScalarAsync(cancellationToken)
-                             .ConfigureAwait(false);
+            .CommandFluent(
+                "SELECT nextval(pg_get_serial_sequence(@table, @column)::regclass)",
+                new { table = table.DbName, column = column.Attribute.Name }
+            )
+            .WithTransaction(transaction)
+            .ExecuteScalarAsync(cancellationToken)
+            .ConfigureAwait(false);
 
         if (value is null or DBNull)
         {
@@ -130,5 +132,7 @@ internal static class PersistenceSerialSequence
     }
 
     private static string Quote(string identifier)
-        => '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
+    {
+        return '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
+    }
 }

@@ -45,7 +45,9 @@ public sealed class LuaModuleBinderTests : IDisposable
 
     [Fact]
     public void Bind_DoesNotExposeMethodsWithoutTheAttribute()
-        => Assert.Equal(LuaValueType.Nil, Run("return probe.not_exposed")[0].Type);
+    {
+        Assert.Equal(LuaValueType.Nil, Run("return probe.not_exposed")[0].Type);
+    }
 
     [Fact]
     public void Bind_EnumArgumentsAcceptNumberOrName_AndReturnAsNumber()
@@ -63,6 +65,39 @@ public sealed class LuaModuleBinderTests : IDisposable
         var exception = Assert.Throws<LuaRuntimeException>(() => Run("return thrower.fail()"));
 
         Assert.Contains("deliberate", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_FunctionThatIsGeneric_IsABindingErrorNamingTheMember()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => _binder.Bind(_state, new GenericFunctionModule())
+        );
+
+        Assert.Contains("GenericFunctionModule.Count", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("[ScriptFunction]", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_FunctionThatIsNotPublic_IsABindingErrorNamingTheMember()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => _binder.Bind(_state, new PrivateFunctionModule())
+        );
+
+        Assert.Contains("PrivateFunctionModule.Hidden", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("[ScriptFunction]", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Bind_FunctionThatIsStatic_IsABindingErrorNamingTheMember()
+    {
+        var exception = Assert.Throws<InvalidOperationException>(
+            () => _binder.Bind(_state, new StaticFunctionModule())
+        );
+
+        Assert.Contains("StaticFunctionModule.Twice", exception.Message, StringComparison.Ordinal);
+        Assert.Contains("[ScriptFunction]", exception.Message, StringComparison.Ordinal);
     }
 
     [Fact]
@@ -95,7 +130,9 @@ public sealed class LuaModuleBinderTests : IDisposable
 
     [Fact]
     public void Bind_MissingRequiredArgument_RaisesALuaError()
-        => Assert.Throws<LuaRuntimeException>(() => Run("return probe.greet()"));
+    {
+        Assert.Throws<LuaRuntimeException>(() => Run("return probe.greet()"));
+    }
 
     [Fact]
     public void Bind_ModuleTable_RejectsWritesAndMetatableChanges()
@@ -128,7 +165,9 @@ public sealed class LuaModuleBinderTests : IDisposable
 
     [Fact]
     public void Bind_ReportsTheDiscoveredEnums()
-        => Assert.Contains(typeof(ProbeColour), _binder.DiscoveredEnums);
+    {
+        Assert.Contains(typeof(ProbeColour), _binder.DiscoveredEnums);
+    }
 
     [Fact]
     public void Bind_WrongArgumentType_RaisesALuaErrorNamingTheFunction()
@@ -140,8 +179,12 @@ public sealed class LuaModuleBinderTests : IDisposable
     }
 
     private LuaValue[] Run(string source)
-        => SyncValueTask.Run(_state.DoStringAsync(source, "test"));
+    {
+        return SyncValueTask.Run(_state.DoStringAsync(source, "test"));
+    }
 
     public void Dispose()
-        => _state.Dispose();
+    {
+        _state.Dispose();
+    }
 }

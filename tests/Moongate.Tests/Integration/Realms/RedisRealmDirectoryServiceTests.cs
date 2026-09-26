@@ -5,6 +5,7 @@ using Moongate.Server.Core.Types.Realms;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Realms.Internal;
 using Moongate.Server.Services.Redis;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Realms;
 
@@ -15,14 +16,15 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
     private readonly RedisConnectionService _redis = new(
         new()
         {
-            ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                               "localhost:6379",
+            ConnectionString = RedisTestServer.ConnectionString,
             HandoffSecret = new('x', 32)
         }
     );
 
     public async Task InitializeAsync()
-        => await _redis.StartAsync();
+    {
+        await _redis.StartAsync();
+    }
 
     [Fact]
     public async Task RegisterAsync_PublishesTwoLiveRealmsSortedAndFilteredByAccountLevel()
@@ -47,9 +49,9 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
         var directory = Create();
         await directory.RegisterAsync(Realm("first", 7));
 
-        var exception = await Assert.ThrowsAsync<RealmDirectoryException>(
-                            () => directory.RegisterAsync(Realm("second", 7)).AsTask()
-                        );
+        var exception =
+            await Assert.ThrowsAsync<RealmDirectoryException>(() => directory.RegisterAsync(Realm("second", 7)).AsTask()
+            );
 
         Assert.Equal(RealmRegistrationError.DuplicateIndex, exception.Error);
         Assert.Equal("first", (await directory.FindByIndexAsync(7, AccountType.Regular))!.Descriptor.RealmId);
@@ -173,19 +175,23 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
             await directory.RegisterAsync(Realm($"realm-{index}", index));
         }
 
-        var exception = await Assert.ThrowsAsync<RealmDirectoryException>(
-                            () => directory.RegisterAsync(Realm("overflow", 128)).AsTask()
-                        );
+        var exception =
+            await Assert.ThrowsAsync<RealmDirectoryException>(() => directory.RegisterAsync(Realm("overflow", 128)).AsTask()
+            );
 
         Assert.Equal(RealmRegistrationError.CapacityExceeded, exception.Error);
         Assert.Equal(128, (await directory.GetAvailableAsync(AccountType.Regular)).Count);
     }
 
     private RedisRealmDirectoryService Create()
-        => new(_redis, _prefix, TimeSpan.FromSeconds(15));
+    {
+        return new(_redis, _prefix, TimeSpan.FromSeconds(15));
+    }
 
     private static RealmInstance Realm(string id, ushort index, AccountType minimum = AccountType.Regular)
-        => new(new(id, index, id, IPAddress.Loopback, 2595, minimum), Guid.NewGuid());
+    {
+        return new(new(id, index, id, IPAddress.Loopback, 2595, minimum), Guid.NewGuid());
+    }
 
     public async Task DisposeAsync()
     {
@@ -201,5 +207,7 @@ public sealed class RedisRealmDirectoryServiceTests : IAsyncLifetime, IAsyncDisp
     }
 
     ValueTask IAsyncDisposable.DisposeAsync()
-        => new(DisposeAsync());
+    {
+        return new(DisposeAsync());
+    }
 }

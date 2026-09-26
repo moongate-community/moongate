@@ -14,7 +14,9 @@ internal sealed class BlockingAccountService : IAccountService
     public TaskCompletionSource Entered { get; } = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     public void Release(AccountEntity? account)
-        => _result.TrySetResult(account);
+    {
+        _result.TrySetResult(account);
+    }
 
     public Task<AccountEntity?> LoginAsync(
         string username,
@@ -33,21 +35,29 @@ internal sealed class BlockingAccountService : IAccountService
         AccountType accountType = AccountType.Regular,
         CancellationToken cancellationToken = default
     )
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public Task<IEnumerable<AccountEntity>> ListAccountsAsync(CancellationToken cancellationToken = default)
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public Task<AccountCreateResult> CreateAccountAsync(
         AccountCreateOptions options,
         CancellationToken cancellationToken = default
     )
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public Task<AccountPage> ListAccountsPageAsync(
         Serial afterId,
         int pageSize = 50,
         CancellationToken cancellationToken = default
     )
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 }

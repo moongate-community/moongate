@@ -28,18 +28,23 @@ public sealed class GatedWriteStream : Stream
         set => throw new NotSupportedException();
     }
 
-    public override void Flush() { }
+    public override void Flush()
+    {
+    }
 
     public override Task FlushAsync(CancellationToken cancellationToken)
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public override int Read(byte[] buffer, int offset, int count)
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public override async ValueTask<int> ReadAsync(Memory<byte> buffer, CancellationToken cancellationToken = default)
     {
-        using var registration = cancellationToken.Register(
-            () =>
+        using var registration = cancellationToken.Register(() =>
             {
                 if (CancellationFailure is not null)
                 {
@@ -65,13 +70,19 @@ public sealed class GatedWriteStream : Stream
     }
 
     public override long Seek(long offset, SeekOrigin origin)
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public override void SetLength(long value)
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public override void Write(byte[] buffer, int offset, int count)
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public override async ValueTask WriteAsync(ReadOnlyMemory<byte> buffer, CancellationToken cancellationToken = default)
     {

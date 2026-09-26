@@ -6,8 +6,8 @@ using Moongate.Tests.TestSupport.Scripting;
 namespace Moongate.Tests.Scripting.Runtime;
 
 /// <summary>
-/// Pins the LuaCSharp behaviours the scripting design depends on. A failure here means the runtime
-/// changed under us; fix the engine before fixing the test.
+///     Pins the LuaCSharp behaviours the scripting design depends on. A failure here means the runtime
+///     changed under us; fix the engine before fixing the test.
 /// </summary>
 public sealed class LuaCSharpBehaviourTests
 {
@@ -295,8 +295,7 @@ public sealed class LuaCSharpBehaviourTests
         state.OpenBasicLibrary();
         state.OpenModuleLibrary();
         var loads = 0;
-        state.ModuleLoader = new CountingModuleLoader(
-            () =>
+        state.ModuleLoader = new CountingModuleLoader(() =>
             {
                 loads++;
 

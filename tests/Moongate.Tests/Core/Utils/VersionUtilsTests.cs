@@ -25,7 +25,9 @@ public sealed class VersionUtilsTests
 
     [Fact]
     public void GetCodename_NullAssembly_ThrowsArgumentNullException()
-        => Assert.Throws<ArgumentNullException>(() => VersionUtils.GetCodename(null!));
+    {
+        Assert.Throws<ArgumentNullException>(() => VersionUtils.GetCodename(null!));
+    }
 
     [Fact]
     public void GetCodename_ReturnsTheValueOfTheCodenameMetadata()
@@ -62,5 +64,7 @@ public sealed class VersionUtilsTests
 
     [Fact]
     public void GetVersion_NullAssembly_ThrowsArgumentNullException()
-        => Assert.Throws<ArgumentNullException>(() => VersionUtils.GetVersion(null!));
+    {
+        Assert.Throws<ArgumentNullException>(() => VersionUtils.GetVersion(null!));
+    }
 }

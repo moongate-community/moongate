@@ -12,7 +12,9 @@ public sealed class YieldingKeystreamMiddleware : INetMiddleware
         ReadOnlyMemory<byte> data,
         CancellationToken cancellationToken = default
     )
-        => ValueTask.FromResult(data);
+    {
+        return ValueTask.FromResult(data);
+    }
 
     public async ValueTask<ReadOnlyMemory<byte>> ProcessSendAsync(
         MoongateTcpClient? client,

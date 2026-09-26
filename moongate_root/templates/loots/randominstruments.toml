@@ -1,0 +1,47 @@
+[[loot]]
+id = "randominstruments"
+[[loot.entries]]
+weight = 30
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0e9c_drum"
+comment = "drum"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0e9d_tambourine"
+comment = "tambourine"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0e9e_tambourine"
+comment = "tambourine"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0eb1_standing_harp"
+comment = "standing harp"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0eb2_lap_harp"
+comment = "lap harp"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0eb3_lute"
+comment = "lute"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x0eb4_lute"
+comment = "lute"
+amount = 1

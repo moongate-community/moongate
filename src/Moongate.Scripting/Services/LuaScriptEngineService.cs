@@ -18,34 +18,135 @@ using Serilog;
 namespace Moongate.Scripting.Services;
 
 /// <summary>
-/// Owns the single LuaState: opens the sandboxed libraries, binds modules, runs the prelude and init.lua, and serves
-/// the four IScriptEngine operations.
+///     Owns the single LuaState: opens the sandboxed libraries, binds modules, runs the prelude and init.lua, and serves
+///     the four IScriptEngine operations.
 /// </summary>
 /// <remarks>
 ///     <para>
-///     The sandbox opens the base, <c>string</c>, <c>table</c>, <c>math</c>, <c>coroutine</c> and
-///     <c>package</c> libraries; <c>io</c>, <c>os</c> and <c>debug</c> are never opened. It then removes
-///     <c>dofile</c>, <c>loadfile</c> and <c>rawset</c>; <c>package.searchpath</c>, <c>package.path</c>,
-///     <c>package.cpath</c>, <c>package.loadlib</c> and the runtime's second <c>package.searchers</c> entry,
-///     which resolves <c>package.path</c> on the host filesystem independently of the module loader; and
-///     <c>coroutine.create</c>, <c>coroutine.wrap</c> and <c>coroutine.resume</c>, whose threads would carry
-///     neither the instruction budget's hook nor its cancellation token. <c>coroutine.yield</c>,
-///     <c>coroutine.status</c> and <c>coroutine.running</c> stay, so the prelude's <c>wait</c> keeps working.
-///     <c>print</c> is replaced by a function that writes to the server log at Information level, under the
-///     script that called it, so script output never bypasses the configured sinks.
+///         The sandbox opens the base,
+///         <c>
+///             string
+///         </c>
+///         ,
+///         <c>
+///             table
+///         </c>
+///         ,
+///         <c>
+///             math
+///         </c>
+///         ,
+///         <c>
+///             coroutine
+///         </c>
+///         and
+///         <c>
+///             package
+///         </c>
+///         libraries;
+///         <c>
+///             io
+///         </c>
+///         ,
+///         <c>
+///             os
+///         </c>
+///         and
+///         <c>
+///             debug
+///         </c>
+///         are never opened. It then removes
+///         <c>
+///             dofile
+///         </c>
+///         ,
+///         <c>
+///             loadfile
+///         </c>
+///         and
+///         <c>
+///             rawset
+///         </c>
+///         ;
+///         <c>
+///             package.searchpath
+///         </c>
+///         ,
+///         <c>
+///             package.path
+///         </c>
+///         ,
+///         <c>
+///             package.cpath
+///         </c>
+///         ,
+///         <c>
+///             package.loadlib
+///         </c>
+///         and the runtime's second
+///         <c>
+///             package.searchers
+///         </c>
+///         entry,
+///         which resolves
+///         <c>
+///             package.path
+///         </c>
+///         on the host filesystem independently of the module loader; and
+///         <c>
+///             coroutine.create
+///         </c>
+///         ,
+///         <c>
+///             coroutine.wrap
+///         </c>
+///         and
+///         <c>
+///             coroutine.resume
+///         </c>
+///         , whose threads would carry
+///         neither the instruction budget's hook nor its cancellation token.
+///         <c>
+///             coroutine.yield
+///         </c>
+///         ,
+///         <c>
+///             coroutine.status
+///         </c>
+///         and
+///         <c>
+///             coroutine.running
+///         </c>
+///         stay, so the prelude's
+///         <c>
+///             wait
+///         </c>
+///         keeps working.
+///         <c>
+///             print
+///         </c>
+///         is replaced by a function that writes to the server log at Information level, under the
+///         script that called it, so script output never bypasses the configured sinks.
 ///     </para>
 ///     <para>
-///     Memory is only partly bounded: <c>string.rep</c> is replaced by a version that refuses a result longer
-///     than <see cref="ScriptEngineOptions.MaxStringLength" /> with a script error. Everything else allocates
-///     freely under the instruction budget; a table constructor or a loop that doubles a string with
-///     <c>..</c> can build far more than the budget suggests before it is stopped.
+///         Memory is only partly bounded:
+///         <c>
+///             string.rep
+///         </c>
+///         is replaced by a version that refuses a result longer
+///         than <see cref="ScriptEngineOptions.MaxStringLength" /> with a script error. Everything else allocates
+///         freely under the instruction budget; a table constructor or a loop that doubles a string with
+///         <c>
+///             ..
+///         </c>
+///         can build far more than the budget suggests before it is stopped.
 ///     </para>
 /// </remarks>
 public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupService, IDisposable
 {
     /// <summary>
-    /// Registration priority for the startup lifecycle: starts after the game loop (-800) and timers (-900) are running,
-    /// and stops before them.
+    ///     Registration priority for the startup lifecycle: starts after the game loop (-800) and timers (-900) are running,
+    ///     and stops before them.
     /// </summary>
     public const int StartupPriority = 70;
 
@@ -71,19 +172,33 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private long _memoryCapHits;
     private bool _disposed;
 
-    /// <summary>Gets every module bound at startup, in binding order; used by the definitions generator.</summary>
+    /// <summary>
+    ///     Gets every module bound at startup, in binding order; used by the definitions generator.
+    /// </summary>
     internal IReadOnlyList<BoundModule> BoundModules => _boundModules;
 
     /// <summary>
-    /// Initializes a new instance of the <see cref="LuaScriptEngineService" /> class. Construction does no Lua work;
-    /// <see cref="StartAsync" /> builds the state.
+    ///     Initializes a new instance of the <see cref="LuaScriptEngineService" /> class. Construction does no Lua work;
+    ///     <see cref="StartAsync" /> builds the state.
     /// </summary>
-    /// <param name="options">Scripts directory, budget and bootstrap settings.</param>
-    /// <param name="registry">Module and enum types to bind at startup, gathered from the container.</param>
-    /// <param name="resolver">Resolves each registered module type to an instance.</param>
-    /// <param name="gameLoop">Checked before every loop-affine member; error events are posted back to it.</param>
-    /// <param name="timers">Wheel that fires script timers and coroutine resumes.</param>
-    /// <param name="eventBus">Publishes <see cref="Moongate.Scripting.Data.Events.ScriptErrorEvent" /> for every script failure.</param>
+    /// <param name="options">
+    ///     Scripts directory, budget and bootstrap settings.
+    /// </param>
+    /// <param name="registry">
+    ///     Module and enum types to bind at startup, gathered from the container.
+    /// </param>
+    /// <param name="resolver">
+    ///     Resolves each registered module type to an instance.
+    /// </param>
+    /// <param name="gameLoop">
+    ///     Checked before every loop-affine member; error events are posted back to it.
+    /// </param>
+    /// <param name="timers">
+    ///     Wheel that fires script timers and coroutine resumes.
+    /// </param>
+    /// <param name="eventBus">
+    ///     Publishes <see cref="Moongate.Scripting.Data.Events.ScriptErrorEvent" /> for every script failure.
+    /// </param>
     public LuaScriptEngineService(
         ScriptEngineOptions options,
         IScriptModuleRegistry registry,
@@ -133,8 +248,8 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <summary>
-    /// Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread;
-    /// diagnostics collectors run off the loop.
+    ///     Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread;
+    ///     diagnostics collectors run off the loop.
     /// </summary>
     public ScriptExecutionMetrics GetMetrics()
     {
@@ -186,15 +301,17 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             }
 
             var error = exception is LuaRuntimeException or LuaCompileException
-                            ? ScriptErrorParser.FromException(exception, file)
-                            : new(file, 0, exception.Message, null);
+                ? ScriptErrorParser.FromException(exception, file)
+                : new(file, 0, exception.Message, null);
             ReportError(error);
 
             throw new InvalidOperationException($"{error.File}:{error.Line}: {error.Message}", exception);
         }
     }
 
-    /// <summary>Opens the sandboxed Lua libraries, binds every module, and runs the prelude and the bootstrap file.</summary>
+    /// <summary>
+    ///     Opens the sandboxed Lua libraries, binds every module, and runs the prelude and the bootstrap file.
+    /// </summary>
     public async Task StartAsync()
     {
         if (_disposed)
@@ -210,9 +327,13 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         await RunOnLoopAsync(Start, "start").ConfigureAwait(false);
     }
 
-    /// <summary>Disposes the engine, releasing the LuaState.</summary>
+    /// <summary>
+    ///     Disposes the engine, releasing the LuaState.
+    /// </summary>
     public async Task StopAsync()
-        => await RunOnLoopAsync(Dispose, "stop").ConfigureAwait(false);
+    {
+        await RunOnLoopAsync(Dispose, "stop").ConfigureAwait(false);
+    }
 
     private void BindModules(LuaState state, CoroutineScheduler scheduler, ScriptOwnership ownership)
     {
@@ -237,10 +358,14 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <summary>
-    /// Replaces <c>string.rep</c> with a version that refuses a result larger than
-    /// <see cref="ScriptEngineOptions.MaxStringLength" />: the one standard function that lets a single
-    /// instruction allocate without limit. Semantics are otherwise Lua's (a count below one gives "",
-    /// an optional separator goes between copies).
+    ///     Replaces
+    ///     <c>
+    ///         string.rep
+    ///     </c>
+    ///     with a version that refuses a result larger than
+    ///     <see cref="ScriptEngineOptions.MaxStringLength" />: the one standard function that lets a single
+    ///     instruction allocate without limit. Semantics are otherwise Lua's (a count below one gives "",
+    ///     an optional separator goes between copies).
     /// </summary>
     private void CapStringAllocation(LuaState state)
     {
@@ -267,8 +392,8 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
                     }
 
                     var separator = context.ArgumentCount > 2 && context.GetArgument(2).Type != LuaValueType.Nil
-                                        ? ReadStringArgument(context, 2)
-                                        : "";
+                        ? ReadStringArgument(context, 2)
+                        : "";
 
                     if (requested <= 0)
                     {
@@ -297,13 +422,30 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <summary>
-    /// Builds the host half of the replacement for the base library's <c>print</c>: it takes one line and
-    /// writes it to the log at Information level under the file that owns the running code. The prelude
-    /// wraps it so every argument goes through Lua's own <c>tostring</c> (honouring <c>__tostring</c>) and
-    /// the results are joined with tabs, exactly as the standard <c>print</c> does.
+    ///     Builds the host half of the replacement for the base library's
+    ///     <c>
+    ///         print
+    ///     </c>
+    ///     : it takes one line and
+    ///     writes it to the log at Information level under the file that owns the running code. The prelude
+    ///     wraps it so every argument goes through Lua's own
+    ///     <c>
+    ///         tostring
+    ///     </c>
+    ///     (honouring
+    ///     <c>
+    ///         __tostring
+    ///     </c>
+    ///     ) and
+    ///     the results are joined with tabs, exactly as the standard
+    ///     <c>
+    ///         print
+    ///     </c>
+    ///     does.
     /// </summary>
     private LuaFunction CreatePrint(IScriptScheduler scheduler)
-        => new(
+    {
+        return new(
             "print",
             (context, _) =>
             {
@@ -314,10 +456,11 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
                 return new(context.Return());
             }
         );
+    }
 
     /// <summary>
-    /// Reads a string argument the way the string library does: strings as they are, numbers converted, anything else a
-    /// bad-argument error.
+    ///     Reads a string argument the way the string library does: strings as they are, numbers converted, anything else a
+    ///     bad-argument error.
     /// </summary>
     private static string ReadStringArgument(LuaFunctionExecutionContext context, int index)
     {
@@ -328,27 +471,35 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             LuaValueType.String => value.Read<string>(),
             LuaValueType.Number => value.ToString(),
             _ => throw new LuaRuntimeException(
-                     context.State,
-                     $"bad argument #{index + 1} to 'rep' (string expected, got {value.TypeToString()})"
-                 )
+                context.State,
+                $"bad argument #{index + 1} to 'rep' (string expected, got {value.TypeToString()})"
+            )
         };
     }
 
     private T Ready<T>(T? component) where T : class
-        => component ??
-           throw new InvalidOperationException(
-               _disposed ? "The script engine has been disposed." : "The script engine has not started."
-           );
+    {
+        return component ??
+               throw new InvalidOperationException(
+                   _disposed ? "The script engine has been disposed." : "The script engine has not started."
+               );
+    }
 
-    /// <summary>Counts a refused <c>string.rep</c> and builds the script error that names the size and the cap.</summary>
+    /// <summary>
+    ///     Counts a refused
+    ///     <c>
+    ///         string.rep
+    ///     </c>
+    ///     and builds the script error that names the size and the cap.
+    /// </summary>
     private LuaRuntimeException Refuse(LuaFunctionExecutionContext context, double size, int cap)
     {
         _memoryCapHits++;
 
         // Counts that fit a long print exactly; anything larger is astronomically over the cap anyway.
         var shown = size <= long.MaxValue
-                        ? ((long)size).ToString(CultureInfo.InvariantCulture)
-                        : size.ToString("0", CultureInfo.InvariantCulture);
+            ? ((long)size).ToString(CultureInfo.InvariantCulture)
+            : size.ToString("0", CultureInfo.InvariantCulture);
 
         return new(
             context.State,
@@ -407,13 +558,17 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <summary>
-    /// Runs a lifecycle step on the loop thread. Called from the bootstrap thread in production, so the step is posted and
-    /// awaited; unit tests and any caller already on the loop run it inline, and a loop that no longer accepts work
-    /// (it faulted, or stopped before this service) runs it inline as well so shutdown still completes. A loop that
-    /// accepts the step and then stops before running it fails the step rather than leaving it awaited forever.
+    ///     Runs a lifecycle step on the loop thread. Called from the bootstrap thread in production, so the step is posted and
+    ///     awaited; unit tests and any caller already on the loop run it inline, and a loop that no longer accepts work
+    ///     (it faulted, or stopped before this service) runs it inline as well so shutdown still completes. A loop that
+    ///     accepts the step and then stops before running it fails the step rather than leaving it awaited forever.
     /// </summary>
-    /// <param name="step">The lifecycle step to run.</param>
-    /// <param name="stepName">Name of the step for the log line and the failure message, such as "start".</param>
+    /// <param name="step">
+    ///     The lifecycle step to run.
+    /// </param>
+    /// <param name="stepName">
+    ///     Name of the step for the log line and the failure message, such as "start".
+    /// </param>
     private async Task RunOnLoopAsync(Action step, string stepName)
     {
         if (_gameLoop.IsOnLoopThread)
@@ -493,8 +648,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             BindModules(state, scheduler, ownership);
             state.Environment["print"] = new(CreatePrint(scheduler));
             WriteDefinitions();
-            budget.Chunk(
-                token =>
+            budget.Chunk(token =>
                 {
                     RunPrelude(state, token);
 
@@ -527,8 +681,8 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <summary>
-    /// Removes the standard-library members that reach past the scripts directory or past the instruction
-    /// budget. Runs once, after the libraries are opened and before any script does.
+    ///     Removes the standard-library members that reach past the scripts directory or past the instruction
+    ///     budget. Runs once, after the libraries are opened and before any script does.
     /// </summary>
     private static void TrimSandbox(LuaState state)
     {
@@ -576,7 +730,9 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         LuaDefinitionsGenerator.Write(_options.ScriptsDirectory, _boundModules, _publishedEnums);
     }
 
-    /// <summary>Disposes the LuaState and releases every component created at startup.</summary>
+    /// <summary>
+    ///     Disposes the LuaState and releases every component created at startup.
+    /// </summary>
     public void Dispose()
     {
         if (_disposed)

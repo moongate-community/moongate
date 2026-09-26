@@ -7,7 +7,9 @@ using Moongate.Server.Ultima.Interfaces;
 
 namespace Moongate.Server.Ultima.Services;
 
-/// <summary>Authenticates an account and selects one immutable, privilege-filtered realm list.</summary>
+/// <summary>
+///     Authenticates an account and selects one immutable, privilege-filtered realm list.
+/// </summary>
 public sealed class LoginAccountFlow
 {
     private readonly IAccountService _accounts;
@@ -53,19 +55,18 @@ public sealed class LoginAccountFlow
         }
 
         var servers = available
-                      .Select(
-                          realm => new GameServerEntry(
-                              realm.ServerIndex,
-                              realm.Name,
-                              0,
-                              0,
-                              realm.Address
-                          )
-                      )
-                      .ToArray();
+            .Select(realm => new GameServerEntry(
+                    realm.ServerIndex,
+                    realm.Name,
+                    0,
+                    0,
+                    realm.Address
+                )
+            )
+            .ToArray();
 
         return servers.Length == 0
-                   ? new(LoginDeniedReason.CommunicationProblem)
-                   : new(account.Id, account.AccountType, servers);
+            ? new(LoginDeniedReason.CommunicationProblem)
+            : new(account.Id, account.AccountType, servers);
     }
 }

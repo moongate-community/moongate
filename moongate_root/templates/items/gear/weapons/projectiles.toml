@@ -1,0 +1,26 @@
+[[item]]
+id = "0x0f3f_arrow"
+base_id = "base_item"
+item_id = 3903
+name = "arrow"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1bfb_crossbow_bolt"
+base_id = "base_item"
+item_id = 7163
+name = "crossbow bolt"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27ac_shuriken"
+base_id = "base_item"
+item_id = 10156
+name = "shuriken"
+rarity = "common"
+movable = true
+hue = 0

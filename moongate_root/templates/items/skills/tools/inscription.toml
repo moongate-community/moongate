@@ -1,0 +1,26 @@
+[[item]]
+id = "0x0e34_a_blank_scroll"
+base_id = "base_item"
+item_id = 3636
+name = "a blank scroll"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fc0_pen_and_ink"
+base_id = "base_item"
+item_id = 4032
+name = "pen and ink"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x14f0_a_blank_deed"
+base_id = "base_item"
+item_id = 5360
+name = "a blank deed"
+rarity = "common"
+movable = false
+hue = 0

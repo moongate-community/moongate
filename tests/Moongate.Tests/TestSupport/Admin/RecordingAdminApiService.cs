@@ -22,8 +22,12 @@ internal sealed class RecordingAdminApiService : IAdminApiService
     }
 
     public void Activate()
-        => Accepting = true;
+    {
+        Accepting = true;
+    }
 
     public void StopAccepting()
-        => Accepting = false;
+    {
+        Accepting = false;
+    }
 }

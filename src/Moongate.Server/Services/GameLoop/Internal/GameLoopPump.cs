@@ -4,7 +4,9 @@ using Moongate.Server.Data.GameLoop.Internal;
 
 namespace Moongate.Server.Services.GameLoop.Internal;
 
-/// <summary>Runs bounded synchronous handlers on its caller's thread; the service owns failure policy.</summary>
+/// <summary>
+///     Runs bounded synchronous handlers on its caller's thread; the service owns failure policy.
+/// </summary>
 internal sealed class GameLoopPump
 {
     private readonly ChannelReader<QueuedGameLoopWorkItem> _reader;

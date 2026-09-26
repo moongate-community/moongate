@@ -9,10 +9,11 @@ public sealed class UoPacketFramerTests
 
     [Theory, InlineData(0), InlineData(-1), InlineData(65536)]
     public void Constructor_InvalidMaximumFrameLength_ThrowsArgumentOutOfRangeException(int maxFrameLength)
-        => Assert.Throws<ArgumentOutOfRangeException>(
-            () =>
-                new UoPacketFramer(PacketRegistry.Default, maxFrameLength)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new UoPacketFramer(PacketRegistry.Default, maxFrameLength)
         );
+    }
 
     [Fact]
     public void Constructor_MutableRegistry_ThrowsArgumentException()
@@ -24,7 +25,9 @@ public sealed class UoPacketFramerTests
 
     [Fact]
     public void Constructor_NullRegistry_ThrowsArgumentNullException()
-        => Assert.Throws<ArgumentNullException>(() => new UoPacketFramer(null!));
+    {
+        Assert.Throws<ArgumentNullException>(() => new UoPacketFramer(null!));
+    }
 
     [Fact]
     public void TryReadFrame_CompleteFixedPacket_ReturnsPacketLength()

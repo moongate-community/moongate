@@ -64,15 +64,29 @@ public sealed class PacketRegistry
         Register(descriptor, null);
     }
 
-    /// <summary>Tries to decode one complete incoming packet, including its opcode and header.</summary>
+    /// <summary>
+    ///     Tries to decode one complete incoming packet, including its opcode and header.
+    /// </summary>
     public bool TryDecode(ReadOnlySpan<byte> data, [NotNullWhen(true)] out IPacket? packet)
-        => TryDecode(data, out packet, out _);
+    {
+        return TryDecode(data, out packet, out _);
+    }
 
-    /// <summary>Tries to decode one complete incoming packet and returns its opcode even when decoding fails.</summary>
-    /// <param name="data">The complete packet, including its opcode and header.</param>
-    /// <param name="packet">The decoded packet on success, or null on failure.</param>
-    /// <param name="opCode">The first byte of the packet, or 0 when the input is empty.</param>
-    /// <returns>True when the packet was successfully decoded; otherwise, false.</returns>
+    /// <summary>
+    ///     Tries to decode one complete incoming packet and returns its opcode even when decoding fails.
+    /// </summary>
+    /// <param name="data">
+    ///     The complete packet, including its opcode and header.
+    /// </param>
+    /// <param name="packet">
+    ///     The decoded packet on success, or null on failure.
+    /// </param>
+    /// <param name="opCode">
+    ///     The first byte of the packet, or 0 when the input is empty.
+    /// </param>
+    /// <returns>
+    ///     True when the packet was successfully decoded; otherwise, false.
+    /// </returns>
     public bool TryDecode(ReadOnlySpan<byte> data, [NotNullWhen(true)] out IPacket? packet, out byte opCode)
     {
         packet = null;
@@ -89,13 +103,23 @@ public sealed class PacketRegistry
         return parser(data, out packet);
     }
 
-    /// <summary>Finds a registered packet by opcode, preferring the incoming packet when both directions exist.</summary>
-    /// <param name="opCode">The opcode to look up.</param>
-    /// <param name="descriptor">The matching descriptor, or null when the opcode is unknown.</param>
-    /// <returns>True when a packet is registered for the opcode; otherwise, false.</returns>
+    /// <summary>
+    ///     Finds a registered packet by opcode, preferring the incoming packet when both directions exist.
+    /// </summary>
+    /// <param name="opCode">
+    ///     The opcode to look up.
+    /// </param>
+    /// <param name="descriptor">
+    ///     The matching descriptor, or null when the opcode is unknown.
+    /// </param>
+    /// <returns>
+    ///     True when a packet is registered for the opcode; otherwise, false.
+    /// </returns>
     public bool TryGetDescriptor(byte opCode, [NotNullWhen(true)] out PacketDescriptor? descriptor)
-        => TryGetDescriptor(opCode, PacketDirection.Incoming, out descriptor) ||
-           TryGetDescriptor(opCode, PacketDirection.Outgoing, out descriptor);
+    {
+        return TryGetDescriptor(opCode, PacketDirection.Incoming, out descriptor) ||
+               TryGetDescriptor(opCode, PacketDirection.Outgoing, out descriptor);
+    }
 
     public bool TryGetDescriptor(
         byte opCode,
@@ -114,12 +138,14 @@ public sealed class PacketRegistry
     }
 
     private ReadOnlyCollection<PacketDescriptor> CreateSnapshot()
-        => Array.AsReadOnly(
+    {
+        return Array.AsReadOnly(
             _registeredPackets
                 .OrderBy(descriptor => descriptor.OpCode)
                 .ThenBy(descriptor => descriptor.Direction)
                 .ToArray()
         );
+    }
 
     private void EnsureAvailable(
         PacketDescriptor descriptor,
@@ -153,11 +179,11 @@ public sealed class PacketRegistry
     private void Register(PacketDescriptor descriptor, PacketParser? parser)
     {
         var keys = descriptor.Direction == PacketDirection.Both
-                       ? new[]
-                       {
-                           (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing)
-                       }
-                       : new[] { (descriptor.OpCode, descriptor.Direction) };
+            ? new[]
+            {
+                (descriptor.OpCode, PacketDirection.Incoming), (descriptor.OpCode, PacketDirection.Outgoing)
+            }
+            : new[] { (descriptor.OpCode, descriptor.Direction) };
         EnsureAvailable(descriptor, keys);
 
         foreach (var key in keys)

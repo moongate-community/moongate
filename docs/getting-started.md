@@ -58,7 +58,8 @@ use the documentation published for that version.
    ```
 
    This writes `config/moongate.toml` with the defaults, creates `logs/`, `plugins/`
-   and `scripts/`, and copies the release's core SQL into `migrations/`. It needs no
+   and `scripts/`, copies the release's core SQL into `migrations/` and its shard
+   data files into `data/`. It needs no
    database and no client files. [Prepare a root with mgboot](mgboot.md) describes
    what happens on a root that already exists.
 
@@ -144,8 +145,9 @@ use the documentation published for that version.
    moongate --root-directory /srv/moongate
    ```
 
-   Always pass `--root-directory`. Without it the server uses the directory the binary
-   sits in. A successful start logs `Postgres connection successful` once per
+   Always pass `--root-directory`. Without it, or with a root that is the directory the
+   binary sits in, the server refuses to start with exit code 2, because an upgrade
+   replaces that directory. A successful start logs `Postgres connection successful` once per
    database, then the loaded services and the bound endpoints. A missing
    `scripts/init.lua` is a warning and starts an empty scripting environment; a
    bootstrap script that exists but fails prevents startup. Add scripts with
@@ -172,6 +174,8 @@ All server-managed paths below are relative to `--root-directory`:
 | `config/moongate.toml` | Created if missing; normal startup preserves it, while explicit certificate setup updates four `[admin_api]` settings |
 | `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgboot` administration TLS identity: private server PFX and public PEM for client trust |
 | `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgboot` (releases after 0.6.0); plugins ship their own under `plugins/` |
+| `data/` | Shard data files copied by `mgboot`, read at game and standalone startup; see [Shard data files](data-files.md) |
+| `templates/items/`, `templates/loots/`, `templates/mobiles/` | Created at game and standalone startup for [templates](templates.md); nothing reads them yet |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `plugins/` | One assembly bundle per plugin directory |
 | `scripts/` | Lua source and generated editor definitions |
@@ -197,6 +201,9 @@ for schema operations and world saves see
 | --- | --- |
 | Exits right after writing `config/moongate.toml` | Expected on a fresh root: `ultima_path` is still `ChangeMe`. Continue with step 2 |
 | Client path error | Set `ultima.ultima_path` to readable, real client data |
+| `Map ... needs map{n}.mul or map{n}LegacyMUL.uop, staidx{n}.mul and statics{n}.mul` | The client lacks that map. Use a complete client, or remove the map from `data/maps.toml` |
+| `The Ultima path has neither MultiCollection.uop nor multi.idx and multi.mul` | The client directory is incomplete. Point `ultima.ultima_path` at a full client installation |
+| `tiledata.mul not found in the Ultima path` | The client directory is incomplete or is not a client directory. Point `ultima.ultima_path` at a full client installation |
 | TOML parse or validation error | Fix the named field; existing files are not silently replaced |
 | `Postgres connection` failure | The database does not exist, the host is wrong, or the role cannot log in. Inside a container, `localhost` is the container itself |
 | Connection variable missing | Export the PostgreSQL and Redis variables referenced by the active TOML sections |
@@ -205,4 +212,6 @@ for schema operations and world saves see
 | PostgreSQL schema changes required | An entity needs DDL that no migration provides. Generate and review a versioned SQL file with `--persistence-schema generate`, then apply it with the runner while the server is stopped |
 | Port binding failure | Check `network.listen_address`, port availability and interface addresses |
 | Another instance detected | Check the PID and running process; use a separate root for another server |
+| `... file ... not found` for a data file, such as `maps.toml` | The root has no `data/`. Run `mgboot` on the root again: it adds the missing files and keeps the others |
+| `InvalidDataException` naming a data file | Fix the entry the message names; see the validation rules in [Shard data files](data-files.md) |
 | Script startup error | Fix `scripts/init.lua`; inspect the script filename and line in the log |

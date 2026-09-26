@@ -18,6 +18,7 @@ internal static class BootProcess
         {
             start.ArgumentList.Add(argument);
         }
+
         start.Environment["MOONGATE_SERVER_EXECUTABLE"] = Path.Combine(
             AppContext.BaseDirectory,
             OperatingSystem.IsWindows() ? "Moongate.Server.exe" : "Moongate.Server"

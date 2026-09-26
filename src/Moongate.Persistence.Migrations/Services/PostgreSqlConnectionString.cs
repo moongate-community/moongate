@@ -2,10 +2,14 @@ using System.Data.Common;
 
 namespace Moongate.Persistence.Migrations.Services;
 
-/// <summary>Normalizes PostgreSQL URIs without coupling callers to a particular Npgsql version.</summary>
+/// <summary>
+///     Normalizes PostgreSQL URIs without coupling callers to a particular Npgsql version.
+/// </summary>
 public static class PostgreSqlConnectionString
 {
-    /// <summary>Converts a URI to provider connection-string syntax; native strings are returned unchanged.</summary>
+    /// <summary>
+    ///     Converts a URI to provider connection-string syntax; native strings are returned unchanged.
+    /// </summary>
     public static string Normalize(string value)
     {
         if (!value.StartsWith("postgres://", StringComparison.OrdinalIgnoreCase) &&

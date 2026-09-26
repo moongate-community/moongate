@@ -1,6 +1,8 @@
 namespace Moongate.Ultima.Data;
 
-/// <summary>Parametric paperdoll composition request; style value 0 means "none".</summary>
+/// <summary>
+///     Parametric paperdoll composition request; style value 0 means "none".
+/// </summary>
 public sealed record PaperdollRequest
 {
     public bool Female { get; init; }

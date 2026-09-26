@@ -28,8 +28,7 @@ public sealed class TomlUtilsTests
 
         if (asynchronous)
         {
-            await Assert.ThrowsAsync<FileNotFoundException>(
-                () => TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path)
+            await Assert.ThrowsAsync<FileNotFoundException>(() => TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path)
             );
         }
         else
@@ -45,12 +44,12 @@ public sealed class TomlUtilsTests
         var key = customNaming ? "serverName" : "server_name";
         var path = directory.CreateFile("settings.toml", $"{key} = \"Città di Luna\"\n[network]\nport = 4000\n");
         var options = customNaming
-                          ? new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
-                          : null;
+            ? new TomlSerializerOptions { PropertyNamingPolicy = JsonNamingPolicy.CamelCase }
+            : null;
 
         var settings = asynchronous
-                           ? await TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, options)
-                           : TomlUtils.DeserializeFromFile<TomlTestSettings>(path, options);
+            ? await TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, options)
+            : TomlUtils.DeserializeFromFile<TomlTestSettings>(path, options);
 
         Assert.NotNull(settings);
         Assert.Equal("Città di Luna", settings.ServerName);
@@ -97,13 +96,11 @@ public sealed class TomlUtilsTests
         var parent = Path.Combine(directory.Path, "nested");
         var path = Path.Combine(parent, "settings.toml");
 
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () =>
-                TomlUtils.SerializeToFileAsync(new TomlTestSettings(), path, cancellationToken: cancellation.Token)
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            TomlUtils.SerializeToFileAsync(new TomlTestSettings(), path, cancellationToken: cancellation.Token)
         );
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () =>
-                TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, cancellationToken: cancellation.Token)
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() =>
+            TomlUtils.DeserializeFromFileAsync<TomlTestSettings>(path, cancellationToken: cancellation.Token)
         );
 
         Assert.False(Directory.Exists(parent));
@@ -256,6 +253,56 @@ public sealed class TomlUtilsTests
         finally
         {
             TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
+        }
+    }
+
+    [Fact]
+    public void RemoveTomlConverter_WhileOthersRead_NeverHidesAnotherConverter()
+    {
+        TomlUtils.AddTomlConverter(new RegistryTomlConverter<StableRegistryMarker>());
+        var missing = 0;
+        using var stop = new CancellationTokenSource();
+
+        var reader = Task.Run(() =>
+            {
+                while (!stop.IsCancellationRequested)
+                {
+                    if (!TomlUtils.GetTomlConverters().OfType<RegistryTomlConverter<StableRegistryMarker>>().Any())
+                    {
+                        Interlocked.Increment(ref missing);
+                    }
+                }
+            }
+        );
+
+        for (var i = 0; i < 20000; i++)
+        {
+            TomlUtils.AddTomlConverter(new RecordingTomlConverter());
+            TomlUtils.RemoveTomlConverter<RecordingTomlConverter>();
+        }
+
+        stop.Cancel();
+        reader.Wait();
+
+        Assert.Equal(0, missing);
+    }
+
+    [Fact]
+    public void AddTomlConverter_SameTypeFromManyThreads_RegistersOnce()
+    {
+        try
+        {
+            for (var round = 0; round < 200; round++)
+            {
+                TomlUtils.RemoveTomlConverter<RegistryTomlConverter<ParallelRegistryMarker>>();
+                Parallel.For(0, 16, _ => TomlUtils.AddTomlConverter(new RegistryTomlConverter<ParallelRegistryMarker>()));
+
+                Assert.Single(TomlUtils.GetTomlConverters().OfType<RegistryTomlConverter<ParallelRegistryMarker>>());
+            }
+        }
+        finally
+        {
+            TomlUtils.RemoveTomlConverter<RegistryTomlConverter<ParallelRegistryMarker>>();
         }
     }
 }

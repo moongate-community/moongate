@@ -78,7 +78,9 @@ internal sealed class ControlledNetworkConnection : INetworkConnection, IDisposa
     }
 
     public Task<byte[]> ReadSentAsync(CancellationToken token)
-        => _sent.Reader.ReadAsync(token).AsTask();
+    {
+        return _sent.Reader.ReadAsync(token).AsTask();
+    }
 
     public async Task SendAsync(ReadOnlyMemory<byte> payload, CancellationToken cancellationToken)
     {

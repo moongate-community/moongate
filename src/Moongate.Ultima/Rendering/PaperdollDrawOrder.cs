@@ -3,8 +3,8 @@ using Moongate.Ultima.Types;
 namespace Moongate.Ultima.Rendering;
 
 /// <summary>
-/// Paint order for paperdoll layers: lower priority is drawn first (covered by later
-/// layers). Cloak sits right above the body; helm covers hair.
+///     Paint order for paperdoll layers: lower priority is drawn first (covered by later
+///     layers). Cloak sits right above the body; helm covers hair.
 /// </summary>
 public static class PaperdollDrawOrder
 {
@@ -12,7 +12,8 @@ public static class PaperdollDrawOrder
     public const int BodyPriority = 10;
 
     public static int Priority(LayerType layer)
-        => layer switch
+    {
+        return layer switch
         {
             LayerType.Cloak       => 11,
             LayerType.Shoes       => 12,
@@ -38,4 +39,5 @@ public static class PaperdollDrawOrder
             LayerType.OneHanded   => 32,
             _                     => 33
         };
+    }
 }

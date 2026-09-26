@@ -1,3 +1,4 @@
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Realms;
@@ -87,7 +88,7 @@ public sealed class HandoffProofServiceTests
             service.Verify(
                 "alice",
                 "password",
-                handoff with { ClientVersion = "7.0.118" },
+                handoff with { ClientVersion = ClientVersion.Parse("7.0.118") },
                 0x12345678,
                 proof
             )
@@ -117,12 +118,14 @@ public sealed class HandoffProofServiceTests
     }
 
     private static PendingHandoff Handoff()
-        => new(
+    {
+        return new(
             new(42),
             AccountType.Regular,
             "alice",
             "realm-a",
             Guid.Parse("2a2fc83d-eac8-4d65-b105-18154901bd3d"),
-            "7.0.117"
+            ClientVersion.Parse("7.0.117")
         );
+    }
 }

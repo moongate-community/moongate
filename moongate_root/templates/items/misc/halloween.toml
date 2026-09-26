@@ -1,0 +1,650 @@
+[[item]]
+id = "2006jackolantern"
+base_id = "base_item"
+item_id = 3179
+name = "jack o lantern"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "2006pumpkinhalloween"
+base_id = "base_item"
+item_id = 3178
+name = "pumpkin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "red_licorice"
+item_id = 3978
+name = "Red Licorice"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "caramel_apple"
+item_id = 2512
+name = "Caramel Apple"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "rock_candy"
+item_id = 4189
+name = "Rock Candy"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "candied_apple"
+item_id = 2512
+name = "Candied Apple"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "brightlycoloredrockcandy"
+item_id = 4189
+name = "Rock Candy"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "black_licorice"
+item_id = 3978
+name = "Black Licorice"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "mr_plains_cookies"
+item_id = 5644
+name = "Mr Plain's Cookies"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pumpkinpizza"
+item_id = 4160
+name = "Pumpkin Pizza"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "creepy_cake"
+item_id = 2537
+name = "Creepy Cake"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "harvest_wine"
+item_id = 2503
+name = "Harvest Wine"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "murky_milk"
+item_id = 2477
+name = "Murky Milk"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "2008small_webleft"
+base_id = "base_item"
+item_id = 4310
+name = "small web"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "2008small_webright"
+base_id = "2008small_webleft"
+item_id = 4311
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "lollipop1"
+item_id = 18061
+name = "lollipop"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "lollipop2"
+base_id = "lollipop1"
+item_id = 18062
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "lollipop3"
+base_id = "lollipop1"
+item_id = 18063
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "wrappedcandy"
+item_id = 18078
+name = "wrapped candy"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "jellybeans"
+item_id = 18060
+name = "jellybeans"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "taffy"
+item_id = 18077
+name = "taffy"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "nougatswirl"
+item_id = 18064
+name = "nougat swirl"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "grim_warning"
+base_id = "base_item"
+item_id = 17085
+name = "Grim Warning"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "skulls_on_pike"
+base_id = "base_item"
+item_id = 17077
+name = "Skulls On Pike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "menacingjackolantern"
+base_id = "base_item"
+item_id = 18068
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "leeringjackolantern"
+base_id = "base_item"
+item_id = 18072
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "blackcat"
+base_id = "base_item"
+item_id = 18056
+name = "black cat statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "blackcateast"
+base_id = "blackcat"
+item_id = 18057
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pumpkinscarecrow"
+base_id = "base_item"
+item_id = 18075
+name = "pumpkin scarecrow"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pumpkinscarecroweast"
+base_id = "pumpkinscarecrow"
+item_id = 18076
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ruined_tapestry"
+base_id = "base_item"
+item_id = 18073
+name = "Ruined Tapestry"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ruinedtapestryeast"
+base_id = "ruined_tapestry"
+item_id = 18074
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "chair_in_a_ghost_costume"
+base_id = "base_item"
+item_id = 16166
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "excellent_iron_maiden"
+base_id = "base_item"
+item_id = 16149
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "halloween_guillotine"
+base_id = "base_item"
+item_id = 16167
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "painted_evil_clown_mask"
+base_id = "base_item"
+item_id = 19088
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "painted_daemon_mask"
+base_id = "base_item"
+item_id = 19090
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "painted_plague_mask"
+base_id = "base_item"
+item_id = 19086
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "painted_evil_jester_mask"
+base_id = "base_item"
+item_id = 19365
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "painted_porcelain_mask"
+base_id = "base_item"
+item_id = 19367
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pumpkin_carving_kit"
+base_id = "base_item"
+item_id = 39213
+name = "Jack O' Lantern Carving Kit"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pumpkin_carving_kit_east"
+base_id = "pumpkin_carving_kit"
+item_id = 39214
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "carvable_pumpkin"
+base_id = "base_item"
+item_id = 39215
+name = "Carvable Pumpkin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallwitch"
+base_id = "base_item"
+item_id = 39220
+name = "unlit tall witch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "talluo"
+base_id = "base_item"
+item_id = 39221
+name = "unlit tall uo"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallankh"
+base_id = "base_item"
+item_id = 39225
+name = "unlit tall ankh"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallspider"
+base_id = "base_item"
+item_id = 39229
+name = "unlit tall spider"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallbat"
+base_id = "base_item"
+item_id = 39233
+name = "unlit tall bat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallskull"
+base_id = "base_item"
+item_id = 39237
+name = "unlit tall skull"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "talldemon"
+base_id = "base_item"
+item_id = 39241
+name = "unlit tall demon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallspirit"
+base_id = "base_item"
+item_id = 39245
+name = "unlit tall spirit"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallscalele"
+base_id = "base_item"
+item_id = 39249
+name = "unlit tall scalele"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallrottenpumpkin"
+base_id = "base_item"
+item_id = 39216
+name = "rotten pumpkin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "carvable_gord"
+base_id = "base_item"
+item_id = 40226
+name = "Carvable Gord"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gordtallwitch"
+base_id = "base_item"
+item_id = 40227
+name = "unlit gord tall witch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gordtallzombie"
+base_id = "base_item"
+item_id = 40231
+name = "unlit gord tall zombie"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "obsidian_skull"
+base_id = "base_item"
+item_id = 39454
+name = "Obsidian Skull"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "crystal_skull"
+base_id = "base_item"
+item_id = 39450
+name = "Crystal Skull"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "jade_skull"
+base_id = "base_item"
+item_id = 39452
+name = "Jade Skull"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "trayof_pumpkin_spice_cider"
+base_id = "base_item"
+item_id = 40240
+name = "Tray of Pumpkin Spice Cider"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tray_of_candy_apples"
+base_id = "base_item"
+item_id = 40242
+name = "Tray of Candy Apples"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "mrs_trouble_makers_head_on_a_spike"
+base_id = "base_item"
+item_id = 39253
+name = "MrsTroubleMaker’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "brutrins_head_on_a_spike"
+base_id = "base_item"
+item_id = 39254
+name = "Brutrin’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "stethuns_head_on_a_spike"
+base_id = "base_item"
+item_id = 39255
+name = "Stethun’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "rakbans_head_on_a_spike"
+base_id = "base_item"
+item_id = 39256
+name = "Rakban’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "thatbloks_head_on_a_spike"
+base_id = "base_item"
+item_id = 39257
+name = "Thatblok’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "gryphons_head_on_a_spike"
+base_id = "base_item"
+item_id = 39258
+name = "Gryphon’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "kyronixs_head_on_a_spike"
+base_id = "base_item"
+item_id = 39259
+name = "Kyronix’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "misks_head_on_a_spike"
+base_id = "base_item"
+item_id = 39260
+name = "Misk’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "bleaks_head_on_a_spike"
+base_id = "base_item"
+item_id = 39261
+name = "Bleak’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "onifrks_head_on_a_spike"
+base_id = "base_item"
+item_id = 39262
+name = "Onifrk’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "mesannas_head_on_a_spike"
+base_id = "base_item"
+item_id = 39263
+name = "Mesanna’s Head On A Spike"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "halloween_ghoul_statue"
+base_id = "base_item"
+item_id = 8457
+name = "Halloween Ghoul Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_halloween_spawner"
+base_id = "base_item"
+item_id = 7956
+rarity = "common"
+movable = false
+visibility = "game_master"
+hue = 0
+
+[[item]]
+id = "halloweenmonsterpawn"
+base_id = "base_halloween_spawner"
+item_id = 7956
+name = "Halloween Monsters"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "halloweenpumpkinpawn"
+base_id = "base_halloween_spawner"
+item_id = 7956
+name = "Halloween Pumpkin spawner"
+rarity = "common"
+movable = false
+hue = 0

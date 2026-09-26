@@ -4,12 +4,16 @@ using Moongate.Server.Core.Services.Events.Internal;
 
 namespace Moongate.Server.Core.Extensions;
 
-/// <summary>Provides container-owned registration and subscription for Moongate events.</summary>
+/// <summary>
+///     Provides container-owned registration and subscription for Moongate events.
+/// </summary>
 public static class ContainerEventExtensions
 {
     extension(Container container)
     {
-        /// <summary>Registers an awaited handler for the exact event type for the container lifetime.</summary>
+        /// <summary>
+        ///     Registers an awaited handler for the exact event type for the container lifetime.
+        /// </summary>
         public Container OnEvent<TEvent>(Func<TEvent, CancellationToken, Task> handler)
             where TEvent : class, IMoongateEvent
         {
@@ -22,7 +26,9 @@ public static class ContainerEventExtensions
             return container;
         }
 
-        /// <summary>Ensures the container has one singleton Moongate event bus.</summary>
+        /// <summary>
+        ///     Ensures the container has one singleton Moongate event bus.
+        /// </summary>
         public Container RegisterMoongateEventBus()
         {
             ArgumentNullException.ThrowIfNull(container);

@@ -1,0 +1,80 @@
+[[item]]
+id = "0x186d_stone_of_humility"
+base_id = "base_item"
+item_id = 6253
+name = "Stone of Humility"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x186e_stone_of_sacrifice"
+base_id = "base_item"
+item_id = 6254
+name = "Stone of Sacrifice"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x186f_stone_of_justice"
+base_id = "base_item"
+item_id = 6255
+name = "Stone of Justice"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1870_stone_of_spirituality"
+base_id = "base_item"
+item_id = 6256
+name = "Stone of Spirituality"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1f13_a_worldgem_bit"
+base_id = "base_item"
+item_id = 7955
+name = "A Worldgem Bit"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1ea7_a_worldgem_bit"
+base_id = "base_item"
+item_id = 7847
+name = "A Worldgem Bit"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1c12_bell_of_courage"
+base_id = "base_item"
+item_id = 7186
+name = "Bell of Courage"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1c13_book_of_truth"
+base_id = "base_item"
+item_id = 7187
+name = "Book of Truth"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1c16_unlit_candle_of_love"
+base_id = "base_item"
+item_id = 7190
+name = "Unlit Candle of Love"
+rarity = "common"
+movable = true
+hue = 0

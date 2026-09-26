@@ -91,8 +91,7 @@ public sealed class DataAccessTests
         owner.RegisterEntity<InventoryEntity>();
         await owner.InitializeAsync();
         var rolledBack = new CharacterEntity();
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => owner.ExecuteInTransactionAsync(
+        await Assert.ThrowsAsync<InvalidOperationException>(() => owner.ExecuteInTransactionAsync(
                 PersistenceDatabaseTarget.Realm,
                 async transaction =>
                 {
@@ -162,8 +161,7 @@ public sealed class DataAccessTests
         await Assert.ThrowsAsync<ArgumentNullException>(() => store.QueryAsync(null!));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => store.QueryAsync(e => true, -1, 1));
         await Assert.ThrowsAsync<ArgumentOutOfRangeException>(() => store.QueryAsync(e => true, 0, 0));
-        await Assert.ThrowsAnyAsync<OperationCanceledException>(
-            () => store.UpsertAsync(
+        await Assert.ThrowsAnyAsync<OperationCanceledException>(() => store.UpsertAsync(
                 new() { Id = new(1) },
                 new(true)
             )
@@ -225,5 +223,7 @@ public sealed class DataAccessTests
     }
 
     private static bool Unsupported(string value)
-        => throw new InvalidOperationException("Must not evaluate rows on the client.");
+    {
+        throw new InvalidOperationException("Must not evaluate rows on the client.");
+    }
 }

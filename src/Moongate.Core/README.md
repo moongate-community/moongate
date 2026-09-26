@@ -87,8 +87,10 @@ foreach (var address in addresses)
 ```
 
 `TomlUtils.Serialize`/`Deserialize<T>` work with strings; the file and async file
-variants create parent directories when writing. Default property naming is
-`snake_case`. Explicit `TomlSerializerOptions` replace the defaults for that call.
+variants create parent directories when writing. Default options use
+`snake_case` names plus any converters added with the thread-safe
+`TomlUtils.AddTomlConverter`. Explicit `TomlSerializerOptions` replace those defaults
+for that call.
 Writes overwrite the target and are not atomic; parsing, serialization and I/O
 errors propagate to the caller. The server's create-default-if-missing behavior
 belongs to its `ConfigHelper`, not to every `TomlUtils` write.

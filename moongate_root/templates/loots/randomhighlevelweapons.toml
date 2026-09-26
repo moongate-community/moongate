@@ -1,0 +1,40 @@
+[[loot]]
+id = "randomhighlevelweapons"
+[[loot.entries]]
+weight = 30
+amount = 1
+
+[[loot.entries]]
+weight = 5
+item_id = "0x1401"
+amount = 1
+
+[[loot.entries]]
+weight = 5
+item_id = "0x0e8a"
+amount = 1
+
+[[loot.entries]]
+weight = 5
+item_id = "0x0f63"
+amount = 1
+
+[[loot.entries]]
+weight = 5
+item_id = "0x0f4c"
+amount = 1
+
+[[loot.entries]]
+weight = 5
+item_id = "0x1403"
+amount = 1
+
+[[loot.entries]]
+weight = 5
+item_id = "0x143f"
+amount = 1
+
+[[loot.entries]]
+weight = 5
+item_id = "0x13ff"
+amount = 1

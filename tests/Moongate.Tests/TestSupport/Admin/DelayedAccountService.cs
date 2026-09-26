@@ -40,20 +40,28 @@ internal sealed class DelayedAccountService : IAccountService
         AccountType accountType = AccountType.Regular,
         CancellationToken cancellationToken = default
     )
-        => _inner.CreateAccountAsync(username, password, accountType, cancellationToken);
+    {
+        return _inner.CreateAccountAsync(username, password, accountType, cancellationToken);
+    }
 
     public Task<AccountEntity?> LoginAsync(string username, string password, CancellationToken cancellationToken = default)
-        => _inner.LoginAsync(username, password, cancellationToken);
+    {
+        return _inner.LoginAsync(username, password, cancellationToken);
+    }
 
     public Task<IEnumerable<AccountEntity>> ListAccountsAsync(CancellationToken cancellationToken = default)
-        => _inner.ListAccountsAsync(cancellationToken);
+    {
+        return _inner.ListAccountsAsync(cancellationToken);
+    }
 
     public Task<AccountPage> ListAccountsPageAsync(
         Serial afterId,
         int pageSize = 50,
         CancellationToken cancellationToken = default
     )
-        => ListFailure is null
-               ? _inner.ListAccountsPageAsync(afterId, pageSize, cancellationToken)
-               : Task.FromException<AccountPage>(ListFailure);
+    {
+        return ListFailure is null
+            ? _inner.ListAccountsPageAsync(afterId, pageSize, cancellationToken)
+            : Task.FromException<AccountPage>(ListFailure);
+    }
 }

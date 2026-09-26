@@ -2,7 +2,9 @@ using Moongate.Server.Core.Types.Hosting;
 
 namespace Moongate.Server.Core.Data.Admin;
 
-/// <summary>Non-sensitive process and realm identity snapshot.</summary>
+/// <summary>
+///     Non-sensitive process and realm identity snapshot.
+/// </summary>
 public sealed class AdminServerInfo
 {
     public string Version { get; }

@@ -81,5 +81,7 @@ public sealed class CommandContextTests
     }
 
     private static CommandContext CreateContext()
-        => new("echo hi there", "echo", ["hi", "there"], CommandSourceType.Console, null);
+    {
+        return new("echo hi there", "echo", ["hi", "there"], CommandSourceType.Console, null);
+    }
 }

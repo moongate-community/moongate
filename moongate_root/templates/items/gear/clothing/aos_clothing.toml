@@ -1,0 +1,101 @@
+[[item]]
+id = "0x2684_hooded_shroud_of_shadows"
+base_id = "base_clothing"
+item_id = 9860
+name = "hooded shroud of shadows"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2683"
+base_id = "0x2684_hooded_shroud_of_shadows"
+item_id = 9859
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2310_formal_shirt"
+base_id = "base_clothing"
+item_id = 8976
+name = "formal shirt"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x230f"
+base_id = "0x2310_formal_shirt"
+item_id = 8975
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2307_fur_boots"
+base_id = "base_clothing"
+item_id = 8967
+name = "fur boots"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2308"
+base_id = "0x2307_fur_boots"
+item_id = 8968
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x230a_fur_cap"
+base_id = "base_clothing"
+item_id = 8970
+name = "fur cap"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2309"
+base_id = "0x230a_fur_cap"
+item_id = 8969
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x230c_fur_sarong"
+base_id = "base_clothing"
+item_id = 8972
+name = "fur sarong"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x230b"
+base_id = "0x230c_fur_sarong"
+item_id = 8971
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x230e_gilded_dress"
+base_id = "base_clothing"
+item_id = 8974
+name = "gilded dress"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x230d"
+base_id = "0x230e_gilded_dress"
+item_id = 8973
+rarity = "common"
+movable = false
+hue = 0

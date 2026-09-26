@@ -59,8 +59,23 @@ docs(plugins): clarify bundle deployment
 
 ## Verify your changes
 
-Solution tests require isolated PostgreSQL and Redis servers. Set these environment
-variables through your secret provider before running them:
+For a quick check while you work, run the fast suite. It needs no Docker and no
+variables, because it leaves out the tests in `Integration`, `Performance` and
+`Stress` namespaces or with a matching `Category` trait:
+
+```sh
+scripts/test.sh
+scripts/test.sh fast --filter 'FullyQualifiedName~Serial'
+```
+
+`scripts/test.sh all` runs the full suite. Its database and Redis tests need
+isolated PostgreSQL and Redis servers. With Docker running, the
+tests start them on their own with [Testcontainers](https://dotnet.testcontainers.org/):
+one `postgres:17-alpine` and one `redis:7-alpine` (with `maxmemory-policy noeviction`)
+per test process, removed when the run ends. The first run downloads the images.
+
+To use servers of your own instead, as CI does, set these environment variables
+through your secret provider; a set variable always wins over the container:
 
 | Variable | Test dependency |
 | --- | --- |
@@ -68,16 +83,17 @@ variables through your secret provider before running them:
 | `MOONGATE_TEST_REDIS_CONNECTION_STRING` | A StackExchange.Redis connection string for a disposable Redis 7+ server configured with `maxmemory-policy noeviction` |
 
 Do not point these variables at a running shard's databases or Redis instance.
-Required integration tests fail when their connection configuration is missing;
-they do not silently skip. Run test projects serially with `-m:1`, as CI does,
-because their hosts share the database services.
+Without the variables and without Docker, the integration tests fail; they do not
+silently skip. Run test projects serially with `-m:1`, as CI does, because their
+hosts share the database services.
 
 Run these commands from the repository root to match the solution checks in CI:
 
 ```sh
 dotnet restore Moongate.slnx
+dotnet format style Moongate.slnx --diagnostics IDE0022 --severity warn --no-restore --verify-no-changes
 dotnet build Moongate.slnx -c Release --no-restore
-dotnet test Moongate.slnx -c Release --no-build -m:1
+bash scripts/test.sh all -c Release --no-build
 ```
 
 For opt-in concurrent database load tests, see [Stress-test PostgreSQL persistence](docs/persistence-stress.md).

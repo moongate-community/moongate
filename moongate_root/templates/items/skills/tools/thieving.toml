@@ -1,0 +1,44 @@
+[[item]]
+id = "0x14fb_lockpick"
+base_id = "base_item"
+item_id = 5371
+name = "lockpick"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x14fc_lockpick"
+base_id = "base_item"
+item_id = 5372
+name = "lockpick"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x14fd_lockpicks"
+base_id = "base_item"
+item_id = 5373
+name = "lockpicks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x14fe_lockpicks"
+base_id = "base_item"
+item_id = 5374
+name = "lockpicks"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "disguise_kit"
+base_id = "base_item"
+item_id = 3589
+name = "disguise kit"
+rarity = "common"
+movable = true
+hue = 0

@@ -1,0 +1,77 @@
+[[loot]]
+id = "randomvegetables"
+[[loot.entries]]
+weight = 2500
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c5c_watermelon"
+comment = "watermelon"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c62_turnip"
+comment = "turnip"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c66_gourd"
+comment = "gourd"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c6b_pumpkin"
+comment = "pumpkin"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c6d_onion"
+comment = "onion"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c70_head_of_lettuce"
+comment = "head of lettuce"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c72_squash"
+comment = "squash"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c74_honeydew_melon"
+comment = "honeydew melon"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c77_carrot"
+comment = "carrot"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c79_canteloupe"
+comment = "canteloupe"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c7b_head_of_cabbage"
+comment = "head of cabbage"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0c82_ear_of_corn"
+comment = "ear of corn"
+amount = 1

@@ -177,9 +177,9 @@ public sealed class PacketSendServiceTests
 
         try
         {
-            var error = await Assert.ThrowsAsync<AggregateException>(
-                            () => sender.SendAndDisconnectAsync(9013, connection, new PingPacket(1)).WaitAsync(Timeout)
-                        );
+            var error = await Assert.ThrowsAsync<AggregateException>(() =>
+                sender.SendAndDisconnectAsync(9013, connection, new PingPacket(1)).WaitAsync(Timeout)
+            );
             Assert.Contains(failure, error.Flatten().InnerExceptions);
             await connection.CloseRequested.WaitAsync(Timeout);
         }
@@ -288,8 +288,8 @@ public sealed class PacketSendServiceTests
     {
         await using var fixture = await SessionFixture.CreateAsync();
         Exception failure = canceled
-                                ? new OperationCanceledException("independent send cancellation")
-                                : new IOException("send failure");
+            ? new OperationCanceledException("independent send cancellation")
+            : new IOException("send failure");
         using var middleware = new ControlledSendMiddleware { Failure = failure };
         fixture.Client.AddMiddleware(middleware);
         var sessions = new SessionService(fixture.Loop);
@@ -323,8 +323,7 @@ public sealed class PacketSendServiceTests
         try
         {
             var loopThread = 0;
-            await slow.ExecuteOnLoopAsync(
-                () =>
+            await slow.ExecuteOnLoopAsync(() =>
                 {
                     loopThread = Environment.CurrentManagedThreadId;
                     Assert.True(sender.TrySend(slow.Client.SessionId, new PingPacket(1)));

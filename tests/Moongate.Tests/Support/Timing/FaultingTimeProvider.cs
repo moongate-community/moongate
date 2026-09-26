@@ -1,6 +1,8 @@
 namespace Moongate.Tests.Support.Timing;
 
-/// <summary>Allows a callback to break subsequent diagnostic timestamp reads.</summary>
+/// <summary>
+///     Allows a callback to break subsequent diagnostic timestamp reads.
+/// </summary>
 public sealed class FaultingTimeProvider : TimeProvider
 {
     private readonly ManualTimeProvider _clock;

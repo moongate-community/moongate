@@ -3,17 +3,23 @@ using Moongate.Core.Extensions.Env;
 namespace Moongate.Core.Extensions.Directories;
 
 /// <summary>
-/// Provides extension methods for directory path resolution and environment variable expansion
+///     Provides extension methods for directory path resolution and environment variable expansion
 /// </summary>
 public static class DirectoriesExtension
 {
     /// <summary>
-    /// Resolves path by expanding tilde (~) to user home directory, expanding environment variables,
-    /// and normalizing the result to an absolute path.
+    ///     Resolves path by expanding tilde (~) to user home directory, expanding environment variables,
+    ///     and normalizing the result to an absolute path.
     /// </summary>
-    /// <param name="path">The path to resolve</param>
-    /// <returns>The fully resolved absolute path with expanded environment variables</returns>
-    /// <exception cref="ArgumentException">Thrown when path is null or empty</exception>
+    /// <param name="path">
+    ///     The path to resolve
+    /// </param>
+    /// <returns>
+    ///     The fully resolved absolute path with expanded environment variables
+    /// </returns>
+    /// <exception cref="ArgumentException">
+    ///     Thrown when path is null or empty
+    /// </exception>
     public static string ResolvePathAndEnvs(this string path)
     {
         if (string.IsNullOrWhiteSpace(path))

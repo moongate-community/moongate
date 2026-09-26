@@ -1,0 +1,35 @@
+[[item]]
+id = "0x0a58_a_bedroll"
+base_id = "base_item"
+item_id = 2648
+name = "a bedroll"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x14eb_blank_map"
+base_id = "base_item"
+item_id = 5355
+name = "blank map"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x14ec_blank_map"
+base_id = "base_item"
+item_id = 5356
+name = "blank map"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "oilcloth"
+base_id = "base_item"
+item_id = 5981
+name = "oil cloth"
+rarity = "common"
+movable = false
+hue = 2001

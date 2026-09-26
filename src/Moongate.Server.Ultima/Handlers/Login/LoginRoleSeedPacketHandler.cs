@@ -1,3 +1,4 @@
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
@@ -17,11 +18,18 @@ public sealed class LoginRoleSeedPacketHandler : ILoginPacketHandler<LoginSeedPa
     {
         cancellationToken.ThrowIfCancellationRequested();
         session.NetworkSession.SetSeed(packet.Seed);
+
+        var clientVersion = new ClientVersion(
+            (int)packet.Major,
+            (int)packet.Minor,
+            (int)packet.Revision,
+            (int)packet.Patch
+        );
+        session.NetworkSession.SetClientVersion(clientVersion);
         _logger.Information(
-            "Login client connected with version v{Major}.{Minor}.{Revision}",
-            packet.Major,
-            packet.Minor,
-            packet.Revision
+            "Login client connected with version {ClientVersion} ({ClientType})",
+            clientVersion,
+            clientVersion.Type
         );
 
         return ValueTask.CompletedTask;

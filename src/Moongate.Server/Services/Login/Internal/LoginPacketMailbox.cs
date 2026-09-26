@@ -36,10 +36,14 @@ internal sealed class LoginPacketMailbox : IAsyncDisposable
     }
 
     public void Start()
-        => _worker = Task.Run(RunAsync);
+    {
+        _worker = Task.Run(RunAsync);
+    }
 
     public bool TryWrite(IPacket packet)
-        => !_cancellation.IsCancellationRequested && _queue.Writer.TryWrite(packet);
+    {
+        return !_cancellation.IsCancellationRequested && _queue.Writer.TryWrite(packet);
+    }
 
     public Task StopAsync()
     {
@@ -76,7 +80,9 @@ internal sealed class LoginPacketMailbox : IAsyncDisposable
                 await handler(Session, packet, _cancellation.Token).ConfigureAwait(false);
             }
         }
-        catch (OperationCanceledException) when (_cancellation.IsCancellationRequested) { }
+        catch (OperationCanceledException) when (_cancellation.IsCancellationRequested)
+        {
+        }
         catch (Exception exception)
         {
             _logger.Error(exception, "Login packet handler failed for session {SessionId}", Session.SessionId);
@@ -90,5 +96,7 @@ internal sealed class LoginPacketMailbox : IAsyncDisposable
     }
 
     public ValueTask DisposeAsync()
-        => new(StopAsync());
+    {
+        return new(StopAsync());
+    }
 }

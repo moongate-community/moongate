@@ -4,10 +4,14 @@ using Moongate.Persistence.Migrations.Types.Migrations;
 
 namespace Moongate.Persistence.Migrations.Services;
 
-/// <summary>Checks immutable history and identifies pending SQL before any mutation.</summary>
+/// <summary>
+///     Checks immutable history and identifies pending SQL before any mutation.
+/// </summary>
 public static class MigrationHistory
 {
-    /// <summary>Reads history through the caller's connection and transaction without creating schema objects.</summary>
+    /// <summary>
+    ///     Reads history through the caller's connection and transaction without creating schema objects.
+    /// </summary>
     public static async Task<IReadOnlyList<AppliedMigration>> ReadAsync(
         Func<DbCommand> createCommand,
         MigrationTarget target,
@@ -40,7 +44,9 @@ public static class MigrationHistory
         return result;
     }
 
-    /// <summary>Validates every installed component before returning pending scripts in catalog order.</summary>
+    /// <summary>
+    ///     Validates every installed component before returning pending scripts in catalog order.
+    /// </summary>
     public static IReadOnlyList<MigrationScript> Validate(MigrationCatalog catalog, IReadOnlyList<AppliedMigration> applied)
     {
         var known = catalog.Scripts.ToDictionary(script => script.Name, StringComparer.Ordinal);

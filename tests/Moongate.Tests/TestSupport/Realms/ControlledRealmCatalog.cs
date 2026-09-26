@@ -17,7 +17,9 @@ internal sealed class ControlledRealmCatalog : IRealmCatalog
         AccountType accountType,
         CancellationToken cancellationToken = default
     )
-        => ValueTask.FromResult<IReadOnlyList<RealmDescriptor>>(Result is null ? [] : [Result.Descriptor]);
+    {
+        return ValueTask.FromResult<IReadOnlyList<RealmDescriptor>>(Result is null ? [] : [Result.Descriptor]);
+    }
 
     public async ValueTask<RealmInstance?> FindByIndexAsync(
         ushort index,
@@ -35,7 +37,7 @@ internal sealed class ControlledRealmCatalog : IRealmCatalog
         }
 
         return PendingResult is null
-                   ? Result
-                   : await PendingResult.Task.WaitAsync(cancellationToken);
+            ? Result
+            : await PendingResult.Task.WaitAsync(cancellationToken);
     }
 }

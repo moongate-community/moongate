@@ -10,7 +10,9 @@ internal sealed class SerialTypeHandler : TypeHandler<Serial>
     private static readonly SerialTypeHandler Instance = new();
 
     public override Serial Deserialize(object value)
-        => new(checked((uint)Convert.ToInt64(value)));
+    {
+        return new(checked((uint)Convert.ToInt64(value)));
+    }
 
     public static void EnsureRegistered()
     {
@@ -37,8 +39,12 @@ internal sealed class SerialTypeHandler : TypeHandler<Serial>
     }
 
     public override void FluentApi(ColumnFluent column)
-        => column.MapType(typeof(long)).IsNullable(false);
+    {
+        column.MapType(typeof(long)).IsNullable(false);
+    }
 
     public override object Serialize(Serial value)
-        => (long)value.Value;
+    {
+        return (long)value.Value;
+    }
 }

@@ -1,0 +1,2150 @@
+[[item]]
+id = "0x16f8_ballista"
+base_id = "base_item"
+item_id = 5880
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x16f9_ballista"
+base_id = "base_item"
+item_id = 5881
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x16fa_ballista"
+base_id = "base_item"
+item_id = 5882
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x16fb_ballista"
+base_id = "base_item"
+item_id = 5883
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x16fc_ballista"
+base_id = "base_item"
+item_id = 5884
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x16fd_ballista"
+base_id = "base_item"
+item_id = 5885
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x16fe_ballista"
+base_id = "base_item"
+item_id = 5886
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x16ff_ballista"
+base_id = "base_item"
+item_id = 5887
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1700_ballista"
+base_id = "base_item"
+item_id = 5888
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1701_ballista"
+base_id = "base_item"
+item_id = 5889
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1702_ballista"
+base_id = "base_item"
+item_id = 5890
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1703_ballista"
+base_id = "base_item"
+item_id = 5891
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1704_ballista"
+base_id = "base_item"
+item_id = 5892
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1705_ballista"
+base_id = "base_item"
+item_id = 5893
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1706_ballista"
+base_id = "base_item"
+item_id = 5894
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1707_ballista"
+base_id = "base_item"
+item_id = 5895
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1708_ballista"
+base_id = "base_item"
+item_id = 5896
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x189f_ballista"
+base_id = "base_item"
+item_id = 6303
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a0_ballista"
+base_id = "base_item"
+item_id = 6304
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a1_ballista"
+base_id = "base_item"
+item_id = 6305
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a2_ballista"
+base_id = "base_item"
+item_id = 6306
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a3_ballista"
+base_id = "base_item"
+item_id = 6307
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a4_ballista"
+base_id = "base_item"
+item_id = 6308
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a5_ballista"
+base_id = "base_item"
+item_id = 6309
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a6_ballista"
+base_id = "base_item"
+item_id = 6310
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a7_ballista"
+base_id = "base_item"
+item_id = 6311
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a8_ballista"
+base_id = "base_item"
+item_id = 6312
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18a9_ballista"
+base_id = "base_item"
+item_id = 6313
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18aa_ballista"
+base_id = "base_item"
+item_id = 6314
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18ab_ballista"
+base_id = "base_item"
+item_id = 6315
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18ac_ballista"
+base_id = "base_item"
+item_id = 6316
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18ad_ballista"
+base_id = "base_item"
+item_id = 6317
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18ae_ballista"
+base_id = "base_item"
+item_id = 6318
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18af_ballista"
+base_id = "base_item"
+item_id = 6319
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18b0_ballista"
+base_id = "base_item"
+item_id = 6320
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18b1_ballista"
+base_id = "base_item"
+item_id = 6321
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18b2_ballista"
+base_id = "base_item"
+item_id = 6322
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18b3_ballista"
+base_id = "base_item"
+item_id = 6323
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18b4_ballista"
+base_id = "base_item"
+item_id = 6324
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18b5_ballista"
+base_id = "base_item"
+item_id = 6325
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18c_e_ballista"
+base_id = "base_item"
+item_id = 6350
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18c_f_ballista"
+base_id = "base_item"
+item_id = 6351
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18d0_ballista"
+base_id = "base_item"
+item_id = 6352
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18d1_ballista"
+base_id = "base_item"
+item_id = 6353
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18d2_ballista"
+base_id = "base_item"
+item_id = 6354
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18d3_ballista"
+base_id = "base_item"
+item_id = 6355
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f0_ballista"
+base_id = "base_item"
+item_id = 6384
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f1_ballista"
+base_id = "base_item"
+item_id = 6385
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f2_ballista"
+base_id = "base_item"
+item_id = 6386
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f3_ballista"
+base_id = "base_item"
+item_id = 6387
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f4_ballista"
+base_id = "base_item"
+item_id = 6388
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f5_ballista"
+base_id = "base_item"
+item_id = 6389
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f6_ballista"
+base_id = "base_item"
+item_id = 6390
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f7_ballista"
+base_id = "base_item"
+item_id = 6391
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f8_ballista"
+base_id = "base_item"
+item_id = 6392
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18f9_ballista"
+base_id = "base_item"
+item_id = 6393
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18fa_ballista"
+base_id = "base_item"
+item_id = 6394
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18fb_ballista"
+base_id = "base_item"
+item_id = 6395
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18fc_ballista"
+base_id = "base_item"
+item_id = 6396
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18fd_ballista"
+base_id = "base_item"
+item_id = 6397
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18fe_ballista"
+base_id = "base_item"
+item_id = 6398
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x18ff_ballista"
+base_id = "base_item"
+item_id = 6399
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1900_ballista"
+base_id = "base_item"
+item_id = 6400
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1901_ballista"
+base_id = "base_item"
+item_id = 6401
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1902_ballista"
+base_id = "base_item"
+item_id = 6402
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1903_ballista"
+base_id = "base_item"
+item_id = 6403
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1904_ballista"
+base_id = "base_item"
+item_id = 6404
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1905_ballista"
+base_id = "base_item"
+item_id = 6405
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1906_ballista"
+base_id = "base_item"
+item_id = 6406
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1907_ballista"
+base_id = "base_item"
+item_id = 6407
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1908_ballista"
+base_id = "base_item"
+item_id = 6408
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1909_ballista"
+base_id = "base_item"
+item_id = 6409
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x190a_ballista"
+base_id = "base_item"
+item_id = 6410
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x190b_ballista"
+base_id = "base_item"
+item_id = 6411
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x190c_ballista"
+base_id = "base_item"
+item_id = 6412
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x190d_ballista"
+base_id = "base_item"
+item_id = 6413
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f3f_ballista"
+base_id = "base_item"
+item_id = 16191
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f40_ballista"
+base_id = "base_item"
+item_id = 16192
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f41_ballista"
+base_id = "base_item"
+item_id = 16193
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f42_ballista"
+base_id = "base_item"
+item_id = 16194
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f43_ballista"
+base_id = "base_item"
+item_id = 16195
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f44_ballista"
+base_id = "base_item"
+item_id = 16196
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f45_ballista"
+base_id = "base_item"
+item_id = 16197
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f46_ballista"
+base_id = "base_item"
+item_id = 16198
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f47_ballista"
+base_id = "base_item"
+item_id = 16199
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f48_ballista"
+base_id = "base_item"
+item_id = 16200
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f49_ballista"
+base_id = "base_item"
+item_id = 16201
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f4a_ballista"
+base_id = "base_item"
+item_id = 16202
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f4b_ballista"
+base_id = "base_item"
+item_id = 16203
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f4c_ballista"
+base_id = "base_item"
+item_id = 16204
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f4d_ballista"
+base_id = "base_item"
+item_id = 16205
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f4e_ballista"
+base_id = "base_item"
+item_id = 16206
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f4f_ballista"
+base_id = "base_item"
+item_id = 16207
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f50_ballista"
+base_id = "base_item"
+item_id = 16208
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f51_ballista"
+base_id = "base_item"
+item_id = 16209
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f52_ballista"
+base_id = "base_item"
+item_id = 16210
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f53_ballista"
+base_id = "base_item"
+item_id = 16211
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f54_ballista"
+base_id = "base_item"
+item_id = 16212
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f55_ballista"
+base_id = "base_item"
+item_id = 16213
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f56_ballista"
+base_id = "base_item"
+item_id = 16214
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f57_ballista"
+base_id = "base_item"
+item_id = 16215
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f58_ballista"
+base_id = "base_item"
+item_id = 16216
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f59_ballista"
+base_id = "base_item"
+item_id = 16217
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f5a_ballista"
+base_id = "base_item"
+item_id = 16218
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f5b_ballista"
+base_id = "base_item"
+item_id = 16219
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f5c_ballista"
+base_id = "base_item"
+item_id = 16220
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f5d_ballista"
+base_id = "base_item"
+item_id = 16221
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f5e_ballista"
+base_id = "base_item"
+item_id = 16222
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f5f_ballista"
+base_id = "base_item"
+item_id = 16223
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f60_ballista"
+base_id = "base_item"
+item_id = 16224
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f61_ballista"
+base_id = "base_item"
+item_id = 16225
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f62_ballista"
+base_id = "base_item"
+item_id = 16226
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f63_ballista"
+base_id = "base_item"
+item_id = 16227
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f64_ballista"
+base_id = "base_item"
+item_id = 16228
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f66_ballista"
+base_id = "base_item"
+item_id = 16230
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f67_ballista"
+base_id = "base_item"
+item_id = 16231
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f68_ballista"
+base_id = "base_item"
+item_id = 16232
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f69_ballista"
+base_id = "base_item"
+item_id = 16233
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f6a_ballista"
+base_id = "base_item"
+item_id = 16234
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f6b_ballista"
+base_id = "base_item"
+item_id = 16235
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f6c_ballista"
+base_id = "base_item"
+item_id = 16236
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f6d_ballista"
+base_id = "base_item"
+item_id = 16237
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f6e_ballista"
+base_id = "base_item"
+item_id = 16238
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f6f_ballista"
+base_id = "base_item"
+item_id = 16239
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f70_ballista"
+base_id = "base_item"
+item_id = 16240
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f71_ballista"
+base_id = "base_item"
+item_id = 16241
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f72_ballista"
+base_id = "base_item"
+item_id = 16242
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f73_ballista"
+base_id = "base_item"
+item_id = 16243
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f74_ballista"
+base_id = "base_item"
+item_id = 16244
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f75_ballista"
+base_id = "base_item"
+item_id = 16245
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f76_ballista"
+base_id = "base_item"
+item_id = 16246
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f77_ballista"
+base_id = "base_item"
+item_id = 16247
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f78_ballista"
+base_id = "base_item"
+item_id = 16248
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f79_ballista"
+base_id = "base_item"
+item_id = 16249
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f7a_ballista"
+base_id = "base_item"
+item_id = 16250
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f7b_ballista"
+base_id = "base_item"
+item_id = 16251
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f7c_ballista"
+base_id = "base_item"
+item_id = 16252
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f7d_ballista"
+base_id = "base_item"
+item_id = 16253
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f7e_ballista"
+base_id = "base_item"
+item_id = 16254
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f7f_ballista"
+base_id = "base_item"
+item_id = 16255
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f80_ballista"
+base_id = "base_item"
+item_id = 16256
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f81_ballista"
+base_id = "base_item"
+item_id = 16257
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f82_ballista"
+base_id = "base_item"
+item_id = 16258
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f83_ballista"
+base_id = "base_item"
+item_id = 16259
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f84_ballista"
+base_id = "base_item"
+item_id = 16260
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f85_ballista"
+base_id = "base_item"
+item_id = 16261
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f86_ballista"
+base_id = "base_item"
+item_id = 16262
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f87_ballista"
+base_id = "base_item"
+item_id = 16263
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f88_ballista"
+base_id = "base_item"
+item_id = 16264
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f89_ballista"
+base_id = "base_item"
+item_id = 16265
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f8a_ballista"
+base_id = "base_item"
+item_id = 16266
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f8b_ballista"
+base_id = "base_item"
+item_id = 16267
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f8c_ballista"
+base_id = "base_item"
+item_id = 16268
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f8d_ballista"
+base_id = "base_item"
+item_id = 16269
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f8e_ballista"
+base_id = "base_item"
+item_id = 16270
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f90_ballista"
+base_id = "base_item"
+item_id = 16272
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f91_ballista"
+base_id = "base_item"
+item_id = 16273
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f92_ballista"
+base_id = "base_item"
+item_id = 16274
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f93_ballista"
+base_id = "base_item"
+item_id = 16275
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f94_ballista"
+base_id = "base_item"
+item_id = 16276
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f95_ballista"
+base_id = "base_item"
+item_id = 16277
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f96_ballista"
+base_id = "base_item"
+item_id = 16278
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f97_ballista"
+base_id = "base_item"
+item_id = 16279
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f98_ballista"
+base_id = "base_item"
+item_id = 16280
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f99_ballista"
+base_id = "base_item"
+item_id = 16281
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f9a_ballista"
+base_id = "base_item"
+item_id = 16282
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f9b_ballista"
+base_id = "base_item"
+item_id = 16283
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f9c_ballista"
+base_id = "base_item"
+item_id = 16284
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f9d_ballista"
+base_id = "base_item"
+item_id = 16285
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f9e_ballista"
+base_id = "base_item"
+item_id = 16286
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f9f_ballista"
+base_id = "base_item"
+item_id = 16287
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa0_ballista"
+base_id = "base_item"
+item_id = 16288
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa1_ballista"
+base_id = "base_item"
+item_id = 16289
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa2_ballista"
+base_id = "base_item"
+item_id = 16290
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa3_ballista"
+base_id = "base_item"
+item_id = 16291
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa4_ballista"
+base_id = "base_item"
+item_id = 16292
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa5_ballista"
+base_id = "base_item"
+item_id = 16293
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa6_ballista"
+base_id = "base_item"
+item_id = 16294
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa7_ballista"
+base_id = "base_item"
+item_id = 16295
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa8_ballista"
+base_id = "base_item"
+item_id = 16296
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fa9_ballista"
+base_id = "base_item"
+item_id = 16297
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3faa_ballista"
+base_id = "base_item"
+item_id = 16298
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f_ab_ballista"
+base_id = "base_item"
+item_id = 16299
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f_ac_ballista"
+base_id = "base_item"
+item_id = 16300
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fad_ballista"
+base_id = "base_item"
+item_id = 16301
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fae_ballista"
+base_id = "base_item"
+item_id = 16302
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3faf_ballista"
+base_id = "base_item"
+item_id = 16303
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb0_ballista"
+base_id = "base_item"
+item_id = 16304
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb1_ballista"
+base_id = "base_item"
+item_id = 16305
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb2_ballista"
+base_id = "base_item"
+item_id = 16306
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb3_ballista"
+base_id = "base_item"
+item_id = 16307
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb4_ballista"
+base_id = "base_item"
+item_id = 16308
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb5_ballista"
+base_id = "base_item"
+item_id = 16309
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb6_ballista"
+base_id = "base_item"
+item_id = 16310
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb7_ballista"
+base_id = "base_item"
+item_id = 16311
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb8_ballista"
+base_id = "base_item"
+item_id = 16312
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb9_ballista"
+base_id = "base_item"
+item_id = 16313
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fbb_ballista"
+base_id = "base_item"
+item_id = 16315
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fbc_ballista"
+base_id = "base_item"
+item_id = 16316
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb_d_ballista"
+base_id = "base_item"
+item_id = 16317
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb_e_ballista"
+base_id = "base_item"
+item_id = 16318
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fb_f_ballista"
+base_id = "base_item"
+item_id = 16319
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc0_ballista"
+base_id = "base_item"
+item_id = 16320
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc1_ballista"
+base_id = "base_item"
+item_id = 16321
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc2_ballista"
+base_id = "base_item"
+item_id = 16322
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc3_ballista"
+base_id = "base_item"
+item_id = 16323
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc4_ballista"
+base_id = "base_item"
+item_id = 16324
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc5_ballista"
+base_id = "base_item"
+item_id = 16325
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc6_ballista"
+base_id = "base_item"
+item_id = 16326
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc7_ballista"
+base_id = "base_item"
+item_id = 16327
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc8_ballista"
+base_id = "base_item"
+item_id = 16328
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc9_ballista"
+base_id = "base_item"
+item_id = 16329
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc_a_ballista"
+base_id = "base_item"
+item_id = 16330
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fcb_ballista"
+base_id = "base_item"
+item_id = 16331
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fcc_ballista"
+base_id = "base_item"
+item_id = 16332
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc_d_ballista"
+base_id = "base_item"
+item_id = 16333
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc_e_ballista"
+base_id = "base_item"
+item_id = 16334
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fc_f_ballista"
+base_id = "base_item"
+item_id = 16335
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd0_ballista"
+base_id = "base_item"
+item_id = 16336
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd1_ballista"
+base_id = "base_item"
+item_id = 16337
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd2_ballista"
+base_id = "base_item"
+item_id = 16338
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd3_ballista"
+base_id = "base_item"
+item_id = 16339
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd4_ballista"
+base_id = "base_item"
+item_id = 16340
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd5_ballista"
+base_id = "base_item"
+item_id = 16341
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd6_ballista"
+base_id = "base_item"
+item_id = 16342
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd7_ballista"
+base_id = "base_item"
+item_id = 16343
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd8_ballista"
+base_id = "base_item"
+item_id = 16344
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fd9_ballista"
+base_id = "base_item"
+item_id = 16345
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fda_ballista"
+base_id = "base_item"
+item_id = 16346
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f_db_ballista"
+base_id = "base_item"
+item_id = 16347
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3f_dc_ballista"
+base_id = "base_item"
+item_id = 16348
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fdd_ballista"
+base_id = "base_item"
+item_id = 16349
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fde_ballista"
+base_id = "base_item"
+item_id = 16350
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fdf_ballista"
+base_id = "base_item"
+item_id = 16351
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fe0_ballista"
+base_id = "base_item"
+item_id = 16352
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fe1_ballista"
+base_id = "base_item"
+item_id = 16353
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fe2_ballista"
+base_id = "base_item"
+item_id = 16354
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fe3_ballista"
+base_id = "base_item"
+item_id = 16355
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x3fe4_ballista"
+base_id = "base_item"
+item_id = 16356
+name = "ballista"
+rarity = "common"
+movable = false
+hue = 0

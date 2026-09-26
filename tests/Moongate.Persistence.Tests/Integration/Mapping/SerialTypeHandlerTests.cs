@@ -24,37 +24,41 @@ public sealed class SerialTypeHandlerTests
         await coordinator.SynchronizeAsync();
         await database.ExecuteAsync("INSERT INTO plugin_characters.characters (id, name) VALUES (4294967296, 'invalid')");
 
-        var exception = await Record.ExceptionAsync(
-                            () =>
-                                coordinator.GetDatabase(PersistenceDatabaseTarget.Realm)
-                                           .Orm
-                                           .Select<CharacterEntity>()
-                                           .ToListAsync()
-                        );
+        var exception = await Record.ExceptionAsync(() =>
+            coordinator.GetDatabase(PersistenceDatabaseTarget.Realm)
+                .Orm
+                .Select<CharacterEntity>()
+                .ToListAsync()
+        );
 
         Assert.NotNull(exception);
         Assert.IsType<OverflowException>(exception.GetBaseException());
     }
 
-    [Theory, InlineData(1L), InlineData(1073741824L), InlineData(2147483647L), InlineData(2147483648L),
-     InlineData(4294967295L)]
-    public async Task Serial_FullUnsignedRange_RoundTripsAsBigint(long value)
+    [Fact]
+    public async Task Serial_FullUnsignedRange_RoundTripsAsBigint()
     {
         await using var database = await _fixture.CreateDatabaseAsync();
         await using var coordinator = CreateCoordinator(database);
         await coordinator.SynchronizeAsync();
         var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
-        var id = new Serial((uint)value);
+        long[] values = [1L, 1073741824L, 2147483647L, 2147483648L, 4294967295L];
 
-        await orm.Insert(new CharacterEntity { Id = id, Name = "round trip" }).ExecuteAffrowsAsync();
-        var loaded = await orm.Select<CharacterEntity>().Where(entity => entity.Id == id).FirstAsync();
+        // Each boundary has its own row; only the database and schema setup are shared.
+        foreach (var value in values)
+        {
+            var id = new Serial((uint)value);
+            await orm.Insert(new CharacterEntity { Id = id, Name = "round trip" }).ExecuteAffrowsAsync();
+            var loaded = await orm.Select<CharacterEntity>().Where(entity => entity.Id == id).FirstAsync();
 
-        Assert.NotNull(loaded);
-        Assert.Equal(id, loaded.Id);
-        Assert.Equal(
-            value,
-            await database.ScalarAsync<long>("SELECT id FROM plugin_characters.characters")
-        );
+            Assert.NotNull(loaded);
+            Assert.Equal(id, loaded.Id);
+            Assert.Equal(
+                value,
+                await database.ScalarAsync<long>($"SELECT id FROM plugin_characters.characters WHERE id = {value}")
+            );
+        }
+
         Assert.Equal(
             "bigint",
             await database.ScalarAsync<string>(

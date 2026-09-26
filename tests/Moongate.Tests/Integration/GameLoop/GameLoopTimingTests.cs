@@ -79,8 +79,7 @@ public sealed class GameLoopTimingTests
         {
             Assert.True(
                 loop.TryPost(
-                    new ActionGameLoopWorkItem(
-                        () =>
+                    new ActionGameLoopWorkItem(() =>
                         {
                             commands++;
                             clock.Advance(TimeSpan.FromMilliseconds(1));
@@ -245,21 +244,24 @@ public sealed class GameLoopTimingTests
         {
             cancellation.Cancel();
             await run.WaitAsync(TestTimeout)
-                     .ConfigureAwait(
-                         ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
-                     );
+                .ConfigureAwait(
+                    ConfigureAwaitOptions.SuppressThrowing | ConfigureAwaitOptions.ContinueOnCapturedContext
+                );
         }
     }
 
     private static GameLoopService CreateLoop(TimerWheelService timers, TimeProvider clock, int commandBatch = 4)
-        => new(
+    {
+        return new(
             new() { QueueCapacity = 8, MaxWorkItemsPerBatch = commandBatch },
             timers,
             clock
         );
+    }
 
     private static TimerWheelService CreateTimers(TimeProvider clock, int timerBatch = 4)
-        => new(
+    {
+        return new(
             new()
             {
                 TickDuration = TimeSpan.FromMilliseconds(1), WheelSize = 8,
@@ -267,4 +269,5 @@ public sealed class GameLoopTimingTests
             },
             clock
         );
+    }
 }

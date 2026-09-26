@@ -6,7 +6,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Network;
 
-/// <summary>Tracks connections independently of game sessions and owns their complete cleanup lifetime.</summary>
+/// <summary>
+///     Tracks connections independently of game sessions and owns their complete cleanup lifetime.
+/// </summary>
 public sealed class ConnectionService : IConnectionService, ILoginConnectionService
 {
     private readonly Lock _gate = new();
@@ -62,8 +64,8 @@ public sealed class ConnectionService : IConnectionService, ILoginConnectionServ
         }
 
         return expectedConnection.Completion.IsCompleted
-                   ? Task.CompletedTask
-                   : expectedConnection.CloseAsync();
+            ? Task.CompletedTask
+            : expectedConnection.CloseAsync();
     }
 
     /// <inheritdoc />
@@ -105,7 +107,9 @@ public sealed class ConnectionService : IConnectionService, ILoginConnectionServ
 
     /// <inheritdoc />
     public bool TryGet(long sessionId, [NotNullWhen(true)] out INetworkConnection? connection)
-        => TryGet(sessionId, out connection, out _);
+    {
+        return TryGet(sessionId, out connection, out _);
+    }
 
     /// <inheritdoc />
     public bool TryGet(
@@ -260,7 +264,7 @@ public sealed class ConnectionService : IConnectionService, ILoginConnectionServ
         }
 
         await Task.WhenAll(entries.Select(entry => entry.Cleanup.Task))
-                  .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
+            .ConfigureAwait(ConfigureAwaitOptions.SuppressThrowing);
         Exception[] failures;
 
         lock (_gate)

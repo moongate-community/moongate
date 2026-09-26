@@ -42,8 +42,8 @@ public sealed class LoopbackPair : IAsyncDisposable
             receiverSocket = await listener.AcceptAsync();
             await connect;
             sender = senderStream is null
-                         ? new(senderSocket, codec: codec)
-                         : new MoongateTcpClient(senderSocket, senderStream, codec: codec);
+                ? new(senderSocket, codec: codec)
+                : new MoongateTcpClient(senderSocket, senderStream, codec: codec);
             senderSocket = null;
             receiver = new(
                 receiverSocket,

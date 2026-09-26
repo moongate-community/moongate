@@ -1,0 +1,11 @@
+[[loot]]
+id = "savage_warrior_male_loot"
+[[loot.entries]]
+weight = 900
+amount = 1
+
+[[loot.entries]]
+weight = 100
+item_id = "0x26ac_bola"
+comment = "bola"
+amount = 1

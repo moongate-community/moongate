@@ -29,10 +29,14 @@ public sealed class RadarCol
     }
 
     public static ushort GetItemColor(int index)
-        => index + 0x4000 < Colors.Length ? Colors[index + 0x4000] : (ushort)0;
+    {
+        return index + 0x4000 < Colors.Length ? Colors[index + 0x4000] : (ushort)0;
+    }
 
     public static ushort GetLandColor(int index)
-        => index < Colors.Length ? Colors[index] : (ushort)0;
+    {
+        return index < Colors.Length ? Colors[index] : (ushort)0;
+    }
 
     public static void ImportFromCSV(string fileName)
     {
@@ -131,10 +135,14 @@ public sealed class RadarCol
     }
 
     public static void SetItemColor(int index, ushort value)
-        => Colors[index + 0x4000] = value;
+    {
+        Colors[index + 0x4000] = value;
+    }
 
     public static void SetLandColor(int index, ushort value)
-        => Colors[index] = value;
+    {
+        Colors[index] = value;
+    }
 
     private static int ConvertStringToInt(string text)
     {

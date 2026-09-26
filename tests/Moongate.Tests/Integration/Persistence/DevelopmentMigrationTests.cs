@@ -57,6 +57,8 @@ public sealed class DevelopmentMigrationTests
         var sqlFile = Assert.Single(Directory.GetFiles(Path.Combine(fixture.Migrations, "auth"), "*.sql"));
         Assert.DoesNotContain(MigrationReviewGuard.Marker, await File.ReadAllTextAsync(sqlFile));
         Assert.Equal(1L, await db.ScalarAsync<long>("SELECT count(*) FROM moongate_migrations.history"));
+        Assert.Equal("auth", await db.ScalarAsync<string>("SELECT target FROM moongate_migrations.history"));
+        Assert.False(Directory.Exists(Path.Combine(fixture.Migrations, "world")));
         Assert.Equal(
             "auth.accounts_id_seq",
             await db.ScalarAsync<string>("SELECT pg_get_serial_sequence('auth.accounts', 'id')")
@@ -89,8 +91,7 @@ public sealed class DevelopmentMigrationTests
         );
         container.AddPersistenceWorld<TestEntity>();
         List<string> observed = [];
-        container.OnEvent<PersistenceReadyEvent>(
-            async (_, _) =>
+        container.OnEvent<PersistenceReadyEvent>(async (_, _) =>
             {
                 if (await db.ScalarAsync<long>("SELECT count(*) FROM moongate_migrations.history") == 1)
                 {
@@ -275,21 +276,6 @@ public sealed class DevelopmentMigrationTests
     }
 
     [Fact]
-    public async Task InitializeAsync_AuthUsesAuthDirectoryAndHistoryTarget()
-    {
-        await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
-        using var fixture = new DevelopmentMigrationFixture(db.ConnectionString);
-        await using var coordinator = fixture.Create(
-            typeof(TestEntity),
-            PersistenceDatabaseTarget.Accounts
-        );
-        await coordinator.InitializeAsync();
-        Assert.Single(Directory.GetFiles(Path.Combine(fixture.Migrations, "auth"), "*.sql"));
-        Assert.Equal("auth", await db.ScalarAsync<string>("SELECT target FROM moongate_migrations.history"));
-        Assert.False(Directory.Exists(Path.Combine(fixture.Migrations, "world")));
-    }
-
-    [Fact]
     public async Task InitializeAsync_CanceledRunnerRollsBackAndLeavesPendingFile()
     {
         await using var db = await new PostgreSqlFixture().CreateDatabaseAsync();
@@ -304,8 +290,8 @@ public sealed class DevelopmentMigrationTests
         var deadline = DateTime.UtcNow.AddSeconds(10);
 
         while (!await db.ScalarAsync<bool>(
-                    "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND query LIKE '%pg_sleep(5)%' AND pid<>pg_backend_pid() AND state='active')"
-                ))
+                   "SELECT EXISTS (SELECT 1 FROM pg_stat_activity WHERE datname=current_database() AND query LIKE '%pg_sleep(5)%' AND pid<>pg_backend_pid() AND state='active')"
+               ))
         {
             Assert.True(DateTime.UtcNow < deadline, "Runner did not begin its transaction.");
             await Task.Delay(30);

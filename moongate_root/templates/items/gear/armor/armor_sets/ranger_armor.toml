@@ -1,0 +1,27 @@
+[[item]]
+id = "0x13dc_ranger"
+item_id = 5084
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13dd_ranger"
+item_id = 5085
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e1_ranger"
+item_id = 5089
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e2_ranger"
+item_id = 5090
+rarity = "common"
+movable = false
+hue = 0

@@ -4,7 +4,9 @@ using Moongate.Server.Data.Timing.Internal;
 
 namespace Moongate.Server.Services.Timing;
 
-/// <summary>A bounded hashed wheel whose callbacks are driven only by its bound game loop thread.</summary>
+/// <summary>
+///     A bounded hashed wheel whose callbacks are driven only by its bound game loop thread.
+/// </summary>
 public sealed class TimerWheelService : ITimerService
 {
     private readonly Lock _syncRoot = new();
@@ -16,8 +18,7 @@ public sealed class TimerWheelService : ITimerService
     private readonly LinkedList<TimerEntry>[] _wheel;
 
     private readonly SortedSet<TimerEntry> _ready = new(
-        Comparer<TimerEntry>.Create(
-            (left, right) =>
+        Comparer<TimerEntry>.Create((left, right) =>
             {
                 var due = left.DueTick.CompareTo(right.DueTick);
 
@@ -396,7 +397,9 @@ public sealed class TimerWheelService : ITimerService
     }
 
     private void AddToWheel(TimerEntry entry)
-        => entry.Node = _wheel[(int)(entry.DueTick % _wheel.Length)].AddLast(entry);
+    {
+        entry.Node = _wheel[(int)(entry.DueTick % _wheel.Length)].AddLast(entry);
+    }
 
     private void ClearTimers()
     {

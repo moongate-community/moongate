@@ -3,7 +3,9 @@ using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Tests.TestSupport.Scripting;
 
-/// <summary>An ITimerService that records registrations and fires them on demand, on the calling thread.</summary>
+/// <summary>
+///     An ITimerService that records registrations and fires them on demand, on the calling thread.
+/// </summary>
 public sealed class RecordingTimerService : ITimerService
 {
     private int _next;
@@ -11,10 +13,14 @@ public sealed class RecordingTimerService : ITimerService
     public List<RegisteredTimer> Timers { get; } = [];
     public List<string> Unregistered { get; } = [];
 
-    /// <summary>When true, RegisterTimer throws instead of registering, as the real wheel does at capacity or once closed.</summary>
+    /// <summary>
+    ///     When true, RegisterTimer throws instead of registering, as the real wheel does at capacity or once closed.
+    /// </summary>
     public bool ThrowOnRegister { get; set; }
 
-    /// <summary>Runs the callback of a registered timer; a one-shot timer is removed first, as the wheel would.</summary>
+    /// <summary>
+    ///     Runs the callback of a registered timer; a one-shot timer is removed first, as the wheel would.
+    /// </summary>
     public void Fire(string id)
     {
         var timer = Timers.Single(candidate => candidate.Id == id);
@@ -28,7 +34,9 @@ public sealed class RecordingTimerService : ITimerService
     }
 
     public TimerMetricsSnapshot GetMetricsSnapshot()
-        => throw new NotSupportedException();
+    {
+        throw new NotSupportedException();
+    }
 
     public string RegisterTimer(string name, TimeSpan interval, Action callback, TimeSpan? delay = null, bool repeat = false)
     {
@@ -44,13 +52,19 @@ public sealed class RecordingTimerService : ITimerService
     }
 
     public Task StartAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public Task StopAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public void UnregisterAllTimers()
-        => Timers.Clear();
+    {
+        Timers.Clear();
+    }
 
     public bool UnregisterTimer(string timerId)
     {
@@ -60,5 +74,7 @@ public sealed class RecordingTimerService : ITimerService
     }
 
     public int UnregisterTimersByName(string name)
-        => Timers.RemoveAll(timer => timer.Name == name);
+    {
+        return Timers.RemoveAll(timer => timer.Name == name);
+    }
 }

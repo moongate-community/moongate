@@ -7,7 +7,9 @@ using Moongate.Server.Core.Types.Hosting;
 
 namespace Moongate.Server.Services.Admin;
 
-/// <summary>Exposes process identity without database or live-world dependencies.</summary>
+/// <summary>
+///     Exposes process identity without database or live-world dependencies.
+/// </summary>
 public sealed class AdminServerInfoProvider : IAdminServerInfoProvider
 {
     private readonly ServerMode _mode;
@@ -25,7 +27,8 @@ public sealed class AdminServerInfoProvider : IAdminServerInfoProvider
     }
 
     public AdminServerInfo GetSnapshot()
-        => new(
+    {
+        return new(
             VersionUtils.GetVersion(typeof(AdminServerInfoProvider).Assembly),
             VersionUtils.GetCodename(typeof(AdminServerInfoProvider).Assembly),
             _mode,
@@ -33,4 +36,5 @@ public sealed class AdminServerInfoProvider : IAdminServerInfoProvider
             _realmId,
             DateTime.UtcNow - _startedAt
         );
+    }
 }

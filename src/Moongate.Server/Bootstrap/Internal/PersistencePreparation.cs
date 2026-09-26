@@ -6,7 +6,9 @@ using Serilog;
 
 namespace Moongate.Server.Bootstrap.Internal;
 
-/// <summary>Loads the host's plugin registrations before an explicit persistence phase.</summary>
+/// <summary>
+///     Loads the host's plugin registrations before an explicit persistence phase.
+/// </summary>
 internal static class PersistencePreparation
 {
     public static async Task DisposePersistenceAsync(Container container)
@@ -36,8 +38,8 @@ internal static class PersistencePreparation
             try
             {
                 await container.Resolve<MoongatePersistenceService>()
-                               .InitializeAsync(cancellationToken)
-                               .ConfigureAwait(false);
+                    .InitializeAsync(cancellationToken)
+                    .ConfigureAwait(false);
             }
             catch (InvalidOperationException exception) when (exception.Message.StartsWith(
                                                                   "PostgreSQL schema changes are required",

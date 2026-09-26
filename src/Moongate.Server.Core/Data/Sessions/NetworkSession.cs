@@ -1,5 +1,6 @@
 using System.Net;
 using Moongate.Network.Interfaces.Client;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Types.Sessions;
 
 namespace Moongate.Server.Core.Data.Sessions;
@@ -11,7 +12,8 @@ public sealed class NetworkSession
     private INetworkConnection? _client;
     private NetworkSessionState _state;
     private uint? _seed;
-    private string? _clientVersion;
+    private ClientVersion? _clientVersion;
+    private bool _compressionEnabled;
 
     public long SessionId { get; }
 
@@ -56,13 +58,28 @@ public sealed class NetworkSession
         }
     }
 
-    public string? ClientVersion
+    public ClientVersion? ClientVersion
     {
         get
         {
             lock (_sync)
             {
                 return _clientVersion;
+            }
+        }
+    }
+
+    /// <summary>
+    ///     Gets whether everything the server sends on this connection is Huffman-compressed. It becomes true once
+    ///     the game login is accepted and never goes back.
+    /// </summary>
+    public bool CompressionEnabled
+    {
+        get
+        {
+            lock (_sync)
+            {
+                return _compressionEnabled;
             }
         }
     }
@@ -90,12 +107,25 @@ public sealed class NetworkSession
         }
     }
 
-    public void SetClientVersion(string clientVersion)
+    /// <summary>
+    ///     Compresses everything sent from now on. Call it before sending the first packet the client must read
+    ///     compressed, which is the first reply to the game login.
+    /// </summary>
+    public void EnableCompression()
     {
         lock (_sync)
         {
             ThrowIfDisconnected();
-            ArgumentException.ThrowIfNullOrWhiteSpace(clientVersion);
+            _compressionEnabled = true;
+        }
+    }
+
+    public void SetClientVersion(ClientVersion clientVersion)
+    {
+        lock (_sync)
+        {
+            ThrowIfDisconnected();
+            ArgumentNullException.ThrowIfNull(clientVersion);
             _clientVersion = clientVersion;
         }
     }

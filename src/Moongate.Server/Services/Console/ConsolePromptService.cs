@@ -5,7 +5,9 @@ using Moongate.Server.Services.Console.Internal;
 
 namespace Moongate.Server.Services.Console;
 
-/// <summary>Keeps a command prompt pinned to the last terminal row and serialises writes against it.</summary>
+/// <summary>
+///     Keeps a command prompt pinned to the last terminal row and serialises writes against it.
+/// </summary>
 public sealed class ConsolePromptService : IConsolePromptService
 {
     private const string PromptPrefix = "MG> ";
@@ -48,7 +50,9 @@ public sealed class ConsolePromptService : IConsolePromptService
     public char UnlockCharacter => PromptUnlockCharacter;
 
     public ConsolePromptService()
-        : this(new SystemConsoleDriver(), IsInteractiveTerminal()) { }
+        : this(new SystemConsoleDriver(), IsInteractiveTerminal())
+    {
+    }
 
     internal ConsolePromptService(IConsoleDriver driver, bool interactive)
     {
@@ -168,8 +172,8 @@ public sealed class ConsolePromptService : IConsolePromptService
 
     /// <inheritdoc />
     public void WriteOutputLine(string text, CommandOutputLevel level)
-        => RunWithPromptHidden(
-            () =>
+    {
+        RunWithPromptHidden(() =>
             {
                 if (level == CommandOutputLevel.Information)
                 {
@@ -183,6 +187,7 @@ public sealed class ConsolePromptService : IConsolePromptService
                 _driver.ResetColor();
             }
         );
+    }
 
     private void ClearPromptRow()
     {
@@ -208,7 +213,9 @@ public sealed class ConsolePromptService : IConsolePromptService
     }
 
     private int GetPromptRow()
-        => Math.Clamp(_driver.WindowTop + _driver.WindowHeight - 1, 0, _driver.BufferHeight - 1);
+    {
+        return Math.Clamp(_driver.WindowTop + _driver.WindowHeight - 1, 0, _driver.BufferHeight - 1);
+    }
 
     private static bool IsInteractiveTerminal()
     {

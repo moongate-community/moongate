@@ -22,7 +22,7 @@ public sealed class TileMatrixPatch
 
         LandBlocksCount = StaticBlocksCount = 0;
         string mapDataPath,
-               mapIndexPath;
+            mapIndexPath;
 
         if (path == null)
         {
@@ -53,8 +53,8 @@ public sealed class TileMatrixPatch
         }
 
         string staDataPath,
-               staIndexPath,
-               staLookupPath;
+            staIndexPath,
+            staLookupPath;
 
         if (path == null)
         {
@@ -111,7 +111,9 @@ public sealed class TileMatrixPatch
     }
 
     public Tile GetLandTile(int x, int y)
-        => GetLandBlock(x >> 3, y >> 3)[((y & 0x7) << 3) + (x & 0x7)];
+    {
+        return GetLandBlock(x >> 3, y >> 3)[((y & 0x7) << 3) + (x & 0x7)];
+    }
 
     public HuedTile[][][] GetStaticBlock(int x, int y)
     {
@@ -129,7 +131,9 @@ public sealed class TileMatrixPatch
     }
 
     public HuedTile[] GetStaticTiles(int x, int y)
-        => GetStaticBlock(x >> 3, y >> 3)[x & 0x7][y & 0x7];
+    {
+        return GetStaticBlock(x >> 3, y >> 3)[x & 0x7][y & 0x7];
+    }
 
     public bool IsLandBlockPatched(int x, int y)
     {
@@ -207,7 +211,7 @@ public sealed class TileMatrixPatch
         using var fsIndex = new FileStream(indexPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         using var fsLookup = new FileStream(lookupPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         using BinaryReader indexReader = new(fsIndex),
-                           lookupReader = new(fsLookup);
+            lookupReader = new(fsLookup);
         var count = Math.Min(
             (int)(indexReader.BaseStream.Length / 4),
             (int)(lookupReader.BaseStream.Length / 12)

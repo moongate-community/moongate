@@ -5,7 +5,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Realms;
 
-/// <summary>Keeps this game process's Redis realm lease live until shutdown or replacement.</summary>
+/// <summary>
+///     Keeps this game process's Redis realm lease live until shutdown or replacement.
+/// </summary>
 public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAsyncDisposable
 {
     public const int StartupPriority = 105;
@@ -52,7 +54,9 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
 
     /// <inheritdoc />
     public Task StopAsync()
-        => _stop ??= StopCoreAsync();
+    {
+        return _stop ??= StopCoreAsync();
+    }
 
     private async Task RenewLoopAsync(CancellationToken cancellationToken)
     {
@@ -129,5 +133,7 @@ public sealed class RedisRealmRegistrationService : IMoongateStartupService, IAs
 
     /// <inheritdoc />
     public async ValueTask DisposeAsync()
-        => await StopAsync().ConfigureAwait(false);
+    {
+        await StopAsync().ConfigureAwait(false);
+    }
 }

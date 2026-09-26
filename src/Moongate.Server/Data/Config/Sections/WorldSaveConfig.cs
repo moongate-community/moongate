@@ -2,13 +2,17 @@ using Moongate.Server.Core.Data.Persistence;
 
 namespace Moongate.Server.Data.Config.Sections;
 
-/// <summary>TOML settings for periodic world saves.</summary>
+/// <summary>
+///     TOML settings for periodic world saves.
+/// </summary>
 public sealed class WorldSaveConfig
 {
     public bool Enabled { get; set; } = true;
     public int IntervalSeconds { get; set; } = 300;
 
-    /// <summary>Maps validated TOML settings to the service's immutable options.</summary>
+    /// <summary>
+    ///     Maps validated TOML settings to the service's immutable options.
+    /// </summary>
     public WorldSaveOptions ToOptions()
     {
         Validate();
@@ -22,7 +26,11 @@ public sealed class WorldSaveConfig
         return options;
     }
 
-    /// <summary>Rejects invalid intervals even when automatic saving is disabled.</summary>
+    /// <summary>
+    ///     Rejects invalid intervals even when automatic saving is disabled.
+    /// </summary>
     public void Validate()
-        => ArgumentOutOfRangeException.ThrowIfNegativeOrZero(IntervalSeconds);
+    {
+        ArgumentOutOfRangeException.ThrowIfNegativeOrZero(IntervalSeconds);
+    }
 }

@@ -32,6 +32,7 @@ internal sealed class ControlledMetricProvider : IMetricProvider
         {
             _maximumConcurrency = Math.Max(active, _maximumConcurrency);
         }
+
         _entered.TrySetResult(Interlocked.Increment(ref _calls));
 
         try
@@ -47,8 +48,12 @@ internal sealed class ControlledMetricProvider : IMetricProvider
     }
 
     public void Release()
-        => _release.TrySetResult();
+    {
+        _release.TrySetResult();
+    }
 
     public Task<int> WaitForEntryAsync()
-        => _entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+    {
+        return _entered.Task.WaitAsync(TimeSpan.FromSeconds(5));
+    }
 }

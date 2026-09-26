@@ -38,7 +38,8 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
 
     public Task<T?> GetByIdForUpdateAsync<T>(Serial id, CancellationToken cancellationToken = default)
         where T : class, IMoongateEntity
-        => RunAsync<T?>(
+    {
+        return RunAsync<T?>(
             async (orm, transaction, token) =>
             {
                 if (!id.IsValid)
@@ -54,11 +55,11 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
                 try
                 {
                     return await orm.Select<T>()
-                                    .WithTransaction(transaction)
-                                    .Where(entity => entity.Id == id)
-                                    .ForUpdate()
-                                    .ToOneAsync(token)
-                                    .ConfigureAwait(false);
+                        .WithTransaction(transaction)
+                        .Where(entity => entity.Id == id)
+                        .ForUpdate()
+                        .ToOneAsync(token)
+                        .ConfigureAwait(false);
                 }
                 catch (Exception exception) when (token.IsCancellationRequested)
                 {
@@ -68,6 +69,7 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
             },
             cancellationToken
         );
+    }
 
     public async Task CompleteCallbackAsync()
     {
@@ -180,7 +182,8 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
 
     public Task<int> UpsertSnapshotsAsync<T>(T[] snapshots, CancellationToken cancellationToken)
         where T : class, IMoongateEntity
-        => RunAsync(
+    {
+        return RunAsync(
             (orm, transaction, token) =>
             {
                 if (_owner.GetTarget(typeof(T)) != Target)
@@ -192,6 +195,7 @@ internal sealed class PersistenceTransaction : IPersistenceTransaction
             },
             cancellationToken
         );
+    }
 
     private void EnsureUsable()
     {

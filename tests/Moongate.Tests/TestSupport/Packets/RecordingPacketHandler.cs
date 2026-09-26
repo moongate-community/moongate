@@ -11,8 +11,12 @@ public sealed class RecordingPacketHandler : IPacketHandler<PingPacket>, IPacket
     public string? Version { get; private set; }
 
     public void Handle(GameSession session, PingPacket packet)
-        => OnPing(session, packet.Sequence);
+    {
+        OnPing(session, packet.Sequence);
+    }
 
     public void Handle(GameSession session, ClientVersionPacket packet)
-        => Version = packet.Version;
+    {
+        Version = packet.Version;
+    }
 }

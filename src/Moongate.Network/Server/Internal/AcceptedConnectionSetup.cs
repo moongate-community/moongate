@@ -2,7 +2,9 @@ using System.Net.Sockets;
 
 namespace Moongate.Network.Server.Internal;
 
-/// <summary>Owns an admitted socket until preparation is transferred to a client.</summary>
+/// <summary>
+///     Owns an admitted socket until preparation is transferred to a client.
+/// </summary>
 internal sealed class AcceptedConnectionSetup
 {
     public Socket Socket { get; }

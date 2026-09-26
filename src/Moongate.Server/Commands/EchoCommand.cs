@@ -3,7 +3,9 @@ using Moongate.Server.Core.Interfaces.Commands;
 
 namespace Moongate.Server.Commands;
 
-/// <summary>Writes the command arguments back to the caller.</summary>
+/// <summary>
+///     Writes the command arguments back to the caller.
+/// </summary>
 public sealed class EchoCommand : ICommandExecutor
 {
     /// <inheritdoc />

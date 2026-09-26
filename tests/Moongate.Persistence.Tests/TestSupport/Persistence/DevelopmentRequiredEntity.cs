@@ -10,6 +10,5 @@ internal sealed class DevelopmentRequiredEntity : IMoongateEntity
     [Column(IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
 
-    [Column(IsNullable = false)]
-    public int Level { get; set; }
+    [Column(IsNullable = false)] public int Level { get; set; }
 }

@@ -1,0 +1,82 @@
+[[loot]]
+id = "randomtools"
+[[loot.entries]]
+weight = 1875
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x0fbc_tongs"
+comment = "tongs"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x13e4"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x10e4_draw_knife"
+comment = "draw knife"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x1028_dovetail_saw"
+comment = "dovetail saw"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x1034_saw"
+comment = "saw"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x102a_hammer"
+comment = "hammer"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x1030_jointing_plane"
+comment = "jointing plane"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x1032_smoothing_plane"
+comment = "smoothing plane"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x10e7_scorp"
+comment = "scorp"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x10e6_inshave"
+comment = "inshave"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x102c_moulding_plane"
+comment = "moulding plane"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x102e_nails"
+comment = "nails"
+amount = 1
+
+[[loot.entries]]
+weight = 625
+item_id = "0x10e5_froe"
+comment = "froe"
+amount = 1

@@ -27,19 +27,21 @@ public sealed class PersistenceModuleRegistryTests
             table.ColumnsByCs.Values.Select(column => column.Attribute.Name).Order(StringComparer.Ordinal)
         );
         var sql = database.Orm
-                          .Select<ConventionNamedEntity>()
-                          .Where(entity => entity.HashPassword == "test")
-                          .ToSql();
+            .Select<ConventionNamedEntity>()
+            .Where(entity => entity.HashPassword == "test")
+            .ToSql();
         Assert.Contains("\"hash_password\"", sql, StringComparison.Ordinal);
         Assert.Contains("\"display_label\"", sql, StringComparison.Ordinal);
     }
 
     [Fact]
     public void PersistenceModuleContract_DoesNotExposeMappingMutationCallback()
-        => Assert.DoesNotContain(
+    {
+        Assert.DoesNotContain(
             typeof(IPersistenceModule).GetMethods(),
             method => string.Equals(method.Name, "Configure", StringComparison.Ordinal)
         );
+    }
 
     [Fact]
     public void RegisterEntity_DuplicateRegistration_RejectsImmediately()
@@ -115,9 +117,8 @@ public sealed class PersistenceModuleRegistryTests
         var before = firstDatabase.Orm.Select<CharacterEntity>().ToSql();
         var invalidRegistry = Registry(Module("plugin.characters", "plugin_wrong", typeof(CharacterEntity)));
 
-        var exception = Assert.Throws<InvalidOperationException>(
-            () =>
-                invalidRegistry.ValidateAndFreeze([invalidDatabase])
+        var exception = Assert.Throws<InvalidOperationException>(() =>
+            invalidRegistry.ValidateAndFreeze([invalidDatabase])
         );
 
         Assert.Contains("plugin_wrong", exception.Message, StringComparison.Ordinal);
@@ -388,7 +389,9 @@ public sealed class PersistenceModuleRegistryTests
     }
 
     private static PostgreSqlDatabase CreateDatabase(PersistenceDatabaseTarget target = PersistenceDatabaseTarget.Realm)
-        => PostgreSqlDatabase.Create(new(target, UnitConnectionString));
+    {
+        return PostgreSqlDatabase.Create(new(target, UnitConnectionString));
+    }
 
     private static TestPersistenceModule Module(
         string id,
@@ -396,7 +399,9 @@ public sealed class PersistenceModuleRegistryTests
         Type entityType,
         PersistenceDatabaseTarget target = PersistenceDatabaseTarget.Realm
     )
-        => new(id, schema, target, [entityType]);
+    {
+        return new(id, schema, target, [entityType]);
+    }
 
     private static PersistenceModuleRegistry Registry(params TestPersistenceModule[] modules)
     {

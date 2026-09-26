@@ -19,15 +19,16 @@ public sealed class RedisAdminLoginThrottleTests
                 )
             );
         }
+
         Assert.False(await fixture.Throttle.TryAcquireAsync("192.0.2.1", sameUsername ? "alice" : "other"));
         var database = fixture.Redis.Connection.GetDatabase();
 
         foreach (var endpoint in fixture.Redis.Connection.GetEndPoints())
         {
             await foreach (var key in fixture.Redis
-                                             .Connection
-                                             .GetServer(endpoint)
-                                             .KeysAsync(pattern: fixture.Prefix + "throttle:*"))
+                               .Connection
+                               .GetServer(endpoint)
+                               .KeysAsync(pattern: fixture.Prefix + "throttle:*"))
             {
                 Assert.DoesNotContain("alice", key.ToString());
                 Assert.InRange((await database.KeyTimeToLiveAsync(key))!.Value, TimeSpan.Zero, TimeSpan.FromSeconds(60));

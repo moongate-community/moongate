@@ -12,9 +12,15 @@
          game services move here. -->
 
     <ItemGroup>
+        <InternalsVisibleTo Include="Moongate.Tests"/>
+    </ItemGroup>
+
+    <ItemGroup>
         <ProjectReference Include="..\Moongate.Network.Packets\Moongate.Network.Packets.csproj"/>
         <ProjectReference Include="..\Moongate.Persistence\Moongate.Persistence.csproj"/>
+        <ProjectReference Include="..\Moongate.Scripting\Moongate.Scripting.csproj"/>
         <ProjectReference Include="..\Moongate.Server.Core\Moongate.Server.Core.csproj"/>
+        <ProjectReference Include="..\Moongate.Ultima\Moongate.Ultima.csproj" />
     </ItemGroup>
 
 </Project>

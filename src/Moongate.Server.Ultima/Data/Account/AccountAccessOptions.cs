@@ -2,7 +2,9 @@ using Moongate.Server.Core.Types.Accounts;
 
 namespace Moongate.Server.Ultima.Data.Account;
 
-/// <summary>Security settings applied together while fencing administrative sessions.</summary>
+/// <summary>
+///     Security settings applied together while fencing administrative sessions.
+/// </summary>
 public sealed class AccountAccessOptions
 {
     public bool IsLocked { get; init; }

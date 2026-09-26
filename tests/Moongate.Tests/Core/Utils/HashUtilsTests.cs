@@ -18,7 +18,9 @@ public sealed class HashUtilsTests
 
     [Theory, InlineData(null), InlineData(""), InlineData(" \t")]
     public void HashPassword_RejectsMissingPassword(string? password)
-        => Assert.Throws<ArgumentException>(() => HashUtils.HashPassword(password!));
+    {
+        Assert.Throws<ArgumentException>(() => HashUtils.HashPassword(password!));
+    }
 
     // Independent fixtures generated with Python hashlib.pbkdf2_hmac("sha256", ...).
     [Theory,
@@ -46,7 +48,9 @@ public sealed class HashUtilsTests
      InlineData("pbkdf2-sha256$1$c2FsdA==$not base64!"),
      InlineData("pbkdf2-sha256$1$c2FsdA==$")]
     public void VerifyPassword_RejectsMalformedPayload(string payload)
-        => Assert.False(HashUtils.VerifyPassword("test-password", payload));
+    {
+        Assert.False(HashUtils.VerifyPassword("test-password", payload));
+    }
 
     [Theory,
      InlineData(null, "payload"),
@@ -56,5 +60,7 @@ public sealed class HashUtilsTests
      InlineData("test-password", ""),
      InlineData("test-password", " ")]
     public void VerifyPassword_RejectsMissingInputs(string? password, string? payload)
-        => Assert.False(HashUtils.VerifyPassword(password!, payload!));
+    {
+        Assert.False(HashUtils.VerifyPassword(password!, payload!));
+    }
 }

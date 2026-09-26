@@ -1,0 +1,125 @@
+[[item]]
+id = "0x0dbf_fishing_pole"
+base_id = "base_item"
+item_id = 3519
+name = "fishing pole"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dc0_fishing_pole"
+base_id = "base_item"
+item_id = 3520
+name = "fishing pole"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "specialfishingnet"
+base_id = "base_item"
+item_id = 3530
+name = "special fishing net"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "fabledfishingnet"
+base_id = "base_item"
+item_id = 3530
+name = "fabled fishing net"
+rarity = "common"
+movable = true
+hue = 1153
+
+[[item]]
+id = "0x0dc8_fishing_net"
+base_id = "base_item"
+item_id = 3528
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dc9_fishing_net"
+base_id = "base_item"
+item_id = 3529
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dca_fishing_net"
+base_id = "base_item"
+item_id = 3530
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dcb_fishing_net"
+base_id = "base_item"
+item_id = 3531
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dd0_fishing_net"
+base_id = "base_item"
+item_id = 3536
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dd1_fishing_net"
+base_id = "base_item"
+item_id = 3537
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dd2_fishing_net"
+base_id = "base_item"
+item_id = 3538
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dd3_fishing_net"
+base_id = "base_item"
+item_id = 3539
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dd4_fishing_net"
+base_id = "base_item"
+item_id = 3540
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dd5_fishing_net"
+base_id = "base_item"
+item_id = 3541
+name = "fishing net"
+rarity = "common"
+movable = false
+hue = 0

@@ -1,4 +1,5 @@
 using System.Net;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Data.Realms;
@@ -87,7 +88,7 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
         var sessions = new LoginSessionService();
         using var connection = new ControlledNetworkConnection(1);
         var session = Authenticate(sessions, connection);
-        session.NetworkSession.SetClientVersion("7.0.117");
+        session.NetworkSession.SetClientVersion(ClientVersion.Parse("7.0.117"));
         var realm = Realm();
         var catalog = new ControlledRealmCatalog { Result = realm };
         var store = new RecordingGameHandoffStore();
@@ -107,7 +108,7 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
                 "Alice",
                 "realm-a",
                 realm.InstanceId,
-                "7.0.117"
+                ClientVersion.Parse("7.0.117")
             ),
             store.IssuedHandoff
         );
@@ -203,7 +204,8 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
     }
 
     private static RealmInstance Realm(AccountType minimumAccountType = AccountType.Regular)
-        => new(
+    {
+        return new(
             new(
                 "realm-a",
                 1,
@@ -214,4 +216,5 @@ public sealed class LoginRoleServerSelectPacketHandlerTests
             ),
             Guid.Parse("234a81d2-c5d4-48cf-a05f-494e541c94d4")
         );
+    }
 }

@@ -5,7 +5,7 @@ For authoring Lua content with the existing modules, start with
 
 A Lua module is a plain C# class marked with `[ScriptModule("name", "help text")]`. The engine binds every registered module once, at startup, on the game loop thread, and publishes it into the running `LuaState` as a read-only global table named after the attribute. On that table:
 
-- every public instance method marked `[ScriptFunction]` becomes a callable field;
+- every public, non-generic instance method marked `[ScriptFunction]` becomes a callable field;
 - every `[ScriptConstant]`-marked static member becomes a read-only value field;
 - every enum a bound signature or constant mentions — or that is registered explicitly — is published as its own read-only global table mapping member names to numbers.
 
@@ -110,7 +110,7 @@ Note the parameter annotation: `tone? Tone|string` — the `?` because `tone` ha
 
 ## Functions
 
-`[ScriptFunction]` only has an effect on **public instance methods**. A static or non-public method is never scanned, so the attribute goes unseen and the method is not published, exactly as if it carried no attribute at all.
+`[ScriptFunction]` is valid only on a **public, non-generic instance method**. A static, non-public or generic method carrying it is a binding error, not a silently missing function: `"{Module}.{Method}: a [ScriptFunction] must be a public, non-generic instance method."`
 
 The Lua name is the attribute's `name` argument when given (it must be a lower-case Lua identifier; the attribute rejects anything else), or the method name converted to snake_case otherwise: each run of uppercase letters starts a new lowercase, underscore-separated word, so `NextColour` becomes `next_colour`.
 
@@ -169,6 +169,7 @@ container.RegisterScriptEnum<Tone>();
 Binding runs once, at startup, and any failure is reported through the exceptions already listed above:
 
 - a duplicate Lua name between two functions, or between a function and a constant, in the same module: `"{Module}.{Member}: Lua name '{name}' is already used in module '{module}'."`
+- a `[ScriptFunction]` on a static, non-public or generic method: `"{Module}.{Method}: a [ScriptFunction] must be a public, non-generic instance method."`
 - a function parameter or return type the converter cannot bind: `"{Module}.{Method}: parameter '{parameter}' of type {Type} cannot be bound."` / `"{Module}.{Method}: return type {Type} cannot be bound."`
 - a `[ScriptConstant]` that is not a public static readonly field or a public static get-only property, or is of an unsupported type (see [Constants and enums](#constants-and-enums) for the exact messages).
 

@@ -33,15 +33,13 @@ public sealed class MoongateEventBusTests
         var entered = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var laterCalls = 0;
-        bus.Subscribe<MoongateStartedEvent>(
-            async (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>(async (_, _) =>
             {
                 entered.SetResult();
                 await release.Task;
             }
         );
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 laterCalls++;
 
@@ -66,8 +64,7 @@ public sealed class MoongateEventBusTests
         container.RegisterMoongateEventBus();
         var bus = container.Resolve<IMoongateEventBus>();
         var baseCalls = 0;
-        bus.Subscribe<IMoongateEvent>(
-            (_, _) =>
+        bus.Subscribe<IMoongateEvent>((_, _) =>
             {
                 baseCalls++;
 
@@ -88,16 +85,14 @@ public sealed class MoongateEventBusTests
         container.RegisterMoongateEventBus();
         var bus = container.Resolve<IMoongateEventBus>();
         var laterCalls = 0;
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 cancellation.Cancel();
 
                 return Task.CompletedTask;
             }
         );
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 laterCalls++;
 
@@ -106,8 +101,7 @@ public sealed class MoongateEventBusTests
         );
 
         var exception =
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(
-                () => bus.PublishAsync(
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(() => bus.PublishAsync(
                     new MoongateStartedEvent(),
                     cancellation.Token
                 )
@@ -128,8 +122,7 @@ public sealed class MoongateEventBusTests
         var releaseFirst = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var calls = new List<string>();
         CancellationToken receivedToken = default;
-        bus.Subscribe<MoongateStartedEvent>(
-            async (_, token) =>
+        bus.Subscribe<MoongateStartedEvent>(async (_, token) =>
             {
                 calls.Add("first:enter");
                 receivedToken = token;
@@ -138,8 +131,7 @@ public sealed class MoongateEventBusTests
                 calls.Add("first:exit");
             }
         );
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 calls.Add("second");
 
@@ -177,8 +169,7 @@ public sealed class MoongateEventBusTests
         var bus = container.Resolve<IMoongateEventBus>();
         var laterCalls = 0;
         bus.Subscribe<MoongateStartedEvent>((_, _) => throw new IOException("observer failed"));
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 laterCalls++;
 
@@ -198,17 +189,15 @@ public sealed class MoongateEventBusTests
         container.RegisterMoongateEventBus();
         var bus = container.Resolve<IMoongateEventBus>();
         var nestedCalls = 0;
-        bus.Subscribe<MoongateStoppingEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStoppingEvent>((_, _) =>
             {
                 nestedCalls++;
 
                 return Task.CompletedTask;
             }
         );
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, token) =>
-                bus.PublishAsync(new MoongateStoppingEvent(), token)
+        bus.Subscribe<MoongateStartedEvent>((_, token) =>
+            bus.PublishAsync(new MoongateStoppingEvent(), token)
         );
 
         var publication = Task.Run(() => bus.PublishAsync(new MoongateStartedEvent()));
@@ -225,13 +214,11 @@ public sealed class MoongateEventBusTests
         var bus = container.Resolve<IMoongateEventBus>();
         var calls = new List<string>();
         IDisposable? firstSubscription = null;
-        firstSubscription = bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        firstSubscription = bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 calls.Add("first");
                 firstSubscription!.Dispose();
-                bus.Subscribe<MoongateStartedEvent>(
-                    (_, _) =>
+                bus.Subscribe<MoongateStartedEvent>((_, _) =>
                     {
                         calls.Add("later");
 
@@ -242,8 +229,7 @@ public sealed class MoongateEventBusTests
                 return Task.CompletedTask;
             }
         );
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 calls.Add("second");
 
@@ -269,8 +255,7 @@ public sealed class MoongateEventBusTests
         var bus = container.Resolve<IMoongateEventBus>();
         var laterCalls = 0;
         bus.Subscribe<MoongateStartedEvent>((_, _) => Task.FromCanceled(observerCancellation.Token));
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 laterCalls++;
 
@@ -300,8 +285,7 @@ public sealed class MoongateEventBusTests
         container.RegisterMoongateEventBus();
         var bus = container.Resolve<IMoongateEventBus>();
         var seen = new List<Type>();
-        bus.SubscribeAll(
-            (message, _) =>
+        bus.SubscribeAll((message, _) =>
             {
                 seen.Add(message.GetType());
 
@@ -322,16 +306,14 @@ public sealed class MoongateEventBusTests
         container.RegisterMoongateEventBus();
         var bus = container.Resolve<IMoongateEventBus>();
         var calls = new List<string>();
-        bus.SubscribeAll(
-            (_, _) =>
+        bus.SubscribeAll((_, _) =>
             {
                 calls.Add("catch-all");
 
                 return Task.CompletedTask;
             }
         );
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 calls.Add("typed");
 
@@ -352,8 +334,7 @@ public sealed class MoongateEventBusTests
         var bus = container.Resolve<IMoongateEventBus>();
         var typedCalls = 0;
         var laterCatchAllCalls = 0;
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 typedCalls++;
 
@@ -361,8 +342,7 @@ public sealed class MoongateEventBusTests
             }
         );
         bus.SubscribeAll((_, _) => throw new IOException("catch-all observer failed"));
-        bus.SubscribeAll(
-            (_, _) =>
+        bus.SubscribeAll((_, _) =>
             {
                 laterCatchAllCalls++;
 
@@ -384,16 +364,14 @@ public sealed class MoongateEventBusTests
         var bus = container.Resolve<IMoongateEventBus>();
         var removedCalls = 0;
         var retainedCalls = 0;
-        var removed = bus.SubscribeAll(
-            (_, _) =>
+        var removed = bus.SubscribeAll((_, _) =>
             {
                 removedCalls++;
 
                 return Task.CompletedTask;
             }
         );
-        bus.SubscribeAll(
-            (_, _) =>
+        bus.SubscribeAll((_, _) =>
             {
                 retainedCalls++;
 
@@ -439,16 +417,14 @@ public sealed class MoongateEventBusTests
         var bus = container.Resolve<IMoongateEventBus>();
         var removedCalls = 0;
         var retainedCalls = 0;
-        var removed = bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        var removed = bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 removedCalls++;
 
                 return Task.CompletedTask;
             }
         );
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 retainedCalls++;
 
@@ -469,8 +445,7 @@ public sealed class MoongateEventBusTests
     {
         var target = new object();
         var reference = new WeakReference(target);
-        bus.Subscribe<MoongateStartedEvent>(
-            (_, _) =>
+        bus.Subscribe<MoongateStartedEvent>((_, _) =>
             {
                 GC.KeepAlive(target);
 

@@ -51,7 +51,9 @@ public sealed class TileMatrix : IDisposable
     private UopFile[] UOPFiles { get; set; }
     private long UOPLength => _map.Length;
 
-    /// <summary>Blocks currently held, land and statics counted separately. Diagnostic.</summary>
+    /// <summary>
+    ///     Blocks currently held, land and statics counted separately. Diagnostic.
+    /// </summary>
     public (int Land, int Statics) CachedBlockCount => (_landTiles.Count, _staticTiles.Count);
 
     public TileMatrix(int fileIndex, int mapId, int width, int height, string path)
@@ -163,7 +165,9 @@ public sealed class TileMatrix : IDisposable
     }
 
     public bool AllFilesExist()
-        => _mapPath != null && _indexPath != null && _staticsPath != null;
+    {
+        return _mapPath != null && _indexPath != null && _staticsPath != null;
+    }
 
     public void CloseStreams()
     {
@@ -190,10 +194,14 @@ public sealed class TileMatrix : IDisposable
     }
 
     public Tile GetLandTile(int x, int y, bool patch)
-        => GetLandBlock(x >> 3, y >> 3, patch)[((y & 0x7) << 3) + (x & 0x7)];
+    {
+        return GetLandBlock(x >> 3, y >> 3, patch)[((y & 0x7) << 3) + (x & 0x7)];
+    }
 
     public Tile GetLandTile(int x, int y)
-        => GetLandBlock(x >> 3, y >> 3)[((y & 0x7) << 3) + (x & 0x7)];
+    {
+        return GetLandBlock(x >> 3, y >> 3)[((y & 0x7) << 3) + (x & 0x7)];
+    }
 
     public StaticTile[] GetPendingStatics(int blockX, int blockY)
     {
@@ -244,10 +252,14 @@ public sealed class TileMatrix : IDisposable
     }
 
     public HuedTile[] GetStaticTiles(int x, int y, bool patch)
-        => GetStaticBlock(x >> 3, y >> 3, patch)[x & 0x7][y & 0x7];
+    {
+        return GetStaticBlock(x >> 3, y >> 3, patch)[x & 0x7][y & 0x7];
+    }
 
     public HuedTile[] GetStaticTiles(int x, int y)
-        => GetStaticBlock(x >> 3, y >> 3)[x & 0x7][y & 0x7];
+    {
+        return GetStaticBlock(x >> 3, y >> 3)[x & 0x7][y & 0x7];
+    }
 
     public bool IsStaticBlockRemoved(int blockX, int blockY)
     {
@@ -292,8 +304,8 @@ public sealed class TileMatrix : IDisposable
     }
 
     /// <summary>
-    /// Resizes both block caches after construction. Lowering the cap evicts down to it at once, so a
-    /// host can give memory back without restarting.
+    ///     Resizes both block caches after construction. Lowering the cap evicts down to it at once, so a
+    ///     host can give memory back without restarting.
     /// </summary>
     public void SetCacheCapacity(int capacity)
     {
@@ -372,8 +384,8 @@ public sealed class TileMatrix : IDisposable
         if (_map?.CanRead != true || !_map.CanSeek)
         {
             _map = _mapPath == null
-                       ? null
-                       : new FileStream(_mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                ? null
+                : new FileStream(_mapPath, FileMode.Open, FileAccess.Read, FileShare.Read);
 
             if (IsUOPFormat && _mapPath != null && !IsUOPAlreadyRead)
             {
@@ -416,8 +428,8 @@ public sealed class TileMatrix : IDisposable
         if (_statics?.CanRead != true || !_statics.CanSeek)
         {
             _statics = _staticsPath == null
-                           ? null
-                           : new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
+                ? null
+                : new FileStream(_staticsPath, FileMode.Open, FileAccess.Read, FileShare.Read);
         }
 
         if (_statics == null)
@@ -560,5 +572,7 @@ public sealed class TileMatrix : IDisposable
     }
 
     public void Dispose()
-        => CloseStreams();
+    {
+        CloseStreams();
+    }
 }

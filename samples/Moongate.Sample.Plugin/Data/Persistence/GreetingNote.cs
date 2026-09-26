@@ -4,7 +4,9 @@ using Moongate.Core.Primitives;
 
 namespace Moongate.Sample.Plugin.Data.Persistence;
 
-/// <summary>A plugin-owned row demonstrating stable attribute mappings and application-assigned identities.</summary>
+/// <summary>
+///     A plugin-owned row demonstrating stable attribute mappings and application-assigned identities.
+/// </summary>
 [Table(Name = "sample_greeter.notes")]
 public sealed class GreetingNote : IMoongateEntity
 {

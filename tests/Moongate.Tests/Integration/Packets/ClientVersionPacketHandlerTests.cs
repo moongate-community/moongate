@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Packets;
@@ -34,7 +35,7 @@ public sealed class ClientVersionPacketHandlerTests
         Assert.Null(session.NetworkSession.ClientVersion);
         blocker.Release();
         await fixture.ExecuteOnLoopAsync(() => { });
-        Assert.Equal("7.0.98.1", session.NetworkSession.ClientVersion);
+        Assert.Equal(ClientVersion.Parse("7.0.98.1"), session.NetworkSession.ClientVersion);
         await dispatcher.StopAsync();
     }
 }

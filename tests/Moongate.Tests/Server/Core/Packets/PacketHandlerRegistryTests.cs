@@ -22,8 +22,7 @@ public sealed class PacketHandlerRegistryTests
         Assert.Same(container.Resolve<AsyncPingPacketHandler>(), container.Resolve<AsyncPingPacketHandler>());
         await registration.BindAsync(container)(null!, new PingPacket(42), CancellationToken.None);
         Assert.Equal((byte)42, container.Resolve<AsyncPingPacketHandler>().LastSequence);
-        Assert.Throws<InvalidOperationException>(
-            () => container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>()
+        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>()
         );
         Assert.False(container.IsRegistered<RecordingPacketHandler>());
     }
@@ -33,8 +32,8 @@ public sealed class PacketHandlerRegistryTests
     {
         using var container = new Container();
         container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>();
-        Assert.Throws<InvalidOperationException>(
-            () => container.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>()
+        Assert.Throws<InvalidOperationException>(() =>
+            container.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>()
         );
         Assert.False(container.IsRegistered<AsyncPingPacketHandler>());
     }
@@ -44,16 +43,16 @@ public sealed class PacketHandlerRegistryTests
     {
         using var container = new Container();
         container.Register<AsyncPingPacketHandler>(Reuse.Transient);
-        Assert.Throws<InvalidOperationException>(
-            () => container.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>()
+        Assert.Throws<InvalidOperationException>(() =>
+            container.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>()
         );
         Assert.Empty(container.Resolve<PacketHandlerRegistry>().Registrations);
 
         using var frozenContainer = new Container();
         frozenContainer.RegisterInstance(new PacketHandlerRegistry());
         frozenContainer.Resolve<PacketHandlerRegistry>().Freeze();
-        Assert.Throws<InvalidOperationException>(
-            () => frozenContainer.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>()
+        Assert.Throws<InvalidOperationException>(() =>
+            frozenContainer.RegisterAsyncPacketHandler<PingPacket, AsyncPingPacketHandler>()
         );
         Assert.False(frozenContainer.IsRegistered<AsyncPingPacketHandler>());
     }
@@ -84,8 +83,7 @@ public sealed class PacketHandlerRegistryTests
         using var container = new Container();
         container.RegisterInstance(new PacketHandlerRegistry());
         var frozen = container.Resolve<PacketHandlerRegistry>().Freeze();
-        Assert.Throws<InvalidOperationException>(
-            () => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
+        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
         );
         Assert.Empty(frozen);
         Assert.False(container.IsRegistered<DependentPacketHandler>());
@@ -96,8 +94,7 @@ public sealed class PacketHandlerRegistryTests
     {
         using var container = new Container();
         container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>();
-        Assert.Throws<InvalidOperationException>(
-            () => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
+        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, DependentPacketHandler>()
         );
         Assert.Single(container.Resolve<PacketHandlerRegistry>().Registrations);
         Assert.False(container.IsRegistered<DependentPacketHandler>());
@@ -120,8 +117,7 @@ public sealed class PacketHandlerRegistryTests
     {
         using var container = new Container();
         container.Register<RecordingPacketHandler>(Reuse.Transient);
-        Assert.Throws<InvalidOperationException>(
-            () => container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>()
+        Assert.Throws<InvalidOperationException>(() => container.RegisterPacketHandler<PingPacket, RecordingPacketHandler>()
         );
         Assert.Empty(container.Resolve<PacketHandlerRegistry>().Registrations);
         Assert.NotSame(container.Resolve<RecordingPacketHandler>(), container.Resolve<RecordingPacketHandler>());

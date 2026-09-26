@@ -3,8 +3,8 @@ using Moongate.Ultima.Io;
 namespace Moongate.Ultima.Animation;
 
 /// <summary>
-/// Contains translation tables used for mapping body values to file subsets.
-/// <seealso cref="Animations" />
+///     Contains translation tables used for mapping body values to file subsets.
+///     <seealso cref="Animations" />
 /// </summary>
 public static class BodyConverter
 {
@@ -27,9 +27,11 @@ public static class BodyConverter
     }
 
     /// <summary>
-    /// Checks to see if <paramref name="body" /> is contained within the mapping table.
+    ///     Checks to see if <paramref name="body" /> is contained within the mapping table.
     /// </summary>
-    /// <returns>True if it is, false if not.</returns>
+    /// <returns>
+    ///     True if it is, false if not.
+    /// </returns>
     public static bool Contains(int body)
     {
         if (Table1 != null && body >= 0 && body < Table1.Length && Table1[body] != -1)
@@ -61,40 +63,68 @@ public static class BodyConverter
     }
 
     /// <summary>
-    /// Attempts to convert <paramref name="body" /> to a body index relative to a file subset, specified by the return value.
+    ///     Attempts to convert <paramref name="body" /> to a body index relative to a file subset, specified by the return value.
     /// </summary>
     /// <returns>
-    /// A value indicating a file subset:
-    /// <list type="table">
-    ///     <listheader>
-    ///         <term>Return Value</term>
-    ///         <description>File Subset</description>
-    ///     </listheader>
-    ///     <item>
-    ///         <term>1</term>
-    ///         <description>Anim.mul, Anim.idx (Standard)</description>
-    ///     </item>
-    ///     <item>
-    ///         <term>2</term>
-    ///         <description>Anim2.mul, Anim2.idx (LBR)</description>
-    ///     </item>
-    ///     <item>
-    ///         <term>3</term>
-    ///         <description>Anim3.mul, Anim3.idx (AOS)</description>
-    ///     </item>
-    ///     <item>
-    ///         <term>4</term>
-    ///         <description>Anim4.mul, Anim4.idx (SE)</description>
-    ///     </item>
-    ///     <item>
-    ///         <term>5</term>
-    ///         <description>Anim5.mul, Anim5.idx (ML)</description>
-    ///     </item>
-    ///     <item>
-    ///         <term>6</term>
-    ///         <description>Anim6.mul, Anim6.idx (SA/HS)</description>
-    ///     </item>
-    /// </list>
+    ///     A value indicating a file subset:
+    ///     <list type="table">
+    ///         <listheader>
+    ///             <term>
+    ///                 Return Value
+    ///             </term>
+    ///             <description>
+    ///                 File Subset
+    ///             </description>
+    ///         </listheader>
+    ///         <item>
+    ///             <term>
+    ///                 1
+    ///             </term>
+    ///             <description>
+    ///                 Anim.mul, Anim.idx (Standard)
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <term>
+    ///                 2
+    ///             </term>
+    ///             <description>
+    ///                 Anim2.mul, Anim2.idx (LBR)
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <term>
+    ///                 3
+    ///             </term>
+    ///             <description>
+    ///                 Anim3.mul, Anim3.idx (AOS)
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <term>
+    ///                 4
+    ///             </term>
+    ///             <description>
+    ///                 Anim4.mul, Anim4.idx (SE)
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <term>
+    ///                 5
+    ///             </term>
+    ///             <description>
+    ///                 Anim5.mul, Anim5.idx (ML)
+    ///             </description>
+    ///         </item>
+    ///         <item>
+    ///             <term>
+    ///                 6
+    ///             </term>
+    ///             <description>
+    ///                 Anim6.mul, Anim6.idx (SA/HS)
+    ///             </description>
+    ///         </item>
+    ///     </list>
     /// </returns>
     public static int Convert(ref int body)
     {
@@ -164,11 +194,14 @@ public static class BodyConverter
     }
 
     /// <summary>
-    /// Converts backward
+    ///     Converts backward
     /// </summary>
-    /// <param name="fileType"></param>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="fileType">
+    /// </param>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static int GetTrueBody(int fileType, int index)
     {
         if (index < 0)
@@ -196,7 +229,7 @@ public static class BodyConverter
     }
 
     /// <summary>
-    /// Fills bodyconv.def Tables
+    ///     Fills bodyconv.def Tables
     /// </summary>
     public static void Initialize()
     {

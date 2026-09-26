@@ -1,0 +1,8 @@
+[[item]]
+id = "0x1647_a_lightsource"
+base_id = "base_item"
+item_id = 5703
+name = "a lightsource"
+rarity = "common"
+movable = false
+hue = 0

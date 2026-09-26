@@ -1,0 +1,49 @@
+[[item]]
+id = "ilsh_healer_camp"
+base_id = "base_item"
+item_id = 5035
+name = "healer camp"
+rarity = "common"
+movable = false
+visibility = "game_master"
+hue = 0
+
+[[item]]
+id = "ilsh_orc_camp"
+base_id = "base_item"
+item_id = 5035
+name = "orc camp"
+rarity = "common"
+movable = false
+visibility = "game_master"
+hue = 0
+
+[[item]]
+id = "ilsh_banker_camp"
+base_id = "base_item"
+item_id = 5035
+name = "banker camp"
+rarity = "common"
+movable = false
+visibility = "game_master"
+hue = 0
+
+[[item]]
+id = "ilsh_mage_camp"
+base_id = "base_item"
+item_id = 5035
+name = "mage camp"
+rarity = "common"
+movable = false
+visibility = "game_master"
+hue = 0
+
+[[item]]
+id = "generic_orc_camp"
+base_id = "base_item"
+item_id = 5035
+name = "orc camp"
+rarity = "common"
+movable = false
+visibility = "game_master"
+hue = 0

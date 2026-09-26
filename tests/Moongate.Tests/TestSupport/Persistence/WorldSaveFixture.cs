@@ -100,14 +100,15 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
     }
 
     public static async Task<WorldSaveFixture> CreateAsync(bool autosave = false, bool twoTargets = false)
-        => new(await HostPersistenceFixture.CreateAsync(twoTargets: twoTargets), autosave);
+    {
+        return new(await HostPersistenceFixture.CreateAsync(twoTargets: twoTargets), autosave);
+    }
 
     public async Task OnLoopAsync(Action action)
     {
         var completion = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         await Loop.PostAsync(
-            new ActionGameLoopWorkItem(
-                () =>
+            new ActionGameLoopWorkItem(() =>
                 {
                     try
                     {
@@ -125,7 +126,9 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
     }
 
     public Task<string?> ReadSavedNameAsync()
-        => Database.ScalarAsync<string>("SELECT name FROM host_test.items WHERE id = 7");
+    {
+        return Database.ScalarAsync<string>("SELECT name FROM host_test.items WHERE id = 7");
+    }
 
     public async Task ReleaseWritesAsync()
     {
@@ -160,8 +163,8 @@ internal sealed class WorldSaveFixture : IAsyncDisposable
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(8));
 
         while (!await _blockedDatabase!.ScalarAsync<bool>(
-                    $"SELECT EXISTS (SELECT 1 FROM pg_locks WHERE relation = '{_blockedTable}'::regclass AND NOT granted)"
-                ))
+                   $"SELECT EXISTS (SELECT 1 FROM pg_locks WHERE relation = '{_blockedTable}'::regclass AND NOT granted)"
+               ))
         {
             await Task.Delay(10, timeout.Token);
         }

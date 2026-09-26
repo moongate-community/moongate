@@ -49,8 +49,7 @@ public sealed class GameLoopPumpTests
         var executed = new List<int>();
         Write(
             channel,
-            new ActionGameLoopWorkItem(
-                () =>
+            new ActionGameLoopWorkItem(() =>
                 {
                     executed.Add(1);
                     clock.Advance(TimeSpan.FromMilliseconds(5));
@@ -67,5 +66,7 @@ public sealed class GameLoopPumpTests
     }
 
     private static void Write(Channel<QueuedGameLoopWorkItem> channel, IGameLoopWorkItem workItem)
-        => channel.Writer.TryWrite(new(workItem, 0));
+    {
+        channel.Writer.TryWrite(new(workItem, 0));
+    }
 }

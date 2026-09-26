@@ -119,4 +119,39 @@ public class PacketReaderTests
         Assert.True(reader.TryReadSerial(out var serial));
         Assert.Equal(new(0x40000001), serial);
     }
+
+    [Fact]
+    public void TryReadFixedBigUnicode_PaddedField_StopsAtNulAndConsumesTheField()
+    {
+        byte[] data = [0x00, 0x45, 0x00, 0x4E, 0x00, 0x55, 0x00, 0x00, 0x00, 0x58, 0xFF];
+        var reader = new PacketReader(data);
+
+        Assert.True(reader.TryReadFixedBigUnicode(10, out var value));
+
+        Assert.Equal("ENU", value);
+        Assert.Equal(10, reader.Position);
+        Assert.True(reader.TryReadByte(out var next));
+        Assert.Equal(0xFF, next);
+    }
+
+    [Fact]
+    public void TryReadFixedBigUnicode_FullWidthNonAsciiField_ReadsEveryCharacter()
+    {
+        var reader = new PacketReader([0x00, 0xE8, 0x00, 0x41]);
+
+        Assert.True(reader.TryReadFixedBigUnicode(4, out var value));
+
+        Assert.Equal("èA", value);
+    }
+
+    [Theory, InlineData(3), InlineData(6), InlineData(-2)]
+    public void TryReadFixedBigUnicode_OddShortOrNegativeWidth_ReturnsFalseWithoutAdvancing(int byteCount)
+    {
+        var reader = new PacketReader([0x00, 0x41, 0x00, 0x42]);
+
+        Assert.False(reader.TryReadFixedBigUnicode(byteCount, out var value));
+
+        Assert.Null(value);
+        Assert.Equal(0, reader.Position);
+    }
 }

@@ -4,15 +4,15 @@ using Moongate.Server.Data.Config;
 namespace Moongate.Server.Helpers;
 
 /// <summary>
-/// Loads the server configuration or writes the model defaults when the TOML file is missing.
+///     Loads the server configuration or writes the model defaults when the TOML file is missing.
 /// </summary>
 public static class ConfigHelper
 {
     /// <summary>
-    /// Reads an existing TOML file or creates it, including any missing parent directories.
+    ///     Reads an existing TOML file or creates it, including any missing parent directories.
     /// </summary>
     /// <remarks>
-    /// Property names use snake_case. Existing files are not rewritten, and parsing or I/O errors propagate to the caller.
+    ///     Property names use snake_case. Existing files are not rewritten, and parsing or I/O errors propagate to the caller.
     /// </remarks>
     public static MoongateServerConfig Load(string filePath)
     {

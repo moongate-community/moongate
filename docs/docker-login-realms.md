@@ -2,7 +2,7 @@
 
 The [Compose example](../examples/docker/login-realms/compose.yaml) builds the current source and runs one login process, two game processes, PostgreSQL 16 and private Redis 7.4. PostgreSQL holds separate Accounts, Realm 1 and Realm 2 databases. Redis holds short-lived realm leases and one-use login handoff tickets. Nothing in the example publishes Redis to the host.
 
-A successful `0x80` login receives a filtered `0xA8` list. `0xA0` selects a realm; login sends `0x8C` with its IPv4 address, port and one-use key, then closes that login connection. The client reconnects to the chosen game port, sends the raw four-byte key as its seed, then `0x91` with the same key and credentials. The game consumes the ticket from Redis and associates the account with its local session. Character selection and world entry are still under development.
+A successful `0x80` login receives a filtered `0xA8` list. `0xA0` selects a realm; login sends `0x8C` with its IPv4 address, port and one-use key, then closes that login connection. The client reconnects to the chosen game port, sends the raw four-byte key as its seed, then `0x91` with the same key and credentials. The game consumes the ticket from Redis, associates the account with its local session and replies with the supported features (`0xB9`) and an empty character list (`0xA9`) with the starting cities. Character creation, selection and world entry are still under development.
 
 ## Topology
 
@@ -45,7 +45,7 @@ export MOONGATE_REDIS_PASSWORD="$(bw get password moongate-redis)"
 export MOONGATE_HANDOFF_SECRET="$(bw get password moongate-handoff)"
 ```
 
-Compose mounts these values as secrets. The server entrypoint constructs `MOONGATE_REDIS_CONNECTION_STRING=redis:6379,password=...` and exports `MOONGATE_HANDOFF_SECRET` only in the runtime process environment. The mounted TOMLs contain references to those variable names, not their values. Redis reads its password from its own secret mount into a private in-memory config file. The PostgreSQL connection URIs are likewise assembled in memory from role-specific secrets.
+Compose mounts these values as secrets. The server entrypoint constructs `MOONGATE_REDIS_CONNECTION_STRING=redis:6379,password=...` and exports `MOONGATE_HANDOFF_SECRET` only in the runtime process environment. The mounted TOMLs contain references to those variable names, not their values. Redis reads its password from its own secret mount into a private in-memory config file. The PostgreSQL connection URIs are likewise assembled in memory from role-specific secrets. Before starting the server, the entrypoint runs `mgboot` on the volume, which adds any [shard data file](data-files.md) the image ships and the volume lacks, keeping the ones already there.
 
 Validate without printing the rendered Compose model, then build:
 

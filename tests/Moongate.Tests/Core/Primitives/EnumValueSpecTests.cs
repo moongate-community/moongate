@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Tests.Support.Serialization.Types;
 
 namespace Moongate.Tests.Core.Primitives;
@@ -39,7 +40,9 @@ public sealed class EnumValueSpecTests
 
     [Fact]
     public void FromCandidates_WithNoCandidates_ThrowsArgumentException()
-        => Assert.Throws<ArgumentException>(() => EnumValueSpec<TemplateRarity>.FromCandidates([]));
+    {
+        Assert.Throws<ArgumentException>(() => EnumValueSpec<TemplateRarity>.FromCandidates([]));
+    }
 
     [Theory, InlineData("common", TemplateRarity.Common), InlineData("EPIC", TemplateRarity.Epic),
      InlineData("  rare  ", TemplateRarity.Rare)]
@@ -106,5 +109,30 @@ public sealed class EnumValueSpecTests
         Assert.True(EnumValueSpec<TemplateRarity>.TryParse(original.ToString(), out var restored));
 
         Assert.Equal(original.ToString(), restored.ToString());
+    }
+
+    [Theory, InlineData("north_east"), InlineData("NorthEast"), InlineData("northeast"), InlineData("NORTH_EAST")]
+    public void TryParse_AMultiWordName_AcceptsTheSnakeCaseFormItWrites(string text)
+    {
+        Assert.True(EnumValueSpec<DirectionType>.TryParse(text, out var spec));
+        Assert.Equal(DirectionType.NorthEast, spec.Resolve());
+    }
+
+    [Fact]
+    public void ToString_ThenTryParse_RoundTripsMultiWordNames()
+    {
+        var fixedSpec = EnumValueSpec<DirectionType>.FromValue(DirectionType.SouthWest);
+        var randomSpec = EnumValueSpec<DirectionType>.FromCandidates([DirectionType.NorthEast, DirectionType.SouthWest]);
+
+        Assert.True(EnumValueSpec<DirectionType>.TryParse(fixedSpec.ToString(), out var fixedBack));
+        Assert.True(EnumValueSpec<DirectionType>.TryParse(randomSpec.ToString(), out var randomBack));
+        Assert.Equal(DirectionType.SouthWest, fixedBack.Resolve());
+        Assert.Equal(randomSpec.ToString(), randomBack.ToString());
+    }
+
+    [Theory, InlineData("99"), InlineData("1"), InlineData("-1"), InlineData("random_of:1,2"), InlineData("north__east_x")]
+    public void TryParse_ANumberOrAnUnknownName_ReturnsFalse(string text)
+    {
+        Assert.False(EnumValueSpec<DirectionType>.TryParse(text, out _));
     }
 }

@@ -20,14 +20,16 @@ internal sealed class PersistenceModuleRegistrySnapshot
     }
 
     public IReadOnlyList<PersistenceModuleRegistration> GetModules(PersistenceDatabaseTarget target)
-        => Modules.Where(module => module.Module.DatabaseTarget == target).ToArray();
+    {
+        return Modules.Where(module => module.Module.DatabaseTarget == target).ToArray();
+    }
 
     public IPersistenceModule GetOwner(Type entityType)
     {
         ArgumentNullException.ThrowIfNull(entityType);
 
         return _entityOwners.TryGetValue(entityType, out var owner)
-                   ? owner
-                   : throw new InvalidOperationException($"Persistence entity '{entityType.FullName}' has no module owner.");
+            ? owner
+            : throw new InvalidOperationException($"Persistence entity '{entityType.FullName}' has no module owner.");
     }
 }

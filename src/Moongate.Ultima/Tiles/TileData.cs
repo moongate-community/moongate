@@ -11,9 +11,17 @@ namespace Moongate.Ultima.Tiles;
 // TODO: move import/export csv routines to separate class
 
 /// <summary>
-/// Contains lists of <see cref="LandData">land</see> and <see cref="ItemData">item</see> tile data.
-/// <seealso cref="LandData" />
-/// <seealso cref="ItemData" />
+///     Contains lists of
+///     <see cref="LandData">
+///         land
+///     </see>
+///     and
+///     <see cref="ItemData">
+///         item
+///     </see>
+///     tile data.
+///     <seealso cref="LandData" />
+///     <seealso cref="ItemData" />
 /// </summary>
 public static class TileData
 {
@@ -21,12 +29,20 @@ public static class TileData
     private static int[] _itemHeader;
 
     /// <summary>
-    /// Gets the list of <see cref="LandData">land tile data</see>.
+    ///     Gets the list of
+    ///     <see cref="LandData">
+    ///         land tile data
+    ///     </see>
+    ///     .
     /// </summary>
     public static LandData[] LandTable { get; private set; }
 
     /// <summary>
-    /// Gets the list of <see cref="ItemData">item tile data</see>.
+    ///     Gets the list of
+    ///     <see cref="ItemData">
+    ///         item tile data
+    ///     </see>
+    ///     .
     /// </summary>
     public static ItemData[] ItemTable { get; private set; }
 
@@ -38,9 +54,10 @@ public static class TileData
     }
 
     /// <summary>
-    /// Exports <see cref="ItemData" /> to csv file
+    ///     Exports <see cref="ItemData" /> to csv file
     /// </summary>
-    /// <param name="fileName"></param>
+    /// <param name="fileName">
+    /// </param>
     public static void ExportItemDataToCsv(string fileName)
     {
         using var tex = new StreamWriter(
@@ -83,9 +100,10 @@ public static class TileData
     }
 
     /// <summary>
-    /// Exports <see cref="LandData" /> to csv file
+    ///     Exports <see cref="LandData" /> to csv file
     /// </summary>
-    /// <param name="fileName"></param>
+    /// <param name="fileName">
+    /// </param>
     public static void ExportLandDataToCsv(string fileName)
     {
         using var tex = new StreamWriter(new FileStream(fileName, FileMode.Create, FileAccess.ReadWrite));
@@ -290,9 +308,10 @@ public static class TileData
     }
 
     /// <summary>
-    /// Saves <see cref="LandData" /> and <see cref="ItemData" /> to tiledata.mul
+    ///     Saves <see cref="LandData" /> and <see cref="ItemData" /> to tiledata.mul
     /// </summary>
-    /// <param name="fileName"></param>
+    /// <param name="fileName">
+    /// </param>
     public static void SaveTileData(string fileName)
     {
         using var fs = new FileStream(fileName, FileMode.Create, FileAccess.Write, FileShare.Write);

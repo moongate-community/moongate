@@ -1,0 +1,8 @@
+[[item]]
+id = "nodraw_blocking_tile"
+base_id = "base_item"
+item_id = 8611
+name = "nodraw_blocking_tile"
+rarity = "common"
+movable = false
+hue = 0

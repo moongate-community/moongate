@@ -3,14 +3,18 @@ using Moongate.Core.Extensions.Env;
 
 namespace Moongate.Server.Data.Config.Sections;
 
-/// <summary>Configures the shared Redis connection and login handoff proof secret.</summary>
+/// <summary>
+///     Configures the shared Redis connection and login handoff proof secret.
+/// </summary>
 public sealed class RedisConfig
 {
     public string ConnectionString { get; set; } = "$MOONGATE_REDIS_CONNECTION_STRING";
 
     public string HandoffSecret { get; set; } = "$MOONGATE_HANDOFF_SECRET";
 
-    /// <summary>Resolves the Redis endpoint for process startup without exposing it in errors.</summary>
+    /// <summary>
+    ///     Resolves the Redis endpoint for process startup without exposing it in errors.
+    /// </summary>
     public string ResolveConnectionString()
     {
         var value = Resolve(ConnectionString, "redis.connection_string");
@@ -18,7 +22,9 @@ public sealed class RedisConfig
         return value;
     }
 
-    /// <summary>Resolves the handoff secret when the process starts.</summary>
+    /// <summary>
+    ///     Resolves the handoff secret when the process starts.
+    /// </summary>
     public string ResolveHandoffSecret()
     {
         var value = Resolve(HandoffSecret, "redis.handoff_secret");
@@ -31,7 +37,9 @@ public sealed class RedisConfig
         return value;
     }
 
-    /// <summary>Checks configuration templates without requiring secrets during config generation.</summary>
+    /// <summary>
+    ///     Checks configuration templates without requiring secrets during config generation.
+    /// </summary>
     public void Validate()
     {
         if (string.IsNullOrWhiteSpace(ConnectionString))
@@ -57,8 +65,8 @@ public sealed class RedisConfig
             var value = template.ExpandEnvironmentVariables(true);
 
             return string.IsNullOrWhiteSpace(value)
-                       ? throw new InvalidOperationException($"{setting} is required.")
-                       : value;
+                ? throw new InvalidOperationException($"{setting} is required.")
+                : value;
         }
         catch (InvalidOperationException)
         {

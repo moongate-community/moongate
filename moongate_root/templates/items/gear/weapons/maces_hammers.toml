@@ -1,0 +1,303 @@
+[[item]]
+id = "base_war_axe"
+base_id = "base_item"
+item_id = 5039
+name = "war axe"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13b0"
+item_id = 5040
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_smiths_hammer"
+base_id = "base_item"
+item_id = 5091
+name = "smith's hammer"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13e4"
+item_id = 5092
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_club"
+base_id = "base_item"
+item_id = 5043
+name = "club"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x13b4"
+item_id = 5044
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_sledge_hammer"
+base_id = "base_item"
+item_id = 4020
+name = "sledge hammer"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fb5"
+item_id = 4021
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_mace"
+base_id = "base_item"
+item_id = 3932
+name = "mace"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0f5d"
+item_id = 3933
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_war_mace"
+base_id = "base_item"
+item_id = 5126
+name = "war mace"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1407"
+item_id = 5127
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_war_hammer"
+base_id = "base_item"
+item_id = 5176
+name = "war hammer"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1439"
+item_id = 5177
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_maul"
+base_id = "base_item"
+item_id = 5178
+name = "maul"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x143b"
+item_id = 5179
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_hammer_pick"
+base_id = "base_item"
+item_id = 5180
+name = "hammer pick"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x143d"
+item_id = 5181
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_scepter"
+base_id = "base_item"
+item_id = 9916
+name = "scepter"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26c6"
+item_id = 9926
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_tessen"
+base_id = "base_item"
+item_id = 10147
+name = "tessen"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27ee"
+item_id = 10222
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_tetsubo"
+base_id = "base_item"
+item_id = 10150
+name = "tetsubo"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27f1"
+item_id = 10225
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_nunchaku"
+base_id = "base_item"
+item_id = 10158
+name = "nunchaku"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27f9"
+item_id = 10233
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_diamond_mace"
+base_id = "base_item"
+item_id = 11556
+name = "diamond mace"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2d30"
+item_id = 11568
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_maul"
+base_id = "base_item"
+item_id = 18626
+name = "gargish maul"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48c3"
+item_id = 18627
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_disc_mace"
+base_id = "base_item"
+item_id = 2307
+name = "disc mace"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x406e"
+item_id = 16494
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_war_hammer"
+base_id = "base_item"
+item_id = 18624
+name = "gargish war hammer"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48c1"
+item_id = 18625
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_tessen"
+base_id = "base_item"
+item_id = 18636
+name = "gargish tessen"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48cd"
+item_id = 18637
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_barbed_whip"
+base_id = "base_item"
+item_id = 41609
+name = "barbed whip"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0xa291"
+item_id = 41617
+rarity = "common"
+movable = false
+hue = 0

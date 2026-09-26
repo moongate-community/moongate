@@ -8,7 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Diagnostics;
 
-/// <summary>Serially collects provider metrics and publishes the latest immutable snapshot.</summary>
+/// <summary>
+///     Serially collects provider metrics and publishes the latest immutable snapshot.
+/// </summary>
 public sealed class DiagnosticService : IDiagnosticService, IDisposable
 {
     public const int StartupPriority = 900;
@@ -67,7 +69,9 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
 
     /// <inheritdoc />
     public DiagnosticSnapshot? GetSnapshot()
-        => Volatile.Read(ref _snapshot);
+    {
+        return Volatile.Read(ref _snapshot);
+    }
 
     /// <inheritdoc />
     public Task StartAsync()
@@ -166,7 +170,7 @@ public sealed class DiagnosticService : IDiagnosticService, IDisposable
         }
 
         await _eventBus.PublishAsync(new DiagnosticSnapshotCollectedEvent(snapshot), cancellationToken)
-                       .ConfigureAwait(false);
+            .ConfigureAwait(false);
     }
 
     private static bool IsValidName(string? name)

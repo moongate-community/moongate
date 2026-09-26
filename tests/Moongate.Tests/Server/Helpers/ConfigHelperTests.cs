@@ -103,8 +103,10 @@ public sealed class ConfigHelperTests
         using var directory = new TemporaryDirectory();
         var path = directory.CreateFile("moongate.toml", toml);
 
-        Assert.Throws<TomlException>(() => ConfigHelper.Load(path));
+        // An unknown name fails while reading; "none", "" and 0 read as ServerMode.None, which validation rejects.
+        var exception = Record.Exception(() => ConfigHelper.Load(path));
 
+        Assert.True(exception is TomlException or InvalidOperationException, exception?.ToString());
         Assert.Equal(toml, File.ReadAllText(path));
     }
 
@@ -132,8 +134,10 @@ public sealed class ConfigHelperTests
         var toml = $"mode = {value}\n";
         var path = directory.CreateFile("moongate.toml", toml);
 
-        Assert.Throws<TomlException>(() => ConfigHelper.Load(path));
+        // An unknown name fails while reading; "none", "" and 0 read as ServerMode.None, which validation rejects.
+        var exception = Record.Exception(() => ConfigHelper.Load(path));
 
+        Assert.True(exception is TomlException or InvalidOperationException, exception?.ToString());
         Assert.Equal(toml, File.ReadAllText(path));
     }
 

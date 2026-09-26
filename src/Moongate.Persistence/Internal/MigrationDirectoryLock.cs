@@ -19,8 +19,8 @@ internal sealed class MigrationDirectoryLock : IDisposable
         try
         {
             foreach (var directory in directories.Select(Path.GetFullPath)
-                                                 .Distinct(StringComparer.Ordinal)
-                                                 .Order(StringComparer.Ordinal))
+                         .Distinct(StringComparer.Ordinal)
+                         .Order(StringComparer.Ordinal))
             {
                 var path = Path.Combine(directory, ".moongate-generation.lock");
 

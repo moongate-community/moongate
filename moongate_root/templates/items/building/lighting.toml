@@ -1,0 +1,17 @@
+[[item]]
+id = "0x0fac_fire_pit"
+base_id = "base_item"
+item_id = 4012
+name = "fire pit"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f64_torch"
+base_id = "base_item"
+item_id = 3940
+name = "torch"
+rarity = "common"
+movable = false
+hue = 0

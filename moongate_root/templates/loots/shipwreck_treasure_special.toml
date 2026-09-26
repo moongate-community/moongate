@@ -1,0 +1,11 @@
+[[loot]]
+id = "shipwreck_treasure_special"
+[[loot.entries]]
+weight = 90
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "specialfishingnet"
+comment = "special fishing net"
+amount = 1

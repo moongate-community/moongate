@@ -5,13 +5,17 @@ using Moongate.Network.Server;
 namespace Moongate.Network.Tests.Integration.Server;
 
 /// <summary>
-/// Everything the accept loop does after <c>AcceptAsync</c> can throw: a connection pipeline factory
-/// can fail, or a client may not start. The socket accepted moments
-/// earlier must not survive that. The peer would otherwise sit in an ESTABLISHED connection nobody
-/// serves, waiting for a FIN that never comes, and the file descriptor would stay taken until a
-/// finalizer happens to run — which nothing makes urgent, because descriptor pressure is invisible to
-/// the garbage collector. Every wait here is bounded so a regression fails fast instead of hanging
-/// the suite.
+///     Everything the accept loop does after
+///     <c>
+///         AcceptAsync
+///     </c>
+///     can throw: a connection pipeline factory
+///     can fail, or a client may not start. The socket accepted moments
+///     earlier must not survive that. The peer would otherwise sit in an ESTABLISHED connection nobody
+///     serves, waiting for a FIN that never comes, and the file descriptor would stay taken until a
+///     finalizer happens to run — which nothing makes urgent, because descriptor pressure is invisible to
+///     the garbage collector. Every wait here is bounded so a regression fails fast instead of hanging
+///     the suite.
 /// </summary>
 public sealed class AcceptLoopConnectionReleaseTests
 {

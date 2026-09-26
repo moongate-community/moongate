@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text.Json.Nodes;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
@@ -10,6 +11,8 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Realms;
 
@@ -29,8 +32,7 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
 
     public async Task InitializeAsync()
     {
-        var endpoint = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                       throw new InvalidOperationException("MOONGATE_TEST_REDIS_CONNECTION_STRING is required.");
+        var endpoint = RedisTestServer.ConnectionString;
         _redis = new(
             new()
             {
@@ -101,12 +103,11 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
         var authKey = await IssueAsync();
 
         var attempts = await Task.WhenAll(
-                           Enumerable.Range(0, 8)
-                                     .Select(
-                                         _ => _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password")
-                                                    .AsTask()
-                                     )
-                       );
+            Enumerable.Range(0, 8)
+                .Select(_ => _store.RedeemAsync(_realmId, _instanceId, authKey, "Alice", "password")
+                    .AsTask()
+                )
+        );
 
         Assert.Single(attempts, result => result is not null);
     }
@@ -131,7 +132,7 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
             ),
             _instanceId
         );
-        var handler = new GameLoginPacketHandler(realm, _store);
+        var handler = new GameLoginPacketHandler(realm, _store, new StubDataLoaderService());
 
         await handler.HandleAsync(
             context,
@@ -171,12 +172,12 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
         var malformed = await IssueAsync();
         Assert.True(
             await _redis.Connection
-                        .GetDatabase()
-                        .StringSetAsync(
-                            Key(malformed),
-                            "not-a-ticket",
-                            TimeSpan.FromSeconds(30)
-                        )
+                .GetDatabase()
+                .StringSetAsync(
+                    Key(malformed),
+                    "not-a-ticket",
+                    TimeSpan.FromSeconds(30)
+                )
         );
         Assert.Null(await _store.RedeemAsync(_realmId, _instanceId, malformed, "Alice", "password"));
     }
@@ -192,7 +193,9 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
     }
 
     private PendingHandoff Handoff()
-        => new(new(42), AccountType.GameMaster, "Alice", _realmId, _instanceId, "7.0.117");
+    {
+        return new(new(42), AccountType.GameMaster, "Alice", _realmId, _instanceId, ClientVersion.Parse("7.0.117"));
+    }
 
     private async Task<uint> IssueAsync()
     {
@@ -204,7 +207,9 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
     }
 
     private string Key(uint authKey)
-        => $"moongate:handoff:{_realmId}:{authKey:X8}";
+    {
+        return $"moongate:handoff:{_realmId}:{authKey:X8}";
+    }
 
     public async Task DisposeAsync()
     {

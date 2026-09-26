@@ -24,8 +24,11 @@ using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Ultima.Handlers.Login;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Server.Ultima;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Login;
 
@@ -36,8 +39,7 @@ public sealed class RedisTcpHandoffFlowTests
     [Fact]
     public async Task TwoListeners_CompleteLoginRedirectAndRejectReplayedGameTicket()
     {
-        var endpoint = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                       throw new InvalidOperationException("MOONGATE_TEST_REDIS_CONNECTION_STRING is required.");
+        var endpoint = RedisTestServer.ConnectionString;
         await using var redis = new RedisConnectionService(
             new()
             {
@@ -81,6 +83,7 @@ public sealed class RedisTcpHandoffFlowTests
         gameContainer.RegisterInstance<IPacketSendService>(gameSender);
         gameContainer.RegisterInstance(realm);
         gameContainer.RegisterInstance<IGameHandoffStore>(handoffs);
+        gameContainer.RegisterInstance<IDataLoaderService>(new StubDataLoaderService());
         gameContainer.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
         var gameDispatcher = new PacketDispatchService(
             loop,
@@ -201,7 +204,8 @@ public sealed class RedisTcpHandoffFlowTests
     }
 
     private static NetworkService CreateNetwork(ConnectionService connections, bool game)
-        => new(
+    {
+        return new(
             new NetworkListenerOptions
             {
                 Endpoints = [new(IPAddress.Loopback, 0)],
@@ -212,6 +216,7 @@ public sealed class RedisTcpHandoffFlowTests
             },
             connections
         );
+    }
 
     private static byte[] CreateAccountLogin()
     {
@@ -240,7 +245,7 @@ public sealed class RedisTcpHandoffFlowTests
     {
         using var deadline = new CancellationTokenSource(Timeout);
         var header = new byte[opcode == 0xA8 ? 3 :
-                              opcode == 0x8C ? 11 : 2];
+            opcode == 0x8C ? 11 : 2];
         await stream.ReadExactlyAsync(header, deadline.Token);
         Assert.Equal(opcode, header[0]);
 

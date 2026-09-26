@@ -95,11 +95,10 @@ public sealed class CoroutineSchedulerTests : IDisposable
         // leaked from the resume into the chunk would abort the chunk.
         _scheduler.Start(Define("f", "local n = 0 for i = 1, 2000 do n = n + i end wait(1)"), "a.lua");
 
-        var result = _budget.Chunk(
-            token =>
-                SyncValueTask.Run(
-                    _state.DoStringAsync("local n = 0 for i = 1, 2000 do n = n + i end return n", "chunk", token)
-                )
+        var result = _budget.Chunk(token =>
+            SyncValueTask.Run(
+                _state.DoStringAsync("local n = 0 for i = 1, 2000 do n = n + i end return n", "chunk", token)
+            )
         );
 
         Assert.Equal(2001000, result[0].Read<double>());
@@ -376,5 +375,7 @@ public sealed class CoroutineSchedulerTests : IDisposable
     }
 
     public void Dispose()
-        => _state.Dispose();
+    {
+        _state.Dispose();
+    }
 }

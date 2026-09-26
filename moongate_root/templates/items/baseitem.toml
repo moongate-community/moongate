@@ -1,0 +1,6 @@
+[[item]]
+id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+hue = 0

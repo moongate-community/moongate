@@ -126,7 +126,8 @@ public sealed class AccountLoginPacketHandlerTests
     }
 
     private static StubRealmCatalog Directory()
-        => new(
+    {
+        return new(
             new RealmDescriptor(
                 "local",
                 1,
@@ -136,4 +137,5 @@ public sealed class AccountLoginPacketHandlerTests
                 AccountType.Regular
             )
         );
+    }
 }

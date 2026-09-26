@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
+using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
@@ -39,13 +40,13 @@ public sealed class AccountLoginPacketHandler : IAsyncPacketHandler<AccountLogin
                     return;
                 }
 
-                session.SetAccountId(result.AccountId);
-                session.SetAccountType(result.AccountType);
+                session.Set(SessionKeys.AccountId, result.AccountId);
+                session.Set(SessionKeys.AccountType, result.AccountType);
 
                 if (!context.TrySend(new ServerListPacket(result.Servers)))
                 {
-                    session.SetAccountId(Serial.Zero);
-                    session.SetAccountType(AccountType.Regular);
+                    session.Set(SessionKeys.AccountId, Serial.Zero);
+                    session.Set(SessionKeys.AccountType, AccountType.Regular);
                     _ = session.NetworkSession.Client?.CloseAsync(cancellationToken);
 
                     return;

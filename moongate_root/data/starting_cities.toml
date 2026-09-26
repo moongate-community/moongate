@@ -1,0 +1,87 @@
+# ==============================================================================
+# Moongate - starting_cities.toml
+#
+# What it is for:
+#   The cities a new character can start in. The server sends this list to the
+#   client with the character list (packet 0xA9); the client shows the cities on
+#   the map during character creation and sends back the index of the one chosen,
+#   so the order of the entries matters.
+#
+# Fields:
+#   town         the city name shown by the client (at most 32 ASCII characters)
+#   description  the place in the city, such as an inn (at most 32 ASCII characters)
+#   location     where the character appears, as "(x, y, z)"
+#   map          the map of the location: felucca, trammel, ilshenar, malas,
+#                tokuno or termur
+#   cliloc       the id of the localized description the client shows
+# ==============================================================================
+
+[[starting_city]]
+town = "New Haven"
+description = "The Bountiful Harvest Inn"
+location = "(3503, 2574, 14)"
+map = "trammel"
+cliloc = 1150168
+
+[[starting_city]]
+town = "Britain"
+description = "The Wayfarer's Inn"
+location = "(1602, 1591, 20)"
+map = "trammel"
+cliloc = 1075074
+
+[[starting_city]]
+town = "Yew"
+description = "The Empath Abbey"
+location = "(633, 858, 0)"
+map = "trammel"
+cliloc = 1075072
+
+[[starting_city]]
+town = "Minoc"
+description = "The Barnacle"
+location = "(2476, 413, 15)"
+map = "trammel"
+cliloc = 1075073
+
+[[starting_city]]
+town = "Moonglow"
+description = "The Scholars Inn"
+location = "(4408, 1168, 0)"
+map = "trammel"
+cliloc = 1075075
+
+[[starting_city]]
+town = "Trinsic"
+description = "The Traveler's Inn"
+location = "(1845, 2745, 0)"
+map = "trammel"
+cliloc = 1075076
+
+[[starting_city]]
+town = "Jhelom"
+description = "The Mercenary Inn"
+location = "(1374, 3826, 0)"
+map = "trammel"
+cliloc = 1075078
+
+[[starting_city]]
+town = "Skara Brae"
+description = "The Falconer's Inn"
+location = "(618, 2234, 0)"
+map = "trammel"
+cliloc = 1075079
+
+[[starting_city]]
+town = "Vesper"
+description = "The Ironwood Inn"
+location = "(2771, 976, 0)"
+map = "trammel"
+cliloc = 1075080
+
+[[starting_city]]
+town = "Royal City"
+description = "Royal City Inn"
+location = "(738, 3486, -19)"
+map = "termur"
+cliloc = 1150169

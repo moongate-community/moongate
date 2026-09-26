@@ -3,7 +3,9 @@ using Moongate.Persistence.Migrations.Types.Migrations;
 
 namespace Moongate.Persistence.Migrations.Services;
 
-/// <summary>Publishes a numbered SQL draft atomically without replacing an existing migration.</summary>
+/// <summary>
+///     Publishes a numbered SQL draft atomically without replacing an existing migration.
+/// </summary>
 public static class MigrationDraftWriter
 {
     public static async Task<string> WriteAsync(
@@ -17,10 +19,10 @@ public static class MigrationDraftWriter
         ArgumentException.ThrowIfNullOrWhiteSpace(sql);
         var root = catalog.SourceDirectories[component];
         var sequence = catalog.Scripts
-                              .Where(script => script.Component == component)
-                              .Select(script => script.Sequence)
-                              .DefaultIfEmpty()
-                              .Max() +
+                           .Where(script => script.Component == component)
+                           .Select(script => script.Sequence)
+                           .DefaultIfEmpty()
+                           .Max() +
                        1;
 
         if (sequence > 9999)
@@ -37,7 +39,7 @@ public static class MigrationDraftWriter
         try
         {
             await File.WriteAllTextAsync(temporary, header + sql + "\n", new UTF8Encoding(false), cancellationToken)
-                      .ConfigureAwait(false);
+                .ConfigureAwait(false);
             cancellationToken.ThrowIfCancellationRequested();
             File.Move(temporary, path, false);
 

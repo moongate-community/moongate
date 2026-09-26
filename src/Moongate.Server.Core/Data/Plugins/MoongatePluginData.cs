@@ -1,6 +1,8 @@
 namespace Moongate.Server.Core.Data.Plugins;
 
-/// <summary>Describes a plugin and its required dependencies.</summary>
+/// <summary>
+///     Describes a plugin and its required dependencies.
+/// </summary>
 public sealed record MoongatePluginData
 {
     public string Id { get; }

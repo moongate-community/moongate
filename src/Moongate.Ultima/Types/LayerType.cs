@@ -1,8 +1,8 @@
 namespace Moongate.Ultima.Types;
 
 /// <summary>
-/// UO equipment layer as used on the wire and in tiledata (the Quality byte of
-/// wearable items). Zero means "not a wearable layer".
+///     UO equipment layer as used on the wire and in tiledata (the Quality byte of
+///     wearable items). Zero means "not a wearable layer".
 /// </summary>
 public enum LayerType : byte
 {

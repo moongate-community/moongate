@@ -1,6 +1,8 @@
 namespace Moongate.Network.Packets.Types.Login;
 
-/// <summary>Reason codes carried by the login denied packet (0x82).</summary>
+/// <summary>
+///     Reason codes carried by the login denied packet (0x82).
+/// </summary>
 public enum LoginDeniedReason : byte
 {
     IncorrectNameOrPassword = 0x00,

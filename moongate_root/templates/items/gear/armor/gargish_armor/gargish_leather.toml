@@ -1,0 +1,62 @@
+[[item]]
+id = "0x4048"
+item_id = 16456
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4047"
+item_id = 16455
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x404a"
+item_id = 16458
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x4049"
+item_id = 16457
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x404e"
+item_id = 16462
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x404d"
+item_id = 16461
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x404c"
+item_id = 16460
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x404b"
+item_id = 16459
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x457f"
+item_id = 17791
+rarity = "common"
+movable = false
+hue = 0

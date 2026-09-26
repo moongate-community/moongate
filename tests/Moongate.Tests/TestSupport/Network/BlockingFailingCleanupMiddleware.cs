@@ -16,8 +16,7 @@ internal sealed class BlockingFailingCleanupMiddleware : INetMiddleware, IDispos
         CancellationToken cancellationToken = default
     )
     {
-        cancellationToken.Register(
-            () =>
+        cancellationToken.Register(() =>
             {
                 _entered.TrySetResult();
 
@@ -34,8 +33,12 @@ internal sealed class BlockingFailingCleanupMiddleware : INetMiddleware, IDispos
     }
 
     public void Release()
-        => _release.Set();
+    {
+        _release.Set();
+    }
 
     public void Dispose()
-        => _release.Set();
+    {
+        _release.Set();
+    }
 }

@@ -1,6 +1,8 @@
 namespace Moongate.Server.Core.Data.Admin;
 
-/// <summary>Absolute administrative session lifetime, independent of listener enablement.</summary>
+/// <summary>
+///     Absolute administrative session lifetime, independent of listener enablement.
+/// </summary>
 public sealed class AdminSessionOptions
 {
     public TimeSpan Lifetime { get; }
@@ -11,6 +13,7 @@ public sealed class AdminSessionOptions
         {
             throw new ArgumentOutOfRangeException(nameof(lifetime));
         }
+
         Lifetime = lifetime;
     }
 }

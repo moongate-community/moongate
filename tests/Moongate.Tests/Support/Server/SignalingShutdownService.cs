@@ -9,7 +9,9 @@ public sealed class SignalingShutdownService : IMoongateStartupService
     public Task ShutdownStarted => _shutdownStarted.Task;
 
     public Task StartAsync()
-        => Task.CompletedTask;
+    {
+        return Task.CompletedTask;
+    }
 
     public Task StopAsync()
     {

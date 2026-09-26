@@ -31,31 +31,31 @@ public sealed class AdminAuditTests
             {
                 password = fixture.Backend.Accounts.Password;
                 var created = await fixture.Backend.Accounts.Service.CreateAccountAsync(
-                                  new()
-                                  {
-                                      Username = "audit-admin", Password = password,
-                                      AccountType = DomainAccountType.Administrator, CanAccessApi = true
-                                  }
-                              );
+                    new()
+                    {
+                        Username = "audit-admin", Password = password,
+                        AccountType = DomainAccountType.Administrator, CanAccessApi = true
+                    }
+                );
                 accountId = created.Account!.Id.Value.ToString();
                 var login = await new AdminLogin.AdminLoginClient(fixture.Channel).LoginAsync(
-                                new()
-                                {
-                                    Username = "audit-admin", Password = password
-                                }
-                            );
+                    new()
+                    {
+                        Username = "audit-admin", Password = password
+                    }
+                );
                 token = login.AccessToken;
                 await new AdminSession.AdminSessionClient(fixture.Channel).LogoutAsync(
                     new(),
                     new Metadata { { "authorization", "Bearer " + token } }
                 );
                 fixture.Gate.StopAccepting();
-                await Assert.ThrowsAsync<RpcException>(
-                    () => new AdminServer.AdminServerClient(fixture.Channel)
-                          .GetServerInfoAsync(new())
-                          .ResponseAsync
+                await Assert.ThrowsAsync<RpcException>(() => new AdminServer.AdminServerClient(fixture.Channel)
+                    .GetServerInfoAsync(new())
+                    .ResponseAsync
                 );
             }
+
             var audits = sink.Events.Where(e => e.Properties.ContainsKey("Operation")).ToArray();
 
             foreach (var operation in new[] { "/Login", "/Logout" })
@@ -66,6 +66,7 @@ public sealed class AdminAuditTests
                 );
                 Assert.Equal(accountId, ((ScalarValue)entry.Properties["ActorId"]).Value?.ToString());
             }
+
             Assert.Contains(audits, e => ((ScalarValue)e.Properties["Status"]).Value?.ToString() == "Unavailable");
             Assert.DoesNotContain(
                 sink.Events,
@@ -73,7 +74,10 @@ public sealed class AdminAuditTests
                      (e.RenderMessage() + e.Exception).Contains(token, StringComparison.Ordinal)
             );
         }
-        finally { Log.Logger = previous; }
+        finally
+        {
+            Log.Logger = previous;
+        }
     }
 
     [Fact]
@@ -100,6 +104,9 @@ public sealed class AdminAuditTests
             Assert.NotEmpty(errors);
             Assert.DoesNotContain(errors, e => (e.RenderMessage() + e.Exception).Contains(secret, StringComparison.Ordinal));
         }
-        finally { Log.Logger = previous; }
+        finally
+        {
+            Log.Logger = previous;
+        }
     }
 }

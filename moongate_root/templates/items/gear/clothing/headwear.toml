@@ -1,0 +1,226 @@
+[[item]]
+id = "base_hat"
+base_id = "base_item"
+item_id = 0
+name = "base_hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x153f_bandana"
+base_id = "base_hat"
+item_id = 5439
+name = "bandana"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1540"
+base_id = "0x153f_bandana"
+item_id = 5440
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x171a_feathered_hat"
+base_id = "base_hat"
+item_id = 5914
+name = "feathered hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1713_floppy_hat"
+base_id = "base_hat"
+item_id = 5907
+name = "floppy hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1719_bonnet"
+base_id = "base_hat"
+item_id = 5913
+name = "bonnet"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1715_cap"
+base_id = "base_hat"
+item_id = 5909
+name = "cap"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x171c_jester_hat"
+base_id = "base_hat"
+item_id = 5916
+name = "jester hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1543_skullcap"
+base_id = "base_hat"
+item_id = 5443
+name = "skullcap"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1544"
+base_id = "0x1543_skullcap"
+item_id = 5444
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1717_straw_hat"
+base_id = "base_hat"
+item_id = 5911
+name = "straw hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1716_tall_straw_hat"
+base_id = "base_hat"
+item_id = 5910
+name = "tall straw hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1714_wide_brim_hat"
+base_id = "base_hat"
+item_id = 5908
+name = "wide-brim hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1718_wizard's_hat"
+base_id = "base_hat"
+item_id = 5912
+name = "wizard's hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x172e_jester's_cap"
+base_id = "base_hat"
+item_id = 5934
+name = "jester's cap"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x171b_tricorne_hat"
+base_id = "base_hat"
+item_id = 5915
+name = "tricorne hat"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1549_tribal_mask"
+base_id = "base_hat"
+item_id = 5449
+name = "tribal mask"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x154a"
+base_id = "0x1549_tribal_mask"
+item_id = 5450
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x154b_tribal_mask"
+base_id = "base_hat"
+item_id = 5451
+name = "tribal mask"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x154c"
+base_id = "0x154b_tribal_mask"
+item_id = 5452
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1545_bear_mask"
+base_id = "base_hat"
+item_id = 5445
+name = "bear mask"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1546"
+base_id = "0x1545_bear_mask"
+item_id = 5446
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1547_deer_mask"
+base_id = "base_hat"
+item_id = 5447
+name = "deer mask"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1548"
+base_id = "0x1547_deer_mask"
+item_id = 5448
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x141b_orc_mask"
+base_id = "base_hat"
+item_id = 5147
+name = "orc mask"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x141c"
+base_id = "0x141b_orc_mask"
+item_id = 5148
+rarity = "common"
+movable = false
+hue = 0

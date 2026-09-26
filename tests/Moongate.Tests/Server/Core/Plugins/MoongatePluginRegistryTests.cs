@@ -284,8 +284,10 @@ public sealed class MoongatePluginRegistryTests
         IEnumerable<MoongatePluginDependencyData>? dependencies = null,
         Version? version = null
     )
-        => new(
+    {
+        return new(
             new(id, id, version ?? new Version(1, 0, 0), dependencies: dependencies),
             register
         );
+    }
 }

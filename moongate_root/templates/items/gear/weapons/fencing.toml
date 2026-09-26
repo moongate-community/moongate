@@ -1,0 +1,351 @@
+[[item]]
+id = "base_spear"
+base_id = "base_item"
+item_id = 3938
+name = "spear"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0f63"
+item_id = 3939
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_kryss"
+base_id = "base_item"
+item_id = 5120
+name = "kryss"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1401"
+item_id = 5121
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_short_spear"
+base_id = "base_item"
+item_id = 5122
+name = "short spear"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1403"
+item_id = 5123
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_war_fork"
+base_id = "base_item"
+item_id = 5124
+name = "war fork"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x1405"
+item_id = 5125
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_pitchfork"
+base_id = "base_item"
+item_id = 3719
+name = "pitchfork"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0e88"
+item_id = 3720
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_pike"
+base_id = "base_item"
+item_id = 9918
+name = "pike"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26c8"
+item_id = 9928
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_lance"
+base_id = "base_item"
+item_id = 9920
+name = "lance"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x26ca"
+item_id = 9930
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_lajatang"
+base_id = "base_item"
+item_id = 10151
+name = "lajatang"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27f2"
+item_id = 10226
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_tekagi"
+base_id = "base_item"
+item_id = 10155
+name = "tekagi"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27f6"
+item_id = 10230
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_kama"
+base_id = "base_item"
+item_id = 10157
+name = "kama"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27f8"
+item_id = 10232
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_sai"
+base_id = "base_item"
+item_id = 10159
+name = "sai"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x27fa"
+item_id = 10234
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_war_cleaver"
+base_id = "base_item"
+item_id = 11555
+name = "war cleaver"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2d2f"
+item_id = 11567
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_elven_spellblade"
+base_id = "base_item"
+item_id = 11552
+name = "elven spellblade"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x2d2c"
+item_id = 11564
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_war_fork"
+base_id = "base_item"
+item_id = 18622
+name = "gargish war fork"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48bf"
+item_id = 18623
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_shortblade"
+base_id = "base_item"
+item_id = 2311
+name = "shortblade"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x4076"
+item_id = 16502
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_bloodblade"
+base_id = "base_item"
+item_id = 2302
+name = "bloodblade"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x4072"
+item_id = 16498
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_kryss"
+base_id = "base_item"
+item_id = 18620
+name = "gargish kryss"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48bd"
+item_id = 18621
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_spiked_whip"
+base_id = "base_item"
+item_id = 41610
+name = "spiked whip"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0xa292"
+item_id = 41618
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_lance"
+base_id = "base_item"
+item_id = 18634
+name = "gargish lance"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48cb"
+item_id = 18635
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_pike"
+base_id = "base_item"
+item_id = 18632
+name = "gargish pike"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48c9"
+item_id = 18633
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_dual_pointed_spear"
+base_id = "base_item"
+item_id = 2308
+name = "dual pointed spear"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x406d"
+item_id = 16493
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_gargish_tekagi"
+base_id = "base_item"
+item_id = 18638
+name = "gargish tekagi"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x48cf"
+item_id = 18639
+rarity = "common"
+movable = false
+hue = 0

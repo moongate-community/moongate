@@ -47,9 +47,9 @@ public sealed class RangeValueSpecTomlConverterFactoryTests
     [Fact]
     public void Deserialize_AnInvalidSpec_ThrowsTomlExceptionNamingTheText()
     {
-        var exception = Assert.Throws<TomlException>(
-            () => TomlUtils.Deserialize<HueHolder>("hue = \"not-a-range\"\n", Options)
-        );
+        var exception =
+            Assert.Throws<TomlException>(() => TomlUtils.Deserialize<HueHolder>("hue = \"not-a-range\"\n", Options)
+            );
 
         Assert.Contains("not-a-range", exception.Message, StringComparison.Ordinal);
     }

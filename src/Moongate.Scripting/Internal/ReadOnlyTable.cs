@@ -3,9 +3,9 @@ using Lua;
 namespace Moongate.Scripting.Internal;
 
 /// <summary>
-/// Wraps a table so Lua can read and call through it but never assign. An empty proxy forwards reads via
-/// __index; writes to existing and new keys both reach __newindex, which raises; __metatable blocks
-/// setmetatable. Writing __newindex on the real table would not work: Lua only consults it for absent keys.
+///     Wraps a table so Lua can read and call through it but never assign. An empty proxy forwards reads via
+///     __index; writes to existing and new keys both reach __newindex, which raises; __metatable blocks
+///     setmetatable. Writing __newindex on the real table would not work: Lua only consults it for absent keys.
 /// </summary>
 internal static class ReadOnlyTable
 {

@@ -1,0 +1,50 @@
+[[loot]]
+id = "bonearmor"
+[[loot.entries]]
+weight = 442
+amount = 1
+
+[[loot.entries]]
+weight = 31
+item_id = "0x1453"
+amount = 1
+
+[[loot.entries]]
+weight = 31
+item_id = "0x1453"
+amount = 1
+
+[[loot.entries]]
+weight = 31
+item_id = "0x1454"
+amount = 1
+
+[[loot.entries]]
+weight = 31
+item_id = "0x1455"
+amount = 1
+
+[[loot.entries]]
+weight = 31
+item_id = "0x1455"
+amount = 1
+
+[[loot.entries]]
+weight = 31
+item_id = "0x1455"
+amount = 1
+
+[[loot.entries]]
+weight = 31
+item_id = "0x1456"
+amount = 1
+
+[[loot.entries]]
+weight = 31
+item_id = "0x1456"
+amount = 1
+
+[[loot.entries]]
+weight = 31
+item_id = "0x1457"
+amount = 1

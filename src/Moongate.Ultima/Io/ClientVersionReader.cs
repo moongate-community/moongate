@@ -3,9 +3,16 @@ using System.Buffers.Binary;
 namespace Moongate.Ultima.Io;
 
 /// <summary>
-/// Reads the UO client version from a <c>client.exe</c> by locating the Win32 <c>VS_VERSION_INFO</c>
-/// resource and decoding its fixed version fields. Returns a plain <see cref="Version" /> so the reader
-/// stays free of any Moongate dependency.
+///     Reads the UO client version from a
+///     <c>
+///         client.exe
+///     </c>
+///     by locating the Win32
+///     <c>
+///         VS_VERSION_INFO
+///     </c>
+///     resource and decoding its fixed version fields. Returns a plain <see cref="Version" /> so the reader
+///     stays free of any Moongate dependency.
 /// </summary>
 public static class ClientVersionReader
 {
@@ -23,11 +30,23 @@ public static class ClientVersionReader
         ];
 
     /// <summary>
-    /// Reads the client version from the <c>client.exe</c> located in the UO client directory
-    /// configured on <see cref="Files" />.
+    ///     Reads the client version from the
+    ///     <c>
+    ///         client.exe
+    ///     </c>
+    ///     located in the UO client directory
+    ///     configured on <see cref="Files" />.
     /// </summary>
     /// <returns>
-    /// The parsed version, or <c>null</c> when <c>client.exe</c> (or its version resource) is not found.
+    ///     The parsed version, or
+    ///     <c>
+    ///         null
+    ///     </c>
+    ///     when
+    ///     <c>
+    ///         client.exe
+    ///     </c>
+    ///     (or its version resource) is not found.
     /// </returns>
     public static Version? Read()
     {
@@ -36,9 +55,23 @@ public static class ClientVersionReader
         return path is null ? null : ReadFromFile(path);
     }
 
-    /// <summary>Reads the client version from a <c>client.exe</c> file.</summary>
-    /// <param name="path">Path to the executable.</param>
-    /// <returns>The parsed version, or <c>null</c> when the version resource is not found.</returns>
+    /// <summary>
+    ///     Reads the client version from a
+    ///     <c>
+    ///         client.exe
+    ///     </c>
+    ///     file.
+    /// </summary>
+    /// <param name="path">
+    ///     Path to the executable.
+    /// </param>
+    /// <returns>
+    ///     The parsed version, or
+    ///     <c>
+    ///         null
+    ///     </c>
+    ///     when the version resource is not found.
+    /// </returns>
     public static Version? ReadFromFile(string path)
     {
         var bytes = File.ReadAllBytes(path);
@@ -46,10 +79,29 @@ public static class ClientVersionReader
         return TryRead(bytes, out var version) ? version : null;
     }
 
-    /// <summary>Parses the client version from the raw bytes of a <c>client.exe</c>.</summary>
-    /// <param name="exeContent">The full contents of the executable.</param>
-    /// <param name="version">The parsed version on success; otherwise <c>0.0</c>.</param>
-    /// <returns><c>true</c> if the version resource was found and decoded.</returns>
+    /// <summary>
+    ///     Parses the client version from the raw bytes of a
+    ///     <c>
+    ///         client.exe
+    ///     </c>
+    ///     .
+    /// </summary>
+    /// <param name="exeContent">
+    ///     The full contents of the executable.
+    /// </param>
+    /// <param name="version">
+    ///     The parsed version on success; otherwise
+    ///     <c>
+    ///         0.0
+    ///     </c>
+    ///     .
+    /// </param>
+    /// <returns>
+    ///     <c>
+    ///         true
+    ///     </c>
+    ///     if the version resource was found and decoded.
+    /// </returns>
     public static bool TryRead(ReadOnlySpan<byte> exeContent, out Version version)
     {
         version = new(0, 0);

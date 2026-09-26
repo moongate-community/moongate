@@ -1,0 +1,86 @@
+[[loot]]
+id = "randomlowlevelweapons"
+[[loot.entries]]
+weight = 10
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x13e4"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0e82"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x13f5"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0fb5"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0e85_pickaxe"
+comment = "pickaxe"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0e86"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0ec5"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0ec3"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x13f7"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0f44"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x143d"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0e88"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x13b4"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0f52"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x0f61"
+amount = 1
+
+[[loot.entries]]
+weight = 3
+item_id = "0x13b8"
+amount = 1

@@ -2,7 +2,9 @@ using Moongate.Persistence.Migrations.Data.Migrations;
 
 namespace Moongate.Persistence.Migrations.Services;
 
-/// <summary>Prevents execution of generated SQL that still needs a developer review.</summary>
+/// <summary>
+///     Prevents execution of generated SQL that still needs a developer review.
+/// </summary>
 public static class MigrationReviewGuard
 {
     public const string Marker = "-- moongate:review-required";

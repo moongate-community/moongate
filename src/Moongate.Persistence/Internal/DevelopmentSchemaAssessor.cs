@@ -16,16 +16,17 @@ internal static class DevelopmentSchemaAssessor
 
         // FreeSql comparison is synchronous; wait for settlement before releasing any schema lock.
         var ddl = await Task.Run(
-                                () => database.Orm.CodeFirst.GetComparisonDDLStatements(entityTypes),
-                                CancellationToken.None
-                            )
-                            .ConfigureAwait(false) ??
+                          () => database.Orm.CodeFirst.GetComparisonDDLStatements(entityTypes),
+                          CancellationToken.None
+                      )
+                      .ConfigureAwait(false) ??
                   "";
         cancellationToken.ThrowIfCancellationRequested();
         var parsed = SchemaSqlReader.TryRead(ddl, out var statements);
         var hasExistingTables = false;
         var newTables = new HashSet<string>(StringComparer.Ordinal);
         var nullableAdditions = new HashSet<string>(StringComparer.Ordinal);
+        var nullableJsonAdditions = new HashSet<string>(StringComparer.Ordinal);
         var literalDefaults = new Dictionary<string, (string Value, bool Nullable)>(StringComparer.Ordinal);
         var removed = new StringBuilder();
         await using var connection = new NpgsqlConnection(database.RuntimeConnectionString);
@@ -63,12 +64,17 @@ internal static class DevelopmentSchemaAssessor
 
             var columns = table.ColumnsByCs.Values.ToArray();
 
-            foreach (var column in columns.Where(
-                         column =>
-                             column.Attribute.IsNullable && !existing.ContainsKey(column.Attribute.Name)
+            foreach (var column in columns.Where(column =>
+                         column.Attribute.IsNullable && !existing.ContainsKey(column.Attribute.Name)
                      ))
             {
-                nullableAdditions.Add(name + "." + Quote(column.Attribute.Name));
+                var key = name + "." + Quote(column.Attribute.Name);
+                nullableAdditions.Add(key);
+
+                if (string.Equals(column.Attribute.DbType?.Trim(), "jsonb", StringComparison.OrdinalIgnoreCase))
+                {
+                    nullableJsonAdditions.Add(key);
+                }
             }
 
             foreach (var column in columns.Where(column => !existing.ContainsKey(column.Attribute.Name)))
@@ -89,15 +95,14 @@ internal static class DevelopmentSchemaAssessor
                 var oldName = attribute.OldName;
                 var isRename = parsed &&
                                !string.IsNullOrEmpty(oldName) &&
-                               statements.Any(
-                                   statement =>
-                                       statement.Tokens.SequenceEqual(
-                                           new[]
-                                           {
-                                               "ALTER", "TABLE", Quote(parts[0]), ".", Quote(parts[1]), "RENAME", "COLUMN",
-                                               Quote(oldName), "TO", Quote(attribute.Name)
-                                           }
-                                       )
+                               statements.Any(statement =>
+                                   statement.Tokens.SequenceEqual(
+                                       new[]
+                                       {
+                                           "ALTER", "TABLE", Quote(parts[0]), ".", Quote(parts[1]), "RENAME", "COLUMN",
+                                           Quote(oldName), "TO", Quote(attribute.Name)
+                                       }
+                                   )
                                );
 
                 if (isRename)
@@ -124,11 +129,11 @@ internal static class DevelopmentSchemaAssessor
             }
 
             foreach (var column in existing.Keys
-                                           .Except(
-                                               columns.Select(column => column.Attribute.Name),
-                                               StringComparer.Ordinal
-                                           )
-                                           .Except(renamed))
+                         .Except(
+                             columns.Select(column => column.Attribute.Name),
+                             StringComparer.Ordinal
+                         )
+                         .Except(renamed))
             {
                 // FreeSql retains unmapped database columns; make the removal explicit and review-required.
                 removed.AppendLine($"ALTER TABLE {name} DROP COLUMN {Quote(column)};");
@@ -224,10 +229,13 @@ internal static class DevelopmentSchemaAssessor
                 tokens[0] == "UPDATE" &&
                 tokens[4] == "SET" &&
                 tokens[6] == "=" &&
-                tokens[7] == "NULL" &&
+                (tokens[7] == "NULL" ||
+                 tokens[7] is "'{}'" or "'[]'" &&
+                 nullableJsonAdditions.Contains(string.Concat(tokens.Skip(1).Take(3)) + "." + tokens[5])) &&
                 added.Contains(string.Concat(tokens.Skip(1).Take(3)) + "." + tokens[5]))
             {
                 // PostgreSQL initializes a new nullable column to NULL already. Avoid firing UPDATE triggers.
+                // FreeSql also emits implicit '{}' or '[]' JSONB backfills without a declared SQL default.
                 continue;
             }
 
@@ -251,7 +259,7 @@ internal static class DevelopmentSchemaAssessor
         accepted.Append(removed);
         accepted.Append(
             await PersistenceSerialSequence.CompareAsync(database, entityTypes, cancellationToken)
-                                           .ConfigureAwait(false)
+                .ConfigureAwait(false)
         );
 
         return new(accepted.ToString(), requiresReview, hasExistingTables);
@@ -342,7 +350,9 @@ internal static class DevelopmentSchemaAssessor
     }
 
     private static bool DefaultsMatch(string? declared, string? actual)
-        => NormalizeDefault(declared).SequenceEqual(NormalizeDefault(actual));
+    {
+        return NormalizeDefault(declared).SequenceEqual(NormalizeDefault(actual));
+    }
 
     private static string[] NormalizeDefault(string? value)
     {
@@ -399,45 +409,47 @@ internal static class DevelopmentSchemaAssessor
 
         return IsPlainNullableType(prefix.ToArray()) &&
                (value is "TRUE" or "FALSE" || value.All(char.IsAsciiDigit) || value.StartsWith('\''))
-                   ? value
-                   : null;
+            ? value
+            : null;
     }
 
     private static bool IsPlainNullableType(string[] tokens)
     {
         if (tokens.Length == 0 ||
             tokens[0] is not ("INT2" or
-                              "INT4" or
-                              "INT8" or
-                              "SMALLINT" or
-                              "INTEGER" or
-                              "BIGINT" or
-                              "BOOL" or
-                              "BOOLEAN" or
-                              "VARCHAR" or
-                              "CHAR" or
-                              "TEXT" or
-                              "TIMESTAMP" or
-                              "TIMESTAMPTZ" or
-                              "DATE" or
-                              "TIME" or
-                              "NUMERIC" or
-                              "DECIMAL" or
-                              "FLOAT4" or
-                              "FLOAT8" or
-                              "REAL" or
-                              "UUID" or
-                              "BYTEA" or
-                              "JSON" or
-                              "JSONB"))
+                "INT4" or
+                "INT8" or
+                "SMALLINT" or
+                "INTEGER" or
+                "BIGINT" or
+                "BOOL" or
+                "BOOLEAN" or
+                "VARCHAR" or
+                "CHAR" or
+                "TEXT" or
+                "TIMESTAMP" or
+                "TIMESTAMPTZ" or
+                "DATE" or
+                "TIME" or
+                "NUMERIC" or
+                "DECIMAL" or
+                "FLOAT4" or
+                "FLOAT8" or
+                "REAL" or
+                "UUID" or
+                "BYTEA" or
+                "JSON" or
+                "JSONB"))
         {
             return false;
         }
 
         return tokens.Skip(1)
-                     .All(token => token is "(" or ")" or "," or "[" or "]" or "NULL" || token.All(char.IsAsciiDigit));
+            .All(token => token is "(" or ")" or "," or "[" or "]" or "NULL" || token.All(char.IsAsciiDigit));
     }
 
     private static string Quote(string identifier)
-        => '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
+    {
+        return '"' + identifier.Replace("\"", "\"\"", StringComparison.Ordinal) + '"';
+    }
 }

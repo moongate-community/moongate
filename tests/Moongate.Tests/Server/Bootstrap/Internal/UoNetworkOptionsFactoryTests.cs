@@ -1,5 +1,8 @@
 using System.Net;
 using Moongate.Core.Utils;
+using Moongate.Network.Client;
+using Moongate.Network.Interfaces.Middleware;
+using Moongate.Network.Packets.Registry;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Network.Framing;
@@ -24,7 +27,7 @@ public sealed class UoNetworkOptionsFactoryTests
         {
             Network = new() { ListenAddress = "127.0.0.1", GamePort = 2594 }
         };
-        var options = UoNetworkOptionsFactory.CreateGame(config);
+        var options = UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, []);
         Assert.Equal(new(IPAddress.Loopback, 2594), Assert.Single(options.Endpoints));
         var first = options.ConnectionPipelineFactory!();
         var second = options.ConnectionPipelineFactory();
@@ -39,7 +42,7 @@ public sealed class UoNetworkOptionsFactoryTests
         {
             Network = new() { ListenAddress = "0.0.0.0", GamePort = 2593 }
         };
-        var options = UoNetworkOptionsFactory.CreateGame(config);
+        var options = UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, []);
         Assert.Equal(NetworkUtils.GetLocalIpAddresses(), options.Endpoints.Select(endpoint => endpoint.Address));
         Assert.All(options.Endpoints, endpoint => Assert.Equal(2593, endpoint.Port));
     }
@@ -52,8 +55,8 @@ public sealed class UoNetworkOptionsFactoryTests
             Network = new() { ListenAddress = "0.0.0.0", LoginPort = 4000, GamePort = 5000 }
         };
 
-        var login = UoNetworkOptionsFactory.CreateLogin(config);
-        var game = UoNetworkOptionsFactory.CreateGame(config);
+        var login = UoNetworkOptionsFactory.CreateLogin(config, PacketRegistry.Default);
+        var game = UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, []);
         var addresses = NetworkUtils.GetLocalIpAddresses();
 
         Assert.Equal(addresses, login.Endpoints.Select(endpoint => endpoint.Address));
@@ -62,5 +65,33 @@ public sealed class UoNetworkOptionsFactoryTests
         Assert.All(game.Endpoints, endpoint => Assert.Equal(5000, endpoint.Port));
         Assert.IsType<UoPacketFramer>(login.ConnectionPipelineFactory!().Framer);
         Assert.IsType<GameSeedFramer>(game.ConnectionPipelineFactory!().Framer);
+    }
+
+    [Fact]
+    public void Create_GameAttachesTheGivenMiddlewaresAndLoginAttachesNone()
+    {
+        var config = new MoongateServerConfig
+        {
+            Network = new() { ListenAddress = "127.0.0.1" }
+        };
+        var middleware = new PassThroughMiddleware();
+
+        var game = UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, [middleware]);
+        var login = UoNetworkOptionsFactory.CreateLogin(config, PacketRegistry.Default);
+
+        Assert.Same(middleware, Assert.Single(game.ConnectionPipelineFactory!().Middlewares!));
+        Assert.Null(login.ConnectionPipelineFactory!().Middlewares);
+    }
+
+    private sealed class PassThroughMiddleware : INetMiddleware
+    {
+        public ValueTask<ReadOnlyMemory<byte>> ProcessAsync(
+            MoongateTcpClient? client,
+            ReadOnlyMemory<byte> data,
+            CancellationToken cancellationToken = default
+        )
+        {
+            return ValueTask.FromResult(data);
+        }
     }
 }

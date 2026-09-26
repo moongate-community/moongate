@@ -5,106 +5,113 @@ using Moongate.Ultima.Types;
 namespace Moongate.Ultima.Tiles;
 
 /// <summary>
-/// Represents item tile data.
-/// <seealso cref="TileData" />
-/// <seealso cref="LandData" />
+///     Represents item tile data.
+///     <seealso cref="TileData" />
+///     <seealso cref="LandData" />
 /// </summary>
 public struct ItemData
 {
     /// <summary>
-    /// Gets the name of this item.
+    ///     Gets the name of this item.
     /// </summary>
     public string Name { get; set; }
 
     /// <summary>
-    /// Gets the animation body index of this item.
-    /// <seealso cref="Moongate.Ultima.Animation.Animations" />
+    ///     Gets the animation body index of this item.
+    ///     <seealso cref="Moongate.Ultima.Animation.Animations" />
     /// </summary>
     public short Animation { get; set; }
 
     /// <summary>
-    /// Gets a bitfield representing the 32 individual flags of this item.
-    /// <seealso cref="TileFlagType" />
+    ///     Gets a bitfield representing the 32 individual flags of this item.
+    ///     <seealso cref="TileFlagType" />
     /// </summary>
     public TileFlagType Flags { get; set; }
 
     /// <summary>
-    /// Whether or not this item is flagged as '<see cref="TileFlagType.Background" />'.
-    /// <seealso cref="TileFlagType" />
+    ///     Whether or not this item is flagged as '<see cref="TileFlagType.Background" />'.
+    ///     <seealso cref="TileFlagType" />
     /// </summary>
     public bool Background => (Flags & TileFlagType.Background) != 0;
 
     /// <summary>
-    /// Whether or not this item is flagged as '<see cref="TileFlagType.Bridge" />'.
-    /// <seealso cref="TileFlagType" />
+    ///     Whether or not this item is flagged as '<see cref="TileFlagType.Bridge" />'.
+    ///     <seealso cref="TileFlagType" />
     /// </summary>
     public bool Bridge => (Flags & TileFlagType.Bridge) != 0;
 
     /// <summary>
-    /// Whether or not this item is flagged as '<see cref="TileFlagType.Impassable" />'.
-    /// <seealso cref="TileFlagType" />
+    ///     Whether or not this item is flagged as '<see cref="TileFlagType.Impassable" />'.
+    ///     <seealso cref="TileFlagType" />
     /// </summary>
     public bool Impassable => (Flags & TileFlagType.Impassable) != 0;
 
     /// <summary>
-    /// Whether or not this item is flagged as '<see cref="TileFlagType.Surface" />'.
-    /// <seealso cref="TileFlagType" />
+    ///     Whether or not this item is flagged as '<see cref="TileFlagType.Surface" />'.
+    ///     <seealso cref="TileFlagType" />
     /// </summary>
     public bool Surface => (Flags & TileFlagType.Surface) != 0;
 
     /// <summary>
-    /// Gets the weight of this item.
+    ///     Gets the weight of this item.
     /// </summary>
     public byte Weight { get; set; }
 
     /// <summary>
-    /// Gets the 'quality' of this item. For wearable items, this will be the layer.
+    ///     Gets the 'quality' of this item. For wearable items, this will be the layer.
     /// </summary>
     public byte Quality { get; set; }
 
     /// <summary>
-    /// Gets the 'quantity' of this item.
+    ///     Gets the 'quantity' of this item.
     /// </summary>
     public byte Quantity { get; set; }
 
     /// <summary>
-    /// Gets the 'value' of this item.
+    ///     Gets the 'value' of this item.
     /// </summary>
     public byte Value { get; set; }
 
     /// <summary>
-    /// Gets the Hue of this item.
+    ///     Gets the Hue of this item.
     /// </summary>
     public byte Hue { get; set; }
 
     /// <summary>
-    /// Gets the stackingOffset of this item. (If flag Generic)
+    ///     Gets the stackingOffset of this item. (If flag Generic)
     /// </summary>
     public byte StackingOffset { get; set; }
 
     /// <summary>
-    /// Gets the height of this item.
+    ///     Gets the height of this item.
     /// </summary>
     public byte Height { get; set; }
 
     /// <summary>
-    /// Gets the MiscData of this item. (old UO Demo weapon template definition) (Unk1)
+    ///     Gets the MiscData of this item. (old UO Demo weapon template definition) (Unk1)
     /// </summary>
     public short MiscData { get; set; }
 
     /// <summary>
-    /// Gets the unk2 of this item.
+    ///     Gets the unk2 of this item.
     /// </summary>
     public byte Unk2 { get; set; }
 
     /// <summary>
-    /// Gets the unk3 of this item.
+    ///     Gets the unk3 of this item.
     /// </summary>
     public byte Unk3 { get; set; }
 
     /// <summary>
-    /// Gets the 'calculated height' of this item. For <see cref="Bridge">bridges</see>, this will be:
-    /// <c>(<see cref="Height" /> / 2)</c>.
+    ///     Gets the 'calculated height' of this item. For
+    ///     <see cref="Bridge">
+    ///         bridges
+    ///     </see>
+    ///     , this will be:
+    ///     <c>
+    ///         (<see cref="Height" /> / 2)
+    ///     </c>
+    ///     .
     /// </summary>
     public int CalcHeight
     {
@@ -120,8 +127,8 @@ public struct ItemData
     }
 
     /// <summary>
-    /// Whether or not this item is wearable as '<see cref="TileFlagType.Wearable" />'.
-    /// <seealso cref="TileFlagType" />
+    ///     Whether or not this item is wearable as '<see cref="TileFlagType.Wearable" />'.
+    ///     <seealso cref="TileFlagType" />
     /// </summary>
     public bool Wearable => (Flags & TileFlagType.Wearable) != 0;
 

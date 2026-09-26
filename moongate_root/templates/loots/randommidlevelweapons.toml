@@ -1,0 +1,110 @@
+[[loot]]
+id = "randommidlevelweapons"
+[[loot.entries]]
+weight = 2230
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x0f5d"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x13fd"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x143b"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x0f50"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x1441"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x13ba"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x13b2"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x1407"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x13b0"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x0f4a"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x13f9"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x0f46"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x13b6"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x0f48"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x13fb"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x0f5f"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x0f4e"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x1443"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x0df1"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x1405"
+amount = 1
+
+[[loot.entries]]
+weight = 185
+item_id = "0x1439"
+amount = 1

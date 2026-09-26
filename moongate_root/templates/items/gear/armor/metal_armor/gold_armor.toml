@@ -1,0 +1,232 @@
+[[item]]
+id = "0x13f2_g"
+item_id = 5106
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13ed_g"
+item_id = 5101
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13ef_g"
+item_id = 5103
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13f1_g"
+item_id = 5105
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13c0_g"
+item_id = 5056
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13c3_g"
+item_id = 5059
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13c4_g"
+item_id = 5060
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c05_g"
+item_id = 7173
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1417_g"
+item_id = 5143
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x141a_g"
+item_id = 5146
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1418_g"
+item_id = 5144
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1416_g"
+item_id = 5142
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27c2_g"
+item_id = 10178
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27c3_g"
+item_id = 10179
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27c8_g"
+item_id = 10184
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27cb_g"
+item_id = 10187
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27cc_g"
+item_id = 10188
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27cf_g"
+item_id = 10191
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27d0_g"
+item_id = 10192
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27d3_g"
+item_id = 10195
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27d4_g"
+item_id = 10196
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x236d_g"
+item_id = 9069
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27d8_g"
+item_id = 10200
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27c0_g"
+item_id = 10176
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27bf_g"
+item_id = 10175
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27c4_g"
+item_id = 10180
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1409_g"
+item_id = 5129
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x140b_g"
+base_id = "0x140b_g"
+item_id = 5131
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x140d_g"
+item_id = 5133
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x140f_g"
+item_id = 5135
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1419_g"
+item_id = 5145
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1b79_g"
+item_id = 7033
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1bc5_g"
+base_id = "0x1bc5_g"
+item_id = 7109
+rarity = "common"
+movable = false
+hue = 0

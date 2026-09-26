@@ -88,9 +88,8 @@ public sealed class PacketDispatchServiceTests
         var session = sessions.GetOrCreate(fixture.Client);
         var dispatcher = CreateDispatcher(fixture, sessions, container);
         await dispatcher.StartAsync();
-        await fixture.ExecuteOnLoopAsync(
-            () =>
-                Assert.True(dispatcher.DisconnectAsync(session.SessionId).IsCompletedSuccessfully)
+        await fixture.ExecuteOnLoopAsync(() =>
+            Assert.True(dispatcher.DisconnectAsync(session.SessionId).IsCompletedSuccessfully)
         );
         Assert.False(sessions.TryGet(session.SessionId, out _));
     }
@@ -131,16 +130,16 @@ public sealed class PacketDispatchServiceTests
         var observed = new TaskCompletionSource<int>(TaskCreationOptions.RunContinuationsAsynchronously);
         var sequences = new List<byte>();
         container.Resolve<RecordingPacketHandler>().OnPing = (actualSession, sequence) =>
-                                                             {
-                                                                 Assert.Same(session, actualSession);
-                                                                 Assert.True(fixture.Loop.IsOnLoopThread);
-                                                                 sequences.Add(sequence);
+        {
+            Assert.Same(session, actualSession);
+            Assert.True(fixture.Loop.IsOnLoopThread);
+            sequences.Add(sequence);
 
-                                                                 if (sequences.Count == 2)
-                                                                 {
-                                                                     observed.SetResult(Environment.CurrentManagedThreadId);
-                                                                 }
-                                                             };
+            if (sequences.Count == 2)
+            {
+                observed.SetResult(Environment.CurrentManagedThreadId);
+            }
+        };
         await dispatcher.StartAsync();
         var loopThreadId = 0;
         await fixture.ExecuteOnLoopAsync(() => loopThreadId = Environment.CurrentManagedThreadId);
@@ -169,6 +168,7 @@ public sealed class PacketDispatchServiceTests
         {
             Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket((byte)i)));
         }
+
         Assert.False(dispatcher.TryDispatch(session.SessionId, new PingPacket(99)));
         Assert.Equal(0, invoked);
         var cleanup = dispatcher.DisconnectAsync(session.SessionId);
@@ -247,5 +247,7 @@ public sealed class PacketDispatchServiceTests
         SessionService sessions,
         Container container
     )
-        => new(fixture.Loop, sessions, container.Resolve<PacketHandlerRegistry>(), container);
+    {
+        return new(fixture.Loop, sessions, container.Resolve<PacketHandlerRegistry>(), container);
+    }
 }

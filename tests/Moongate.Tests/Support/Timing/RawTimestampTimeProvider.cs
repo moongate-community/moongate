@@ -1,6 +1,8 @@
 namespace Moongate.Tests.Support.Timing;
 
-/// <summary>A monotonic clock advanced directly in provider units for sub-TimeSpan-tick boundary tests.</summary>
+/// <summary>
+///     A monotonic clock advanced directly in provider units for sub-TimeSpan-tick boundary tests.
+/// </summary>
 public sealed class RawTimestampTimeProvider : TimeProvider
 {
     private long _timestamp;
@@ -27,5 +29,7 @@ public sealed class RawTimestampTimeProvider : TimeProvider
     }
 
     public override long GetTimestamp()
-        => Interlocked.Read(ref _timestamp);
+    {
+        return Interlocked.Read(ref _timestamp);
+    }
 }

@@ -1,0 +1,8 @@
+[[item]]
+id = "base_map"
+base_id = "0x14ec_blank_map"
+item_id = 5356
+name = "map"
+rarity = "common"
+movable = false
+hue = 0

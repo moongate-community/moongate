@@ -8,19 +8,29 @@ using Moongate.Persistence.Migrations.Types.Migrations;
 
 namespace Moongate.Persistence.Migrations.Services;
 
-/// <summary>Discovers versioned core and plugin SQL without loading plugin assemblies.</summary>
+/// <summary>
+///     Discovers versioned core and plugin SQL without loading plugin assemblies.
+/// </summary>
 public sealed partial class MigrationCatalog
 {
-    /// <summary>Gets the database target shared by every script.</summary>
+    /// <summary>
+    ///     Gets the database target shared by every script.
+    /// </summary>
     public MigrationTarget Target { get; }
 
-    /// <summary>Gets core scripts first, then plugins by stable ID, with ascending component sequences.</summary>
+    /// <summary>
+    ///     Gets core scripts first, then plugins by stable ID, with ascending component sequences.
+    /// </summary>
     public IReadOnlyList<MigrationScript> Scripts { get; }
 
-    /// <summary>Gets installed components, including those with no SQL for this target.</summary>
+    /// <summary>
+    ///     Gets installed components, including those with no SQL for this target.
+    /// </summary>
     public IReadOnlySet<string> Components { get; }
 
-    /// <summary>Gets the absolute migrations root for each installed component.</summary>
+    /// <summary>
+    ///     Gets the absolute migrations root for each installed component.
+    /// </summary>
     public IReadOnlyDictionary<string, string> SourceDirectories { get; }
 
     private MigrationCatalog(
@@ -36,7 +46,9 @@ public sealed partial class MigrationCatalog
         Components = components.ToFrozenSet(StringComparer.Ordinal);
     }
 
-    /// <summary>Reads a required core directory and optional plugin bundles into an immutable catalog.</summary>
+    /// <summary>
+    ///     Reads a required core directory and optional plugin bundles into an immutable catalog.
+    /// </summary>
     public static MigrationCatalog Load(string directory, string? pluginsDirectory, MigrationTarget target)
     {
         if (!Enum.IsDefined(target))
@@ -73,8 +85,8 @@ public sealed partial class MigrationCatalog
                 using var manifest = JsonDocument.Parse(File.ReadAllText(manifestPath));
                 var id = manifest.RootElement.TryGetProperty("id", out var property) &&
                          property.ValueKind == JsonValueKind.String
-                             ? property.GetString()
-                             : null;
+                    ? property.GetString()
+                    : null;
 
                 if (id is null || !ComponentPattern().IsMatch(id) || !components.Add(id))
                 {
@@ -142,8 +154,8 @@ public sealed partial class MigrationCatalog
             }
 
             var sql = new UTF8Encoding(false, true).GetString(File.ReadAllBytes(file))
-                                                   .TrimStart('\uFEFF')
-                                                   .Replace("\r\n", "\n", StringComparison.Ordinal);
+                .TrimStart('\uFEFF')
+                .Replace("\r\n", "\n", StringComparison.Ordinal);
 
             if (string.IsNullOrWhiteSpace(sql))
             {

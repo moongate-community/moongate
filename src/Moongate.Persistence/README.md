@@ -124,8 +124,17 @@ functions must deep-copy nested mutable state. An absent entity is retained; del
 FreeSql can generate ordinary additive schema DDL. Use `OldName` for supported renames, and write explicit reviewed SQL for
 semantic data transformations. Downgrades are operator-managed. This package does not create database backups.
 
-Map every complex property explicitly with a supported column/navigation mapping or mark it for explicit omission, such as
-`IsIgnore`. Do not assume an ordinary writable object graph is serialized or cascaded automatically.
+Custom objects and `List<T>` can use `[JsonMap, Column(DbType = "jsonb", IsNullable = true)]`
+from `FreeSql.DataAnnotations`. This package includes and enables `FreeSql.Extensions.JsonMap`
+for both targets, using Newtonsoft.Json. With default settings, JSON members retain their
+C# names; the SQL column name still follows snake_case. Empty lists round-trip as `[]`,
+nullable properties as SQL `NULL`. Upserts replace the complete JSON value and reads remain
+detached. World-save snapshots must deep-copy collections and their mutable elements.
+See the [JSONB tutorial](https://moongate.sh/server/persistence-entity-tutorial/#7-store-custom-values-as-jsonb).
+
+Other complex properties still need a supported column/navigation mapping or explicit
+omission with `IsIgnore`. An unannotated object graph is not serialized or cascaded
+implicitly. JSON payload changes do not automatically migrate existing documents.
 
 Mappings are immutable, attribute-only, and identical for a persistence CLR type everywhere. Modules select ownership and
 target; they do not remap types. Do not independently reconfigure these types through another raw FreeSql instance. FreeSql

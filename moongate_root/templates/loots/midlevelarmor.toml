@@ -1,0 +1,90 @@
+[[loot]]
+id = "midlevelarmor"
+[[loot.entries]]
+weight = 2860
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13ed"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13ef"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13ef"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13f1"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13f2"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13f2"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13f2"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13c0"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13c0"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13c3"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x13c4"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x1409"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x140b"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x140d"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x140f"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x1b75"
+amount = 1
+
+[[loot.entries]]
+weight = 204
+item_id = "0x1b79"
+amount = 1

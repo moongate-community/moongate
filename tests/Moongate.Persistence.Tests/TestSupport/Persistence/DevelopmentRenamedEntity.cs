@@ -10,6 +10,5 @@ internal sealed class DevelopmentRenamedEntity : IMoongateEntity
     [Column(IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
 
-    [Column(OldName = "old_level")]
-    public int? Level { get; set; }
+    [Column(OldName = "old_level")] public int? Level { get; set; }
 }

@@ -17,9 +17,9 @@ public sealed class AdminAccountsGrpcService : AdminAccounts.AdminAccountsBase
     public override async Task<AccountSummary> CreateAccount(CreateAccountRequest request, ServerCallContext context)
     {
         var result = await _accounts.CreateAccountAsync(
-                         AdminAccountMapper.ToCreateOptions(request),
-                         context.CancellationToken
-                     );
+            AdminAccountMapper.ToCreateOptions(request),
+            context.CancellationToken
+        );
         var response = AdminAccountMapper.ToCreateResponse(result);
         context.GetHttpContext().Items["AdminTargetId"] = response.AccountId;
 
@@ -32,11 +32,12 @@ public sealed class AdminAccountsGrpcService : AdminAccounts.AdminAccountsBase
         {
             throw new RpcException(new(StatusCode.InvalidArgument, "Page size cannot exceed 200."));
         }
+
         var page = await _accounts.ListAccountsPageAsync(
-                       new(request.AfterAccountId),
-                       request.PageSize == 0 ? 50 : (int)request.PageSize,
-                       context.CancellationToken
-                   );
+            new(request.AfterAccountId),
+            request.PageSize == 0 ? 50 : (int)request.PageSize,
+            context.CancellationToken
+        );
         var response = new ListAccountsResponse { NextAfterAccountId = page.NextAfterId.Value };
         response.Accounts.AddRange(page.Items.Select(AdminAccountMapper.ToSummary));
 

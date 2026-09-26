@@ -1,0 +1,71 @@
+[[item]]
+id = "horse_statue"
+base_id = "base_item"
+item_id = 8480
+name = "horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ostard_statue"
+base_id = "base_item"
+item_id = 8501
+name = "random ostard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ostard_statue_desert"
+base_id = "ostard_statue"
+item_id = 8501
+name = "desert ostard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ostard_statue_forest"
+base_id = "ostard_statue"
+item_id = 8503
+name = "forest ostard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ostard_statue_frenzied"
+base_id = "ostard_statue"
+item_id = 8502
+name = "frenzied ostard"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "llama_statue"
+base_id = "base_item"
+item_id = 8438
+name = "llama"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pack_horse_statue"
+base_id = "base_item"
+item_id = 8486
+name = "pack horse"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "pack_llama_statue"
+base_id = "base_item"
+item_id = 8487
+name = "pack llama"
+rarity = "common"
+movable = false
+hue = 0

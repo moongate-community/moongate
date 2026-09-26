@@ -25,6 +25,9 @@
     <ItemGroup>
         <Content Include="../../migrations/**/*" Link="migrations/%(RecursiveDir)%(Filename)%(Extension)"
                  CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"/>
+        <!-- mgboot copies these into <root>/data; the game and standalone loaders need them. -->
+        <Content Include="../../moongate_root/data/**/*" Link="data/%(RecursiveDir)%(Filename)%(Extension)"
+                 CopyToOutputDirectory="PreserveNewest" CopyToPublishDirectory="PreserveNewest"/>
     </ItemGroup>
 
     <!-- These travel with the binaries: the AGPL asks for the licence to be conveyed

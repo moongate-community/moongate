@@ -4,7 +4,9 @@ using Tomlyn.Serialization;
 
 namespace Moongate.Core.Serialization.Toml;
 
-/// <summary>Reads and writes a <see cref="RangeValueSpec{T}" /> as the text or bare number it documents.</summary>
+/// <summary>
+///     Reads and writes a <see cref="RangeValueSpec{T}" /> as the text or bare number it documents.
+/// </summary>
 public sealed class RangeValueSpecTomlConverter<T> : TomlConverter<RangeValueSpec<T>> where T : struct, INumber<T>
 {
     /// <inheritdoc />

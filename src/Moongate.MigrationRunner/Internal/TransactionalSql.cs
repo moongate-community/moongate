@@ -23,17 +23,17 @@ internal static class TransactionalSql
             var keyword = sql[..end].ToString().ToUpperInvariant();
 
             if (keyword is "BEGIN" or
-                           "START" or
-                           "COMMIT" or
-                           "END" or
-                           "ROLLBACK" or
-                           "ABORT" or
-                           "SAVEPOINT" or
-                           "RELEASE" or
-                           "PREPARE" or
-                           "SET" or
-                           "RESET" or
-                           "DISCARD")
+                "START" or
+                "COMMIT" or
+                "END" or
+                "ROLLBACK" or
+                "ABORT" or
+                "SAVEPOINT" or
+                "RELEASE" or
+                "PREPARE" or
+                "SET" or
+                "RESET" or
+                "DISCARD")
             {
                 throw new InvalidOperationException(
                     $"Migration '{script.Name}' contains transaction or session control. Migrations must run inside the runner transaction."

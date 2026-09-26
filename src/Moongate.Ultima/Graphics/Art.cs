@@ -47,22 +47,31 @@ public static class Art
     }
 
     public static int GetIdxLength()
-        => (int)(_fileIndex.IdxLength / 12);
+    {
+        return (int)(_fileIndex.IdxLength / 12);
+    }
 
     /// <summary>
-    /// Returns Bitmap of LandTile (with Cache)
+    ///     Returns Bitmap of LandTile (with Cache)
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UltimaBitmap GetLand(int index)
-        => GetLand(index, out _);
+    {
+        return GetLand(index, out _);
+    }
 
     /// <summary>
-    /// Returns Bitmap of LandTile (with Cache) and verdata bool
+    ///     Returns Bitmap of LandTile (with Cache) and verdata bool
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="patched"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <param name="patched">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UltimaBitmap GetLand(int index, out bool patched)
     {
         index &= 0x3FFF;
@@ -183,21 +192,30 @@ public static class Art
     }
 
     /// <summary>
-    /// Returns Bitmap of Static (with Cache)
+    ///     Returns Bitmap of Static (with Cache)
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="checkMaxId"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <param name="checkMaxId">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UltimaBitmap GetStatic(int index, bool checkMaxId = true)
-        => GetStatic(index, out _, checkMaxId);
+    {
+        return GetStatic(index, out _, checkMaxId);
+    }
 
     /// <summary>
-    /// Returns Bitmap of Static (with Cache) and verdata bool
+    ///     Returns Bitmap of Static (with Cache) and verdata bool
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="patched"></param>
-    /// <param name="checkMaxId"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <param name="patched">
+    /// </param>
+    /// <param name="checkMaxId">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UltimaBitmap GetStatic(int index, out bool patched, bool checkMaxId = true)
     {
         index = GetLegalItemId(index, checkMaxId);
@@ -243,13 +261,17 @@ public static class Art
     }
 
     public static bool IsUOAHS()
-        => GetIdxLength() >= 0x13FDC;
+    {
+        return GetIdxLength() >= 0x13FDC;
+    }
 
     /// <summary>
-    /// Tests if LandTile is defined
+    ///     Tests if LandTile is defined
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool IsValidLand(int index)
     {
         index &= 0x3FFF;
@@ -268,10 +290,12 @@ public static class Art
     }
 
     /// <summary>
-    /// Tests if Static is defined (width and height check)
+    ///     Tests if Static is defined (width and height check)
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool IsValidStatic(int index)
     {
         index = GetLegalItemId(index);
@@ -374,7 +398,7 @@ public static class Art
     }
 
     /// <summary>
-    /// ReReads Art.mul
+    ///     ReReads Art.mul
     /// </summary>
     public static void Reload()
     {
@@ -389,9 +413,10 @@ public static class Art
     }
 
     /// <summary>
-    /// Removes Land index <see cref="_removed" />
+    ///     Removes Land index <see cref="_removed" />
     /// </summary>
-    /// <param name="index"></param>
+    /// <param name="index">
+    /// </param>
     public static void RemoveLand(int index)
     {
         index &= 0x3FFF;
@@ -400,9 +425,10 @@ public static class Art
     }
 
     /// <summary>
-    /// Removes Static index <see cref="_removed" />
+    ///     Removes Static index <see cref="_removed" />
     /// </summary>
-    /// <param name="index"></param>
+    /// <param name="index">
+    /// </param>
     public static void RemoveStatic(int index)
     {
         index = GetLegalItemId(index);
@@ -412,10 +438,12 @@ public static class Art
     }
 
     /// <summary>
-    /// Sets bmp of index in <see cref="_replaced" /> of Land
+    ///     Sets bmp of index in <see cref="_replaced" /> of Land
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="bmp"></param>
+    /// <param name="index">
+    /// </param>
+    /// <param name="bmp">
+    /// </param>
     public static void ReplaceLand(int index, UltimaBitmap bmp)
     {
         index &= 0x3FFF;
@@ -429,11 +457,15 @@ public static class Art
     }
 
     /// <summary>
-    /// Sets bmp of index in <see cref="_cache" /> of Static
+    ///     Sets bmp of index in <see cref="_cache" /> of Static
     /// </summary>
-    /// <param name="index"></param>
-    /// <param name="bmp"></param>
-    /// <exception cref="ArgumentException">Thrown when the bitmap is too large for the MUL format</exception>
+    /// <param name="index">
+    /// </param>
+    /// <param name="bmp">
+    /// </param>
+    /// <exception cref="ArgumentException">
+    ///     Thrown when the bitmap is too large for the MUL format
+    /// </exception>
     public static void ReplaceStatic(int index, UltimaBitmap bmp)
     {
         index = GetLegalItemId(index);
@@ -458,9 +490,10 @@ public static class Art
     }
 
     /// <summary>
-    /// Saves mul
+    ///     Saves mul
     /// </summary>
-    /// <param name="path"></param>
+    /// <param name="path">
+    /// </param>
     public static unsafe void Save(string path)
     {
         _landImageData = new();
@@ -484,8 +517,8 @@ public static class Art
             // GetLand / GetStatic transparently check _replaced
             // first, then the LRU cache, then decode from disk.
             var bmp = index < 0x4000
-                          ? GetLand(index)
-                          : GetStatic(index - 0x4000, false);
+                ? GetLand(index)
+                : GetStatic(index - 0x4000, false);
 
             if (bmp == null || _removed[index])
             {
@@ -678,17 +711,19 @@ public static class Art
     }
 
     /// <summary>
-    /// Override the LRU cap for the Art read cache. Lower values bound
-    /// the working set on memory-constrained machines at the cost of
-    /// more re-decodes during long browsing sessions.
+    ///     Override the LRU cap for the Art read cache. Lower values bound
+    ///     the working set on memory-constrained machines at the cost of
+    ///     more re-decodes during long browsing sessions.
     /// </summary>
     public static void SetCacheCapacity(int capacity)
-        => _cache.SetCapacity(capacity);
+    {
+        _cache.SetCapacity(capacity);
+    }
 
     /// <summary>
-    /// Decodes a land tile into a caller-supplied 44x44 ushort buffer
-    /// (16bppArgb1555). All land tiles are 44x44 so dimensions are fixed.
-    /// `destination` must be at least 44*44 = 1936 ushorts.
+    ///     Decodes a land tile into a caller-supplied 44x44 ushort buffer
+    ///     (16bppArgb1555). All land tiles are 44x44 so dimensions are fixed.
+    ///     `destination` must be at least 44*44 = 1936 ushorts.
     /// </summary>
     public static unsafe bool TryGetLandPixels(int index, Span<ushort> destination, out bool patched)
     {
@@ -770,8 +805,8 @@ public static class Art
     }
 
     /// <summary>
-    /// Returns the dimensions of a static without decoding pixel data.
-    /// Land tiles are always 44x44 so no dimension query is needed for them.
+    ///     Returns the dimensions of a static without decoding pixel data.
+    ///     Land tiles are always 44x44 so no dimension query is needed for them.
     /// </summary>
     public static bool TryGetStaticDimensions(int index, out int width, out int height, bool checkMaxId = true)
     {
@@ -802,17 +837,17 @@ public static class Art
     }
 
     /// <summary>
-    /// Decodes a static into a caller-supplied pixel buffer (16bppArgb1555).
-    /// Lets the caller reuse one buffer across many decodes instead of
-    /// paying the per-call `new Bitmap(...)` + GDI handle + LockBits cost
-    /// that `GetStatic` does.
-    /// `destination` must be at least <paramref name="width" /> *
-    /// <paramref name="height" /> ushorts. Dimensions are populated in
-    /// out parameters even when the buffer is too small, so callers can
-    /// resize and retry.
-    /// Cache semantics: does not touch _cache. Every call decodes from
-    /// disk. Pair with TryGetStaticDimensions if you need to size the
-    /// buffer first.
+    ///     Decodes a static into a caller-supplied pixel buffer (16bppArgb1555).
+    ///     Lets the caller reuse one buffer across many decodes instead of
+    ///     paying the per-call `new Bitmap(...)` + GDI handle + LockBits cost
+    ///     that `GetStatic` does.
+    ///     `destination` must be at least <paramref name="width" /> *
+    ///     <paramref name="height" /> ushorts. Dimensions are populated in
+    ///     out parameters even when the buffer is too small, so callers can
+    ///     resize and retry.
+    ///     Cache semantics: does not touch _cache. Every call decodes from
+    ///     disk. Pair with TryGetStaticDimensions if you need to size the
+    ///     buffer first.
     /// </summary>
     public static unsafe bool TryGetStaticPixels(
         int index,
@@ -923,16 +958,22 @@ public static class Art
     }
 
     /// <summary>
-    /// Validates if a static bitmap will fit within the MUL format limits by computing
-    /// the exact encoded size. The format uses 16-bit lookup table offsets, limiting total
-    /// encoded data to 65,535 ushorts. A pixel is considered opaque when its alpha bit
-    /// (0x8000) is set in 16bppArgb1555 — callers that want pure-black/white treated as
-    /// transparent must run the bitmap through Utils.ConvertBmp first (mirrors the save path).
-    /// Per-row encoded cost: 2 ushorts header per opaque run + 1 ushort per opaque pixel + 2 end markers.
+    ///     Validates if a static bitmap will fit within the MUL format limits by computing
+    ///     the exact encoded size. The format uses 16-bit lookup table offsets, limiting total
+    ///     encoded data to 65,535 ushorts. A pixel is considered opaque when its alpha bit
+    ///     (0x8000) is set in 16bppArgb1555 — callers that want pure-black/white treated as
+    ///     transparent must run the bitmap through Utils.ConvertBmp first (mirrors the save path).
+    ///     Per-row encoded cost: 2 ushorts header per opaque run + 1 ushort per opaque pixel + 2 end markers.
     /// </summary>
-    /// <param name="bmp">The bitmap to validate</param>
-    /// <param name="estimatedSize">Encoded size in ushorts (output)</param>
-    /// <returns>True if the image fits, false if it exceeds limits</returns>
+    /// <param name="bmp">
+    ///     The bitmap to validate
+    /// </param>
+    /// <param name="estimatedSize">
+    ///     Encoded size in ushorts (output)
+    /// </param>
+    /// <returns>
+    ///     True if the image fits, false if it exceeds limits
+    /// </returns>
     public static unsafe bool ValidateStaticSize(UltimaBitmap bmp, out int estimatedSize)
     {
         estimatedSize = 0;

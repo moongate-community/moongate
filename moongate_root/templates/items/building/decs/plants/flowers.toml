@@ -1,0 +1,351 @@
+[[item]]
+id = "0xc37_flowers"
+item_id = 3127
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc38_flowers"
+item_id = 3128
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc3b_dried_flowers"
+item_id = 3131
+name = "dried flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc3c_dried_flowers"
+item_id = 3132
+name = "dried flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc3d_dried_flowers"
+item_id = 3133
+name = "dried flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc3e_dried_flowers"
+item_id = 3134
+name = "dried flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc3f_dried_flowers"
+item_id = 3135
+name = "dried flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc40_dried_flowers"
+item_id = 3136
+name = "dried flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc41_dried_flowers"
+item_id = 3137
+name = "dried flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc42_dried_flowers"
+item_id = 3138
+name = "dried flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc45_flowers"
+item_id = 3141
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc46_flowers"
+item_id = 3142
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc47_flowers"
+item_id = 3143
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc48_flowers"
+item_id = 3144
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc49_flowers"
+item_id = 3145
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc4a_flowers"
+item_id = 3146
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc4b_flowers"
+item_id = 3147
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc4c_flowers"
+item_id = 3148
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc4d_flowers"
+item_id = 3149
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc4e_flowers"
+item_id = 3150
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc83_campion_flowers"
+item_id = 3203
+name = "campion flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc84_foxglove_flowers"
+item_id = 3204
+name = "foxglove flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc85_orfluer_flowers"
+item_id = 3205
+name = "orfluer flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc86_red_poppies"
+item_id = 3206
+name = "red poppies"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc87_campion_flowers"
+item_id = 3207
+name = "campion flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc88_snowdrops"
+item_id = 3208
+name = "snowdrops"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc89_campion_flowers"
+item_id = 3209
+name = "campion flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc8a_foxglove_flowers"
+item_id = 3210
+name = "foxglove flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc8b_white_flowers"
+item_id = 3211
+name = "white flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc8c_white_flowers"
+item_id = 3212
+name = "white flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc8d_white_poppies"
+item_id = 3213
+name = "white poppies"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xc8e_snowdrops"
+item_id = 3214
+name = "snowdrops"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcbe_poppies"
+item_id = 3262
+name = "poppies"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcbf_poppies"
+item_id = 3263
+name = "poppies"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcc0_orfluer_flowers"
+item_id = 3264
+name = "orfluer flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xcc1_orfluer_flowers"
+item_id = 3265
+name = "orfluer flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd29_flowers"
+item_id = 3369
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd2b_flowers"
+item_id = 3371
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd2d_flowers"
+item_id = 3373
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd2f_flowers"
+item_id = 3375
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xd36_flowers"
+item_id = 3382
+name = "flowers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11ca_flowerpot"
+item_id = 4554
+name = "flowerpot"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11cb_flowerpot"
+item_id = 4555
+name = "flowerpot"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x11cc_flowerpot"
+item_id = 4556
+name = "flowerpot"
+rarity = "common"
+movable = false
+hue = 0

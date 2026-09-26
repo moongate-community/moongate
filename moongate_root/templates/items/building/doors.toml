@@ -1,0 +1,1927 @@
+[[item]]
+id = "0x0334_#"
+item_id = 820
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0336_#"
+item_id = 822
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0338_#"
+item_id = 824
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x033a_#"
+item_id = 826
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x033c_#"
+item_id = 828
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x033e_#"
+item_id = 830
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0340_#"
+item_id = 832
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0342_#"
+item_id = 834
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0344_#"
+item_id = 836
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0346_#"
+item_id = 838
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0348_#"
+item_id = 840
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x034a_#"
+item_id = 842
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x034c_#"
+item_id = 844
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x034e_#"
+item_id = 846
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0350_#"
+item_id = 848
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0352_#"
+item_id = 850
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00e8_#"
+item_id = 232
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00ea_#"
+item_id = 234
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00ec_#"
+item_id = 236
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00ee_#"
+item_id = 238
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00f0_#"
+item_id = 240
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00f2_#"
+item_id = 242
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00f4_#"
+item_id = 244
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x00f6_#"
+item_id = 246
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0314_#"
+item_id = 788
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0316_#"
+item_id = 790
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0318_dungeon_wall"
+item_id = 792
+name = "dungeon wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x031a_#"
+item_id = 794
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x031c_#"
+item_id = 796
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x031e_#"
+item_id = 798
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0320_#"
+item_id = 800
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0322_#"
+item_id = 802
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0324_#"
+item_id = 804
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0326_#"
+item_id = 806
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0328_#"
+item_id = 808
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x032a_#"
+item_id = 810
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x032c_stone_wall"
+item_id = 812
+name = "stone wall"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x032e_#"
+item_id = 814
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0330_#"
+item_id = 816
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0332_#"
+item_id = 818
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0354_#"
+item_id = 852
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0356_#"
+item_id = 854
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0358_#"
+item_id = 856
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x035a_#"
+item_id = 858
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x035c_#"
+item_id = 860
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x035e_#"
+item_id = 862
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0360_#"
+item_id = 864
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0362_#"
+item_id = 866
+name = "#"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0675_metal_door"
+item_id = 1653
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0676_metal_door"
+item_id = 1654
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0677_metal_door"
+item_id = 1655
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0678_metal_door"
+item_id = 1656
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0679_metal_door"
+item_id = 1657
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x067a_metal_door"
+item_id = 1658
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x067b_metal_door"
+item_id = 1659
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x067c_metal_door"
+item_id = 1660
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x067d_metal_door"
+item_id = 1661
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x067e_metal_door"
+item_id = 1662
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x067f_metal_door"
+item_id = 1663
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0680_metal_door"
+item_id = 1664
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0681_metal_door"
+item_id = 1665
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0682_metal_door"
+item_id = 1666
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0683_metal_door"
+item_id = 1667
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0684_metal_door"
+item_id = 1668
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c5_metal_door"
+item_id = 1733
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c6_metal_door"
+item_id = 1734
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c7_metal_door"
+item_id = 1735
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c8_metal_door"
+item_id = 1736
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c9_metal_door"
+item_id = 1737
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ca_metal_door"
+item_id = 1738
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06cb_metal_door"
+item_id = 1739
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06cc_metal_door"
+item_id = 1740
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06cd_metal_door"
+item_id = 1741
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ce_metal_door"
+item_id = 1742
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06cf_metal_door"
+item_id = 1743
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d0_metal_door"
+item_id = 1744
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d1_metal_door"
+item_id = 1745
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d2_metal_door"
+item_id = 1746
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d3_metal_door"
+item_id = 1747
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d4_metal_door"
+item_id = 1748
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0685_barred_metal_door"
+item_id = 1669
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0686_barred_metal_door"
+item_id = 1670
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0687_barred_metal_door"
+item_id = 1671
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0688_barred_metal_door"
+item_id = 1672
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0689_metal_door"
+item_id = 1673
+name = "metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x068a_barred_metal_door"
+item_id = 1674
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x068b_barred_metal_door"
+item_id = 1675
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x068c_barred_metal_door"
+item_id = 1676
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x068d_barred_metal_door"
+item_id = 1677
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x068e_barred_metal_door"
+item_id = 1678
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x068f_barred_metal_door"
+item_id = 1679
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0690_barred_metal_door"
+item_id = 1680
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0691_barred_metal_door"
+item_id = 1681
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0692_barred_metal_door"
+item_id = 1682
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0693_barred_metal_door"
+item_id = 1683
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0694_barred_metal_door"
+item_id = 1684
+name = "barred metal door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06f5_portcullis"
+item_id = 1781
+name = "portcullis"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06f6_portcullis"
+item_id = 1782
+name = "portcullis"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0695_rattan_door"
+item_id = 1685
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0696_rattan_door"
+item_id = 1686
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0697_rattan_door"
+item_id = 1687
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0698_rattan_door"
+item_id = 1688
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0699_rattan_door"
+item_id = 1689
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x069a_rattan_door"
+item_id = 1690
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x069b_rattan_door"
+item_id = 1691
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x069c_rattan_door"
+item_id = 1692
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x069d_rattan_door"
+item_id = 1693
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x069e_rattan_door"
+item_id = 1694
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x069f_rattan_door"
+item_id = 1695
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a0_rattan_door"
+item_id = 1696
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a1_rattan_door"
+item_id = 1697
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a2_rattan_door"
+item_id = 1698
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a3_rattan_door"
+item_id = 1699
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a4_rattan_door"
+item_id = 1700
+name = "rattan door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a5_wooden_door"
+item_id = 1701
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a6_wooden_door"
+item_id = 1702
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a7_wooden_door"
+item_id = 1703
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a8_wooden_door"
+item_id = 1704
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06a9_wooden_door"
+item_id = 1705
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06aa_wooden_door"
+item_id = 1706
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ab_wooden_door"
+item_id = 1707
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ac_wooden_door"
+item_id = 1708
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ad_wooden_door"
+item_id = 1709
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ae_wooden_door"
+item_id = 1710
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06af_wooden_door"
+item_id = 1711
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b0_wooden_door"
+item_id = 1712
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b1_wooden_door"
+item_id = 1713
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b2_wooden_door"
+item_id = 1714
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b3_wooden_door"
+item_id = 1715
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b4_wooden_door"
+item_id = 1716
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b5_wooden_door"
+item_id = 1717
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b6_wooden_door"
+item_id = 1718
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b7_wooden_door"
+item_id = 1719
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b8_wooden_door"
+item_id = 1720
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06b9_wooden_door"
+item_id = 1721
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ba_wooden_door"
+item_id = 1722
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06bb_wooden_door"
+item_id = 1723
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06bc_wooden_door"
+item_id = 1724
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06bd_wooden_door"
+item_id = 1725
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06be_wooden_door"
+item_id = 1726
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06bf_wooden_door"
+item_id = 1727
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c0_wooden_door"
+item_id = 1728
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c1_wooden_door"
+item_id = 1729
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c2_wooden_door"
+item_id = 1730
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c3_wooden_door"
+item_id = 1731
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06c4_wooden_door"
+item_id = 1732
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d5_wooden_door"
+item_id = 1749
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d6_wooden_door"
+item_id = 1750
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d7_wooden_door"
+item_id = 1751
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d8_wooden_door"
+item_id = 1752
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06d9_wooden_door"
+item_id = 1753
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06da_wooden_door"
+item_id = 1754
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06db_wooden_door"
+item_id = 1755
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06dc_wooden_door"
+item_id = 1756
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06dd_wooden_door"
+item_id = 1757
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06de_wooden_door"
+item_id = 1758
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06df_wooden_door"
+item_id = 1759
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e0_wooden_door"
+item_id = 1760
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e1_wooden_door"
+item_id = 1761
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e2_wooden_door"
+item_id = 1762
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e3_wooden_door"
+item_id = 1763
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e4_wooden_door"
+item_id = 1764
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e5_wooden_door"
+item_id = 1765
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e6_wooden_door"
+item_id = 1766
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e7_wooden_door"
+item_id = 1767
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e8_wooden_door"
+item_id = 1768
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06e9_wooden_door"
+item_id = 1769
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ea_wooden_door"
+item_id = 1770
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06eb_wooden_door"
+item_id = 1771
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ec_wooden_door"
+item_id = 1772
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ed_wooden_door"
+item_id = 1773
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ee_wooden_door"
+item_id = 1774
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06ef_wooden_door"
+item_id = 1775
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06f0_wooden_door"
+item_id = 1776
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06f1_wooden_door"
+item_id = 1777
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06f2_wooden_door"
+item_id = 1778
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06f3_wooden_door"
+item_id = 1779
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x06f4_wooden_door"
+item_id = 1780
+name = "wooden door"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0839_wooden_gate"
+item_id = 2105
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x083a_wooden_gate"
+item_id = 2106
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x083b_wooden_gate"
+item_id = 2107
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x083c_wooden_gate"
+item_id = 2108
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x083d_wooden_gate"
+item_id = 2109
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x083e_wooden_gate"
+item_id = 2110
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x083f_wooden_gate"
+item_id = 2111
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0840_wooden_gate"
+item_id = 2112
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0841_wooden_gate"
+item_id = 2113
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0842_wooden_gate"
+item_id = 2114
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0843_wooden_gate"
+item_id = 2115
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0844_wooden_gate"
+item_id = 2116
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0845_wooden_gate"
+item_id = 2117
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0846_wooden_gate"
+item_id = 2118
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0847_wooden_gate"
+item_id = 2119
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0848_wooden_gate"
+item_id = 2120
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0866_wooden_gate"
+item_id = 2150
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0867_wooden_gate"
+item_id = 2151
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0868_wooden_gate"
+item_id = 2152
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0869_wooden_gate"
+item_id = 2153
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x086a_wooden_gate"
+item_id = 2154
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x086b_wooden_gate"
+item_id = 2155
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x086c_wooden_gate"
+item_id = 2156
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x086d_wooden_gate"
+item_id = 2157
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x086e_wooden_gate"
+item_id = 2158
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x086f_wooden_gate"
+item_id = 2159
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0870_wooden_gate"
+item_id = 2160
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0871_wooden_gate"
+item_id = 2161
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0872_wooden_gate"
+item_id = 2162
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0873_wooden_gate"
+item_id = 2163
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0874_wooden_gate"
+item_id = 2164
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0875_wooden_gate"
+item_id = 2165
+name = "wooden gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0825_iron_gate"
+item_id = 2085
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0826_iron_gate"
+item_id = 2086
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0827_iron_gate"
+item_id = 2087
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0828_iron_gate"
+item_id = 2088
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0829_iron_gate"
+item_id = 2089
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x082a_iron_gate"
+item_id = 2090
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x082b_iron_gate"
+item_id = 2091
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x082c_iron_gate"
+item_id = 2092
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x082d_iron_gate"
+item_id = 2093
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x082e_iron_gate"
+item_id = 2094
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x082f_iron_gate"
+item_id = 2095
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0830_iron_gate"
+item_id = 2096
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0831_iron_gate"
+item_id = 2097
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0832_iron_gate"
+item_id = 2098
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0833_iron_gate"
+item_id = 2099
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x084c_iron_gate"
+item_id = 2124
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x084d_iron_gate"
+item_id = 2125
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x084e_iron_gate"
+item_id = 2126
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x084f_iron_gate"
+item_id = 2127
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0850_iron_gate"
+item_id = 2128
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0851_iron_gate"
+item_id = 2129
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0852_iron_gate"
+item_id = 2130
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0853_iron_gate"
+item_id = 2131
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0854_iron_gate"
+item_id = 2132
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0855_iron_gate"
+item_id = 2133
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0856_iron_gate"
+item_id = 2134
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0857_iron_gate"
+item_id = 2135
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0858_iron_gate"
+item_id = 2136
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0859_iron_gate"
+item_id = 2137
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x085a_iron_gate"
+item_id = 2138
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x085b_iron_gate"
+item_id = 2139
+name = "iron gate"
+rarity = "common"
+movable = false
+hue = 0

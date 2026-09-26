@@ -18,8 +18,7 @@ public sealed class GameLoopMetricsTests
         var failure = new ApplicationException("original command fault");
         await loop.StartAsync();
         await loop.PostAsync(
-            new ActionGameLoopWorkItem(
-                () =>
+            new ActionGameLoopWorkItem(() =>
                 {
                     clock.FailTimestampReads = true;
 
@@ -44,8 +43,7 @@ public sealed class GameLoopMetricsTests
         var failure = new InvalidOperationException("fatal command");
         await loop.StartAsync();
         await loop.PostAsync(
-            new ActionGameLoopWorkItem(
-                () =>
+            new ActionGameLoopWorkItem(() =>
                 {
                     clock.Advance(TimeSpan.FromMilliseconds(4));
 

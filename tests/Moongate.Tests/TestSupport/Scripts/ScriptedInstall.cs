@@ -5,21 +5,31 @@ using System.Security.Cryptography;
 
 namespace Moongate.Tests.TestSupport.Scripts;
 
-/// <summary>Publishes fake releases into a temporary directory and runs scripts/install.sh against them.</summary>
+/// <summary>
+///     Publishes fake releases into a temporary directory and runs scripts/install.sh against them.
+/// </summary>
 internal sealed class ScriptedInstall : IDisposable
 {
     private readonly string _root;
 
-    /// <summary>Gets the directory the script downloads from, laid out the way the release URLs are.</summary>
+    /// <summary>
+    ///     Gets the directory the script downloads from, laid out the way the release URLs are.
+    /// </summary>
     public string ReleaseDirectory { get; }
 
-    /// <summary>Gets the directory the script installs into.</summary>
+    /// <summary>
+    ///     Gets the directory the script installs into.
+    /// </summary>
     public string InstallDirectory { get; }
 
-    /// <summary>Gets the directory the script links the command into.</summary>
+    /// <summary>
+    ///     Gets the directory the script links the command into.
+    /// </summary>
     public string BinDirectory { get; }
 
-    /// <summary>Creates the temporary release, install and bin directories this run uses.</summary>
+    /// <summary>
+    ///     Creates the temporary release, install and bin directories this run uses.
+    /// </summary>
     public ScriptedInstall()
     {
         _root = Path.Combine(Path.GetTempPath(), "moongate-install-" + Guid.NewGuid().ToString("N"));
@@ -30,7 +40,9 @@ internal sealed class ScriptedInstall : IDisposable
         Directory.CreateDirectory(BinDirectory);
     }
 
-    /// <summary>Returns whether this is Linux and the tools the script needs are on the PATH.</summary>
+    /// <summary>
+    ///     Returns whether this is Linux and the tools the script needs are on the PATH.
+    /// </summary>
     public static bool AreToolsAvailable()
     {
         if (!OperatingSystem.IsLinux())
@@ -44,11 +56,17 @@ internal sealed class ScriptedInstall : IDisposable
             .All(tool => directories.Any(directory => File.Exists(Path.Combine(directory, tool))));
     }
 
-    /// <summary>Replaces the archive's bytes and leaves its checksum file untouched.</summary>
+    /// <summary>
+    ///     Replaces the archive's bytes and leaves its checksum file untouched.
+    /// </summary>
     public void Corrupt(string version, string rid)
-        => File.WriteAllText(ArchivePath(version, rid), "not an archive");
+    {
+        File.WriteAllText(ArchivePath(version, rid), "not an archive");
+    }
 
-    /// <summary>Writes a release archive and its checksum, with the given text standing in for the server binary.</summary>
+    /// <summary>
+    ///     Writes a release archive and its checksum, with the given text standing in for the server binary.
+    /// </summary>
     public void Publish(string version, string rid, string binaryContent, bool includeMgboot = false)
     {
         var bundle = Path.Combine(_root, "staging-" + Guid.NewGuid().ToString("N"), "moongate-" + rid);
@@ -78,7 +96,9 @@ internal sealed class ScriptedInstall : IDisposable
         File.WriteAllText(archive + ".sha256", hash + "  " + Path.GetFileName(archive) + "\n");
     }
 
-    /// <summary>Runs the script against the fake release, returning its exit code and combined output.</summary>
+    /// <summary>
+    ///     Runs the script against the fake release, returning its exit code and combined output.
+    /// </summary>
     public async Task<(int ExitCode, string Output)> RunAsync(string version, string rid)
     {
         var start = new ProcessStartInfo("sh")
@@ -104,7 +124,9 @@ internal sealed class ScriptedInstall : IDisposable
         return (process.ExitCode, await standardOutput + await standardError);
     }
 
-    /// <summary>Locates scripts/install.sh by walking up from the test output directory to the repository root.</summary>
+    /// <summary>
+    ///     Locates scripts/install.sh by walking up from the test output directory to the repository root.
+    /// </summary>
     public static string ScriptPath()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);
@@ -123,9 +145,13 @@ internal sealed class ScriptedInstall : IDisposable
     }
 
     private string ArchivePath(string version, string rid)
-        => Path.Combine(ReleaseDirectory, "v" + version, $"moongate-{rid}-{version}.tar.gz");
+    {
+        return Path.Combine(ReleaseDirectory, "v" + version, $"moongate-{rid}-{version}.tar.gz");
+    }
 
-    /// <summary>Deletes the temporary tree, releases and installation alike.</summary>
+    /// <summary>
+    ///     Deletes the temporary tree, releases and installation alike.
+    /// </summary>
     public void Dispose()
     {
         if (Directory.Exists(_root))

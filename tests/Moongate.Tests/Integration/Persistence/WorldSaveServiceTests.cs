@@ -169,30 +169,30 @@ public sealed class WorldSaveServiceTests
         await using var fixture = await WorldSaveFixture.CreateAsync();
         await fixture.StartAsync();
         fixture.OnCapture = () =>
-                            {
-                                Action[] operations =
-                                [
-                                    () => { _ = fixture.Operations.ExecuteAsync(_ => Task.CompletedTask); },
-                                    () => { _ = fixture.Saves.SaveAsync(); },
-                                    () => { _ = fixture.Saves.StopAsync(true); }
-                                ];
+        {
+            Action[] operations =
+            [
+                () => { _ = fixture.Operations.ExecuteAsync(_ => Task.CompletedTask); },
+                () => { _ = fixture.Saves.SaveAsync(); },
+                () => { _ = fixture.Saves.StopAsync(true); }
+            ];
 
-                                foreach (var operation in operations)
-                                {
-                                    Exception? error = null;
+            foreach (var operation in operations)
+            {
+                Exception? error = null;
 
-                                    try
-                                    {
-                                        operation();
-                                    }
-                                    catch (Exception exception)
-                                    {
-                                        error = exception;
-                                    }
+                try
+                {
+                    operation();
+                }
+                catch (Exception exception)
+                {
+                    error = exception;
+                }
 
-                                    Assert.IsType<InvalidOperationException>(error);
-                                }
-                            };
+                Assert.IsType<InvalidOperationException>(error);
+            }
+        };
         await fixture.Saves.SaveAsync().WaitAsync(Timeout);
         Assert.Equal("before", await fixture.ReadSavedNameAsync());
     }
@@ -204,8 +204,7 @@ public sealed class WorldSaveServiceTests
         await fixture.StartAsync();
         var committed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var apply = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var operation = fixture.Operations.ExecuteAsync(
-            async token =>
+        var operation = fixture.Operations.ExecuteAsync(async token =>
             {
                 await fixture.Items.UpsertAsync(new() { Id = fixture.Entities[0].Id, Name = "committed" }, token);
                 committed.SetResult();
@@ -253,8 +252,7 @@ public sealed class WorldSaveServiceTests
         await fixture.StartAsync();
         var committed = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         var apply = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        var operation = fixture.Operations.ExecuteAsync(
-            async token =>
+        var operation = fixture.Operations.ExecuteAsync(async token =>
             {
                 await fixture.Items.UpsertAsync(new() { Id = fixture.Entities[0].Id, Name = "final committed" }, token);
                 committed.SetResult();
@@ -268,9 +266,8 @@ public sealed class WorldSaveServiceTests
         try
         {
             Assert.False(stopping.IsCompleted);
-            await Assert.ThrowsAsync<InvalidOperationException>(
-                () =>
-                    fixture.Operations.ExecuteAsync(_ => throw new IOException("must not execute"))
+            await Assert.ThrowsAsync<InvalidOperationException>(() =>
+                fixture.Operations.ExecuteAsync(_ => throw new IOException("must not execute"))
             );
             await fixture.OnLoopAsync(() => { });
             Assert.Equal(0, fixture.Captures);
@@ -326,9 +323,7 @@ public sealed class WorldSaveServiceTests
         var failure = new IOException("owner application failed after commit");
         Assert.Same(
             failure,
-            await Record.ExceptionAsync(
-                () => fixture.Operations.ExecuteAsync(
-                    async token =>
+            await Record.ExceptionAsync(() => fixture.Operations.ExecuteAsync(async token =>
                     {
                         await fixture.Items.UpsertAsync(new() { Id = fixture.Entities[0].Id, Name = "committed" }, token);
 

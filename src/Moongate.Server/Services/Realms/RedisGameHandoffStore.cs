@@ -2,6 +2,7 @@ using System.Buffers.Binary;
 using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography;
 using System.Text.Json;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Data.Internal.Realms;
@@ -10,7 +11,9 @@ using StackExchange.Redis;
 
 namespace Moongate.Server.Services.Realms;
 
-/// <summary>Stores short-lived redirect tickets in the shared Redis instance.</summary>
+/// <summary>
+///     Stores short-lived redirect tickets in the shared Redis instance.
+/// </summary>
 public sealed class RedisGameHandoffStore : IGameHandoffStore
 {
     private const int MaxIssueAttempts = 32;
@@ -23,7 +26,9 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
     private readonly Func<uint> _generateAuthKey;
 
     public RedisGameHandoffStore(RedisConnectionService redis, IHandoffProofService proof)
-        : this(redis, proof, GenerateAuthKey) { }
+        : this(redis, proof, GenerateAuthKey)
+    {
+    }
 
     internal RedisGameHandoffStore(
         RedisConnectionService redis,
@@ -78,7 +83,7 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
                     handoff.Username,
                     handoff.RealmId,
                     handoff.InstanceId,
-                    handoff.ClientVersion,
+                    handoff.ClientVersion?.ToString(),
                     proof
                 );
                 var encoded = JsonSerializer.SerializeToUtf8Bytes(ticket);
@@ -87,7 +92,7 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
                 {
                     var key = Key(handoff.RealmId, authKey);
                     var issued = await database.StringSetAsync(key, encoded, TicketLifetime, When.NotExists)
-                                               .ConfigureAwait(false);
+                        .ConfigureAwait(false);
 
                     if (token.IsCancellationRequested)
                     {
@@ -168,7 +173,7 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
                     ticket.Username,
                     ticket.RealmId,
                     ticket.InstanceId,
-                    ticket.ClientVersion
+                    ClientVersion.TryParse(ticket.ClientVersion, out var clientVersion) ? clientVersion : null
                 );
 
                 if (!StringComparer.Ordinal.Equals(ticket.RealmId, realmId) ||
@@ -187,8 +192,8 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
                 {
                     return consumedBytes is not null &&
                            CryptographicOperations.FixedTimeEquals(candidateBytes, consumedBytes)
-                               ? handoff
-                               : null;
+                        ? handoff
+                        : null;
                 }
                 finally
                 {
@@ -225,7 +230,9 @@ public sealed class RedisGameHandoffStore : IGameHandoffStore
     }
 
     private static RedisKey Key(string realmId, uint authKey)
-        => $"moongate:handoff:{realmId}:{authKey:X8}";
+    {
+        return $"moongate:handoff:{realmId}:{authKey:X8}";
+    }
 
     private static bool TryReadTicket(byte[] encoded, [NotNullWhen(true)] out RedisHandoffTicket? ticket)
     {

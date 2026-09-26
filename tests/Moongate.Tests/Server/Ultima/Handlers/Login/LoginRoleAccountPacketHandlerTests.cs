@@ -129,11 +129,11 @@ public sealed class LoginRoleAccountPacketHandlerTests
             proof
         );
         var pending = handler.HandleAsync(
-                                 original,
-                                 new("user", "password", 0xFF),
-                                 CancellationToken.None
-                             )
-                             .AsTask();
+                original,
+                new("user", "password", 0xFF),
+                CancellationToken.None
+            )
+            .AsTask();
         await accounts.Entered.Task.WaitAsync(TimeSpan.FromSeconds(2));
         Assert.True(sessions.Remove(original));
         using var replacementConnection = new ControlledNetworkConnection(1);
@@ -147,10 +147,13 @@ public sealed class LoginRoleAccountPacketHandlerTests
     }
 
     private static AccountEntity Account()
-        => new() { Id = new(42), AccountType = AccountType.Regular };
+    {
+        return new() { Id = new(42), AccountType = AccountType.Regular };
+    }
 
     private static StubRealmCatalog Directory()
-        => new(
+    {
+        return new(
             new RealmDescriptor(
                 "local",
                 1,
@@ -160,4 +163,5 @@ public sealed class LoginRoleAccountPacketHandlerTests
                 AccountType.Regular
             )
         );
+    }
 }

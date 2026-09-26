@@ -1,0 +1,191 @@
+[[item]]
+id = "elvenbedeastdeed"
+item_id = 5360
+name = "Elven Bed (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "elvenbedsouthdeed"
+item_id = 5360
+name = "Elven Bed (South)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "alchemisttabledeedeast"
+item_id = 5360
+name = "Alchemist Table (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "alchemisttablesouthdeed"
+item_id = 5360
+name = "Alchemist Table (South)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "elvenloveseateastdeed"
+item_id = 5360
+name = "Elven Loveseat (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "elvenloveseatsouthdeed"
+item_id = 5360
+name = "Elven Loveseat (South)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "elvenwashbasineastdeed"
+item_id = 5360
+name = "Elven Wash Basin (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "elvenwashbasinsouthdeed"
+item_id = 5360
+name = "Elven Wash Basin (South)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fancycoucheastdeed"
+item_id = 5360
+name = "Fancy Couch (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fancycouchnorthdeed"
+item_id = 5360
+name = "Fancy Couch (North)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fancycouchsouthdeed"
+item_id = 5360
+name = "Fancy Couch (South)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fancycouchwestdeed"
+item_id = 5360
+name = "Fancy Couch (West)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "hardwoodtableeastdeed"
+item_id = 5360
+name = "Hardwood Table (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "hardwoodtablesouthdeed"
+item_id = 5360
+name = "Hardwood Table (South)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fancyloveseateastdeed"
+item_id = 5360
+name = "Fancy Loveseat (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fancyloveseatnorthdeed"
+item_id = 5360
+name = "Fancy Loveseat (North)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fancyloveseatsouthdeed"
+item_id = 5360
+name = "Fancy Loveseat (South)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fancyloveseatwestdeed"
+item_id = 5360
+name = "Fancy Loveseat (West)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ornatetableeastdeed"
+item_id = 5360
+name = "Ornate Table (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ornatetablesouthdeed"
+item_id = 5360
+name = "Ornate Table (South)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "plushloveseateastdeed"
+item_id = 5360
+name = "Plush Loveseat (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "plushloveseatsouthdeed"
+item_id = 5360
+name = "Plush Loveseat (South)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallelvenbedeastdeed"
+item_id = 5360
+name = "Tall Elven Bed (East)"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tallelvenbedsouthdeed"
+item_id = 5360
+name = "Tall Elven Bed (South)"
+rarity = "common"
+movable = false
+hue = 0

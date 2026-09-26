@@ -1,0 +1,47 @@
+[[item]]
+id = "0x100e_copper_key"
+item_id = 4110
+name = "copper key"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x100f_gold_key"
+item_id = 4111
+name = "gold key"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1010_iron_key"
+item_id = 4112
+name = "iron key"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1011_key_ring"
+item_id = 4113
+name = "key ring"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1012_magic_key"
+item_id = 4114
+name = "magic key"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1013_rusty_iron_key"
+item_id = 4115
+name = "rusty iron key"
+rarity = "common"
+movable = false
+hue = 0

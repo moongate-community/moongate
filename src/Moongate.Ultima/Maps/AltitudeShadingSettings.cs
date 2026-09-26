@@ -3,33 +3,34 @@ using Moongate.Ultima.Types;
 namespace Moongate.Ultima.Maps;
 
 /// <summary>
-/// Configuration for altitude-based shading effects
+///     Configuration for altitude-based shading effects
 /// </summary>
 public class AltitudeShadingSettings
 {
     /// <summary>
-    /// Surface normal Z-component (higher = softer shading)
-    /// Sharp: 2.0, Normal: 4.0, Soft: 8.0+
+    ///     Surface normal Z-component (higher = softer shading)
+    ///     Sharp: 2.0, Normal: 4.0, Soft: 8.0+
     /// </summary>
     public float NormalZ { get; set; } = 8.0f;
 
     /// <summary>
-    /// Brightness variation range (0.0 to 0.5)
-    /// Sharp: 0.40 (±40%), Normal: 0.30 (±30%), Soft: 0.15 (±15%)
+    ///     Brightness variation range (0.0 to 0.5)
+    ///     Sharp: 0.40 (±40%), Normal: 0.30 (±30%), Soft: 0.15 (±15%)
     /// </summary>
     public float BrightnessRange { get; set; } = 0.15f;
 
     /// <summary>
-    /// Altitude gradient smoothing factor
-    /// Sharp: 0.75, Normal: 0.50, Soft: 0.25
+    ///     Altitude gradient smoothing factor
+    ///     Sharp: 0.75, Normal: 0.50, Soft: 0.25
     /// </summary>
     public float GradientSmoothing { get; set; } = 0.25f;
 
     /// <summary>
-    /// Gets preset configuration
+    ///     Gets preset configuration
     /// </summary>
     public static AltitudeShadingSettings GetPreset(AltitudeShadingPresetType preset)
-        => preset switch
+    {
+        return preset switch
         {
             AltitudeShadingPresetType.Sharp => new()
             {
@@ -51,4 +52,5 @@ public class AltitudeShadingSettings
             },
             _ => new() // Default to Soft
         };
+    }
 }

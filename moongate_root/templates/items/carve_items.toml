@@ -1,0 +1,88 @@
+[[item]]
+id = "base_carveitem"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x_c000_barbed_hide"
+base_id = "base_carveitem"
+item_id = 4216
+name = "barbed hide"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x_c001_horned_hide"
+base_id = "base_carveitem"
+item_id = 4216
+name = "horned hide"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x_c002_spined_hide"
+base_id = "base_carveitem"
+item_id = 4216
+name = "spined hide"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x_c003_black_scale"
+base_id = "base_carveitem"
+item_id = 9908
+name = "black scale"
+rarity = "common"
+movable = false
+hue = 1109
+
+[[item]]
+id = "0x_c004_blue_scale"
+base_id = "base_carveitem"
+item_id = 9908
+name = "blue scale"
+rarity = "common"
+movable = false
+hue = 6
+
+[[item]]
+id = "0x_c005_green_scale"
+base_id = "base_carveitem"
+item_id = 9908
+name = "green scale"
+rarity = "common"
+movable = false
+hue = 2129
+
+[[item]]
+id = "0x_c006_red_scale"
+base_id = "base_carveitem"
+item_id = 9908
+name = "red scale"
+rarity = "common"
+movable = false
+hue = 1635
+
+[[item]]
+id = "0x_c007_white_scale"
+base_id = "base_carveitem"
+item_id = 9908
+name = "white scale"
+rarity = "common"
+movable = false
+hue = 706
+
+[[item]]
+id = "0x_c008_yellow_scale"
+base_id = "base_carveitem"
+item_id = 9908
+name = "yellow scale"
+rarity = "common"
+movable = false
+hue = 2125

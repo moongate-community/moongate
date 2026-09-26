@@ -8,6 +8,7 @@ using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Network;
 using Moongate.Tests.TestSupport.Directories;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Login;
 
@@ -25,8 +26,7 @@ public sealed class ServerModeBootstrapTests
             Network = new() { ListenAddress = "127.0.0.1", LoginPort = 0 },
             Redis = new()
             {
-                ConnectionString = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ??
-                                   "localhost:6379",
+                ConnectionString = RedisTestServer.ConnectionString,
                 HandoffSecret = new('x', 32)
             }
         };

@@ -50,7 +50,9 @@ public sealed class RandomUtilsTests
 
     [Theory, InlineData(0, 6), InlineData(-2, 6), InlineData(3, 0), InlineData(3, -1)]
     public void Dice_InvalidCountOrSidesReturnsZeroWithoutBonus(int amount, int sides)
-        => Assert.Equal(0, RandomUtils.Dice(amount, sides, 100));
+    {
+        Assert.Equal(0, RandomUtils.Dice(amount, sides, 100));
+    }
 
     [Fact]
     public void Dice_OneSidedDiceApplyCountAndBonus()

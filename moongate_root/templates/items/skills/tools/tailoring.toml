@@ -1,0 +1,62 @@
+[[item]]
+id = "0x0f9d_sewing_kit"
+base_id = "base_item"
+item_id = 3997
+name = "sewing kit"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f9e_scissors"
+base_id = "base_item"
+item_id = 3998
+name = "scissors"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0f9f_scissors"
+base_id = "base_item"
+item_id = 3999
+name = "scissors"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fa9_dyes"
+base_id = "base_item"
+item_id = 4009
+name = "dyes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0fab_dying_tub"
+base_id = "base_item"
+item_id = 4011
+name = "dying tub"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0ec6_dress_form"
+base_id = "base_item"
+item_id = 3782
+name = "dress form"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0ec7_dress_form"
+base_id = "base_item"
+item_id = 3783
+name = "dress form"
+rarity = "common"
+movable = true
+hue = 0

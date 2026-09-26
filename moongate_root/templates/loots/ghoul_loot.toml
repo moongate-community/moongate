@@ -1,0 +1,15 @@
+[[loot]]
+id = "ghoul_loot"
+[[loot.entries]]
+weight = 50
+amount = 1
+
+[[loot.entries]]
+weight = 25
+loot_template_id = "randomgems"
+amount = 2
+
+[[loot.entries]]
+weight = 25
+loot_template_id = "bonearmor"
+amount = 1

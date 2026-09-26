@@ -21,6 +21,7 @@ public sealed class AdminSessionGrpcService : AdminSession.AdminSessionBase
         {
             throw new RpcException(new(StatusCode.Unauthenticated, "Invalid administration credentials."));
         }
+
         var session = await _sessions.FindAsync(digest, context.CancellationToken);
 
         if (session is not null)
@@ -28,6 +29,7 @@ public sealed class AdminSessionGrpcService : AdminSession.AdminSessionBase
             context.GetHttpContext().Items["AdminActorId"] = session.Identity.AccountId.Value;
             context.GetHttpContext().Items["AdminTargetId"] = session.Identity.AccountId.Value;
         }
+
         await _sessions.RemoveAsync(digest, context.CancellationToken);
 
         return new();

@@ -3,7 +3,9 @@ using Moongate.Network.Packets.Registry;
 
 namespace Moongate.Server.Services.Network.Framing;
 
-/// <summary>Reads the game connection seed before delegating subsequent frames to the UO packet framer.</summary>
+/// <summary>
+///     Reads the game connection seed before delegating subsequent frames to the UO packet framer.
+/// </summary>
 public sealed class GameSeedFramer : INetFramer
 {
     private const int RawSeedLength = 4;

@@ -33,13 +33,15 @@ public class AccountService : IAccountService
         AccountType accountType = AccountType.Regular,
         CancellationToken cancellationToken = default
     )
-        => CreateAccountAsync(
+    {
+        return CreateAccountAsync(
             new()
             {
                 Username = username, Password = password, AccountType = accountType
             },
             cancellationToken
         );
+    }
 
     public async Task<AccountPage> ListAccountsPageAsync(
         Serial afterId,
@@ -51,6 +53,7 @@ public class AccountService : IAccountService
         {
             throw new ArgumentOutOfRangeException(nameof(pageSize));
         }
+
         var values = await _accountDataAccess.QueryAsync(a => a.Id > afterId, 0, pageSize + 1, cancellationToken);
         var items = values.Take(pageSize).ToArray();
 
@@ -68,6 +71,7 @@ public class AccountService : IAccountService
         {
             throw new ArgumentOutOfRangeException(nameof(options));
         }
+
         var username = options.Username;
         var password = options.Password;
         var accountType = options.AccountType;
@@ -75,7 +79,7 @@ public class AccountService : IAccountService
         try
         {
             var existingAccount = await _accountDataAccess
-                                      .QueryAsync(a => a.Username == username, cancellationToken);
+                .QueryAsync(a => a.Username == username, cancellationToken);
 
             if (existingAccount.Any())
             {
@@ -151,6 +155,7 @@ public class AccountService : IAccountService
             {
                 return null;
             }
+
             AccountEntity? result = null;
             await _persistence.ExecuteInTransactionAsync(
                 PersistenceDatabaseTarget.Accounts,
@@ -165,6 +170,7 @@ public class AccountService : IAccountService
                     {
                         return;
                     }
+
                     account.LastLoginAt = DateTime.UtcNow;
                     await tx.GetDataAccess<AccountEntity>().UpsertAsync(account, cancellationToken);
                     result = account;

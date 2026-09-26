@@ -16,7 +16,9 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
     public string Version { get; }
 
     public ClientVersionPacket(string version)
-        : this(version, GetCanonicalLength(version)) { }
+        : this(version, GetCanonicalLength(version))
+    {
+    }
 
     private ClientVersionPacket(string version, int length)
     {
@@ -44,8 +46,8 @@ public sealed class ClientVersionPacket : BasePacket<ClientVersionPacket>, IInco
         var payload = data[LoginProtocolConstants.VariableHeaderLength..];
         var reader = new PacketReader(payload);
         var parsed = payload[^1] == 0
-                         ? reader.TryReadNullTerminatedAscii(payload.Length, out var version)
-                         : reader.TryReadAscii(payload.Length, out version);
+            ? reader.TryReadNullTerminatedAscii(payload.Length, out var version)
+            : reader.TryReadAscii(payload.Length, out version);
 
         if (!parsed || string.IsNullOrWhiteSpace(version))
         {

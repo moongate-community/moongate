@@ -1,19 +1,23 @@
 using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Templates.Items;
 
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-/// Builds an <see cref="ItemTemplate" /> from one parsed block, resolving its <c>get=</c>
-/// target against a fully precomputed header-to-Id map.
+///     Builds an <see cref="ItemTemplate" /> from one parsed block, resolving its
+///     <c>
+///         get=
+///     </c>
+///     target against a fully precomputed header-to-Id map.
 /// </summary>
 internal static class ItemTemplateBuilder
 {
     /// <summary>
-    /// Computes a block's Id and item Serial, with no dependency on any other block. Used both to
-    /// precompute the full header-to-Id map up front and, once that map exists, by <see cref="Build" />.
-    /// False for a block with no id= of its own (a get=a b alias, or a non-item block).
+    ///     Computes a block's Id and item Serial, with no dependency on any other block. Used both to
+    ///     precompute the full header-to-Id map up front and, once that map exists, by <see cref="Build" />.
+    ///     False for a block with no id= of its own (a get=a b alias, or a non-item block).
     /// </summary>
     public static bool TryComputeId(DfnBlock block, out string id, out Serial itemId)
     {
@@ -54,14 +58,22 @@ internal static class ItemTemplateBuilder
             Movable = block.Fields.TryGetValue("movable", out var movable) && movable == "1"
         };
 
+        // UOX3's visible= is 0 for everyone; 1 (hidden), 2 (magically invisible) and 3 (GM hidden) all keep the
+        // item from players, the closest being visible to staff only.
+        if (block.Fields.TryGetValue("visible", out var visibleText) && int.TryParse(visibleText, out var visible) &&
+            visible is >= 1 and <= 3)
+        {
+            template.Visibility = AccountType.GameMaster;
+        }
+
         if (block.Fields.TryGetValue("name", out var displayName) && displayName.Length > 0)
         {
             template.Name = displayName;
         }
 
-        if (block.Fields.TryGetValue("color", out var colorText) && Serial.TryParse(colorText, out var color))
+        if (block.Fields.TryGetValue("color", out var colorText) && HueSpec.TryParse(colorText, out var hue))
         {
-            template.Hue = RangeValueSpec<int>.FromValue((int)color.Value);
+            template.Hue = hue;
         }
 
         if (block.Fields.TryGetValue("weightmax", out var weightMaxText) && int.TryParse(weightMaxText, out var weightMax))
@@ -86,5 +98,7 @@ internal static class ItemTemplateBuilder
     }
 
     private static bool IsBareHex(string header)
-        => header.StartsWith("0x", StringComparison.OrdinalIgnoreCase);
+    {
+        return header.StartsWith("0x", StringComparison.OrdinalIgnoreCase);
+    }
 }

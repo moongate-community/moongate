@@ -33,7 +33,9 @@ public class DirectoriesConfig
     }
 
     public string GetPath<TEnum>(TEnum value) where TEnum : struct, Enum
-        => GetPath(Enum.GetName(value));
+    {
+        return GetPath(Enum.GetName(value));
+    }
 
     public string GetPath(string directoryType)
     {
@@ -43,9 +45,9 @@ public class DirectoriesConfig
         // own separator: snake-casing the whole string first would let '/' or '\' survive
         // untouched inside the result, since WordSplitter does not treat either as a boundary.
         var segments = directoryType
-                       .Split(PathSegmentSeparators, StringSplitOptions.RemoveEmptyEntries)
-                       .Select(segment => segment.ToSnakeCase())
-                       .ToArray();
+            .Split(PathSegmentSeparators, StringSplitOptions.RemoveEmptyEntries)
+            .Select(segment => segment.ToSnakeCase())
+            .ToArray();
 
         var path = Path.Combine([Root, .. segments]);
 
@@ -58,7 +60,9 @@ public class DirectoriesConfig
     }
 
     public override string ToString()
-        => Root;
+    {
+        return Root;
+    }
 
     private void Init()
     {
@@ -70,7 +74,7 @@ public class DirectoriesConfig
         var directoryTypes = _directories.ToList();
 
         foreach (var path in directoryTypes.Select(GetPath)
-                                           .Where(path => !Directory.Exists(path)))
+                     .Where(path => !Directory.Exists(path)))
         {
             Directory.CreateDirectory(path);
         }

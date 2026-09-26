@@ -1,8 +1,8 @@
 namespace Moongate.Server.Bootstrap.Internal;
 
 /// <summary>
-/// Shares lifecycle tasks across repeated, concurrent, and reentrant calls.
-/// Callback execution starts only after the corresponding task has been published.
+///     Shares lifecycle tasks across repeated, concurrent, and reentrant calls.
+///     Callback execution starts only after the corresponding task has been published.
 /// </summary>
 internal sealed class BootstrapLifecycleTasks
 {
@@ -12,7 +12,9 @@ internal sealed class BootstrapLifecycleTasks
     private Task<List<Exception>>? _shutdownTask;
     private bool _configuring;
 
-    /// <summary>Runs configuration exclusively before any lifecycle task has been published.</summary>
+    /// <summary>
+    ///     Runs configuration exclusively before any lifecycle task has been published.
+    /// </summary>
     public void Configure(Action configure)
     {
         lock (_lifecycleSync)

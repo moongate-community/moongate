@@ -1,8 +1,8 @@
 namespace Moongate.Scripting.Internal;
 
 /// <summary>
-/// Drives LuaCSharp's ValueTask-shaped API synchronously. Nothing a module exposes is genuinely
-/// asynchronous, so a task that is still pending when the call returns is a bug, not something to await.
+///     Drives LuaCSharp's ValueTask-shaped API synchronously. Nothing a module exposes is genuinely
+///     asynchronous, so a task that is still pending when the call returns is a bug, not something to await.
 /// </summary>
 internal static class SyncValueTask
 {

@@ -20,20 +20,20 @@ public sealed class MoongateTcpServerTests
         await using var server = new MoongateTcpServer(
             new(IPAddress.Loopback, 0),
             connectionPipelineFactory: () => failFactory && Interlocked.Increment(ref attempts) == 1
-                                                 ? throw new SocketException((int)SocketError.InvalidArgument)
-                                                 : new ConnectionPipeline()
+                ? throw new SocketException((int)SocketError.InvalidArgument)
+                : new ConnectionPipeline()
         );
         server.OnException += (_, _) => throw new InvalidOperationException("diagnostic failure");
         server.OnException += (_, _) => failed.TrySetResult();
         server.OnClientConnect += (_, _) =>
-                                  {
-                                      if (!failFactory && Interlocked.Increment(ref attempts) == 1)
-                                      {
-                                          throw new InvalidOperationException("connect failure");
-                                      }
+        {
+            if (!failFactory && Interlocked.Increment(ref attempts) == 1)
+            {
+                throw new InvalidOperationException("connect failure");
+            }
 
-                                      connected.TrySetResult();
-                                  };
+            connected.TrySetResult();
+        };
         await server.StartAsync(CancellationToken.None);
         using var first = new TcpClient();
         await first.ConnectAsync(IPAddress.Loopback, server.Port).WaitAsync(Timeout);
@@ -68,8 +68,7 @@ public sealed class MoongateTcpServerTests
         string parameterName
     )
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () => new MoongateTcpServer(
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() => new MoongateTcpServer(
                 new(IPAddress.Loopback, 0),
                 receiveBufferSize: receiveBufferSize,
                 maxFrameLength: maxFrameLength
@@ -146,17 +145,15 @@ public sealed class MoongateTcpServerTests
     {
         await using var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
         var starts = Enumerable.Range(0, 16)
-                               .Select(
-                                   _ => Task.Run(
-                                       async () =>
-                                       {
-                                           await server.StartAsync(CancellationToken.None);
+            .Select(_ => Task.Run(async () =>
+                    {
+                        await server.StartAsync(CancellationToken.None);
 
-                                           return server.Port;
-                                       }
-                                   )
-                               )
-                               .ToArray();
+                        return server.Port;
+                    }
+                )
+            )
+            .ToArray();
         var ports = await Task.WhenAll(starts).WaitAsync(Timeout);
         Assert.InRange(ports[0], 1, 65535);
         Assert.All(ports, port => Assert.Equal(ports[0], port));
@@ -296,15 +293,15 @@ public sealed class MoongateTcpServerTests
         var disconnected = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         await using var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
         server.OnDataReceived += (_, args) =>
-                                 {
-                                     _ = args.Client.CloseAsync();
-                                     disconnected.TrySetResult();
+        {
+            _ = args.Client.CloseAsync();
+            disconnected.TrySetResult();
 
-                                     if (!release.Wait(Timeout))
-                                     {
-                                         throw new TimeoutException("The data callback was not released.");
-                                     }
-                                 };
+            if (!release.Wait(Timeout))
+            {
+                throw new TimeoutException("The data callback was not released.");
+            }
+        };
         await server.StartAsync(CancellationToken.None);
         using var peer = new TcpClient();
         await peer.ConnectAsync(IPAddress.Loopback, server.Port).WaitAsync(Timeout);
@@ -335,21 +332,21 @@ public sealed class MoongateTcpServerTests
         var connections = 0;
         await using var server = new MoongateTcpServer(new(IPAddress.Loopback, 0));
         server.OnClientConnect += (_, _) =>
-                                  {
-                                      if (Interlocked.Increment(ref connections) == 2)
-                                      {
-                                          secondConnected.TrySetResult();
-                                      }
-                                  };
+        {
+            if (Interlocked.Increment(ref connections) == 2)
+            {
+                secondConnected.TrySetResult();
+            }
+        };
         server.OnDataReceived += (_, _) =>
-                                 {
-                                     entered.TrySetResult();
+        {
+            entered.TrySetResult();
 
-                                     if (!release.Wait(Timeout))
-                                     {
-                                         throw new TimeoutException("The first client callback was not released.");
-                                     }
-                                 };
+            if (!release.Wait(Timeout))
+            {
+                throw new TimeoutException("The first client callback was not released.");
+            }
+        };
         await server.StartAsync(CancellationToken.None);
         using var first = new TcpClient();
         using var second = new TcpClient();

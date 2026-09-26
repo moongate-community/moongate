@@ -7,7 +7,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Packets;
 
-/// <summary>Snapshots outgoing packets and sends them through bounded, game-independent connection queues.</summary>
+/// <summary>
+///     Snapshots outgoing packets and sends them through bounded, game-independent connection queues.
+/// </summary>
 public sealed class PacketSendService : IPacketSendService, ILoginPacketSendService
 {
     private readonly Lock _gate = new();
@@ -115,7 +117,9 @@ public sealed class PacketSendService : IPacketSendService, ILoginPacketSendServ
 
     /// <inheritdoc />
     public bool TrySend(long sessionId, IOutgoingPacket packet)
-        => TrySendCore(sessionId, packet, null);
+    {
+        return TrySendCore(sessionId, packet, null);
+    }
 
     /// <inheritdoc />
     public bool TrySend(long sessionId, INetworkConnection expectedConnection, IOutgoingPacket packet)

@@ -1,0 +1,62 @@
+[[item]]
+id = "0x122a_blood"
+base_id = "base_item"
+item_id = 4650
+name = "blood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x122b_blood"
+base_id = "base_item"
+item_id = 4651
+name = "blood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x122c_blood"
+base_id = "base_item"
+item_id = 4652
+name = "blood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x122d_blood"
+base_id = "base_item"
+item_id = 4653
+name = "blood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x122e_blood"
+base_id = "base_item"
+item_id = 4654
+name = "blood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x122f_blood_smear"
+base_id = "base_item"
+item_id = 4655
+name = "blood smear"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1645_blood"
+base_id = "base_item"
+item_id = 5701
+name = "blood"
+rarity = "common"
+movable = false
+hue = 0

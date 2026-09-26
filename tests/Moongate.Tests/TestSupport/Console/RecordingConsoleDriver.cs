@@ -26,22 +26,32 @@ internal sealed class RecordingConsoleDriver : IConsoleDriver
         }
     }
 
-    /// <summary>Index of the operation that should throw an IOException, or -1 to never throw.</summary>
+    /// <summary>
+    ///     Index of the operation that should throw an IOException, or -1 to never throw.
+    /// </summary>
     public int ThrowOnOperation { get; set; } = -1;
 
     public IReadOnlyList<string> Operations => _operations;
 
     public void ResetColor()
-        => Record("reset");
+    {
+        Record("reset");
+    }
 
     public void SetCursorPosition(int left, int top)
-        => Record($"pos:{left},{top}");
+    {
+        Record($"pos:{left},{top}");
+    }
 
     public void Write(string value)
-        => Record($"write:{value}");
+    {
+        Record($"write:{value}");
+    }
 
     public void WriteLine(string value)
-        => Record($"writeline:{value}");
+    {
+        Record($"writeline:{value}");
+    }
 
     private void Record(string operation)
     {

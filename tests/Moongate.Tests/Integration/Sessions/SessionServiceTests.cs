@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Core.Primitives;
 using Moongate.Server.Bootstrap;
+using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Services.Sessions;
@@ -34,8 +35,8 @@ public sealed class SessionServiceTests
         ISessionService service = new SessionService(fixture.Loop);
 
         var sessions = await Task.WhenAll(
-                           Enumerable.Range(0, 32).Select(_ => Task.Run(() => service.GetOrCreate(fixture.Client)))
-                       );
+            Enumerable.Range(0, 32).Select(_ => Task.Run(() => service.GetOrCreate(fixture.Client)))
+        );
 
         Assert.All(sessions, session => Assert.Same(sessions[0], session));
         Assert.Equal(1, service.Count);
@@ -97,8 +98,8 @@ public sealed class SessionServiceTests
             ISessionService service = new SessionService(fixtures[0].Loop);
 
             var sessions = await Task.WhenAll(
-                               fixtures.Select(fixture => Task.Run(() => service.GetOrCreate(fixture.Client)))
-                           );
+                fixtures.Select(fixture => Task.Run(() => service.GetOrCreate(fixture.Client)))
+            );
 
             Assert.Equal(fixtures.Count, service.Count);
 
@@ -119,8 +120,7 @@ public sealed class SessionServiceTests
         await using var fixture = await SessionFixture.CreateAsync();
         using var container = new Container();
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
-        bootstrap.RegisterServices(
-            services =>
+        bootstrap.RegisterServices(services =>
             {
                 services.RegisterInstance<IGameLoopService>(fixture.Loop);
 
@@ -168,19 +168,19 @@ public sealed class SessionServiceTests
         Assert.False(service.TryGetByCharacterId(firstCharacterId, out var missingSession));
         Assert.Null(missingSession);
 
-        await fixture.ExecuteOnLoopAsync(() => session.SetCharacterId(firstCharacterId));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, firstCharacterId));
 
         Assert.True(service.TryGetByCharacterId(firstCharacterId, out var firstMatch));
         Assert.Same(session, firstMatch);
 
-        await fixture.ExecuteOnLoopAsync(() => session.SetCharacterId(secondCharacterId));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, secondCharacterId));
 
         Assert.False(service.TryGetByCharacterId(firstCharacterId, out var changedSession));
         Assert.Null(changedSession);
         Assert.True(service.TryGetByCharacterId(secondCharacterId, out var secondMatch));
         Assert.Same(session, secondMatch);
 
-        await fixture.ExecuteOnLoopAsync(() => session.SetCharacterId(Serial.Zero));
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, Serial.Zero));
 
         Assert.False(service.TryGetByCharacterId(secondCharacterId, out var clearedSession));
         Assert.Null(clearedSession);

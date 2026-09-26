@@ -187,10 +187,10 @@ public sealed class LuaDefinitionsGeneratorTests
         using var luarc = JsonDocument.Parse(File.ReadAllText(Path.Combine(scripts.Path, ".luarc.json")));
         Assert.Equal("Lua 5.2", luarc.RootElement.GetProperty("runtime.version").GetString());
         var globals = luarc.RootElement
-                           .GetProperty("diagnostics.globals")
-                           .EnumerateArray()
-                           .Select(element => element.GetString())
-                           .ToList();
+            .GetProperty("diagnostics.globals")
+            .EnumerateArray()
+            .Select(element => element.GetString())
+            .ToList();
         Assert.Contains("probe", globals);
         Assert.Contains("log", globals);
         Assert.Contains("ProbeColour", globals);
@@ -217,7 +217,9 @@ public sealed class LuaDefinitionsGeneratorTests
     }
 
     private static List<BoundModule> BindProbeAndLogModules(LuaState state, LuaModuleBinder binder)
-        => [binder.Bind(state, new ProbeModule()), binder.Bind(state, new LogModule())];
+    {
+        return [binder.Bind(state, new ProbeModule()), binder.Bind(state, new LogModule())];
+    }
 
     private static List<BoundModule> Modules()
     {

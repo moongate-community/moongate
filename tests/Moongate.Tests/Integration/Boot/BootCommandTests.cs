@@ -22,11 +22,11 @@ public sealed class BootCommandTests
         using var directory = new TemporaryDirectory();
         var root = Path.Combine(directory.Path, "server root");
         var result = await BootProcess.RunAsync(
-                         root,
-                         "--generate-admin-certificate",
-                         "--admin-certificate-hosts",
-                         "login.example.test,192.0.2.10"
-                     );
+            root,
+            "--generate-admin-certificate",
+            "--admin-certificate-hosts",
+            "login.example.test,192.0.2.10"
+        );
         Assert.True(result.ExitCode == 0, result.Output);
         var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(Path.Combine(root, "config/moongate.toml"))!;
         Assert.True(config.AdminApi.Enabled);

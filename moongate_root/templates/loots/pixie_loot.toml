@@ -1,0 +1,5 @@
+[[loot]]
+id = "pixie_loot"
+[[loot.entries]]
+weight = 80
+amount = 1

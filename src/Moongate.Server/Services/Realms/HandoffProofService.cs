@@ -6,7 +6,9 @@ using Moongate.Server.Core.Interfaces.Services;
 
 namespace Moongate.Server.Services.Realms;
 
-/// <summary>Creates domain-separated HMAC proofs for the login-to-game handoff.</summary>
+/// <summary>
+///     Creates domain-separated HMAC proofs for the login-to-game handoff.
+/// </summary>
 public sealed class HandoffProofService : IHandoffProofService, IDisposable
 {
     private const int CredentialKeySize = 32;
@@ -87,7 +89,7 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
 
         var usernameBytes = Encoding.UTF8.GetBytes(handoff.Username);
         var realmBytes = Encoding.UTF8.GetBytes(handoff.RealmId);
-        var versionBytes = handoff.ClientVersion is null ? null : Encoding.UTF8.GetBytes(handoff.ClientVersion);
+        var versionBytes = handoff.ClientVersion is null ? null : Encoding.UTF8.GetBytes(handoff.ClientVersion.ToString());
         var input = new byte[HandoffDomain.Length +
                              AccountIdSize +
                              AccountTypeSize +
@@ -177,12 +179,16 @@ public sealed class HandoffProofService : IHandoffProofService, IDisposable
     }
 
     private static bool IsValid(PendingHandoff handoff)
-        => handoff.AccountId.IsValid &&
-           Enum.IsDefined(handoff.AccountType) &&
-           !string.IsNullOrEmpty(handoff.Username) &&
-           !string.IsNullOrEmpty(handoff.RealmId) &&
-           handoff.InstanceId != Guid.Empty;
+    {
+        return handoff.AccountId.IsValid &&
+               Enum.IsDefined(handoff.AccountType) &&
+               !string.IsNullOrEmpty(handoff.Username) &&
+               !string.IsNullOrEmpty(handoff.RealmId) &&
+               handoff.InstanceId != Guid.Empty;
+    }
 
     public void Dispose()
-        => CryptographicOperations.ZeroMemory(_secret);
+    {
+        CryptographicOperations.ZeroMemory(_secret);
+    }
 }

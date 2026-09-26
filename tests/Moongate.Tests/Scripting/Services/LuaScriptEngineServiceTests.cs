@@ -31,14 +31,13 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         _container.AddScriptModule<ProbeModule>();
         _container.AddScriptModule<LogModule>();
         _container.Resolve<IMoongateEventBus>()
-                  .Subscribe<ScriptErrorEvent>(
-                      (evt, _) =>
-                      {
-                          _events.Add(evt);
+            .Subscribe<ScriptErrorEvent>((evt, _) =>
+                {
+                    _events.Add(evt);
 
-                          return Task.CompletedTask;
-                      }
-                  );
+                    return Task.CompletedTask;
+                }
+            );
     }
 
     [Fact]

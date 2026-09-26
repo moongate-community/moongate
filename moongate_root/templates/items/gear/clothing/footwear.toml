@@ -1,0 +1,67 @@
+[[item]]
+id = "0x170b_boots"
+base_id = "base_item"
+item_id = 5899
+name = "boots"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x170c"
+base_id = "0x170b_boots"
+item_id = 5900
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x170d_sandals"
+base_id = "base_item"
+item_id = 5901
+name = "sandals"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x170e"
+base_id = "0x170d_sandals"
+item_id = 5902
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x170f_shoes"
+base_id = "base_item"
+item_id = 5903
+name = "shoes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1710"
+base_id = "0x170f_shoes"
+item_id = 5904
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1711_thigh_boots"
+base_id = "base_item"
+item_id = 5905
+name = "thigh boots"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1712"
+base_id = "0x1711_thigh_boots"
+item_id = 5906
+rarity = "common"
+movable = false
+hue = 0

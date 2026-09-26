@@ -4,8 +4,12 @@ using Moongate.Server.Ultima.Interfaces.Loaders;
 namespace Moongate.Tests.TestSupport.Ultima.Loaders;
 
 /// <summary>
-/// An <see cref="IDataLoader{TEntity}" /> whose entities and dependencies come from the container,
-/// so <c>AddUltimaDataLoader</c> can construct it the same way it constructs a real loader.
+///     An <see cref="IDataLoader{TEntity}" /> whose entities and dependencies come from the container,
+///     so
+///     <c>
+///         AddUltimaDataLoader
+///     </c>
+///     can construct it the same way it constructs a real loader.
 /// </summary>
 public sealed class FakeDataLoader<TEntity> : IDataLoader<TEntity>
 {

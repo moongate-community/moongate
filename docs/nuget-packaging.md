@@ -58,10 +58,10 @@ The current `FreeSql.Provider.PostgreSQL` 3.5.311 dependency resolves Npgsql
 overriding Npgsql to another major. A provider/driver upgrade must pass the real
 PostgreSQL package consumer and solution compatibility tests described here.
 
-The solution's PostgreSQL fixtures use the same connection contract. Set
-`MOONGATE_TEST_POSTGRES_CONNECTION_STRING` for an isolated test server whose admin
-role may create/drop databases. Solution tests also require
-`MOONGATE_TEST_REDIS_CONNECTION_STRING` for a disposable Redis instance; see the
+The solution's PostgreSQL fixtures use the same connection contract when
+`MOONGATE_TEST_POSTGRES_CONNECTION_STRING` is set, and likewise
+`MOONGATE_TEST_REDIS_CONNECTION_STRING` for Redis; without them, the solution tests
+start PostgreSQL and Redis containers through Docker. See the
 [integration-test prerequisites](../CONTRIBUTING.md#verify-your-changes).
 Run test projects serially because their hosts share these services:
 

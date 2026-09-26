@@ -1,0 +1,17 @@
+[[item]]
+id = "0x26ac_bola"
+base_id = "base_item"
+item_id = 9900
+name = "bola"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "base_fukiya"
+base_id = "base_item"
+item_id = 10154
+name = "fukiya"
+rarity = "common"
+movable = true
+hue = 0

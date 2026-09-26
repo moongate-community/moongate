@@ -1,6 +1,8 @@
 namespace Moongate.Persistence.Tests.TestSupport.Persistence.Stress;
 
-/// <summary>Bounded one-millisecond buckets; overflow uses the observed maximum instead of clipping slow calls.</summary>
+/// <summary>
+///     Bounded one-millisecond buckets; overflow uses the observed maximum instead of clipping slow calls.
+/// </summary>
 internal sealed class LatencyHistogram
 {
     private readonly long[] _buckets = new long[60_002];

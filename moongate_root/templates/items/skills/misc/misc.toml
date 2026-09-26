@@ -1,0 +1,17 @@
+[[item]]
+id = "0x091a_beehive"
+base_id = "base_item"
+item_id = 2330
+name = "beehive"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x142a_pot_of_wax"
+base_id = "base_item"
+item_id = 5162
+name = "pot of wax"
+rarity = "common"
+movable = true
+hue = 0

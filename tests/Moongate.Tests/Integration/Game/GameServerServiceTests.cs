@@ -72,11 +72,11 @@ public sealed class GameServerServiceTests
         fixture.Network.Accept(connection);
         var returned = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         fixture.Handler.OnPing = (session, _) =>
-                                 {
-                                     fixture.Network.Close(connection);
-                                     Assert.Null(session.NetworkSession.Client);
-                                     returned.TrySetResult();
-                                 };
+        {
+            fixture.Network.Close(connection);
+            Assert.Null(session.NetworkSession.Client);
+            returned.TrySetResult();
+        };
         fixture.Network.Receive(connection, new byte[] { 0x73, 1 });
         await returned.Task.WaitAsync(Timeout);
         await fixture.Game.StopAsync().WaitAsync(Timeout);
@@ -92,11 +92,11 @@ public sealed class GameServerServiceTests
         using var connection = new ControlledNetworkConnection(1);
         var startupFailure = new InvalidOperationException("startup after admission");
         fixture.Network.OnStart = () =>
-                                  {
-                                      fixture.Network.Accept(connection);
+        {
+            fixture.Network.Accept(connection);
 
-                                      return Task.FromException(startupFailure);
-                                  };
+            return Task.FromException(startupFailure);
+        };
         Assert.Same(startupFailure, await Assert.ThrowsAsync<InvalidOperationException>(() => fixture.Game.StartAsync()));
         Assert.Empty(fixture.Sessions.GetAll());
         Assert.Equal(0, fixture.Connections.Count);
@@ -140,11 +140,11 @@ public sealed class GameServerServiceTests
         using var connection = new ControlledNetworkConnection(1);
         fixture.Network.Accept(connection);
         fixture.Network.OnStop = () =>
-                                 {
-                                     entered.TrySetResult();
+        {
+            entered.TrySetResult();
 
-                                     return release.Task;
-                                 };
+            return release.Task;
+        };
 
         try
         {

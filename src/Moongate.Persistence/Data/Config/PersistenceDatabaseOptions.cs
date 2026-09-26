@@ -4,35 +4,53 @@ using Npgsql;
 
 namespace Moongate.Persistence.Data.Config;
 
-/// <summary>Provides lazy runtime and schema connections for one persistence database target.</summary>
+/// <summary>
+///     Provides lazy runtime and schema connections for one persistence database target.
+/// </summary>
 public sealed class PersistenceDatabaseOptions
 {
     private readonly Func<string?> _runtimeConnectionStringFactory;
     private readonly Func<string?> _schemaConnectionStringFactory;
     private readonly bool _hasSeparateSchemaConnection;
 
-    /// <summary>Gets the database target configured by this instance.</summary>
+    /// <summary>
+    ///     Gets the database target configured by this instance.
+    /// </summary>
     public PersistenceDatabaseTarget Target { get; }
 
     /// <summary>
-    /// Creates options backed by connection-string values held in memory.
+    ///     Creates options backed by connection-string values held in memory.
     /// </summary>
-    /// <param name="target">The database target.</param>
-    /// <param name="runtimeConnectionString">The runtime connection string.</param>
-    /// <param name="schemaConnectionString">The optional connection used for schema DDL.</param>
+    /// <param name="target">
+    ///     The database target.
+    /// </param>
+    /// <param name="runtimeConnectionString">
+    ///     The runtime connection string.
+    /// </param>
+    /// <param name="schemaConnectionString">
+    ///     The optional connection used for schema DDL.
+    /// </param>
     public PersistenceDatabaseOptions(
         PersistenceDatabaseTarget target,
         string runtimeConnectionString,
         string? schemaConnectionString = null
-    ) : this(target, () => runtimeConnectionString, schemaConnectionString is null ? null : () => schemaConnectionString) { }
+    ) : this(target, () => runtimeConnectionString, schemaConnectionString is null ? null : () => schemaConnectionString)
+    {
+    }
 
     /// <summary>
-    /// Creates options whose runtime connection is resolved during initialization, even without registered entities.
-    /// Schema connections are resolved when the target is activated for schema operations.
+    ///     Creates options whose runtime connection is resolved during initialization, even without registered entities.
+    ///     Schema connections are resolved when the target is activated for schema operations.
     /// </summary>
-    /// <param name="target">The database target.</param>
-    /// <param name="runtimeConnectionStringFactory">Resolves the runtime connection string.</param>
-    /// <param name="schemaConnectionStringFactory">Optionally resolves the connection used for schema DDL.</param>
+    /// <param name="target">
+    ///     The database target.
+    /// </param>
+    /// <param name="runtimeConnectionStringFactory">
+    ///     Resolves the runtime connection string.
+    /// </param>
+    /// <param name="schemaConnectionStringFactory">
+    ///     Optionally resolves the connection used for schema DDL.
+    /// </param>
     public PersistenceDatabaseOptions(
         PersistenceDatabaseTarget target,
         Func<string?> runtimeConnectionStringFactory,
@@ -49,15 +67,22 @@ public sealed class PersistenceDatabaseOptions
 
     /// <inheritdoc />
     public override string ToString()
-        => $"PersistenceDatabaseOptions {{ Target = {Target}, SeparateSchemaConnection = {_hasSeparateSchemaConnection} }}";
+    {
+        return
+            $"PersistenceDatabaseOptions {{ Target = {Target}, SeparateSchemaConnection = {_hasSeparateSchemaConnection} }}";
+    }
 
     internal string ResolveRuntimeConnectionString()
-        => ResolveConnectionString(_runtimeConnectionStringFactory, "runtime");
+    {
+        return ResolveConnectionString(_runtimeConnectionStringFactory, "runtime");
+    }
 
     internal string ResolveSchemaConnectionString(string runtimeConnectionString)
-        => _hasSeparateSchemaConnection
-               ? ResolveConnectionString(_schemaConnectionStringFactory, "schema")
-               : runtimeConnectionString;
+    {
+        return _hasSeparateSchemaConnection
+            ? ResolveConnectionString(_schemaConnectionStringFactory, "schema")
+            : runtimeConnectionString;
+    }
 
     internal void ValidateSameDatabaseEndpoint(string runtimeConnectionString, string schemaConnectionString)
     {

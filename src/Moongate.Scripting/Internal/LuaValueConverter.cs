@@ -3,19 +3,21 @@ using Lua;
 
 namespace Moongate.Scripting.Internal;
 
-/// <summary>The one place that decides how CLR values and Lua values map onto each other.</summary>
+/// <summary>
+///     The one place that decides how CLR values and Lua values map onto each other.
+/// </summary>
 internal static class LuaValueConverter
 {
     /// <summary>
-    /// Converts a Lua argument to the CLR type a bound method parameter declares. Conversion is strict:
-    /// there is no coercion between kinds (a Lua string is never read as a number, for instance).
-    /// Integer targets (<see cref="int" />, <see cref="long" />) additionally require the Lua number to be
-    /// integral and within the target type's range. Enum targets accept either the enum's underlying
-    /// number or the member's name.
+    ///     Converts a Lua argument to the CLR type a bound method parameter declares. Conversion is strict:
+    ///     there is no coercion between kinds (a Lua string is never read as a number, for instance).
+    ///     Integer targets (<see cref="int" />, <see cref="long" />) additionally require the Lua number to be
+    ///     integral and within the target type's range. Enum targets accept either the enum's underlying
+    ///     number or the member's name.
     /// </summary>
     /// <exception cref="InvalidCastException">
-    /// <paramref name="value" /> is nil for a non-nullable value type, or its Lua kind, integer-ness, or
-    /// range does not match what <paramref name="targetType" /> requires.
+    ///     <paramref name="value" /> is nil for a non-nullable value type, or its Lua kind, integer-ness, or
+    ///     range does not match what <paramref name="targetType" /> requires.
     /// </exception>
     public static object? FromLua(LuaValue value, Type targetType)
     {
@@ -27,8 +29,8 @@ internal static class LuaValueConverter
         if (value.Type == LuaValueType.Nil)
         {
             return targetType.IsValueType && Nullable.GetUnderlyingType(targetType) is null
-                       ? throw new InvalidCastException($"nil cannot be converted to {targetType.Name}")
-                       : null;
+                ? throw new InvalidCastException($"nil cannot be converted to {targetType.Name}")
+                : null;
         }
 
         var underlying = Nullable.GetUnderlyingType(targetType) ?? targetType;
@@ -91,8 +93,8 @@ internal static class LuaValueConverter
         if (underlying == typeof(int))
         {
             return number is >= int.MinValue and <= int.MaxValue
-                       ? (int)number
-                       : throw new InvalidCastException($"{number} is out of range for {underlying.Name}");
+                ? (int)number
+                : throw new InvalidCastException($"{number} is out of range for {underlying.Name}");
         }
 
         if (underlying == typeof(long))
@@ -101,14 +103,16 @@ internal static class LuaValueConverter
             // exactly 2^63 through, where the cast wraps to long.MinValue. The bound is exclusive 2^63
             // instead; long.MinValue is exactly -2^63 and stays inclusive.
             return number is >= long.MinValue and < 9223372036854775808.0
-                       ? (long)number
-                       : throw new InvalidCastException($"{number} is out of range for {underlying.Name}");
+                ? (long)number
+                : throw new InvalidCastException($"{number} is out of range for {underlying.Name}");
         }
 
         throw new InvalidCastException($"Parameters of type {targetType.FullName} are not supported.");
     }
 
-    /// <summary>Gets whether values of <paramref name="type" /> can be converted to or from Lua by this converter.</summary>
+    /// <summary>
+    ///     Gets whether values of <paramref name="type" /> can be converted to or from Lua by this converter.
+    /// </summary>
     public static bool IsSupported(Type type)
     {
         if (type.IsEnum)
@@ -129,10 +133,12 @@ internal static class LuaValueConverter
     }
 
     /// <summary>
-    /// Converts a CLR value returned by a bound method into the <see cref="LuaValue" /> Lua receives. Enums, including
-    /// those boxed via <paramref name="declaredType" />, are converted to their numeric value.
+    ///     Converts a CLR value returned by a bound method into the <see cref="LuaValue" /> Lua receives. Enums, including
+    ///     those boxed via <paramref name="declaredType" />, are converted to their numeric value.
     /// </summary>
-    /// <exception cref="InvalidCastException">The value's runtime type is not one this converter knows how to send to Lua.</exception>
+    /// <exception cref="InvalidCastException">
+    ///     The value's runtime type is not one this converter knows how to send to Lua.
+    /// </exception>
     public static LuaValue ToLua(object? value, Type declaredType)
     {
         if (value is null)

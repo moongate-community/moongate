@@ -7,7 +7,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Console;
 
-/// <summary>Polls the terminal for keystrokes and dispatches submitted command lines.</summary>
+/// <summary>
+///     Polls the terminal for keystrokes and dispatches submitted command lines.
+/// </summary>
 public sealed class ConsoleInputService : IConsoleInputService, IDisposable
 {
     private const int PollDelayMilliseconds = 25;
@@ -21,7 +23,9 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     private Task _loop = Task.CompletedTask;
 
     public ConsoleInputService(IConsolePromptService prompt, ICommandSystemService commands)
-        : this(prompt, commands, new SystemConsoleKeySource()) { }
+        : this(prompt, commands, new SystemConsoleKeySource())
+    {
+    }
 
     internal ConsoleInputService(
         IConsolePromptService prompt,
@@ -73,7 +77,9 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     }
 
     private static bool IsNoKey(ConsoleKeyInfo key)
-        => key.KeyChar == '\0' && key.Key == default && key.Modifiers == 0;
+    {
+        return key.KeyChar == '\0' && key.Key == default && key.Modifiers == 0;
+    }
 
     private static string MaskSensitiveInput(string input)
     {
@@ -99,8 +105,8 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         _ = ReadToken(text, ref position);
 
         return position == passwordStart
-                   ? input
-                   : input[..passwordStart] + new string('*', position - passwordStart) + input[position..];
+            ? input
+            : input[..passwordStart] + new string('*', position - passwordStart) + input[position..];
     }
 
     private static ReadOnlySpan<char> ReadToken(ReadOnlySpan<char> text, ref int position)
@@ -228,11 +234,11 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
         try
         {
             var output = await _commands.ExecuteAsync(
-                             commandLine,
-                             CommandSourceType.Console,
-                             null,
-                             cancellationToken
-                         );
+                commandLine,
+                CommandSourceType.Console,
+                null,
+                cancellationToken
+            );
 
             foreach (var line in output)
             {
@@ -251,5 +257,7 @@ public sealed class ConsoleInputService : IConsoleInputService, IDisposable
     }
 
     public void Dispose()
-        => _lifetime.Dispose();
+    {
+        _lifetime.Dispose();
+    }
 }

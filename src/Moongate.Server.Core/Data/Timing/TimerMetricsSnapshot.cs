@@ -1,6 +1,8 @@
 namespace Moongate.Server.Core.Data.Timing;
 
-/// <summary>Timer registration counts and monotonic callback measurements.</summary>
+/// <summary>
+///     Timer registration counts and monotonic callback measurements.
+/// </summary>
 public sealed class TimerMetricsSnapshot
 {
     public int ActiveTimers { get; init; }

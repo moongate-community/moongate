@@ -1,0 +1,17 @@
+[[item]]
+id = "0x1bd7_board"
+base_id = "base_item"
+item_id = 7127
+name = "board"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1bda_board"
+base_id = "base_item"
+item_id = 7130
+name = "board"
+rarity = "common"
+movable = false
+hue = 0

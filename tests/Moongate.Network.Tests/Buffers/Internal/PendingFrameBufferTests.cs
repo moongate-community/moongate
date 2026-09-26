@@ -51,14 +51,13 @@ public sealed class PendingFrameBufferTests
     {
         var pool = new TrackingArrayPool();
 
-        Assert.Throws<ArgumentOutOfRangeException>(
-            () =>
-                new PendingFrameBuffer(
-                    new PendingFrameBufferTestFramer(),
-                    receiveBufferSize,
-                    maxFrameLength,
-                    pool
-                )
+        Assert.Throws<ArgumentOutOfRangeException>(() =>
+            new PendingFrameBuffer(
+                new PendingFrameBufferTestFramer(),
+                receiveBufferSize,
+                maxFrameLength,
+                pool
+            )
         );
         Assert.Equal(0, pool.RentCount);
     }

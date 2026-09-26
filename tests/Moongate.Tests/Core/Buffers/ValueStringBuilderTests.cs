@@ -147,8 +147,8 @@ public class ValueStringBuilderTests
 
     [Theory, InlineData(false), InlineData(true)]
     public void Append_SpanFormatterReportsInvalidCount_ThrowsWithoutAdvancingLength(bool negativeCount)
-        => Assert.Throws<FormatException>(
-            () =>
+    {
+        Assert.Throws<FormatException>(() =>
             {
                 using var builder = new ValueStringBuilder(new char[16].AsSpan());
                 builder.Append("prefix");
@@ -163,6 +163,7 @@ public class ValueStringBuilderTests
                 }
             }
         );
+    }
 
     [Fact]
     public void Append_StackBufferGrows_PreservesWrittenCharactersAndEdits()
@@ -218,8 +219,8 @@ public class ValueStringBuilderTests
     {
         var source = "seed".ToCharArray();
         using var builder = suppliedBuffer
-                                ? new ValueStringBuilder(source.AsSpan(), new char[2])
-                                : new ValueStringBuilder((ReadOnlySpan<char>)source);
+            ? new ValueStringBuilder(source.AsSpan(), new char[2])
+            : new ValueStringBuilder((ReadOnlySpan<char>)source);
         source[0] = 'X';
 
         builder.Append("-next");
@@ -329,8 +330,7 @@ public class ValueStringBuilderTests
      InlineData(7, 0, "length")]
     public void Remove_InvalidRange_ThrowsWithoutChangingText(int start, int count, string parameter)
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () =>
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 using var builder = new ValueStringBuilder(new char[8].AsSpan());
                 builder.Append("abcdef");
@@ -387,8 +387,7 @@ public class ValueStringBuilderTests
      InlineData(4, 3, "count")]
     public void ReplaceAny_InvalidRange_ThrowsWithoutChangingText(int start, int count, string parameter)
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () =>
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 using var builder = new ValueStringBuilder(new char[8].AsSpan());
                 builder.Append("abcdef");
@@ -450,8 +449,7 @@ public class ValueStringBuilderTests
      InlineData(4, 3, "count")]
     public void Replace_InvalidRange_ThrowsWithoutChangingText(int start, int count, string parameter)
     {
-        var exception = Assert.Throws<ArgumentOutOfRangeException>(
-            () =>
+        var exception = Assert.Throws<ArgumentOutOfRangeException>(() =>
             {
                 using var builder = new ValueStringBuilder(new char[8].AsSpan());
                 builder.Append("abcdef");

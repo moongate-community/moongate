@@ -48,8 +48,10 @@ storage, Docker Compose, logs, and upgrades.
 ## Status
 
 Moongate is under active development. The transport, packet pipeline, scripting,
-persistence and Redis-backed login-to-game handoff are in place; character
-selection and a playable world are not. [Implementation status](docs/implementation-status.md)
+persistence, shard data files, client-file readers (tiledata, maps, multis) with movement
+and line-of-sight checks, and Redis-backed login-to-game handoff are in place, and
+the game sends an empty character list after login; character creation, selection and
+a playable world are not. [Implementation status](docs/implementation-status.md)
 lists what works today, area by area.
 
 ## Scripting
@@ -105,7 +107,11 @@ Start with [Writing Lua scripts](docs/scripting.md). The
 - [Writing a plugin](docs/plugins.md): an assembly under `plugins/` that registers services, commands, Lua modules and metric providers before the server starts.
 - [Writing a Lua module](docs/lua-modules.md): a C# class with `[ScriptModule]` and `[ScriptFunction]` that scripts call as a read-only table.
 - [Registering a metric provider](docs/metric-providers.md): an `IMetricProvider` whose samples join the diagnostics snapshot.
+- [Localization](docs/localization.md): the server language, the `data/messages` files and `ILocalizationService`.
+- [Shard data files](docs/data-files.md): the TOML files under `data/` (maps, regions, races, skills and the rest), their fields and the checks that stop the server at startup.
+- [Client files and world queries](docs/world-queries.md): `ITileDataService`, `IMapService` and `IMultiService` over the client files, plus `IMovementService` and `ILineOfSightService` for steps and sight.
 - [Loading TOML templates](docs/templates.md): an `IDataLoader<TEntity>` that reads shard content once at startup, plus `EnumValueSpec<TEnum>` for fields that resolve randomly.
+- [TOML value types](docs/toml-types.md): every TOML converter (points, rectangles, hues, serials, value specs, account types, server mode), the forms it reads and writes, and how to add one.
 
 The first three are shown by one compiled sample, [samples/Moongate.Sample.Plugin](samples/Moongate.Sample.Plugin/), which the test suite loads through the real plugin loader.
 

@@ -1,7 +1,7 @@
 namespace Moongate.Core.Types.Geometry;
 
 /// <summary>
-/// Eight compass directions encoded in the low three bits, with an optional running flag.
+///     Eight compass directions encoded in the low three bits, with an optional running flag.
 /// </summary>
 [Flags]
 public enum DirectionType : byte

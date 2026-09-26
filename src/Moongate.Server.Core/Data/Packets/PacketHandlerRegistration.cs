@@ -5,7 +5,9 @@ using Moongate.Server.Core.Packets;
 
 namespace Moongate.Server.Core.Data.Packets;
 
-/// <summary>Immutable handler metadata with a binder invoked once by dispatcher startup.</summary>
+/// <summary>
+///     Immutable handler metadata with a binder invoked once by dispatcher startup.
+/// </summary>
 public sealed class PacketHandlerRegistration
 {
     public Type PacketType { get; }

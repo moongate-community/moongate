@@ -2,10 +2,11 @@
 
 Shard content that a designer authors by hand, such as item and mobile definitions,
 is a set of TOML files under `templates/` in the server root, read once when the
-shard starts. This page covers the loader contract in `Moongate.Server.Ultima`, the
-TOML value types in `Moongate.Core` that make templates pleasant to write by hand,
-and converter registration. It assumes [writing a plugin](plugins.md), since a
-loader is registered from `Register` the same way a service or a metric provider is.
+shard starts. This page covers the loader contract in `Moongate.Server.Ultima` and
+the TOML value types in `Moongate.Core` that make templates pleasant to write by
+hand; [TOML value types](toml-types.md) is the reference for their text forms. It
+assumes [writing a plugin](plugins.md), since a loader is registered from `Register`
+the same way a service or a metric provider is.
 
 ## What exists today
 
@@ -16,6 +17,8 @@ from UOX3 data. **No loader reads them yet:** `IDataLoader<ItemTemplate>` and
 `IDataLoader<LootTemplate>` have not been written or registered, so template files
 under `templates/` are not loaded by the current server. This page documents the
 mechanism a loader plugs into; the item and loot guides follow once a loader exists.
+The same contract already loads the files under `data/`, such as maps, races and
+regions: see [Shard data files](data-files.md) for working loaders.
 See [Implementation status](implementation-status.md).
 
 ## The loader contract
@@ -97,9 +100,11 @@ As text, the three forms are:
 | `rarity = "random_of"` | Any member of the enum, picked fresh each `Resolve()` |
 | `rarity = "random_of:rare,epic,legendary"` | One of exactly these three, picked fresh each `Resolve()` |
 
-Parsing member names is case-insensitive; writing always lowercases them, so
-`FromValue(ItemRarityType.Epic).ToString()` is `"epic"`, matching how a designer
-types it. A field declares this by its type, nothing else:
+Parsing member names ignores case and underscores; writing uses lowercase
+snake_case, so `FromValue(ItemRarityType.Epic).ToString()` is `"epic"`, matching how
+a designer types it, and what is written always reads back. See
+[EnumValueSpec](toml-types.md#enumvaluespec) for every accepted form and error. A
+field declares this by its type, nothing else:
 
 ```csharp
 public EnumValueSpec<ItemRarityType> Rarity { get; set; } =
@@ -122,80 +127,28 @@ public readonly struct RangeValueSpec<T> where T : struct, INumber<T>
 }
 ```
 
-As text, a bare number (`hue = 1150`) is fixed; a quoted `min-max` (`hue = "1150-1200"`)
+As text, a bare number (`amount = 5`) is fixed; a quoted `min-max` (`amount = "5-10"`)
 picks a fresh value in that inclusive range on every `Resolve()`. A quoted bare
-number (`hue = "1150"`) is accepted too. Writing a fixed value emits a bare number;
-writing a range emits the quoted form.
+number (`amount = "5"`) is accepted too. Writing a fixed value emits a bare number;
+writing a range emits the quoted form. See
+[RangeValueSpec](toml-types.md#rangevaluespec) for every accepted form and error.
 
 ```csharp
-public RangeValueSpec<int> Hue { get; set; } = RangeValueSpec<int>.FromValue(0);
+public RangeValueSpec<int> Amount { get; set; } = RangeValueSpec<int>.FromValue(1);
 ```
+
+Hues have their own type, `HueSpec`, with the same fixed-or-range text form and hex
+values such as `"0x03EA-0x0422"`; `ItemTemplate.Hue` uses it. See
+[HueSpec](toml-types.md#huespec).
 
 ## Registering a TOML converter
 
-`EnumValueSpec<TEnum>` and `RangeValueSpec<T>` read and write through converter
-factories: given any closed generic, the factory builds the matching converter by
-reflection, so one factory instance covers every enum or number type a template
-wraps.
-
-`TomlUtils` keeps a global list of converters that every call without its own
-explicit options picks up:
-
-```csharp
-public static void AddTomlConverter(TomlConverter converter);
-public static bool RemoveTomlConverter<T>() where T : TomlConverter;
-public static IReadOnlyList<TomlConverter> GetTomlConverters();
-```
-
-`AddTomlConverter` is thread-safe and idempotent: a second converter of the same
-type is ignored. Registration is global and process-wide. Register once, at startup:
-
-```csharp
-TomlUtils.AddTomlConverter(new SerialTomlConverter());
-TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
-TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
-```
-
-**This never affects a call that passes its own `TomlSerializerOptions`.**
-`Deserialize`, `Serialize` and the file-based overloads all take an optional
-`options` parameter; when it is supplied, it is used exactly as given, with no
-converters merged in from the global list.
-
-### Worked example: `Serial`
-
-`Serial` is the UO wire identity, and templates name one as a graphic id:
-`item_id = 0x0FEF`. `SerialTomlConverter` reads that bare hex integer, which TOML
-parses natively, or the same text quoted (`item_id = "0x0FEF"`), and always writes a
-bare integer:
-
-```csharp
-public sealed class SerialTomlConverter : TomlConverter<Serial>
-{
-    public override Serial Read(TomlReader reader)
-    {
-        if (reader.TokenType == TomlTokenType.String)
-        {
-            var text = reader.GetString();
-
-            if (!Serial.TryParse(text, out var parsed))
-            {
-                throw reader.CreateException($"'{text}' is not a valid serial.");
-            }
-
-            return parsed;
-        }
-
-        return new Serial((uint)reader.GetInt64());
-    }
-
-    public override void Write(TomlWriter writer, Serial value)
-        => writer.WriteIntegerValue(value.Value);
-}
-```
-
-A converter for a type of your own follows the same shape: subclass
-`TomlConverter<T>` for one closed type, or `TomlConverterFactory` when the type is
-itself generic, and register the instance once with `TomlUtils.AddTomlConverter`.
+`EnumValueSpec<TEnum>`, `RangeValueSpec<T>`, `HueSpec`, `Serial` and the point types
+read and write through converters that `MoongateUltimaPlugin` registers once with
+`TomlUtils.AddTomlConverter`; `Visibility` uses a converter named by an attribute.
+A template needs nothing more than the field type. For the accepted and written
+forms of every type, the errors, and how to write and register a converter of your
+own, see [TOML value types](toml-types.md).
 
 ## The template shapes
 
@@ -210,8 +163,25 @@ itself generic, and register the instance once with `TomlUtils.AddTomlConverter`
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
 | `ScriptId` | Names the Lua module handling this template's behaviour |
 | `Movable` | Tiledata carries no such flag, so this is explicit |
-| `Hue` | `RangeValueSpec<int>`, `0` meaning the art's native coloring |
+| `Visibility` | The lowest account type that sees the item: `regular`, `game_master` or `administrator`, as `realm_directory.minimum_account_type`. Unset by default, so a template inherits it through `BaseId`; an item with none anywhere is visible to everyone. `IsVisibleTo(accountType)` answers for one viewer |
+| `Hue` | `HueSpec`, `0` meaning the art's native coloring; a quoted `"min-max"` range picks one per spawn |
 | `MaxItems`, `MaxWeight` | Nullable; set only on a container template |
+
+Spawners, for example, are for staff only, and their children inherit it:
+
+```toml
+[[item]]
+id = "base_spawner"
+base_id = "base_item"
+item_id = 7956
+visibility = "game_master"
+
+[[item]]
+id = "orcspawn"
+base_id = "base_spawner"
+item_id = 7956
+name = "Orc Spawner"
+```
 
 `LootTemplate` and `LootEntry` are the same kind of shape:
 

@@ -1,15 +1,15 @@
 using Moongate.Server.Admin.Data.Config;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config.Sections;
-using Moongate.Server.Serialization.Config.Internal;
-using Tomlyn.Serialization;
 
 namespace Moongate.Server.Data.Config;
 
 public class MoongateServerConfig
 {
-    /// <summary>Gets or sets the configured server roles, defaulting to both login and game.</summary>
-    [TomlConverter(typeof(ServerModeTomlConverter))]
+    /// <summary>
+    ///     Gets or sets the configured server roles, defaulting to both login and game.
+    /// </summary>
     public ServerMode Mode { get; set; } = ServerMode.Standalone;
 
     public ShardConfig Shard { get; set; } = new();
@@ -32,7 +32,13 @@ public class MoongateServerConfig
 
     public ScriptingConfig Scripting { get; set; } = new();
 
-    /// <summary>Validates configuration before server services begin startup.</summary>
+    public LocalizationConfig Localization { get; set; } = new();
+
+    public LineOfSightConfig LineOfSight { get; set; } = new();
+
+    /// <summary>
+    ///     Validates configuration before server services begin startup.
+    /// </summary>
     public void Validate()
     {
         if (Mode is not (ServerMode.Login or ServerMode.Game or ServerMode.Standalone))
@@ -54,7 +60,11 @@ public class MoongateServerConfig
 
         Redis.Validate();
 
-        if (AdminApi is null) { throw new InvalidOperationException("The admin_api configuration section cannot be null."); }
+        if (AdminApi is null)
+        {
+            throw new InvalidOperationException("The admin_api configuration section cannot be null.");
+        }
+
         AdminApi.Validate();
 
         if (Persistence is null)
@@ -91,5 +101,19 @@ public class MoongateServerConfig
         }
 
         Scripting.Validate();
+
+        if (Localization is null)
+        {
+            throw new InvalidOperationException("The localization configuration section cannot be null.");
+        }
+
+        Localization.Validate();
+
+        if (LineOfSight is null)
+        {
+            throw new InvalidOperationException("The line of sight configuration section cannot be null.");
+        }
+
+        LineOfSight.Validate();
     }
 }

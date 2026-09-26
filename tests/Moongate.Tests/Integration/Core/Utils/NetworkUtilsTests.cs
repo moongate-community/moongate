@@ -42,7 +42,9 @@ public sealed class NetworkUtilsTests
 
     [Fact]
     public void GetListeningAddresses_NullEndpoint_ThrowsArgumentNullException()
-        => Assert.Throws<ArgumentNullException>(() => NetworkUtils.GetListeningAddresses(null!));
+    {
+        Assert.Throws<ArgumentNullException>(() => NetworkUtils.GetListeningAddresses(null!));
+    }
 
     [Fact]
     public void GetLocalIpAddresses_IncludesLoopbackAndExcludesWildcardAddresses()

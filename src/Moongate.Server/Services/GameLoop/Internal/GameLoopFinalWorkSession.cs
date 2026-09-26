@@ -3,7 +3,9 @@ using Moongate.Server.Core.Interfaces.GameLoop;
 
 namespace Moongate.Server.Services.GameLoop.Internal;
 
-/// <summary>A single pending synchronous capture slot, usable only during one terminal callback.</summary>
+/// <summary>
+///     A single pending synchronous capture slot, usable only during one terminal callback.
+/// </summary>
 internal sealed class GameLoopFinalWorkSession
 {
     private readonly Lock _gate = new();
@@ -22,7 +24,9 @@ internal sealed class GameLoopFinalWorkSession
     }
 
     public Task CloseAsync()
-        => CloseAsync(null);
+    {
+        return CloseAsync(null);
+    }
 
     public async Task CloseAsync(Exception? callbackFailure)
     {

@@ -34,19 +34,19 @@ public sealed class TcpThroughputTests
             new LengthPrefixFramer()
         );
         server.OnDataReceived += (_, args) =>
-                                 {
-                                     if (!args.Data.Span.SequenceEqual(frame))
-                                     {
-                                         received.TrySetException(new InvalidDataException("Corrupted load-test frame."));
+        {
+            if (!args.Data.Span.SequenceEqual(frame))
+            {
+                received.TrySetException(new InvalidDataException("Corrupted load-test frame."));
 
-                                         return;
-                                     }
+                return;
+            }
 
-                                     if (Interlocked.Increment(ref count) == expectedCount)
-                                     {
-                                         received.TrySetResult();
-                                     }
-                                 };
+            if (Interlocked.Increment(ref count) == expectedCount)
+            {
+                received.TrySetResult();
+            }
+        };
         var peers = new List<TcpClient>();
         await server.StartAsync(deadline.Token);
 
@@ -62,8 +62,7 @@ public sealed class TcpThroughputTests
             var before = GC.GetTotalAllocatedBytes(true);
             var startedAt = Stopwatch.GetTimestamp();
             await Task.WhenAll(
-                peers.Select(
-                    async peer =>
+                peers.Select(async peer =>
                     {
                         for (var index = 0; index < messagesPerClient; index++)
                         {

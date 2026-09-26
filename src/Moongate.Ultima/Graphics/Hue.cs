@@ -86,9 +86,9 @@ public sealed class Hue
     }
 
     /// <summary>
-    /// Builds a Hue directly from the on-disk byte layout: 32 ushorts of
-    /// colors, then tableStart / tableEnd ushorts, then a 20-byte ASCII
-    /// name. Lets the loader skip Marshal.PtrToStructure boxing per hue.
+    ///     Builds a Hue directly from the on-disk byte layout: 32 ushorts of
+    ///     colors, then tableStart / tableEnd ushorts, then a 20-byte ASCII
+    ///     name. Lets the loader skip Marshal.PtrToStructure boxing per hue.
     /// </summary>
     public Hue(int index, ReadOnlySpan<byte> data)
     {
@@ -115,10 +115,12 @@ public sealed class Hue
     }
 
     /// <summary>
-    /// Applies Hue to Bitmap
+    ///     Applies Hue to Bitmap
     /// </summary>
-    /// <param name="bmp"></param>
-    /// <param name="onlyHueGrayPixels"></param>
+    /// <param name="bmp">
+    /// </param>
+    /// <param name="onlyHueGrayPixels">
+    /// </param>
     public unsafe void ApplyTo(UltimaBitmap bmp, bool onlyHueGrayPixels)
     {
         var stride = bmp.Stride >> 1;
@@ -194,7 +196,9 @@ public sealed class Hue
     }
 
     public SKColor GetColor(int index)
-        => HueToColor(Colors[index]);
+    {
+        return HueToColor(Colors[index]);
+    }
 
     public void Import(string fileName)
     {
@@ -248,9 +252,10 @@ public sealed class Hue
     }
 
     /// <summary>
-    /// Converts Hue color to RGB color
+    ///     Converts Hue color to RGB color
     /// </summary>
-    /// <param name="hue"></param>
+    /// <param name="hue">
+    /// </param>
     private static SKColor HueToColor(ushort hue)
     {
         const int scale = 255 / 31;

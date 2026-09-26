@@ -14,8 +14,12 @@ internal sealed class WorldSaveTimeProvider : TimeProvider
     }
 
     public override long GetTimestamp()
-        => Interlocked.Read(ref _timestamp);
+    {
+        return Interlocked.Read(ref _timestamp);
+    }
 
     public override DateTimeOffset GetUtcNow()
-        => UtcNow;
+    {
+        return UtcNow;
+    }
 }

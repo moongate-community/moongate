@@ -7,9 +7,11 @@ namespace Moongate.Network.Packets.Registry;
 public static class PacketTable
 {
     /// <summary>
-    /// Creates and freezes a registry containing all built-in packet types.
+    ///     Creates and freezes a registry containing all built-in packet types.
     /// </summary>
-    /// <returns>A ready-to-use frozen registry.</returns>
+    /// <returns>
+    ///     A ready-to-use frozen registry.
+    /// </returns>
     public static PacketRegistry CreateRegistry()
     {
         var registry = new PacketRegistry();
@@ -20,9 +22,11 @@ public static class PacketTable
     }
 
     /// <summary>
-    /// Registers the built-in packet types in an empty mutable registry.
+    ///     Registers the built-in packet types in an empty mutable registry.
     /// </summary>
-    /// <param name="registry">The registry to configure before use.</param>
+    /// <param name="registry">
+    ///     The registry to configure before use.
+    /// </param>
     public static void Register(PacketRegistry registry)
     {
         ArgumentNullException.ThrowIfNull(registry);

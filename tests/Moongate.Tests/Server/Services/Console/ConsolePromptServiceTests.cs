@@ -101,9 +101,7 @@ public sealed class ConsolePromptServiceTests
         driver.ThrowOnOperation = driver.Operations.Count + 3;
         var writes = 0;
 
-        var exception = Record.Exception(
-            () => service.RunWithPromptHidden(
-                () =>
+        var exception = Record.Exception(() => service.RunWithPromptHidden(() =>
                 {
                     writes++;
                     driver.Write("callback write");

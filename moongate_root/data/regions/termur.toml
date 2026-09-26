@@ -1,0 +1,1011 @@
+# ==============================================================================
+# Moongate - regions/termur.toml
+#
+# What it is for:
+#   The regions of TerMur: towns, dungeons and other named areas, with the
+#   rules they apply. The map is the name of this file. Every rule is written out
+#   and already includes the rules of the region's parents, so a region can be
+#   read on its own. Where regions overlap, the highest priority applies.
+#
+# Fields:
+#   name            the region name (leave out for areas that only apply rules)
+#   type            base, town, dungeon, nohousing, guarded, jail or greenacres
+#   priority        where regions overlap, the highest one applies
+#   parent          the name of the region this one is part of, on this map
+#   areas           rectangles as "(x1, y1)..(x2, y2)": first corner included,
+#                   second corner excluded; these are corners, not sizes
+#                   example: areas = ["(1330, 1991)..(1343, 2004)"]
+#                   with height: { bounds = "(2200, 1110)..(2250, 1160)", z1 = 0, z2 = 128 }
+#                   z1 is included, z2 excluded; omit either for no limit
+#                   without z1 and z2 the rectangle covers every height
+#   go_location     where a "go to region" command takes a character, "(x, y, z)"
+#   entrance        the entrance of the town or dungeon, "(x, y, z)"
+#   music           the music played in the region (see the music list)
+#   weather         the weather profile of weather.toml the region uses
+#   rune_name       the name of a rune marked here
+#   guarded         whether guards protect the region
+#   housing         whether players may place houses
+#   instant_logout  whether a character with no fight in progress logs out at once
+#   recall_in, recall_out, gate_in, gate_out, mark, teleport_in, teleport_out
+#                   whether those travel spells work into, out of or in the region;
+#                   a travel spell is blocked when any region covering the place
+#                   blocks it, whatever its priority
+# ==============================================================================
+
+[[region]]
+name = "Abyss"
+type = "dungeon"
+priority = 50
+areas = [
+    "(301, 328)..(1076, 802)",
+    "(780, 32)..(1076, 328)",
+    "(436, 802)..(740, 980)",
+    "(754, 881)..(862, 974)",
+    "(756, 1049)..(860, 1142)",
+    "(756, 1214)..(861, 1313)",
+    "(0, 684)..(134, 860)",
+    "(0, 485)..(134, 647)",
+    "(0, 286)..(137, 445)",
+    "(254, 70)..(500, 253)",
+]
+go_location = "(946, 72, 72)"
+music = "StygianAbyss"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Abyssal Lair"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(931, 314)..(1031, 454)"]
+go_location = "(985, 366, -11)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Medusas Lair"
+type = "base"
+priority = 100
+parent = "Abyss"
+areas = [
+    "(764, 894)..(833, 983)",
+    "(816, 749)..(829, 765)",
+]
+go_location = "(771, 928, 0)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "NPC Encampment"
+type = "base"
+priority = 100
+parent = "Abyss"
+areas = [{ bounds = "(1087, 1127)..(1096, 1133)", z1 = -42, z2 = 128 }]
+go_location = "(1090, 1130, -42)"
+entrance = "(1090, 1132, 0)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Cavern of the Discarded"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = [
+    "(887, 475)..(1000, 575)",
+    "(926, 533)..(971, 553)",
+    "(928, 543)..(970, 573)",
+    "(929, 536)..(970, 564)",
+    "(936, 559)..(972, 573)",
+    "(938, 541)..(958, 572)",
+    "(961, 527)..(983, 559)",
+]
+go_location = "(912, 501, -12)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Chamber of Virtue"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(739, 465)..(760, 486)"]
+go_location = "(747, 474, -17)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Crimson Veins"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(931, 135)..(996, 200)"]
+go_location = "(974, 164, -11)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Enslaved Goblins"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = [
+    "(538, 806)..(613, 856)",
+    "(539, 790)..(614, 840)",
+    "(553, 791)..(613, 841)",
+    "(560, 796)..(581, 817)",
+    "(570, 773)..(613, 857)",
+    "(571, 788)..(596, 813)",
+]
+go_location = "(581, 815, -45)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Fairy Dragon Lair"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(849, 254)..(916, 297)"]
+go_location = "(888, 277, 3)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Fire Temple Ruins"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = [
+    "(474, 766)..(563, 789)",
+    "(485, 760)..(553, 789)",
+    "(495, 750)..(560, 779)",
+    "(506, 750)..(572, 782)",
+    "(520, 739)..(584, 771)",
+]
+go_location = "(519, 765, -92)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Fractured City"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = [
+    "(664, 439)..(731, 527)",
+    "(726, 505)..(771, 527)",
+    "(712, 402)..(820, 460)",
+    "(720, 504)..(746, 527)",
+    "(771, 460)..(810, 518)",
+    "(808, 480)..(820, 512)",
+]
+go_location = "(780, 445, -15)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Lands of the Lich"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = [
+    "(499, 575)..(570, 695)",
+    "(554, 600)..(628, 642)",
+]
+go_location = "(538, 656, 8)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Lava Caldera"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(553, 860)..(639, 948)"]
+go_location = "(587, 895, -73)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Passage of Tears"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(638, 530)..(738, 635)"]
+go_location = "(685, 579, -15)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Secret Garden"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(413, 678)..(489, 749)"]
+go_location = "(462, 719, 22)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Serpents Lair"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = [
+    "(681, 679)..(849, 790)",
+    "(703, 656)..(850, 789)",
+    "(785, 640)..(850, 775)",
+]
+go_location = "(711, 720, -11)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Silver Sapling"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(311, 582)..(379, 650)"]
+go_location = "(341, 619, 26)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Skeletal Dragon"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(643, 809)..(698, 872)"]
+go_location = "(675, 828, -109)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Sutek the Mage"
+type = "base"
+priority = 50
+parent = "Abyss"
+areas = ["(901, 574)..(954, 614)"]
+go_location = "(924, 595, -14)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Underworld"
+type = "dungeon"
+priority = 50
+areas = ["(898, 808)..(1280, 1231)"]
+go_location = "(1128, 1207, -2)"
+music = "HumanLevel"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Atoll Bend"
+type = "dungeon"
+priority = 50
+areas = ["(1027, 3311)..(1224, 3514)"]
+go_location = "(1118, 3408, -42)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Chicken Chase"
+type = "dungeon"
+priority = 50
+areas = ["(448, 3352)..(613, 3480)"]
+go_location = "(560, 3412, 37)"
+rune_name = "Chicken Chase"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Fishermans Reach"
+type = "dungeon"
+priority = 50
+areas = ["(547, 2835)..(745, 3102)"]
+go_location = "(631, 3035, 36)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Gated Isle"
+type = "dungeon"
+priority = 50
+areas = ["(603, 3836)..(815, 4043)"]
+go_location = "(703, 3934, -31)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "High Plain"
+type = "dungeon"
+priority = 50
+areas = ["(748, 2843)..(981, 3050)"]
+go_location = "(863, 2931, 38)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Holy City"
+type = "base"
+priority = 50
+areas = ["(922, 3838)..(1071, 3965)"]
+go_location = "(997, 3869, -42)"
+music = "Holycity"
+weather = "none"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Kepetch Waste"
+type = "dungeon"
+priority = 50
+areas = ["(356, 3143)..(523, 3224)"]
+go_location = "(447, 3188, 20)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Lost Settlement"
+type = "dungeon"
+priority = 50
+areas = ["(454, 3708)..(648, 3957)"]
+go_location = "(526, 3822, -44)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Moongates"
+type = "guarded"
+priority = 50
+areas = [
+    "(852, 3525)..(867, 3540)",
+    "(925, 3988)..(940, 4003)",
+]
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Northern Steppes"
+type = "dungeon"
+priority = 50
+areas = ["(694, 3020)..(954, 3148)"]
+go_location = "(822, 3063, 61)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Raptor Island"
+type = "dungeon"
+priority = 50
+areas = [
+    "(712, 3765)..(879, 3829)",
+    "(728, 3809)..(839, 3923)",
+    "(769, 3721)..(972, 3768)",
+    "(808, 3692)..(930, 3732)",
+]
+go_location = "(816, 3778, -42)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Royal City"
+type = "town"
+priority = 50
+areas = ["(624, 3296)..(927, 3583)"]
+go_location = "(750, 3440, -20)"
+music = "RoyalCity"
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Queen's Palace"
+type = "base"
+priority = 50
+parent = "Royal City"
+areas = ["(717, 3339)..(785, 3412)"]
+go_location = "(748, 3357, 55)"
+music = "QueenPalace"
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Royal City Inn"
+type = "base"
+priority = 50
+parent = "Royal City"
+areas = [
+    "(724, 3463)..(761, 3483)",
+    "(747, 3480)..(760, 3493)",
+]
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Royal Park"
+type = "dungeon"
+priority = 50
+areas = [
+    "(632, 3233)..(808, 3268)",
+    "(753, 3161)..(990, 3292)",
+]
+go_location = "(711, 3255, -42)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Slith Valley"
+type = "dungeon"
+priority = 50
+areas = ["(1028, 3263)..(1221, 3404)"]
+go_location = "(1078, 3331, -42)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Spider Island"
+type = "dungeon"
+priority = 50
+areas = ["(1063, 3695)..(1181, 3779)"]
+go_location = "(1115, 3730, -42)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Stygian Dragon Lair"
+type = "dungeon"
+priority = 50
+areas = ["(258, 90)..(489, 245)"]
+go_location = "(367, 155, 0)"
+music = "StygianDragon"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Talon Point"
+type = "dungeon"
+priority = 50
+areas = [
+    "(632, 3830)..(730, 3885)",
+    "(629, 3786)..(705, 3826)",
+    "(656, 3750)..(707, 3791)",
+]
+go_location = "(676, 3831, -39)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Toxic Desert"
+type = "dungeon"
+priority = 50
+areas = [{ bounds = "(1010, 2929)..(1156, 3049)", z1 = 37, z2 = 128 }]
+go_location = "(1047, 2980, 62)"
+entrance = "(1051, 3022, 0)"
+rune_name = "Toxic Desert"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Void Island"
+type = "dungeon"
+priority = 50
+areas = ["(314, 3473)..(581, 3699)"]
+go_location = "(440, 3577, 38)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Volcano"
+type = "dungeon"
+priority = 50
+areas = ["(298, 2895)..(499, 3117)"]
+go_location = "(407, 3010, -24)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Walled Circus"
+type = "dungeon"
+priority = 50
+areas = ["(291, 3207)..(445, 3354)"]
+go_location = "(370, 3273, 0)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Waterfall Point"
+type = "dungeon"
+priority = 50
+areas = ["(635, 2862)..(731, 2926)"]
+go_location = "(661, 2894, 39)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Shrine of Singularity"
+type = "base"
+priority = 50
+areas = ["(978, 3786)..(1018, 3838)"]
+go_location = "(995, 3806, 0)"
+music = "CodexShrine"
+weather = "none"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Great Ape Lair"
+type = "dungeon"
+priority = 100
+areas = [{ bounds = "(832, 1363)..(938, 1474)", z1 = -25, z2 = 128 }]
+go_location = "(926, 1464, 0)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Zipactriotl Lair"
+type = "dungeon"
+priority = 100
+areas = [{ bounds = "(831, 2239)..(959, 2367)", z1 = -25, z2 = 128 }]
+go_location = "(896, 2304, -19)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Myrmidex Queen Lair"
+type = "dungeon"
+priority = 100
+areas = [{ bounds = "(704, 2248)..(828, 2363)", z1 = -25, z2 = 128 }]
+go_location = "(766, 2306, 0)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Kotl City"
+type = "dungeon"
+priority = 50
+areas = [{ bounds = "(435, 2270)..(675, 2490)", z1 = -25, z2 = 128 }]
+go_location = "(542, 2473, 0)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true

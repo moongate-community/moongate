@@ -1,0 +1,55 @@
+[[loot]]
+id = "lesserpotions"
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0e_empty_bottle"
+comment = "empty bottle"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0d_purple_potion"
+comment = "purple potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0b_red_potion"
+comment = "red potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f06_black_potion"
+comment = "black potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f07_orange_potion"
+comment = "orange potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0c_yellow_potion"
+comment = "yellow potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f0a_green_potion"
+comment = "green potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f08_blue_potion"
+comment = "blue potion"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x0f09_white_potion"
+comment = "white potion"
+amount = 1

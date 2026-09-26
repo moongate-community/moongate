@@ -130,7 +130,7 @@ dotnet_diagnostic.cs8774.severity = none
 dotnet_diagnostic.cs8775.severity = none
 dotnet_diagnostic.cs8776.severity = none
 dotnet_diagnostic.cs8777.severity = none
-dotnet_diagnostic.IDE0022.severity = none
+dotnet_diagnostic.IDE0022.severity = warning
 dotnet_style_parentheses_in_arithmetic_binary_operators = never_if_unnecessary:none
 dotnet_style_parentheses_in_other_binary_operators = never_if_unnecessary:none
 dotnet_style_parentheses_in_relational_binary_operators = never_if_unnecessary:none
@@ -144,11 +144,34 @@ dotnet_style_require_accessibility_modifiers = for_non_interface_members:suggest
 csharp_style_namespace_declarations = file_scoped:error
 csharp_style_prefer_primary_constructors = false:none
 csharp_style_expression_bodied_constructors = false:error
+csharp_style_expression_bodied_methods = false:warning
 dotnet_diagnostic.IDE0161.severity = error
 dotnet_diagnostic.IDE0290.severity = error
 
+# Keep XML documentation opening tags, text and closing tags on separate lines.
+resharper_xmldoc_linebreaks_inside_tags_for_elements_longer_than = 0
+resharper_xmldoc_linebreaks_inside_tags_for_multiline_elements = true
+resharper_xmldoc_indent_text = one_indent
+
 # ReSharper properties
 resharper_apply_auto_detected_rules = false
+# Use fixed continuation indents instead of inheriting personal Rider alignment settings.
+resharper_continuous_indent_multiplier = 1
+resharper_indent_anonymous_method_block = false
+resharper_indent_preprocessor_if = no_indent
+resharper_indent_preprocessor_region = usual_indent
+resharper_indent_preprocessor_other = no_indent
+resharper_align_linq_query = false
+resharper_align_multiline_argument = false
+resharper_align_multiline_binary_patterns = false
+resharper_align_multiline_calls_chain = false
+resharper_align_multiline_expression = false
+resharper_align_multiline_extends_list = false
+resharper_align_multiline_parameter = false
+resharper_align_multiple_declaration = false
+resharper_align_multline_type_parameter_constrains = false
+resharper_align_multline_type_parameter_list = false
+resharper_align_tuple_components = false
 # Keep multiple attributes in a single bracketed section.
 resharper_csharp_force_attribute_style = join
 # Keep Rider/ReSharper aligned with csharp_prefer_braces.
@@ -198,7 +221,7 @@ resharper_wrap_lines = true
 resharper_arrange_attributes_highlighting = warning
 resharper_arrange_constructor_or_destructor_body_highlighting = suggestion
 resharper_arrange_local_function_body_highlighting = suggestion
-resharper_arrange_method_or_operator_body_highlighting = suggestion
+resharper_arrange_method_or_operator_body_highlighting = warning
 resharper_arrange_redundant_parentheses_highlighting = suggestion
 resharper_arrange_this_qualifier_highlighting = hint
 resharper_arrange_type_member_modifiers_highlighting = hint
@@ -263,7 +286,6 @@ resharper_web_config_type_not_resolved_highlighting = warning
 resharper_web_config_wrong_module_highlighting = warning
 resharper_wrong_indent_size_highlighting = warning
 resharper_convert_constructor_to_member_initializers_highlighting = none
-resharper_arrange_method_or_operator_body_highlighting = none
 # ReSharper inspection severities
 resharper_enforce_do_while_statement_braces_highlighting = hint
 resharper_enforce_fixed_statement_braces_highlighting = hint

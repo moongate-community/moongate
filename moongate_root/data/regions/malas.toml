@@ -1,0 +1,520 @@
+# ==============================================================================
+# Moongate - regions/malas.toml
+#
+# What it is for:
+#   The regions of Malas: towns, dungeons and other named areas, with the
+#   rules they apply. The map is the name of this file. Every rule is written out
+#   and already includes the rules of the region's parents, so a region can be
+#   read on its own. Where regions overlap, the highest priority applies.
+#
+# Fields:
+#   name            the region name (leave out for areas that only apply rules)
+#   type            base, town, dungeon, nohousing, guarded, jail or greenacres
+#   priority        where regions overlap, the highest one applies
+#   parent          the name of the region this one is part of, on this map
+#   areas           rectangles as "(x1, y1)..(x2, y2)": first corner included,
+#                   second corner excluded; these are corners, not sizes
+#                   example: areas = ["(1330, 1991)..(1343, 2004)"]
+#                   with height: { bounds = "(2200, 1110)..(2250, 1160)", z1 = 0, z2 = 128 }
+#                   z1 is included, z2 excluded; omit either for no limit
+#                   without z1 and z2 the rectangle covers every height
+#   go_location     where a "go to region" command takes a character, "(x, y, z)"
+#   entrance        the entrance of the town or dungeon, "(x, y, z)"
+#   music           the music played in the region (see the music list)
+#   weather         the weather profile of weather.toml the region uses
+#   rune_name       the name of a rune marked here
+#   guarded         whether guards protect the region
+#   housing         whether players may place houses
+#   instant_logout  whether a character with no fight in progress logs out at once
+#   recall_in, recall_out, gate_in, gate_out, mark, teleport_in, teleport_out
+#                   whether those travel spells work into, out of or in the region;
+#                   a travel spell is blocked when any region covering the place
+#                   blocks it, whatever its priority
+# ==============================================================================
+
+[[region]]
+name = "Ilse of the Divide"
+type = "nohousing"
+priority = 50
+areas = ["(1532, 857)..(1832, 1057)"]
+go_location = "(1731, 981, -79)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Bedlam"
+type = "dungeon"
+priority = 50
+areas = ["(75, 1590)..(210, 1760)"]
+go_location = "(117, 1681, 0)"
+entrance = "(2068, 1372, -75)"
+music = "GrizzleDungeon"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = true
+
+[[region]]
+name = "The Citadel"
+type = "dungeon"
+priority = 50
+areas = ["(60, 1855)..(195, 1990)"]
+go_location = "(106, 1884, 0)"
+entrance = "(1349, 769, 14)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = true
+
+[[region]]
+name = "Luna"
+type = "town"
+priority = 50
+areas = ["(945, 490)..(1036, 551)"]
+go_location = "(989, 520, -50)"
+music = "Tavern04"
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Luna"
+areas = ["(986, 509)..(1004, 530)"]
+weather = "none"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Umbra"
+type = "town"
+priority = 50
+areas = [
+    "(2042, 1265)..(2090, 1278)",
+    "(1960, 1278)..(2106, 1413)",
+    "(2004, 1413)..(2040, 1419)",
+]
+go_location = "(2049, 1344, -85)"
+weather = "none"
+guarded = true
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+type = "town"
+priority = 50
+parent = "Umbra"
+areas = ["(2031, 1311)..(2046, 1325)"]
+weather = "none"
+guarded = true
+housing = false
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Labyrinth"
+type = "dungeon"
+priority = 50
+areas = ["(256, 1795)..(499, 2025)"]
+go_location = "(336, 1970, 0)"
+entrance = "(1731, 981, -79)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = true
+
+[[region]]
+name = "Doom"
+type = "dungeon"
+priority = 50
+areas = ["(256, 0)..(512, 304)"]
+go_location = "(2366, 1268, -85)"
+entrance = "(2357, 1268, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Doom Gauntlet"
+type = "dungeon"
+priority = 50
+areas = ["(256, 304)..(512, 560)"]
+go_location = "(429, 340, -1)"
+entrance = "(2357, 1268, 0)"
+music = "Dungeon9"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Orc Fortress"
+type = "base"
+priority = 50
+areas = ["(1295, 1189)..(1395, 1294)"]
+go_location = "(1340, 1226, -90)"
+weather = "none"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Crystal Cave Entrance"
+type = "nohousing"
+priority = 50
+areas = ["(1176, 509)..(1219, 522)"]
+go_location = "(1195, 515, -90)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Protected Island"
+type = "nohousing"
+priority = 50
+areas = [
+    "(1976, 101)..(2448, 345)",
+    "(2051, 345)..(2356, 382)",
+    "(2026, 345)..(2051, 370)",
+    "(2069, 382)..(2144, 396)",
+    "(2254, 382)..(2352, 420)",
+    "(2222, 382)..(2254, 402)",
+]
+go_location = "(2104, 380, -90)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Grand Arena"
+type = "nohousing"
+priority = 50
+areas = ["(919, 622)..(962, 652)"]
+go_location = "(961, 637, -90)"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Hanse's Hostel"
+type = "base"
+priority = 50
+areas = [
+    "(1049, 1420)..(1062, 1445)",
+    "(1062, 1420)..(1065, 1431)",
+    "(1062, 1439)..(1065, 1445)",
+]
+go_location = "(1063, 1435, -90)"
+weather = "none"
+guarded = false
+housing = true
+instant_logout = true
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Yomotsu Mines"
+type = "dungeon"
+priority = 50
+areas = ["(0, 0)..(129, 129)"]
+go_location = "(6, 118, 0)"
+entrance = "(259, 783, 0)"
+music = "TokunoDungeon"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Fan Dancer's Dojo"
+type = "dungeon"
+priority = 50
+areas = ["(40, 320)..(210, 720)"]
+go_location = "(71, 337, 0)"
+entrance = "(977, 223, 0)"
+music = "TokunoDungeon"
+weather = "none"
+guarded = false
+housing = false
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Samurai start location"
+type = "base"
+priority = 50
+areas = ["(320, 690)..(435, 790)"]
+music = "Zento"
+weather = "none"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Ninja start location"
+type = "base"
+priority = 50
+areas = ["(360, 795)..(440, 835)"]
+music = "Zento"
+weather = "none"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+[[region]]
+name = "Ninja cave"
+type = "base"
+priority = 50
+areas = ["(360, 960)..(460, 1175)"]
+weather = "none"
+guarded = false
+housing = true
+instant_logout = false
+recall_in = true
+recall_out = true
+gate_in = true
+gate_out = true
+mark = true
+teleport_in = true
+teleport_out = true
+
+# ------------------------------------------------------------------------------
+# Travel zones: places where travel spells are limited, with no other rules.
+# Their priority is 0, so the rules of any other region covering them still apply.
+# ------------------------------------------------------------------------------
+
+# Travel zone: the Crystal Cave, below height -80.
+[[region]]
+type = "base"
+priority = 0
+areas = [
+    { bounds = "(1182, 437)..(1211, 470)", z2 = -80 },
+    { bounds = "(1156, 470)..(1211, 503)", z2 = -80 },
+    { bounds = "(1176, 503)..(1208, 509)", z2 = -80 },
+    { bounds = "(1188, 509)..(1201, 513)", z2 = -80 },
+]
+weather = "none"
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = false
+
+# Travel zone: the Doom Gauntlet.
+[[region]]
+type = "base"
+priority = 0
+areas = ["(256, 304)..(512, 560)"]
+weather = "none"
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+# Travel zone: the Doom ferry.
+[[region]]
+type = "base"
+priority = 0
+areas = [
+    "(426, 314)..(431, 332)",
+    "(406, 247)..(411, 265)",
+]
+weather = "none"
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = false
+teleport_out = true
+
+# Travel zone: the Tokuno dungeons.
+[[region]]
+type = "base"
+priority = 0
+areas = [
+    "(0, 0)..(129, 129)",
+    "(45, 320)..(195, 710)",
+]
+weather = "none"
+recall_in = false
+recall_out = true
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+# Travel zone: the Doom lamp room.
+[[region]]
+type = "base"
+priority = 0
+areas = ["(465, 92)..(474, 102)"]
+weather = "none"
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true
+
+# Travel zone: the Doom guardian room.
+[[region]]
+type = "base"
+priority = 0
+areas = ["(356, 5)..(375, 25)"]
+weather = "none"
+recall_in = false
+recall_out = false
+gate_in = false
+gate_out = false
+mark = false
+teleport_in = true
+teleport_out = true

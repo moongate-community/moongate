@@ -1,0 +1,1535 @@
+[[item]]
+id = "0x20c8_ettin_statue"
+item_id = 8392
+name = "Ettin Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20c9_gorilla_statue"
+item_id = 8393
+name = "Gorilla Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20ca_lizardman_statue"
+item_id = 8394
+name = "Lizardman Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20cb_ogre_statue"
+item_id = 8395
+name = "Ogre Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20cc_troll_statue"
+item_id = 8396
+name = "Troll Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20cd_male_statue"
+item_id = 8397
+name = "Male Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20ce_female_statue"
+item_id = 8398
+name = "Female Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20cf_bear_statue"
+item_id = 8399
+name = "Bear Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d0_rat_statue"
+item_id = 8400
+name = "Rat Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d1_chicken_statue"
+item_id = 8401
+name = "Chicken Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d2_corpser_statue"
+item_id = 8402
+name = "Corpser Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d3_demon_statue"
+item_id = 8403
+name = "Demon Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d4_deer_statue"
+item_id = 8404
+name = "Deer Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d5_dog_statue"
+item_id = 8405
+name = "Dog Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d6_dragon_statue"
+item_id = 8406
+name = "Dragon Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d7_earth_elemental_statue"
+item_id = 8407
+name = "Earth Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d8_ettin_statue"
+item_id = 8408
+name = "Ettin Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20d9_gargoyle_statue"
+item_id = 8409
+name = "Gargoyle Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20da_crocodile_statue"
+item_id = 8410
+name = "Crocodile Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20db_grizzly_bear_statue"
+item_id = 8411
+name = "Grizzly Bear Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20dc_harpy_statue"
+item_id = 8412
+name = "Harpy Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20dd_horse_statue"
+item_id = 8413
+name = "Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20de_lizard_man_statue"
+item_id = 8414
+name = "Lizard Man Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20df_ogre_statue"
+item_id = 8415
+name = "Ogre Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e0_orc_statue"
+item_id = 8416
+name = "Orc Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e1_polar_bear_statue"
+item_id = 8417
+name = "Polar Bear Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e2_rabbit_statue"
+item_id = 8418
+name = "Rabbit Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e3_rat_man_statue"
+item_id = 8419
+name = "Rat Man Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e4_scorpion_statue"
+item_id = 8420
+name = "Scorpion Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e5_serpent_statue"
+item_id = 8421
+name = "Serpent Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e6_sheep_statue"
+item_id = 8422
+name = "Sheep Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e7_skeleton_statue"
+item_id = 8423
+name = "Skeleton Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e8_slime_statue"
+item_id = 8424
+name = "Slime Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20e9_troll_statue"
+item_id = 8425
+name = "Troll Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20ea_wolf_statue"
+item_id = 8426
+name = "Wolf Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20eb_wooly_sheep_statue"
+item_id = 8427
+name = "Wooly Sheep Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20ec_zombie_statue"
+item_id = 8428
+name = "Zombie Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20ed_air_elemental_statue"
+item_id = 8429
+name = "Air Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20ee_bird_statue"
+item_id = 8430
+name = "Bird Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20ef_bull_statue"
+item_id = 8431
+name = "Bull Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f0_bull_statue"
+item_id = 8432
+name = "Bull Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f1_dolphin_statue"
+item_id = 8433
+name = "Dolphin Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f2_eagle_statue"
+item_id = 8434
+name = "Eagle Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f3_fire_elemental_statue"
+item_id = 8435
+name = "Fire Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f4_gazer_statue"
+item_id = 8436
+name = "Gazer Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f5_gorilla_statue"
+item_id = 8437
+name = "Gorilla Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f6_llama_statue"
+item_id = 8438
+name = "Llama Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f7_cougar_statue"
+item_id = 8439
+name = "Cougar Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f8_liche_statue"
+item_id = 8440
+name = "Liche Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20f9_mongbat_statue"
+item_id = 8441
+name = "Mongbat Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20fa_reaper_statue"
+item_id = 8442
+name = "Reaper Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20fb_sea_serpent_statue"
+item_id = 8443
+name = "Sea Serpent Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20fc_snake_statue"
+item_id = 8444
+name = "Snake Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20fd_giant_spider_statue"
+item_id = 8445
+name = "Giant Spider Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20fe_snake_statue"
+item_id = 8446
+name = "Snake Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x20ff_walrus_statue"
+item_id = 8447
+name = "Walrus Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2100_wisp_statue"
+item_id = 8448
+name = "Wisp Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2101_pig_statue"
+item_id = 8449
+name = "Pig Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2102_panther_statue"
+item_id = 8450
+name = "Panther Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2103_cow_statue"
+item_id = 8451
+name = "Cow Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2104_daemon_statue"
+item_id = 8452
+name = "Daemon Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2105_daemon_statue"
+item_id = 8453
+name = "Daemon Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2106_male_statue"
+item_id = 8454
+name = "Male Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2107_female_statue"
+item_id = 8455
+name = "Female Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2108_mountain_goat_statue"
+item_id = 8456
+name = "Mountain Goat Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2109_ghoul_statue"
+item_id = 8457
+name = "Ghoul Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x210a_headless_statue"
+item_id = 8458
+name = "Headless Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x210b_water_elemental_statue"
+item_id = 8459
+name = "Water Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2118_black_bear_statue"
+item_id = 8472
+name = "Black Bear Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2119_big_cat_statue"
+item_id = 8473
+name = "Big Cat Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x211a_bird_statue"
+item_id = 8474
+name = "Bird Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x211b_cat_statue"
+item_id = 8475
+name = "Cat Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x211c_dog_statue"
+item_id = 8476
+name = "Dog Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x211d_eagle_statue"
+item_id = 8477
+name = "Eagle Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x211e_grizzly_bear_statue"
+item_id = 8478
+name = "Grizzly Bear Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x211f_horse_statue"
+item_id = 8479
+name = "Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2120_horse_statue"
+item_id = 8480
+name = "Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2121_horse_statue"
+item_id = 8481
+name = "Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2122_wolf_statue"
+item_id = 8482
+name = "Wolf Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2123_rat_statue"
+item_id = 8483
+name = "Rat Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2124_horse_statue"
+item_id = 8484
+name = "Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2125_rabbit_statue"
+item_id = 8485
+name = "Rabbit Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2126_pack_horse_statue"
+item_id = 8486
+name = "Pack Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2127_pack_llama_statue"
+item_id = 8487
+name = "Pack Llama Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x212a_terathan_warrior_statue"
+item_id = 8490
+name = "Terathan Warrior Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x212b_terathan_drone_statue"
+item_id = 8491
+name = "Terathan Drone Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x212c_terathan_matriarch_statue"
+item_id = 8492
+name = "Terathan Matriarch Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x212d_cyclops_statue"
+item_id = 8493
+name = "Cyclops Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x212e_titan_statue"
+item_id = 8494
+name = "Titan Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x212f_giant_toad_statue"
+item_id = 8495
+name = "Giant Toad Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2130_bullfrog_statue"
+item_id = 8496
+name = "Bullfrog Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2131_lizard_statue"
+item_id = 8497
+name = "Lizard Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2132_ophidian_mage_statue"
+item_id = 8498
+name = "Ophidian Mage Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2133_ophidian_warrior_statue"
+item_id = 8499
+name = "Ophidian Warrior Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2134_ophidian_queen_statue"
+item_id = 8500
+name = "Ophidian Queen Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2135_desert_ostard_statue"
+item_id = 8501
+name = "Desert Ostard Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2136_frenzied_ostard_statue"
+item_id = 8502
+name = "Frenzied Ostard Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2137_forest_ostard_statue"
+item_id = 8503
+name = "Forest Ostard Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2580_billy_goat_statue"
+item_id = 9600
+name = "Billy Goat Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2581_centaur_statue"
+item_id = 9601
+name = "Centaur Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2582_corpser_statue"
+item_id = 9602
+name = "Corpser Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2583_cougar_statue"
+item_id = 9603
+name = "Cougar Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2584_daemon_statue"
+item_id = 9604
+name = "Daemon Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2585_black_gate_daemon_statue"
+item_id = 9605
+name = "Black Gate Daemon Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2586_elder_daemon_statue"
+item_id = 9606
+name = "Elder Daemon Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2587_ice_fiend_statue"
+item_id = 9607
+name = "Ice Fiend Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2588_dog_hound_statue"
+item_id = 9608
+name = "Dog Hound Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2589_ethereal_warriors_statue"
+item_id = 9609
+name = "Ethereal Warriors Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x258a_evil_mage_statue"
+item_id = 9610
+name = "Evil Mage Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x258b_evil_mage_boss_statue"
+item_id = 9611
+name = "Evil Mage Boss Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x258c_giant_frog_statue"
+item_id = 9612
+name = "Giant Frog Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x258d_gargoyle_statue"
+item_id = 9613
+name = "Gargoyle Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x258e_stone_gargoyle_statue"
+item_id = 9614
+name = "Stone Gargoyle Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x258f_gazer_statue"
+item_id = 9615
+name = "Gazer Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2590_efreet_statue"
+item_id = 9616
+name = "Efreet Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2591_ghoul_statue"
+item_id = 9617
+name = "Ghoul Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2592_silverback_gorilla_statue"
+item_id = 9618
+name = "Silverback Gorilla Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2593_great_worm_statue"
+item_id = 9619
+name = "Great Worm Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2594_stone_harpy_statue"
+item_id = 9620
+name = "Stone Harpy Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2595_headless_statue"
+item_id = 9621
+name = "Headless Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2596_hell_hound_statue"
+item_id = 9622
+name = "Hell Hound Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2597_hellcat_statue"
+item_id = 9623
+name = "Hellcat Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2598_dappled_brown_horse_statue"
+item_id = 9624
+name = "Dappled Brown Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2599_dappled_gray_horse_statue"
+item_id = 9625
+name = "Dappled Gray Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x259a_dark_brown_horse_statue"
+item_id = 9626
+name = "Dark Brown Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x259b_dark_steed_statue"
+item_id = 9627
+name = "Dark Steed Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x259c_nightmare_statue"
+item_id = 9628
+name = "Nightmare Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x259d_silver_steed_statue"
+item_id = 9629
+name = "Silver Steed Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x259e_tan_horse_statue"
+item_id = 9630
+name = "Tan Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x259f_imp_statue"
+item_id = 9631
+name = "Imp Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a0_kirin_statue"
+item_id = 9632
+name = "Kirin Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a1_komodo_dragon_statue"
+item_id = 9633
+name = "Komodo Dragon Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a2_kraken_statue"
+item_id = 9634
+name = "Kraken Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a3_snow_leopard_statue"
+item_id = 9635
+name = "Snow Leopard Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a4_liche_statue"
+item_id = 9636
+name = "Liche Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a5_liche_lord_statue"
+item_id = 9637
+name = "Liche Lord Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a6_mongbat_statue"
+item_id = 9638
+name = "Mongbat Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a7_mummy_statue"
+item_id = 9639
+name = "Mummy Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a8_ogre_lord_statue"
+item_id = 9640
+name = "Ogre Lord Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25a9_ophidian_archmage_statue"
+item_id = 9641
+name = "Ophidian Archmage Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25aa_ophidian_knight_statue"
+item_id = 9642
+name = "Ophidian Knight Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25ab_ophidian_mage_statue"
+item_id = 9643
+name = "Ophidian Mage Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25ac_ophidian_queen_statue"
+item_id = 9644
+name = "Ophidian Queen Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25ad_ophidian_warrior_statue"
+item_id = 9645
+name = "Ophidian Warrior Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25ae_orc_statue"
+item_id = 9646
+name = "Orc Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25af_orc_captain_statue"
+item_id = 9647
+name = "Orc Captain Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b0_orc_lord_statue"
+item_id = 9648
+name = "Orc Lord Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b1_orc_shaman_statue"
+item_id = 9649
+name = "orc Shaman Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b2_desert_ostard_statue"
+item_id = 9650
+name = "Desert Ostard Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b3_forest_ostard_statue"
+item_id = 9651
+name = "Forest Ostard Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b4_frenzied_ostard_statue"
+item_id = 9652
+name = "Frenzied Ostard Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b5_panther_statue"
+item_id = 9653
+name = "Panther Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b6_pixie_statue"
+item_id = 9654
+name = "Pixie Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b7_rat_man_statue"
+item_id = 9655
+name = "Rat Man Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b8_rotting_corpse_statue"
+item_id = 9656
+name = "Rotting Corpse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25b9_giant_scorpion_statue"
+item_id = 9657
+name = "Giant Scorpion Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25ba_sea_horse_statue"
+item_id = 9658
+name = "Sea Horse Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25bb_nameless_one_statue"
+item_id = 9659
+name = "Nameless One Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25bc_skeleton_statue"
+item_id = 9660
+name = "Skeleton Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25bd_skeleton_knight_statue"
+item_id = 9661
+name = "Skeleton Knight Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25be_skeleton_mage_statue"
+item_id = 9662
+name = "Skeleton Mage Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25bf_giant_snake_statue"
+item_id = 9663
+name = "Giant Snake Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c0_giant_ice_snake_statue"
+item_id = 9664
+name = "Giant Ice Snake Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c1_giant_lava_snake_statue"
+item_id = 9665
+name = "Giant Lava Snake Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c2_silver_serpent_statue"
+item_id = 9666
+name = "Silver Serpent Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c3_black_widow_spider_statue"
+item_id = 9667
+name = "Black Widow Spider Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c4_dread_spider_statue"
+item_id = 9668
+name = "Dread Spider Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c5_frost_spider_statue"
+item_id = 9669
+name = "Frost Spider Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c6_giant_spider_statue"
+item_id = 9670
+name = "Giant Spider Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c7_ghost_statue"
+item_id = 9671
+name = "Ghost Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c8_swamp_tentacles_statue"
+item_id = 9672
+name = "Swamp Tentacles Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25c9_terathan_drone_statue"
+item_id = 9673
+name = "Terathan Drone Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25ca_terathan_avenger_statue"
+item_id = 9674
+name = "Terathan Avenger Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25cb_terathan_queen_statue"
+item_id = 9675
+name = "Terathan Queen Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25cc_terathan_warrior_statue"
+item_id = 9676
+name = "Terathan Warrior Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25cd_titan_statue"
+item_id = 9677
+name = "Titan Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25ce_unicorn_statue"
+item_id = 9678
+name = "Unicorn Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25cf_wolf_statue"
+item_id = 9679
+name = "Wolf Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d0_dire_wolf_statue"
+item_id = 9680
+name = "Dire Wolf Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d1_gray_wolf_statue"
+item_id = 9681
+name = "Gray Wolf Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d2_silver_wolf_statue"
+item_id = 9682
+name = "Silver Wolf Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d3_timber_wolf_statue"
+item_id = 9683
+name = "Timber Wolf Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d4_wyvern_statue"
+item_id = 9684
+name = "Wyvern Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d5_zombie_statue"
+item_id = 9685
+name = "Zombie Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d6_acid_elemental_statue"
+item_id = 9686
+name = "Acid Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d7_air_elemental_statue"
+item_id = 9687
+name = "Air Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d8_blood_elemental_statue"
+item_id = 9688
+name = "Blood Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25d9_fire_elemental_statue"
+item_id = 9689
+name = "Fire Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25da_ice_elemental_statue"
+item_id = 9690
+name = "Ice Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25db_poison_elemental_statue"
+item_id = 9691
+name = "Poison Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25dc_snow_elemental_statue"
+item_id = 9692
+name = "Snow Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x25dd_water_elemental_statue"
+item_id = 9693
+name = "Water Elemental Statue"
+rarity = "common"
+movable = false
+hue = 0

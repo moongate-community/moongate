@@ -62,8 +62,10 @@ application-provided behavior. No framing factory means raw TCP chunks, which ar
 message boundaries. A protocol-specific listener supplies `ConnectionPipelineFactory`.
 The game host supplies a new `GameSeedFramer` for each connection. It recognizes
 a raw four-byte reconnect seed or a versioned `0xEF` seed packet, then delegates
-subsequent packets to `UoPacketFramer`. Options are snapshotted at construction,
-including endpoint objects.
+subsequent packets to `UoPacketFramer`. Both framers use the packet registry the
+host builds at startup. The game listener also installs `UoCompressionMiddleware`,
+which Huffman-compresses outgoing data once the session enables compression after a
+valid `0x91`. Options are snapshotted at construction, including endpoint objects.
 
 ## Callback and shutdown rules
 

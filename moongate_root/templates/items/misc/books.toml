@@ -1,0 +1,431 @@
+[[item]]
+id = "base_book"
+base_id = "base_item"
+item_id = 4079
+name = "book"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "0x0fef_book"
+base_id = "base_book"
+item_id = 4079
+name = "book"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0ff1_a_book"
+base_id = "base_book"
+item_id = 4081
+name = "a book"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0ff3_book"
+base_id = "base_book"
+item_id = 4083
+name = "book"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0ff4_book"
+base_id = "base_book"
+item_id = 4084
+name = "book"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "the_first_uox_book"
+base_id = "base_item"
+item_id = 4079
+name = "The First UOX Book"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "a_grammar_of_orcish"
+base_id = "base_item"
+item_id = 4079
+name = "A Grammer of Orchish"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "the_bold_stranger"
+base_id = "base_item"
+item_id = 4079
+name = "The Bold Stranger"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "birds_of_britannia"
+base_id = "base_item"
+item_id = 4079
+name = "Birds of Britannia"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "regarding_llamas"
+base_id = "base_item"
+item_id = 4079
+name = "Regarding Llamas"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "talking_to_wisps"
+base_id = "base_item"
+item_id = 4079
+name = "Talking to Wisps"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "taming_dragons"
+base_id = "base_item"
+item_id = 4079
+name = "Taming Dragons"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "politic_call_to_anarchy"
+base_id = "base_item"
+item_id = 4079
+name = "A Politic Call to Anarchy"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "ethical_hedonism"
+base_id = "base_item"
+item_id = 4079
+name = "Ethical Hedonism: An Introduction"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "diversity_of_our_land"
+base_id = "base_item"
+item_id = 4079
+name = "On the diversity of our land"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "virtue"
+base_id = "base_item"
+item_id = 4079
+name = "Virtue"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "my_story"
+base_id = "base_item"
+item_id = 4079
+name = "My Story"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "burning_of_trinsic"
+base_id = "base_item"
+item_id = 4079
+name = "The Burning of Trinsic"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "the_fight"
+base_id = "base_item"
+item_id = 4079
+name = "The Fight"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "song_of_samlethe"
+base_id = "base_item"
+item_id = 4079
+name = "A Song of Samlethe"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "childrens_tale_vol2"
+base_id = "base_item"
+item_id = 4079
+name = "Classic Childrens Tales Vol.2"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tales_of_vesper_vol1"
+base_id = "base_item"
+item_id = 4079
+name = "Classic tales of Vesper vol.1"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tale_of_three_tribes"
+base_id = "base_item"
+item_id = 4079
+name = "A Tale of Three Tribes"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "deceit_dungeon_of_horrors"
+base_id = "base_item"
+item_id = 4079
+name = "Deceit: A Dungeon of Horrors"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "life_of_a_minstrel"
+base_id = "base_item"
+item_id = 4079
+name = "The Life of a Travelling Minstrel"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "wild_girl"
+base_id = "base_item"
+item_id = 4079
+name = "The Wild Girl in The Forest"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "primer_on_arms_and_weapons"
+base_id = "base_item"
+item_id = 4079
+name = "A Primer on Arms and Weopons"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "guide_to_guilds"
+base_id = "base_item"
+item_id = 4079
+name = "Beltrans Guide to Guilds"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "britannian_flora"
+base_id = "base_item"
+item_id = 4079
+name = "Britannian Flora"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "dimensional_travel"
+base_id = "base_item"
+item_id = 4079
+name = "Dimensional Travel, a Monograph"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "major_trade_associations"
+base_id = "base_item"
+item_id = 4079
+name = "The Major Trade Associations"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "rankings_of_trades"
+base_id = "base_item"
+item_id = 4079
+name = "The Rankings of Trades"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "treatise_on_alchemy"
+base_id = "base_item"
+item_id = 4079
+name = "Treatise on Alchemy"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "uox3_story_one"
+base_id = "base_item"
+item_id = 4079
+name = "UOX3 Story Chapter One - Death"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "uox3_story_two"
+base_id = "base_item"
+item_id = 4079
+name = "UOX3 Story Chapter Two - End of The World"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "uox3_story_three"
+base_id = "base_item"
+item_id = 4079
+name = "UOX3 Story Chapter Three - The Lost Splinter"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "quest_of_the_virtues_vol1"
+base_id = "base_item"
+item_id = 4079
+name = "Quest of the Virtues - Volume 1"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "fropoz_journal"
+base_id = "base_item"
+item_id = 4079
+name = "Fropoz's Journal"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "translated_gargoyle_journal"
+base_id = "base_item"
+item_id = 4079
+name = "Translated Gargoyle Journal"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "kaburs_journal"
+base_id = "base_item"
+item_id = 4079
+name = "Kabur's Journal"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2254_book_of_arms"
+base_id = "base_item"
+item_id = 8788
+name = "book of arms"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x238c_book_of_bushido"
+base_id = "base_item"
+item_id = 9120
+name = "book of bushido"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x23a0_book_of_ninjitsu"
+base_id = "base_item"
+item_id = 9120
+name = "book of ninjitsu"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_khaldun_book"
+base_id = "base_item"
+item_id = 4081
+name = "book"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_khaldun_book2"
+base_id = "base_item"
+item_id = 4082
+name = "book"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tavaras_journal_3"
+base_id = "base_khaldun_book"
+item_id = 4082
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tavaras_journal_7"
+base_id = "base_khaldun_book"
+item_id = 4082
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "tavaras_journal_11"
+base_id = "base_khaldun_book"
+item_id = 4082
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+movable = false
+hue = 0

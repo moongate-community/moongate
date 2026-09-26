@@ -11,8 +11,8 @@ public sealed class PlatformUtilsTests
     public void GetCurrentPlatform_MatchesExclusiveRuntimePlatform()
     {
         var expected = OperatingSystem.IsWindows() ? PlatformType.Windows :
-                       OperatingSystem.IsMacOS() ? PlatformType.Osx :
-                       OperatingSystem.IsLinux() ? PlatformType.Linux : PlatformType.Unknown;
+            OperatingSystem.IsMacOS() ? PlatformType.Osx :
+            OperatingSystem.IsLinux() ? PlatformType.Linux : PlatformType.Unknown;
 
         Assert.Equal(expected, PlatformUtils.GetCurrentPlatform());
     }

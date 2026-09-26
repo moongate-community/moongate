@@ -24,11 +24,11 @@ internal sealed partial class PersistenceModuleRegistry
         ThrowIfFrozen();
 
         return _modules
-               .Select(module => module.DatabaseTarget)
-               .Concat(_entities.Values.OfType<PersistenceDatabaseTarget>())
-               .Distinct()
-               .Order()
-               .ToArray();
+            .Select(module => module.DatabaseTarget)
+            .Concat(_entities.Values.OfType<PersistenceDatabaseTarget>())
+            .Distinct()
+            .Order()
+            .ToArray();
     }
 
     public void RegisterEntity(Type entityType, PersistenceDatabaseTarget? target = null)
@@ -59,8 +59,8 @@ internal sealed partial class PersistenceModuleRegistry
         var databaseByTarget = databases.ToDictionary(database => database.Target);
         _modules.AddRange(CreateAutomaticModules(databaseByTarget));
         var orderedModules = _modules
-                             .OrderBy(module => module.DatabaseTarget)
-                             .ToArray();
+            .OrderBy(module => module.DatabaseTarget)
+            .ToArray();
         ValidateModuleDeclarations(orderedModules);
         var owners = ValidateOwnership(orderedModules);
 
@@ -77,13 +77,12 @@ internal sealed partial class PersistenceModuleRegistry
         }
 
         var registrations = orderedModules
-                            .Select(
-                                module => new PersistenceModuleRegistration(
-                                    module,
-                                    module.EntityTypes.OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray()
-                                )
-                            )
-                            .ToArray();
+            .Select(module => new PersistenceModuleRegistration(
+                    module,
+                    module.EntityTypes.OrderBy(type => type.FullName, StringComparer.Ordinal).ToArray()
+                )
+            )
+            .ToArray();
 
         return new(registrations, owners);
     }
@@ -94,43 +93,41 @@ internal sealed partial class PersistenceModuleRegistry
     {
         var explicitlyOwned = _modules.SelectMany(module => module.EntityTypes).ToHashSet();
         var groups = _entities
-                     .Where(entity => entity.Value.HasValue && !explicitlyOwned.Contains(entity.Key))
-                     .GroupBy(
-                         entity =>
-                         {
-                             var target = entity.Value!.Value;
+            .Where(entity => entity.Value.HasValue && !explicitlyOwned.Contains(entity.Key))
+            .GroupBy(entity =>
+                {
+                    var target = entity.Value!.Value;
 
-                             if (!databases.TryGetValue(target, out var database))
-                             {
-                                 throw new InvalidOperationException(
-                                     $"Persistence target '{target}' is required but is not configured."
-                                 );
-                             }
+                    if (!databases.TryGetValue(target, out var database))
+                    {
+                        throw new InvalidOperationException(
+                            $"Persistence target '{target}' is required but is not configured."
+                        );
+                    }
 
-                             var tableName = database.Orm.CodeFirst.GetTableByEntity(entity.Key).DbName;
-                             var separator = tableName.IndexOf('.');
+                    var tableName = database.Orm.CodeFirst.GetTableByEntity(entity.Key).DbName;
+                    var separator = tableName.IndexOf('.');
 
-                             if (separator <= 0)
-                             {
-                                 throw new InvalidOperationException(
-                                     $"Persistence entity '{entity.Key.FullName}' must declare a schema-qualified table, for example [Table(Name = \"world.characters\")]."
-                                 );
-                             }
+                    if (separator <= 0)
+                    {
+                        throw new InvalidOperationException(
+                            $"Persistence entity '{entity.Key.FullName}' must declare a schema-qualified table, for example [Table(Name = \"world.characters\")]."
+                        );
+                    }
 
-                             return (Target: target, Schema: tableName[..separator]);
-                         }
-                     );
+                    return (Target: target, Schema: tableName[..separator]);
+                }
+            );
 
-        return groups.Select(
-                         group => new AutomaticPersistenceModule(
-                             group.Key.Schema,
-                             group.Key.Target,
-                             group.Select(entity => entity.Key)
-                                  .OrderBy(type => type.FullName, StringComparer.Ordinal)
-                                  .ToArray()
-                         )
-                     )
-                     .ToArray();
+        return groups.Select(group => new AutomaticPersistenceModule(
+                    group.Key.Schema,
+                    group.Key.Target,
+                    group.Select(entity => entity.Key)
+                        .OrderBy(type => type.FullName, StringComparer.Ordinal)
+                        .ToArray()
+                )
+            )
+            .ToArray();
     }
 
     [GeneratedRegex("^[a-z0-9]+(?:[._-][a-z0-9]+)*$", RegexOptions.CultureInvariant)]

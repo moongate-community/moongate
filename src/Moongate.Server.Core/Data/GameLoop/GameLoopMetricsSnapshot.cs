@@ -1,6 +1,8 @@
 namespace Moongate.Server.Core.Data.GameLoop;
 
-/// <summary>A point-in-time view of loop admission, queue age and command execution.</summary>
+/// <summary>
+///     A point-in-time view of loop admission, queue age and command execution.
+/// </summary>
 public sealed record GameLoopMetricsSnapshot
 {
     public int QueueDepth { get; init; }

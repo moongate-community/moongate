@@ -53,9 +53,10 @@ internal sealed class SessionPacketOutbox
     }
 
     public void Start()
-
+    {
         // Middleware can block synchronously: one worker per connection, never per packet.
-        => Completion = Task.Run(RunAsync);
+        Completion = Task.Run(RunAsync);
+    }
 
     public bool TryWrite(byte[] frame)
     {
@@ -139,8 +140,8 @@ internal sealed class SessionPacketOutbox
         }
         catch (Exception exception) when (_disconnectRequested.IsCompletedSuccessfully &&
                                           exception is IOException or
-                                                       ObjectDisposedException or
-                                                       OperationCanceledException)
+                                              ObjectDisposedException or
+                                              OperationCanceledException)
         {
             // Only the captured owner request identifies an intentionally interrupted write.
             // A send failure may close the transport itself, so its current state is not a cause.
@@ -176,7 +177,9 @@ internal sealed class SessionPacketOutbox
             failures.Add(exception);
         }
 
-        while (_queue.Reader.TryRead(out _)) { }
+        while (_queue.Reader.TryRead(out _))
+        {
+        }
 
         if (failures.Count > 0)
         {

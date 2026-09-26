@@ -1,4 +1,5 @@
 using Moongate.Server.Services.Redis;
+using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Redis;
 
@@ -7,7 +8,7 @@ public sealed class RedisConnectionServiceTests
     [Fact]
     public async Task StartAsync_PingsSharedRedisAndReleasesConnectionOnStop()
     {
-        var endpoint = Environment.GetEnvironmentVariable("MOONGATE_TEST_REDIS_CONNECTION_STRING") ?? "localhost:6379";
+        var endpoint = RedisTestServer.ConnectionString;
         var service = new RedisConnectionService(
             new()
             {
@@ -35,9 +36,9 @@ public sealed class RedisConnectionServiceTests
             }
         );
 
-        var exception = await Assert.ThrowsAsync<InvalidOperationException>(
-                            () => service.StartAsync().WaitAsync(TimeSpan.FromSeconds(5))
-                        );
+        var exception =
+            await Assert.ThrowsAsync<InvalidOperationException>(() => service.StartAsync().WaitAsync(TimeSpan.FromSeconds(5))
+            );
 
         Assert.Contains("redis.connection_string", exception.Message);
         Assert.DoesNotContain("not-for-errors", exception.ToString());

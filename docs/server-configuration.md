@@ -77,6 +77,12 @@ max_instructions_per_chunk = 10000000
 hook_interval = 1000
 write_definitions = true
 max_string_length = 16777216
+
+[localization]
+language = "eng" # Reads <root>/data/messages/eng.toml.
+
+[line_of_sight]
+max_distance = 25 # Farthest cells along X or Y a point can see.
 ```
 
 Only the databases for the active role must already exist and accept connections:
@@ -97,13 +103,13 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 
 | Setting | Meaning and limits |
 | --- | --- |
-| `mode` | `login`, `game` or `standalone`; default standalone. Login runs account authentication, a login packet listener and realm directory; Game runs world services and publishes its realm to Redis; Standalone runs both roles and publishes its local realm to Redis. |
+| `mode` | `login`, `game` or `standalone`; default standalone. Login runs account authentication, a login packet listener and realm directory; Game runs world services and publishes its realm to Redis; Standalone runs both roles and publishes its local realm to Redis. See [TOML value types](toml-types.md#enums). |
 | `shard.shard_name` | Shard display metadata; used as the standalone list name when it fits the 32-character ASCII wire limit. Otherwise the local list name defaults to `Moongate`. |
 | `network.login_port` | Login TCP listener port; default 2593. Used in login and standalone modes. |
 | `network.game_port` | Game TCP listener port; default 2595. Used in game and standalone modes. Standalone rejects equal login and game ports. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create an endpoint for each active role on every address, including IPv6 addresses; it is not a single wildcard listener. Standalone therefore starts two listeners per address. Use a specific IP to restrict binding. |
 | `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
-| `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. |
+| `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. It must contain `tiledata.mul`, the map and statics files of every map in `data/maps.toml`, and `MultiCollection.uop` or `multi.idx` with `multi.mul`; the server stops at startup when one is missing. |
 | `persistence.auto_sync_schema` | Defaults to false. Normal startup checks versioned SQL history; when false it also fails if registered entities require DDL. Generate and review SQL, then apply it with the separate migration runner. Enable only as an explicit development convenience. |
 | `persistence.accounts.connection_string` | Accounts/login PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Accounts. |
 | `persistence.realm.connection_string` | This realm's PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Realm. |
@@ -112,7 +118,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `realm_directory.realm_id` | Stable ID for a game realm and its Redis lease/ticket namespace. Standalone defaults to `local`; give each independently running realm a distinct ID. |
 | `realm_directory.name`, `server_index` | ASCII list name (at most 32 characters) and unique index (0–65535). Standalone defaults to the shard name and index zero; set a distinct index for each realm sharing Redis. |
 | `realm_directory.advertised_address`, `advertised_port` | Client-facing IPv4 literal and port. Required in game mode; standalone defaults to loopback and `network.game_port`. `0xA8` carries the address; `0x8C` carries the selected realm port. |
-| `realm_directory.minimum_account_type` | Lowest account level allowed to see the realm; `regular`, `game_master` or `administrator`. |
+| `realm_directory.minimum_account_type` | Lowest account level allowed to see the realm; `regular`, `game_master` or `administrator`. See [TOML value types](toml-types.md#enums). |
 | `realm_directory.heartbeat_interval_seconds`, `lease_duration_seconds`, `max_realms` | Defaults 5, 15 and 128. Lease duration must exceed two heartbeats; the Redis-backed directory caps realms at 128. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |
@@ -125,6 +131,8 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.hook_interval` | Positive instruction-check interval, no greater than either instruction budget. |
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
+| `localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
+| `line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
 
 Redis is required at runtime in all three modes, including standalone. `redis.connection_string` is a StackExchange.Redis configuration string or an environment reference resolved at startup; the Docker example uses `redis:6379,password=...` on its private bridge. `redis.handoff_secret` is an independent cluster-wide secret, also supplied through an environment reference. Give the login and every game process the same values. The Docker example reads both from separate Compose secrets; keep the actual values out of TOML and the repository. A Redis connection failure prevents startup. A later Redis outage stops new realm lists and handoffs while existing game sessions continue; pending tickets are lost on Redis restart and game processes republish their leases. Configure Redis with `maxmemory-policy noeviction`.
 
@@ -142,7 +150,7 @@ dotnet run --project src/Moongate.Server -c Release -- \
 
 | Option | Default | Current behavior |
 | --- | --- | --- |
-| `--root-directory <path>` | Unset | Overrides `MOONGATE_ROOT`; otherwise the executable directory is used |
+| `--root-directory <path>` | Unset | Overrides `MOONGATE_ROOT`; with neither set the server refuses to start |
 | `--pid-file-name <name>` | `moongate.pid` | PID filename under the chosen root; use a plain filename |
 | `--log-level <level>` | `Information` | Parsed into server arguments, but currently not applied to the Serilog level policy |
 | `--log-to-file` | `true` | File logging is enabled; the generated parser only accepts this as a presence flag |
@@ -161,7 +169,11 @@ Although help displays `<bool>` for the default-true options, the current CLI
 does not accept `--show-header false`, `--show-header=false` or corresponding
 file-logging forms. There is no CLI switch to turn these two options off yet.
 
-Root precedence is **command line → `MOONGATE_ROOT` → executable directory**.
+Root precedence is **command line → `MOONGATE_ROOT`**. With neither set the root would
+be the directory holding the binary, and the server refuses to start with exit code 2,
+naming `--root-directory`. The same refusal applies when either resolves to that
+directory, because an upgrade replaces it wholesale and would delete `config/`, `logs/`,
+`save/` and `world-saves/` with it.
 The chosen root expands home/environment references and becomes an absolute path;
 a relative root starts from the working directory. Prefer explicit absolute paths
 in service managers and containers. Docker sets `MOONGATE_ROOT=/data` by default.

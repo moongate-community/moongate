@@ -3,9 +3,9 @@ using System.Text.RegularExpressions;
 namespace Moongate.Tests.Conventions;
 
 /// <summary>
-/// Guards CODE_CONVENTION 4.2: an IDE rearrange pass sorts members by kind and accessibility, which lifts
-/// Dispose above the methods it tears down. The rule is not expressible in .editorconfig, so this test is
-/// what actually fails when a formatter moves it.
+///     Guards CODE_CONVENTION 4.2: an IDE rearrange pass sorts members by kind and accessibility, which lifts
+///     Dispose above the methods it tears down. The rule is not expressible in .editorconfig, so this test is
+///     what actually fails when a formatter moves it.
 /// </summary>
 public sealed class DisposeMemberOrderTests
 {
@@ -44,15 +44,16 @@ public sealed class DisposeMemberOrderTests
     }
 
     private static IEnumerable<string> EnumerateProductionSources(string root)
-        => Directory.EnumerateFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories)
-                    .Where(
-                        file => !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}") &&
-                                !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
-                    );
+    {
+        return Directory.EnumerateFiles(Path.Combine(root, "src"), "*.cs", SearchOption.AllDirectories)
+            .Where(file => !file.Contains($"{Path.DirectorySeparatorChar}bin{Path.DirectorySeparatorChar}") &&
+                           !file.Contains($"{Path.DirectorySeparatorChar}obj{Path.DirectorySeparatorChar}")
+            );
+    }
 
     /// <summary>
-    /// Names the top-level members declared after the last Dispose member of the file. Nesting depth keeps the
-    /// scan on the outer type, so members of a nested type never count as trailing.
+    ///     Names the top-level members declared after the last Dispose member of the file. Nesting depth keeps the
+    ///     scan on the outer type, so members of a nested type never count as trailing.
     /// </summary>
     private static List<string> MembersAfterLastDispose(IReadOnlyList<string> lines)
     {

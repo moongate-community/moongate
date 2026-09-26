@@ -32,19 +32,26 @@ public static class Sounds
     }
 
     /// <summary>
-    /// Returns <see cref="UoSound" /> of ID
+    ///     Returns <see cref="UoSound" /> of ID
     /// </summary>
-    /// <param name="soundId"></param>
-    /// <returns></returns>
+    /// <param name="soundId">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UoSound GetSound(int soundId)
-        => GetSound(soundId, out _);
+    {
+        return GetSound(soundId, out _);
+    }
 
     /// <summary>
-    /// Returns <see cref="UoSound" /> of ID with bool translated in .def
+    ///     Returns <see cref="UoSound" /> of ID with bool translated in .def
     /// </summary>
-    /// <param name="soundId"></param>
-    /// <param name="translated"></param>
-    /// <returns></returns>
+    /// <param name="soundId">
+    /// </param>
+    /// <param name="translated">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static UoSound GetSound(int soundId, out bool translated)
     {
         translated = false;
@@ -120,10 +127,12 @@ public static class Sounds
     }
 
     /// <summary>
-    /// Returns length of SoundID
+    ///     Returns length of SoundID
     /// </summary>
-    /// <param name="soundId"></param>
-    /// <returns></returns>
+    /// <param name="soundId">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static double GetSoundLength(int soundId)
     {
         if (soundId < 0)
@@ -173,7 +182,7 @@ public static class Sounds
     }
 
     /// <summary>
-    /// Reads Sounds and def
+    ///     Reads Sounds and def
     /// </summary>
     public static void Initialize()
     {
@@ -212,15 +221,21 @@ public static class Sounds
     }
 
     public static bool IsRemovedSound(int soundId)
-        => soundId < 0 || _removed[soundId];
+    {
+        return soundId < 0 || _removed[soundId];
+    }
 
     /// <summary>
-    /// Returns Sound name and tests if valid
+    ///     Returns Sound name and tests if valid
     /// </summary>
-    /// <param name="soundId"></param>
-    /// <param name="name"></param>
-    /// <param name="translated"></param>
-    /// <returns></returns>
+    /// <param name="soundId">
+    /// </param>
+    /// <param name="name">
+    /// </param>
+    /// <param name="translated">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static bool IsValidSound(int soundId, out string name, out bool translated)
     {
         translated = false;
@@ -507,6 +522,7 @@ public static class Sounds
     }
 
     private static int[] WaveHeader(int length)
+    {
         /* ====================
          * = WAVE File layout =
          * ====================
@@ -526,8 +542,9 @@ public static class Sounds
          * short[..] - data /
          * ====================
          * */
-        => new[]
+        return new[]
         {
             0x46464952, length + 36, 0x45564157, 0x20746D66, 0x10, 0x010001, 0x5622, 0xAC44, 0x100002, 0x61746164, length
         };
+    }
 }

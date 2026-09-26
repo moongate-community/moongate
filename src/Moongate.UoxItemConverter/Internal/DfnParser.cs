@@ -1,12 +1,46 @@
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-/// Reads UOX3's <c>.dfn</c> block format: <c>// comment</c> lines, blank lines, a
-/// <c>[header]</c> line, a bare <c>{</c>, one line per entry, and a bare <c>}</c>. A trailing
-/// <c>//comment</c> is stripped from every line first, real data has it glued straight onto a brace
-/// with no space (<c>{//approximately 1%</c>), which otherwise hides the whole block: the real
-/// engine (<c>oldstrutil::removeTrailing(sLine, "//")</c> in UOX3's own <c>ssection.cpp</c>) does the
-/// same, unconditionally, before looking at a line's content.
+///     Reads UOX3's
+///     <c>
+///         .dfn
+///     </c>
+///     block format:
+///     <c>
+///         // comment
+///     </c>
+///     lines, blank lines, a
+///     <c>
+///         [header]
+///     </c>
+///     line, a bare
+///     <c>
+///         {
+///     </c>
+///     , one line per entry, and a bare
+///     <c>
+///         }
+///     </c>
+///     . A trailing
+///     <c>
+///         //comment
+///     </c>
+///     is stripped from every line first, real data has it glued straight onto a brace
+///     with no space (
+///     <c>
+///         {//approximately 1%
+///     </c>
+///     ), which otherwise hides the whole block: the real
+///     engine (
+///     <c>
+///         oldstrutil::removeTrailing(sLine, "//")
+///     </c>
+///     in UOX3's own
+///     <c>
+///         ssection.cpp
+///     </c>
+///     ) does the
+///     same, unconditionally, before looking at a line's content.
 /// </summary>
 internal static class DfnParser
 {

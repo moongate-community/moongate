@@ -1,5 +1,7 @@
+using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.UoxItemConverter.Internal;
 using Moongate.UoxItemConverter.Tests.TestSupport;
 
@@ -47,9 +49,36 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.Equal((uint)0x0f6b, item.ItemId.Value);
         Assert.Equal("torch", item.Name);
         Assert.True(item.Movable);
-        Assert.Equal(0x0010, item.Hue.Resolve());
+        Assert.Equal(new Hue(0x0010), item.Hue.Resolve());
         Assert.Equal(10, item.MaxWeight);
         Assert.Null(item.BaseId);
+    }
+
+    [Theory,
+     InlineData("", null),
+     InlineData("visible=0", null),
+     InlineData("visible=1", AccountType.GameMaster),
+     InlineData("visible=2", AccountType.GameMaster),
+     InlineData("visible=3", AccountType.GameMaster)]
+    public void Run_TheVisibleField_MapsHiddenItemsToGameMasterVisibility(string visibleLine, AccountType? expected)
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            $$"""
+            [orcspawn]
+            {
+            name=Orc Spawner
+            id=0x1f13
+            {{visibleLine}}
+            }
+            """
+        );
+
+        var exitCode = Run();
+
+        Assert.True(exitCode == 0, CombinedOutput);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
+        Assert.Equal(expected, Assert.Single(file!.Item).Visibility);
     }
 
     [Fact]
@@ -582,13 +611,15 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     private int Run(bool includeLootDestination = true)
-        => UoxItemConverterCommand.Run(
+    {
+        return UoxItemConverterCommand.Run(
             _dirs.SourceDirectory,
             _dirs.DestinationDirectory,
             includeLootDestination ? _dirs.LootDestinationDirectory : null,
             _output,
             _error
         );
+    }
 
     public void Dispose()
     {

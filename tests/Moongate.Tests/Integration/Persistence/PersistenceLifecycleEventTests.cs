@@ -19,8 +19,7 @@ public sealed class PersistenceLifecycleEventTests
         using var cancellation = new CancellationTokenSource();
         var events = new List<string>();
         var serviceStarted = false;
-        fixture.Container.OnEvent<PersistenceReadyEvent>(
-            (_, _) =>
+        fixture.Container.OnEvent<PersistenceReadyEvent>((_, _) =>
             {
                 events.Add("ready");
                 cancellation.Cancel();
@@ -28,8 +27,7 @@ public sealed class PersistenceLifecycleEventTests
                 return Task.CompletedTask;
             }
         );
-        fixture.Container.OnEvent<PersistenceStoppedEvent>(
-            (_, _) =>
+        fixture.Container.OnEvent<PersistenceStoppedEvent>((_, _) =>
             {
                 events.Add("stopped");
 
@@ -70,31 +68,27 @@ public sealed class PersistenceLifecycleEventTests
         var containerAliveAtStopped = false;
         var stoppedTokenCanBeCanceled = true;
         container.RegisterInstance(new RecordingDisposable(events, "container:dispose"));
-        container.OnEvent<PersistenceReadyEvent>(
-            async (_, token) =>
+        container.OnEvent<PersistenceReadyEvent>(async (_, token) =>
             {
                 await container.Resolve<IDataAccess<TestEntity>>().UpsertAsync(new() { Id = new(1), Name = "ready" }, token);
                 events.Add("persistence:ready");
             }
         );
-        container.OnEvent<MoongateStartedEvent>(
-            (_, _) =>
+        container.OnEvent<MoongateStartedEvent>((_, _) =>
             {
                 events.Add("server:started");
 
                 return Task.CompletedTask;
             }
         );
-        container.OnEvent<MoongateStoppedEvent>(
-            (_, _) =>
+        container.OnEvent<MoongateStoppedEvent>((_, _) =>
             {
                 events.Add("server:stopped");
 
                 return Task.CompletedTask;
             }
         );
-        container.OnEvent<PersistenceStoppedEvent>(
-            async (_, token) =>
+        container.OnEvent<PersistenceStoppedEvent>(async (_, token) =>
             {
                 stoppedAccessError = await Record.ExceptionAsync(() => owner.SaveAllAsync());
                 containerAliveAtStopped = !container.IsDisposed;
@@ -142,16 +136,14 @@ public sealed class PersistenceLifecycleEventTests
     {
         using var container = new Container();
         var count = 0;
-        container.OnEvent<PersistenceReadyEvent>(
-            (_, _) =>
+        container.OnEvent<PersistenceReadyEvent>((_, _) =>
             {
                 count++;
 
                 return Task.CompletedTask;
             }
         );
-        container.OnEvent<PersistenceStoppedEvent>(
-            (_, _) =>
+        container.OnEvent<PersistenceStoppedEvent>((_, _) =>
             {
                 count++;
 
@@ -172,16 +164,14 @@ public sealed class PersistenceLifecycleEventTests
         await using var fixture = await HostPersistenceFixture.CreateAsync(false);
         fixture.RegisterEntity();
         var count = 0;
-        fixture.Container.OnEvent<PersistenceReadyEvent>(
-            (_, _) =>
+        fixture.Container.OnEvent<PersistenceReadyEvent>((_, _) =>
             {
                 count++;
 
                 return Task.CompletedTask;
             }
         );
-        fixture.Container.OnEvent<PersistenceStoppedEvent>(
-            (_, _) =>
+        fixture.Container.OnEvent<PersistenceStoppedEvent>((_, _) =>
             {
                 count++;
 
@@ -203,16 +193,14 @@ public sealed class PersistenceLifecycleEventTests
         await using var fixture = await HostPersistenceFixture.CreateAsync();
         var events = new List<string>();
         var failure = new IOException("service failure");
-        fixture.Container.OnEvent<PersistenceReadyEvent>(
-            (_, _) =>
+        fixture.Container.OnEvent<PersistenceReadyEvent>((_, _) =>
             {
                 events.Add("ready");
 
                 return Task.CompletedTask;
             }
         );
-        fixture.Container.OnEvent<PersistenceStoppedEvent>(
-            (_, _) =>
+        fixture.Container.OnEvent<PersistenceStoppedEvent>((_, _) =>
             {
                 events.Add("stopped");
 
@@ -248,8 +236,7 @@ public sealed class PersistenceLifecycleEventTests
         await using var fixture = await HostPersistenceFixture.CreateAsync();
         var count = 0;
         fixture.Container.OnEvent<PersistenceStoppedEvent>((_, _) => throw new IOException("observer failure"));
-        fixture.Container.OnEvent<PersistenceStoppedEvent>(
-            (_, _) =>
+        fixture.Container.OnEvent<PersistenceStoppedEvent>((_, _) =>
             {
                 count++;
 

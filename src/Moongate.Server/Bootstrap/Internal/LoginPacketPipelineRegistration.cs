@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Network.Packets.Registry;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
@@ -13,13 +14,14 @@ internal static class LoginPacketPipelineRegistration
 {
     public static Container Register(Container container, int listenerPriority = 100)
     {
+        PacketRegistryFactory.Register(container);
         container.RegisterDelegate<ILoginNetworkService>(
             resolver =>
             {
                 var config = resolver.Resolve<MoongateServerConfig>();
 
                 return new NetworkService(
-                    UoNetworkOptionsFactory.CreateLogin(config),
+                    UoNetworkOptionsFactory.CreateLogin(config, resolver.Resolve<PacketRegistry>()),
                     resolver.Resolve<ILoginConnectionService>()
                 );
             },
@@ -29,20 +31,21 @@ internal static class LoginPacketPipelineRegistration
         container.RegisterInstance(new LoginPacketHandlerRegistry());
 
         return container.AddMoongateService<ILoginConnectionService, ConnectionService>(40)
-                        .AddMoongateService<ILoginPacketSendService, PacketSendService>(
-                            resolver => new(resolver.Resolve<ILoginConnectionService>()),
-                            50
-                        )
-                        .AddMoongateService<LoginPacketDispatchService>(60)
-                        .AddMoongateService<LoginServerService>(
-                            resolver => new(
-                                resolver.Resolve<ILoginNetworkService>(),
-                                resolver.Resolve<ILoginConnectionService>(),
-                                resolver.Resolve<ILoginSessionService>(),
-                                resolver.Resolve<LoginPacketDispatchService>(),
-                                resolver.Resolve<ILoginPacketSendService>()
-                            ),
-                            listenerPriority
-                        );
+            .AddMoongateService<ILoginPacketSendService, PacketSendService>(
+                resolver => new(resolver.Resolve<ILoginConnectionService>()),
+                50
+            )
+            .AddMoongateService<LoginPacketDispatchService>(60)
+            .AddMoongateService<LoginServerService>(
+                resolver => new(
+                    resolver.Resolve<ILoginNetworkService>(),
+                    resolver.Resolve<ILoginConnectionService>(),
+                    resolver.Resolve<ILoginSessionService>(),
+                    resolver.Resolve<LoginPacketDispatchService>(),
+                    resolver.Resolve<ILoginPacketSendService>(),
+                    resolver.Resolve<PacketRegistry>()
+                ),
+                listenerPriority
+            );
     }
 }

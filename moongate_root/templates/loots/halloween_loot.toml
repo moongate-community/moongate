@@ -1,0 +1,11 @@
+[[loot]]
+id = "halloween_loot"
+[[loot.entries]]
+weight = 400
+amount = 1
+
+[[loot.entries]]
+weight = 100
+item_id = "halloween_ghoul_statue"
+comment = "Halloween Ghoul Statue"
+amount = 1

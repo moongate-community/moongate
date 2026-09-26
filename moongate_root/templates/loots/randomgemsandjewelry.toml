@@ -1,0 +1,377 @@
+[[loot]]
+id = "randomgemsandjewelry"
+[[loot.entries]]
+weight = 1816
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f0f_star_sapphire"
+comment = "star sapphire"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f10_emerald"
+comment = "emerald"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f11_sapphire"
+comment = "sapphire"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f12_sapphire"
+comment = "sapphire"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f13_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f13_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f14_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f14_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f15_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f15_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f15_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f16_amethyst"
+comment = "amethyst"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f17_amethyst"
+comment = "amethyst"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f18_tourmaline"
+comment = "tourmaline"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f18_tourmaline"
+comment = "tourmaline"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f19_sapphire"
+comment = "sapphire"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1a_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1a_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1b_star_sapphire"
+comment = "star sapphire"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1c_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1c_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1d_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1d_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1e_tourmaline"
+comment = "tourmaline"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1e_tourmaline"
+comment = "tourmaline"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f1f_sapphire"
+comment = "sapphire"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f20_tourmaline"
+comment = "tourmaline"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f20_tourmaline"
+comment = "tourmaline"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f21_star_sapphire"
+comment = "star sapphire"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f22_amethyst"
+comment = "amethyst"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f23_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f23_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f23_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f24_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f24_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f24_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f25_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f25_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f25_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f26_diamond"
+comment = "diamond"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f27_diamond"
+comment = "diamond"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f28_diamond"
+comment = "diamond"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f29_diamond"
+comment = "diamond"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2a_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2a_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2b_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2b_#"
+comment = "#"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2c_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2c_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2c_citrine"
+comment = "citrine"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2d_tourmaline"
+comment = "tourmaline"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2d_tourmaline"
+comment = "tourmaline"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2e_amethyst"
+comment = "amethyst"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f2f_emerald"
+comment = "emerald"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x0f30_diamond"
+comment = "diamond"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x1085_necklace"
+comment = "necklace"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x1088_necklace"
+comment = "necklace"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x1087_earrings"
+comment = "earrings"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x1088_necklace"
+comment = "necklace"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x1089_necklace"
+comment = "necklace"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x108a_ring"
+comment = "ring"
+amount = 1
+
+[[loot.entries]]
+weight = 132
+item_id = "0x108b_beads"
+comment = "beads"
+amount = 1

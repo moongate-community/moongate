@@ -22,17 +22,17 @@ public sealed class ConnectionPreparationTests
                 ConnectionPipelineFactory = () => new()
                 {
                     PrepareStreamAsync = async (stream, token) =>
-                                         {
-                                             Interlocked.Increment(ref calls);
+                    {
+                        Interlocked.Increment(ref calls);
 
-                                             if (preparing)
-                                             {
-                                                 entered.TrySetResult();
-                                                 await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
-                                             }
+                        if (preparing)
+                        {
+                            entered.TrySetResult();
+                            await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                        }
 
-                                             return stream;
-                                         },
+                        return stream;
+                    },
                     ConfigureClient = client => client.OnConnected += (_, _) => entered.TrySetResult()
                 }
             }
@@ -60,26 +60,26 @@ public sealed class ConnectionPreparationTests
             new()
             {
                 ConnectionPipelineFactory = () =>
-                                            {
-                                                var number = Interlocked.Increment(ref next);
+                {
+                    var number = Interlocked.Increment(ref next);
 
-                                                return new()
-                                                {
-                                                    PrepareStreamAsync = async (stream, token) =>
-                                                                         {
-                                                                             if (number == 1)
-                                                                             {
-                                                                                 entered.TrySetResult();
-                                                                                 await release.Task.WaitAsync(token);
-                                                                             }
+                    return new()
+                    {
+                        PrepareStreamAsync = async (stream, token) =>
+                        {
+                            if (number == 1)
+                            {
+                                entered.TrySetResult();
+                                await release.Task.WaitAsync(token);
+                            }
 
-                                                                             return stream;
-                                                                         },
-                                                    ConfigureClient =
-                                                        client => client.OnConnected +=
-                                                                      (_, _) => connected.TrySetResult(number)
-                                                };
-                                            }
+                            return stream;
+                        },
+                        ConfigureClient =
+                            client => client.OnConnected +=
+                                (_, _) => connected.TrySetResult(number)
+                    };
+                }
             }
         );
         await server.StartAsync(CancellationToken.None);
@@ -110,10 +110,10 @@ public sealed class ConnectionPreparationTests
                 ConnectionPipelineFactory = () => new()
                 {
                     PrepareStreamAsync = (stream, _) => throws
-                                                            ? ValueTask.FromException<Stream>(
-                                                                new IOException("setup failed")
-                                                            )
-                                                            : ValueTask.FromResult(stream),
+                        ? ValueTask.FromException<Stream>(
+                            new IOException("setup failed")
+                        )
+                        : ValueTask.FromResult(stream),
                     ConfigureClient = client => client.Dispose()
                 }
             }
@@ -139,10 +139,10 @@ public sealed class ConnectionPreparationTests
                 ConnectionPipelineFactory = () => new()
                 {
                     ConfigureClient = client =>
-                                      {
-                                          client.OnConnected += (_, _) => connected.TrySetResult();
-                                          client.OnDataReceived += (_, args) => received.TrySetResult(args.Data.Span[0]);
-                                      }
+                    {
+                        client.OnConnected += (_, _) => connected.TrySetResult();
+                        client.OnDataReceived += (_, args) => received.TrySetResult(args.Data.Span[0]);
+                    }
                 }
             }
         );
@@ -179,23 +179,23 @@ public sealed class ConnectionPreparationTests
                 ConnectionPipelineFactory = () => new()
                 {
                     PrepareStreamAsync = async (stream, _) =>
-                                         {
-                                             if (Interlocked.Increment(ref attempts) == 1)
-                                             {
-                                                 entered.TrySetResult();
-                                                 await release.Task;
-                                             }
+                    {
+                        if (Interlocked.Increment(ref attempts) == 1)
+                        {
+                            entered.TrySetResult();
+                            await release.Task;
+                        }
 
-                                             return stream;
-                                         }
+                        return stream;
+                    }
                 }
             }
         );
         server.OnClientConnect += (_, _) =>
-                                  {
-                                      Interlocked.Increment(ref connectionCount);
-                                      connected.TrySetResult();
-                                  };
+        {
+            Interlocked.Increment(ref connectionCount);
+            connected.TrySetResult();
+        };
         await server.StartAsync(CancellationToken.None);
         using var first = new Socket(AddressFamily.InterNetwork, SocketType.Stream, ProtocolType.Tcp);
         await first.ConnectAsync(server.Endpoint);
@@ -224,20 +224,20 @@ public sealed class ConnectionPreparationTests
                 ConnectionPipelineFactory = () => new()
                 {
                     PrepareStreamAsync = async (stream, token) =>
-                                         {
-                                             entered.TrySetResult();
+                    {
+                        entered.TrySetResult();
 
-                                             try
-                                             {
-                                                 await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
-                                             }
-                                             finally
-                                             {
-                                                 cancelled.TrySetResult();
-                                             }
+                        try
+                        {
+                            await Task.Delay(System.Threading.Timeout.InfiniteTimeSpan, token);
+                        }
+                        finally
+                        {
+                            cancelled.TrySetResult();
+                        }
 
-                                             return stream;
-                                         }
+                        return stream;
+                    }
                 }
             }
         );

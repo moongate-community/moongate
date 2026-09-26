@@ -11,9 +11,12 @@ using Serilog;
 
 namespace Moongate.Server.Services.Packets;
 
-/// <summary>Dispatches typed handlers through the existing bounded game loop inbox.</summary>
+/// <summary>
+///     Dispatches typed handlers through the existing bounded game loop inbox.
+/// </summary>
 public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDisposable
 {
+    private readonly PacketRegistry _packets;
     private readonly Lock _gate = new();
     private readonly IGameLoopService _gameLoop;
     private readonly ISessionService _sessions;
@@ -39,9 +42,11 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         IGameLoopService gameLoop,
         ISessionService sessions,
         PacketHandlerRegistry registry,
-        IResolverContext resolver
+        IResolverContext resolver,
+        PacketRegistry? packets = null
     )
     {
+        _packets = packets ?? PacketRegistry.Default;
         _gameLoop = gameLoop;
         _sessions = sessions;
         _registry = registry;
@@ -55,8 +60,8 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         var retirement = RetireSessionAsync(sessionId);
 
         return cancellationFailure is null
-                   ? retirement
-                   : CompleteAfterCancellationFailureAsync(retirement, cancellationFailure);
+            ? retirement
+            : CompleteAfterCancellationFailureAsync(retirement, cancellationFailure);
     }
 
     /// <inheritdoc />
@@ -73,9 +78,9 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
             {
                 var registrations = _registry.Freeze();
                 _handlers = registrations.Where(pair => !pair.Value.IsAsync)
-                                         .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.Bind(_resolver));
+                    .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.Bind(_resolver));
                 _asyncHandlers = registrations.Where(pair => pair.Value.IsAsync)
-                                              .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.BindAsync(_resolver));
+                    .ToFrozenDictionary(pair => pair.Key, pair => pair.Value.BindAsync(_resolver));
 
                 if (_asyncHandlers.Count > 0)
                 {
@@ -86,7 +91,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
                 _running = true;
                 _logger.Information(
                     "Packet dispatcher started with {PacketCount} registered packets and {HandlerCount} registered handlers",
-                    PacketRegistry.Default.RegisteredPackets.Count,
+                    _packets.RegisteredPackets.Count,
                     _handlers.Count + _asyncHandlers.Count
                 );
             }
@@ -266,5 +271,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
     }
 
     public ValueTask DisposeAsync()
-        => new(StopAsync());
+    {
+        return new(StopAsync());
+    }
 }

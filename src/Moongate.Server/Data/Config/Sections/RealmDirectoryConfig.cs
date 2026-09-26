@@ -2,12 +2,12 @@ using System.Net;
 using System.Net.Sockets;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Hosting;
-using Moongate.Server.Serialization.Config.Internal;
-using Tomlyn.Serialization;
 
 namespace Moongate.Server.Data.Config.Sections;
 
-/// <summary>Configures the realm advertised through Redis discovery.</summary>
+/// <summary>
+///     Configures the realm advertised through Redis discovery.
+/// </summary>
 public sealed class RealmDirectoryConfig
 {
     public string RealmId { get; set; } = "";
@@ -20,7 +20,6 @@ public sealed class RealmDirectoryConfig
 
     public int AdvertisedPort { get; set; }
 
-    [TomlConverter(typeof(AccountTypeTomlConverter))]
     public AccountType MinimumAccountType { get; set; } = AccountType.Regular;
 
     public int HeartbeatIntervalSeconds { get; set; } = 5;

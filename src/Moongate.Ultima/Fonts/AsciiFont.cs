@@ -19,12 +19,16 @@ public sealed class AsciiFont
     }
 
     /// <summary>
-    /// Gets Bitmap of given character
+    ///     Gets Bitmap of given character
     /// </summary>
-    /// <param name="character"></param>
-    /// <returns></returns>
+    /// <param name="character">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public UltimaBitmap GetBitmap(char character)
-        => Characters[((character - 0x20) & 0x7FFFFFFF) % 224];
+    {
+        return Characters[((character - 0x20) & 0x7FFFFFFF) % 224];
+    }
 
     public static AsciiFont GetFixed(int font, AsciiFont[] fonts)
     {

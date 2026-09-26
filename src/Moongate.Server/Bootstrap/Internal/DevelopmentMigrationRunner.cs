@@ -91,7 +91,9 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
                     process.Kill(true);
                 }
             }
-            catch (InvalidOperationException) { }
+            catch (InvalidOperationException)
+            {
+            }
 
             await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
             await Task.WhenAll(stdout, stderr).ConfigureAwait(false);

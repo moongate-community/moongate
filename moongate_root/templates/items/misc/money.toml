@@ -1,0 +1,80 @@
+[[item]]
+id = "0x0eed_gold_coin"
+item_id = 3821
+name = "gold coin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0eed_4_gold_coin"
+item_id = 3821
+name = "gold coin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0xeed_20_gold_coin"
+item_id = 3821
+name = "gold coin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0ef2_silver_coin"
+item_id = 3826
+name = "silver coin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0ef2_4_silver_coin"
+item_id = 3826
+name = "silver coin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0ef2_20_silver_coin"
+item_id = 3826
+name = "silver coin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0eea_copper_coin"
+item_id = 3818
+name = "copper coin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0eea_4_copper_coin"
+item_id = 3819
+name = "copper coin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0eea_20_copper_coin"
+item_id = 3820
+name = "copper coin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "bankcheck"
+base_id = "base_item"
+item_id = 5360
+name = "a bank check"
+rarity = "common"
+movable = false
+hue = 52

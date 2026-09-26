@@ -10,10 +10,12 @@ public sealed class UnicodeFont
     }
 
     /// <summary>
-    /// Returns max height of text
+    ///     Returns max height of text
     /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
+    /// <param name="text">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public int GetHeight(string text)
     {
         if (string.IsNullOrEmpty(text))
@@ -33,10 +35,12 @@ public sealed class UnicodeFont
     }
 
     /// <summary>
-    /// Returns width of text
+    ///     Returns width of text
     /// </summary>
-    /// <param name="text"></param>
-    /// <returns></returns>
+    /// <param name="text">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public int GetWidth(string text)
     {
         if (string.IsNullOrEmpty(text))

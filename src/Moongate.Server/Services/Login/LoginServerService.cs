@@ -6,9 +6,12 @@ using Serilog;
 
 namespace Moongate.Server.Services.Login;
 
-/// <summary>Connects the login transport to login-owned sessions and ordered packet dispatch.</summary>
+/// <summary>
+///     Connects the login transport to login-owned sessions and ordered packet dispatch.
+/// </summary>
 public sealed class LoginServerService : IMoongateStartupService
 {
+    private readonly PacketRegistry _packets;
     private readonly INetworkService _network;
     private readonly IConnectionService _connections;
     private readonly ILoginSessionService _sessions;
@@ -26,9 +29,11 @@ public sealed class LoginServerService : IMoongateStartupService
         IConnectionService connections,
         ILoginSessionService sessions,
         LoginPacketDispatchService dispatcher,
-        IPacketSendService sender
+        IPacketSendService sender,
+        PacketRegistry? packets = null
     )
     {
+        _packets = packets ?? PacketRegistry.Default;
         _network = network;
         _connections = connections;
         _sessions = sessions;
@@ -55,8 +60,7 @@ public sealed class LoginServerService : IMoongateStartupService
         {
             _stopping = true;
 
-            return _lifecycle.StopAsync(
-                async startup =>
+            return _lifecycle.StopAsync(async startup =>
                 {
                     if (startup is not null)
                     {
@@ -104,7 +108,7 @@ public sealed class LoginServerService : IMoongateStartupService
             return;
         }
 
-        if (PacketRegistry.Default.TryDecode(args.Data.Span, out var packet, out var opCode) &&
+        if (_packets.TryDecode(args.Data.Span, out var packet, out var opCode) &&
             _dispatcher.TryDispatch(args.Connection.SessionId, packet))
         {
             return;

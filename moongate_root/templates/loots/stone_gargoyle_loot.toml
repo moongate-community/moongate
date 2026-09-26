@@ -1,0 +1,5 @@
+[[loot]]
+id = "stone_gargoyle_loot"
+[[loot.entries]]
+weight = 500
+amount = 1

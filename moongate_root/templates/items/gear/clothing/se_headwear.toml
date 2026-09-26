@@ -1,0 +1,50 @@
+[[item]]
+id = "0x2305_flower_garland"
+base_id = "base_hat"
+item_id = 8965
+name = "flower garland"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2306"
+base_id = "0x2305_flower_garland"
+item_id = 8966
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x278f_cloth_ninja_hood"
+base_id = "base_hat"
+item_id = 10127
+name = "cloth ninja hood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27da"
+base_id = "0x278f_cloth_ninja_hood"
+item_id = 10202
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x2798_kasa"
+base_id = "base_hat"
+item_id = 10136
+name = "kasa"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x27e3"
+base_id = "0x2797_ninja_tall_tabi"
+item_id = 10211
+rarity = "common"
+movable = false
+hue = 0

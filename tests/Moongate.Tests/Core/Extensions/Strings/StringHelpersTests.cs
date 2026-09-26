@@ -38,7 +38,9 @@ public class StringHelpersTests
      InlineData("", ""),
      InlineData(null, null)]
     public void Capitalize_PooledCharacters_PreservesWordRules(string? input, string? expected)
-        => Assert.Equal(expected, input!.Capitalize());
+    {
+        Assert.Equal(expected, input!.Capitalize());
+    }
 
     [Fact]
     public void Capitalize_TurkishCurrentCulture_UsesInvariantInitials()
@@ -57,7 +59,9 @@ public class StringHelpersTests
         string? input,
         string expected
     )
-        => Assert.Equal(expected, input!.DefaultIfNullOrEmpty("fallback"));
+    {
+        Assert.Equal(expected, input!.DefaultIfNullOrEmpty("fallback"));
+    }
 
     [Fact]
     public void IndentMultiline_CustomSeparator_IndentsEmptyAndTrailingLines()
@@ -146,7 +150,9 @@ public class StringHelpersTests
 
     [Fact]
     public void Remove_EmptyMatch_RejectsTheInvalidSearchTerm()
-        => Assert.Throws<ArgumentException>(() => "abc".AsSpan().Remove("", StringComparison.Ordinal));
+    {
+        Assert.Throws<ArgumentException>(() => "abc".AsSpan().Remove("", StringComparison.Ordinal));
+    }
 
     [Fact]
     public void Remove_EmptySource_WritesNothingToTheDestination()
@@ -180,7 +186,9 @@ public class StringHelpersTests
 
     [Fact]
     public void Remove_InvalidComparison_Throws()
-        => Assert.Throws<ArgumentException>(() => "abc".AsSpan().Remove("b", (StringComparison)99));
+    {
+        Assert.Throws<ArgumentException>(() => "abc".AsSpan().Remove("b", (StringComparison)99));
+    }
 
     [Fact]
     public void Remove_MultipleCharacterMatches_RemovesTheWholeMatch()
@@ -225,25 +233,37 @@ public class StringHelpersTests
 
     [Theory, InlineData(null), InlineData(""), InlineData(" \t\r\n")]
     public void Wrap_BlankText_ProducesNoLines(string? input)
-        => Assert.Null(input!.Wrap(10, 2));
+    {
+        Assert.Null(input!.Wrap(10, 2));
+    }
 
     [Fact]
     public void Wrap_LongWordAfterExistingLine_RespectsTheTotalLineLimit()
-        => Assert.Equal(new[] { "one", "abcd" }, "one abcdefghijk".Wrap(4, 2));
+    {
+        Assert.Equal(new[] { "one", "abcd" }, "one abcdefghijk".Wrap(4, 2));
+    }
 
     [Fact]
     public void Wrap_LongWordReachesLineLimit_StopsBeforeRemainingCharacters()
-        => Assert.Equal(new[] { "abcd" }, "abcdefghijk".Wrap(4, 1));
+    {
+        Assert.Equal(new[] { "abcd" }, "abcdefghijk".Wrap(4, 1));
+    }
 
     [Fact]
     public void Wrap_LongWord_SplitsAtTheRequestedWidth()
-        => Assert.Equal(new[] { "abcd", "efgh", "ijk" }, "abcdefghijk".Wrap(4, 10));
+    {
+        Assert.Equal(new[] { "abcd", "efgh", "ijk" }, "abcdefghijk".Wrap(4, 10));
+    }
 
     [Fact]
     public void Wrap_WordWouldExceedLineWidth_MovesItToTheNextLine()
-        => Assert.Equal(new[] { "one two", "three", "four" }, "  one two three four  ".Wrap(7, 10));
+    {
+        Assert.Equal(new[] { "one two", "three", "four" }, "  one two three four  ".Wrap(7, 10));
+    }
 
     [Fact]
     public void Wrap_WordsReachLineLimit_StopsBeforeRemainingWords()
-        => Assert.Equal(new[] { "one", "two" }, "one two three".Wrap(4, 2));
+    {
+        Assert.Equal(new[] { "one", "two" }, "one two three".Wrap(4, 2));
+    }
 }

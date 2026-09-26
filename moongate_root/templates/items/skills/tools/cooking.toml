@@ -1,0 +1,106 @@
+[[item]]
+id = "0x1043_rolling_pin"
+base_id = "base_item"
+item_id = 4163
+name = "rolling pin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x097f_skillet"
+base_id = "base_item"
+item_id = 2431
+name = "skillet"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09e2"
+base_id = "0x097f_skillet"
+item_id = 2530
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x103e_sifter"
+base_id = "base_item"
+item_id = 4158
+name = "sifter"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0461_oven"
+base_id = "base_item"
+item_id = 1121
+name = "oven"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0462_oven"
+base_id = "base_item"
+item_id = 1122
+name = "oven"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x046c_oven"
+base_id = "base_item"
+item_id = 1132
+name = "oven"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x046f_oven"
+base_id = "base_item"
+item_id = 1135
+name = "oven"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x092b_oven"
+base_id = "base_item"
+item_id = 2347
+name = "oven"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x092c_oven"
+base_id = "base_item"
+item_id = 2348
+name = "oven"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0931_oven"
+base_id = "base_item"
+item_id = 2353
+name = "oven"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0930_oven"
+base_id = "base_item"
+item_id = 2352
+name = "oven"
+rarity = "common"
+movable = false
+hue = 0

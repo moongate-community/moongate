@@ -12,8 +12,8 @@ public static class MoveToFrontCoding
     }
 
     /// <summary>
-    /// MTF-decodes <paramref name="input" /> into <paramref name="output" />.
-    /// <paramref name="output" /> must be at least <paramref name="input" />.Length long.
+    ///     MTF-decodes <paramref name="input" /> into <paramref name="output" />.
+    ///     <paramref name="output" /> must be at least <paramref name="input" />.Length long.
     /// </summary>
     public static void Decode(ReadOnlySpan<byte> input, Span<byte> output)
     {

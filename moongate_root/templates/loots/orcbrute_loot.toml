@@ -1,0 +1,17 @@
+[[loot]]
+id = "orcbrute_loot"
+[[loot.entries]]
+weight = 750
+amount = 1
+
+[[loot.entries]]
+weight = 50
+item_id = "orcishkinmask"
+comment = "a mask of orcish kin"
+amount = 1
+
+[[loot.entries]]
+weight = 200
+item_id = "0x26ac_bola"
+comment = "bola"
+amount = 1

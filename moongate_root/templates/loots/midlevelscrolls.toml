@@ -1,0 +1,145 @@
+[[loot]]
+id = "midlevelscrolls"
+[[loot.entries]]
+weight = 1
+item_id = "0x1f45_archcure_scroll"
+comment = "archcure scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f46_archprotection_scroll"
+comment = "archprotection scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f47_curse_scroll"
+comment = "curse scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f48_fire_field_scroll"
+comment = "fire field scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f49_greater_heal_scroll"
+comment = "greater heal scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f4a_lightning_scroll"
+comment = "lightning scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f4b_mana_drain_scroll"
+comment = "mana drain scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f4c_recall_scroll"
+comment = "recall scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f4d_blade_spirits_scroll"
+comment = "blade spirits scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f4e_dispel_field_scroll"
+comment = "dispel field scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f4f_incognito_scroll"
+comment = "incognito scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f50_magic_reflection_scroll"
+comment = "magic reflection scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f51_mind_blast_scroll"
+comment = "mind blast scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f52_paralyze_scroll"
+comment = "paralyze scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f53_poison_field_scroll"
+comment = "poison field scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f54_summon_creature_scroll"
+comment = "summon creature scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f55_dispel_scroll"
+comment = "dispel scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f56_energy_bolt_scroll"
+comment = "energy bolt scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f57_explosion_scroll"
+comment = "explosion scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f58_invisibility_scroll"
+comment = "invisibility scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f59_mark_scroll"
+comment = "mark scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f5a_mass_curse_scroll"
+comment = "mass curse scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f5b_paralyze_field_scroll"
+comment = "paralyze field scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f5c_reveal_scroll"
+comment = "reveal scroll"
+amount = 1

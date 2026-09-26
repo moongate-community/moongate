@@ -1,0 +1,354 @@
+[[loot]]
+id = "randomclothing"
+[[loot.entries]]
+weight = 220
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1713_floppy_hat"
+comment = "floppy hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1716_tall_straw_hat"
+comment = "tall straw hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1717_straw_hat"
+comment = "straw hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1540"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1544"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1517_shirt"
+comment = "shirt"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x152e_short_pants"
+comment = "short pants"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1539_long_pants"
+comment = "long pants"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x170b_boots"
+comment = "boots"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x170d_sandals"
+comment = "sandals"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x170f_shoes"
+comment = "shoes"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1711_thigh_boots"
+comment = "thigh boots"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x153d_full_apron"
+comment = "full apron"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1fa1_tunic"
+comment = "tunic"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1fa1_tunic"
+comment = "tunic"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1f03_robe"
+comment = "robe"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1515_cloak"
+comment = "cloak"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1714_wide_brim_hat"
+comment = "wide-brim hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1715_cap"
+comment = "cap"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x171a_feathered_hat"
+comment = "feathered hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x171b_tricorne_hat"
+comment = "tricorne hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1efd_fancy_shirt"
+comment = "fancy shirt"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x152e_short_pants"
+comment = "short pants"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1539_long_pants"
+comment = "long pants"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x170b_boots"
+comment = "boots"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x170f_shoes"
+comment = "shoes"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1711_thigh_boots"
+comment = "thigh boots"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1f9f_jester_suit"
+comment = "jester suit"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1f7b_doublet"
+comment = "doublet"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1541_body_sash"
+comment = "body sash"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1f03_robe"
+comment = "robe"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1515_cloak"
+comment = "cloak"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1713_floppy_hat"
+comment = "floppy hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1716_tall_straw_hat"
+comment = "tall straw hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1717_straw_hat"
+comment = "straw hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1540"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1544"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1517_shirt"
+comment = "shirt"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1516"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x152e_short_pants"
+comment = "short pants"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1537_kilt"
+comment = "kilt"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1539_long_pants"
+comment = "long pants"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x170b_boots"
+comment = "boots"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x170d_sandals"
+comment = "sandals"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x170f_shoes"
+comment = "shoes"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1711_thigh_boots"
+comment = "thigh boots"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1fa1_tunic"
+comment = "tunic"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1f01_plain_dress"
+comment = "plain dress"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x153b_half_apron"
+comment = "half apron"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x153d_full_apron"
+comment = "full apron"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1fa1_tunic"
+comment = "tunic"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1f03_robe"
+comment = "robe"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1f01_plain_dress"
+comment = "plain dress"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1714_wide_brim_hat"
+comment = "wide-brim hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1719_bonnet"
+comment = "bonnet"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x171a_feathered_hat"
+comment = "feathered hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x171b_tricorne_hat"
+comment = "tricorne hat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1f03_robe"
+comment = "robe"
+amount = 1
+
+[[loot.entries]]
+weight = 13
+item_id = "0x1eff_fancy_dress"
+comment = "fancy dress"
+amount = 1

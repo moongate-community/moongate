@@ -171,6 +171,7 @@ runnable walk-through from entity class to applied migration.
 | `AddMoongateService<TService, TImpl>(priority)` / `AddMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order. Further overloads accept factories and runtime types | this page |
 | `RegisterCommand<TExecutor>(name, description, source, minimumAccountType)` | One console/in-game command executor, as a singleton | [Console commands](#console-commands) |
 | `RegisterPacketHandler<TPacket, THandler>()` | One packet handler singleton bound to an incoming packet type | this page |
+| `RegisterIncomingPacket<TPacket>()` | An incoming packet type added to the packet registry the host builds at startup, so the server can frame and decode its opcode | [Packets and handlers](packets.md#host-integration) |
 | `RegisterAsyncPacketHandler<TPacket, THandler>()` | One async packet handler singleton for I/O; results return to the game loop through `PacketContext` | [Packets and handlers](packets.md#register-a-game-handler) |
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
 | `AddScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Writing a Lua module](lua-modules.md) |
@@ -186,6 +187,8 @@ service takes a lower priority than the services that depend on it. Built-in val
 | -900 | `TimerWheelService` |
 | -800 | `IGameLoopService` (`GameLoopService`) |
 | -10 | `IUltimaDataService` (`UltimaDataService`) |
+| -5 | `IDataLoaderService` (`DataLoaderService`; game and standalone) |
+| -4 | `IMapService` (`MapService`), `IMultiService` (`MultiService`); game and standalone, see [Client files and world queries](world-queries.md) |
 | 0 (default) | `ISessionService`, `IEventBusService`, `IPluginLoaderService`, `ICommandSystemService`, and any registration that omits `priority` |
 | 40 | `IWorldSaveService` (`WorldSaveService`), `IConnectionService` |
 | 50 | `IPacketSendService` |
@@ -204,8 +207,9 @@ this startup-service list is resolved, regardless of a plugin service's priority
 
 `RegisterPacketHandler<TPacket, THandler>()` binds one `IPacketHandler<TPacket>`
 singleton to one incoming packet type, called synchronously on the game loop thread;
-a second handler for the same type throws before startup. The [packet guide](packets.md)
-explains why handler registration alone cannot add an opcode to the wire registry.
+a second handler for the same type throws before startup. A packet the plugin defines
+also needs `RegisterIncomingPacket<TPacket>()`, because handler registration alone does
+not add its opcode to the wire registry; see [Host integration](packets.md#host-integration).
 
 `OnEvent<TEvent>(handler)` subscribes to the container-owned event bus from
 `Register`; the handler is awaited for every published `TEvent` as long as the
@@ -284,7 +288,7 @@ wired yet. Its future input path must protect the password as the console does.
 Build the plugin project in Release and copy its output, everything under
 `bin/Release/net10.0/` and not just the entry DLL, into `<root>/plugins/<BundleName>/`
 on the target server. `<root>` is resolved at startup from `--root-directory`, then
-`MOONGATE_ROOT`, then the executable's own directory.
+`MOONGATE_ROOT`; the server refuses to start with neither.
 
 A bundle is a directory under `<root>/plugins/`; its name is also the name the loader
 expects for its entry assembly. A bundle at `plugins/mymod/` must contain `mymod.dll`,

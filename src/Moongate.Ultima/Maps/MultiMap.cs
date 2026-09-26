@@ -8,10 +8,14 @@ public sealed class MultiMap
     private static byte[] _streamBuffer;
 
     /// <summary>
-    /// reads facet0*.mul into Bitmap
+    ///     reads facet0*.mul into Bitmap
     /// </summary>
-    /// <param name="id">facet id</param>
-    /// <returns>Bitmap</returns>
+    /// <param name="id">
+    ///     facet id
+    /// </param>
+    /// <returns>
+    ///     Bitmap
+    /// </returns>
     public static unsafe UltimaBitmap GetFacetImage(int id)
     {
         var path = Files.GetFilePath($"facet0{id}.mul");
@@ -61,7 +65,7 @@ public sealed class MultiMap
     }
 
     /// <summary>
-    /// Returns Bitmap
+    ///     Returns Bitmap
     /// </summary>
     public static unsafe UltimaBitmap GetMultiMap()
     {
@@ -120,10 +124,12 @@ public sealed class MultiMap
     }
 
     /// <summary>
-    /// Stores Image into facet.mul format
+    ///     Stores Image into facet.mul format
     /// </summary>
-    /// <param name="path"></param>
-    /// <param name="sourceBitmap"></param>
+    /// <param name="path">
+    /// </param>
+    /// <param name="sourceBitmap">
+    /// </param>
     public static unsafe void SaveFacetImage(string path, UltimaBitmap sourceBitmap)
     {
         var width = sourceBitmap.Width;
@@ -170,10 +176,12 @@ public sealed class MultiMap
     }
 
     /// <summary>
-    /// Saves Bitmap to rle Format
+    ///     Saves Bitmap to rle Format
     /// </summary>
-    /// <param name="image"></param>
-    /// <param name="bin"></param>
+    /// <param name="image">
+    /// </param>
+    /// <param name="bin">
+    /// </param>
     public static unsafe void SaveMultiMap(UltimaBitmap image, BinaryWriter bin)
     {
         bin.Write(2560); // width

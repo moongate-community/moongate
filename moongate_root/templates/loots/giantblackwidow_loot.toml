@@ -1,0 +1,29 @@
+[[loot]]
+id = "giantblackwidow_loot"
+[[loot.entries]]
+weight = 20
+amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "0x0f0a_green_potion"
+comment = "green potion"
+amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "0x0f0a_b_green_potion"
+comment = "green potion"
+amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "0x0f0a_c_green_potion"
+comment = "green potion"
+amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "0x0f0a_d_green_potion"
+comment = "green potion"
+amount = 1

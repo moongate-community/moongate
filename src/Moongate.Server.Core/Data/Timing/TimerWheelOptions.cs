@@ -1,6 +1,8 @@
 namespace Moongate.Server.Core.Data.Timing;
 
-/// <summary>Bounds timer retention, wheel precision and cooperative callback batches.</summary>
+/// <summary>
+///     Bounds timer retention, wheel precision and cooperative callback batches.
+/// </summary>
 public sealed class TimerWheelOptions
 {
     private readonly TimeSpan _tickDuration = TimeSpan.FromMilliseconds(8);
@@ -9,7 +11,9 @@ public sealed class TimerWheelOptions
     private readonly int _maxCallbacksPerBatch = 256;
     private readonly TimeSpan _callbackBudget = TimeSpan.FromMilliseconds(5);
 
-    /// <summary>Wheel resolution; deadlines round upward to this positive duration.</summary>
+    /// <summary>
+    ///     Wheel resolution; deadlines round upward to this positive duration.
+    /// </summary>
     public TimeSpan TickDuration
     {
         get => _tickDuration;
@@ -20,7 +24,9 @@ public sealed class TimerWheelOptions
         }
     }
 
-    /// <summary>Number of buckets visited at most once when catching up after a pause.</summary>
+    /// <summary>
+    ///     Number of buckets visited at most once when catching up after a pause.
+    /// </summary>
     public int WheelSize
     {
         get => _wheelSize;
@@ -31,7 +37,9 @@ public sealed class TimerWheelOptions
         }
     }
 
-    /// <summary>Maximum registrations, including ready and repeating in-flight callbacks.</summary>
+    /// <summary>
+    ///     Maximum registrations, including ready and repeating in-flight callbacks.
+    /// </summary>
     public int MaxPendingTimers
     {
         get => _maxPendingTimers;
@@ -42,7 +50,9 @@ public sealed class TimerWheelOptions
         }
     }
 
-    /// <summary>Maximum attempted callbacks per batch.</summary>
+    /// <summary>
+    ///     Maximum attempted callbacks per batch.
+    /// </summary>
     public int MaxCallbacksPerBatch
     {
         get => _maxCallbacksPerBatch;
@@ -53,7 +63,9 @@ public sealed class TimerWheelOptions
         }
     }
 
-    /// <summary>Cooperative elapsed-time budget; one due callback is always allowed.</summary>
+    /// <summary>
+    ///     Cooperative elapsed-time budget; one due callback is always allowed.
+    /// </summary>
     public TimeSpan CallbackBudget
     {
         get => _callbackBudget;

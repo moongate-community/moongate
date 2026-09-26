@@ -1,7 +1,9 @@
 using FreeSql;
+using FreeSql.DataAnnotations;
 using FreeSql.Internal;
 using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Types.Persistence;
+using Newtonsoft.Json.Linq;
 
 namespace Moongate.Persistence.Internal;
 
@@ -37,12 +39,23 @@ internal sealed class PostgreSqlDatabase : IDisposable
         var schemaConnectionString = options.ResolveSchemaConnectionString(runtimeConnectionString);
         options.ValidateSameDatabaseEndpoint(runtimeConnectionString, schemaConnectionString);
         SerialTypeHandler.EnsureRegistered();
+        HueTypeHandler.EnsureRegistered();
         var orm = new FreeSqlBuilder()
-                  .UseConnectionString(DataType.PostgreSQL, runtimeConnectionString)
-                  .UseNameConvert(NameConvertType.PascalCaseToUnderscoreWithLower)
-                  .UseAutoSyncStructure(false)
-                  .UseNoneCommandParameter(false)
-                  .Build();
+            .UseConnectionString(DataType.PostgreSQL, runtimeConnectionString)
+            .UseNameConvert(NameConvertType.PascalCaseToUnderscoreWithLower)
+            .UseAutoSyncStructure(false)
+            .UseNoneCommandParameter(false)
+            .Build();
+        orm.Aop.ConfigEntityProperty += (_, args) =>
+        {
+            if (args.ModifyResult.MapType is null && args.Property.IsDefined(typeof(JsonMapAttribute), false))
+            {
+                // JsonMap 3.5.311 defaults PostgreSQL values to JObject, which rejects JSON arrays.
+                args.ModifyResult.MapType = typeof(JToken);
+            }
+        };
+        orm.UseJsonMap();
+        UtcDateTimeConvention.Apply(orm);
 
         return new(options.Target, runtimeConnectionString, schemaConnectionString, orm);
     }

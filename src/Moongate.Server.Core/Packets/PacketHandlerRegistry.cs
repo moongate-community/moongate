@@ -6,14 +6,18 @@ using Moongate.Server.Core.Interfaces.Packets;
 
 namespace Moongate.Server.Core.Packets;
 
-/// <summary>Collects typed handler metadata until dispatcher startup freezes registrations.</summary>
+/// <summary>
+///     Collects typed handler metadata until dispatcher startup freezes registrations.
+/// </summary>
 public sealed class PacketHandlerRegistry
 {
     private readonly Lock _gate = new();
     private readonly Dictionary<Type, PacketHandlerRegistration> _registrations = new();
     private FrozenDictionary<Type, PacketHandlerRegistration>? _frozen;
 
-    /// <summary>Gets an immutable snapshot of the registered packet types and deferred binders.</summary>
+    /// <summary>
+    ///     Gets an immutable snapshot of the registered packet types and deferred binders.
+    /// </summary>
     public IReadOnlyDictionary<Type, PacketHandlerRegistration> Registrations
     {
         get
@@ -25,7 +29,9 @@ public sealed class PacketHandlerRegistry
         }
     }
 
-    /// <summary>Closes registration and returns stable, read-only metadata without resolving handlers.</summary>
+    /// <summary>
+    ///     Closes registration and returns stable, read-only metadata without resolving handlers.
+    /// </summary>
     public IReadOnlyDictionary<Type, PacketHandlerRegistration> Freeze()
     {
         lock (_gate)
@@ -37,7 +43,8 @@ public sealed class PacketHandlerRegistry
     internal void Register<TPacket, THandler>(Container container)
         where TPacket : class, IIncomingPacket<TPacket>
         where THandler : class, IPacketHandler<TPacket>
-        => RegisterCore<TPacket, THandler>(
+    {
+        RegisterCore<TPacket, THandler>(
             container,
             new(
                 typeof(TPacket),
@@ -50,11 +57,13 @@ public sealed class PacketHandlerRegistry
                 }
             )
         );
+    }
 
     internal void RegisterAsync<TPacket, THandler>(Container container)
         where TPacket : class, IIncomingPacket<TPacket>
         where THandler : class, IAsyncPacketHandler<TPacket>
-        => RegisterCore<TPacket, THandler>(
+    {
+        RegisterCore<TPacket, THandler>(
             container,
             new(
                 typeof(TPacket),
@@ -64,10 +73,11 @@ public sealed class PacketHandlerRegistry
                     var handler = resolver.Resolve<THandler>();
 
                     return (context, packet, cancellationToken) =>
-                               handler.HandleAsync(context, (TPacket)packet, cancellationToken);
+                        handler.HandleAsync(context, (TPacket)packet, cancellationToken);
                 }
             )
         );
+    }
 
     private void RegisterCore<TPacket, THandler>(Container container, PacketHandlerRegistration registration)
         where TPacket : class, IIncomingPacket<TPacket>

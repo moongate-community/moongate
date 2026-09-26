@@ -3,7 +3,7 @@ using Moongate.Ultima.Types;
 namespace Moongate.Ultima.Data;
 
 /// <summary>
-/// Enriched item information: the tiledata record plus art facts, for tools and UIs.
+///     Enriched item information: the tiledata record plus art facts, for tools and UIs.
 /// </summary>
 public sealed record UoItemInfo
 {

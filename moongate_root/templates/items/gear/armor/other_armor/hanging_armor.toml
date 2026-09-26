@@ -1,0 +1,679 @@
+[[item]]
+id = "0x13e5_a_ringmail_leggings"
+base_id = "base_item"
+item_id = 5093
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+hue = 2425
+
+[[item]]
+id = "0x13e6_a"
+base_id = "0x13e5_a_ringmail_leggings"
+item_id = 5094
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e7_a_ringmail_tunic"
+base_id = "base_item"
+item_id = 5095
+name = "ringmail tunic"
+rarity = "common"
+movable = false
+hue = 2425
+
+[[item]]
+id = "0x13e8_a"
+base_id = "0x13e7_a_ringmail_tunic"
+item_id = 5096
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e9_a_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5097
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+hue = 2425
+
+[[item]]
+id = "0x13ea_a"
+base_id = "0x13e9_a_ringmail_sleeves"
+item_id = 5098
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bc_a_chainmail_leggings"
+base_id = "base_item"
+item_id = 5052
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+hue = 2425
+
+[[item]]
+id = "0x13c1_a"
+base_id = "0x13bc_a_chainmail_leggings"
+item_id = 5057
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bd_a_chainmail_tunic"
+base_id = "base_item"
+item_id = 5053
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+hue = 2425
+
+[[item]]
+id = "0x13c2_a"
+base_id = "0x13bd_a_chainmail_tunic"
+item_id = 5058
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e5_b_ringmail_leggings"
+base_id = "base_item"
+item_id = 5093
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+hue = 2217
+
+[[item]]
+id = "0x13e6_b"
+base_id = "0x13e5_b_ringmail_leggings"
+item_id = 5094
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e7_b_ringmail_tunic"
+base_id = "base_item"
+item_id = 5095
+name = "ringmail tunic"
+rarity = "common"
+movable = false
+hue = 2217
+
+[[item]]
+id = "0x13e8_b"
+base_id = "0x13e7_b_ringmail_tunic"
+item_id = 5096
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e9_b_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5097
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+hue = 2217
+
+[[item]]
+id = "0x13ea_b"
+base_id = "0x13e9_b_ringmail_sleeves"
+item_id = 5098
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bc_b_chainmail_leggings"
+base_id = "base_item"
+item_id = 5052
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+hue = 2217
+
+[[item]]
+id = "0x13c1_b"
+base_id = "0x13bc_b_chainmail_leggings"
+item_id = 5057
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bd_b_chainmail_tunic"
+base_id = "base_item"
+item_id = 5053
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+hue = 2217
+
+[[item]]
+id = "0x13c2_b"
+base_id = "0x13bd_b_chainmail_tunic"
+item_id = 5058
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e5_c_ringmail_leggings"
+base_id = "base_item"
+item_id = 5093
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+hue = 2414
+
+[[item]]
+id = "0x13e6_c"
+base_id = "0x13e5_c_ringmail_leggings"
+item_id = 5094
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e7_c_ringmail_tunic"
+base_id = "base_item"
+item_id = 5095
+name = "ringmail tunic"
+rarity = "common"
+movable = false
+hue = 2414
+
+[[item]]
+id = "0x13e8_c"
+base_id = "0x13e7_c_ringmail_tunic"
+item_id = 5096
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e9_c_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5097
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+hue = 2414
+
+[[item]]
+id = "0x13ea_c"
+base_id = "0x13e9_c_ringmail_sleeves"
+item_id = 5098
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bc_c_chainmail_leggings"
+base_id = "base_item"
+item_id = 5052
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+hue = 2414
+
+[[item]]
+id = "0x13c1_c"
+base_id = "0x13bc_c_chainmail_leggings"
+item_id = 5057
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bd_c_chainmail_tunic"
+base_id = "base_item"
+item_id = 5053
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+hue = 2414
+
+[[item]]
+id = "0x13c2_c"
+base_id = "0x13bd_c_chainmail_tunic"
+item_id = 5058
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e5_d_ringmail_leggings"
+base_id = "base_item"
+item_id = 5093
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+hue = 2419
+
+[[item]]
+id = "0x13e6_d"
+base_id = "0x13e5_d_ringmail_leggings"
+item_id = 5094
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e7_d_ringmail_tunic"
+base_id = "base_item"
+item_id = 5095
+name = "ringmail tunic"
+rarity = "common"
+movable = false
+hue = 2419
+
+[[item]]
+id = "0x13e8_d"
+base_id = "0x13e7_d_ringmail_tunic"
+item_id = 5096
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e9_d_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5097
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+hue = 2419
+
+[[item]]
+id = "0x13ea_d"
+base_id = "0x13e9_d_ringmail_sleeves"
+item_id = 5098
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bc_d_chainmail_leggings"
+base_id = "base_item"
+item_id = 5052
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+hue = 2419
+
+[[item]]
+id = "0x13c1_d"
+base_id = "0x13bc_d_chainmail_leggings"
+item_id = 5057
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bd_d_chainmail_tunic"
+base_id = "base_item"
+item_id = 5053
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+hue = 2419
+
+[[item]]
+id = "0x13c2_d"
+base_id = "0x13bd_d_chainmail_tunic"
+item_id = 5058
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e5_g_ringmail_leggings"
+base_id = "base_item"
+item_id = 5093
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+hue = 2213
+
+[[item]]
+id = "0x13e6_g"
+base_id = "0x13e5_g_ringmail_leggings"
+item_id = 5094
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e7_g_ringmail_tunic"
+base_id = "base_item"
+item_id = 5095
+name = "ringmail tunic"
+rarity = "common"
+movable = false
+hue = 2213
+
+[[item]]
+id = "0x13e8_g"
+base_id = "0x13e7_g_ringmail_tunic"
+item_id = 5096
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e9_g_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5097
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+hue = 2213
+
+[[item]]
+id = "0x13ea_g"
+base_id = "0x13e9_g_ringmail_sleeves"
+item_id = 5098
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bc_g_chainmail_leggings"
+base_id = "base_item"
+item_id = 5052
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+hue = 2213
+
+[[item]]
+id = "0x13c1_g"
+base_id = "0x13bc_g_chainmail_leggings"
+item_id = 5057
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bd_g_chainmail_tunic"
+base_id = "base_item"
+item_id = 5053
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+hue = 2213
+
+[[item]]
+id = "0x13c2_g"
+base_id = "0x13bd_g_chainmail_tunic"
+item_id = 5058
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e5_s_ringmail_leggings"
+base_id = "base_item"
+item_id = 5093
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+hue = 2406
+
+[[item]]
+id = "0x13e6_s"
+base_id = "0x13e5_s_ringmail_leggings"
+item_id = 5094
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e7_s_ringmail_tunic"
+base_id = "base_item"
+item_id = 5095
+name = "ringmail tunic"
+rarity = "common"
+movable = false
+hue = 2406
+
+[[item]]
+id = "0x13e8_s"
+base_id = "0x13e7_s_ringmail_tunic"
+item_id = 5096
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e9_s_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5097
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+hue = 2406
+
+[[item]]
+id = "0x13ea_s"
+base_id = "0x13e9_s_ringmail_sleeves"
+item_id = 5098
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bc_s_chainmail_leggings"
+base_id = "base_item"
+item_id = 5052
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+hue = 2406
+
+[[item]]
+id = "0x13c1_s"
+base_id = "0x13bc_s_chainmail_leggings"
+item_id = 5057
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bd_s_chainmail_tunic"
+base_id = "base_item"
+item_id = 5053
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+hue = 2406
+
+[[item]]
+id = "0x13c2_s"
+base_id = "0x13bd_s_chainmail_tunic"
+item_id = 5058
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e5_va_ringmail_leggings"
+base_id = "base_item"
+item_id = 5093
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+hue = 2219
+
+[[item]]
+id = "0x13e6_va"
+base_id = "0x13e5_va_ringmail_leggings"
+item_id = 5094
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e7_va_ringmail_tunic"
+base_id = "base_item"
+item_id = 5095
+name = "ringmail tunic"
+rarity = "common"
+movable = false
+hue = 2219
+
+[[item]]
+id = "0x13e8_va"
+base_id = "0x13e7_va_ringmail_tunic"
+item_id = 5096
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e9_va_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5097
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+hue = 2219
+
+[[item]]
+id = "0x13ea_va"
+base_id = "0x13e9_va_ringmail_sleeves"
+item_id = 5098
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bc_va_chainmail_leggings"
+base_id = "base_item"
+item_id = 5052
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+hue = 2219
+
+[[item]]
+id = "0x13c1_va"
+base_id = "0x13bc_va_chainmail_leggings"
+item_id = 5057
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bd_va_chainmail_tunic"
+base_id = "base_item"
+item_id = 5053
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+hue = 2219
+
+[[item]]
+id = "0x13c2_va"
+base_id = "0x13bd_va_chainmail_tunic"
+item_id = 5058
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e5_ve_ringmail_leggings"
+base_id = "base_item"
+item_id = 5093
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+hue = 2207
+
+[[item]]
+id = "0x13e6_ve"
+base_id = "0x13e5_ve_ringmail_leggings"
+item_id = 5094
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e7_ve_ringmail_tunic"
+base_id = "base_item"
+item_id = 5095
+name = "ringmail tunic"
+rarity = "common"
+movable = false
+hue = 2207
+
+[[item]]
+id = "0x13e8_ve"
+base_id = "0x13e7_ve_ringmail_tunic"
+item_id = 5096
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13e9_ve_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5097
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+hue = 2207
+
+[[item]]
+id = "0x13ea_ve"
+base_id = "0x13e9_ve_ringmail_sleeves"
+item_id = 5098
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bc_ve_chainmail_leggings"
+base_id = "base_item"
+item_id = 5052
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+hue = 2207
+
+[[item]]
+id = "0x13c1_ve"
+base_id = "0x13bc_ve_chainmail_leggings"
+item_id = 5057
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x13bd_ve_chainmail_tunic"
+base_id = "base_item"
+item_id = 5053
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+hue = 2207
+
+[[item]]
+id = "0x13c2_ve"
+base_id = "0x13bd_ve_chainmail_tunic"
+item_id = 5058
+rarity = "common"
+movable = false
+hue = 0

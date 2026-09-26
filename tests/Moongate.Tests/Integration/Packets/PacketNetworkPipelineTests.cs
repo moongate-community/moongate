@@ -1,6 +1,7 @@
 using System.Net;
 using System.Net.Sockets;
 using DryIoc;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Registry;
@@ -58,7 +59,7 @@ public sealed class PacketNetworkPipelineTests
         container.AddMoongateService<ISessionService, SessionService>();
         container.RegisterInstance<IPluginLoaderService>(new DeferredPacketPluginLoader(container));
         container.RegisterPacketHandler<PingPacket, PingPacketHandler>()
-                 .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
+            .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();
         PacketPipelineRegistration.Register(container);
         var bootstrap = new MoongateServerBootstrap(container, CancellationToken.None);
 
@@ -106,8 +107,7 @@ public sealed class PacketNetworkPipelineTests
 
         using (var pause = new CancellationTokenSource(TimeSpan.FromMilliseconds(100)))
         {
-            await Assert.ThrowsAnyAsync<OperationCanceledException>(
-                async () =>
+            await Assert.ThrowsAnyAsync<OperationCanceledException>(async () =>
                 {
                     _ = await peer.GetStream().ReadAsync(new byte[1], pause.Token);
                 }
@@ -149,9 +149,9 @@ public sealed class PacketNetworkPipelineTests
         var first = new MoongateTcpServer(
             new(IPAddress.Loopback, 0),
             connectionPipelineFactory: () => new(
-                                           middlewares: [new FailingCleanupMiddleware()],
-                                           framer: new UoPacketFramer(PacketRegistry.Default)
-                                       )
+                middlewares: [new FailingCleanupMiddleware()],
+                framer: new UoPacketFramer(PacketRegistry.Default)
+            )
         );
         var second = new MoongateTcpServer(
             new(IPAddress.Loopback, 0),
@@ -214,16 +214,16 @@ public sealed class PacketNetworkPipelineTests
         var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
         await using var fixture = new PacketNetworkFixture(
                 disconnectSender: _ =>
-                                  {
-                                      entered.TrySetResult();
+                {
+                    entered.TrySetResult();
 
-                                      if (failSender)
-                                      {
-                                          throw new IOException("Controlled sender cleanup failure.");
-                                      }
+                    if (failSender)
+                    {
+                        throw new IOException("Controlled sender cleanup failure.");
+                    }
 
-                                      return release.Task;
-                                  }
+                    return release.Task;
+                }
             )
             { AllowCleanupFailure = failSender };
         await fixture.StartAsync();
@@ -285,7 +285,7 @@ public sealed class PacketNetworkPipelineTests
         using var peer = await fixture.ConnectAsync();
         await peer.GetStream().WriteAsync(new byte[] { 0xBD, 0, 7, (byte)'7', (byte)'.', (byte)'0', 0, 0x73, 4 });
         Assert.Equal(new byte[] { 0x73, 4 }, await ReadAsync(peer, 2));
-        Assert.Equal("7.0", Assert.Single(fixture.Sessions.GetAll()).NetworkSession.ClientVersion);
+        Assert.Equal(ClientVersion.Parse("7.0"), Assert.Single(fixture.Sessions.GetAll()).NetworkSession.ClientVersion);
     }
 
     [Theory,

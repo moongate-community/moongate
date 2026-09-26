@@ -44,8 +44,12 @@ public sealed class MigrationCommandTests : IClassFixture<PostgreSqlFixture>
         // (defaulting to 5432 there), never from a query parameter, so a non-default port must ride
         // in the authority itself - "localhost" alone silently assumed 5432 whenever the real
         // Postgres this test runs against listens elsewhere.
+        // The credentials ride in the authority too: a Testcontainers server requires the password,
+        // while the CI service trusts the connection and has none.
+        var userInfo = Uri.EscapeDataString(builder.Username ?? "postgres") +
+                       (string.IsNullOrEmpty(builder.Password) ? "" : ":" + Uri.EscapeDataString(builder.Password));
         var uri =
-            $"postgres://postgres@localhost:{builder.Port}/{builder.Database}?host={Uri.EscapeDataString(builder.Host!)}&pooling=false";
+            $"postgres://{userInfo}@localhost:{builder.Port}/{builder.Database}?host={Uri.EscapeDataString(builder.Host!)}&pooling=false";
         var config =
             "[persistence.accounts]\nconnection_string = '$ABSENT_AUTH_DATABASE'\n[persistence.realm]\nconnection_string = '" +
             uri +

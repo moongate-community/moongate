@@ -3,7 +3,9 @@ using Moongate.Server.Core.Types.Accounts;
 
 namespace Moongate.Server.Core.Data.Admin;
 
-/// <summary>A safe account summary without credentials or private contact data.</summary>
+/// <summary>
+///     A safe account summary without credentials or private contact data.
+/// </summary>
 public sealed class AdminAccountSnapshot
 {
     public Serial AccountId { get; }

@@ -71,7 +71,9 @@ public ref struct PacketWriter
     }
 
     public void WriteSerial(Serial value)
-        => WriteUInt32BigEndian(value.Value);
+    {
+        WriteUInt32BigEndian(value.Value);
+    }
 
     public void WriteUInt16BigEndian(ushort value)
     {

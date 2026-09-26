@@ -1,0 +1,88 @@
+[[item]]
+id = "0x103f_cookie_mix"
+base_id = "base_item"
+item_id = 4159
+name = "cookie mix"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "cake_mix"
+base_id = "base_item"
+item_id = 4159
+name = "cake mix"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x103d_dough"
+base_id = "base_item"
+item_id = 4157
+name = "dough"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "sweet_dough"
+base_id = "base_item"
+item_id = 4157
+name = "sweet dough"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1039_sack_of_flour"
+base_id = "base_item"
+item_id = 4153
+name = "sack of flour"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1045_sack_of_flour"
+base_id = "base_item"
+item_id = 4165
+name = "sack of flour"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1046_open_sack_of_flour"
+base_id = "base_item"
+item_id = 4166
+name = "open sack of flour"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x103a_open_sack_of_flour"
+base_id = "base_item"
+item_id = 4154
+name = "open sack of flour"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a1e_bowl_of_flour"
+item_id = 2590
+name = "bowl of flour"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ebd_#"
+base_id = "base_item"
+item_id = 7869
+name = "#"
+rarity = "common"
+movable = false
+hue = 0

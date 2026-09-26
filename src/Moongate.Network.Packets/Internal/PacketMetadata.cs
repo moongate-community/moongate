@@ -18,16 +18,15 @@ internal static class PacketMetadata
         }
 
         var attribute = packetType.GetCustomAttributes(typeof(PacketHandlerAttribute), false)
-                                  .Cast<PacketHandlerAttribute>()
-                                  .SingleOrDefault() ??
+                            .Cast<PacketHandlerAttribute>()
+                            .SingleOrDefault() ??
                         throw Error(packetType, "is missing PacketHandlerAttribute");
         var incomingContract = packetType.GetInterfaces()
-                                         .Any(
-                                             candidate => candidate.IsGenericType &&
-                                                          candidate.GetGenericTypeDefinition() ==
-                                                          typeof(IIncomingPacket<>) &&
-                                                          candidate.GenericTypeArguments[0] == packetType
-                                         );
+            .Any(candidate => candidate.IsGenericType &&
+                              candidate.GetGenericTypeDefinition() ==
+                              typeof(IIncomingPacket<>) &&
+                              candidate.GenericTypeArguments[0] == packetType
+            );
         var outgoingContract = typeof(IOutgoingPacket).IsAssignableFrom(packetType);
         var direction = (incomingContract, outgoingContract) switch
         {
@@ -61,13 +60,15 @@ internal static class PacketMetadata
                     attribute.Description
                 ),
             PacketSizing.Variable => throw Error(
-                                         packetType,
-                                         "has invalid variable sizing; Length must be -1 and MinimumLength must be 3..65535"
-                                     ),
+                packetType,
+                "has invalid variable sizing; Length must be -1 and MinimumLength must be 3..65535"
+            ),
             _ => throw Error(packetType, $"has unknown packet sizing value {(int)attribute.Sizing}")
         };
     }
 
     private static InvalidOperationException Error(Type packetType, string message)
-        => new($"Packet type '{packetType.FullName}' {message}.");
+    {
+        return new($"Packet type '{packetType.FullName}' {message}.");
+    }
 }

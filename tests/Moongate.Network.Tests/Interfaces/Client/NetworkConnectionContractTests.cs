@@ -23,9 +23,9 @@ public sealed class NetworkConnectionContractTests
         using var deadline = new CancellationTokenSource(TimeSpan.FromSeconds(5));
         var accepting = listener.AcceptTcpClientAsync(deadline.Token).AsTask();
         await using var client = await MoongateTcpClient.ConnectAsync(
-                                     (IPEndPoint)listener.LocalEndpoint,
-                                     cancellationToken: deadline.Token
-                                 );
+            (IPEndPoint)listener.LocalEndpoint,
+            cancellationToken: deadline.Token
+        );
         using var peer = await accepting;
         INetworkConnection connection = client;
         Assert.Equal(peer.Client.RemoteEndPoint, connection.LocalEndPoint);

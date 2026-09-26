@@ -1,0 +1,62 @@
+[[item]]
+id = "carrot_resource"
+base_id = "base_item"
+item_id = 3190
+name = "carrots"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "onion_resource"
+base_id = "base_item"
+item_id = 3183
+name = "onions"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "turnip_resource"
+base_id = "base_item"
+item_id = 3171
+name = "turnip"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "cabbage_resource"
+base_id = "base_item"
+item_id = 3195
+name = "head of cabbage"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "flax_resource"
+base_id = "base_item"
+item_id = 6811
+name = "flax"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "watermelon_resource"
+base_id = "base_item"
+item_id = 3164
+name = "watermelon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "garlic_resource"
+base_id = "base_item"
+item_id = 6369
+name = "garlic"
+rarity = "common"
+movable = false
+hue = 0

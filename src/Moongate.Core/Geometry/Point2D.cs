@@ -5,11 +5,11 @@ using Moongate.Core.Interfaces.Geometry;
 namespace Moongate.Core.Geometry;
 
 /// <summary>
-/// Represents Point2D.
+///     Represents Point2D.
 /// </summary>
 public struct Point2D
     : IPoint2D, IComparable<Point2D>, IComparable<IPoint2D>, IEquatable<object>, IEquatable<Point2D>,
-      IEquatable<IPoint2D>, ISpanFormattable, ISpanParsable<Point2D>
+        IEquatable<IPoint2D>, ISpanFormattable, ISpanParsable<Point2D>
 {
     public static readonly Point2D Zero = new(0, 0);
 
@@ -18,13 +18,19 @@ public struct Point2D
     public int Y { get; set; }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point2D(IPoint2D p) : this(p.X, p.Y) { }
+    public Point2D(IPoint2D p) : this(p.X, p.Y)
+    {
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point2D(Point3D p) : this(p.X, p.Y) { }
+    public Point2D(Point3D p) : this(p.X, p.Y)
+    {
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
-    public Point2D(Point2D p) : this(p.X, p.Y) { }
+    public Point2D(Point2D p) : this(p.X, p.Y)
+    {
+    }
 
     public Point2D(int x, int y)
     {
@@ -52,24 +58,36 @@ public struct Point2D
     }
 
     public bool Equals(Point2D other)
-        => X == other.X && Y == other.Y;
+    {
+        return X == other.X && Y == other.Y;
+    }
 
     public bool Equals(IPoint2D? other)
-        => X == other?.X && Y == other.Y;
+    {
+        return X == other?.X && Y == other.Y;
+    }
 
     public override bool Equals(object? obj)
-        => obj is Point2D other && Equals(other);
+    {
+        return obj is Point2D other && Equals(other);
+    }
 
     public override int GetHashCode()
-        => HashCode.Combine(X, Y);
+    {
+        return HashCode.Combine(X, Y);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point2D Parse(string s)
-        => Parse(s, null);
+    {
+        return Parse(s, null);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static Point2D Parse(string s, IFormatProvider? provider)
-        => Parse(s.AsSpan(), provider);
+    {
+        return Parse(s.AsSpan(), provider);
+    }
 
     public static Point2D Parse(ReadOnlySpan<char> s, IFormatProvider? provider)
     {
@@ -105,17 +123,25 @@ public struct Point2D
     }
 
     public override string ToString()
-        => ToString(null, null);
+    {
+        return ToString(null, null);
+    }
 
     public string ToString(string? format, IFormatProvider? formatProvider)
-        => string.Create(formatProvider, $"({X}, {Y})");
+    {
+        return string.Create(formatProvider, $"({X}, {Y})");
+    }
 
     public bool TryFormat(Span<char> destination, out int charsWritten, ReadOnlySpan<char> format, IFormatProvider? provider)
-        => destination.TryWrite(provider, $"({X}, {Y})", out charsWritten);
+    {
+        return destination.TryWrite(provider, $"({X}, {Y})", out charsWritten);
+    }
 
     [MethodImpl(MethodImplOptions.AggressiveInlining)]
     public static bool TryParse(string? s, IFormatProvider? provider, out Point2D result)
-        => TryParse(s.AsSpan(), provider, out result);
+    {
+        return TryParse(s.AsSpan(), provider, out result);
+    }
 
     public static bool TryParse(ReadOnlySpan<char> s, IFormatProvider? provider, out Point2D result)
     {

@@ -6,18 +6,22 @@ using Moongate.Network.Interfaces.Middleware;
 namespace Moongate.Network.Data;
 
 /// <summary>
-/// Per-connection transport configuration produced by a server factory on each accepted connection.
+///     Per-connection transport configuration produced by a server factory on each accepted connection.
 /// </summary>
 public sealed record ConnectionPipeline
 {
-    /// <summary>Prepares an owned readable/writable stream before callbacks or receive start.</summary>
+    /// <summary>
+    ///     Prepares an owned readable/writable stream before callbacks or receive start.
+    /// </summary>
     /// <remarks>
-    /// The returned stream must own its input. On failure dispose any wrapper created;
-    /// the transport owns the input stream and socket. Observe the supplied cancellation token.
+    ///     The returned stream must own its input. On failure dispose any wrapper created;
+    ///     the transport owns the input stream and socket. Observe the supplied cancellation token.
     /// </remarks>
     public Func<Stream, CancellationToken, ValueTask<Stream>>? PrepareStreamAsync { get; init; }
 
-    /// <summary>Installs per-client callbacks after preparation and before receive starts.</summary>
+    /// <summary>
+    ///     Installs per-client callbacks after preparation and before receive starts.
+    /// </summary>
     public Action<MoongateTcpClient>? ConfigureClient { get; init; }
 
     public ITransportCodec? Codec { get; init; }

@@ -1,6 +1,8 @@
 namespace Moongate.UoxItemConverter.Tests.TestSupport;
 
-/// <summary>A temporary source/destination/loot-destination directory triple for one test run.</summary>
+/// <summary>
+///     A temporary source/destination/loot-destination directory triple for one test run.
+/// </summary>
 internal sealed class ConverterTestDirectories : IDisposable
 {
     public string SourceDirectory { get; }
@@ -16,7 +18,13 @@ internal sealed class ConverterTestDirectories : IDisposable
         Directory.CreateDirectory(SourceDirectory);
     }
 
-    /// <summary>Writes one <c>.dfn</c> source file under <see cref="SourceDirectory" />.</summary>
+    /// <summary>
+    ///     Writes one
+    ///     <c>
+    ///         .dfn
+    ///     </c>
+    ///     source file under <see cref="SourceDirectory" />.
+    /// </summary>
     public string WriteSource(string relativePath, string content)
     {
         var path = Path.Combine(SourceDirectory, relativePath);

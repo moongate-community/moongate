@@ -10,10 +10,10 @@ using Npgsql;
 namespace Moongate.MigrationRunner.Internal;
 
 /// <summary>
-/// The real logic, testable in-process: no CLI parsing (Program.cs's Cli class and
-/// ConsoleAppFramework own that), output written to the given writers rather than
-/// <see cref="Console" /> directly, and the exit code returned rather than set on
-/// <see cref="Environment.ExitCode" />.
+///     The real logic, testable in-process: no CLI parsing (Program.cs's Cli class and
+///     ConsoleAppFramework own that), output written to the given writers rather than
+///     <see cref="Console" /> directly, and the exit code returned rather than set on
+///     <see cref="Environment.ExitCode" />.
 /// </summary>
 internal static class MigrationCommand
 {
@@ -26,7 +26,18 @@ internal static class MigrationCommand
         TextWriter error,
         CancellationToken cancellationToken = default
     )
-        => RunAsync(false, target, rootDirectory, migrationsDirectory, pluginsDirectory, output, error, cancellationToken);
+    {
+        return RunAsync(
+            false,
+            target,
+            rootDirectory,
+            migrationsDirectory,
+            pluginsDirectory,
+            output,
+            error,
+            cancellationToken
+        );
+    }
 
     public static Task<int> ApplyAsync(
         MigrationTarget target,
@@ -37,7 +48,18 @@ internal static class MigrationCommand
         TextWriter error,
         CancellationToken cancellationToken = default
     )
-        => RunAsync(true, target, rootDirectory, migrationsDirectory, pluginsDirectory, output, error, cancellationToken);
+    {
+        return RunAsync(
+            true,
+            target,
+            rootDirectory,
+            migrationsDirectory,
+            pluginsDirectory,
+            output,
+            error,
+            cancellationToken
+        );
+    }
 
     private static async Task<int> RunAsync(
         bool apply,
@@ -64,13 +86,13 @@ internal static class MigrationCommand
             try
             {
                 var config = await TomlUtils.DeserializeFromFileAsync<RunnerConfiguration>(
-                                 Path.Combine(root, "config", "moongate.toml"),
-                                 cancellationToken: cancellationToken
-                             );
+                    Path.Combine(root, "config", "moongate.toml"),
+                    cancellationToken: cancellationToken
+                );
                 configuredMigrations = config?.Persistence.MigrationsDirectory;
                 var template = target == MigrationTarget.Auth
-                                   ? config?.Persistence.Accounts.ConnectionString
-                                   : config?.Persistence.Realm.ConnectionString;
+                    ? config?.Persistence.Accounts.ConnectionString
+                    : config?.Persistence.Realm.ConnectionString;
 
                 if (string.IsNullOrWhiteSpace(template))
                 {

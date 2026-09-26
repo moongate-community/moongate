@@ -1,0 +1,5 @@
+[[loot]]
+id = "treasure_map_lvl1loot"
+[[loot.entries]]
+weight = 990
+amount = 1

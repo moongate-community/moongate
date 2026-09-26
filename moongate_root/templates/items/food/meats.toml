@@ -1,0 +1,127 @@
+[[item]]
+id = "0x1e1f_sliced_ham"
+item_id = 7711
+name = "sliced ham"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0976_slab_of_bacon"
+item_id = 2422
+name = "slab of bacon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0977_slab_of_bacon"
+item_id = 2423
+name = "slab of bacon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0978_slice_of_bacon"
+item_id = 2424
+name = "slice of bacon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0979_slice_of_bacon"
+item_id = 2425
+name = "slice of bacon"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09b7_cooked_bird"
+item_id = 2487
+name = "cooked bird"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09b8_cooked_bird"
+item_id = 2488
+name = "cooked bird"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09bb_roast_pig"
+item_id = 2491
+name = "roast pig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09bc_roast_pig"
+item_id = 2492
+name = "roast pig"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09c0_sausage"
+item_id = 2496
+name = "sausage"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09c1_sausage"
+item_id = 2497
+name = "sausage"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09c9_ham"
+item_id = 2505
+name = "ham"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09d3_ham"
+item_id = 2515
+name = "ham"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09f2_cooked_ribs"
+item_id = 2546
+name = "cooked ribs"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1608_chicken_leg"
+item_id = 5640
+name = "chicken leg"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x160a_leg_of_lamb"
+item_id = 5642
+name = "leg of lamb"
+rarity = "common"
+movable = false
+hue = 0

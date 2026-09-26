@@ -1,5 +1,6 @@
 using System.Net;
 using Moongate.Core.Primitives;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
@@ -8,6 +9,7 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Login;
 
@@ -26,7 +28,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
             context,
             new(AuthKey, "user", "password"),
             CancellationToken.None
@@ -34,10 +36,13 @@ public sealed class GameLoginPacketHandlerTests
 
         Assert.Equal(new(42), session.AccountId);
         Assert.Equal(AccountType.GameMaster, session.AccountType);
+        Assert.Equal(ClientVersion.Parse("7.0.117"), session.ClientVersion);
         Assert.Equal(1, store.RedeemCalls);
         Assert.Equal("realm", store.RealmId);
         Assert.Equal(AuthKey, store.AuthKey);
-        Assert.Equal(0, sender.SentCount);
+
+        // Supported features (0xB9) and the character list (0xA9).
+        Assert.Equal(2, sender.SentCount);
     }
 
     [Theory, InlineData(null, AuthKey), InlineData(0x23456789u, AuthKey)]
@@ -56,7 +61,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
             context,
             new(packetKey, "user", "password"),
             CancellationToken.None
@@ -79,7 +84,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
             context,
             new(AuthKey, "user", "wrong-password"),
             CancellationToken.None
@@ -102,7 +107,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
             context,
             new(AuthKey, "user", "password"),
             CancellationToken.None
@@ -114,7 +119,8 @@ public sealed class GameLoginPacketHandlerTests
     }
 
     private static RealmInstance Realm()
-        => new(
+    {
+        return new(
             new(
                 "realm",
                 1,
@@ -125,9 +131,12 @@ public sealed class GameLoginPacketHandlerTests
             ),
             Guid.Parse("74e13e2c-dab8-4acf-8613-362362b0e83a")
         );
+    }
 
     private static PendingHandoff Handoff()
-        => new(new(42), AccountType.GameMaster, "user", "realm", Realm().InstanceId, "7.0.117");
+    {
+        return new(new(42), AccountType.GameMaster, "user", "realm", Realm().InstanceId, ClientVersion.Parse("7.0.117"));
+    }
 
     private sealed class RecordingHandoffStore : IGameHandoffStore
     {
@@ -142,7 +151,9 @@ public sealed class GameLoginPacketHandlerTests
             ReadOnlyMemory<byte> credentialKey,
             CancellationToken token = default
         )
-            => throw new NotSupportedException();
+        {
+            throw new NotSupportedException();
+        }
 
         public ValueTask<PendingHandoff?> RedeemAsync(
             string realmId,
@@ -166,6 +177,8 @@ public sealed class GameLoginPacketHandlerTests
         }
 
         public ValueTask RevokeAsync(string realmId, uint authKey, CancellationToken token = default)
-            => ValueTask.CompletedTask;
+        {
+            return ValueTask.CompletedTask;
+        }
     }
 }

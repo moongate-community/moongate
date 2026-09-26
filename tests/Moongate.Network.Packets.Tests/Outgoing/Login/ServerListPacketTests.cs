@@ -21,7 +21,9 @@ public class ServerListPacketTests
 
     [Fact]
     public void Constructor_NullEntry_ThrowsArgumentException()
-        => Assert.Throws<ArgumentException>(() => new ServerListPacket(new GameServerEntry[] { null! }));
+    {
+        Assert.Throws<ArgumentException>(() => new ServerListPacket(new GameServerEntry[] { null! }));
+    }
 
     [Fact]
     public void Constructor_SnapshotsCollectionEntriesAndAddressBytes()

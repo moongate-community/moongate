@@ -1,0 +1,17 @@
+[[item]]
+id = "sand"
+base_id = "base_item"
+item_id = 16954
+name = "sand"
+rarity = "common"
+movable = true
+hue = 0
+
+[[item]]
+id = "base_granite"
+base_id = "base_item"
+item_id = 6009
+name = "high quality granite"
+rarity = "common"
+movable = true
+hue = 0

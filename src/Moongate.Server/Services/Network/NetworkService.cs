@@ -11,7 +11,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Network;
 
-/// <summary>Owns transport listeners and synchronous notifications independently of game state.</summary>
+/// <summary>
+///     Owns transport listeners and synchronous notifications independently of game state.
+/// </summary>
 public sealed class NetworkService : INetworkService, ILoginNetworkService
 {
     private readonly ILogger _logger = Log.ForContext<NetworkService>();
@@ -30,7 +32,9 @@ public sealed class NetworkService : INetworkService, ILoginNetworkService
     internal IReadOnlyList<MoongateTcpServer> Listeners { get; }
 
     public NetworkService(NetworkListenerOptions options, IConnectionService connections)
-        : this(CreateListeners(options), connections) { }
+        : this(CreateListeners(options), connections)
+    {
+    }
 
     internal NetworkService(IReadOnlyList<MoongateTcpServer> listeners, IConnectionService connections)
     {
@@ -64,8 +68,7 @@ public sealed class NetworkService : INetworkService, ILoginNetworkService
         {
             _stopping = true;
 
-            return _lifecycle.StopAsync(
-                async startup =>
+            return _lifecycle.StopAsync(async startup =>
                 {
                     if (startup is not null)
                     {
@@ -85,9 +88,10 @@ public sealed class NetworkService : INetworkService, ILoginNetworkService
     }
 
     private static async Task CloseRejectedAsync(INetworkConnection connection)
-
+    {
         // A close request is distinct from actual completion; join both even when one fails.
-        => await Task.WhenAll(CaptureCloseAsync(connection), connection.Completion).ConfigureAwait(false);
+        await Task.WhenAll(CaptureCloseAsync(connection), connection.Completion).ConfigureAwait(false);
+    }
 
     private static MoongateTcpServer[] CreateListeners(NetworkListenerOptions options)
     {
@@ -97,21 +101,20 @@ public sealed class NetworkService : INetworkService, ILoginNetworkService
         }
 
         return options.Endpoints
-                      .Select(
-                          endpoint =>
-                          {
-                              ArgumentNullException.ThrowIfNull(endpoint);
-                              var address = endpoint.Address.AddressFamily == AddressFamily.InterNetworkV6
-                                                ? new IPAddress(endpoint.Address.GetAddressBytes(), endpoint.Address.ScopeId)
-                                                : new IPAddress(endpoint.Address.GetAddressBytes());
+            .Select(endpoint =>
+                {
+                    ArgumentNullException.ThrowIfNull(endpoint);
+                    var address = endpoint.Address.AddressFamily == AddressFamily.InterNetworkV6
+                        ? new IPAddress(endpoint.Address.GetAddressBytes(), endpoint.Address.ScopeId)
+                        : new IPAddress(endpoint.Address.GetAddressBytes());
 
-                              return new MoongateTcpServer(
-                                  new(address, endpoint.Port),
-                                  connectionPipelineFactory: options.ConnectionPipelineFactory
-                              );
-                          }
-                      )
-                      .ToArray();
+                    return new MoongateTcpServer(
+                        new(address, endpoint.Port),
+                        connectionPipelineFactory: options.ConnectionPipelineFactory
+                    );
+                }
+            )
+            .ToArray();
     }
 
     private void OnClientConnect(object? sender, TcpClientEventArgs args)
@@ -242,24 +245,23 @@ public sealed class NetworkService : INetworkService, ILoginNetworkService
     {
         List<Exception> failures = [];
         await Task.WhenAll(
-                      Listeners.Select(
-                          async listener =>
-                          {
-                              try
-                              {
-                                  await listener.StopAsync(default).ConfigureAwait(false);
-                              }
-                              catch (Exception exception)
-                              {
-                                  lock (failures)
-                                  {
-                                      failures.Add(exception);
-                                  }
-                              }
-                          }
-                      )
-                  )
-                  .ConfigureAwait(false);
+                Listeners.Select(async listener =>
+                    {
+                        try
+                        {
+                            await listener.StopAsync(default).ConfigureAwait(false);
+                        }
+                        catch (Exception exception)
+                        {
+                            lock (failures)
+                            {
+                                failures.Add(exception);
+                            }
+                        }
+                    }
+                )
+            )
+            .ConfigureAwait(false);
         Task[] pending;
 
         lock (_cleanupGate)

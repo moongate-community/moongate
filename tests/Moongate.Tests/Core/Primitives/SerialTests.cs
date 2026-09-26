@@ -32,7 +32,9 @@ public class SerialTests
 
     [Fact]
     public void GetHashCode_EqualValues_AreEqual()
-        => Assert.Equal(new Serial(0x40000123u).GetHashCode(), new Serial(0x40000123u).GetHashCode());
+    {
+        Assert.Equal(new Serial(0x40000123u).GetHashCode(), new Serial(0x40000123u).GetHashCode());
+    }
 
     [Theory, InlineData(0x00000001u, true, false), InlineData(0x3FFFFFFFu, true, false),
      InlineData(0x40000000u, false, true), InlineData(0x7EEEEEEEu, false, true), InlineData(0x00000000u, false, false),
@@ -60,7 +62,9 @@ public class SerialTests
      // The band is exclusive: the last item serial is not virtual, and neither is a mobile.
      InlineData(0x7EEEEEEEu, false), InlineData(0x40000000u, false), InlineData(0x00000001u, false)]
     public void IsVirtual_CoversOnlyTheReservedBand(uint value, bool isVirtual)
-        => Assert.Equal(isVirtual, new Serial(value).IsVirtual);
+    {
+        Assert.Equal(isVirtual, new Serial(value).IsVirtual);
+    }
 
     [Fact]
     public void ProtocolConstants_MatchWireRanges()
@@ -93,7 +97,9 @@ public class SerialTests
 
     [Fact]
     public void TryParse_RejectsNull()
-        => Assert.False(Serial.TryParse(null, out _));
+    {
+        Assert.False(Serial.TryParse(null, out _));
+    }
 
     [Theory, InlineData(""), InlineData("   "), InlineData("banana"), InlineData("0x"), InlineData("-1"),
      InlineData("0x100000000"), InlineData("4294967296")]
@@ -115,9 +121,13 @@ public class SerialTests
     // guess at whether the digits look hexadecimal.
     [Fact]
     public void TryParse_WithoutThePrefix_DoesNotGuessHex()
-        => Assert.False(Serial.TryParse("4000000A", out _));
+    {
+        Assert.False(Serial.TryParse("4000000A", out _));
+    }
 
     [Fact]
     public void VirtualBand_StartsRightAfterTheLastItem()
-        => Assert.Equal(Serial.MaxItem + 1, Serial.MinVirtual);
+    {
+        Assert.Equal(Serial.MaxItem + 1, Serial.MinVirtual);
+    }
 }

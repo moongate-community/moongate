@@ -1,0 +1,145 @@
+[[loot]]
+id = "lowlevelscrolls"
+[[loot.entries]]
+weight = 1
+item_id = "0x1f2e_clumsy_scroll"
+comment = "clumsy scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f2f_create_food_scroll"
+comment = "create food scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f30_feeblemind_scroll"
+comment = "feeblemind scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f31_heal_scroll"
+comment = "heal scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f33_night_sight_scroll"
+comment = "night sight scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f33_night_sight_scroll"
+comment = "night sight scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f2d_reactive_armor_scroll"
+comment = "reactive armor scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f34_weaken_scroll"
+comment = "weaken scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f35_agility_scroll"
+comment = "agility scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f36_cunning_scroll"
+comment = "cunning scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f37_cure_scroll"
+comment = "cure scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f38_harm_scroll"
+comment = "harm scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f39_magic_trap_scroll"
+comment = "magic trap scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f3a_magic_untrap_scroll"
+comment = "magic untrap scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f3b_protection_scroll"
+comment = "protection scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f3c_strength_scroll"
+comment = "strength scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f3d_bless_scroll"
+comment = "bless scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f3e_fireball_scroll"
+comment = "fireball scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f3f_magic_lock_scroll"
+comment = "magic lock scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f40_poison_scroll"
+comment = "poison scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f41_telekinisis_scroll"
+comment = "telekinisis scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f42_teleport_scroll"
+comment = "teleport scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f43_unlock_scroll"
+comment = "unlock scroll"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x1f44_wall_of_stone_scroll"
+comment = "wall of stone scroll"
+amount = 1

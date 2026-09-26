@@ -39,10 +39,12 @@ public sealed class Skills
     }
 
     /// <summary>
-    /// Returns <see cref="SkillInfo" /> of index
+    ///     Returns <see cref="SkillInfo" /> of index
     /// </summary>
-    /// <param name="index"></param>
-    /// <returns></returns>
+    /// <param name="index">
+    /// </param>
+    /// <returns>
+    /// </returns>
     public static SkillInfo GetSkill(int index)
     {
         var stream = _fileIndex.Seek(index, out var length, out var extra, out _);
@@ -65,7 +67,7 @@ public sealed class Skills
     }
 
     /// <summary>
-    /// ReReads skills.mul
+    ///     ReReads skills.mul
     /// </summary>
     public static void Reload()
     {

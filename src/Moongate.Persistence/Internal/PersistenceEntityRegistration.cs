@@ -52,11 +52,11 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
         entityCount = values.Count;
 
         return async (transaction, cancellationToken) =>
-               {
-                   foreach (var batch in values.Chunk(SnapshotBatchSize))
-                   {
-                       await transaction.UpsertSnapshotsAsync(batch, cancellationToken).ConfigureAwait(false);
-                   }
-               };
+        {
+            foreach (var batch in values.Chunk(SnapshotBatchSize))
+            {
+                await transaction.UpsertSnapshotsAsync(batch, cancellationToken).ConfigureAwait(false);
+            }
+        };
     }
 }

@@ -51,8 +51,8 @@ public sealed class EnumValueSpecTomlConverterFactoryTests
     [Fact]
     public void Deserialize_AnInvalidSpec_ThrowsTomlExceptionNamingTheText()
     {
-        var exception = Assert.Throws<TomlException>(
-            () => TomlUtils.Deserialize<TemplateRarityHolder>("rarity = \"not-a-member\"\n", Options)
+        var exception = Assert.Throws<TomlException>(() =>
+            TomlUtils.Deserialize<TemplateRarityHolder>("rarity = \"not-a-member\"\n", Options)
         );
 
         Assert.Contains("not-a-member", exception.Message, StringComparison.Ordinal);

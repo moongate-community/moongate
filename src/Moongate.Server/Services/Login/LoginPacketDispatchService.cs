@@ -8,7 +8,9 @@ using Serilog;
 
 namespace Moongate.Server.Services.Login;
 
-/// <summary>Runs one bounded, ordered async handler mailbox per login connection.</summary>
+/// <summary>
+///     Runs one bounded, ordered async handler mailbox per login connection.
+/// </summary>
 public sealed class LoginPacketDispatchService : IMoongateStartupService
 {
     private readonly Lock _gate = new();
@@ -36,10 +38,10 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
         lock (_gate)
         {
             _handlers = _registry.Freeze()
-                                 .ToDictionary(
-                                     entry => entry.Key,
-                                     entry => entry.Value.Bind(_resolver)
-                                 );
+                .ToDictionary(
+                    entry => entry.Key,
+                    entry => entry.Value.Bind(_resolver)
+                );
             _running = true;
         }
 
@@ -71,9 +73,11 @@ public sealed class LoginPacketDispatchService : IMoongateStartupService
     }
 
     public Task DisconnectAsync(long sessionId)
-        => _sessions.TryGet(sessionId, out var session)
-               ? DisconnectAsync(session)
-               : Task.CompletedTask;
+    {
+        return _sessions.TryGet(sessionId, out var session)
+            ? DisconnectAsync(session)
+            : Task.CompletedTask;
+    }
 
     public Task DisconnectAsync(LoginSession session)
     {

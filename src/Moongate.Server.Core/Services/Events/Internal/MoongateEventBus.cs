@@ -24,8 +24,8 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
         {
             ThrowIfDisposed();
             registrations = _registrations.TryGetValue(typeof(TEvent), out var registered)
-                                ? registered.ToArray()
-                                : [];
+                ? registered.ToArray()
+                : [];
             catchAllRegistrations = _catchAllRegistrations.Count == 0 ? [] : _catchAllRegistrations.ToArray();
         }
 
@@ -82,8 +82,8 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
     }
 
     internal void Unsubscribe(Type eventType, MoongateEventRegistration registration)
-        => RemoveUnderLock(
-            () =>
+    {
+        RemoveUnderLock(() =>
             {
                 if (!_registrations.TryGetValue(eventType, out var registrations))
                 {
@@ -98,9 +98,12 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
                 }
             }
         );
+    }
 
     internal void UnsubscribeCatchAll(MoongateEventRegistration registration)
-        => RemoveUnderLock(() => _catchAllRegistrations.Remove(registration));
+    {
+        RemoveUnderLock(() => _catchAllRegistrations.Remove(registration));
+    }
 
     private void RemoveUnderLock(Action remove)
     {
@@ -146,7 +149,9 @@ internal sealed class MoongateEventBus : IMoongateEventBus, IDisposable
     }
 
     private void ThrowIfDisposed()
-        => ObjectDisposedException.ThrowIf(_isDisposed, this);
+    {
+        ObjectDisposedException.ThrowIf(_isDisposed, this);
+    }
 
     public void Dispose()
     {
