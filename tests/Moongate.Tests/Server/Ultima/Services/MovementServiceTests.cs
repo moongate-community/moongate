@@ -165,6 +165,17 @@ public sealed class MovementServiceTests
         Assert.False(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), DirectionType.NorthEast, MovementAbilityType.Walk, out _));
     }
 
+    [Fact]
+    public void CheckMovement_DirectionWithJunkBits_UsesTheLowThreeBits()
+    {
+        // 0x09 is north-east (0x01) with a stray bit, as ModernUO masks it; north-east from (5, 5) lands on (6, 4).
+        _map.SetLandZ(6, 4, 6, 4, 2).SetLandZ(7, 3, 7, 4, 2).SetLandZ(6, 3, 6, 3, 2);
+
+        Assert.True(CreateService().CheckMovement(MapType.Felucca, new(5, 5, 0), (DirectionType)0x09, MovementAbilityType.Walk, out var newZ));
+        Assert.Equal(CreateService().GetAverageZ(MapType.Felucca, 6, 4), newZ);
+        Assert.NotEqual(0, newZ);
+    }
+
     private MovementService CreateService()
     {
         return new(_map, _tiles);

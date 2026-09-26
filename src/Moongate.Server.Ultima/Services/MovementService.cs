@@ -40,7 +40,8 @@ public class MovementService : IMovementService
         out int newZ
     )
     {
-        var baseDirection = Point3D.GetBaseDirection(direction);
+        // Only the low three bits name the direction, as ModernUO's Direction.Mask; the rest, running included, is ignored.
+        var baseDirection = (DirectionType)((byte)direction & 0x7);
         var forward = from.Move(baseDirection);
 
         if (!_mapService.Contains(map, from.X, from.Y) || !_mapService.Contains(map, forward.X, forward.Y))
