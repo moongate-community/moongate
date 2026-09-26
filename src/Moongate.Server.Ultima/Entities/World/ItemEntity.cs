@@ -27,6 +27,7 @@ public class ItemEntity : IMoongateEntity
     /// <summary>
     ///     The id of the item template the item was made from, such as <c>orcspawn</c>.
     /// </summary>
+    [Column(IsNullable = false)]
     public string TemplateId { get; set; } = string.Empty;
 
     /// <summary>

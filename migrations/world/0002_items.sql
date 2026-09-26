@@ -5,7 +5,7 @@ CREATE SEQUENCE IF NOT EXISTS world.items_id_seq
 
 CREATE TABLE IF NOT EXISTS "world"."items" (
   "id" INT8,
-  "template_id" VARCHAR(255),
+  "template_id" VARCHAR(255) NOT NULL,
   "item_id" INT4 NOT NULL,
   "hue" INT4 NOT NULL,
   "amount" INT4 NOT NULL,

@@ -51,7 +51,7 @@ Validate without printing the rendered Compose model, then build:
 
 ```sh
 docker compose config --quiet
-docker compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply migration-status
+docker compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply schema-apply-realm-2 migration-status
 ```
 
 Missing secret inputs fail validation by name. Use `--quiet`: rendering the expanded model can expose values from Compose's early-validation extension.
@@ -67,14 +67,23 @@ docker compose up -d --wait postgres redis
 docker compose --profile schema run --rm auth-schema-apply
 ```
 
-Review and apply the sample plugin's World SQL for Realm 1:
+Review and apply the World SQL for Realm 1, the core world tables plus the sample
+plugin's, then the core world tables for Realm 2:
 
 ```sh
 docker compose --profile schema run --rm migration-status
 docker compose --profile schema run --rm schema-preview
 docker compose --profile schema run --rm schema-apply
 docker compose --profile schema run --rm migration-status
+docker compose --profile schema run --rm schema-apply-realm-2
 ```
+
+Every game server needs its World SQL applied before it starts; a pending migration
+stops startup. The init script creates the `world` schema in both Realm databases and
+gives each runtime role DML on its tables and use of its ID sequences. A volume
+initialized before the core world tables existed lacks those grants: run the
+`provision_world_schema` statements of `postgres/init.sh` for each Realm database by
+hand, or recreate the disposable volume.
 
 The schema jobs do not start a Redis client. They use their selected schema-role PostgreSQL secret and run only the requested target. The runtime TOMLs set `auto_sync_schema = false` and use core SQL bundled at `/app/migrations`. For more on authoring and applying plugin SQL, see [Generate, review and apply](persistence-migrations.md#generate-review-and-apply).
 
@@ -110,10 +119,12 @@ docker compose up -d --no-build --force-recreate game-1
 From the repository root:
 
 ```sh
-sh examples/docker/login-realms/smoke.sh
+MOONGATE_SMOKE_UO_PATH=/path/to/ultima-client sh examples/docker/login-realms/smoke.sh
 ```
 
-The script creates a unique Compose project with temporary volumes and synthetic process-only credentials. It builds local images, checks PostgreSQL roles and schema behavior, starts all three hosts, verifies that both Redis leases have positive TTLs after a full lease interval, and checks clean shutdown. The UO `0x80`→`0x91` handoff and ticket replay are covered by the Redis-backed integration tests in the .NET suite.
+Game servers load `tiledata.mul`, the maps and the multis at startup, so the script needs
+a real client directory; it stops with exit code 2 when `MOONGATE_SMOKE_UO_PATH` has no
+`tiledata.mul`. The script creates a unique Compose project with temporary volumes and synthetic process-only credentials. It builds local images, checks PostgreSQL roles and schema behavior, applies the World SQL to both realms and checks their runtime roles can write world items, starts all three hosts, verifies that both Redis leases have positive TTLs after a full lease interval, and checks clean shutdown. The UO `0x80`→`0x91` handoff and ticket replay are covered by the Redis-backed integration tests in the .NET suite.
 
 ## Troubleshooting
 

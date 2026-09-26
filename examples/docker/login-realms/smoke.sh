@@ -16,6 +16,12 @@ trap cleanup EXIT INT TERM
 
 mkdir -p "$temporary_directory/uo"
 
+# Game servers load tiledata, maps and multis at startup, so the smoke test needs real client files.
+if [ ! -f "${MOONGATE_SMOKE_UO_PATH:-}/tiledata.mul" ]; then
+    echo "Set MOONGATE_SMOKE_UO_PATH to an Ultima Online client directory containing tiledata.mul." >&2
+    exit 2
+fi
+
 if env -i PATH="$PATH" UO_DATA_PATH="$temporary_directory/uo" \
     docker compose -p "$project" -f "$example_directory/compose.yaml" config --quiet >/dev/null 2>&1
 then
@@ -25,7 +31,7 @@ fi
 
 # Disposable values exist only in this process environment. The Realm 1 values
 # contain literal backslash escapes and URI delimiters to prove exact password handling.
-export UO_DATA_PATH="$temporary_directory/uo"
+export UO_DATA_PATH="$MOONGATE_SMOKE_UO_PATH"
 export MOONGATE_POSTGRES_ADMIN_PASSWORD="smoke-admin-$project"
 export MOONGATE_ACCOUNTS_SCHEMA_PASSWORD="smoke-accounts-schema-$project"
 export MOONGATE_ACCOUNTS_RUNTIME_PASSWORD="smoke-accounts-runtime-$project"
@@ -37,7 +43,7 @@ export MOONGATE_REDIS_PASSWORD="$(openssl rand -hex 32)"
 export MOONGATE_HANDOFF_SECRET="$(openssl rand -hex 32)"
 
 $compose config --quiet
-$compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply migration-status
+$compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply schema-apply-realm-2 migration-status
 $compose up -d --wait postgres redis
 $compose run --rm auth-schema-apply
 auth_access=$($compose exec -T -e PGPASSWORD="$MOONGATE_ACCOUNTS_RUNTIME_PASSWORD" postgres \
@@ -62,6 +68,7 @@ printf '%s\n' "$status" | grep -F 'sample-greeter/0001_create_notes.sql' >/dev/n
 $compose run --rm schema-apply
 repeat=$($compose run --rm schema-apply)
 printf '%s\n' "$repeat" | grep -F 'Applied 0 migration(s)' >/dev/null
+$compose run --rm schema-apply-realm-2
 second_preview=$($compose run --rm schema-preview)
 printf '%s\n' "$second_preview"
 printf '%s\n' "$second_preview" | grep -F 'No PostgreSQL schema changes required.' >/dev/null
@@ -91,7 +98,8 @@ fi
 echo "PASS: runtime role cannot perform DDL"
 history=$($postgres_exec psql -At -v ON_ERROR_STOP=1 -U moongate_realm_1_runtime -d moongate_realm_1 \
     -c "SELECT count(*) FROM moongate_migrations.history WHERE target = 'world';")
-[ "$history" = "2" ] || { echo "Expected two readable World migration history rows." >&2; exit 1; }
+# Core world catalog (mobiles, items) plus the sample plugin's migrations.
+[ "$history" = "4" ] || { echo "Expected four readable World migration history rows, found $history." >&2; exit 1; }
 if $postgres_exec psql -v ON_ERROR_STOP=1 -U moongate_realm_1_runtime -d moongate_realm_1 \
     -c "DELETE FROM moongate_migrations.history;" >/dev/null 2>&1
 then
@@ -99,6 +107,14 @@ then
     exit 1
 fi
 echo "PASS: runtime role can read but cannot change migration history"
+
+for realm in 1 2
+do
+    world_access=$($postgres_exec psql -At -v ON_ERROR_STOP=1 -U "moongate_realm_${realm}_runtime" -d "moongate_realm_$realm" \
+        -c "SELECT has_table_privilege(current_user, 'world.items', 'INSERT') AND has_sequence_privilege(current_user, 'world.items_id_seq', 'USAGE');")
+    [ "$world_access" = "t" ] || { echo "Realm $realm runtime role cannot write world items." >&2; exit 1; }
+done
+echo "PASS: both realm runtime roles can write world items and draw their IDs"
 
 $compose up -d login game-1 game-2
 for service in login game-1 game-2

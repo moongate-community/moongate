@@ -159,6 +159,17 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         Assert.NotNull(await _items.GetByIdAsync(new Serial(0x40000051)));
     }
 
+    [Fact]
+    public async Task AnItemWithoutATemplate_IsRejectedByTheDatabase()
+    {
+        var exception = await Record.ExceptionAsync(() => _host.Database.ExecuteAsync(
+            "INSERT INTO world.items (id, template_id, item_id, hue, amount, map, x, y, z) " +
+            "VALUES (1073741900, NULL, 1, 0, 1, 0, 1, 1, 0)"
+        ));
+
+        Assert.IsType<PostgresException>(exception);
+    }
+
     private async Task<MobileEntity> NewMobileAsync()
     {
         var mobile = new MobileEntity { Id = new(0x00000100 + (uint)Random.Shared.Next(1, 100000)), Name = "Aria" };
