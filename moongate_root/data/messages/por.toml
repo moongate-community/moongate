@@ -16,7 +16,7 @@
 # ==============================================================================
 
 [messages]
-0 = "Este item está sem custos."
+0 = "Este item não tem mais cargas."
 1 = "Entra a bordo do barco."
 2 = "Não foi lá encontrado nenhum barco."
 3 = "Saiu do barco."

@@ -16,7 +16,7 @@
 # ==============================================================================
 
 [messages]
-0 = "Dieses Element ist nicht kostenpflichtig."
+0 = "Dieser Gegenstand hat keine Ladungen mehr."
 1 = "Sie sind an Bord des Bootes."
 2 = "Es wurde kein Boot gefunden."
 3 = "Sie haben das Boot verlassen."

@@ -16,7 +16,7 @@
 # ==============================================================================
 
 [messages]
-0 = "Ta pozycja jest poza opłatami."
+0 = "Ten przedmiot nie ma już ładunków."
 1 = "Wchodzisz na pokład łodzi."
 2 = "Nie było tam żadnej łodzi."
 3 = "Wyszedłeś z łodzi."

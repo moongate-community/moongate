@@ -16,7 +16,7 @@
 # ==============================================================================
 
 [messages]
-0 = "Tato položka není zpoplatněna."
+0 = "Tento předmět již nemá žádné náboje."
 1 = "Nalodíte se na loď."
 2 = "Nenašla se tam žádná loď."
 3 = "Odjeli jste z lodi."

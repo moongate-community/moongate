@@ -16,7 +16,7 @@
 # ==============================================================================
 
 [messages]
-0 = "Questo articolo non è a pagamento."
+0 = "Questo oggetto non ha più cariche."
 1 = "Si sale a bordo della barca."
 2 = "Non è stata trovata nessuna barca."
 3 = "Hai lasciato la barca."

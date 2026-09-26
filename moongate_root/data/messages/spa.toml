@@ -16,7 +16,7 @@
 # ==============================================================================
 
 [messages]
-0 = "Este artículo está fuera de los cargos."
+0 = "Este objeto no tiene más cargas."
 1 = "Se sube al barco."
 2 = "No se encontró ningún barco allí."
 3 = "Has dejado el barco."
