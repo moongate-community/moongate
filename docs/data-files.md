@@ -46,22 +46,21 @@ it.
 "No" means the file is loaded and validated, but no game system reads it yet. A
 mistake in such a file still stops the server.
 
-Field names are snake_case. Some fields use value types with their own TOML form:
+Field names are snake_case. Some fields use value types with their own TOML form;
+[TOML value types](toml-types.md) lists every accepted form and error:
 
 | Type | Form | Example |
 | --- | --- | --- |
 | `Point2D` | quoted `"(x, y)"` | `size = "(7168, 4096)"` |
 | `Point3D` | quoted `"(x, y, z)"` | `location = "(1602, 1591, 20)"` |
-| `Serial` | bare integer, decimal or hex | `cliloc = 1150168` |
+| `Serial` | bare integer, decimal or hex, or the same quoted | `cliloc = 1150168` |
 | `Rectangle2D` | quoted `"(x1, y1)..(x2, y2)"` | `bounds = "(44, 65)..(186, 159)"` |
-| `HueSpec` | bare integer, or a quoted `"min-max"` range | `0x00BF`, `"0x03EA-0x0422"` |
+| `HueSpec` | bare integer, or a quoted hue or `"min-max"` range | `0x00BF`, `"0x03EA-0x0422"` |
 
 `Rectangle2D` writes two corners: the first included and the second excluded.
 The legacy `"(x, y)+(width, height)"` format is still accepted when reading.
 
-`Point2D`, `Point3D` and `Serial` are described in
-[Loading TOML templates](templates.md#registering-a-toml-converter). A value that
-does not match its form fails to parse and stops the server.
+A value that does not match its form fails to parse and stops the server.
 
 ## Maps
 

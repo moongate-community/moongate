@@ -103,7 +103,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 
 | Setting | Meaning and limits |
 | --- | --- |
-| `mode` | `login`, `game` or `standalone`; default standalone. Login runs account authentication, a login packet listener and realm directory; Game runs world services and publishes its realm to Redis; Standalone runs both roles and publishes its local realm to Redis. |
+| `mode` | `login`, `game` or `standalone`; default standalone. Login runs account authentication, a login packet listener and realm directory; Game runs world services and publishes its realm to Redis; Standalone runs both roles and publishes its local realm to Redis. See [TOML value types](toml-types.md#servermode). |
 | `shard.shard_name` | Shard display metadata; used as the standalone list name when it fits the 32-character ASCII wire limit. Otherwise the local list name defaults to `Moongate`. |
 | `network.login_port` | Login TCP listener port; default 2593. Used in login and standalone modes. |
 | `network.game_port` | Game TCP listener port; default 2595. Used in game and standalone modes. Standalone rejects equal login and game ports. |
@@ -118,7 +118,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `realm_directory.realm_id` | Stable ID for a game realm and its Redis lease/ticket namespace. Standalone defaults to `local`; give each independently running realm a distinct ID. |
 | `realm_directory.name`, `server_index` | ASCII list name (at most 32 characters) and unique index (0–65535). Standalone defaults to the shard name and index zero; set a distinct index for each realm sharing Redis. |
 | `realm_directory.advertised_address`, `advertised_port` | Client-facing IPv4 literal and port. Required in game mode; standalone defaults to loopback and `network.game_port`. `0xA8` carries the address; `0x8C` carries the selected realm port. |
-| `realm_directory.minimum_account_type` | Lowest account level allowed to see the realm; `regular`, `game_master` or `administrator`. |
+| `realm_directory.minimum_account_type` | Lowest account level allowed to see the realm; `regular`, `game_master` or `administrator`. See [TOML value types](toml-types.md#accounttype). |
 | `realm_directory.heartbeat_interval_seconds`, `lease_duration_seconds`, `max_realms` | Defaults 5, 15 and 128. Lease duration must exceed two heartbeats; the Redis-backed directory caps realms at 128. |
 | `world_save.enabled` | Starts periodic autosaving when true. Does not disable explicit saves or the eligible final shutdown save. |
 | `world_save.interval_seconds` | Positive integer seconds, validated even when autosaving is disabled. |

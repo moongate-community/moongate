@@ -111,6 +111,7 @@ Start with [Writing Lua scripts](docs/scripting.md). The
 - [Shard data files](docs/data-files.md): the TOML files under `data/` (maps, regions, races, skills and the rest), their fields and the checks that stop the server at startup.
 - [Client files and world queries](docs/world-queries.md): `ITileDataService`, `IMapService` and `IMultiService` over the client files, plus `IMovementService` and `ILineOfSightService` for steps and sight.
 - [Loading TOML templates](docs/templates.md): an `IDataLoader<TEntity>` that reads shard content once at startup, plus `EnumValueSpec<TEnum>` for fields that resolve randomly.
+- [TOML value types](docs/toml-types.md): every TOML converter (points, rectangles, hues, serials, value specs, account types, server mode), the forms it reads and writes, and how to add one.
 
 The first three are shown by one compiled sample, [samples/Moongate.Sample.Plugin](samples/Moongate.Sample.Plugin/), which the test suite loads through the real plugin loader.
 

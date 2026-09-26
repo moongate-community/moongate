@@ -2,10 +2,11 @@
 
 Shard content that a designer authors by hand, such as item and mobile definitions,
 is a set of TOML files under `templates/` in the server root, read once when the
-shard starts. This page covers the loader contract in `Moongate.Server.Ultima`, the
-TOML value types in `Moongate.Core` that make templates pleasant to write by hand,
-and converter registration. It assumes [writing a plugin](plugins.md), since a
-loader is registered from `Register` the same way a service or a metric provider is.
+shard starts. This page covers the loader contract in `Moongate.Server.Ultima` and
+the TOML value types in `Moongate.Core` that make templates pleasant to write by
+hand; [TOML value types](toml-types.md) is the reference for their text forms. It
+assumes [writing a plugin](plugins.md), since a loader is registered from `Register`
+the same way a service or a metric provider is.
 
 ## What exists today
 
@@ -101,7 +102,9 @@ As text, the three forms are:
 
 Parsing member names is case-insensitive; writing always lowercases them, so
 `FromValue(ItemRarityType.Epic).ToString()` is `"epic"`, matching how a designer
-types it. A field declares this by its type, nothing else:
+types it. Use it only with one-word members: see
+[EnumValueSpec](toml-types.md#enumvaluespec) for every accepted form and error. A
+field declares this by its type, nothing else:
 
 ```csharp
 public EnumValueSpec<ItemRarityType> Rarity { get; set; } =
@@ -127,117 +130,25 @@ public readonly struct RangeValueSpec<T> where T : struct, INumber<T>
 As text, a bare number (`amount = 5`) is fixed; a quoted `min-max` (`amount = "5-10"`)
 picks a fresh value in that inclusive range on every `Resolve()`. A quoted bare
 number (`amount = "5"`) is accepted too. Writing a fixed value emits a bare number;
-writing a range emits the quoted form.
+writing a range emits the quoted form. See
+[RangeValueSpec](toml-types.md#rangevaluespec) for every accepted form and error.
 
 ```csharp
 public RangeValueSpec<int> Amount { get; set; } = RangeValueSpec<int>.FromValue(1);
 ```
 
 Hues have their own type, `HueSpec`, with the same fixed-or-range text form and hex
-values such as `"0x03EA-0x0422"`; `ItemTemplate.Hue` uses it.
+values such as `"0x03EA-0x0422"`; `ItemTemplate.Hue` uses it. See
+[HueSpec](toml-types.md#huespec).
 
 ## Registering a TOML converter
 
-`EnumValueSpec<TEnum>` and `RangeValueSpec<T>` read and write through converter
-factories: given any closed generic, the factory builds the matching converter by
-reflection, so one factory instance covers every enum or number type a template
-wraps.
-
-`TomlUtils` keeps a global list of converters that every call without its own
-explicit options picks up:
-
-```csharp
-public static void AddTomlConverter(TomlConverter converter);
-public static bool RemoveTomlConverter<T>() where T : TomlConverter;
-public static IReadOnlyList<TomlConverter> GetTomlConverters();
-```
-
-`AddTomlConverter` and `RemoveTomlConverter` are thread-safe: each change replaces the
-converter list and the default options together, so a concurrent call sees the old
-set or the new one, never a mix. A second converter of the same type is ignored;
-`RemoveTomlConverter<T>` removes every converter of type `T`, and `GetTomlConverters`
-returns the current set. Registration is global and process-wide. Register once, at startup:
-
-```csharp
-TomlUtils.AddTomlConverter(new SerialTomlConverter());
-TomlUtils.AddTomlConverter(new Point2DTomlConverter());
-TomlUtils.AddTomlConverter(new Point3DTomlConverter());
-TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
-TomlUtils.AddTomlConverter(new Rectangle2DTomlConverter());
-TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
-TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
-```
-
-**This never affects a call that passes its own `TomlSerializerOptions`.**
-`Deserialize`, `Serialize` and the file-based overloads all take an optional
-`options` parameter; when it is supplied, it is used exactly as given, with no
-converters merged in from the global list.
-
-`Rectangle2DTomlConverter` writes two corners as `"(x1, y1)..(x2, y2)"`.
-The first corner is included and the second is excluded; the second point is
-an endpoint, not a width and height. The old `"(x, y)+(width, height)"` syntax
-is still accepted when reading. For example, both of these describe the same
-rectangle, but serialization writes the first form:
-
-```toml
-bounds = "(44, 65)..(186, 159)"
-# Legacy equivalent: bounds = "(44, 65)+(142, 94)"
-```
-
-Region areas use the same corner notation. `RegionAreaContent` declares its
-converter through a `TomlConverter` attribute, so it needs no global registration.
-See [Region areas](data-files.md#areas) for strings and optional height limits.
-
-### Worked example: `Serial`
-
-`Serial` is the UO wire identity, and templates name one as a graphic id:
-`item_id = 0x0FEF`. `SerialTomlConverter` reads that bare hex integer, which TOML
-parses natively, or the same text quoted (`item_id = "0x0FEF"`), and always writes a
-bare integer:
-
-```csharp
-public sealed class SerialTomlConverter : TomlConverter<Serial>
-{
-    public override Serial Read(TomlReader reader)
-    {
-        if (reader.TokenType == TomlTokenType.String)
-        {
-            var text = reader.GetString();
-
-            if (!Serial.TryParse(text, out var parsed))
-            {
-                throw reader.CreateException($"'{text}' is not a valid serial.");
-            }
-
-            return parsed;
-        }
-
-        return new Serial((uint)reader.GetInt64());
-    }
-
-    public override void Write(TomlWriter writer, Serial value)
-        => writer.WriteIntegerValue(value.Value);
-}
-```
-
-### Worked example: `Point2D` and `Point3D`
-
-Points are written as the quoted text their `ToString()` produces, the same form the
-server prints in logs and commands, so a value copied from there pastes straight into a
-file. `Point2DTomlConverter` and `Point3DTomlConverter` read and write it with the
-invariant culture, so a file reads the same on every machine:
-
-```toml
-position = "(1495, 1629)"
-location = "(1495, 1629, 10)"
-```
-
-Anything else, including a bare number or the wrong number of coordinates, fails with a
-`TomlException` naming the offending text.
-
-A converter for a type of your own follows the same shape: subclass
-`TomlConverter<T>` for one closed type, or `TomlConverterFactory` when the type is
-itself generic, and register the instance once with `TomlUtils.AddTomlConverter`.
+`EnumValueSpec<TEnum>`, `RangeValueSpec<T>`, `HueSpec`, `Serial` and the point types
+read and write through converters that `MoongateUltimaPlugin` registers once with
+`TomlUtils.AddTomlConverter`; `Visibility` uses a converter named by an attribute.
+A template needs nothing more than the field type. For the accepted and written
+forms of every type, the errors, and how to write and register a converter of your
+own, see [TOML value types](toml-types.md).
 
 ## The template shapes
 
