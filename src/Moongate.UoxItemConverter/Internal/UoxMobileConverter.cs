@@ -1,5 +1,7 @@
 using Moongate.Core.Utils;
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Names;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
 
 namespace Moongate.UoxItemConverter.Internal;
 
@@ -45,6 +47,77 @@ internal static class UoxMobileConverter
         File.WriteAllText(namesDestination, NamesHeader + TomlUtils.Serialize(new NameListFile { Names = nameLists }));
         output.WriteLine($"Converted {nameLists.Count} name list(s) to {namesDestination}.");
 
+        var npcDirectory = Path.Combine(mobileSource, "npc");
+        var sourceFiles = Directory.Exists(npcDirectory)
+            ? Directory.EnumerateFiles(npcDirectory, "*.dfn", SearchOption.AllDirectories)
+                       .Where(file => !IsSkippedFile(npcDirectory, file))
+                       .Order(StringComparer.Ordinal)
+                       .ToArray()
+            : [];
+        var blocksByFile = new List<(string File, List<DfnBlock> Blocks)>();
+        var blocksByHeader = new Dictionary<string, DfnBlock>(StringComparer.OrdinalIgnoreCase);
+        var report = new ConversionReport();
+
+        foreach (var file in sourceFiles)
+        {
+            var blocks = DfnParser.Parse(File.ReadAllLines(file));
+            blocksByFile.Add((file, blocks));
+
+            foreach (var block in blocks.Where(block => !MobileTemplateBuilder.IsSpecialSection(block.Header)))
+            {
+                if (!blocksByHeader.TryAdd(block.Header, block))
+                {
+                    report.Count("duplicate npc header");
+                }
+            }
+        }
+
+        var context = new MobileBuildContext(
+            dictionary,
+            items,
+            blocksByHeader.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase),
+            new Dictionary<int, HueSpec?>(),
+            new Dictionary<int, MobileSounds>(),
+            report
+        );
+        var written = 0;
+
+        foreach (var (file, blocks) in blocksByFile)
+        {
+            var templates = blocks.Where(block => ReferenceEquals(blocksByHeader.GetValueOrDefault(block.Header), block))
+                                  .Select(block => MobileTemplateBuilder.Build(block, context))
+                                  .OfType<MobileTemplate>()
+                                  .ToList();
+
+            if (templates.Count == 0)
+            {
+                continue;
+            }
+
+            var relative = Path.GetRelativePath(npcDirectory, file);
+            var outputPath = Path.Combine(mobileDestination, Path.ChangeExtension(relative, ".toml"));
+            Directory.CreateDirectory(Path.GetDirectoryName(outputPath)!);
+            TomlUtils.SerializeToFile(new MobileTemplateFile { Mobile = templates }, outputPath);
+            written += templates.Count;
+            output.WriteLine($"npc/{relative} -> {Path.GetRelativePath(mobileDestination, outputPath)} ({templates.Count} mobile(s))");
+        }
+
+        output.WriteLine($"Converted {written} mobile(s).");
+
+        foreach (var (reason, count) in report.Lines)
+        {
+            output.WriteLine($"  {count} x {reason}");
+        }
+
         return 0;
+    }
+
+    // Name lists are converted on their own; npclists are spawn lists, not npcs.
+    private static bool IsSkippedFile(string npcDirectory, string file)
+    {
+        var relative = Path.GetRelativePath(npcDirectory, file).Replace('\\', '/');
+
+        return relative.Equals("namelists.dfn", StringComparison.OrdinalIgnoreCase) ||
+               relative.StartsWith("npclists/", StringComparison.OrdinalIgnoreCase);
     }
 }

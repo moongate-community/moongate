@@ -54,6 +54,7 @@ internal static class UoxItemConverterCommand
         TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
+        TomlUtils.AddTomlConverter(new DiceSpecTomlConverter());
 
         var sourceFiles = File.Exists(source)
             ? [source]
