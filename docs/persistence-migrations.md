@@ -159,7 +159,11 @@ its value; a development-generated sequence that is already attached is retained
 The fourth adds the `can_access_api` column, `false` for every existing account. Existing
 duplicate usernames, or null usernames or password hashes, must be resolved before
 the constraint migration can apply; no account is silently deleted. The core world
-catalog has no files yet. The sample plugin ships `world/0001_create_notes.sql`.
+catalog has `0001_mobiles.sql` and `0002_items.sql`. Their table and sequence DDL comes
+from the development generator; the foreign keys, CHECK constraints and partial indexes
+are written by hand, since the generator produces only columns and sequences, and the
+startup schema check accepts them. The sample plugin ships
+`world/0001_create_notes.sql`.
 
 ## Automatic development migrations
 

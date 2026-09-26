@@ -231,6 +231,30 @@ save-only failure do not poison the barrier.
 How often saves run, and how the final save behaves at shutdown, is described in
 [Operate PostgreSQL](persistence-operations.md#world-saves).
 
+## World items
+
+`ItemEntity` (`world.items`) and `MobileEntity` (`world.mobiles`) are registered by the
+Ultima plugin for the Realm database in game and standalone modes. An item is in exactly
+one place, and the database checks it:
+
+| Place | Columns | Set with |
+| --- | --- | --- |
+| On the ground | `map`, `x`, `y`, `z` | `PlaceOnGround(map, location)` |
+| In a container item | `container_id`, `grid_x`, `grid_y` | `PutInContainer(containerId, gridX, gridY)` |
+| Worn by a mobile | `mobile_id`, `layer` | `Equip(mobileId, layer)` |
+
+Each helper clears the other two groups, so move an item only through them. The
+database also rejects an item inside itself and two items on the same layer of one
+mobile. Deleting a container or a mobile deletes what it holds, recursively: a backpack
+and everything inside it disappear with the mobile that wears it.
+
+A new item with `Id = Serial.Zero` gets its id from `world.items_id_seq`, which starts at
+`Serial.MinItem`; a CHECK caps it at `Serial.MaxItem`, and mobiles are held to
+`Serial.MinMobile..MaxMobile` the same way. Only what differs from the item template is
+stored: a null `name`, `movable` or `visibility` means the template's value. Values only
+some items have, such as charges, durability and script tags, go in the `props` JSONB
+column (`ItemProps`).
+
 ## Accounts
 
 The built-in Ultima plugin registers `AccountEntity` in the Accounts database and
