@@ -89,6 +89,7 @@ The reasons quoted on this page are that last part.
 | `EnumValueSpec<TEnum>` | quoted member name or `random_of` spec | `rarity = "random_of:rare,epic"` | `EnumValueSpecTomlConverterFactory` | registration |
 | `RangeValueSpec<T>` | bare number, or a quoted `"min-max"` | `amount = "5-10"` | `RangeValueSpecTomlConverterFactory` | registration |
 | `decimal` | bare integer or float | `weight = 0.02`, `weight = 7` | built in | built in |
+| `DiceSpec` | bare integer, or a quoted dice expression | `strength = "1d25+95"` | `DiceSpecTomlConverter` | registration |
 | Any enum | its snake_case name; flags joined by `\|` | `visibility = "game_master"`, `mode = "standalone"` | `EnumTomlConverterFactory` | built in |
 
 The converters of the first group and the enum converter are in
@@ -330,6 +331,39 @@ Errors:
 
 Used by: `amount` in loot templates. See
 [Fields that resolve to a fresh number](templates.md#fields-that-resolve-to-a-fresh-number).
+
+## DiceSpec
+
+A `DiceSpec` is a number field rolled with dice notation, or a constant. Mobile
+templates use it for stats, skills, damage, resistances, karma, fame and gold.
+
+Accepted forms:
+
+```toml
+armor = 20             # bare integer: constant
+karma = -2500          # negative constants are allowed
+karma = "-2500"        # the same, quoted
+strength = "1d25+95"   # one 25-sided die plus 95: 96 to 120
+damage = "3d4+2"       # three 4-sided dice plus 2: 5 to 14
+hits = "4d6k3"         # four 6-sided dice, keep the highest three
+mana = "(2d6+1)*10"    # parentheses, *, /
+```
+
+`NdM` rolls N dice of M sides; `+`, `-`, `*`, `/`, parentheses and `k` (keep the
+highest) combine them. A uniform range from a to b is one die,
+`1d(b-a+1)+(a-1)`. **`"96-120"` is not a range**: it is 96 minus 120, a constant -24.
+
+Written form: a constant as a bare integer, an expression as the quoted text it was
+read from.
+
+Errors:
+
+| Value | Result |
+| --- | --- |
+| `strength = "2d"` | `'2d' is not a number or a dice expression.` |
+| `strength = true` | `Expected a number or a dice expression.` |
+
+Used by: `MobileTemplate`. See [The template shapes](templates.md#the-template-shapes).
 
 ## Enums
 

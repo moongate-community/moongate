@@ -42,6 +42,7 @@ it.
 | `weather.toml` | `WeatherContent` | bodies | No |
 | `regions/<map>.toml` | `RegionContent` | weather (every profile must exist), maps | No |
 | `messages/<lang>.toml` | `MessageContent` | regions | Yes, through `ILocalizationService` |
+| `names.toml` | `NameList` | messages | Yes, through `INameService` |
 
 "No" means the file is loaded and validated, but no game system reads it yet. A
 mistake in such a file still stops the server.
@@ -56,6 +57,7 @@ Field names are snake_case. Some fields use value types with their own TOML form
 | `Serial` | bare integer, decimal or hex, or the same quoted | `cliloc = 1150168` |
 | `Rectangle2D` | quoted `"(x1, y1)..(x2, y2)"` | `bounds = "(44, 65)..(186, 159)"` |
 | `HueSpec` | bare integer, or a quoted hue or `"min-max"` range | `0x00BF`, `"0x03EA-0x0422"` |
+| `DiceSpec` | bare integer, or a quoted dice expression | `karma = -2500`, `strength = "1d25+95"` |
 | Any enum | quoted name, case and underscores ignored; flags joined by `\|` | `map = "felucca"`, `music = "mountn_a"` |
 
 `Rectangle2D` writes two corners: the first included and the second excluded.
@@ -316,6 +318,36 @@ The server stops when:
 
 - `banned_names.toml` does not exist;
 - a word is empty after trimming, which would ban every name.
+
+## Names
+
+`names.toml` holds the lists random NPC names are drawn from. A mobile template names a
+list with `name_list`; `INameService.RandomName(listId)` picks one name from it.
+
+```toml
+[[names]]
+id = "male"
+names = [
+    "Aaron",
+    "Abbott",
+]
+```
+
+| Field | Meaning |
+| --- | --- |
+| `id` | The list id, unique ignoring case |
+| `names` | The names |
+
+The shipped file has the `male` and `female` lists from UOX3 (`namelists.dfn`, lists 1
+and 2). The loader trims ids and names and returns one `NameList` per list.
+
+### Validation at startup
+
+The server stops when:
+
+- `names.toml` does not exist;
+- a list id is empty, or used twice ignoring case;
+- a list is empty, or a name is empty after trimming.
 
 ## Containers
 

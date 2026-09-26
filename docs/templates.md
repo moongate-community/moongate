@@ -11,8 +11,8 @@ the same way a service or a metric provider is.
 ## What exists today
 
 The loader contract, `DataLoaderService`, `EnumValueSpec<TEnum>`, `RangeValueSpec<T>`
-and the converter registry are in place and tested. The `ItemTemplate` and
-`LootTemplate` data shapes exist, and [a converter](uox3-migration.md) produces them
+and the converter registry are in place and tested. The `ItemTemplate`,
+`MobileTemplate` and `LootTemplate` data shapes exist, and [a converter](uox3-migration.md) produces them
 from UOX3 data. **No loader reads them yet:** `IDataLoader<ItemTemplate>` and
 `IDataLoader<LootTemplate>` have not been written or registered, so template files
 under `templates/` are not loaded by the current server. This page documents the
@@ -197,6 +197,82 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Orc Spawner"
 ```
+
+`MobileTemplate` defines a mobile, creature or human NPC, one `[[mobile]]` entry
+under `templates/mobiles/`. Every field but `Id` may be unset: it is inherited through
+`BaseId`, and with none anywhere the default below applies. Numbers that vary per
+mobile are dice ([`DiceSpec`](toml-types.md#dicespec)): `strength = "1d25+95"` rolls 96
+to 120; a constant is a bare integer.
+
+| Field | Purpose |
+| --- | --- |
+| `Id`, `BaseId`, `Comment` | As in `ItemTemplate` |
+| `Name` | A fixed name such as `an orc`; unset draws one from `NameList` |
+| `NameList` | A list id in `data/names.toml`; `{gender}` becomes `male` or `female`, the gender the mobile gets |
+| `Title` | Shown after the name, such as `the guard` |
+| `Body` | The body the client draws; unset uses the `Race` body for the gender |
+| `Gender` | `male`, `female` or `random` (50/50 for every mobile); unset is `male` |
+| `Race` | `human`, `elf` or `gargoyle`: skin, hair and beard come from `races.toml` unless set here; unset for a creature |
+| `SkinHue`, `HairHue`, `BeardHue` | `HueSpec`; unset uses the race hues |
+| `Hair`, `Beard` | Item ids, one picked; unset uses the race styles for the gender, and females get no beard |
+| `Strength`, `Dexterity`, `Intelligence` | Dice; unset is 10 |
+| `Hits`, `Mana`, `Stamina` | Dice; unset is the strength, the intelligence and the dexterity |
+| `Damage`, `Armor` | Dice for an unarmed hit and the natural armour; unset is `1d4` and 0 |
+| `Resistances` | `[mobile.resistances]` with `physical`, `fire`, `cold`, `poison`, `energy`, dice in percent; unset is 0 |
+| `Skills` | `[mobile.skills]`, skill names such as `magic_resistance`, dice in whole points 0 to 120 |
+| `Notoriety` | `innocent`, `ally`, `attackable`, `criminal`, `enemy`, `murderer` or `invulnerable`, the name colour; unset is `innocent` |
+| `Karma`, `Fame` | Dice; karma may be negative |
+| `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
+| `Loot`, `Gold` | Loot template ids rolled into the corpse, and dice for the gold in the backpack |
+| `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death` |
+| `ScriptId` | The Lua module handling the mobile's behaviour, AI included |
+| `Visibility`, `Tags` | As in `ItemTemplate` |
+
+`Resistances`, `Sounds`, `Skills` and `Tags` are inherited key by key, so a base such as
+`base_orc` sets the five sounds once and every orc keeps them; every other field a child
+sets replaces the base's. `Validate()` rejects dice that can roll below 0 (karma apart),
+an unknown skill, a skill above 120, a resistance above 100, a negative sound, an
+equipment entry with no item or an empty item id, and an empty tag key.
+
+```toml
+[[mobile]]
+id = "base_orc"
+body = 0x11
+name = "an orc"
+notoriety = "murderer"
+
+[mobile.sounds]
+start_attack = 0x1B0
+idle = 0x1B1
+attack = 0x1B2
+hurt = 0x1B3
+death = 0x1B4
+
+[[mobile]]
+id = "orc"
+base_id = "base_orc"
+strength = "1d25+95"
+karma = -2500
+loot = ["orc_loot"]
+
+[mobile.skills]
+tactics = "1d26+54"
+
+[[mobile]]
+id = "guard"
+gender = "random"
+race = "human"
+name_list = "{gender}"
+title = "the guard"
+notoriety = "invulnerable"
+script_id = "ai.guard"
+
+[[mobile.equipment]]
+items = ["leather_skirt", "leather_shorts"]
+gender = "female"
+```
+
+No loader reads mobile templates yet.
 
 `LootTemplate` and `LootEntry` are the same kind of shape:
 

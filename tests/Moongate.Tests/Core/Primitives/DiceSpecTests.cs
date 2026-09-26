@@ -40,6 +40,17 @@ public sealed class DiceSpecTests
         Assert.Equal(-24, DiceSpec.Parse("96-120").Roll());
     }
 
+    [Theory,
+     InlineData("3d4+2", 5, 14),
+     InlineData("4d6k3", 3, 18),
+     InlineData("(2d6+1)*10", 30, 130)]
+    public void Parse_TheDocumentedForms_HaveTheirBounds(string text, int min, int max)
+    {
+        var spec = DiceSpec.Parse(text);
+
+        Assert.Equal((min, max), (spec.Min, spec.Max));
+    }
+
     [Theory, InlineData(""), InlineData("abc"), InlineData("2d"), InlineData(null)]
     public void TryParse_BadText_ReturnsFalseAndParseThrows(string? text)
     {
