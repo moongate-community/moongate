@@ -50,14 +50,20 @@ internal static class DfnParser
         string? header = null;
         Dictionary<string, string>? fields = null;
         List<string>? entries = null;
+        Dictionary<string, string>? comments = null;
+        List<string?>? entryComments = null;
+        string? label = null;
 
         foreach (var rawLine in lines)
         {
             var line = rawLine.Trim();
             var commentIndex = line.IndexOf("//", StringComparison.Ordinal);
+            string? comment = null;
 
             if (commentIndex >= 0)
             {
+                comment = line[(commentIndex + 2)..].Trim();
+                comment = comment.Length == 0 ? null : comment;
                 line = line[..commentIndex].TrimEnd();
             }
 
@@ -75,10 +81,14 @@ internal static class DfnParser
                 continue;
             }
 
-            if (line == "{")
+            // "{ Human Male" opens the block too; the text after the brace is a label, not an entry.
+            if (line.StartsWith('{'))
             {
                 fields = new(StringComparer.OrdinalIgnoreCase);
                 entries = [];
+                comments = new(StringComparer.OrdinalIgnoreCase);
+                entryComments = [];
+                label = line[1..].Trim() is { Length: > 0 } text ? text : null;
 
                 continue;
             }
@@ -87,7 +97,7 @@ internal static class DfnParser
             {
                 if (header is not null && fields is not null && entries is not null)
                 {
-                    blocks.Add(new(header, fields, entries));
+                    blocks.Add(new(header, fields, entries, comments!, label, entryComments!));
                 }
 
                 header = null;
@@ -103,6 +113,7 @@ internal static class DfnParser
             }
 
             entries.Add(line);
+            entryComments!.Add(comment);
 
             var separator = line.IndexOf('=');
 
@@ -114,6 +125,11 @@ internal static class DfnParser
             var key = line[..separator].Trim();
             var value = line[(separator + 1)..].Trim();
             fields[key] = value;
+
+            if (comment is not null)
+            {
+                comments![key] = comment;
+            }
         }
 
         return blocks;
