@@ -322,6 +322,26 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Contains("not a gender pair", CombinedOutput);
     }
 
+    [Fact]
+    public void Run_TheWrittenMobilesAreReadBackAndVerified()
+    {
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource("npc/a.dfn", "[x]\n{\nID=0x0011\nSTR=10\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+        Assert.Contains("Verified 1 mobile(s) and 2 name list(s)", CombinedOutput);
+    }
+
+    [Fact]
+    public void Run_ATemplateThatFailsValidation_FailsTheRun()
+    {
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource("npc/a.dfn", "[x]\n{\nID=0x0011\nDEF=-5\n}\n");
+
+        Assert.Equal(1, Run());
+        Assert.Contains("Mobile template 'x': armor", CombinedOutput);
+    }
+
     private void WriteItemsAndNames()
     {
         _dirs.WriteSource("items.dfn", "[0x0eed]\n{\nid=0x0eed\n}\n");

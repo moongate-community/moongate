@@ -123,7 +123,90 @@ internal static class UoxMobileConverter
             output.WriteLine($"  {count} x {reason}");
         }
 
+        var errors = Verify(mobileDestination, namesDestination, items, out var verifiedMobiles, out var verifiedLists);
+
+        if (errors.Count > 0)
+        {
+            foreach (var verificationError in errors)
+            {
+                error.WriteLine($"Verification failed: {verificationError}");
+            }
+
+            error.WriteLine($"{errors.Count} verification error(s) found reading the converted mobiles back.");
+
+            return 1;
+        }
+
+        output.WriteLine(
+            $"Verified {verifiedMobiles} mobile(s) and {verifiedLists} name list(s) read back from disk: no duplicate " +
+            "ids; every base_id, item, loot and name list resolves; every template validates."
+        );
+
         return 0;
+    }
+
+    // Reads what was written back, as the server will, and checks every reference and rule.
+    private static List<string> Verify(
+        string mobileDestination,
+        string namesDestination,
+        ItemIndex items,
+        out int mobileCount,
+        out int listCount
+    )
+    {
+        var errors = new List<string>();
+        var listIds = (TomlUtils.DeserializeFromFile<NameListFile>(namesDestination)?.Names ?? [])
+                      .Select(list => list.Id)
+                      .ToHashSet(StringComparer.OrdinalIgnoreCase);
+        var mobiles = Directory.Exists(mobileDestination)
+            ? Directory.EnumerateFiles(mobileDestination, "*.toml", SearchOption.AllDirectories)
+                       .SelectMany(path => TomlUtils.DeserializeFromFile<MobileTemplateFile>(path)?.Mobile ?? [])
+                       .ToList()
+            : [];
+        var ids = new HashSet<string>(StringComparer.Ordinal);
+        var itemIds = items.ItemIdByHeader.Values.ToHashSet(StringComparer.Ordinal);
+
+        foreach (var mobile in mobiles.Where(mobile => !ids.Add(mobile.Id)))
+        {
+            errors.Add($"mobile '{mobile.Id}' is defined more than once");
+        }
+
+        foreach (var mobile in mobiles)
+        {
+            if (mobile.BaseId is not null && !ids.Contains(mobile.BaseId))
+            {
+                errors.Add($"mobile '{mobile.Id}' has base_id '{mobile.BaseId}', which does not exist");
+            }
+
+            errors.AddRange(
+                (mobile.Equipment ?? []).SelectMany(entry => entry.Items)
+                                        .Where(item => !itemIds.Contains(item))
+                                        .Select(item => $"mobile '{mobile.Id}' equips item '{item}', which does not exist")
+            );
+            errors.AddRange(
+                (mobile.Loot ?? []).Where(loot => !items.LootIds.Contains(loot))
+                                   .Select(loot => $"mobile '{mobile.Id}' has loot '{loot}', which does not exist")
+            );
+
+            if (mobile.NameList is { } list && !list.Contains('{') && !listIds.Contains(list))
+            {
+                errors.Add($"mobile '{mobile.Id}' has name_list '{list}', which does not exist");
+            }
+
+            try
+            {
+                mobile.Validate();
+            }
+            catch (InvalidDataException exception)
+            {
+                errors.Add(exception.Message);
+            }
+        }
+
+        mobileCount = mobiles.Count;
+        listCount = listIds.Count;
+
+        return errors;
     }
 
     // GET=a b: one template from a male/female pair; any other pair is skipped.
