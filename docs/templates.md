@@ -167,6 +167,21 @@ TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
 `options` parameter; when it is supplied, it is used exactly as given, with no
 converters merged in from the global list.
 
+`Rectangle2DTomlConverter` writes two corners as `"(x1, y1)..(x2, y2)"`.
+The first corner is included and the second is excluded; the second point is
+an endpoint, not a width and height. The old `"(x, y)+(width, height)"` syntax
+is still accepted when reading. For example, both of these describe the same
+rectangle, but serialization writes the first form:
+
+```toml
+bounds = "(44, 65)..(186, 159)"
+# Legacy equivalent: bounds = "(44, 65)+(142, 94)"
+```
+
+Region areas use the same corner notation. `RegionAreaContent` declares its
+converter through a `TomlConverter` attribute, so it needs no global registration.
+See [Region areas](data-files.md#areas) for strings and optional height limits.
+
 ### Worked example: `Serial`
 
 `Serial` is the UO wire identity, and templates name one as a graphic id:

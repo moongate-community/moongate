@@ -16,6 +16,17 @@ public sealed class Rectangle2DTomlConverterTests
     };
 
     [Fact]
+    public void Deserialize_TwoCorners_PreservesExclusiveEnd()
+    {
+        var holder = TomlUtils.Deserialize<Rectangle2DHolder>("bounds = \" (44, 65) .. (186, 159) \"\n", Options);
+
+        Assert.Equal(new Rectangle2D(44, 65, 142, 94), holder!.Bounds);
+        Assert.True(holder.Bounds.Contains(44, 65));
+        Assert.False(holder.Bounds.Contains(186, 100));
+        Assert.False(holder.Bounds.Contains(100, 159));
+    }
+
+    [Fact]
     public void Deserialize_AQuotedRectangle_ReadsCornerAndSize()
     {
         var holder = TomlUtils.Deserialize<Rectangle2DHolder>("bounds = \"(44, 65)+(142, 94)\"\n", Options);
@@ -48,7 +59,7 @@ public sealed class Rectangle2DTomlConverterTests
 
         var toml = TomlUtils.Serialize(original, Options);
 
-        Assert.Equal("bounds = \"(10, 20)+(150, 95)\"", toml.Trim());
+        Assert.Equal("bounds = \"(10, 20)..(160, 115)\"", toml.Trim());
         Assert.Equal(original.Bounds, TomlUtils.Deserialize<Rectangle2DHolder>(toml, Options)!.Bounds);
     }
 }

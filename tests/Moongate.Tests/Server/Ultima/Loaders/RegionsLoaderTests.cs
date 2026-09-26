@@ -19,7 +19,7 @@ public sealed class RegionsLoaderTests
                                 name = "Britain"
                                 type = "town"
                                 priority = 50
-                                areas = [{ x1 = 1416, y1 = 1498, x2 = 1740, y2 = 1777, z1 = -10, z2 = 128 }]
+                                areas = [{ bounds = "(1416, 1498)..(1740, 1777)", z1 = -10, z2 = 128 }]
                                 go_location = "(1495, 1629, 10)"
                                 music = "Britain1"
                                 guarded = true
@@ -32,7 +32,7 @@ public sealed class RegionsLoaderTests
                                   name = "The Tavern"
                                   type = "base"
                                   parent = "Britain"
-                                  areas = [{ x1 = 1450, y1 = 1600, x2 = 1460, y2 = 1610 }]
+                                  areas = ["(1450, 1600)..(1460, 1610)"]
                                   instant_logout = true
 
                                   """;
@@ -103,9 +103,9 @@ public sealed class RegionsLoaderTests
     }
 
     [Theory,
-     InlineData("x2 = 1740", "x2 = 1416"),
+     InlineData("(1740, 1777)", "(1416, 1777)"),
      InlineData("z1 = -10, z2 = 128", "z1 = 128, z2 = -10"),
-     InlineData("areas = [{ x1 = 1416, y1 = 1498, x2 = 1740, y2 = 1777, z1 = -10, z2 = 128 }]", "areas = []")]
+     InlineData("areas = [{ bounds = \"(1416, 1498)..(1740, 1777)\", z1 = -10, z2 = 128 }]", "areas = []")]
     public async Task LoadDataAsync_BadArea_ThrowsInvalidDataException(string from, string to)
     {
         using var root = new TemporaryDirectory();

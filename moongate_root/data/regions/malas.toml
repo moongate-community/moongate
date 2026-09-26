@@ -12,8 +12,12 @@
 #   type            base, town, dungeon, nohousing, guarded, jail or greenacres
 #   priority        where regions overlap, the highest one applies
 #   parent          the name of the region this one is part of, on this map
-#   areas           the rectangles of the region: x1 and y1 are included, x2
-#                   and y2 are not; z1 and z2 limit the height when present
+#   areas           rectangles as "(x1, y1)..(x2, y2)": first corner included,
+#                   second corner excluded; these are corners, not sizes
+#                   example: areas = ["(1330, 1991)..(1343, 2004)"]
+#                   with height: { bounds = "(2200, 1110)..(2250, 1160)", z1 = 0, z2 = 128 }
+#                   z1 is included, z2 excluded; omit either for no limit
+#                   without z1 and z2 the rectangle covers every height
 #   go_location     where a "go to region" command takes a character, "(x, y, z)"
 #   entrance        the entrance of the town or dungeon, "(x, y, z)"
 #   music           the music played in the region (see the music list)
@@ -32,7 +36,7 @@
 name = "Ilse of the Divide"
 type = "nohousing"
 priority = 50
-areas = [{ x1 = 1532, y1 = 857, x2 = 1832, y2 = 1057 }]
+areas = ["(1532, 857)..(1832, 1057)"]
 go_location = "(1731, 981, -79)"
 weather = "none"
 guarded = false
@@ -50,7 +54,7 @@ teleport_out = true
 name = "Bedlam"
 type = "dungeon"
 priority = 50
-areas = [{ x1 = 75, y1 = 1590, x2 = 210, y2 = 1760 }]
+areas = ["(75, 1590)..(210, 1760)"]
 go_location = "(117, 1681, 0)"
 entrance = "(2068, 1372, -75)"
 music = "GrizzleDungeon"
@@ -70,7 +74,7 @@ teleport_out = true
 name = "The Citadel"
 type = "dungeon"
 priority = 50
-areas = [{ x1 = 60, y1 = 1855, x2 = 195, y2 = 1990 }]
+areas = ["(60, 1855)..(195, 1990)"]
 go_location = "(106, 1884, 0)"
 entrance = "(1349, 769, 14)"
 music = "Dungeon9"
@@ -90,7 +94,7 @@ teleport_out = true
 name = "Luna"
 type = "town"
 priority = 50
-areas = [{ x1 = 945, y1 = 490, x2 = 1036, y2 = 551 }]
+areas = ["(945, 490)..(1036, 551)"]
 go_location = "(989, 520, -50)"
 music = "Tavern04"
 weather = "none"
@@ -109,7 +113,7 @@ teleport_out = true
 type = "town"
 priority = 50
 parent = "Luna"
-areas = [{ x1 = 986, y1 = 509, x2 = 1004, y2 = 530 }]
+areas = ["(986, 509)..(1004, 530)"]
 weather = "none"
 guarded = true
 housing = false
@@ -127,9 +131,9 @@ name = "Umbra"
 type = "town"
 priority = 50
 areas = [
-    { x1 = 2042, y1 = 1265, x2 = 2090, y2 = 1278 },
-    { x1 = 1960, y1 = 1278, x2 = 2106, y2 = 1413 },
-    { x1 = 2004, y1 = 1413, x2 = 2040, y2 = 1419 },
+    "(2042, 1265)..(2090, 1278)",
+    "(1960, 1278)..(2106, 1413)",
+    "(2004, 1413)..(2040, 1419)",
 ]
 go_location = "(2049, 1344, -85)"
 weather = "none"
@@ -148,7 +152,7 @@ teleport_out = true
 type = "town"
 priority = 50
 parent = "Umbra"
-areas = [{ x1 = 2031, y1 = 1311, x2 = 2046, y2 = 1325 }]
+areas = ["(2031, 1311)..(2046, 1325)"]
 weather = "none"
 guarded = true
 housing = false
@@ -165,7 +169,7 @@ teleport_out = true
 name = "Labyrinth"
 type = "dungeon"
 priority = 50
-areas = [{ x1 = 256, y1 = 1795, x2 = 499, y2 = 2025 }]
+areas = ["(256, 1795)..(499, 2025)"]
 go_location = "(336, 1970, 0)"
 entrance = "(1731, 981, -79)"
 music = "Dungeon9"
@@ -185,7 +189,7 @@ teleport_out = true
 name = "Doom"
 type = "dungeon"
 priority = 50
-areas = [{ x1 = 256, y1 = 0, x2 = 512, y2 = 304 }]
+areas = ["(256, 0)..(512, 304)"]
 go_location = "(2366, 1268, -85)"
 entrance = "(2357, 1268, 0)"
 music = "Dungeon9"
@@ -205,7 +209,7 @@ teleport_out = true
 name = "Doom Gauntlet"
 type = "dungeon"
 priority = 50
-areas = [{ x1 = 256, y1 = 304, x2 = 512, y2 = 560 }]
+areas = ["(256, 304)..(512, 560)"]
 go_location = "(429, 340, -1)"
 entrance = "(2357, 1268, 0)"
 music = "Dungeon9"
@@ -225,7 +229,7 @@ teleport_out = true
 name = "Orc Fortress"
 type = "base"
 priority = 50
-areas = [{ x1 = 1295, y1 = 1189, x2 = 1395, y2 = 1294 }]
+areas = ["(1295, 1189)..(1395, 1294)"]
 go_location = "(1340, 1226, -90)"
 weather = "none"
 guarded = false
@@ -243,7 +247,7 @@ teleport_out = true
 name = "Crystal Cave Entrance"
 type = "nohousing"
 priority = 50
-areas = [{ x1 = 1176, y1 = 509, x2 = 1219, y2 = 522 }]
+areas = ["(1176, 509)..(1219, 522)"]
 go_location = "(1195, 515, -90)"
 weather = "none"
 guarded = false
@@ -262,12 +266,12 @@ name = "Protected Island"
 type = "nohousing"
 priority = 50
 areas = [
-    { x1 = 1976, y1 = 101, x2 = 2448, y2 = 345 },
-    { x1 = 2051, y1 = 345, x2 = 2356, y2 = 382 },
-    { x1 = 2026, y1 = 345, x2 = 2051, y2 = 370 },
-    { x1 = 2069, y1 = 382, x2 = 2144, y2 = 396 },
-    { x1 = 2254, y1 = 382, x2 = 2352, y2 = 420 },
-    { x1 = 2222, y1 = 382, x2 = 2254, y2 = 402 },
+    "(1976, 101)..(2448, 345)",
+    "(2051, 345)..(2356, 382)",
+    "(2026, 345)..(2051, 370)",
+    "(2069, 382)..(2144, 396)",
+    "(2254, 382)..(2352, 420)",
+    "(2222, 382)..(2254, 402)",
 ]
 go_location = "(2104, 380, -90)"
 weather = "none"
@@ -286,7 +290,7 @@ teleport_out = true
 name = "Grand Arena"
 type = "nohousing"
 priority = 50
-areas = [{ x1 = 919, y1 = 622, x2 = 962, y2 = 652 }]
+areas = ["(919, 622)..(962, 652)"]
 go_location = "(961, 637, -90)"
 weather = "none"
 guarded = false
@@ -305,9 +309,9 @@ name = "Hanse's Hostel"
 type = "base"
 priority = 50
 areas = [
-    { x1 = 1049, y1 = 1420, x2 = 1062, y2 = 1445 },
-    { x1 = 1062, y1 = 1420, x2 = 1065, y2 = 1431 },
-    { x1 = 1062, y1 = 1439, x2 = 1065, y2 = 1445 },
+    "(1049, 1420)..(1062, 1445)",
+    "(1062, 1420)..(1065, 1431)",
+    "(1062, 1439)..(1065, 1445)",
 ]
 go_location = "(1063, 1435, -90)"
 weather = "none"
@@ -326,7 +330,7 @@ teleport_out = true
 name = "Yomotsu Mines"
 type = "dungeon"
 priority = 50
-areas = [{ x1 = 0, y1 = 0, x2 = 129, y2 = 129 }]
+areas = ["(0, 0)..(129, 129)"]
 go_location = "(6, 118, 0)"
 entrance = "(259, 783, 0)"
 music = "TokunoDungeon"
@@ -346,7 +350,7 @@ teleport_out = true
 name = "Fan Dancer's Dojo"
 type = "dungeon"
 priority = 50
-areas = [{ x1 = 40, y1 = 320, x2 = 210, y2 = 720 }]
+areas = ["(40, 320)..(210, 720)"]
 go_location = "(71, 337, 0)"
 entrance = "(977, 223, 0)"
 music = "TokunoDungeon"
@@ -366,7 +370,7 @@ teleport_out = true
 name = "Samurai start location"
 type = "base"
 priority = 50
-areas = [{ x1 = 320, y1 = 690, x2 = 435, y2 = 790 }]
+areas = ["(320, 690)..(435, 790)"]
 music = "Zento"
 weather = "none"
 guarded = false
@@ -384,7 +388,7 @@ teleport_out = true
 name = "Ninja start location"
 type = "base"
 priority = 50
-areas = [{ x1 = 360, y1 = 795, x2 = 440, y2 = 835 }]
+areas = ["(360, 795)..(440, 835)"]
 music = "Zento"
 weather = "none"
 guarded = false
@@ -402,7 +406,7 @@ teleport_out = true
 name = "Ninja cave"
 type = "base"
 priority = 50
-areas = [{ x1 = 360, y1 = 960, x2 = 460, y2 = 1175 }]
+areas = ["(360, 960)..(460, 1175)"]
 weather = "none"
 guarded = false
 housing = true
@@ -425,10 +429,10 @@ teleport_out = true
 type = "base"
 priority = 0
 areas = [
-    { x1 = 1182, y1 = 437, x2 = 1211, y2 = 470, z2 = -80 },
-    { x1 = 1156, y1 = 470, x2 = 1211, y2 = 503, z2 = -80 },
-    { x1 = 1176, y1 = 503, x2 = 1208, y2 = 509, z2 = -80 },
-    { x1 = 1188, y1 = 509, x2 = 1201, y2 = 513, z2 = -80 },
+    { bounds = "(1182, 437)..(1211, 470)", z2 = -80 },
+    { bounds = "(1156, 470)..(1211, 503)", z2 = -80 },
+    { bounds = "(1176, 503)..(1208, 509)", z2 = -80 },
+    { bounds = "(1188, 509)..(1201, 513)", z2 = -80 },
 ]
 weather = "none"
 recall_in = false
@@ -443,7 +447,7 @@ teleport_out = false
 [[region]]
 type = "base"
 priority = 0
-areas = [{ x1 = 256, y1 = 304, x2 = 512, y2 = 560 }]
+areas = ["(256, 304)..(512, 560)"]
 weather = "none"
 recall_in = false
 recall_out = false
@@ -458,8 +462,8 @@ teleport_out = true
 type = "base"
 priority = 0
 areas = [
-    { x1 = 426, y1 = 314, x2 = 431, y2 = 332 },
-    { x1 = 406, y1 = 247, x2 = 411, y2 = 265 },
+    "(426, 314)..(431, 332)",
+    "(406, 247)..(411, 265)",
 ]
 weather = "none"
 recall_in = false
@@ -475,8 +479,8 @@ teleport_out = true
 type = "base"
 priority = 0
 areas = [
-    { x1 = 0, y1 = 0, x2 = 129, y2 = 129 },
-    { x1 = 45, y1 = 320, x2 = 195, y2 = 710 },
+    "(0, 0)..(129, 129)",
+    "(45, 320)..(195, 710)",
 ]
 weather = "none"
 recall_in = false
@@ -491,7 +495,7 @@ teleport_out = true
 [[region]]
 type = "base"
 priority = 0
-areas = [{ x1 = 465, y1 = 92, x2 = 474, y2 = 102 }]
+areas = ["(465, 92)..(474, 102)"]
 weather = "none"
 recall_in = false
 recall_out = false
@@ -505,7 +509,7 @@ teleport_out = true
 [[region]]
 type = "base"
 priority = 0
-areas = [{ x1 = 356, y1 = 5, x2 = 375, y2 = 25 }]
+areas = ["(356, 5)..(375, 25)"]
 weather = "none"
 recall_in = false
 recall_out = false

@@ -53,8 +53,11 @@ Field names are snake_case. Some fields use value types with their own TOML form
 | `Point2D` | quoted `"(x, y)"` | `size = "(7168, 4096)"` |
 | `Point3D` | quoted `"(x, y, z)"` | `location = "(1602, 1591, 20)"` |
 | `Serial` | bare integer, decimal or hex | `cliloc = 1150168` |
-| `Rectangle2D` | quoted `"(x, y)+(width, height)"` | `bounds = "(44, 65)+(142, 94)"` |
+| `Rectangle2D` | quoted `"(x1, y1)..(x2, y2)"` | `bounds = "(44, 65)..(186, 159)"` |
 | `HueSpec` | bare integer, or a quoted `"min-max"` range | `0x00BF`, `"0x03EA-0x0422"` |
+
+`Rectangle2D` writes two corners: the first included and the second excluded.
+The legacy `"(x, y)+(width, height)"` format is still accepted when reading.
 
 `Point2D`, `Point3D` and `Serial` are described in
 [Loading TOML templates](templates.md#registering-a-toml-converter). A value that
@@ -310,7 +313,7 @@ The server stops when:
 [[container]]
 name = "default"
 gump = 0x003C
-bounds = "(44, 65)+(142, 94)"
+bounds = "(44, 65)..(186, 159)"
 drop_sound = 0x0048
 default = true
 items = []
@@ -318,7 +321,7 @@ items = []
 [[container]]
 name = "bag"
 gump = 0x003D
-bounds = "(29, 34)+(108, 94)"
+bounds = "(29, 34)..(137, 128)"
 drop_sound = 0x0048
 items = [0x0E76, 0x2256, 0x2257]
 ```
@@ -428,7 +431,7 @@ file name sets the map of every region in it; a region has no `map` field.
 name = "The Heartwood"
 type = "town"
 priority = 50
-areas = [{ x1 = 6911, y1 = 255, x2 = 7168, y2 = 512 }]
+areas = ["(6911, 255)..(7168, 512)"]
 go_location = "(6984, 337, 0)"
 entrance = "(535, 995, 0)"
 music = "ElfCity"
@@ -459,16 +462,35 @@ values follow `Music/Digital/Config.txt` of the client.
 
 ### Areas
 
-Each area is a rectangle: `x1` and `y1` are included, `x2` and `y2` are not. `z1`
-and `z2` are optional and limit the height the same way; without them the area
-covers every height.
+Write each rectangle as `"(x1, y1)..(x2, y2)"`: two corners, not a position
+and a size. The first corner is included and the second is excluded. For example,
+`"(1330, 1991)..(1343, 2004)"` covers X from 1330 through 1342 and Y from 1991
+through 2003. Both points use the same `(x, y)` notation as `Point2D`.
+
+Without height limits, use strings directly:
 
 ```toml
 areas = [
-    { x1 = 1416, y1 = 1498, x2 = 1740, y2 = 1777, z1 = -10, z2 = 128 },
-    { x1 = 1500, y1 = 1408, x2 = 1546, y2 = 1498, z1 = 0, z2 = 128 },
+    "(1330, 1991)..(1343, 2004)",
+    "(1494, 3767)..(1506, 3778)",
 ]
 ```
+
+To limit height, use an inline table with `bounds` and optional `z1` and `z2`.
+`z1` is included and `z2` is excluded. Either limit may be omitted independently;
+when neither is present, the rectangle covers every height. Strings and tables
+may be mixed in the same `areas` array.
+
+```toml
+areas = [
+    { bounds = "(1416, 1498)..(1740, 1777)", z1 = -10, z2 = 128 },
+    { bounds = "(1500, 1408)..(1546, 1498)", z1 = 0, z2 = 128 },
+]
+```
+
+The loader also accepts the legacy `{ x1 = ..., y1 = ..., x2 = ..., y2 = ... }`
+tables. Serialization always writes the new corner format, using a string when
+there are no height limits and a `bounds` table otherwise.
 
 ### Parents and overlaps
 
@@ -489,7 +511,7 @@ Lost Lands of Felucca:
 [[region]]
 type = "base"
 priority = 0
-areas = [{ x1 = 5120, y1 = 2304, x2 = 6144, y2 = 4096 }]
+areas = ["(5120, 2304)..(6144, 4096)"]
 weather = "none"
 recall_in = false
 recall_out = false
@@ -509,8 +531,10 @@ The server stops when:
 - the `regions/` directory does not exist;
 - a file name is not a map name (the match ignores case);
 - a region has no areas;
-- an area's `x2` is not above `x1`, its `y2` is not above `y1`, or, when both are
-  set, its `z2` is not above `z1`;
+- an area has malformed bounds, missing coordinates, mixed `bounds` and legacy
+  coordinate fields, unknown fields, or non-integer height limits;
+- the second corner is not above the first on both X and Y, or, when both height
+  limits are set, `z2` is not above `z1`;
 - a region's `weather` is not a profile of `weather.toml`;
 - a name is used twice in the same file;
 - a `parent` is not a region of the same file, or the parents loop back.

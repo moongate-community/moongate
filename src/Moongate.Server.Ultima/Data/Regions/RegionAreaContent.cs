@@ -1,9 +1,13 @@
+using Moongate.Server.Ultima.Serialization.Toml;
+using Tomlyn.Serialization;
+
 namespace Moongate.Server.Ultima.Data.Regions;
 
 /// <summary>
 ///     One rectangle of a region. The start is included and the end is not; without <see cref="Z1" /> and
 ///     <see cref="Z2" /> the rectangle covers every height.
 /// </summary>
+[TomlConverter(typeof(RegionAreaContentTomlConverter))]
 public class RegionAreaContent
 {
     public int X1 { get; set; }

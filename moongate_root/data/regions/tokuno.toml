@@ -12,8 +12,12 @@
 #   type            base, town, dungeon, nohousing, guarded, jail or greenacres
 #   priority        where regions overlap, the highest one applies
 #   parent          the name of the region this one is part of, on this map
-#   areas           the rectangles of the region: x1 and y1 are included, x2
-#                   and y2 are not; z1 and z2 limit the height when present
+#   areas           rectangles as "(x1, y1)..(x2, y2)": first corner included,
+#                   second corner excluded; these are corners, not sizes
+#                   example: areas = ["(1330, 1991)..(1343, 2004)"]
+#                   with height: { bounds = "(2200, 1110)..(2250, 1160)", z1 = 0, z2 = 128 }
+#                   z1 is included, z2 excluded; omit either for no limit
+#                   without z1 and z2 the rectangle covers every height
 #   go_location     where a "go to region" command takes a character, "(x, y, z)"
 #   entrance        the entrance of the town or dungeon, "(x, y, z)"
 #   music           the music played in the region (see the music list)
@@ -33,9 +37,9 @@ name = "Moongates"
 type = "guarded"
 priority = 50
 areas = [
-    { x1 = 1167, y1 = 996, x2 = 1171, y2 = 1000 },
-    { x1 = 799, y1 = 1201, x2 = 805, y2 = 1207 },
-    { x1 = 267, y1 = 625, x2 = 274, y2 = 632 },
+    "(1167, 996)..(1171, 1000)",
+    "(799, 1201)..(805, 1207)",
+    "(267, 625)..(274, 632)",
 ]
 weather = "none"
 guarded = true
@@ -53,7 +57,7 @@ teleport_out = true
 name = "Zento"
 type = "town"
 priority = 50
-areas = [{ x1 = 656, y1 = 1192, x2 = 816, y2 = 1320 }]
+areas = ["(656, 1192)..(816, 1320)"]
 go_location = "(736, 1256, 30)"
 music = "Zento"
 weather = "none"
@@ -72,7 +76,7 @@ teleport_out = true
 type = "town"
 priority = 50
 parent = "Zento"
-areas = [{ x1 = 674, y1 = 1203, x2 = 699, y2 = 1219 }]
+areas = ["(674, 1203)..(699, 1219)"]
 weather = "none"
 guarded = true
 housing = false
@@ -89,7 +93,7 @@ teleport_out = true
 name = "Fan Dancer's Dojo"
 type = "nohousing"
 priority = 50
-areas = [{ x1 = 969, y1 = 194, x2 = 992, y2 = 224 }]
+areas = ["(969, 194)..(992, 224)"]
 go_location = "(977, 223, 23)"
 weather = "none"
 guarded = false
@@ -107,7 +111,7 @@ teleport_out = true
 name = "Bushido Dojo"
 type = "nohousing"
 priority = 50
-areas = [{ x1 = 283, y1 = 361, x2 = 351, y2 = 463 }]
+areas = ["(283, 361)..(351, 463)"]
 go_location = "(320, 408, 32)"
 weather = "none"
 guarded = false

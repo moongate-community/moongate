@@ -12,7 +12,7 @@ public sealed class ContainersLoaderTests
     private const string Default = """
                                    [[container]]
                                    gump = 0x3C
-                                   bounds = "(44, 65)+(142, 94)"
+                                   bounds = "(44, 65)..(186, 159)"
                                    drop_sound = 0x48
                                    default = true
                                    items = []
@@ -23,7 +23,7 @@ public sealed class ContainersLoaderTests
                                     [[container]]
                                     name = "backpack"
                                     gump = 0x3C
-                                    bounds = "(44, 65)+(142, 94)"
+                                    bounds = "(44, 65)..(186, 159)"
                                     drop_sound = 0x48
                                     items = [0x0E75, 0x09B2]
 
@@ -32,7 +32,7 @@ public sealed class ContainersLoaderTests
     private const string GameBoard = """
                                      [[container]]
                                      gump = 0x91A
-                                     bounds = "(0, 0)+(282, 210)"
+                                     bounds = "(0, 0)..(282, 210)"
                                      items = [0x0FA6]
 
                                      """;
@@ -90,7 +90,7 @@ public sealed class ContainersLoaderTests
         Assert.Contains("0x9B2", exception.Message, StringComparison.Ordinal);
     }
 
-    [Theory, InlineData("gump = 0x91A", "gump = 0"), InlineData("\"(0, 0)+(282, 210)\"", "\"(0, 0)+(0, 210)\"")]
+    [Theory, InlineData("gump = 0x91A", "gump = 0"), InlineData("\"(0, 0)..(282, 210)\"", "\"(0, 0)..(0, 210)\"")]
     public async Task LoadDataAsync_NoGumpOrEmptyArea_ThrowsInvalidDataException(string from, string to)
     {
         using var root = new TemporaryDirectory();
