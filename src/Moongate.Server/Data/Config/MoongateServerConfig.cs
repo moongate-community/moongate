@@ -2,8 +2,6 @@ using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config.Sections;
-using Moongate.Server.Serialization.Config.Internal;
-using Tomlyn.Serialization;
 
 namespace Moongate.Server.Data.Config;
 
@@ -12,7 +10,6 @@ public class MoongateServerConfig
     /// <summary>
     ///     Gets or sets the configured server roles, defaulting to both login and game.
     /// </summary>
-    [TomlConverter(typeof(ServerModeTomlConverter))]
     public ServerMode Mode { get; set; } = ServerMode.Standalone;
 
     public ShardConfig Shard { get; set; } = new();

@@ -1,4 +1,5 @@
 using System.Text.Json;
+using Moongate.Core.Serialization.Toml;
 using Tomlyn;
 using Tomlyn.Serialization;
 
@@ -8,7 +9,8 @@ namespace Moongate.Core.Utils;
 ///     Serializes TOML documents and reads or writes UTF-8 configuration files using Tomlyn.
 /// </summary>
 /// <remarks>
-///     When options are omitted, property names use snake_case, plus whatever converters were added with
+///     When options are omitted, property names use snake_case, every enum is written and read by its snake_case name
+///     (see <see cref="EnumNameUtils" />), plus whatever converters were added with
 ///     <see cref="AddTomlConverter" />. Explicit options replace these defaults for the current call and are
 ///     never affected by converter registration. Serialization, parsing and file-system exceptions propagate
 ///     to the caller.
@@ -19,12 +21,12 @@ public static class TomlUtils
     // reader never sees a registry half-way through an add or a remove.
     private static readonly Lock RegistryLock = new();
 
+    // Always part of the default options, after the registered converters so a converter added for one enum wins.
+    private static readonly TomlConverter EnumNames = new EnumTomlConverterFactory();
+
     private static volatile TomlConverter[] _converters = [];
 
-    private static volatile TomlSerializerOptions _defaultOptions = new()
-    {
-        PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower
-    };
+    private static volatile TomlSerializerOptions _defaultOptions = CreateOptions([]);
 
     /// <summary>
     ///     Adds a TOML converter to every call that does not pass its own options. Thread-safe; a second
@@ -183,10 +185,15 @@ public static class TomlUtils
     private static void Publish(TomlConverter[] converters)
     {
         _converters = converters;
-        _defaultOptions = new()
+        _defaultOptions = CreateOptions(converters);
+    }
+
+    private static TomlSerializerOptions CreateOptions(TomlConverter[] converters)
+    {
+        return new()
         {
             PropertyNamingPolicy = JsonNamingPolicy.SnakeCaseLower,
-            Converters = converters
+            Converters = [.. converters, EnumNames]
         };
     }
 }

@@ -56,6 +56,7 @@ Field names are snake_case. Some fields use value types with their own TOML form
 | `Serial` | bare integer, decimal or hex, or the same quoted | `cliloc = 1150168` |
 | `Rectangle2D` | quoted `"(x1, y1)..(x2, y2)"` | `bounds = "(44, 65)..(186, 159)"` |
 | `HueSpec` | bare integer, or a quoted hue or `"min-max"` range | `0x00BF`, `"0x03EA-0x0422"` |
+| Any enum | quoted name, case and underscores ignored; flags joined by `\|` | `map = "felucca"`, `music = "mountn_a"` |
 
 `Rectangle2D` writes two corners: the first included and the second excluded.
 The legacy `"(x, y)+(width, height)"` format is still accepted when reading.

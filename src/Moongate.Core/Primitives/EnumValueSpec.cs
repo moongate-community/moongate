@@ -1,5 +1,5 @@
-using Moongate.Core.Extensions.Strings;
 using Moongate.Core.Random;
+using Moongate.Core.Utils;
 
 namespace Moongate.Core.Primitives;
 
@@ -125,7 +125,7 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
 
             for (var i = 0; i < names.Length; i++)
             {
-                if (!TryParseName(names[i], out var candidate))
+                if (!EnumNameUtils.TryParse<TEnum>(names[i], out var candidate))
                 {
                     return false;
                 }
@@ -138,7 +138,7 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
             return true;
         }
 
-        if (!TryParseName(trimmed, out var value))
+        if (!EnumNameUtils.TryParse<TEnum>(trimmed, out var value))
         {
             return false;
         }
@@ -156,32 +156,11 @@ public readonly struct EnumValueSpec<TEnum> where TEnum : struct, Enum
         return IsRandom ? _candidates![BuiltInRng.Next(_candidates.Length)] : _fixedValue;
     }
 
-    // Matches a member by name only, ignoring case and underscores, so the snake_case form ToString writes reads back;
-    // Enum.TryParse would also take numbers, even ones no member has.
-    private static bool TryParseName(string text, out TEnum value)
-    {
-        var name = text.Replace("_", string.Empty);
-
-        foreach (var member in Enum.GetValues<TEnum>())
-        {
-            if (string.Equals(member.ToString(), name, StringComparison.OrdinalIgnoreCase))
-            {
-                value = member;
-
-                return true;
-            }
-        }
-
-        value = default;
-
-        return false;
-    }
-
     /// <inheritdoc />
     public override string ToString()
     {
         return IsRandom
-            ? $"{RandomOfPrefix}:{string.Join(',', _candidates!.Select(candidate => candidate.ToString().ToSnakeCase()))}"
-            : _fixedValue.ToString().ToSnakeCase();
+            ? $"{RandomOfPrefix}:{string.Join(',', _candidates!.Select(EnumNameUtils.Format))}"
+            : EnumNameUtils.Format(_fixedValue);
     }
 }

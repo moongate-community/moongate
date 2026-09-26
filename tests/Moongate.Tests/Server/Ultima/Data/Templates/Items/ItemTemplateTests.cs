@@ -68,10 +68,10 @@ public sealed class ItemTemplateTests
         Assert.DoesNotContain("visibility", TomlUtils.Serialize(new ItemTemplate { Id = "orcspawn", BaseId = "base_spawner" }));
     }
 
-    [Theory, InlineData("gm"), InlineData("1")]
+    [Theory, InlineData("gm"), InlineData("7")]
     public void Visibility_TomlUnknownValue_Throws(string text)
     {
-        var toml = text == "1" ? "id = \"s\"\nvisibility = 1\n" : $"id = \"s\"\nvisibility = \"{text}\"\n";
+        var toml = text == "7" ? "id = \"s\"\nvisibility = 7\n" : $"id = \"s\"\nvisibility = \"{text}\"\n";
 
         Assert.ThrowsAny<Exception>(() => TomlUtils.Deserialize<ItemTemplate>(toml));
     }

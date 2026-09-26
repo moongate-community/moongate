@@ -2,8 +2,6 @@ using System.Net;
 using System.Net.Sockets;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Hosting;
-using Moongate.Server.Core.Serialization.Toml;
-using Tomlyn.Serialization;
 
 namespace Moongate.Server.Data.Config.Sections;
 
@@ -22,7 +20,6 @@ public sealed class RealmDirectoryConfig
 
     public int AdvertisedPort { get; set; }
 
-    [TomlConverter(typeof(AccountTypeTomlConverter))]
     public AccountType MinimumAccountType { get; set; } = AccountType.Regular;
 
     public int HeartbeatIntervalSeconds { get; set; } = 5;

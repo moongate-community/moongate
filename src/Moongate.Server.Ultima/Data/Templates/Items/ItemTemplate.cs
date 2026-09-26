@@ -1,8 +1,6 @@
 using Moongate.Core.Primitives;
-using Moongate.Server.Core.Serialization.Toml;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Types.Templates;
-using Tomlyn.Serialization;
 
 namespace Moongate.Server.Ultima.Data.Templates.Items;
 
@@ -91,7 +89,6 @@ public class ItemTemplate
     ///     which players never see. Null, the default, is unset: the template inherits it through
     ///     <see cref="BaseId" />, and an item with none anywhere is visible to everyone.
     /// </summary>
-    [TomlConverter(typeof(NullableAccountTypeTomlConverter))]
     public AccountType? Visibility { get; set; }
 
     /// <summary>

@@ -12,7 +12,11 @@ key `go_location`.
 
 ## How a converter is applied
 
-A converter reaches a field in one of two ways.
+A converter reaches a field in one of three ways.
+
+**Built in for enums.** `TomlUtils` always adds `EnumTomlConverterFactory` to its
+default options, so every enum is written and read by name with no registration:
+see [Enums](#enums). A converter registered for one enum type wins over it.
 
 **Registered for every call.** `TomlUtils` in `Moongate.Core` keeps a list of
 converters that every call without its own options uses:
@@ -44,21 +48,21 @@ a region file is a `Point3D?` and uses `Point3DTomlConverter`.
 
 **Declared with an attribute.** `[TomlConverter(typeof(...))]` on a property or on a
 type applies the converter to that property, or to every use of that type, with no
-registration:
+registration. Region areas use it on their type:
 
 ```csharp
-[TomlConverter(typeof(AccountTypeTomlConverter))]
-public AccountType MinimumAccountType { get; set; } = AccountType.Regular;
+[TomlConverter(typeof(RegionAreaContentTomlConverter))]
+public sealed class RegionAreaContent
 ```
 
-A converter named by an attribute must convert exactly the member type. For an
-`AccountType?` property, `ItemTemplate.Visibility` uses
-`NullableAccountTypeTomlConverter`, not `AccountTypeTomlConverter`. An unset
-nullable value is left out of the file.
+A converter named by an attribute must convert exactly the member type: an `int?`
+property needs a converter for `int?`, not for `int`. Registered converters and the
+built-in enum converter have no such limit: they also cover the nullable form, and
+an unset nullable value is left out of the file.
 
 **Explicit options get nothing.** `Deserialize`, `Serialize` and the file overloads
 take an optional `TomlSerializerOptions`. Without it, the call uses the default
-options: snake_case names plus the registered converters. With it, the call uses
+options: snake_case names, the registered converters and the enum converter. With it, the call uses
 the options exactly as given: registered converters are never added to them.
 Converters declared with an attribute still apply, because they belong to the type.
 
@@ -84,14 +88,11 @@ The reasons quoted on this page are that last part.
 | `HueSpec` | bare integer, or a quoted hue or range | `hue = "0x047E-0x04B0"` | `HueSpecTomlConverter` | registration |
 | `EnumValueSpec<TEnum>` | quoted member name or `random_of` spec | `rarity = "random_of:rare,epic"` | `EnumValueSpecTomlConverterFactory` | registration |
 | `RangeValueSpec<T>` | bare number, or a quoted `"min-max"` | `amount = "5-10"` | `RangeValueSpecTomlConverterFactory` | registration |
-| `AccountType` | `"regular"`, `"game_master"` or `"administrator"` | `minimum_account_type = "game_master"` | `AccountTypeTomlConverter` | attribute on the property |
-| `AccountType?` | the same, or no key | `visibility = "game_master"` | `NullableAccountTypeTomlConverter` | attribute on the property |
-| `ServerMode` | `"login"`, `"game"` or `"standalone"` | `mode = "standalone"` | `ServerModeTomlConverter` | attribute on the property |
+| Any enum | its snake_case name; flags joined by `\|` | `visibility = "game_master"`, `mode = "standalone"` | `EnumTomlConverterFactory` | built in |
 
-The converters of the first group are in `Moongate.Core/Serialization/Toml`.
-`AccountType` converters are in `Moongate.Server.Core/Serialization/Toml`,
-`ServerModeTomlConverter` is internal to `Moongate.Server`, and
-`RegionAreaContentTomlConverter` is in `Moongate.Server.Ultima/Serialization/Toml`.
+The converters of the first group and the enum converter are in
+`Moongate.Core/Serialization/Toml`; `RegionAreaContentTomlConverter` is in
+`Moongate.Server.Ultima/Serialization/Toml`.
 
 ## Serial
 
@@ -329,76 +330,55 @@ Errors:
 Used by: `amount` in loot templates. See
 [Fields that resolve to a fresh number](templates.md#fields-that-resolve-to-a-fresh-number).
 
-## AccountType
+## Enums
 
-`AccountTypeTomlConverter` reads and writes an `AccountType` as its snake_case name.
-
-Accepted forms:
-
-```toml
-minimum_account_type = "regular"
-minimum_account_type = "game_master"
-minimum_account_type = "administrator"
-```
-
-Case is ignored (`"Game_Master"` works), but the underscore is required:
-`"gamemaster"` and `"gm"` are rejected.
-
-Written form: the lowercase name.
-
-Errors: any other text, a number such as `1`, or any value that is not a string
-gives `Account type must be regular, game_master, or administrator.`
-
-`NullableAccountTypeTomlConverter` wraps it for an `AccountType?` property. It reads
-the same forms; a missing key leaves the value unset, and an unset value is not
-written, so an item template that sets no `visibility` inherits it through
-`base_id`.
-
-Used by: `realm_directory.minimum_account_type` in `moongate.toml`
-(`AccountTypeTomlConverter`), and `visibility` in item templates
-(`NullableAccountTypeTomlConverter`). Both are declared with an attribute on the
-property.
-
-## ServerMode
-
-`ServerModeTomlConverter` reads and writes the `mode` key of `moongate.toml`.
-
-Accepted forms:
+Every enum is written as its snake_case name and read back from it, through
+`EnumTomlConverterFactory`, which `TomlUtils` always includes in its default
+options. The rules live in `EnumNameUtils`, which `EnumValueSpec` shares.
 
 ```toml
-mode = "login"
-mode = "game"
-mode = "standalone"
+minimum_account_type = "game_master"   # AccountType.GameMaster
+map = "ter_mur"                        # MapType.TerMur
+music = "mountn_a"                     # MusicType.Mountn_a
 ```
 
-Case is ignored. Written form: the lowercase name.
+- **Reading** ignores case and underscores: `"game_master"`, `"GameMaster"` and
+  `"gamemaster"` are the same, and `"termur"` reads `MapType.TerMur`.
+- **Writing** uses the lowercase snake_case name, which always reads back.
+- **Numbers:** a bare integer is read only when a member has exactly that value, for
+  data keyed by number such as `id = 0` in `skills.toml`; it is written back as the
+  name. A number inside a string, such as `"1"`, is never accepted.
+
+**Flags.** A `[Flags]` enum writes a value that has its own name as that name, and
+any other combination as names joined by `|`; reading combines the names:
+
+```toml
+mode = "standalone"              # ServerMode.Login | ServerMode.Game has its own name
+mode = "login|game"              # reads the same value
+flags = "impassable|surface"     # TileFlagType.Impassable | TileFlagType.Surface
+```
+
+Spaces around the names are ignored. A combination is split into the largest named
+parts, so `DirectionType.SouthEast | DirectionType.Running` is written as
+`"running|south_east"`, not as single bits. Zero is written as the name of the zero
+member when there is one (`"none"`), and as an empty string otherwise; an empty string
+reads as zero for a flags enum only. A plain enum rejects `|`.
 
 Errors:
 
 | Value | Result |
 | --- | --- |
-| `mode = 1` | `Server mode must be a string: login, game, or standalone.` |
-| `mode = "both"` | `Server mode must be login, game, or standalone.` |
+| `minimum_account_type = "gm"` | `'gm' is not a AccountType; use one of regular, game_master, administrator.` |
+| `minimum_account_type = "1"` | the same message, naming `1` |
+| `minimum_account_type = 7` | `7 is not a AccountType value; write its name.` |
+| `minimum_account_type = true` | `Expected a AccountType name as a string, such as "regular".` |
 
-`ServerMode.None` has no TOML form; writing it fails with the second message.
+A value is still checked by the code that loads it: `mode = "none"` reads, then the
+configuration rejects `ServerMode.None`.
 
-Used by: `mode` in `moongate.toml`, declared with an attribute on
-`MoongateServerConfig.Mode`. See [Server configuration](server-configuration.md).
-
-## Plain enums
-
-An enum field with no converter uses Tomlyn's built-in enum handling:
-
-- **Reading** takes the member name as a string and ignores case: `map = "felucca"`,
-  `map = "TerMur"` and `map = "termur"` all work. An unknown name fails with
-  ``Invalid enum name `nowhere` for type 'MapType'.``
-- **Writing** emits the member's number: `MapType.TerMur` is written as `map = 5`, not
-  as a name.
-
-Files that people write and the server only reads, such as `maps.toml` and the
-region files, can use plain enums. A field that code writes back, such as those in
-`moongate.toml`, which the server creates and saves, needs a converter so the
-file keeps a readable name. That is why `AccountType` and `ServerMode` have one.
+Used by: `mode` and `realm_directory.minimum_account_type` in `moongate.toml`,
+`visibility` in item templates, and the enum keys of the [shard data files](data-files.md),
+such as `map`, `season`, `music` and `skill`.
 
 ## Write a converter
 
