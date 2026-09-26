@@ -18,13 +18,24 @@ Directions are relative to the server. This is the default table, not the whole 
 | `0x80` | `AccountLoginPacket` | Incoming | Fixed 62 | Login: async account check, then `0xA8` list or `0x82` denial |
 | `0x82` | `LoginDeniedPacket` | Outgoing | Fixed 2 | — |
 | `0x8C` | `ServerRedirectPacket` | Outgoing | Fixed 11 | Login: sent after a valid `0xA0`, before closing the login connection |
-| `0x91` | `GameLoginPacket` | Incoming | Fixed 65 | Game: validates and consumes the one-use handoff ticket |
+| `0x91` | `GameLoginPacket` | Incoming | Fixed 65 | Game: validates and consumes the one-use handoff ticket, then sends `0xB9` and `0xA9` |
 | `0xA0` | `ServerSelectPacket` | Incoming | Fixed 3 | Login: checks realm eligibility, issues ticket and redirects |
 | `0xA8` | `ServerListPacket` | Outgoing | Variable, minimum 6 | — |
-| `0xB9` | `SupportFeaturesPacket` | Outgoing | Fixed 5 | — |
-| `0xBD` | `ClientVersionPacket` | Incoming | Variable, minimum 4 | `ClientVersionPacketHandler` |
+| `0xB9` | `SupportFeaturesPacket` | Outgoing | Fixed 5 | Game: sent after a valid `0x91` |
+| `0xBD` | `ClientVersionPacket` | Incoming | Variable, minimum 4 | `ClientVersionPacketHandler`: records the client version on the session |
 | `0xBD` | `ClientVersionRequestPacket` | Outgoing | Fixed 3 | — |
-| `0xEF` | `LoginSeedPacket` | Incoming | Fixed 21 | `LoginSeedPacketHandler` |
+| `0xEF` | `LoginSeedPacket` | Incoming | Fixed 21 | `LoginSeedPacketHandler`; on login listeners it also records the client version, which the handoff ticket carries to the game session |
+
+The Ultima plugin adds these packets in game and standalone modes, with
+`RegisterIncomingPacket` for the incoming ones (see
+[Host integration](#host-integration)):
+
+| Opcode | Class | Direction | Length | Handler |
+| --- | --- | --- | --- | --- |
+| `0x8D` | `CreateCharacterEnhancedPacket` | Incoming | Variable | None yet: decoded only |
+| `0xA9` | `CharacterListPacket` | Outgoing | Variable, minimum 6 | — |
+| `0xD9` | `ClientHardwareInfoPacket` | Incoming | Fixed 268 | None yet: decoded only |
+| `0xF8` | `CreateCharacterPacket` | Incoming | Fixed 106 | None yet: decoded only |
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
@@ -35,8 +46,13 @@ the client sends that key as a raw four-byte seed, followed by `0x91` with the
 same key, username and password. The game checks the seed and atomically consumes
 the Redis ticket. The ticket expires 30 seconds after it is issued, so the game
 reconnect must complete within that time. A direct `0xEF` client-version seed
-still works on game listeners. Character selection and world entry are separate
-future work.
+still works on game listeners.
+
+After a valid `0x91` the game server copies the client version from the ticket to
+the session, turns on Huffman compression for everything it sends from then on,
+and sends `0xB9` followed by `0xA9`: seven empty character slots and the starting
+cities from `data/starting_cities.toml`. Creating, selecting and entering the
+world with a character are future work.
 
 `TryGetDescriptor(opCode, out descriptor)` prefers incoming, then outgoing;
 `descriptor.PacketType.Name` gives its class name. The overload accepting
@@ -230,13 +246,20 @@ Admission stays nonblocking. Disconnect and server shutdown cancel the
 handler token; observe it in every awaited I/O call. Exceptions are logged
 without packet payloads and do not stop the game loop.
 
-**Host integration requires both registrations.** `PacketRegistry.Default` is
-already frozen. The current host creates its UO framer and default game decoder
-with that registry. Registering only a handler in a plugin does not add a new
-opcode to the wire table. For a new built-in packet, extend `PacketTable` in the
-source and register its handler in host composition. A custom host may supply its
-own completed registry consistently to framing and decoding; changing just one
-side is insufficient.
+### Host integration
+
+**A new incoming packet needs two registrations.** The handler registration does
+not add the opcode to the wire table. Add the packet type too:
+
+```csharp
+container.RegisterIncomingPacket<ExamplePacket>();
+container.RegisterPacketHandler<ExamplePacket, ExamplePacketHandler>();
+```
+
+At startup the host builds one registry from `PacketTable` plus every
+`RegisterIncomingPacket` call, freezes it, and gives it to the framers, the login
+and game listeners and the dispatcher. Outgoing packets need no registration to be
+sent. A packet registered without a handler is decoded, logged at debug level and ignored.
 
 The host also registers LoginSeed and an async AccountLogin handler. The latter
 checks credentials against `IAccountService`, sends `0x82` for denied login or

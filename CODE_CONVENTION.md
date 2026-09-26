@@ -248,6 +248,9 @@ tests/Moongate.Tests/TestSupport/Persistence/WorldSaveFixture.cs    → namespac
 
 Integration, contract and performance tests go in their own folder rather than beside unit tests:
 `tests/Moongate.Tests/Integration/<Domain>/`. Nothing lives in the test project root.
+A test that needs PostgreSQL or Redis must sit in an `Integration`, `Performance` or `Stress`
+namespace, or carry the matching `Category` trait: `scripts/test.sh fast` leaves tests out by
+that rule only, so a database test placed elsewhere breaks the fast suite.
 
 ### 12.2 Naming
 

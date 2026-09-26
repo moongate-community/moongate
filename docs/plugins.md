@@ -171,6 +171,7 @@ runnable walk-through from entity class to applied migration.
 | `AddMoongateService<TService, TImpl>(priority)` / `AddMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order. Further overloads accept factories and runtime types | this page |
 | `RegisterCommand<TExecutor>(name, description, source, minimumAccountType)` | One console/in-game command executor, as a singleton | [Console commands](#console-commands) |
 | `RegisterPacketHandler<TPacket, THandler>()` | One packet handler singleton bound to an incoming packet type | this page |
+| `RegisterIncomingPacket<TPacket>()` | An incoming packet type added to the packet registry the host builds at startup, so the server can frame and decode its opcode | [Packets and handlers](packets.md#host-integration) |
 | `RegisterAsyncPacketHandler<TPacket, THandler>()` | One async packet handler singleton for I/O; results return to the game loop through `PacketContext` | [Packets and handlers](packets.md#register-a-game-handler) |
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
 | `AddScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Writing a Lua module](lua-modules.md) |
@@ -204,8 +205,9 @@ this startup-service list is resolved, regardless of a plugin service's priority
 
 `RegisterPacketHandler<TPacket, THandler>()` binds one `IPacketHandler<TPacket>`
 singleton to one incoming packet type, called synchronously on the game loop thread;
-a second handler for the same type throws before startup. The [packet guide](packets.md)
-explains why handler registration alone cannot add an opcode to the wire registry.
+a second handler for the same type throws before startup. A packet the plugin defines
+also needs `RegisterIncomingPacket<TPacket>()`, because handler registration alone does
+not add its opcode to the wire registry; see [Host integration](packets.md#host-integration).
 
 `OnEvent<TEvent>(handler)` subscribes to the container-owned event bus from
 `Register`; the handler is awaited for every published `TEvent` as long as the

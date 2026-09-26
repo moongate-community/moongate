@@ -6,7 +6,7 @@ Moongate publishes Linux images to [GitHub Container Registry](https://github.co
 docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 ```
 
-The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships `mgboot`, the migration runner, the core SQL and `mg-uoxconv`. The `sample-plugin` build target adds the sample plugin bundle.
+The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships `mgboot`, the migration runner, the core SQL, the [shard data files](data-files.md) and `mg-uoxconv`. The `sample-plugin` build target adds the sample plugin bundle.
 
 ## Build cache
 
@@ -14,7 +14,7 @@ The Dockerfile restores dependencies before copying source files, then publishes
 executable with `--no-restore`. Restore and publish use the same configuration, target architecture
 and self-contained setting. There is no separate server build before publication.
 
-The build context includes source, core migrations, build settings, licenses and the sample plugin.
+The build context includes source, core migrations, the shard data files (`moongate_root/data`), build settings, licenses and the sample plugin.
 Documentation, tests, the website, local `bin`/`obj` directories and environment files are excluded.
 Sample plugin source is copied only into its own build target. When adding a new image input,
 update `.dockerignore` and the relevant `COPY` instructions together.
@@ -75,7 +75,7 @@ handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
 Supply the four referenced variables from a secret provider in the container environment. PostgreSQL variables are `postgres://` URIs for role-specific databases. The Redis variable is a StackExchange.Redis connection string such as `redis:6379,password=<secret>` on a private Docker network; the handoff secret is a different value. Do not commit either value into TOML, Compose or `.env`. The [configuration reference](server-configuration.md) covers the other settings.
 
-Prepare a root before starting, then apply Auth and World SQL to their respective databases:
+Prepare a root before starting (this also copies the shard data files into `/data/data`), then apply Auth and World SQL to their respective databases:
 
 ```sh
 docker volume create moongate-data
@@ -95,6 +95,8 @@ Mount that same volume for the server and migration runner. Stop the affected ru
 ## Ports, storage and updates
 
 The current image declares UO client ports 2593 and 2595. `EXPOSE` does not publish a host port; configure `ports` for the login and each game listener that clients must reach. Keep Redis and PostgreSQL on a private network. Each running Moongate process needs its own `/data` volume; each realm needs its own Realm database. Do not share one root or Realm database between running game processes.
+
+After pulling a newer image, run `mgboot` on the volume again, as above: it adds the data files and core SQL the new release introduces and keeps the files already in the root. The Compose example does this in its entrypoint on every start.
 
 `docker compose down` preserves named volumes. Adding `--volumes` deletes server roots and PostgreSQL data; use it only for a disposable environment. World saves are not PostgreSQL backups. Stop services normally so the final world save can complete.
 

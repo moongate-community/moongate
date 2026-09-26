@@ -16,6 +16,8 @@ from UOX3 data. **No loader reads them yet:** `IDataLoader<ItemTemplate>` and
 `IDataLoader<LootTemplate>` have not been written or registered, so template files
 under `templates/` are not loaded by the current server. This page documents the
 mechanism a loader plugs into; the item and loot guides follow once a loader exists.
+The same contract already loads the files under `data/`, such as maps, races and
+regions: see [Shard data files](data-files.md) for working loaders.
 See [Implementation status](implementation-status.md).
 
 ## The loader contract
@@ -154,6 +156,8 @@ type is ignored. Registration is global and process-wide. Register once, at star
 TomlUtils.AddTomlConverter(new SerialTomlConverter());
 TomlUtils.AddTomlConverter(new Point2DTomlConverter());
 TomlUtils.AddTomlConverter(new Point3DTomlConverter());
+TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
+TomlUtils.AddTomlConverter(new Rectangle2DTomlConverter());
 TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
 TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
 ```

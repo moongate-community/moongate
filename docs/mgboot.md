@@ -83,6 +83,7 @@ Distribute only `admin.crt`; clients must verify trust and hostname.
 | `logs/`, `plugins/`, `scripts/` | Standard server directories |
 | `migrations/auth/` | The core auth SQL files included in the distribution |
 | `migrations/world/` | World migration directory; initially empty if no core World SQL is shipped |
+| `data/` | The shard data files included in the distribution: maps, regions, races, skills, messages and the rest; see [Shard data files](data-files.md) |
 | `.mgboot.lock` | Retained file used to prevent simultaneous initialization |
 
 The new config sets `persistence.migrations_directory` to the absolute `migrations`
@@ -92,6 +93,11 @@ migration runner use the same catalog. Other values remain the server defaults: 
 generation and automatic schema synchronization are disabled. Runtime Redis
 credentials must be supplied before starting the server.
 The root does not need database access or Ultima Online client files to be prepared.
+
+Data files are copied only when missing, so a file you edited stays as it is. Run
+`mgboot` again after upgrading to add the data files a new release introduces; a
+file that exists in the root is never replaced, so compare it with the one beside
+the new `Moongate.Server` binary (`data/`) to pick up upstream changes.
 
 Base migration preparation copies the versioned SQL distributed with Moongate.
 It does not generate new SQL from entities, load plugins, create databases or apply

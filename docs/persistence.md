@@ -68,6 +68,9 @@ Mapping rules:
 - Ordinary public scalar properties are mapped by FreeSql. Every complex property
   needs an explicit supported mapping, a navigation mapping, or `IsIgnore`; an
   unannotated object graph is not serialized or cascaded.
+- `DateTime` columns are `timestamp` without time zone. Moongate converts local values
+  to UTC before writing and reads every value back as `DateTimeKind.Utc`.
+- `Hue` properties map to an `integer` column automatically.
 - The mapping belongs to the CLR type and must be identical in every owner. A module
   selects ownership and database target; it cannot remap the type, and no code may
   reconfigure a persistence type through another raw FreeSql instance.

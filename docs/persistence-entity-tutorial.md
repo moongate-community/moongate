@@ -296,14 +296,14 @@ migrations_directory = "${MOONGATE_ROOT}/migrations"
 ```
 
 Set `MOONGATE_ROOT` to your server data root, or use an absolute source directory.
-The shipped core auth migrations (`0001` to `0003`) must already be applied, which
-is why the generated files below start at `0004`. For a new custom entity
+The shipped core auth migrations (`0001` to `0004`) must already be applied, which
+is why the generated files below start at `0005`. For a new custom entity
 registered with `AddPersistenceAuth<CustomAuthEntity>()`:
 
 1. Start the server with the new entity registered. Startup writes
-   `migrations/auth/0004_auto_schema.sql`, applies it and records its checksum.
+   `migrations/auth/0005_auto_schema.sql`, applies it and records its checksum.
 2. Stop the server and add `public DateTime? LastLoginAt { get; set; }` to the entity.
-3. Start again. Startup writes and applies `0005_auto_schema.sql`; existing rows
+3. Start again. Startup writes and applies `0006_auto_schema.sql`; existing rows
    receive a null `last_login_at` value.
 4. Restart without changing the entity: no new migration is generated.
 5. Commit both generated SQL files and the entity code. Numbers always continue

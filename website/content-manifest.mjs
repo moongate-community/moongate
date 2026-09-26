@@ -23,6 +23,7 @@ export const contentEntries = [
   { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Scripting and content' },
   { source: 'docs/templates.md', slug: 'server/templates', title: 'Loading TOML templates', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },
+  { source: 'docs/data-files.md', slug: 'server/data-files', title: 'Shard data files', group: 'Scripting and content' },
   { source: 'docs/uox3-migration.md', slug: 'server/uox3-migration', title: 'Migrate from UOX3', group: 'Scripting and content' },
 
   // Extend with C#: plugins and the subsystems they plug into.

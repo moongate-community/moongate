@@ -58,7 +58,8 @@ use the documentation published for that version.
    ```
 
    This writes `config/moongate.toml` with the defaults, creates `logs/`, `plugins/`
-   and `scripts/`, and copies the release's core SQL into `migrations/`. It needs no
+   and `scripts/`, copies the release's core SQL into `migrations/` and its shard
+   data files into `data/`. It needs no
    database and no client files. [Prepare a root with mgboot](mgboot.md) describes
    what happens on a root that already exists.
 
@@ -173,6 +174,8 @@ All server-managed paths below are relative to `--root-directory`:
 | `config/moongate.toml` | Created if missing; normal startup preserves it, while explicit certificate setup updates four `[admin_api]` settings |
 | `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgboot` administration TLS identity: private server PFX and public PEM for client trust |
 | `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgboot` (releases after 0.6.0); plugins ship their own under `plugins/` |
+| `data/` | Shard data files copied by `mgboot`, read at game and standalone startup; see [Shard data files](data-files.md) |
+| `templates/items/`, `templates/loots/`, `templates/mobiles/` | Created at game and standalone startup for [templates](templates.md); nothing reads them yet |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `plugins/` | One assembly bundle per plugin directory |
 | `scripts/` | Lua source and generated editor definitions |
@@ -206,4 +209,6 @@ for schema operations and world saves see
 | PostgreSQL schema changes required | An entity needs DDL that no migration provides. Generate and review a versioned SQL file with `--persistence-schema generate`, then apply it with the runner while the server is stopped |
 | Port binding failure | Check `network.listen_address`, port availability and interface addresses |
 | Another instance detected | Check the PID and running process; use a separate root for another server |
+| `... file ... not found` for a data file, such as `maps.toml` | The root has no `data/`. Run `mgboot` on the root again: it adds the missing files and keeps the others |
+| `InvalidDataException` naming a data file | Fix the entry the message names; see the validation rules in [Shard data files](data-files.md) |
 | Script startup error | Fix `scripts/init.lua`; inspect the script filename and line in the log |

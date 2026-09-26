@@ -152,10 +152,11 @@ There is no automatic reverse migration and no database backup facility.
 
 ## The core auth catalog
 
-The core auth catalog contains `0001_account_id_sequence.sql`, `0002_accounts.sql`
-and `0003_account_serial_ownership.sql`. The third attaches the existing
-`auth.account_id_seq` to `auth.accounts.id` without resetting its value; a
-development-generated sequence that is already attached is retained. Existing
+The core auth catalog contains `0001_account_id_sequence.sql`, `0002_accounts.sql`,
+`0003_account_serial_ownership.sql` and `0004_account_admin_api_access.sql`. The third
+attaches the existing `auth.account_id_seq` to `auth.accounts.id` without resetting
+its value; a development-generated sequence that is already attached is retained.
+The fourth adds the `can_access_api` column, `false` for every existing account. Existing
 duplicate usernames, or null usernames or password hashes, must be resolved before
 the constraint migration can apply; no account is silently deleted. The core world
 catalog has no files yet. The sample plugin ships `world/0001_create_notes.sql`.
