@@ -1,4 +1,5 @@
 using Moongate.Server.Admin.Data.Config;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config.Sections;
 using Moongate.Server.Serialization.Config.Internal;
@@ -33,6 +34,8 @@ public class MoongateServerConfig
     public DiagnosticConfig Diagnostics { get; set; } = new();
 
     public ScriptingConfig Scripting { get; set; } = new();
+
+    public LocalizationConfig Localization { get; set; } = new();
 
     /// <summary>
     ///     Validates configuration before server services begin startup.
@@ -99,5 +102,12 @@ public class MoongateServerConfig
         }
 
         Scripting.Validate();
+
+        if (Localization is null)
+        {
+            throw new InvalidOperationException("The localization configuration section cannot be null.");
+        }
+
+        Localization.Validate();
     }
 }

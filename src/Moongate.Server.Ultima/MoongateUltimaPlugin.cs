@@ -15,6 +15,7 @@ using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
@@ -97,12 +98,15 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<BodiesLoader, BodyContent>(7);
             container.AddUltimaDataLoader<WeatherLoader, WeatherContent>(8);
             container.AddUltimaDataLoader<RegionsLoader, RegionContent>(9);
+            container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
             container.RegisterIncomingPacket<ClientHardwareInfoPacket>();
             container.RegisterIncomingPacket<CreateCharacterPacket>();
             container.RegisterIncomingPacket<CreateCharacterEnhancedPacket>();
+
+            container.Register<ILocalizationService, LocalizationService>(Reuse.Singleton);
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);

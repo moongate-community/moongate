@@ -205,6 +205,7 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(serverArgs);
                     services.RegisterInstance(serverConfig);
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
+                    services.RegisterInstance(serverConfig.Localization);
                     services.RegisterInstance(TimeProvider.System);
                     services.RegisterMoongatePersistence(
                             serverConfig.Persistence.ToOptions(

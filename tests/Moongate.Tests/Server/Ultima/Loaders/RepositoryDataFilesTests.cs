@@ -6,7 +6,9 @@ using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
@@ -47,6 +49,8 @@ public sealed class RepositoryDataFilesTests
         container.AddUltimaDataLoader<BodiesLoader, BodyContent>(7);
         container.AddUltimaDataLoader<WeatherLoader, WeatherContent>(8);
         container.AddUltimaDataLoader<RegionsLoader, RegionContent>(9);
+        container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
+        container.RegisterInstance(new LocalizationConfig { Language = "ita" });
         container.Register<IDataLoaderService, DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<IDataLoaderService>();
 
@@ -60,6 +64,11 @@ public sealed class RepositoryDataFilesTests
         Assert.NotEmpty(Assert.Single(service.GetEntities<BannedNamesContent>()).Words);
         Assert.Single(service.GetEntities<ContainerContent>(), entry => entry.Default);
         Assert.Equal(1045, service.GetEntities<BodyContent>().Count);
+
+        var messages = service.GetEntities<MessageContent>();
+        Assert.Equal(5462, messages.Count);
+        Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
+        Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
 
         var regions = service.GetEntities<RegionContent>();
         Assert.Equal(388, regions.Count);
@@ -98,6 +107,21 @@ public sealed class RepositoryDataFilesTests
             region => region.Map == MapType.Malas && region.Priority == 0 && region.Contains(1190, 450, -70) && !region.RecallOut &&
                       region.Areas.Any(area => area.Z2 == -80)
         );
+    }
+
+    [Theory,
+     InlineData("eng"), InlineData("ita"), InlineData("ger"), InlineData("fre"),
+     InlineData("spa"), InlineData("por"), InlineData("pol"), InlineData("cze")]
+    public async Task ShippedMessageFiles_LoadForEveryLanguage(string language)
+    {
+        var loader = new MessagesLoader(
+            new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data"]),
+            new LocalizationConfig { Language = language }
+        );
+
+        await loader.InitializeAsync();
+
+        Assert.Equal(5462, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     private static string FindRepositoryRoot()
