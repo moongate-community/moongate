@@ -60,7 +60,8 @@ resolve the chain once it exists. A parent block with no `id=` of its own, such 
 `[base_coin]`, is not converted on its own: the converter inlines its lines into every
 child that `get=` it, as UOX3 does, with the child's own lines winning. A coin so gets
 `weight = 0.02` and `stackable = true`, and its `base_id` is the first ancestor that has
-an `id=` (`base_item`). An inherited `name=` also counts towards a `0x…` block's id.
+an `id=` (`base_item`). An inherited `name=` becomes the template's name but never part
+of its id: ids come from each block's own lines only.
 
 ## Loot tables
 

@@ -249,6 +249,34 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_AnInheritedName_IsTheTemplateNameButNotPartOfTheId()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [base_sleeves]
+            {
+            name=studded sleeves
+            }
+
+            [0x13dc]
+            {
+            get=base_sleeves
+            id=0x13dc
+            }
+            """
+        );
+
+        var exitCode = Run();
+
+        Assert.True(exitCode == 0, CombinedOutput);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
+        var item = Assert.Single(file!.Item);
+        Assert.Equal("0x13dc", item.Id);
+        Assert.Equal("studded sleeves", item.Name);
+    }
+
+    [Fact]
     public void Run_AGetCycleBetweenBlocksWithNoId_StopsWithoutLooping()
     {
         _dirs.WriteSource(

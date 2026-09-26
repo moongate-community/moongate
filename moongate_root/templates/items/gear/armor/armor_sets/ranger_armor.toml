@@ -1,26 +1,26 @@
 [[item]]
-id = "0x13dc_ranger_studded_sleeves,_ranger_armor"
+id = "0x13dc_ranger"
 item_id = 5084
 name = "studded sleeves, ranger armor"
 rarity = "common"
 hue = 1436
 
 [[item]]
-id = "0x13dd_ranger_studded_gloves,_ranger_armor"
+id = "0x13dd_ranger"
 item_id = 5085
 name = "studded gloves, ranger armor"
 rarity = "common"
 hue = 1436
 
 [[item]]
-id = "0x13e1_ranger_studded_leggings,_ranger_armor"
+id = "0x13e1_ranger"
 item_id = 5089
 name = "studded leggings, ranger armor"
 rarity = "common"
 hue = 1436
 
 [[item]]
-id = "0x13e2_ranger_studded_tunic,_ranger_armor"
+id = "0x13e2_ranger"
 item_id = 5090
 name = "studded tunic, ranger armor"
 rarity = "common"

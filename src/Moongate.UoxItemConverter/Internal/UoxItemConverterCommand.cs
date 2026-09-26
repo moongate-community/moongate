@@ -70,7 +70,8 @@ internal static class UoxItemConverterCommand
             }
         }
 
-        // Inlined before any Id is computed: an inherited name= can be part of a bare-hex block's Id.
+        // Inlined for the fields only: Ids below come from each block's own lines, so an inherited name= never
+        // renames a bare-hex block.
         foreach (var blocks in blocksByFile.Values)
         {
             for (var i = 0; i < blocks.Count; i++)
@@ -94,7 +95,7 @@ internal static class UoxItemConverterCommand
         var lootIdByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var knownLootIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
 
-        foreach (var block in flatByHeader.Values)
+        foreach (var block in blocksByHeader.Values)
         {
             if (convertLoot && LootTemplateBuilder.TryGetLootId(block.Header, out var lootId))
             {

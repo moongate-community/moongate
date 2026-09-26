@@ -48,7 +48,8 @@ internal static class ItemTemplateBuilder
 
     public static ItemTemplate? Build(DfnBlock block, IReadOnlyDictionary<string, string> idByHeader)
     {
-        if (!TryComputeId(block, out var id, out var itemId))
+        // The Id is the one precomputed from the block's own lines, not from inlined get= lines.
+        if (!TryComputeId(block, out _, out var itemId) || !idByHeader.TryGetValue(block.Header, out var id))
         {
             return null;
         }
