@@ -67,6 +67,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         TomlUtils.AddTomlConverter(new Rectangle2DTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
+        TomlUtils.AddTomlConverter(new DiceSpecTomlConverter());
 
         var mode = container.IsRegistered<ServerMode>() ? container.Resolve<ServerMode>() : ServerMode.Standalone;
 
