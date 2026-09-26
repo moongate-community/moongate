@@ -1,7 +1,8 @@
 # Migrate from UOX3
 
 `mg-uoxconv` converts [UOX3](https://github.com/UOX3DevTeam/UOX3) `.dfn` item
-definitions and loot lists into Moongate's `ItemTemplate` and `LootTemplate` TOML.
+definitions and loot lists into Moongate's `ItemTemplate` and `LootTemplate` TOML, and
+UOX3 NPCs and name lists into `MobileTemplate` TOML and `names.toml`.
 The shapes it writes are described in [Loading TOML templates](templates.md#the-template-shapes);
 no loader reads them yet, so the output is content prepared for that loader.
 
@@ -11,7 +12,8 @@ From a source checkout:
 
 ```sh
 dotnet run --project src/Moongate.UoxItemConverter -- \
-  --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
+  --source <file-or-directory> --destination <dir> [--loot-destination <dir>] \
+  [--mobile-source <dfndata> --mobile-destination <dir> --names-destination <file>]
 ```
 
 Docker images after 0.6.0 bundle the same tool at `/app/mg-uoxconv`; see
@@ -23,12 +25,14 @@ example when there is no local .NET SDK.
 same relative path, holding one `[[item]]` per block that has an `id=` of its own.
 `--loot-destination` is optional; without it, `LOOTLIST` blocks are skipped. A bare
 invocation prints the help and exits `0`; a missing required argument exits `1`.
+The three mobile arguments go together (see [Mobiles and name lists](#mobiles-and-name-lists)).
 
 Every block from every source file is read before any `get=` chain is resolved,
 because a chain's target can live in another file: UOX3's own data keeps a sword's
 facing variants beside its base definition but a shared `base_item` elsewhere. A
 trailing `//comment` is stripped from every line first, as the UOX3 engine does;
 real data glues one straight onto a block's opening brace (`{//approximately 1%`).
+Text after the opening brace (`{ Random Hair`) is a label, not a line of the block.
 
 ## What maps
 
@@ -93,6 +97,58 @@ maps onto `LootEntry.Amount`, a `RangeValueSpec<int>`.
 `ITEMLIST=`, UOX3's "spawn every entry" sibling, is a different mechanic, not a
 weighted pick, and never appears in real `lootlists.dfn` data; it is dropped, as is
 any entry the converter cannot resolve.
+
+## Mobiles and name lists
+
+With `--mobile-source` set to UOX3's `dfndata` folder, the same run converts, after the
+items:
+
+- every block under `npc/` (not `npc/npclists`) into a `[[mobile]]` template, one file
+  per source file under `--mobile-destination`, id = the header in snake_case;
+- the twenty `[RANDOMNAME n]` lists of `npc/namelists.dfn` into `--names-destination`.
+
+It also reads `creatures/creatures.dfn` (sounds), `colors/colors.dfn` (colour lists) and
+`../dictionaries/dictionary.ENG` (numeric names and titles). Equipment and loot are
+resolved against the items and loot tables of the same run.
+
+Every npc block is converted, so inheritance stays a `base_id` instead of being copied
+in: `GET=x` and `GETLBR=x` become `base_id = "x"`. LBR is UOX3's default era; the other
+era tags (`GETUO`, `GETAOS`, …) are ignored, although the blocks they name are converted
+too.
+
+| UOX3 | Template | Note |
+| --- | --- | --- |
+| `ID=0x0190` / `0x0191` | `race = "human"`, `gender` | elf 0x25D/0x25E and gargoyle 0x29A/0x29B likewise; the race gives the body |
+| `ID=` other | `body` | |
+| `RACE=0/1/2` | `race` human / elf / gargoyle | UOX3's other races are dropped |
+| `NAME=`, `TITLE=` | `name`, `title` | a number is a dictionary id; `#` takes the line's `//` comment |
+| `NAMELIST=n` | `name_list` | 1 `male`, 2 `female`, 3 `orc`, 5 `daemon`, … |
+| `STR`, `DEX`, `INT` | `strength`, … | `96 120` becomes the die `1d25+95`; one value a constant |
+| `HPMAX` (else `HP`), `MANAMAX`, `STAMINAMAX` | `hits`, `mana`, `stamina` | dice |
+| `DAMAGE`, `DEF` | `damage`, `armor` | dice |
+| `RESISTFIRE/COLD/POISON/LIGHTNING`, `ELEMENTRESIST` | `resistances` | lightning is energy |
+| skill tags (`MAGERY=500 700`) | `[mobile.skills]` | tenths to points, capped at 120; `MAGICRESISTANCE` is `resisting_spells` |
+| `KARMA`, `FAME`, `GOLD` | `karma`, `fame`, `gold` | dice |
+| `FLAG=INNOCENT/NEUTRAL/EVIL` | `notoriety` innocent / attackable / murderer | |
+| `EQUIPITEM=x`, `EQUIPITEM=listobjectN` | `[[mobile.equipment]]` | a list gives every item of `[ITEMLIST N]`, one picked at random; its weights and `blank` lines are dropped; the hair and beard lists 13–15 are skipped |
+| `COLOR`, `COLORLIST` after an `EQUIPITEM` | that entry's `hue` | a colour list only when it is one unbroken run of hues |
+| `LOOT=list,n` | `loot` | the loot table, n times |
+| `CUSTOMINTTAG`, `CUSTOMSTRINGTAG` | `tags` | |
+| `[CREATURE id]` sounds | `[mobile.sounds]` | on the template whose own block sets the body |
+
+`GET=m_guard f_guard`, a male and a female of the same race, becomes one `guard` with
+`gender = "random"`, `name_list = "{gender}"` and the equipment only one of them wears
+filtered by `gender`. A field the two set differently takes the male value and is
+reported; in UOX3's data that is mostly the death sound of humans. Any other two-target
+`GET` (`graydragon reddragon`) is skipped.
+
+Dropped, no home yet: AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
+taming and bard skills (`TOTAME`, `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), shops
+(`SHOPKEEPER`, `SHOPLIST`), `PACKITEM`, `CARVE`, `FOOD`, `PRIV`, `SCRIPT` and the other
+tags without a field. The run prints how often each kind of value was dropped.
+
+The written mobiles are read back as well: ids unique, every `base_id`, equipment item,
+loot table and name list resolves, and every template passes `MobileTemplate.Validate()`.
 
 ## Verifying the output
 

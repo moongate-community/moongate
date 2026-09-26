@@ -383,7 +383,33 @@ internal static class MobileTemplateBuilder
                 return null;
             }
 
-            headers = list.Entries.Select(line => line.Split(' ', 2)[0].Trim()).ToList();
+            // Lines are "weight|item" or "item"; "blank" is a chance of nothing. Items is an even pick, so the weights
+            // and the blanks are dropped.
+            headers = [];
+
+            foreach (var line in list.Entries)
+            {
+                var item = line.Split(' ', 2)[0].Trim();
+                var bar = item.IndexOf('|');
+
+                if (bar >= 0)
+                {
+                    item = item[(bar + 1)..];
+                    context.Report.Count("item list weight or blank dropped");
+                }
+
+                if (item.Equals("blank", StringComparison.OrdinalIgnoreCase))
+                {
+                    if (bar < 0)
+                    {
+                        context.Report.Count("item list weight or blank dropped");
+                    }
+
+                    continue;
+                }
+
+                headers.Add(item);
+            }
         }
         else
         {

@@ -1,4 +1,354 @@
 [[item]]
+id = "0x0a9f_display_case"
+base_id = "base_item"
+item_id = 2719
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0aa0_display_case"
+base_id = "base_item"
+item_id = 2720
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0aa1_display_case"
+base_id = "base_item"
+item_id = 2721
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0aa2_display_case"
+base_id = "base_item"
+item_id = 2722
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0aa3_display_case"
+base_id = "base_item"
+item_id = 2723
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0aa4_display_case"
+base_id = "base_item"
+item_id = 2724
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0aa5_display_case"
+base_id = "base_item"
+item_id = 2725
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b18_display_case"
+base_id = "base_item"
+item_id = 2840
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b0f_display_case"
+base_id = "base_item"
+item_id = 2831
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b10_display_case"
+base_id = "base_item"
+item_id = 2832
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b11_display_case"
+base_id = "base_item"
+item_id = 2833
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b12_display_case"
+base_id = "base_item"
+item_id = 2834
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b13_display_case"
+base_id = "base_item"
+item_id = 2835
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b14_display_case"
+base_id = "base_item"
+item_id = 2836
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b15_display_case"
+base_id = "base_item"
+item_id = 2837
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b16_display_case"
+base_id = "base_item"
+item_id = 2838
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b17_display_case"
+base_id = "base_item"
+item_id = 2839
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0afd_display_case"
+base_id = "base_item"
+item_id = 2813
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0afe_display_case"
+base_id = "base_item"
+item_id = 2814
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0aff_display_case"
+base_id = "base_item"
+item_id = 2815
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b00_display_case"
+base_id = "base_item"
+item_id = 2816
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b01_display_case"
+base_id = "base_item"
+item_id = 2817
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b02_display_case"
+base_id = "base_item"
+item_id = 2818
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b03_display_case"
+base_id = "base_item"
+item_id = 2819
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b04_display_case"
+base_id = "base_item"
+item_id = 2820
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b05_display_case"
+base_id = "base_item"
+item_id = 2821
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b06_display_case"
+base_id = "base_item"
+item_id = 2822
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b07_display_case"
+base_id = "base_item"
+item_id = 2823
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b08_display_case"
+base_id = "base_item"
+item_id = 2824
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b0b_display_case"
+base_id = "base_item"
+item_id = 2827
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b09_display_case"
+base_id = "base_item"
+item_id = 2825
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b0c_display_case"
+base_id = "base_item"
+item_id = 2828
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b0a_display_case"
+base_id = "base_item"
+item_id = 2826
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b0d_display_case"
+base_id = "base_item"
+item_id = 2829
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b0e_display_case"
+base_id = "base_item"
+item_id = 2830
+name = "display case"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x0b34_table"
 base_id = "base_item"
 item_id = 2868
@@ -38,6 +388,36 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x0b37_table"
+base_id = "base_item"
+item_id = 2871
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b38_table"
+base_id = "base_item"
+item_id = 2872
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b39_table"
+base_id = "base_item"
+item_id = 2873
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x0b3a_table"
 base_id = "base_item"
 item_id = 2874
@@ -64,6 +444,26 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x0b3d_counter"
+base_id = "base_item"
+item_id = 2877
+name = "counter"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b3e_counter"
+base_id = "base_item"
+item_id = 2878
+name = "counter"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x0b3f_counter"
 base_id = "base_item"
 item_id = 2879
@@ -78,6 +478,1110 @@ id = "0x0b40_counter"
 base_id = "base_item"
 item_id = 2880
 name = "counter"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b49_writing_table"
+base_id = "base_item"
+item_id = 2889
+name = "writing table"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b4a_writing_table"
+base_id = "base_item"
+item_id = 2890
+name = "writing table"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b4b_writing_table"
+base_id = "base_item"
+item_id = 2891
+name = "writing table"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b4c_writing_table"
+base_id = "base_item"
+item_id = 2892
+name = "writing table"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b6b_table"
+base_id = "base_item"
+item_id = 2923
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b6c_table"
+base_id = "base_item"
+item_id = 2924
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b6d_table"
+base_id = "base_item"
+item_id = 2925
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b6e_table"
+base_id = "base_item"
+item_id = 2926
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b6f_table"
+base_id = "base_item"
+item_id = 2927
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b70_table"
+base_id = "base_item"
+item_id = 2928
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b71_table"
+base_id = "base_item"
+item_id = 2929
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b72_table"
+base_id = "base_item"
+item_id = 2930
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b73_table"
+base_id = "base_item"
+item_id = 2931
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b74_table"
+base_id = "base_item"
+item_id = 2932
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b75_table"
+base_id = "base_item"
+item_id = 2933
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b76_table"
+base_id = "base_item"
+item_id = 2934
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b77_table"
+base_id = "base_item"
+item_id = 2935
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b78_table"
+base_id = "base_item"
+item_id = 2936
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b79_table"
+base_id = "base_item"
+item_id = 2937
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b7a_table"
+base_id = "base_item"
+item_id = 2938
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b7b_table"
+base_id = "base_item"
+item_id = 2939
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b7c_table"
+base_id = "base_item"
+item_id = 2940
+name = "table"
+rarity = "common"
+movable = true
+weight = 30.0
+buy_price = 10
+sell_price = 5
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b7d_table"
+base_id = "base_item"
+item_id = 2941
+name = "table"
+rarity = "common"
+movable = true
+weight = 30.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b7e_table"
+base_id = "base_item"
+item_id = 2942
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b7f_table"
+base_id = "base_item"
+item_id = 2943
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b80_table"
+base_id = "base_item"
+item_id = 2944
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b81_table"
+base_id = "base_item"
+item_id = 2945
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b82_table"
+base_id = "base_item"
+item_id = 2946
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b83_table"
+base_id = "base_item"
+item_id = 2947
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b84_table"
+base_id = "base_item"
+item_id = 2948
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b85_table"
+base_id = "base_item"
+item_id = 2949
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b86_table"
+base_id = "base_item"
+item_id = 2950
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b87_table"
+base_id = "base_item"
+item_id = 2951
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b88_table"
+base_id = "base_item"
+item_id = 2952
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b89_table"
+base_id = "base_item"
+item_id = 2953
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b8a_table"
+base_id = "base_item"
+item_id = 2954
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b8b_table"
+base_id = "base_item"
+item_id = 2955
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b8c_table"
+base_id = "base_item"
+item_id = 2956
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b8d_table"
+base_id = "base_item"
+item_id = 2957
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b8e_table"
+base_id = "base_item"
+item_id = 2958
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b8f_table"
+base_id = "base_item"
+item_id = 2959
+name = "table"
+rarity = "common"
+movable = true
+weight = 30.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b90_table"
+base_id = "base_item"
+item_id = 2960
+name = "table"
+rarity = "common"
+movable = true
+weight = 30.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+
+[[item]]
+id = "0x118b_table"
+base_id = "base_item"
+item_id = 4491
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x118c_table"
+base_id = "base_item"
+item_id = 4492
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x118d_table"
+base_id = "base_item"
+item_id = 4493
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x118e_table"
+base_id = "base_item"
+item_id = 4494
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x118f_table"
+base_id = "base_item"
+item_id = 4495
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1190_table"
+base_id = "base_item"
+item_id = 4496
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1191_table"
+base_id = "base_item"
+item_id = 4497
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1192_table"
+base_id = "base_item"
+item_id = 4498
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11d6_bamboo_table"
+base_id = "base_item"
+item_id = 4566
+name = "bamboo table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11d7_bamboo_table"
+base_id = "base_item"
+item_id = 4567
+name = "bamboo table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11d8_bamboo_table"
+base_id = "base_item"
+item_id = 4568
+name = "bamboo table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11d9_bamboo_table"
+base_id = "base_item"
+item_id = 4569
+name = "bamboo table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11da_bamboo_table"
+base_id = "base_item"
+item_id = 4570
+name = "bamboo table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11db_bamboo_table"
+base_id = "base_item"
+item_id = 4571
+name = "bamboo table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11dc_log_table"
+base_id = "base_item"
+item_id = 4572
+name = "log table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11dd_log_table"
+base_id = "base_item"
+item_id = 4573
+name = "log table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11de_log_table"
+base_id = "base_item"
+item_id = 4574
+name = "log table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11df_log_table"
+base_id = "base_item"
+item_id = 4575
+name = "log table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11e0_log_table"
+base_id = "base_item"
+item_id = 4576
+name = "log table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x11e1_log_table"
+base_id = "base_item"
+item_id = 4577
+name = "log table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1201_stone_table"
+base_id = "base_item"
+item_id = 4609
+name = "stone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1202_stone_table"
+base_id = "base_item"
+item_id = 4610
+name = "stone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1203_stone_table"
+base_id = "base_item"
+item_id = 4611
+name = "stone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1204_stone_table"
+base_id = "base_item"
+item_id = 4612
+name = "stone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1205_stone_table"
+base_id = "base_item"
+item_id = 4613
+name = "stone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1206_stone_table"
+base_id = "base_item"
+item_id = 4614
+name = "stone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1667_table"
+base_id = "base_item"
+item_id = 5735
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1668_table"
+base_id = "base_item"
+item_id = 5736
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1669_table"
+base_id = "base_item"
+item_id = 5737
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x166a_table"
+base_id = "base_item"
+item_id = 5738
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x166b_table"
+base_id = "base_item"
+item_id = 5739
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x166c_table"
+base_id = "base_item"
+item_id = 5740
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1916_massage_table"
+base_id = "base_item"
+item_id = 6422
+name = "massage table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1917_massage_table"
+base_id = "base_item"
+item_id = 6423
+name = "massage table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1910_bar"
+base_id = "base_item"
+item_id = 6416
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1911_bar"
+base_id = "base_item"
+item_id = 6417
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1912_bar"
+base_id = "base_item"
+item_id = 6418
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1913_bar"
+base_id = "base_item"
+item_id = 6419
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1918_bar"
+base_id = "base_item"
+item_id = 6424
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1919_bar"
+base_id = "base_item"
+item_id = 6425
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x191a_bar"
+base_id = "base_item"
+item_id = 6426
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x191b_bar"
+base_id = "base_item"
+item_id = 6427
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x191c_bar"
+base_id = "base_item"
+item_id = 6428
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x191d_bar"
+base_id = "base_item"
+item_id = 6429
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x191e_bar"
+base_id = "base_item"
+item_id = 6430
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x191f_bar"
+base_id = "base_item"
+item_id = 6431
+name = "bar"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1da5_table"
+base_id = "base_item"
+item_id = 7589
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1da6_table"
+base_id = "base_item"
+item_id = 7590
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1da7_table"
+base_id = "base_item"
+item_id = 7591
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1da8_table"
+base_id = "base_item"
+item_id = 7592
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1da9_table"
+base_id = "base_item"
+item_id = 7593
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1daa_table"
+base_id = "base_item"
+item_id = 7594
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dab_table"
+base_id = "base_item"
+item_id = 7595
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dac_table"
+base_id = "base_item"
+item_id = 7596
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dbb_sandstone_table"
+base_id = "base_item"
+item_id = 7611
+name = "sandstone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dbc_sandstone_table"
+base_id = "base_item"
+item_id = 7612
+name = "sandstone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dbd_sandstone_table"
+base_id = "base_item"
+item_id = 7613
+name = "sandstone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dbe_sandstone_table"
+base_id = "base_item"
+item_id = 7614
+name = "sandstone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dbf_sandstone_table"
+base_id = "base_item"
+item_id = 7615
+name = "sandstone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dc0_sandstone_table"
+base_id = "base_item"
+item_id = 7616
+name = "sandstone table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dc1_marble_table"
+base_id = "base_item"
+item_id = 7617
+name = "marble table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dc2_marble_table"
+base_id = "base_item"
+item_id = 7618
+name = "marble table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dc3_marble_table"
+base_id = "base_item"
+item_id = 7619
+name = "marble table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dc4_marble_table"
+base_id = "base_item"
+item_id = 7620
+name = "marble table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dc5_marble_table"
+base_id = "base_item"
+item_id = 7621
+name = "marble table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dc6_marble_table"
+base_id = "base_item"
+item_id = 7622
+name = "marble table"
 rarity = "common"
 movable = false
 weight = 10.0

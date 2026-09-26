@@ -1,4 +1,44 @@
 [[item]]
+id = "0x0002_ankh"
+base_id = "base_item"
+item_id = 2
+name = "ankh"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0003_ankh"
+base_id = "base_item"
+item_id = 3
+name = "ankh"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0004_ankh"
+base_id = "base_item"
+item_id = 4
+name = "ankh"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0005_ankh"
+base_id = "base_item"
+item_id = 5
+name = "ankh"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x1223_pedistal"
 base_id = "base_item"
 item_id = 4643
@@ -7,6 +47,1609 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
+hue = 0
+
+[[item]]
+id = "0x1224_statue"
+base_id = "base_item"
+item_id = 4644
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1225_statue"
+base_id = "base_item"
+item_id = 4645
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1226_statue"
+base_id = "base_item"
+item_id = 4646
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1227_statue"
+base_id = "base_item"
+item_id = 4647
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1228_statue"
+base_id = "base_item"
+item_id = 4648
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x129f_statue"
+base_id = "base_item"
+item_id = 4767
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x12a0_statue"
+base_id = "base_item"
+item_id = 4768
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x12a1_statue"
+base_id = "base_item"
+item_id = 4769
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x12a2_statue"
+base_id = "base_item"
+item_id = 4770
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x12a3_statue"
+base_id = "base_item"
+item_id = 4771
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x12a4_wall_carving"
+base_id = "base_item"
+item_id = 4772
+name = "wall carving"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x12ca_bust"
+base_id = "base_item"
+item_id = 4810
+name = "bust"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x12cb_bust"
+base_id = "base_item"
+item_id = 4811
+name = "bust"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x12d8_statue"
+base_id = "base_item"
+item_id = 4824
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x12d9_statue"
+base_id = "base_item"
+item_id = 4825
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x139a_statue"
+base_id = "base_item"
+item_id = 5018
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x139b_statue"
+base_id = "base_item"
+item_id = 5019
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x139c_statue"
+base_id = "base_item"
+item_id = 5020
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x139d_statue"
+base_id = "base_item"
+item_id = 5021
+name = "statue"
+rarity = "common"
+movable = true
+weight = 10.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x139e_statue"
+base_id = "base_item"
+item_id = 5022
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x139f_statue"
+base_id = "base_item"
+item_id = 5023
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x13a0_statue"
+base_id = "base_item"
+item_id = 5024
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x13a1_statue"
+base_id = "base_item"
+item_id = 5025
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x13a2_statue"
+base_id = "base_item"
+item_id = 5026
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x13a3_statue"
+base_id = "base_item"
+item_id = 5027
+name = "statue"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x149f_honesty"
+base_id = "base_item"
+item_id = 5279
+name = "Honesty"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a0_honesty"
+base_id = "base_item"
+item_id = 5280
+name = "Honesty"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a1_honesty"
+base_id = "base_item"
+item_id = 5281
+name = "Honesty"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a2_honesty"
+base_id = "base_item"
+item_id = 5282
+name = "Honesty"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a3_honesty"
+base_id = "base_item"
+item_id = 5283
+name = "Honesty"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a4_honesty"
+base_id = "base_item"
+item_id = 5284
+name = "Honesty"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a5_honesty"
+base_id = "base_item"
+item_id = 5285
+name = "Honesty"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a6_honesty"
+base_id = "base_item"
+item_id = 5286
+name = "Honesty"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a7_compassion"
+base_id = "base_item"
+item_id = 5287
+name = "Compassion"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a8_compassion"
+base_id = "base_item"
+item_id = 5288
+name = "Compassion"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14a9_compassion"
+base_id = "base_item"
+item_id = 5289
+name = "Compassion"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14aa_compassion"
+base_id = "base_item"
+item_id = 5290
+name = "Compassion"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14ab_compassion"
+base_id = "base_item"
+item_id = 5291
+name = "Compassion"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14ac_compassion"
+base_id = "base_item"
+item_id = 5292
+name = "Compassion"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14ad_compassion"
+base_id = "base_item"
+item_id = 5293
+name = "Compassion"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14ae_compassion"
+base_id = "base_item"
+item_id = 5294
+name = "Compassion"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14af_justice"
+base_id = "base_item"
+item_id = 5295
+name = "Justice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b0_justice"
+base_id = "base_item"
+item_id = 5296
+name = "Justice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b1_justice"
+base_id = "base_item"
+item_id = 5297
+name = "Justice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b2_justice"
+base_id = "base_item"
+item_id = 5298
+name = "Justice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b3_justice"
+base_id = "base_item"
+item_id = 5299
+name = "Justice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b4_justice"
+base_id = "base_item"
+item_id = 5300
+name = "Justice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b5_justice"
+base_id = "base_item"
+item_id = 5301
+name = "Justice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b6_justice"
+base_id = "base_item"
+item_id = 5302
+name = "Justice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b7_valor"
+base_id = "base_item"
+item_id = 5303
+name = "Valor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b8_valor"
+base_id = "base_item"
+item_id = 5304
+name = "Valor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14b9_valor"
+base_id = "base_item"
+item_id = 5305
+name = "Valor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14ba_valor"
+base_id = "base_item"
+item_id = 5306
+name = "Valor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14bb_valor"
+base_id = "base_item"
+item_id = 5307
+name = "Valor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14bc_valor"
+base_id = "base_item"
+item_id = 5308
+name = "Valor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14bd_valor"
+base_id = "base_item"
+item_id = 5309
+name = "Valor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14be_valor"
+base_id = "base_item"
+item_id = 5310
+name = "Valor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14bf_spirituality"
+base_id = "base_item"
+item_id = 5311
+name = "Spirituality"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c0_spirituality"
+base_id = "base_item"
+item_id = 5312
+name = "Spirituality"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c1_spirituality"
+base_id = "base_item"
+item_id = 5313
+name = "Spirituality"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c2_spirituality"
+base_id = "base_item"
+item_id = 5314
+name = "Spirituality"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c3_spirituality"
+base_id = "base_item"
+item_id = 5315
+name = "Spirituality"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c4_spirituality"
+base_id = "base_item"
+item_id = 5316
+name = "Spirituality"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c5_spirituality"
+base_id = "base_item"
+item_id = 5317
+name = "Spirituality"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c6_spirituality"
+base_id = "base_item"
+item_id = 5318
+name = "Spirituality"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c7_honor"
+base_id = "base_item"
+item_id = 5319
+name = "Honor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c8_honor"
+base_id = "base_item"
+item_id = 5320
+name = "Honor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14c9_honor"
+base_id = "base_item"
+item_id = 5321
+name = "Honor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14ca_honor"
+base_id = "base_item"
+item_id = 5322
+name = "Honor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14cb_honor"
+base_id = "base_item"
+item_id = 5323
+name = "Honor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14cc_honor"
+base_id = "base_item"
+item_id = 5324
+name = "Honor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14cd_honor"
+base_id = "base_item"
+item_id = 5325
+name = "Honor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14ce_honor"
+base_id = "base_item"
+item_id = 5326
+name = "Honor"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14cf_humility"
+base_id = "base_item"
+item_id = 5327
+name = "Humility"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d0_humility"
+base_id = "base_item"
+item_id = 5328
+name = "Humility"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d1_humility"
+base_id = "base_item"
+item_id = 5329
+name = "Humility"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d2_humility"
+base_id = "base_item"
+item_id = 5330
+name = "Humility"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d3_humility"
+base_id = "base_item"
+item_id = 5331
+name = "Humility"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d4_humility"
+base_id = "base_item"
+item_id = 5332
+name = "Humility"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d5_humility"
+base_id = "base_item"
+item_id = 5333
+name = "Humility"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d6_humility"
+base_id = "base_item"
+item_id = 5334
+name = "Humility"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x150a_sacrifice"
+base_id = "base_item"
+item_id = 5386
+name = "Sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x150b_sacrifice"
+base_id = "base_item"
+item_id = 5387
+name = "Sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x150c_sacrifice"
+base_id = "base_item"
+item_id = 5388
+name = "Sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x150d_sacrifice"
+base_id = "base_item"
+item_id = 5389
+name = "Sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x150e_sacrifice"
+base_id = "base_item"
+item_id = 5390
+name = "Sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x150f_sacrifice"
+base_id = "base_item"
+item_id = 5391
+name = "Sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1510_sacrifice"
+base_id = "base_item"
+item_id = 5392
+name = "Sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1511_sacrifice"
+base_id = "base_item"
+item_id = 5393
+name = "Sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1731_fountain"
+base_id = "base_item"
+item_id = 5937
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1732_fountain"
+base_id = "base_item"
+item_id = 5938
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1733_fountain"
+base_id = "base_item"
+item_id = 5939
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1734_fountain"
+base_id = "base_item"
+item_id = 5940
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1735_fountain"
+base_id = "base_item"
+item_id = 5941
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1736_fountain"
+base_id = "base_item"
+item_id = 5942
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1737_fountain"
+base_id = "base_item"
+item_id = 5943
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1738_fountain"
+base_id = "base_item"
+item_id = 5944
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1739_fountain"
+base_id = "base_item"
+item_id = 5945
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x173a_fountain"
+base_id = "base_item"
+item_id = 5946
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x173b_fountain"
+base_id = "base_item"
+item_id = 5947
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x173c_fountain"
+base_id = "base_item"
+item_id = 5948
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x173d_fountain"
+base_id = "base_item"
+item_id = 5949
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x173e_fountain"
+base_id = "base_item"
+item_id = 5950
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x173f_fountain"
+base_id = "base_item"
+item_id = 5951
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1741_fountain"
+base_id = "base_item"
+item_id = 5953
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17cf_teleporter"
+base_id = "base_item"
+item_id = 6095
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d0_teleporter"
+base_id = "base_item"
+item_id = 6096
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d1_teleporter"
+base_id = "base_item"
+item_id = 6097
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d2_teleporter"
+base_id = "base_item"
+item_id = 6098
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d3_teleporter"
+base_id = "base_item"
+item_id = 6099
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d4_teleporter"
+base_id = "base_item"
+item_id = 6100
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d5_teleporter"
+base_id = "base_item"
+item_id = 6101
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d6_teleporter"
+base_id = "base_item"
+item_id = 6102
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d7_teleporter"
+base_id = "base_item"
+item_id = 6103
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d8_teleporter"
+base_id = "base_item"
+item_id = 6104
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17d9_teleporter"
+base_id = "base_item"
+item_id = 6105
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17da_teleporter"
+base_id = "base_item"
+item_id = 6106
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17db_teleporter"
+base_id = "base_item"
+item_id = 6107
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17dc_teleporter"
+base_id = "base_item"
+item_id = 6108
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17dd_teleporter"
+base_id = "base_item"
+item_id = 6109
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17de_teleporter"
+base_id = "base_item"
+item_id = 6110
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17df_teleporter"
+base_id = "base_item"
+item_id = 6111
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e0_teleporter"
+base_id = "base_item"
+item_id = 6112
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e1_teleporter"
+base_id = "base_item"
+item_id = 6113
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e2_teleporter"
+base_id = "base_item"
+item_id = 6114
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e3_teleporter"
+base_id = "base_item"
+item_id = 6115
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e4_teleporter"
+base_id = "base_item"
+item_id = 6116
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e5_teleporter"
+base_id = "base_item"
+item_id = 6117
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e6_teleporter"
+base_id = "base_item"
+item_id = 6118
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e7_teleporter"
+base_id = "base_item"
+item_id = 6119
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e8_teleporter"
+base_id = "base_item"
+item_id = 6120
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17e9_teleporter"
+base_id = "base_item"
+item_id = 6121
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17ea_teleporter"
+base_id = "base_item"
+item_id = 6122
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17eb_teleporter"
+base_id = "base_item"
+item_id = 6123
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17ec_teleporter"
+base_id = "base_item"
+item_id = 6124
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17ed_teleporter"
+base_id = "base_item"
+item_id = 6125
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17ee_teleporter"
+base_id = "base_item"
+item_id = 6126
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17ef_teleporter"
+base_id = "base_item"
+item_id = 6127
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17f0_teleporter"
+base_id = "base_item"
+item_id = 6128
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17f1_teleporter"
+base_id = "base_item"
+item_id = 6129
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17f2_teleporter"
+base_id = "base_item"
+item_id = 6130
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17fc_teleporter"
+base_id = "base_item"
+item_id = 6140
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17fd_teleporter"
+base_id = "base_item"
+item_id = 6141
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17fe_teleporter"
+base_id = "base_item"
+item_id = 6142
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x17ff_teleporter"
+base_id = "base_item"
+item_id = 6143
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1800_teleporter"
+base_id = "base_item"
+item_id = 6144
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1801_teleporter"
+base_id = "base_item"
+item_id = 6145
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1802_teleporter"
+base_id = "base_item"
+item_id = 6146
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1803_teleporter"
+base_id = "base_item"
+item_id = 6147
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1804_teleporter"
+base_id = "base_item"
+item_id = 6148
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1805_teleporter"
+base_id = "base_item"
+item_id = 6149
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1806_teleporter"
+base_id = "base_item"
+item_id = 6150
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1807_teleporter"
+base_id = "base_item"
+item_id = 6151
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1808_teleporter"
+base_id = "base_item"
+item_id = 6152
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1809_teleporter"
+base_id = "base_item"
+item_id = 6153
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x180a_teleporter"
+base_id = "base_item"
+item_id = 6154
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x180b_teleporter"
+base_id = "base_item"
+item_id = 6155
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x180c_teleporter"
+base_id = "base_item"
+item_id = 6156
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x180d_teleporter"
+base_id = "base_item"
+item_id = 6157
+name = "teleporter"
+rarity = "common"
+movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -127,4 +1770,634 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19c3_fountain"
+base_id = "base_item"
+item_id = 6595
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19c4_fountain"
+base_id = "base_item"
+item_id = 6596
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19c5_fountain"
+base_id = "base_item"
+item_id = 6597
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19c6_fountain"
+base_id = "base_item"
+item_id = 6598
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19c7_fountain"
+base_id = "base_item"
+item_id = 6599
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19c8_fountain"
+base_id = "base_item"
+item_id = 6600
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19c9_fountain"
+base_id = "base_item"
+item_id = 6601
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19ca_fountain"
+base_id = "base_item"
+item_id = 6602
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19cb_fountain"
+base_id = "base_item"
+item_id = 6603
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19cc_fountain"
+base_id = "base_item"
+item_id = 6604
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19cd_fountain"
+base_id = "base_item"
+item_id = 6605
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19ce_fountain"
+base_id = "base_item"
+item_id = 6606
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19cf_fountain"
+base_id = "base_item"
+item_id = 6607
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19d0_fountain"
+base_id = "base_item"
+item_id = 6608
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19d1_fountain"
+base_id = "base_item"
+item_id = 6609
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x19d3_fountain"
+base_id = "base_item"
+item_id = 6611
+name = "fountain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1d97_ankh_of_sacrifice"
+base_id = "base_item"
+item_id = 7575
+name = "ankh of sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1d98_ankh_of_sacrifice"
+base_id = "base_item"
+item_id = 7576
+name = "ankh of sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e5c_ankh_of_sacrifice"
+base_id = "base_item"
+item_id = 7772
+name = "ankh of sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e5d_ankh_of_sacrifice"
+base_id = "base_item"
+item_id = 7773
+name = "ankh of sacrifice"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ed4_gravestone"
+base_id = "base_item"
+item_id = 3796
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0ed5_gravestone"
+base_id = "base_item"
+item_id = 3797
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0ed6_gravestone"
+base_id = "base_item"
+item_id = 3798
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0ed7_gravestone"
+base_id = "base_item"
+item_id = 3799
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0ed8_gravestone"
+base_id = "base_item"
+item_id = 3800
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0ed9_gravestone"
+base_id = "base_item"
+item_id = 3801
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0eda_gravestone"
+base_id = "base_item"
+item_id = 3802
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0edb_gravestone"
+base_id = "base_item"
+item_id = 3803
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0edc_gravestone"
+base_id = "base_item"
+item_id = 3804
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0edd_gravestone"
+base_id = "base_item"
+item_id = 3805
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x0ede_gravestone"
+base_id = "base_item"
+item_id = 3806
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1165_gravestone"
+base_id = "base_item"
+item_id = 4453
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1166_gravestone"
+base_id = "base_item"
+item_id = 4454
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1167_gravestone"
+base_id = "base_item"
+item_id = 4455
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1168_gravestone"
+base_id = "base_item"
+item_id = 4456
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1169_gravestone"
+base_id = "base_item"
+item_id = 4457
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x116a_gravestone"
+base_id = "base_item"
+item_id = 4458
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x116b_gravestone"
+base_id = "base_item"
+item_id = 4459
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x116c_gravestone"
+base_id = "base_item"
+item_id = 4460
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x116d_gravestone"
+base_id = "base_item"
+item_id = 4461
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x116e_gravestone"
+base_id = "base_item"
+item_id = 4462
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x116f_gravestone"
+base_id = "base_item"
+item_id = 4463
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1170_gravestone"
+base_id = "base_item"
+item_id = 4464
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1171_gravestone"
+base_id = "base_item"
+item_id = 4465
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1172_gravestone"
+base_id = "base_item"
+item_id = 4466
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1173_gravestone"
+base_id = "base_item"
+item_id = 4467
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1174_gravestone"
+base_id = "base_item"
+item_id = 4468
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1175_gravestone"
+base_id = "base_item"
+item_id = 4469
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1176_gravestone"
+base_id = "base_item"
+item_id = 4470
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1177_gravestone"
+base_id = "base_item"
+item_id = 4471
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1178_gravestone"
+base_id = "base_item"
+item_id = 4472
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1179_gravestone"
+base_id = "base_item"
+item_id = 4473
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x117a_gravestone"
+base_id = "base_item"
+item_id = 4474
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x117b_gravestone"
+base_id = "base_item"
+item_id = 4475
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x117c_gravestone"
+base_id = "base_item"
+item_id = 4476
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x117d_gravestone"
+base_id = "base_item"
+item_id = 4477
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x117e_gravestone"
+base_id = "base_item"
+item_id = 4478
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x117f_gravestone"
+base_id = "base_item"
+item_id = 4479
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1180_gravestone"
+base_id = "base_item"
+item_id = 4480
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1181_gravestone"
+base_id = "base_item"
+item_id = 4481
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1182_gravestone"
+base_id = "base_item"
+item_id = 4482
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1183_gravestone"
+base_id = "base_item"
+item_id = 4483
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
+hue = 0
+
+[[item]]
+id = "0x1184_gravestone"
+base_id = "base_item"
+item_id = 4484
+name = "gravestone"
+rarity = "common"
+movable = false
+weight = 30.0
 hue = 0

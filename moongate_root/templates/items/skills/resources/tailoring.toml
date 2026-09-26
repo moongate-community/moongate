@@ -183,6 +183,32 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x0f96_bolt_of_cloth"
+base_id = "base_item"
+item_id = 3990
+name = "bolt of cloth"
+rarity = "common"
+weight = 5.0
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0f97_bolt_of_cloth"
+base_id = "base_item"
+item_id = 3991
+name = "bolt of cloth"
+rarity = "common"
+weight = 5.0
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
+hue = 0
+
+[[item]]
 id = "0x0f98_bolt_of_cloth"
 base_id = "base_item"
 item_id = 3992
@@ -218,6 +244,32 @@ name = "bolt of cloth"
 rarity = "common"
 weight = 5.0
 amount = 1
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0f9b_bolt_of_cloth"
+base_id = "base_item"
+item_id = 3995
+name = "bolt of cloth"
+rarity = "common"
+weight = 5.0
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0f9c_bolt_of_cloth"
+base_id = "base_item"
+item_id = 3996
+name = "bolt of cloth"
+rarity = "common"
+weight = 5.0
 stackable = true
 buy_price = 120
 sell_price = 60

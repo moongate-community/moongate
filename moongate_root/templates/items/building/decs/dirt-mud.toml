@@ -1,4 +1,44 @@
 [[item]]
+id = "0x0911_dirt_patch"
+base_id = "base_item"
+item_id = 2321
+name = "dirt patch"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0912_dirt_patch"
+base_id = "base_item"
+item_id = 2322
+name = "dirt patch"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0913_dirt_patch"
+base_id = "base_item"
+item_id = 2323
+name = "dirt patch"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0914_dirt_patch"
+base_id = "base_item"
+item_id = 2324
+name = "dirt patch"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x1b27_dirt"
 base_id = "base_item"
 item_id = 6951
@@ -303,6 +343,46 @@ id = "0x1e02_mud"
 base_id = "base_item"
 item_id = 7682
 name = "mud"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e03_footprints"
+base_id = "base_item"
+item_id = 7683
+name = "footprints"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e04_footprints"
+base_id = "base_item"
+item_id = 7684
+name = "footprints"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e05_footprints"
+base_id = "base_item"
+item_id = 7685
+name = "footprints"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e06_footprints"
+base_id = "base_item"
+item_id = 7686
+name = "footprints"
 rarity = "common"
 movable = false
 weight = 1.0

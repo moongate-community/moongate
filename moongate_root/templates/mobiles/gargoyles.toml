@@ -1,0 +1,232 @@
+[[mobile]]
+id = "gargoyle"
+name = "a gargoyle"
+name_list = "list_12"
+body = 4
+strength = "1d30+145"
+dexterity = "1d20+75"
+intelligence = "1d25+80"
+damage = "1d16+2"
+armor = 16
+notoriety = "attackable"
+karma = -3500
+fame = 3500
+loot = ["midlevelscrolls", "randomgems", "randomgems", "randompotions", "randompotions", "treasure_map_lvl1loot"]
+gold = "1d101+49"
+[mobile.skills]
+magery = "1d16+69"
+resisting_spells = "1d16+69"
+parrying = "1d11+34"
+tactics = "1d21+49"
+wrestling = "1d41+39"
+[mobile.sounds]
+start_attack = 372
+idle = 373
+attack = 374
+hurt = 375
+death = 376
+
+[[mobile]]
+id = "stonegargoyle"
+name = "a stone gargoyle"
+body = 67
+skin_hue = 902
+strength = "1d30+245"
+dexterity = "1d20+75"
+intelligence = "1d25+80"
+damage = "1d21+3"
+armor = 25
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["randompotions", "randomgems", "randomgems", "stone_gargoyle_loot", "treasure_map_lvl2loot"]
+gold = "1d101+149"
+[mobile.skills]
+resisting_spells = "1d16+84"
+parrying = "1d11+34"
+tactics = "1d21+79"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 372
+idle = 373
+attack = 374
+hurt = 375
+death = 376
+
+[[mobile]]
+id = "enslavedgargoyle"
+name = "an enslaved gargoyle"
+name_list = "list_12"
+title = "the enslaved gargoyle"
+body = 753
+strength = "1d59+301"
+dexterity = "1d20+75"
+intelligence = "1d25+80"
+damage = "1d16+2"
+armor = 16
+notoriety = "attackable"
+fame = 3500
+loot = ["randomgems"]
+gold = "1d51+249"
+[mobile.skills]
+resisting_spells = "1d16+69"
+parrying = "1d11+34"
+tactics = "1d21+49"
+wrestling = "1d41+39"
+[mobile.sounds]
+start_attack = 372
+idle = 373
+attack = 374
+hurt = 375
+death = 376
+
+[[mobile]]
+id = "firegargoyle"
+name = "a fire gargoyle"
+name_list = "fire_gargoyle"
+body = 130
+strength = "1d50+350"
+dexterity = "1d20+125"
+intelligence = "1d25+225"
+damage = "1d16+2"
+armor = 16
+notoriety = "attackable"
+karma = -3500
+fame = 3500
+loot = ["randomgems", "randomgems", "randompotions", "midlevelscrolls", "treasure_map_lvl1loot"]
+gold = "1d101+199"
+[mobile.skills]
+anatomy = "1d11+74"
+magery = "1d16+89"
+resisting_spells = "1d16+89"
+tactics = "1d21+79"
+wrestling = "1d41+39"
+[mobile.sounds]
+start_attack = 372
+idle = 373
+attack = 374
+hurt = 375
+death = 376
+
+[[mobile]]
+id = "gargoyledestroyer"
+name = "a gargoyle destroyer"
+name_list = "list_12"
+title = "the gargoyle destroyer"
+body = 755
+strength = "1d91+759"
+dexterity = "1d49+101"
+intelligence = "1d49+151"
+damage = "1d16+2"
+armor = "1d10+30"
+notoriety = "attackable"
+karma = -10000
+fame = 10000
+loot = ["randomgems", "randomgems"]
+gold = "1d101+199"
+[mobile.skills]
+anatomy = "1d50+50"
+fencing = "1d11+89"
+mace_fighting = "1d11+89"
+magery = "1d10+90"
+resisting_spells = 120
+parrying = "1d11+89"
+swordsmanship = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 372
+idle = 373
+attack = 374
+hurt = 375
+death = 376
+
+[[mobile]]
+id = "gargoyleenforcer"
+name = "a gargoyle enforcer"
+name_list = "list_12"
+title = "the gargoyle enforcer"
+body = 754
+strength = "1d91+259"
+dexterity = "1d20+75"
+intelligence = "1d25+100"
+damage = "1d11+4"
+armor = "1d8+25"
+notoriety = "attackable"
+karma = -5000
+fame = 5000
+loot = ["midlevelscrolls"]
+gold = "1d51+274"
+[mobile.skills]
+anatomy = "1d11+69"
+evaluating_intelligence = "1d31+69"
+magery = "1d11+79"
+resisting_spells = 120
+parrying = "1d11+49"
+swordsmanship = "1d11+79"
+tactics = "1d11+69"
+wrestling = "1d11+79"
+[mobile.sounds]
+start_attack = 372
+idle = 373
+attack = 374
+hurt = 375
+death = 376
+
+[[mobile]]
+id = "gargoylealchemist"
+name = "a gargoyle alchemist"
+name_list = "list_12"
+title = "the gargoyle alchemist"
+body = 758
+strength = "1d22+158"
+dexterity = "1d19+75"
+intelligence = "1d19+81"
+hits = "1d21+79"
+damage = "1d15+6"
+armor = 10
+notoriety = "attackable"
+karma = 1000
+gold = "1d101+49"
+[mobile.skills]
+parrying = "1d14+67"
+alchemy = "1d7+95"
+magery = "1d12+74"
+resisting_spells = "1d14+70"
+tactics = "1d20+49"
+wrestling = "1d27+52"
+[mobile.sounds]
+start_attack = 372
+idle = 373
+attack = 374
+hurt = 375
+death = 376
+
+[[mobile]]
+id = "gargoylemason"
+name = "a gargoyle stone worker"
+name_list = "list_12"
+title = "the gargoyle stone worker"
+body = 758
+strength = "1d22+158"
+dexterity = "1d19+75"
+intelligence = "1d19+81"
+hits = "1d31+69"
+damage = "1d18+6"
+armor = 10
+notoriety = "attackable"
+karma = 1000
+gold = "1d101+49"
+[mobile.skills]
+parrying = "1d14+67"
+alchemy = "1d7+95"
+magery = "1d12+74"
+resisting_spells = "1d14+70"
+tactics = "1d20+49"
+wrestling = "1d27+52"
+[mobile.sounds]
+start_attack = 372
+idle = 373
+attack = 374
+hurt = 375
+death = 376

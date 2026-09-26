@@ -48,6 +48,246 @@ weight = 20.0
 hue = 0
 
 [[item]]
+id = "0x197a_bellows"
+base_id = "base_item"
+item_id = 6522
+name = "bellows"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x197e_forge"
+base_id = "base_item"
+item_id = 6526
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1982_forge"
+base_id = "base_item"
+item_id = 6530
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x197d_bellows"
+base_id = "base_item"
+item_id = 6525
+name = "bellows"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1981_forge"
+base_id = "base_item"
+item_id = 6529
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1985_forge"
+base_id = "base_item"
+item_id = 6533
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1986_bellows"
+base_id = "base_item"
+item_id = 6534
+name = "bellows"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x198a_forge"
+base_id = "base_item"
+item_id = 6538
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x198e_forge"
+base_id = "base_item"
+item_id = 6542
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1989_bellows"
+base_id = "base_item"
+item_id = 6537
+name = "bellows"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x198d_forge"
+base_id = "base_item"
+item_id = 6541
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1991_forge"
+base_id = "base_item"
+item_id = 6545
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1992_bellows"
+base_id = "base_item"
+item_id = 6546
+name = "bellows"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1996_forge"
+base_id = "base_item"
+item_id = 6550
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x199a_forge"
+base_id = "base_item"
+item_id = 6554
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1995_bellows"
+base_id = "base_item"
+item_id = 6549
+name = "bellows"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1999_forge"
+base_id = "base_item"
+item_id = 6553
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x199d_forge"
+base_id = "base_item"
+item_id = 6557
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x199e_bellows"
+base_id = "base_item"
+item_id = 6558
+name = "bellows"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x19a2_forge"
+base_id = "base_item"
+item_id = 6562
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x19a6_forge"
+base_id = "base_item"
+item_id = 6566
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x19a1_bellows"
+base_id = "base_item"
+item_id = 6561
+name = "bellows"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x19a5_forge"
+base_id = "base_item"
+item_id = 6565
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x19a9_forge"
+base_id = "base_item"
+item_id = 6569
+name = "forge"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
 id = "sandminingbook"
 base_id = "base_item"
 item_id = 4084

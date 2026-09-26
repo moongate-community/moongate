@@ -1,0 +1,289 @@
+[[item]]
+id = "0x0432_curtain"
+base_id = "base_item"
+item_id = 1074
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0435_curtain"
+base_id = "base_item"
+item_id = 1077
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0980_curtains"
+base_id = "base_item"
+item_id = 2432
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0981_curtains"
+base_id = "base_item"
+item_id = 2433
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0982_curtains"
+base_id = "base_item"
+item_id = 2434
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0983_curtains"
+base_id = "base_item"
+item_id = 2435
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0984_curtains"
+base_id = "base_item"
+item_id = 2436
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0985_curtains"
+base_id = "base_item"
+item_id = 2437
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0986_curtains"
+base_id = "base_item"
+item_id = 2438
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0987_curtains"
+base_id = "base_item"
+item_id = 2439
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0988_curtains"
+base_id = "base_item"
+item_id = 2440
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0989_curtains"
+base_id = "base_item"
+item_id = 2441
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x098a_curtains"
+base_id = "base_item"
+item_id = 2442
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x098b_curtains"
+base_id = "base_item"
+item_id = 2443
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12da_curtain"
+base_id = "base_item"
+item_id = 4826
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12de_curtain"
+base_id = "base_item"
+item_id = 4830
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12e2_curtain_sash"
+base_id = "base_item"
+item_id = 4834
+name = "curtain sash"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12e3_curtain_sash"
+base_id = "base_item"
+item_id = 4835
+name = "curtain sash"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12e4_curtain_sash"
+base_id = "base_item"
+item_id = 4836
+name = "curtain sash"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12e5_curtain"
+base_id = "base_item"
+item_id = 4837
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12e9_curtain"
+base_id = "base_item"
+item_id = 4841
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12ed_curtain_sash"
+base_id = "base_item"
+item_id = 4845
+name = "curtain sash"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x154e_curtains"
+base_id = "base_item"
+item_id = 5454
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x154f_curtains"
+base_id = "base_item"
+item_id = 5455
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1557_curtains"
+base_id = "base_item"
+item_id = 5463
+name = "curtains"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0433_curtain_rod"
+base_id = "base_item"
+item_id = 1075
+name = "curtain rod"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0434_curtain_rod"
+base_id = "base_item"
+item_id = 1076
+name = "curtain rod"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1638_curtain"
+base_id = "base_item"
+item_id = 5688
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1639_curtain"
+base_id = "base_item"
+item_id = 5689
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0

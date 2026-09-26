@@ -17,6 +17,136 @@ rarity = "common"
 hue = 1420
 
 [[item]]
+id = "shipwreck_painting"
+base_id = "base_item"
+item_id = 3784
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_painting_2"
+base_id = "base_item"
+item_id = 3785
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_portrait"
+base_id = "base_item"
+item_id = 3815
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_portrait_2"
+base_id = "base_item"
+item_id = 3743
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_painting_3"
+base_id = "base_item"
+item_id = 3744
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_painting_4"
+base_id = "base_item"
+item_id = 3745
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_painting_5"
+base_id = "base_item"
+item_id = 3746
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_painting_6"
+base_id = "base_item"
+item_id = 3747
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_painting_7"
+base_id = "base_item"
+item_id = 3748
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_portrait_3"
+base_id = "base_item"
+item_id = 3749
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_portrait_4"
+base_id = "base_item"
+item_id = 3750
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_portrait_5"
+base_id = "base_item"
+item_id = 3751
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "shipwreck_portrait_6"
+base_id = "base_item"
+item_id = 3752
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
 id = "messageinabottle"
 base_id = "base_item"
 item_id = 2463

@@ -1,0 +1,299 @@
+[[item]]
+id = "0x156c_decorative_shield"
+base_id = "base_item"
+item_id = 5484
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x156d_decorative_shield"
+base_id = "base_item"
+item_id = 5485
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x156e_decorative_shield"
+base_id = "base_item"
+item_id = 5486
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x156f_decorative_shield"
+base_id = "base_item"
+item_id = 5487
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1570_decorative_shield"
+base_id = "base_item"
+item_id = 5488
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1571_decorative_shield"
+base_id = "base_item"
+item_id = 5489
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1572_decorative_shield"
+base_id = "base_item"
+item_id = 5490
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1573_decorative_shield"
+base_id = "base_item"
+item_id = 5491
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1574_decorative_shield"
+base_id = "base_item"
+item_id = 5492
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1575_decorative_shield"
+base_id = "base_item"
+item_id = 5493
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1576_decorative_shield"
+base_id = "base_item"
+item_id = 5494
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1577_decorative_shield"
+base_id = "base_item"
+item_id = 5495
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1578_decorative_shield"
+base_id = "base_item"
+item_id = 5496
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1579_decorative_shield"
+base_id = "base_item"
+item_id = 5497
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x157a_decorative_shield"
+base_id = "base_item"
+item_id = 5498
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x157b_decorative_shield"
+base_id = "base_item"
+item_id = 5499
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x157c_decorative_shield"
+base_id = "base_item"
+item_id = 5500
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x157d_decorative_shield"
+base_id = "base_item"
+item_id = 5501
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x157e_decorative_shield"
+base_id = "base_item"
+item_id = 5502
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x157f_decorative_shield"
+base_id = "base_item"
+item_id = 5503
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1580_decorative_shield"
+base_id = "base_item"
+item_id = 5504
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1581_decorative_shield"
+base_id = "base_item"
+item_id = 5505
+name = "decorative shield"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1582_decorative_shields"
+base_id = "base_item"
+item_id = 5506
+name = "decorative shields"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1583_decorative_shields"
+base_id = "base_item"
+item_id = 5507
+name = "decorative shields"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1584_decorative_shields"
+base_id = "base_item"
+item_id = 5508
+name = "decorative shields"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1585_decorative_shields"
+base_id = "base_item"
+item_id = 5509
+name = "decorative shields"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1634_decorative_shields"
+base_id = "base_item"
+item_id = 5684
+name = "decorative shields"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1635_decorative_shields"
+base_id = "base_item"
+item_id = 5685
+name = "decorative shields"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1636_decorative_shields"
+base_id = "base_item"
+item_id = 5686
+name = "decorative shields"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1637_decorative_shields"
+base_id = "base_item"
+item_id = 5687
+name = "decorative shields"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0

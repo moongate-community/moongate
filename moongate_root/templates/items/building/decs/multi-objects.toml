@@ -1,4 +1,234 @@
 [[item]]
+id = "0x1b81_wood"
+base_id = "base_item"
+item_id = 7041
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b82_wood"
+base_id = "base_item"
+item_id = 7042
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b83_wood"
+base_id = "base_item"
+item_id = 7043
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b84_wood"
+base_id = "base_item"
+item_id = 7044
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b85_wood"
+base_id = "base_item"
+item_id = 7045
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b86_wood"
+base_id = "base_item"
+item_id = 7046
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b87_wood"
+base_id = "base_item"
+item_id = 7047
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b88_wood"
+base_id = "base_item"
+item_id = 7048
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b89_wood"
+base_id = "base_item"
+item_id = 7049
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b8a_wood"
+base_id = "base_item"
+item_id = 7050
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b8b_wood"
+base_id = "base_item"
+item_id = 7051
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b8c_wood"
+base_id = "base_item"
+item_id = 7052
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b8d_wood"
+base_id = "base_item"
+item_id = 7053
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b8e_wood"
+base_id = "base_item"
+item_id = 7054
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b8f_wood"
+base_id = "base_item"
+item_id = 7055
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b90_wood"
+base_id = "base_item"
+item_id = 7056
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b91_wood"
+base_id = "base_item"
+item_id = 7057
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b92_wood"
+base_id = "base_item"
+item_id = 7058
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b93_wood"
+base_id = "base_item"
+item_id = 7059
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b97_wood"
+base_id = "base_item"
+item_id = 7063
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b98_wood"
+base_id = "base_item"
+item_id = 7064
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b99_wood"
+base_id = "base_item"
+item_id = 7065
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b9a_wood"
+base_id = "base_item"
+item_id = 7066
+name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x1b9b_wood"
 base_id = "base_item"
 item_id = 7067
@@ -33,6 +263,576 @@ id = "0x1b9e_wood"
 base_id = "base_item"
 item_id = 7070
 name = "wood"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b9f_refuse"
+base_id = "base_item"
+item_id = 7071
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba0_refuse"
+base_id = "base_item"
+item_id = 7072
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba1_refuse"
+base_id = "base_item"
+item_id = 7073
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba2_refuse"
+base_id = "base_item"
+item_id = 7074
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba3_refuse"
+base_id = "base_item"
+item_id = 7075
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba4_refuse"
+base_id = "base_item"
+item_id = 7076
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba5_refuse"
+base_id = "base_item"
+item_id = 7077
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba6_refuse"
+base_id = "base_item"
+item_id = 7078
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba7_refuse"
+base_id = "base_item"
+item_id = 7079
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba8_refuse"
+base_id = "base_item"
+item_id = 7080
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ba9_refuse"
+base_id = "base_item"
+item_id = 7081
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1baa_refuse"
+base_id = "base_item"
+item_id = 7082
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bab_refuse"
+base_id = "base_item"
+item_id = 7083
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bac_refuse"
+base_id = "base_item"
+item_id = 7084
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bad_refuse"
+base_id = "base_item"
+item_id = 7085
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bae_refuse"
+base_id = "base_item"
+item_id = 7086
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1baf_refuse"
+base_id = "base_item"
+item_id = 7087
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bb0_refuse"
+base_id = "base_item"
+item_id = 7088
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bb1_refuse"
+base_id = "base_item"
+item_id = 7089
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bb2_refuse"
+base_id = "base_item"
+item_id = 7090
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bb4_refuse"
+base_id = "base_item"
+item_id = 7092
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bb5_refuse"
+base_id = "base_item"
+item_id = 7093
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bb6_refuse"
+base_id = "base_item"
+item_id = 7094
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bb7_refuse"
+base_id = "base_item"
+item_id = 7095
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bb8_refuse"
+base_id = "base_item"
+item_id = 7096
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bb9_refuse"
+base_id = "base_item"
+item_id = 7097
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bba_refuse"
+base_id = "base_item"
+item_id = 7098
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bbb_refuse"
+base_id = "base_item"
+item_id = 7099
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bbc_refuse"
+base_id = "base_item"
+item_id = 7100
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bbd_refuse"
+base_id = "base_item"
+item_id = 7101
+name = "refuse"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d7_vat"
+base_id = "base_item"
+item_id = 5335
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d8_vat"
+base_id = "base_item"
+item_id = 5336
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14e1_vat"
+base_id = "base_item"
+item_id = 5345
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14d9_vat"
+base_id = "base_item"
+item_id = 5337
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14da_vat"
+base_id = "base_item"
+item_id = 5338
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14e2_vat"
+base_id = "base_item"
+item_id = 5346
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14db_vat"
+base_id = "base_item"
+item_id = 5339
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14dc_vat"
+base_id = "base_item"
+item_id = 5340
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14dd_vat"
+base_id = "base_item"
+item_id = 5341
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14de_vat"
+base_id = "base_item"
+item_id = 5342
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14df_vat"
+base_id = "base_item"
+item_id = 5343
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x151e_vat"
+base_id = "base_item"
+item_id = 5406
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x151f_vat"
+base_id = "base_item"
+item_id = 5407
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1520_vat"
+base_id = "base_item"
+item_id = 5408
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1521_vat"
+base_id = "base_item"
+item_id = 5409
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1522_vat"
+base_id = "base_item"
+item_id = 5410
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1523_vat"
+base_id = "base_item"
+item_id = 5411
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1524_vat"
+base_id = "base_item"
+item_id = 5412
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1525_vat"
+base_id = "base_item"
+item_id = 5413
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1550_vat"
+base_id = "base_item"
+item_id = 5456
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1551_vat"
+base_id = "base_item"
+item_id = 5457
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1552_vat"
+base_id = "base_item"
+item_id = 5458
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1553_vat"
+base_id = "base_item"
+item_id = 5459
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1554_vat"
+base_id = "base_item"
+item_id = 5460
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1555_vat"
+base_id = "base_item"
+item_id = 5461
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1556_vat"
+base_id = "base_item"
+item_id = 5462
+name = "vat"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1558_vat"
+base_id = "base_item"
+item_id = 5464
+name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0

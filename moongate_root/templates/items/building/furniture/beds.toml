@@ -1,0 +1,739 @@
+[[item]]
+id = "0x0a5a_bed"
+base_id = "base_item"
+item_id = 2650
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a5b_bed"
+base_id = "base_item"
+item_id = 2651
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a63_bed"
+base_id = "base_item"
+item_id = 2659
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a5c_bed"
+base_id = "base_item"
+item_id = 2652
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a5d_bed"
+base_id = "base_item"
+item_id = 2653
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a62_bed"
+base_id = "base_item"
+item_id = 2658
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a5e_bed"
+base_id = "base_item"
+item_id = 2654
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a5f_bed"
+base_id = "base_item"
+item_id = 2655
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a60_bed"
+base_id = "base_item"
+item_id = 2656
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a61_bed"
+base_id = "base_item"
+item_id = 2657
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a64_bed"
+base_id = "base_item"
+item_id = 2660
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a65_bed"
+base_id = "base_item"
+item_id = 2661
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a66_bed"
+base_id = "base_item"
+item_id = 2662
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a67_bed"
+base_id = "base_item"
+item_id = 2663
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a68_bed"
+base_id = "base_item"
+item_id = 2664
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a69_bed"
+base_id = "base_item"
+item_id = 2665
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a6a_bed"
+base_id = "base_item"
+item_id = 2666
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a6b_bed"
+base_id = "base_item"
+item_id = 2667
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a70_bed"
+base_id = "base_item"
+item_id = 2672
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a71_bed"
+base_id = "base_item"
+item_id = 2673
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a72_bed"
+base_id = "base_item"
+item_id = 2674
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a73_bed"
+base_id = "base_item"
+item_id = 2675
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a74_bed"
+base_id = "base_item"
+item_id = 2676
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a75_bed"
+base_id = "base_item"
+item_id = 2677
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a76_bed"
+base_id = "base_item"
+item_id = 2678
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a77_bed"
+base_id = "base_item"
+item_id = 2679
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a78_bed"
+base_id = "base_item"
+item_id = 2680
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a79_bed"
+base_id = "base_item"
+item_id = 2681
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a7a_bed"
+base_id = "base_item"
+item_id = 2682
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a7b_bed"
+base_id = "base_item"
+item_id = 2683
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a7c_bed"
+base_id = "base_item"
+item_id = 2684
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a7d_bed"
+base_id = "base_item"
+item_id = 2685
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a7e_bed"
+base_id = "base_item"
+item_id = 2686
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a7f_bed"
+base_id = "base_item"
+item_id = 2687
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a80_bed"
+base_id = "base_item"
+item_id = 2688
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a81_bed"
+base_id = "base_item"
+item_id = 2689
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a82_bed"
+base_id = "base_item"
+item_id = 2690
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a83_bed"
+base_id = "base_item"
+item_id = 2691
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a84_bed"
+base_id = "base_item"
+item_id = 2692
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a85_bed"
+base_id = "base_item"
+item_id = 2693
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a86_bed"
+base_id = "base_item"
+item_id = 2694
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a87_bed"
+base_id = "base_item"
+item_id = 2695
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a88_bed"
+base_id = "base_item"
+item_id = 2696
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a89_bed"
+base_id = "base_item"
+item_id = 2697
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a8a_bed"
+base_id = "base_item"
+item_id = 2698
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a8b_bed"
+base_id = "base_item"
+item_id = 2699
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a8c_bed"
+base_id = "base_item"
+item_id = 2700
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a8d_bed"
+base_id = "base_item"
+item_id = 2701
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a8e_bed"
+base_id = "base_item"
+item_id = 2702
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a8f_bed"
+base_id = "base_item"
+item_id = 2703
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a90_bed"
+base_id = "base_item"
+item_id = 2704
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0a91_bed"
+base_id = "base_item"
+item_id = 2705
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0ab0_bed"
+base_id = "base_item"
+item_id = 2736
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0ab1_bed"
+base_id = "base_item"
+item_id = 2737
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0ab2_bed"
+base_id = "base_item"
+item_id = 2738
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0ab3_bed"
+base_id = "base_item"
+item_id = 2739
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0ab4_bed"
+base_id = "base_item"
+item_id = 2740
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x0ab5_bed"
+base_id = "base_item"
+item_id = 2741
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11ce_bed"
+base_id = "base_item"
+item_id = 4558
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11cd_bed"
+base_id = "base_item"
+item_id = 4557
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11d0_bed"
+base_id = "base_item"
+item_id = 4560
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11d1_bed"
+base_id = "base_item"
+item_id = 4561
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11d2_bed"
+base_id = "base_item"
+item_id = 4562
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11d3_bed"
+base_id = "base_item"
+item_id = 4563
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11d4_bed"
+base_id = "base_item"
+item_id = 4564
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11d5_bed"
+base_id = "base_item"
+item_id = 4565
+name = "bed"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11f0_hammock"
+base_id = "base_item"
+item_id = 4592
+name = "hammock"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11f1_hammock"
+base_id = "base_item"
+item_id = 4593
+name = "hammock"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11f2_hammock"
+base_id = "base_item"
+item_id = 4594
+name = "hammock"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11f3_hammock"
+base_id = "base_item"
+item_id = 4595
+name = "hammock"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11fd_cot"
+base_id = "base_item"
+item_id = 4605
+name = "cot"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11fe_cot"
+base_id = "base_item"
+item_id = 4606
+name = "cot"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x11ff_cot"
+base_id = "base_item"
+item_id = 4607
+name = "cot"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0
+
+[[item]]
+id = "0x1200_cot"
+base_id = "base_item"
+item_id = 4608
+name = "cot"
+rarity = "common"
+movable = false
+weight = 100.0
+hue = 0

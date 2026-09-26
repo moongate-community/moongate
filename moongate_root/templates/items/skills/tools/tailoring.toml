@@ -59,6 +59,166 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x1015_spinning_wheel"
+base_id = "base_item"
+item_id = 4117
+name = "spinning wheel"
+rarity = "common"
+movable = true
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x1016_spinning_wheel"
+base_id = "base_item"
+item_id = 4118
+name = "spinning wheel"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x1019_spinning_wheel"
+base_id = "base_item"
+item_id = 4121
+name = "spinning wheel"
+rarity = "common"
+movable = true
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x101a_spinning_wheel"
+base_id = "base_item"
+item_id = 4122
+name = "spinning wheel"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x101c_spinning_wheel"
+base_id = "base_item"
+item_id = 4124
+name = "spinning wheel"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x101d_spinning_wheel"
+base_id = "base_item"
+item_id = 4125
+name = "spinning wheel"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x10a4_spinning_wheel"
+base_id = "base_item"
+item_id = 4260
+name = "spinning wheel"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x10a5_spinning_wheel"
+base_id = "base_item"
+item_id = 4261
+name = "spinning wheel"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x105f_upright_loom"
+base_id = "base_item"
+item_id = 4191
+name = "upright loom"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x1060_upright_loom"
+base_id = "base_item"
+item_id = 4192
+name = "upright loom"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x1061_upright_loom"
+base_id = "base_item"
+item_id = 4193
+name = "upright loom"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x1062_upright_loom"
+base_id = "base_item"
+item_id = 4194
+name = "upright loom"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x1063_upright_loom"
+base_id = "base_item"
+item_id = 4195
+name = "upright loom"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x1064_upright_loom"
+base_id = "base_item"
+item_id = 4196
+name = "upright loom"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x1065_upright_loom"
+base_id = "base_item"
+item_id = 4197
+name = "upright loom"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x1066_upright_loom"
+base_id = "base_item"
+item_id = 4198
+name = "upright loom"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
 id = "0x0ec6_dress_form"
 base_id = "base_item"
 item_id = 3782

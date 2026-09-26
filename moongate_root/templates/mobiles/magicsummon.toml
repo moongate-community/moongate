@@ -1,0 +1,204 @@
+[[mobile]]
+id = "energyvortex_summon"
+name = "an energy vortex"
+body = 164
+skin_hue = 117
+strength = 200
+dexterity = 200
+intelligence = 100
+hits = 1900
+mana = 0
+stamina = 250
+damage = "1d19+7"
+[mobile.skills]
+resisting_spells = 99
+tactics = 90
+wrestling = 120
+[mobile.sounds]
+start_attack = 21
+attack = 40
+
+[[mobile]]
+id = "airele_summon"
+name = "an air elemental"
+body = 13
+skin_hue = 30591
+strength = "1d20+115"
+dexterity = "1d11+54"
+intelligence = "1d15+90"
+damage = "1d9+4"
+armor = 20
+[mobile.skills]
+magery = "1d16+59"
+resisting_spells = "1d16+59"
+parrying = "1d11+54"
+tactics = "1d21+59"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 263
+idle = 264
+attack = 265
+hurt = 266
+death = 267
+
+[[mobile]]
+id = "earthele_summon"
+name = "an earth elemental"
+body = 14
+strength = "1d20+115"
+dexterity = "1d10+55"
+intelligence = "1d15+60"
+damage = "1d16+2"
+armor = 20
+[mobile.skills]
+resisting_spells = "1d46+29"
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+39"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "firele_summon"
+name = "a fire elemental"
+body = 15
+skin_hue = 0
+strength = "1d20+115"
+dexterity = "1d10+55"
+intelligence = "1d15+90"
+damage = "1d9+3"
+armor = 20
+[mobile.skills]
+magery = "1d16+59"
+resisting_spells = "1d16+59"
+parrying = "1d11+39"
+tactics = "1d21+79"
+wrestling = "1d31+69"
+evaluating_intelligence = "1d16+59"
+[mobile.sounds]
+start_attack = 273
+idle = 274
+attack = 275
+hurt = 276
+death = 277
+
+[[mobile]]
+id = "waterele_summon"
+name = "a water elemental"
+body = 16
+strength = "1d30+125"
+dexterity = "1d20+65"
+intelligence = "1d25+100"
+damage = "1d9+3"
+armor = 20
+[mobile.skills]
+magery = "1d16+69"
+resisting_spells = "1d16+69"
+parrying = "1d11+54"
+tactics = "1d21+64"
+wrestling = "1d21+69"
+[mobile.sounds]
+start_attack = 278
+idle = 279
+attack = 280
+hurt = 281
+death = 282
+
+[[mobile]]
+id = "bladespirit_summon"
+name = "a blade spirit"
+body = 574
+strength = 150
+dexterity = 150
+intelligence = 150
+hits = 1200
+mana = 0
+stamina = 250
+damage = "1d9+9"
+[mobile.skills]
+resisting_spells = 70
+tactics = 90
+wrestling = 90
+[mobile.sounds]
+start_attack = 512
+attack = 512
+death = 673
+
+[[mobile]]
+id = "daemon_summon"
+name = "a daemon"
+body = 10
+skin_hue = 0
+strength = "1d15+237"
+dexterity = "1d10+65"
+intelligence = "1d8+150"
+damage = "1d16+9"
+armor = 25
+[mobile.skills]
+magery = "1d11+69"
+resisting_spells = "1d11+69"
+parrying = "1d11+64"
+tactics = "1d11+69"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 357
+idle = 358
+attack = 359
+hurt = 360
+death = 361
+
+[[mobile]]
+id = "dupre_summon"
+name = "Dupre The Hero"
+body = 994
+skin_hue = 0
+strength = 600
+dexterity = 70
+intelligence = 100
+hits = 600
+mana = 100
+stamina = 70
+damage = "1d51+49"
+armor = 50
+karma = 10000
+fame = 10000
+[mobile.skills]
+resisting_spells = 65
+tactics = 100
+wrestling = 100
+swordsmanship = 100
+magery = 90
+[mobile.sounds]
+hurt = 341
+death = 348
+
+[[mobile]]
+id = "blacknight_summon"
+name = "Black Night"
+body = 11
+skin_hue = 0
+strength = 600
+dexterity = 70
+intelligence = 100
+hits = 600
+mana = 100
+stamina = 70
+damage = "1d51+49"
+armor = 50
+[mobile.skills]
+resisting_spells = 100
+tactics = 100
+wrestling = 100
+swordsmanship = 100
+parrying = 100
+magery = 100
+[mobile.sounds]
+start_attack = 387
+idle = 388
+attack = 389
+hurt = 390
+death = 391

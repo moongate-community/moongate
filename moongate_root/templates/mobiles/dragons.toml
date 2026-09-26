@@ -1,0 +1,249 @@
+[[mobile]]
+id = "graydragon"
+name = "a dragon"
+body = 12
+strength = "1d30+795"
+dexterity = "1d20+85"
+intelligence = "1d40+435"
+damage = "1d21+8"
+armor = 30
+notoriety = "attackable"
+karma = -15000
+fame = 15000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "treasure_map_lvl4loot"]
+gold = "1d201+1199"
+[mobile.skills]
+anatomy = 99
+magery = "1d11+29"
+resisting_spells = "1d2+98"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d4+89"
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "reddragon"
+base_id = "graydragon"
+name = "a dragon"
+body = 59
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "graydrake"
+name = "a drake"
+body = 60
+strength = "1d30+400"
+dexterity = "1d20+132"
+intelligence = "1d40+100"
+damage = "1d21+3"
+armor = 23
+notoriety = "attackable"
+karma = -5500
+fame = 5500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl2loot"]
+gold = "1d151+99"
+[mobile.skills]
+resisting_spells = "1d16+64"
+parrying = "1d16+64"
+tactics = "1d26+64"
+wrestling = "1d16+64"
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "reddrake"
+base_id = "graydrake"
+name = "a drake"
+body = 61
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "shadowwyrm"
+name = "a shadow wyrm"
+body = 106
+strength = "1d101+899"
+dexterity = "1d133+67"
+intelligence = "1d133+487"
+damage = "1d43+10"
+armor = 35
+notoriety = "attackable"
+karma = -22500
+fame = 22500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl5loot"]
+gold = "1d801+1199"
+[mobile.skills]
+evaluating_intelligence = "1d50+50"
+magery = "1d21+79"
+resisting_spells = "1d21+99"
+meditation = "1d23+52"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d3+97"
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "whitewyrm"
+name = "a white wyrm"
+body = 49
+strength = "1d40+720"
+dexterity = "1d30+100"
+intelligence = "1d40+385"
+damage = "1d25+8"
+armor = 32
+notoriety = "attackable"
+karma = -18000
+fame = 18000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl4loot"]
+gold = "1d801+599"
+[mobile.skills]
+anatomy = 101
+magery = "1d2+98"
+resisting_spells = "1d2+98"
+parrying = "1d21+69"
+tactics = "1d3+97"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "ancientwyrm"
+name = "an ancient wyrm"
+body = 46
+strength = "1d101+1099"
+dexterity = "1d90+85"
+intelligence = "1d90+685"
+damage = "1d43+10"
+armor = 35
+notoriety = "murderer"
+karma = -22500
+fame = 22500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "treasure_map_lvl5loot"]
+gold = "1d201+1099"
+[mobile.skills]
+evaluating_intelligence = "1d50+50"
+magery = "1d21+79"
+resisting_spells = "1d20+100"
+meditation = "1d23+52"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d3+97"
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "wyvern"
+name = "a wyvern"
+body = 62
+strength = "1d39+201"
+dexterity = "1d20+152"
+intelligence = "1d40+50"
+damage = "1d22+2"
+armor = 20
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl2loot"]
+gold = "1d51+249"
+[mobile.skills]
+resisting_spells = "1d16+64"
+parrying = "1d16+64"
+tactics = "1d26+64"
+wrestling = "1d16+64"
+poisoning = "1d21+59"
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "serpentinedragon"
+name = "a serpentine dragon"
+body = 103
+strength = "1d30+110"
+dexterity = "1d20+200"
+intelligence = "1d40+1000"
+hits = 800
+damage = "1d8+4"
+armor = 18
+notoriety = "attackable"
+karma = -15000
+fame = 15000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls"]
+gold = "1d201+1099"
+[mobile.skills]
+evaluating_intelligence = 100
+magery = "1d11+109"
+resisting_spells = 100
+meditation = 100
+parrying = "1d41+54"
+tactics = "1d11+49"
+wrestling = "1d71+29"
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "skeletaldragon"
+name = "a skeletal dragon"
+body = 104
+strength = "1d101+899"
+dexterity = "1d133+67"
+intelligence = "1d133+487"
+damage = "1d43+10"
+armor = 40
+notoriety = "attackable"
+karma = -22500
+fame = 22500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls"]
+gold = "1d501+1499"
+[mobile.skills]
+evaluating_intelligence = "1d50+50"
+magery = "1d21+79"
+resisting_spells = "1d21+99"
+meditation = "1d23+52"
+parrying = "1d41+54"
+tactics = "1d39+59"
+wrestling = "1d3+97"
+[mobile.sounds]
+start_attack = 1162
+idle = 1160
+attack = 1163
+hurt = 1164
+death = 1161

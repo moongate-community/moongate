@@ -19,6 +19,36 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "0x0fa4_checkers"
+base_id = "base_item"
+item_id = 4004
+name = "checkers"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fa5_checkers"
+base_id = "base_item"
+item_id = 4005
+name = "checkers"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fa8_chess_pieces"
+base_id = "base_item"
+item_id = 4008
+name = "chess pieces"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x0fad_backgammon_game"
 base_id = "base_item"
 item_id = 4013
@@ -72,6 +102,36 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x0e12_chessmen"
+base_id = "base_item"
+item_id = 3602
+name = "chessmen"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0e13_chessmen"
+base_id = "base_item"
+item_id = 3603
+name = "chessmen"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0e14_chessmen"
+base_id = "base_item"
+item_id = 3604
+name = "chessmen"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x0e15_cards"
 base_id = "base_item"
 item_id = 3605
@@ -122,6 +182,26 @@ weight = 0.1
 hue = 0
 
 [[item]]
+id = "0x0e1a_checkers"
+base_id = "base_item"
+item_id = 3610
+name = "checkers"
+rarity = "common"
+movable = false
+weight = 0.1
+hue = 0
+
+[[item]]
+id = "0x0e1b_checkers"
+base_id = "base_item"
+item_id = 3611
+name = "checkers"
+rarity = "common"
+movable = false
+weight = 0.1
+hue = 0
+
+[[item]]
 id = "0x0e1c_backgammon_board"
 base_id = "base_item"
 item_id = 3612
@@ -131,6 +211,76 @@ movable = false
 weight = 1.0
 buy_price = 2
 sell_price = 1
+hue = 0
+
+[[item]]
+id = "0x12a6_tarot"
+base_id = "base_item"
+item_id = 4774
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12a7_tarot"
+base_id = "base_item"
+item_id = 4775
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12a8_tarot"
+base_id = "base_item"
+item_id = 4776
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12a9_tarot"
+base_id = "base_item"
+item_id = 4777
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12aa_tarot"
+base_id = "base_item"
+item_id = 4778
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12ab_deck_of_tarot"
+base_id = "base_item"
+item_id = 4779
+name = "deck of tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x12ac_deck_of_tarot"
+base_id = "base_item"
+item_id = 4780
+name = "deck of tarot"
+rarity = "common"
+movable = false
+weight = 1.0
 hue = 0
 
 [[item]]

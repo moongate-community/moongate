@@ -1,0 +1,119 @@
+[[item]]
+id = "0x0eb5_music_stand"
+base_id = "base_item"
+item_id = 3765
+name = "music stand"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x0eb6_music_stand"
+base_id = "base_item"
+item_id = 3766
+name = "music stand"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x0eb7_music_stand"
+base_id = "base_item"
+item_id = 3767
+name = "music stand"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x0eb8_music_stand"
+base_id = "base_item"
+item_id = 3768
+name = "music stand"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x0eb9_music_stand"
+base_id = "base_item"
+item_id = 3769
+name = "music stand"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x0eba_music_stand"
+base_id = "base_item"
+item_id = 3770
+name = "music stand"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x0ebb_music_stand"
+base_id = "base_item"
+item_id = 3771
+name = "music stand"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x0ebc_music_stand"
+base_id = "base_item"
+item_id = 3772
+name = "music stand"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x0ebd_sheet_music"
+base_id = "base_item"
+item_id = 3773
+name = "sheet music"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ebe_sheet_music"
+base_id = "base_item"
+item_id = 3774
+name = "sheet music"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ebf_sheet_music"
+base_id = "base_item"
+item_id = 3775
+name = "sheet music"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ec0_sheet_music"
+base_id = "base_item"
+item_id = 3776
+name = "sheet music"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0

@@ -1,5 +1,41 @@
 [[item]]
+id = "0x09a8_metal_box"
+base_id = "base_item"
+item_id = 2472
+name = "metal box"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+hue = 0
+max_weight = 400000
+
+[[item]]
+id = "0x0e80_metal_box"
+base_id = "base_item"
+item_id = 3712
+name = "metal box"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+hue = 0
+max_weight = 400000
+
+[[item]]
+id = "strongbox"
+base_id = "0x0e80_metal_box"
+item_id = 3712
+name = "strongbox"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
 id = "ballotbox_east"
+base_id = "0x0e80_metal_box"
 item_id = 3712
 name = "ballot box"
 rarity = "common"
@@ -8,11 +44,64 @@ hue = 0
 
 [[item]]
 id = "ballotbox_south"
+base_id = "0x0e80_metal_box"
 item_id = 2472
 name = "ballot box"
 rarity = "common"
 movable = false
 hue = 0
+
+[[item]]
+id = "0x09ab_metal_chest"
+base_id = "base_item"
+item_id = 2475
+name = "metal chest"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 40
+sell_price = 20
+hue = 0
+max_weight = 400000
+
+[[item]]
+id = "0x0e7c_metal_chest"
+base_id = "base_item"
+item_id = 3708
+name = "metal chest"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 40
+sell_price = 20
+hue = 0
+max_weight = 400000
+
+[[item]]
+id = "0x0e40_metal_chest"
+base_id = "base_item"
+item_id = 3648
+name = "metal chest"
+rarity = "common"
+movable = true
+weight = 30.0
+buy_price = 40
+sell_price = 20
+hue = 0
+max_weight = 400000
+
+[[item]]
+id = "0x0e41_metal_chest"
+base_id = "base_item"
+item_id = 3649
+name = "metal chest"
+rarity = "common"
+movable = true
+weight = 30.0
+buy_price = 40
+sell_price = 20
+hue = 0
+max_weight = 400000
 
 [[item]]
 id = "puzzlechest"

@@ -21,3 +21,9 @@ movable = true
 layer = "two_handed"
 decays = true
 hue = 0
+
+[[item]]
+id = "0x27f5"
+item_id = 10229
+rarity = "common"
+hue = 0

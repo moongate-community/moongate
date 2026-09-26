@@ -11,6 +11,30 @@ amount = 2
 
 [[loot.entries]]
 weight = 10
+item_id = "0x19b7_iron_ore"
+comment = "iron ore"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x19b8_iron_ore"
+comment = "iron ore"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x19b9_iron_ore"
+comment = "iron ore"
+amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "0x19ba_iron_ore"
+comment = "iron ore"
+amount = 1
+
+[[loot.entries]]
+weight = 10
 item_id = "0x0f81_fertile_dirt"
 comment = "fertile dirt"
 amount = 1

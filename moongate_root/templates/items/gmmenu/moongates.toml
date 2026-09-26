@@ -1,4 +1,49 @@
 [[item]]
+id = "0x0dda_red_moongate"
+base_id = "base_item"
+item_id = 3546
+name = "red moongate"
+rarity = "common"
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0ddb_red_moongate"
+base_id = "base_item"
+item_id = 3547
+name = "red moongate"
+rarity = "common"
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0ddc_red_moongate"
+base_id = "base_item"
+item_id = 3548
+name = "red moongate"
+rarity = "common"
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0ddd_red_moongate"
+base_id = "base_item"
+item_id = 3549
+name = "red moongate"
+rarity = "common"
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0dde_red_moongate"
+base_id = "base_item"
+item_id = 3550
+name = "red moongate"
+rarity = "common"
+decays = true
+hue = 0
+
+[[item]]
 id = "0x0f6c_blue_moongate"
 base_id = "base_item"
 item_id = 3948

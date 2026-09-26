@@ -1,0 +1,144 @@
+[[mobile]]
+id = "deepseaserpent"
+name = "a deep sea serpent"
+body = 145
+strength = "1d175+250"
+dexterity = "1d49+86"
+intelligence = "1d69+86"
+damage = "1d21+9"
+armor = 20
+notoriety = "attackable"
+karma = -6000
+fame = 6000
+[mobile.skills]
+magery = "1d11+49"
+resisting_spells = "1d16+64"
+parrying = "1d11+64"
+tactics = "1d11+64"
+wrestling = "1d11+64"
+[mobile.sounds]
+start_attack = 447
+attack = 448
+hurt = 449
+death = 451
+
+[[mobile]]
+id = "dolphin"
+name = "a dolphin"
+body = 151
+strength = "1d29+20"
+dexterity = "1d20+65"
+intelligence = "1d15+95"
+damage = "1d4+3"
+armor = 6
+karma = 2000
+fame = 500
+[mobile.skills]
+resisting_spells = "1d6+14"
+parrying = "1d11+64"
+tactics = "1d11+18"
+wrestling = "1d11+18"
+[mobile.sounds]
+start_attack = 138
+idle = 139
+attack = 140
+hurt = 141
+death = 142
+
+[[mobile]]
+id = "kraken"
+name = "a kraken"
+body = 77
+skin_hue = 0
+strength = "1d25+755"
+dexterity = "1d20+225"
+intelligence = "1d15+25"
+damage = "1d45+3"
+armor = 25
+notoriety = "attackable"
+karma = -11000
+fame = 11000
+loot = ["treasure_map_lvl4loot", "kraken_loot"]
+gold = "1d301+299"
+[mobile.skills]
+resisting_spells = "1d6+14"
+parrying = "1d11+14"
+tactics = "1d16+44"
+wrestling = "1d16+44"
+[mobile.sounds]
+idle = 851
+attack = 849
+hurt = 852
+death = 850
+
+[[mobile]]
+id = "seaserpent"
+name = "a sea serpent"
+body = 150
+skin_hue = 649
+strength = "1d58+167"
+dexterity = "1d28+57"
+intelligence = "1d43+52"
+damage = "1d11+4"
+armor = 15
+notoriety = "attackable"
+karma = -6000
+fame = 6000
+loot = ["treasure_map_lvl2loot"]
+gold = "1d51+49"
+[mobile.skills]
+magery = "1d11+49"
+resisting_spells = "1d16+59"
+parrying = "1d11+64"
+tactics = "1d11+59"
+wrestling = "1d11+59"
+[mobile.sounds]
+start_attack = 447
+attack = 448
+hurt = 449
+death = 451
+
+[[mobile]]
+id = "walrus"
+name = "a walrus"
+body = 221
+strength = "1d9+20"
+dexterity = "1d10+45"
+intelligence = "1d5+15"
+damage = "1d4+2"
+armor = 9
+karma = 0
+fame = 150
+[mobile.skills]
+resisting_spells = "1d6+14"
+parrying = "1d11+44"
+tactics = "1d11+18"
+wrestling = "1d11+18"
+[mobile.sounds]
+start_attack = 224
+idle = 225
+attack = 226
+hurt = 227
+death = 1217
+
+[[mobile]]
+id = "seahorse"
+name = "a sea horse"
+body = 144
+strength = "1d29+20"
+dexterity = "1d20+65"
+intelligence = "1d15+95"
+damage = "1d10+4"
+armor = 10
+karma = 2000
+fame = 500
+[mobile.skills]
+resisting_spells = "1d6+14"
+tactics = "1d11+18"
+wrestling = "1d11+18"
+[mobile.sounds]
+start_attack = 1144
+idle = 1145
+attack = 1146
+hurt = 1147
+death = 1148

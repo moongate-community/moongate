@@ -66,3 +66,23 @@ buy_price = 500
 sell_price = 0
 decays = true
 hue = 0
+
+[[item]]
+id = "0x1e2c_pickpocket_dip"
+base_id = "base_item"
+item_id = 7724
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x1e2d_pickpocket_dip"
+base_id = "base_item"
+item_id = 7725
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0

@@ -1,0 +1,314 @@
+[[item]]
+id = "0x0ec8_painting"
+base_id = "base_item"
+item_id = 3784
+name = "painting"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ec9_painting"
+base_id = "base_item"
+item_id = 3785
+name = "painting"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ee7_portrait"
+base_id = "base_item"
+item_id = 3815
+name = "portrait"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0e9f_portrait"
+base_id = "base_item"
+item_id = 3743
+name = "portrait"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ea0_painting"
+base_id = "base_item"
+item_id = 3744
+name = "painting"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ea1_painting"
+base_id = "base_item"
+item_id = 3745
+name = "painting"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ea2_painting"
+base_id = "base_item"
+item_id = 3746
+name = "painting"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ea3_painting"
+base_id = "base_item"
+item_id = 3747
+name = "painting"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ea4_painting"
+base_id = "base_item"
+item_id = 3748
+name = "painting"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ea5_portrait"
+base_id = "base_item"
+item_id = 3749
+name = "portrait"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ea6_portrait"
+base_id = "base_item"
+item_id = 3750
+name = "portrait"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ea7_portrait"
+base_id = "base_item"
+item_id = 3751
+name = "portrait"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ea8_portrait"
+base_id = "base_item"
+item_id = 3752
+name = "portrait"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0eaa_tapestry"
+base_id = "base_item"
+item_id = 3754
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0eab_tapestry"
+base_id = "base_item"
+item_id = 3755
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0eac_tapestry"
+base_id = "base_item"
+item_id = 3756
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ead_tapestry"
+base_id = "base_item"
+item_id = 3757
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0eae_tapestry"
+base_id = "base_item"
+item_id = 3758
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0eaf_tapestry"
+base_id = "base_item"
+item_id = 3759
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fd5_tapestry"
+base_id = "base_item"
+item_id = 4053
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fd6_tapestry"
+base_id = "base_item"
+item_id = 4054
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fd7_tapestry"
+base_id = "base_item"
+item_id = 4055
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fd8_tapestry"
+base_id = "base_item"
+item_id = 4056
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fd9_tapestry"
+base_id = "base_item"
+item_id = 4057
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fda_tapestry"
+base_id = "base_item"
+item_id = 4058
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fdb_tapestry"
+base_id = "base_item"
+item_id = 4059
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fdc_tapestry"
+base_id = "base_item"
+item_id = 4060
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fdd_tapestry"
+base_id = "base_item"
+item_id = 4061
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fde_tapestry"
+base_id = "base_item"
+item_id = 4062
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fdf_tapestry"
+base_id = "base_item"
+item_id = 4063
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fe0_tapestry"
+base_id = "base_item"
+item_id = 4064
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fe1_tapestry"
+base_id = "base_item"
+item_id = 4065
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fe2_tapestry"
+base_id = "base_item"
+item_id = 4066
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fe3_tapestry"
+base_id = "base_item"
+item_id = 4067
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0fe4_tapestry"
+base_id = "base_item"
+item_id = 4068
+name = "tapestry"
+rarity = "common"
+weight = 1.0
+hue = 0

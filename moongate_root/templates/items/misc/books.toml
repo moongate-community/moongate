@@ -20,9 +20,25 @@ rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x0ff0_a_book"
+base_id = "base_book"
+item_id = 4080
+name = "a book"
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x0ff1_a_book"
 base_id = "base_book"
 item_id = 4081
+name = "a book"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0ff2_a_book"
+base_id = "base_book"
+item_id = 4082
 name = "a book"
 rarity = "common"
 hue = 0
@@ -41,6 +57,78 @@ base_id = "base_book"
 item_id = 4084
 name = "book"
 rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0fbd_book"
+base_id = "base_book"
+item_id = 4029
+name = "book"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0fbe_book"
+base_id = "base_book"
+item_id = 4030
+name = "book"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x1e20_book"
+base_id = "base_item"
+item_id = 7712
+name = "book"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e21_books"
+base_id = "base_item"
+item_id = 7713
+name = "books"
+rarity = "common"
+weight = 2.0
+hue = 0
+
+[[item]]
+id = "0x1e22_books"
+base_id = "base_item"
+item_id = 7714
+name = "books"
+rarity = "common"
+weight = 2.0
+hue = 0
+
+[[item]]
+id = "0x1e23_books"
+base_id = "base_item"
+item_id = 7715
+name = "books"
+rarity = "common"
+weight = 2.0
+hue = 0
+
+[[item]]
+id = "0x1e24_books"
+base_id = "base_item"
+item_id = 7716
+name = "books"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1e25_books"
+base_id = "base_item"
+item_id = 7717
+name = "books"
+rarity = "common"
+movable = false
+weight = 5.0
 hue = 0
 
 [[item]]

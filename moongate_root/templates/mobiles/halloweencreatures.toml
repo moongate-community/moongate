@@ -1,0 +1,58 @@
+[[mobile]]
+id = "killerpumpkin"
+name = "Grimm"
+body = 1246
+strength = "1d151+199"
+dexterity = "1d5+120"
+intelligence = "1d51+199"
+damage = "1d6+9"
+armor = 20
+notoriety = "murderer"
+karma = -5000
+fame = 5000
+loot = ["grim_pumpkin_loot", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents"]
+gold = "1d401+799"
+[mobile.skills]
+resisting_spells = "1d11+19"
+tactics = "1d11+19"
+wrestling = "1d11+19"
+[mobile.sounds]
+start_attack = 372
+idle = 373
+attack = 374
+hurt = 375
+death = 376
+
+[[mobile]]
+id = "halloweenzombie"
+base_id = "zombie"
+notoriety = "murderer"
+loot = ["halloween_loot"]
+
+[[mobile]]
+id = "halloweenwraith"
+base_id = "wraith"
+notoriety = "murderer"
+loot = ["halloween_loot"]
+
+[[mobile]]
+id = "halloweenshade"
+base_id = "halloweenwraith"
+body = 26
+[mobile.sounds]
+start_attack = 382
+idle = 383
+attack = 384
+hurt = 385
+death = 386
+
+[[mobile]]
+id = "halloweenskeleton"
+base_id = "skeleton"
+notoriety = "murderer"
+loot = ["halloween_loot"]
+
+[[mobile]]
+id = "halloweenboneaxeman"
+base_id = "halloweenskeleton"
+name = "a bone axeman"

@@ -12,6 +12,24 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x1bde_logs"
+base_id = "base_item"
+item_id = 7134
+name = "logs"
+rarity = "common"
+weight = 2.0
+hue = 0
+
+[[item]]
+id = "0x1bdf_logs"
+base_id = "base_item"
+item_id = 7135
+name = "logs"
+rarity = "common"
+weight = 2.0
+hue = 0
+
+[[item]]
 id = "0x1be0_log"
 base_id = "base_item"
 item_id = 7136
@@ -22,6 +40,25 @@ stackable = true
 buy_price = 1
 sell_price = 1
 decays = true
+hue = 0
+
+[[item]]
+id = "0x1be1_logs"
+base_id = "base_item"
+item_id = 7137
+name = "logs"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1be2_logs"
+base_id = "base_item"
+item_id = 7138
+name = "logs"
+rarity = "common"
+weight = 1.0
 hue = 0
 
 [[item]]

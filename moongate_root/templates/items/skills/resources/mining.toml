@@ -1,4 +1,64 @@
 [[item]]
+id = "0x19b7_iron_ore"
+base_id = "base_item"
+item_id = 6583
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 2.0
+stackable = true
+decays = true
+hue = 0
+
+[[item]]
+id = "0x19b8_iron_ore"
+base_id = "base_item"
+item_id = 6584
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 7.0
+stackable = true
+decays = true
+hue = 0
+
+[[item]]
+id = "0x19b9_iron_ore"
+base_id = "base_item"
+item_id = 6585
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 12.0
+stackable = true
+decays = true
+hue = 0
+
+[[item]]
+id = "0x19ba_iron_ore"
+base_id = "base_item"
+item_id = 6586
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 7.0
+stackable = true
+decays = true
+hue = 0
+
+[[item]]
+id = "shadow_iron_ore"
+base_id = "base_item"
+item_id = 6585
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 12.0
+stackable = true
+decays = true
+hue = 0
+
+[[item]]
 id = "sand"
 base_id = "base_item"
 item_id = 16954

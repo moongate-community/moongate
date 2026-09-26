@@ -272,7 +272,9 @@ items = ["leather_skirt", "leather_shorts"]
 gender = "female"
 ```
 
-No loader reads mobile templates yet.
+The shipped `templates/mobiles/` holds UOX3's NPCs, converted by
+[`mg-uoxconv`](uox3-migration.md#mobiles-and-name-lists). No loader reads mobile
+templates yet.
 
 `LootTemplate` and `LootEntry` are the same kind of shape:
 

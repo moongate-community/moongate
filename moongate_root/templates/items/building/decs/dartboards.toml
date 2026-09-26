@@ -1,0 +1,59 @@
+[[item]]
+id = "0x1e2e_dartboard"
+base_id = "base_item"
+item_id = 7726
+name = "dartboard"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e2f_dartboard"
+base_id = "base_item"
+item_id = 7727
+name = "dartboard"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e30_dartboard_w/axe"
+base_id = "base_item"
+item_id = 7728
+name = "dartboard w/axe"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e31_dartboard_w/axe"
+base_id = "base_item"
+item_id = 7729
+name = "dartboard w/axe"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e32_dartboard_w/knives"
+base_id = "base_item"
+item_id = 7730
+name = "dartboard w/knives"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e33_dartboard_w/knives"
+base_id = "base_item"
+item_id = 7731
+name = "dartboard w/knives"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0

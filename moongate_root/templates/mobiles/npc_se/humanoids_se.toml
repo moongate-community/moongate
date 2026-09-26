@@ -1,0 +1,120 @@
+[[mobile]]
+id = "kappa_se"
+base_id = "base_kappa"
+strength = "1d31+194"
+dexterity = "1d21+49"
+intelligence = "1d16+39"
+hits = "1d31+149"
+damage = "1d14+12"
+armor = "1d16+34"
+karma = -3000
+fame = 3000
+gold = "1d51+174"
+[mobile.resistances]
+fire = "1d16+34"
+cold = "1d11+24"
+poison = "1d16+34"
+energy = "1d11+19"
+[mobile.skills]
+resisting_spells = "1d11+59"
+tactics = "1d11+79"
+wrestling = "1d6+59"
+anatomy = 0
+
+[[mobile]]
+id = "yomotsuelder_se"
+base_id = "base_yomotsu_elder"
+strength = "1d131+694"
+dexterity = "1d116+249"
+intelligence = "1d26+14"
+hits = "1d76+819"
+damage = "1d11+54"
+armor = "1d21+64"
+karma = -10000
+fame = 10000
+loot = ["treasure_map_lvl3loot", "randomgems", "randomgems", "reagentsandlesserpotions"]
+gold = "1d301+1499"
+[mobile.resistances]
+fire = "1d21+29"
+cold = "1d21+44"
+poison = "1d21+34"
+energy = "1d26+24"
+[mobile.skills]
+wrestling = "1d11+109"
+tactics = "1d6+114"
+resisting_spells = "1d16+99"
+anatomy = "1d6+114"
+
+[[mobile]]
+id = "yomotsupriest_se"
+base_id = "base_yomotsu_priest"
+strength = "1d51+479"
+dexterity = "1d16+99"
+intelligence = "1d76+599"
+hits = "1d51+479"
+damage = "1d11+54"
+armor = "1d21+64"
+karma = -10000
+fame = 7000
+loot = ["treasure_map_lvl3loot", "randomgems", "randomgems", "reagentsandlesserpotions"]
+gold = "1d101+599"
+[mobile.resistances]
+fire = "1d21+29"
+cold = "1d21+44"
+poison = "1d21+34"
+energy = "1d26+24"
+[mobile.skills]
+wrestling = "1d11+47"
+tactics = "1d6+54"
+resisting_spells = "1d9+111"
+anatomy = 0
+magery = "1d11+104"
+evaluating_intelligence = "1d16+92"
+meditation = "1d16+94"
+
+[[mobile]]
+id = "yomotsuwarrior_se"
+base_id = "base_yomotsu_warrior"
+strength = "1d51+479"
+dexterity = "1d16+149"
+intelligence = "1d21+14"
+hits = "1d51+479"
+damage = "1d11+54"
+armor = "1d21+64"
+karma = -1249
+fame = 2500
+loot = ["treasure_map_lvl3loot", "randomgems", "randomgems", "reagentsandlesserpotions"]
+gold = "1d101+599"
+[mobile.resistances]
+fire = "1d21+29"
+cold = "1d21+44"
+poison = "1d16+39"
+energy = "1d21+29"
+[mobile.skills]
+wrestling = "1d11+97"
+tactics = "1d11+94"
+resisting_spells = "1d11+79"
+anatomy = "1d11+84"
+
+[[mobile]]
+id = "fandancer_se"
+base_id = "base_fan_dancer"
+strength = "1d61+314"
+dexterity = "1d56+199"
+intelligence = "1d6+19"
+hits = "1d71+349"
+damage = "1d6+11"
+armor = "1d21+39"
+karma = -9000
+fame = 9000
+gold = "1d301+699"
+[mobile.resistances]
+fire = "1d21+49"
+cold = "1d21+49"
+poison = "1d21+49"
+energy = "1d21+39"
+[mobile.skills]
+resisting_spells = "1d11+99"
+tactics = "1d11+69"
+wrestling = "1d16+69"
+anatomy = 0

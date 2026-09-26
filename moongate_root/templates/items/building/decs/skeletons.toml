@@ -1,4 +1,164 @@
 [[item]]
+id = "0x1a01_skeleton"
+base_id = "base_item"
+item_id = 6657
+name = "skeleton"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a02_skeleton"
+base_id = "base_item"
+item_id = 6658
+name = "skeleton"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a03_skeleton"
+base_id = "base_item"
+item_id = 6659
+name = "skeleton"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a04_skeleton"
+base_id = "base_item"
+item_id = 6660
+name = "skeleton"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a05_skeleton"
+base_id = "base_item"
+item_id = 6661
+name = "skeleton"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a06_skeleton"
+base_id = "base_item"
+item_id = 6662
+name = "skeleton"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a09_skeleton"
+base_id = "base_item"
+item_id = 6665
+name = "skeleton"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a0a_skeleton"
+base_id = "base_item"
+item_id = 6666
+name = "skeleton"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1ad8_pile_of_skulls"
+base_id = "base_item"
+item_id = 6872
+name = "pile of skulls"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ad9_pile_of_skulls"
+base_id = "base_item"
+item_id = 6873
+name = "pile of skulls"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ada_pile_of_skulls"
+base_id = "base_item"
+item_id = 6874
+name = "pile of skulls"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1adb_pile_of_skulls"
+base_id = "base_item"
+item_id = 6875
+name = "pile of skulls"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1adc_pile_of_skulls"
+base_id = "base_item"
+item_id = 6876
+name = "pile of skulls"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1add_pile_of_skulls"
+base_id = "base_item"
+item_id = 6877
+name = "pile of skulls"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ade_pile_of_skulls"
+base_id = "base_item"
+item_id = 6878
+name = "pile of skulls"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1adf_pile_of_skulls"
+base_id = "base_item"
+item_id = 6879
+name = "pile of skulls"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x1ae0_skull"
 base_id = "base_item"
 item_id = 6880
@@ -246,4 +406,24 @@ name = "spine"
 rarity = "common"
 movable = false
 weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b1d_skeletong_with_meat"
+base_id = "base_item"
+item_id = 6941
+name = "skeletong with meat"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1b1e_skeletong_with_meat"
+base_id = "base_item"
+item_id = 6942
+name = "skeletong with meat"
+rarity = "common"
+movable = false
+weight = 10.0
 hue = 0

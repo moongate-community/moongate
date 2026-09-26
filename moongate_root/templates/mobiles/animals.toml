@@ -1,0 +1,750 @@
+[[mobile]]
+id = "base_animals"
+
+[[mobile]]
+id = "brownbear"
+name = "a bear"
+body = 167
+strength = "1d25+75"
+dexterity = "1d20+25"
+intelligence = "1d25+22"
+mana = 0
+damage = "1d11+1"
+armor = 8
+fame = 450
+[mobile.skills]
+resisting_spells = "1d21+19"
+parrying = "1d21+24"
+tactics = "1d21+39"
+wrestling = "1d21+39"
+[mobile.sounds]
+start_attack = 95
+idle = 96
+attack = 97
+hurt = 98
+death = 99
+
+[[mobile]]
+id = "blackbear"
+base_id = "brownbear"
+name = "a bear"
+body = 211
+dexterity = "1d20+55"
+intelligence = "1d4+10"
+damage = "1d11+1"
+armor = 8
+[mobile.sounds]
+start_attack = 95
+idle = 96
+attack = 97
+hurt = 98
+death = 99
+
+[[mobile]]
+id = "boar"
+name = "a boar"
+body = 290
+strength = 25
+dexterity = 15
+intelligence = 5
+mana = 0
+damage = "1d4+2"
+armor = 5
+fame = 300
+[mobile.skills]
+resisting_spells = 90
+parrying = 95
+tactics = 50
+wrestling = 50
+[mobile.sounds]
+start_attack = 196
+idle = 197
+attack = 198
+hurt = 199
+death = 200
+
+[[mobile]]
+id = "bull"
+name = "a bull"
+body = 232
+skin_hue = "0x08FD-0x090E"
+strength = "1d35+76"
+dexterity = "1d20+55"
+intelligence = "1d29+46"
+mana = 0
+damage = "1d6+3"
+armor = 14
+fame = 600
+[mobile.skills]
+resisting_spells = "1d8+17"
+parrying = "1d13+42"
+tactics = "1d18+67"
+wrestling = "1d36+4"
+[mobile.sounds]
+start_attack = 100
+idle = 101
+attack = 102
+hurt = 103
+death = 104
+
+[[mobile]]
+id = "bullfrog"
+name = "a bullfrog"
+body = 81
+skin_hue = 0
+strength = "1d25+45"
+dexterity = "1d20+5"
+intelligence = "1d10+10"
+mana = 0
+damage = "1d2"
+armor = 3
+fame = 350
+[mobile.skills]
+resisting_spells = "1d16+24"
+parrying = "1d36+37"
+tactics = "1d21+39"
+wrestling = "1d21+39"
+[mobile.sounds]
+start_attack = 614
+idle = 615
+attack = 616
+hurt = 617
+death = 618
+
+[[mobile]]
+id = "cat"
+name = "a cat"
+body = 201
+skin_hue = "0x08FD-0x090E"
+strength = 9
+dexterity = 35
+intelligence = 5
+mana = 0
+damage = 1
+armor = 4
+[mobile.skills]
+hiding = "1d21+14"
+resisting_spells = 50
+parrying = 25
+tactics = 40
+wrestling = 50
+[mobile.sounds]
+start_attack = 105
+idle = 675
+attack = 107
+hurt = 108
+death = 109
+
+[[mobile]]
+id = "cougar"
+name = "a cougar"
+body = 63
+strength = "1d25+55"
+dexterity = "1d20+65"
+intelligence = "1d25+25"
+mana = 0
+damage = "1d11+1"
+armor = 8
+fame = 450
+[mobile.skills]
+hiding = "1d11+4"
+resisting_spells = "1d16+14"
+parrying = "1d11+54"
+tactics = "1d16+44"
+wrestling = "1d16+44"
+[mobile.sounds]
+start_attack = 115
+idle = 116
+attack = 117
+hurt = 118
+death = 119
+
+[[mobile]]
+id = "cow"
+name = "a cow"
+body = 216
+strength = 30
+dexterity = 15
+intelligence = 5
+mana = 0
+damage = "1d4"
+armor = 5
+fame = 300
+[mobile.skills]
+resisting_spells = 55
+parrying = 55
+tactics = 55
+wrestling = 55
+[mobile.sounds]
+start_attack = 120
+idle = 121
+attack = 122
+hurt = 123
+death = 124
+
+[[mobile]]
+id = "dog"
+name = "a dog"
+body = 217
+skin_hue = "0x08FD-0x090E"
+strength = "1d11+26"
+dexterity = "1d16+27"
+intelligence = "1d9+28"
+mana = 0
+damage = "1d4+3"
+armor = 6
+fame = 300
+[mobile.skills]
+resisting_spells = "1d26+21"
+parrying = "1d26+27"
+tactics = "1d13+18"
+fencing = "1d13+18"
+[mobile.sounds]
+start_attack = 133
+idle = 134
+attack = 135
+hurt = 136
+death = 137
+
+[[mobile]]
+id = "goat"
+name = "a goat"
+body = 209
+strength = 19
+dexterity = 15
+intelligence = 5
+mana = 0
+damage = "1d2+2"
+armor = 5
+fame = 150
+[mobile.skills]
+resisting_spells = 50
+parrying = 50
+tactics = 50
+wrestling = 50
+[mobile.sounds]
+start_attack = 153
+idle = 154
+attack = 155
+hurt = 156
+death = 157
+
+[[mobile]]
+id = "gorilla"
+name = "a gorilla"
+body = 29
+strength = "1d43+52"
+dexterity = "1d20+35"
+intelligence = "1d25+35"
+mana = 0
+damage = "1d11+1"
+armor = 10
+fame = 450
+[mobile.skills]
+resisting_spells = "1d16+44"
+parrying = "1d11+42"
+tactics = "1d16+42"
+wrestling = "1d16+42"
+[mobile.sounds]
+start_attack = 158
+idle = 159
+attack = 160
+hurt = 161
+death = 162
+
+[[mobile]]
+id = "greywolf"
+name = "a grey wolf"
+body = 25
+skin_hue = 998
+strength = "1d25+55"
+dexterity = "1d20+55"
+intelligence = "1d25+30"
+mana = 0
+damage = "1d7+1"
+armor = 9
+karma = 0
+fame = 450
+[mobile.skills]
+hiding = "1d16+44"
+resisting_spells = "1d16+19"
+parrying = "1d11+44"
+tactics = "1d16+44"
+wrestling = "1d16+44"
+[mobile.sounds]
+start_attack = 229
+idle = 230
+attack = 231
+hurt = 232
+death = 233
+
+[[mobile]]
+id = "graywolf"
+base_id = "greywolf"
+
+[[mobile]]
+id = "grizbear"
+name = "a grizzly bear"
+body = 212
+strength = "1d30+125"
+dexterity = "1d25+80"
+intelligence = "1d25+15"
+mana = 0
+damage = "1d10+5"
+armor = 12
+fame = 1000
+[mobile.skills]
+resisting_spells = "1d16+24"
+parrying = "1d16+69"
+tactics = "1d31+69"
+wrestling = "1d26+44"
+[mobile.sounds]
+start_attack = 163
+idle = 164
+attack = 165
+hurt = 166
+death = 167
+
+[[mobile]]
+id = "hart"
+name = "a great hart"
+body = 234
+strength = "1d31+40"
+dexterity = "1d31+46"
+intelligence = "1d31+26"
+mana = 0
+damage = "1d7+3"
+armor = 12
+fame = 300
+[mobile.skills]
+resisting_spells = "1d19+26"
+parrying = "1d19+24"
+tactics = "1d2+2"
+wrestling = "1d2+2"
+[mobile.sounds]
+start_attack = 131
+idle = 1226
+attack = 189
+hurt = 131
+death = 132
+
+[[mobile]]
+id = "hind"
+name = "a hind"
+body = 237
+strength = "1d31+20"
+dexterity = "1d31+46"
+intelligence = "1d31+16"
+mana = 0
+damage = 4
+armor = 4
+fame = 300
+[mobile.skills]
+hiding = "1d21+9"
+resisting_spells = 15
+parrying = 22
+tactics = 19
+wrestling = 26
+[mobile.sounds]
+start_attack = 131
+idle = 1226
+attack = 189
+hurt = 131
+death = 132
+
+[[mobile]]
+id = "jackrabbit"
+base_id = "rabbit"
+name = "a jack rabbit"
+strength = 15
+dexterity = 25
+intelligence = 5
+mana = 0
+damage = "1d2"
+armor = 2
+[mobile.skills]
+hiding = "1d16+44"
+
+[[mobile]]
+id = "mountaingoat"
+base_id = "goat"
+name = "a mountain goat"
+body = 88
+strength = "1d43+21"
+dexterity = "1d20+55"
+intelligence = "1d15+15"
+mana = 0
+damage = "1d5+2"
+armor = 8
+fame = 300
+[mobile.skills]
+resisting_spells = "1d6+24"
+parrying = "1d11+44"
+tactics = "1d16+28"
+wrestling = "1d16+28"
+[mobile.sounds]
+start_attack = 153
+idle = 154
+attack = 155
+hurt = 156
+death = 157
+
+[[mobile]]
+id = "packhorse"
+name = "a pack horse"
+body = 291
+strength = "1d77+43"
+dexterity = "1d20+35"
+intelligence = "1d5+5"
+mana = 0
+stamina = "1d20+80"
+damage = "1d9+3"
+armor = 9
+karma = 200
+[mobile.skills]
+resisting_spells = "1d6+24"
+parrying = "1d11+34"
+tactics = "1d16+28"
+wrestling = "1d16+28"
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "packllama"
+name = "a pack llama"
+body = 292
+strength = "1d29+51"
+dexterity = "1d20+35"
+intelligence = "1d15+15"
+mana = 0
+stamina = "1d20+85"
+damage = "1d5+1"
+armor = 8
+karma = 200
+[mobile.skills]
+resisting_spells = "1d6+14"
+parrying = "1d11+34"
+tactics = "1d11+18"
+wrestling = "1d11+18"
+[mobile.sounds]
+start_attack = 183
+idle = 1012
+attack = 1013
+hurt = 1014
+death = 185
+
+[[mobile]]
+id = "panther"
+name = "a panther"
+body = 214
+strength = "1d25+60"
+dexterity = "1d20+85"
+intelligence = "1d25+25"
+mana = 0
+damage = "1d13+1"
+armor = 8
+fame = 450
+[mobile.skills]
+hiding = "1d11+14"
+resisting_spells = "1d16+14"
+parrying = "1d11+54"
+tactics = "1d16+49"
+wrestling = "1d16+49"
+[mobile.sounds]
+start_attack = 186
+idle = 187
+attack = 188
+hurt = 189
+death = 190
+
+[[mobile]]
+id = "pig"
+name = "a pig"
+body = 203
+strength = 20
+dexterity = 20
+intelligence = 5
+mana = 0
+damage = "1d3+1"
+armor = 6
+fame = 150
+[mobile.skills]
+resisting_spells = 50
+parrying = 50
+tactics = 50
+wrestling = 50
+[mobile.sounds]
+start_attack = 196
+idle = 197
+attack = 198
+hurt = 199
+death = 200
+
+[[mobile]]
+id = "polarbear"
+name = "a polar bear"
+body = 213
+strength = "1d25+115"
+dexterity = "1d25+80"
+intelligence = "1d25+25"
+mana = 0
+damage = "1d10+4"
+armor = 9
+fame = 1500
+[mobile.skills]
+resisting_spells = "1d16+44"
+parrying = "1d16+9"
+tactics = "1d31+59"
+wrestling = "1d26+44"
+[mobile.sounds]
+start_attack = 163
+idle = 164
+attack = 165
+hurt = 166
+death = 167
+
+[[mobile]]
+id = "rabbit"
+name = "a rabbit"
+body = 205
+skin_hue = "0x08FD-0x090E"
+strength = "1d5+5"
+dexterity = "1d13+25"
+intelligence = "1d9+5"
+mana = 0
+damage = 1
+armor = 3
+fame = 150
+[mobile.skills]
+hiding = "1d21+24"
+resisting_spells = 50
+parrying = 50
+tactics = 50
+wrestling = 50
+[mobile.sounds]
+attack = 201
+hurt = 202
+death = 203
+
+[[mobile]]
+id = "rat"
+name = "a rat"
+body = 238
+strength = 9
+dexterity = 35
+intelligence = 5
+mana = 0
+damage = "1d2"
+armor = 3
+karma = -150
+fame = 150
+[mobile.skills]
+resisting_spells = 40
+parrying = 40
+tactics = 40
+wrestling = 40
+[mobile.sounds]
+start_attack = 204
+idle = 205
+attack = 206
+hurt = 207
+death = 208
+
+[[mobile]]
+id = "sheep"
+name = "a sheep"
+body = 207
+strength = 19
+dexterity = 25
+intelligence = 5
+mana = 0
+damage = "1d2"
+armor = 3
+fame = 300
+[mobile.skills]
+resisting_spells = 50
+parrying = 50
+tactics = 60
+wrestling = 50
+[mobile.sounds]
+start_attack = 214
+idle = 215
+attack = 216
+hurt = 217
+death = 218
+
+[[mobile]]
+id = "snowleopard"
+name = "a snow leopard"
+body = 64
+skin_hue = 72
+strength = "1d25+55"
+dexterity = "1d20+65"
+intelligence = "1d25+25"
+mana = 0
+damage = "1d9+1"
+armor = 12
+fame = 450
+[mobile.skills]
+hiding = "1d21+4"
+resisting_spells = "1d11+24"
+parrying = "1d11+54"
+tactics = "1d16+44"
+wrestling = "1d11+39"
+[mobile.sounds]
+start_attack = 115
+idle = 116
+attack = 117
+hurt = 118
+death = 119
+
+[[mobile]]
+id = "timberwolf"
+name = "a timber wolf"
+body = 225
+strength = "1d25+55"
+dexterity = "1d20+55"
+intelligence = "1d15+10"
+mana = 0
+damage = "1d7+3"
+armor = 9
+fame = 450
+[mobile.skills]
+hiding = "1d6+4"
+resisting_spells = "1d18+27"
+parrying = "1d13+42"
+tactics = "1d21+29"
+wrestling = "1d21+39"
+[mobile.sounds]
+start_attack = 229
+idle = 230
+attack = 231
+hurt = 232
+death = 233
+
+[[mobile]]
+id = "whitewolf"
+name = "a white wolf"
+body = 37
+skin_hue = 906
+strength = "1d25+55"
+dexterity = "1d20+55"
+intelligence = "1d25+30"
+mana = 0
+damage = "1d7+1"
+armor = 8
+fame = 450
+[mobile.skills]
+hiding = "1d16+4"
+resisting_spells = "1d16+19"
+parrying = "1d11+44"
+tactics = "1d16+44"
+wrestling = "1d16+44"
+[mobile.sounds]
+start_attack = 229
+idle = 230
+attack = 231
+hurt = 232
+death = 233
+
+[[mobile]]
+id = "silverwolf"
+name = "a silver wolf"
+body = 100
+strength = "1d25+95"
+dexterity = "1d25+80"
+intelligence = "1d25+35"
+damage = "1d17+5"
+armor = 11
+notoriety = "attackable"
+karma = 2500
+fame = 2500
+[mobile.skills]
+hiding = "1d11+4"
+resisting_spells = "1d18+57"
+parrying = "1d13+62"
+tactics = "1d21+49"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 229
+idle = 230
+attack = 231
+hurt = 232
+death = 233
+
+[[mobile]]
+id = "squirrel"
+name = "a squirrel"
+body = 278
+strength = "1d7+43"
+dexterity = 35
+intelligence = 5
+damage = "1d2"
+[mobile.skills]
+resisting_spells = 4
+parrying = 4
+tactics = 4
+wrestling = 4
+[mobile.sounds]
+start_attack = 202
+idle = 201
+attack = 202
+hurt = 203
+death = 203
+
+[[mobile]]
+id = "ferret"
+name = "a ferret"
+body = 279
+strength = "1d8+40"
+dexterity = 55
+intelligence = 75
+damage = "1d3+6"
+armor = 1
+[mobile.skills]
+resisting_spells = 4
+parrying = 4
+tactics = 4
+wrestling = 4
+[mobile.sounds]
+start_attack = 202
+idle = 201
+attack = 202
+hurt = 203
+death = 203
+
+[[mobile]]
+id = "base_crane"
+base_id = "base_animals"
+name = "crane"
+body = 254
+[mobile.sounds]
+start_attack = 1241
+idle = 1240
+attack = 1239
+hurt = 1242
+death = 1238
+
+[[mobile]]
+id = "crane"
+base_id = "crane_se"
+
+[[mobile]]
+id = "base_gaman"
+base_id = "base_animals"
+name = "gaman"
+body = 248
+[mobile.sounds]
+start_attack = 162
+idle = 1271
+attack = 1270
+hurt = 1274
+death = 1269
+
+[[mobile]]
+id = "gaman"
+base_id = "gaman_se"

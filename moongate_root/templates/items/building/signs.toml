@@ -6,3 +6,1194 @@ name = "post"
 rarity = "common"
 weight = 1.0
 hue = 0
+
+[[item]]
+id = "0x1297_sign"
+base_id = "base_item"
+item_id = 4759
+name = "sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x1298_sign"
+base_id = "base_item"
+item_id = 4760
+name = "sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x1299_sign"
+base_id = "base_item"
+item_id = 4761
+name = "sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x129a_sign"
+base_id = "base_item"
+item_id = 4762
+name = "sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x129b_sign"
+base_id = "base_item"
+item_id = 4763
+name = "sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x129c_sign"
+base_id = "base_item"
+item_id = 4764
+name = "sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x129d_sign"
+base_id = "base_item"
+item_id = 4765
+name = "sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x129e_sign"
+base_id = "base_item"
+item_id = 4766
+name = "sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x12a5_sign"
+base_id = "base_item"
+item_id = 4773
+name = "sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0b95_library"
+base_id = "base_item"
+item_id = 2965
+name = "Library"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b96_library"
+base_id = "base_item"
+item_id = 2966
+name = "Library"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b97_wooden_signpost"
+base_id = "base_item"
+item_id = 2967
+name = "wooden signpost"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b98_wooden_signpost"
+base_id = "base_item"
+item_id = 2968
+name = "wooden signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b99_wooden_signpost"
+base_id = "base_item"
+item_id = 2969
+name = "wooden signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b9a_wooden_signpost"
+base_id = "base_item"
+item_id = 2970
+name = "wooden signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b9b_metal_signpost"
+base_id = "base_item"
+item_id = 2971
+name = "metal signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b9c_metal_signpost"
+base_id = "base_item"
+item_id = 2972
+name = "metal signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b9d_metal_signpost"
+base_id = "base_item"
+item_id = 2973
+name = "metal signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b9e_metal_signpost"
+base_id = "base_item"
+item_id = 2974
+name = "metal signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b9f_metal_signpost"
+base_id = "base_item"
+item_id = 2975
+name = "metal signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba0_metal_signpost"
+base_id = "base_item"
+item_id = 2976
+name = "metal signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba1_metal_signpost"
+base_id = "base_item"
+item_id = 2977
+name = "metal signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba2_metal_signpost"
+base_id = "base_item"
+item_id = 2978
+name = "metal signpost"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba3_bakery"
+base_id = "base_item"
+item_id = 2979
+name = "Bakery"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba4_bakery"
+base_id = "base_item"
+item_id = 2980
+name = "Bakery"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba5_tailor"
+base_id = "base_item"
+item_id = 2981
+name = "Tailor"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba6_tailor"
+base_id = "base_item"
+item_id = 2982
+name = "Tailor"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba7_tinker"
+base_id = "base_item"
+item_id = 2983
+name = "Tinker"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba8_tinker"
+base_id = "base_item"
+item_id = 2984
+name = "Tinker"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0ba9_butcher"
+base_id = "base_item"
+item_id = 2985
+name = "Butcher"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0baa_butcher"
+base_id = "base_item"
+item_id = 2986
+name = "Butcher"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bab_healer"
+base_id = "base_item"
+item_id = 2987
+name = "Healer"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bac_healer"
+base_id = "base_item"
+item_id = 2988
+name = "Healer"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bad_mage"
+base_id = "base_item"
+item_id = 2989
+name = "Mage"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bae_mage"
+base_id = "base_item"
+item_id = 2990
+name = "Mage"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0baf_woodworker"
+base_id = "base_item"
+item_id = 2991
+name = "Woodworker"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb0_woodworker"
+base_id = "base_item"
+item_id = 2992
+name = "Woodworker"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb1_customs"
+base_id = "base_item"
+item_id = 2993
+name = "Customs"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb2_customs"
+base_id = "base_item"
+item_id = 2994
+name = "Customs"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb3_inn"
+base_id = "base_item"
+item_id = 2995
+name = "Inn"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb4_inn"
+base_id = "base_item"
+item_id = 2996
+name = "Inn"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb5_shipwright"
+base_id = "base_item"
+item_id = 2997
+name = "Shipwright"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb6_shipwright"
+base_id = "base_item"
+item_id = 2998
+name = "Shipwright"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb7_stables"
+base_id = "base_item"
+item_id = 2999
+name = "Stables"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb8_stables"
+base_id = "base_item"
+item_id = 3000
+name = "Stables"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bb9_barber_shop"
+base_id = "base_item"
+item_id = 3001
+name = "Barber Shop"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bba_barber_shop"
+base_id = "base_item"
+item_id = 3002
+name = "Barber Shop"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bbb_bard"
+base_id = "base_item"
+item_id = 3003
+name = "Bard"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bbc_bard"
+base_id = "base_item"
+item_id = 3004
+name = "Bard"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bbd_fletcher"
+base_id = "base_item"
+item_id = 3005
+name = "Fletcher"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bbe_fletcher"
+base_id = "base_item"
+item_id = 3006
+name = "Fletcher"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bbf_armorer"
+base_id = "base_item"
+item_id = 3007
+name = "Armorer"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc0_armorer"
+base_id = "base_item"
+item_id = 3008
+name = "Armorer"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc1_jeweler"
+base_id = "base_item"
+item_id = 3009
+name = "Jeweler"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc2_jeweler"
+base_id = "base_item"
+item_id = 3010
+name = "Jeweler"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc3_tavern"
+base_id = "base_item"
+item_id = 3011
+name = "Tavern"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc4_tavern"
+base_id = "base_item"
+item_id = 3012
+name = "Tavern"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc5_reagent_shop"
+base_id = "base_item"
+item_id = 3013
+name = "Reagent Shop"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc6_reagent_shop"
+base_id = "base_item"
+item_id = 3014
+name = "Reagent Shop"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc7_blacksmith"
+base_id = "base_item"
+item_id = 3015
+name = "Blacksmith"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc8_blacksmith"
+base_id = "base_item"
+item_id = 3016
+name = "Blacksmith"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bc9_painter"
+base_id = "base_item"
+item_id = 3017
+name = "Painter"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bca_painter"
+base_id = "base_item"
+item_id = 3018
+name = "Painter"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bcb_provisioner"
+base_id = "base_item"
+item_id = 3019
+name = "Provisioner"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bcc_provisioner"
+base_id = "base_item"
+item_id = 3020
+name = "Provisioner"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bcd_bowyer"
+base_id = "base_item"
+item_id = 3021
+name = "Bowyer"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bce_bowyer"
+base_id = "base_item"
+item_id = 3022
+name = "Bowyer"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bcf_wooden_sign"
+base_id = "base_item"
+item_id = 3023
+name = "wooden sign"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd0_wooden_sign"
+base_id = "base_item"
+item_id = 3024
+name = "wooden sign"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd1_brass_sign"
+base_id = "base_item"
+item_id = 3025
+name = "brass sign"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd2_brass_sign"
+base_id = "base_item"
+item_id = 3026
+name = "brass sign"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd3_armaments_guild"
+base_id = "base_item"
+item_id = 3027
+name = "Armaments Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd4_armaments_guild"
+base_id = "base_item"
+item_id = 3028
+name = "Armaments Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd5_armorers_guild"
+base_id = "base_item"
+item_id = 3029
+name = "Armorers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd6_armorers_guild"
+base_id = "base_item"
+item_id = 3030
+name = "Armorers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd7_blacksmiths_guild"
+base_id = "base_item"
+item_id = 3031
+name = "Blacksmiths Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd8_blacksmiths_guild"
+base_id = "base_item"
+item_id = 3032
+name = "Blacksmiths Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bd9_weapons_guild"
+base_id = "base_item"
+item_id = 3033
+name = "Weapons Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bda_weapons_guild"
+base_id = "base_item"
+item_id = 3034
+name = "Weapons Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bdb_bardic_guild"
+base_id = "base_item"
+item_id = 3035
+name = "Bardic Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bdc_bardic_guild"
+base_id = "base_item"
+item_id = 3036
+name = "Bardic Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bdd_barters_guild"
+base_id = "base_item"
+item_id = 3037
+name = "Barters Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bde_barters_guild"
+base_id = "base_item"
+item_id = 3038
+name = "Barters Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bdf_provisioners_guild"
+base_id = "base_item"
+item_id = 3039
+name = "Provisioners Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be0_provisioners_guild"
+base_id = "base_item"
+item_id = 3040
+name = "Provisioners Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be1_traders_guild"
+base_id = "base_item"
+item_id = 3041
+name = "Traders Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be2_traders_guild"
+base_id = "base_item"
+item_id = 3042
+name = "Traders Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be3_cooks_guild"
+base_id = "base_item"
+item_id = 3043
+name = "Cooks Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be4_cooks_guild"
+base_id = "base_item"
+item_id = 3044
+name = "Cooks Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be5_healers_guild"
+base_id = "base_item"
+item_id = 3045
+name = "Healers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be6_healers_guild"
+base_id = "base_item"
+item_id = 3046
+name = "Healers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be7_mages_guild"
+base_id = "base_item"
+item_id = 3047
+name = "Mages Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be8_mages_guild"
+base_id = "base_item"
+item_id = 3048
+name = "Mages Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0be9_sorcerers_guild"
+base_id = "base_item"
+item_id = 3049
+name = "Sorcerers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bea_sorcerers_guild"
+base_id = "base_item"
+item_id = 3050
+name = "Sorcerers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0beb_illusionists_guild"
+base_id = "base_item"
+item_id = 3051
+name = "Illusionists Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bec_illusionists_guild"
+base_id = "base_item"
+item_id = 3052
+name = "Illusionists Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bed_miners_guild"
+base_id = "base_item"
+item_id = 3053
+name = "Miners Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bee_miners_guild"
+base_id = "base_item"
+item_id = 3054
+name = "Miners Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bef_archers_guild"
+base_id = "base_item"
+item_id = 3055
+name = "Archers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf0_archers_guild"
+base_id = "base_item"
+item_id = 3056
+name = "Archers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf1_seamens_guild"
+base_id = "base_item"
+item_id = 3057
+name = "Seamens Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf2_seamens_guild"
+base_id = "base_item"
+item_id = 3058
+name = "Seamens Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf3_fishermens_guild"
+base_id = "base_item"
+item_id = 3059
+name = "Fishermens Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf4_fishermens_guild"
+base_id = "base_item"
+item_id = 3060
+name = "Fishermens Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf5_sailors_guild"
+base_id = "base_item"
+item_id = 3061
+name = "Sailors Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf6_sailors_guild"
+base_id = "base_item"
+item_id = 3062
+name = "Sailors Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf7_shipwrights_guild"
+base_id = "base_item"
+item_id = 3063
+name = "Shipwrights Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf8_shipwrights_guild"
+base_id = "base_item"
+item_id = 3064
+name = "Shipwrights Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bf9_tailors_guild"
+base_id = "base_item"
+item_id = 3065
+name = "Tailors Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bfa_tailors_guild"
+base_id = "base_item"
+item_id = 3066
+name = "Tailors Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bfb_thieves_guild"
+base_id = "base_item"
+item_id = 3067
+name = "Thieves Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bfc_thieves_guild"
+base_id = "base_item"
+item_id = 3068
+name = "Thieves Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bfd_rogues_guild"
+base_id = "base_item"
+item_id = 3069
+name = "Rogues Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bfe_rogues_guild"
+base_id = "base_item"
+item_id = 3070
+name = "Rogues Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0bff_assassins_guild"
+base_id = "base_item"
+item_id = 3071
+name = "Assassins Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c00_assassins_guild"
+base_id = "base_item"
+item_id = 3072
+name = "Assassins Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c01_tinkers_guild"
+base_id = "base_item"
+item_id = 3073
+name = "Tinkers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c02_tinkers_guild"
+base_id = "base_item"
+item_id = 3074
+name = "Tinkers Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c03_warriors_guild"
+base_id = "base_item"
+item_id = 3075
+name = "Warriors Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c04_warriors_guild"
+base_id = "base_item"
+item_id = 3076
+name = "Warriors Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c05_cavalry_guild"
+base_id = "base_item"
+item_id = 3077
+name = "Cavalry Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c06_cavalry_guild"
+base_id = "base_item"
+item_id = 3078
+name = "Cavalry Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c07_fighters_guild"
+base_id = "base_item"
+item_id = 3079
+name = "Fighters Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c08_fighters_guild"
+base_id = "base_item"
+item_id = 3080
+name = "Fighters Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c09_merchants_guild"
+base_id = "base_item"
+item_id = 3081
+name = "Merchants Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c0a_merchants_guild"
+base_id = "base_item"
+item_id = 3082
+name = "Merchants Guild"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c0b_bank"
+base_id = "base_item"
+item_id = 3083
+name = "Bank"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c0c_bank"
+base_id = "base_item"
+item_id = 3084
+name = "Bank"
+rarity = "common"
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c0d_theatre"
+base_id = "base_item"
+item_id = 3085
+name = "Theatre"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c0e_theatre"
+base_id = "base_item"
+item_id = 3086
+name = "Theatre"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "housesign"
+base_id = "base_item"
+item_id = 3026
+name = "Brass sign"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "housesign_2"
+base_id = "base_item"
+item_id = 3025
+name = "Brass sign"
+rarity = "common"
+hue = 0

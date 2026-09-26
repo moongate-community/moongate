@@ -21,3 +21,63 @@ buy_price = 2
 sell_price = 1
 decays = true
 hue = 0
+
+[[item]]
+id = "0x1eb7_empty_tool_kit"
+base_id = "base_item"
+item_id = 7863
+name = "empty tool kit"
+rarity = "common"
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1eb8_tool_kit"
+base_id = "base_item"
+item_id = 7864
+name = "tool kit"
+rarity = "common"
+weight = 10.0
+buy_price = 2
+sell_price = 1
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1eb9_tool_kit"
+base_id = "base_item"
+item_id = 7865
+name = "tool kit"
+rarity = "common"
+weight = 10.0
+buy_price = 2
+sell_price = 1
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1eba_tool_kit"
+base_id = "base_item"
+item_id = 7866
+name = "tool kit"
+rarity = "common"
+weight = 10.0
+buy_price = 2
+sell_price = 1
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1ebb_tool_kit"
+base_id = "base_item"
+item_id = 7867
+name = "tool kit"
+rarity = "common"
+weight = 10.0
+buy_price = 2
+sell_price = 1
+decays = true
+hue = 0

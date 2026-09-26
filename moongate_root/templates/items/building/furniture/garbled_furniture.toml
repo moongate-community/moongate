@@ -1,4 +1,64 @@
 [[item]]
+id = "0x0c10_broken_chair"
+base_id = "base_item"
+item_id = 3088
+name = "broken chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c11_broken_chair"
+base_id = "base_item"
+item_id = 3089
+name = "broken chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c12_broken_armoire"
+base_id = "base_item"
+item_id = 3090
+name = "broken armoire"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c13_broken_armoire"
+base_id = "base_item"
+item_id = 3091
+name = "broken armoire"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c14_ruined_bookcase"
+base_id = "base_item"
+item_id = 3092
+name = "ruined bookcase"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c15_ruined_bookcase"
+base_id = "base_item"
+item_id = 3093
+name = "ruined bookcase"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x0c16_damaged_books"
 base_id = "base_item"
 item_id = 3094
@@ -6,6 +66,226 @@ name = "damaged books"
 rarity = "common"
 movable = false
 weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c17_covered_chair"
+base_id = "base_item"
+item_id = 3095
+name = "covered chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c18_covered_chair"
+base_id = "base_item"
+item_id = 3096
+name = "covered chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c19_broken_chair"
+base_id = "base_item"
+item_id = 3097
+name = "broken chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c1a_broken_chair"
+base_id = "base_item"
+item_id = 3098
+name = "broken chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c1b_broken_chair"
+base_id = "base_item"
+item_id = 3099
+name = "broken chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c1c_broken_chair"
+base_id = "base_item"
+item_id = 3100
+name = "broken chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c1d_broken_chair"
+base_id = "base_item"
+item_id = 3101
+name = "broken chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c1e_broken_chair"
+base_id = "base_item"
+item_id = 3102
+name = "broken chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c1f_broken_clock"
+base_id = "base_item"
+item_id = 3103
+name = "broken clock"
+rarity = "common"
+movable = true
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0c20_broken_dresser"
+base_id = "base_item"
+item_id = 3104
+name = "broken dresser"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c21_broken_dresser"
+base_id = "base_item"
+item_id = 3105
+name = "broken dresser"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c22_broken_dresser"
+base_id = "base_item"
+item_id = 3106
+name = "broken dresser"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c23_broken_dresser"
+base_id = "base_item"
+item_id = 3107
+name = "broken dresser"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c24_broken_furniture"
+base_id = "base_item"
+item_id = 3108
+name = "broken furniture"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c25_broken_furniture"
+base_id = "base_item"
+item_id = 3109
+name = "broken furniture"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c26_ruined_bed"
+base_id = "base_item"
+item_id = 3110
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c27_ruined_bed"
+base_id = "base_item"
+item_id = 3111
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c28_ruined_bed"
+base_id = "base_item"
+item_id = 3112
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c29_ruined_bed"
+base_id = "base_item"
+item_id = 3113
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c2a_ruined_bed"
+base_id = "base_item"
+item_id = 3114
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c2b_ruined_bed"
+base_id = "base_item"
+item_id = 3115
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0c2c_ruined_painting"
+base_id = "base_item"
+item_id = 3116
+name = "ruined painting"
+rarity = "common"
+movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -49,6 +329,86 @@ weight = 5.0
 hue = 0
 
 [[item]]
+id = "0x1894_ruined_bed"
+base_id = "base_item"
+item_id = 6292
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1895_ruined_bed"
+base_id = "base_item"
+item_id = 6293
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1896_ruined_bed"
+base_id = "base_item"
+item_id = 6294
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1897_ruined_bed"
+base_id = "base_item"
+item_id = 6295
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1898_ruined_bed"
+base_id = "base_item"
+item_id = 6296
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1899_ruined_bed"
+base_id = "base_item"
+item_id = 6297
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x189a_ruined_bed"
+base_id = "base_item"
+item_id = 6298
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x189b_ruined_bed"
+base_id = "base_item"
+item_id = 6299
+name = "ruined bed"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x1db3_broken_barrel"
 base_id = "base_item"
 item_id = 7603
@@ -89,6 +449,246 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "0x0a2d_drawer"
+base_id = "base_item"
+item_id = 2605
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a2e_drawer"
+base_id = "base_item"
+item_id = 2606
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a2f_drawer"
+base_id = "base_item"
+item_id = 2607
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a31_drawer"
+base_id = "base_item"
+item_id = 2609
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a32_drawer"
+base_id = "base_item"
+item_id = 2610
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a33_drawer"
+base_id = "base_item"
+item_id = 2611
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a35_drawer"
+base_id = "base_item"
+item_id = 2613
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a36_drawer"
+base_id = "base_item"
+item_id = 2614
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a37_drawer"
+base_id = "base_item"
+item_id = 2615
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a39_drawer"
+base_id = "base_item"
+item_id = 2617
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a3a_drawer"
+base_id = "base_item"
+item_id = 2618
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a3b_drawer"
+base_id = "base_item"
+item_id = 2619
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a3e_drawer"
+base_id = "base_item"
+item_id = 2622
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a3f_drawer"
+base_id = "base_item"
+item_id = 2623
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a40_drawer"
+base_id = "base_item"
+item_id = 2624
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a41_drawer"
+base_id = "base_item"
+item_id = 2625
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a42_drawer"
+base_id = "base_item"
+item_id = 2626
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a43_drawer"
+base_id = "base_item"
+item_id = 2627
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a46_drawer"
+base_id = "base_item"
+item_id = 2630
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a47_drawer"
+base_id = "base_item"
+item_id = 2631
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a48_drawer"
+base_id = "base_item"
+item_id = 2632
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a49_drawer"
+base_id = "base_item"
+item_id = 2633
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a4a_drawer"
+base_id = "base_item"
+item_id = 2634
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0a4b_drawer"
+base_id = "base_item"
+item_id = 2635
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x10e1_barrel_hoops"
 base_id = "base_item"
 item_id = 4321
@@ -109,10 +709,200 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "0x1e6e_boards"
+base_id = "base_item"
+item_id = 7790
+name = "boards"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e6f_chair"
+base_id = "base_item"
+item_id = 7791
+name = "chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1e70_drawer"
+base_id = "base_item"
+item_id = 7792
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e71_chest_of_drawers"
+base_id = "base_item"
+item_id = 7793
+name = "chest of drawers"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1e72_table"
+base_id = "base_item"
+item_id = 7794
+name = "table"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1e73_table_legs"
+base_id = "base_item"
+item_id = 7795
+name = "table legs"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e74_table_leg"
+base_id = "base_item"
+item_id = 7796
+name = "table leg"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e75_table_legs"
+base_id = "base_item"
+item_id = 7797
+name = "table legs"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e76_shelves"
+base_id = "base_item"
+item_id = 7798
+name = "shelves"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1e77_boards"
+base_id = "base_item"
+item_id = 7799
+name = "boards"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1e78_chair"
+base_id = "base_item"
+item_id = 7800
+name = "chair"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1e79_drawer"
+base_id = "base_item"
+item_id = 7801
+name = "drawer"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e7a_chest_of_drawers"
+base_id = "base_item"
+item_id = 7802
+name = "chest of drawers"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1e7b_table"
+base_id = "base_item"
+item_id = 7803
+name = "table"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x1e7c_table_legs"
+base_id = "base_item"
+item_id = 7804
+name = "table legs"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e7d_table_leg"
+base_id = "base_item"
+item_id = 7805
+name = "table leg"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e7e_shelves"
+base_id = "base_item"
+item_id = 7806
+name = "shelves"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
 id = "0x1e7f_stool"
 base_id = "base_item"
 item_id = 7807
 name = "stool"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1e80_wooden_box"
+base_id = "base_item"
+item_id = 7808
+name = "wooden box"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1e81_wooden_box"
+base_id = "base_item"
+item_id = 7809
+name = "wooden box"
 rarity = "common"
 movable = false
 weight = 5.0
@@ -126,6 +916,36 @@ name = "lathe work"
 rarity = "common"
 movable = false
 weight = 2.0
+hue = 0
+
+[[item]]
+id = "0x1eb1_barrel_staves"
+base_id = "base_item"
+item_id = 7857
+name = "barrel staves"
+rarity = "common"
+movable = true
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1eb3_barrel_staves"
+base_id = "base_item"
+item_id = 7859
+name = "barrel staves"
+rarity = "common"
+movable = true
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1eb4_barrel_staves"
+base_id = "base_item"
+item_id = 7860
+name = "barrel staves"
+rarity = "common"
+movable = true
+weight = 1.0
 hue = 0
 
 [[item]]

@@ -1,0 +1,89 @@
+[[item]]
+id = "0x120e_altar"
+base_id = "base_item"
+item_id = 4622
+name = "altar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x120f_altar"
+base_id = "base_item"
+item_id = 4623
+name = "altar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1210_altar"
+base_id = "base_item"
+item_id = 4624
+name = "altar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1211_altar"
+base_id = "base_item"
+item_id = 4625
+name = "altar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1212_altar"
+base_id = "base_item"
+item_id = 4626
+name = "altar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1213_altar"
+base_id = "base_item"
+item_id = 4627
+name = "altar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1214_altar"
+base_id = "base_item"
+item_id = 4628
+name = "altar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1215_altar"
+base_id = "base_item"
+item_id = 4629
+name = "altar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1216_altar"
+base_id = "base_item"
+item_id = 4630
+name = "altar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0

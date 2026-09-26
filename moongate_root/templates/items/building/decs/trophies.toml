@@ -1,0 +1,139 @@
+[[item]]
+id = "0x1e60_trophy"
+base_id = "base_item"
+item_id = 7776
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e61_trophy"
+base_id = "base_item"
+item_id = 7777
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e62_trophy"
+base_id = "base_item"
+item_id = 7778
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e63_trophy"
+base_id = "base_item"
+item_id = 7779
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e64_trophy"
+base_id = "base_item"
+item_id = 7780
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e65_trophy"
+base_id = "base_item"
+item_id = 7781
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e66_trophy"
+base_id = "base_item"
+item_id = 7782
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e67_trophy"
+base_id = "base_item"
+item_id = 7783
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e68_trophy"
+base_id = "base_item"
+item_id = 7784
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e69_trophy"
+base_id = "base_item"
+item_id = 7785
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e6a_trophy"
+base_id = "base_item"
+item_id = 7786
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e6b_trophy"
+base_id = "base_item"
+item_id = 7787
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e6c_trophy"
+base_id = "base_item"
+item_id = 7788
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e6d_trophy"
+base_id = "base_item"
+item_id = 7789
+name = "trophy"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0

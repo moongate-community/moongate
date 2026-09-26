@@ -1,0 +1,1119 @@
+[[item]]
+id = "0x0aa9_rug"
+base_id = "base_item"
+item_id = 2729
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aaa_rug"
+base_id = "base_item"
+item_id = 2730
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aab_rug"
+base_id = "base_item"
+item_id = 2731
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aac_rug"
+base_id = "base_item"
+item_id = 2732
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aad_rug"
+base_id = "base_item"
+item_id = 2733
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aae_rug"
+base_id = "base_item"
+item_id = 2734
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aaf_rug"
+base_id = "base_item"
+item_id = 2735
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ab6_rug"
+base_id = "base_item"
+item_id = 2742
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ab7_rug"
+base_id = "base_item"
+item_id = 2743
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ab8_rug"
+base_id = "base_item"
+item_id = 2744
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ab9_rug"
+base_id = "base_item"
+item_id = 2745
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aba_rug"
+base_id = "base_item"
+item_id = 2746
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0abb_rug"
+base_id = "base_item"
+item_id = 2747
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0abc_rug"
+base_id = "base_item"
+item_id = 2748
+name = "rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0abd_carpet"
+base_id = "base_item"
+item_id = 2749
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0abe_carpet"
+base_id = "base_item"
+item_id = 2750
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0abf_carpet"
+base_id = "base_item"
+item_id = 2751
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac0_carpet"
+base_id = "base_item"
+item_id = 2752
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac1_carpet"
+base_id = "base_item"
+item_id = 2753
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac2_carpet"
+base_id = "base_item"
+item_id = 2754
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac3_carpet"
+base_id = "base_item"
+item_id = 2755
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac4_carpet"
+base_id = "base_item"
+item_id = 2756
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac5_carpet"
+base_id = "base_item"
+item_id = 2757
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af6_carpet"
+base_id = "base_item"
+item_id = 2806
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af7_carpet"
+base_id = "base_item"
+item_id = 2807
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af8_carpet"
+base_id = "base_item"
+item_id = 2808
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af9_carpet"
+base_id = "base_item"
+item_id = 2809
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac6_carpet"
+base_id = "base_item"
+item_id = 2758
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac7_carpet"
+base_id = "base_item"
+item_id = 2759
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac8_carpet"
+base_id = "base_item"
+item_id = 2760
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ac9_carpet"
+base_id = "base_item"
+item_id = 2761
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aca_carpet"
+base_id = "base_item"
+item_id = 2762
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0acb_carpet"
+base_id = "base_item"
+item_id = 2763
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0acc_carpet"
+base_id = "base_item"
+item_id = 2764
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0acd_carpet"
+base_id = "base_item"
+item_id = 2765
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ace_carpet"
+base_id = "base_item"
+item_id = 2766
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0acf_carpet"
+base_id = "base_item"
+item_id = 2767
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad0_carpet"
+base_id = "base_item"
+item_id = 2768
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad1_carpet"
+base_id = "base_item"
+item_id = 2769
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad2_carpet"
+base_id = "base_item"
+item_id = 2770
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad3_carpet"
+base_id = "base_item"
+item_id = 2771
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad4_carpet"
+base_id = "base_item"
+item_id = 2772
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad5_carpet"
+base_id = "base_item"
+item_id = 2773
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad6_carpet"
+base_id = "base_item"
+item_id = 2774
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad7_carpet"
+base_id = "base_item"
+item_id = 2775
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad8_carpet"
+base_id = "base_item"
+item_id = 2776
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ad9_carpet"
+base_id = "base_item"
+item_id = 2777
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ada_carpet"
+base_id = "base_item"
+item_id = 2778
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0adb_carpet"
+base_id = "base_item"
+item_id = 2779
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0adc_carpet"
+base_id = "base_item"
+item_id = 2780
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0add_carpet"
+base_id = "base_item"
+item_id = 2781
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ade_carpet"
+base_id = "base_item"
+item_id = 2782
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0adf_carpet"
+base_id = "base_item"
+item_id = 2783
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae0_carpet"
+base_id = "base_item"
+item_id = 2784
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae1_carpet"
+base_id = "base_item"
+item_id = 2785
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae2_carpet"
+base_id = "base_item"
+item_id = 2786
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae3_carpet"
+base_id = "base_item"
+item_id = 2787
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae4_carpet"
+base_id = "base_item"
+item_id = 2788
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae5_carpet"
+base_id = "base_item"
+item_id = 2789
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae6_carpet"
+base_id = "base_item"
+item_id = 2790
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae7_carpet"
+base_id = "base_item"
+item_id = 2791
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae8_carpet"
+base_id = "base_item"
+item_id = 2792
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0ae9_carpet"
+base_id = "base_item"
+item_id = 2793
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aea_carpet"
+base_id = "base_item"
+item_id = 2794
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aee_carpet"
+base_id = "base_item"
+item_id = 2798
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aef_carpet"
+base_id = "base_item"
+item_id = 2799
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af0_carpet"
+base_id = "base_item"
+item_id = 2800
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af1_carpet"
+base_id = "base_item"
+item_id = 2801
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af2_carpet"
+base_id = "base_item"
+item_id = 2802
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af3_carpet"
+base_id = "base_item"
+item_id = 2803
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af4_carpet"
+base_id = "base_item"
+item_id = 2804
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0af5_carpet"
+base_id = "base_item"
+item_id = 2805
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aeb_carpet"
+base_id = "base_item"
+item_id = 2795
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aec_carpet"
+base_id = "base_item"
+item_id = 2796
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0aed_carpet"
+base_id = "base_item"
+item_id = 2797
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0afa_carpet"
+base_id = "base_item"
+item_id = 2810
+name = "carpet"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e36_bearskin_rug"
+base_id = "base_item"
+item_id = 7734
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e37_bearskin_rug"
+base_id = "base_item"
+item_id = 7735
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e38_bearskin_rug"
+base_id = "base_item"
+item_id = 7736
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e39_bearskin_rug"
+base_id = "base_item"
+item_id = 7737
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e3a_bearskin_rug"
+base_id = "base_item"
+item_id = 7738
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e3b_bearskin_rug"
+base_id = "base_item"
+item_id = 7739
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e3c_bearskin_rug"
+base_id = "base_item"
+item_id = 7740
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e3d_bearskin_rug"
+base_id = "base_item"
+item_id = 7741
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e3e_bearskin_rug"
+base_id = "base_item"
+item_id = 7742
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e40_bearskin_rug"
+base_id = "base_item"
+item_id = 7744
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e41_bearskin_rug"
+base_id = "base_item"
+item_id = 7745
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e42_bearskin_rug"
+base_id = "base_item"
+item_id = 7746
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e43_bearskin_rug"
+base_id = "base_item"
+item_id = 7747
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e44_bearskin_rug"
+base_id = "base_item"
+item_id = 7748
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e45_bearskin_rug"
+base_id = "base_item"
+item_id = 7749
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e46_bearskin_rug"
+base_id = "base_item"
+item_id = 7750
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e47_bearskin_rug"
+base_id = "base_item"
+item_id = 7751
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e48_bearskin_rug"
+base_id = "base_item"
+item_id = 7752
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e49_bearskin_rug"
+base_id = "base_item"
+item_id = 7753
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e4a_bearskin_rug"
+base_id = "base_item"
+item_id = 7754
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e4b_bearskin_rug"
+base_id = "base_item"
+item_id = 7755
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e4c_bearskin_rug"
+base_id = "base_item"
+item_id = 7756
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e4d_bearskin_rug"
+base_id = "base_item"
+item_id = 7757
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e4e_bearskin_rug"
+base_id = "base_item"
+item_id = 7758
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e4f_bearskin_rug"
+base_id = "base_item"
+item_id = 7759
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e50_bearskin_rug"
+base_id = "base_item"
+item_id = 7760
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e51_bearskin_rug"
+base_id = "base_item"
+item_id = 7761
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e53_bearskin_rug"
+base_id = "base_item"
+item_id = 7763
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e54_bearskin_rug"
+base_id = "base_item"
+item_id = 7764
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e55_bearskin_rug"
+base_id = "base_item"
+item_id = 7765
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e56_bearskin_rug"
+base_id = "base_item"
+item_id = 7766
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e57_bearskin_rug"
+base_id = "base_item"
+item_id = 7767
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e58_bearskin_rug"
+base_id = "base_item"
+item_id = 7768
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e59_bearskin_rug"
+base_id = "base_item"
+item_id = 7769
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e5a_bearskin_rug"
+base_id = "base_item"
+item_id = 7770
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e5b_bearskin_rug"
+base_id = "base_item"
+item_id = 7771
+name = "bearskin rug"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0

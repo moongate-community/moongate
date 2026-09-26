@@ -1,4 +1,304 @@
 [[item]]
+id = "0x13bc_chainmail_leggings"
+base_id = "base_item"
+item_id = 5052
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13bd_chainmail_tunic"
+base_id = "base_item"
+item_id = 5053
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13c1_chainmail_leggings"
+base_id = "base_item"
+item_id = 5057
+name = "chainmail leggings"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13c2_chainmail_tunic"
+base_id = "base_item"
+item_id = 5058
+name = "chainmail tunic"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13c8_leather_sleeves"
+base_id = "base_item"
+item_id = 5064
+name = "leather sleeves"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13c9_leather_leggings"
+base_id = "base_item"
+item_id = 5065
+name = "leather leggings"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13ca_leather_tunic"
+base_id = "base_item"
+item_id = 5066
+name = "leather tunic"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13cf_leather_sleeves"
+base_id = "base_item"
+item_id = 5071
+name = "leather sleeves"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13d0_leather_leggings"
+base_id = "base_item"
+item_id = 5072
+name = "leather leggings"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13d1_leather_tunic"
+base_id = "base_item"
+item_id = 5073
+name = "leather tunic"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13d7_studded_sleeves"
+base_id = "base_item"
+item_id = 5079
+name = "studded sleeves"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13d8_studded_leggings"
+base_id = "base_item"
+item_id = 5080
+name = "studded leggings"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13d9_studded_tunic"
+base_id = "base_item"
+item_id = 5081
+name = "studded tunic"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13de_studded_sleeves"
+base_id = "base_item"
+item_id = 5086
+name = "studded sleeves"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13df_studded_leggings"
+base_id = "base_item"
+item_id = 5087
+name = "studded leggings"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13e0_studded_tunic"
+base_id = "base_item"
+item_id = 5088
+name = "studded tunic"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13e5_ringmail_leggings"
+base_id = "base_item"
+item_id = 5093
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13e6_ringmail_leggings"
+base_id = "base_item"
+item_id = 5094
+name = "ringmail leggings"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13e7_ringmail_armor"
+base_id = "base_item"
+item_id = 5095
+name = "ringmail armor"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13e8_ringmail_armor"
+base_id = "base_item"
+item_id = 5096
+name = "ringmail armor"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13e9_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5097
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x13ea_ringmail_sleeves"
+base_id = "base_item"
+item_id = 5098
+name = "ringmail sleeves"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1508_decorative_armor"
+base_id = "base_item"
+item_id = 5384
+name = "decorative armor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1509_decorative_armor"
+base_id = "base_item"
+item_id = 5385
+name = "decorative armor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1512_decorative_armor"
+base_id = "base_item"
+item_id = 5394
+name = "decorative armor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1513_decorative_armor"
+base_id = "base_item"
+item_id = 5395
+name = "decorative armor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x151a_decorative_armor"
+base_id = "base_item"
+item_id = 5402
+name = "decorative armor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x151b_decorative_armor"
+base_id = "base_item"
+item_id = 5403
+name = "decorative armor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x151c_decorative_armor"
+base_id = "base_item"
+item_id = 5404
+name = "decorative armor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x151d_decorative_armor"
+base_id = "base_item"
+item_id = 5405
+name = "decorative armor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x13e5_a_ringmail_leggings"
 base_id = "base_item"
 item_id = 5093

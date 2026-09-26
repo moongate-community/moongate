@@ -70,6 +70,8 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains(names, list => list.Id == "male" && list.Names.Count > 500);
         Assert.Contains(names, list => list.Id == "female" && list.Names.Count > 500);
         Assert.Equal("Aaron", names.Single(list => list.Id == "male").Names[0]);
+        Assert.Equal(20, names.Count);
+        Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
         Assert.Equal(5462, messages.Count);

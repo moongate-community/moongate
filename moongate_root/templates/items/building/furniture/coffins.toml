@@ -1,0 +1,1628 @@
+[[item]]
+id = "0x1c22_casket"
+base_id = "base_item"
+item_id = 7202
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c23_casket"
+base_id = "base_item"
+item_id = 7203
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c24_casket"
+base_id = "base_item"
+item_id = 7204
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c25_casket"
+base_id = "base_item"
+item_id = 7205
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c26_casket"
+base_id = "base_item"
+item_id = 7206
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c27_casket"
+base_id = "base_item"
+item_id = 7207
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c28_casket"
+base_id = "base_item"
+item_id = 7208
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c29_casket"
+base_id = "base_item"
+item_id = 7209
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c2a_casket"
+base_id = "base_item"
+item_id = 7210
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c2b_casket"
+base_id = "base_item"
+item_id = 7211
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c2c_casket"
+base_id = "base_item"
+item_id = 7212
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c2d_casket"
+base_id = "base_item"
+item_id = 7213
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c2e_casket"
+base_id = "base_item"
+item_id = 7214
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c2f_casket"
+base_id = "base_item"
+item_id = 7215
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c30_casket"
+base_id = "base_item"
+item_id = 7216
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c31_casket"
+base_id = "base_item"
+item_id = 7217
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c32_casket"
+base_id = "base_item"
+item_id = 7218
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c33_casket"
+base_id = "base_item"
+item_id = 7219
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c34_casket"
+base_id = "base_item"
+item_id = 7220
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c35_casket"
+base_id = "base_item"
+item_id = 7221
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c36_casket"
+base_id = "base_item"
+item_id = 7222
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c37_casket"
+base_id = "base_item"
+item_id = 7223
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c38_casket"
+base_id = "base_item"
+item_id = 7224
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c39_casket"
+base_id = "base_item"
+item_id = 7225
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c3a_casket"
+base_id = "base_item"
+item_id = 7226
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c3b_casket"
+base_id = "base_item"
+item_id = 7227
+name = "casket"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c3c_coffin"
+base_id = "base_item"
+item_id = 7228
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c3d_coffin"
+base_id = "base_item"
+item_id = 7229
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c3e_coffin"
+base_id = "base_item"
+item_id = 7230
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c3f_coffin"
+base_id = "base_item"
+item_id = 7231
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c40_coffin"
+base_id = "base_item"
+item_id = 7232
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c41_coffin"
+base_id = "base_item"
+item_id = 7233
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c42_coffin"
+base_id = "base_item"
+item_id = 7234
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c43_coffin"
+base_id = "base_item"
+item_id = 7235
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c44_coffin"
+base_id = "base_item"
+item_id = 7236
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c45_coffin"
+base_id = "base_item"
+item_id = 7237
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c46_coffin"
+base_id = "base_item"
+item_id = 7238
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c47_coffin"
+base_id = "base_item"
+item_id = 7239
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c48_coffin"
+base_id = "base_item"
+item_id = 7240
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c49_coffin"
+base_id = "base_item"
+item_id = 7241
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c4a_coffin"
+base_id = "base_item"
+item_id = 7242
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c4b_coffin"
+base_id = "base_item"
+item_id = 7243
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c4c_coffin"
+base_id = "base_item"
+item_id = 7244
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c4d_coffin"
+base_id = "base_item"
+item_id = 7245
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c4e_coffin"
+base_id = "base_item"
+item_id = 7246
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c4f_coffin"
+base_id = "base_item"
+item_id = 7247
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c50_coffin"
+base_id = "base_item"
+item_id = 7248
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c51_coffin"
+base_id = "base_item"
+item_id = 7249
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c52_coffin"
+base_id = "base_item"
+item_id = 7250
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c53_coffin"
+base_id = "base_item"
+item_id = 7251
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c54_coffin"
+base_id = "base_item"
+item_id = 7252
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c55_coffin"
+base_id = "base_item"
+item_id = 7253
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c56_coffin"
+base_id = "base_item"
+item_id = 7254
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c57_coffin"
+base_id = "base_item"
+item_id = 7255
+name = "coffin"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c58_coffin_lid"
+base_id = "base_item"
+item_id = 7256
+name = "coffin lid"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c59_coffin_lid"
+base_id = "base_item"
+item_id = 7257
+name = "coffin lid"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c5a_coffin_lid"
+base_id = "base_item"
+item_id = 7258
+name = "coffin lid"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c5b_coffin_lid"
+base_id = "base_item"
+item_id = 7259
+name = "coffin lid"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c5c_coffin_lid"
+base_id = "base_item"
+item_id = 7260
+name = "coffin lid"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c5d_coffin_lid"
+base_id = "base_item"
+item_id = 7261
+name = "coffin lid"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c5e_coffin_lid"
+base_id = "base_item"
+item_id = 7262
+name = "coffin lid"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1c5f_coffin_lid"
+base_id = "base_item"
+item_id = 7263
+name = "coffin lid"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d13_body"
+base_id = "base_item"
+item_id = 7443
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d14_body"
+base_id = "base_item"
+item_id = 7444
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d15_body"
+base_id = "base_item"
+item_id = 7445
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d16_body"
+base_id = "base_item"
+item_id = 7446
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d17_body"
+base_id = "base_item"
+item_id = 7447
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d18_body"
+base_id = "base_item"
+item_id = 7448
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d19_body"
+base_id = "base_item"
+item_id = 7449
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d1a_body"
+base_id = "base_item"
+item_id = 7450
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d1b_body"
+base_id = "base_item"
+item_id = 7451
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d1c_body"
+base_id = "base_item"
+item_id = 7452
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d1d_body"
+base_id = "base_item"
+item_id = 7453
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d1e_body"
+base_id = "base_item"
+item_id = 7454
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d1f_body"
+base_id = "base_item"
+item_id = 7455
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d20_body"
+base_id = "base_item"
+item_id = 7456
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d21_body"
+base_id = "base_item"
+item_id = 7457
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d22_body"
+base_id = "base_item"
+item_id = 7458
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d23_body"
+base_id = "base_item"
+item_id = 7459
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d24_body"
+base_id = "base_item"
+item_id = 7460
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d25_body"
+base_id = "base_item"
+item_id = 7461
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d26_body"
+base_id = "base_item"
+item_id = 7462
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d27_body"
+base_id = "base_item"
+item_id = 7463
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d28_body"
+base_id = "base_item"
+item_id = 7464
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d29_body"
+base_id = "base_item"
+item_id = 7465
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d2a_body"
+base_id = "base_item"
+item_id = 7466
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d2b_body"
+base_id = "base_item"
+item_id = 7467
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d2c_body"
+base_id = "base_item"
+item_id = 7468
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d2d_body"
+base_id = "base_item"
+item_id = 7469
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d2e_body"
+base_id = "base_item"
+item_id = 7470
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d2f_body"
+base_id = "base_item"
+item_id = 7471
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d4c_body"
+base_id = "base_item"
+item_id = 7500
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d4d_body"
+base_id = "base_item"
+item_id = 7501
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d4e_body"
+base_id = "base_item"
+item_id = 7502
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d4f_body"
+base_id = "base_item"
+item_id = 7503
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d50_body"
+base_id = "base_item"
+item_id = 7504
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d51_body"
+base_id = "base_item"
+item_id = 7505
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d52_body"
+base_id = "base_item"
+item_id = 7506
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d53_body"
+base_id = "base_item"
+item_id = 7507
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d54_body"
+base_id = "base_item"
+item_id = 7508
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d55_body"
+base_id = "base_item"
+item_id = 7509
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d56_body"
+base_id = "base_item"
+item_id = 7510
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d57_body"
+base_id = "base_item"
+item_id = 7511
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d58_body"
+base_id = "base_item"
+item_id = 7512
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d59_body"
+base_id = "base_item"
+item_id = 7513
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d5a_body"
+base_id = "base_item"
+item_id = 7514
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d5b_body"
+base_id = "base_item"
+item_id = 7515
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d5c_body"
+base_id = "base_item"
+item_id = 7516
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d5d_body"
+base_id = "base_item"
+item_id = 7517
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d5e_body"
+base_id = "base_item"
+item_id = 7518
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d5f_body"
+base_id = "base_item"
+item_id = 7519
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d60_body"
+base_id = "base_item"
+item_id = 7520
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d61_body"
+base_id = "base_item"
+item_id = 7521
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d62_body"
+base_id = "base_item"
+item_id = 7522
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d63_body"
+base_id = "base_item"
+item_id = 7523
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d64_body"
+base_id = "base_item"
+item_id = 7524
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d65_body"
+base_id = "base_item"
+item_id = 7525
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d66_body"
+base_id = "base_item"
+item_id = 7526
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d67_body"
+base_id = "base_item"
+item_id = 7527
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d68_body"
+base_id = "base_item"
+item_id = 7528
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d69_body"
+base_id = "base_item"
+item_id = 7529
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d6a_body"
+base_id = "base_item"
+item_id = 7530
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d6b_body"
+base_id = "base_item"
+item_id = 7531
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d30_body"
+base_id = "base_item"
+item_id = 7472
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d31_body"
+base_id = "base_item"
+item_id = 7473
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d32_body"
+base_id = "base_item"
+item_id = 7474
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d33_body"
+base_id = "base_item"
+item_id = 7475
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d34_body"
+base_id = "base_item"
+item_id = 7476
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d35_body"
+base_id = "base_item"
+item_id = 7477
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d36_body"
+base_id = "base_item"
+item_id = 7478
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d37_body"
+base_id = "base_item"
+item_id = 7479
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d38_body"
+base_id = "base_item"
+item_id = 7480
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d39_body"
+base_id = "base_item"
+item_id = 7481
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d3a_body"
+base_id = "base_item"
+item_id = 7482
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d3b_body"
+base_id = "base_item"
+item_id = 7483
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d3c_body"
+base_id = "base_item"
+item_id = 7484
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d3d_body"
+base_id = "base_item"
+item_id = 7485
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d3e_body"
+base_id = "base_item"
+item_id = 7486
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d3f_body"
+base_id = "base_item"
+item_id = 7487
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d40_body"
+base_id = "base_item"
+item_id = 7488
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d41_body"
+base_id = "base_item"
+item_id = 7489
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d42_body"
+base_id = "base_item"
+item_id = 7490
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d43_body"
+base_id = "base_item"
+item_id = 7491
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d44_body"
+base_id = "base_item"
+item_id = 7492
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d45_body"
+base_id = "base_item"
+item_id = 7493
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d46_body"
+base_id = "base_item"
+item_id = 7494
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d47_body"
+base_id = "base_item"
+item_id = 7495
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d48_body"
+base_id = "base_item"
+item_id = 7496
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d49_body"
+base_id = "base_item"
+item_id = 7497
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d4a_body"
+base_id = "base_item"
+item_id = 7498
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d4b_body"
+base_id = "base_item"
+item_id = 7499
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d6c_body"
+base_id = "base_item"
+item_id = 7532
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d6d_body"
+base_id = "base_item"
+item_id = 7533
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d6e_body"
+base_id = "base_item"
+item_id = 7534
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d6f_body"
+base_id = "base_item"
+item_id = 7535
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d70_body"
+base_id = "base_item"
+item_id = 7536
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d71_body"
+base_id = "base_item"
+item_id = 7537
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d72_body"
+base_id = "base_item"
+item_id = 7538
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d73_body"
+base_id = "base_item"
+item_id = 7539
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d74_body"
+base_id = "base_item"
+item_id = 7540
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d75_body"
+base_id = "base_item"
+item_id = 7541
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d76_body"
+base_id = "base_item"
+item_id = 7542
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d77_body"
+base_id = "base_item"
+item_id = 7543
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d78_body"
+base_id = "base_item"
+item_id = 7544
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d79_body"
+base_id = "base_item"
+item_id = 7545
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d7a_body"
+base_id = "base_item"
+item_id = 7546
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d7b_body"
+base_id = "base_item"
+item_id = 7547
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d7c_body"
+base_id = "base_item"
+item_id = 7548
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d7d_body"
+base_id = "base_item"
+item_id = 7549
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d7e_body"
+base_id = "base_item"
+item_id = 7550
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d7f_body"
+base_id = "base_item"
+item_id = 7551
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d80_body"
+base_id = "base_item"
+item_id = 7552
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d81_body"
+base_id = "base_item"
+item_id = 7553
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d82_body"
+base_id = "base_item"
+item_id = 7554
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d83_body"
+base_id = "base_item"
+item_id = 7555
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d84_body"
+base_id = "base_item"
+item_id = 7556
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d85_body"
+base_id = "base_item"
+item_id = 7557
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d86_body"
+base_id = "base_item"
+item_id = 7558
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d87_body"
+base_id = "base_item"
+item_id = 7559
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d88_body"
+base_id = "base_item"
+item_id = 7560
+name = "body"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1d89_body"
+base_id = "base_item"
+item_id = 7561
+name = "body"
+rarity = "common"
+movable = false
+hue = 0

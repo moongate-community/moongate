@@ -1,0 +1,25 @@
+[[mobile]]
+id = "bakekitsune_se"
+base_id = "base_bakekitsune"
+strength = "1d51+169"
+dexterity = "1d21+124"
+intelligence = "1d51+374"
+hits = "1d41+309"
+damage = "1d14+31"
+armor = "1d31+39"
+karma = -8000
+fame = 8000
+loot = ["midlevelscrolls", "midlevelscrolls", "necroreagents", "necroreagents", "necroreagents"]
+gold = "1d301+699"
+[mobile.resistances]
+fire = 70
+cold = 40
+poison = 40
+energy = 40
+[mobile.skills]
+magery = "1d11+79"
+resisting_spells = "1d21+79"
+evaluating_intelligence = "1d11+79"
+meditation = "1d11+84"
+tactics = "1d21+69"
+wrestling = "1d6+49"

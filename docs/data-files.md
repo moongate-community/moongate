@@ -338,8 +338,9 @@ names = [
 | `id` | The list id, unique ignoring case |
 | `names` | The names |
 
-The shipped file has the `male` and `female` lists from UOX3 (`namelists.dfn`, lists 1
-and 2). The loader trims ids and names and returns one `NameList` per list.
+The shipped file has UOX3's twenty lists (`namelists.dfn`), converted by
+[`mg-uoxconv`](uox3-migration.md#mobiles-and-name-lists): `male`, `female`, `orc`,
+`daemon`, `ratman` and so on. The loader trims ids and names and returns one `NameList` per list.
 
 ### Validation at startup
 

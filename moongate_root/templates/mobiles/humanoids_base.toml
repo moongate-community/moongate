@@ -1,0 +1,359 @@
+[[mobile]]
+id = "base_humanoid"
+notoriety = "attackable"
+
+[[mobile]]
+id = "base_orc"
+base_id = "base_humanoid"
+name = "an orc"
+name_list = "orc"
+body = 17
+[mobile.sounds]
+start_attack = 432
+idle = 433
+attack = 434
+hurt = 435
+death = 436
+[[mobile.equipment]]
+items = ["0x1711_thigh_boots"]
+
+[[mobile]]
+id = "orc"
+base_id = "orc_lbr"
+
+[[mobile]]
+id = "cluborc"
+base_id = "orc"
+body = 41
+[mobile.sounds]
+start_attack = 432
+idle = 433
+attack = 434
+hurt = 435
+death = 436
+[[mobile.equipment]]
+items = ["0x13b4"]
+
+[[mobile]]
+id = "base_orccaptain"
+base_id = "base_humanoid"
+name = "an orc captain"
+name_list = "orc"
+body = 7
+[mobile.sounds]
+start_attack = 432
+idle = 433
+attack = 434
+hurt = 435
+death = 436
+[[mobile.equipment]]
+items = ["0x1711_thigh_boots"]
+
+[[mobile]]
+id = "orccaptain"
+base_id = "orccaptain_lbr"
+
+[[mobile]]
+id = "base_orcmage"
+base_id = "base_humanoid"
+name = "an orcish mage"
+body = 140
+[mobile.sounds]
+start_attack = 1114
+idle = 1115
+attack = 1116
+hurt = 1117
+death = 1118
+
+[[mobile]]
+id = "orcmage"
+base_id = "orcmage_lbr"
+
+[[mobile]]
+id = "base_orclord"
+base_id = "base_humanoid"
+name = "an orcish lord"
+body = 138
+[mobile.sounds]
+start_attack = 432
+idle = 433
+attack = 434
+hurt = 435
+death = 436
+[[mobile.equipment]]
+items = ["0x1711_thigh_boots"]
+
+[[mobile]]
+id = "orclord"
+base_id = "orclord_lbr"
+
+[[mobile]]
+id = "base_orcbomber"
+base_id = "base_humanoid"
+name = "an orc bomber"
+body = 182
+[mobile.sounds]
+start_attack = 432
+idle = 433
+attack = 434
+hurt = 435
+death = 436
+
+[[mobile]]
+id = "orcbomber"
+base_id = "orcbomber_lbr"
+
+[[mobile]]
+id = "base_orcscout"
+base_id = "base_humanoid"
+name = "an orc scout"
+body = 181
+[mobile.sounds]
+start_attack = 432
+idle = 433
+attack = 434
+hurt = 435
+death = 436
+[[mobile.equipment]]
+items = ["0x1711_thigh_boots"]
+
+[[mobile]]
+id = "orcscout"
+base_id = "orcscout_lbr"
+
+[[mobile]]
+id = "base_orcbrute"
+base_id = "base_humanoid"
+name = "an orc brute"
+body = 189
+[mobile.sounds]
+start_attack = 432
+idle = 433
+attack = 434
+hurt = 435
+death = 436
+[mobile.tags]
+provImmune = "1"
+
+[[mobile]]
+id = "orcbrute"
+base_id = "orcbrute_lbr"
+
+[[mobile]]
+id = "base_orcchopper"
+base_id = "base_humanoid"
+name = "an orc chopper"
+body = 7
+[mobile.sounds]
+start_attack = 432
+idle = 433
+attack = 434
+hurt = 435
+death = 436
+
+[[mobile]]
+id = "orcchopper"
+base_id = "orcchopper_lbr"
+
+[[mobile]]
+id = "base_lizardman"
+base_id = "base_humanoid"
+name = "a lizardman"
+name_list = "lizardman"
+body = 33
+loot = ["randomgemsandjewelry"]
+[mobile.sounds]
+start_attack = 417
+idle = 418
+attack = 419
+hurt = 420
+death = 421
+
+[[mobile]]
+id = "lizardman"
+base_id = "lizardman_lbr"
+
+[[mobile]]
+id = "spearlizardman"
+base_id = "lizardman"
+body = 35
+[mobile.skills]
+fencing = "1d21+49"
+[mobile.sounds]
+start_attack = 417
+idle = 418
+attack = 419
+hurt = 420
+death = 421
+
+[[mobile]]
+id = "macelizardman"
+base_id = "lizardman"
+body = 36
+[mobile.skills]
+mace_fighting = "1d21+49"
+[mobile.sounds]
+start_attack = 417
+idle = 418
+attack = 419
+hurt = 420
+death = 421
+
+[[mobile]]
+id = "base_ratman"
+base_id = "base_humanoid"
+name = "a ratman"
+name_list = "ratman"
+body = 42
+[mobile.sounds]
+start_attack = 437
+idle = 438
+attack = 439
+hurt = 440
+death = 441
+
+[[mobile]]
+id = "ratman"
+base_id = "ratman_lbr"
+
+[[mobile]]
+id = "maceratman"
+base_id = "ratman"
+body = 44
+[mobile.skills]
+mace_fighting = "1d26+49"
+[mobile.sounds]
+start_attack = 437
+idle = 438
+attack = 439
+hurt = 440
+death = 441
+
+[[mobile]]
+id = "swordratman"
+base_id = "ratman"
+body = 45
+[mobile.skills]
+swordsmanship = "1d26+49"
+[mobile.sounds]
+start_attack = 437
+idle = 438
+attack = 439
+hurt = 440
+death = 441
+
+[[mobile]]
+id = "base_ratmanmage"
+base_id = "base_humanoid"
+name = "a ratman shaman"
+name_list = "ratman"
+body = 143
+skin_hue = 1002
+loot = ["lowlevelscrolls"]
+[mobile.sounds]
+start_attack = 437
+idle = 438
+attack = 439
+hurt = 440
+death = 441
+
+[[mobile]]
+id = "ratmanmage"
+base_id = "ratmanmage_lbr"
+
+[[mobile]]
+id = "base_ratmanarcher"
+base_id = "base_humanoid"
+name = "a ratman"
+name_list = "ratman"
+body = 142
+[mobile.sounds]
+start_attack = 437
+idle = 438
+attack = 439
+hurt = 440
+death = 441
+
+[[mobile]]
+id = "ratmanarcher"
+base_id = "ratmanarcher_lbr"
+
+[[mobile]]
+id = "base_kappa"
+base_id = "base_humanoid"
+name = "a kappa"
+body = 240
+[mobile.sounds]
+start_attack = 1291
+idle = 1290
+attack = 1289
+hurt = 1292
+death = 1288
+
+[[mobile]]
+id = "kappa"
+base_id = "kappa_se"
+
+[[mobile]]
+id = "base_yomotsu_elder"
+base_id = "base_humanoid"
+name = "a yomotsu elder"
+body = 255
+[mobile.sounds]
+start_attack = 1106
+idle = 1066
+attack = 1077
+hurt = 1078
+death = 1082
+
+[[mobile]]
+id = "yomotsuelder"
+base_id = "yomotsuelder_se"
+
+[[mobile]]
+id = "base_yomotsu_priest"
+base_id = "base_humanoid"
+name = "a yomotsu priest"
+body = 253
+[mobile.sounds]
+start_attack = 1106
+idle = 1066
+attack = 1077
+hurt = 1078
+death = 1082
+
+[[mobile]]
+id = "yomotsupriest"
+base_id = "yomotsupriest_se"
+
+[[mobile]]
+id = "base_yomotsu_warrior"
+base_id = "base_humanoid"
+name = "a yomotsu warrior"
+body = 245
+[mobile.sounds]
+start_attack = 1105
+idle = 1106
+attack = 1107
+hurt = 1108
+death = 1109
+
+[[mobile]]
+id = "yomotsuwarrior"
+base_id = "yomotsuwarrior_se"
+
+[[mobile]]
+id = "base_fan_dancer"
+base_id = "base_humanoid"
+name = "fan dancer"
+body = 247
+[mobile.sounds]
+start_attack = 883
+idle = 882
+attack = 884
+hurt = 885
+death = 885
+
+[[mobile]]
+id = "fandancer"
+base_id = "fandancer_se"

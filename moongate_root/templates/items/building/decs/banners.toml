@@ -1,0 +1,1589 @@
+[[item]]
+id = "0x0426_tattered_banner"
+base_id = "base_item"
+item_id = 1062
+name = "tattered banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0427_tattered_banner"
+base_id = "base_item"
+item_id = 1063
+name = "tattered banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x042a_tattered_banner"
+base_id = "base_item"
+item_id = 1066
+name = "tattered banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x042b_tattered_banner"
+base_id = "base_item"
+item_id = 1067
+name = "tattered banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x042c_tattered_banner"
+base_id = "base_item"
+item_id = 1068
+name = "tattered banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x042d_tattered_banner"
+base_id = "base_item"
+item_id = 1069
+name = "tattered banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x042e_tattered_banner"
+base_id = "base_item"
+item_id = 1070
+name = "tattered banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x042f_tattered_banner"
+base_id = "base_item"
+item_id = 1071
+name = "tattered banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1586_banner"
+base_id = "base_item"
+item_id = 5510
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1587_banner"
+base_id = "base_item"
+item_id = 5511
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1588_banner"
+base_id = "base_item"
+item_id = 5512
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1589_banner"
+base_id = "base_item"
+item_id = 5513
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x158a_banner"
+base_id = "base_item"
+item_id = 5514
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x158b_banner"
+base_id = "base_item"
+item_id = 5515
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x158c_banner"
+base_id = "base_item"
+item_id = 5516
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x158d_banner"
+base_id = "base_item"
+item_id = 5517
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x158e_banner"
+base_id = "base_item"
+item_id = 5518
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x158f_banner_hanger"
+base_id = "base_item"
+item_id = 5519
+name = "banner hanger"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1590_banner"
+base_id = "base_item"
+item_id = 5520
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1591_banner"
+base_id = "base_item"
+item_id = 5521
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1592_banner"
+base_id = "base_item"
+item_id = 5522
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1593_banner"
+base_id = "base_item"
+item_id = 5523
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1594_banner"
+base_id = "base_item"
+item_id = 5524
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1595_banner"
+base_id = "base_item"
+item_id = 5525
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1596_banner"
+base_id = "base_item"
+item_id = 5526
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1598_banner"
+base_id = "base_item"
+item_id = 5528
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x159b_banner"
+base_id = "base_item"
+item_id = 5531
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x159c_banner"
+base_id = "base_item"
+item_id = 5532
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1599_banner"
+base_id = "base_item"
+item_id = 5529
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x159a_banner"
+base_id = "base_item"
+item_id = 5530
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x159d_banner"
+base_id = "base_item"
+item_id = 5533
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x159e_curtain"
+base_id = "base_item"
+item_id = 5534
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x159f_curtain"
+base_id = "base_item"
+item_id = 5535
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a0_banner"
+base_id = "base_item"
+item_id = 5536
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a1_banner"
+base_id = "base_item"
+item_id = 5537
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a2_banner"
+base_id = "base_item"
+item_id = 5538
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a3_banner"
+base_id = "base_item"
+item_id = 5539
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a4_banner"
+base_id = "base_item"
+item_id = 5540
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a5_banner"
+base_id = "base_item"
+item_id = 5541
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a6_banner"
+base_id = "base_item"
+item_id = 5542
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a7_banner"
+base_id = "base_item"
+item_id = 5543
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a8_banner"
+base_id = "base_item"
+item_id = 5544
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15a9_banner"
+base_id = "base_item"
+item_id = 5545
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15aa_banner"
+base_id = "base_item"
+item_id = 5546
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ab_banner"
+base_id = "base_item"
+item_id = 5547
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ac_banner"
+base_id = "base_item"
+item_id = 5548
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ad_banner"
+base_id = "base_item"
+item_id = 5549
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ae_banner"
+base_id = "base_item"
+item_id = 5550
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15af_banner"
+base_id = "base_item"
+item_id = 5551
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15b0_banner"
+base_id = "base_item"
+item_id = 5552
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15b1_banner"
+base_id = "base_item"
+item_id = 5553
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15b2_banner"
+base_id = "base_item"
+item_id = 5554
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15b3_banner"
+base_id = "base_item"
+item_id = 5555
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15b4_banner"
+base_id = "base_item"
+item_id = 5556
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15b5_banner"
+base_id = "base_item"
+item_id = 5557
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15b7_banner"
+base_id = "base_item"
+item_id = 5559
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15b8_banner"
+base_id = "base_item"
+item_id = 5560
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15b9_banner"
+base_id = "base_item"
+item_id = 5561
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ba_banner"
+base_id = "base_item"
+item_id = 5562
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15bb_banner"
+base_id = "base_item"
+item_id = 5563
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15bc_banner"
+base_id = "base_item"
+item_id = 5564
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15bd_banner"
+base_id = "base_item"
+item_id = 5565
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15be_banner"
+base_id = "base_item"
+item_id = 5566
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15bf_banner"
+base_id = "base_item"
+item_id = 5567
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c0_banner"
+base_id = "base_item"
+item_id = 5568
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c1_banner"
+base_id = "base_item"
+item_id = 5569
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c2_banner"
+base_id = "base_item"
+item_id = 5570
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c3_banner"
+base_id = "base_item"
+item_id = 5571
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c4_banner"
+base_id = "base_item"
+item_id = 5572
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c5_banner"
+base_id = "base_item"
+item_id = 5573
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c6_banner"
+base_id = "base_item"
+item_id = 5574
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c7_banner"
+base_id = "base_item"
+item_id = 5575
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c8_banner"
+base_id = "base_item"
+item_id = 5576
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15c9_banner"
+base_id = "base_item"
+item_id = 5577
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ca_banner"
+base_id = "base_item"
+item_id = 5578
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15cb_banner"
+base_id = "base_item"
+item_id = 5579
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15cc_banner"
+base_id = "base_item"
+item_id = 5580
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15cd_banner"
+base_id = "base_item"
+item_id = 5581
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ce_banner"
+base_id = "base_item"
+item_id = 5582
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15cf_banner"
+base_id = "base_item"
+item_id = 5583
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d0_banner"
+base_id = "base_item"
+item_id = 5584
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d1_banner"
+base_id = "base_item"
+item_id = 5585
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d2_banner"
+base_id = "base_item"
+item_id = 5586
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d3_banner"
+base_id = "base_item"
+item_id = 5587
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d4_banner"
+base_id = "base_item"
+item_id = 5588
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d5_banner"
+base_id = "base_item"
+item_id = 5589
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d6_banner"
+base_id = "base_item"
+item_id = 5590
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d7_banner"
+base_id = "base_item"
+item_id = 5591
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d8_banner"
+base_id = "base_item"
+item_id = 5592
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15d9_banner"
+base_id = "base_item"
+item_id = 5593
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15da_banner"
+base_id = "base_item"
+item_id = 5594
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15db_banner"
+base_id = "base_item"
+item_id = 5595
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15dc_banner"
+base_id = "base_item"
+item_id = 5596
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15dd_banner"
+base_id = "base_item"
+item_id = 5597
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15de_banner"
+base_id = "base_item"
+item_id = 5598
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15df_banner"
+base_id = "base_item"
+item_id = 5599
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e0_banner"
+base_id = "base_item"
+item_id = 5600
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e1_banner"
+base_id = "base_item"
+item_id = 5601
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e2_banner"
+base_id = "base_item"
+item_id = 5602
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e3_banner"
+base_id = "base_item"
+item_id = 5603
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e4_banner"
+base_id = "base_item"
+item_id = 5604
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e5_banner"
+base_id = "base_item"
+item_id = 5605
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e6_banner"
+base_id = "base_item"
+item_id = 5606
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e7_banner"
+base_id = "base_item"
+item_id = 5607
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e8_banner"
+base_id = "base_item"
+item_id = 5608
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15e9_banner"
+base_id = "base_item"
+item_id = 5609
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ea_banner"
+base_id = "base_item"
+item_id = 5610
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15eb_banner"
+base_id = "base_item"
+item_id = 5611
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ec_banner"
+base_id = "base_item"
+item_id = 5612
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ed_banner"
+base_id = "base_item"
+item_id = 5613
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ee_banner"
+base_id = "base_item"
+item_id = 5614
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15ef_banner"
+base_id = "base_item"
+item_id = 5615
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15f0_banner"
+base_id = "base_item"
+item_id = 5616
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15f1_banner"
+base_id = "base_item"
+item_id = 5617
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15f2_banner"
+base_id = "base_item"
+item_id = 5618
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15f3_banner"
+base_id = "base_item"
+item_id = 5619
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15f4_banner"
+base_id = "base_item"
+item_id = 5620
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15f5_banner"
+base_id = "base_item"
+item_id = 5621
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15f6_curtain"
+base_id = "base_item"
+item_id = 5622
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x15f7_curtain"
+base_id = "base_item"
+item_id = 5623
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x160d_curtain"
+base_id = "base_item"
+item_id = 5645
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x160e_curtain"
+base_id = "base_item"
+item_id = 5646
+name = "curtain"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x160f_banner"
+base_id = "base_item"
+item_id = 5647
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1610_banner"
+base_id = "base_item"
+item_id = 5648
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1611_banner"
+base_id = "base_item"
+item_id = 5649
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1612_banner"
+base_id = "base_item"
+item_id = 5650
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1613_banner"
+base_id = "base_item"
+item_id = 5651
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1614_banner"
+base_id = "base_item"
+item_id = 5652
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1615_banner"
+base_id = "base_item"
+item_id = 5653
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1616_banner"
+base_id = "base_item"
+item_id = 5654
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1617_banner"
+base_id = "base_item"
+item_id = 5655
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1618_banner"
+base_id = "base_item"
+item_id = 5656
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1619_banner"
+base_id = "base_item"
+item_id = 5657
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x161a_banner"
+base_id = "base_item"
+item_id = 5658
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x161b_banner"
+base_id = "base_item"
+item_id = 5659
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x161c_banner"
+base_id = "base_item"
+item_id = 5660
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x161d_banner"
+base_id = "base_item"
+item_id = 5661
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x161e_banner"
+base_id = "base_item"
+item_id = 5662
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x161f_banner"
+base_id = "base_item"
+item_id = 5663
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1620_banner"
+base_id = "base_item"
+item_id = 5664
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1621_banner"
+base_id = "base_item"
+item_id = 5665
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1622_banner"
+base_id = "base_item"
+item_id = 5666
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1623_banner"
+base_id = "base_item"
+item_id = 5667
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1624_banner"
+base_id = "base_item"
+item_id = 5668
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1625_banner"
+base_id = "base_item"
+item_id = 5669
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1626_banner_hanger"
+base_id = "base_item"
+item_id = 5670
+name = "banner hanger"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1627_banner"
+base_id = "base_item"
+item_id = 5671
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1628_banner"
+base_id = "base_item"
+item_id = 5672
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1629_banner"
+base_id = "base_item"
+item_id = 5673
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x162a_banner"
+base_id = "base_item"
+item_id = 5674
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x162b_banner"
+base_id = "base_item"
+item_id = 5675
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x162c_banner"
+base_id = "base_item"
+item_id = 5676
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x162d_banner"
+base_id = "base_item"
+item_id = 5677
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x162e_banner"
+base_id = "base_item"
+item_id = 5678
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1631_banner"
+base_id = "base_item"
+item_id = 5681
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1632_banner"
+base_id = "base_item"
+item_id = 5682
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x162f_banner"
+base_id = "base_item"
+item_id = 5679
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1630_banner"
+base_id = "base_item"
+item_id = 5680
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1633_banner"
+base_id = "base_item"
+item_id = 5683
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0

@@ -25,6 +25,199 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x1067_cut_up_leather"
+base_id = "base_item"
+item_id = 4199
+name = "cut up leather"
+rarity = "common"
+weight = 1.0
+stackable = true
+buy_price = 7
+sell_price = 3
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1068_cut_up_leather"
+base_id = "base_item"
+item_id = 4200
+name = "cut up leather"
+rarity = "common"
+weight = 1.0
+stackable = true
+buy_price = 7
+sell_price = 3
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1069_stretched_hide"
+base_id = "base_item"
+item_id = 4201
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x106a_stretched_hide"
+base_id = "base_item"
+item_id = 4202
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x106b_stretched_hide"
+base_id = "base_item"
+item_id = 4203
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x106c_stretched_hide"
+base_id = "base_item"
+item_id = 4204
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x106d_stretched_hide"
+base_id = "base_item"
+item_id = 4205
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x106e_stretched_hide"
+base_id = "base_item"
+item_id = 4206
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x106f_stretched_hide"
+base_id = "base_item"
+item_id = 4207
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x107a_stretched_hide"
+base_id = "base_item"
+item_id = 4218
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x107b_stretched_hide"
+base_id = "base_item"
+item_id = 4219
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x107c_stretched_hide"
+base_id = "base_item"
+item_id = 4220
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x107d_stretched_hide"
+base_id = "base_item"
+item_id = 4221
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x107e_stretched_hide"
+base_id = "base_item"
+item_id = 4222
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x107f_stretched_hide"
+base_id = "base_item"
+item_id = 4223
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x1080_stretched_hide"
+base_id = "base_item"
+item_id = 4224
+name = "stretched hide"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x1081_cut_up_leather"
+base_id = "base_item"
+item_id = 4225
+name = "cut up leather"
+rarity = "common"
+weight = 1.0
+stackable = true
+buy_price = 7
+sell_price = 3
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1082_cut_up_leather"
+base_id = "base_item"
+item_id = 4226
+name = "cut up leather"
+rarity = "common"
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 7
+sell_price = 3
+decays = true
+hue = 0
+
+[[item]]
 id = "0x11f4_a_fur"
 base_id = "base_item"
 item_id = 4596

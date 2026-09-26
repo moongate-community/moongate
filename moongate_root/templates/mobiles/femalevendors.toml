@@ -1,0 +1,1463 @@
+[[mobile]]
+id = "f_bard"
+base_id = "basevendor"
+name_list = "female"
+title = "the Bard"
+gender = "female"
+race = "human"
+[mobile.skills]
+musicianship = "1d37+63"
+discordance = "1d24+74"
+provocation = "1d19+64"
+peacemaking = "1d24+64"
+archery = "1d33+35"
+swordsmanship = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_miner"
+base_id = "basevendor"
+name_list = "female"
+title = "the Miner"
+gender = "female"
+race = "human"
+[mobile.skills]
+mining = "1d24+64"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x0e85_pickaxe"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_weaponsmith"
+base_id = "basevendor"
+name_list = "female"
+title = "the Weaponsmith"
+gender = "female"
+race = "human"
+[mobile.skills]
+arms_lore = "1d37+63"
+blacksmithy = "1d24+64"
+fencing = "1d24+44"
+mace_fighting = "1d24+44"
+swordsmanship = "1d24+44"
+tactics = "1d33+35"
+[mobile.sounds]
+death = 337
+[mobile.tags]
+bodType = "1"
+bodSubtype = "1"
+[[mobile.equipment]]
+items = ["0x13e4"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_baker"
+base_id = "basevendor"
+name_list = "female"
+title = "the Baker"
+gender = "female"
+race = "human"
+[mobile.skills]
+cooking = "1d24+74"
+taste_identification = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_provisioner"
+base_id = "basevendor"
+name_list = "female"
+title = "the Provisioner"
+gender = "female"
+race = "human"
+[mobile.skills]
+camping = "1d24+44"
+parrying = "1d24+44"
+tactics = "1d24+44"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_cobbler"
+base_id = "basevendor"
+name_list = "female"
+title = "the Cobbler"
+gender = "female"
+race = "human"
+[mobile.skills]
+tailoring = "1d24+59"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_innkeeper"
+base_id = "basevendor"
+name_list = "female"
+title = "the Innkeeper"
+gender = "female"
+race = "human"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_herbalist"
+base_id = "basevendor"
+name_list = "female"
+title = "the Herbalist"
+gender = "female"
+race = "human"
+[mobile.skills]
+alchemy = "1d24+34"
+cooking = "1d24+34"
+taste_identification = "1d24+34"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0579-0x05A7"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0579-0x05A7"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0579-0x05A7"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0579-0x05A7"
+
+[[mobile]]
+id = "f_butcher"
+base_id = "basevendor"
+name_list = "female"
+title = "the Butcher"
+gender = "female"
+race = "human"
+[mobile.skills]
+anatomy = "1d24+44"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x13f7"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_tailor"
+base_id = "basevendor"
+name_list = "female"
+title = "the Tailor"
+gender = "female"
+race = "human"
+[mobile.skills]
+tailoring = "1d37+63"
+[mobile.sounds]
+death = 337
+[mobile.tags]
+bodType = "2"
+bodSubtype = "1"
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_bowyer"
+base_id = "basevendor"
+name_list = "female"
+title = "the Bowyer"
+gender = "female"
+race = "human"
+[mobile.skills]
+archery = "1d24+59"
+bowcraft_fletching = "1d11+89"
+tactics = "1d24+44"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x13fd"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_jeweler"
+base_id = "basevendor"
+name_list = "female"
+title = "the Jeweler"
+gender = "female"
+race = "human"
+[mobile.skills]
+item_identification = "1d37+63"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_leatherworker"
+base_id = "basevendor"
+name_list = "female"
+title = "the Leatherworker"
+gender = "female"
+race = "human"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1544"]
+
+[[mobile.equipment]]
+items = ["0x13cd"]
+
+[[mobile.equipment]]
+items = ["0x13d2"]
+
+[[mobile.equipment]]
+items = ["0x13d3"]
+
+[[mobile.equipment]]
+items = ["0x13ce"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile]]
+id = "f_mage"
+base_id = "basevendor"
+name_list = "female"
+title = "the Mage"
+gender = "female"
+race = "human"
+[mobile.skills]
+evaluating_intelligence = "1d24+64"
+inscription = "1d24+64"
+meditation = "1d24+59"
+magery = "1d37+63"
+resisting_spells = "1d24+64"
+wrestling = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1718_wizard's_hat"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0515-0x054A"
+
+[[mobile]]
+id = "f_shipwright"
+base_id = "basevendor"
+name_list = "female"
+title = "the Shipwright"
+gender = "female"
+race = "human"
+[mobile.skills]
+carpentry = "1d24+59"
+mace_fighting = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x0e8a"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_spinner"
+base_id = "basevendor"
+name_list = "female"
+title = "the Spinner"
+gender = "female"
+race = "human"
+[mobile.skills]
+tailoring = "1d24+34"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_armourer"
+base_id = "basevendor"
+name_list = "female"
+title = "the Armourer"
+gender = "female"
+race = "human"
+[mobile.skills]
+arms_lore = "1d37+63"
+blacksmithy = "1d24+59"
+[mobile.sounds]
+death = 337
+[mobile.tags]
+bodType = "1"
+bodSubtype = "2"
+[[mobile.equipment]]
+items = ["0x13e4"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_blacksmith"
+base_id = "basevendor"
+name_list = "female"
+title = "the Blacksmith"
+gender = "female"
+race = "human"
+[mobile.skills]
+arms_lore = "1d33+35"
+blacksmithy = "1d24+64"
+fencing = "1d24+59"
+mace_fighting = "1d33+60"
+parrying = "1d33+60"
+swordsmanship = "1d24+59"
+tactics = "1d24+59"
+[mobile.sounds]
+death = 337
+[mobile.tags]
+bodType = "1"
+bodSubtype = "3"
+[[mobile.equipment]]
+items = ["0x13e4"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_architect"
+base_id = "basevendor"
+name_list = "female"
+title = "the Architect"
+gender = "female"
+race = "human"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_carpenter"
+base_id = "basevendor"
+name_list = "female"
+title = "the Carpenter"
+gender = "female"
+race = "human"
+[mobile.skills]
+carpentry = "1d16+84"
+lumberjacking = "1d24+59"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_farmer"
+base_id = "basevendor"
+name_list = "female"
+title = "the Farmer"
+gender = "female"
+race = "human"
+karma = 1200
+fame = 400
+[mobile.skills]
+cooking = "1d33+35"
+lumberjacking = "1d33+35"
+taste_identification = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_cook"
+base_id = "basevendor"
+name_list = "female"
+title = "the Cook"
+gender = "female"
+race = "human"
+[mobile.skills]
+cooking = "1d11+89"
+taste_identification = "1d24+74"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_animaltrainer"
+base_id = "basevendor"
+name_list = "female"
+title = "the Animal Trainer"
+gender = "female"
+race = "human"
+karma = 1200
+fame = 400
+[mobile.skills]
+animal_lore = "1d16+84"
+animal_taming = "1d11+89"
+veterinary = "1d24+64"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_fisher"
+base_id = "basevendor"
+name_list = "female"
+title = "the Fisher"
+gender = "female"
+race = "human"
+karma = 1200
+fame = 400
+[mobile.skills]
+fishing = "1d24+74"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f03_robe"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x0dbf_fishing_pole"]
+
+[[mobile]]
+id = "f_alchemist"
+base_id = "basevendor"
+name_list = "female"
+title = "the Alchemist"
+gender = "female"
+race = "human"
+[mobile.skills]
+alchemy = "1d16+84"
+taste_identification = "1d24+64"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x04B1-0x04DF"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x04B1-0x04DF"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x04B1-0x04DF"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x04B1-0x04DF"
+
+[[mobile]]
+id = "f_tinker"
+base_id = "basevendor"
+name_list = "female"
+title = "the Tinker"
+gender = "female"
+race = "human"
+karma = 1200
+fame = 400
+[mobile.skills]
+lockpicking = "1d24+59"
+tinkering = "1d37+63"
+remove_trap = "1d24+74"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_beekeeper"
+base_id = "basevendor"
+name_list = "female"
+title = "the Beekeeper"
+gender = "female"
+race = "human"
+[mobile.skills]
+animal_lore = "1d24+54"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_healer"
+base_id = "basevendor"
+name_list = "female"
+title = "the Healer"
+gender = "female"
+race = "human"
+[mobile.skills]
+anatomy = "1d24+74"
+forensic_evaluation = "1d24+64"
+healing = "1d37+63"
+spirit_speak = "1d24+59"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x0e8a"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+
+[[mobile]]
+id = "f_playervendor"
+name_list = "female"
+title = "The Player Vendor"
+gender = "female"
+race = "human"
+strength = "1d26+49"
+dexterity = "1d6+64"
+intelligence = "1d26+49"
+damage = "1d13+2"
+armor = 10
+notoriety = "innocent"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x203b_short_hair"]
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x1539_long_pants"]
+hue = "0x06A5-0x06D3"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x06A5-0x06D3"
+
+[[mobile.equipment]]
+items = ["0x1711_thigh_boots"]
+hue = "0x0579-0x05A7"
+
+[[mobile.equipment]]
+items = ["0x1541_body_sash"]
+hue = "0x0641-0x0676"
+
+[[mobile]]
+id = "f_tavernkeeper"
+base_id = "basevendor"
+name_list = "female"
+title = "the Tavernkeeper"
+gender = "female"
+race = "human"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_scribe"
+base_id = "basevendor"
+name_list = "female"
+title = "the Scribe"
+gender = "male"
+race = "human"
+[mobile.skills]
+evaluating_intelligence = "1d24+59"
+inscription = "1d11+89"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1f03_robe"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0515-0x054A"
+
+[[mobile]]
+id = "f_weaver"
+base_id = "basevendor"
+name_list = "female"
+title = "the Weaver"
+gender = "female"
+race = "human"
+[mobile.skills]
+tailoring = "1d24+64"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_mapmaker"
+base_id = "basevendor"
+name_list = "female"
+title = "the Mapmaker"
+gender = "female"
+race = "human"
+[mobile.skills]
+cartography = "1d11+89"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x0e8a"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_furtrader"
+base_id = "basevendor"
+name_list = "female"
+title = "the Furtrader"
+gender = "female"
+race = "human"
+[mobile.skills]
+alchemy = "1d24+59"
+animal_lore = "1d16+84"
+camping = "1d24+54"
+cooking = "1d24+44"
+taste_identification = "1d16+84"
+tracking = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1544"]
+
+[[mobile.equipment]]
+items = ["0x13cd"]
+
+[[mobile.equipment]]
+items = ["0x13d2"]
+
+[[mobile.equipment]]
+items = ["0x13d3"]
+
+[[mobile.equipment]]
+items = ["0x13ce"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile]]
+id = "f_tanner"
+base_id = "basevendor"
+name_list = "female"
+title = "the Tanner"
+gender = "female"
+race = "human"
+[mobile.skills]
+tailoring = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1544"]
+
+[[mobile.equipment]]
+items = ["0x13cd"]
+
+[[mobile.equipment]]
+items = ["0x13d2"]
+
+[[mobile.equipment]]
+items = ["0x13d3"]
+
+[[mobile.equipment]]
+items = ["0x13ce"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile]]
+id = "f_waitress"
+base_id = "basevendor"
+name_list = "female"
+title = "the Waitress"
+gender = "female"
+race = "human"
+[mobile.skills]
+discordance = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x153b_half_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_miller"
+base_id = "basevendor"
+name_list = "female"
+title = "the Miller"
+gender = "female"
+race = "human"
+strength = "1d16+39"
+dexterity = "1d16+34"
+intelligence = "1d16+24"
+[mobile.skills]
+tinkering = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_rancher"
+base_id = "basevendor"
+name_list = "female"
+title = "the Rancher"
+gender = "female"
+race = "human"
+strength = "1d16+34"
+dexterity = "1d15+33"
+intelligence = "1d15+27"
+karma = 1200
+fame = 400
+[mobile.skills]
+animal_lore = "1d24+54"
+animal_taming = "1d24+59"
+healing = "1d37+63"
+veterinary = "1d24+59"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_hairstylist"
+base_id = "basevendor"
+name_list = "female"
+title = "the Hair Stylist"
+gender = "female"
+race = "human"
+strength = "1d16+34"
+dexterity = "1d15+33"
+intelligence = "1d15+27"
+karma = 1200
+fame = 400
+[mobile.skills]
+alchemy = "1d24+54"
+magery = "1d24+59"
+taste_identification = "1d37+63"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_gypsymaiden"
+base_id = "basevendor"
+name_list = "female"
+title = "the Gypsy Maiden"
+gender = "female"
+race = "human"
+[mobile.skills]
+camping = "1d24+44"
+parrying = "1d24+44"
+tactics = "1d24+44"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile]]
+id = "f_gypsyanimaltrainer"
+base_id = "basevendor"
+name_list = "female"
+title = "the Gypsy Animal Trainer"
+gender = "female"
+race = "human"
+karma = 1200
+fame = 400
+[mobile.skills]
+animal_lore = "1d16+84"
+animal_taming = "1d11+89"
+veterinary = "1d24+64"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+
+[[mobile]]
+id = "f_gypsyfortuneteller"
+base_id = "basevendor"
+name_list = "female"
+title = "the Gypsy Fortune Teller"
+gender = "female"
+race = "human"
+[mobile.skills]
+evaluating_intelligence = "1d24+64"
+inscription = "1d24+64"
+meditation = "1d24+59"
+magery = "1d37+63"
+resisting_spells = "1d24+64"
+wrestling = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+
+[[mobile]]
+id = "f_vagabond"
+base_id = "basevendor"
+name_list = "female"
+title = "the Vagabond"
+gender = "female"
+race = "human"
+karma = 1200
+fame = 400
+[mobile.skills]
+lockpicking = "1d24+59"
+tinkering = "1d37+63"
+remove_trap = "1d24+74"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+
+[[mobile]]
+id = "f_ironworker"
+base_id = "basevendor"
+name_list = "female"
+title = "the Iron Worker"
+gender = "female"
+race = "human"
+[mobile.skills]
+arms_lore = "1d33+35"
+blacksmithy = "1d24+64"
+fencing = "1d24+59"
+mace_fighting = "1d33+60"
+parrying = "1d33+60"
+swordsmanship = "1d24+59"
+tactics = "1d24+59"
+[mobile.sounds]
+death = 337
+[mobile.tags]
+bodType = "1"
+bodSubtype = "3"
+[[mobile.equipment]]
+items = ["0x13e4"]
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1f01_plain_dress", "0x153b_half_apron", "0x153d_full_apron"]
+
+[[mobile]]
+id = "f_veterinarian"
+base_id = "basevendor"
+name_list = "female"
+title = "the veterinarian"
+gender = "female"
+race = "human"
+[mobile.skills]
+anatomy = "1d24+74"
+forensic_evaluation = "1d24+64"
+healing = "1d37+63"
+spirit_speak = "1d24+59"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x0e8a"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]

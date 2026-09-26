@@ -1,0 +1,1222 @@
+[[mobile]]
+id = "female"
+base_id = "basehuman"
+name = "Basic Female"
+name_list = "female"
+gender = "female"
+race = "human"
+strength = "1d26+49"
+dexterity = "1d11+59"
+intelligence = "1d26+49"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1eff_fancy_dress"]
+
+[[mobile]]
+id = "f_banker"
+base_id = "basehuman"
+name_list = "female"
+title = "the Banker"
+gender = "female"
+race = "human"
+strength = "1d26+49"
+dexterity = "1d6+64"
+intelligence = "1d26+49"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_guard"
+base_id = "basehuman"
+name_list = "female"
+title = "the Guard"
+gender = "female"
+race = "human"
+strength = "1d501+999"
+dexterity = "1d51+149"
+intelligence = "1d51+449"
+hits = 2000
+damage = "1d301+1199"
+armor = 100
+karma = 10000
+fame = 10000
+[mobile.skills]
+detecting_hidden = "1d11+89"
+fencing = "1d11+89"
+forensic_evaluation = "1d11+89"
+mace_fighting = "1d11+89"
+resisting_spells = "1d11+89"
+parrying = "1d11+89"
+swordsmanship = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["guardhalberd"]
+
+[[mobile.equipment]]
+items = ["0x141a"]
+
+[[mobile]]
+id = "f_murderer_archmage"
+base_id = "basehuman"
+name_list = "male"
+title = "the Archmage"
+gender = "female"
+race = "human"
+strength = "1d26+149"
+dexterity = "1d21+19"
+intelligence = "1d251+499"
+damage = "1d10+2"
+armor = 18
+notoriety = "murderer"
+karma = -3000
+fame = 3000
+gold = "1d151+349"
+[mobile.skills]
+evaluating_intelligence = "1d70+30"
+magery = "1d6+94"
+parrying = "1d24+64"
+resisting_spells = "1d23+77"
+meditation = "1d23+27"
+tactics = "1d24+64"
+wrestling = "1d61+19"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1718_wizard's_hat"]
+hue = "0x0641-0x0676"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0641-0x0676"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0641-0x0676"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1f03_robe"]
+hue = "0x0641-0x0676"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0641-0x0676"
+
+[[mobile]]
+id = "f_whealer"
+base_id = "basehuman"
+name_list = "female"
+title = "the Wandering Healer"
+gender = "female"
+race = "human"
+strength = "1d97+303"
+dexterity = "1d49+101"
+intelligence = "1d97+203"
+damage = "1d28+2"
+armor = "1d17+3"
+karma = 1000
+fame = 1000
+[mobile.skills]
+camping = "1d33+35"
+anatomy = "1d34+64"
+evaluating_intelligence = "1d19+81"
+forensic_evaluation = "1d34+64"
+healing = "1d34+64"
+magery = "1d19+81"
+resisting_spells = "1d19+81"
+spirit_speak = "1d34+64"
+tactics = "1d19+81"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+
+[[mobile]]
+id = "f_pirate"
+base_id = "basehuman"
+name_list = "female"
+title = "the Pirate"
+gender = "female"
+race = "human"
+strength = "1d15+85"
+dexterity = "1d35+65"
+intelligence = "1d15+70"
+notoriety = "murderer"
+[mobile.skills]
+resisting_spells = "1d10+48"
+parrying = "1d24+24"
+swordsmanship = "1d37+63"
+tactics = "1d24+64"
+wrestling = "1d33+25"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x13b6"]
+
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_fighter"
+base_id = "basehuman"
+name_list = "female"
+title = "the Fighter"
+gender = "female"
+race = "human"
+strength = "1d78+10"
+dexterity = "1d78+10"
+intelligence = "1d43+6"
+damage = "1d8+9"
+[mobile.skills]
+arms_lore = "1d24+59"
+fencing = "1d33+35"
+mace_fighting = "1d33+35"
+resisting_spells = "1d33+25"
+parrying = "1d24+59"
+swordsmanship = "1d37+63"
+tactics = "1d33+35"
+wrestling = "1d24+24"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x13ed"]
+
+[[mobile.equipment]]
+items = ["0x13ef"]
+
+[[mobile.equipment]]
+items = ["0x13e1"]
+
+[[mobile.equipment]]
+items = ["0x13b8"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots"]
+
+[[mobile]]
+id = "f_paladin"
+base_id = "basehuman"
+name_list = "male"
+title = "the Paladin"
+gender = "female"
+race = "human"
+strength = "1d29+63"
+dexterity = "1d43+45"
+intelligence = "1d13+36"
+damage = "1d8+9"
+[mobile.skills]
+arms_lore = "1d24+54"
+fencing = "1d24+64"
+mace_fighting = "1d24+64"
+parrying = "1d11+89"
+resisting_spells = "1d24+74"
+swordsmanship = "1d24+64"
+tactics = "1d24+74"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+
+[[mobile]]
+id = "f_warrior"
+base_id = "basehuman"
+name_list = "male"
+title = "the Warrior"
+gender = "female"
+race = "human"
+strength = "1d71+17"
+dexterity = "1d71+17"
+intelligence = "1d37+12"
+damage = "1d8+9"
+[mobile.skills]
+arms_lore = "1d24+59"
+fencing = "1d33+35"
+mace_fighting = "1d33+35"
+parrying = "1d24+74"
+resisting_spells = "1d33+35"
+swordsmanship = "1d16+84"
+wrestling = "1d24+24"
+tactics = "1d24+74"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x13ed"]
+
+[[mobile.equipment]]
+items = ["0x13ef"]
+
+[[mobile.equipment]]
+items = ["0x13e1"]
+
+[[mobile.equipment]]
+items = ["0x0f61", "0x13b6", "0x13b8", "0x13ff"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots"]
+
+[[mobile]]
+id = "f_sailor"
+base_id = "basehuman"
+name_list = "female"
+title = "the Sailor"
+gender = "female"
+race = "human"
+strength = "1d15+65"
+dexterity = "1d15+65"
+intelligence = "1d15+40"
+[mobile.skills]
+cartography = "1d24+59"
+resisting_spells = "1d33+35"
+parrying = "1d24+14"
+swordsmanship = "1d24+74"
+wrestling = "1d33+35"
+tactics = "1d24+64"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_brigand"
+base_id = "basehuman"
+name_list = "female"
+gender = "female"
+race = "human"
+strength = "1d15+85"
+dexterity = "1d15+80"
+intelligence = "1d15+60"
+damage = "1d14+9"
+notoriety = "murderer"
+karma = -1000
+fame = 1000
+gold = "1d101+99"
+[mobile.skills]
+camping = "1d24+34"
+fencing = "1d33+45"
+lockpicking = "1d24+34"
+hiding = "1d24+64"
+mace_fighting = "1d24+24"
+resisting_spells = "1d24+24"
+remove_trap = "1d24+34"
+snooping = "1d24+44"
+swordsmanship = "1d24+34"
+tactics = "1d24+34"
+wrestling = "1d24+14"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_beggar"
+base_id = "basehuman"
+name_list = "female"
+title = "the Beggar"
+gender = "female"
+race = "human"
+strength = "1d15+25"
+dexterity = "1d15+20"
+intelligence = "1d15+35"
+[mobile.skills]
+begging = "1d37+63"
+resisting_spells = "1d24+4"
+snooping = "1d24+64"
+stealing = "1d24+59"
+tactics = "1d24+4"
+wrestling = "1d24+4"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_noble"
+base_id = "basehuman"
+name_list = "female"
+title = "the Noble"
+gender = "female"
+race = "human"
+strength = "1d26+49"
+dexterity = "1d6+64"
+intelligence = "1d26+49"
+gold = 400
+[mobile.skills]
+parrying = "1d33+35"
+swordsmanship = "1d33+35"
+tactics = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_thief_guildmaster"
+base_id = "basehuman"
+name_list = "male"
+title = "the Thief Guildmaster"
+gender = "female"
+race = "human"
+strength = "1d15+60"
+dexterity = "1d15+85"
+intelligence = "1d15+70"
+[mobile.skills]
+detecting_hidden = "1d24+64"
+fencing = "1d24+59"
+hiding = "1d24+59"
+lockpicking = "1d24+64"
+resisting_spells = "1d24+24"
+poisoning = "1d24+34"
+remove_trap = "1d24+59"
+snooping = "1d37+63"
+stealing = "1d37+63"
+stealth = "1d24+64"
+tactics = "1d33+25"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1401", "0x1405"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_thief"
+base_id = "basehuman"
+name_list = "female"
+title = "the Thief"
+gender = "female"
+race = "human"
+strength = "1d15+60"
+dexterity = "1d15+85"
+intelligence = "1d15+70"
+notoriety = "attackable"
+[mobile.skills]
+detecting_hidden = "1d24+64"
+fencing = "1d24+59"
+hiding = "1d24+59"
+lockpicking = "1d24+64"
+resisting_spells = "1d24+24"
+poisoning = "1d24+34"
+remove_trap = "1d24+59"
+snooping = "1d37+63"
+stealing = "1d37+63"
+stealth = "1d24+64"
+tactics = "1d33+25"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1401", "0x1405"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_townthief"
+base_id = "basehuman"
+name_list = "female"
+title = "the Thief"
+gender = "female"
+race = "human"
+strength = "1d26+49"
+dexterity = "1d7+88"
+intelligence = "1d26+49"
+[mobile.skills]
+detecting_hidden = "1d24+64"
+fencing = "1d24+59"
+hiding = "1d24+59"
+lockpicking = "1d24+64"
+remove_trap = "1d24+59"
+snooping = "1d37+63"
+stealing = "1d37+63"
+stealth = "1d24+64"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_peasant"
+base_id = "basehuman"
+name_list = "female"
+title = "the Peasant"
+gender = "female"
+race = "human"
+strength = "1d15+25"
+dexterity = "1d15+20"
+intelligence = "1d15+15"
+[mobile.skills]
+tactics = "1d24+4"
+swordsmanship = "1d24+4"
+wrestling = "1d24+4"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_gypsy"
+base_id = "basehuman"
+name_list = "female"
+title = "the Gypsy"
+gender = "female"
+race = "human"
+strength = "1d26+49"
+dexterity = "1d6+74"
+intelligence = "1d26+49"
+[mobile.skills]
+begging = "1d24+44"
+camping = "1d24+44"
+hiding = "1d24+44"
+item_identification = "1d24+44"
+parrying = "1d24+34"
+resisting_spells = "1d24+34"
+snooping = "1d24+44"
+stealing = "1d24+44"
+tactics = "1d34+34"
+tinkering = "1d24+44"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1fa1_tunic", "0x1fa1_tunic", "0x1f03_robe", "0x1f01_plain_dress", "0x1f01_plain_dress"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_seeker"
+base_id = "basehuman"
+name_list = "female"
+title = "the Seeker of Adventure"
+gender = "female"
+race = "human"
+strength = "1d26+49"
+dexterity = "1d6+74"
+intelligence = "1d26+49"
+[mobile.skills]
+resisting_spells = "1d21+39"
+parrying = "1d21+39"
+swordsmanship = "1d24+44"
+tactics = "1d21+39"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x13c4"]
+
+[[mobile.equipment]]
+items = ["0x13c3"]
+
+[[mobile.equipment]]
+items = ["0x13dd"]
+
+[[mobile.equipment]]
+items = ["0x13ba"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_jailer"
+base_id = "basehuman"
+name_list = "female"
+title = "the Jailer"
+gender = "female"
+race = "human"
+strength = "1d26+49"
+dexterity = "1d6+64"
+intelligence = "1d26+49"
+[mobile.skills]
+mace_fighting = "1d24+64"
+parrying = "1d33+35"
+swordsmanship = "1d24+44"
+wrestling = "1d24+59"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x13c4"]
+
+[[mobile.equipment]]
+items = ["0x13c3"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile]]
+id = "f_towncrier"
+base_id = "basehuman"
+name_list = "female"
+title = "the Town Crier"
+gender = "female"
+race = "human"
+strength = "1d11+39"
+dexterity = "1d26+44"
+intelligence = "1d11+39"
+damage = "1d9+7"
+karma = 1200
+fame = 400
+[mobile.skills]
+archery = "1d11+89"
+detecting_hidden = "1d11+89"
+fencing = "1d11+89"
+mace_fighting = "1d11+89"
+parrying = "1d11+89"
+resisting_spells = "1d11+89"
+swordsmanship = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_artist"
+base_id = "basehuman"
+name_list = "female"
+title = "the Artist"
+gender = "female"
+race = "human"
+strength = "1d16+14"
+dexterity = "1d6+64"
+intelligence = "1d16+14"
+damage = "1d9+7"
+karma = 1200
+fame = 400
+gold = "1d51-1"
+[mobile.skills]
+anatomy = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_ranger"
+base_id = "basehuman"
+name_list = "female"
+title = "the Ranger"
+gender = "female"
+race = "human"
+strength = "1d15+70"
+dexterity = "1d15+75"
+intelligence = "1d15+60"
+karma = 125
+fame = 100
+[mobile.skills]
+animal_lore = "1d24+59"
+archery = "1d24+64"
+camping = "1d24+54"
+fencing = "1d24+14"
+hiding = "1d24+44"
+resisting_spells = "1d24+64"
+swordsmanship = "1d24+34"
+tactics = "1d24+64"
+tracking = "1d24+64"
+wrestling = "1d24+14"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x0f61", "0x13b4", "0x13b6", "0x13b8", "0x13b0", "0x13ff", "0x1401", "0x1405", "0x1407", "0x143b", "0x1441"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_gambler"
+base_id = "basehuman"
+name_list = "female"
+title = "the Gambler"
+gender = "female"
+race = "human"
+strength = "1d15+30"
+dexterity = "1d35+50"
+intelligence = "1d15+55"
+[mobile.skills]
+evaluating_intelligence = "1d24+44"
+fencing = "1d33+35"
+item_identification = "1d24+74"
+snooping = "1d33+35"
+stealing = "1d24+59"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1401", "0x1405"]
+
+[[mobile.equipment]]
+items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_judge"
+base_id = "basehuman"
+name_list = "female"
+title = "the Judge"
+gender = "female"
+race = "human"
+strength = "1d16+64"
+dexterity = "1d16+59"
+intelligence = "1d16+74"
+[mobile.skills]
+evaluating_intelligence = "1d24+74"
+forensic_evaluation = "1d24+59"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1517_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1f03_robe"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_mayor"
+base_id = "basehuman"
+name_list = "female"
+title = "the Mayor"
+gender = "female"
+race = "human"
+strength = "1d16+34"
+dexterity = "1d16+34"
+intelligence = "1d16+49"
+[mobile.skills]
+evaluating_intelligence = "1d33+35"
+peacemaking = "1d33+35"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1541_body_sash"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_monk"
+base_id = "basehuman"
+name_list = "female"
+title = "the Monk"
+gender = "female"
+race = "human"
+strength = "1d16+19"
+dexterity = "1d16+34"
+intelligence = "1d16+39"
+[mobile.skills]
+evaluating_intelligence = "1d11+89"
+healing = "1d33+35"
+mace_fighting = "1d24+64"
+meditation = "1d33+35"
+resisting_spells = "1d37+63"
+tactics = "1d24+59"
+wrestling = "1d24+74"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x170d_sandals"]
+
+[[mobile.equipment]]
+items = ["0x1f03_robe"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_prisoner"
+base_id = "basehuman"
+name_list = "female"
+title = "the Prisoner"
+gender = "female"
+race = "human"
+strength = "1d16+9"
+dexterity = "1d16+9"
+intelligence = "1d16+29"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x152e_short_pants"]
+
+[[mobile]]
+id = "f_sculptor"
+base_id = "basehuman"
+name_list = "female"
+title = "the Sculptor"
+gender = "female"
+race = "human"
+strength = "1d16+14"
+dexterity = "1d16+24"
+intelligence = "1d16+19"
+[mobile.skills]
+anatomy = "1d24+44"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+hue = "0x0835-0x0852"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0835-0x0852"
+
+[[mobile]]
+id = "f_golemcontroller"
+base_id = "basehuman"
+name_list = "golem_controller"
+title = "the controller"
+gender = "female"
+race = "human"
+strength = "1d25+125"
+dexterity = "1d25+95"
+intelligence = "1d25+150"
+damage = "1d13+2"
+armor = 18
+notoriety = "murderer"
+karma = -4000
+fame = 4000
+gold = "1d151+349"
+[mobile.skills]
+evaluating_intelligence = "1d50+50"
+magery = "1d6+94"
+resisting_spells = "1d18+102"
+meditation = "1d23+52"
+parrying = "1d24+64"
+tactics = "1d24+64"
+wrestling = "1d24+64"
+[mobile.sounds]
+death = 337
+
+[[mobile]]
+id = "f_executioner"
+base_id = "basehuman"
+name_list = "male"
+title = "the Executioner"
+gender = "female"
+race = "human"
+strength = "1d15+385"
+dexterity = "1d15+150"
+intelligence = "1d15+160"
+armor = 20
+notoriety = "murderer"
+karma = -5000
+fame = 5000
+gold = "1d101+99"
+[mobile.skills]
+anatomy = 120
+camping = "1d33+35"
+fencing = "1d33+45"
+hiding = "1d16+84"
+lockpicking = "1d24+44"
+lumberjacking = 120
+resisting_spells = "1d10+83"
+poisoning = "1d24+59"
+remove_trap = "1d33+35"
+stealing = "1d24+59"
+swordsmanship = 120
+tactics = 120
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1531_skirt"]
+hue = "0x0641-0x0676"
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat"]
+hue = "0x0641-0x0676"
+
+[[mobile.equipment]]
+items = ["0x1711_thigh_boots"]
+hue = "0x0641-0x0676"
+
+[[mobile.equipment]]
+items = ["0x0f46"]
+
+[[mobile]]
+id = "f_chaosdragoon"
+base_id = "basehuman"
+name = "a chaos dragoon"
+gender = "female"
+race = "human"
+strength = "1d41+183"
+dexterity = "1d13+62"
+intelligence = "1d21+63"
+notoriety = "murderer"
+karma = -5000
+fame = 5000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
+gold = "1d151+49"
+[mobile.skills]
+anatomy = "1d12+76"
+fencing = "1d10+82"
+mace_fighting = "1d10+82"
+resisting_spells = "1d14+82"
+parrying = "1d14+82"
+swordsmanship = "1d10+82"
+tactics = "1d8+78"
+wrestling = 10
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["swampdragon"]
+
+[[mobile]]
+id = "f_chaosdragoonelite"
+base_id = "basehuman"
+name = "a chaos dragoon elite"
+gender = "female"
+race = "human"
+strength = 291
+dexterity = 68
+intelligence = 136
+notoriety = "murderer"
+karma = -8000
+fame = 8000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems"]
+gold = "1d51+249"
+[mobile.skills]
+anatomy = 89
+evaluating_intelligence = 84
+fencing = "1d16+84"
+mace_fighting = "1d16+84"
+magery = 87
+resisting_spells = 104
+parrying = "1d16+84"
+swordsmanship = "1d16+84"
+tactics = 89
+wrestling = 10
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["armorswampdragon"]
+
+[[mobile]]
+id = "f_gypsybanker"
+base_id = "basehuman"
+name_list = "female"
+title = "the Gypsy Banker"
+gender = "female"
+race = "human"
+strength = "1d26+49"
+dexterity = "1d6+64"
+intelligence = "1d26+49"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x1714_wide_brim_hat", "0x1719_bonnet", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+
+[[mobile.equipment]]
+items = ["0x1516", "0x152e_short_pants", "0x1537_kilt", "0x1539_long_pants"]
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1ffd_surcoat", "0x1f7b_doublet", "0x1eff_fancy_dress", "0x1541_body_sash"]
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]

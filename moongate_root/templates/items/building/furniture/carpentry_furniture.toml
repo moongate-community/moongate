@@ -1,0 +1,179 @@
+[[item]]
+id = "0x14ea_moulding_board"
+base_id = "base_item"
+item_id = 5354
+name = "moulding board"
+rarity = "common"
+movable = true
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19fb_cooper's_bench"
+base_id = "base_item"
+item_id = 6651
+name = "cooper's bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19fc_cooper's_bench"
+base_id = "base_item"
+item_id = 6652
+name = "cooper's bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19f1_woodworkers_bench"
+base_id = "base_item"
+item_id = 6641
+name = "woodworkers bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19f2_woodworkers_bench"
+base_id = "base_item"
+item_id = 6642
+name = "woodworkers bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19f3_woodworkers_bench"
+base_id = "base_item"
+item_id = 6643
+name = "woodworkers bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19f4_vise"
+base_id = "base_item"
+item_id = 6644
+name = "vise"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19f5_woodworkers_bench"
+base_id = "base_item"
+item_id = 6645
+name = "woodworkers bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19f6_woodworkers_bench"
+base_id = "base_item"
+item_id = 6646
+name = "woodworkers bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19f7_woodworkers_bench"
+base_id = "base_item"
+item_id = 6647
+name = "woodworkers bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19f8_vise"
+base_id = "base_item"
+item_id = 6648
+name = "vise"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19f9_cooper's_bench"
+base_id = "base_item"
+item_id = 6649
+name = "cooper's bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x19fa_cooper's_bench"
+base_id = "base_item"
+item_id = 6650
+name = "cooper's bench"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x12b1_scaffold"
+base_id = "base_item"
+item_id = 4785
+name = "scaffold"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x12b2_scaffold"
+base_id = "base_item"
+item_id = 4786
+name = "scaffold"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x12c8_scaffold"
+base_id = "base_item"
+item_id = 4808
+name = "scaffold"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x12c9_scaffold"
+base_id = "base_item"
+item_id = 4809
+name = "scaffold"
+rarity = "common"
+movable = false
+weight = 60.0
+hue = 0
+
+[[item]]
+id = "0x14e9_moulding_board"
+base_id = "base_item"
+item_id = 5353
+name = "moulding board"
+rarity = "common"
+movable = true
+weight = 10.0
+hue = 0

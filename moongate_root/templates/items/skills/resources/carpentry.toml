@@ -12,6 +12,26 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x1bd8_boards"
+base_id = "base_item"
+item_id = 7128
+name = "boards"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bd9_boards"
+base_id = "base_item"
+item_id = 7129
+name = "boards"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x1bda_board"
 base_id = "base_item"
 item_id = 7130
@@ -22,4 +42,24 @@ stackable = true
 buy_price = 1
 sell_price = 1
 decays = true
+hue = 0
+
+[[item]]
+id = "0x1bdb_boards"
+base_id = "base_item"
+item_id = 7131
+name = "boards"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1bdc_boards"
+base_id = "base_item"
+item_id = 7132
+name = "boards"
+rarity = "common"
+movable = false
+weight = 1.0
 hue = 0

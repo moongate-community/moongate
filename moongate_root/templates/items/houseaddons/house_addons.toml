@@ -1,0 +1,843 @@
+[[item]]
+id = "0x1883_millstone"
+base_id = "base_item"
+item_id = 6275
+name = "millstone"
+rarity = "common"
+movable = false
+weight = 50.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1884_millstone"
+base_id = "base_item"
+item_id = 6276
+name = "millstone"
+rarity = "common"
+movable = false
+weight = 50.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1885_millstone"
+base_id = "base_item"
+item_id = 6277
+name = "millstone"
+rarity = "common"
+movable = false
+weight = 50.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1886_millstone"
+base_id = "base_item"
+item_id = 6278
+name = "millstone"
+rarity = "common"
+movable = false
+weight = 50.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1887_millstone"
+base_id = "base_item"
+item_id = 6279
+name = "millstone"
+rarity = "common"
+movable = false
+weight = 50.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1888_millstone"
+base_id = "base_item"
+item_id = 6280
+name = "millstone"
+rarity = "common"
+movable = false
+weight = 50.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1889_millstones"
+base_id = "base_item"
+item_id = 6281
+name = "millstones"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x188a_millstones"
+base_id = "base_item"
+item_id = 6282
+name = "millstones"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1920_flour_mill"
+base_id = "base_item"
+item_id = 6432
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1922_flour_mill"
+base_id = "base_item"
+item_id = 6434
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1921_flour_mill"
+base_id = "base_item"
+item_id = 6433
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1925_flour_mill"
+base_id = "base_item"
+item_id = 6437
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1923_flour_mill"
+base_id = "base_item"
+item_id = 6435
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1926_flour_mill"
+base_id = "base_item"
+item_id = 6438
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1924_crank"
+base_id = "base_item"
+item_id = 6436
+name = "crank"
+rarity = "common"
+movable = false
+weight = 10.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1928_crank"
+base_id = "base_item"
+item_id = 6440
+name = "crank"
+rarity = "common"
+movable = false
+weight = 10.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x192c_flour_mill"
+base_id = "base_item"
+item_id = 6444
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x192e_flour_mill"
+base_id = "base_item"
+item_id = 6446
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x192d_flour_mill"
+base_id = "base_item"
+item_id = 6445
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1931_flour_mill"
+base_id = "base_item"
+item_id = 6449
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x192f_flour_mill"
+base_id = "base_item"
+item_id = 6447
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1932_flour_mill"
+base_id = "base_item"
+item_id = 6450
+name = "flour mill"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1930_crank"
+base_id = "base_item"
+item_id = 6448
+name = "crank"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1934_crank"
+base_id = "base_item"
+item_id = 6452
+name = "crank"
+rarity = "common"
+movable = false
+weight = 100.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1070_training_dummy"
+base_id = "base_item"
+item_id = 4208
+name = "training dummy"
+rarity = "common"
+movable = true
+weight = 60.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1071_training_dummy"
+base_id = "base_item"
+item_id = 4209
+name = "training dummy"
+rarity = "common"
+movable = false
+weight = 60.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1074_training_dummy"
+base_id = "base_item"
+item_id = 4212
+name = "training dummy"
+rarity = "common"
+movable = true
+weight = 60.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1075_training_dummy"
+base_id = "base_item"
+item_id = 4213
+name = "training dummy"
+rarity = "common"
+movable = false
+weight = 60.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x100a_archery_butte"
+base_id = "base_item"
+item_id = 4106
+name = "archery butte"
+rarity = "common"
+movable = false
+weight = 80.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x100b_archery_butte"
+base_id = "base_item"
+item_id = 4107
+name = "archery butte"
+rarity = "common"
+movable = false
+weight = 80.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1ec0_pickpocket_dip"
+base_id = "base_item"
+item_id = 7872
+name = "pickpocket dip"
+rarity = "common"
+movable = true
+weight = 60.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1ec1_pickpocket_dip"
+base_id = "base_item"
+item_id = 7873
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1ec3_pickpocket_dip"
+base_id = "base_item"
+item_id = 7875
+name = "pickpocket dip"
+rarity = "common"
+movable = true
+weight = 60.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1ec4_pickpocket_dip"
+base_id = "base_item"
+item_id = 7876
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x0b41_water_trough"
+base_id = "base_item"
+item_id = 2881
+name = "water trough"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b42_water_trough"
+base_id = "base_item"
+item_id = 2882
+name = "water trough"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b43_water_trough"
+base_id = "base_item"
+item_id = 2883
+name = "water trough"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0b44_water_trough"
+base_id = "base_item"
+item_id = 2884
+name = "water trough"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "brownbearrug1"
+base_id = "base_item"
+item_id = 7744
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug2"
+base_id = "base_item"
+item_id = 7745
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug3"
+base_id = "base_item"
+item_id = 7746
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug4"
+base_id = "base_item"
+item_id = 7747
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug5"
+base_id = "base_item"
+item_id = 7748
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug6"
+base_id = "base_item"
+item_id = 7749
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug7"
+base_id = "base_item"
+item_id = 7750
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug8"
+base_id = "base_item"
+item_id = 7751
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug9"
+base_id = "base_item"
+item_id = 7752
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug10"
+base_id = "base_item"
+item_id = 7734
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug11"
+base_id = "base_item"
+item_id = 7735
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug12"
+base_id = "base_item"
+item_id = 7736
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug13"
+base_id = "base_item"
+item_id = 7737
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug14"
+base_id = "base_item"
+item_id = 7738
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug15"
+base_id = "base_item"
+item_id = 7739
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug16"
+base_id = "base_item"
+item_id = 7740
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug17"
+base_id = "base_item"
+item_id = 7741
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "brownbearrug18"
+base_id = "base_item"
+item_id = 7742
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug1"
+base_id = "base_item"
+item_id = 7763
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug2"
+base_id = "base_item"
+item_id = 7764
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug3"
+base_id = "base_item"
+item_id = 7765
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug4"
+base_id = "base_item"
+item_id = 7766
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug5"
+base_id = "base_item"
+item_id = 7767
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug6"
+base_id = "base_item"
+item_id = 7768
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug7"
+base_id = "base_item"
+item_id = 7769
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug8"
+base_id = "base_item"
+item_id = 7770
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug9"
+base_id = "base_item"
+item_id = 7771
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug10"
+base_id = "base_item"
+item_id = 7753
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug11"
+base_id = "base_item"
+item_id = 7754
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug12"
+base_id = "base_item"
+item_id = 7755
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug13"
+base_id = "base_item"
+item_id = 7756
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug14"
+base_id = "base_item"
+item_id = 7757
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug15"
+base_id = "base_item"
+item_id = 7758
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug16"
+base_id = "base_item"
+item_id = 7759
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug17"
+base_id = "base_item"
+item_id = 7760
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0
+
+[[item]]
+id = "polarbearrug18"
+base_id = "base_item"
+item_id = 7761
+name = "a bearskin rug"
+rarity = "common"
+movable = false
+weight = 10.0
+decays = false
+hue = 0

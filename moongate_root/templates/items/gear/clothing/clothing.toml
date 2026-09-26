@@ -306,3 +306,39 @@ base_id = "0x1fa1_tunic"
 item_id = 8098
 rarity = "common"
 hue = 0
+
+[[item]]
+id = "0x1535_gold_belt"
+base_id = "base_clothing"
+item_id = 5429
+name = "gold belt"
+rarity = "common"
+weight = 1.0
+buy_price = 50
+sell_price = 25
+hue = 0
+
+[[item]]
+id = "0x1536"
+base_id = "0x1535_gold_belt"
+item_id = 5430
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x1ffd_surcoat"
+base_id = "base_clothing"
+item_id = 8189
+name = "surcoat"
+rarity = "common"
+weight = 1.0
+buy_price = 44
+sell_price = 22
+hue = 0
+
+[[item]]
+id = "0x1ffe"
+base_id = "0x1ffd_surcoat"
+item_id = 8190
+rarity = "common"
+hue = 0

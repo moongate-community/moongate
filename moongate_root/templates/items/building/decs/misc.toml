@@ -1,4 +1,44 @@
 [[item]]
+id = "0x041f_gruesome_standard"
+base_id = "base_item"
+item_id = 1055
+name = "gruesome standard"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0420_gruesome_standard"
+base_id = "base_item"
+item_id = 1056
+name = "gruesome standard"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0428_gruesome_standard"
+base_id = "base_item"
+item_id = 1064
+name = "gruesome standard"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0429_gruesome_standard"
+base_id = "base_item"
+item_id = 1065
+name = "gruesome standard"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x0b45_large_vase"
 base_id = "base_item"
 item_id = 2885
@@ -36,6 +76,26 @@ name = "vase"
 rarity = "common"
 movable = false
 weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x0c39_peg_board"
+base_id = "base_item"
+item_id = 3129
+name = "peg board"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x0c3a_peg_board"
+base_id = "base_item"
+item_id = 3130
+name = "peg board"
+rarity = "common"
+movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -349,6 +409,26 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "0x0f37_saddle"
+base_id = "base_item"
+item_id = 3895
+name = "saddle"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x0f38_saddle"
+base_id = "base_item"
+item_id = 3896
+name = "saddle"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x0f3b_horse_dung"
 base_id = "base_item"
 item_id = 3899
@@ -499,6 +579,66 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "0x10ac_hanging_pole"
+base_id = "base_item"
+item_id = 4268
+name = "hanging pole"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x10ad_hanging_pole"
+base_id = "base_item"
+item_id = 4269
+name = "hanging pole"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x10ae_hanging_pole"
+base_id = "base_item"
+item_id = 4270
+name = "hanging pole"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x10af_hanging_pole"
+base_id = "base_item"
+item_id = 4271
+name = "hanging pole"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x10b0_hanging_pole"
+base_id = "base_item"
+item_id = 4272
+name = "hanging pole"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x10b1_hanging_pole"
+base_id = "base_item"
+item_id = 4273
+name = "hanging pole"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x1449_loose_grain"
 base_id = "base_item"
 item_id = 5193
@@ -519,10 +659,160 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "0x14e7_hitching_post"
+base_id = "base_item"
+item_id = 5351
+name = "hitching post"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14e8_hitching_post"
+base_id = "base_item"
+item_id = 5352
+name = "hitching post"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14f3_ship_model"
+base_id = "base_item"
+item_id = 5363
+name = "ship model"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14f4_ship_model"
+base_id = "base_item"
+item_id = 5364
+name = "ship model"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14f7_anchor"
+base_id = "base_item"
+item_id = 5367
+name = "anchor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x14f8_rope"
+base_id = "base_item"
+item_id = 5368
+name = "rope"
+rarity = "common"
+movable = true
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x14f9_anchor"
+base_id = "base_item"
+item_id = 5369
+name = "anchor"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
 id = "0x14fa_rope"
 base_id = "base_item"
 item_id = 5370
 name = "rope"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1500_plough"
+base_id = "base_item"
+item_id = 5376
+name = "plough"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x1501_plough"
+base_id = "base_item"
+item_id = 5377
+name = "plough"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x1502_plough"
+base_id = "base_item"
+item_id = 5378
+name = "plough"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x1503_plough"
+base_id = "base_item"
+item_id = 5379
+name = "plough"
+rarity = "common"
+movable = false
+weight = 3.0
+hue = 0
+
+[[item]]
+id = "0x1504_harrow"
+base_id = "base_item"
+item_id = 5380
+name = "harrow"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1505_harrow"
+base_id = "base_item"
+item_id = 5381
+name = "harrow"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1506_harrow"
+base_id = "base_item"
+item_id = 5382
+name = "harrow"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1507_harrow"
+base_id = "base_item"
+item_id = 5383
+name = "harrow"
 rarity = "common"
 movable = false
 weight = 1.0
@@ -629,6 +919,148 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "0x1b23_leaves"
+base_id = "base_item"
+item_id = 6947
+name = "leaves"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b24_leaves"
+base_id = "base_item"
+item_id = 6948
+name = "leaves"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b25_leaves"
+base_id = "base_item"
+item_id = 6949
+name = "leaves"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1b26_leaves"
+base_id = "base_item"
+item_id = 6950
+name = "leaves"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e26_oar"
+base_id = "base_item"
+item_id = 7718
+name = "oar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e27_oar"
+base_id = "base_item"
+item_id = 7719
+name = "oar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e28_oar"
+base_id = "base_item"
+item_id = 7720
+name = "oar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e29_oar"
+base_id = "base_item"
+item_id = 7721
+name = "oar"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e2a_oars"
+base_id = "base_item"
+item_id = 7722
+name = "oars"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e2b_oars"
+base_id = "base_item"
+item_id = 7723
+name = "oars"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e34_scarecrow"
+base_id = "base_item"
+item_id = 7732
+name = "scarecrow"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e35_scarecrow"
+base_id = "base_item"
+item_id = 7733
+name = "scarecrow"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1e5e_bulletin_board"
+base_id = "base_item"
+item_id = 7774
+name = "bulletin board"
+rarity = "common"
+movable = false
+weight = 5.0
+decays = false
+hue = 0
+
+[[item]]
+id = "0x1e5f_bulletin_board"
+base_id = "base_item"
+item_id = 7775
+name = "bulletin board"
+rarity = "common"
+movable = false
+weight = 5.0
+decays = false
+hue = 0
+
+[[item]]
 id = "0x1e9a_hook"
 base_id = "base_item"
 item_id = 7834
@@ -716,6 +1148,166 @@ name = "rope"
 rarity = "common"
 movable = false
 weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ea3_net"
+base_id = "base_item"
+item_id = 7843
+name = "net"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ea4_net"
+base_id = "base_item"
+item_id = 7844
+name = "net"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ea5_net"
+base_id = "base_item"
+item_id = 7845
+name = "net"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1ea6_net"
+base_id = "base_item"
+item_id = 7846
+name = "net"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1376_horse_barding"
+base_id = "base_item"
+item_id = 4982
+name = "horse barding"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1377_horse_barding"
+base_id = "base_item"
+item_id = 4983
+name = "horse barding"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1378_horse_barding"
+base_id = "base_item"
+item_id = 4984
+name = "horse barding"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1379_horse_barding"
+base_id = "base_item"
+item_id = 4985
+name = "horse barding"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1374_bridle"
+base_id = "base_item"
+item_id = 4980
+name = "bridle"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1375_bridle"
+base_id = "base_item"
+item_id = 4981
+name = "bridle"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1a82_ore_cart"
+base_id = "base_item"
+item_id = 6786
+name = "ore cart"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a83_ore_cart"
+base_id = "base_item"
+item_id = 6787
+name = "ore cart"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a86_ore_cart"
+base_id = "base_item"
+item_id = 6790
+name = "ore cart"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a87_ore_cart"
+base_id = "base_item"
+item_id = 6791
+name = "ore cart"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a88_ore_cart"
+base_id = "base_item"
+item_id = 6792
+name = "ore cart"
+rarity = "common"
+movable = false
+weight = 5.0
+hue = 0
+
+[[item]]
+id = "0x1a8b_ore_cart"
+base_id = "base_item"
+item_id = 6795
+name = "ore cart"
+rarity = "common"
+movable = false
+weight = 5.0
 hue = 0
 
 [[item]]

@@ -1,4 +1,52 @@
 [[item]]
+id = "0x1869_stone_of_honor"
+base_id = "base_item"
+item_id = 6249
+name = "Stone of Honor"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
+hue = 0
+
+[[item]]
+id = "0x186a_stone_of_compassion"
+base_id = "base_item"
+item_id = 6250
+name = "Stone of Compassion"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
+hue = 0
+
+[[item]]
+id = "0x186b_stone_of_honesty"
+base_id = "base_item"
+item_id = 6251
+name = "Stone of Honesty"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
+hue = 0
+
+[[item]]
+id = "0x186c_stone_of_valor"
+base_id = "base_item"
+item_id = 6252
+name = "Stone of Valor"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
+hue = 0
+
+[[item]]
 id = "0x186d_stone_of_humility"
 base_id = "base_item"
 item_id = 6253
@@ -87,6 +135,30 @@ id = "0x1c13_book_of_truth"
 base_id = "base_item"
 item_id = 7187
 name = "Book of Truth"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 30000
+sell_price = 30000
+hue = 0
+
+[[item]]
+id = "0x1c14_candle_of_love"
+base_id = "base_item"
+item_id = 7188
+name = "Candle of Love"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 30000
+sell_price = 30000
+hue = 0
+
+[[item]]
+id = "0x1c15_candle_of_love"
+base_id = "base_item"
+item_id = 7189
+name = "Candle of Love"
 rarity = "common"
 movable = true
 weight = 2.0

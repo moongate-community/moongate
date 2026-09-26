@@ -1,0 +1,843 @@
+[[mobile]]
+id = "base_mounts"
+notoriety = "attackable"
+
+[[mobile]]
+id = "horse"
+name = "a horse"
+body = 228
+strength = "1d77+21"
+dexterity = "1d20+55"
+intelligence = "1d5+5"
+mana = 0
+damage = "1d2+2"
+armor = 9
+karma = 300
+fame = 300
+[mobile.skills]
+resisting_spells = "1d6+24"
+parrying = "1d11+34"
+tactics = "1d16+28"
+wrestling = "1d16+28"
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "brownhorse"
+base_id = "horse"
+name = "a horse"
+body = 200
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "grayhorse"
+base_id = "horse"
+name = "a horse"
+body = 226
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "darkhorse"
+base_id = "horse"
+name = "a horse"
+body = 204
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "etherealhorse"
+base_id = "horse"
+name = "an ethereal horse"
+body = 115
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "llama"
+base_id = "horse"
+name = "a llama"
+body = 220
+strength = "1d29+20"
+dexterity = "1d20+35"
+intelligence = "1d15+15"
+damage = "1d5+1"
+armor = 8
+karma = 300
+fame = 300
+[mobile.skills]
+resisting_spells = "1d6+14"
+parrying = "1d11+34"
+tactics = "1d11+18"
+wrestling = "1d11+18"
+[mobile.sounds]
+start_attack = 183
+idle = 1012
+attack = 1013
+hurt = 1014
+death = 185
+
+[[mobile]]
+id = "ethereallama"
+base_id = "llama"
+name = "an ethereal llama"
+body = 170
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 183
+idle = 1012
+attack = 1013
+hurt = 1014
+death = 185
+
+[[mobile]]
+id = "frenziedostard"
+base_id = "horse"
+name = "a frenzied ostard"
+body = 219
+skin_hue = "0x844E-0x847C"
+strength = "1d77+93"
+dexterity = "1d20+95"
+intelligence = "1d5+5"
+mana = 0
+damage = "1d13+7"
+armor = 15
+notoriety = "attackable"
+karma = -1500
+fame = 1500
+[mobile.skills]
+resisting_spells = "1d6+74"
+parrying = "1d11+74"
+tactics = "1d16+78"
+wrestling = "1d16+78"
+[mobile.sounds]
+start_attack = 629
+idle = 630
+attack = 631
+hurt = 632
+death = 633
+
+[[mobile]]
+id = "forestostard"
+base_id = "horse"
+name = "a forest ostard"
+body = 218
+skin_hue = "0x8899-0x88B0"
+strength = "1d77+93"
+dexterity = "1d20+55"
+intelligence = "1d5+5"
+mana = 0
+damage = "1d9+6"
+armor = 9
+fame = 450
+[mobile.skills]
+hiding = "1d16+14"
+resisting_spells = "1d6+26"
+parrying = "1d11+24"
+tactics = "1d16+28"
+wrestling = "1d16+28"
+[mobile.sounds]
+start_attack = 624
+idle = 625
+attack = 626
+hurt = 627
+death = 628
+
+[[mobile]]
+id = "desertostard"
+base_id = "horse"
+name = "a desert ostard"
+body = 210
+strength = "1d77+93"
+dexterity = "1d20+55"
+intelligence = "1d5+5"
+mana = 0
+damage = "1d9+3"
+armor = 10
+fame = 450
+[mobile.skills]
+resisting_spells = "1d6+24"
+parrying = "1d11+34"
+tactics = "1d16+24"
+wrestling = "1d16+28"
+[mobile.sounds]
+start_attack = 624
+idle = 625
+attack = 626
+hurt = 627
+death = 628
+
+[[mobile]]
+id = "etherealostard"
+base_id = "desertostard"
+name = "an ethereal ostard"
+body = 171
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 624
+idle = 625
+attack = 626
+hurt = 627
+death = 628
+
+[[mobile]]
+id = "nightmare"
+base_id = "horse"
+name = "a nightmare"
+body = 116
+strength = "1d30+495"
+dexterity = "1d20+85"
+intelligence = "1d40+85"
+damage = "1d21+8"
+armor = 30
+notoriety = "attackable"
+karma = -14000
+fame = 14000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "randompotions", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
+gold = "1d51+249"
+[mobile.skills]
+magery = "1d41+9"
+resisting_spells = "1d16+84"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d13+80"
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "darknightmare"
+base_id = "nightmare"
+name = "a nightmare"
+body = 177
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "manenightmare"
+base_id = "nightmare"
+name = "a nightmare"
+body = 178
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "purenightmare"
+base_id = "nightmare"
+name = "a nightmare"
+body = 179
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "unicorn"
+base_id = "horse"
+name = "a unicorn"
+body = 122
+strength = "1d30+295"
+dexterity = "1d20+95"
+intelligence = "1d70+185"
+damage = "1d21+8"
+armor = 30
+karma = 9000
+fame = 9000
+loot = ["randompotions", "randompotions", "randompotions", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
+gold = "1d201+199"
+[mobile.skills]
+evaluating_intelligence = "1d11+79"
+magery = "1d21+59"
+resisting_spells = "1d16+74"
+meditation = "1d11+49"
+parrying = "1d11+64"
+tactics = "1d4+19"
+wrestling = "1d13+80"
+[mobile.sounds]
+start_attack = 1212
+idle = 1213
+attack = 1214
+hurt = 1215
+death = 1216
+
+[[mobile]]
+id = "etherealunicorn"
+base_id = "unicorn"
+name = "an ethereal unicorn"
+body = 192
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 1212
+idle = 1213
+attack = 1214
+hurt = 1215
+death = 1216
+
+[[mobile]]
+id = "kirin"
+base_id = "horse"
+name = "a ki-rin"
+body = 132
+strength = "1d30+295"
+dexterity = "1d20+85"
+intelligence = "1d70+185"
+damage = "1d21+8"
+armor = 30
+karma = 9000
+fame = 9000
+loot = ["randompotions", "randompotions", "randompotions", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
+gold = "1d201+199"
+[mobile.skills]
+evaluating_intelligence = "1d11+79"
+meditation = "1d11+89"
+magery = "1d21+59"
+resisting_spells = "1d16+84"
+parrying = "1d11+54"
+tactics = "1d4+19"
+wrestling = "1d13+80"
+[mobile.sounds]
+start_attack = 965
+idle = 966
+attack = 967
+hurt = 968
+death = 969
+
+[[mobile]]
+id = "warhorse1"
+base_id = "horse"
+name = "a war horse"
+body = 118
+strength = 400
+dexterity = 125
+intelligence = "1d5+50"
+mana = 0
+damage = "1d4+4"
+armor = 25
+karma = 300
+fame = 300
+[mobile.skills]
+resisting_spells = "1d6+24"
+parrying = "1d11+34"
+tactics = "1d16+28"
+wrestling = "1d16+28"
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "warhorse2"
+base_id = "warhorse1"
+body = 119
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "warhorse3"
+base_id = "warhorse1"
+body = 120
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "warhorse4"
+base_id = "warhorse1"
+body = 121
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "darksteed"
+base_id = "horse"
+name = "a dark steed"
+body = 114
+strength = "1d30+495"
+dexterity = "1d20+85"
+intelligence = "1d40+85"
+damage = "1d21+8"
+armor = 30
+notoriety = "attackable"
+karma = -14000
+fame = 14000
+[mobile.skills]
+magery = "1d41+9"
+resisting_spells = "1d16+84"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d13+80"
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "silversteed"
+base_id = "horse"
+name = "a silver steed"
+body = 117
+strength = "1d30+495"
+dexterity = "1d20+85"
+intelligence = "1d40+85"
+damage = "1d21+8"
+armor = 30
+notoriety = "attackable"
+karma = 14000
+fame = 14000
+[mobile.skills]
+magery = "1d41+9"
+resisting_spells = "1d16+84"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d13+80"
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "skeletalmount"
+base_id = "horse"
+name = "a skeletal steed"
+body = 793
+strength = "1d10+200"
+dexterity = "1d10+100"
+intelligence = "1d15+100"
+damage = "1d21+8"
+armor = 30
+notoriety = "attackable"
+karma = -10000
+fame = 10000
+[mobile.skills]
+resisting_spells = "1d16+84"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d13+80"
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "giantbeetle"
+base_id = "horse"
+name = "a giant beetle"
+body = 791
+strength = 300
+dexterity = 100
+intelligence = 500
+damage = "1d23+9"
+armor = 30
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+[mobile.skills]
+wrestling = 100
+tactics = 100
+resisting_spells = 80
+[mobile.sounds]
+start_attack = 541
+idle = 542
+attack = 354
+hurt = 355
+death = 541
+
+[[mobile]]
+id = "etherealgiantbeetle"
+base_id = "giantbeetle"
+name = "an ethereal giant beetle"
+body = 195
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 541
+idle = 542
+attack = 543
+hurt = 544
+death = 545
+
+[[mobile]]
+id = "firebeetle"
+base_id = "giantbeetle"
+name = "a fire beetle"
+body = 169
+strength = "1d151+149"
+dexterity = "1d35+65"
+intelligence = 500
+[mobile.skills]
+anatomy = "1d101-1"
+resisting_spells = "1d61+29"
+tactics = "1d61+39"
+wrestling = "1d61+39"
+[mobile.sounds]
+start_attack = 541
+idle = 542
+attack = 543
+hurt = 544
+death = 545
+
+[[mobile]]
+id = "firesteed"
+base_id = "horse"
+name = "a fire steed"
+body = 190
+strength = "1d30+495"
+dexterity = "1d20+85"
+intelligence = "1d40+85"
+damage = "1d21+8"
+armor = 30
+karma = -14000
+fame = 14000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems"]
+gold = "1d51+199"
+[mobile.skills]
+magery = "1d41+9"
+resisting_spells = "1d16+84"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d20+80"
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "ridgeback"
+base_id = "horse"
+name = "a ridgeback"
+body = 187
+strength = "1d43+57"
+dexterity = "1d20+55"
+intelligence = "1d15+15"
+damage = "1d3+2"
+armor = 9
+karma = 0
+fame = 300
+[mobile.skills]
+resisting_spells = "1d16+24"
+parrying = "1d6+24"
+tactics = "1d16+28"
+wrestling = "1d11+34"
+[mobile.sounds]
+start_attack = 1014
+idle = 1013
+attack = 1012
+hurt = 1015
+death = 1011
+
+[[mobile]]
+id = "savageridgeback"
+base_id = "ridgeback"
+name = "a savage ridgeback"
+body = 188
+[mobile.sounds]
+start_attack = 1014
+idle = 1013
+attack = 1012
+hurt = 1015
+death = 1011
+
+[[mobile]]
+id = "etherealridgeback"
+base_id = "ridgeback"
+name = "an ethereal ridgeback"
+body = 193
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 1014
+idle = 1013
+attack = 1012
+hurt = 1015
+death = 1011
+
+[[mobile]]
+id = "swampdragon"
+base_id = "horse"
+name = "a swamp dragon"
+body = 794
+skin_hue = 2129
+strength = "1d88+208"
+dexterity = "1d20+65"
+intelligence = "1d40+60"
+damage = "1d2+2"
+armor = 40
+karma = -2000
+fame = 2000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems"]
+[mobile.skills]
+anatomy = "1d11+44"
+resisting_spells = "1d11+44"
+tactics = "1d11+44"
+wrestling = "1d10+50"
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "armoredswampdragon"
+base_id = "swampdragon"
+name = "an armoured swamp dragon"
+body = 799
+armor = 60
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "etherealswampdragon"
+base_id = "swampdragon"
+name = "an ethereal swamp dragon"
+body = 194
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "reptalon"
+base_id = "horse"
+name = "a reptalon"
+body = 276
+strength = "1d26+999"
+dexterity = "1d11+149"
+intelligence = "1d41+249"
+damage = "1d26+11"
+armor = 25
+karma = -20000
+fame = 20000
+gold = "1d251+999"
+[mobile.skills]
+resisting_spells = 77
+tactics = 103
+wrestling = 102
+[mobile.sounds]
+start_attack = 1275
+idle = 1277
+attack = 1276
+hurt = 1278
+death = 1279
+
+[[mobile]]
+id = "etherealreptalon"
+base_id = "reptalon"
+name = "an ethereal reptalon"
+body = 276
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 1275
+idle = 1277
+attack = 1276
+hurt = 1278
+death = 1279
+
+[[mobile]]
+id = "cusidhe"
+base_id = "horse"
+name = "a cu sidhe"
+body = 277
+strength = "1d26+1199"
+dexterity = "1d21+149"
+intelligence = "1d41+249"
+hits = "1d201+999"
+damage = "1d26+11"
+armor = 25
+karma = -20000
+fame = 20000
+[mobile.skills]
+anatomy = "1d5+64"
+healing = "1d27+71"
+resisting_spells = "1d16+74"
+tactics = "1d10+89"
+wrestling = "1d8+89"
+magery = 120
+[mobile.sounds]
+start_attack = 1400
+idle = 1399
+attack = 1398
+hurt = 1401
+death = 1397
+
+[[mobile]]
+id = "etherealcusidhe"
+base_id = "cusidhe"
+name = "an ethereal cu sidhe"
+body = 277
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 1400
+idle = 1399
+attack = 1398
+hurt = 1401
+death = 1397
+
+[[mobile]]
+id = "chargerofthefallen"
+base_id = "horse"
+name = "Charger of the Fallen"
+body = 284
+strength = "1d325+575"
+dexterity = "1d230+390"
+intelligence = "1d10+290"
+hits = "1d1015+1225"
+damage = "1d20+60"
+karma = -20000
+fame = 20000
+[mobile.skills]
+wrestling = 120
+tactics = 120
+resisting_spells = "1d21+99"
+poisoning = "1d21+99"
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "etherealkirin"
+name = "an ethereal ki-rin"
+body = 191
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 965
+idle = 966
+attack = 967
+hurt = 968
+death = 969
+
+[[mobile]]
+id = "etherealpolarbear"
+base_id = "horse"
+name = "an ethereal polar bear"
+body = 213
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 163
+idle = 164
+attack = 165
+hurt = 166
+death = 167
+
+[[mobile]]
+id = "etherealboura"
+base_id = "horse"
+name = "an ethereal boura"
+body = 715
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 1504
+idle = 1507
+attack = 1504
+hurt = 1506
+death = 1505
+
+[[mobile]]
+id = "etherealchargerofthefallen"
+base_id = "horse"
+name = "an ethereal charger of the fallen"
+body = 284
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "etherealtiger"
+base_id = "horse"
+name = "an ethereal tiger"
+body = 1255
+skin_hue = 16385
+[mobile.sounds]
+start_attack = 1648
+idle = 1651
+attack = 1649
+hurt = 1650
+death = 1648
+
+[[mobile]]
+id = "base_hiryu"
+base_id = "base_mounts"
+name = "hiryu"
+body = 243
+[mobile.sounds]
+start_attack = 1278
+idle = 1277
+attack = 1276
+hurt = 1279
+death = 1275
+
+[[mobile]]
+id = "hiryu"
+base_id = "hiryu_se"
+
+[[mobile]]
+id = "lesserhiryu"
+base_id = "lesser_hiryu_se"

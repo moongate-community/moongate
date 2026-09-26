@@ -1,10 +1,808 @@
 [[item]]
+id = "0x09fb_wall_sconce"
+base_id = "base_item"
+item_id = 2555
+name = "wall sconce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09fc_wall_sconce"
+base_id = "base_item"
+item_id = 2556
+name = "wall sconce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09fd_wall_sconce"
+base_id = "base_item"
+item_id = 2557
+name = "wall sconce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x09fe_wall_sconce"
+base_id = "0x09fd_wall_sconce"
+item_id = 2558
+name = "wall sconce"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x09ff_wall_sconce"
+base_id = "0x09fd_wall_sconce"
+item_id = 2559
+name = "wall sconce"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a00_wall_sconce"
+base_id = "base_item"
+item_id = 2560
+name = "wall sconce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a01_wall_sconce"
+base_id = "base_item"
+item_id = 2561
+name = "wall sconce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a02_wall_sconce"
+base_id = "base_item"
+item_id = 2562
+name = "wall sconce"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a03_wall_sconce"
+base_id = "base_item"
+item_id = 2563
+name = "wall sconce"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a04_wall_sconce"
+base_id = "base_item"
+item_id = 2564
+name = "wall sconce"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a05_wall_torch"
+base_id = "base_item"
+item_id = 2565
+name = "wall torch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a06_wall_torch"
+base_id = "base_item"
+item_id = 2566
+name = "wall torch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a07_wall_torch"
+base_id = "base_item"
+item_id = 2567
+name = "wall torch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a08_wall_torch"
+base_id = "base_item"
+item_id = 2568
+name = "wall torch"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a09_wall_torch"
+base_id = "base_item"
+item_id = 2569
+name = "wall torch"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a0a_wall_torch"
+base_id = "base_item"
+item_id = 2570
+name = "wall torch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a0b_wall_torch"
+base_id = "base_item"
+item_id = 2571
+name = "wall torch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a0c_wall_torch"
+base_id = "base_item"
+item_id = 2572
+name = "wall torch"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0a0d_wall_torch"
+base_id = "0x0a0c_wall_torch"
+item_id = 2573
+name = "wall torch"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a0e_wall_torch"
+base_id = "0x0a0c_wall_torch"
+item_id = 2574
+name = "wall torch"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a0f_candle"
+base_id = "base_item"
+item_id = 2575
+name = "candle"
+rarity = "common"
+weight = 2.0
+buy_price = 6
+sell_price = 3
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a10_candle"
+base_id = "0x0a0f_candle"
+item_id = 2576
+name = "candle"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a11_candle"
+base_id = "0x0a0f_candle"
+item_id = 2577
+name = "candle"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a12_torch"
+base_id = "base_item"
+item_id = 2578
+name = "torch"
+rarity = "common"
+weight = 1.0
+buy_price = 7
+sell_price = 3
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a13_torch"
+base_id = "0x0a12_torch"
+item_id = 2579
+name = "torch"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a14_torch"
+base_id = "0x0a12_torch"
+item_id = 2580
+name = "torch"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a15_lantern"
+base_id = "base_item"
+item_id = 2581
+name = "lantern"
+rarity = "common"
+weight = 2.0
+buy_price = 7
+sell_price = 2
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a16_lantern"
+base_id = "0x0a15_lantern"
+item_id = 2582
+name = "lantern"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a17_lantern"
+base_id = "0x0a15_lantern"
+item_id = 2583
+name = "lantern"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a18_lantern"
+base_id = "base_item"
+item_id = 2584
+name = "lantern"
+rarity = "common"
+weight = 2.0
+buy_price = 7
+sell_price = 2
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a1a_lantern"
+base_id = "base_item"
+item_id = 2586
+name = "lantern"
+rarity = "common"
+weight = 2.0
+buy_price = 7
+sell_price = 2
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a1b_lantern"
+base_id = "0x0a1a_lantern"
+item_id = 2587
+name = "lantern"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a1c_lantern"
+base_id = "0x0a1a_lantern"
+item_id = 2588
+name = "lantern"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a1d_lantern"
+base_id = "base_item"
+item_id = 2589
+name = "lantern"
+rarity = "common"
+weight = 2.0
+buy_price = 7
+sell_price = 2
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a22_lantern"
+base_id = "base_item"
+item_id = 2594
+name = "lantern"
+rarity = "common"
+weight = 2.0
+buy_price = 7
+sell_price = 2
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a23_lantern"
+base_id = "0x0a22_lantern"
+item_id = 2595
+name = "lantern"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a24_lantern"
+base_id = "0x0a22_lantern"
+item_id = 2596
+name = "lantern"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0a25_lantern"
+base_id = "base_item"
+item_id = 2597
+name = "lantern"
+rarity = "common"
+weight = 2.0
+buy_price = 7
+sell_price = 2
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a26_candle"
+base_id = "base_item"
+item_id = 2598
+name = "candle"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a27_candlabra"
+base_id = "base_item"
+item_id = 2599
+name = "candlabra"
+rarity = "common"
+weight = 3.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a28_candle"
+base_id = "base_item"
+item_id = 2600
+name = "candle"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0a29_candlabra"
+base_id = "base_item"
+item_id = 2601
+name = "candlabra"
+rarity = "common"
+weight = 3.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b1a_candle"
+base_id = "base_item"
+item_id = 2842
+name = "candle"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b1b_candle"
+base_id = "0x0b1a_candle"
+item_id = 2843
+name = "candle"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0b1c_candle"
+base_id = "0x0b1a_candle"
+item_id = 2844
+name = "candle"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0b1d_candlabra"
+base_id = "base_item"
+item_id = 2845
+name = "candlabra"
+rarity = "common"
+weight = 3.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b1e_candlabra"
+base_id = "0x0b1d_candlabra"
+item_id = 2846
+name = "candlabra"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0b1f_candlabra"
+base_id = "0x0b1d_candlabra"
+item_id = 2847
+name = "candlabra"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0b26_candlabra"
+base_id = "base_item"
+item_id = 2854
+name = "candlabra"
+rarity = "common"
+weight = 3.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b27_candlabra"
+base_id = "0x0b26_candlabra"
+item_id = 2855
+name = "candlabra"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0b28_candlabra"
+base_id = "0x0b26_candlabra"
+item_id = 2856
+name = "candlabra"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0b20_lamp_post"
+base_id = "base_item"
+item_id = 2848
+name = "lamp post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0b21_lamp_post"
+base_id = "base_item"
+item_id = 2849
+name = "lamp post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0b22_lamp_post"
+base_id = "base_item"
+item_id = 2850
+name = "lamp post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0b23_lamp_post"
+base_id = "base_item"
+item_id = 2851
+name = "lamp post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0b24_lamp_post"
+base_id = "base_item"
+item_id = 2852
+name = "lamp post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0b25_lamp_post"
+base_id = "base_item"
+item_id = 2853
+name = "lamp post"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e31_brazier"
+base_id = "base_item"
+item_id = 3633
+name = "brazier"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0e32_brazier"
+base_id = "0x0e31_brazier"
+item_id = 3634
+name = "brazier"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x0e33_brazier"
+base_id = "0x0e31_brazier"
+item_id = 3635
+name = "brazier"
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x0fac_fire_pit"
 base_id = "base_item"
 item_id = 4012
 name = "fire pit"
 rarity = "common"
 movable = false
+hue = 0
+
+[[item]]
+id = "0x19aa_brazier"
+base_id = "base_item"
+item_id = 6570
+name = "brazier"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x19bb_brazier"
+base_id = "base_item"
+item_id = 6587
+name = "brazier"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x19ab_fire"
+base_id = "base_item"
+item_id = 6571
+name = "fire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1ecd_light"
+base_id = "base_item"
+item_id = 7885
+name = "light"
+rarity = "common"
+buy_price = 81
+sell_price = 40
+hue = 0
+
+[[item]]
+id = "0x1ece_light"
+base_id = "base_item"
+item_id = 7886
+name = "light"
+rarity = "common"
+buy_price = 81
+sell_price = 40
+hue = 0
+
+[[item]]
+id = "0x1ecf_light"
+base_id = "base_item"
+item_id = 7887
+name = "light"
+rarity = "common"
+buy_price = 81
+sell_price = 40
+hue = 0
+
+[[item]]
+id = "0x1ed0_light"
+base_id = "base_item"
+item_id = 7888
+name = "light"
+rarity = "common"
+buy_price = 81
+sell_price = 40
+hue = 0
+
+[[item]]
+id = "0x1ed1_light"
+base_id = "base_item"
+item_id = 7889
+name = "light"
+rarity = "common"
+buy_price = 81
+sell_price = 40
+hue = 0
+
+[[item]]
+id = "0x1ed2_light"
+base_id = "base_item"
+item_id = 7890
+name = "light"
+rarity = "common"
+buy_price = 81
+sell_price = 40
+hue = 0
+
+[[item]]
+id = "0x1f19_magic_crystal"
+base_id = "base_item"
+item_id = 7961
+name = "magic crystal"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x1f1c_magic_crystal"
+base_id = "base_item"
+item_id = 7964
+name = "magic crystal"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x1f2b_brazier"
+base_id = "base_item"
+item_id = 7979
+name = "brazier"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0de3_campfire"
+base_id = "base_item"
+item_id = 3555
+name = "campfire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0de7_campfire"
+base_id = "base_item"
+item_id = 3559
+name = "campfire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0de8_campfire"
+base_id = "base_item"
+item_id = 3560
+name = "campfire"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0de9_embers"
+base_id = "base_item"
+item_id = 3561
+name = "embers"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x0dea_burned_wood"
+base_id = "base_item"
+item_id = 3562
+name = "burned wood"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "0x1853_skull_with_candle"
+base_id = "base_item"
+item_id = 6227
+name = "skull with candle"
+rarity = "common"
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1854_skull_with_candle"
+base_id = "base_item"
+item_id = 6228
+name = "skull with candle"
+rarity = "common"
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1857_skull_with_candle"
+base_id = "base_item"
+item_id = 6231
+name = "skull with candle"
+rarity = "common"
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1858_skull_with_candle"
+base_id = "base_item"
+item_id = 6232
+name = "skull with candle"
+rarity = "common"
+decays = true
+hue = 0
+
+[[item]]
+id = "0x142c_candle"
+base_id = "base_item"
+item_id = 5164
+name = "candle"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x142f_candle"
+base_id = "base_item"
+item_id = 5167
+name = "candle"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1430_candle"
+base_id = "base_item"
+item_id = 5168
+name = "candle"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1433_candle"
+base_id = "base_item"
+item_id = 5171
+name = "candle"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1434_candle"
+base_id = "base_item"
+item_id = 5172
+name = "candle"
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1437_candle"
+base_id = "base_item"
+item_id = 5175
+name = "candle"
+rarity = "common"
+weight = 1.0
+decays = true
 hue = 0
 
 [[item]]

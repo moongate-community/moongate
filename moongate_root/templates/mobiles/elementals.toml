@@ -1,0 +1,514 @@
+[[mobile]]
+id = "base_elemental"
+notoriety = "attackable"
+
+[[mobile]]
+id = "airele"
+name = "an air elemental"
+body = 13
+skin_hue = 30591
+strength = "1d30+125"
+dexterity = "1d20+165"
+intelligence = "1d5+100"
+damage = "1d9+4"
+armor = 20
+notoriety = "attackable"
+karma = -4500
+fame = 4500
+loot = ["lowlevelscrolls", "midlevelscrolls", "randompotions", "randompotions", "treasure_map_lvl2loot"]
+gold = "1d101+199"
+[mobile.skills]
+magery = "1d16+59"
+resisting_spells = "1d16+59"
+parrying = "1d11+54"
+tactics = "1d21+59"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 263
+idle = 264
+attack = 265
+hurt = 266
+death = 267
+
+[[mobile]]
+id = "earthele"
+name = "an earth elemental"
+body = 14
+strength = "1d30+125"
+dexterity = "1d20+165"
+intelligence = "1d25+70"
+damage = "1d16+2"
+armor = 20
+notoriety = "attackable"
+karma = -3500
+fame = 3500
+loot = ["earthele_loot", "earthele_loot", "earthele_loot", "earthele_loot", "earthele_loot", "treasure_map_lvl1loot"]
+gold = "1d151+199"
+[mobile.skills]
+resisting_spells = "1d46+49"
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "fireele"
+name = "a fire elemental"
+body = 15
+strength = "1d30+125"
+dexterity = "1d20+165"
+intelligence = "1d25+100"
+damage = "1d9+3"
+armor = 20
+notoriety = "attackable"
+karma = -4500
+fame = 4500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl2loot"]
+gold = "1d151+149"
+[mobile.skills]
+magery = "1d16+59"
+resisting_spells = "1d31+74"
+parrying = "1d21+39"
+tactics = "1d21+79"
+wrestling = "1d31+69"
+[mobile.sounds]
+start_attack = 273
+idle = 274
+attack = 275
+hurt = 276
+death = 277
+
+[[mobile]]
+id = "waterele"
+name = "a water elemental"
+body = 16
+skin_hue = 0
+strength = "1d30+125"
+dexterity = "1d20+65"
+intelligence = "1d25+100"
+damage = "1d9+3"
+armor = 20
+notoriety = "attackable"
+karma = -4500
+fame = 4500
+loot = ["randompotions", "randompotions", "treasure_map_lvl2loot"]
+gold = "1d51+199"
+[mobile.skills]
+magery = "1d16+59"
+resisting_spells = "1d16+99"
+parrying = "1d11+89"
+tactics = "1d21+49"
+wrestling = "1d21+49"
+[mobile.sounds]
+start_attack = 278
+idle = 279
+attack = 280
+hurt = 281
+death = 282
+
+[[mobile]]
+id = "bloodele"
+name = "a blood elemental"
+body = 159
+strength = "1d90+525"
+dexterity = "1d20+65"
+intelligence = "1d125+225"
+damage = "1d29+7"
+armor = 30
+notoriety = "attackable"
+karma = -12500
+fame = 12500
+loot = ["lowlevelscrolls", "lowlevelscrolls", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl5loot"]
+gold = "1d301+1099"
+[mobile.skills]
+evaluating_intelligence = "1d46+49"
+magery = "1d16+84"
+resisting_spells = "1d16+79"
+meditation = "1d41+9"
+parrying = "1d11+84"
+tactics = "1d21+79"
+wrestling = "1d21+79"
+[mobile.sounds]
+start_attack = 278
+idle = 279
+attack = 280
+hurt = 281
+death = 282
+
+[[mobile]]
+id = "poisonele"
+name = "a poison elemental"
+body = 162
+strength = "1d90+425"
+dexterity = "1d20+165"
+intelligence = "1d75+360"
+damage = "1d21+4"
+armor = 35
+notoriety = "attackable"
+karma = -12500
+fame = 12500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl5loot"]
+gold = "1d301+799"
+[mobile.skills]
+magery = "1d16+79"
+resisting_spells = "1d31+84"
+meditation = "1d41+79"
+parrying = "1d11+74"
+poisoning = "1d11+89"
+tactics = "1d21+79"
+wrestling = "1d21+69"
+[mobile.sounds]
+start_attack = 263
+idle = 264
+attack = 265
+hurt = 266
+death = 267
+
+[[mobile]]
+id = "iceele"
+name = "an ice elemental"
+body = 161
+strength = "1d30+155"
+dexterity = "1d20+95"
+intelligence = "1d22+170"
+damage = "1d22+4"
+armor = 20
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["randompotions", "randompotions", "randompotions", "randompotions"]
+gold = "1d151+149"
+[mobile.skills]
+resisting_spells = "1d51+29"
+magery = "1d50+10"
+parrying = "1d26+59"
+tactics = "1d61+9"
+wrestling = "1d51+9"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "snowele"
+name = "a snow elemental"
+body = 163
+strength = "1d30+325"
+dexterity = "1d20+165"
+intelligence = "1d25+70"
+damage = "1d21+3"
+armor = 25
+notoriety = "attackable"
+karma = -6000
+fame = 6000
+loot = ["snowele_loot", "snowele_loot", "snowele_loot", "snowele_loot", "snowele_loot", "treasure_map_lvl2loot", "treasure_map_lvl3loot"]
+gold = "1d51+199"
+[mobile.skills]
+resisting_spells = "1d16+49"
+parrying = "1d11+64"
+tactics = "1d21+79"
+wrestling = "1d21+79"
+[mobile.sounds]
+start_attack = 263
+idle = 264
+attack = 265
+hurt = 266
+death = 267
+
+[[mobile]]
+id = "acidele"
+name = "an acid elemental"
+body = 158
+strength = "1d30+325"
+dexterity = "1d20+65"
+intelligence = "1d25+270"
+damage = "1d17+3"
+armor = 25
+notoriety = "attackable"
+karma = -10000
+fame = 10000
+loot = ["lowlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
+gold = "1d301+299"
+[mobile.skills]
+anatomy = "1d31+29"
+magery = "1d16+69"
+resisting_spells = "1d16+59"
+parrying = "1d11+54"
+tactics = "1d11+79"
+wrestling = "1d21+69"
+[mobile.sounds]
+start_attack = 278
+idle = 279
+attack = 280
+hurt = 281
+death = 282
+
+[[mobile]]
+id = "crystalele"
+name = "a crystal elemental"
+body = 300
+strength = "1d25+135"
+dexterity = "1d15+50"
+intelligence = "1d25+85"
+damage = "1d18+2"
+armor = 15
+notoriety = "attackable"
+karma = -6500
+fame = 6500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
+gold = "1d101+399"
+[mobile.skills]
+magery = "1d6+69"
+resisting_spells = "1d11+79"
+meditation = "1d11+64"
+tactics = "1d11+74"
+wrestling = "1d11+64"
+[mobile.sounds]
+start_attack = 278
+idle = 279
+attack = 280
+hurt = 281
+death = 282
+
+[[mobile]]
+id = "dullcopperele"
+name = "a dull copper elemental"
+body = 110
+strength = "1d30+225"
+dexterity = "1d20+125"
+intelligence = "1d22+70"
+damage = "1d16+4"
+armor = 17
+notoriety = "attackable"
+karma = -3500
+fame = 3750
+loot = ["randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d301+299"
+[mobile.skills]
+resisting_spells = "1d46+49"
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "shadowironele"
+name = "a shadow iron elemental"
+body = 111
+strength = "1d30+225"
+dexterity = "1d20+125"
+intelligence = "1d22+70"
+damage = "1d16+4"
+armor = 17
+notoriety = "attackable"
+karma = -4500
+fame = 4500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d301+299"
+[mobile.skills]
+resisting_spells = 100
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "copperele"
+name = "a copper elemental"
+body = 109
+strength = "1d30+225"
+dexterity = "1d20+125"
+intelligence = "1d22+70"
+damage = "1d16+4"
+armor = 17
+notoriety = "attackable"
+karma = -3500
+fame = 4500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d301+299"
+[mobile.skills]
+resisting_spells = "1d46+49"
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "bronzeele"
+name = "a bronze elemental"
+body = 108
+strength = "1d30+225"
+dexterity = "1d20+125"
+intelligence = "1d22+70"
+damage = "1d16+4"
+armor = 17
+notoriety = "attackable"
+karma = -3500
+fame = 4750
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d301+299"
+[mobile.skills]
+resisting_spells = "1d46+49"
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "goldele"
+name = "a gold elemental"
+body = 166
+strength = "1d30+225"
+dexterity = "1d20+125"
+intelligence = "1d22+70"
+damage = "1d16+4"
+armor = 34
+notoriety = "attackable"
+karma = -3500
+fame = 5000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d301+299"
+[mobile.skills]
+resisting_spells = "1d46+49"
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "agapiteele"
+name = "an agapite elemental"
+body = 107
+strength = "1d30+225"
+dexterity = "1d20+125"
+intelligence = "1d22+70"
+damage = "1d25+15"
+armor = 17
+notoriety = "attackable"
+karma = -3500
+fame = 5500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d301+299"
+[mobile.skills]
+resisting_spells = "1d46+49"
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "veriteele"
+name = "a verite elemental"
+body = 113
+strength = "1d30+225"
+dexterity = "1d20+125"
+intelligence = "1d22+70"
+damage = "1d16+4"
+armor = 17
+notoriety = "attackable"
+karma = -3500
+fame = 5750
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d301+299"
+[mobile.skills]
+resisting_spells = "1d46+49"
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "valoriteele"
+name = "a valorite elemental"
+body = 112
+strength = "1d30+225"
+dexterity = "1d20+125"
+intelligence = "1d22+70"
+damage = "1d25+15"
+armor = 34
+notoriety = "murderer"
+karma = -3500
+fame = 6000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d201+449"
+[mobile.skills]
+resisting_spells = "1d46+49"
+parrying = "1d26+39"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 268
+idle = 269
+attack = 270
+hurt = 271
+death = 273
+
+[[mobile]]
+id = "energyvortex"
+name = "an energy vortex"
+body = 164
+strength = 200
+dexterity = 200
+intelligence = 100
+hits = 1900
+stamina = 250
+damage = "1d19+7"
+notoriety = "attackable"
+[mobile.skills]
+resisting_spells = 99
+tactics = 90
+wrestling = 120
+[mobile.sounds]
+start_attack = 21
+attack = 40
+
+[[mobile]]
+id = "base_raiju"
+base_id = "base_elemental"
+name = "a Rai-Ju"
+
+[[mobile]]
+id = "raiju"
+base_id = "raiju_se"

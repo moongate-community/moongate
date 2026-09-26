@@ -1,0 +1,406 @@
+[[item]]
+id = "0x09a9_small_crate"
+base_id = "base_item"
+item_id = 2473
+name = "small crate"
+rarity = "common"
+movable = true
+weight = 5.0
+buy_price = 8
+sell_price = 4
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e7e_small_crate"
+base_id = "base_item"
+item_id = 3710
+name = "small crate"
+rarity = "common"
+movable = true
+weight = 5.0
+buy_price = 8
+sell_price = 4
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x09aa_wooden_box"
+base_id = "base_item"
+item_id = 2474
+name = "wooden box"
+rarity = "common"
+movable = true
+weight = 7.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e7d_wooden_box"
+base_id = "base_item"
+item_id = 3709
+name = "wooden box"
+rarity = "common"
+movable = true
+weight = 7.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a2c_chest_of_drawers"
+base_id = "base_item"
+item_id = 2604
+name = "chest of drawers"
+rarity = "common"
+weight = 20.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a3c_dresser"
+base_id = "base_item"
+item_id = 2620
+name = "dresser"
+rarity = "common"
+weight = 50.0
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a3d_dresser"
+base_id = "base_item"
+item_id = 2621
+name = "dresser"
+rarity = "common"
+weight = 5.0
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a44_dresser"
+base_id = "base_item"
+item_id = 2628
+name = "dresser"
+rarity = "common"
+weight = 5.0
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a45_dresser"
+base_id = "base_item"
+item_id = 2629
+name = "dresser"
+rarity = "common"
+weight = 5.0
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a34_chest_of_drawers"
+base_id = "base_item"
+item_id = 2612
+name = "chest of drawers"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a30_chest_of_drawers"
+base_id = "base_item"
+item_id = 2608
+name = "chest of drawers"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a38_chest_of_drawers"
+base_id = "base_item"
+item_id = 2616
+name = "chest of drawers"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a4f_armoire"
+base_id = "base_item"
+item_id = 2639
+name = "armoire"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a53_armoire"
+base_id = "base_item"
+item_id = 2643
+name = "armoire"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a4d_armoire"
+base_id = "base_item"
+item_id = 2637
+name = "armoire"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a51_armoire"
+base_id = "base_item"
+item_id = 2641
+name = "armoire"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 20
+sell_price = 10
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a97_bookcase"
+base_id = "base_item"
+item_id = 2711
+name = "bookcase"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a98_bookcase"
+base_id = "base_item"
+item_id = 2712
+name = "bookcase"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a9b_bookcase"
+base_id = "base_item"
+item_id = 2715
+name = "bookcase"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a99_bookcase"
+base_id = "base_item"
+item_id = 2713
+name = "bookcase"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a9a_bookcase"
+base_id = "base_item"
+item_id = 2714
+name = "bookcase"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a9c_bookcase"
+base_id = "base_item"
+item_id = 2716
+name = "bookcase"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a9d_wooden_shelf"
+base_id = "base_item"
+item_id = 2717
+name = "wooden shelf"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0a9e_wooden_shelf"
+base_id = "base_item"
+item_id = 2718
+name = "wooden shelf"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e3c_crate"
+base_id = "base_item"
+item_id = 3644
+name = "crate"
+rarity = "common"
+movable = true
+weight = 6.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e3d_crate"
+base_id = "base_item"
+item_id = 3645
+name = "crate"
+rarity = "common"
+movable = true
+weight = 6.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e3e_crate"
+base_id = "base_item"
+item_id = 3646
+name = "crate"
+rarity = "common"
+movable = true
+weight = 5.0
+buy_price = 12
+sell_price = 6
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e3f_crate"
+base_id = "base_item"
+item_id = 3647
+name = "crate"
+rarity = "common"
+movable = true
+weight = 5.0
+buy_price = 12
+sell_price = 6
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e42_wooden_chest"
+base_id = "base_item"
+item_id = 3650
+name = "wooden chest"
+rarity = "common"
+movable = true
+weight = 30.0
+buy_price = 30
+sell_price = 15
+decays = true
+hue = 0
+max_weight = 40000
+
+[[item]]
+id = "0x0e43_wooden_chest"
+base_id = "base_item"
+item_id = 3651
+name = "wooden chest"
+rarity = "common"
+movable = true
+weight = 30.0
+buy_price = 30
+sell_price = 15
+decays = true
+hue = 0
+max_weight = 40000

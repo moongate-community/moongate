@@ -1,0 +1,111 @@
+[[mobile]]
+id = "basesavage"
+base_id = "basehuman"
+name_list = "savage"
+body = 184
+skin_hue = 0
+notoriety = "murderer"
+
+[[mobile]]
+id = "savageshaman"
+base_id = "basesavage"
+name = "savage shaman"
+strength = "1d20+125"
+dexterity = "1d20+90"
+intelligence = "1d25+160"
+damage = "1d11+1"
+armor = 5
+karma = -1000
+fame = 1000
+gold = "1d146+89"
+[mobile.skills]
+evaluating_intelligence = "1d23+77"
+fencing = "1d23+62"
+mace_fighting = "1d23+62"
+magery = "1d23+72"
+resisting_spells = "1d23+77"
+parrying = "1d10+60"
+swordsmanship = "1d23+62"
+tactics = "1d23+62"
+wrestling = "1d23+62"
+
+[[mobile]]
+id = "m_savagewarrior"
+base_id = "basesavage"
+body = 183
+strength = "1d25+90"
+dexterity = "1d30+85"
+intelligence = "1d15+50"
+damage = 1
+armor = 1
+karma = -1000
+fame = 1000
+loot = ["savage_loot", "savage_warrior_male_loot"]
+gold = "1d51+149"
+[mobile.skills]
+camping = "1d33+35"
+evaluating_intelligence = "1d23+77"
+fencing = "1d24+59"
+hiding = "1d16+84"
+lockpicking = "1d24+44"
+mace_fighting = "1d24+59"
+magery = "1d23+72"
+resisting_spells = "1d23+57"
+parrying = "1d10+53"
+poisoning = "1d24+59"
+swordsmanship = "1d24+59"
+tactics = "1d24+59"
+wrestling = "1d23+62"
+
+[[mobile]]
+id = "f_savagewarrior"
+base_id = "basesavage"
+body = 184
+strength = "1d25+90"
+dexterity = "1d30+85"
+intelligence = "1d15+50"
+damage = 1
+armor = 1
+karma = -1000
+fame = 1000
+loot = ["savage_loot", "savage_warrior_female_loot"]
+gold = "1d51+149"
+[mobile.skills]
+camping = "1d33+35"
+evaluating_intelligence = "1d23+77"
+fencing = "1d24+59"
+healing = "1d23+62"
+hiding = "1d16+84"
+mace_fighting = "1d24+59"
+magery = "1d23+72"
+resisting_spells = "1d23+57"
+parrying = "1d10+53"
+poisoning = "1d24+59"
+swordsmanship = "1d24+59"
+tactics = "1d24+59"
+wrestling = "1d23+62"
+
+[[mobile]]
+id = "savagerider"
+base_id = "basesavage"
+strength = "1d25+90"
+dexterity = "1d30+85"
+intelligence = "1d15+50"
+damage = 1
+armor = 1
+karma = -1000
+fame = 1000
+loot = ["savage_rider_loot"]
+gold = "1d51+149"
+[mobile.skills]
+evaluating_intelligence = "1d23+77"
+fencing = "1d23+62"
+mace_fighting = "1d23+62"
+magery = "1d23+72"
+resisting_spells = "1d23+57"
+parrying = "1d10+53"
+swordsmanship = "1d23+62"
+tactics = "1d24+59"
+wrestling = "1d23+62"
+[[mobile.equipment]]
+items = ["ridgeback"]

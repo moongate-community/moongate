@@ -1,0 +1,434 @@
+[[mobile]]
+id = "base_undead"
+notoriety = "attackable"
+
+[[mobile]]
+id = "zombie"
+name = "a zombie"
+body = 3
+skin_hue = 0
+strength = "1d25+45"
+dexterity = "1d20+30"
+intelligence = "1d15+25"
+damage = "1d7+1"
+armor = 9
+notoriety = "attackable"
+karma = -600
+fame = 600
+loot = ["bonearmor"]
+gold = "1d13+3"
+[mobile.skills]
+resisting_spells = "1d26+14"
+parrying = "1d11+19"
+tactics = "1d16+34"
+wrestling = "1d16+34"
+[mobile.sounds]
+start_attack = 471
+idle = 472
+attack = 473
+hurt = 474
+death = 475
+
+[[mobile]]
+id = "ancientlich"
+name_list = "ancient_lich"
+body = 79
+skin_hue = 0
+strength = "1d90+215"
+dexterity = "1d20+95"
+intelligence = "1d41+959"
+hits = "1d101+899"
+damage = "1d19+11"
+armor = 30
+notoriety = "murderer"
+karma = -23000
+fame = 23000
+loot = ["lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "randomgems", "randomgems", "randomgems", "randomgems", "lichlord_loot", "lichlord_loot", "lichlord_loot", "lichlord_loot", "treasure_map_lvl5loot"]
+gold = "1d201+1299"
+[mobile.skills]
+evaluating_intelligence = "1d2+98"
+magery = 120
+resisting_spells = 120
+meditation = "1d2+99"
+poisoning = "1d2+99"
+tactics = "1d11+89"
+wrestling = "1d26+74"
+[mobile.sounds]
+start_attack = 412
+idle = 413
+attack = 414
+hurt = 415
+death = 416
+
+[[mobile]]
+id = "lichlord"
+name = "a lich lord"
+body = 79
+skin_hue = 0
+strength = "1d90+415"
+dexterity = "1d20+145"
+intelligence = "1d90+565"
+damage = "1d13+5"
+armor = 25
+notoriety = "attackable"
+karma = -18000
+fame = 18000
+loot = ["lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "randomgems", "randomgems", "randomgems", "randomgems", "lichlord_loot", "lichlord_loot", "lichlord_loot", "lichlord_loot", "treasure_map_lvl4loot"]
+gold = "1d301+399"
+[mobile.skills]
+magery = "1d11+89"
+resisting_spells = 120
+meditation = "1d31+19"
+parrying = "1d11+54"
+evaluating_intelligence = "1d31+29"
+tactics = "1d21+49"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 412
+idle = 413
+attack = 414
+hurt = 415
+death = 416
+
+[[mobile]]
+id = "lich"
+name = "a lich"
+body = 24
+skin_hue = 0
+strength = "1d30+170"
+dexterity = "1d20+125"
+intelligence = "1d30+275"
+damage = "1d11+19"
+armor = 25
+notoriety = "attackable"
+karma = -8000
+fame = 8000
+loot = ["lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "randomgems", "randomgems", "lich_loot", "lich_loot", "treasure_map_lvl1loot", "treasure_map_lvl3loot"]
+gold = "1d51+199"
+[mobile.skills]
+evaluating_intelligence = 100
+magery = "1d11+69"
+resisting_spells = "1d21+79"
+meditation = "1d11+84"
+tactics = "1d21+69"
+wrestling = "1d21+69"
+[mobile.sounds]
+start_attack = 412
+idle = 413
+attack = 414
+hurt = 415
+death = 416
+
+[[mobile]]
+id = "spectre"
+name = "a spectre"
+body = 26
+skin_hue = 26231
+strength = "1d25+75"
+dexterity = "1d20+75"
+intelligence = "1d25+35"
+damage = "1d7+5"
+armor = 14
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "bonearmor"]
+gold = "1d101+49"
+[mobile.skills]
+evaluating_intelligence = "1d16+54"
+hiding = "1d11+54"
+magery = "1d16+54"
+resisting_spells = "1d16+54"
+parrying = "1d11+44"
+tactics = "1d16+44"
+wrestling = "1d11+44"
+[mobile.sounds]
+start_attack = 382
+idle = 383
+attack = 384
+hurt = 385
+death = 386
+
+[[mobile]]
+id = "wraith"
+name = "a wraith"
+body = 26
+skin_hue = 26231
+strength = "1d25+75"
+dexterity = "1d20+75"
+intelligence = "1d25+35"
+damage = "1d5+5"
+armor = 14
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d16+44"
+parrying = "1d11+44"
+tactics = "1d16+44"
+wrestling = "1d11+44"
+[mobile.sounds]
+start_attack = 382
+idle = 383
+attack = 384
+hurt = 385
+death = 386
+
+[[mobile]]
+id = "shade"
+base_id = "spectre"
+name = "a shade"
+body = 26
+[mobile.sounds]
+start_attack = 382
+idle = 383
+attack = 384
+hurt = 385
+death = 386
+
+[[mobile]]
+id = "skeleton"
+name = "a skeleton"
+body = 50
+skin_hue = 0
+strength = "1d25+55"
+dexterity = "1d20+55"
+intelligence = "1d25+15"
+damage = "1d7+1"
+armor = 8
+notoriety = "attackable"
+karma = -450
+fame = 450
+loot = ["bonearmor"]
+gold = "1d51-1"
+[mobile.skills]
+resisting_spells = "1d16+44"
+parrying = "1d11+44"
+tactics = "1d16+44"
+wrestling = "1d11+44"
+[mobile.sounds]
+start_attack = 451
+idle = 452
+attack = 453
+hurt = 454
+death = 455
+
+[[mobile]]
+id = "boneaxeman"
+base_id = "skeleton"
+name = "a bone axeman"
+body = 56
+[mobile.sounds]
+start_attack = 451
+idle = 452
+attack = 453
+hurt = 454
+death = 455
+
+[[mobile]]
+id = "boneknight"
+name = "a bone knight"
+body = 147
+skin_hue = 0
+strength = "1d55+195"
+dexterity = "1d20+75"
+intelligence = "1d25+35"
+damage = "1d22+8"
+armor = 30
+notoriety = "attackable"
+karma = -3000
+fame = 3000
+loot = ["bonearmor", "bonearmor", "randompotions"]
+gold = "1d151-1"
+[mobile.skills]
+resisting_spells = "1d16+74"
+parrying = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 451
+idle = 452
+attack = 453
+hurt = 454
+death = 455
+
+[[mobile]]
+id = "skeletalknight"
+base_id = "boneknight"
+name = "a skeletal knight"
+damage = "1d15+5"
+armor = 20
+[mobile.skills]
+resisting_spells = "1d16+64"
+parrying = "1d11+84"
+tactics = "1d16+84"
+wrestling = "1d11+84"
+
+[[mobile]]
+id = "bonemage"
+name = "a bone magi"
+body = 148
+skin_hue = 2014
+strength = "1d25+75"
+dexterity = "1d20+55"
+intelligence = "1d25+185"
+damage = "1d7+3"
+armor = 22
+notoriety = "attackable"
+karma = -3000
+fame = 3000
+loot = ["lowlevelscrolls", "lowlevelscrolls", "randomgems", "randomgems", "randomgems"]
+gold = "1d151+49"
+[mobile.skills]
+magery = "1d11+69"
+resisting_spells = "1d21+59"
+parrying = "1d11+54"
+tactics = "1d16+44"
+wrestling = "1d16+49"
+[mobile.sounds]
+start_attack = 451
+idle = 452
+attack = 453
+hurt = 454
+death = 455
+
+[[mobile]]
+id = "skeletalmage"
+base_id = "bonemage"
+name = "a skeletal mage"
+skin_hue = 0
+damage = "1d7+1"
+armor = 19
+[mobile.skills]
+magery = "1d11+59"
+resisting_spells = "1d16+54"
+parrying = "1d11+54"
+tactics = "1d16+44"
+wrestling = "1d11+44"
+
+[[mobile]]
+id = "mummy"
+name = "a mummy"
+body = 154
+skin_hue = 1102
+strength = "1d25+345"
+dexterity = "1d20+70"
+intelligence = "1d15+25"
+damage = "1d29+3"
+armor = 25
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["midlevelscrolls", "midlevelscrolls", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "mummy_loot", "mummy_loot", "mummy_loot", "mummy_loot", "mummy_loot", "mummy_loot"]
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d26+14"
+parrying = "1d11+19"
+tactics = "1d16+34"
+wrestling = "1d16+34"
+[mobile.sounds]
+start_attack = 471
+idle = 472
+attack = 473
+hurt = 474
+death = 475
+
+[[mobile]]
+id = "rottingcorpse"
+name = "a rotting corpse"
+body = 155
+strength = "1d50+300"
+dexterity = "1d40+130"
+intelligence = "1d51+149"
+hits = "1d501+1999"
+damage = "1d7+1"
+armor = 40
+notoriety = "attackable"
+karma = -6000
+fame = 6000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls"]
+gold = "1d901+599"
+[mobile.skills]
+resisting_spells = 120
+poisoning = 120
+tactics = 100
+wrestling = 100
+[mobile.sounds]
+start_attack = 471
+idle = 472
+attack = 473
+hurt = 474
+death = 475
+
+[[mobile]]
+id = "ghoul"
+base_id = "wraith"
+name = "a ghoul"
+body = 153
+skin_hue = 0
+[mobile.sounds]
+start_attack = 1154
+idle = 1155
+attack = 1156
+hurt = 1157
+death = 1158
+
+[[mobile]]
+id = "spectralarmor"
+base_id = "base_undead"
+name = "a spectral armor"
+body = 637
+skin_hue = 32806
+strength = "1d10+100"
+dexterity = "1d10+100"
+intelligence = "1d10+100"
+hits = "1d40+295"
+damage = "1d25+3"
+armor = 20
+notoriety = "murderer"
+karma = -4000
+fame = 4000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d11+89"
+parrying = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d26+74"
+[mobile.sounds]
+start_attack = 86
+idle = 512
+
+[[mobile]]
+id = "base_lady_of_the_snow"
+base_id = "base_undead"
+name = "lady of the snow"
+body = 252
+[mobile.sounds]
+start_attack = 1157
+idle = 1156
+attack = 1155
+hurt = 1154
+death = 880
+
+[[mobile]]
+id = "ladyofthesnow"
+base_id = "ladyofthesnow_se"
+
+[[mobile]]
+id = "base_revenant_lion"
+base_id = "base_undead"
+name = "revenant lion"
+body = 251
+[mobile.sounds]
+start_attack = 1304
+idle = 1303
+attack = 1302
+hurt = 1305
+death = 1301
+
+[[mobile]]
+id = "revenantlion"
+base_id = "revenant_lion_se"

@@ -1,0 +1,176 @@
+[[mobile]]
+id = "base_agressiveanimals"
+notoriety = "attackable"
+
+[[mobile]]
+id = "direwolf"
+name = "a dire wolf"
+body = 23
+strength = "1d25+95"
+dexterity = "1d25+80"
+intelligence = "1d25+35"
+damage = "1d17+5"
+armor = 11
+notoriety = "attackable"
+karma = -2500
+fame = 2500
+[mobile.skills]
+hiding = "1d11+4"
+resisting_spells = "1d18+57"
+parrying = "1d13+62"
+tactics = "1d21+49"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 229
+idle = 230
+attack = 231
+hurt = 232
+death = 233
+
+[[mobile]]
+id = "giantrat"
+name = "a giant rat"
+body = 215
+race = "gargoyle"
+strength = "1d43+31"
+dexterity = "1d20+45"
+intelligence = "1d15+15"
+mana = 0
+damage = "1d7+2"
+armor = 9
+notoriety = "attackable"
+karma = -300
+fame = 300
+gold = "1d26-1"
+[mobile.skills]
+resisting_spells = "1d6+24"
+parrying = "1d11+44"
+tactics = "1d16+28"
+wrestling = "1d16+28"
+[mobile.sounds]
+start_attack = 392
+idle = 393
+attack = 394
+hurt = 395
+death = 396
+
+[[mobile]]
+id = "gianttoad"
+name = "a giant toad"
+body = 80
+strength = "1d25+75"
+dexterity = "1d20+5"
+intelligence = "1d10+10"
+mana = 0
+damage = "1d19+1"
+armor = 12
+notoriety = "attackable"
+karma = -750
+fame = 750
+gold = "1d26-1"
+[mobile.skills]
+resisting_spells = "1d16+24"
+parrying = "1d36+37"
+tactics = "1d21+39"
+wrestling = "1d21+39"
+[mobile.sounds]
+start_attack = 619
+idle = 620
+attack = 621
+hurt = 622
+death = 623
+
+[[mobile]]
+id = "scorpion"
+name = "a giant scorpion"
+body = 48
+skin_hue = 0
+strength = "1d43+72"
+dexterity = "1d20+75"
+intelligence = "1d15+15"
+mana = 0
+damage = "1d10+2"
+armor = 14
+notoriety = "attackable"
+karma = -2000
+fame = 2000
+[mobile.skills]
+resisting_spells = "1d6+29"
+parrying = "1d11+59"
+tactics = "1d16+59"
+wrestling = "1d16+49"
+poisoning = "1d21+79"
+[mobile.sounds]
+start_attack = 397
+idle = 398
+attack = 399
+hurt = 400
+death = 401
+
+[[mobile]]
+id = "sewerrat"
+name = "a sewer rat"
+body = 238
+race = "gargoyle"
+strength = 9
+dexterity = 25
+intelligence = "1d5+5"
+mana = 0
+damage = "1d2"
+armor = 3
+notoriety = "attackable"
+karma = -300
+fame = 300
+[mobile.skills]
+resisting_spells = 50
+tactics = 50
+wrestling = 50
+[mobile.sounds]
+start_attack = 204
+idle = 205
+attack = 206
+hurt = 207
+death = 208
+
+[[mobile]]
+id = "phoenix"
+name = "a phoenix"
+body = 5
+skin_hue = 1209
+strength = "1d197+503"
+dexterity = "1d99+201"
+intelligence = "1d197+503"
+damage = "1d11+19"
+armor = 25
+fame = 15000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems"]
+gold = "1d401+599"
+[mobile.skills]
+magery = "1d11+89"
+resisting_spells = "1d35+85"
+meditation = "1d26+74"
+tactics = "1d11+79"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 143
+idle = 144
+attack = 145
+hurt = 146
+death = 147
+
+[[mobile]]
+id = "base_bakekitsune"
+base_id = "base_agressiveanimals"
+name = "a bake kitsune"
+body = 246
+notoriety = "murderer"
+[mobile.sounds]
+start_attack = 1246
+idle = 1245
+attack = 1244
+hurt = 1247
+death = 1243
+
+[[mobile]]
+id = "bakekitsune"
+base_id = "bakekitsune_se"

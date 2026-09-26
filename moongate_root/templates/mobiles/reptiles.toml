@@ -1,0 +1,497 @@
+[[mobile]]
+id = "base_reptiles"
+notoriety = "attackable"
+
+[[mobile]]
+id = "alligator"
+name = "an alligator"
+body = 202
+strength = "1d25+75"
+dexterity = "1d20+5"
+intelligence = "1d10+10"
+mana = 0
+stamina = "1d20+45"
+damage = "1d17+1"
+armor = 15
+notoriety = "attackable"
+karma = -600
+fame = 600
+[mobile.skills]
+resisting_spells = "1d16+24"
+parrying = "1d36+37"
+tactics = "1d21+39"
+wrestling = "1d21+39"
+[mobile.sounds]
+start_attack = 90
+idle = 91
+attack = 92
+hurt = 93
+death = 94
+
+[[mobile]]
+id = "giantserpent"
+name = "a giant serpent"
+body = 21
+strength = "1d30+185"
+dexterity = "1d25+55"
+intelligence = "1d20+65"
+damage = "1d15+4"
+armor = 16
+notoriety = "attackable"
+karma = -2500
+fame = 2500
+[mobile.skills]
+resisting_spells = "1d16+24"
+parrying = "1d16+44"
+poisoning = "1d31+69"
+tactics = "1d6+64"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 219
+idle = 220
+attack = 221
+hurt = 222
+death = 223
+
+[[mobile]]
+id = "icesnake"
+name = "an ice snake"
+body = 52
+skin_hue = 1154
+strength = "1d13+41"
+dexterity = "1d10+35"
+intelligence = "1d5+25"
+damage = "1d6+1"
+armor = 10
+notoriety = "attackable"
+karma = -900
+fame = 900
+[mobile.skills]
+resisting_spells = "1d6+14"
+tactics = "1d16+38"
+wrestling = "1d16+38"
+[mobile.sounds]
+start_attack = 219
+idle = 220
+attack = 221
+hurt = 222
+death = 223
+
+[[mobile]]
+id = "iceserpent"
+name = "a giant ice serpent"
+body = 89
+skin_hue = 1152
+strength = "1d30+215"
+dexterity = "1d25+25"
+intelligence = "1d20+65"
+damage = "1d15+4"
+armor = 16
+notoriety = "attackable"
+karma = -2500
+fame = 2500
+loot = ["gianticeserpent_loot", "randomgemsandjewelry", "randomgemsandjewelry", "randomgemsandjewelry"]
+gold = "1d51-1"
+[mobile.skills]
+anatomy = "1d23+27"
+resisting_spells = "1d16+24"
+parrying = "1d16+44"
+tactics = "1d6+74"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 219
+idle = 220
+attack = 221
+hurt = 222
+death = 223
+
+[[mobile]]
+id = "lavalizard"
+name = "a lava lizard"
+body = 206
+skin_hue = 40
+strength = "1d25+125"
+dexterity = "1d20+55"
+intelligence = "1d10+10"
+mana = 0
+damage = "1d27+1"
+armor = 20
+notoriety = "attackable"
+karma = -3000
+fame = 3000
+gold = "1d31+19"
+[mobile.skills]
+resisting_spells = "1d16+54"
+parrying = "1d36+47"
+tactics = "1d21+59"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 90
+idle = 91
+attack = 92
+hurt = 93
+death = 94
+
+[[mobile]]
+id = "lavasnake"
+name = "a lava snake"
+body = 52
+skin_hue = 40
+strength = "1d13+42"
+dexterity = "1d10+15"
+intelligence = "1d5+5"
+damage = "1d15+2"
+armor = 10
+notoriety = "attackable"
+karma = -600
+fame = 600
+[mobile.skills]
+resisting_spells = "1d6+14"
+tactics = "1d16+18"
+wrestling = "1d16+18"
+[mobile.sounds]
+start_attack = 219
+idle = 220
+attack = 221
+hurt = 222
+death = 223
+
+[[mobile]]
+id = "lavaserpent"
+name = "a giant lava serpent"
+body = 90
+skin_hue = 40
+strength = "1d30+385"
+dexterity = "1d25+55"
+intelligence = "1d20+65"
+damage = "1d19+6"
+armor = 20
+notoriety = "attackable"
+karma = -4500
+fame = 4500
+loot = ["randomgemsandjewelry", "randomgemsandjewelry", "randomgemsandjewelry"]
+[mobile.skills]
+resisting_spells = "1d46+24"
+parrying = "1d16+44"
+tactics = "1d6+64"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 219
+idle = 220
+attack = 221
+hurt = 222
+death = 223
+
+[[mobile]]
+id = "ophwarrior"
+name = "an ophidian warrior"
+body = 86
+strength = "1d171+149"
+dexterity = "1d97+93"
+intelligence = "1d97+63"
+damage = "1d11+2"
+armor = 18
+notoriety = "attackable"
+karma = -4500
+fame = 4500
+loot = ["randompotions", "randompotions", "randompotions", "randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d101+49"
+[mobile.skills]
+magery = "1d26+69"
+resisting_spells = "1d16+69"
+parrying = "1d26+59"
+tactics = "1d16+69"
+swordsmanship = "1d26+59"
+[mobile.sounds]
+start_attack = 634
+idle = 635
+attack = 636
+hurt = 637
+death = 638
+
+[[mobile]]
+id = "ophenforcer"
+name = "an ophidian enforcer"
+body = 86
+strength = "1d181+159"
+dexterity = "1d107+98"
+intelligence = "1d97+63"
+damage = "1d12+3"
+armor = 19
+notoriety = "attackable"
+karma = -5000
+fame = 5000
+loot = ["randompotions", "randompotions", "randompotions", "randompotions", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl1loot"]
+gold = "1d101+49"
+[mobile.skills]
+magery = "1d26+69"
+resisting_spells = "1d16+79"
+parrying = "1d26+69"
+tactics = "1d16+79"
+swordsmanship = "1d26+69"
+[mobile.sounds]
+start_attack = 634
+idle = 635
+attack = 636
+hurt = 637
+death = 638
+
+[[mobile]]
+id = "ophknight"
+name = "an ophidian knight-errant"
+body = 137
+strength = "1d179+416"
+dexterity = "1d10+165"
+intelligence = "1d25+45"
+damage = "1d16+9"
+armor = 20
+notoriety = "attackable"
+karma = -10000
+fame = 10000
+loot = ["randompotions", "randompotions", "randompotions", "randompotions", "randompotions", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl3loot"]
+gold = "1d101+199"
+[mobile.skills]
+resisting_spells = "1d16+64"
+parrying = "1d11+74"
+poisoning = "1d21+59"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 634
+idle = 635
+attack = 636
+hurt = 637
+death = 638
+
+[[mobile]]
+id = "ophavenger"
+name = "an ophidian avenger"
+body = 137
+skin_hue = 1645
+strength = "1d181+419"
+dexterity = "1d16+169"
+intelligence = "1d27+47"
+damage = "1d29+14"
+armor = 22
+notoriety = "attackable"
+karma = -10000
+fame = 10000
+loot = ["randompotions", "randompotions", "randompotions", "randompotions", "randompotions", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl3loot"]
+gold = "1d101+199"
+[mobile.skills]
+resisting_spells = "1d6+74"
+parrying = "1d11+74"
+poisoning = "1d16+69"
+tactics = "1d6+94"
+wrestling = "1d6+94"
+[mobile.sounds]
+start_attack = 634
+idle = 635
+attack = 636
+hurt = 637
+death = 638
+
+[[mobile]]
+id = "ophapprentice"
+name = "an ophidian apprentice mage"
+body = 85
+strength = "1d25+180"
+dexterity = "1d25+190"
+intelligence = "1d25+95"
+damage = "1d10+2"
+armor = 15
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["randompotions", "lowlevelscrolls", "midlevelscrolls", "treasure_map_lvl2loot"]
+gold = "1d101+49"
+[mobile.skills]
+magery = "1d16+84"
+resisting_spells = "1d24+74"
+parrying = "1d24+64"
+tactics = "1d24+64"
+wrestling = "1d41+19"
+[mobile.sounds]
+start_attack = 639
+idle = 640
+attack = 641
+hurt = 642
+death = 643
+
+[[mobile]]
+id = "ophshaman"
+name = "an ophidian shaman"
+body = 85
+strength = "1d25+280"
+dexterity = "1d25+290"
+intelligence = "1d25+225"
+damage = "1d10+2"
+armor = 22
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["randompotions", "randompotions", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl2loot"]
+gold = "1d101+49"
+[mobile.skills]
+magery = "1d6+94"
+resisting_spells = "1d24+74"
+parrying = "1d24+64"
+tactics = "1d24+64"
+wrestling = "1d41+19"
+[mobile.sounds]
+start_attack = 639
+idle = 640
+attack = 641
+hurt = 642
+death = 643
+
+[[mobile]]
+id = "ophmatriarch"
+name = "an ophidian matriarch"
+body = 87
+strength = "1d90+415"
+dexterity = "1d20+95"
+intelligence = "1d90+365"
+damage = "1d13+5"
+armor = 25
+notoriety = "attackable"
+karma = -16000
+fame = 16000
+loot = ["midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "treasure_map_lvl4loot"]
+gold = "1d51+199"
+[mobile.skills]
+evaluating_intelligence = "1d21+4"
+magery = "1d11+89"
+resisting_spells = "1d11+89"
+meditation = "1d21+4"
+parrying = "1d11+54"
+tactics = "1d21+49"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 644
+idle = 645
+attack = 646
+hurt = 647
+death = 648
+
+[[mobile]]
+id = "ophjusticar"
+name = "an ophidian justicar"
+body = 85
+strength = "1d25+280"
+dexterity = "1d25+290"
+intelligence = "1d25+225"
+damage = "1d11+4"
+armor = 23
+notoriety = "attackable"
+karma = -11500
+fame = 11500
+loot = ["midlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
+gold = "1d151+149"
+[mobile.skills]
+magery = "1d6+94"
+resisting_spells = "1d24+74"
+parrying = "1d24+64"
+tactics = "1d24+64"
+wrestling = "1d41+19"
+[mobile.sounds]
+start_attack = 639
+idle = 640
+attack = 641
+hurt = 642
+death = 643
+
+[[mobile]]
+id = "ophzealot"
+name = "an ophidian zealot"
+body = 85
+strength = "1d25+280"
+dexterity = "1d25+190"
+hits = "1d34+122"
+damage = "1d13+8"
+armor = 10
+notoriety = "attackable"
+karma = -11500
+fame = 11500
+loot = ["midlevelscrolls", "midlevelscrolls"]
+gold = "1d151+149"
+[mobile.skills]
+evaluating_intelligence = "1d6+94"
+magery = "1d6+94"
+resisting_spells = "1d23+74"
+tactics = "1d23+64"
+wrestling = "1d41+19"
+[mobile.sounds]
+start_attack = 639
+idle = 640
+attack = 641
+hurt = 642
+death = 643
+
+[[mobile]]
+id = "silverserpent"
+name = "a silver serpent"
+body = 91
+skin_hue = 1154
+strength = "1d200+160"
+dexterity = "1d150+150"
+intelligence = "1d20+20"
+damage = "1d23+1"
+armor = 20
+notoriety = "attackable"
+karma = -300
+fame = 300
+[mobile.skills]
+resisting_spells = "1d6+94"
+parrying = "1d16+54"
+poisoning = "1d11+89"
+tactics = "1d16+79"
+wrestling = "1d16+84"
+[mobile.sounds]
+start_attack = 219
+idle = 220
+attack = 221
+hurt = 222
+death = 223
+
+[[mobile]]
+id = "snake"
+name = "a snake"
+body = 52
+skin_hue = "0x07D1-0x07E2"
+strength = "1d13+21"
+dexterity = "1d10+15"
+intelligence = "1d5+5"
+damage = "1d4"
+armor = 8
+notoriety = "attackable"
+karma = -300
+fame = 300
+[mobile.skills]
+resisting_spells = "1d6+14"
+parrying = "1d11+14"
+tactics = "1d16+18"
+wrestling = "1d16+18"
+poisoning = "1d21+49"
+[mobile.sounds]
+start_attack = 219
+idle = 220
+attack = 221
+hurt = 222
+death = 223
+
+[[mobile]]
+id = "base_yamandon"
+base_id = "base_reptiles"
+name = "a yamandon"
+body = 249
+[mobile.sounds]
+start_attack = 1262
+idle = 1261
+attack = 1260
+hurt = 1263
+death = 1258
+
+[[mobile]]
+id = "yamandon"
+base_id = "yamandon_se"

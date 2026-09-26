@@ -1,0 +1,26 @@
+[[mobile]]
+id = "oni_se"
+base_id = "base_oni"
+strength = "1d106+799"
+dexterity = "1d51+149"
+intelligence = "1d31+169"
+hits = "1d131+399"
+damage = "1d43+56"
+armor = "1d16+64"
+karma = -12000
+fame = 12000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl4loot"]
+gold = "1d251+1599"
+[mobile.resistances]
+fire = "1d21+49"
+cold = "1d16+34"
+poison = "1d26+44"
+energy = "1d31+34"
+[mobile.skills]
+resisting_spells = "1d16+84"
+magery = "1d12+94"
+evaluating_intelligence = "1d21+99"
+meditation = "1d16+26"
+tactics = "1d16+84"
+wrestling = "1d11+89"
+anatomy = "1d11+84"

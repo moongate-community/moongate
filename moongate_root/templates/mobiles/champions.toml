@@ -1,0 +1,642 @@
+[[mobile]]
+id = "paroxysmus"
+name = "Chief Paroxysmus"
+body = 256
+strength = "1d291+4759"
+dexterity = "1d320+475"
+intelligence = "1d241+3009"
+hits = "1d5171+22859"
+damage = "1d36+34"
+armor = 20
+notoriety = "attackable"
+karma = -15000
+fame = 15000
+gold = "1d801+1199"
+[mobile.skills]
+resisting_spells = 120
+tactics = 120
+wrestling = 120
+magery = 120
+evaluating_intelligence = 120
+[mobile.sounds]
+start_attack = 1394
+idle = 1393
+attack = 1392
+hurt = 1395
+death = 1391
+
+[[mobile]]
+id = "abyssmalhorror"
+name = "an abyssmal horror"
+body = 312
+strength = "1d20+400"
+dexterity = "1d10+80"
+intelligence = "1d20+400"
+hits = 6000
+damage = "1d17+18"
+armor = 20
+notoriety = "attackable"
+karma = -26000
+fame = 26000
+gold = "1d401+1599"
+[mobile.skills]
+resisting_spells = "1d4+116"
+tactics = 100
+wrestling = "1d5+83"
+magery = "1d6+111"
+evaluating_intelligence = 120
+meditation = 120
+[mobile.sounds]
+start_attack = 1106
+idle = 1105
+attack = 1107
+hurt = 1108
+death = 1109
+
+[[mobile]]
+id = "bonedaemon"
+name = "a bone daemon"
+body = 308
+strength = 1000
+dexterity = "1d25+150"
+intelligence = "1d50+170"
+hits = 3600
+damage = "1d7+81"
+armor = 20
+notoriety = "attackable"
+karma = -20000
+fame = 20000
+gold = "1d1001+3999"
+[mobile.skills]
+resisting_spells = "1d26+49"
+tactics = 100
+wrestling = 100
+magery = "1d11+76"
+evaluating_intelligence = "1d11+76"
+meditation = 100
+[mobile.sounds]
+start_attack = 1165
+idle = 1166
+attack = 1167
+hurt = 1168
+death = 1169
+
+[[mobile]]
+id = "barracoon"
+name = "Barracoon"
+title = "the Piper"
+gender = "male"
+race = "human"
+strength = "1d121+304"
+dexterity = "1d79+71"
+intelligence = "1d246+504"
+hits = 4200
+damage = "1d22+50"
+armor = 20
+notoriety = "attackable"
+karma = -22500
+fame = 22500
+gold = "1d2001+3999"
+[mobile.skills]
+resisting_spells = 100
+tactics = "1d4+96"
+wrestling = "1d4+96"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1539_long_pants"]
+hue = 351
+
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = 569
+
+[[mobile.equipment]]
+items = ["0x171c_jester_hat"]
+hue = 522
+
+[[mobile.equipment]]
+items = ["0x170b_boots"]
+hue = 842
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = 421
+
+[[mobile]]
+id = "darkfather"
+name = "a demon knight"
+name_list = "dark_father"
+title = "the Dark Father"
+body = 318
+strength = 500
+dexterity = 100
+intelligence = 1000
+hits = 30000
+damage = "1d23+33"
+armor = 20
+notoriety = "attackable"
+karma = -28000
+fame = 28000
+gold = "1d801+2199"
+[mobile.skills]
+resisting_spells = 120
+tactics = 100
+wrestling = 120
+magery = 100
+evaluating_intelligence = 100
+meditation = 120
+[mobile.sounds]
+start_attack = 357
+idle = 358
+attack = 359
+hurt = 360
+death = 361
+
+[[mobile]]
+id = "darknightcreeper"
+name = "a darknight creeper"
+name_list = "darknight_creeper"
+title = "the Darknight Creeper"
+body = 313
+strength = "1d30+300"
+dexterity = "1d10+100"
+intelligence = "1d30+300"
+hits = 4000
+damage = "1d9+49"
+armor = 20
+notoriety = "attackable"
+karma = -22000
+fame = 22000
+gold = "1d401+1599"
+[mobile.skills]
+resisting_spells = 90
+tactics = 100
+wrestling = 90
+poisoning = 120
+magery = "1d9+111"
+evaluating_intelligence = "1d3+117"
+meditation = 120
+[mobile.sounds]
+start_attack = 224
+idle = 225
+attack = 226
+hurt = 227
+death = 1217
+
+[[mobile]]
+id = "dreadhorn"
+name = "Dread Horn"
+body = 257
+strength = 300
+dexterity = 200
+intelligence = 100
+hits = 1000
+damage = "1d16+19"
+armor = 20
+notoriety = "attackable"
+karma = -1500
+fame = 1500
+gold = 1000
+[mobile.skills]
+resisting_spells = 80
+tactics = 80
+wrestling = 80
+[mobile.sounds]
+start_attack = 168
+idle = 169
+attack = 170
+hurt = 171
+death = 172
+
+[[mobile]]
+id = "fleshrenderer"
+name = "a fleshrenderer"
+body = 315
+strength = "1d60+400"
+dexterity = "1d10+200"
+intelligence = "1d40+220"
+hits = 4500
+damage = "1d13+37"
+armor = 20
+notoriety = "attackable"
+karma = -23000
+fame = 23000
+gold = "1d401+1599"
+[mobile.skills]
+resisting_spells = 120
+tactics = 100
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 844
+idle = 845
+attack = 846
+hurt = 847
+death = 843
+
+[[mobile]]
+id = "impaler"
+name = "an impaler"
+name_list = "impaler"
+title = "the Impaler"
+body = 306
+strength = 190
+dexterity = 45
+intelligence = 190
+hits = 5000
+damage = "1d18+60"
+armor = 20
+notoriety = "attackable"
+karma = -24000
+fame = 24000
+gold = "1d401+1599"
+[mobile.skills]
+resisting_spells = 100
+tactics = 100
+wrestling = 80
+poisoning = 120
+
+[[mobile]]
+id = "ladymelisande"
+name = "Lady Melisande"
+body = 258
+strength = 500
+dexterity = 100
+intelligence = 250
+hits = 5000
+damage = "1d43+39"
+armor = 20
+notoriety = "attackable"
+karma = -20000
+fame = 20000
+gold = "1d501+1499"
+[mobile.skills]
+resisting_spells = 120
+tactics = 100
+wrestling = 100
+[mobile.sounds]
+start_attack = 589
+idle = 590
+attack = 591
+hurt = 592
+death = 593
+
+[[mobile]]
+id = "lordoaks"
+name = "Lord Oaks"
+body = 175
+strength = "1d448+402"
+dexterity = "1d50+100"
+intelligence = "1d298+502"
+hits = 3000
+damage = "1d23+45"
+armor = 20
+notoriety = "attackable"
+karma = 22500
+fame = 22500
+gold = "1d2501+3499"
+[mobile.skills]
+resisting_spells = "1d21+99"
+tactics = 100
+wrestling = 100
+magery = 120
+anatomy = "1d26+74"
+evaluating_intelligence = 120
+meditation = 120
+[mobile.sounds]
+start_attack = 758
+idle = 760
+attack = 757
+hurt = 761
+death = 759
+
+[[mobile]]
+id = "mephitis"
+name = "Mephitis"
+body = 173
+strength = "1d496+504"
+dexterity = "1d199+101"
+intelligence = "1d199+401"
+hits = 3000
+damage = "1d27+44"
+armor = 20
+notoriety = "attackable"
+karma = -22500
+fame = 22500
+gold = "1d501+2499"
+[mobile.skills]
+resisting_spells = "1d51+69"
+tactics = "1d4+96"
+wrestling = "1d4+96"
+[mobile.sounds]
+start_attack = 387
+idle = 388
+attack = 389
+hurt = 390
+death = 391
+
+[[mobile]]
+id = "interredgrizzle"
+name = "Monstrous Interred Grizzle"
+body = 259
+strength = "1d291+4759"
+dexterity = "1d320+475"
+intelligence = "1d241+3009"
+hits = 10000
+damage = "1d23+62"
+armor = 20
+notoriety = "attackable"
+karma = -15000
+fame = 15000
+gold = "1d3001+2999"
+[mobile.skills]
+evaluating_intelligence = 120
+magery = 120
+resisting_spells = 120
+tactics = 120
+wrestling = 120
+[mobile.sounds]
+start_attack = 1410
+idle = 1409
+attack = 1408
+hurt = 1411
+death = 1407
+
+[[mobile]]
+id = "neira"
+name = "Neira"
+title = "the Necromancer"
+gender = "female"
+race = "human"
+strength = "1d121+304"
+dexterity = "1d79+71"
+intelligence = "1d246+504"
+hits = 4800
+damage = "1d28+50"
+armor = 20
+notoriety = "attackable"
+karma = -22500
+fame = 22500
+gold = "1d501+2499"
+[mobile.skills]
+resisting_spells = 120
+tactics = "1d4+96"
+wrestling = "1d4+96"
+magery = 120
+evaluating_intelligence = 120
+meditation = 120
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["skeletalmount"]
+
+[[mobile.equipment]]
+items = ["0x2684_hooded_shroud_of_shadows"]
+hue = 1109
+
+[[mobile]]
+id = "rikktor"
+name = "Rikktor"
+body = 172
+strength = "1d200+700"
+dexterity = "1d150+200"
+intelligence = "1d50+50"
+hits = 3000
+damage = "1d42+60"
+armor = 20
+notoriety = "attackable"
+karma = -22500
+fame = 22500
+gold = "1d1001+3999"
+[mobile.skills]
+resisting_spells = 120
+tactics = 100
+wrestling = "1d21+79"
+anatomy = 100
+[mobile.sounds]
+start_attack = 362
+idle = 363
+attack = 364
+hurt = 365
+death = 366
+
+[[mobile]]
+id = "semidar"
+name = "Semidar"
+body = 174
+strength = "1d99+501"
+dexterity = "1d99+101"
+intelligence = "1d150+600"
+hits = 1500
+damage = "1d25+47"
+armor = 20
+notoriety = "attackable"
+karma = -24000
+fame = 24000
+gold = "1d501+5999"
+[mobile.skills]
+resisting_spells = 120
+tactics = "1d16+89"
+wrestling = "1d16+89"
+magery = "1d16+89"
+evaluating_intelligence = "1d6+94"
+meditation = "1d6+94"
+[mobile.sounds]
+start_attack = 1200
+idle = 1201
+attack = 1202
+hurt = 1203
+death = 1204
+
+[[mobile]]
+id = "serado"
+name = "Serado"
+title = "the Awakened"
+body = 249
+strength = 1000
+dexterity = 150
+intelligence = 300
+hits = 9000
+damage = "1d22+97"
+armor = 20
+notoriety = "attackable"
+karma = -22500
+fame = 22500
+[mobile.skills]
+resisting_spells = 120
+tactics = 120
+wrestling = 70
+poisoning = 120
+[mobile.sounds]
+start_attack = 1262
+idle = 1261
+attack = 1260
+hurt = 1263
+death = 1258
+
+[[mobile]]
+id = "shadowknight"
+name = "a shadowknight"
+name_list = "shadow_knight"
+title = "the Shadow Knight"
+body = 311
+strength = 250
+dexterity = 100
+intelligence = 100
+hits = 2000
+damage = "1d25+40"
+armor = 20
+notoriety = "attackable"
+karma = -25000
+fame = 25000
+gold = "1d401+1599"
+[mobile.skills]
+resisting_spells = 120
+tactics = 100
+wrestling = 100
+magery = 100
+evaluating_intelligence = 100
+meditation = 100
+[mobile.sounds]
+start_attack = 718
+idle = 719
+attack = 720
+hurt = 721
+death = 707
+
+[[mobile]]
+id = "shimmeringeffusion"
+name = "Shimmering Effusion"
+body = 261
+strength = 250
+dexterity = 100
+intelligence = 100
+hits = 2000
+damage = "1d35+29"
+armor = 20
+notoriety = "attackable"
+karma = -25000
+fame = 25000
+gold = "1d401+1599"
+[mobile.skills]
+resisting_spells = 120
+tactics = 100
+wrestling = 100
+magery = 100
+evaluating_intelligence = 100
+meditation = 100
+[mobile.sounds]
+start_attack = 1428
+idle = 1427
+attack = 1422
+hurt = 1429
+death = 1421
+
+[[mobile]]
+id = "silvani"
+name = "Silvani"
+body = 176
+strength = "1d148+252"
+dexterity = "1d694+156"
+intelligence = "1d298+502"
+hits = 600
+damage = "1d27+51"
+armor = 20
+notoriety = "attackable"
+karma = 20000
+fame = 20000
+gold = "1d1001+1999"
+[mobile.skills]
+resisting_spells = "1d21+99"
+tactics = "1d4+96"
+wrestling = "1d4+96"
+magery = "1d11+96"
+evaluating_intelligence = 100
+meditation = 100
+[mobile.sounds]
+start_attack = 1127
+idle = 1136
+attack = 1133
+hurt = 1137
+death = 1129
+
+[[mobile]]
+id = "theharrower"
+name = "The Harrower"
+body = 146
+strength = "1d100+900"
+dexterity = "1d15+125"
+intelligence = "1d200+1000"
+hits = 39000
+damage = "1d22+60"
+armor = 20
+notoriety = "attackable"
+karma = -25000
+fame = 25000
+[mobile.skills]
+resisting_spells = 120
+tactics = "1d21+89"
+wrestling = "1d11+89"
+magery = 120
+evaluating_intelligence = 120
+meditation = 120
+[mobile.sounds]
+start_attack = 1149
+idle = 1150
+attack = 1151
+hurt = 1152
+death = 1153
+
+[[mobile]]
+id = "trueharrower"
+name = "The True Harrower"
+body = 780
+strength = "1d100+900"
+dexterity = "1d15+125"
+intelligence = "1d200+1000"
+hits = 39000
+damage = "1d22+60"
+armor = 20
+notoriety = "attackable"
+karma = -25000
+fame = 25000
+[mobile.skills]
+resisting_spells = 120
+tactics = "1d21+89"
+wrestling = "1d11+89"
+magery = 120
+evaluating_intelligence = 120
+meditation = 120
+[mobile.sounds]
+start_attack = 357
+idle = 358
+attack = 359
+hurt = 360
+death = 361
+
+[[mobile]]
+id = "travesty"
+name = "Travesty"
+body = 264
+strength = "1d30+170"
+dexterity = "1d20+125"
+intelligence = "1d30+275"
+hits = "1d18+202"
+damage = "1d14+47"
+armor = 20
+notoriety = "attackable"
+karma = -8000
+fame = 8000
+[mobile.skills]
+resisting_spells = 120
+tactics = "1d21+69"
+wrestling = "1d21+69"
+magery = "1d11+99"
+evaluating_intelligence = 120
+meditation = "1d11+84"
+[mobile.sounds]
+start_attack = 1106
+idle = 1105
+attack = 1107
+hurt = 1108
+death = 1109

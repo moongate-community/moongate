@@ -1,0 +1,154 @@
+[[mobile]]
+id = "bird"
+name = "a bird"
+name_list = "bird"
+body = 6
+skin_hue = "0x0835-0x0852"
+strength = "1d4"
+dexterity = 25
+intelligence = "1d4"
+mana = 0
+damage = 2
+fame = 150
+[mobile.skills]
+hiding = 5
+parrying = 5
+tactics = 5
+wrestling = 5
+[mobile.sounds]
+start_attack = 148
+idle = 149
+attack = 150
+hurt = 151
+death = 152
+
+[[mobile]]
+id = "canary"
+base_id = "bird"
+name = "a canary"
+skin_hue = 253
+strength = "1d3"
+dexterity = 10
+intelligence = "1d6+4"
+damage = 1
+armor = 1
+[mobile.skills]
+tactics = 1
+wrestling = 1
+
+[[mobile]]
+id = "tropicalbird"
+base_id = "bird"
+name = "a tropical bird"
+
+[[mobile]]
+id = "crow"
+base_id = "raven"
+name = "a crow"
+
+[[mobile]]
+id = "chicken"
+name = "a chicken"
+body = 208
+strength = 5
+dexterity = 15
+intelligence = 5
+damage = 2
+armor = 1
+fame = 150
+[mobile.skills]
+tactics = 5
+wrestling = 5
+[mobile.sounds]
+start_attack = 110
+idle = 111
+attack = 112
+hurt = 113
+death = 114
+
+[[mobile]]
+id = "eagle"
+name = "an eagle"
+body = 5
+skin_hue = 0
+strength = "1d17+30"
+dexterity = "1d25+35"
+intelligence = "1d13+7"
+mana = 0
+damage = "1d7+3"
+armor = 11
+karma = 0
+fame = 300
+[mobile.skills]
+resisting_spells = "1d16+14"
+parrying = "1d16+24"
+tactics = "1d20+17"
+wrestling = "1d11+19"
+[mobile.sounds]
+start_attack = 143
+idle = 144
+attack = 145
+hurt = 146
+death = 147
+
+[[mobile]]
+id = "falcon"
+base_id = "bird"
+name = "a falcon"
+body = 6
+skin_hue = 548
+strength = "1d11+17"
+dexterity = "1d27+41"
+intelligence = "1d10+5"
+hits = "1d6+12"
+damage = "1d7+2"
+armor = 9
+fame = 190
+[mobile.skills]
+resisting_spells = "1d16+19"
+parrying = "1d11+19"
+tactics = "1d18+19"
+wrestling = "1d11+19"
+[mobile.sounds]
+start_attack = 148
+idle = 149
+attack = 150
+hurt = 151
+death = 152
+
+[[mobile]]
+id = "hawk"
+base_id = "bird"
+name = "a hawk"
+skin_hue = 548
+strength = "1d11+19"
+dexterity = "1d27+39"
+intelligence = "1d13+7"
+hits = "1d9+11"
+damage = "1d7+2"
+armor = 9
+fame = 200
+[mobile.skills]
+resisting_spells = "1d16+14"
+parrying = "1d11+19"
+tactics = "1d24+13"
+wrestling = "1d11+19"
+
+[[mobile]]
+id = "raven"
+base_id = "bird"
+name = "a raven"
+skin_hue = 1
+strength = 9
+dexterity = 25
+intelligence = 5
+mana = 0
+damage = 1
+armor = 3
+fame = 300
+[mobile.skills]
+hiding = "1d11+4"
+resisting_spells = 5
+parrying = 5
+tactics = 10
+wrestling = 10

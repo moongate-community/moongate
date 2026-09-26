@@ -1,0 +1,167 @@
+[[mobile]]
+id = "base_zealot"
+name = "Zealot of Khaldun"
+notoriety = "murderer"
+
+[[mobile]]
+id = "zealot_knight_male"
+base_id = "base_zealot"
+title = "the Knight"
+gender = "male"
+race = "human"
+strength = "1d50+350"
+dexterity = "1d15+150"
+intelligence = "1d25+75"
+hits = "1d73+727"
+damage = "1d29+5"
+armor = 20
+karma = -10000
+fame = 10000
+gold = "1d51+49"
+[mobile.skills]
+anatomy = 120
+resisting_spells = "1d11+89"
+parrying = "1d11+89"
+swordsmanship = 120
+tactics = "1d11+89"
+wrestling = "1d11+69"
+[mobile.sounds]
+death = 348
+
+[[mobile]]
+id = "zealot_knight_female"
+base_id = "base_zealot"
+title = "the Knight"
+gender = "female"
+race = "human"
+strength = "1d10+110"
+dexterity = "1d10+70"
+intelligence = "1d10+120"
+hits = "1d88+277"
+mana = "1d39+226"
+damage = "1d29+5"
+armor = 20
+karma = -10000
+fame = 10000
+gold = "1d51+49"
+[mobile.skills]
+anatomy = 120
+resisting_spells = "1d11+89"
+parrying = "1d11+89"
+swordsmanship = 120
+tactics = "1d11+89"
+wrestling = "1d11+69"
+[mobile.sounds]
+death = 337
+
+[[mobile]]
+id = "zealot_knight"
+base_id = "base_zealot"
+title = "the Knight"
+gender = "random"
+race = "human"
+strength = "1d50+350"
+dexterity = "1d15+150"
+intelligence = "1d25+75"
+hits = "1d73+727"
+damage = "1d29+5"
+armor = 20
+karma = -10000
+fame = 10000
+gold = "1d51+49"
+[mobile.skills]
+anatomy = 120
+resisting_spells = "1d11+89"
+parrying = "1d11+89"
+swordsmanship = 120
+tactics = "1d11+89"
+wrestling = "1d11+69"
+[mobile.sounds]
+death = 348
+
+[[mobile]]
+id = "zealot_summoner_male"
+base_id = "base_zealot"
+title = "the Summoner"
+gender = "male"
+race = "human"
+strength = "1d10+110"
+dexterity = "1d10+70"
+intelligence = "1d10+120"
+hits = "1d88+277"
+mana = "1d39+226"
+damage = "1d13+2"
+armor = 20
+karma = -2000
+fame = 1000
+gold = "1d51+49"
+[mobile.skills]
+evaluating_intelligence = "1d6+94"
+magery = "1d6+94"
+resisting_spells = "1d11+79"
+meditation = "1d11+89"
+parrying = "1d9+74"
+wrestling = "1d11+79"
+tactics = "1d11+89"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x13b6", "0x13b8", "0x13ba", "0x13ff", "0x13fb", "0x0e85_pickaxe", "0x13b0", "0x13b4", "0x13e4", "0x1405"]
+
+[[mobile]]
+id = "zealot_summoner_female"
+base_id = "base_zealot"
+title = "the Summoner"
+gender = "female"
+race = "human"
+strength = "1d10+110"
+dexterity = "1d10+70"
+intelligence = "1d10+120"
+hits = "1d88+277"
+mana = "1d39+226"
+damage = "1d13+2"
+armor = 20
+karma = -2000
+fame = 1000
+gold = "1d51+49"
+[mobile.skills]
+evaluating_intelligence = "1d6+94"
+magery = "1d6+94"
+resisting_spells = "1d11+79"
+meditation = "1d11+89"
+parrying = "1d9+74"
+wrestling = "1d11+79"
+tactics = "1d11+89"
+[mobile.sounds]
+death = 337
+[[mobile.equipment]]
+items = ["0x13b6", "0x13b8", "0x13ba", "0x13ff", "0x13fb", "0x0e85_pickaxe", "0x13b0", "0x13b4", "0x13e4", "0x1405"]
+
+[[mobile]]
+id = "zealot_summoner"
+base_id = "base_zealot"
+title = "the Summoner"
+gender = "random"
+race = "human"
+strength = "1d10+110"
+dexterity = "1d10+70"
+intelligence = "1d10+120"
+hits = "1d88+277"
+mana = "1d39+226"
+damage = "1d13+2"
+armor = 20
+karma = -2000
+fame = 1000
+gold = "1d51+49"
+[mobile.skills]
+evaluating_intelligence = "1d6+94"
+magery = "1d6+94"
+resisting_spells = "1d11+79"
+meditation = "1d11+89"
+parrying = "1d9+74"
+wrestling = "1d11+79"
+tactics = "1d11+89"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x13b6", "0x13b8", "0x13ba", "0x13ff", "0x13fb", "0x0e85_pickaxe", "0x13b0", "0x13b4", "0x13e4", "0x1405"]

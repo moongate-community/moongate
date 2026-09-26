@@ -37,6 +37,54 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x1849_heating_stand"
+base_id = "base_item"
+item_id = 6217
+name = "heating stand"
+rarity = "common"
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
+hue = 0
+
+[[item]]
+id = "0x184a_heating_stand"
+base_id = "base_item"
+item_id = 6218
+name = "heating stand"
+rarity = "common"
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
+hue = 0
+
+[[item]]
+id = "0x184d_heating_stand"
+base_id = "base_item"
+item_id = 6221
+name = "heating stand"
+rarity = "common"
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
+hue = 0
+
+[[item]]
+id = "0x184e_heating_stand"
+base_id = "base_item"
+item_id = 6222
+name = "heating stand"
+rarity = "common"
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
+hue = 0
+
+[[item]]
 id = "0x0e24_empty_vial"
 base_id = "base_item"
 item_id = 3620
@@ -485,6 +533,18 @@ item_id = 6216
 name = "flask"
 rarity = "common"
 weight = 1.0
+hue = 0
+
+[[item]]
+id = "0x1c19_oil_flask"
+base_id = "base_item"
+item_id = 7193
+name = "oil flask"
+rarity = "common"
+weight = 1.0
+buy_price = 4
+sell_price = 4
+decays = true
 hue = 0
 
 [[item]]

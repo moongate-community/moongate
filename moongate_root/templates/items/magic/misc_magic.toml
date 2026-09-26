@@ -47,6 +47,13 @@ sell_price = 1
 hue = 0
 
 [[item]]
+id = "0x0e2e"
+base_id = "0x0e2d_crystal_ball"
+item_id = 3630
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "crystalballofpetsummoning"
 base_id = "base_item"
 item_id = 3630

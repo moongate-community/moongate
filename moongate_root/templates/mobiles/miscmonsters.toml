@@ -1,0 +1,590 @@
+[[mobile]]
+id = "succubus"
+name = "a succubus"
+name_list = "pixie"
+body = 149
+strength = "1d133+487"
+dexterity = "1d50+120"
+intelligence = "1d160+497"
+damage = "1d29+8"
+armor = 40
+notoriety = "attackable"
+karma = -24000
+fame = 24000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
+gold = "1d801+1199"
+[mobile.skills]
+evaluating_intelligence = "1d11+89"
+magery = "1d2+98"
+resisting_spells = "1d20+100"
+meditation = "1d11+89"
+tactics = "1d11+79"
+wrestling = "1d11+79"
+[mobile.sounds]
+start_attack = 1200
+idle = 1201
+attack = 1202
+hurt = 1203
+death = 1204
+
+[[mobile]]
+id = "pixie"
+name = "a pixie"
+name_list = "pixie"
+body = 128
+strength = "1d10+20"
+dexterity = "1d101+299"
+intelligence = "1d51+199"
+damage = "1d10+5"
+armor = 50
+notoriety = "attackable"
+karma = 7000
+fame = 7000
+loot = ["randomgems", "randomgems", "pixie_loot"]
+[mobile.skills]
+evaluating_intelligence = "1d11+89"
+magery = "1d11+89"
+resisting_spells = "1d20+100"
+meditation = "1d11+89"
+parrying = "1d11+9"
+tactics = "1d11+9"
+wrestling = "1d4+9"
+[mobile.sounds]
+start_attack = 1127
+idle = 1136
+attack = 1133
+hurt = 1137
+death = 1129
+
+[[mobile]]
+id = "centaur"
+name = "a centaur"
+name_list = "centaur"
+body = 101
+strength = "1d99+201"
+dexterity = "1d157+103"
+intelligence = "1d10+90"
+damage = "1d22+7"
+armor = 25
+notoriety = "attackable"
+fame = 6500
+gold = "1d51+249"
+[mobile.skills]
+anatomy = "1d21+94"
+archery = "1d6+94"
+resisting_spells = "1d31+49"
+parrying = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d6+94"
+[mobile.sounds]
+start_attack = 679
+idle = 680
+attack = 681
+hurt = 682
+death = 683
+
+[[mobile]]
+id = "ethwarrior"
+name = "an ethereal warrior"
+name_list = "ethereal_warrior"
+body = 123
+strength = "1d200+585"
+dexterity = "1d79+176"
+intelligence = "1d100+350"
+damage = "1d9+11"
+armor = "1d19+41"
+notoriety = "innocent"
+karma = 7000
+fame = 7000
+loot = ["randomgems", "randomgems"]
+gold = "1d51+249"
+[mobile.skills]
+anatomy = "1d26+49"
+evaluating_intelligence = "1d11+89"
+magery = "1d2+98"
+resisting_spells = "1d11+89"
+meditation = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d3+97"
+[mobile.sounds]
+start_attack = 758
+idle = 760
+attack = 757
+hurt = 761
+death = 759
+
+[[mobile]]
+id = "efreet"
+name = "an efreet"
+body = 131
+skin_hue = 2125
+strength = "1d30+325"
+dexterity = "1d20+265"
+intelligence = "1d25+170"
+damage = "1d9+7"
+armor = 28
+notoriety = "attackable"
+karma = -10000
+fame = 10000
+loot = ["randompotions", "randompotions", "randompotions", "randompotions", "randompotions", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "daemonbonearmor", "treasure_map_lvl3loot"]
+gold = "1d251+249"
+[mobile.skills]
+evaluating_intelligence = "1d16+59"
+magery = "1d16+59"
+resisting_spells = "1d16+59"
+parrying = "1d11+64"
+tactics = "1d21+59"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 880
+idle = 883
+attack = 884
+hurt = 885
+death = 886
+
+[[mobile]]
+id = "hellcat"
+name = "a hellcat"
+body = 201
+skin_hue = "0x0641-0x0676"
+strength = "1d41+59"
+dexterity = "1d81+69"
+intelligence = "1d73+12"
+damage = "1d13+2"
+armor = 15
+notoriety = "attackable"
+karma = -1000
+fame = 1000
+gold = "1d51-1"
+[mobile.skills]
+resisting_spells = "1d16+44"
+parrying = "1d46+22"
+tactics = "1d16+39"
+wrestling = "1d11+29"
+[mobile.sounds]
+start_attack = 105
+idle = 675
+attack = 107
+hurt = 108
+death = 109
+
+[[mobile]]
+id = "largehellcat"
+name = "a predator hellcat"
+body = 127
+skin_hue = "0x0641-0x0676"
+strength = "1d25+160"
+dexterity = "1d20+95"
+intelligence = "1d25+75"
+damage = "1d19+1"
+armor = 15
+notoriety = "attackable"
+karma = -2500
+fame = 2500
+gold = "1d51+49"
+[mobile.skills]
+resisting_spells = "1d16+74"
+parrying = "1d11+54"
+tactics = "1d16+49"
+wrestling = "1d16+49"
+[mobile.sounds]
+start_attack = 105
+idle = 106
+attack = 107
+hurt = 108
+death = 109
+
+[[mobile]]
+id = "hellhound"
+name = "a hell hound"
+body = 98
+skin_hue = 1153
+strength = "1d49+101"
+dexterity = "1d25+80"
+intelligence = "1d25+35"
+damage = "1d17+5"
+armor = 15
+notoriety = "attackable"
+karma = -3400
+fame = 3400
+gold = "1d151-1"
+[mobile.skills]
+resisting_spells = "1d18+57"
+parrying = "1d13+62"
+tactics = "1d21+49"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 229
+idle = 230
+attack = 231
+hurt = 232
+death = 233
+
+[[mobile]]
+id = "stoneharpy"
+name = "a stone harpy"
+body = 73
+skin_hue = 902
+strength = "1d25+295"
+dexterity = "1d25+85"
+intelligence = "1d25+50"
+damage = "1d19+2"
+armor = 25
+notoriety = "attackable"
+karma = -4500
+fame = 4500
+loot = ["randomgems", "randomgems", "randomgems"]
+gold = "1d101+399"
+[mobile.skills]
+resisting_spells = "1d16+49"
+parrying = "1d16+74"
+tactics = "1d31+69"
+wrestling = "1d31+69"
+[mobile.sounds]
+start_attack = 916
+idle = 918
+attack = 916
+hurt = 919
+death = 917
+
+[[mobile]]
+id = "gazer"
+name = "a gazer"
+body = 22
+strength = "1d30+95"
+dexterity = "1d20+85"
+intelligence = "1d25+140"
+damage = "1d10+2"
+armor = 18
+notoriety = "attackable"
+karma = -3500
+fame = 3500
+loot = ["lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "randompotions", "randompotions", "treasure_map_lvl1loot"]
+gold = "1d101+49"
+[mobile.skills]
+magery = "1d16+49"
+resisting_spells = "1d16+59"
+parrying = "1d16+39"
+tactics = "1d21+49"
+wrestling = "1d21+49"
+[mobile.sounds]
+start_attack = 377
+idle = 378
+attack = 379
+hurt = 380
+death = 381
+
+[[mobile]]
+id = "gazerlarva"
+name = "a gazer larva"
+body = 778
+strength = "1d25+75"
+dexterity = "1d25+50"
+intelligence = "1d25+55"
+damage = "1d11"
+armor = 11
+notoriety = "attackable"
+karma = -900
+fame = 900
+gold = "1d26-1"
+[mobile.skills]
+resisting_spells = 70
+tactics = 70
+wrestling = 70
+[mobile.sounds]
+start_attack = 377
+idle = 378
+attack = 379
+hurt = 380
+death = 381
+
+[[mobile]]
+id = "eldergazer"
+name = "an elder gazer"
+body = 68
+strength = "1d30+295"
+dexterity = "1d20+85"
+intelligence = "1d95+290"
+damage = "1d22+2"
+armor = 25
+notoriety = "attackable"
+karma = -12500
+fame = 12500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems"]
+gold = "1d401+849"
+[mobile.skills]
+evaluating_intelligence = "1d11+24"
+magery = "1d11+89"
+resisting_spells = "1d6+114"
+parrying = "1d11+54"
+tactics = "1d21+79"
+wrestling = "1d21+79"
+[mobile.sounds]
+start_attack = 377
+idle = 378
+attack = 379
+hurt = 380
+death = 381
+
+[[mobile]]
+id = "harpy"
+name = "a harpy"
+body = 30
+strength = "1d25+95"
+dexterity = "1d25+85"
+intelligence = "1d25+50"
+damage = "1d7+2"
+armor = 14
+notoriety = "attackable"
+karma = -2500
+fame = 2500
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d16+49"
+parrying = "1d16+74"
+tactics = "1d31+69"
+wrestling = "1d31+59"
+[mobile.sounds]
+start_attack = 916
+idle = 918
+attack = 916
+hurt = 919
+death = 917
+
+[[mobile]]
+id = "headless"
+name = "a headless one"
+body = 31
+strength = "1d25+25"
+dexterity = "1d20+35"
+intelligence = "1d15+15"
+damage = "1d10+2"
+armor = 9
+notoriety = "attackable"
+karma = -450
+fame = 450
+gold = "1d51-1"
+[mobile.skills]
+resisting_spells = "1d6+14"
+parrying = "1d11+34"
+tactics = "1d16+24"
+wrestling = "1d16+24"
+[mobile.sounds]
+start_attack = 407
+idle = 408
+attack = 409
+hurt = 410
+death = 411
+
+[[mobile]]
+id = "slime"
+name = "a slime"
+body = 51
+strength = "1d13+21"
+dexterity = "1d6+15"
+intelligence = "1d5+15"
+damage = "1d7+1"
+armor = 19
+notoriety = "attackable"
+karma = -300
+fame = 300
+loot = ["randomgems", "randomgems"]
+gold = "1d26-1"
+[mobile.skills]
+resisting_spells = "1d6+14"
+tactics = "1d16+18"
+wrestling = "1d16+18"
+parrying = "1d7+14"
+poisoning = "1d21+29"
+[mobile.sounds]
+start_attack = 456
+idle = 457
+attack = 458
+hurt = 459
+death = 460
+
+[[mobile]]
+id = "jwilson"
+base_id = "slime"
+name = "a jwilson"
+
+[[mobile]]
+id = "frostooze"
+name = "a frost ooze"
+body = 94
+skin_hue = 1153
+strength = "1d13+17"
+dexterity = "1d6+15"
+intelligence = "1d5+15"
+damage = "1d9+1"
+armor = 8
+notoriety = "attackable"
+karma = -450
+fame = 450
+loot = ["randomgems", "randomgems"]
+[mobile.skills]
+resisting_spells = "1d6+4"
+parrying = "1d7+14"
+tactics = "1d16+18"
+wrestling = "1d16+24"
+[mobile.sounds]
+start_attack = 456
+idle = 457
+attack = 458
+hurt = 459
+death = 460
+
+[[mobile]]
+id = "wisp"
+name = "a wisp"
+body = 58
+strength = "1d30+195"
+dexterity = "1d30+195"
+intelligence = "1d30+195"
+damage = "1d6+14"
+armor = 20
+notoriety = "attackable"
+fame = 4000
+gold = "1d101+99"
+[mobile.skills]
+magery = 80
+resisting_spells = 80
+parrying = 80
+tactics = 80
+wrestling = 80
+[mobile.sounds]
+start_attack = 466
+idle = 467
+attack = 468
+hurt = 469
+death = 470
+
+[[mobile]]
+id = "shadowwisp"
+name = "a shadow wisp"
+body = 165
+strength = "1d25+15"
+dexterity = "1d30+15"
+intelligence = "1d15+10"
+damage = "1d9+2"
+armor = 9
+notoriety = "attackable"
+karma = -500
+fame = 500
+[mobile.skills]
+magery = 50
+resisting_spells = 100
+parrying = 90
+tactics = "1d16+24"
+wrestling = "1d16+24"
+[mobile.sounds]
+start_attack = 466
+idle = 467
+attack = 468
+hurt = 469
+death = 470
+
+[[mobile]]
+id = "darkwisp"
+name = "a dark wisp"
+body = 165
+strength = "1d30+195"
+dexterity = "1d30+195"
+intelligence = "1d30+195"
+damage = "1d6+14"
+armor = 22
+notoriety = "murderer"
+fame = 4000
+gold = "1d101+99"
+[mobile.skills]
+magery = "1d11+79"
+resisting_spells = "1d11+79"
+meditation = 20
+parrying = 80
+tactics = 80
+wrestling = 80
+[mobile.sounds]
+start_attack = 466
+idle = 467
+attack = 468
+hurt = 469
+death = 470
+
+[[mobile]]
+id = "evilmage"
+name = "an evil mage"
+body = 124
+strength = "1d25+80"
+dexterity = "1d25+90"
+intelligence = "1d25+95"
+damage = "1d10+2"
+armor = 8
+notoriety = "murderer"
+karma = -2500
+fame = 2500
+loot = ["lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents"]
+gold = "1d51-1"
+[mobile.skills]
+evaluating_intelligence = "1d21+4"
+magery = "1d26+74"
+resisting_spells = "1d23+74"
+tactics = "1d23+64"
+wrestling = "1d61+19"
+[mobile.sounds]
+hurt = 1078
+death = 1059
+
+[[mobile]]
+id = "evilmagelord"
+name = "an evil mage lord"
+body = 125
+strength = "1d25+80"
+dexterity = "1d25+190"
+intelligence = "1d25+125"
+damage = "1d10+2"
+armor = 18
+notoriety = "murderer"
+karma = -10500
+fame = 10500
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents"]
+gold = "1d51+199"
+[mobile.skills]
+evaluating_intelligence = "1d70+30"
+magery = "1d6+94"
+resisting_spells = "1d23+77"
+meditation = "1d23+27"
+tactics = "1d24+64"
+wrestling = "1d61+19"
+[mobile.sounds]
+hurt = 1078
+death = 1059
+
+[[mobile]]
+id = "tentacles_of_the_harrower"
+name = "tentacles of the harrower"
+body = 129
+strength = "1d101+899"
+dexterity = "1d15+125"
+intelligence = "1d201+999"
+damage = "1d8+12"
+armor = 30
+notoriety = "murderer"
+karma = -15000
+fame = 15000
+loot = ["reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "reagents", "highlevelscrolls", "highlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls"]
+gold = "1d551+749"
+[mobile.skills]
+evaluating_intelligence = 100
+magery = "1d11+99"
+resisting_spells = 120
+meditation = 100
+parrying = 0
+swordsmanship = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 850
+idle = 851
+attack = 852
+hurt = 853
+death = 854

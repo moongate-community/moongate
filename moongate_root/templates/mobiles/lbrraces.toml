@@ -1,0 +1,243 @@
+[[mobile]]
+id = "jukawarrior"
+name = "a juka warrior"
+body = 764
+strength = "1d100+250"
+dexterity = "1d20+60"
+intelligence = "1d50+100"
+damage = "1d7+4"
+armor = "1d5+20"
+notoriety = "murderer"
+karma = -10000
+fame = 10000
+gold = "1d51+249"
+[mobile.skills]
+anatomy = "1d11+79"
+fencing = "1d11+79"
+mace_fighting = "1d11+79"
+resisting_spells = 120
+parrying = "1d11+79"
+swordsmanship = "1d11+79"
+tactics = "1d11+79"
+wrestling = "1d11+79"
+[mobile.sounds]
+start_attack = 427
+idle = 429
+attack = 432
+hurt = 464
+death = 652
+[[mobile.equipment]]
+items = ["0x0df1"]
+
+[[mobile]]
+id = "jukalord"
+name = "a juka lord"
+body = 766
+strength = "1d100+400"
+dexterity = "1d20+80"
+intelligence = "1d50+150"
+damage = "1d7+7"
+armor = "1d5+20"
+notoriety = "murderer"
+karma = -15000
+fame = 15000
+gold = "1d201+199"
+[mobile.skills]
+anatomy = "1d11+89"
+archery = "1d6+94"
+healing = "1d21+79"
+resisting_spells = 120
+parrying = "1d11+89"
+swordsmanship = "1d11+89"
+tactics = "1d6+94"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 427
+idle = 429
+attack = 432
+hurt = 464
+death = 10444
+
+[[mobile]]
+id = "jukamage"
+name = "a juka mage"
+body = 765
+strength = "1d100+200"
+dexterity = "1d20+70"
+intelligence = "1d50+450"
+damage = "1d11+1"
+armor = "1d5+10"
+notoriety = "murderer"
+karma = -15000
+fame = 15000
+loot = ["randomgems", "midlevelscrolls", "midlevelscrolls"]
+gold = "1d51+199"
+[mobile.skills]
+anatomy = "1d11+79"
+evaluating_intelligence = "1d21+79"
+fencing = "1d11+79"
+magery = "1d2+98"
+resisting_spells = 120
+parrying = "1d11+79"
+tactics = "1d11+79"
+wrestling = "1d11+79"
+[mobile.sounds]
+start_attack = 427
+idle = 429
+attack = 432
+hurt = 464
+death = 652
+
+[[mobile]]
+id = "meereternal"
+name = "a meer eternal"
+body = 772
+strength = "1d90+415"
+dexterity = "1d20+145"
+intelligence = "1d90+565"
+damage = "1d16+2"
+armor = 25
+notoriety = "attackable"
+karma = 18000
+fame = 18000
+loot = ["midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls"]
+gold = 1300
+[mobile.skills]
+evaluating_intelligence = "1d31+29"
+magery = "1d11+89"
+resisting_spells = 120
+parrying = "1d11+54"
+tactics = "1d21+49"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 115
+attack = 651
+hurt = 359
+death = 188
+
+[[mobile]]
+id = "meerwarrior"
+name = "a meer warrior"
+body = 771
+strength = "1d15+85"
+dexterity = "1d15+185"
+intelligence = "1d15+85"
+damage = "1d16+7"
+armor = 20
+karma = 5000
+fame = 2000
+gold = "1d51+49"
+[mobile.skills]
+resisting_spells = "1d10+90"
+tactics = "1d10+90"
+wrestling = "1d10+90"
+[mobile.sounds]
+start_attack = 115
+attack = 117
+hurt = 342
+death = 348
+
+[[mobile]]
+id = "meercaptain"
+name = "a meer captain"
+body = 773
+strength = "1d15+95"
+dexterity = "1d15+185"
+intelligence = "1d15+95"
+damage = "1d17+1"
+armor = 25
+karma = 5000
+fame = 2000
+gold = "1d51+49"
+[mobile.skills]
+archery = "1d11+89"
+resisting_spells = "1d10+90"
+tactics = "1d10+90"
+wrestling = "1d10+80"
+[mobile.sounds]
+start_attack = 115
+attack = 117
+hurt = 333
+death = 788
+
+[[mobile]]
+id = "meermage"
+name = "a meer mage"
+body = 770
+strength = "1d31+169"
+dexterity = "1d21+124"
+intelligence = "1d31+274"
+damage = "1d13+17"
+armor = 25
+notoriety = "attackable"
+karma = 8000
+fame = 8000
+loot = ["daemonbonearmor", "midlevelscrolls", "midlevelscrolls"]
+gold = 700
+[mobile.skills]
+evaluating_intelligence = 100
+magery = "1d11+69"
+resisting_spells = "1d21+79"
+meditation = "1d11+84"
+tactics = "1d21+69"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 115
+attack = 117
+hurt = 333
+death = 788
+
+[[mobile]]
+id = "blackthornjuggernaut"
+name = "a blackthorn juggernaut"
+body = 768
+race = "human"
+strength = "1d100+300"
+dexterity = "1d20+50"
+intelligence = "1d50+50"
+damage = "1d16+7"
+armor = "1d10+30"
+notoriety = "murderer"
+karma = -12000
+fame = 12000
+loot = ["randomgems", "randomgems", "randomtinkerparts", "juggernaut_loot"]
+gold = "1d301+399"
+[mobile.skills]
+anatomy = "1d11+89"
+resisting_spells = 120
+parrying = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 571
+attack = 571
+hurt = 320
+death = 348
+
+[[mobile]]
+id = "betrayer"
+name = "a betrayer"
+body = 767
+race = "human"
+strength = "1d100+400"
+dexterity = "1d20+80"
+intelligence = "1d50+150"
+damage = "1d21+8"
+armor = "1d5+30"
+notoriety = "murderer"
+karma = -15000
+fame = 15000
+loot = ["randomgems", "randomgems", "betrayer_loot"]
+gold = "1d101+199"
+[mobile.skills]
+anatomy = "1d11+89"
+evaluating_intelligence = "1d11+89"
+magery = "1d51+49"
+resisting_spells = "1d120"
+parrying = "1d11+89"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+attack = 571
+hurt = 320
+death = 348

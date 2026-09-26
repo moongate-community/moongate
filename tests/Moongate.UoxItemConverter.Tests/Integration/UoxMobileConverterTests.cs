@@ -185,7 +185,8 @@ public sealed class UoxMobileConverterTests : IDisposable
             [ITEMLIST 20]
             {
             0x1517
-            0x13e4
+            50|blank
+            10|0x13e4
             }
             [ITEMLIST 13]
             {
@@ -237,6 +238,7 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Contains("unresolved item", CombinedOutput);
         Assert.Contains("unresolved loot", CombinedOutput);
         Assert.Contains("colour list not a range", CombinedOutput);
+        Assert.Contains("item list weight or blank dropped", CombinedOutput);
     }
 
     [Fact]

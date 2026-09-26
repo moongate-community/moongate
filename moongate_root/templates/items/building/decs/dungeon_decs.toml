@@ -1,0 +1,419 @@
+[[item]]
+id = "0x126b_block"
+base_id = "base_item"
+item_id = 4715
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x126c_block"
+base_id = "base_item"
+item_id = 4716
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x126d_block"
+base_id = "base_item"
+item_id = 4717
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x126e_block"
+base_id = "base_item"
+item_id = 4718
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x126f_block"
+base_id = "base_item"
+item_id = 4719
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1270_block"
+base_id = "base_item"
+item_id = 4720
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1271_block"
+base_id = "base_item"
+item_id = 4721
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1272_block"
+base_id = "base_item"
+item_id = 4722
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1273_block"
+base_id = "base_item"
+item_id = 4723
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1274_block"
+base_id = "base_item"
+item_id = 4724
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1275_block"
+base_id = "base_item"
+item_id = 4725
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1276_block"
+base_id = "base_item"
+item_id = 4726
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1277_block"
+base_id = "base_item"
+item_id = 4727
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1278_block"
+base_id = "base_item"
+item_id = 4728
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1279_block"
+base_id = "base_item"
+item_id = 4729
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x127a_block"
+base_id = "base_item"
+item_id = 4730
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x127b_block"
+base_id = "base_item"
+item_id = 4731
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x127c_block"
+base_id = "base_item"
+item_id = 4732
+name = "block"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x127e_pillory"
+base_id = "base_item"
+item_id = 4734
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x127f_pillory"
+base_id = "base_item"
+item_id = 4735
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1280_pillory"
+base_id = "base_item"
+item_id = 4736
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1281_pillory"
+base_id = "base_item"
+item_id = 4737
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1282_pillory"
+base_id = "base_item"
+item_id = 4738
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1283_pillory"
+base_id = "base_item"
+item_id = 4739
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1284_pillory"
+base_id = "base_item"
+item_id = 4740
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1285_pillory"
+base_id = "base_item"
+item_id = 4741
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1286_pillory"
+base_id = "base_item"
+item_id = 4742
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1287_pillory"
+base_id = "base_item"
+item_id = 4743
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1288_pillory"
+base_id = "base_item"
+item_id = 4744
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1289_pillory"
+base_id = "base_item"
+item_id = 4745
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x128a_pillory"
+base_id = "base_item"
+item_id = 4746
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x128b_pillory"
+base_id = "base_item"
+item_id = 4747
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x128c_pillory"
+base_id = "base_item"
+item_id = 4748
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x128d_pillory"
+base_id = "base_item"
+item_id = 4749
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x128e_pillory"
+base_id = "base_item"
+item_id = 4750
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x128f_pillory"
+base_id = "base_item"
+item_id = 4751
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1290_pillory"
+base_id = "base_item"
+item_id = 4752
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1291_pillory"
+base_id = "base_item"
+item_id = 4753
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1292_pillory"
+base_id = "base_item"
+item_id = 4754
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1293_pillory"
+base_id = "base_item"
+item_id = 4755
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1294_pillory"
+base_id = "base_item"
+item_id = 4756
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1295_pillory"
+base_id = "base_item"
+item_id = 4757
+name = "pillory"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0

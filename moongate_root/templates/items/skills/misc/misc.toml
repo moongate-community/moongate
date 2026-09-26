@@ -1,4 +1,126 @@
 [[item]]
+id = "0x0f65_easel"
+base_id = "base_item"
+item_id = 3941
+name = "easel"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f66_easel_with_canvas"
+base_id = "base_item"
+item_id = 3942
+name = "easel with canvas"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f67_easel"
+base_id = "base_item"
+item_id = 3943
+name = "easel"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f68_easel_with_canvas"
+base_id = "base_item"
+item_id = 3944
+name = "easel with canvas"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f69_easel"
+base_id = "base_item"
+item_id = 3945
+name = "easel"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f6a_easel_with_canvas"
+base_id = "base_item"
+item_id = 3946
+name = "easel with canvas"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f71_rack_of_canvases"
+base_id = "base_item"
+item_id = 3953
+name = "rack of canvases"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f72_rack_of_canvases"
+base_id = "base_item"
+item_id = 3954
+name = "rack of canvases"
+rarity = "common"
+movable = false
+weight = 20.0
+stackable = false
+decays = false
+hue = 0
+
+[[item]]
+id = "0x0f73_rack_of_canvases"
+base_id = "base_item"
+item_id = 3955
+name = "rack of canvases"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f74_rack_of_canvases"
+base_id = "base_item"
+item_id = 3956
+name = "rack of canvases"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f75_rack_of_canvases"
+base_id = "base_item"
+item_id = 3957
+name = "rack of canvases"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0f76_rack_of_canvases"
+base_id = "base_item"
+item_id = 3958
+name = "rack of canvases"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
 id = "0x091a_beehive"
 base_id = "base_item"
 item_id = 2330
@@ -9,6 +131,76 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "0x0dcc_fishing_weight"
+base_id = "base_item"
+item_id = 3532
+name = "fishing weight"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 5
+sell_price = 5
+hue = 0
+
+[[item]]
+id = "0x0dcd_fishing_weight"
+base_id = "base_item"
+item_id = 3533
+name = "fishing weight"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 5
+sell_price = 5
+hue = 0
+
+[[item]]
+id = "0x0dce_fishing_weight"
+base_id = "base_item"
+item_id = 3534
+name = "fishing weight"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 5
+sell_price = 5
+hue = 0
+
+[[item]]
+id = "0x0dcf_fishing_weight"
+base_id = "base_item"
+item_id = 3535
+name = "fishing weight"
+rarity = "common"
+movable = true
+weight = 2.0
+buy_price = 5
+sell_price = 5
+hue = 0
+
+[[item]]
+id = "0x1428_dipping_stick"
+base_id = "base_item"
+item_id = 5160
+name = "dipping stick"
+rarity = "common"
+movable = true
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1429_dipping_stick"
+base_id = "base_item"
+item_id = 5161
+name = "dipping stick"
+rarity = "common"
+movable = true
+weight = 1.0
+decays = true
+hue = 0
+
+[[item]]
 id = "0x142a_pot_of_wax"
 base_id = "base_item"
 item_id = 5162
@@ -16,5 +208,40 @@ name = "pot of wax"
 rarity = "common"
 movable = true
 weight = 3.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x142b_pot_of_wax"
+base_id = "base_item"
+item_id = 5163
+name = "pot of wax"
+rarity = "common"
+movable = true
+weight = 2.0
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1422_beeswax"
+base_id = "base_item"
+item_id = 5154
+name = "beeswax"
+rarity = "common"
+movable = true
+weight = 0.1
+stackable = true
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1423_beeswax"
+base_id = "base_item"
+item_id = 5155
+name = "beeswax"
+rarity = "common"
+movable = true
+weight = 0.1
+stackable = true
 decays = true
 hue = 0

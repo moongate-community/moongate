@@ -1,0 +1,288 @@
+[[mobile]]
+id = "orc_aos"
+base_id = "base_orc"
+strength = "1d2+95"
+dexterity = "1d2+80"
+intelligence = "1d2+35"
+hits = "1d15+57"
+damage = "1d3+4"
+armor = "1d6+24"
+karma = -1500
+fame = 1500
+loot = ["treasure_map_lvl1loot"]
+gold = "1d26+24"
+[mobile.resistances]
+fire = "1d11+19"
+cold = "1d11+9"
+poison = "1d11+9"
+energy = "1d11+19"
+[mobile.skills]
+magery = 50
+parrying = "1d26+34"
+tactics = "1d26+54"
+wrestling = "1d3+49"
+
+[[mobile]]
+id = "orccaptain_aos"
+base_id = "base_orccaptain"
+strength = "1d35+110"
+dexterity = "1d35+100"
+intelligence = "1d2+85"
+hits = "1d21+66"
+damage = "1d11+4"
+armor = "1d6+29"
+karma = -2500
+fame = 2500
+gold = "1d71+29"
+[mobile.resistances]
+fire = "1d11+9"
+cold = "1d11+14"
+poison = "1d6+4"
+energy = "1d6+4"
+[mobile.skills]
+magery = 70
+resisting_spells = "1d26+59"
+parrying = "1d26+69"
+tactics = "1d16+84"
+swordsmanship = "1d26+69"
+
+[[mobile]]
+id = "orcmage_aos"
+base_id = "base_orcmage"
+strength = "1d35+115"
+dexterity = "1d2+90"
+intelligence = "1d25+160"
+hits = "1d21+69"
+damage = "1d11+3"
+armor = "1d6+24"
+karma = -3000
+fame = 3000
+loot = ["treasure_map_lvl1loot"]
+gold = "1d51+74"
+[mobile.resistances]
+fire = "1d11+29"
+cold = "1d11+19"
+poison = "1d11+29"
+energy = "1d11+29"
+[mobile.skills]
+resisting_spells = "1d2+59"
+magery = 60
+parrying = "1d26+59"
+tactics = "1d16+49"
+wrestling = "1d11+39"
+
+[[mobile]]
+id = "orclord_aos"
+base_id = "base_orclord"
+strength = "1d69+146"
+dexterity = "1d2+90"
+intelligence = "1d2+60"
+hits = "1d29+94"
+damage = "1d11+3"
+armor = "1d6+24"
+karma = -2500
+fame = 2500
+loot = ["treasure_map_lvl1loot"]
+gold = "1d71+49"
+[mobile.resistances]
+fire = "1d11+29"
+cold = "1d11+19"
+poison = "1d11+29"
+energy = "1d11+29"
+[mobile.skills]
+resisting_spells = "1d26+69"
+parrying = "1d26+59"
+tactics = "1d16+74"
+swordsmanship = "1d26+59"
+wrestling = "1d26+59"
+
+[[mobile]]
+id = "orcbomber_aos"
+base_id = "base_orcbomber"
+strength = "1d69+146"
+dexterity = "1d2+90"
+intelligence = "1d2+60"
+hits = "1d29+94"
+damage = "1d8"
+armor = "1d11+24"
+karma = -2500
+fame = 2500
+gold = "1d71+49"
+[mobile.resistances]
+fire = "1d11+29"
+cold = "1d11+14"
+poison = "1d6+14"
+energy = "1d6+24"
+[mobile.skills]
+resisting_spells = "1d16+69"
+tactics = "1d16+74"
+wrestling = "1d26+59"
+swordsmanship = "1d26+59"
+
+[[mobile]]
+id = "orcscout_aos"
+base_id = "base_orcscout"
+strength = "1d90+6"
+dexterity = "1d30+100"
+intelligence = "1d2+35"
+hits = "1d15+57"
+damage = "1d3+4"
+armor = "1d11+24"
+karma = -1500
+fame = 1500
+gold = "1d71+49"
+[mobile.resistances]
+fire = "1d11+29"
+cold = "1d11+14"
+poison = "1d6+14"
+energy = "1d6+24"
+[mobile.skills]
+archery = "1d31+59"
+fencing = "1d21+49"
+parrying = "1d26+34"
+resisting_spells = "1d26+49"
+tactics = "1d26+54"
+
+[[mobile]]
+id = "orcbrute_aos"
+base_id = "base_orcbrute"
+strength = "1d179+766"
+dexterity = 66
+intelligence = "1d2+45"
+hits = "1d77+475"
+damage = "1d6+19"
+armor = "1d11+44"
+karma = -15000
+fame = 15000
+loot = ["orcbrute_loot"]
+gold = "1d301+49"
+[mobile.resistances]
+fire = "1d11+39"
+cold = "1d11+24"
+poison = "1d11+24"
+energy = "1d11+24"
+[mobile.skills]
+mace_fighting = "1d11+89"
+resisting_spells = 120
+parrying = "1d11+74"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+
+[[mobile]]
+id = "orcchopper_aos"
+base_id = "base_orcchopper"
+strength = "1d99+146"
+dexterity = "1d2+90"
+intelligence = "1d2+60"
+hits = "1d43+96"
+damage = "1d10+3"
+armor = "1d11+24"
+karma = -2500
+fame = 2500
+gold = 100
+[mobile.resistances]
+fire = "1d11+29"
+cold = "1d11+14"
+poison = "1d6+14"
+energy = "1d6+24"
+[mobile.skills]
+parrying = "1d26+59"
+magery = "1d26+69"
+resisting_spells = "1d26+59"
+tactics = "1d16+74"
+wrestling = "1d26+59"
+
+[[mobile]]
+id = "lizardman_aos"
+base_id = "base_lizardman"
+strength = "1d2+95"
+dexterity = "1d2+85"
+intelligence = "1d2+35"
+hits = "1d15+57"
+damage = "1d3+4"
+armor = "1d6+24"
+karma = -1500
+fame = 1500
+gold = "1d26+49"
+[mobile.resistances]
+fire = "1d6+4"
+cold = "1d6+4"
+poison = "1d11+9"
+energy = 0
+[mobile.skills]
+resisting_spells = 35
+parrying = "1d21+54"
+tactics = "1d26+54"
+wrestling = "1d3+49"
+
+[[mobile]]
+id = "ratman_aos"
+base_id = "base_ratman"
+strength = "1d2+95"
+dexterity = "1d2+80"
+intelligence = "1d2+35"
+hits = "1d15+57"
+damage = "1d2+3"
+armor = "1d6+24"
+karma = -1500
+fame = 1500
+gold = "1d51+49"
+[mobile.resistances]
+fire = "1d11+9"
+cold = "1d11+9"
+poison = "1d11+9"
+energy = "1d11+9"
+[mobile.skills]
+resisting_spells = 35
+parrying = "1d21+49"
+tactics = "1d26+49"
+wrestling = "1d26+49"
+
+[[mobile]]
+id = "ratmanmage_aos"
+base_id = "base_ratmanmage"
+strength = "1d35+145"
+dexterity = "1d30+100"
+intelligence = "1d25+185"
+hits = "1d21+87"
+damage = "1d8+6"
+armor = "1d6+39"
+karma = -7500
+fame = 7500
+gold = "1d151+49"
+[mobile.resistances]
+fire = "1d11+9"
+cold = "1d11+9"
+poison = "1d11+9"
+energy = "1d11+9"
+[mobile.skills]
+evaluating_intelligence = "1d11+69"
+magery = "1d16+64"
+resisting_spells = 65
+tactics = "1d26+49"
+wrestling = "1d26+49"
+
+[[mobile]]
+id = "ratmanarcher_aos"
+base_id = "base_ratmanarcher"
+strength = "1d35+145"
+dexterity = "1d30+100"
+intelligence = "1d25+115"
+hits = "1d21+87"
+damage = "1d7+3"
+armor = "1d16+39"
+karma = -6500
+fame = 6500
+gold = "1d51+49"
+[mobile.resistances]
+fire = "1d11+9"
+cold = "1d11+9"
+poison = "1d11+9"
+energy = "1d11+9"
+[mobile.skills]
+anatomy = "1d11+59"
+archery = "1d16+74"
+resisting_spells = 65
+parrying = "1d21+59"
+tactics = "1d26+49"
+wrestling = "1d26+49"

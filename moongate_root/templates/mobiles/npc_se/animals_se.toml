@@ -1,0 +1,34 @@
+[[mobile]]
+id = "crane_se"
+base_id = "base_crane"
+strength = "1d11+24"
+dexterity = "1d11+14"
+intelligence = "1d6+9"
+damage = "1d2"
+armor = 5
+[mobile.skills]
+resisting_spells = "1d2+3"
+tactics = "1d2+9"
+wrestling = "1d2+9"
+anatomy = 0
+
+[[mobile]]
+id = "gaman_se"
+base_id = "base_gaman"
+strength = "1d31+144"
+dexterity = "1d31+114"
+intelligence = "1d16+44"
+hits = "1d31+129"
+damage = "1d11+12"
+armor = "1d21+49"
+karma = -2000
+[mobile.resistances]
+fire = "1d21+29"
+cold = "1d21+29"
+poison = "1d21+39"
+energy = "1d21+29"
+[mobile.skills]
+resisting_spells = "1d6+34"
+tactics = "1d16+69"
+wrestling = "1d11+49"
+anatomy = 0

@@ -1,4 +1,17 @@
 [[item]]
+id = "0x0a2a_a_stool"
+base_id = "base_item"
+item_id = 2602
+name = "a stool"
+rarity = "common"
+movable = true
+weight = 10.0
+buy_price = 12
+sell_price = 6
+decays = true
+hue = 0
+
+[[item]]
 id = "0x0a2b_a_stool"
 base_id = "base_item"
 item_id = 2603
@@ -8,6 +21,318 @@ movable = true
 weight = 10.0
 buy_price = 12
 sell_price = 6
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b2c_wooden_bench"
+base_id = "base_item"
+item_id = 2860
+name = "wooden bench"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b2d_wooden_bench"
+base_id = "base_item"
+item_id = 2861
+name = "wooden bench"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b2e_wooden_chair"
+base_id = "base_item"
+item_id = 2862
+name = "wooden chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b2f_wooden_chair"
+base_id = "base_item"
+item_id = 2863
+name = "wooden chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b30_wooden_chair"
+base_id = "base_item"
+item_id = 2864
+name = "wooden chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b31_wooden_chair"
+base_id = "base_item"
+item_id = 2865
+name = "wooden chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b32_throne"
+base_id = "base_item"
+item_id = 2866
+name = "throne"
+rarity = "common"
+movable = true
+weight = 40.0
+buy_price = 48
+sell_price = 24
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b33_throne"
+base_id = "base_item"
+item_id = 2867
+name = "throne"
+rarity = "common"
+movable = true
+weight = 40.0
+buy_price = 48
+sell_price = 24
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b4e_chair"
+base_id = "base_item"
+item_id = 2894
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b4f_chair"
+base_id = "base_item"
+item_id = 2895
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b50_chair"
+base_id = "base_item"
+item_id = 2896
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b51_chair"
+base_id = "base_item"
+item_id = 2897
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b52_chair"
+base_id = "base_item"
+item_id = 2898
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b53_chair"
+base_id = "base_item"
+item_id = 2899
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b54_chair"
+base_id = "base_item"
+item_id = 2900
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b55_chair"
+base_id = "base_item"
+item_id = 2901
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b56_chair"
+base_id = "base_item"
+item_id = 2902
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b57_chair"
+base_id = "base_item"
+item_id = 2903
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b58_chair"
+base_id = "base_item"
+item_id = 2904
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b59_chair"
+base_id = "base_item"
+item_id = 2905
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 18
+sell_price = 9
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b5a_chair"
+base_id = "base_item"
+item_id = 2906
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b5b_chair"
+base_id = "base_item"
+item_id = 2907
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b5c_chair"
+base_id = "base_item"
+item_id = 2908
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x0b5d_chair"
+base_id = "base_item"
+item_id = 2909
+name = "chair"
+rarity = "common"
+movable = true
+weight = 20.0
+buy_price = 14
+sell_price = 7
 decays = true
 hue = 0
 
@@ -25,6 +350,192 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x0b5f_bench"
+base_id = "base_item"
+item_id = 2911
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b60_bench"
+base_id = "base_item"
+item_id = 2912
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b61_bench"
+base_id = "base_item"
+item_id = 2913
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b62_bench"
+base_id = "base_item"
+item_id = 2914
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b63_bench"
+base_id = "base_item"
+item_id = 2915
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b64_bench"
+base_id = "base_item"
+item_id = 2916
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b65_bench"
+base_id = "base_item"
+item_id = 2917
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b66_bench"
+base_id = "base_item"
+item_id = 2918
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b67_bench"
+base_id = "base_item"
+item_id = 2919
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b68_bench"
+base_id = "base_item"
+item_id = 2920
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b69_bench"
+base_id = "base_item"
+item_id = 2921
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b6a_bench"
+base_id = "base_item"
+item_id = 2922
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b91_bench"
+base_id = "base_item"
+item_id = 2961
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b92_bench"
+base_id = "base_item"
+item_id = 2962
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b93_bench"
+base_id = "base_item"
+item_id = 2963
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x0b94_bench"
+base_id = "base_item"
+item_id = 2964
+name = "bench"
+rarity = "common"
+movable = false
+weight = 20.0
+hue = 0
+
+[[item]]
+id = "0x1049_loom_bench"
+base_id = "base_item"
+item_id = 4169
+name = "loom bench"
+rarity = "common"
+movable = true
+weight = 10.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x104a_loom_bench"
+base_id = "base_item"
+item_id = 4170
+name = "loom bench"
+rarity = "common"
+movable = true
+weight = 10.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
 id = "0x11fc_bamboo_stool"
 base_id = "base_item"
 item_id = 4604
@@ -32,6 +543,284 @@ name = "bamboo stool"
 rarity = "common"
 movable = true
 weight = 10.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1207_stone_bench"
+base_id = "base_item"
+item_id = 4615
+name = "stone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1208_stone_bench"
+base_id = "base_item"
+item_id = 4616
+name = "stone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1209_stone_bench"
+base_id = "base_item"
+item_id = 4617
+name = "stone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x120a_stone_bench"
+base_id = "base_item"
+item_id = 4618
+name = "stone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x120b_stone_bench"
+base_id = "base_item"
+item_id = 4619
+name = "stone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x120c_stone_bench"
+base_id = "base_item"
+item_id = 4620
+name = "stone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1218_stone_chair"
+base_id = "base_item"
+item_id = 4632
+name = "stone chair"
+rarity = "common"
+movable = true
+weight = 40.0
+buy_price = 30
+sell_price = 15
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1219_stone_chair"
+base_id = "base_item"
+item_id = 4633
+name = "stone chair"
+rarity = "common"
+movable = true
+weight = 40.0
+buy_price = 30
+sell_price = 15
+decays = true
+hue = 0
+
+[[item]]
+id = "0x121a_stone_chair"
+base_id = "base_item"
+item_id = 4634
+name = "stone chair"
+rarity = "common"
+movable = true
+weight = 40.0
+buy_price = 30
+sell_price = 15
+decays = true
+hue = 0
+
+[[item]]
+id = "0x121b_stone_chair"
+base_id = "base_item"
+item_id = 4635
+name = "stone chair"
+rarity = "common"
+movable = true
+weight = 40.0
+buy_price = 30
+sell_price = 15
+decays = true
+hue = 0
+
+[[item]]
+id = "0x1526_throne"
+base_id = "base_item"
+item_id = 5414
+name = "throne"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1527_throne"
+base_id = "base_item"
+item_id = 5415
+name = "throne"
+rarity = "common"
+movable = false
+weight = 10.0
+hue = 0
+
+[[item]]
+id = "0x1dc7_sandstone_bench"
+base_id = "base_item"
+item_id = 7623
+name = "sandstone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dc8_sandstone_bench"
+base_id = "base_item"
+item_id = 7624
+name = "sandstone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dc9_sandstone_bench"
+base_id = "base_item"
+item_id = 7625
+name = "sandstone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dca_sandstone_bench"
+base_id = "base_item"
+item_id = 7626
+name = "sandstone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dcb_sandstone_bench"
+base_id = "base_item"
+item_id = 7627
+name = "sandstone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dcc_sandstone_bench"
+base_id = "base_item"
+item_id = 7628
+name = "sandstone bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dcd_marble_bench"
+base_id = "base_item"
+item_id = 7629
+name = "marble bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dce_marble_bench"
+base_id = "base_item"
+item_id = 7630
+name = "marble bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dcf_marble_bench"
+base_id = "base_item"
+item_id = 7631
+name = "marble bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dd0_marble_bench"
+base_id = "base_item"
+item_id = 7632
+name = "marble bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dd1_marble_bench"
+base_id = "base_item"
+item_id = 7633
+name = "marble bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x1dd2_marble_bench"
+base_id = "base_item"
+item_id = 7634
+name = "marble bench"
+rarity = "common"
+movable = false
+weight = 40.0
+hue = 0
+
+[[item]]
+id = "0x3dff_bench"
+base_id = "base_item"
+item_id = 15871
+name = "bench"
+rarity = "common"
+movable = true
+weight = 40.0
+buy_price = 14
+sell_price = 7
+decays = true
+hue = 0
+
+[[item]]
+id = "0x3e00_bench"
+base_id = "base_item"
+item_id = 15872
+name = "bench"
+rarity = "common"
+movable = true
+weight = 40.0
 buy_price = 14
 sell_price = 7
 decays = true
