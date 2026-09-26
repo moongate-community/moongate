@@ -1,0 +1,43 @@
+using Moongate.Core.Interfaces.DiceNotation;
+using ShaiRandom.Generators;
+
+namespace Moongate.Core.DiceNotation.Terms;
+
+/// <summary>
+/// Base term -- represents a numerical constant.
+/// </summary>
+public class ConstantTerm : ITerm
+{
+    /// <summary>
+    /// The numerical constant represented by this term.
+    /// </summary>
+    public readonly int Value;
+
+    /// <summary>
+    /// Constructor. Takes the numerical constant it represents.
+    /// </summary>
+    /// <param name="value">The numerical value this term represents.</param>
+    public ConstantTerm(int value)
+    {
+        Value = value;
+    }
+
+    /// <summary>
+    /// Returns the numerical constant it represents. RNG is unused.
+    /// </summary>
+    /// <param name="rng">(Unused) rng.</param>
+    /// <returns>The numerical constant this term represents.</returns>
+    public int GetResult(IEnhancedRandom rng)
+    {
+        return Value;
+    }
+
+    /// <summary>
+    /// Returns a string representation of this constant.
+    /// </summary>
+    /// <returns>The numerical constant being represented, as a string.</returns>
+    public override string ToString()
+    {
+        return Value.ToString();
+    }
+}
