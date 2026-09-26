@@ -4,7 +4,10 @@ base_id = "base_item"
 item_id = 3702
 name = "bag"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 7
+sell_price = 3
+decays = true
 hue = 0
 max_weight = 40000
 
@@ -14,7 +17,8 @@ base_id = "base_item"
 item_id = 3702
 name = "bag of sending"
 rarity = "common"
-movable = false
+weight = 2.0
+decays = true
 hue = 0
 
 [[item]]
@@ -23,6 +27,9 @@ base_id = "base_item"
 item_id = 3706
 name = "picnic basket"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 10
+sell_price = 5
+decays = true
 hue = 0
 max_weight = 40000

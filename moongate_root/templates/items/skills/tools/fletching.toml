@@ -5,6 +5,9 @@ item_id = 4130
 name = "fletcher's tools"
 rarity = "common"
 movable = true
+weight = 4.0
+buy_price = 20
+sell_price = 10
 hue = 0
 
 [[item]]
@@ -14,4 +17,7 @@ item_id = 4131
 name = "fletcher's tools"
 rarity = "common"
 movable = true
+weight = 4.0
+buy_price = 20
+sell_price = 10
 hue = 0

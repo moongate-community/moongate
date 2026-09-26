@@ -5,6 +5,7 @@ item_id = 8251
 name = "Short Hair"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -14,6 +15,7 @@ item_id = 8252
 name = "Long Hair"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -23,6 +25,7 @@ item_id = 8253
 name = "Pony Tail"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -32,6 +35,7 @@ item_id = 8260
 name = "Mohawk"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -41,6 +45,7 @@ item_id = 8261
 name = "Pageboy"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -50,6 +55,7 @@ item_id = 8262
 name = "Buns"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -59,6 +65,7 @@ item_id = 8263
 name = "Afro"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -68,6 +75,7 @@ item_id = 8264
 name = "Receding Hair"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -77,6 +85,7 @@ item_id = 8265
 name = "Pig Tails"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -86,6 +95,7 @@ item_id = 8266
 name = "Krisna Hair"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -95,6 +105,8 @@ item_id = 8254
 name = "Long Beard"
 rarity = "common"
 movable = false
+weight = 0.01
+layer = "facial_hair"
 hue = 0
 
 [[item]]
@@ -104,6 +116,8 @@ item_id = 8255
 name = "Short Beard"
 rarity = "common"
 movable = false
+weight = 0.01
+layer = "facial_hair"
 hue = 0
 
 [[item]]
@@ -113,6 +127,8 @@ item_id = 8256
 name = "Goatee"
 rarity = "common"
 movable = false
+weight = 0.01
+layer = "facial_hair"
 hue = 0
 
 [[item]]
@@ -122,6 +138,8 @@ item_id = 8257
 name = "Mustache"
 rarity = "common"
 movable = false
+weight = 0.01
+layer = "facial_hair"
 hue = 0
 
 [[item]]
@@ -131,6 +149,8 @@ item_id = 8267
 name = "Medium Short Beard"
 rarity = "common"
 movable = false
+weight = 0.01
+layer = "facial_hair"
 hue = 0
 
 [[item]]
@@ -140,6 +160,8 @@ item_id = 8268
 name = "Long Short Beard"
 rarity = "common"
 movable = false
+weight = 0.01
+layer = "facial_hair"
 hue = 0
 
 [[item]]
@@ -149,6 +171,8 @@ item_id = 8269
 name = "Vandyke"
 rarity = "common"
 movable = false
+weight = 0.01
+layer = "facial_hair"
 hue = 0
 
 [[item]]
@@ -158,6 +182,7 @@ item_id = 12223
 name = "Mid Long Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -167,6 +192,7 @@ item_id = 12224
 name = "Long Feather Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -176,6 +202,7 @@ item_id = 12225
 name = "Short Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -185,6 +212,7 @@ item_id = 12226
 name = "Mullet Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -194,6 +222,7 @@ item_id = 12236
 name = "Flower Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -203,6 +232,7 @@ item_id = 12237
 name = "Long Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -212,6 +242,7 @@ item_id = 12238
 name = "Topknot Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -221,6 +252,7 @@ item_id = 12239
 name = "Long Braid Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -230,6 +262,7 @@ item_id = 12240
 name = "Buns Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -239,6 +272,7 @@ item_id = 12241
 name = "Spiked Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -248,4 +282,5 @@ item_id = 12242
 name = "Long Elf"
 rarity = "common"
 movable = false
+weight = 0.01
 hue = 0

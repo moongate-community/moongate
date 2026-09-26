@@ -4,7 +4,12 @@ base_id = "base_item"
 item_id = 4187
 name = "axle"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 2
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +18,12 @@ base_id = "base_item"
 item_id = 4177
 name = "axle with gears"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 2
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +32,9 @@ base_id = "base_item"
 item_id = 7607
 name = "barrel hoop"
 rarity = "common"
-movable = false
+weight = 5.0
+amount = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -31,7 +43,9 @@ base_id = "base_item"
 item_id = 7608
 name = "barrel lid"
 rarity = "common"
-movable = false
+weight = 2.0
+amount = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -40,7 +54,9 @@ base_id = "base_item"
 item_id = 7858
 name = "barrel stave"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -49,7 +65,9 @@ base_id = "base_item"
 item_id = 4100
 name = "barrel tap"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -58,7 +76,11 @@ base_id = "base_item"
 item_id = 4171
 name = "clock"
 rarity = "common"
-movable = false
+weight = 2.0
+amount = 1
+buy_price = 24
+sell_price = 12
+decays = true
 hue = 0
 
 [[item]]
@@ -67,7 +89,11 @@ base_id = "base_item"
 item_id = 4172
 name = "clock"
 rarity = "common"
-movable = false
+weight = 2.0
+amount = 1
+buy_price = 24
+sell_price = 12
+decays = true
 hue = 0
 
 [[item]]
@@ -76,7 +102,10 @@ base_id = "base_item"
 item_id = 4173
 name = "clock frame"
 rarity = "common"
-movable = false
+weight = 2.0
+amount = 1
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
@@ -85,7 +114,10 @@ base_id = "base_item"
 item_id = 4174
 name = "clock frame"
 rarity = "common"
-movable = false
+weight = 2.0
+amount = 1
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
@@ -94,7 +126,11 @@ base_id = "base_item"
 item_id = 4175
 name = "clock parts"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -103,7 +139,11 @@ base_id = "base_item"
 item_id = 4179
 name = "gears"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+buy_price = 2
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -112,7 +152,8 @@ base_id = "base_item"
 item_id = 4167
 name = "globe"
 rarity = "common"
-movable = false
+weight = 4.0
+decays = true
 hue = 0
 
 [[item]]
@@ -121,7 +162,8 @@ base_id = "base_item"
 item_id = 4168
 name = "globe"
 rarity = "common"
-movable = false
+weight = 4.0
+decays = true
 hue = 0
 
 [[item]]
@@ -130,7 +172,12 @@ base_id = "base_item"
 item_id = 4181
 name = "hinge"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 2
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -139,7 +186,8 @@ base_id = "base_item"
 item_id = 6225
 name = "scales"
 rarity = "common"
-movable = false
+weight = 4.0
+decays = true
 hue = 0
 
 [[item]]
@@ -148,7 +196,8 @@ base_id = "base_item"
 item_id = 6226
 name = "scales"
 rarity = "common"
-movable = false
+weight = 4.0
+decays = true
 hue = 0
 
 [[item]]
@@ -157,7 +206,10 @@ base_id = "base_item"
 item_id = 4183
 name = "sextant"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -166,7 +218,12 @@ base_id = "base_item"
 item_id = 4185
 name = "sextant parts"
 rarity = "common"
-movable = false
+weight = 2.0
+amount = 1
+stackable = true
+buy_price = 6
+sell_price = 3
+decays = true
 hue = 0
 
 [[item]]
@@ -175,7 +232,12 @@ base_id = "base_item"
 item_id = 4189
 name = "springs"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -184,7 +246,8 @@ base_id = "base_item"
 item_id = 7964
 name = "power crystal"
 rarity = "common"
-movable = false
+weight = 1.0
+decays = true
 hue = 0
 
 [[item]]
@@ -193,5 +256,6 @@ base_id = "base_item"
 item_id = 7848
 name = "clockwork assembly"
 rarity = "common"
-movable = false
+weight = 50.0
+decays = true
 hue = 0

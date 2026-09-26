@@ -4,7 +4,10 @@ base_id = "base_item"
 item_id = 5198
 name = "daemon bone arms"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 156
+sell_price = 78
+decays = true
 hue = 1608
 
 [[item]]
@@ -13,7 +16,10 @@ base_id = "base_item"
 item_id = 5199
 name = "daemon bone armor"
 rarity = "common"
-movable = false
+weight = 6.0
+buy_price = 234
+sell_price = 117
+decays = true
 hue = 1608
 
 [[item]]
@@ -22,7 +28,10 @@ base_id = "base_item"
 item_id = 5200
 name = "daemon bone gauntlets"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 133
+sell_price = 66
+decays = true
 hue = 1608
 
 [[item]]
@@ -31,7 +40,10 @@ base_id = "base_item"
 item_id = 5201
 name = "daemon bone helm"
 rarity = "common"
-movable = false
+weight = 3.0
+buy_price = 157
+sell_price = 71
+decays = true
 hue = 1608
 
 [[item]]
@@ -40,5 +52,8 @@ base_id = "base_item"
 item_id = 5202
 name = "daemon bone legs"
 rarity = "common"
-movable = false
+weight = 3.0
+buy_price = 179
+sell_price = 89
+decays = true
 hue = 1608

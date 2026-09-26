@@ -2,54 +2,46 @@
 id = "0x4058"
 item_id = 16472
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x4057"
 item_id = 16471
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x405a"
 item_id = 16474
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x4059"
 item_id = 16473
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x405e"
 item_id = 16478
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x405d"
 item_id = 16477
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x405c"
 item_id = 16476
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x405b"
 item_id = 16475
 rarity = "common"
-movable = false
 hue = 0

@@ -88,6 +88,7 @@ The reasons quoted on this page are that last part.
 | `HueSpec` | bare integer, or a quoted hue or range | `hue = "0x047E-0x04B0"` | `HueSpecTomlConverter` | registration |
 | `EnumValueSpec<TEnum>` | quoted member name or `random_of` spec | `rarity = "random_of:rare,epic"` | `EnumValueSpecTomlConverterFactory` | registration |
 | `RangeValueSpec<T>` | bare number, or a quoted `"min-max"` | `amount = "5-10"` | `RangeValueSpecTomlConverterFactory` | registration |
+| `decimal` | bare integer or float | `weight = 0.02`, `weight = 7` | built in | built in |
 | Any enum | its snake_case name; flags joined by `\|` | `visibility = "game_master"`, `mode = "standalone"` | `EnumTomlConverterFactory` | built in |
 
 The converters of the first group and the enum converter are in

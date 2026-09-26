@@ -3,7 +3,6 @@ id = "townstonedeed"
 item_id = 5360
 name = "Townstone deed"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -11,7 +10,6 @@ id = "guildstonedeed"
 item_id = 5360
 name = "Guildstone deed"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -19,7 +17,8 @@ id = "playervendordeed"
 item_id = 5360
 name = "Player vendor deed"
 rarity = "common"
-movable = false
+buy_price = 1500
+sell_price = 700
 hue = 0
 
 [[item]]
@@ -27,14 +26,12 @@ id = "hairrestyledeed"
 item_id = 5360
 name = "a coupon for a free hair restyling"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "smallbod_oldid"
 item_id = 5359
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -43,8 +40,10 @@ base_id = "base_item"
 item_id = 8792
 name = "a bulk order deed"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
+[item.tags]
+bodType = "1"
 
 [[item]]
 id = "smallbod_tailor"
@@ -52,5 +51,7 @@ base_id = "base_item"
 item_id = 8792
 name = "a bulk order deed"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
+[item.tags]
+bodType = "2"

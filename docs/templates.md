@@ -162,10 +162,25 @@ own, see [TOML value types](toml-types.md).
 | `Name`, `Comment` | A display name override, and a designer note nobody reads at runtime |
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
 | `ScriptId` | Names the Lua module handling this template's behaviour |
-| `Movable` | Tiledata carries no such flag, so this is explicit |
+| `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted" |
+| `Weight` | Stones to two decimals (`weight = 0.02` for a coin); unset uses the whole-stone tiledata weight |
+| `Amount` | `RangeValueSpec<int>`: the stack size of a new item, fixed or `"10-20"`; unset is 1 |
+| `Stackable` | Unset uses the tiledata `Generic` flag |
+| `Layer` | A `LayerType` name such as `one_handed`; unset uses the tiledata layer |
+| `BuyPrice`, `SellPrice` | What vendors sell it for and pay for it; unset means vendors do not trade it |
+| `Decays`, `DecayMinutes` | Unset decays when movable, after 60 minutes |
+| `LootType` | `regular`, `newbied`, `blessed` or `cursed`: what happens when the owner dies; unset is `regular` |
+| `Tags` | Free script values in an `[item.tags]` table; a child's tags add to and override its base's |
 | `Visibility` | The lowest account type that sees the item: `regular`, `game_master` or `administrator`, as `realm_directory.minimum_account_type`. Unset by default, so a template inherits it through `BaseId`; an item with none anywhere is visible to everyone. `IsVisibleTo(accountType)` answers for one viewer |
 | `Hue` | `HueSpec`, `0` meaning the art's native coloring; a quoted `"min-max"` range picks one per spawn |
 | `MaxItems`, `MaxWeight` | Nullable; set only on a container template |
+
+Fields that the client's `tiledata.mul` also carries (weight, stackability, layer,
+movability) are overrides: unset means tiledata, as in POL and ModernUO. The extensions
+in `ItemTemplateExtensions` give the value a new item gets, such as
+`template.EffectiveWeight(tileDataService)`, and `Validate()` rejects a negative weight or
+price, a weight with more than two decimals, an amount below 1, a decay time below one
+minute and an empty tag key.
 
 Spawners, for example, are for staff only, and their children inherit it:
 

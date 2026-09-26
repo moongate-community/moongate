@@ -5,6 +5,10 @@ item_id = 4079
 name = "book"
 rarity = "common"
 movable = true
+weight = 1.0
+buy_price = 18
+sell_price = 9
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +17,6 @@ base_id = "base_book"
 item_id = 4079
 name = "book"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -22,7 +25,6 @@ base_id = "base_book"
 item_id = 4081
 name = "a book"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -31,7 +33,6 @@ base_id = "base_book"
 item_id = 4083
 name = "book"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -40,7 +41,6 @@ base_id = "base_book"
 item_id = 4084
 name = "book"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -49,7 +49,7 @@ base_id = "base_item"
 item_id = 4079
 name = "The First UOX Book"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -58,7 +58,7 @@ base_id = "base_item"
 item_id = 4079
 name = "A Grammer of Orchish"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -67,7 +67,7 @@ base_id = "base_item"
 item_id = 4079
 name = "The Bold Stranger"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -76,7 +76,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Birds of Britannia"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -85,7 +85,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Regarding Llamas"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -94,7 +94,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Talking to Wisps"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -103,7 +103,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Taming Dragons"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -112,7 +112,7 @@ base_id = "base_item"
 item_id = 4079
 name = "A Politic Call to Anarchy"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -121,7 +121,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Ethical Hedonism: An Introduction"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -130,7 +130,7 @@ base_id = "base_item"
 item_id = 4079
 name = "On the diversity of our land"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -139,7 +139,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Virtue"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -148,7 +148,7 @@ base_id = "base_item"
 item_id = 4079
 name = "My Story"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -157,7 +157,7 @@ base_id = "base_item"
 item_id = 4079
 name = "The Burning of Trinsic"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -166,7 +166,7 @@ base_id = "base_item"
 item_id = 4079
 name = "The Fight"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -175,7 +175,7 @@ base_id = "base_item"
 item_id = 4079
 name = "A Song of Samlethe"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -184,7 +184,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Classic Childrens Tales Vol.2"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -193,7 +193,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Classic tales of Vesper vol.1"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -202,7 +202,7 @@ base_id = "base_item"
 item_id = 4079
 name = "A Tale of Three Tribes"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -211,7 +211,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Deceit: A Dungeon of Horrors"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -220,7 +220,7 @@ base_id = "base_item"
 item_id = 4079
 name = "The Life of a Travelling Minstrel"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -229,7 +229,7 @@ base_id = "base_item"
 item_id = 4079
 name = "The Wild Girl in The Forest"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -238,7 +238,7 @@ base_id = "base_item"
 item_id = 4079
 name = "A Primer on Arms and Weopons"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -247,7 +247,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Beltrans Guide to Guilds"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -256,7 +256,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Britannian Flora"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -265,7 +265,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Dimensional Travel, a Monograph"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -274,7 +274,7 @@ base_id = "base_item"
 item_id = 4079
 name = "The Major Trade Associations"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -283,7 +283,7 @@ base_id = "base_item"
 item_id = 4079
 name = "The Rankings of Trades"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -292,7 +292,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Treatise on Alchemy"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -301,7 +301,7 @@ base_id = "base_item"
 item_id = 4079
 name = "UOX3 Story Chapter One - Death"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -310,7 +310,7 @@ base_id = "base_item"
 item_id = 4079
 name = "UOX3 Story Chapter Two - End of The World"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -319,7 +319,7 @@ base_id = "base_item"
 item_id = 4079
 name = "UOX3 Story Chapter Three - The Lost Splinter"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -328,7 +328,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Quest of the Virtues - Volume 1"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -337,7 +337,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Fropoz's Journal"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -346,7 +346,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Translated Gargoyle Journal"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -355,7 +355,7 @@ base_id = "base_item"
 item_id = 4079
 name = "Kabur's Journal"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -364,7 +364,10 @@ base_id = "base_item"
 item_id = 8788
 name = "book of arms"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
 hue = 0
 
 [[item]]
@@ -373,7 +376,10 @@ base_id = "base_item"
 item_id = 9120
 name = "book of bushido"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
 hue = 0
 
 [[item]]
@@ -382,7 +388,10 @@ base_id = "base_item"
 item_id = 9120
 name = "book of ninjitsu"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
 hue = 0
 
 [[item]]
@@ -391,7 +400,10 @@ base_id = "base_item"
 item_id = 4081
 name = "book"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
 hue = 0
 
 [[item]]
@@ -400,7 +412,10 @@ base_id = "base_item"
 item_id = 4082
 name = "book"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
 hue = 0
 
 [[item]]
@@ -409,7 +424,6 @@ base_id = "base_khaldun_book"
 item_id = 4082
 name = "Journal: Discovery Of The Tomb"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -418,7 +432,6 @@ base_id = "base_khaldun_book"
 item_id = 4082
 name = "Journal: Discovery Of The Tomb"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -427,5 +440,4 @@ base_id = "base_khaldun_book"
 item_id = 4082
 name = "Journal: Discovery Of The Tomb"
 rarity = "common"
-movable = false
 hue = 0

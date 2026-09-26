@@ -5,6 +5,9 @@ item_id = 6253
 name = "Stone of Humility"
 rarity = "common"
 movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
 hue = 0
 
 [[item]]
@@ -14,6 +17,9 @@ item_id = 6254
 name = "Stone of Sacrifice"
 rarity = "common"
 movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
 hue = 0
 
 [[item]]
@@ -23,6 +29,9 @@ item_id = 6255
 name = "Stone of Justice"
 rarity = "common"
 movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
 hue = 0
 
 [[item]]
@@ -32,6 +41,9 @@ item_id = 6256
 name = "Stone of Spirituality"
 rarity = "common"
 movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
 hue = 0
 
 [[item]]
@@ -41,6 +53,9 @@ item_id = 7955
 name = "A Worldgem Bit"
 rarity = "common"
 movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
 hue = 0
 
 [[item]]
@@ -50,6 +65,9 @@ item_id = 7847
 name = "A Worldgem Bit"
 rarity = "common"
 movable = true
+weight = 2.0
+buy_price = 10000
+sell_price = 10000
 hue = 0
 
 [[item]]
@@ -59,6 +77,9 @@ item_id = 7186
 name = "Bell of Courage"
 rarity = "common"
 movable = true
+weight = 2.0
+buy_price = 30000
+sell_price = 30000
 hue = 0
 
 [[item]]
@@ -68,6 +89,9 @@ item_id = 7187
 name = "Book of Truth"
 rarity = "common"
 movable = true
+weight = 2.0
+buy_price = 30000
+sell_price = 30000
 hue = 0
 
 [[item]]
@@ -77,4 +101,7 @@ item_id = 7190
 name = "Unlit Candle of Love"
 rarity = "common"
 movable = true
+weight = 2.0
+buy_price = 30000
+sell_price = 30000
 hue = 0

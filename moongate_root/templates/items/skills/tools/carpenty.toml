@@ -4,7 +4,10 @@ base_id = "base_item"
 item_id = 4134
 name = "chisels"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 14
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +16,10 @@ base_id = "base_item"
 item_id = 4135
 name = "chisels"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 14
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +28,10 @@ base_id = "base_item"
 item_id = 4136
 name = "dovetail saw"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 14
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -31,7 +40,10 @@ base_id = "base_item"
 item_id = 4137
 name = "dovetail saw"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 14
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -40,7 +52,10 @@ base_id = "base_item"
 item_id = 4138
 name = "hammer"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 28
+sell_price = 14
+decays = true
 hue = 0
 
 [[item]]
@@ -49,7 +64,10 @@ base_id = "base_item"
 item_id = 4139
 name = "hammer"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 28
+sell_price = 14
+decays = true
 hue = 0
 
 [[item]]
@@ -58,7 +76,10 @@ base_id = "base_item"
 item_id = 4140
 name = "moulding plane"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -67,7 +88,10 @@ base_id = "base_item"
 item_id = 4141
 name = "moulding plane"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -76,7 +100,10 @@ base_id = "base_item"
 item_id = 4142
 name = "nails"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 2
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -85,7 +112,10 @@ base_id = "base_item"
 item_id = 4143
 name = "nails"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 2
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -94,7 +124,10 @@ base_id = "base_item"
 item_id = 4144
 name = "jointing plane"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -103,7 +136,10 @@ base_id = "base_item"
 item_id = 4145
 name = "jointing plane"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -112,7 +148,10 @@ base_id = "base_item"
 item_id = 4146
 name = "smoothing plane"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -121,7 +160,10 @@ base_id = "base_item"
 item_id = 4147
 name = "smoothing plane"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -130,7 +172,10 @@ base_id = "base_item"
 item_id = 4148
 name = "saw"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 18
+sell_price = 9
+decays = true
 hue = 0
 
 [[item]]
@@ -139,7 +184,10 @@ base_id = "base_item"
 item_id = 4149
 name = "saw"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 18
+sell_price = 9
+decays = true
 hue = 0
 
 [[item]]
@@ -148,7 +196,10 @@ base_id = "base_item"
 item_id = 4324
 name = "draw knife"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 14
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -157,7 +208,10 @@ base_id = "base_item"
 item_id = 4325
 name = "froe"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -166,7 +220,10 @@ base_id = "base_item"
 item_id = 4326
 name = "inshave"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -175,5 +232,8 @@ base_id = "base_item"
 item_id = 4327
 name = "scorp"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0

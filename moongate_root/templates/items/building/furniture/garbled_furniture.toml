@@ -5,6 +5,7 @@ item_id = 3094
 name = "damaged books"
 rarity = "common"
 movable = false
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -14,6 +15,7 @@ item_id = 3117
 name = "debris"
 rarity = "common"
 movable = false
+weight = 5.0
 hue = 0
 
 [[item]]
@@ -23,6 +25,7 @@ item_id = 3118
 name = "debris"
 rarity = "common"
 movable = false
+weight = 5.0
 hue = 0
 
 [[item]]
@@ -32,6 +35,7 @@ item_id = 3119
 name = "debris"
 rarity = "common"
 movable = false
+weight = 5.0
 hue = 0
 
 [[item]]
@@ -41,6 +45,7 @@ item_id = 3120
 name = "debris"
 rarity = "common"
 movable = false
+weight = 5.0
 hue = 0
 
 [[item]]
@@ -50,6 +55,7 @@ item_id = 7603
 name = "broken barrel"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -59,6 +65,7 @@ item_id = 7604
 name = "broken barrel"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -68,6 +75,7 @@ item_id = 7605
 name = "broken barrel"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -77,6 +85,7 @@ item_id = 7606
 name = "broken barrel"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -86,6 +95,7 @@ item_id = 4321
 name = "barrel hoops"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -95,6 +105,7 @@ item_id = 4322
 name = "barrel hoops"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -104,6 +115,7 @@ item_id = 7807
 name = "stool"
 rarity = "common"
 movable = false
+weight = 5.0
 hue = 0
 
 [[item]]
@@ -113,6 +125,7 @@ item_id = 7810
 name = "lathe work"
 rarity = "common"
 movable = false
+weight = 2.0
 hue = 0
 
 [[item]]
@@ -122,4 +135,5 @@ item_id = 7861
 name = "unfinished barrel"
 rarity = "common"
 movable = true
+weight = 5.0
 hue = 0

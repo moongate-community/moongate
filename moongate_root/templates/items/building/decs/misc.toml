@@ -5,6 +5,7 @@ item_id = 2885
 name = "large vase"
 rarity = "common"
 movable = false
+weight = 3.0
 hue = 0
 
 [[item]]
@@ -14,6 +15,7 @@ item_id = 2886
 name = "vase"
 rarity = "common"
 movable = false
+weight = 3.0
 hue = 0
 
 [[item]]
@@ -23,6 +25,7 @@ item_id = 2887
 name = "large vase"
 rarity = "common"
 movable = false
+weight = 3.0
 hue = 0
 
 [[item]]
@@ -32,6 +35,7 @@ item_id = 2888
 name = "vase"
 rarity = "common"
 movable = false
+weight = 3.0
 hue = 0
 
 [[item]]
@@ -41,6 +45,7 @@ item_id = 3582
 name = "cut hair"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -50,6 +55,7 @@ item_id = 3583
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -59,6 +65,7 @@ item_id = 3584
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -68,6 +75,7 @@ item_id = 3585
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -77,6 +85,7 @@ item_id = 3586
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -86,6 +95,7 @@ item_id = 3587
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -95,6 +105,7 @@ item_id = 3588
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -104,6 +115,7 @@ item_id = 3589
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -113,6 +125,7 @@ item_id = 3590
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -122,6 +135,7 @@ item_id = 3591
 name = "wig stand"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -131,6 +145,7 @@ item_id = 3592
 name = "wig stand"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -140,6 +155,7 @@ item_id = 3593
 name = "wig stand"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -149,6 +165,7 @@ item_id = 3594
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -158,6 +175,7 @@ item_id = 3595
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -167,6 +185,7 @@ item_id = 3596
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -176,6 +195,7 @@ item_id = 3597
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -185,6 +205,7 @@ item_id = 3598
 name = "wig"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -194,6 +215,7 @@ item_id = 3619
 name = "bloody water"
 rarity = "common"
 movable = false
+weight = 0.1
 hue = 0
 
 [[item]]
@@ -203,6 +225,7 @@ item_id = 3652
 name = "empty jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -212,6 +235,7 @@ item_id = 3653
 name = "empty jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -221,6 +245,7 @@ item_id = 3654
 name = "empty jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -230,6 +255,7 @@ item_id = 3655
 name = "empty jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -239,6 +265,7 @@ item_id = 3656
 name = "full jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -248,6 +275,7 @@ item_id = 3657
 name = "full jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -257,6 +285,7 @@ item_id = 3658
 name = "full jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -266,6 +295,7 @@ item_id = 3659
 name = "full jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -275,6 +305,7 @@ item_id = 3660
 name = "jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -284,6 +315,7 @@ item_id = 3661
 name = "jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -293,6 +325,7 @@ item_id = 3662
 name = "jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -302,6 +335,7 @@ item_id = 3663
 name = "jars"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -311,6 +345,7 @@ item_id = 3707
 name = "water tub"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -320,6 +355,7 @@ item_id = 3899
 name = "horse dung"
 rarity = "common"
 movable = false
+weight = 0.1
 hue = 0
 
 [[item]]
@@ -329,6 +365,7 @@ item_id = 3900
 name = "horse dung"
 rarity = "common"
 movable = false
+weight = 0.1
 hue = 0
 
 [[item]]
@@ -338,6 +375,7 @@ item_id = 4022
 name = "horse shoes"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -347,6 +385,7 @@ item_id = 4033
 name = "paints and brush"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -356,6 +395,7 @@ item_id = 4036
 name = "conch shell"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -365,6 +405,7 @@ item_id = 4037
 name = "shells"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -374,6 +415,7 @@ item_id = 4038
 name = "shells"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -383,6 +425,7 @@ item_id = 4039
 name = "nautilus"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -392,6 +435,7 @@ item_id = 4040
 name = "shell"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -401,6 +445,7 @@ item_id = 4041
 name = "shells"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -410,6 +455,7 @@ item_id = 4042
 name = "shells"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -419,6 +465,7 @@ item_id = 4043
 name = "shell"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -428,6 +475,7 @@ item_id = 4044
 name = "shell"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -437,6 +485,7 @@ item_id = 4550
 name = "flower pot"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -446,6 +495,7 @@ item_id = 4551
 name = "flower pot"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -455,6 +505,7 @@ item_id = 5193
 name = "loose grain"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -464,6 +515,7 @@ item_id = 5344
 name = "bucket"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -473,6 +525,7 @@ item_id = 5370
 name = "rope"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -482,6 +535,7 @@ item_id = 5396
 name = "Serpent Crest"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -491,6 +545,7 @@ item_id = 5453
 name = "water barrel"
 rarity = "common"
 movable = false
+weight = 3.0
 hue = 0
 
 [[item]]
@@ -500,6 +555,7 @@ item_id = 6270
 name = "spilled flour"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -509,6 +565,7 @@ item_id = 6271
 name = "spilled flour"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -518,6 +575,7 @@ item_id = 6272
 name = "spilled flour"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -527,6 +585,7 @@ item_id = 6273
 name = "spilled flour"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -536,6 +595,7 @@ item_id = 6943
 name = "leaves"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -545,6 +605,7 @@ item_id = 6944
 name = "leaves"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -554,6 +615,7 @@ item_id = 6945
 name = "leaves"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -563,6 +625,7 @@ item_id = 6946
 name = "leaves"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -572,6 +635,7 @@ item_id = 7834
 name = "hook"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -581,6 +645,7 @@ item_id = 7835
 name = "hook"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -590,6 +655,7 @@ item_id = 7836
 name = "pullies"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -599,6 +665,7 @@ item_id = 7837
 name = "pullies"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -608,6 +675,7 @@ item_id = 7838
 name = "pulley"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -617,6 +685,7 @@ item_id = 7839
 name = "pulley"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -626,6 +695,7 @@ item_id = 7840
 name = "rope"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -635,6 +705,7 @@ item_id = 7841
 name = "rope"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -644,6 +715,7 @@ item_id = 7842
 name = "rope"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -653,6 +725,7 @@ item_id = 4150
 name = "hay"
 rarity = "common"
 movable = false
+weight = 0.1
 hue = 0
 
 [[item]]
@@ -662,6 +735,7 @@ item_id = 4151
 name = "hay"
 rarity = "common"
 movable = false
+weight = 0.1
 hue = 0
 
 [[item]]
@@ -671,6 +745,7 @@ item_id = 4152
 name = "wood curls"
 rarity = "common"
 movable = false
+weight = 0.1
 hue = 0
 
 [[item]]
@@ -680,6 +755,7 @@ item_id = 887
 name = "patch"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -689,6 +765,7 @@ item_id = 889
 name = "dagges"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -697,7 +774,8 @@ base_id = "base_item"
 item_id = 3894
 name = "sheaf of hay"
 rarity = "common"
-movable = false
+weight = 1.0
+decays = true
 hue = 0
 
 [[item]]
@@ -706,7 +784,8 @@ base_id = "base_item"
 item_id = 4108
 name = "hay sheave"
 rarity = "common"
-movable = false
+weight = 1.0
+decays = true
 hue = 0
 
 [[item]]
@@ -715,7 +794,8 @@ base_id = "base_item"
 item_id = 4109
 name = "hay sheave"
 rarity = "common"
-movable = false
+weight = 1.0
+decays = true
 hue = 0
 
 [[item]]
@@ -725,4 +805,5 @@ item_id = 2331
 name = "flour"
 rarity = "common"
 movable = false
+weight = 2.55
 hue = 0

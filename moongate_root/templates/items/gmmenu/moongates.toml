@@ -4,7 +4,7 @@ base_id = "base_item"
 item_id = 3948
 name = "blue moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +13,7 @@ base_id = "base_item"
 item_id = 3949
 name = "blue moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +22,7 @@ base_id = "base_item"
 item_id = 3950
 name = "blue oongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -31,7 +31,7 @@ base_id = "base_item"
 item_id = 3951
 name = "blue moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -40,7 +40,7 @@ base_id = "base_item"
 item_id = 3952
 name = "blue moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -49,7 +49,7 @@ base_id = "base_item"
 item_id = 8148
 name = "black moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -58,7 +58,7 @@ base_id = "base_item"
 item_id = 8149
 name = "black moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -67,7 +67,7 @@ base_id = "base_item"
 item_id = 8150
 name = "black moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -76,7 +76,7 @@ base_id = "base_item"
 item_id = 8151
 name = "black moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -85,7 +85,7 @@ base_id = "base_item"
 item_id = 8152
 name = "black moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -94,7 +94,7 @@ base_id = "base_item"
 item_id = 6885
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -103,7 +103,7 @@ base_id = "base_item"
 item_id = 6886
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -112,7 +112,7 @@ base_id = "base_item"
 item_id = 6887
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -121,7 +121,7 @@ base_id = "base_item"
 item_id = 6888
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -130,7 +130,7 @@ base_id = "base_item"
 item_id = 6889
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -139,7 +139,7 @@ base_id = "base_item"
 item_id = 6890
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -148,7 +148,7 @@ base_id = "base_item"
 item_id = 6891
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -157,7 +157,7 @@ base_id = "base_item"
 item_id = 6892
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -166,7 +166,7 @@ base_id = "base_item"
 item_id = 6893
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -175,7 +175,7 @@ base_id = "base_item"
 item_id = 6899
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -184,7 +184,7 @@ base_id = "base_item"
 item_id = 6900
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -193,7 +193,7 @@ base_id = "base_item"
 item_id = 6901
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -202,7 +202,7 @@ base_id = "base_item"
 item_id = 6902
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -211,7 +211,7 @@ base_id = "base_item"
 item_id = 6903
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -220,7 +220,7 @@ base_id = "base_item"
 item_id = 6904
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -229,7 +229,7 @@ base_id = "base_item"
 item_id = 6905
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -238,7 +238,7 @@ base_id = "base_item"
 item_id = 6906
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -247,7 +247,7 @@ base_id = "base_item"
 item_id = 6907
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -256,7 +256,7 @@ base_id = "base_item"
 item_id = 8139
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -265,7 +265,7 @@ base_id = "base_item"
 item_id = 8140
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -274,7 +274,7 @@ base_id = "base_item"
 item_id = 8141
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -283,7 +283,7 @@ base_id = "base_item"
 item_id = 8142
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -292,7 +292,7 @@ base_id = "base_item"
 item_id = 8143
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -301,7 +301,7 @@ base_id = "base_item"
 item_id = 8144
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -310,7 +310,7 @@ base_id = "base_item"
 item_id = 8145
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -319,7 +319,7 @@ base_id = "base_item"
 item_id = 8146
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -328,7 +328,7 @@ base_id = "base_item"
 item_id = 8147
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -337,7 +337,7 @@ base_id = "base_item"
 item_id = 8158
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -346,7 +346,7 @@ base_id = "base_item"
 item_id = 8159
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -355,7 +355,7 @@ base_id = "base_item"
 item_id = 8160
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -364,7 +364,7 @@ base_id = "base_item"
 item_id = 8161
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -373,7 +373,7 @@ base_id = "base_item"
 item_id = 8162
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -382,7 +382,7 @@ base_id = "base_item"
 item_id = 8163
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -391,7 +391,7 @@ base_id = "base_item"
 item_id = 8164
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -400,7 +400,7 @@ base_id = "base_item"
 item_id = 8165
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -409,7 +409,7 @@ base_id = "base_item"
 item_id = 8166
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -418,7 +418,7 @@ base_id = "base_item"
 item_id = 8167
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -427,7 +427,7 @@ base_id = "base_item"
 item_id = 8168
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -436,7 +436,7 @@ base_id = "base_item"
 item_id = 8169
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -445,7 +445,7 @@ base_id = "base_item"
 item_id = 8170
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -454,5 +454,5 @@ base_id = "base_item"
 item_id = 8171
 name = "summon moongate"
 rarity = "common"
-movable = false
+decays = true
 hue = 0

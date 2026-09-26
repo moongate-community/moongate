@@ -2,6 +2,8 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Ultima.Types;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.UoxItemConverter.Internal;
 using Moongate.UoxItemConverter.Tests.TestSupport;
 
@@ -52,6 +54,92 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.Equal(new Hue(0x0010), item.Hue.Resolve());
         Assert.Equal(10, item.MaxWeight);
         Assert.Null(item.BaseId);
+    }
+
+    [Fact]
+    public void Run_TheBaseFields_AreConverted()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [coin]
+            {
+            name=gold coin
+            id=0x0eed
+            weight=2
+            amount=5
+            pileable=1
+            layer=21
+            value=60 30
+            decay=1
+            newbie
+            custominttag=Level 7
+            customstringtag=Owner Mario Rossi
+            }
+            """
+        );
+
+        var exitCode = Run();
+
+        Assert.True(exitCode == 0, CombinedOutput);
+        var item = Assert.Single(TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!.Item);
+        Assert.Equal(0.02m, item.Weight);
+        Assert.Equal(5, item.Amount!.Value.Resolve());
+        Assert.True(item.Stackable);
+        Assert.Equal(LayerType.Backpack, item.Layer);
+        Assert.Equal((60, 30), (item.BuyPrice, item.SellPrice));
+        Assert.True(item.Decays);
+        Assert.Equal(LootType.Newbied, item.LootType);
+        Assert.Equal("7", item.Tags!["Level"]);
+        Assert.Equal("Mario Rossi", item.Tags["Owner"]);
+    }
+
+    [Theory,
+     InlineData("value=40", 40, 40),
+     InlineData("", null, null)]
+    public void Run_OneValueOrNone_SetsBothPricesOrNeither(string valueLine, int? buy, int? sell)
+    {
+        _dirs.WriteSource("items.dfn", $$"""
+            [lamp]
+            {
+            id=0x0a22
+            {{valueLine}}
+            }
+            """);
+
+        Assert.Equal(0, Run());
+        var item = Assert.Single(TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!.Item);
+        Assert.Equal((buy, sell), (item.BuyPrice, item.SellPrice));
+    }
+
+    [Theory,
+     InlineData("movable=1", true),
+     InlineData("movable=3", true),
+     InlineData("movable=2", false),
+     InlineData("movable=0", null),
+     InlineData("", null),
+     InlineData("decay=0", null)]
+    public void Run_MovableFollowsUox3_AndUnsetMeansTiledata(string line, bool? movable)
+    {
+        _dirs.WriteSource("items.dfn", $$"""
+            [lamp]
+            {
+            id=0x0a22
+            {{line}}
+            }
+            """);
+
+        Assert.Equal(0, Run());
+        var item = Assert.Single(TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!.Item);
+
+        if (line.StartsWith("decay"))
+        {
+            Assert.False(item.Decays);
+        }
+        else
+        {
+            Assert.Equal(movable, item.Movable);
+        }
     }
 
     [Theory,

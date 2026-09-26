@@ -3,7 +3,7 @@ id = "0xc95_coconut_palm"
 item_id = 3221
 name = "coconut palm"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -11,7 +11,7 @@ id = "0xc96_date_palm"
 item_id = 3222
 name = "date palm"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -19,7 +19,7 @@ id = "0xc99_small_palm"
 item_id = 3225
 name = "small palm"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -27,7 +27,7 @@ id = "0xc9a_small_palm"
 item_id = 3226
 name = "small palm"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -35,7 +35,7 @@ id = "0xc9b_small_palm"
 item_id = 3227
 name = "small palm"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -43,7 +43,7 @@ id = "0xc9c_small_palm"
 item_id = 3228
 name = "small palm"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -51,7 +51,7 @@ id = "0xc9d_small_palm"
 item_id = 3229
 name = "small palm"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -59,7 +59,7 @@ id = "0xc9e_o'hii_tree"
 item_id = 3230
 name = "o'hii tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -67,7 +67,7 @@ id = "0xca6_ponytail_palm"
 item_id = 3238
 name = "ponytail palm"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -75,7 +75,7 @@ id = "0xca8_small_banana_tree"
 item_id = 3240
 name = "small banana tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -83,7 +83,7 @@ id = "0xcaa_banana_tree"
 item_id = 3242
 name = "banana tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -91,7 +91,7 @@ id = "0xcab_banana_tree"
 item_id = 3243
 name = "banana tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -99,7 +99,7 @@ id = "0xcc9_spider_tree"
 item_id = 3273
 name = "spider tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -107,7 +107,7 @@ id = "0xcca_tree"
 item_id = 3274
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -115,7 +115,7 @@ id = "0xccb_tree"
 item_id = 3275
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -123,7 +123,7 @@ id = "0xccc_tree"
 item_id = 3276
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -131,7 +131,7 @@ id = "0xccd_tree"
 item_id = 3277
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -139,7 +139,7 @@ id = "0xcce_leaves"
 item_id = 3278
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -147,7 +147,7 @@ id = "0xccf_leaves"
 item_id = 3279
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -155,7 +155,7 @@ id = "0xcd0_tree"
 item_id = 3280
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -163,7 +163,7 @@ id = "0xcd1_leaves"
 item_id = 3281
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -171,7 +171,7 @@ id = "0xcd2_leaves"
 item_id = 3282
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -179,7 +179,7 @@ id = "0xcd3_tree"
 item_id = 3283
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -187,7 +187,7 @@ id = "0xcd4_leaves"
 item_id = 3284
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -195,7 +195,7 @@ id = "0xcd5_leaves"
 item_id = 3285
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -203,7 +203,7 @@ id = "0xcd6_cedar_tree"
 item_id = 3286
 name = "cedar tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -211,7 +211,7 @@ id = "0xcd7_cedar_needles"
 item_id = 3287
 name = "cedar needles"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -219,7 +219,7 @@ id = "0xcd8_cedar_tree"
 item_id = 3288
 name = "cedar tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -227,7 +227,7 @@ id = "0xcd9_cedar_needles"
 item_id = 3289
 name = "cedar needles"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -235,7 +235,7 @@ id = "0xcda_oak_tree"
 item_id = 3290
 name = "oak tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -243,7 +243,7 @@ id = "0xcdb_oak_leaves"
 item_id = 3291
 name = "oak leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -251,7 +251,7 @@ id = "0xcdc_oak_leaves"
 item_id = 3292
 name = "oak leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -259,7 +259,7 @@ id = "0xcdd_oak_tree"
 item_id = 3293
 name = "oak tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -267,7 +267,7 @@ id = "0xcde_oak_leaves"
 item_id = 3294
 name = "oak leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -275,7 +275,7 @@ id = "0xcdf_oak_leaves"
 item_id = 3295
 name = "oak leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -283,7 +283,7 @@ id = "0xce0_walnut_tree"
 item_id = 3296
 name = "walnut tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -291,7 +291,7 @@ id = "0xce1_walnut_leaves"
 item_id = 3297
 name = "walnut leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -299,7 +299,7 @@ id = "0xce2_walnut_leaves"
 item_id = 3298
 name = "walnut leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -307,7 +307,7 @@ id = "0xce3_walnut_tree"
 item_id = 3299
 name = "walnut tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -315,7 +315,7 @@ id = "0xce4_walnut_leaves"
 item_id = 3300
 name = "walnut leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -323,7 +323,7 @@ id = "0xce5_walnut_leaves"
 item_id = 3301
 name = "walnut leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -331,7 +331,7 @@ id = "0xce6_willow_tree"
 item_id = 3302
 name = "willow tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -339,7 +339,7 @@ id = "0xce7_willow_leaves"
 item_id = 3303
 name = "willow leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -347,7 +347,7 @@ id = "0xce8_willow_leaves"
 item_id = 3304
 name = "willow leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -355,7 +355,7 @@ id = "0xce9_sapling"
 item_id = 3305
 name = "sapling"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -363,7 +363,7 @@ id = "0xcea_sapling"
 item_id = 3306
 name = "sapling"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -371,7 +371,7 @@ id = "0xcf8_cypress_tree"
 item_id = 3320
 name = "cypress tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -379,7 +379,7 @@ id = "0xcf9_cypress_leaves"
 item_id = 3321
 name = "cypress leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -387,7 +387,7 @@ id = "0xcfa_cypress_leaves"
 item_id = 3322
 name = "cypress leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -395,7 +395,7 @@ id = "0xcfb_cypress_tree"
 item_id = 3323
 name = "cypress tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -403,7 +403,7 @@ id = "0xcfc_cypress_leaves"
 item_id = 3324
 name = "cypress leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -411,7 +411,7 @@ id = "0xcfd_cypress_leaves"
 item_id = 3325
 name = "cypress leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -419,7 +419,7 @@ id = "0xcfe_cypress_tree"
 item_id = 3326
 name = "cypress tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -427,7 +427,7 @@ id = "0xcff_cypress_leaves"
 item_id = 3327
 name = "cypress leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -435,7 +435,7 @@ id = "0xd00_cypress_leaves"
 item_id = 3328
 name = "cypress leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -443,7 +443,7 @@ id = "0xd01_cypress_tree"
 item_id = 3329
 name = "cypress tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -451,7 +451,7 @@ id = "0xd02_cypress_leaves"
 item_id = 3330
 name = "cypress leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -459,7 +459,7 @@ id = "0xd03_cypress_leaves"
 item_id = 3331
 name = "cypress leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -467,7 +467,7 @@ id = "0xd41_tree"
 item_id = 3393
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -475,7 +475,7 @@ id = "0xd42_tree"
 item_id = 3394
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -483,7 +483,7 @@ id = "0xd43_tree"
 item_id = 3395
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -491,7 +491,7 @@ id = "0xd44_tree"
 item_id = 3396
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -499,7 +499,7 @@ id = "0xd45_leaves"
 item_id = 3397
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -507,7 +507,7 @@ id = "0xd46_leaves"
 item_id = 3398
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -515,7 +515,7 @@ id = "0xd47_leaves"
 item_id = 3399
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -523,7 +523,7 @@ id = "0xd48_leaves"
 item_id = 3400
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -531,7 +531,7 @@ id = "0xd49_leaves"
 item_id = 3401
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -539,7 +539,7 @@ id = "0xd4a_leaves"
 item_id = 3402
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -547,7 +547,7 @@ id = "0xd4b_leaves"
 item_id = 3403
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -555,7 +555,7 @@ id = "0xd4c_leaves"
 item_id = 3404
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -563,7 +563,7 @@ id = "0xd4d_leaves"
 item_id = 3405
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -571,7 +571,7 @@ id = "0xd4e_leaves"
 item_id = 3406
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -579,7 +579,7 @@ id = "0xd4f_leaves"
 item_id = 3407
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -587,7 +587,7 @@ id = "0xd50_leaves"
 item_id = 3408
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -595,7 +595,7 @@ id = "0xd51_leaves"
 item_id = 3409
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -603,7 +603,7 @@ id = "0xd52_leaves"
 item_id = 3410
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -611,7 +611,7 @@ id = "0xd53_leaves"
 item_id = 3411
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -619,7 +619,7 @@ id = "0xd57_tree"
 item_id = 3415
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -627,7 +627,7 @@ id = "0xd58_tree"
 item_id = 3416
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -635,7 +635,7 @@ id = "0xd59_tree"
 item_id = 3417
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -643,7 +643,7 @@ id = "0xd5a_tree"
 item_id = 3418
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -651,7 +651,7 @@ id = "0xd5b_tree"
 item_id = 3419
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -659,7 +659,7 @@ id = "0xd5c_leaves"
 item_id = 3420
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -667,7 +667,7 @@ id = "0xd5d_leaves"
 item_id = 3421
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -675,7 +675,7 @@ id = "0xd5e_leaves"
 item_id = 3422
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -683,7 +683,7 @@ id = "0xd5f_leaves"
 item_id = 3423
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -691,7 +691,7 @@ id = "0xd60_leaves"
 item_id = 3424
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -699,7 +699,7 @@ id = "0xd61_leaves"
 item_id = 3425
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -707,7 +707,7 @@ id = "0xd62_leaves"
 item_id = 3426
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -715,7 +715,7 @@ id = "0xd63_leaves"
 item_id = 3427
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -723,7 +723,7 @@ id = "0xd64_leaves"
 item_id = 3428
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -731,7 +731,7 @@ id = "0xd65_leaves"
 item_id = 3429
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -739,7 +739,7 @@ id = "0xd66_leaves"
 item_id = 3430
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -747,7 +747,7 @@ id = "0xd67_leaves"
 item_id = 3431
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -755,7 +755,7 @@ id = "0xd68_leaves"
 item_id = 3432
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -763,7 +763,7 @@ id = "0xd69_leaves"
 item_id = 3433
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -771,7 +771,7 @@ id = "0xd6e_tree"
 item_id = 3438
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -779,7 +779,7 @@ id = "0xd6f_tree"
 item_id = 3439
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -787,7 +787,7 @@ id = "0xd70_tree"
 item_id = 3440
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -795,7 +795,7 @@ id = "0xd71_tree"
 item_id = 3441
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -803,7 +803,7 @@ id = "0xd72_tree"
 item_id = 3442
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -811,7 +811,7 @@ id = "0xd73_leaves"
 item_id = 3443
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -819,7 +819,7 @@ id = "0xd74_leaves"
 item_id = 3444
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -827,7 +827,7 @@ id = "0xd75_leaves"
 item_id = 3445
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -835,7 +835,7 @@ id = "0xd76_leaves"
 item_id = 3446
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -843,7 +843,7 @@ id = "0xd77_leaves"
 item_id = 3447
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -851,7 +851,7 @@ id = "0xd78_leaves"
 item_id = 3448
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -859,7 +859,7 @@ id = "0xd79_leaves"
 item_id = 3449
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -867,7 +867,7 @@ id = "0xd7a_leaves"
 item_id = 3450
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -875,7 +875,7 @@ id = "0xd7b_leaves"
 item_id = 3451
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -883,7 +883,7 @@ id = "0xd7c_leaves"
 item_id = 3452
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -891,7 +891,7 @@ id = "0xd7d_leaves"
 item_id = 3453
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -899,7 +899,7 @@ id = "0xd7e_leaves"
 item_id = 3454
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -907,7 +907,7 @@ id = "0xd7f_leaves"
 item_id = 3455
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -915,7 +915,7 @@ id = "0xd84_tree"
 item_id = 3460
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -923,7 +923,7 @@ id = "0xd85_tree"
 item_id = 3461
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -931,7 +931,7 @@ id = "0xd86_tree"
 item_id = 3462
 name = "tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -939,7 +939,7 @@ id = "0xd87_leaves"
 item_id = 3463
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -947,7 +947,7 @@ id = "0xd88_leaves"
 item_id = 3464
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -955,7 +955,7 @@ id = "0xd89_leaves"
 item_id = 3465
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -963,7 +963,7 @@ id = "0xd8a_leaves"
 item_id = 3466
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -971,7 +971,7 @@ id = "0xd8b_leaves"
 item_id = 3467
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -979,7 +979,7 @@ id = "0xd8c_leaves"
 item_id = 3468
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -987,7 +987,7 @@ id = "0xd8d_leaves"
 item_id = 3469
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -995,7 +995,7 @@ id = "0xd8e_leaves"
 item_id = 3470
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1003,7 +1003,7 @@ id = "0xd8f_leaves"
 item_id = 3471
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1011,7 +1011,7 @@ id = "0xd90_leaves"
 item_id = 3472
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1019,7 +1019,7 @@ id = "0xd94_apple_tree"
 item_id = 3476
 name = "apple tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1027,7 +1027,7 @@ id = "0xd95_leaves"
 item_id = 3477
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1035,7 +1035,7 @@ id = "0xd96_apple_tree"
 item_id = 3478
 name = "apple tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1043,7 +1043,7 @@ id = "0xd97_fall_leaves"
 item_id = 3479
 name = "fall leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1051,7 +1051,7 @@ id = "0xd98_apple_tree"
 item_id = 3480
 name = "apple tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1059,7 +1059,7 @@ id = "0xd99_leaves"
 item_id = 3481
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1067,7 +1067,7 @@ id = "0xd9a_apple_tree"
 item_id = 3482
 name = "apple tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1075,7 +1075,7 @@ id = "0xd9b_fall_leaves"
 item_id = 3483
 name = "fall leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1083,7 +1083,7 @@ id = "0xd9c_peach_tree"
 item_id = 3484
 name = "peach tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1091,7 +1091,7 @@ id = "0xd9d_leaves"
 item_id = 3485
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1099,7 +1099,7 @@ id = "0xd9e_peach_tree"
 item_id = 3486
 name = "peach tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1107,7 +1107,7 @@ id = "0xd9f_fall_leaves"
 item_id = 3487
 name = "fall leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1115,7 +1115,7 @@ id = "0xda0_peach_tree"
 item_id = 3488
 name = "peach tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1123,7 +1123,7 @@ id = "0xda1_leaves"
 item_id = 3489
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1131,7 +1131,7 @@ id = "0xda2_peach_tree"
 item_id = 3490
 name = "peach tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1139,7 +1139,7 @@ id = "0xda3_fall_leaves"
 item_id = 3491
 name = "fall leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1147,7 +1147,7 @@ id = "0xda4_pear_tree"
 item_id = 3492
 name = "pear tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1155,7 +1155,7 @@ id = "0xda5_leaves"
 item_id = 3493
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1163,7 +1163,7 @@ id = "0xda6_pear_tree"
 item_id = 3494
 name = "pear tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1171,7 +1171,7 @@ id = "0xda7_fall_leaves"
 item_id = 3495
 name = "fall leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1179,7 +1179,7 @@ id = "0xda8_pear_tree"
 item_id = 3496
 name = "pear tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1187,7 +1187,7 @@ id = "0xda9_leaves"
 item_id = 3497
 name = "leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1195,7 +1195,7 @@ id = "0xdaa_pear_tree"
 item_id = 3498
 name = "pear tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1203,7 +1203,7 @@ id = "0xdab_fall_leaves"
 item_id = 3499
 name = "fall leaves"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1211,7 +1211,7 @@ id = "0xdac_tree_stump"
 item_id = 3500
 name = "tree stump"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1219,7 +1219,7 @@ id = "0xdad_tree_stump"
 item_id = 3501
 name = "tree stump"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1227,7 +1227,7 @@ id = "0xe56_tree_stump"
 item_id = 3670
 name = "tree stump"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1235,7 +1235,7 @@ id = "0xe57_tree_stump"
 item_id = 3671
 name = "tree stump"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1243,7 +1243,7 @@ id = "0xe58_tree_stump"
 item_id = 3672
 name = "tree stump"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1251,7 +1251,7 @@ id = "0xe59_tree_stump"
 item_id = 3673
 name = "tree stump"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1259,7 +1259,7 @@ id = "0x11c8_potted_tree"
 item_id = 4552
 name = "potted tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1267,7 +1267,7 @@ id = "0x11c9_potted_tree"
 item_id = 4553
 name = "potted tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1275,7 +1275,7 @@ id = "0x12b6_yew_tree"
 item_id = 4790
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1283,7 +1283,7 @@ id = "0x12b7_yew_tree"
 item_id = 4791
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1291,7 +1291,7 @@ id = "0x12b8_yew_tree"
 item_id = 4792
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1299,7 +1299,7 @@ id = "0x12b9_yew_tree"
 item_id = 4793
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1307,7 +1307,7 @@ id = "0x12ba_yew_tree"
 item_id = 4794
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1315,7 +1315,7 @@ id = "0x12bb_yew_tree"
 item_id = 4795
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1323,7 +1323,7 @@ id = "0x12bc_yew_tree"
 item_id = 4796
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1331,7 +1331,7 @@ id = "0x12bd_yew_tree"
 item_id = 4797
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1339,7 +1339,7 @@ id = "0x12be_yew_tree"
 item_id = 4798
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1347,7 +1347,7 @@ id = "0x12bf_yew_tree"
 item_id = 4799
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1355,7 +1355,7 @@ id = "0x12c0_yew_tree"
 item_id = 4800
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1363,7 +1363,7 @@ id = "0x12c1_yew_tree"
 item_id = 4801
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1371,7 +1371,7 @@ id = "0x12c2_yew_tree"
 item_id = 4802
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1379,7 +1379,7 @@ id = "0x12c3_yew_tree"
 item_id = 4803
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1387,7 +1387,7 @@ id = "0x12c4_yew_tree"
 item_id = 4804
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1395,7 +1395,7 @@ id = "0x12c5_yew_tree"
 item_id = 4805
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1403,7 +1403,7 @@ id = "0x12c6_yew_tree"
 item_id = 4806
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1411,7 +1411,7 @@ id = "0x12c7_yew_tree"
 item_id = 4807
 name = "yew tree"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1419,7 +1419,7 @@ id = "0x1b7e_tuscany_pine"
 item_id = 7038
 name = "tuscany pine"
 rarity = "common"
-movable = false
+weight = 0.01
 hue = 0
 
 [[item]]
@@ -1427,7 +1427,7 @@ id = "0xd54_vines"
 item_id = 3412
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1435,7 +1435,7 @@ id = "0xd55_vines"
 item_id = 3413
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1443,7 +1443,7 @@ id = "0xd56_vines"
 item_id = 3414
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1451,7 +1451,7 @@ id = "0xd6a_vines"
 item_id = 3434
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1459,7 +1459,7 @@ id = "0xd6b_vines"
 item_id = 3435
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1467,7 +1467,7 @@ id = "0xd6c_vines"
 item_id = 3436
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1475,7 +1475,7 @@ id = "0xd6d_vines"
 item_id = 3437
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1483,7 +1483,7 @@ id = "0xd80_vines"
 item_id = 3456
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1491,7 +1491,7 @@ id = "0xd81_vines"
 item_id = 3457
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1499,7 +1499,7 @@ id = "0xd82_vines"
 item_id = 3458
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1507,7 +1507,7 @@ id = "0xd83_vines"
 item_id = 3459
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1515,7 +1515,7 @@ id = "0xd91_vines"
 item_id = 3473
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1523,7 +1523,7 @@ id = "0xd92_vines"
 item_id = 3474
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0
 
 [[item]]
@@ -1531,5 +1531,5 @@ id = "0xd93_vines"
 item_id = 3475
 name = "vines"
 rarity = "common"
-movable = false
+weight = 0.05
 hue = 0

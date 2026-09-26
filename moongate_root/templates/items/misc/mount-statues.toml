@@ -4,7 +4,8 @@ base_id = "base_item"
 item_id = 8480
 name = "horse"
 rarity = "common"
-movable = false
+buy_price = 700
+sell_price = 350
 hue = 0
 
 [[item]]
@@ -13,7 +14,8 @@ base_id = "base_item"
 item_id = 8501
 name = "random ostard"
 rarity = "common"
-movable = false
+buy_price = 700
+sell_price = 350
 hue = 0
 
 [[item]]
@@ -22,7 +24,6 @@ base_id = "ostard_statue"
 item_id = 8501
 name = "desert ostard"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -31,7 +32,6 @@ base_id = "ostard_statue"
 item_id = 8503
 name = "forest ostard"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -40,7 +40,6 @@ base_id = "ostard_statue"
 item_id = 8502
 name = "frenzied ostard"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -49,7 +48,8 @@ base_id = "base_item"
 item_id = 8438
 name = "llama"
 rarity = "common"
-movable = false
+buy_price = 700
+sell_price = 350
 hue = 0
 
 [[item]]
@@ -58,7 +58,8 @@ base_id = "base_item"
 item_id = 8486
 name = "pack horse"
 rarity = "common"
-movable = false
+buy_price = 700
+sell_price = 350
 hue = 0
 
 [[item]]
@@ -67,5 +68,6 @@ base_id = "base_item"
 item_id = 8487
 name = "pack llama"
 rarity = "common"
-movable = false
+buy_price = 700
+sell_price = 350
 hue = 0

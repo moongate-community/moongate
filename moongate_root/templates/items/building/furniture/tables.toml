@@ -5,6 +5,10 @@ item_id = 2868
 name = "table"
 rarity = "common"
 movable = true
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -14,6 +18,10 @@ item_id = 2869
 name = "table"
 rarity = "common"
 movable = true
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -23,6 +31,10 @@ item_id = 2870
 name = "table"
 rarity = "common"
 movable = true
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -32,6 +44,10 @@ item_id = 2874
 name = "table"
 rarity = "common"
 movable = true
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -41,6 +57,10 @@ item_id = 2876
 name = "table"
 rarity = "common"
 movable = true
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -50,6 +70,7 @@ item_id = 2879
 name = "counter"
 rarity = "common"
 movable = false
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -59,4 +80,5 @@ item_id = 2880
 name = "counter"
 rarity = "common"
 movable = false
+weight = 10.0
 hue = 0

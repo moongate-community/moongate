@@ -4,7 +4,8 @@ base_id = "base_item"
 item_id = 2540
 name = "savage kin paint"
 rarity = "common"
-movable = false
+weight = 2.0
+stackable = true
 hue = 2101
 
 [[item]]
@@ -13,7 +14,9 @@ base_id = "base_item"
 item_id = 3839
 name = "a hair-only dye"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 30000
+sell_price = 15000
 hue = 0
 
 [[item]]
@@ -22,7 +25,9 @@ base_id = "base_item"
 item_id = 3839
 name = "a beard-only dye"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 30000
+sell_price = 15000
 hue = 0
 
 [[item]]
@@ -31,7 +36,9 @@ base_id = "base_item"
 item_id = 3839
 name = "a hair dye"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
 hue = 0
 
 [[item]]
@@ -40,7 +47,9 @@ base_id = "base_item"
 item_id = 3839
 name = "a special hair-only dye"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 30000
+sell_price = 15000
 hue = 0
 
 [[item]]
@@ -49,7 +58,9 @@ base_id = "base_item"
 item_id = 3839
 name = "a special beard-only dye"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 30000
+sell_price = 15000
 hue = 0
 
 [[item]]
@@ -58,7 +69,9 @@ base_id = "base_item"
 item_id = 3839
 name = "a special hair dye"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
 hue = 0
 
 [[item]]
@@ -67,8 +80,11 @@ base_id = "base_item"
 item_id = 4091
 name = "mana draught"
 rarity = "common"
-movable = false
+weight = 1.0
+decays = true
 hue = 1162
+[item.tags]
+consumableID = "1"
 
 [[item]]
 id = "seedoflife"
@@ -76,56 +92,66 @@ base_id = "base_item"
 item_id = 5927
 name = "seed of life"
 rarity = "common"
-movable = false
+weight = 1.0
+stackable = true
+decays = true
 hue = 1169
+[item.tags]
+consumableID = "2"
 
 [[item]]
 id = "balmofprotection"
 item_id = 7192
 name = "balm of protection"
 rarity = "common"
-movable = false
 hue = 1177
+[item.tags]
+consumableID = "3"
 
 [[item]]
 id = "balmofstrength"
 item_id = 3835
 name = "balm of strength"
 rarity = "common"
-movable = false
 hue = 0
+[item.tags]
+consumableID = "4"
 
 [[item]]
 id = "balmofswiftness"
 item_id = 6216
 name = "balm of swiftness"
 rarity = "common"
-movable = false
 hue = 0
+[item.tags]
+consumableID = "5"
 
 [[item]]
 id = "balmofwisdom"
 item_id = 6215
 name = "balm of wisdom"
 rarity = "common"
-movable = false
 hue = 0
+[item.tags]
+consumableID = "6"
 
 [[item]]
 id = "lifeshieldlotion"
 item_id = 3836
 name = "life shield lotion"
 rarity = "common"
-movable = false
 hue = 0
+[item.tags]
+consumableID = "7"
 
 [[item]]
 id = "stoneskinlotion"
 item_id = 3837
 name = "stone skin lotion"
 rarity = "common"
-movable = false
 hue = 0
+[item.tags]
+consumableID = "8"
 
 [[item]]
 id = "gemofsalvation"
@@ -133,8 +159,10 @@ base_id = "base_item"
 item_id = 7955
 name = "gem of salvation"
 rarity = "common"
-movable = false
+loot_type = "newbied"
 hue = 286
+[item.tags]
+consumableID = "9"
 
 [[item]]
 id = "newplayerticket"
@@ -142,7 +170,7 @@ base_id = "base_item"
 item_id = 5360
 name = "new player ticket"
 rarity = "common"
-movable = false
+loot_type = "newbied"
 hue = 0
 
 [[item]]
@@ -151,8 +179,12 @@ base_id = "base_item"
 item_id = 3628
 name = "Elixir of Metal Conversion"
 rarity = "common"
-movable = false
+amount = 1
+stackable = true
+decays = true
 hue = 0
+[item.tags]
+typeID = "1"
 
 [[item]]
 id = "powderoftranslocation"
@@ -160,7 +192,9 @@ base_id = "base_item"
 item_id = 9912
 name = "powder of translocation"
 rarity = "common"
-movable = false
+weight = 0.01
+amount = 1
+stackable = true
 hue = 2101
 
 [[item]]
@@ -169,5 +203,7 @@ base_id = "base_item"
 item_id = 9911
 name = "a zoogi fungus"
 rarity = "common"
-movable = false
+amount = 1
+stackable = true
+decays = true
 hue = 0

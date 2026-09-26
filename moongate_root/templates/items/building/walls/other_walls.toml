@@ -3,7 +3,6 @@ id = "0x2540_wall"
 item_id = 9536
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -11,7 +10,6 @@ id = "0x2541_wall"
 item_id = 9537
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -19,7 +17,6 @@ id = "0x2542_wall"
 item_id = 9538
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -27,7 +24,6 @@ id = "0x2543_wall"
 item_id = 9539
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -35,7 +31,6 @@ id = "0x2544_wall"
 item_id = 9540
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -43,7 +38,6 @@ id = "0x2545_wall"
 item_id = 9541
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -51,7 +45,6 @@ id = "0x2546_wall"
 item_id = 9542
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -59,7 +52,6 @@ id = "0x2547_wall"
 item_id = 9543
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -67,7 +59,6 @@ id = "0x2548_wall"
 item_id = 9544
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -75,7 +66,6 @@ id = "0x2549_wall"
 item_id = 9545
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -83,7 +73,6 @@ id = "0x254a_wall"
 item_id = 9546
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -91,7 +80,6 @@ id = "0x254b_wall"
 item_id = 9547
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -99,7 +87,6 @@ id = "0x254c_wall"
 item_id = 9548
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -107,7 +94,6 @@ id = "0x254d_wall"
 item_id = 9549
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -115,7 +101,6 @@ id = "0x254e_wall"
 item_id = 9550
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -123,7 +108,6 @@ id = "0x254f_wall"
 item_id = 9551
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -131,7 +115,6 @@ id = "0x2550_wall"
 item_id = 9552
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -139,7 +122,6 @@ id = "0x2551_wall"
 item_id = 9553
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -147,7 +129,6 @@ id = "0x2552_wall"
 item_id = 9554
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -155,7 +136,6 @@ id = "0x2553_wall"
 item_id = 9555
 name = "wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -163,7 +143,6 @@ id = "0x3ef2_jungle_wall"
 item_id = 16114
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -171,7 +150,6 @@ id = "0x3ef3_jungle_wall"
 item_id = 16115
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -179,7 +157,6 @@ id = "0x3ef4_jungle_wall"
 item_id = 16116
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -187,7 +164,6 @@ id = "0x3ef5_jungle_wall"
 item_id = 16117
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -195,7 +171,6 @@ id = "0x3ef6_jungle_wall"
 item_id = 16118
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -203,7 +178,6 @@ id = "0x3ef7_jungle_wall"
 item_id = 16119
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -211,7 +185,6 @@ id = "0x3ef9_jungle_wall"
 item_id = 16121
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -219,7 +192,6 @@ id = "0x3efa_jungle_wall"
 item_id = 16122
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -227,7 +199,6 @@ id = "0x3efb_jungle_wall"
 item_id = 16123
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -235,7 +206,6 @@ id = "0x3efc_jungle_wall"
 item_id = 16124
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -243,7 +213,6 @@ id = "0x3efd_jungle_wall"
 item_id = 16125
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -251,7 +220,6 @@ id = "0x3efe_jungle_wall"
 item_id = 16126
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -259,7 +227,6 @@ id = "0x3eff_jungle_wall"
 item_id = 16127
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -267,7 +234,6 @@ id = "0x3f00_jungle_wall"
 item_id = 16128
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -275,7 +241,6 @@ id = "0x3f01_jungle_wall"
 item_id = 16129
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -283,7 +248,6 @@ id = "0x3f02_jungle_wall"
 item_id = 16130
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -291,7 +255,6 @@ id = "0x3f03_jungle_wall"
 item_id = 16131
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -299,7 +262,6 @@ id = "0x3f04_jungle_wall"
 item_id = 16132
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -307,7 +269,6 @@ id = "0x3f05_jungle_wall"
 item_id = 16133
 name = "jungle wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -315,7 +276,6 @@ id = "0x3f06_window"
 item_id = 16134
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -323,7 +283,6 @@ id = "0x121d_wall_carving"
 item_id = 4637
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -331,7 +290,6 @@ id = "0x121e_wall_carving"
 item_id = 4638
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -339,7 +297,6 @@ id = "0x121f_wall_carving"
 item_id = 4639
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -347,7 +304,6 @@ id = "0x1220_wall_carving"
 item_id = 4640
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -355,7 +311,6 @@ id = "0x1221_wall_carving"
 item_id = 4641
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -363,7 +318,6 @@ id = "0x1222_wall_carving"
 item_id = 4642
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -371,7 +325,6 @@ id = "0x1231_wall_carving"
 item_id = 4657
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -379,7 +332,6 @@ id = "0x1232_wall_carving"
 item_id = 4658
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -387,7 +339,6 @@ id = "0x1233_wall_carving"
 item_id = 4659
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -395,7 +346,6 @@ id = "0x1234_wall_carving"
 item_id = 4660
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -403,7 +353,6 @@ id = "0x1235_wall_carving"
 item_id = 4661
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -411,7 +360,6 @@ id = "0x1237_wall_carving"
 item_id = 4663
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -419,7 +367,6 @@ id = "0x1238_wall_carving"
 item_id = 4664
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -427,7 +374,6 @@ id = "0x1239_wall_carving"
 item_id = 4665
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -435,7 +381,6 @@ id = "0x123a_wall_carving"
 item_id = 4666
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -443,7 +388,6 @@ id = "0x123b_wall_carving"
 item_id = 4667
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -451,7 +395,6 @@ id = "0x123c_wall_carving"
 item_id = 4668
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -459,7 +402,6 @@ id = "0x123d_wall_carving"
 item_id = 4669
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -467,7 +409,6 @@ id = "0x123e_wall_carving"
 item_id = 4670
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -475,7 +416,6 @@ id = "0x1240_wall_carving"
 item_id = 4672
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -483,7 +423,6 @@ id = "0x1241_wall_carving"
 item_id = 4673
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -491,7 +430,6 @@ id = "0x1242_wall_carving"
 item_id = 4674
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -499,7 +437,6 @@ id = "0x1243_wall_carving"
 item_id = 4675
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -507,7 +444,6 @@ id = "0x1244_wall_carving"
 item_id = 4676
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -515,7 +451,6 @@ id = "0x1265_wall_carving"
 item_id = 4709
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -523,7 +458,6 @@ id = "0x1266_wall_carving"
 item_id = 4710
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -531,7 +465,6 @@ id = "0x1267_wall_carving"
 item_id = 4711
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -539,7 +472,6 @@ id = "0x12cc_wall_carving"
 item_id = 4812
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -547,7 +479,6 @@ id = "0x12cd_wall_carving"
 item_id = 4813
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -555,7 +486,6 @@ id = "0x12ce_wall_carving"
 item_id = 4814
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -563,7 +493,6 @@ id = "0x12cf_wall_carving"
 item_id = 4815
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -571,7 +500,6 @@ id = "0x12d0_wall_carving"
 item_id = 4816
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -579,7 +507,6 @@ id = "0x12d2_wall_carving"
 item_id = 4818
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -587,7 +514,6 @@ id = "0x12d3_wall_carving"
 item_id = 4819
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -595,7 +521,6 @@ id = "0x12d4_wall_carving"
 item_id = 4820
 name = "wall carving"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -603,7 +528,6 @@ id = "0x03a5_pier"
 item_id = 933
 name = "pier"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -611,7 +535,6 @@ id = "0x03a6_rope"
 item_id = 934
 name = "rope"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -619,7 +542,6 @@ id = "0x03a7_rope"
 item_id = 935
 name = "rope"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -627,7 +549,6 @@ id = "0x03a8_rope"
 item_id = 936
 name = "rope"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -635,7 +556,6 @@ id = "0x03a9_rope"
 item_id = 937
 name = "rope"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -643,7 +563,6 @@ id = "0x03aa_pier"
 item_id = 938
 name = "pier"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -651,7 +570,6 @@ id = "0x03ab_pier"
 item_id = 939
 name = "pier"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -659,7 +577,6 @@ id = "0x03ac_pier"
 item_id = 940
 name = "pier"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -667,7 +584,6 @@ id = "0x03ad_pier"
 item_id = 941
 name = "pier"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -675,7 +591,6 @@ id = "0x03ae_pier"
 item_id = 942
 name = "pier"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -683,7 +598,6 @@ id = "0x03af_pier"
 item_id = 943
 name = "pier"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -691,5 +605,4 @@ id = "0x03b0_pier"
 item_id = 944
 name = "pier"
 rarity = "common"
-movable = false
 hue = 0

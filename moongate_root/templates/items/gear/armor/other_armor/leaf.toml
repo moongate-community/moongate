@@ -2,47 +2,40 @@
 id = "0x317e"
 item_id = 12670
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x317b"
 item_id = 12667
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x3181"
 item_id = 12673
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x317c"
 item_id = 12668
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x317d"
 item_id = 12669
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x317f"
 item_id = 12671
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
 id = "0x3180"
 item_id = 12672
 rarity = "common"
-movable = false
 hue = 0

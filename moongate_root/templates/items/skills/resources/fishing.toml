@@ -2,7 +2,8 @@
 id = "base_magic_fish"
 item_id = 3542
 rarity = "common"
-movable = false
+weight = 1.0
+stackable = true
 hue = 0
 
 [[item]]
@@ -11,7 +12,6 @@ base_id = "base_item"
 item_id = 2508
 name = "big fish"
 rarity = "common"
-movable = false
 hue = 1420
 
 [[item]]
@@ -20,7 +20,9 @@ base_id = "base_item"
 item_id = 2463
 name = "message in a bottle"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 8
+sell_price = 4
 hue = 0
 
 [[item]]
@@ -29,7 +31,9 @@ base_id = "base_item"
 item_id = 5358
 name = "waterstained SOS"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 8
+sell_price = 4
 hue = 0
 
 [[item]]
@@ -37,5 +41,4 @@ id = "waterstainedsos_tol"
 base_id = "waterstainedsos"
 item_id = 41740
 rarity = "common"
-movable = false
 hue = 0

@@ -4,7 +4,10 @@ base_id = "base_item"
 item_id = 9797
 name = "dragon helm"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +16,10 @@ base_id = "base_item"
 item_id = 9798
 name = "dragon helm"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +28,10 @@ base_id = "base_item"
 item_id = 9865
 name = "winged helmet"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -31,7 +40,10 @@ base_id = "base_item"
 item_id = 9866
 name = "winged helmet"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -40,7 +52,10 @@ base_id = "base_item"
 item_id = 9867
 name = "hachimaki"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -49,7 +64,10 @@ base_id = "base_item"
 item_id = 9868
 name = "hachimaki"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -58,7 +76,10 @@ base_id = "base_item"
 item_id = 9869
 name = "kabuto"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -67,7 +88,10 @@ base_id = "base_item"
 item_id = 9870
 name = "kabuto"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -76,7 +100,10 @@ base_id = "base_item"
 item_id = 9871
 name = "kabuto mempo"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -85,7 +112,10 @@ base_id = "base_item"
 item_id = 9872
 name = "kabuto mempo"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -94,7 +124,10 @@ base_id = "base_item"
 item_id = 9873
 name = "leather cap"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -103,7 +136,10 @@ base_id = "base_item"
 item_id = 9874
 name = "leather cap"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -112,7 +148,10 @@ base_id = "base_item"
 item_id = 9885
 name = "robin hood cap"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -121,7 +160,10 @@ base_id = "base_item"
 item_id = 9889
 name = "feathered mask"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -130,7 +172,10 @@ base_id = "base_item"
 item_id = 9890
 name = "feathered mask"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -139,7 +184,10 @@ base_id = "base_item"
 item_id = 9891
 name = "ninja mask"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -148,5 +196,8 @@ base_id = "base_item"
 item_id = 9892
 name = "ninja mask"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0

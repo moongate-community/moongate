@@ -3,7 +3,6 @@ id = "0x1085_necklace"
 item_id = 4229
 name = "necklace"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -11,7 +10,6 @@ id = "0x1086_bracelet"
 item_id = 4230
 name = "bracelet"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -19,7 +17,6 @@ id = "0x1087_earrings"
 item_id = 4231
 name = "earrings"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -27,7 +24,6 @@ id = "0x1088_necklace"
 item_id = 4232
 name = "necklace"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -35,7 +31,6 @@ id = "0x1089_necklace"
 item_id = 4233
 name = "necklace"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -43,7 +38,6 @@ id = "0x108a_ring"
 item_id = 4234
 name = "ring"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -51,5 +45,4 @@ id = "0x108b_beads"
 item_id = 4235
 name = "beads"
 rarity = "common"
-movable = false
 hue = 0

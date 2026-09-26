@@ -5,13 +5,14 @@ item_id = 3919
 name = "crossbow"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0f50"
 item_id = 3920
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -21,13 +22,14 @@ item_id = 5116
 name = "heavy crossbow"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x13fd"
 item_id = 5117
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -37,13 +39,14 @@ item_id = 5041
 name = "bow"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x13b2"
 item_id = 5042
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -53,13 +56,14 @@ item_id = 9922
 name = "composite bow"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x26cc"
 item_id = 9932
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -69,13 +73,15 @@ item_id = 9923
 name = "repeating crossbow"
 rarity = "common"
 movable = true
+weight = 6.0
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x26cd"
 item_id = 9933
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -85,13 +91,14 @@ item_id = 10149
 name = "yumi"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x27f0"
 item_id = 10224
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -101,13 +108,14 @@ item_id = 11550
 name = "elven composite longbow"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x2d2a"
 item_id = 11562
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -117,11 +125,12 @@ item_id = 11563
 name = "magical shortbow"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x2d1f"
 item_id = 11551
 rarity = "common"
-movable = false
 hue = 0

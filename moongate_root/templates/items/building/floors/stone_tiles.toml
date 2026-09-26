@@ -3,7 +3,6 @@ id = "0x0491_blue_slate_tile"
 item_id = 1169
 name = "blue slate tile"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -11,7 +10,6 @@ id = "0x0492_blue_slate_tile"
 item_id = 1170
 name = "blue slate tile"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -19,7 +17,6 @@ id = "0x0493_blue_slate_tile"
 item_id = 1171
 name = "blue slate tile"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -27,7 +24,6 @@ id = "0x0494_blue_slate_tile"
 item_id = 1172
 name = "blue slate tile"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -35,7 +31,6 @@ id = "0x0495_marble_floor"
 item_id = 1173
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -43,7 +38,6 @@ id = "0x0496_marble_floor"
 item_id = 1174
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -51,7 +45,6 @@ id = "0x0497_marble_floor"
 item_id = 1175
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -59,7 +52,6 @@ id = "0x0498_marble_floor"
 item_id = 1176
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -67,7 +59,6 @@ id = "0x049b_blue_slate_tile"
 item_id = 1179
 name = "blue slate tile"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -75,7 +66,6 @@ id = "0x049c_grey_slate_tile"
 item_id = 1180
 name = "grey slate tile"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -83,7 +73,6 @@ id = "0x049d_sandstone_paver"
 item_id = 1181
 name = "sandstone paver"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -91,7 +80,6 @@ id = "0x049e_sandstone_paver"
 item_id = 1182
 name = "sandstone paver"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -99,7 +87,6 @@ id = "0x049f_sandstone_paver"
 item_id = 1183
 name = "sandstone paver"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -107,7 +94,6 @@ id = "0x04a0_sandstone_paver"
 item_id = 1184
 name = "sandstone paver"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -115,7 +101,6 @@ id = "0x04e2_bricks"
 item_id = 1250
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -123,7 +108,6 @@ id = "0x04e3_bricks"
 item_id = 1251
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -131,7 +115,6 @@ id = "0x04e4_bricks"
 item_id = 1252
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -139,7 +122,6 @@ id = "0x04e5_bricks"
 item_id = 1253
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -147,7 +129,6 @@ id = "0x04e6_bricks"
 item_id = 1254
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -155,7 +136,6 @@ id = "0x04e7_bricks"
 item_id = 1255
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -163,7 +143,6 @@ id = "0x04e8_bricks"
 item_id = 1256
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -171,7 +150,6 @@ id = "0x04e9_bricks"
 item_id = 1257
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -179,7 +157,6 @@ id = "0x04ea_blue_tiles"
 item_id = 1258
 name = "blue tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -187,7 +164,6 @@ id = "0x04eb_blue_tiles"
 item_id = 1259
 name = "blue tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -195,7 +171,6 @@ id = "0x04ec_blue_tiles"
 item_id = 1260
 name = "blue tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -203,7 +178,6 @@ id = "0x04ed_blue_tiles"
 item_id = 1261
 name = "blue tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -211,7 +185,6 @@ id = "0x04ee_blue_tiles"
 item_id = 1262
 name = "blue tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -219,7 +192,6 @@ id = "0x04ef_blue_tiles"
 item_id = 1263
 name = "blue tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -227,7 +199,6 @@ id = "0x04f0_blue_tiles"
 item_id = 1264
 name = "blue tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -235,7 +206,6 @@ id = "0x04f1_blue_tiles"
 item_id = 1265
 name = "blue tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -243,7 +213,6 @@ id = "0x04f2_blue_tiles"
 item_id = 1266
 name = "blue tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -251,7 +220,6 @@ id = "0x04f3_red_tiles"
 item_id = 1267
 name = "red tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -259,7 +227,6 @@ id = "0x04f4_red_tiles"
 item_id = 1268
 name = "red tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -267,7 +234,6 @@ id = "0x04f5_red_tiles"
 item_id = 1269
 name = "red tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -275,7 +241,6 @@ id = "0x04f6_red_tiles"
 item_id = 1270
 name = "red tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -283,7 +248,6 @@ id = "0x04f7_red_tiles"
 item_id = 1271
 name = "red tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -291,7 +255,6 @@ id = "0x04f8_red_tiles"
 item_id = 1272
 name = "red tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -299,7 +262,6 @@ id = "0x04f9_red_tiles"
 item_id = 1273
 name = "red tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -307,7 +269,6 @@ id = "0x04fa_red_tiles"
 item_id = 1274
 name = "red tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -315,7 +276,6 @@ id = "0x04fb_red_tiles"
 item_id = 1275
 name = "red tiles"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -323,7 +283,6 @@ id = "0x04fd_flagstones"
 item_id = 1277
 name = "flagstones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -331,7 +290,6 @@ id = "0x04fe_flagstones"
 item_id = 1278
 name = "flagstones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -339,7 +297,6 @@ id = "0x04ff_flagstones"
 item_id = 1279
 name = "flagstones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -347,7 +304,6 @@ id = "0x0500_flagstones"
 item_id = 1280
 name = "flagstones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -355,7 +311,6 @@ id = "0x0501_flagstones"
 item_id = 1281
 name = "flagstones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -363,7 +318,6 @@ id = "0x0502_flagstones"
 item_id = 1282
 name = "flagstones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -371,7 +325,6 @@ id = "0x0503_flagstones"
 item_id = 1283
 name = "flagstones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -379,7 +332,6 @@ id = "0x050d_marble_floor"
 item_id = 1293
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -387,7 +339,6 @@ id = "0x050e_marble_floor"
 item_id = 1294
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -395,7 +346,6 @@ id = "0x050f_marble_floor"
 item_id = 1295
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -403,7 +353,6 @@ id = "0x0510_marble_floor"
 item_id = 1296
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -411,7 +360,6 @@ id = "0x0511_marble_floor"
 item_id = 1297
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -419,7 +367,6 @@ id = "0x0512_marble_floor"
 item_id = 1298
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -427,7 +374,6 @@ id = "0x0513_marble_floor"
 item_id = 1299
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -435,7 +381,6 @@ id = "0x0514_marble_floor"
 item_id = 1300
 name = "marble floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -443,7 +388,6 @@ id = "0x0515_cobblestones"
 item_id = 1301
 name = "cobblestones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -451,7 +395,6 @@ id = "0x0516_cobblestones"
 item_id = 1302
 name = "cobblestones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -459,7 +402,6 @@ id = "0x0517_cobblestones"
 item_id = 1303
 name = "cobblestones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -467,7 +409,6 @@ id = "0x0518_cobblestones"
 item_id = 1304
 name = "cobblestones"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -475,7 +416,6 @@ id = "0x0519_stone_pavers"
 item_id = 1305
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -483,7 +423,6 @@ id = "0x051a_stone_pavers"
 item_id = 1306
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -491,7 +430,6 @@ id = "0x051b_stone_pavers"
 item_id = 1307
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -499,7 +437,6 @@ id = "0x051c_stone_pavers"
 item_id = 1308
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -507,7 +444,6 @@ id = "0x051d_stone_pavers"
 item_id = 1309
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -515,7 +451,6 @@ id = "0x051e_stone_pavers"
 item_id = 1310
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -523,7 +458,6 @@ id = "0x051f_stone_pavers"
 item_id = 1311
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -531,7 +465,6 @@ id = "0x0520_stone_pavers"
 item_id = 1312
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -539,7 +472,6 @@ id = "0x0521_stone_pavers"
 item_id = 1313
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -547,7 +479,6 @@ id = "0x0522_stone_pavers"
 item_id = 1314
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -555,7 +486,6 @@ id = "0x0523_stone_pavers"
 item_id = 1315
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -563,7 +493,6 @@ id = "0x0524_stone_pavers"
 item_id = 1316
 name = "stone pavers"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -571,7 +500,6 @@ id = "0x0525_sandstone_floor"
 item_id = 1317
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -579,7 +507,6 @@ id = "0x0526_sandstone_floor"
 item_id = 1318
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -587,7 +514,6 @@ id = "0x0527_sandstone_floor"
 item_id = 1319
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -595,7 +521,6 @@ id = "0x0528_sandstone_floor"
 item_id = 1320
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -603,7 +528,6 @@ id = "0x0529_sandstone_floor"
 item_id = 1321
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -611,7 +535,6 @@ id = "0x052a_sandstone_floor"
 item_id = 1322
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -619,7 +542,6 @@ id = "0x052b_sandstone_fllor"
 item_id = 1323
 name = "sandstone fllor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -627,7 +549,6 @@ id = "0x052c_sandstone_floor"
 item_id = 1324
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -635,7 +556,6 @@ id = "0x052f_sandstone_floor"
 item_id = 1327
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -643,7 +563,6 @@ id = "0x0530_sandstone_floor"
 item_id = 1328
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -651,7 +570,6 @@ id = "0x0531_sandstone_floor"
 item_id = 1329
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -659,7 +577,6 @@ id = "0x0532_sandstone_floor"
 item_id = 1330
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -667,7 +584,6 @@ id = "0x0533_sandstone_floor"
 item_id = 1331
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -675,7 +591,6 @@ id = "0x0534_sandstone_floor"
 item_id = 1332
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -683,7 +598,6 @@ id = "0x0535_sandstone_floor"
 item_id = 1333
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -691,7 +605,6 @@ id = "0x0536_sandstone_floor"
 item_id = 1334
 name = "sandstone floor"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -699,7 +612,6 @@ id = "0x0537_bricks"
 item_id = 1335
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -707,7 +619,6 @@ id = "0x0538_bricks"
 item_id = 1336
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -715,7 +626,6 @@ id = "0x0539_bricks"
 item_id = 1337
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -723,5 +633,4 @@ id = "0x053a_bricks"
 item_id = 1338
 name = "bricks"
 rarity = "common"
-movable = false
 hue = 0

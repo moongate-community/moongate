@@ -3,7 +3,9 @@ id = "base_potion"
 base_id = "base_item"
 item_id = 0
 rarity = "common"
-movable = false
+weight = 1.0
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
@@ -12,7 +14,8 @@ base_id = "base_potion"
 item_id = 3853
 name = "purple potion"
 rarity = "common"
-movable = false
+buy_price = 20
+sell_price = 35
 hue = 0
 
 [[item]]
@@ -21,7 +24,8 @@ base_id = "base_potion"
 item_id = 3853
 name = "purple potion"
 rarity = "common"
-movable = false
+buy_price = 25
+sell_price = 50
 hue = 0
 
 [[item]]
@@ -30,7 +34,8 @@ base_id = "base_potion"
 item_id = 3853
 name = "purple potion"
 rarity = "common"
-movable = false
+buy_price = 55
+sell_price = 105
 hue = 0
 
 [[item]]
@@ -39,7 +44,8 @@ base_id = "base_potion"
 item_id = 3851
 name = "red potion"
 rarity = "common"
-movable = false
+buy_price = 60
+sell_price = 30
 hue = 0
 
 [[item]]
@@ -48,7 +54,8 @@ base_id = "base_potion"
 item_id = 3851
 name = "red potion"
 rarity = "common"
-movable = false
+buy_price = 80
+sell_price = 40
 hue = 0
 
 [[item]]
@@ -57,7 +64,8 @@ base_id = "base_potion"
 item_id = 3846
 name = "black potion"
 rarity = "common"
-movable = false
+buy_price = 30
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -66,7 +74,8 @@ base_id = "base_potion"
 item_id = 3847
 name = "orange potion"
 rarity = "common"
-movable = false
+buy_price = 30
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -75,7 +84,8 @@ base_id = "base_potion"
 item_id = 3847
 name = "orange potion"
 rarity = "common"
-movable = false
+buy_price = 40
+sell_price = 20
 hue = 0
 
 [[item]]
@@ -84,7 +94,8 @@ base_id = "base_potion"
 item_id = 3847
 name = "orange potion"
 rarity = "common"
-movable = false
+buy_price = 70
+sell_price = 35
 hue = 0
 
 [[item]]
@@ -93,7 +104,8 @@ base_id = "base_potion"
 item_id = 3848
 name = "blue potion"
 rarity = "common"
-movable = false
+buy_price = 30
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -102,7 +114,8 @@ base_id = "base_potion"
 item_id = 3848
 name = "blue potion"
 rarity = "common"
-movable = false
+buy_price = 60
+sell_price = 30
 hue = 0
 
 [[item]]
@@ -111,7 +124,8 @@ base_id = "base_potion"
 item_id = 3849
 name = "white potion"
 rarity = "common"
-movable = false
+buy_price = 30
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -120,7 +134,8 @@ base_id = "base_potion"
 item_id = 3849
 name = "white potion"
 rarity = "common"
-movable = false
+buy_price = 50
+sell_price = 25
 hue = 0
 
 [[item]]
@@ -129,7 +144,8 @@ base_id = "base_potion"
 item_id = 3850
 name = "green potion"
 rarity = "common"
-movable = false
+buy_price = 30
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -138,7 +154,8 @@ base_id = "base_potion"
 item_id = 3850
 name = "green potion"
 rarity = "common"
-movable = false
+buy_price = 40
+sell_price = 20
 hue = 0
 
 [[item]]
@@ -147,7 +164,8 @@ base_id = "base_potion"
 item_id = 3850
 name = "green potion"
 rarity = "common"
-movable = false
+buy_price = 50
+sell_price = 25
 hue = 0
 
 [[item]]
@@ -156,7 +174,8 @@ base_id = "base_potion"
 item_id = 3850
 name = "green potion"
 rarity = "common"
-movable = false
+buy_price = 260
+sell_price = 130
 hue = 0
 
 [[item]]
@@ -165,7 +184,8 @@ base_id = "base_potion"
 item_id = 3852
 name = "yellow potion"
 rarity = "common"
-movable = false
+buy_price = 30
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -174,7 +194,8 @@ base_id = "base_potion"
 item_id = 3852
 name = "yellow potion"
 rarity = "common"
-movable = false
+buy_price = 40
+sell_price = 20
 hue = 0
 
 [[item]]
@@ -183,7 +204,8 @@ base_id = "base_potion"
 item_id = 3852
 name = "yellow potion"
 rarity = "common"
-movable = false
+buy_price = 70
+sell_price = 35
 hue = 0
 
 [[item]]
@@ -193,6 +215,8 @@ item_id = 6464
 name = "keg specially lined for potions"
 rarity = "common"
 movable = true
+weight = 20.0
+decays = true
 hue = 0
 
 [[item]]
@@ -201,5 +225,6 @@ base_id = "base_potion"
 item_id = 3844
 name = "Pet Bonding Potion"
 rarity = "common"
-movable = false
+buy_price = 80
+sell_price = 40
 hue = 0

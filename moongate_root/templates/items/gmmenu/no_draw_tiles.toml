@@ -5,4 +5,5 @@ item_id = 8611
 name = "nodraw_blocking_tile"
 rarity = "common"
 movable = false
+decays = false
 hue = 0

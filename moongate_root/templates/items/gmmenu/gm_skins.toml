@@ -5,6 +5,9 @@ item_id = 8258
 name = "Lord British"
 rarity = "common"
 movable = true
+weight = 0.3
+decays = true
+loot_type = "newbied"
 hue = 0
 
 [[item]]
@@ -14,6 +17,9 @@ item_id = 8259
 name = "Lord Blackthorne"
 rarity = "common"
 movable = true
+weight = 0.3
+decays = true
+loot_type = "newbied"
 hue = 0
 
 [[item]]
@@ -23,6 +29,9 @@ item_id = 8272
 name = "Dupre the Fighter"
 rarity = "common"
 movable = true
+weight = 0.3
+decays = true
+loot_type = "newbied"
 hue = 0
 
 [[item]]
@@ -32,6 +41,9 @@ item_id = 8270
 name = "death shroud"
 rarity = "common"
 movable = true
+weight = 0.3
+decays = true
+loot_type = "newbied"
 hue = 0
 
 [[item]]
@@ -41,6 +53,10 @@ item_id = 8271
 name = "GM Robe"
 rarity = "common"
 movable = true
+weight = 0.3
+layer = "inner_torso"
+decays = true
+loot_type = "newbied"
 hue = 0
 
 [[item]]
@@ -50,6 +66,10 @@ item_id = 8271
 name = "Counselor Robe"
 rarity = "common"
 movable = true
+weight = 0.3
+layer = "inner_torso"
+decays = true
+loot_type = "newbied"
 hue = 3
 
 [[item]]
@@ -59,6 +79,10 @@ item_id = 8271
 name = "Gamemaster Robe"
 rarity = "common"
 movable = true
+weight = 0.3
+layer = "inner_torso"
+decays = true
+loot_type = "newbied"
 hue = 37
 
 [[item]]
@@ -68,6 +92,10 @@ item_id = 8271
 name = "Seer Robe"
 rarity = "common"
 movable = true
+weight = 0.3
+layer = "inner_torso"
+decays = true
+loot_type = "newbied"
 hue = 72
 
 [[item]]
@@ -77,4 +105,8 @@ item_id = 8271
 name = "Admin Robe"
 rarity = "common"
 movable = true
+weight = 0.3
+layer = "inner_torso"
+decays = true
+loot_type = "newbied"
 hue = 1

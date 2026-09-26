@@ -5,6 +5,7 @@ item_id = 4650
 name = "blood"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -14,6 +15,7 @@ item_id = 4651
 name = "blood"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -23,6 +25,7 @@ item_id = 4652
 name = "blood"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -32,6 +35,7 @@ item_id = 4653
 name = "blood"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -41,6 +45,7 @@ item_id = 4654
 name = "blood"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -50,6 +55,7 @@ item_id = 4655
 name = "blood smear"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -59,4 +65,5 @@ item_id = 5701
 name = "blood"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0

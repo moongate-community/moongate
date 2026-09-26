@@ -4,7 +4,12 @@ base_id = "base_item"
 item_id = 5371
 name = "lockpick"
 rarity = "common"
-movable = false
+weight = 0.1
+amount = 1
+stackable = true
+buy_price = 12
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +18,12 @@ base_id = "base_item"
 item_id = 5372
 name = "lockpick"
 rarity = "common"
-movable = false
+weight = 0.1
+amount = 1
+stackable = true
+buy_price = 12
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +32,12 @@ base_id = "base_item"
 item_id = 5373
 name = "lockpicks"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 18
+sell_price = 9
+decays = true
 hue = 0
 
 [[item]]
@@ -31,7 +46,12 @@ base_id = "base_item"
 item_id = 5374
 name = "lockpicks"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 18
+sell_price = 9
+decays = true
 hue = 0
 
 [[item]]
@@ -41,4 +61,8 @@ item_id = 3589
 name = "disguise kit"
 rarity = "common"
 movable = true
+weight = 1.0
+buy_price = 500
+sell_price = 0
+decays = true
 hue = 0

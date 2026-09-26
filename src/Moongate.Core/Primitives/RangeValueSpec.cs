@@ -32,6 +32,11 @@ public readonly struct RangeValueSpec<T> where T : struct, INumber<T>
     /// </summary>
     public bool IsRandom { get; }
 
+    /// <summary>
+    ///     Gets the smallest value <see cref="Resolve" /> can return: the fixed value, or the bottom of the range.
+    /// </summary>
+    public T Min => IsRandom ? _min : _fixedValue;
+
     private RangeValueSpec(T fixedValue)
     {
         _fixedValue = fixedValue;

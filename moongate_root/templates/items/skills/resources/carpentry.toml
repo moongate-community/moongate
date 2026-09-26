@@ -4,7 +4,11 @@ base_id = "base_item"
 item_id = 7127
 name = "board"
 rarity = "common"
-movable = false
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -13,5 +17,9 @@ base_id = "base_item"
 item_id = 7130
 name = "board"
 rarity = "common"
-movable = false
+weight = 1.0
+stackable = true
+buy_price = 1
+sell_price = 1
+decays = true
 hue = 0

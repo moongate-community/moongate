@@ -5,6 +5,9 @@ item_id = 16954
 name = "sand"
 rarity = "common"
 movable = true
+weight = 0.1
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
@@ -14,4 +17,7 @@ item_id = 6009
 name = "high quality granite"
 rarity = "common"
 movable = true
+weight = 1.0
+stackable = true
+decays = true
 hue = 0

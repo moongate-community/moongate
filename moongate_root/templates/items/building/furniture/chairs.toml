@@ -5,6 +5,10 @@ item_id = 2603
 name = "a stool"
 rarity = "common"
 movable = true
+weight = 10.0
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -14,6 +18,10 @@ item_id = 2910
 name = "foot stool"
 rarity = "common"
 movable = true
+weight = 10.0
+buy_price = 10
+sell_price = 5
+decays = true
 hue = 0
 
 [[item]]
@@ -23,4 +31,8 @@ item_id = 4604
 name = "bamboo stool"
 rarity = "common"
 movable = true
+weight = 10.0
+buy_price = 14
+sell_price = 7
+decays = true
 hue = 0

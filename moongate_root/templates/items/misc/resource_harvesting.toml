@@ -5,6 +5,8 @@ item_id = 3190
 name = "carrots"
 rarity = "common"
 movable = false
+weight = 255.0
+decays = false
 hue = 0
 
 [[item]]
@@ -14,6 +16,8 @@ item_id = 3183
 name = "onions"
 rarity = "common"
 movable = false
+weight = 255.0
+decays = false
 hue = 0
 
 [[item]]
@@ -23,6 +27,8 @@ item_id = 3171
 name = "turnip"
 rarity = "common"
 movable = false
+weight = 255.0
+decays = false
 hue = 0
 
 [[item]]
@@ -32,6 +38,8 @@ item_id = 3195
 name = "head of cabbage"
 rarity = "common"
 movable = false
+weight = 255.0
+decays = false
 hue = 0
 
 [[item]]
@@ -41,6 +49,8 @@ item_id = 6811
 name = "flax"
 rarity = "common"
 movable = false
+weight = 255.0
+decays = false
 hue = 0
 
 [[item]]
@@ -50,6 +60,8 @@ item_id = 3164
 name = "watermelon"
 rarity = "common"
 movable = false
+weight = 255.0
+decays = false
 hue = 0
 
 [[item]]
@@ -59,4 +71,6 @@ item_id = 6369
 name = "garlic"
 rarity = "common"
 movable = false
+weight = 255.0
+decays = false
 hue = 0

@@ -3,7 +3,6 @@ id = "0x0149_plaster_wall"
 item_id = 329
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -11,7 +10,6 @@ id = "0x014a_plaster_wall"
 item_id = 330
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -19,7 +17,6 @@ id = "0x014b_plaster_wall"
 item_id = 331
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -27,7 +24,6 @@ id = "0x014c_plaster_wall"
 item_id = 332
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -35,7 +31,6 @@ id = "0x014d_plaster_wall"
 item_id = 333
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -43,7 +38,6 @@ id = "0x014e_plaster_wall"
 item_id = 334
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -51,7 +45,6 @@ id = "0x014f_plaster_wall"
 item_id = 335
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -59,7 +52,6 @@ id = "0x0150_plaster_wall"
 item_id = 336
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -67,7 +59,6 @@ id = "0x0151_plaster_wall"
 item_id = 337
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -75,7 +66,6 @@ id = "0x0152_plaster_wall"
 item_id = 338
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -83,7 +73,6 @@ id = "0x0153_plaster_wall"
 item_id = 339
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -91,7 +80,6 @@ id = "0x0154_window"
 item_id = 340
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -99,7 +87,6 @@ id = "0x0155_window"
 item_id = 341
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -107,7 +94,6 @@ id = "0x0156_window"
 item_id = 342
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -115,7 +101,6 @@ id = "0x0157_window"
 item_id = 343
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -123,7 +108,6 @@ id = "0x0127_plaster_wall"
 item_id = 295
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -131,7 +115,6 @@ id = "0x0128_plaster_wall"
 item_id = 296
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -139,7 +122,6 @@ id = "0x0129_plaster_wall"
 item_id = 297
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -147,7 +129,6 @@ id = "0x012a_wooden_post"
 item_id = 298
 name = "wooden post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -155,7 +136,6 @@ id = "0x012c_plaster_wall"
 item_id = 300
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -163,7 +143,6 @@ id = "0x012d_plaster_wall"
 item_id = 301
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -171,7 +150,6 @@ id = "0x012e_plaster_wall"
 item_id = 302
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -179,7 +157,6 @@ id = "0x012f_plaster_wall"
 item_id = 303
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -187,7 +164,6 @@ id = "0x0130_plaster_wall"
 item_id = 304
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -195,7 +171,6 @@ id = "0x0131_plaster_wall"
 item_id = 305
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -203,7 +178,6 @@ id = "0x0132_plaster_wall"
 item_id = 306
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -211,7 +185,6 @@ id = "0x0133_plaster_wall"
 item_id = 307
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -219,7 +192,6 @@ id = "0x0134_plaster_wall"
 item_id = 308
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -227,7 +199,6 @@ id = "0x0135_plaster_wall"
 item_id = 309
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -235,7 +206,6 @@ id = "0x0136_plaster_wall"
 item_id = 310
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -243,7 +213,6 @@ id = "0x0137_plaster_wall"
 item_id = 311
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -251,7 +220,6 @@ id = "0x0138_plaster_wall"
 item_id = 312
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -259,7 +227,6 @@ id = "0x0139_plaster_wall"
 item_id = 313
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -267,7 +234,6 @@ id = "0x13a_window"
 item_id = 314
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -275,7 +241,6 @@ id = "0x013b_window"
 item_id = 315
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -283,7 +248,6 @@ id = "0x013c_archway"
 item_id = 316
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -291,7 +255,6 @@ id = "0x013d_archway"
 item_id = 317
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -299,7 +262,6 @@ id = "0x013e_archway"
 item_id = 318
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -307,7 +269,6 @@ id = "0x013f_archway"
 item_id = 319
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -315,7 +276,6 @@ id = "0x0140_archway"
 item_id = 320
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -323,7 +283,6 @@ id = "0x0141_wooden_beam"
 item_id = 321
 name = "wooden beam"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -331,7 +290,6 @@ id = "0x0142_wooden_beam"
 item_id = 322
 name = "wooden beam"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -339,7 +297,6 @@ id = "0x0143_wooden_beam"
 item_id = 323
 name = "wooden beam"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -347,7 +304,6 @@ id = "0x0144_wooden_beam"
 item_id = 324
 name = "wooden beam"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -355,7 +311,6 @@ id = "0x01ff_plaster_wall"
 item_id = 511
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -363,7 +318,6 @@ id = "0x0200_plaster_wall"
 item_id = 512
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -371,7 +325,6 @@ id = "0x0201_plaster_wall"
 item_id = 513
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -379,7 +332,6 @@ id = "0x0202_sandstone"
 item_id = 514
 name = "sandstone"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -387,7 +339,6 @@ id = "0x0203_plaster_wall"
 item_id = 515
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -395,7 +346,6 @@ id = "0x0204_plaster_wall"
 item_id = 516
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -403,7 +353,6 @@ id = "0x0205_plaster_wall"
 item_id = 517
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -411,7 +360,6 @@ id = "0x0206_plaster_wall"
 item_id = 518
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -419,7 +367,6 @@ id = "0x0207_window"
 item_id = 519
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -427,7 +374,6 @@ id = "0x0208_window"
 item_id = 520
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -435,7 +381,6 @@ id = "0x0209_window"
 item_id = 521
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -443,7 +388,6 @@ id = "0x020a_window"
 item_id = 522
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -451,7 +395,6 @@ id = "0x020b_plaster_wall"
 item_id = 523
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -459,7 +402,6 @@ id = "0x020c_plaster_wall"
 item_id = 524
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -467,7 +409,6 @@ id = "0x037f_plaster_wall"
 item_id = 895
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -475,7 +416,6 @@ id = "0x0380_plaster_wall"
 item_id = 896
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -483,7 +423,6 @@ id = "0x0381_plaster_wall"
 item_id = 897
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -491,7 +430,6 @@ id = "0x0382_wooden_post"
 item_id = 898
 name = "wooden post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -499,7 +437,6 @@ id = "0x0383_plaster_wall"
 item_id = 899
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -507,7 +444,6 @@ id = "0x0384_plaster_wall"
 item_id = 900
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -515,7 +451,6 @@ id = "0x0385_plaster_wall"
 item_id = 901
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -523,7 +458,6 @@ id = "0x0386_plaster_wall"
 item_id = 902
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -531,7 +465,6 @@ id = "0x0387_plaster_wall"
 item_id = 903
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -539,7 +472,6 @@ id = "0x0388_plaster_wall"
 item_id = 904
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -547,7 +479,6 @@ id = "0x0389_plaster_wall"
 item_id = 905
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -555,7 +486,6 @@ id = "0x038a_plaster_wall"
 item_id = 906
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -563,7 +493,6 @@ id = "0x038b_plaster_wall"
 item_id = 907
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -571,7 +500,6 @@ id = "0x038c_plaster_wall"
 item_id = 908
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -579,7 +507,6 @@ id = "0x038d_plaster_wall"
 item_id = 909
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -587,7 +514,6 @@ id = "0x038e_plaster_wall"
 item_id = 910
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -595,7 +521,6 @@ id = "0x038f_plaster_wall"
 item_id = 911
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -603,7 +528,6 @@ id = "0x0390_plaster_wall"
 item_id = 912
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -611,7 +535,6 @@ id = "0x0391_plaster_wall"
 item_id = 913
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -619,7 +542,6 @@ id = "0x0392_plaster_wall"
 item_id = 914
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -627,7 +549,6 @@ id = "0x0393_plaster_wall"
 item_id = 915
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -635,7 +556,6 @@ id = "0x0394_plaster_wall"
 item_id = 916
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -643,7 +563,6 @@ id = "0x0395_plaster_wall"
 item_id = 917
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -651,7 +570,6 @@ id = "0x0396_plaster_wall"
 item_id = 918
 name = "plaster wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -659,7 +577,6 @@ id = "0x0397_archway"
 item_id = 919
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -667,7 +584,6 @@ id = "0x0398_archway"
 item_id = 920
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -675,7 +591,6 @@ id = "0x0399_archway"
 item_id = 921
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -683,7 +598,6 @@ id = "0x039a_archway"
 item_id = 922
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -691,7 +605,6 @@ id = "0x039b_archway"
 item_id = 923
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -699,7 +612,6 @@ id = "0x039c_wooden_beam"
 item_id = 924
 name = "wooden beam"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -707,7 +619,6 @@ id = "0x039d_wooden_beast"
 item_id = 925
 name = "wooden beast"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -715,7 +626,6 @@ id = "0x039e_wooden_beam"
 item_id = 926
 name = "wooden beam"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -723,7 +633,6 @@ id = "0x039f_wooden_beam"
 item_id = 927
 name = "wooden beam"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -731,5 +640,4 @@ id = "0x03a0_archway"
 item_id = 928
 name = "archway"
 rarity = "common"
-movable = false
 hue = 0

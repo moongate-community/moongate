@@ -37,7 +37,6 @@ id = "puzzlestrongbox"
 base_id = "puzzlechest"
 item_id = 2472
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -45,5 +44,4 @@ id = "puzzlestrongbox_ns"
 base_id = "puzzlechest"
 item_id = 3712
 rarity = "common"
-movable = false
 hue = 0

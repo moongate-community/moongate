@@ -3,7 +3,6 @@ id = "stoneandplastermini"
 item_id = 5360
 name = "Mini House: Stone and Plaster"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -11,7 +10,6 @@ id = "fieldstonemini"
 item_id = 5360
 name = "Mini House: Field Stone"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -19,7 +17,6 @@ id = "smallbrickmini"
 item_id = 5360
 name = "Mini House: Small Brick"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -27,7 +24,6 @@ id = "woodenmini"
 item_id = 5360
 name = "Mini House: Wooden"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -35,7 +31,6 @@ id = "woodandplastermini"
 item_id = 5360
 name = "Mini House: Wood and Plaster"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -43,7 +38,6 @@ id = "thatchedroofcottage"
 item_id = 5360
 name = "Mini House: Thatched-Roof Cottage"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -51,7 +45,6 @@ id = "brickmini"
 item_id = 5360
 name = "Mini House: Brick"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -59,7 +52,6 @@ id = "twostorywoodandplastermini"
 item_id = 5360
 name = "Mini House: Two-Story Wood and Plaster"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -67,7 +59,6 @@ id = "malasmountainpassmini"
 item_id = 5360
 name = "Mini House: Malas Mountain Pass"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -75,5 +66,4 @@ id = "churchatnightmini"
 item_id = 5360
 name = "Mini House: Church at Night"
 rarity = "common"
-movable = false
 hue = 0

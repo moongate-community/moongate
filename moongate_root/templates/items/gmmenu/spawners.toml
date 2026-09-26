@@ -4,6 +4,8 @@ base_id = "base_item"
 item_id = 7956
 rarity = "common"
 movable = false
+weight = 500.0
+decays = false
 visibility = "game_master"
 hue = 0
 
@@ -13,7 +15,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Orc Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -22,7 +24,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Orc Lord Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -31,7 +33,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Orc Capt Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -40,7 +42,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Orc Mage Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -49,7 +51,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Ettin Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -58,7 +60,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Goat Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -67,7 +69,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Harpy Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -76,7 +78,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Random Orc Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -85,7 +87,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Random Lizard Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -94,7 +96,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Random Ratman Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -103,7 +105,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Random Dragon Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -112,7 +114,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Random Barn Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -121,7 +123,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Air Elemental Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -130,7 +132,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Earth Elemental Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -139,7 +141,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Fire Elemental Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -148,7 +150,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Water Elemental Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -157,7 +159,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Poison Elemental Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -166,7 +168,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Giant Serpent Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -175,7 +177,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Giant Spider Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -184,7 +186,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Giant Scorpion Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -193,7 +195,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Lich Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -202,7 +204,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Lich Lord Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -211,7 +213,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Bone Mage Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -220,7 +222,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Bone Knight Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -229,7 +231,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Bone Axeman Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -238,7 +240,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Arctic Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -247,7 +249,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Cave Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -256,7 +258,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Desert Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -265,7 +267,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Dungeon Spawner"
 rarity = "common"
-movable = false
+amount = 3
 hue = 0
 
 [[item]]
@@ -274,7 +276,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Eerie Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -283,7 +285,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Farm Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -292,7 +294,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Forest Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -301,7 +303,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Jungle Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -310,7 +312,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Mountain Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -319,7 +321,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Ocean Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -328,7 +330,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Swamp Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -337,7 +339,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Town Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -346,7 +348,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Volcanic Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -355,7 +357,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Diablo Spawner"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -364,7 +366,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Dog and Cat spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -373,7 +375,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "All Bear Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -382,7 +384,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Swamp Creature Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -391,7 +393,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Jungle Creature Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -400,7 +402,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Livestock Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -409,7 +411,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "All Birds Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -418,7 +420,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "All Animals Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -427,7 +429,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Small Animal Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -436,7 +438,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Productive Animal Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -445,7 +447,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Strong Undead Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -454,7 +456,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Weak Undead Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -463,7 +465,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "All Undead Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -472,7 +474,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Ettins,Ogres and Trolls"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -481,7 +483,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Weak Orc Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -490,7 +492,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Strong Orc Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -499,7 +501,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Orc Kin Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -508,7 +510,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "All Daemons Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -517,7 +519,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Elemental & Daemon Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -526,7 +528,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "All Elementals Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -535,7 +537,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "All Overworld Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -544,7 +546,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Alchemist Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -553,7 +555,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Anim Trainer Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -562,7 +564,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Armourer Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -571,7 +573,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Architect Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -580,7 +582,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Baker Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -589,7 +591,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Banker Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -598,7 +600,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Bard Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -607,7 +609,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Blacksmith Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -616,7 +618,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Beekeeper Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -625,7 +627,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Bowyer Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -634,7 +636,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Butcher Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -643,7 +645,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Carpenter Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -652,7 +654,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Cobbler Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -661,7 +663,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Cook Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -670,7 +672,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Farmer Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -679,7 +681,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Fisherman Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -688,7 +690,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Healer Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -697,7 +699,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Wandering Healer Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -706,7 +708,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Herbalist Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -715,7 +717,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Innkeeper Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -724,7 +726,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Tavernkeeper Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -733,7 +735,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Waiter Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -742,7 +744,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Jewler Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -751,7 +753,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Leatherworker Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -760,7 +762,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Furtrader Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -769,7 +771,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Tanner Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -778,7 +780,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Mage Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -787,7 +789,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Miner Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -796,7 +798,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Provisioner Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -805,7 +807,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Scribe Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -814,7 +816,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Shipwright Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -823,7 +825,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Mapmaker Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -832,7 +834,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Spinner Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -841,7 +843,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Tailor Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -850,7 +852,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Tinker Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -859,7 +861,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Weaponsmith Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -868,7 +870,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Weaver Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -877,7 +879,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Basic Human Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -886,7 +888,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Guard Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -895,7 +897,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Archmage Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -904,7 +906,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Pirate Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -913,7 +915,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Fighter Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -922,7 +924,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Ranger Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -931,7 +933,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Sailor Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -940,7 +942,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Gambler Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -949,7 +951,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Judge Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -958,7 +960,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Miller Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -967,7 +969,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Monk Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -976,7 +978,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Rancher Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -985,7 +987,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Prisoner Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -994,7 +996,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Sculptor Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1003,7 +1005,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Brigand Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1012,7 +1014,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Beggar Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1021,7 +1023,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Noble Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1030,7 +1032,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Thief Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1039,7 +1041,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Peasant Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1048,7 +1050,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Gypsy Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1057,7 +1059,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Seeker Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1066,7 +1068,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Jailer Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1075,7 +1077,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Towncrier Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1084,7 +1086,7 @@ base_id = "base_spawner"
 item_id = 5015
 name = "Artist Spawn"
 rarity = "common"
-movable = false
+amount = 2
 hue = 0
 
 [[item]]
@@ -1093,7 +1095,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Escort Spawn"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1102,7 +1104,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Carrot Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1111,7 +1113,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Onion Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1120,7 +1122,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Turnip Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1129,7 +1131,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Cabbage Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1138,7 +1140,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Watermelon Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1147,7 +1149,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Gourd Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1156,7 +1158,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Pumpkin Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1165,7 +1167,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Squash Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1174,7 +1176,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Honeydew Melon Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1183,7 +1185,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Canteloupe Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1192,7 +1194,7 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Garlic Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0
 
 [[item]]
@@ -1201,5 +1203,5 @@ base_id = "base_spawner"
 item_id = 7956
 name = "Flax Spawner"
 rarity = "common"
-movable = false
+amount = 1
 hue = 0

@@ -4,7 +4,10 @@ base_id = "base_item"
 item_id = 9813
 name = "jester shoes"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 100
+sell_price = 100
+decays = true
 hue = 0
 
 [[item]]
@@ -12,7 +15,6 @@ id = "0x2656"
 base_id = "0x2655_jester_shoes"
 item_id = 9814
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -22,6 +24,10 @@ item_id = 9903
 name = "arcane thigh boots"
 rarity = "common"
 movable = true
+weight = 4.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -30,7 +36,10 @@ base_id = "base_item"
 item_id = 9811
 name = "waraji"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 50
+sell_price = 25
+decays = true
 hue = 0
 
 [[item]]
@@ -38,5 +47,4 @@ id = "0x2654"
 base_id = "0x2653_waraji"
 item_id = 9812
 rarity = "common"
-movable = false
 hue = 0

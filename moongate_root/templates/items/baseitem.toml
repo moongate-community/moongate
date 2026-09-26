@@ -2,5 +2,6 @@
 id = "base_item"
 item_id = 0
 rarity = "common"
-movable = false
+stackable = false
+decays = false
 hue = 0

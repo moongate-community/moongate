@@ -4,7 +4,8 @@ base_id = "base_item"
 item_id = 10134
 name = "samurai tabi"
 rarity = "common"
-movable = false
+weight = 2.0
+decays = true
 hue = 0
 
 [[item]]
@@ -13,5 +14,6 @@ base_id = "base_item"
 item_id = 10135
 name = "ninja tall tabi"
 rarity = "common"
-movable = false
+weight = 2.0
+decays = true
 hue = 0

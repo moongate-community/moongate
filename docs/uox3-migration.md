@@ -40,16 +40,25 @@ Verified against real UOX3 data:
 | The block header, or `name=` when the header is a bare hex | `Id` | Run through `StringUtils.ToSnakeCase`; `name=` is free text ("pitcher of wine") |
 | `name=` | `Name` | Carried as-is; UOX3 does not separate an identifier from display text |
 | A single-target `get=` | `BaseId` | Only when that target itself converted; `get=a b`, an alias with no `id=` of its own, converts nothing |
-| `movable=1` | `Movable` | Anything else, including absent, is `false` |
+| `movable=1` or `3` / `2` | `Movable = true` / `false` | `0` or absent leaves it unset, so tiledata decides |
+| `weight=` | `Weight` | Divided by 100: UOX3 weighs in hundredths of a stone |
+| `amount=` | `Amount` | A fixed stack size |
+| `pileable=` | `Stackable` | |
+| `layer=` | `Layer` | The UOX3 layer number as a `LayerType` name |
+| `value=buy sell` | `BuyPrice`, `SellPrice` | One number sets both |
+| `decay=` | `Decays` | `1` is true, anything else false |
+| `newbie` or `newbie=1` | `LootType = newbied` | |
+| `custominttag=name value`, `customstringtag=name text` | `Tags` | Every line, so a block can set several |
 | `color=` | `Hue` | A fixed value, not a range |
 | `weightmax=` | `MaxWeight` | |
 | `visible=1`, `2` or `3` | `Visibility = game_master` | Hidden, magically invisible or GM hidden all keep the item from players; `visible=0` or absent leaves it unset, visible to everyone |
 
-Everything else has no home in `ItemTemplate` yet and is dropped: weight, value,
-layer, the combat stat fields, `colorlist`, `pileable` (tiledata already carries it),
-`script=`, and the multi and geometry fields. `BaseId` is a pointer only: the
+Everything else has no home in `ItemTemplate` yet and is dropped: the combat stat
+fields, `colorlist`, `script=`, and the multi and geometry fields. `BaseId` is a pointer only: the
 converter does not flatten a parent's fields into its children; the loader will
-resolve the chain once it exists.
+resolve the chain once it exists. A parent block with no `id=` of its own, such as
+`[base_coin]`, is not converted, so its fields (a coin's `weight=2`, `pileable=1`) do not
+reach the children that `get=` it; those children fall back to tiledata.
 
 ## Loot tables
 

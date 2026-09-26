@@ -4,7 +4,11 @@ base_id = "base_item"
 item_id = 7134
 name = "log"
 rarity = "common"
-movable = false
+weight = 2.0
+stackable = true
+buy_price = 0
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +17,11 @@ base_id = "base_item"
 item_id = 7136
 name = "log"
 rarity = "common"
-movable = false
+weight = 2.0
+stackable = true
+buy_price = 1
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -22,5 +30,9 @@ base_id = "base_item"
 item_id = 3553
 name = "kindling"
 rarity = "common"
-movable = false
+weight = 1.0
+stackable = true
+buy_price = 0
+sell_price = 1
+decays = true
 hue = 0

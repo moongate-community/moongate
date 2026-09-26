@@ -4,7 +4,7 @@ base_id = "base_item"
 item_id = 0
 name = "base clothing"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +13,9 @@ base_id = "base_clothing"
 item_id = 5441
 name = "body sash"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 15
+sell_price = 7
 hue = 0
 
 [[item]]
@@ -21,7 +23,6 @@ id = "0x1542"
 base_id = "0x1541_body_sash"
 item_id = 5442
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -30,7 +31,9 @@ base_id = "base_clothing"
 item_id = 5397
 name = "cloak"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 43
+sell_price = 21
 hue = 0
 
 [[item]]
@@ -38,7 +41,6 @@ id = "0x1530"
 base_id = "0x1515_cloak"
 item_id = 5424
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -47,7 +49,9 @@ base_id = "base_clothing"
 item_id = 8059
 name = "doublet"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 25
+sell_price = 12
 hue = 0
 
 [[item]]
@@ -55,7 +59,6 @@ id = "0x1f7c"
 base_id = "0x1f7b_doublet"
 item_id = 8060
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -64,7 +67,9 @@ base_id = "base_clothing"
 item_id = 7935
 name = "fancy dress"
 rarity = "common"
-movable = false
+weight = 3.0
+buy_price = 25
+sell_price = 12
 hue = 0
 
 [[item]]
@@ -72,7 +77,6 @@ id = "0x1f00"
 base_id = "0x1eff_fancy_dress"
 item_id = 7936
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -81,7 +85,9 @@ base_id = "base_clothing"
 item_id = 7933
 name = "fancy shirt"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 55
+sell_price = 27
 hue = 0
 
 [[item]]
@@ -89,7 +95,6 @@ id = "0x1efe"
 base_id = "0x1efd_fancy_shirt"
 item_id = 7934
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -98,7 +103,9 @@ base_id = "base_clothing"
 item_id = 5437
 name = "full apron"
 rarity = "common"
-movable = false
+weight = 4.0
+buy_price = 25
+sell_price = 13
 hue = 0
 
 [[item]]
@@ -106,7 +113,6 @@ id = "0x153e"
 base_id = "0x153d_full_apron"
 item_id = 5438
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -115,7 +121,9 @@ base_id = "base_clothing"
 item_id = 5435
 name = "half apron"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 26
+sell_price = 13
 hue = 0
 
 [[item]]
@@ -123,7 +131,6 @@ id = "0x153c"
 base_id = "0x153b_half_apron"
 item_id = 5436
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -132,7 +139,9 @@ base_id = "base_clothing"
 item_id = 8095
 name = "jester suit"
 rarity = "common"
-movable = false
+weight = 4.0
+buy_price = 51
+sell_price = 25
 hue = 0
 
 [[item]]
@@ -140,7 +149,6 @@ id = "0x1f_a0"
 base_id = "0x1f9f_jester_suit"
 item_id = 8096
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -149,7 +157,9 @@ base_id = "base_clothing"
 item_id = 5431
 name = "kilt"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 31
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -157,7 +167,6 @@ id = "0x1538"
 base_id = "0x1537_kilt"
 item_id = 5432
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -166,7 +175,9 @@ base_id = "base_clothing"
 item_id = 5433
 name = "long pants"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 34
+sell_price = 17
 hue = 0
 
 [[item]]
@@ -174,7 +185,6 @@ id = "0x153a"
 base_id = "0x1539_long_pants"
 item_id = 5434
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -183,7 +193,9 @@ base_id = "base_clothing"
 item_id = 7937
 name = "plain dress"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 56
+sell_price = 28
 hue = 0
 
 [[item]]
@@ -191,7 +203,6 @@ id = "0x1f02"
 base_id = "0x1f01_plain_dress"
 item_id = 7938
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -200,7 +211,9 @@ base_id = "base_clothing"
 item_id = 7939
 name = "robe"
 rarity = "common"
-movable = false
+weight = 3.0
+buy_price = 68
+sell_price = 34
 hue = 0
 
 [[item]]
@@ -208,7 +221,6 @@ id = "0x1f04"
 base_id = "0x1f03_robe"
 item_id = 7940
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -217,7 +229,10 @@ base_id = "base_clothing"
 item_id = 7939
 name = "resurrection robe"
 rarity = "common"
-movable = false
+weight = 3.0
+buy_price = 0
+sell_price = 0
+decays = true
 hue = 0
 
 [[item]]
@@ -226,7 +241,9 @@ base_id = "base_clothing"
 item_id = 5399
 name = "shirt"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 37
+sell_price = 18
 hue = 0
 
 [[item]]
@@ -234,7 +251,6 @@ id = "0x1518"
 base_id = "0x1517_shirt"
 item_id = 5400
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -243,7 +259,9 @@ base_id = "base_clothing"
 item_id = 5422
 name = "short pants"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 24
+sell_price = 12
 hue = 0
 
 [[item]]
@@ -251,7 +269,6 @@ id = "0x152f"
 base_id = "0x152e_short_pants"
 item_id = 5423
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -260,7 +277,9 @@ base_id = "base_clothing"
 item_id = 5425
 name = "skirt"
 rarity = "common"
-movable = false
+weight = 4.0
+buy_price = 33
+sell_price = 16
 hue = 0
 
 [[item]]
@@ -268,7 +287,6 @@ id = "0x1516"
 base_id = "0x1531_skirt"
 item_id = 5398
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -277,7 +295,9 @@ base_id = "base_clothing"
 item_id = 8097
 name = "tunic"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 33
+sell_price = 16
 hue = 0
 
 [[item]]
@@ -285,5 +305,4 @@ id = "0x1fa2"
 base_id = "0x1fa1_tunic"
 item_id = 8098
 rarity = "common"
-movable = false
 hue = 0

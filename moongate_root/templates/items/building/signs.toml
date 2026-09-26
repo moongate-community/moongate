@@ -4,5 +4,5 @@ base_id = "base_item"
 item_id = 4758
 name = "post"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0

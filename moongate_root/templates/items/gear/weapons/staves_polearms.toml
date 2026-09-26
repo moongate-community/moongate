@@ -5,13 +5,14 @@ item_id = 5108
 name = "crook"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x13f5"
 item_id = 5109
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -21,13 +22,14 @@ item_id = 3713
 name = "shepherd's crook"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0e82"
 item_id = 3714
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -37,13 +39,14 @@ item_id = 5112
 name = "gnarled staff"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x13f9"
 item_id = 5113
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -53,13 +56,14 @@ item_id = 3568
 name = "black staff"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0df1"
 item_id = 3569
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -69,13 +73,14 @@ item_id = 3721
 name = "quarter staff"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0e8a"
 item_id = 3722
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -85,13 +90,14 @@ item_id = 5182
 name = "halberd"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x143f"
 item_id = 5183
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -101,6 +107,12 @@ item_id = 5183
 name = "a guard's halberd"
 rarity = "common"
 movable = true
+weight = 16.0
+layer = "two_handed"
+buy_price = 40
+sell_price = 20
+decays = true
+loot_type = "newbied"
 hue = 0
 
 [[item]]
@@ -110,13 +122,14 @@ item_id = 3917
 name = "bardiche"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x0f4e"
 item_id = 3918
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -126,13 +139,14 @@ item_id = 9914
 name = "scythe"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x26c4"
 item_id = 9924
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -142,13 +156,14 @@ item_id = 9917
 name = "bladed staff"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x26c7"
 item_id = 9927
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -158,13 +173,14 @@ item_id = 9919
 name = "double bladed staff"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x26c9"
 item_id = 9929
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -174,13 +190,14 @@ item_id = 11557
 name = "wild staff"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x2d31"
 item_id = 11569
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -190,13 +207,14 @@ item_id = 18612
 name = "gargish bardiche"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x48b5"
 item_id = 18613
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -206,13 +224,14 @@ item_id = 18628
 name = "gargish scythe"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x48c5"
 item_id = 18629
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -222,13 +241,14 @@ item_id = 2310
 name = "serpentstone staff"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x406f"
 item_id = 16495
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -238,13 +258,14 @@ item_id = 18616
 name = "gargish gnarled staff"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x48b9"
 item_id = 18617
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -254,11 +275,12 @@ item_id = 2309
 name = "glass staff"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x4070"
 item_id = 16496
 rarity = "common"
-movable = false
 hue = 0

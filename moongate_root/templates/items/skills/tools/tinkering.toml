@@ -4,7 +4,10 @@ base_id = "base_item"
 item_id = 7868
 name = "tinker's tools"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 8
+sell_price = 4
+decays = true
 hue = 0
 
 [[item]]
@@ -13,5 +16,8 @@ base_id = "base_item"
 item_id = 7862
 name = "empty tool kit"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
 hue = 0

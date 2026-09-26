@@ -3,7 +3,6 @@ id = "sturdy_pickaxe"
 item_id = 3718
 name = "sturdy pickaxe"
 rarity = "common"
-movable = false
 hue = 2419
 
 [[item]]
@@ -11,7 +10,6 @@ id = "sturdy_shovel"
 item_id = 3898
 name = "sturdy shovel"
 rarity = "common"
-movable = false
 hue = 2419
 
 [[item]]
@@ -19,7 +17,6 @@ id = "gargoyles_pickaxe"
 item_id = 3718
 name = "gargoyle's pickaxe"
 rarity = "common"
-movable = false
 hue = 2419
 
 [[item]]
@@ -27,7 +24,6 @@ id = "prospectors_tool"
 item_id = 4020
 name = "prospector's tool"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -35,86 +31,85 @@ id = "mining_gloves_1"
 item_id = 5070
 name = "leather gloves of mining"
 rarity = "common"
-movable = false
 hue = 0
+[item.tags]
+skillBonusID = "45"
+skillBonusVal = "10"
 
 [[item]]
 id = "mining_gloves_3"
 item_id = 5070
 name = "studded leather gloves of mining"
 rarity = "common"
-movable = false
 hue = 0
+[item.tags]
+skillBonusID = "45"
+skillBonusVal = "30"
 
 [[item]]
 id = "mining_gloves_5"
 item_id = 5106
 name = "ringmail gloves of mining +5"
 rarity = "common"
-movable = false
 hue = 0
+[item.tags]
+skillBonusID = "45"
+skillBonusVal = "50"
 
 [[item]]
 id = "base_runic_hammer"
 item_id = 5091
 rarity = "common"
-movable = false
 hue = 0
+[item.tags]
+runicHammer = "1"
 
 [[item]]
 id = "dull_copper_colored_anvil"
 item_id = 4015
 rarity = "common"
-movable = false
 hue = 2419
 
 [[item]]
 id = "shadow_iron_colored_anvil"
 item_id = 4015
 rarity = "common"
-movable = false
 hue = 2406
 
 [[item]]
 id = "copper_colored_anvil"
 item_id = 4015
 rarity = "common"
-movable = false
 hue = 2414
 
 [[item]]
 id = "bronze_colored_anvil"
 item_id = 4015
 rarity = "common"
-movable = false
 hue = 1750
 
 [[item]]
 id = "gold_colored_anvil"
 item_id = 4015
 rarity = "common"
-movable = false
 hue = 2213
 
 [[item]]
 id = "agapite_colored_anvil"
 item_id = 4015
 rarity = "common"
-movable = false
 hue = 2425
 
 [[item]]
 id = "verite_colored_anvil"
 item_id = 4015
 rarity = "common"
-movable = false
 hue = 2207
 
 [[item]]
 id = "valorite_colored_anvil"
 item_id = 4015
 rarity = "common"
-movable = false
 hue = 2219
 
 [[item]]
@@ -123,7 +118,7 @@ base_id = "base_item"
 item_id = 4102
 name = "powder of temperament"
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 2419
 
 [[item]]
@@ -131,37 +126,45 @@ id = "ancient_smithy_hammer_10"
 item_id = 5092
 name = "ancient smithy hammer +10"
 rarity = "common"
-movable = false
 hue = 1154
+[item.tags]
+skillBonusID = "7"
+skillBonusVal = "100"
 
 [[item]]
 id = "ancient_smithy_hammer_15"
 item_id = 5092
 name = "ancient smithy hammer +15"
 rarity = "common"
-movable = false
 hue = 1154
+[item.tags]
+skillBonusID = "7"
+skillBonusVal = "150"
 
 [[item]]
 id = "ancient_smithy_hammer_30"
 item_id = 5092
 name = "ancient smithy hammer +30"
 rarity = "common"
-movable = false
 hue = 1154
+[item.tags]
+skillBonusID = "7"
+skillBonusVal = "300"
 
 [[item]]
 id = "ancient_smithy_hammer_60"
 item_id = 5092
 name = "ancient smithy hammer +60"
 rarity = "common"
-movable = false
 hue = 1154
+[item.tags]
+skillBonusID = "7"
+skillBonusVal = "600"
 
 [[item]]
 id = "base_power_scroll"
 base_id = "base_item"
 item_id = 5360
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 1153

@@ -3,7 +3,8 @@ id = "base_carveitem"
 base_id = "base_item"
 item_id = 0
 rarity = "common"
-movable = false
+stackable = true
+decays = true
 hue = 0
 
 [[item]]
@@ -12,7 +13,7 @@ base_id = "base_carveitem"
 item_id = 4216
 name = "barbed hide"
 rarity = "common"
-movable = false
+weight = 5.0
 hue = 0
 
 [[item]]
@@ -21,7 +22,7 @@ base_id = "base_carveitem"
 item_id = 4216
 name = "horned hide"
 rarity = "common"
-movable = false
+weight = 5.0
 hue = 0
 
 [[item]]
@@ -30,7 +31,7 @@ base_id = "base_carveitem"
 item_id = 4216
 name = "spined hide"
 rarity = "common"
-movable = false
+weight = 5.0
 hue = 0
 
 [[item]]
@@ -39,7 +40,6 @@ base_id = "base_carveitem"
 item_id = 9908
 name = "black scale"
 rarity = "common"
-movable = false
 hue = 1109
 
 [[item]]
@@ -48,7 +48,6 @@ base_id = "base_carveitem"
 item_id = 9908
 name = "blue scale"
 rarity = "common"
-movable = false
 hue = 6
 
 [[item]]
@@ -57,7 +56,6 @@ base_id = "base_carveitem"
 item_id = 9908
 name = "green scale"
 rarity = "common"
-movable = false
 hue = 2129
 
 [[item]]
@@ -66,7 +64,6 @@ base_id = "base_carveitem"
 item_id = 9908
 name = "red scale"
 rarity = "common"
-movable = false
 hue = 1635
 
 [[item]]
@@ -75,7 +72,6 @@ base_id = "base_carveitem"
 item_id = 9908
 name = "white scale"
 rarity = "common"
-movable = false
 hue = 706
 
 [[item]]
@@ -84,5 +80,4 @@ base_id = "base_carveitem"
 item_id = 9908
 name = "yellow scale"
 rarity = "common"
-movable = false
 hue = 2125

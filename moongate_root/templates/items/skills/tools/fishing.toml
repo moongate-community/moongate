@@ -4,7 +4,10 @@ base_id = "base_item"
 item_id = 3519
 name = "fishing pole"
 rarity = "common"
-movable = false
+weight = 8.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +16,10 @@ base_id = "base_item"
 item_id = 3520
 name = "fishing pole"
 rarity = "common"
-movable = false
+weight = 8.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -23,7 +29,13 @@ item_id = 3530
 name = "special fishing net"
 rarity = "common"
 movable = true
+weight = 15.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
+[item.tags]
+fabledNet = "1"
 
 [[item]]
 id = "fabledfishingnet"
@@ -32,6 +44,10 @@ item_id = 3530
 name = "fabled fishing net"
 rarity = "common"
 movable = true
+weight = 15.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 1153
 
 [[item]]
@@ -40,7 +56,10 @@ base_id = "base_item"
 item_id = 3528
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -49,7 +68,10 @@ base_id = "base_item"
 item_id = 3529
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -58,7 +80,10 @@ base_id = "base_item"
 item_id = 3530
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 15.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -67,7 +92,10 @@ base_id = "base_item"
 item_id = 3531
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -76,7 +104,10 @@ base_id = "base_item"
 item_id = 3536
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -85,7 +116,10 @@ base_id = "base_item"
 item_id = 3537
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -94,7 +128,10 @@ base_id = "base_item"
 item_id = 3538
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -103,7 +140,10 @@ base_id = "base_item"
 item_id = 3539
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -112,7 +152,10 @@ base_id = "base_item"
 item_id = 3540
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0
 
 [[item]]
@@ -121,5 +164,8 @@ base_id = "base_item"
 item_id = 3541
 name = "fishing net"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 15
+sell_price = 7
+decays = true
 hue = 0

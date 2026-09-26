@@ -4,7 +4,11 @@ base_id = "base_item"
 item_id = 4216
 name = "pile of hides"
 rarity = "common"
-movable = false
+weight = 5.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +17,11 @@ base_id = "base_item"
 item_id = 4217
 name = "pile of hides"
 rarity = "common"
-movable = false
+weight = 5.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +30,11 @@ base_id = "base_item"
 item_id = 4596
 name = "a fur"
 rarity = "common"
-movable = false
+weight = 10.0
+stackable = true
+buy_price = 4
+sell_price = 2
+decays = true
 hue = 0
 
 [[item]]
@@ -31,5 +43,9 @@ base_id = "base_item"
 item_id = 4600
 name = "a fur"
 rarity = "common"
-movable = false
+weight = 10.0
+stackable = true
+buy_price = 4
+sell_price = 2
+decays = true
 hue = 0

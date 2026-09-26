@@ -4,7 +4,11 @@ base_id = "base_item"
 item_id = 7121
 name = "feather"
 rarity = "common"
-movable = false
+weight = 0.1
+stackable = true
+buy_price = 2
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +17,11 @@ base_id = "base_item"
 item_id = 7124
 name = "shaft"
 rarity = "common"
-movable = false
+weight = 0.1
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +30,12 @@ base_id = "base_item"
 item_id = 7124
 name = "shaft"
 rarity = "common"
-movable = false
+weight = 0.1
+amount = 5
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -31,7 +44,12 @@ base_id = "base_item"
 item_id = 7124
 name = "shaft"
 rarity = "common"
-movable = false
+weight = 0.1
+amount = 20
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -40,5 +58,10 @@ base_id = "base_item"
 item_id = 7124
 name = "shaft"
 rarity = "common"
-movable = false
+weight = 0.1
+amount = 50
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0

@@ -5,6 +5,7 @@ item_id = 2330
 name = "beehive"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -14,4 +15,6 @@ item_id = 5162
 name = "pot of wax"
 rarity = "common"
 movable = true
+weight = 3.0
+decays = true
 hue = 0

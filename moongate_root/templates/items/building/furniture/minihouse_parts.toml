@@ -5,6 +5,7 @@ item_id = 8900
 name = "Mini House: Stone and Plaster"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -14,6 +15,7 @@ item_id = 8926
 name = "Mini House: Field Stone"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -23,6 +25,7 @@ item_id = 8927
 name = "Mini House: Small Brick"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -32,6 +35,7 @@ item_id = 8905
 name = "Mini House: Wooden"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -41,6 +45,7 @@ item_id = 8928
 name = "Mini House: Wood and Plaster"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -50,6 +55,7 @@ item_id = 8929
 name = "Mini House: Thatched-Roof Cottage"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -59,6 +65,7 @@ item_id = 8909
 name = "Mini House: Brick Part 1"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -68,6 +75,7 @@ item_id = 8907
 name = "Mini House: Brick Part 2"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -77,6 +85,7 @@ item_id = 8908
 name = "Mini House: Brick Part 3"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -86,6 +95,7 @@ item_id = 8906
 name = "Mini House: Brick Part 4"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -95,6 +105,7 @@ item_id = 8961
 name = "Mini House: Two-Story Wood and Plaster Part 1"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -104,6 +115,7 @@ item_id = 8962
 name = "Mini House: Two-Story Wood and Plaster Part 2"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -113,6 +125,7 @@ item_id = 8964
 name = "Mini House: Two-Story Wood and Plaster Part 3"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -122,6 +135,7 @@ item_id = 8963
 name = "Mini House: Two-Story Wood and Plaster Part 4"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -131,6 +145,7 @@ item_id = 8982
 name = "Mini House: Malas Mountain Pass Part 1"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -140,6 +155,7 @@ item_id = 8981
 name = "Mini House: Malas Mountain Pass Part 2"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -149,6 +165,7 @@ item_id = 8980
 name = "Mini House: Malas Mountain Pass Part 3"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -158,6 +175,7 @@ item_id = 8979
 name = "Mini House: Malas Mountain Pass Part 4"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0
 
 [[item]]
@@ -167,4 +185,5 @@ item_id = 8984
 name = "Mini House: Church at Night"
 rarity = "common"
 movable = true
+weight = 10.0
 hue = 0

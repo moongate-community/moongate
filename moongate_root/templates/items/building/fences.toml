@@ -3,7 +3,6 @@ id = "0x03b3_wooden_fence"
 item_id = 947
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -11,7 +10,6 @@ id = "0x03b4_wooden_fence"
 item_id = 948
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -19,7 +17,6 @@ id = "0x03b5_wooden_fence"
 item_id = 949
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -27,7 +24,6 @@ id = "0x03b6_wooden_post"
 item_id = 950
 name = "wooden post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -35,7 +31,6 @@ id = "0x0835_wooden_fence"
 item_id = 2101
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -43,7 +38,6 @@ id = "0x0836_wooden_fence"
 item_id = 2102
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -51,7 +45,6 @@ id = "0x0837_wooden_fence"
 item_id = 2103
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -59,7 +52,6 @@ id = "0x0838_wooden_post"
 item_id = 2104
 name = "wooden post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -67,7 +59,6 @@ id = "0x085c_wooden_fence"
 item_id = 2140
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -75,7 +66,6 @@ id = "0x085d_wooden_fence"
 item_id = 2141
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -83,7 +73,6 @@ id = "0x085e_wooden_fence"
 item_id = 2142
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -91,7 +80,6 @@ id = "0x085f_wooden_fence"
 item_id = 2143
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -99,7 +87,6 @@ id = "0x0860_wooden_fence"
 item_id = 2144
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -107,7 +94,6 @@ id = "0x0861_wooden_fence"
 item_id = 2145
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -115,7 +101,6 @@ id = "0x0862_wooden_fence"
 item_id = 2146
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -123,7 +108,6 @@ id = "0x0863_wooden_fence"
 item_id = 2147
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -131,7 +115,6 @@ id = "0x0864_wooden_fence"
 item_id = 2148
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -139,7 +122,6 @@ id = "0x0865_wooden_fence"
 item_id = 2149
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -147,7 +129,6 @@ id = "0x0877_woodne_fence"
 item_id = 2167
 name = "woodne fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -155,7 +136,6 @@ id = "0x0878_wooden_fence"
 item_id = 2168
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -163,7 +143,6 @@ id = "0x088a_wooden_fence"
 item_id = 2186
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -171,7 +150,6 @@ id = "0x088b_wooden_fence"
 item_id = 2187
 name = "wooden fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -179,7 +157,6 @@ id = "0x07d6_stone_post"
 item_id = 2006
 name = "stone post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -187,7 +164,6 @@ id = "0x07d7_railing"
 item_id = 2007
 name = "railing"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -195,7 +171,6 @@ id = "0x07d8_railing"
 item_id = 2008
 name = "railing"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -203,7 +178,6 @@ id = "0x08eb_stone_rail"
 item_id = 2283
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -211,7 +185,6 @@ id = "0x08ec_stone_rail"
 item_id = 2284
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -219,7 +192,6 @@ id = "0x08ed_stone_rail"
 item_id = 2285
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -227,7 +199,6 @@ id = "0x08ee_stone_rail"
 item_id = 2286
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -235,7 +206,6 @@ id = "0x08ef_stone_rail"
 item_id = 2287
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -243,7 +213,6 @@ id = "0x08f0_stone_post"
 item_id = 2288
 name = "stone post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -251,7 +220,6 @@ id = "0x08f1_stone_rail"
 item_id = 2289
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -259,7 +227,6 @@ id = "0x08f2_stone_rail"
 item_id = 2290
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -267,7 +234,6 @@ id = "0x08f3_sandstone_rail"
 item_id = 2291
 name = "sandstone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -275,7 +241,6 @@ id = "0x08f4_sandstone_rail"
 item_id = 2292
 name = "sandstone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -283,7 +248,6 @@ id = "0x08f5_sandstone_rail"
 item_id = 2293
 name = "sandstone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -291,7 +255,6 @@ id = "0x08f7_stone_rail"
 item_id = 2295
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -299,7 +262,6 @@ id = "0x08f8_stone_rail"
 item_id = 2296
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -307,7 +269,6 @@ id = "0x08f9_stone_rail"
 item_id = 2297
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -315,7 +276,6 @@ id = "0x08fa_stone_rail"
 item_id = 2298
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -323,7 +283,6 @@ id = "0x08fb_stone_rail"
 item_id = 2299
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -331,7 +290,6 @@ id = "0x08fc_stone_rail"
 item_id = 2300
 name = "stone rail"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -339,7 +297,6 @@ id = "0x0821_iron_fence"
 item_id = 2081
 name = "iron fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -347,7 +304,6 @@ id = "0x0822_iron_fence"
 item_id = 2082
 name = "iron fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -355,7 +311,6 @@ id = "0x0823_iron_fence"
 item_id = 2083
 name = "iron fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -363,7 +318,6 @@ id = "0x0849_iron_fence"
 item_id = 2121
 name = "iron fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -371,7 +325,6 @@ id = "0x084a_iron_fence"
 item_id = 2122
 name = "iron fence"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -379,5 +332,4 @@ id = "0x084b_iron_fence"
 item_id = 2123
 name = "iron fence"
 rarity = "common"
-movable = false
 hue = 0

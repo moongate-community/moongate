@@ -4,7 +4,12 @@ base_id = "base_item"
 item_id = 3636
 name = "a blank scroll"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +18,10 @@ base_id = "base_item"
 item_id = 4032
 name = "pen and ink"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 6
+sell_price = 3
+decays = true
 hue = 0
 
 [[item]]
@@ -22,5 +30,10 @@ base_id = "base_item"
 item_id = 5360
 name = "a blank deed"
 rarity = "common"
-movable = false
+weight = 1.0
+amount = 1
+stackable = false
+buy_price = 12
+sell_price = 6
+decays = true
 hue = 0

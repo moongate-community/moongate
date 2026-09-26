@@ -4,7 +4,10 @@ base_id = "base_item"
 item_id = 4027
 name = "tongs"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 16
+sell_price = 8
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +16,10 @@ base_id = "base_item"
 item_id = 4028
 name = "tongs"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 16
+sell_price = 8
+decays = true
 hue = 0
 
 [[item]]
@@ -23,6 +29,7 @@ item_id = 4015
 name = "anvil"
 rarity = "common"
 movable = false
+weight = 20.0
 hue = 0
 
 [[item]]
@@ -30,5 +37,4 @@ id = "0x0fb0"
 base_id = "0x0faf_anvil"
 item_id = 4016
 rarity = "common"
-movable = false
 hue = 0

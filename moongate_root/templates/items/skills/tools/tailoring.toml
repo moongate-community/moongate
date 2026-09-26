@@ -4,7 +4,10 @@ base_id = "base_item"
 item_id = 3997
 name = "sewing kit"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 3
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +16,10 @@ base_id = "base_item"
 item_id = 3998
 name = "scissors"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 13
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +28,10 @@ base_id = "base_item"
 item_id = 3999
 name = "scissors"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 13
+sell_price = 6
+decays = true
 hue = 0
 
 [[item]]
@@ -31,7 +40,10 @@ base_id = "base_item"
 item_id = 4009
 name = "dyes"
 rarity = "common"
-movable = false
+weight = 3.0
+buy_price = 8
+sell_price = 4
+decays = true
 hue = 0
 
 [[item]]
@@ -40,7 +52,10 @@ base_id = "base_item"
 item_id = 4011
 name = "dying tub"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 9
+sell_price = 4
+decays = true
 hue = 0
 
 [[item]]
@@ -50,6 +65,7 @@ item_id = 3782
 name = "dress form"
 rarity = "common"
 movable = true
+weight = 20.0
 hue = 0
 
 [[item]]
@@ -59,4 +75,5 @@ item_id = 3783
 name = "dress form"
 rarity = "common"
 movable = true
+weight = 20.0
 hue = 0

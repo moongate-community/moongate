@@ -4,5 +4,6 @@ base_id = "base_item"
 item_id = 5703
 name = "a lightsource"
 rarity = "common"
-movable = false
+decays = false
+loot_type = "newbied"
 hue = 0

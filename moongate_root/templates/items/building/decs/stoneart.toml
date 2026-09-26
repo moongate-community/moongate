@@ -5,6 +5,8 @@ item_id = 4643
 name = "pedistal"
 rarity = "common"
 movable = true
+weight = 10.0
+decays = true
 hue = 0
 
 [[item]]
@@ -14,6 +16,7 @@ item_id = 6173
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -23,6 +26,7 @@ item_id = 6174
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -32,6 +36,7 @@ item_id = 6175
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -41,6 +46,7 @@ item_id = 6176
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -50,6 +56,7 @@ item_id = 6177
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -59,6 +66,7 @@ item_id = 6178
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -68,6 +76,7 @@ item_id = 6179
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -77,6 +86,7 @@ item_id = 6180
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -86,6 +96,7 @@ item_id = 6181
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -95,6 +106,7 @@ item_id = 6182
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -104,6 +116,7 @@ item_id = 6183
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -113,4 +126,5 @@ item_id = 6184
 name = "alchemical symbol"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0

@@ -3,7 +3,6 @@ id = "0x019b_rattan_post"
 item_id = 411
 name = "rattan post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -11,7 +10,6 @@ id = "0x019c_rattan_supports"
 item_id = 412
 name = "rattan supports"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -19,7 +17,6 @@ id = "0x019d_rattan_supports"
 item_id = 413
 name = "rattan supports"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -27,7 +24,6 @@ id = "0x019e_rattan_supports"
 item_id = 414
 name = "rattan supports"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -35,7 +31,6 @@ id = "0x019f_rattan_supports"
 item_id = 415
 name = "rattan supports"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -43,7 +38,6 @@ id = "0x01a0_rattan_supports"
 item_id = 416
 name = "rattan supports"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -51,7 +45,6 @@ id = "0x01a1_rattan_supports"
 item_id = 417
 name = "rattan supports"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -59,7 +52,6 @@ id = "0x01a2_rattan_supports"
 item_id = 418
 name = "rattan supports"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -67,7 +59,6 @@ id = "0x01a3_rattan_pole"
 item_id = 419
 name = "rattan pole"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -75,7 +66,6 @@ id = "0x01a5_rattan_wall"
 item_id = 421
 name = "rattan wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -83,7 +73,6 @@ id = "0x01a6_rattan_wall"
 item_id = 422
 name = "rattan wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -91,7 +80,6 @@ id = "0x01a7_rattan_wall"
 item_id = 423
 name = "rattan wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -99,7 +87,6 @@ id = "0x01a8_rattan_pole"
 item_id = 424
 name = "rattan pole"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -107,7 +94,6 @@ id = "0x01a9_rattan_wall"
 item_id = 425
 name = "rattan wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -115,7 +101,6 @@ id = "0x01aa_rattan_wall"
 item_id = 426
 name = "rattan wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -123,7 +108,6 @@ id = "0x01ab_rattan_wall"
 item_id = 427
 name = "rattan wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -131,7 +115,6 @@ id = "0x01ac_rattan_wall"
 item_id = 428
 name = "rattan wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -139,7 +122,6 @@ id = "0x01ad_window"
 item_id = 429
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -147,7 +129,6 @@ id = "0x01ae_window"
 item_id = 430
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -155,7 +136,6 @@ id = "0x01af_window"
 item_id = 431
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -163,7 +143,6 @@ id = "0x01b0_window"
 item_id = 432
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -171,7 +150,6 @@ id = "0x01b5_rattan_post"
 item_id = 437
 name = "rattan post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -179,7 +157,6 @@ id = "0x01b6_hide_wall"
 item_id = 438
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -187,7 +164,6 @@ id = "0x01b7_hide_wall"
 item_id = 439
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -195,7 +171,6 @@ id = "0x01b8_hide_wall"
 item_id = 440
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -203,7 +178,6 @@ id = "0x022c_door"
 item_id = 556
 name = "door"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -211,7 +185,6 @@ id = "0x022d_door"
 item_id = 557
 name = "door"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -219,7 +192,6 @@ id = "0x022e_door"
 item_id = 558
 name = "door"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -227,7 +199,6 @@ id = "0x022f_door"
 item_id = 559
 name = "door"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -235,7 +206,6 @@ id = "0x01b9_rattan_post"
 item_id = 441
 name = "rattan post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -243,7 +213,6 @@ id = "0x01ba_hide_wall"
 item_id = 442
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -251,7 +220,6 @@ id = "0x01bb_hide_wall"
 item_id = 443
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -259,7 +227,6 @@ id = "0x01bc_hide_wall"
 item_id = 444
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -267,7 +234,6 @@ id = "0x01bd_hide_wall"
 item_id = 445
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -275,7 +241,6 @@ id = "0x01be_hide_wall"
 item_id = 446
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -283,7 +248,6 @@ id = "0x01bf_hide_wall"
 item_id = 447
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -291,7 +255,6 @@ id = "0x01c0_hide_wall"
 item_id = 448
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -299,7 +262,6 @@ id = "0x01c1_hide_wall"
 item_id = 449
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -307,7 +269,6 @@ id = "0x01c2_hide_wall"
 item_id = 450
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -315,7 +276,6 @@ id = "0x01c3_hide_wall"
 item_id = 451
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -323,7 +283,6 @@ id = "0x01c4_window"
 item_id = 452
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -331,7 +290,6 @@ id = "0x01c5_window"
 item_id = 453
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -339,7 +297,6 @@ id = "0x01c6_window"
 item_id = 454
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -347,7 +304,6 @@ id = "0x01c7_window"
 item_id = 455
 name = "window"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -355,7 +311,6 @@ id = "0x01c8_hide_wall"
 item_id = 456
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -363,7 +318,6 @@ id = "0x01c9_hide_wall"
 item_id = 457
 name = "hide wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -371,7 +325,6 @@ id = "0x01cb_dock_pole"
 item_id = 459
 name = "dock pole"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -379,7 +332,6 @@ id = "0x01cc_dock_pole"
 item_id = 460
 name = "dock pole"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -387,7 +339,6 @@ id = "0x01cd_dock_pole"
 item_id = 461
 name = "dock pole"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -395,7 +346,6 @@ id = "0x01ce_dock_pole"
 item_id = 462
 name = "dock pole"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -403,7 +353,6 @@ id = "0x020f_bamboo_wall"
 item_id = 527
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -411,7 +360,6 @@ id = "0x0210_bamboo_wall"
 item_id = 528
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -419,7 +367,6 @@ id = "0x0211_bamboo_wall"
 item_id = 529
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -427,7 +374,6 @@ id = "0x0212_bamboo_wall"
 item_id = 530
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -435,7 +381,6 @@ id = "0x0213_bamboo_wall"
 item_id = 531
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -443,7 +388,6 @@ id = "0x0214_bamboo_wall"
 item_id = 532
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -451,7 +395,6 @@ id = "0x0215_bamboo_wall"
 item_id = 533
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -459,7 +402,6 @@ id = "0x0216_bamboo_wall"
 item_id = 534
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -467,7 +409,6 @@ id = "0x0217_bamboo_wall"
 item_id = 535
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -475,7 +416,6 @@ id = "0x0218_bamboo_wall"
 item_id = 536
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -483,7 +423,6 @@ id = "0x0219_bamboo_wall"
 item_id = 537
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -491,7 +430,6 @@ id = "0x021a_bamboo_wall"
 item_id = 538
 name = "bamboo wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -499,7 +437,6 @@ id = "0x021d_palisade"
 item_id = 541
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -507,7 +444,6 @@ id = "0x021e_palisade"
 item_id = 542
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -515,7 +451,6 @@ id = "0x021f_palisade"
 item_id = 543
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -523,7 +458,6 @@ id = "0x0220_palisade"
 item_id = 544
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -531,7 +465,6 @@ id = "0x0221_palisade"
 item_id = 545
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -539,7 +472,6 @@ id = "0x0222_palisade"
 item_id = 546
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -547,7 +479,6 @@ id = "0x0223_palisade"
 item_id = 547
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -555,7 +486,6 @@ id = "0x0226_palisade"
 item_id = 550
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -563,7 +493,6 @@ id = "0x0227_wooden_wall"
 item_id = 551
 name = "wooden wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -571,7 +500,6 @@ id = "0x0228_wooden_wall"
 item_id = 552
 name = "wooden wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -579,7 +507,6 @@ id = "0x0421_palisade"
 item_id = 1057
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -587,7 +514,6 @@ id = "0x0422_palisade"
 item_id = 1058
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -595,7 +521,6 @@ id = "0x0423_palisade"
 item_id = 1059
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -603,7 +528,6 @@ id = "0x0424_palisade"
 item_id = 1060
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -611,7 +535,6 @@ id = "0x0425_palisade"
 item_id = 1061
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -619,7 +542,6 @@ id = "0x0430_palisade"
 item_id = 1072
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -627,7 +549,6 @@ id = "0x0431_palisade"
 item_id = 1073
 name = "palisade"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -635,7 +556,6 @@ id = "0x215a_rattan_wall"
 item_id = 8538
 name = "rattan wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -643,7 +563,6 @@ id = "0x0229_wooden_post"
 item_id = 553
 name = "wooden post"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -651,7 +570,6 @@ id = "0x022a_wooden_wall"
 item_id = 554
 name = "wooden wall"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -659,5 +577,4 @@ id = "0x022b_wooden_wall"
 item_id = 555
 name = "wooden wall"
 rarity = "common"
-movable = false
 hue = 0

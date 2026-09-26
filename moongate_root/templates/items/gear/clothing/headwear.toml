@@ -4,7 +4,7 @@ base_id = "base_item"
 item_id = 0
 name = "base_hat"
 rarity = "common"
-movable = false
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +13,9 @@ base_id = "base_hat"
 item_id = 5439
 name = "bandana"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 14
+sell_price = 6
 hue = 0
 
 [[item]]
@@ -21,7 +23,6 @@ id = "0x1540"
 base_id = "0x153f_bandana"
 item_id = 5440
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -30,7 +31,9 @@ base_id = "base_hat"
 item_id = 5914
 name = "feathered hat"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 27
+sell_price = 13
 hue = 0
 
 [[item]]
@@ -39,7 +42,9 @@ base_id = "base_hat"
 item_id = 5907
 name = "floppy hat"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 25
+sell_price = 12
 hue = 0
 
 [[item]]
@@ -48,7 +53,9 @@ base_id = "base_hat"
 item_id = 5913
 name = "bonnet"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 26
+sell_price = 13
 hue = 0
 
 [[item]]
@@ -57,7 +64,9 @@ base_id = "base_hat"
 item_id = 5909
 name = "cap"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 27
+sell_price = 13
 hue = 0
 
 [[item]]
@@ -66,7 +75,9 @@ base_id = "base_hat"
 item_id = 5916
 name = "jester hat"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 31
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -75,7 +86,9 @@ base_id = "base_hat"
 item_id = 5443
 name = "skullcap"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 12
+sell_price = 6
 hue = 0
 
 [[item]]
@@ -83,7 +96,7 @@ id = "0x1544"
 base_id = "0x1543_skullcap"
 item_id = 5444
 rarity = "common"
-movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -92,7 +105,9 @@ base_id = "base_hat"
 item_id = 5911
 name = "straw hat"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 25
+sell_price = 12
 hue = 0
 
 [[item]]
@@ -101,7 +116,9 @@ base_id = "base_hat"
 item_id = 5910
 name = "tall straw hat"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 26
+sell_price = 13
 hue = 0
 
 [[item]]
@@ -110,7 +127,9 @@ base_id = "base_hat"
 item_id = 5908
 name = "wide-brim hat"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 26
+sell_price = 13
 hue = 0
 
 [[item]]
@@ -119,7 +138,9 @@ base_id = "base_hat"
 item_id = 5912
 name = "wizard's hat"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 30
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -128,7 +149,9 @@ base_id = "base_hat"
 item_id = 5934
 name = "jester's cap"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 31
+sell_price = 15
 hue = 0
 
 [[item]]
@@ -137,7 +160,9 @@ base_id = "base_hat"
 item_id = 5915
 name = "tricorne hat"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 26
+sell_price = 13
 hue = 0
 
 [[item]]
@@ -146,7 +171,9 @@ base_id = "base_hat"
 item_id = 5449
 name = "tribal mask"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 40
+sell_price = 20
 hue = 0
 
 [[item]]
@@ -154,7 +181,6 @@ id = "0x154a"
 base_id = "0x1549_tribal_mask"
 item_id = 5450
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -163,7 +189,9 @@ base_id = "base_hat"
 item_id = 5451
 name = "tribal mask"
 rarity = "common"
-movable = false
+weight = 2.0
+buy_price = 40
+sell_price = 20
 hue = 0
 
 [[item]]
@@ -171,7 +199,6 @@ id = "0x154c"
 base_id = "0x154b_tribal_mask"
 item_id = 5452
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -180,7 +207,9 @@ base_id = "base_hat"
 item_id = 5445
 name = "bear mask"
 rarity = "common"
-movable = false
+weight = 5.0
+buy_price = 50
+sell_price = 25
 hue = 0
 
 [[item]]
@@ -188,7 +217,6 @@ id = "0x1546"
 base_id = "0x1545_bear_mask"
 item_id = 5446
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -197,7 +225,9 @@ base_id = "base_hat"
 item_id = 5447
 name = "deer mask"
 rarity = "common"
-movable = false
+weight = 4.0
+buy_price = 50
+sell_price = 25
 hue = 0
 
 [[item]]
@@ -205,7 +235,6 @@ id = "0x1548"
 base_id = "0x1547_deer_mask"
 item_id = 5448
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -214,7 +243,9 @@ base_id = "base_hat"
 item_id = 5147
 name = "orc mask"
 rarity = "common"
-movable = false
+weight = 4.0
+buy_price = 50
+sell_price = 25
 hue = 0
 
 [[item]]
@@ -222,5 +253,4 @@ id = "0x141c"
 base_id = "0x141b_orc_mask"
 item_id = 5148
 rarity = "common"
-movable = false
 hue = 0

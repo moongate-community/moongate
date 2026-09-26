@@ -3,7 +3,6 @@ id = "practice_skinning_knife"
 item_id = 3780
 name = "a skinning knife (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -11,7 +10,6 @@ id = "practice_hatchet"
 item_id = 3907
 name = "a hatchet (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -19,7 +17,6 @@ id = "practice_axe"
 item_id = 3911
 name = "a battle axe (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -27,7 +24,6 @@ id = "practice_mace"
 item_id = 3932
 name = "a mace (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -35,7 +31,6 @@ id = "practice_longsword"
 item_id = 3937
 name = "a longsword (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -43,7 +38,6 @@ id = "practice_spear"
 item_id = 3939
 name = "a spear (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -51,7 +45,6 @@ id = "practice_bow"
 item_id = 5042
 name = "a bow (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -59,7 +52,6 @@ id = "practice_club"
 item_id = 5043
 name = "a club (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -67,7 +59,6 @@ id = "practice_crook"
 item_id = 5109
 name = "a crook (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -75,5 +66,4 @@ id = "practice_gnarled_staff"
 item_id = 5112
 name = "a gnarled staff (practice weapon)"
 rarity = "common"
-movable = false
 hue = 0

@@ -5,6 +5,7 @@ item_id = 6880
 name = "skull"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -14,6 +15,7 @@ item_id = 6881
 name = "skull"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -23,6 +25,7 @@ item_id = 6882
 name = "skull"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -32,6 +35,7 @@ item_id = 6883
 name = "skull"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -41,6 +45,7 @@ item_id = 6884
 name = "skull"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -50,6 +55,7 @@ item_id = 6921
 name = "bone pile"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -59,6 +65,7 @@ item_id = 6922
 name = "bone pile"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -68,6 +75,7 @@ item_id = 6923
 name = "bone pile"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -77,6 +85,7 @@ item_id = 6924
 name = "bone pile"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -86,6 +95,7 @@ item_id = 6925
 name = "bone pile"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -95,6 +105,7 @@ item_id = 6926
 name = "bone pile"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -104,6 +115,7 @@ item_id = 6927
 name = "bone pile"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -113,6 +125,7 @@ item_id = 6928
 name = "bone pile"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -122,6 +135,7 @@ item_id = 6929
 name = "bone"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -131,6 +145,7 @@ item_id = 6930
 name = "bone"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -140,6 +155,7 @@ item_id = 6931
 name = "jaw bone"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -149,6 +165,7 @@ item_id = 6932
 name = "jaw bone"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -158,6 +175,7 @@ item_id = 6933
 name = "pelvis bone"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -167,6 +185,7 @@ item_id = 6934
 name = "pelvis bone"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -176,6 +195,7 @@ item_id = 6935
 name = "rib cage"
 rarity = "common"
 movable = true
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -185,6 +205,7 @@ item_id = 6936
 name = "rib cage"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -194,6 +215,7 @@ item_id = 6937
 name = "bone shards"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -203,6 +225,7 @@ item_id = 6938
 name = "bone shards"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -212,6 +235,7 @@ item_id = 6939
 name = "spine"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0
 
 [[item]]
@@ -221,4 +245,5 @@ item_id = 6940
 name = "spine"
 rarity = "common"
 movable = false
+weight = 1.0
 hue = 0

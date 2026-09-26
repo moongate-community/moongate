@@ -5,13 +5,14 @@ item_id = 2314
 name = "soul glaive"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x406b"
 item_id = 16491
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -21,13 +22,14 @@ item_id = 2303
 name = "boomerang"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x4067"
 item_id = 16487
 rarity = "common"
-movable = false
 hue = 0
 
 [[item]]
@@ -37,11 +39,12 @@ item_id = 2305
 name = "cyclone"
 rarity = "common"
 movable = true
+layer = "two_handed"
+decays = true
 hue = 0
 
 [[item]]
 id = "0x406c"
 item_id = 16492
 rarity = "common"
-movable = false
 hue = 0

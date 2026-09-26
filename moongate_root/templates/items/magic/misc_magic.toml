@@ -4,7 +4,11 @@ base_id = "base_item"
 item_id = 3834
 name = "a spellbook"
 rarity = "common"
-movable = false
+weight = 1.0
+layer = "one_handed"
+buy_price = 22
+sell_price = 11
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +17,10 @@ base_id = "base_item"
 item_id = 7956
 name = "a recall rune"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 18
+sell_price = 9
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +29,10 @@ base_id = "base_item"
 item_id = 7959
 name = "a recall rune"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 18
+sell_price = 9
+decays = true
 hue = 0
 
 [[item]]
@@ -31,7 +41,9 @@ base_id = "base_item"
 item_id = 3629
 name = "crystal ball"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 2
+sell_price = 1
 hue = 0
 
 [[item]]
@@ -40,7 +52,9 @@ base_id = "base_item"
 item_id = 3630
 name = "crystal ball of pet summoning"
 rarity = "common"
-movable = false
+weight = 10.0
+buy_price = 2
+sell_price = 1
 hue = 0
 
 [[item]]
@@ -49,7 +63,10 @@ base_id = "base_item"
 item_id = 8786
 name = "paladin spellbook"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
 hue = 0
 
 [[item]]
@@ -58,7 +75,10 @@ base_id = "base_item"
 item_id = 8787
 name = "necromancer book"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
 hue = 0
 
 [[item]]
@@ -67,7 +87,10 @@ base_id = "base_item"
 item_id = 11677
 name = "mystic book"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
 hue = 0
 
 [[item]]
@@ -76,7 +99,10 @@ base_id = "base_item"
 item_id = 3979
 name = "moonstone"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
 hue = 0
 
 [[item]]
@@ -85,5 +111,9 @@ base_id = "base_item"
 item_id = 8901
 name = "a runebook"
 rarity = "common"
-movable = false
+weight = 0.0
+buy_price = 22
+sell_price = 11
+decays = true
+loot_type = "newbied"
 hue = 1121

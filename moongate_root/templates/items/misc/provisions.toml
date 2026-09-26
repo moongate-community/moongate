@@ -5,6 +5,10 @@ item_id = 2648
 name = "a bedroll"
 rarity = "common"
 movable = true
+weight = 5.0
+buy_price = 6
+sell_price = 2
+decays = true
 hue = 0
 
 [[item]]
@@ -13,7 +17,10 @@ base_id = "base_item"
 item_id = 5355
 name = "blank map"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 75
+sell_price = 37
+decays = true
 hue = 0
 
 [[item]]
@@ -22,7 +29,10 @@ base_id = "base_item"
 item_id = 5356
 name = "blank map"
 rarity = "common"
-movable = false
+weight = 1.0
+buy_price = 75
+sell_price = 37
+decays = true
 hue = 0
 
 [[item]]
@@ -31,5 +41,9 @@ base_id = "base_item"
 item_id = 5981
 name = "oil cloth"
 rarity = "common"
-movable = false
+weight = 1.0
+stackable = true
+buy_price = 20
+sell_price = 10
+decays = true
 hue = 2001
