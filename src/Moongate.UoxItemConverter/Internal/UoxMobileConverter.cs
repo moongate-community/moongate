@@ -77,7 +77,7 @@ internal static class UoxMobileConverter
             items,
             blocksByHeader.Keys.ToHashSet(StringComparer.OrdinalIgnoreCase),
             UoxColorLists.Load(Path.Combine(mobileSource, "colors", "colors.dfn")),
-            new Dictionary<int, MobileSounds>(),
+            UoxCreatureSounds.Load(Path.Combine(mobileSource, "creatures", "creatures.dfn")),
             report
         );
         var written = 0;

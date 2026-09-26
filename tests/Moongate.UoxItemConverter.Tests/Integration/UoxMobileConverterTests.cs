@@ -239,6 +239,29 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.Contains("colour list not a range", CombinedOutput);
     }
 
+    [Fact]
+    public void Run_SoundsComeFromCreaturesOnTheBlockThatSetsTheBody()
+    {
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource(
+            "creatures/creatures.dfn",
+            "[CREATURE 0x11]\n{ Orc\nSOUND_STARTATTACK=0x1b0\nSOUND_IDLE=0x1b1\nSOUND_ATTACK=0x1b2\nSOUND_DEFEND=0x1b3\nSOUND_DIE=0x1b4\n}\n" +
+            "[CREATURE 0x190]\n{ Human Male\nSOUND_DIE=0x15c\n}\n"
+        );
+        _dirs.WriteMobileSource("npc/a.dfn", "[base_orc]\n{\nID=0x0011\n}\n[orc]\n{\nGET=base_orc\n}\n[man]\n{\nID=0x0190\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var mobiles = ReadMobiles("a.toml");
+        var sounds = mobiles["base_orc"].Sounds!;
+        Assert.Equal(
+            ((int?)0x1B0, (int?)0x1B1, (int?)0x1B2, (int?)0x1B3, (int?)0x1B4),
+            (sounds.StartAttack, sounds.Idle, sounds.Attack, sounds.Hurt, sounds.Death)
+        );
+        Assert.Null(mobiles["orc"].Sounds);
+        Assert.Equal(((int?)null, (int?)0x15C), (mobiles["man"].Sounds!.Idle, mobiles["man"].Sounds!.Death));
+    }
+
     private void WriteItemsAndNames()
     {
         _dirs.WriteSource("items.dfn", "[0x0eed]\n{\nid=0x0eed\n}\n");

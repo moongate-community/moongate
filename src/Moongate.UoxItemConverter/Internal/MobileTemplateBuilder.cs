@@ -90,6 +90,16 @@ internal static class MobileTemplateBuilder
     {
         if (block.Fields.TryGetValue("ID", out var idText) && TryParseNumber(idText, out var body))
         {
+            // The block that sets the body carries its sounds; templates inheriting from it get them through base_id.
+            if (context.CreatureSounds.TryGetValue(body, out var sounds))
+            {
+                template.Sounds = new()
+                {
+                    StartAttack = sounds.StartAttack, Idle = sounds.Idle, Attack = sounds.Attack, Hurt = sounds.Hurt,
+                    Death = sounds.Death
+                };
+            }
+
             if (HumanoidBodies.TryGetValue(body, out var humanoid))
             {
                 (template.Race, template.Gender) = (humanoid.Race, humanoid.Gender);
