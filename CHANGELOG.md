@@ -1,5 +1,68 @@
 # Changelog
 
+## [0.8.0](https://github.com/moongate-community/moongate/compare/v0.7.0...v0.8.0) (2026-09-26)
+
+
+### Features
+
+* **boot:** ship the shard data files and copy them into the root ([f7a7948](https://github.com/moongate-community/moongate/commit/f7a7948c468744101677eaaf2904bbb05f2b207a)), closes [#111](https://github.com/moongate-community/moongate/issues/111)
+* **config:** add the line_of_sight section with max_distance ([0e22e83](https://github.com/moongate-community/moongate/commit/0e22e83caf1faedc9af6902f654713e80db4d740))
+* **core:** write and read every enum in TOML by name ([b69527b](https://github.com/moongate-community/moongate/commit/b69527bbd0f7b5dde8f816f3059b0aa96b3b2701))
+* **data:** add offensive words to banned_names.toml ([4251e44](https://github.com/moongate-community/moongate/commit/4251e44bdd7edc5747e357a6b3ba611c9ad0d3ec))
+* **data:** add teleport rules to regions ([09a2094](https://github.com/moongate-community/moongate/commit/09a20946238e77ae9e8ba266038b212e4758f5ff))
+* **data:** add travel zones as regions ([17fd752](https://github.com/moongate-community/moongate/commit/17fd752f41641a06bdae96741007f7de3297ce5e))
+* **data:** add weather profiles and give every region a weather ([a6c6e5f](https://github.com/moongate-community/moongate/commit/a6c6e5f36fdaadc271a6dce3997270b00a7611c2))
+* **data:** name the entries of containers.toml ([8572437](https://github.com/moongate-community/moongate/commit/8572437d9a253e2f68209797ab39f6591c18c8c5))
+* **localization:** add server language with UOX3 message files ([3e3a452](https://github.com/moongate-community/moongate/commit/3e3a452a6efb88bd684332891c788d1a317d4bbc))
+* **network:** add ClientVersion and carry it from login to the game session ([6469217](https://github.com/moongate-community/moongate/commit/6469217351db2da0b5967ae28a53565c84d6cb79))
+* **persistence:** support custom values and collections in JSONB ([d5a033a](https://github.com/moongate-community/moongate/commit/d5a033a6599b9fc5f0fe5e9794cd24ca8de57b89))
+* **persistence:** support custom values and collections in JSONB ([7ccdccf](https://github.com/moongate-community/moongate/commit/7ccdccf30ee0396396f8aa58eb9801c5b732bf5f)), closes [#108](https://github.com/moongate-community/moongate/issues/108)
+* **scripting:** add the localization Lua module ([4bd6609](https://github.com/moongate-community/moongate/commit/4bd6609b3a90451037155d2cf1eb939f798581ca))
+* **server:** let plugins register incoming packets and move Ultima packets to the plugin ([dcbfeef](https://github.com/moongate-community/moongate/commit/dcbfeef7a62991995b6db421b1e235654b88395a))
+* **server:** refuse to start when the root is the directory holding the binary ([fa8f767](https://github.com/moongate-community/moongate/commit/fa8f76712cc7154d6b872525edce34c674c696c7)), closes [#52](https://github.com/moongate-community/moongate/issues/52)
+* **server:** send starting cities and character list after game login ([e12a5b8](https://github.com/moongate-community/moongate/commit/e12a5b8f76dc335121ee5449fd80ab8f61072a12))
+* **templates:** add visibility to item templates ([fc38295](https://github.com/moongate-community/moongate/commit/fc38295e43d1d272c451921e1e2508513007866c))
+* **toml:** add Point2D and Point3D converters ([e39f8ff](https://github.com/moongate-community/moongate/commit/e39f8ff63f399ce742f67508cc12dc1eacad0b70))
+* **toml:** use corner ranges for rectangle bounds ([b057fcd](https://github.com/moongate-community/moongate/commit/b057fcda25b27a4ef9d44d45284a2feeb62fc62d))
+* **ultima:** add character creation rules and client flags ([e911325](https://github.com/moongate-community/moongate/commit/e911325d1d2d6f479d6017595dc5e90f0633bdd1))
+* **ultima:** add HueSpec and load races with their allowed hair and beard styles ([22e515f](https://github.com/moongate-community/moongate/commit/22e515f1d014357203f2b424377d695bc207c3cc))
+* **ultima:** add ILineOfSightService with POL's line walk and ModernUO's rules ([78cc30f](https://github.com/moongate-community/moongate/commit/78cc30f88014cfe4d6e9ce626d72f913cec9ead6))
+* **ultima:** add IMapService to read map terrain and statics ([f020250](https://github.com/moongate-community/moongate/commit/f020250913fdd76e4ce3758ff805855c972eba19))
+* **ultima:** add IMovementService with the average terrain height ([0fa15f0](https://github.com/moongate-community/moongate/commit/0fa15f025eea959088916c182c00fa4c5739c5d9))
+* **ultima:** add IMultiService to read multi layouts ([4313e65](https://github.com/moongate-community/moongate/commit/4313e653f644731af5a361f3c60a9a81bd391710))
+* **ultima:** add ITileDataService to read land and item tiles ([798bf5e](https://github.com/moongate-community/moongate/commit/798bf5ed1297b20d005e47f153bfad10e56c84f8))
+* **ultima:** add the classic client create character packet (0xF8) ([9adf2d5](https://github.com/moongate-community/moongate/commit/9adf2d5a442b8bfa8a2b7ec44f6f6b19b1311398))
+* **ultima:** check a straight step against terrain and statics ([c0f861e](https://github.com/moongate-community/moongate/commit/c0f861ec68d492c800271187acf8e4513ed627be))
+* **ultima:** check diagonal steps and register IMovementService ([59dab92](https://github.com/moongate-community/moongate/commit/59dab92de247394af9a70e85e57632fb818b2a9e))
+* **ultima:** load banned name words from banned_names.toml ([4366754](https://github.com/moongate-community/moongate/commit/436675463a938c520e306b30e6065aded2db80fd))
+* **ultima:** load body kinds from bodies.toml ([2594fdd](https://github.com/moongate-community/moongate/commit/2594fdd175250c3dac2cc4f62dc990b9d6c0e75a))
+* **ultima:** load container gumps and add the music track ids ([c783e08](https://github.com/moongate-community/moongate/commit/c783e08639e9a55a1fbf65952e12c0076631b155))
+* **ultima:** load regions from one file per map with explicit rules ([4efdd93](https://github.com/moongate-community/moongate/commit/4efdd93c4aea817a9cf47637e501c41ecea5e4ec))
+* **ultima:** load skills and professions from data files ([56dca80](https://github.com/moongate-community/moongate/commit/56dca8091fba6b8aa440a32b9427019c8259a184))
+* **ultima:** load tiledata.mul when the server starts ([3fa699c](https://github.com/moongate-community/moongate/commit/3fa699c36fa8081a1ebd15687c9dec813bf863c8))
+* **ultima:** store character skills as a JSONB list ([c7753cb](https://github.com/moongate-community/moongate/commit/c7753cbce66cc5c49a78d991040959503de1c69e))
+* **ultima:** store position, appearance and stats on CharacterEntity ([f3ab926](https://github.com/moongate-community/moongate/commit/f3ab926eef4696dd14501bf744ebca85ed156384))
+
+
+### Bug Fixes
+
+* **admin:** ensure the certificates directory exists ([7cb69d8](https://github.com/moongate-community/moongate/commit/7cb69d83926bf8bad934c655eb77072f6886260a))
+* **core:** make the TOML converter registry safe under concurrent use ([2bb430a](https://github.com/moongate-community/moongate/commit/2bb430ac146a440f8b2e859dbcd3c65a2991bdab))
+* **core:** read EnumValueSpec member names as it writes them, never numbers ([638dd3a](https://github.com/moongate-community/moongate/commit/638dd3ac031f90b38ed63c7f714093a1b11a7de9))
+* **data:** list each body once in bodies.toml ([d50aba0](https://github.com/moongate-community/moongate/commit/d50aba0ab5c01c14625fbd1908c8dcb568c7e221))
+* **data:** validate starting cities when they load ([13d038e](https://github.com/moongate-community/moongate/commit/13d038e5c44224980d2334920647f6499cc7b3e7))
+* **persistence:** keep DateTime columns in UTC ([e5668ca](https://github.com/moongate-community/moongate/commit/e5668cab2c85006d5c70e758904734acebc5c408))
+* **scripting:** refuse [ScriptFunction] on static, non-public or generic methods ([478bcdc](https://github.com/moongate-community/moongate/commit/478bcdc51e2ff91870783255adaa62221fc54e8e)), closes [#36](https://github.com/moongate-community/moongate/issues/36)
+* **ultima:** check the map bounds first and walk statics without allocating ([48705c5](https://github.com/moongate-community/moongate/commit/48705c5dd822f7f05b894d41181f01d9b790ba2e))
+* **ultima:** read only the low three bits of a movement direction ([51b7b8e](https://github.com/moongate-community/moongate/commit/51b7b8e54555efdf1b77233edd3445d1b211bc1c))
+
+
+### Performance Improvements
+
+* **docker:** streamline publication and reuse build cache ([330b449](https://github.com/moongate-community/moongate/commit/330b449c9cdbee49f3c9813f27f98129fc67935c))
+* **docker:** streamline publication and reuse build cache ([979e1c4](https://github.com/moongate-community/moongate/commit/979e1c45aee4a38c5ab61e2e1026ac24a899b1cf))
+* **tests:** add fast suite and consolidate database scenarios ([b791048](https://github.com/moongate-community/moongate/commit/b7910481ea37e092c42a1a0c6a74bd7ebf5b3a83))
+
 ## [0.7.0](https://github.com/moongate-community/moongate/compare/v0.6.0...v0.7.0) (2026-09-24)
 
 ### Features
