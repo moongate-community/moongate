@@ -113,6 +113,61 @@ public sealed class UoxMobileConverterTests : IDisposable
         );
     }
 
+    [Fact]
+    public void Run_NumbersBecomeDice()
+    {
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource(
+            "npc/a.dfn",
+            """
+            [x]
+            {
+            ID=0x0011
+            STR=96 120
+            DEX=50
+            HPMAX=58 72
+            HP=1
+            DAMAGE=3 9
+            DEF=14
+            RESISTFIRE=20 30
+            ELEMENTRESIST=10 11 12 13
+            MAGERY=500 700
+            MAGICRESISTANCE=655
+            SWORDSMANSHIP=1000 1500
+            SWORDFIGHTING=500
+            KARMA=-2500
+            FAME=2500
+            GOLD=0 50
+            FLAG=NEUTRAL
+            CUSTOMINTTAG=Level 7
+            }
+            """
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var x = ReadMobiles("a.toml")["x"];
+        Assert.Equal("1d25+95", x.Strength!.Value.ToString());
+        Assert.Equal(50, x.Dexterity!.Value.Roll());
+        Assert.Equal("1d15+57", x.Hits!.Value.ToString());
+        Assert.Equal("1d7+2", x.Damage!.Value.ToString());
+        Assert.Equal(14, x.Armor!.Value.Roll());
+        Assert.Equal(
+            (10, 11, 13, 12),
+            (x.Resistances!.Fire!.Value.Roll(), x.Resistances.Cold!.Value.Roll(), x.Resistances.Poison!.Value.Roll(),
+             x.Resistances.Energy!.Value.Roll())
+        );
+        Assert.Equal("1d21+49", x.Skills!["magery"].ToString());
+        Assert.Equal(65, x.Skills["resisting_spells"].Roll());
+        Assert.Equal(120, x.Skills["swordsmanship"].Max);
+        Assert.Equal(3, x.Skills.Count);
+        Assert.Equal((-2500, 2500), (x.Karma!.Value.Roll(), x.Fame!.Value.Roll()));
+        Assert.Equal("1d51-1", x.Gold!.Value.ToString());
+        Assert.Equal(NotorietyType.Attackable, x.Notoriety);
+        Assert.Equal("7", x.Tags!["Level"]);
+        x.Validate();
+    }
+
     private void WriteItemsAndNames()
     {
         _dirs.WriteSource("items.dfn", "[0x0eed]\n{\nid=0x0eed\n}\n");
