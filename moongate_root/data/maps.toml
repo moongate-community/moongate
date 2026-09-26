@@ -14,6 +14,8 @@
 #   rules       the rule set applied on the map
 #   season      the season sent with packet 0xBC: spring, summer, fall, winter or
 #               desolation
+#   weather     the weather profile of weather.toml used where no region covers
+#               a place
 # ==============================================================================
 
 [[map]]
@@ -23,6 +25,7 @@ name = "Felucca"
 size = "(7168, 4096)"
 rules = "FeluccaRules"
 season = "desolation"
+weather = "temperate"
 
 [[map]]
 map = "trammel"
@@ -31,6 +34,7 @@ name = "Trammel"
 size = "(7168, 4096)"
 rules = "TrammelRules"
 season = "spring"
+weather = "temperate"
 
 [[map]]
 map = "ilshenar"
@@ -39,6 +43,7 @@ name = "Ilshenar"
 size = "(2304, 1600)"
 rules = "TrammelRules"
 season = "summer"
+weather = "none"
 
 [[map]]
 map = "malas"
@@ -47,6 +52,7 @@ name = "Malas"
 size = "(2560, 2048)"
 rules = "TrammelRules"
 season = "summer"
+weather = "none"
 
 [[map]]
 map = "tokuno"
@@ -55,6 +61,7 @@ name = "Tokuno"
 size = "(1448, 1448)"
 rules = "TrammelRules"
 season = "summer"
+weather = "none"
 
 [[map]]
 map = "termur"
@@ -63,3 +70,4 @@ name = "TerMur"
 size = "(1280, 4096)"
 rules = "TrammelRules"
 season = "summer"
+weather = "none"

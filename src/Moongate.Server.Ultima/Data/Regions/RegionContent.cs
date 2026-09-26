@@ -51,6 +51,11 @@ public class RegionContent
     public MusicType? Music { get; set; }
 
     /// <summary>
+    ///     The name of the weather profile of <c>weather.toml</c> the region uses.
+    /// </summary>
+    public string Weather { get; set; } = "none";
+
+    /// <summary>
     ///     The name a rune marked here gets.
     /// </summary>
     public string? RuneName { get; set; }

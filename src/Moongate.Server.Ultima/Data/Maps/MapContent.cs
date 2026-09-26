@@ -17,4 +17,9 @@ public class MapContent
 
     public SeasonType Season { get; set; }
 
+    /// <summary>
+    ///     The weather profile of <c>weather.toml</c> used where no region covers a place.
+    /// </summary>
+    public string Weather { get; set; } = "none";
+
 }

@@ -1,0 +1,187 @@
+# ==============================================================================
+# Moongate - weather.toml
+#
+# What it is for:
+#   The weather profiles a region can use, named by their climate. A region picks
+#   one in its region file with weather = "<name>". Every hour the server rolls
+#   the chances of the region's profile to decide whether it rains, snows or
+#   storms there, and every day the temperature, which the client uses to tint
+#   the scene. The profile "none" never changes the weather.
+#
+# Fields:
+#   name                    the profile name used by the region files
+#   rain_chance             chance (%) of rain in the next hour
+#   snow_chance             chance (%) of snow in the next hour, checked before rain
+#   storm_chance            chance (%) of a storm in the next hour, checked first
+#   snow_threshold          no snow at this temperature or above
+#   min_temperature         the lowest temperature of a normal day
+#   max_temperature         the highest temperature of a normal day
+#   cold_chance             chance (%) of a cold day, between min_temperature and
+#                           cold_temperature
+#   cold_temperature        see cold_chance
+#   heat_chance             chance (%) of a hot day, between max_temperature and
+#                           heat_temperature
+#   heat_temperature        see heat_chance
+#   rain_temperature_drop   how much rain lowers the temperature
+#   storm_temperature_drop  how much a storm lowers the temperature
+# ==============================================================================
+
+# No weather at all.
+[[weather]]
+name = "none"
+rain_chance = 0
+snow_chance = 0
+storm_chance = 0
+snow_threshold = 0
+min_temperature = 15
+max_temperature = 25
+cold_chance = 0
+cold_temperature = 0
+heat_chance = 0
+heat_temperature = 0
+rain_temperature_drop = 5
+storm_temperature_drop = 10
+
+# Dry and hot, almost never rains.
+[[weather]]
+name = "desert"
+rain_chance = 1
+snow_chance = 0
+storm_chance = 0
+snow_threshold = 0
+min_temperature = 10
+max_temperature = 30
+cold_chance = 0
+cold_temperature = 0
+heat_chance = 80
+heat_temperature = 35
+rain_temperature_drop = 5
+storm_temperature_drop = 10
+
+# Hot, with frequent rain and storms.
+[[weather]]
+name = "tropical"
+rain_chance = 80
+snow_chance = 0
+storm_chance = 60
+snow_threshold = 0
+min_temperature = 10
+max_temperature = 30
+cold_chance = 0
+cold_temperature = 0
+heat_chance = 80
+heat_temperature = 35
+rain_temperature_drop = 5
+storm_temperature_drop = 10
+
+# Mixed weather, mostly dry.
+[[weather]]
+name = "temperate"
+rain_chance = 20
+snow_chance = 10
+storm_chance = 20
+snow_threshold = 10
+min_temperature = 5
+max_temperature = 30
+cold_chance = 10
+cold_temperature = 2
+heat_chance = 10
+heat_temperature = 35
+rain_temperature_drop = 5
+storm_temperature_drop = 10
+
+# Cold and wet, rain, snow and storms.
+[[weather]]
+name = "highland"
+rain_chance = 50
+snow_chance = 30
+storm_chance = 40
+snow_threshold = 10
+min_temperature = 4
+max_temperature = 25
+cold_chance = 20
+cold_temperature = 0
+heat_chance = 10
+heat_temperature = 30
+rain_temperature_drop = 5
+storm_temperature_drop = 10
+
+# Frequent storms.
+[[weather]]
+name = "stormy"
+rain_chance = 20
+snow_chance = 10
+storm_chance = 40
+snow_threshold = 15
+min_temperature = 10
+max_temperature = 30
+cold_chance = 20
+cold_temperature = 5
+heat_chance = 20
+heat_temperature = 35
+rain_temperature_drop = 5
+storm_temperature_drop = 10
+
+# Often rainy, rarely snowy or stormy.
+[[weather]]
+name = "mild"
+rain_chance = 40
+snow_chance = 5
+storm_chance = 5
+snow_threshold = 10
+min_temperature = 5
+max_temperature = 25
+cold_chance = 10
+cold_temperature = 0
+heat_chance = 10
+heat_temperature = 30
+rain_temperature_drop = 5
+storm_temperature_drop = 10
+
+# Cold, snows most of the time.
+[[weather]]
+name = "snowy"
+rain_chance = 0
+snow_chance = 90
+storm_chance = 40
+snow_threshold = 5
+min_temperature = 4
+max_temperature = 10
+cold_chance = 90
+cold_temperature = 1
+heat_chance = 0
+heat_temperature = 0
+rain_temperature_drop = 0
+storm_temperature_drop = 10
+
+# Cool and mostly dry.
+[[weather]]
+name = "cool"
+rain_chance = 20
+snow_chance = 5
+storm_chance = 5
+snow_threshold = 5
+min_temperature = 5
+max_temperature = 20
+cold_chance = 20
+cold_temperature = 5
+heat_chance = 20
+heat_temperature = 35
+rain_temperature_drop = 5
+storm_temperature_drop = 10
+
+# Rains all the time, frequent storms.
+[[weather]]
+name = "rainy"
+rain_chance = 100
+snow_chance = 0
+storm_chance = 60
+snow_threshold = 0
+min_temperature = 10
+max_temperature = 25
+cold_chance = 0
+cold_temperature = 0
+heat_chance = 80
+heat_temperature = 35
+rain_temperature_drop = 5
+storm_temperature_drop = 10

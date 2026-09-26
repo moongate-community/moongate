@@ -2,8 +2,11 @@ using Moongate.Core.Directories;
 using Moongate.Core.Geometry;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
+using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Data.Weather;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Directories;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Ultima.Types;
 using Tomlyn;
 
@@ -148,8 +151,52 @@ public sealed class RegionsLoaderTests
         await Assert.ThrowsAsync<TomlException>(() => CreateLoader(root).LoadDataAsync());
     }
 
+    [Fact]
+    public async Task LoadDataAsync_WeatherMissingFromWeatherFile_ThrowsInvalidDataException()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/regions/trammel.toml", Town.Replace("guarded = true", "weather = \"blizzard\"\nguarded = true"));
+
+        var exception =
+            await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+
+        Assert.Contains("blizzard", exception.Message, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_Weather_DefaultsToNoneAndReadsTheProfileName()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/regions/trammel.toml", Town.Replace("guarded = true", "weather = \"temperate\"\nguarded = true") + Tavern);
+
+        var regions = (await CreateLoader(root).LoadDataAsync()).Entities;
+
+        Assert.Equal("temperate", regions.Single(region => region.Name == "Britain").Weather);
+        Assert.Equal("none", regions.Single(region => region.Name == "The Tavern").Weather);
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_MapWeatherMissingFromWeatherFile_ThrowsInvalidDataException()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/regions/trammel.toml", Town);
+        var dataLoaderService = Weather().With(new MapContent { Name = "Trammel", Weather = "blizzard" });
+
+        await Assert.ThrowsAsync<InvalidDataException>(
+            () => new RegionsLoader(new DirectoriesConfig(root.Path, ["data"]), dataLoaderService).LoadDataAsync()
+        );
+    }
+
     private static RegionsLoader CreateLoader(TemporaryDirectory root)
     {
-        return new(new DirectoriesConfig(root.Path, ["data"]));
+        return new(new DirectoriesConfig(root.Path, ["data"]), Weather());
+    }
+
+    private static StubDataLoaderService Weather()
+    {
+        return new StubDataLoaderService().With(
+            new WeatherContent { Name = "none" },
+            new WeatherContent { Name = "temperate" }
+        );
     }
 }

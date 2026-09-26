@@ -1,7 +1,9 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
+using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Regions;
+using Moongate.Server.Ultima.Data.Weather;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -11,19 +13,22 @@ namespace Moongate.Server.Ultima.Loaders;
 /// <summary>
 ///     Loads the regions of every <c>data/regions/&lt;map&gt;.toml</c> file, where the file name is the map
 ///     (<c>felucca.toml</c>). A file named after no map, a region without areas, an area whose end is not past its
-///     start, a name used twice on a map or a parent that is missing or loops back stops the server at startup.
+///     start, a name used twice on a map, a parent that is missing or loops back, or a weather profile missing from
+///     <c>weather.toml</c> stops the server at startup, so this loader runs after <see cref="WeatherLoader" />.
 /// </summary>
 public class RegionsLoader : IDataLoader<RegionContent>
 {
     private readonly DirectoriesConfig _directoriesConfig;
+    private readonly IDataLoaderService _dataLoaderService;
 
     private readonly ILogger _logger = Log.ForContext<RegionsLoader>();
 
     private string regionsDirectory => Path.Join(_directoriesConfig["data"], "regions");
 
-    public RegionsLoader(DirectoriesConfig directoriesConfig)
+    public RegionsLoader(DirectoriesConfig directoriesConfig, IDataLoaderService dataLoaderService)
     {
         _directoriesConfig = directoriesConfig;
+        _dataLoaderService = dataLoaderService;
     }
 
     public Task InitializeAsync(CancellationToken cancellationToken = default)
@@ -39,6 +44,17 @@ public class RegionsLoader : IDataLoader<RegionContent>
     public async Task<DataLoaderResult<RegionContent>> LoadDataAsync(CancellationToken cancellationToken = default)
     {
         var regions = new List<RegionContent>();
+        var weatherNames = _dataLoaderService.GetEntities<WeatherContent>()
+            .Select(weather => weather.Name)
+            .ToHashSet(StringComparer.Ordinal);
+
+        // Maps load before the weather profiles, so their default weather is checked here.
+        foreach (var map in _dataLoaderService.GetEntities<MapContent>().Where(map => !weatherNames.Contains(map.Weather)))
+        {
+            throw new InvalidDataException(
+                $"maps.toml: map '{map.Name}' uses weather '{map.Weather}', which is not in weather.toml."
+            );
+        }
 
         foreach (var file in Directory.GetFiles(regionsDirectory, "*.toml").Order(StringComparer.Ordinal))
         {
@@ -54,6 +70,13 @@ public class RegionsLoader : IDataLoader<RegionContent>
             {
                 region.Map = map;
                 ValidateAreas(file, region);
+
+                if (!weatherNames.Contains(region.Weather))
+                {
+                    throw new InvalidDataException(
+                        $"{file}: region '{region.Name}' uses weather '{region.Weather}', which is not in weather.toml."
+                    );
+                }
             }
 
             ValidateNamesAndParents(file, mapRegions);

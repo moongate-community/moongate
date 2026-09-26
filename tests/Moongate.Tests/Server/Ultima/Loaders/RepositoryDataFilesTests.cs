@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
+using Moongate.Server.Ultima.Data.Weather;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Loaders;
@@ -44,7 +45,8 @@ public sealed class RepositoryDataFilesTests
         container.AddUltimaDataLoader<BannedNamesLoader, BannedNamesContent>(5);
         container.AddUltimaDataLoader<ContainersLoader, ContainerContent>(6);
         container.AddUltimaDataLoader<BodiesLoader, BodyContent>(7);
-        container.AddUltimaDataLoader<RegionsLoader, RegionContent>(8);
+        container.AddUltimaDataLoader<WeatherLoader, WeatherContent>(8);
+        container.AddUltimaDataLoader<RegionsLoader, RegionContent>(9);
         container.Register<IDataLoaderService, DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<IDataLoaderService>();
 
@@ -60,11 +62,17 @@ public sealed class RepositoryDataFilesTests
         Assert.Equal(1045, service.GetEntities<BodyContent>().Count);
 
         var regions = service.GetEntities<RegionContent>();
-        Assert.Equal(382, regions.Count);
+        Assert.Equal(388, regions.Count);
+        Assert.Equal(10, service.GetEntities<WeatherContent>().Count);
+        Assert.Equal("temperate", service.GetEntities<MapContent>().Single(map => map.Map == MapType.Felucca).Weather);
+        Assert.Equal("none", service.GetEntities<MapContent>().Single(map => map.Map == MapType.Malas).Weather);
         var britain = Assert.Single(regions, region => region.Map == MapType.Trammel && region.Name == "Britain");
         Assert.True(britain.Guarded);
         Assert.False(britain.Housing);
         Assert.Equal(MusicType.Britain1, britain.Music);
+        Assert.Equal("temperate", britain.Weather);
+        Assert.Contains(regions, region => region.Map == MapType.Felucca && region.Priority == 0 && region.Weather == "snowy" && region.Contains(4000, 300, 0));
+        Assert.All(regions.Where(region => region.Type == RegionType.Dungeon), region => Assert.Equal("none", region.Weather));
         Assert.Equal(new Point3D(1495, 1629, 10), britain.GoLocation);
         Assert.True(britain.Contains(1495, 1629, 10));
         Assert.All(regions.Where(region => region.Map == MapType.Ilshenar), region => Assert.False(region.RecallIn));

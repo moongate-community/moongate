@@ -17,6 +17,7 @@
 #   go_location     where a "go to region" command takes a character, "(x, y, z)"
 #   entrance        the entrance of the town or dungeon, "(x, y, z)"
 #   music           the music played in the region (see the music list)
+#   weather         the weather profile of weather.toml the region uses
 #   rune_name       the name of a rune marked here
 #   guarded         whether guards protect the region
 #   housing         whether players may place houses
@@ -41,6 +42,7 @@ areas = [
     { x1 = 4459, y1 = 1276, x2 = 4475, y2 = 1292 },
     { x1 = 3554, y1 = 2132, x2 = 3572, y2 = 2150 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -63,6 +65,7 @@ areas = [
     { x1 = 6063, y1 = 3698, x2 = 6111, y2 = 3750 },
 ]
 go_location = "(6103, 3724, 25)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -82,6 +85,7 @@ areas = [{ x1 = 6911, y1 = 255, x2 = 7168, y2 = 512 }]
 go_location = "(6984, 337, 0)"
 entrance = "(535, 995, 0)"
 music = "ElfCity"
+weather = "none"
 guarded = true
 housing = false
 instant_logout = false
@@ -101,6 +105,7 @@ areas = [{ x1 = 6144, y1 = 0, x2 = 6399, y2 = 255 }]
 go_location = "(6174, 23, 0)"
 entrance = "(762, 1645, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -120,6 +125,7 @@ areas = [{ x1 = 6240, y1 = 850, x2 = 6315, y2 = 920 }]
 go_location = "(6308, 892, -1)"
 entrance = "(1716, 892, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -139,6 +145,7 @@ areas = [{ x1 = 6400, y1 = 0, x2 = 6621, y2 = 255 }]
 go_location = "(6474, 188, 0)"
 entrance = "(3784, 1097, 14)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -158,6 +165,7 @@ areas = [{ x1 = 6440, y1 = 820, x2 = 6600, y2 = 970 }]
 go_location = "(6478, 863, 11)"
 entrance = "(587, 1641, -1)"
 music = "MelisandesLair"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -177,6 +185,7 @@ areas = [{ x1 = 6191, y1 = 311, x2 = 6561, y2 = 671 }]
 go_location = "(6222, 335, 60)"
 entrance = "(5574, 3024, 31)"
 music = "ParoxysmusLair"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -193,6 +202,7 @@ name = "Bravehorn's drinking pool"
 type = "base"
 priority = 50
 areas = [{ x1 = 1302, y1 = 2331, x2 = 1340, y2 = 2353 }]
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -209,6 +219,7 @@ name = "Huntsman's Forest"
 type = "base"
 priority = 50
 areas = [{ x1 = 1595, y1 = 550, x2 = 1715, y2 = 670 }]
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -230,6 +241,7 @@ areas = [
 ]
 go_location = "(2275, 1210, 0)"
 music = "Cove"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -255,6 +267,7 @@ areas = [
 ]
 go_location = "(1495, 1629, 10)"
 music = "Britain1"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -285,6 +298,7 @@ areas = [
     { x1 = 1544, y1 = 1760, x2 = 1560, y2 = 1776, z1 = 0, z2 = 128 },
     { x1 = 1560, y1 = 1760, x2 = 1568, y2 = 1768, z1 = 0, z2 = 128 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -303,6 +317,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1120, y1 = 1776, x2 = 1152, y2 = 1808 }]
 go_location = "(1135, 1791, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -321,6 +336,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1184, y1 = 1808, x2 = 1216, y2 = 1840 }]
 go_location = "(1199, 1823, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -339,6 +355,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1216, y1 = 1872, x2 = 1248, y2 = 1904 }]
 go_location = "(1231, 1887, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -357,6 +374,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1208, y1 = 1712, x2 = 1224, y2 = 1736 }]
 go_location = "(1215, 1723, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -375,6 +393,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1224, y1 = 1712, x2 = 1240, y2 = 1736 }]
 go_location = "(1231, 1723, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -393,6 +412,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1176, y1 = 1672, x2 = 1192, y2 = 1695 }]
 go_location = "(1183, 1683, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -411,6 +431,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1192, y1 = 1672, x2 = 1208, y2 = 1696 }]
 go_location = "(1199, 1683, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -429,6 +450,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1104, y1 = 1608, x2 = 1136, y2 = 1640 }]
 go_location = "(1120, 1624, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -447,6 +469,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1136, y1 = 1560, x2 = 1168, y2 = 1592 }]
 go_location = "(1152, 1576, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -465,6 +488,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1208, y1 = 1592, x2 = 1224, y2 = 1616 }]
 go_location = "(1216, 1604, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -483,6 +507,7 @@ priority = 50
 parent = "Britain"
 areas = [{ x1 = 1224, y1 = 1592, x2 = 1240, y2 = 1616 }]
 go_location = "(1232, 1604, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -500,6 +525,7 @@ type = "nohousing"
 priority = 50
 areas = [{ x1 = 1333, y1 = 1441, x2 = 1417, y2 = 1523 }]
 go_location = "(1384, 1492, 10)"
+weather = "temperate"
 guarded = false
 housing = false
 instant_logout = false
@@ -522,6 +548,7 @@ areas = [
 ]
 go_location = "(1383, 3815, 0)"
 music = "Jhelom"
+weather = "temperate"
 guarded = false
 housing = false
 instant_logout = false
@@ -544,6 +571,7 @@ areas = [
     { x1 = 1383, y1 = 3951, x2 = 1492, y2 = 4045, z1 = -20, z2 = 128 },
 ]
 go_location = "(1383, 3815, 0)"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -565,6 +593,7 @@ areas = [
     { x1 = 1432, y1 = 3768, x2 = 1464, y2 = 3776, z1 = -20, z2 = 128 },
     { x1 = 1440, y1 = 3776, x2 = 1464, y2 = 3784, z1 = -20, z2 = 128 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -589,6 +618,7 @@ areas = [
 ]
 go_location = "(2466, 544, 0)"
 music = "Minoc"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -609,6 +639,7 @@ areas = [
     { x1 = 2465, y1 = 405, x2 = 2473, y2 = 413 },
     { x1 = 2481, y1 = 405, x2 = 2489, y2 = 413 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -636,6 +667,7 @@ areas = [
 ]
 go_location = "(3650, 2519, 0)"
 music = "Ocllo"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -656,6 +688,7 @@ areas = [
     { x1 = 3664, y1 = 2640, x2 = 3672, y2 = 2656 },
     { x1 = 3672, y1 = 2648, x2 = 3680, y2 = 2656 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -681,6 +714,7 @@ areas = [
 ]
 go_location = "(1867, 2780, 0)"
 music = "Trinsic"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -704,6 +738,7 @@ areas = [
     { x1 = 1923, y1 = 2786, x2 = 1935, y2 = 2808 },
     { x1 = 1935, y1 = 2786, x2 = 1942, y2 = 2800 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -727,6 +762,7 @@ areas = [
 ]
 go_location = "(2899, 676, 0)"
 music = "Vesper"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -750,6 +786,7 @@ areas = [
     { x1 = 2892, y1 = 901, x2 = 2908, y2 = 920 },
     { x1 = 2908, y1 = 904, x2 = 2916, y2 = 912 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -775,6 +812,7 @@ areas = [
 ]
 go_location = "(546, 992, 0)"
 music = "Yew"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -791,6 +829,7 @@ type = "town"
 priority = 50
 parent = "Yew"
 areas = [{ x1 = 600, y1 = 808, x2 = 624, y2 = 832, z1 = 0, z2 = 39 }]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -810,6 +849,7 @@ parent = "Yew"
 areas = [{ x1 = 664, y1 = 928, x2 = 686, y2 = 950 }]
 go_location = "(675, 939, 0)"
 rune_name = "A Field of Sheep in Yew"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -829,6 +869,7 @@ parent = "Yew"
 areas = [{ x1 = 664, y1 = 1168, x2 = 686, y2 = 1190 }]
 go_location = "(675, 1179, 0)"
 rune_name = "A Field of Sheep in Yew"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -848,6 +889,7 @@ parent = "Yew"
 areas = [{ x1 = 560, y1 = 1088, x2 = 582, y2 = 1110 }]
 go_location = "(571, 1099, 0)"
 rune_name = "A Farm in Yew"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -867,6 +909,7 @@ parent = "Yew"
 areas = [{ x1 = 560, y1 = 1232, x2 = 576, y2 = 1248 }]
 go_location = "(567, 1239, 0)"
 rune_name = "A Wheatfield in Yew"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -886,6 +929,7 @@ parent = "Yew"
 areas = [{ x1 = 368, y1 = 1176, x2 = 382, y2 = 1208 }]
 go_location = "(375, 1191, 0)"
 rune_name = "A Wheatfield in Yew"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -916,6 +960,7 @@ areas = [
 ]
 go_location = "(5223, 190, 5)"
 music = "Wind"
+weather = "none"
 guarded = true
 housing = false
 instant_logout = false
@@ -940,6 +985,7 @@ areas = [
     { x1 = 5206, y1 = 164, x2 = 5212, y2 = 179 },
     { x1 = 5303, y1 = 28, x2 = 5319, y2 = 42 },
 ]
+weather = "none"
 guarded = true
 housing = false
 instant_logout = true
@@ -958,6 +1004,7 @@ priority = 50
 areas = [{ x1 = 2868, y1 = 3324, x2 = 3073, y2 = 3519, z1 = 0, z2 = 128 }]
 go_location = "(3010, 3371, 15)"
 music = "Serpents"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -978,6 +1025,7 @@ areas = [
     { x1 = 2968, y1 = 3416, x2 = 2976, y2 = 3432, z1 = 0, z2 = 128 },
     { x1 = 3008, y1 = 3450, x2 = 3022, y2 = 3464, z1 = 0, z2 = 128 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -996,6 +1044,7 @@ priority = 50
 areas = [{ x1 = 538, y1 = 2107, x2 = 688, y2 = 2297 }]
 go_location = "(632, 2233, 0)"
 music = "Skarabra"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -1018,6 +1067,7 @@ areas = [
     { x1 = 552, y1 = 2168, x2 = 568, y2 = 2192 },
     { x1 = 568, y1 = 2168, x2 = 576, y2 = 2176 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -1036,6 +1086,7 @@ priority = 50
 areas = [{ x1 = 3475, y1 = 1000, x2 = 3835, y2 = 1435, z1 = 0, z2 = 128 }]
 go_location = "(3732, 1279, 0)"
 music = "Nujelm"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -1066,6 +1117,7 @@ areas = [
     { x1 = 3744, y1 = 1264, x2 = 3752, y2 = 1272, z1 = 0, z2 = 128 },
     { x1 = 3744, y1 = 1248, x2 = 3752, y2 = 1256, z1 = 0, z2 = 128 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -1109,6 +1161,7 @@ areas = [
 ]
 go_location = "(4442, 1172, 0)"
 music = "Moonglow"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -1132,6 +1185,7 @@ areas = [
     { x1 = 4488, y1 = 1060, x2 = 4492, y2 = 1068, z1 = 0, z2 = 128 },
     { x1 = 4476, y1 = 1060, x2 = 4480, y2 = 1068, z1 = 0, z2 = 128 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -1156,6 +1210,7 @@ areas = [
 ]
 go_location = "(3714, 2220, 20)"
 music = "Magincia"
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = false
@@ -1175,6 +1230,7 @@ areas = [
     { x1 = 3680, y1 = 2152, x2 = 3704, y2 = 2160 },
     { x1 = 3720, y1 = 2216, x2 = 3736, y2 = 2232 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -1196,6 +1252,7 @@ areas = [
 ]
 go_location = "(2706, 2163, 0)"
 music = "Bucsden"
+weather = "temperate"
 guarded = false
 housing = false
 instant_logout = false
@@ -1217,6 +1274,7 @@ areas = [
     { x1 = 2664, y1 = 2232, x2 = 2688, y2 = 2240 },
     { x1 = 2672, y1 = 2240, x2 = 2688, y2 = 2248 },
 ]
+weather = "temperate"
 guarded = true
 housing = false
 instant_logout = true
@@ -1239,6 +1297,7 @@ areas = [
 go_location = "(5456, 1862, 0)"
 entrance = "(2499, 916, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1258,6 +1317,7 @@ areas = [{ x1 = 5122, y1 = 518, x2 = 5370, y2 = 770 }]
 go_location = "(5187, 635, 0)"
 entrance = "(4111, 429, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1277,6 +1337,7 @@ areas = [{ x1 = 5377, y1 = 516, x2 = 5631, y2 = 1022 }]
 go_location = "(5501, 570, 59)"
 entrance = "(1296, 1082, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1296,6 +1357,7 @@ areas = [{ x1 = 5120, y1 = 770, x2 = 5371, y2 = 1028 }]
 go_location = "(5243, 1004, 0)"
 entrance = "(1176, 2635, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1315,6 +1377,7 @@ areas = [{ x1 = 5898, y1 = 2, x2 = 6136, y2 = 246 }]
 go_location = "(5905, 22, 44)"
 entrance = "(4722, 3814, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1334,6 +1397,7 @@ areas = [{ x1 = 5381, y1 = 1284, x2 = 5628, y2 = 1509 }]
 go_location = "(5571, 1302, 0)"
 entrance = "(5882, 3819, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1351,6 +1415,7 @@ type = "jail"
 priority = 50
 areas = [{ x1 = 5271, y1 = 1159, x2 = 5312, y2 = 1192 }]
 go_location = "(5275, 1163, 0)"
+weather = "none"
 guarded = false
 housing = true
 instant_logout = false
@@ -1368,6 +1433,7 @@ type = "greenacres"
 priority = 1
 areas = [{ x1 = 5376, y1 = 512, x2 = 6143, y2 = 1279 }]
 go_location = "(5445, 1153, 0)"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1390,6 +1456,7 @@ areas = [
 go_location = "(5395, 126, 0)"
 entrance = "(512, 1559, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1409,6 +1476,7 @@ areas = [{ x1 = 5633, y1 = 511, x2 = 5886, y2 = 1021 }]
 go_location = "(5825, 599, 0)"
 entrance = "(2042, 226, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1431,6 +1499,7 @@ areas = [
     { x1 = 2359, y1 = 927, x2 = 2373, y2 = 945 },
 ]
 go_location = "(2367, 942, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1448,6 +1517,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 1887, y1 = 354, x2 = 1920, y2 = 377 }]
 go_location = "(1903, 365, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1465,6 +1535,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 1925, y1 = 307, x2 = 1943, y2 = 325 }]
 go_location = "(1934, 316, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1482,6 +1553,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 2323, y1 = 809, x2 = 2368, y2 = 851 }]
 go_location = "(2345, 830, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1499,6 +1571,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 1436, y1 = 1215, x2 = 1465, y2 = 1252 }]
 go_location = "(1443, 1228, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1516,6 +1589,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 1611, y1 = 1175, x2 = 1662, y2 = 1204 }]
 go_location = "(1629, 1189, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1533,6 +1607,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 2406, y1 = 168, x2 = 2428, y2 = 184 }]
 go_location = "(2426, 177, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1550,6 +1625,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 2418, y1 = 81, x2 = 2442, y2 = 113 }]
 go_location = "(2440, 94, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1567,6 +1643,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 2447, y1 = 39, x2 = 2489, y2 = 67 }]
 go_location = "(2471, 64, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1587,6 +1664,7 @@ areas = [
     { x1 = 2556, y1 = 474, x2 = 2582, y2 = 501 },
 ]
 go_location = "(2558, 499, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1604,6 +1682,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 4594, y1 = 3807, x2 = 4617, y2 = 3824 }]
 go_location = "(4605, 3815, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1621,6 +1700,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 4018, y1 = 421, x2 = 4067, y2 = 470 }]
 go_location = "(4054, 440, 3)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1641,6 +1721,7 @@ areas = [
     { x1 = 4005, y1 = 298, x2 = 4027, y2 = 310 },
 ]
 go_location = "(4030, 325, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1658,6 +1739,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 1973, y1 = 251, x2 = 1994, y2 = 274 }]
 go_location = "(1984, 262, 8)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1675,6 +1757,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 766, y1 = 1683, x2 = 778, y2 = 1697 }]
 go_location = "(773, 1684, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1692,6 +1775,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 1713, y1 = 1055, x2 = 1753, y2 = 1080 }]
 go_location = "(1723, 1065, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1709,6 +1793,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 1604, y1 = 958, x2 = 1650, y2 = 1009 }]
 go_location = "(1638, 974, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1730,6 +1815,7 @@ areas = [
     { x1 = 2590, y1 = 413, x2 = 2623, y2 = 448 },
 ]
 go_location = "(2593, 477, 60)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1751,6 +1837,7 @@ areas = [
     { x1 = 2456, y1 = 907, x2 = 2475, y2 = 941 },
 ]
 go_location = "(2445, 880, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -1773,6 +1860,7 @@ areas = [
 go_location = "(5451, 3143, -60)"
 entrance = "(5426, 3120, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1792,6 +1880,7 @@ areas = [{ x1 = 5635, y1 = 1285, x2 = 5880, y2 = 1520 }]
 go_location = "(5760, 2908, 15)"
 entrance = "(2922, 3402, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1815,6 +1904,7 @@ areas = [
 go_location = "(5210, 2322, 30)"
 entrance = "(1996, 80, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -1836,6 +1926,7 @@ areas = [
     { x1 = 5235, y1 = 3930, x2 = 5315, y2 = 3942 },
 ]
 go_location = "(5228, 3978, 37)"
+weather = "none"
 guarded = true
 housing = false
 instant_logout = false
@@ -1852,6 +1943,7 @@ type = "town"
 priority = 50
 parent = "Delucia"
 areas = [{ x1 = 5194, y1 = 4053, x2 = 5204, y2 = 4073 }]
+weather = "none"
 guarded = true
 housing = false
 instant_logout = true
@@ -1872,6 +1964,7 @@ areas = [
     { x1 = 5831, y1 = 3237, x2 = 5851, y2 = 3267 },
 ]
 go_location = "(5769, 3176, 0)"
+weather = "none"
 guarded = true
 housing = false
 instant_logout = false
@@ -1888,6 +1981,7 @@ type = "town"
 priority = 50
 parent = "Papua"
 areas = [{ x1 = 5757, y1 = 3150, x2 = 5781, y2 = 3174 }]
+weather = "none"
 guarded = true
 housing = false
 instant_logout = true
@@ -1906,6 +2000,7 @@ priority = 50
 areas = [{ x1 = 1939, y1 = 215, x2 = 2073, y2 = 352 }]
 go_location = "(2043, 236, 13)"
 music = "Mountn_a"
+weather = "temperate"
 guarded = false
 housing = false
 instant_logout = false
@@ -1924,6 +2019,7 @@ priority = 50
 areas = [{ x1 = 2433, y1 = 846, x2 = 2561, y2 = 974 }]
 go_location = "(2499, 918, 0)"
 music = "Vesper"
+weather = "temperate"
 guarded = false
 housing = false
 instant_logout = false
@@ -1941,6 +2037,7 @@ type = "nohousing"
 priority = 50
 areas = [{ x1 = 1289, y1 = 1064, x2 = 1321, y2 = 1101 }]
 go_location = "(1298, 1081, 0)"
+weather = "temperate"
 guarded = false
 housing = false
 instant_logout = false
@@ -1962,6 +2059,7 @@ areas = [
     { x1 = 1349, y1 = 1122, x2 = 1354, y2 = 1224 },
 ]
 go_location = "(1380, 1114, 0)"
+weather = "temperate"
 guarded = false
 housing = false
 instant_logout = false
@@ -1981,6 +2079,7 @@ areas = [{ x1 = 5886, y1 = 1281, x2 = 6143, y2 = 1535 }]
 go_location = "(6032, 1499, 0)"
 entrance = "(1492, 1641, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -2004,6 +2103,7 @@ areas = [
 go_location = "(5137, 2015, 0)"
 entrance = "(1014, 1434, 0)"
 music = "Dungeon9"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -2022,6 +2122,7 @@ priority = 50
 areas = [{ x1 = 4557, y1 = 1471, x2 = 4577, y2 = 1481 }]
 go_location = "(4567, 1475, 0)"
 rune_name = "A Cotton Field in Moonglow"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -2040,6 +2141,7 @@ priority = 50
 areas = [{ x1 = 796, y1 = 2152, x2 = 832, y2 = 2176 }]
 go_location = "(813, 2163, 0)"
 rune_name = "A Wheatfield in Skara Brae"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -2057,6 +2159,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 816, y1 = 2251, x2 = 832, y2 = 2259 }]
 go_location = "(823, 2254, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -2074,6 +2177,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 816, y1 = 2261, x2 = 832, y2 = 2269 }]
 go_location = "(823, 2264, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -2091,6 +2195,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 816, y1 = 2271, x2 = 832, y2 = 2279 }]
 go_location = "(823, 2264, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -2108,6 +2213,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 816, y1 = 2281, x2 = 832, y2 = 2289 }]
 go_location = "(823, 2274, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -2125,6 +2231,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 835, y1 = 2344, x2 = 851, y2 = 2360 }]
 go_location = "(843, 2352, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -2142,6 +2249,7 @@ type = "base"
 priority = 50
 areas = [{ x1 = 816, y1 = 2344, x2 = 832, y2 = 2368 }]
 go_location = "(823, 2355, 0)"
+weather = "temperate"
 guarded = false
 housing = true
 instant_logout = false
@@ -2163,6 +2271,7 @@ teleport_out = true
 type = "base"
 priority = 0
 areas = [{ x1 = 5120, y1 = 2304, x2 = 6144, y2 = 4096 }]
+weather = "none"
 recall_in = false
 recall_out = false
 gate_in = false
@@ -2176,6 +2285,7 @@ teleport_out = true
 type = "base"
 priority = 0
 areas = [{ x1 = 5120, y1 = 0, x2 = 5376, y2 = 256 }]
+weather = "none"
 recall_in = false
 recall_out = false
 gate_in = false
@@ -2189,6 +2299,7 @@ teleport_out = true
 type = "base"
 priority = 0
 areas = [{ x1 = 5640, y1 = 1776, x2 = 5935, y2 = 2039 }]
+weather = "none"
 recall_in = false
 recall_out = false
 gate_in = false
@@ -2196,3 +2307,33 @@ gate_out = false
 mark = false
 teleport_in = true
 teleport_out = true
+
+# ------------------------------------------------------------------------------
+# Weather zones: places with their own weather, with no other rules.
+# Their priority is 0, so any other region covering them keeps its own weather.
+# ------------------------------------------------------------------------------
+
+# Weather zone: Ice Isle.
+[[region]]
+type = "base"
+priority = 0
+areas = [
+    { x1 = 3850, y1 = 160, x2 = 4240, y2 = 480 },
+    { x1 = 3900, y1 = 480, x2 = 4280, y2 = 660 },
+    { x1 = 4160, y1 = 660, x2 = 4310, y2 = 770 },
+]
+weather = "snowy"
+
+# Weather zone: around the Covetous entrance, between Vesper and Minoc.
+[[region]]
+type = "base"
+priority = 0
+areas = [{ x1 = 2425, y1 = 725, x2 = 2675, y2 = 975 }]
+weather = "mild"
+
+# Weather zone: around the Despise entrance, north of Britain.
+[[region]]
+type = "base"
+priority = 0
+areas = [{ x1 = 1245, y1 = 1045, x2 = 1495, y2 = 1295 }]
+weather = "mild"

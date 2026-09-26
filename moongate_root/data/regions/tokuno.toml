@@ -17,6 +17,7 @@
 #   go_location     where a "go to region" command takes a character, "(x, y, z)"
 #   entrance        the entrance of the town or dungeon, "(x, y, z)"
 #   music           the music played in the region (see the music list)
+#   weather         the weather profile of weather.toml the region uses
 #   rune_name       the name of a rune marked here
 #   guarded         whether guards protect the region
 #   housing         whether players may place houses
@@ -36,6 +37,7 @@ areas = [
     { x1 = 799, y1 = 1201, x2 = 805, y2 = 1207 },
     { x1 = 267, y1 = 625, x2 = 274, y2 = 632 },
 ]
+weather = "none"
 guarded = true
 housing = false
 instant_logout = false
@@ -54,6 +56,7 @@ priority = 50
 areas = [{ x1 = 656, y1 = 1192, x2 = 816, y2 = 1320 }]
 go_location = "(736, 1256, 30)"
 music = "Zento"
+weather = "none"
 guarded = true
 housing = false
 instant_logout = false
@@ -70,6 +73,7 @@ type = "town"
 priority = 50
 parent = "Zento"
 areas = [{ x1 = 674, y1 = 1203, x2 = 699, y2 = 1219 }]
+weather = "none"
 guarded = true
 housing = false
 instant_logout = true
@@ -87,6 +91,7 @@ type = "nohousing"
 priority = 50
 areas = [{ x1 = 969, y1 = 194, x2 = 992, y2 = 224 }]
 go_location = "(977, 223, 23)"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
@@ -104,6 +109,7 @@ type = "nohousing"
 priority = 50
 areas = [{ x1 = 283, y1 = 361, x2 = 351, y2 = 463 }]
 go_location = "(320, 408, 32)"
+weather = "none"
 guarded = false
 housing = false
 instant_logout = false
