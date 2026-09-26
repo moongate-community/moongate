@@ -1,3 +1,4 @@
+using Moongate.Server.Core.Types.Hosting;
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Primitives;
@@ -188,6 +189,8 @@ public sealed class AccountServiceTests
         peer.RegisterMoongatePersistence(
             new([new(PersistenceDatabaseTarget.Accounts, fixture.Database.ConnectionString)], true)
         );
+        // An accounts-only peer is a login server: no Realm database, so no world entities.
+        peer.RegisterInstance(ServerMode.Login);
         new MoongateUltimaPlugin().Register(peer);
         await using var persistence = peer.Resolve<MoongatePersistenceService>();
         await persistence.InitializeAsync();
@@ -224,6 +227,8 @@ public sealed class AccountServiceTests
         peer.RegisterMoongatePersistence(
             new([new(PersistenceDatabaseTarget.Accounts, fixture.Database.ConnectionString)], true)
         );
+        // An accounts-only peer is a login server: no Realm database, so no world entities.
+        peer.RegisterInstance(ServerMode.Login);
         new MoongateUltimaPlugin().Register(peer);
         await using var persistence = peer.Resolve<MoongatePersistenceService>();
         await persistence.InitializeAsync();

@@ -23,6 +23,7 @@ using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Data.Weather;
 using Moongate.Server.Ultima.Entities.Auth;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces;
@@ -115,6 +116,9 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddScriptModule<LocalizationModule>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
+            container.AddPersistenceWorld<MobileEntity>();
+            container.AddPersistenceWorld<ItemEntity>();
+
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
             // After the loaders: the maps come from data/maps.toml.
             container.AddMoongateService<IMapService, MapService>(-4);

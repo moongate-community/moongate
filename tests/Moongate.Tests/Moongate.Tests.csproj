@@ -42,6 +42,8 @@
     <ItemGroup>
         <Content Include="../../migrations/auth/*.sql"
                  Link="AccountMigrations/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"/>
+        <Content Include="../../migrations/world/*.sql"
+                 Link="WorldMigrations/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"/>
     </ItemGroup>
 
     <ItemGroup>

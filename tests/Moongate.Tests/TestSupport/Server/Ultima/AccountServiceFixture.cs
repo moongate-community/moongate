@@ -44,6 +44,7 @@ internal sealed class AccountServiceFixture : IAsyncDisposable
                 await host.AccountsDatabase!.ExecuteAsync(await File.ReadAllTextAsync(migration));
             }
 
+            await CoreMigrationFiles.ApplyAsync(host.Database, "world");
             await host.Owner.InitializeAsync();
 
             return new(host);
