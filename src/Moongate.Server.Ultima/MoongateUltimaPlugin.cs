@@ -103,6 +103,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<WeatherLoader, WeatherContent>(8);
             container.AddUltimaDataLoader<RegionsLoader, RegionContent>(9);
             container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
+            container.AddUltimaDataLoader<NamesLoader, NameList>(11);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();

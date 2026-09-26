@@ -50,6 +50,7 @@ public sealed class RepositoryDataFilesTests
         container.AddUltimaDataLoader<WeatherLoader, WeatherContent>(8);
         container.AddUltimaDataLoader<RegionsLoader, RegionContent>(9);
         container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
+        container.AddUltimaDataLoader<NamesLoader, NameList>(11);
         container.RegisterInstance(new LocalizationConfig { Language = "ita" });
         container.Register<IDataLoaderService, DataLoaderService>(Reuse.Singleton);
         var service = container.Resolve<IDataLoaderService>();
@@ -64,6 +65,11 @@ public sealed class RepositoryDataFilesTests
         Assert.NotEmpty(Assert.Single(service.GetEntities<BannedNamesContent>()).Words);
         Assert.Single(service.GetEntities<ContainerContent>(), entry => entry.Default);
         Assert.Equal(1045, service.GetEntities<BodyContent>().Count);
+
+        var names = service.GetEntities<NameList>();
+        Assert.Contains(names, list => list.Id == "male" && list.Names.Count > 500);
+        Assert.Contains(names, list => list.Id == "female" && list.Names.Count > 500);
+        Assert.Equal("Aaron", names.Single(list => list.Id == "male").Names[0]);
 
         var messages = service.GetEntities<MessageContent>();
         Assert.Equal(5462, messages.Count);
