@@ -19,7 +19,6 @@ using Moongate.Server.Ultima.Types.Characters;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 using Npgsql;
-using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
 
@@ -32,7 +31,6 @@ public sealed class CharacterService : ICharacterService
     private const string UniqueSlotIndex = "ux_mobiles_account_slot";
     private const string UniqueViolation = "23505";
 
-    private readonly ILogger _logger = Log.ForContext<CharacterService>();
     private readonly IDataLoaderService _data;
     private readonly IStartingItemsService _startingItems;
     private readonly MoongatePersistenceService _persistence;
@@ -111,14 +109,6 @@ public sealed class CharacterService : ICharacterService
 
             throw;
         }
-
-        _logger.Information(
-            "Account {AccountId} created character {Serial} {Name} in slot {Slot}",
-            accountId,
-            character.Id,
-            character.Name,
-            character.Slot
-        );
 
         // After the commit the character is saved whatever happens: the event is published without cancellation.
         await _events.PublishAsync(new CharacterCreatedEvent(character, items), CancellationToken.None);

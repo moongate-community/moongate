@@ -62,7 +62,23 @@ internal static class CharacterCreationReply
             );
             await context.SendAndDisconnectAsync(new PopupMessagePacket(ToPopup(refusal)), cancellationToken)
                          .ConfigureAwait(false);
+
+            return;
         }
+
+        var character = result.Character!;
+        logger.Information(
+            "Session {SessionId}: account {AccountId} created character {Serial} {Name} ({Race} {Gender}) in slot {Slot} at {Map} {Location}",
+            context.SessionId,
+            accountId,
+            character.Id,
+            character.Name,
+            character.Race,
+            character.Gender,
+            character.Slot,
+            character.Map,
+            character.Location
+        );
     }
 
     private static PopupMessageType ToPopup(CharacterCreationRefusalType refusal)
