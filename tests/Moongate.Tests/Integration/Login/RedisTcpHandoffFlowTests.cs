@@ -1,12 +1,13 @@
 using System.Buffers.Binary;
-using System.Net;
 using System.Net.Sockets;
+using System.Net;
 using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Channels;
 using DryIoc;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Registry;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Data.Network;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Extensions;
@@ -16,8 +17,8 @@ using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Game;
 using Moongate.Server.Services.GameLoop;
 using Moongate.Server.Services.Login;
-using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Network.Framing;
+using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Packets;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
@@ -25,10 +26,12 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
-using Moongate.Tests.TestSupport.Server.Ultima;
-using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Containers;
+using Moongate.Tests.TestSupport.Server.Ultima;
+using Moongate.Tests.TestSupport.Ultima.Characters;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Integration.Login;
 
@@ -84,6 +87,8 @@ public sealed class RedisTcpHandoffFlowTests
         gameContainer.RegisterInstance(realm);
         gameContainer.RegisterInstance<IGameHandoffStore>(handoffs);
         gameContainer.RegisterInstance<IDataLoaderService>(new StubDataLoaderService());
+        gameContainer.RegisterInstance<ICharacterService>(new RecordingCharacterService());
+        gameContainer.RegisterInstance(new CharactersConfig());
         gameContainer.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
         var gameDispatcher = new PacketDispatchService(
             loop,

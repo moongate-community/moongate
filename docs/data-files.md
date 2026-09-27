@@ -197,8 +197,8 @@ The server stops when:
 
 `professions.toml` lists the professions a player can pick at character creation.
 The client sends the chosen id (packet 0xF8) and leaves skills and stats empty; the
-character is meant to get the stats and skills listed here. Id 0 is the "Advanced" choice, where the player picks
-everything, so it is not listed.
+character gets the stats and skills listed here. Id 0 is the "Advanced" choice, where the player picks
+everything, so it is not listed; an id not listed is treated as 0.
 
 ```toml
 [[profession]]
@@ -272,9 +272,9 @@ beard = []
 | `body` | The body id of a living character of this race and gender. |
 | `hair`, `beard` | The item ids of the allowed styles. No hair or beard (0) is always allowed and is not listed. |
 
-A hue outside the allowed ones is meant to become the nearest allowed hue, and a
-style not listed is dropped. `CharacterCreationRules` implements these checks, but
-character creation does not call it yet.
+At character creation a hue outside the allowed ones becomes the nearest allowed hue,
+and a style not listed is dropped (`CharacterCreationRules`). A race the client
+sends that is not loaded becomes human.
 
 ### Validation at startup
 
@@ -309,9 +309,9 @@ words = [
 | `starts_with` | Words a name may not start with: `gm` also bans `GMaria`. |
 | `words` | Words a name may not contain as a whole word: `mage` bans `Aria the Mage` but not `Magenta`. |
 
-The loader trims every word and returns one `BannedNamesContent`. A banned name is
-meant to become `Generic Player` (`CharacterCreationRules.ValidateName`), but
-character creation does not call it yet.
+The loader trims every word and returns one `BannedNamesContent`. At character
+creation a banned or malformed name becomes `Generic Player`
+(`CharacterCreationRules.ValidateName`). Names are not unique.
 
 ### Validation at startup
 
