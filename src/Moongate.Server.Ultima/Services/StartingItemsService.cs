@@ -177,7 +177,7 @@ public class StartingItemsService : IStartingItemsService
 
         if (lootType != template.EffectiveLootType())
         {
-            item.Props = new ItemProps { LootType = lootType };
+            item.SetProp(ItemPropKeys.LootType, lootType);
         }
     }
 

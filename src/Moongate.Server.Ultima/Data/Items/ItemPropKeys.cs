@@ -1,0 +1,37 @@
+namespace Moongate.Server.Ultima.Data.Items;
+
+/// <summary>
+///     The keys of the item props the server itself reads; scripts may add any other key.
+/// </summary>
+public static class ItemPropKeys
+{
+    /// <summary>
+    ///     What happens to the item when its owner dies, when it differs from the template's (a <c>LootType</c>).
+    /// </summary>
+    public const string LootType = "loot_type";
+
+    /// <summary>
+    ///     The charges of a wand or another charged item.
+    /// </summary>
+    public const string Charges = "charges";
+
+    /// <summary>
+    ///     The current durability of a weapon or armour.
+    /// </summary>
+    public const string Durability = "durability";
+
+    /// <summary>
+    ///     The durability of a weapon or armour when new.
+    /// </summary>
+    public const string MaxDurability = "max_durability";
+
+    /// <summary>
+    ///     The crafting quality, such as <c>exceptional</c>.
+    /// </summary>
+    public const string Quality = "quality";
+
+    /// <summary>
+    ///     The serial value of the mobile that crafted the item.
+    /// </summary>
+    public const string CrafterId = "crafter_id";
+}

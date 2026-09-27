@@ -1,3 +1,4 @@
+using System.Globalization;
 using FreeSql.DataAnnotations;
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
@@ -102,7 +103,7 @@ public class ItemEntity : IMoongateEntity
     public DateTime? DecayAt { get; set; }
 
     [JsonMap, Column(DbType = "jsonb", IsNullable = true)]
-    public ItemProps? Props { get; set; }
+    public Dictionary<string, object?>? Props { get; set; }
 
     [Column(IsIgnore = true)]
     public ItemLocationType Location =>
@@ -178,6 +179,116 @@ public class ItemEntity : IMoongateEntity
         ClearLocation();
         MobileId = mobileId;
         Layer = layer;
+    }
+
+    /// <summary>
+    ///     Sets the prop <paramref name="key" />, such as <see cref="ItemPropKeys.Quality" />; null removes it.
+    /// </summary>
+    /// <exception cref="ArgumentException">
+    ///     The key is empty, or the value is not a string, a number, a bool or an enum.
+    /// </exception>
+    public void SetProp(string key, object? value)
+    {
+        if (string.IsNullOrWhiteSpace(key))
+        {
+            throw new ArgumentException("An item prop needs a key.", nameof(key));
+        }
+
+        if (value is null)
+        {
+            RemoveProp(key);
+
+            return;
+        }
+
+        if (value is not (string or bool or Enum or byte or sbyte or short or ushort or int or uint or long or ulong or float
+                          or double or decimal))
+        {
+            throw new ArgumentException(
+                $"Item prop '{key}' cannot hold a {value.GetType().Name}: use a string, a number, a bool or an enum.",
+                nameof(value)
+            );
+        }
+
+        Props ??= new();
+        Props[key] = value;
+    }
+
+    /// <summary>
+    ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />, or <paramref name="defaultValue" /> when
+    ///     the item does not have it.
+    /// </summary>
+    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    public T GetProp<T>(string key, T defaultValue = default!)
+    {
+        return TryGetProp<T>(key, out var value) ? value : defaultValue;
+    }
+
+    /// <summary>
+    ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />; false when the item does not have it.
+    /// </summary>
+    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    public bool TryGetProp<T>(string key, out T value)
+    {
+        if (Props is null || !Props.TryGetValue(key, out var stored) || stored is null)
+        {
+            value = default!;
+
+            return false;
+        }
+
+        value = ConvertProp<T>(key, stored);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Removes the prop <paramref name="key" />; false when the item did not have it.
+    /// </summary>
+    public bool RemoveProp(string key)
+    {
+        if (Props is null || !Props.Remove(key))
+        {
+            return false;
+        }
+
+        if (Props.Count == 0)
+        {
+            Props = null;
+        }
+
+        return true;
+    }
+
+    // The JSONB column gives whole numbers back as long and enums as their number, so a stored value is converted to
+    // the type asked for rather than cast.
+    private static T ConvertProp<T>(string key, object stored)
+    {
+        if (stored is T typed)
+        {
+            return typed;
+        }
+
+        var target = Nullable.GetUnderlyingType(typeof(T)) ?? typeof(T);
+
+        try
+        {
+            var converted = target.IsEnum
+                ? stored is string name
+                    ? Enum.Parse(target, name, true)
+                    : Enum.ToObject(target, Convert.ToInt64(stored, CultureInfo.InvariantCulture))
+                : Convert.ChangeType(stored, target, CultureInfo.InvariantCulture);
+
+            return (T)converted;
+        }
+        catch (Exception exception) when (exception is FormatException or InvalidCastException or OverflowException
+                                              or ArgumentException)
+        {
+            throw new InvalidCastException(
+                $"Item prop '{key}' holds {stored} ({stored.GetType().Name}), which is not a {typeof(T).Name}.",
+                exception
+            );
+        }
     }
 
     private void ClearLocation()

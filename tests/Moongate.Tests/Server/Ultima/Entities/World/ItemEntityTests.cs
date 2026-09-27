@@ -1,7 +1,9 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Ultima.Types;
 
@@ -103,5 +105,65 @@ public sealed class ItemEntityTests
         item.PutInContainer(Backpack, new Point2D(10, 20));
 
         return item;
+    }
+
+    [Fact]
+    public void Props_SetGetAndRemove()
+    {
+        var item = new ItemEntity();
+
+        item.SetProp(ItemPropKeys.Quality, "exceptional");
+        item.SetProp(ItemPropKeys.Charges, 12);
+
+        Assert.Equal("exceptional", item.GetProp<string>(ItemPropKeys.Quality));
+        Assert.Equal(12, item.GetProp<int>(ItemPropKeys.Charges));
+        Assert.Equal("regular", item.GetProp("missing", "regular"));
+        Assert.Equal(0, item.GetProp<int>("missing"));
+        Assert.True(item.RemoveProp(ItemPropKeys.Charges));
+        Assert.False(item.TryGetProp<int>(ItemPropKeys.Charges, out _));
+    }
+
+    [Fact]
+    public void Props_SettingNullRemoves_AndNoPropsLeavesTheColumnNull()
+    {
+        var item = new ItemEntity();
+        item.SetProp(ItemPropKeys.Quality, "exceptional");
+
+        item.SetProp(ItemPropKeys.Quality, null);
+
+        Assert.Null(item.Props);
+    }
+
+    [Fact]
+    public void Props_StoredValuesConvertToTheTypeAsked()
+    {
+        // What the JSONB column gives back: whole numbers as long, enums as numbers or names.
+        var item = new ItemEntity
+        {
+            Props = new() { ["charges"] = 12L, ["loot_type"] = 1L, ["loot_name"] = "Blessed", ["weight"] = 2.5 }
+        };
+
+        Assert.Equal(12, item.GetProp<int>("charges"));
+        Assert.Equal(LootType.Newbied, item.GetProp<LootType>("loot_type"));
+        Assert.Equal(LootType.Blessed, item.GetProp<LootType>("loot_name"));
+        Assert.Equal(2.5m, item.GetProp<decimal>("weight"));
+        Assert.True(item.TryGetProp<LootType>("loot_type", out var lootType) && lootType == LootType.Newbied);
+    }
+
+    [Fact]
+    public void Props_AValueThatDoesNotConvert_Throws()
+    {
+        var item = new ItemEntity { Props = new() { ["charges"] = "many" } };
+
+        Assert.Contains("'charges'", Assert.Throws<InvalidCastException>(() => item.GetProp<int>("charges")).Message);
+    }
+
+    [Fact]
+    public void Props_ANestedValueOrAnEmptyKey_IsRejected()
+    {
+        var item = new ItemEntity();
+
+        Assert.Throws<ArgumentException>(() => item.SetProp("list", new List<int> { 1 }));
+        Assert.Throws<ArgumentException>(() => item.SetProp(" ", 1));
     }
 }

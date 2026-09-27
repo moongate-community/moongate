@@ -6,6 +6,7 @@ using Moongate.Persistence.Interfaces;
 using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Data.Characters;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Entities.World;
@@ -77,7 +78,7 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
             stored.Where(item => item.ContainerId == backpack.Id),
             item => Assert.True(item.GridLocation!.Value is { X: >= 44 and < 186, Y: >= 65 and < 159 })
         );
-        Assert.Equal(LootType.Newbied, stored.Single(item => item.TemplateId == "pearl").Props!.LootType);
+        Assert.Equal(LootType.Newbied, stored.Single(item => item.TemplateId == "pearl").GetProp<LootType>(ItemPropKeys.LootType));
     }
 
     [Fact]

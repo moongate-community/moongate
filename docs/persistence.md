@@ -253,7 +253,22 @@ A new item with `Id = Serial.Zero` gets its id from `world.items_id_seq`, which 
 `Serial.MinMobile..MaxMobile` the same way. Only what differs from the item template is
 stored: a null `name`, `movable` or `visibility` means the template's value. Values only
 some items have, such as charges, durability and script tags, go in the `props` JSONB
-column (`ItemProps`).
+column, a key-value dictionary read and written through the item:
+
+```csharp
+item.SetProp(ItemPropKeys.Quality, "exceptional");      // null removes the key
+var charges = item.GetProp<int>(ItemPropKeys.Charges);   // default(T) when missing
+var quality = item.GetProp(ItemPropKeys.Quality, "regular");
+if (item.TryGetProp<LootType>(ItemPropKeys.LootType, out var lootType)) { /* ... */ }
+item.RemoveProp(ItemPropKeys.Charges);
+```
+
+`ItemPropKeys` names the keys the server reads (`loot_type`, `charges`, `durability`,
+`max_durability`, `quality`, `crafter_id`); scripts may use any other key. A prop holds a
+string, a number, a bool or an enum; anything else is rejected when set. The column gives
+whole numbers back as `long` and enums as their number, so `GetProp<T>` converts to the
+type asked for, and throws `InvalidCastException` naming the key when the stored value
+does not convert. An item with no props stores `NULL`.
 
 ## Accounts
 

@@ -43,7 +43,8 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var backpack = Item(0x40000001, i => i.Equip(mobile.Id, LayerType.Backpack));
         var coin = Item(0x40000002, i => i.PutInContainer(backpack.Id, new Point2D(44, 65)));
         var wand = Item(0x40000003, i => i.PlaceOnGround(MapType.Trammel, new Point3D(1602, 1591, 20)));
-        wand.Props = new ItemProps { Charges = 12, Tags = new() { ["quest_step"] = "3" } };
+        wand.SetProp(ItemPropKeys.Charges, 12);
+        wand.SetProp("quest_step", "3");
         wand.Visibility = AccountType.GameMaster;
         coin.Amount = 250;
 
@@ -58,10 +59,10 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
 
         Assert.Equal((backpack.Id, new Point2D(44, 65), 250), (loadedCoin.ContainerId!.Value, loadedCoin.GridLocation!.Value, loadedCoin.Amount));
         Assert.Equal((MapType.Trammel, new Point3D(1602, 1591, 20)), (loadedWand.Map!.Value, loadedWand.GroundLocation!.Value));
-        Assert.Equal(12, loadedWand.Props!.Charges);
+        Assert.Equal(12, loadedWand.GetProp<int>(ItemPropKeys.Charges));
         Assert.Equal(AccountType.GameMaster, loadedWand.Visibility);
         Assert.Null(loadedCoin.Visibility);
-        Assert.Equal("3", loadedWand.Props.Tags!["quest_step"]);
+        Assert.Equal("3", loadedWand.GetProp<string>("quest_step"));
         Assert.Equal((mobile.Id, LayerType.Backpack), (loadedPack.MobileId!.Value, loadedPack.Layer!.Value));
     }
 
@@ -180,12 +181,12 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     {
         var item = Item(0x40000060, i => i.PlaceOnGround(MapType.Felucca, new Point3D(1, 1, 0)));
         item.Rarity = ItemRarityType.Epic;
-        item.Props = new ItemProps { LootType = LootType.Newbied };
+        item.SetProp(ItemPropKeys.LootType, LootType.Newbied);
 
         await _items.UpsertAsync(item);
         var loaded = (await _items.GetByIdAsync(item.Id))!;
 
-        Assert.Equal((ItemRarityType.Epic, (LootType?)LootType.Newbied), (loaded.Rarity, loaded.Props!.LootType));
+        Assert.Equal((ItemRarityType.Epic, (LootType?)LootType.Newbied), (loaded.Rarity, (LootType?)loaded.GetProp<LootType>(ItemPropKeys.LootType)));
     }
 
     [Fact]
