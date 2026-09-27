@@ -77,7 +77,20 @@ jobs:
 
       - name: Test
         # Test projects share PostgreSQL and Redis services; run their hosts one at a time.
-        run: bash scripts/test.sh all -c Release --no-build
+        # The run also collects code coverage and merges it into artifacts/coverage.
+        run: bash scripts/coverage.sh all -c Release --no-build
+
+      - name: Publish coverage summary
+        run: cat artifacts/coverage/Summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: |
+            artifacts/coverage
+            !artifacts/coverage/results
+          retention-days: 14
 
       - name: Verify portable administration client
         run: |

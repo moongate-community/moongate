@@ -96,6 +96,11 @@ dotnet build Moongate.slnx -c Release --no-restore
 bash scripts/test.sh all -c Release --no-build
 ```
 
+`scripts/coverage.sh` takes the same arguments, runs the tests with code coverage,
+and writes a merged report to `artifacts/coverage/index.html`. CI runs it in place
+of `scripts/test.sh`, shows the per-assembly summary on the run page, and keeps the
+HTML report as the `coverage-report` artifact for 14 days.
+
 For opt-in concurrent database load tests, see [Stress-test PostgreSQL persistence](docs/persistence-stress.md).
 
 Add or update tests for changed behavior. For bug fixes, include a regression test
