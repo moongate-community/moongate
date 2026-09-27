@@ -3,6 +3,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
+using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Data.Characters;
 using Moongate.Server.Ultima.Data.Containers;
@@ -114,6 +115,26 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         );
 
         await Assert.ThrowsAsync<ArgumentException>(() => service.GiveAsync(Request(new())));
+
+        Assert.Empty(await _items.QueryAsync(item => item.MobileId == _mobile.Id));
+    }
+
+    [Fact]
+    public async Task GiveAsync_InACallersTransaction_IsRolledBackWithIt()
+    {
+        var service = CreateService(Set(common: true, entries: [Entry("bottle")]));
+
+        await Assert.ThrowsAsync<InvalidOperationException>(() => _host.Owner.ExecuteInTransactionAsync(
+                PersistenceDatabaseTarget.Realm,
+                async transaction =>
+                {
+                    Assert.NotEmpty(await service.GiveAsync(transaction, Request(new())));
+
+                    throw new InvalidOperationException("caller failed");
+                },
+                CancellationToken.None
+            )
+        );
 
         Assert.Empty(await _items.QueryAsync(item => item.MobileId == _mobile.Id));
     }
