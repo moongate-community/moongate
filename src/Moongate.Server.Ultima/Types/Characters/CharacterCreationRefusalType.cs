@@ -11,7 +11,7 @@ public enum CharacterCreationRefusalType
     TooManyCharacters,
 
     /// <summary>
-    ///     The slot is beyond the limit or already holds a character.
+    ///     Another create for the same account took the chosen slot at the same moment.
     /// </summary>
     SlotUnavailable
 }

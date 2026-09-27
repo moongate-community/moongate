@@ -24,7 +24,7 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Creates player characters: refuses only a full account or an unavailable slot, sanitizes every other choice with
+///     Creates player characters: refuses only a full account, picks a free slot, sanitizes every other choice with
 ///     <see cref="CharacterCreationRules" />, and saves the character with its starting items in one transaction.
 /// </summary>
 public sealed class CharacterService : ICharacterService
@@ -70,12 +70,7 @@ public sealed class CharacterService : ICharacterService
             return CharacterCreationResult.Refused(CharacterCreationRefusalType.TooManyCharacters);
         }
 
-        if (request.Slot < 0 || request.Slot >= _config.MaxPerAccount || existing.Any(c => c.Slot == request.Slot))
-        {
-            return CharacterCreationResult.Refused(CharacterCreationRefusalType.SlotUnavailable);
-        }
-
-        var character = Build(accountId, request);
+        var character = Build(accountId, request, FreeSlot(request.Slot, existing));
         IReadOnlyList<ItemEntity> items = [];
 
         try
@@ -143,7 +138,24 @@ public sealed class CharacterService : ICharacterService
         return characters.OrderBy(character => character.Slot ?? byte.MaxValue).ThenBy(character => character.Id).ToList();
     }
 
-    private MobileEntity Build(Serial accountId, CharacterCreationRequest request)
+    /// <summary>
+    ///     The requested slot when it is in range and free, otherwise the first free one. Established servers ignore the
+    ///     client's slot altogether; keeping it when it fits preserves the player's choice without trusting its meaning.
+    ///     An account below its limit always has a free slot.
+    /// </summary>
+    private byte FreeSlot(int requested, IReadOnlyList<MobileEntity> existing)
+    {
+        var used = existing.Where(c => c.Slot is not null).Select(c => (int)c.Slot!.Value).ToHashSet();
+
+        if (requested >= 0 && requested < _config.MaxPerAccount && !used.Contains(requested))
+        {
+            return (byte)requested;
+        }
+
+        return (byte)Enumerable.Range(0, _config.MaxPerAccount).First(slot => !used.Contains(slot));
+    }
+
+    private MobileEntity Build(Serial accountId, CharacterCreationRequest request, byte slot)
     {
         var race = _data.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == request.Race) ??
                    _data.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == RaceType.Human) ??
@@ -158,7 +170,7 @@ public sealed class CharacterService : ICharacterService
         return new()
         {
             AccountId = accountId,
-            Slot = (byte)request.Slot,
+            Slot = slot,
             Name = CharacterCreationRules.ValidateName(request.Name, bannedNames),
             Gender = gender,
             Race = race.Race,
