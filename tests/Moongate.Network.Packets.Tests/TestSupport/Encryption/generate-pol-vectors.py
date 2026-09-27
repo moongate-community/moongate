@@ -67,7 +67,9 @@ int main(int argc, char** argv) {
     emit("send",send);
     std::vector<unsigned char> lp(62,0); lp[0]=0x80; memcpy(lp.data()+1,"fixture",7); memcpy(lp.data()+31,"example",7);
     l.Init(seedBytes,info.uiKey1,info.uiKey2); login(l,info.eType,lp); emit("loginPacket",lp);
+    std::vector<unsigned char> tail{0xA0,0,0}; login(l,info.eType,tail); lp.insert(lp.end(),tail.begin(),tail.end()); emit("loginPacketAndSelect",lp);
     std::vector<unsigned char> gp(65,0); gp[0]=0x91; memcpy(gp.data()+1,seedBytes,4); memcpy(gp.data()+5,"fixture",7); memcpy(gp.data()+35,"example",7);
+    gp.push_back(0x73); gp.push_back(0x42);
     // Invert the original decryptor byte-by-byte to produce a valid client handshake.
     b.Init();
     if(info.eType>=CRYPT_OLD_BLOWFISH && info.eType<=CRYPT_BLOWFISH_TWOFISH) {
@@ -77,7 +79,7 @@ int main(int argc, char** argv) {
         }
     }
     if(info.eType>=CRYPT_BLOWFISH_TWOFISH) { t.Init(seedBytes); t.Decrypt(gp.data(),gp.data(),gp.size()); }
-    emit("gameLogin",gp);
+    emit("gameLoginAndPing",gp); gp.resize(65); emit("gameLogin",gp);
 }
 ''')
     subprocess.run(['g++','-std=c++20','-O0','-I',str(root),str(root/'reference.cpp'), *map(str,(root/'pol/crypt').glob('*.cpp')),'-o',str(root/'reference')],check=True)
@@ -91,6 +93,9 @@ int main(int argc, char** argv) {
                 row[key+'Hashes']={str(n):hashlib.sha256(values[key][:n]).hexdigest().upper() for n in (64,256,257,21036,21037,50000)}
             row['LoginPacket']=values['loginPacket'].hex().upper()
             row['GameLogin']=values['gameLogin'].hex().upper()
+            row['LoginPacketAndSelect']=values['loginPacketAndSelect'].hex().upper()
+            row['GameLoginAndPing']=values['gameLoginAndPing'].hex().upper()
+            row['SendPrefix']=values['send'][:64].hex().upper()
             rows.append(row)
     output=Path(__file__).with_name('pol-vectors.json')
     output.write_text(json.dumps({'PolCommit':subprocess.check_output(['git','-C',str(pol),'rev-parse','HEAD'],text=True).strip(),'Vectors':rows},indent=2)+'\n')
