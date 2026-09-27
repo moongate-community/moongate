@@ -565,6 +565,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     /// <summary>
     ///     Starts every current Lua handler of <paramref name="eventName" /> as a coroutine owned by the file that
     ///     subscribed it, each with its own table. Runs on the loop thread.
+    ///     A handler the scheduler refuses to start is reported as a script error and the rest still run.
     /// </summary>
     internal void Dispatch(string eventName, IReadOnlyList<KeyValuePair<string, LuaValue>> values)
     {
@@ -585,7 +586,23 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
                 table[key] = value;
             }
 
-            scheduler.Start(subscription.Function, subscription.Owner, table);
+            // Handler errors are already reported by the scheduler; this catches the scheduler refusing to start one
+            // at all. The work item runs on the loop, where an escaping exception would fault the whole loop.
+            try
+            {
+                scheduler.Start(subscription.Function, subscription.Owner, table);
+            }
+            catch (Exception exception)
+            {
+                ReportError(
+                    new(
+                        subscription.Owner,
+                        0,
+                        $"handler for event '{eventName}' could not start: {exception.Message}",
+                        null
+                    )
+                );
+            }
         }
     }
 
