@@ -102,7 +102,6 @@ hue = 0
 
 [[item]]
 id = "0x27c2"
-base_id = "0x27c2"
 item_id = 10178
 rarity = "common"
 hue = 0
@@ -115,7 +114,6 @@ hue = 0
 
 [[item]]
 id = "0x27c8"
-base_id = "0x27c8"
 item_id = 10184
 rarity = "common"
 hue = 0

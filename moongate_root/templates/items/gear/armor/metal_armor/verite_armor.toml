@@ -162,7 +162,6 @@ hue = 2207
 
 [[item]]
 id = "0x140b_ve"
-base_id = "0x140b_ve"
 item_id = 5131
 rarity = "common"
 hue = 0
@@ -193,7 +192,6 @@ hue = 2207
 
 [[item]]
 id = "0x1bc5_ve"
-base_id = "0x1bc5_ve"
 item_id = 7109
 rarity = "common"
 hue = 0

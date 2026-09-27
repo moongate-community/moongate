@@ -93,7 +93,8 @@ internal static class ItemTemplateBuilder
             // Only single-parent inheritance maps onto BaseId. get=a b names an alias, not a parent;
             // an unresolved single target (its own block had no id=, or was never converted) is
             // dropped the same as any other field this converter cannot carry over faithfully.
-            if (targets.Length == 1 && idByHeader.TryGetValue(targets[0], out var baseId))
+            // A block that gets itself (UOX3 data has [0x27c2] with get=0x27c2) inherits nothing.
+            if (targets.Length == 1 && idByHeader.TryGetValue(targets[0], out var baseId) && baseId != id)
             {
                 template.BaseId = baseId;
             }

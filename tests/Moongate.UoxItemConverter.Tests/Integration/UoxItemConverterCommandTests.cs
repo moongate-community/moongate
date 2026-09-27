@@ -310,6 +310,18 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_ABlockThatGetsItself_LeavesBaseIdUnset()
+    {
+        _dirs.WriteSource("items.dfn", "[0x27c2]\n{\nget=0x27c2\nid=0x27c2\n}\n");
+
+        var exitCode = Run();
+
+        Assert.True(exitCode == 0, CombinedOutput);
+        var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
+        Assert.Null(Assert.Single(file!.Item).BaseId);
+    }
+
+    [Fact]
     public void Run_AGetTargetThatNeverConverted_LeavesBaseIdUnset()
     {
         _dirs.WriteSource(
