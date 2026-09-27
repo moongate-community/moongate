@@ -12,6 +12,7 @@ using Moongate.Server.Core.Types.Sessions;
 using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.Characters;
@@ -118,7 +119,24 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
             )
             .ConfigureAwait(false);
 
-        var characters = await _characters.GetCharactersAsync(handoff.AccountId, cancellationToken).ConfigureAwait(false);
+        IReadOnlyList<MobileEntity> characters;
+
+        try
+        {
+            characters = await _characters.GetCharactersAsync(handoff.AccountId, cancellationToken).ConfigureAwait(false);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+        catch (Exception exception)
+        {
+            // The client is already authenticated and waits for its character list; deny rather than leave it hanging.
+            _logger.Error(exception, "Character list lookup for account {AccountId} failed", handoff.AccountId);
+            await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+
+            return;
+        }
         var maxPerAccount = _charactersConfig.MaxPerAccount;
         var characterListPacket = new CharacterListPacket(
             CharacterListBuilder.Names(characters, maxPerAccount),

@@ -75,6 +75,19 @@ public sealed class CreateCharacterPacketHandlerTests
     }
 
     [Fact]
+    public async Task HandleAsync_ServiceFails_SendsCouldNotAttachAndDisconnects()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var characters = new RecordingCharacterService { Failure = new InvalidOperationException("database down") };
+
+        await new CreateCharacterPacketHandler(characters).HandleAsync(context, Packet(), CancellationToken.None);
+
+        Assert.Equal(PopupMessageType.CouldNotAttach, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
+        Assert.False(fixture.Client.IsConnected);
+    }
+
+    [Fact]
     public async Task HandleAsync_WithoutAccount_DisconnectsWithoutCreating()
     {
         await using var fixture = await SessionFixture.CreateAsync();

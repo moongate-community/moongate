@@ -37,7 +37,21 @@ internal static class CharacterCreationReply
             return;
         }
 
-        var result = await characters.CreateAsync(accountId, request, cancellationToken).ConfigureAwait(false);
+        CharacterCreationResult result;
+
+        try
+        {
+            result = await characters.CreateAsync(accountId, request, cancellationToken).ConfigureAwait(false);
+        }
+        catch (Exception exception) when (exception is not OperationCanceledException)
+        {
+            // Without an answer the client waits on its spinner until it times out; tell it and close instead.
+            logger.Error(exception, "Character creation for account {AccountId} failed", accountId);
+            await context.SendAndDisconnectAsync(new PopupMessagePacket(PopupMessageType.CouldNotAttach), cancellationToken)
+                         .ConfigureAwait(false);
+
+            return;
+        }
 
         if (result.Refusal is { } refusal)
         {
