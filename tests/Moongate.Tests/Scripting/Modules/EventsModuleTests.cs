@@ -29,6 +29,7 @@ public sealed class EventsModuleTests : IDisposable
             "probe_fired",
             e => new Dictionary<string, object?> { ["name"] = e.Name, ["value"] = e.Value }
         );
+        _container.AddScriptModule<CallbackModule>();
         _container.AddScriptEvent<UnsupportedValueEvent>(
             "unsupported_value",
             e => new Dictionary<string, object?> { ["when"] = e.When }
@@ -258,6 +259,37 @@ public sealed class EventsModuleTests : IDisposable
 
         Assert.Equal(before, _loop.PostedWorkItems);
         engine.Dispose();
+    }
+
+    [Fact]
+    public async Task Dispatch_WhenTheSchedulerRefusesAHandler_ReportsItAndRunsTheRest()
+    {
+        _scripts.Write(
+            "init.lua",
+            "events.on('probe_fired', function(e) end) events.on('probe_fired', function(e) end) " +
+            "function go() callback.invoke() end"
+        );
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        Exception? thrown = null;
+
+        // Starting a coroutine while another resumes is refused by the scheduler; Dispatch must survive it
+        // rather than fault the game loop that runs it.
+        _container.Resolve<CallbackModule>().OnInvoke = () =>
+        {
+            try
+            {
+                engine.Dispatch("probe_fired", []);
+            }
+            catch (Exception exception)
+            {
+                thrown = exception;
+            }
+        };
+        engine.Call("go");
+
+        Assert.Null(thrown);
+        Assert.Equal(2, _errors.Count(e => e.Error.Message.Contains("probe_fired", StringComparison.Ordinal)));
     }
 
     private LuaScriptEngineService NewEngine()
