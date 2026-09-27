@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
+using Moongate.Scripting.Interfaces;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
@@ -12,9 +13,10 @@ using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
-using Moongate.Server.Ultima;
-using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Packets.Characters;
+using Moongate.Server.Ultima;
 using Moongate.Tests.TestSupport.Directories;
 
 namespace Moongate.Tests.Server.Bootstrap.Internal;
@@ -99,6 +101,18 @@ public sealed class ServerRoleRegistrationTests
             Assert.Contains(
                 typeof(LoginSeedPacket),
                 container.Resolve<PacketHandlerRegistry>().Registrations.Keys
+            );
+            Assert.Contains(
+                typeof(CreateCharacterPacket),
+                container.Resolve<PacketHandlerRegistry>().Registrations.Keys
+            );
+            Assert.Contains(
+                typeof(CreateCharacterEnhancedPacket),
+                container.Resolve<PacketHandlerRegistry>().Registrations.Keys
+            );
+            Assert.Contains(
+                "character_created",
+                container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(registration => registration.Name)
             );
         }
 
