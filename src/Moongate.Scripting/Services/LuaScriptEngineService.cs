@@ -166,6 +166,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private LuaState? _state;
     private ScriptFileLoader? _files;
     private CoroutineScheduler? _scheduler;
+    private ScriptEventSubscriptions? _eventSubscriptions;
     private InstructionBudget? _budget;
     private long _callsStarted;
     private long _chunkBudgetAborts;
@@ -273,6 +274,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _guard.EnsureScriptThread(nameof(Invalidate));
         var key = ScriptFileLoader.Normalize(relativePath);
         Ready(_scheduler).CancelOwned(key);
+        Ready(_eventSubscriptions).RemoveOwner(key);
         Ready(_files).Invalidate(key);
     }
 
@@ -335,14 +337,23 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         await RunOnLoopAsync(Dispose, "stop").ConfigureAwait(false);
     }
 
-    private void BindModules(LuaState state, CoroutineScheduler scheduler, ScriptOwnership ownership)
+    private void BindModules(
+        LuaState state,
+        CoroutineScheduler scheduler,
+        ScriptOwnership ownership,
+        ScriptEventSubscriptions events
+    )
     {
         var binder = new LuaModuleBinder(_guard);
         _boundModules.Clear();
 
-        // Built-ins first: engine and timer depend on engine internals, so the host cannot register them.
+        // Built-ins first: engine, timer and events depend on engine internals, so the host cannot register them.
         _boundModules.Add(binder.Bind(state, new EngineModule()));
         _boundModules.Add(binder.Bind(state, new TimerModule(_timers, scheduler, ownership)));
+        var eventNames = _registry.EventRegistrations
+            .Select(registration => registration.Name)
+            .ToHashSet(StringComparer.Ordinal);
+        _boundModules.Add(binder.Bind(state, new EventsModule(events, scheduler, eventNames)));
 
         foreach (var moduleType in _registry.ModuleTypes)
         {
@@ -621,6 +632,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         ScriptFileLoader files;
         CoroutineScheduler scheduler;
         InstructionBudget budget;
+        var eventSubscriptions = new ScriptEventSubscriptions();
 
         try
         {
@@ -645,7 +657,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             budget.Install();
             scheduler = new(state, _timers, budget, ownership, ReportError, () => files.CurrentFile);
 
-            BindModules(state, scheduler, ownership);
+            BindModules(state, scheduler, ownership, eventSubscriptions);
             state.Environment["print"] = new(CreatePrint(scheduler));
             WriteDefinitions();
             budget.Chunk(token =>
@@ -668,6 +680,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _state = state;
         _files = files;
         _scheduler = scheduler;
+        _eventSubscriptions = eventSubscriptions;
         _budget = budget;
 
         RunBootstrap();
@@ -677,7 +690,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             _options.ScriptsDirectory
         );
 
-        // Module count includes the two built-ins, engine and timer.
+        // Module count includes the three built-ins: engine, timer and events.
     }
 
     /// <summary>
@@ -746,10 +759,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         // periodic timer.every callback that fires after this point must not reach CreateCoroutine on
         // a disposed state (the timer wheel and the loop stop after this service does).
         _scheduler?.CancelAll();
+        _eventSubscriptions?.Clear();
         _state?.Dispose();
         _state = null;
         _files = null;
         _scheduler = null;
+        _eventSubscriptions = null;
         _budget = null;
     }
 }
