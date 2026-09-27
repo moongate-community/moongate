@@ -447,6 +447,15 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "a_welcome"
+base_id = "base_item"
+item_id = 0
+name = "A Welcome"
+rarity = "common"
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x2254_book_of_arms"
 base_id = "base_item"
 item_id = 8788
@@ -507,9 +516,81 @@ decays = true
 hue = 0
 
 [[item]]
+id = "lysanders_notebook_1"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Lysander's Notebook"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "lysanders_notebook_2"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Lysander's Notebook"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "lysanders_notebook_3"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Lysander's Notebook"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "lysanders_notebook_7"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Lysander's Notebook"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "lysanders_notebook_8"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Lysander's Notebook"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "lysanders_notebook_11"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Lysander's Notebook"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tavaras_journal_1"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tavaras_journal_2"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "tavaras_journal_3"
 base_id = "base_khaldun_book"
 item_id = 4082
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tavaras_journal_6"
+base_id = "base_khaldun_book"
+item_id = 0
 name = "Journal: Discovery Of The Tomb"
 rarity = "common"
 hue = 0
@@ -523,9 +604,137 @@ rarity = "common"
 hue = 0
 
 [[item]]
+id = "tavaras_journal_8"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tavaras_journal_9"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "tavaras_journal_11"
 base_id = "base_khaldun_book"
 item_id = 4082
 name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tavaras_journal_14"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tavaras_journal_16"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tavaras_journal_16b"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tavaras_journal_17"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tavaras_journal_19"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "Journal: Discovery Of The Tomb"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "grimmoch_journal_1"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "The Daily Journal Of Grimmoch Drummel"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "grimmoch_journal_2"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "The Daily Journal Of Grimmoch Drummel"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "grimmoch_journal_3"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "The Daily Journal Of Grimmoch Drummel"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "grimmoch_journal_6"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "The Daily Journal Of Grimmoch Drummel"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "grimmoch_journal_7"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "The Daily Journal Of Grimmoch Drummel"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "grimmoch_journal_11"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "The Daily Journal Of Grimmoch Drummel"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "grimmoch_journal_14"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "The Daily Journal Of Grimmoch Drummel"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "grimmoch_journal_17"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "The Daily Journal Of Grimmoch Drummel"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "grimmoch_journal_23"
+base_id = "base_khaldun_book"
+item_id = 0
+name = "The Daily Journal Of Grimmoch Drummel"
 rarity = "common"
 hue = 0

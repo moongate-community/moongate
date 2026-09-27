@@ -11,6 +11,69 @@ Map = "100"
 Level = "0"
 
 [[item]]
+id = "treasuremaplvl0"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "0"
+
+[[item]]
+id = "treasuremaplvl1"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "1"
+
+[[item]]
+id = "treasuremaplvl2"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "2"
+
+[[item]]
+id = "treasuremaplvl3"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "3"
+
+[[item]]
+id = "treasuremaplvl4"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "4"
+
+[[item]]
+id = "treasuremaplvl5"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "5"
+
+[[item]]
+id = "treasuremaplvl6"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "6"
+
+[[item]]
 id = "treasuredirt"
 base_id = "base_item"
 item_id = 2323
@@ -28,3 +91,68 @@ movable = true
 weight = 30.0
 hue = 0
 max_weight = 400000
+
+[[item]]
+id = "treasurechestlevel0"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "0"
+
+[[item]]
+id = "treasurechestlevel1"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "1"
+
+[[item]]
+id = "treasurechestlevel2"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "2"
+
+[[item]]
+id = "treasurechestlevel3"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "3"
+
+[[item]]
+id = "treasurechestlevel4"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "4"
+
+[[item]]
+id = "treasurechestlevel5"
+base_id = "base_treasure_chest"
+item_id = 0
+name = "Treasure Chest"
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "5"
+
+[[item]]
+id = "treasurechestlevel6"
+base_id = "base_treasure_chest"
+item_id = 0
+name = "Treasure Chest"
+rarity = "common"
+hue = 0
+[item.tags]
+Level = "6"

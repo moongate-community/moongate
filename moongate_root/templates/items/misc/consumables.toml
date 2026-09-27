@@ -9,6 +9,13 @@ stackable = true
 hue = 2101
 
 [[item]]
+id = "savagekinpaint"
+base_id = "tribalpaint"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "haironlydye"
 base_id = "base_item"
 item_id = 3839
@@ -98,6 +105,15 @@ decays = true
 hue = 1169
 [item.tags]
 consumableID = "2"
+
+[[item]]
+id = "base_balmlotion"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 1.0
+decays = true
+hue = 0
 
 [[item]]
 id = "balmofprotection"
@@ -203,6 +219,46 @@ decays = true
 hue = 0
 [item.tags]
 typeID = "1"
+
+[[item]]
+id = "elixirofagapiteconversion"
+base_id = "elixirofmetalconversion"
+item_id = 0
+name = "Elixir of Agapite Conversion"
+rarity = "common"
+hue = 0
+[item.tags]
+typeID = "2"
+
+[[item]]
+id = "elixirofgoldconversion"
+base_id = "elixirofmetalconversion"
+item_id = 0
+name = "Elixir of Gold Conversion"
+rarity = "common"
+hue = 0
+[item.tags]
+typeID = "3"
+
+[[item]]
+id = "elixirofvaloriteconversion"
+base_id = "elixirofmetalconversion"
+item_id = 0
+name = "Elixir of Valorite Conversion"
+rarity = "common"
+hue = 0
+[item.tags]
+typeID = "4"
+
+[[item]]
+id = "elixirofveriteconversion"
+base_id = "elixirofmetalconversion"
+item_id = 0
+name = "Elixir of Verite Conversion"
+rarity = "common"
+hue = 0
+[item.tags]
+typeID = "5"
 
 [[item]]
 id = "powderoftranslocation"

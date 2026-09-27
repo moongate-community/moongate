@@ -9,6 +9,38 @@ stackable = true
 hue = 0
 
 [[item]]
+id = "prized_magic_fish"
+base_id = "base_magic_fish"
+item_id = 0
+name = "prized fish"
+rarity = "common"
+hue = 81
+
+[[item]]
+id = "wondrous_magic_fish"
+base_id = "base_magic_fish"
+item_id = 0
+name = "wondrous fish"
+rarity = "common"
+hue = 134
+
+[[item]]
+id = "truly_rare_magic_fish"
+base_id = "base_magic_fish"
+item_id = 0
+name = "truly rare fish"
+rarity = "common"
+hue = 118
+
+[[item]]
+id = "highly_peculiar_magic_fish"
+base_id = "base_magic_fish"
+item_id = 0
+name = "highly peculiar fish"
+rarity = "common"
+hue = 102
+
+[[item]]
 id = "big_fish"
 base_id = "base_item"
 item_id = 2508
@@ -174,3 +206,35 @@ base_id = "waterstainedsos"
 item_id = 41740
 rarity = "common"
 hue = 0
+
+[[item]]
+id = "shipwreck_treasure_1"
+base_id = "0x0e42_wooden_chest"
+item_id = 0
+name = "treasure chest recovered from a shipwreck"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "shipwreck_treasure_2"
+base_id = "0x0e7c_metal_chest"
+item_id = 0
+name = "treasure chest recovered from a shipwreck"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "shipwreck_treasure_3"
+base_id = "0x0e40_metal_chest"
+item_id = 0
+name = "treasure chest recovered from a shipwreck"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "shipwreck_treasure_4"
+base_id = "0x0e40_metal_chest"
+item_id = 0
+name = "treasure chest recovered from a shipwreck"
+rarity = "common"
+hue = 1153

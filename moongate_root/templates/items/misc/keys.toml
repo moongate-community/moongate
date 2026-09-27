@@ -1,4 +1,15 @@
 [[item]]
+id = "base_key"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 9
+sell_price = 4
+decays = true
+hue = 0
+
+[[item]]
 id = "0x100e_copper_key"
 base_id = "base_item"
 item_id = 4110

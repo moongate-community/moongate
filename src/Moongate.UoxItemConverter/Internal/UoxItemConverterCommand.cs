@@ -140,6 +140,34 @@ internal static class UoxItemConverterCommand
             }
         }
 
+        // A block with no id= of its own but one parent that converted (UOX3's magic items, journals and other
+        // variants: get=0x0df1 plus a name and a colour) is a template too, id = its header, inheriting the graphic.
+        // Repeated until nothing changes, so a variant of a variant converts once its parent has.
+        for (var added = true; added;)
+        {
+            added = false;
+
+            foreach (var block in blocksByHeader.Values)
+            {
+                if (idByHeader.ContainsKey(block.Header) ||
+                    lootIdByHeader.ContainsKey(block.Header) ||
+                    !ItemTemplateBuilder.TryGetSingleParent(block, out var parent) ||
+                    !idByHeader.ContainsKey(parent))
+                {
+                    continue;
+                }
+
+                var id = StringUtils.ToSnakeCase(block.Header);
+                idByHeader[block.Header] = id;
+                added = true;
+
+                if (block.Fields.TryGetValue("name", out var itemName) && itemName.Length > 0)
+                {
+                    itemNameById[id] = itemName;
+                }
+            }
+        }
+
         var written = 0;
         var lootWritten = 0;
         var skippedDuplicate = 0;

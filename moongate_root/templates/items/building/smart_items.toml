@@ -1,4 +1,13 @@
 [[item]]
+id = "base_smart_object"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+decays = false
+hue = 0
+
+[[item]]
 id = "smart_brazier"
 base_id = "base_item"
 item_id = 7979
@@ -49,6 +58,86 @@ inactiveID = "0x0001"
 activeID = "0x053b"
 
 [[item]]
+id = "smart_cavefloor_0x053d_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x053d"
+
+[[item]]
+id = "smart_cavefloor_0x0544_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x0544"
+
+[[item]]
+id = "smart_cavefloor_0x0545_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x0545"
+
+[[item]]
+id = "smart_cavefloor_0x0546_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x0546"
+
+[[item]]
+id = "smart_cavefloor_0x0548_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x0548"
+
+[[item]]
+id = "smart_cavefloor_0x054a_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x054a"
+
+[[item]]
+id = "smart_cavefloor_0x054b_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x054b"
+
+[[item]]
+id = "smart_cavefloor_0x054c_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x054c"
+
+[[item]]
 id = "smart_stonewall_0x01d0_hidden"
 base_id = "base_item"
 item_id = 1
@@ -60,6 +149,79 @@ hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x1d0"
+
+[[item]]
+id = "smart_stonewall_0x01d1_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01d1"
+
+[[item]]
+id = "smart_stonearch_0x01e3_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+name = "stone arch"
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e3"
+
+[[item]]
+id = "smart_stonearch_0x01e4_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+name = "stone arch"
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e4"
+
+[[item]]
+id = "smart_stonearch_0x01e5_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+name = "stone arch"
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e5"
+
+[[item]]
+id = "smart_stonewall_0x01e8_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e8"
+
+[[item]]
+id = "smart_stonewall_0x01e9_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e9"
+
+[[item]]
+id = "smart_stonewall_0x01ea_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+rarity = "common"
+hue = 0
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01ea"
 
 [[item]]
 id = "smart_teleporter_0x17dc"

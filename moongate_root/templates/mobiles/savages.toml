@@ -29,10 +29,10 @@ swordsmanship = "1d23+62"
 tactics = "1d23+62"
 wrestling = "1d23+62"
 [[mobile.equipment]]
-items = ["base_bone_arms"]
+items = ["0x144e"]
 
 [[mobile.equipment]]
-items = ["base_bone_legs"]
+items = ["0x1452"]
 
 [[mobile.equipment]]
 items = ["0x1547_deer_mask", "0x1548"]
@@ -65,13 +65,13 @@ swordsmanship = "1d24+59"
 tactics = "1d24+59"
 wrestling = "1d23+62"
 [[mobile.equipment]]
-items = ["base_spear", "0x0f63"]
+items = ["0x0f62", "0x0f63"]
 
 [[mobile.equipment]]
-items = ["base_bone_arms"]
+items = ["0x144e"]
 
 [[mobile.equipment]]
-items = ["base_bone_legs"]
+items = ["0x1452"]
 
 [[mobile.equipment]]
 items = ["0x154b_tribal_mask", "0x154c"]
@@ -104,13 +104,13 @@ swordsmanship = "1d24+59"
 tactics = "1d24+59"
 wrestling = "1d23+62"
 [[mobile.equipment]]
-items = ["base_spear", "0x0f63"]
+items = ["0x0f62", "0x0f63"]
 
 [[mobile.equipment]]
-items = ["base_bone_arms"]
+items = ["0x144e"]
 
 [[mobile.equipment]]
-items = ["base_bone_legs"]
+items = ["0x1452"]
 
 [[mobile.equipment]]
 items = ["0x154b_tribal_mask", "0x154c"]
@@ -138,13 +138,13 @@ swordsmanship = "1d23+62"
 tactics = "1d24+59"
 wrestling = "1d23+62"
 [[mobile.equipment]]
-items = ["base_spear"]
+items = ["tribalspear"]
 
 [[mobile.equipment]]
-items = ["base_bone_arms"]
+items = ["0x144e"]
 
 [[mobile.equipment]]
-items = ["base_bone_legs"]
+items = ["0x1452"]
 
 [[mobile.equipment]]
 items = ["0x154b_tribal_mask", "0x154c"]

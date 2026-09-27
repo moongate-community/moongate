@@ -14,6 +14,30 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x0f3f_5"
+base_id = "0x0f3f_arrow"
+item_id = 0
+rarity = "common"
+amount = 5
+hue = 0
+
+[[item]]
+id = "0x0f3f_20"
+base_id = "0x0f3f_arrow"
+item_id = 0
+rarity = "common"
+amount = 20
+hue = 0
+
+[[item]]
+id = "0x0f3f_50"
+base_id = "0x0f3f_arrow"
+item_id = 0
+rarity = "common"
+amount = 50
+hue = 0
+
+[[item]]
 id = "0x1bfb_crossbow_bolt"
 base_id = "base_item"
 item_id = 7163
@@ -29,6 +53,30 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x1bfb_5"
+base_id = "0x1bfb_crossbow_bolt"
+item_id = 0
+rarity = "common"
+amount = 5
+hue = 0
+
+[[item]]
+id = "0x1bfb_20"
+base_id = "0x1bfb_crossbow_bolt"
+item_id = 0
+rarity = "common"
+amount = 20
+hue = 0
+
+[[item]]
+id = "0x1bfb_50"
+base_id = "0x1bfb_crossbow_bolt"
+item_id = 0
+rarity = "common"
+amount = 50
+hue = 0
+
+[[item]]
 id = "0x27ac_shuriken"
 base_id = "base_item"
 item_id = 10156
@@ -41,4 +89,28 @@ stackable = true
 buy_price = 6
 sell_price = 3
 decays = true
+hue = 0
+
+[[item]]
+id = "0x27ac_5"
+base_id = "0x27ac_shuriken"
+item_id = 0
+rarity = "common"
+amount = 5
+hue = 0
+
+[[item]]
+id = "0x27ac_20"
+base_id = "0x27ac_shuriken"
+item_id = 0
+rarity = "common"
+amount = 20
+hue = 0
+
+[[item]]
+id = "0x27ac_50"
+base_id = "0x27ac_shuriken"
+item_id = 0
+rarity = "common"
+amount = 50
 hue = 0

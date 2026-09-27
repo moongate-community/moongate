@@ -1,6 +1,12 @@
 [[loot]]
 id = "halloween_loot"
 [[loot.entries]]
+weight = 500
+item_id = "twilight_lantern"
+comment = "Twilight Lantern"
+amount = 1
+
+[[loot.entries]]
 weight = 400
 amount = 1
 

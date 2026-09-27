@@ -1,0 +1,9 @@
+[[item]]
+id = "0x0df2_aos"
+base_id = "base_wand"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 30
+sell_price = 15
+hue = 0

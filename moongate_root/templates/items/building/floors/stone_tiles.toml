@@ -359,6 +359,15 @@ movable = false
 hue = 0
 
 [[item]]
+id = "0x04fc"
+base_id = "base_item"
+item_id = 0
+name = "flagstones"
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
 id = "0x04fd_flagstones"
 base_id = "base_item"
 item_id = 1277

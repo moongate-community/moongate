@@ -292,6 +292,21 @@ decays = true
 hue = 0
 
 [[item]]
+id = "tdarcanecloak"
+base_id = "0x26ad_arcane_cloak"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tdarcanecloak_newbie"
+base_id = "0x26ad_arcane_cloak"
+item_id = 0
+rarity = "common"
+loot_type = "newbied"
+hue = 0
+
+[[item]]
 id = "0x26ae_arcane_robe"
 base_id = "base_item"
 item_id = 9902
@@ -305,6 +320,21 @@ decays = true
 hue = 0
 
 [[item]]
+id = "tdarcanerobe"
+base_id = "0x26ae_arcane_robe"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tdarcanerobe_newbie"
+base_id = "0x26ae_arcane_robe"
+item_id = 0
+rarity = "common"
+loot_type = "newbied"
+hue = 0
+
+[[item]]
 id = "0x26b0_arcane_gloves"
 base_id = "base_item"
 item_id = 9904
@@ -315,4 +345,19 @@ weight = 1.0
 buy_price = 50
 sell_price = 25
 decays = true
+hue = 0
+
+[[item]]
+id = "tdarcanegloves"
+base_id = "0x26b0_arcane_gloves"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tdarcanegloves_newbie"
+base_id = "0x26b0_arcane_gloves"
+item_id = 0
+rarity = "common"
+loot_type = "newbied"
 hue = 0

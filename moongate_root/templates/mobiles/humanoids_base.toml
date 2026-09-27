@@ -47,13 +47,13 @@ attack = 434
 hurt = 435
 death = 436
 [[mobile.equipment]]
-items = ["base_two_handed_axe"]
+items = ["0x1442"]
 
 [[mobile.equipment]]
-items = ["base_ring_tunic"]
+items = ["0x13ec"]
 
 [[mobile.equipment]]
-items = ["base_orc_helm"]
+items = ["0x1f0b"]
 
 [[mobile.equipment]]
 items = ["0x1711_thigh_boots"]
@@ -90,13 +90,13 @@ attack = 434
 hurt = 435
 death = 436
 [[mobile.equipment]]
-items = ["base_two_handed_axe"]
+items = ["0x1442"]
 
 [[mobile.equipment]]
-items = ["base_ring_tunic"]
+items = ["0x13ec"]
 
 [[mobile.equipment]]
-items = ["base_orc_helm"]
+items = ["0x1f0b"]
 
 [[mobile.equipment]]
 items = ["0x1711_thigh_boots"]
@@ -133,7 +133,7 @@ attack = 434
 hurt = 435
 death = 436
 [[mobile.equipment]]
-items = ["base_bow"]
+items = ["0x13b1"]
 
 [[mobile.equipment]]
 items = ["0x1711_thigh_boots"]
@@ -156,7 +156,7 @@ death = 436
 [mobile.tags]
 provImmune = "1"
 [[mobile.equipment]]
-items = ["base_war_mace"]
+items = ["0x1406"]
 
 [[mobile]]
 id = "orcbrute"
@@ -174,10 +174,10 @@ attack = 434
 hurt = 435
 death = 436
 [[mobile.equipment]]
-items = ["base_executioners_axe"]
+items = ["0x0f45"]
 
 [[mobile.equipment]]
-items = ["base_ring_tunic"]
+items = ["0x13ec"]
 
 [[mobile]]
 id = "orcchopper"
@@ -214,7 +214,7 @@ attack = 419
 hurt = 420
 death = 421
 [[mobile.equipment]]
-items = ["base_short_spear"]
+items = ["0x1402"]
 
 [[mobile]]
 id = "macelizardman"
@@ -229,7 +229,7 @@ attack = 419
 hurt = 420
 death = 421
 [[mobile.equipment]]
-items = ["base_war_mace"]
+items = ["0x1406"]
 
 [[mobile]]
 id = "base_ratman"
@@ -261,7 +261,7 @@ attack = 439
 hurt = 440
 death = 441
 [[mobile.equipment]]
-items = ["base_mace"]
+items = ["0x0f5c"]
 
 [[mobile]]
 id = "swordratman"
@@ -276,7 +276,7 @@ attack = 439
 hurt = 440
 death = 441
 [[mobile.equipment]]
-items = ["base_longsword"]
+items = ["0x0f60"]
 
 [[mobile]]
 id = "base_ratmanmage"
@@ -310,7 +310,7 @@ attack = 439
 hurt = 440
 death = 441
 [[mobile.equipment]]
-items = ["base_bow"]
+items = ["0x13b1"]
 
 [[mobile]]
 id = "ratmanarcher"

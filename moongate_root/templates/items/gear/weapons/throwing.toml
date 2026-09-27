@@ -10,7 +10,15 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x090a"
+base_id = "0x090a_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x406b"
+base_id = "0x090a_lbr"
 item_id = 16491
 rarity = "common"
 hue = 0
@@ -27,7 +35,15 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x08ff"
+base_id = "0x08ff_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x4067"
+base_id = "0x08ff_lbr"
 item_id = 16487
 rarity = "common"
 hue = 0
@@ -44,7 +60,15 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x0901"
+base_id = "0x0901_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x406c"
+base_id = "0x0901_lbr"
 item_id = 16492
 rarity = "common"
 hue = 0

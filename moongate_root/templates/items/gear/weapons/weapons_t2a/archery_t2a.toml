@@ -1,0 +1,79 @@
+[[item]]
+id = "0x0f4f_t2a"
+base_id = "base_crossbow"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 46
+sell_price = 23
+hue = 0
+
+[[item]]
+id = "0x13fc_t2a"
+base_id = "base_heavy_crossbow"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 56
+sell_price = 28
+hue = 0
+
+[[item]]
+id = "0x13b1_t2a"
+base_id = "base_bow"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 46
+sell_price = 23
+hue = 0
+
+[[item]]
+id = "0x26c2_t2a"
+base_id = "base_composite_bow"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 57
+sell_price = 29
+hue = 0
+
+[[item]]
+id = "0x26c3_t2a"
+base_id = "base_repeating_crossbow"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 65
+sell_price = 32
+hue = 0
+
+[[item]]
+id = "0x27a5_t2a"
+base_id = "base_yumi"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 60
+sell_price = 30
+hue = 0
+
+[[item]]
+id = "0x2d1e_t2a"
+base_id = "base_elven_composite_longbow"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 52
+sell_price = 26
+hue = 0
+
+[[item]]
+id = "0x2d2b_t2a"
+base_id = "base_magical_shortbow"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 51
+sell_price = 26
+hue = 0

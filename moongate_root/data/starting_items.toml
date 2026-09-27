@@ -85,21 +85,21 @@ equip = true
 common = false
 skill = "item_identification"
 [[set.items]]
-items = ["base_gnarled_staff"]
+items = ["0x13f8"]
 equip = true
 
 [[set]]
 common = false
 skill = "parrying"
 [[set.items]]
-items = ["base_wooden_shield"]
+items = ["0x1b7a"]
 equip = false
 
 [[set]]
 common = false
 skill = "begging"
 [[set.items]]
-items = ["base_gnarled_staff"]
+items = ["0x13f8"]
 equip = true
 
 [[set]]
@@ -111,11 +111,11 @@ hue = 1726
 equip = true
 
 [[set.items]]
-items = ["base_leather_gloves"]
+items = ["0x13c6"]
 equip = true
 
 [[set.items]]
-items = ["base_smiths_hammer"]
+items = ["0x13e3"]
 equip = true
 
 [[set.items]]
@@ -324,7 +324,7 @@ items = ["0x1f2d_reactive_armor_scroll", "0x1f2e_clumsy_scroll", "0x1f2f_create_
 equip = false
 
 [[set.items]]
-items = ["0x0e76_bag"]
+items = ["bagofreagents"]
 equip = false
 
 [[set.items]]
@@ -347,7 +347,7 @@ equip = true
 common = false
 skill = "tactics"
 [[set.items]]
-items = ["base_katana"]
+items = ["0x13fe"]
 equip = false
 
 [[set]]
@@ -381,7 +381,7 @@ items = ["practice_bow"]
 equip = true
 
 [[set.items]]
-items = ["base_bow"]
+items = ["0x13b1"]
 equip = true
 
 [[set.items]]
@@ -446,7 +446,7 @@ hue = 1726
 equip = true
 
 [[set.items]]
-items = ["base_skinning_knife"]
+items = ["0x0ec4"]
 equip = true
 
 [[set]]
@@ -465,35 +465,35 @@ equip = false
 common = false
 skill = "swordsmanship"
 [[set.items]]
-items = ["base_katana"]
+items = ["0x13fe"]
 equip = true
 
 [[set]]
 common = false
 skill = "mace_fighting"
 [[set.items]]
-items = ["base_club"]
+items = ["0x13b3"]
 equip = false
 
 [[set]]
 common = false
 skill = "fencing"
 [[set.items]]
-items = ["base_kryss"]
+items = ["0x1400"]
 equip = false
 
 [[set]]
 common = false
 skill = "wrestling"
 [[set.items]]
-items = ["base_leather_gloves"]
+items = ["0x13c6"]
 equip = true
 
 [[set]]
 common = false
 skill = "lumberjacking"
 [[set.items]]
-items = ["base_hatchet"]
+items = ["0x0f43"]
 equip = false
 
 [[set]]
@@ -540,31 +540,31 @@ amount = 50
 equip = false
 
 [[set.items]]
-items = ["base_bone_helm"]
+items = ["0x1451"]
 equip = true
 
 [[set.items]]
-items = ["base_leather_gloves"]
+items = ["necro_sleeves"]
 equip = true
 
 [[set.items]]
-items = ["base_leather_gorget"]
+items = ["necro_gorget"]
 equip = true
 
 [[set.items]]
-items = ["base_leather_tunic"]
+items = ["necro_leggings"]
 equip = true
 
 [[set.items]]
-items = ["base_leather_tunic"]
+items = ["necro_tunic"]
 equip = true
 
 [[set.items]]
-items = ["base_leather_gloves"]
+items = ["necro_gloves"]
 equip = true
 
 [[set.items]]
-items = ["base_bone_harvester"]
+items = ["0x26bb"]
 equip = true
 
 [[set.items]]
@@ -580,7 +580,7 @@ hue = 1626
 equip = true
 
 [[set.items]]
-items = ["base_dagger"]
+items = ["0x0f51"]
 equip = true
 
 [[set]]
@@ -591,7 +591,7 @@ items = ["0x2252_paladin_spellbook"]
 equip = false
 
 [[set.items]]
-items = ["base_broadsword"]
+items = ["0x0f5e"]
 equip = true
 
 [[set.items]]
@@ -607,27 +607,27 @@ items = ["0x1711_thigh_boots"]
 equip = true
 
 [[set.items]]
-items = ["base_ring_gloves"]
+items = ["0x13eb"]
 equip = true
 
 [[set.items]]
-items = ["base_ring_tunic"]
+items = ["0x13ec"]
 equip = true
 
 [[set.items]]
-items = ["base_ring_sleeves"]
+items = ["0x13ee"]
 equip = true
 
 [[set.items]]
-items = ["base_ring_leggings"]
+items = ["0x13f0"]
 equip = true
 
 [[set.items]]
-items = ["base_plate_gorget"]
+items = ["0x1413"]
 equip = true
 
 [[set.items]]
-items = ["base_helmet"]
+items = ["0x140a"]
 equip = true
 
 [[set]]
@@ -650,11 +650,11 @@ items = ["0x279b_tattsuke_hakama"]
 equip = true
 
 [[set.items]]
-items = ["base_bokuto"]
+items = ["0x27a8"]
 equip = true
 
 [[set.items]]
-items = ["base_leather_jingasa"]
+items = ["0x2776"]
 equip = true
 
 [[set.items]]
@@ -681,7 +681,7 @@ items = ["0x2797_ninja_tall_tabi"]
 equip = true
 
 [[set.items]]
-items = ["base_tekagi"]
+items = ["0x27ab"]
 equip = true
 
 [[set.items]]
@@ -786,7 +786,7 @@ equip = true
 [[set]]
 common = true
 [[set.items]]
-items = ["base_dagger"]
+items = ["0x0f51"]
 equip = false
 
 [[set.items]]

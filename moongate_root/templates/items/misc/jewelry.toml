@@ -1,4 +1,15 @@
 [[item]]
+id = "base_jewelry"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 13
+decays = true
+hue = 0
+
+[[item]]
 id = "0x1085_necklace"
 base_id = "base_item"
 item_id = 4229
@@ -68,6 +79,15 @@ weight = 1.0
 buy_price = 26
 sell_price = 13
 decays = true
+hue = 0
+
+[[item]]
+id = "weddingband"
+base_id = "0x108a_ring"
+item_id = 0
+name = "weddingband"
+rarity = "common"
+loot_type = "newbied"
 hue = 0
 
 [[item]]

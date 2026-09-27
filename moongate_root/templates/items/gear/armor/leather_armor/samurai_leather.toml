@@ -1,35 +1,83 @@
 [[item]]
+id = "0x2776"
+base_id = "0x2776_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x27c1"
+base_id = "0x2776_lbr"
 item_id = 10177
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x277a"
+base_id = "0x277a_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x27c5"
+base_id = "0x277a_lbr"
 item_id = 10181
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x277b"
+base_id = "0x277b_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x27c6"
+base_id = "0x277b_lbr"
 item_id = 10182
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x277e"
+base_id = "0x277e_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x27c9"
+base_id = "0x277e_lbr"
 item_id = 10185
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x2786"
+base_id = "0x2786_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x27d1"
+base_id = "0x2786_lbr"
 item_id = 10193
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x278a"
+base_id = "0x278a_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x27d5"
+base_id = "0x278a_lbr"
 item_id = 10197
 rarity = "common"
 hue = 0

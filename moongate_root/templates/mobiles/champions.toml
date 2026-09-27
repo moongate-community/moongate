@@ -395,7 +395,7 @@ items = ["0x2684_hooded_shroud_of_shadows"]
 hue = 1109
 
 [[mobile.equipment]]
-items = ["base_scimitar"]
+items = ["0x13b5"]
 hue = 32
 
 [[mobile]]

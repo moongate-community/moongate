@@ -219,6 +219,13 @@ loot_type = "newbied"
 hue = 0
 
 [[item]]
+id = "bluesnowflake"
+base_id = "0x232e_snowflake"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x232f_snowflake"
 base_id = "base_item"
 item_id = 9007
@@ -228,6 +235,13 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
+hue = 0
+
+[[item]]
+id = "whitesnowflake"
+base_id = "0x232f_snowflake"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -243,6 +257,13 @@ loot_type = "newbied"
 hue = 0
 
 [[item]]
+id = "redpoinsettia"
+base_id = "0x2330_poinsettia"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x2331_poinsettia"
 base_id = "base_item"
 item_id = 9009
@@ -252,6 +273,13 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
+hue = 0
+
+[[item]]
+id = "whitepoinsettia"
+base_id = "0x2331_poinsettia"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -276,6 +304,13 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
+hue = 0
+
+[[item]]
+id = "lightofthewintersolstice"
+base_id = "0x236e"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -464,6 +499,41 @@ rarity = "common"
 weight = 1.0
 decays = true
 loot_type = "newbied"
+hue = 0
+
+[[item]]
+id = "snowglobe"
+base_id = "snowglobe_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "snowglobe_t2a"
+base_id = "base_snowglobe"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "snowglobe_lbr"
+base_id = "base_snowglobe"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "snowglobe_aos"
+base_id = "base_snowglobe"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "snowglobe_tol"
+base_id = "base_snowglobe"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]

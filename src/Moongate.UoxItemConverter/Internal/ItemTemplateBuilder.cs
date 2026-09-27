@@ -46,13 +46,38 @@ internal static class ItemTemplateBuilder
         return true;
     }
 
+    /// <summary>
+    ///     Gets the one parent a block names with <c>get=</c>, else with <c>getlbr=</c> (UOX3's default era); false for
+    ///     none or for a random <c>get=a b</c>.
+    /// </summary>
+    public static bool TryGetSingleParent(DfnBlock block, out string parent)
+    {
+        foreach (var key in new[] { "get", "getlbr" })
+        {
+            if (block.Fields.TryGetValue(key, out var text))
+            {
+                var targets = text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+                parent = targets.Length == 1 ? targets[0] : "";
+
+                return targets.Length == 1;
+            }
+        }
+
+        parent = "";
+
+        return false;
+    }
+
     public static ItemTemplate? Build(DfnBlock block, IReadOnlyDictionary<string, string> idByHeader)
     {
-        // The Id is the one precomputed from the block's own lines, not from inlined get= lines.
-        if (!TryComputeId(block, out _, out var itemId) || !idByHeader.TryGetValue(block.Header, out var id))
+        // The Id is the one precomputed up front. A block with no id= of its own keeps item_id 0, which the server's
+        // loader fills from its base_id.
+        if (!idByHeader.TryGetValue(block.Header, out var id))
         {
             return null;
         }
+
+        TryComputeId(block, out _, out var itemId);
 
         var template = new ItemTemplate
         {
@@ -86,18 +111,12 @@ internal static class ItemTemplateBuilder
             template.MaxWeight = weightMax;
         }
 
-        if (block.Fields.TryGetValue("get", out var getText))
+        // Only single-parent inheritance maps onto BaseId. get=a b names an alias, not a parent; an unresolved single
+        // target (never converted) is dropped the same as any other field this converter cannot carry over
+        // faithfully. A block that gets itself (UOX3 data has [0x27c2] with get=0x27c2) inherits nothing.
+        if (TryGetSingleParent(block, out var parent) && idByHeader.TryGetValue(parent, out var baseId) && baseId != id)
         {
-            var targets = getText.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-            // Only single-parent inheritance maps onto BaseId. get=a b names an alias, not a parent;
-            // an unresolved single target (its own block had no id=, or was never converted) is
-            // dropped the same as any other field this converter cannot carry over faithfully.
-            // A block that gets itself (UOX3 data has [0x27c2] with get=0x27c2) inherits nothing.
-            if (targets.Length == 1 && idByHeader.TryGetValue(targets[0], out var baseId) && baseId != id)
-            {
-                template.BaseId = baseId;
-            }
+            template.BaseId = baseId;
         }
 
         return template;

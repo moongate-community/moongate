@@ -43,6 +43,28 @@ decays = false
 hue = 0
 
 [[item]]
+id = "cotton_resource"
+base_id = "base_item"
+item_id = 0
+name = "cotton"
+rarity = "common"
+movable = false
+weight = 255.0
+decays = false
+hue = 0
+
+[[item]]
+id = "wheat_resource"
+base_id = "base_item"
+item_id = 0
+name = "wheat"
+rarity = "common"
+movable = false
+weight = 255.0
+decays = false
+hue = 0
+
+[[item]]
 id = "flax_resource"
 base_id = "base_item"
 item_id = 6811
@@ -58,6 +80,61 @@ id = "watermelon_resource"
 base_id = "base_item"
 item_id = 3164
 name = "watermelon"
+rarity = "common"
+movable = false
+weight = 255.0
+decays = false
+hue = 0
+
+[[item]]
+id = "gourd_resource"
+base_id = "base_item"
+item_id = 0
+name = "gourd"
+rarity = "common"
+movable = false
+weight = 255.0
+decays = false
+hue = 0
+
+[[item]]
+id = "pumpkin_resource"
+base_id = "base_item"
+item_id = 0
+name = "pumpkin"
+rarity = "common"
+movable = false
+weight = 255.0
+decays = false
+hue = 0
+
+[[item]]
+id = "squash_resource"
+base_id = "base_item"
+item_id = 0
+name = "squash"
+rarity = "common"
+movable = false
+weight = 255.0
+decays = false
+hue = 0
+
+[[item]]
+id = "honeydewmelon_resource"
+base_id = "base_item"
+item_id = 0
+name = "honeydew melon"
+rarity = "common"
+movable = false
+weight = 255.0
+decays = false
+hue = 0
+
+[[item]]
+id = "canteloupe_resource"
+base_id = "base_item"
+item_id = 0
+name = "canteloupe"
 rarity = "common"
 movable = false
 weight = 255.0

@@ -368,6 +368,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "folded_cloth"
+base_id = "0x1763_folded_cloth"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1764_folded_cloth"
 base_id = "base_item"
 item_id = 5988

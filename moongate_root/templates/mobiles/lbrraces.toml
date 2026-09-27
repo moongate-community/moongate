@@ -27,7 +27,7 @@ attack = 432
 hurt = 464
 death = 652
 [[mobile.equipment]]
-items = ["base_halberd", "base_spear", "0x0df1"]
+items = ["0x143e", "0x0f62", "0x0df1"]
 
 [[mobile]]
 id = "jukalord"
@@ -58,7 +58,7 @@ attack = 432
 hurt = 464
 death = 10444
 [[mobile.equipment]]
-items = ["base_bow"]
+items = ["0x13b1"]
 
 [[mobile]]
 id = "jukamage"

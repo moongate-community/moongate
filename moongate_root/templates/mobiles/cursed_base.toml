@@ -31,19 +31,19 @@ tactics = "1d11+89"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_studded_tunic", "0x13e2"]
+items = ["0x13db", "0x13e2"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_plate_arms", "0x1417"]
+items = ["0x1410", "0x1417"]
 hue = 1433
 
 [[mobile.equipment]]
-items = ["base_ring_gloves", "0x13f2"]
+items = ["0x13eb", "0x13f2"]
 hue = 1433
 
 [[mobile.equipment]]
-items = ["base_studded_leggings", "0x13e1"]
+items = ["0x13da", "0x13e1"]
 hue = 2415
 
 [[mobile.equipment]]
@@ -87,19 +87,19 @@ death = 348
 items = ["0x204a_krisna_hair"]
 
 [[mobile.equipment]]
-items = ["base_leather_tunic", "0x13d3"]
+items = ["0x13cc", "0x13d3"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_leather_gloves", "0x13ce"]
+items = ["0x13c6", "0x13ce"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_leather_leggings", "0x13d2"]
+items = ["0x13cb", "0x13d2"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_bow", "0x13b2"]
+items = ["0x13b1", "0x13b2"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170c"]
@@ -135,23 +135,23 @@ wrestling = "1d11+69"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_leather_tunic", "0x13d3"]
+items = ["0x13cc", "0x13d3"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_leather_gloves", "0x13ce"]
+items = ["0x13c6", "0x13ce"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_leather_sleeves", "0x13cd"]
+items = ["0x13c5", "0x13cd"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_leather_leggings", "0x13d2"]
+items = ["0x13cb", "0x13d2"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_bardiche", "0x0f4e"]
+items = ["0x0f4d", "0x0f4e"]
 hue = 2415
 
 [[mobile.equipment]]
@@ -186,27 +186,27 @@ wrestling = "1d11+69"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]
-items = ["base_ring_gloves", "0x13f2"]
+items = ["0x13eb", "0x13f2"]
 hue = 1433
 
 [[mobile.equipment]]
-items = ["base_fem_plate"]
+items = ["0x1c04"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_leather_sleeves", "0x13cd"]
+items = ["0x13c5", "0x13cd"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_leather_leggings", "0x13d2"]
+items = ["0x13cb", "0x13d2"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_kryss", "0x1401"]
+items = ["0x1400", "0x1401"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_buckler"]
+items = ["buckler"]
 hue = 2415
 
 [[mobile.equipment]]
@@ -240,11 +240,11 @@ tactics = "1d11+89"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_ring_sleeves", "0x13ef"]
+items = ["0x13ee", "0x13ef"]
 hue = 1433
 
 [[mobile.equipment]]
-items = ["base_ring_gloves", "0x13f2"]
+items = ["0x13eb", "0x13f2"]
 hue = 1433
 
 [[mobile.equipment]]
@@ -252,7 +252,7 @@ items = ["0x152e_short_pants", "0x152f"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["0x13b6", "0x13b8", "0x13ba", "base_broadsword", "base_cutlass", "0x13ff", "base_hatchet", "base_executioners_axe", "base_axe", "base_double_axe", "base_battle_axe", "0x13fb", "0x0e85_pickaxe", "0x13b0", "base_two_handed_axe", "base_dagger", "base_kryss", "0x13b4", "base_hammer_pick", "base_mace", "base_maul", "0x13e4", "base_war_hammer", "base_war_mace", "0x1405"]
+items = ["0x13b6", "0x13b8", "0x13ba", "0x0f5e", "0x1440", "0x13ff", "0x0f43", "0x0f45", "0x0f49", "0x0f4b", "0x0f47", "0x13fb", "0x0e85_pickaxe", "0x13b0", "0x1442", "0x0f51", "0x1400", "0x13b4", "0x143c", "0x0f5c", "0x143a", "0x13e4", "0x1438", "0x1406", "0x1405"]
 
 [[mobile]]
 id = "cursed_female"
@@ -285,11 +285,11 @@ items = ["0x1517_shirt", "0x1518"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["base_ring_sleeves", "0x13ef"]
+items = ["0x13ee", "0x13ef"]
 hue = 1433
 
 [[mobile.equipment]]
-items = ["base_ring_gloves", "0x13f2"]
+items = ["0x13eb", "0x13f2"]
 hue = 1433
 
 [[mobile.equipment]]
@@ -297,7 +297,7 @@ items = ["0x152e_short_pants", "0x152f"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["0x13b6", "0x13b8", "0x13ba", "base_broadsword", "base_cutlass", "0x13ff", "base_hatchet", "base_executioners_axe", "base_axe", "base_double_axe", "base_battle_axe", "0x13fb", "0x0e85_pickaxe", "0x13b0", "base_two_handed_axe", "base_dagger", "base_kryss", "0x13b4", "base_hammer_pick", "base_mace", "base_maul", "0x13e4", "base_war_hammer", "base_war_mace", "0x1405"]
+items = ["0x13b6", "0x13b8", "0x13ba", "0x0f5e", "0x1440", "0x13ff", "0x0f43", "0x0f45", "0x0f49", "0x0f4b", "0x0f47", "0x13fb", "0x0e85_pickaxe", "0x13b0", "0x1442", "0x0f51", "0x1400", "0x13b4", "0x143c", "0x0f5c", "0x143a", "0x13e4", "0x1438", "0x1406", "0x1405"]
 
 [[mobile]]
 id = "cursed"
@@ -324,11 +324,11 @@ parrying = "1d9+74"
 wrestling = "1d11+79"
 tactics = "1d11+89"
 [[mobile.equipment]]
-items = ["base_ring_sleeves", "0x13ef"]
+items = ["0x13ee", "0x13ef"]
 hue = 1433
 
 [[mobile.equipment]]
-items = ["base_ring_gloves", "0x13f2"]
+items = ["0x13eb", "0x13f2"]
 hue = 1433
 
 [[mobile.equipment]]
@@ -336,7 +336,7 @@ items = ["0x152e_short_pants", "0x152f"]
 hue = 2415
 
 [[mobile.equipment]]
-items = ["0x13b6", "0x13b8", "0x13ba", "base_broadsword", "base_cutlass", "0x13ff", "base_hatchet", "base_executioners_axe", "base_axe", "base_double_axe", "base_battle_axe", "0x13fb", "0x0e85_pickaxe", "0x13b0", "base_two_handed_axe", "base_dagger", "base_kryss", "0x13b4", "base_hammer_pick", "base_mace", "base_maul", "0x13e4", "base_war_hammer", "base_war_mace", "0x1405"]
+items = ["0x13b6", "0x13b8", "0x13ba", "0x0f5e", "0x1440", "0x13ff", "0x0f43", "0x0f45", "0x0f49", "0x0f4b", "0x0f47", "0x13fb", "0x0e85_pickaxe", "0x13b0", "0x1442", "0x0f51", "0x1400", "0x13b4", "0x143c", "0x0f5c", "0x143a", "0x13e4", "0x1438", "0x1406", "0x1405"]
 
 [[mobile.equipment]]
 items = ["0x1517_shirt", "0x1518"]

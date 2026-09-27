@@ -1,0 +1,9 @@
+[[item]]
+id = "0x27aa_tol"
+base_id = "base_fukiya"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 51
+sell_price = 36
+hue = 0

@@ -1,0 +1,47 @@
+[[item]]
+id = "base_door"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_floor"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_wall"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_fence"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_roof"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+hue = 0
+
+[[item]]
+id = "base_plant"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+hue = 0

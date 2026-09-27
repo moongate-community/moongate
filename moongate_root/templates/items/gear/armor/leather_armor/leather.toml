@@ -1,53 +1,174 @@
 [[item]]
+id = "0x13c5"
+base_id = "0x13c5_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x13cd"
+base_id = "0x13c5_lbr"
 item_id = 5069
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x13c6"
+base_id = "0x13c6_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x13ce"
+base_id = "0x13c6_lbr"
 item_id = 5070
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x13c7"
+base_id = "0x13c7_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "leathergorget"
+base_id = "0x13c7_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "0x1db9"
+base_id = "0x1db9_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1dba"
+base_id = "0x1db9_lbr"
 item_id = 7610
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x13cb"
+base_id = "0x13cb_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x13d2"
+base_id = "0x13cb_lbr"
 item_id = 5074
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x13cc"
+base_id = "0x13cc_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x13d3"
+base_id = "0x13cc_lbr"
 item_id = 5075
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x1c00"
+base_id = "0x1c00_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1c01"
+base_id = "0x1c00_lbr"
 item_id = 7169
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x1c06"
+base_id = "0x1c06_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1c07"
+base_id = "0x1c06_lbr"
 item_id = 7175
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x1c08"
+base_id = "0x1c08_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1c09"
+base_id = "0x1c08_lbr"
 item_id = 7177
 rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x1c0a"
+base_id = "0x1c0a_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1c0b"
+base_id = "0x1c0a_lbr"
 item_id = 7179
 rarity = "common"
 hue = 0
+
+[[item]]
+id = "necro_sleeves"
+base_id = "0x13c6_lbr"
+item_id = 0
+rarity = "common"
+hue = 707
+
+[[item]]
+id = "necro_gloves"
+base_id = "0x13c6_lbr"
+item_id = 0
+rarity = "common"
+hue = 707
+
+[[item]]
+id = "necro_gorget"
+base_id = "0x13c7_lbr"
+item_id = 0
+rarity = "common"
+hue = 707
+
+[[item]]
+id = "necro_leggings"
+base_id = "0x13cc_lbr"
+item_id = 0
+rarity = "common"
+hue = 707
+
+[[item]]
+id = "necro_tunic"
+base_id = "0x13cc_lbr"
+item_id = 0
+rarity = "common"
+hue = 707

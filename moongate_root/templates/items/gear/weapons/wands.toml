@@ -9,19 +9,29 @@ decays = true
 hue = 0
 
 [[item]]
+id = "0x0df2"
+base_id = "0x0df2_lbr"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x0df3"
+base_id = "0x0df2_lbr"
 item_id = 3571
 rarity = "common"
 hue = 0
 
 [[item]]
 id = "0x0df4"
+base_id = "0x0df2_lbr"
 item_id = 3572
 rarity = "common"
 hue = 0
 
 [[item]]
 id = "0x0df5"
+base_id = "0x0df2_lbr"
 item_id = 3573
 rarity = "common"
 hue = 0

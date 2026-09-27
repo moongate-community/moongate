@@ -1,4 +1,12 @@
 [[item]]
+id = "base_raw_food"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+stackable = true
+hue = 0
+
+[[item]]
 id = "0x09f1_cut_of_raw_ribs"
 base_id = "base_item"
 item_id = 2545

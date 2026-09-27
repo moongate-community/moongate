@@ -11,6 +11,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "sewing_kit"
+base_id = "0x0f9d_sewing_kit"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x0f9e_scissors"
 base_id = "base_item"
 item_id = 3998

@@ -790,6 +790,16 @@ decays = true
 hue = 0
 
 [[item]]
+id = "twilight_lantern"
+base_id = "0x0a25_lantern"
+item_id = 0
+name = "Twilight Lantern"
+rarity = "common"
+buy_price = 5000
+sell_price = 2500
+hue = 0
+
+[[item]]
 id = "halloween_ghoul_statue"
 base_id = "base_item"
 item_id = 8457

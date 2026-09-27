@@ -3,3 +3,13 @@ id = "randompolearms"
 [[loot.entries]]
 weight = 50
 amount = 1
+
+[[loot.entries]]
+weight = 25
+item_id = "0x143e"
+amount = 1
+
+[[loot.entries]]
+weight = 25
+item_id = "0x0f4d"
+amount = 1

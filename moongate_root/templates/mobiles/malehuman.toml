@@ -105,16 +105,16 @@ items = ["guardhalberd"]
 items = ["0x1416"]
 
 [[mobile.equipment]]
-items = ["base_plate_gloves"]
+items = ["0x1414"]
 
 [[mobile.equipment]]
-items = ["base_plate_gorget"]
+items = ["0x1413"]
 
 [[mobile.equipment]]
 items = ["0x141a"]
 
 [[mobile.equipment]]
-items = ["base_plate_arms"]
+items = ["0x1410"]
 
 [[mobile]]
 id = "m_murderer_archmage"
@@ -278,7 +278,7 @@ wrestling = "1d24+24"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_chain_coif"]
+items = ["0x13bb"]
 
 [[mobile.equipment]]
 items = ["0x13ed"]
@@ -290,7 +290,7 @@ items = ["0x13ef"]
 items = ["0x13e1"]
 
 [[mobile.equipment]]
-items = ["base_wooden_shield"]
+items = ["0x1b7a"]
 
 [[mobile.equipment]]
 items = ["0x13b8"]
@@ -320,28 +320,28 @@ tactics = "1d24+74"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_close_helm"]
+items = ["0x1408"]
 
 [[mobile.equipment]]
-items = ["base_plate_arms"]
+items = ["0x1410"]
 
 [[mobile.equipment]]
-items = ["base_plate_leggings"]
+items = ["0x1411"]
 
 [[mobile.equipment]]
-items = ["base_plate_gorget"]
+items = ["0x1413"]
 
 [[mobile.equipment]]
-items = ["base_plate_gloves"]
+items = ["0x1414"]
 
 [[mobile.equipment]]
-items = ["base_plate_chest"]
+items = ["0x1415"]
 
 [[mobile.equipment]]
-items = ["base_viking_sword"]
+items = ["0x13b9"]
 
 [[mobile.equipment]]
-items = ["base_bronze_shield"]
+items = ["0x1b72"]
 
 [[mobile.equipment]]
 items = ["0x1515_cloak"]
@@ -369,7 +369,7 @@ tactics = "1d24+74"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_chain_coif"]
+items = ["0x13bb"]
 
 [[mobile.equipment]]
 items = ["0x13ed"]
@@ -381,10 +381,10 @@ items = ["0x13ef"]
 items = ["0x13e1"]
 
 [[mobile.equipment]]
-items = ["base_wooden_shield"]
+items = ["0x1b7a"]
 
 [[mobile.equipment]]
-items = ["base_broadsword", "0x0f61", "0x13b6", "0x13b8", "0x13ff"]
+items = ["0x0f5e", "0x0f61", "0x13b6", "0x13b8", "0x13ff"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots"]
@@ -409,7 +409,7 @@ tactics = "1d24+64"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_kryss"]
+items = ["0x1400"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -469,10 +469,10 @@ items = ["0x13d2"]
 items = ["0x13d3"]
 
 [[mobile.equipment]]
-items = ["base_spear"]
+items = ["0x0f62"]
 
 [[mobile.equipment]]
-items = ["base_leather_gorget"]
+items = ["0x13c7"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -534,7 +534,7 @@ tactics = "1d33+35"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_broadsword"]
+items = ["0x0f5e"]
 
 [[mobile.equipment]]
 items = ["0x1714_wide_brim_hat", "0x1715_cap", "0x171a_feathered_hat", "0x171b_tricorne_hat"]
@@ -584,7 +584,7 @@ tactics = "1d33+25"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_dagger", "0x1401", "0x1405"]
+items = ["0x0f51", "0x1401", "0x1405"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -635,7 +635,7 @@ tactics = "1d33+25"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_dagger", "0x1401", "0x1405"]
+items = ["0x0f51", "0x1401", "0x1405"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -682,7 +682,7 @@ stealth = "1d24+64"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_kryss"]
+items = ["0x1400"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -766,7 +766,7 @@ tinkering = "1d24+44"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_kryss"]
+items = ["0x1400"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -811,7 +811,7 @@ items = ["0x13c4"]
 items = ["0x13c3"]
 
 [[mobile.equipment]]
-items = ["base_chain_coif"]
+items = ["0x13bb"]
 
 [[mobile.equipment]]
 items = ["0x13dd"]
@@ -820,7 +820,7 @@ items = ["0x13dd"]
 items = ["0x13b8"]
 
 [[mobile.equipment]]
-items = ["base_bronze_shield"]
+items = ["0x1b72"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -847,7 +847,7 @@ wrestling = "1d24+59"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_plate_gloves"]
+items = ["0x1414"]
 
 [[mobile.equipment]]
 items = ["0x13c4"]
@@ -856,16 +856,16 @@ items = ["0x13c4"]
 items = ["0x13c3"]
 
 [[mobile.equipment]]
-items = ["base_chain_coif"]
+items = ["0x13bb"]
 
 [[mobile.equipment]]
-items = ["base_plate_arms"]
+items = ["0x1410"]
 
 [[mobile.equipment]]
-items = ["base_broadsword"]
+items = ["0x0f5e"]
 
 [[mobile.equipment]]
-items = ["base_bronze_shield"]
+items = ["0x1b72"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -984,7 +984,7 @@ wrestling = "1d24+14"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_mace", "base_broadsword", "0x0f61", "0x13b4", "0x13b6", "0x13b8", "0x13b0", "0x13ff", "0x1401", "0x1405", "0x1407", "0x143b", "0x1441"]
+items = ["0x0f5c", "0x0f5e", "0x0f61", "0x13b4", "0x13b6", "0x13b8", "0x13b0", "0x13ff", "0x1401", "0x1405", "0x1407", "0x143b", "0x1441"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -995,10 +995,10 @@ items = ["0x1517_shirt"]
 hue = "0x0835-0x0852"
 
 [[mobile.equipment]]
-items = ["base_leather_tunic"]
+items = ["0x13cc"]
 
 [[mobile.equipment]]
-items = ["base_leather_leggings"]
+items = ["0x13cb"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -1023,7 +1023,7 @@ stealing = "1d24+59"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_dagger", "0x1401", "0x1405"]
+items = ["0x0f51", "0x1401", "0x1405"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -1061,7 +1061,7 @@ forensic_evaluation = "1d24+59"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["base_smiths_hammer"]
+items = ["0x13e3"]
 
 [[mobile.equipment]]
 items = ["0x1517_shirt"]
@@ -1214,19 +1214,19 @@ wrestling = "1d24+64"
 [mobile.sounds]
 death = 348
 [[mobile.equipment]]
-items = ["0x26ad_arcane_cloak"]
+items = ["tdarcanecloak_newbie"]
 hue = 2117
 
 [[mobile.equipment]]
-items = ["0x26ae_arcane_robe"]
+items = ["tdarcanerobe_newbie"]
 hue = 2117
 
 [[mobile.equipment]]
-items = ["0x26b0_arcane_gloves"]
+items = ["tdarcanegloves_newbie"]
 hue = 2117
 
 [[mobile.equipment]]
-items = ["0x26af_arcane_thigh_boots"]
+items = ["tdarcanethighboots_newbie"]
 hue = 2117
 
 [[mobile]]
@@ -1303,16 +1303,16 @@ death = 348
 items = ["0x2645_dragon_helm", "0x2646_dragon_helm"]
 
 [[mobile.equipment]]
-items = ["base_dragon_leggings", "0x2648"]
+items = ["0x2647", "0x2648"]
 
 [[mobile.equipment]]
-items = ["base_dragon_gloves", "0x2644"]
+items = ["0x2643", "0x2644"]
 
 [[mobile.equipment]]
-items = ["base_dragon_breastplate", "0x2642"]
+items = ["0x2641", "0x2642"]
 
 [[mobile.equipment]]
-items = ["base_dragon_sleeves", "0x2658"]
+items = ["0x2657", "0x2658"]
 
 [[mobile.equipment]]
 items = ["0x1517_shirt", "0x1518"]
@@ -1321,10 +1321,10 @@ items = ["0x1517_shirt", "0x1518"]
 items = ["0x170b_boots", "0x170c"]
 
 [[mobile.equipment]]
-items = ["base_kryss", "0x1401", "base_broadsword", "0x0f5f", "base_katana", "0x13ff"]
+items = ["0x1400", "0x1401", "0x0f5e", "0x0f5f", "0x13fe", "0x13ff"]
 
 [[mobile.equipment]]
-items = ["base_chaos_shield"]
+items = ["chaosshield"]
 
 [[mobile.equipment]]
 items = ["swampdragon"]
@@ -1360,16 +1360,16 @@ death = 348
 items = ["0x2645_dragon_helm", "0x2646_dragon_helm"]
 
 [[mobile.equipment]]
-items = ["base_dragon_leggings", "0x2648"]
+items = ["0x2647", "0x2648"]
 
 [[mobile.equipment]]
-items = ["base_dragon_gloves", "0x2644"]
+items = ["0x2643", "0x2644"]
 
 [[mobile.equipment]]
-items = ["base_dragon_breastplate", "0x2642"]
+items = ["0x2641", "0x2642"]
 
 [[mobile.equipment]]
-items = ["base_dragon_sleeves", "0x2658"]
+items = ["0x2657", "0x2658"]
 
 [[mobile.equipment]]
 items = ["0x1517_shirt", "0x1518"]
@@ -1378,10 +1378,10 @@ items = ["0x1517_shirt", "0x1518"]
 items = ["0x170b_boots", "0x170c"]
 
 [[mobile.equipment]]
-items = ["base_kryss", "0x1401", "base_broadsword", "0x0f5f", "base_katana", "0x13ff"]
+items = ["0x1400", "0x1401", "0x0f5e", "0x0f5f", "0x13fe", "0x13ff"]
 
 [[mobile.equipment]]
-items = ["base_chaos_shield"]
+items = ["chaosshield"]
 
 [[mobile.equipment]]
 items = ["armorswampdragon"]

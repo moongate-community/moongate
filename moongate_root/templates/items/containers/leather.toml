@@ -64,6 +64,13 @@ hue = 0
 max_weight = 40000
 
 [[item]]
+id = "bag"
+base_id = "0x0e76_bag"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "bagofsending"
 base_id = "base_item"
 item_id = 3702
@@ -85,3 +92,10 @@ sell_price = 5
 decays = true
 hue = 0
 max_weight = 40000
+
+[[item]]
+id = "picnicbasket"
+base_id = "0x0e7a_picnic_basket"
+item_id = 0
+rarity = "common"
+hue = 0

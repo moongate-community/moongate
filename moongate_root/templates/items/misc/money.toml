@@ -1,4 +1,15 @@
 [[item]]
+id = "base_coin"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.02
+amount = 1
+stackable = true
+decays = true
+hue = 0
+
+[[item]]
 id = "0x0eed_gold_coin"
 base_id = "base_item"
 item_id = 3821

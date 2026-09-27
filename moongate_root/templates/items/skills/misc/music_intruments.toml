@@ -1,4 +1,13 @@
 [[item]]
+id = "base_instrument"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = true
+decays = true
+hue = 0
+
+[[item]]
 id = "0x0e9c_drum"
 base_id = "base_item"
 item_id = 3740

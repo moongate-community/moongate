@@ -41,10 +41,10 @@ Verified against real UOX3 data:
 
 | UOX3 | ItemTemplate | Note |
 | --- | --- | --- |
-| The block's own `id=` | `ItemId` | Required; a block with no `id=` is not converted at all |
+| The block's own `id=` | `ItemId` | A block with no `id=` of its own converts only when it has one parent (below), with `item_id = 0`: the server's loader takes the parent's graphic |
 | The block header, or `name=` when the header is a bare hex | `Id` | Run through `StringUtils.ToSnakeCase`; `name=` is free text ("pitcher of wine") |
 | `name=` | `Name` | Carried as-is; UOX3 does not separate an identifier from display text |
-| A single-target `get=` | `BaseId` | Only when that target itself converted; `get=a b`, an alias with no `id=` of its own, converts nothing |
+| A single-target `get=` (else `getlbr=`) | `BaseId` | Only when that target itself converted; `get=a b`, a random alias with no `id=` of its own, converts nothing |
 | `movable=1` or `3` / `2` | `Movable = true` / `false` | `0` or absent leaves it unset, so tiledata decides |
 | `weight=` | `Weight` | Divided by 100: UOX3 weighs in hundredths of a stone |
 | `amount=` | `Amount` | A fixed stack size |
@@ -62,11 +62,19 @@ Everything else has no home in `ItemTemplate` yet and is dropped: the combat sta
 fields, `colorlist`, `script=`, and the multi and geometry fields. `BaseId` is a pointer only: the
 converter does not flatten a parent's fields into its children; the loader will
 resolve the chain once it exists. A parent block with no `id=` of its own, such as
-`[base_coin]`, is not converted on its own: the converter inlines its lines into every
-child that `get=` it, as UOX3 does, with the child's own lines winning. A coin so gets
-`weight = 0.02` and `stackable = true`, and its `base_id` is the first ancestor that has
-an `id=` (`base_item`). An inherited `name=` becomes the template's name but never part
-of its id: ids come from each block's own lines only.
+`[base_coin]`, has its lines inlined into every child that `get=` it, as UOX3 does, with
+the child's own lines winning. A coin so gets `weight = 0.02` and `stackable = true`, and
+its `base_id` is the first ancestor that has an `id=` (`base_item`). An inherited `name=`
+becomes the template's name but never part of its id: ids come from each block's own
+lines only.
+
+A block with no `id=` of its own but a single parent (`get=x`, else `getlbr=x`) that
+converted is a template too, id = its header: UOX3's magic items, journals and other
+variants (`[glacialstaff] get=0x0df1 name=glacial staff color=0x0480`) and single-target
+aliases. It keeps `item_id = 0`, which the server's loader fills from its `base_id`, and
+the chain is resolved over repeated passes, so a variant of a variant converts too. The
+shipped data has 9665 item templates this way; loot entries and NPC equipment that name
+such a block now resolve to it.
 
 ## Loot tables
 

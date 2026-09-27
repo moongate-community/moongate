@@ -2,7 +2,25 @@
 id = "tavaras_journals"
 [[loot.entries]]
 weight = 1
+item_id = "tavaras_journal_1"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_2"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
 item_id = "tavaras_journal_3"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_6"
 comment = "Journal: Discovery Of The Tomb"
 amount = 1
 
@@ -14,6 +32,48 @@ amount = 1
 
 [[loot.entries]]
 weight = 1
+item_id = "tavaras_journal_8"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_9"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
 item_id = "tavaras_journal_11"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_14"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_16"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_16b"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_17"
+comment = "Journal: Discovery Of The Tomb"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "tavaras_journal_19"
 comment = "Journal: Discovery Of The Tomb"
 amount = 1

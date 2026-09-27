@@ -1,4 +1,13 @@
 [[item]]
+id = "base_food"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = true
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x1ad3_donuts"
 base_id = "base_item"
 item_id = 6867

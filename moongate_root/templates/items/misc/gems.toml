@@ -1,4 +1,15 @@
 [[item]]
+id = "base_gem"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 1.0
+amount = 1
+stackable = true
+decays = true
+hue = 0
+
+[[item]]
 id = "0x0f0f_star_sapphire"
 base_id = "base_item"
 item_id = 3855

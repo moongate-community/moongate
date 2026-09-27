@@ -239,7 +239,9 @@ public sealed class UoxItemConverterCommandTests : IDisposable
 
         Assert.True(exitCode == 0, CombinedOutput);
         var file = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"));
-        Assert.DoesNotContain(file!.Item, item => item.Id is "base_coin" or "base_metal");
+        // base_metal and base_coin have one parent and fields of their own, so they are templates too, but the coin
+        // still gets their fields inlined and inherits from the first ancestor with an id= of its own.
+        Assert.Equal("base_item", file!.Item.Single(item => item.Id == "base_coin").BaseId);
         var coin = file.Item.Single(item => item.Id == "0x0eed_gold_coin");
         Assert.Equal(0.02m, coin.Weight);
         Assert.True(coin.Stackable);
@@ -347,6 +349,82 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         var item = Assert.Single(file!.Item);
         Assert.Equal("0x1441", item.Id);
         Assert.Null(item.BaseId);
+    }
+
+    [Fact]
+    public void Run_ABlockWithOneParentAndNoIdOfItsOwn_BecomesATemplateInheritingTheGraphic()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [0x0df1]
+            {
+            id=0x0df1
+            name=magic staff
+            }
+
+            [glacialstaff]
+            {
+            get=0x0df1
+            name=glacial staff
+            color=0x0480
+            }
+
+            [frost_staff]
+            {
+            get=glacialstaff
+            name=frost staff
+            }
+
+            [plain_staff]
+            {
+            getlbr=0x0df1
+            }
+            """
+        );
+
+        var exitCode = Run();
+
+        Assert.True(exitCode == 0, CombinedOutput);
+        var items = TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, "items.toml"))!
+                             .Item.ToDictionary(item => item.Id);
+        var glacial = items["glacialstaff"];
+        Assert.Equal(("0x0df1_magic_staff", 0u, "glacial staff", "0x0480"), (glacial.BaseId, glacial.ItemId.Value, glacial.Name, glacial.Hue.ToString()));
+        Assert.Equal(("0x0df1_magic_staff", "frost staff"), (items["frost_staff"].BaseId, items["frost_staff"].Name));
+        Assert.Equal("0x0df1_magic_staff", items["plain_staff"].BaseId);
+    }
+
+    [Fact]
+    public void Run_ALootEntryNamingABlockWithNoIdOfItsOwn_Resolves()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            """
+            [0x0df1]
+            {
+            id=0x0df1
+            }
+
+            [glacialstaff]
+            {
+            get=0x0df1
+            name=glacial staff
+            }
+
+            [LOOTLIST staffs]
+            {
+            glacialstaff
+            }
+            """
+        );
+
+        var exitCode = Run();
+
+        Assert.True(exitCode == 0, CombinedOutput);
+        var loot = Assert.Single(
+            TomlUtils.DeserializeFromFile<ConvertedLootFile>(Path.Combine(_dirs.LootDestinationDirectory, "staffs.toml"))!.Loot
+        );
+        Assert.Equal("glacialstaff", Assert.Single(loot.Entries).ItemId);
     }
 
     [Fact]

@@ -1,0 +1,69 @@
+[[item]]
+id = "0x0ec2_tol"
+base_id = "base_cleaver"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 15
+sell_price = 7
+hue = 0
+
+[[item]]
+id = "0x0ec4_tol"
+base_id = "base_skinning_knife"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 14
+sell_price = 7
+hue = 0
+
+[[item]]
+id = "0x0f51_tol"
+base_id = "base_dagger"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 21
+sell_price = 10
+hue = 0
+
+[[item]]
+id = "0x13f6_tol"
+base_id = "base_butcher_knife"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 14
+sell_price = 7
+hue = 0
+
+[[item]]
+id = "0x2d22_tol"
+base_id = "base_leafblade"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 32
+sell_price = 16
+hue = 0
+
+[[item]]
+id = "0x2d21_tol"
+base_id = "base_assassin_spike"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 32
+sell_price = 16
+hue = 0
+
+[[item]]
+id = "0x0902_tol"
+base_id = "base_gargish_dagger"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 20
+sell_price = 10
+hue = 0

@@ -9,6 +9,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "samuraitabi"
+base_id = "0x2796_samurai_tabi"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x2797_ninja_tall_tabi"
 base_id = "base_item"
 item_id = 10135
@@ -16,4 +23,11 @@ name = "ninja tall tabi"
 rarity = "common"
 weight = 2.0
 decays = true
+hue = 0
+
+[[item]]
+id = "ninjatalltabi"
+base_id = "0x2797_ninja_tall_tabi"
+item_id = 0
+rarity = "common"
 hue = 0

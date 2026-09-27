@@ -1333,6 +1333,15 @@ decays = true
 hue = 0
 
 [[item]]
+id = "base_shield"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = true
+decays = true
+hue = 0
+
+[[item]]
 id = "base_bronze_shield"
 base_id = "base_item"
 item_id = 7026

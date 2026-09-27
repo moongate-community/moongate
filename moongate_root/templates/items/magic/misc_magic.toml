@@ -12,6 +12,69 @@ decays = true
 hue = 0
 
 [[item]]
+id = "spellbook"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "spellbook1"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "spellbook1to2"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "spellbook1to3"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "spellbook1to4"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "spellbook1to5"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "spellbook1to6"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "spellbook1to7"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "spellbook1to8"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f14_a_recall_rune"
 base_id = "base_item"
 item_id = 7956
@@ -21,6 +84,13 @@ weight = 1.0
 buy_price = 18
 sell_price = 9
 decays = true
+hue = 0
+
+[[item]]
+id = "usedrecallrune"
+base_id = "0x1f14_a_recall_rune"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -36,6 +106,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "recallrune"
+base_id = "0x1f17_a_recall_rune"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x0e2d_crystal_ball"
 base_id = "base_item"
 item_id = 3629
@@ -47,9 +124,23 @@ sell_price = 1
 hue = 0
 
 [[item]]
+id = "crystalball"
+base_id = "0x0e2d_crystal_ball"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x0e2e"
 base_id = "0x0e2d_crystal_ball"
 item_id = 3630
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "sparklingcrystalball"
+base_id = "0x0e2e"
+item_id = 0
 rarity = "common"
 hue = 0
 
@@ -77,6 +168,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "paladinspellbook"
+base_id = "0x2252_paladin_spellbook"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x2253_necromancer_book"
 base_id = "base_item"
 item_id = 8787
@@ -89,6 +187,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "necromancerbook"
+base_id = "0x2253_necromancer_book"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x2d9d_mystic_book"
 base_id = "base_item"
 item_id = 11677
@@ -98,6 +203,13 @@ weight = 1.0
 buy_price = 22
 sell_price = 11
 decays = true
+hue = 0
+
+[[item]]
+id = "mysticbook"
+base_id = "0x2d9d_mystic_book"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]

@@ -1,0 +1,159 @@
+[[item]]
+id = "0x13f4_aos"
+base_id = "base_crook"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 33
+sell_price = 24
+hue = 0
+
+[[item]]
+id = "0x0e81_aos"
+base_id = "base_shepherds_crook"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 33
+sell_price = 24
+hue = 0
+
+[[item]]
+id = "0x13f8_aos"
+base_id = "base_gnarled_staff"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 24
+sell_price = 12
+hue = 0
+
+[[item]]
+id = "0x0df0_aos"
+base_id = "base_black_staff"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 27
+sell_price = 24
+hue = 0
+
+[[item]]
+id = "0x0e89_aos"
+base_id = "base_quarter_staff"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 30
+sell_price = 15
+hue = 0
+
+[[item]]
+id = "0x143e_aos"
+base_id = "base_halberd"
+item_id = 0
+rarity = "common"
+weight = 16.0
+buy_price = 50
+sell_price = 25
+hue = 0
+
+[[item]]
+id = "0x0f4d_aos"
+base_id = "base_bardiche"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 68
+sell_price = 34
+hue = 0
+
+[[item]]
+id = "0x26ba_aos"
+base_id = "base_scythe"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 39
+sell_price = 19
+hue = 0
+
+[[item]]
+id = "0x26bd_aos"
+base_id = "base_bladed_staff"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 40
+sell_price = 20
+hue = 0
+
+[[item]]
+id = "0x26bf_aos"
+base_id = "base_double_bladed_staff"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 47
+sell_price = 24
+hue = 0
+
+[[item]]
+id = "0x2d25_aos"
+base_id = "base_wild_staff"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 29
+sell_price = 15
+hue = 0
+
+[[item]]
+id = "0x48b4_aos"
+base_id = "base_gargish_bardiche"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 68
+sell_price = 34
+hue = 0
+
+[[item]]
+id = "0x48c4_aos"
+base_id = "base_gargish_scythe"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 39
+sell_price = 19
+hue = 0
+
+[[item]]
+id = "0x0906_aos"
+base_id = "base_serpentstone_staff"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 29
+sell_price = 15
+hue = 0
+
+[[item]]
+id = "0x48b8_aos"
+base_id = "base_gargish_gnarled_staff"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 24
+sell_price = 12
+hue = 0
+
+[[item]]
+id = "0x0905_aos"
+base_id = "base_glass_staff"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 11
+sell_price = 6
+hue = 0

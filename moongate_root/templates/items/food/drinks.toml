@@ -1,4 +1,11 @@
 [[item]]
+id = "base_drink"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f9e_pitcher_of_water"
 base_id = "base_item"
 item_id = 8094

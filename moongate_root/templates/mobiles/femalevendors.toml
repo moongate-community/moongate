@@ -411,7 +411,7 @@ items = ["0x1544"]
 items = ["0x13cd"]
 
 [[mobile.equipment]]
-items = ["base_skinning_knife"]
+items = ["0x0ec4"]
 
 [[mobile.equipment]]
 items = ["0x13d2"]
@@ -423,7 +423,7 @@ items = ["0x13d3"]
 items = ["0x13ce"]
 
 [[mobile.equipment]]
-items = ["base_leather_gorget"]
+items = ["0x13c7"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -445,7 +445,7 @@ wrestling = "1d33+35"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]
-items = ["base_black_staff"]
+items = ["0x0df0"]
 
 [[mobile.equipment]]
 items = ["0x1718_wizard's_hat"]
@@ -689,7 +689,7 @@ taste_identification = "1d33+35"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]
-items = ["base_pitchfork"]
+items = ["0x0e87"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -757,7 +757,7 @@ veterinary = "1d24+64"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]
-items = ["base_shepherds_crook"]
+items = ["0x0e81"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -1122,7 +1122,7 @@ items = ["0x1544"]
 items = ["0x13cd"]
 
 [[mobile.equipment]]
-items = ["base_skinning_knife"]
+items = ["0x0ec4"]
 
 [[mobile.equipment]]
 items = ["0x13d2"]
@@ -1134,7 +1134,7 @@ items = ["0x13d3"]
 items = ["0x13ce"]
 
 [[mobile.equipment]]
-items = ["base_leather_gorget"]
+items = ["0x13c7"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -1157,7 +1157,7 @@ items = ["0x1544"]
 items = ["0x13cd"]
 
 [[mobile.equipment]]
-items = ["base_skinning_knife"]
+items = ["0x0ec4"]
 
 [[mobile.equipment]]
 items = ["0x13d2"]
@@ -1169,7 +1169,7 @@ items = ["0x13d3"]
 items = ["0x13ce"]
 
 [[mobile.equipment]]
-items = ["base_leather_gorget"]
+items = ["0x13c7"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -1257,7 +1257,7 @@ veterinary = "1d24+59"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]
-items = ["base_shepherds_crook"]
+items = ["0x0e81"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -1297,7 +1297,7 @@ taste_identification = "1d37+63"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]
-items = ["base_shepherds_crook"]
+items = ["0x0e81"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -1359,7 +1359,7 @@ veterinary = "1d24+64"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]
-items = ["base_shepherds_crook"]
+items = ["0x0e81"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -1393,7 +1393,7 @@ wrestling = "1d33+35"
 [mobile.sounds]
 death = 337
 [[mobile.equipment]]
-items = ["base_black_staff"]
+items = ["0x0df0"]
 
 [[mobile.equipment]]
 items = ["0x1efd_fancy_shirt"]

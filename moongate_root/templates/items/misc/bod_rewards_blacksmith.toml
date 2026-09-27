@@ -65,6 +65,70 @@ hue = 0
 runicHammer = "1"
 
 [[item]]
+id = "dull_copper_runic_hammer"
+base_id = "base_runic_hammer"
+item_id = 0
+name = "dull copper runic smithy hammer"
+rarity = "common"
+hue = 2419
+
+[[item]]
+id = "shadow_iron_runic_hammer"
+base_id = "base_runic_hammer"
+item_id = 0
+name = "shadow iron runic smithy hammer"
+rarity = "common"
+hue = 2406
+
+[[item]]
+id = "copper_runic_hammer"
+base_id = "base_runic_hammer"
+item_id = 0
+name = "copper runic smithy hammer"
+rarity = "common"
+hue = 2013
+
+[[item]]
+id = "bronze_runic_hammer"
+base_id = "base_runic_hammer"
+item_id = 0
+name = "bronze runic smithy hammer"
+rarity = "common"
+hue = 1750
+
+[[item]]
+id = "gold_runic_hammer"
+base_id = "base_runic_hammer"
+item_id = 0
+name = "gold runic smithy hammer"
+rarity = "common"
+hue = 2213
+
+[[item]]
+id = "agapite_runic_hammer"
+base_id = "base_runic_hammer"
+item_id = 0
+name = "agapite runic smithy hammer"
+rarity = "common"
+hue = 2425
+
+[[item]]
+id = "verite_runic_hammer"
+base_id = "base_runic_hammer"
+item_id = 0
+name = "verite runic smithy hammer"
+rarity = "common"
+hue = 2207
+
+[[item]]
+id = "valorite_runic_hammer"
+base_id = "base_runic_hammer"
+item_id = 0
+name = "valorite runic smithy hammer"
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "dull_copper_colored_anvil"
 item_id = 4015
 rarity = "common"
@@ -168,3 +232,35 @@ item_id = 5360
 rarity = "common"
 weight = 1.0
 hue = 1153
+
+[[item]]
+id = "power_scroll_blacksmith_5"
+base_id = "base_power_scroll"
+item_id = 0
+name = "wonderous scoll of blacksmithing"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "power_scroll_blacksmith_10"
+base_id = "base_power_scroll"
+item_id = 0
+name = "exalted scroll of blacksmithing"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "power_scroll_blacksmith_15"
+base_id = "base_power_scroll"
+item_id = 0
+name = "mythical scroll of blacksmithing"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "power_scroll_blacksmith_20"
+base_id = "base_power_scroll"
+item_id = 0
+name = "legendary scroll of blacksmithing"
+rarity = "common"
+hue = 0

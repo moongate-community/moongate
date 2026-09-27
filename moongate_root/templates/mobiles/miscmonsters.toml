@@ -83,7 +83,7 @@ attack = 681
 hurt = 682
 death = 683
 [[mobile.equipment]]
-items = ["base_bow"]
+items = ["0x13b1"]
 
 [[mobile]]
 id = "ethwarrior"
@@ -461,7 +461,7 @@ attack = 468
 hurt = 469
 death = 470
 [[mobile.equipment]]
-items = ["0x1647_a_lightsource"]
+items = ["wispglow"]
 
 [[mobile]]
 id = "shadowwisp"
@@ -488,7 +488,7 @@ attack = 468
 hurt = 469
 death = 470
 [[mobile.equipment]]
-items = ["0x1647_a_lightsource"]
+items = ["shadowwispglow"]
 
 [[mobile]]
 id = "darkwisp"
@@ -516,7 +516,7 @@ attack = 468
 hurt = 469
 death = 470
 [[mobile.equipment]]
-items = ["0x1647_a_lightsource"]
+items = ["wispglow"]
 
 [[mobile]]
 id = "evilmage"

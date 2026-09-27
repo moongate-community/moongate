@@ -29,3 +29,423 @@ weight = 0.1
 amount = 1
 decays = true
 hue = 0
+
+[[item]]
+id = "campion_flower_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Campion Flower Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+CampionFlowerSeed = "1"
+
+[[item]]
+id = "poppies_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Poppie Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+PoppieSeed = "1"
+
+[[item]]
+id = "snowdrop_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Snowdrop Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+SnowdropSeed = "1"
+
+[[item]]
+id = "bulrushe_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Bulrushe Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+BulrusheSeed = "1"
+
+[[item]]
+id = "lilie_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Lilie Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+LilieSeed = "1"
+
+[[item]]
+id = "pampas_grass_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Pampas Grass Seed"
+rarity = "common"
+hue = 43
+[item.tags]
+PampasGrassSeed = "1"
+
+[[item]]
+id = "rushe_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Rushe Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+RusheSeed = "1"
+
+[[item]]
+id = "elephant_ear_plantr_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Elephant Ear Plant Seed"
+rarity = "common"
+hue = 33
+[item.tags]
+ElephantEarPlantrSeed = "1"
+
+[[item]]
+id = "fern_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Fern Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+FernSeed = "1"
+
+[[item]]
+id = "ponytail_palm_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Ponytail Palm Seed"
+rarity = "common"
+hue = 33
+[item.tags]
+PonytailPalmSeed = "1"
+
+[[item]]
+id = "small_palm_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Small Palm Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+SmallPalmSeed = "1"
+
+[[item]]
+id = "century_plant_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Century Plant Seed"
+rarity = "common"
+hue = 33
+[item.tags]
+CenturyPlantSeed = "1"
+
+[[item]]
+id = "water_plant_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Water Plant Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+WaterPlantSeed = "1"
+
+[[item]]
+id = "snake_plant_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Snake Plant Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+SnakePlantSeed = "1"
+
+[[item]]
+id = "prickly_pear_cactus_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Prickly Pear Cactus Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+PricklyPearCactusSeed = "1"
+
+[[item]]
+id = "barrel_cactus_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Barrel Cactus Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+BarrelCactusSeed = "1"
+
+[[item]]
+id = "tribarrel_cactus_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Tribarrel Cactus Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+TribarrelCactusSeed = "1"
+
+[[item]]
+id = "common_green_bonsai_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Common Green Bonsai Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+CommonGreenBonsaiSeed = "1"
+
+[[item]]
+id = "common_pink_bonsai_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Common Pink Bonsai Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+CommonPinkBonsaiSeed = "1"
+
+[[item]]
+id = "uncommon_green_bonsai_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Uncommon Green Bonsai Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+UncommonGreenBonsai = "1"
+
+[[item]]
+id = "uncommon_pink_bonsai_seed"
+base_id = "base_seed"
+item_id = 0
+name = "Uncommon Pink Bonsai Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+UncommonPinkBonsai = "1"
+
+[[item]]
+id = "rare_green_bonsai"
+base_id = "base_seed"
+item_id = 0
+name = "Rare Green Bonsai Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+RareGreenBonsai = "1"
+
+[[item]]
+id = "rare_pink_bonsai"
+base_id = "base_seed"
+item_id = 0
+name = "RarePinkBonsai Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+RarePinkBonsai = "1"
+
+[[item]]
+id = "exceptional_bonsai"
+base_id = "base_seed"
+item_id = 0
+name = "Exceptional Bonsai Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+ExceptionalBonsai = "1"
+
+[[item]]
+id = "exotic_bonsai"
+base_id = "base_seed"
+item_id = 0
+name = "Exotic Bonsai Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+ExoticBonsai = "1"
+
+[[item]]
+id = "cactus"
+base_id = "base_seed"
+item_id = 0
+name = "Cactus Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+Cactus = "1"
+
+[[item]]
+id = "flax_flowers"
+base_id = "base_seed"
+item_id = 0
+name = "Flax Flowers Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+FlaxFlowers = "1"
+
+[[item]]
+id = "foxglove_flowers"
+base_id = "base_seed"
+item_id = 0
+name = "Foxglove Flowers Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+FoxgloveFlowers = "1"
+
+[[item]]
+id = "hops_east"
+base_id = "base_seed"
+item_id = 0
+name = "Hops East Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+HopsEast = "1"
+
+[[item]]
+id = "orfluer_flowers"
+base_id = "base_seed"
+item_id = 0
+name = "Orfluer Flowers Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+OrfluerFlowers = "1"
+
+[[item]]
+id = "cypress_twisted"
+base_id = "base_seed"
+item_id = 0
+name = "CypressTwisted Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+CypressTwisted = "1"
+
+[[item]]
+id = "hedge_short"
+base_id = "base_seed"
+item_id = 0
+name = "Hedge Short Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+HedgeShort = "1"
+
+[[item]]
+id = "juniper_bush"
+base_id = "base_seed"
+item_id = 0
+name = "Juniper Bush Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+JuniperBush = "1"
+
+[[item]]
+id = "snowdrop_patch"
+base_id = "base_seed"
+item_id = 0
+name = "Snowdrop Patch Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+SnowdropPatch = "1"
+
+[[item]]
+id = "cattails"
+base_id = "base_seed"
+item_id = 0
+name = "Cattails Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+Cattails = "1"
+
+[[item]]
+id = "poppy_patch"
+base_id = "base_seed"
+item_id = 0
+name = "Poppy Patch Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+PoppyPatch = "1"
+
+[[item]]
+id = "spider_tree"
+base_id = "base_seed"
+item_id = 0
+name = "Spider Tree Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+SpiderTree = "1"
+
+[[item]]
+id = "water_lily"
+base_id = "base_seed"
+item_id = 0
+name = "Water Lily Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+WaterLily = "1"
+
+[[item]]
+id = "cypress_straight"
+base_id = "base_seed"
+item_id = 0
+name = "Cypress Straight Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+CypressStraight = "1"
+
+[[item]]
+id = "hedge_tall"
+base_id = "base_seed"
+item_id = 0
+name = "Hedge Tall Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+HedgeTall = "1"
+
+[[item]]
+id = "hops_south"
+base_id = "base_seed"
+item_id = 0
+name = "Hops South Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+HopsSouth = "1"
+
+[[item]]
+id = "sugar_canes"
+base_id = "base_seed"
+item_id = 0
+name = "Sugar Canes Seed"
+rarity = "common"
+hue = 0
+[item.tags]
+SugarCanes = "1"

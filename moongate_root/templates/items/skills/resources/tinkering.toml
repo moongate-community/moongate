@@ -213,6 +213,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "sextant"
+base_id = "0x1057_sextant"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1059_sextant_parts"
 base_id = "base_item"
 item_id = 4185

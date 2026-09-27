@@ -254,10 +254,10 @@ attack = 453
 hurt = 454
 death = 455
 [[mobile.equipment]]
-items = ["base_metal_shield"]
+items = ["0x1b7b"]
 
 [[mobile.equipment]]
-items = ["base_cutlass"]
+items = ["0x1440"]
 
 [[mobile]]
 id = "skeletalknight"
@@ -406,15 +406,15 @@ wrestling = "1d26+74"
 start_attack = 86
 idle = 512
 [[mobile.equipment]]
-items = ["base_buckler"]
+items = ["buckler"]
 hue = 2101
 
 [[mobile.equipment]]
-items = ["base_chain_coif", "0x13c0"]
+items = ["0x13bb", "0x13c0"]
 hue = 2101
 
 [[mobile.equipment]]
-items = ["base_plate_gloves", "0x1418"]
+items = ["0x1414", "0x1418"]
 hue = 2101
 
 [[mobile]]

@@ -1,162 +1,399 @@
 [[item]]
+id = "0x13eb_va"
+base_id = "0x13eb_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x13f2_va"
+base_id = "0x13eb_lbr"
 item_id = 5106
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x13ec_va"
+base_id = "0x13ec_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x13ed_va"
+base_id = "0x13ec_lbr"
 item_id = 5101
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x13ee_va"
+base_id = "0x13ee_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x13ef_va"
+base_id = "0x13ee_lbr"
 item_id = 5103
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x13f0_va"
+base_id = "0x13f0_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x13f1_va"
+base_id = "0x13f0_lbr"
 item_id = 5105
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x13bb_va"
+base_id = "0x13bb_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x13c0_va"
+base_id = "0x13bb_lbr"
 item_id = 5056
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x13be_va"
+base_id = "0x13be_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x13c3_va"
+base_id = "0x13be_lbr"
 item_id = 5059
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x13bf_va"
+base_id = "0x13bf_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x13c4_va"
+base_id = "0x13bf_lbr"
 item_id = 5060
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x1c04_va"
+base_id = "0x1c04_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x1c05_va"
+base_id = "0x1c04_lbr"
 item_id = 7173
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x1410_va"
+base_id = "0x1410_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x1417_va"
+base_id = "0x1410_lbr"
 item_id = 5143
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x1411_va"
+base_id = "0x1411_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x141a_va"
+base_id = "0x1411_lbr"
 item_id = 5146
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x1413_va"
+base_id = "0x1413_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "valoriteplatemailgorget"
+base_id = "0x1413_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x1414_va"
+base_id = "0x1414_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x1418_va"
+base_id = "0x1414_lbr"
 item_id = 5144
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x1415_va"
+base_id = "0x1415_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x1416_va"
+base_id = "0x1415_lbr"
 item_id = 5142
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2777_va"
+base_id = "0x2777_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27c2_va"
+base_id = "0x2777_lbr"
 item_id = 10178
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2778_va"
+base_id = "0x2778_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27c3_va"
+base_id = "0x2778_lbr"
 item_id = 10179
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x277d_va"
+base_id = "0x277d_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27c8_va"
+base_id = "0x277d_lbr"
 item_id = 10184
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2780_va"
+base_id = "0x2780_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27cb_va"
+base_id = "0x2780_lbr"
 item_id = 10187
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2781_va"
+base_id = "0x2781_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27cc_va"
+base_id = "0x2781_lbr"
 item_id = 10188
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2784_va"
+base_id = "0x2784_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27cf_va"
+base_id = "0x2784_lbr"
 item_id = 10191
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2785_va"
+base_id = "0x2785_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27d0_va"
+base_id = "0x2785_lbr"
 item_id = 10192
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2788_va"
+base_id = "0x2788_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27d3_va"
+base_id = "0x2788_lbr"
 item_id = 10195
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2789_va"
+base_id = "0x2789_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27d4_va"
+base_id = "0x2789_lbr"
 item_id = 10196
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x236c_va"
+base_id = "0x236c_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x236d_va"
+base_id = "0x236c_lbr"
 item_id = 9069
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x278d_va"
+base_id = "0x278d_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27d8_va"
+base_id = "0x278d_lbr"
 item_id = 10200
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2775_va"
+base_id = "0x2775_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27c0_va"
+base_id = "0x2775_lbr"
 item_id = 10176
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2774_va"
+base_id = "0x2774_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27bf_va"
+base_id = "0x2774_lbr"
 item_id = 10175
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x2779_va"
+base_id = "0x2779_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x27c4_va"
+base_id = "0x2779_lbr"
 item_id = 10180
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x1408_va"
+base_id = "0x1408_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x1409_va"
+base_id = "0x1408_lbr"
 item_id = 5129
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x140a_va"
+base_id = "0x140a_lbr"
+item_id = 0
 rarity = "common"
 hue = 2219
 
@@ -167,26 +404,149 @@ rarity = "common"
 hue = 0
 
 [[item]]
+id = "0x140c_va"
+base_id = "0x140c_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x140d_va"
+base_id = "0x140c_lbr"
 item_id = 5133
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x140e_va"
+base_id = "0x140e_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x140f_va"
+base_id = "0x140e_lbr"
 item_id = 5135
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x1412_va"
+base_id = "0x1412_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x1419_va"
+base_id = "0x1412_lbr"
 item_id = 5145
 rarity = "common"
 hue = 2219
 
 [[item]]
+id = "0x1b72_va"
+base_id = "0x1b72_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "valoritevaloriteshield"
+base_id = "0x1b72_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x1b73_va"
+base_id = "0x1b73_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "valoritebuckler"
+base_id = "0x1b73_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x1b74_va"
+base_id = "0x1b74_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x1b76_va"
+base_id = "0x1b76_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x1b78_va"
+base_id = "0x1b78_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
 id = "0x1b79_va"
+base_id = "0x1b78_lbr"
 item_id = 7033
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x1b7a_va"
+base_id = "0x1b7a_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "valoritewoodenshield"
+base_id = "0x1b7a_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x1b7b_va"
+base_id = "0x1b7b_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "valoritemetalshield"
+base_id = "0x1b7b_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x1bc3_va"
+base_id = "0x1bc3_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "valoritechaosshield"
+base_id = "0x1bc3_lbr"
+item_id = 0
+rarity = "common"
+hue = 2219
+
+[[item]]
+id = "0x1bc4_va"
+base_id = "0x1bc4_lbr"
+item_id = 0
 rarity = "common"
 hue = 2219
 

@@ -1099,6 +1099,38 @@ amount = 1
 hue = 0
 
 [[item]]
+id = "puzzlechest_spawn"
+base_id = "base_spawner"
+item_id = 0
+name = "Puzzle Chest Spawn"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "puzzlechest_spawn_ns"
+base_id = "base_spawner"
+item_id = 0
+name = "Puzzle Chest Spawn"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "puzzlestrongbox_spawn"
+base_id = "base_spawner"
+item_id = 0
+name = "Puzzle Chest Spawn"
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "puzzlestrongbox_spawn_ns"
+base_id = "base_spawner"
+item_id = 0
+name = "Puzzle Chest Spawn"
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "carrotspawn"
 base_id = "base_spawner"
 item_id = 7956

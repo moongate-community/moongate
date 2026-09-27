@@ -5,6 +5,12 @@ weight = 750
 amount = 1
 
 [[loot.entries]]
+weight = 200
+item_id = "a_welcome"
+comment = "A Welcome"
+amount = 1
+
+[[loot.entries]]
 weight = 50
 item_id = "power_crystal"
 comment = "power crystal"

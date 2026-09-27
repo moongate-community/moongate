@@ -1,4 +1,13 @@
 [[item]]
+id = "base_trophy"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+decays = true
+hue = 0
+
+[[item]]
 id = "brownbeartrophy"
 base_id = "base_item"
 item_id = 7776

@@ -549,6 +549,16 @@ weight = 1.0
 hue = 0
 
 [[item]]
+id = "0x15b6"
+base_id = "base_item"
+item_id = 0
+name = "banner"
+rarity = "common"
+movable = false
+weight = 1.0
+hue = 0
+
+[[item]]
 id = "0x15b7_banner"
 base_id = "base_item"
 item_id = 5559

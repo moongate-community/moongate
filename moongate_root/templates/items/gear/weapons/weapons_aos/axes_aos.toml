@@ -1,0 +1,109 @@
+[[item]]
+id = "0x13fa_aos"
+base_id = "base_large_battle_axe"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 43
+sell_price = 21
+hue = 0
+
+[[item]]
+id = "0x1442_aos"
+base_id = "base_two_handed_axe"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 42
+sell_price = 21
+hue = 0
+
+[[item]]
+id = "0x0f43_aos"
+base_id = "base_hatchet"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 30
+sell_price = 15
+hue = 0
+
+[[item]]
+id = "0x0f45_aos"
+base_id = "base_executioners_axe"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 38
+sell_price = 33
+hue = 0
+
+[[item]]
+id = "0x0f47_aos"
+base_id = "base_battle_axe"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 38
+sell_price = 36
+hue = 0
+
+[[item]]
+id = "0x0f49_aos"
+base_id = "base_axe"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 48
+sell_price = 24
+hue = 0
+
+[[item]]
+id = "0x0f4b_aos"
+base_id = "base_double_axe"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 32
+sell_price = 16
+hue = 0
+
+[[item]]
+id = "0x2d28_aos"
+base_id = "base_ornate_axe"
+item_id = 0
+rarity = "common"
+weight = 12.0
+buy_price = 47
+sell_price = 24
+hue = 0
+
+[[item]]
+id = "0x48b0_aos"
+base_id = "base_gargish_battle_axe"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 38
+sell_price = 36
+hue = 0
+
+[[item]]
+id = "0x08fd_aos"
+base_id = "base_dual_short_axes"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 84
+sell_price = 42
+hue = 0
+
+[[item]]
+id = "0x48b2_aos"
+base_id = "base_gargish_axe"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 48
+sell_price = 24
+hue = 0

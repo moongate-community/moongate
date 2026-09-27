@@ -53,7 +53,7 @@ animal_lore = "1d16+84"
 animal_taming = "1d11+89"
 veterinary = "1d24+64"
 [[mobile.equipment]]
-items = ["base_shepherds_crook"]
+items = ["0x0e81"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -434,7 +434,7 @@ hue = "0x0835-0x0852"
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
 
 [[mobile.equipment]]
-items = ["base_crossbow", "0x13b2", "0x13fd"]
+items = ["0x0f4f", "0x13b2", "0x13fd"]
 gender = "male"
 
 [[mobile.equipment]]
@@ -640,7 +640,7 @@ cooking = "1d33+35"
 lumberjacking = "1d33+35"
 taste_identification = "1d33+35"
 [[mobile.equipment]]
-items = ["base_pitchfork"]
+items = ["0x0e87"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -727,7 +727,7 @@ items = ["0x1544"]
 items = ["0x13cd"]
 
 [[mobile.equipment]]
-items = ["base_skinning_knife"]
+items = ["0x0ec4"]
 
 [[mobile.equipment]]
 items = ["0x13d2"]
@@ -739,7 +739,7 @@ items = ["0x13d3"]
 items = ["0x13ce"]
 
 [[mobile.equipment]]
-items = ["base_leather_gorget"]
+items = ["0x13c7"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -758,7 +758,7 @@ animal_lore = "1d16+84"
 animal_taming = "1d11+89"
 veterinary = "1d24+64"
 [[mobile.equipment]]
-items = ["base_shepherds_crook"]
+items = ["0x0e81"]
 
 [[mobile.equipment]]
 items = ["0x1517_shirt"]
@@ -846,7 +846,7 @@ alchemy = "1d24+54"
 magery = "1d24+59"
 taste_identification = "1d37+63"
 [[mobile.equipment]]
-items = ["base_shepherds_crook"]
+items = ["0x0e81"]
 
 [[mobile.equipment]]
 items = ["0x1713_floppy_hat", "0x1716_tall_straw_hat", "0x1717_straw_hat", "0x1540", "0x1544"]
@@ -1099,7 +1099,7 @@ race = "human"
 items = ["0x13cd"]
 
 [[mobile.equipment]]
-items = ["base_skinning_knife"]
+items = ["0x0ec4"]
 
 [[mobile.equipment]]
 items = ["0x13d2"]
@@ -1111,7 +1111,7 @@ items = ["0x13d3"]
 items = ["0x13ce"]
 
 [[mobile.equipment]]
-items = ["base_leather_gorget"]
+items = ["0x13c7"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]
@@ -1135,7 +1135,7 @@ magery = "1d37+63"
 resisting_spells = "1d24+64"
 wrestling = "1d33+35"
 [[mobile.equipment]]
-items = ["base_black_staff"]
+items = ["0x0df0"]
 
 [[mobile.equipment]]
 items = ["0x1718_wizard's_hat"]
@@ -1465,7 +1465,7 @@ items = ["0x1544"]
 items = ["0x13cd"]
 
 [[mobile.equipment]]
-items = ["base_skinning_knife"]
+items = ["0x0ec4"]
 
 [[mobile.equipment]]
 items = ["0x13d2"]
@@ -1477,7 +1477,7 @@ items = ["0x13d3"]
 items = ["0x13ce"]
 
 [[mobile.equipment]]
-items = ["base_leather_gorget"]
+items = ["0x13c7"]
 
 [[mobile.equipment]]
 items = ["0x170b_boots", "0x170d_sandals", "0x170f_shoes", "0x1711_thigh_boots"]

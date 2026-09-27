@@ -37,6 +37,13 @@ sell_price = 13
 hue = 0
 
 [[item]]
+id = "featheredhat"
+base_id = "0x171a_feathered_hat"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1713_floppy_hat"
 base_id = "base_hat"
 item_id = 5907
@@ -45,6 +52,13 @@ rarity = "common"
 weight = 1.0
 buy_price = 25
 sell_price = 12
+hue = 0
+
+[[item]]
+id = "floppyhat"
+base_id = "0x1713_floppy_hat"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -59,6 +73,13 @@ sell_price = 13
 hue = 0
 
 [[item]]
+id = "bonnet"
+base_id = "0x1719_bonnet"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1715_cap"
 base_id = "base_hat"
 item_id = 5909
@@ -70,6 +91,13 @@ sell_price = 13
 hue = 0
 
 [[item]]
+id = "cap"
+base_id = "0x1715_cap"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x171c_jester_hat"
 base_id = "base_hat"
 item_id = 5916
@@ -78,6 +106,13 @@ rarity = "common"
 weight = 1.0
 buy_price = 31
 sell_price = 15
+hue = 0
+
+[[item]]
+id = "jesterhat"
+base_id = "0x171c_jester_hat"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -111,6 +146,13 @@ sell_price = 12
 hue = 0
 
 [[item]]
+id = "strawhat"
+base_id = "0x1717_straw_hat"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1716_tall_straw_hat"
 base_id = "base_hat"
 item_id = 5910
@@ -119,6 +161,13 @@ rarity = "common"
 weight = 1.0
 buy_price = 26
 sell_price = 13
+hue = 0
+
+[[item]]
+id = "tallstrawhat"
+base_id = "0x1716_tall_straw_hat"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -133,6 +182,13 @@ sell_price = 13
 hue = 0
 
 [[item]]
+id = "widebrimhat"
+base_id = "0x1714_wide_brim_hat"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1718_wizard's_hat"
 base_id = "base_hat"
 item_id = 5912
@@ -141,6 +197,13 @@ rarity = "common"
 weight = 1.0
 buy_price = 30
 sell_price = 15
+hue = 0
+
+[[item]]
+id = "wizardshat"
+base_id = "0x1718_wizard's_hat"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -155,6 +218,13 @@ sell_price = 15
 hue = 0
 
 [[item]]
+id = "jesterscap"
+base_id = "0x172e_jester's_cap"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x171b_tricorne_hat"
 base_id = "base_hat"
 item_id = 5915
@@ -163,6 +233,13 @@ rarity = "common"
 weight = 1.0
 buy_price = 26
 sell_price = 13
+hue = 0
+
+[[item]]
+id = "tricornehat"
+base_id = "0x171b_tricorne_hat"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]

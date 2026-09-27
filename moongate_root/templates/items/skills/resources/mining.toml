@@ -81,3 +81,66 @@ weight = 1.0
 stackable = true
 decays = true
 hue = 0
+
+[[item]]
+id = "irongranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "dullcoppergranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "shadowirongranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "coppergranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "bronzegranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "goldgranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "agapitegranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "veritegranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "valoritegranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 0

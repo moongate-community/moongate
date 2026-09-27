@@ -96,7 +96,8 @@ public sealed class UoxStartingItemsConverterTests : IDisposable
 
         var set = Assert.Single(ReadSets());
         Assert.Equal((SkillType?)SkillType.Magery, set.Skill);
-        Assert.Equal(["0x0f7a_black_pearl", "0x1f03_robe"], set.Items[0].Items);
+        // black_pearl_alias has one parent, so it is a template of its own inheriting the pearl.
+        Assert.Equal(["black_pearl_alias", "0x1f03_robe"], set.Items[0].Items);
         Assert.Equal("2", set.Items[0].Amount!.Value.ToString());
         Assert.Null(set.Items[0].Newbie);
         Assert.Equal(["bagofreagents"], set.Items[1].Items);

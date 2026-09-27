@@ -30,6 +30,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "sandals"
+base_id = "0x170d_sandals"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x170e"
 base_id = "0x170d_sandals"
 item_id = 5902

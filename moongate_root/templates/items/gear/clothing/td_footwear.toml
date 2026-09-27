@@ -31,6 +31,21 @@ decays = true
 hue = 0
 
 [[item]]
+id = "tdarcanethighboots"
+base_id = "0x26af_arcane_thigh_boots"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "tdarcanethighboots_newbie"
+base_id = "0x26af_arcane_thigh_boots"
+item_id = 0
+rarity = "common"
+loot_type = "newbied"
+hue = 0
+
+[[item]]
 id = "0x2653_waraji"
 base_id = "base_item"
 item_id = 9811

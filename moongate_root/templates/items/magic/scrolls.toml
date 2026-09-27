@@ -1,4 +1,28 @@
 [[item]]
+id = "base_scroll"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.01
+amount = 1
+stackable = true
+decays = true
+hue = 0
+
+[[item]]
+id = "base_first_scroll"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.01
+amount = 1
+stackable = true
+buy_price = 12
+sell_price = 6
+decays = true
+hue = 0
+
+[[item]]
 id = "0x1f2e_clumsy_scroll"
 base_id = "base_item"
 item_id = 7982
@@ -10,6 +34,13 @@ stackable = true
 buy_price = 12
 sell_price = 6
 decays = true
+hue = 0
+
+[[item]]
+id = "clumsyscroll"
+base_id = "0x1f2e_clumsy_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -27,6 +58,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "createfoodscroll"
+base_id = "0x1f2f_create_food_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f30_feeblemind_scroll"
 base_id = "base_item"
 item_id = 7984
@@ -38,6 +76,13 @@ stackable = true
 buy_price = 12
 sell_price = 6
 decays = true
+hue = 0
+
+[[item]]
+id = "feeblemindscroll"
+base_id = "0x1f30_feeblemind_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -55,6 +100,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "healscroll"
+base_id = "0x1f31_heal_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f32_magic_arrow_scroll"
 base_id = "base_item"
 item_id = 7986
@@ -66,6 +118,13 @@ stackable = true
 buy_price = 12
 sell_price = 6
 decays = true
+hue = 0
+
+[[item]]
+id = "magicarrowscroll"
+base_id = "0x1f32_magic_arrow_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -83,6 +142,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "nightsightscroll"
+base_id = "0x1f33_night_sight_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f2d_reactive_armor_scroll"
 base_id = "base_item"
 item_id = 7981
@@ -97,6 +163,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "reactivearmorscroll"
+base_id = "0x1f2d_reactive_armor_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f34_weaken_scroll"
 base_id = "base_item"
 item_id = 7988
@@ -107,6 +180,26 @@ amount = 1
 stackable = true
 buy_price = 12
 sell_price = 6
+decays = true
+hue = 0
+
+[[item]]
+id = "weakenscroll"
+base_id = "0x1f34_weaken_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "base_second_scroll"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.01
+amount = 1
+stackable = true
+buy_price = 22
+sell_price = 11
 decays = true
 hue = 0
 
@@ -125,6 +218,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "agilityscroll"
+base_id = "0x1f35_agility_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f36_cunning_scroll"
 base_id = "base_item"
 item_id = 7990
@@ -136,6 +236,13 @@ stackable = true
 buy_price = 22
 sell_price = 11
 decays = true
+hue = 0
+
+[[item]]
+id = "cunningscroll"
+base_id = "0x1f36_cunning_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -153,6 +260,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "curescroll"
+base_id = "0x1f37_cure_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f38_harm_scroll"
 base_id = "base_item"
 item_id = 7992
@@ -164,6 +278,13 @@ stackable = true
 buy_price = 22
 sell_price = 11
 decays = true
+hue = 0
+
+[[item]]
+id = "harmscroll"
+base_id = "0x1f38_harm_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -181,6 +302,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "magictrapscroll"
+base_id = "0x1f39_magic_trap_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f3a_magic_untrap_scroll"
 base_id = "base_item"
 item_id = 7994
@@ -192,6 +320,13 @@ stackable = true
 buy_price = 22
 sell_price = 11
 decays = true
+hue = 0
+
+[[item]]
+id = "magicuntrapscroll"
+base_id = "0x1f3a_magic_untrap_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -209,6 +344,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "protctionscroll"
+base_id = "0x1f3b_protection_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f3c_strength_scroll"
 base_id = "base_item"
 item_id = 7996
@@ -219,6 +361,26 @@ amount = 1
 stackable = true
 buy_price = 22
 sell_price = 11
+decays = true
+hue = 0
+
+[[item]]
+id = "strengthscroll"
+base_id = "0x1f3c_strength_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "base_third_scroll"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.01
+amount = 1
+stackable = true
+buy_price = 32
+sell_price = 16
 decays = true
 hue = 0
 
@@ -237,6 +399,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "blessscroll"
+base_id = "0x1f3d_bless_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f3e_fireball_scroll"
 base_id = "base_item"
 item_id = 7998
@@ -248,6 +417,13 @@ stackable = true
 buy_price = 32
 sell_price = 16
 decays = true
+hue = 0
+
+[[item]]
+id = "fireballscroll"
+base_id = "0x1f3e_fireball_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -265,6 +441,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "magiclockscroll"
+base_id = "0x1f3f_magic_lock_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f40_poison_scroll"
 base_id = "base_item"
 item_id = 8000
@@ -276,6 +459,13 @@ stackable = true
 buy_price = 32
 sell_price = 16
 decays = true
+hue = 0
+
+[[item]]
+id = "poisonscroll"
+base_id = "0x1f40_poison_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -293,6 +483,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "telekinisisscroll"
+base_id = "0x1f41_telekinisis_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f42_teleport_scroll"
 base_id = "base_item"
 item_id = 8002
@@ -304,6 +501,13 @@ stackable = true
 buy_price = 32
 sell_price = 16
 decays = true
+hue = 0
+
+[[item]]
+id = "teleportscroll"
+base_id = "0x1f42_teleport_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -321,6 +525,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "unlockscroll"
+base_id = "0x1f43_unlock_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f44_wall_of_stone_scroll"
 base_id = "base_item"
 item_id = 8004
@@ -331,6 +542,26 @@ amount = 1
 stackable = true
 buy_price = 32
 sell_price = 16
+decays = true
+hue = 0
+
+[[item]]
+id = "wallofstonescroll"
+base_id = "0x1f44_wall_of_stone_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "base_fourth_scroll"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.01
+amount = 1
+stackable = true
+buy_price = 42
+sell_price = 21
 decays = true
 hue = 0
 
@@ -349,6 +580,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "archcurescroll"
+base_id = "0x1f45_archcure_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f46_archprotection_scroll"
 base_id = "base_item"
 item_id = 8006
@@ -360,6 +598,13 @@ stackable = true
 buy_price = 42
 sell_price = 21
 decays = true
+hue = 0
+
+[[item]]
+id = "archprotectionscroll"
+base_id = "0x1f46_archprotection_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -377,6 +622,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "cursescroll"
+base_id = "0x1f47_curse_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f48_fire_field_scroll"
 base_id = "base_item"
 item_id = 8008
@@ -388,6 +640,13 @@ stackable = true
 buy_price = 42
 sell_price = 21
 decays = true
+hue = 0
+
+[[item]]
+id = "firefieldscroll"
+base_id = "0x1f48_fire_field_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -405,6 +664,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "greaterhealscroll"
+base_id = "0x1f49_greater_heal_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f4a_lightning_scroll"
 base_id = "base_item"
 item_id = 8010
@@ -416,6 +682,13 @@ stackable = true
 buy_price = 42
 sell_price = 21
 decays = true
+hue = 0
+
+[[item]]
+id = "lightningscroll"
+base_id = "0x1f4a_lightning_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -433,6 +706,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "manadrainscroll"
+base_id = "0x1f4b_mana_drain_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f4c_recall_scroll"
 base_id = "base_item"
 item_id = 8012
@@ -443,6 +723,26 @@ amount = 1
 stackable = true
 buy_price = 42
 sell_price = 21
+decays = true
+hue = 0
+
+[[item]]
+id = "recallscroll"
+base_id = "0x1f4c_recall_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "base_fifth_scroll"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.01
+amount = 1
+stackable = true
+buy_price = 52
+sell_price = 26
 decays = true
 hue = 0
 
@@ -461,6 +761,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "bladespiritscroll"
+base_id = "0x1f4d_blade_spirits_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f4e_dispel_field_scroll"
 base_id = "base_item"
 item_id = 8014
@@ -472,6 +779,13 @@ stackable = true
 buy_price = 52
 sell_price = 26
 decays = true
+hue = 0
+
+[[item]]
+id = "dispelfieldscroll"
+base_id = "0x1f4e_dispel_field_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -489,6 +803,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "incognitoscroll"
+base_id = "0x1f4f_incognito_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f50_magic_reflection_scroll"
 base_id = "base_item"
 item_id = 8016
@@ -500,6 +821,13 @@ stackable = true
 buy_price = 52
 sell_price = 26
 decays = true
+hue = 0
+
+[[item]]
+id = "magicreflectionscroll"
+base_id = "0x1f50_magic_reflection_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -517,6 +845,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "mindblastscroll"
+base_id = "0x1f51_mind_blast_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f52_paralyze_scroll"
 base_id = "base_item"
 item_id = 8018
@@ -528,6 +863,13 @@ stackable = true
 buy_price = 52
 sell_price = 26
 decays = true
+hue = 0
+
+[[item]]
+id = "paralyzescroll"
+base_id = "0x1f52_paralyze_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -545,6 +887,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "poisonfieldscroll"
+base_id = "0x1f53_poison_field_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f54_summon_creature_scroll"
 base_id = "base_item"
 item_id = 8020
@@ -555,6 +904,26 @@ amount = 1
 stackable = true
 buy_price = 52
 sell_price = 26
+decays = true
+hue = 0
+
+[[item]]
+id = "summoncreaturescroll"
+base_id = "0x1f54_summon_creature_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "base_sixth_scroll"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.01
+amount = 1
+stackable = true
+buy_price = 62
+sell_price = 31
 decays = true
 hue = 0
 
@@ -573,6 +942,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "dispelscroll"
+base_id = "0x1f55_dispel_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f56_energy_bolt_scroll"
 base_id = "base_item"
 item_id = 8022
@@ -584,6 +960,13 @@ stackable = true
 buy_price = 62
 sell_price = 31
 decays = true
+hue = 0
+
+[[item]]
+id = "energyboltscroll"
+base_id = "0x1f56_energy_bolt_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -601,6 +984,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "explosionscroll"
+base_id = "0x1f57_explosion_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f58_invisibility_scroll"
 base_id = "base_item"
 item_id = 8024
@@ -612,6 +1002,13 @@ stackable = true
 buy_price = 62
 sell_price = 31
 decays = true
+hue = 0
+
+[[item]]
+id = "invisibilityscroll"
+base_id = "0x1f58_invisibility_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -629,6 +1026,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "markscroll"
+base_id = "0x1f59_mark_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f5a_mass_curse_scroll"
 base_id = "base_item"
 item_id = 8026
@@ -640,6 +1044,13 @@ stackable = true
 buy_price = 62
 sell_price = 31
 decays = true
+hue = 0
+
+[[item]]
+id = "masscursescroll"
+base_id = "0x1f5a_mass_curse_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -657,6 +1068,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "paralyzefieldscroll"
+base_id = "0x1f5b_paralyze_field_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f5c_reveal_scroll"
 base_id = "base_item"
 item_id = 8028
@@ -667,6 +1085,26 @@ amount = 1
 stackable = true
 buy_price = 62
 sell_price = 31
+decays = true
+hue = 0
+
+[[item]]
+id = "revealscroll"
+base_id = "0x1f5c_reveal_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "base_seventh_scroll"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.01
+amount = 1
+stackable = true
+buy_price = 72
+sell_price = 36
 decays = true
 hue = 0
 
@@ -685,6 +1123,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "chainlightningscroll"
+base_id = "0x1f5d_chain_lightning_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f5e_energy_field_scroll"
 base_id = "base_item"
 item_id = 8030
@@ -696,6 +1141,13 @@ stackable = true
 buy_price = 72
 sell_price = 36
 decays = true
+hue = 0
+
+[[item]]
+id = "energygfieldscroll"
+base_id = "0x1f5e_energy_field_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -713,6 +1165,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "flamestrikescroll"
+base_id = "0x1f5f_flamestrike_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f60_gate_travel_scroll"
 base_id = "base_item"
 item_id = 8032
@@ -724,6 +1183,13 @@ stackable = true
 buy_price = 72
 sell_price = 36
 decays = true
+hue = 0
+
+[[item]]
+id = "gatetravelscroll"
+base_id = "0x1f60_gate_travel_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -741,6 +1207,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "manavampirescroll"
+base_id = "0x1f61_mana_vampire_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f62_mass_dispel_scroll"
 base_id = "base_item"
 item_id = 8034
@@ -752,6 +1225,13 @@ stackable = true
 buy_price = 72
 sell_price = 36
 decays = true
+hue = 0
+
+[[item]]
+id = "massdispelscroll"
+base_id = "0x1f62_mass_dispel_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -769,6 +1249,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "meteorstormscroll"
+base_id = "0x1f63_meteor_storm_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f64_polymorph_scroll"
 base_id = "base_item"
 item_id = 8036
@@ -779,6 +1266,26 @@ amount = 1
 stackable = true
 buy_price = 72
 sell_price = 36
+decays = true
+hue = 0
+
+[[item]]
+id = "polymorphscroll"
+base_id = "0x1f64_polymorph_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
+id = "base_eighth_scroll"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.01
+amount = 1
+stackable = true
+buy_price = 82
+sell_price = 41
 decays = true
 hue = 0
 
@@ -797,6 +1304,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "earthquakescroll"
+base_id = "0x1f65_earthquake_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f66_energy_vortex_scroll"
 base_id = "base_item"
 item_id = 8038
@@ -808,6 +1322,13 @@ stackable = true
 buy_price = 82
 sell_price = 41
 decays = true
+hue = 0
+
+[[item]]
+id = "energyvortexscroll"
+base_id = "0x1f66_energy_vortex_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -825,6 +1346,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "resurrectionscroll"
+base_id = "0x1f67_resurrection_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f68_summon_air_elemental_scroll"
 base_id = "base_item"
 item_id = 8040
@@ -836,6 +1364,13 @@ stackable = true
 buy_price = 82
 sell_price = 41
 decays = true
+hue = 0
+
+[[item]]
+id = "summonairelementalscroll"
+base_id = "0x1f68_summon_air_elemental_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -853,6 +1388,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "summondaemonscroll"
+base_id = "0x1f69_summon_daemon_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f6a_summon_earth_elemental_scroll"
 base_id = "base_item"
 item_id = 8042
@@ -864,6 +1406,13 @@ stackable = true
 buy_price = 82
 sell_price = 41
 decays = true
+hue = 0
+
+[[item]]
+id = "summonearthelementalscroll"
+base_id = "0x1f6a_summon_earth_elemental_scroll"
+item_id = 0
+rarity = "common"
 hue = 0
 
 [[item]]
@@ -881,6 +1430,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "summonfireelementalscroll"
+base_id = "0x1f6b_summon_fire_elemental_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f6c_summon_water_elemental_scroll"
 base_id = "base_item"
 item_id = 8044
@@ -895,6 +1451,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "summonwaterelementalscroll"
+base_id = "0x1f6c_summon_water_elemental_scroll"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x1f6d_all_spell_scroll"
 base_id = "base_item"
 item_id = 8045
@@ -903,4 +1466,11 @@ rarity = "common"
 amount = 1
 stackable = true
 decays = true
+hue = 0
+
+[[item]]
+id = "allspellscroll"
+base_id = "0x1f6d_all_spell_scroll"
+item_id = 0
+rarity = "common"
 hue = 0

@@ -1,0 +1,1655 @@
+[[item]]
+id = "0x13eb_t2a"
+base_id = "base_ring_gloves"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 122
+sell_price = 61
+hue = 0
+
+[[item]]
+id = "0x13ec_t2a"
+base_id = "base_ring_tunic"
+item_id = 0
+rarity = "common"
+weight = 15.0
+buy_price = 218
+sell_price = 109
+hue = 0
+
+[[item]]
+id = "0x13ee_t2a"
+base_id = "base_ring_sleeves"
+item_id = 0
+rarity = "common"
+weight = 15.0
+buy_price = 147
+sell_price = 73
+hue = 0
+
+[[item]]
+id = "0x13f0_t2a"
+base_id = "base_ring_leggings"
+item_id = 0
+rarity = "common"
+weight = 15.0
+buy_price = 147
+sell_price = 73
+hue = 0
+
+[[item]]
+id = "0x13bb_t2a"
+base_id = "base_chain_coif"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 130
+sell_price = 65
+hue = 0
+
+[[item]]
+id = "0x13be_t2a"
+base_id = "base_chain_leggings"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 166
+sell_price = 83
+hue = 0
+
+[[item]]
+id = "0x13bf_t2a"
+base_id = "base_chain_tunic"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 207
+sell_price = 103
+hue = 0
+
+[[item]]
+id = "0x1c04_t2a"
+base_id = "base_fem_plate"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 245
+sell_price = 122
+hue = 0
+
+[[item]]
+id = "0x1410_t2a"
+base_id = "base_plate_arms"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 181
+sell_price = 90
+hue = 0
+
+[[item]]
+id = "0x1411_t2a"
+base_id = "base_plate_leggings"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 218
+sell_price = 109
+hue = 0
+
+[[item]]
+id = "0x1413_t2a"
+base_id = "base_plate_gorget"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 124
+sell_price = 70
+hue = 0
+
+[[item]]
+id = "0x1414_t2a"
+base_id = "base_plate_gloves"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 145
+sell_price = 72
+hue = 0
+
+[[item]]
+id = "0x1415_t2a"
+base_id = "base_plate_chest"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 273
+sell_price = 136
+hue = 0
+
+[[item]]
+id = "0x13c5_t2a"
+base_id = "base_leather_sleeves"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 80
+sell_price = 40
+hue = 0
+
+[[item]]
+id = "0x13c6_t2a"
+base_id = "base_leather_gloves"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 60
+sell_price = 30
+hue = 0
+
+[[item]]
+id = "0x13c7_t2a"
+base_id = "base_leather_gorget"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 74
+sell_price = 37
+hue = 0
+
+[[item]]
+id = "0x1db9_t2a"
+base_id = "base_leather_cap"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 68
+sell_price = 31
+hue = 0
+
+[[item]]
+id = "0x13cb_t2a"
+base_id = "base_leather_leggings"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 80
+sell_price = 40
+hue = 0
+
+[[item]]
+id = "0x13cc_t2a"
+base_id = "base_leather_tunic"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 101
+sell_price = 52
+hue = 0
+
+[[item]]
+id = "0x1c00_t2a"
+base_id = "base_leather_shorts"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 86
+sell_price = 43
+hue = 0
+
+[[item]]
+id = "0x1c06_t2a"
+base_id = "base_leather_armor"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 116
+sell_price = 58
+hue = 0
+
+[[item]]
+id = "0x1c08_t2a"
+base_id = "base_leather_skirt"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 87
+sell_price = 43
+hue = 0
+
+[[item]]
+id = "0x1c0a_t2a"
+base_id = "base_leather_bustier"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 97
+sell_price = 48
+hue = 0
+
+[[item]]
+id = "0x13d4_t2a"
+base_id = "base_studded_sleeves"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 87
+sell_price = 43
+hue = 0
+
+[[item]]
+id = "0x13d5_t2a"
+base_id = "base_studded_gloves"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 79
+sell_price = 39
+hue = 0
+
+[[item]]
+id = "0x13d6_t2a"
+base_id = "base_studded_gorget"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 73
+sell_price = 36
+hue = 0
+
+[[item]]
+id = "0x13da_t2a"
+base_id = "base_studded_leggings"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 103
+sell_price = 51
+hue = 0
+
+[[item]]
+id = "0x13db_t2a"
+base_id = "base_studded_tunic"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 128
+sell_price = 64
+hue = 0
+
+[[item]]
+id = "0x1c02_t2a"
+base_id = "base_studded_armor"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 142
+sell_price = 71
+hue = 0
+
+[[item]]
+id = "0x1c0c_t2a"
+base_id = "base_studded_bustier"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 120
+sell_price = 60
+hue = 0
+
+[[item]]
+id = "0x144e_t2a"
+base_id = "base_bone_arms"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 156
+sell_price = 78
+hue = 0
+
+[[item]]
+id = "0x144f_t2a"
+base_id = "base_bone_armor"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 234
+sell_price = 117
+hue = 0
+
+[[item]]
+id = "0x1450_t2a"
+base_id = "base_bone_gauntlets"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 133
+sell_price = 66
+hue = 0
+
+[[item]]
+id = "0x1451_t2a"
+base_id = "base_bone_helm"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 157
+sell_price = 71
+hue = 0
+
+[[item]]
+id = "0x1452_t2a"
+base_id = "base_bone_legs"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 179
+sell_price = 89
+hue = 0
+
+[[item]]
+id = "0x1f0b_t2a"
+base_id = "base_orc_helm"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 105
+sell_price = 48
+hue = 0
+
+[[item]]
+id = "0x1408_t2a"
+base_id = "base_close_helm"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 145
+sell_price = 72
+hue = 0
+
+[[item]]
+id = "0x140a_t2a"
+base_id = "base_helmet"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 116
+sell_price = 58
+hue = 0
+
+[[item]]
+id = "0x140c_t2a"
+base_id = "base_bascinet"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 127
+sell_price = 46
+hue = 0
+
+[[item]]
+id = "0x140e_t2a"
+base_id = "base_norse_helm"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 145
+sell_price = 53
+hue = 0
+
+[[item]]
+id = "0x1412_t2a"
+base_id = "base_plate_helm"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 170
+sell_price = 85
+hue = 0
+
+[[item]]
+id = "0x2777_t2a"
+base_id = "base_heavy_platemail_jingasa"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 555
+sell_price = 285
+hue = 0
+
+[[item]]
+id = "0x2778_t2a"
+base_id = "base_decorative_platemail_kabuto"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 694
+sell_price = 352
+hue = 0
+
+[[item]]
+id = "0x277d_t2a"
+base_id = "base_platemail_do"
+item_id = 0
+rarity = "common"
+weight = 11.0
+buy_price = 426
+sell_price = 227
+hue = 0
+
+[[item]]
+id = "0x2780_t2a"
+base_id = "base_platemail_hiro_sode"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 206
+sell_price = 103
+hue = 0
+
+[[item]]
+id = "0x2781_t2a"
+base_id = "base_light_platemail_jingasa"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 267
+sell_price = 121
+hue = 0
+
+[[item]]
+id = "0x2784_t2a"
+base_id = "base_small_platemail_jingasa"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 267
+sell_price = 121
+hue = 0
+
+[[item]]
+id = "0x2785_t2a"
+base_id = "base_platemail_battle_kabuto"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 225
+sell_price = 102
+hue = 0
+
+[[item]]
+id = "0x2788_t2a"
+base_id = "base_platemail_suneate"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 204
+sell_price = 90
+hue = 0
+
+[[item]]
+id = "0x2789_t2a"
+base_id = "base_platemail_kabuto"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 225
+sell_price = 102
+hue = 0
+
+[[item]]
+id = "0x236c_t2a"
+base_id = "base_kabuto"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 188
+sell_price = 86
+hue = 0
+
+[[item]]
+id = "0x278d_t2a"
+base_id = "base_platemail_haidate"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 214
+sell_price = 95
+hue = 0
+
+[[item]]
+id = "0x2774_t2a"
+base_id = "base_chainmail_hatsuburi"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 555
+sell_price = 285
+hue = 0
+
+[[item]]
+id = "0x2775_t2a"
+base_id = "base_platemail_hatsuburi"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 555
+sell_price = 285
+hue = 0
+
+[[item]]
+id = "0x2779_t2a"
+base_id = "base_platemail_mempo"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 166
+sell_price = 87
+hue = 0
+
+[[item]]
+id = "0x278e_t2a"
+base_id = "base_leather_ninja_hood"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 73
+sell_price = 33
+hue = 0
+
+[[item]]
+id = "0x2790_t2a"
+base_id = "base_leather_ninja_belt"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 36
+sell_price = 16
+hue = 0
+
+[[item]]
+id = "0x2791_t2a"
+base_id = "base_leather_ninja_pants"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 45
+sell_price = 20
+hue = 0
+
+[[item]]
+id = "0x2792_t2a"
+base_id = "base_leather_ninja_mitts"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 71
+sell_price = 35
+hue = 0
+
+[[item]]
+id = "0x2793_t2a"
+base_id = "base_leather_ninja_jacket"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 70
+sell_price = 38
+hue = 0
+
+[[item]]
+id = "0x2776_t2a"
+base_id = "base_leather_jingasa"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 80
+sell_price = 37
+hue = 0
+
+[[item]]
+id = "0x277a_t2a"
+base_id = "base_leather_mempo"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 64
+sell_price = 34
+hue = 0
+
+[[item]]
+id = "0x277b_t2a"
+base_id = "base_leather_do"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 120
+sell_price = 62
+hue = 0
+
+[[item]]
+id = "0x277e_t2a"
+base_id = "base_leather_hiro_sode"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 45
+sell_price = 21
+hue = 0
+
+[[item]]
+id = "0x2786_t2a"
+base_id = "base_leather_suneate"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 50
+sell_price = 21
+hue = 0
+
+[[item]]
+id = "0x278a_t2a"
+base_id = "base_leather_haidate"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 49
+sell_price = 23
+hue = 0
+
+[[item]]
+id = "0x277c_t2a"
+base_id = "base_studded_do"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 179
+sell_price = 97
+hue = 0
+
+[[item]]
+id = "0x277f_t2a"
+base_id = "base_studded_hiro_sode"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 68
+sell_price = 30
+hue = 0
+
+[[item]]
+id = "0x2787_t2a"
+base_id = "base_studded_suneate"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 71
+sell_price = 32
+hue = 0
+
+[[item]]
+id = "0x278b_t2a"
+base_id = "base_studded_haidate"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 69
+sell_price = 30
+hue = 0
+
+[[item]]
+id = "0x279d_t2a"
+base_id = "base_studded_mempo"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 66
+sell_price = 32
+hue = 0
+
+[[item]]
+id = "0x2fc8_t2a"
+base_id = "base_leaf_arms"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 71
+sell_price = 35
+hue = 0
+
+[[item]]
+id = "0x2fc5_t2a"
+base_id = "base_leaf_tunic"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 117
+sell_price = 59
+hue = 0
+
+[[item]]
+id = "0x2fcb_t2a"
+base_id = "base_leaf_armor"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 117
+sell_price = 59
+hue = 0
+
+[[item]]
+id = "0x2fc6_t2a"
+base_id = "base_leaf_gloves"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 71
+sell_price = 35
+hue = 0
+
+[[item]]
+id = "0x2fc7_t2a"
+base_id = "base_leaf_gorget"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 64
+sell_price = 34
+hue = 0
+
+[[item]]
+id = "0x2fc9_t2a"
+base_id = "base_leaf_leggings"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 90
+sell_price = 45
+hue = 0
+
+[[item]]
+id = "0x2fca_t2a"
+base_id = "base_leaf_tonlet"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 90
+sell_price = 45
+hue = 0
+
+[[item]]
+id = "0x2b77_t2a"
+base_id = "base_hide_pauldrons"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 107
+sell_price = 54
+hue = 0
+
+[[item]]
+id = "0x2b74_t2a"
+base_id = "base_hide_tunic"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 172
+sell_price = 86
+hue = 0
+
+[[item]]
+id = "0x2b79_t2a"
+base_id = "base_hide_armor"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 172
+sell_price = 86
+hue = 0
+
+[[item]]
+id = "0x2b75_t2a"
+base_id = "base_hide_gloves"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 107
+sell_price = 53
+hue = 0
+
+[[item]]
+id = "0x2b78_t2a"
+base_id = "base_hide_pants"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 131
+sell_price = 65
+hue = 0
+
+[[item]]
+id = "0x2b76_t2a"
+base_id = "base_hide_gorget"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 98
+sell_price = 52
+hue = 0
+
+[[item]]
+id = "0x2657_t2a"
+base_id = "base_dragon_sleeves"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 98
+sell_price = 49
+hue = 0
+
+[[item]]
+id = "0x2641_t2a"
+base_id = "base_dragon_breastplate"
+item_id = 0
+rarity = "common"
+weight = 11.0
+buy_price = 172
+sell_price = 86
+hue = 0
+
+[[item]]
+id = "0x2643_t2a"
+base_id = "base_dragon_gloves"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 98
+sell_price = 49
+hue = 0
+
+[[item]]
+id = "0x2645_t2a"
+base_id = "base_dragon_helm"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 115
+sell_price = 52
+hue = 0
+
+[[item]]
+id = "0x2647_t2a"
+base_id = "base_dragon_leggings"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 131
+sell_price = 65
+hue = 0
+
+[[item]]
+id = "0x2b6c_t2a"
+base_id = "base_woodland_arms"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 179
+sell_price = 89
+hue = 0
+
+[[item]]
+id = "0x2b67_t2a"
+base_id = "base_woodland_chest"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 313
+sell_price = 156
+hue = 0
+
+[[item]]
+id = "0x2b6d_t2a"
+base_id = "base_woodland_armor"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 313
+sell_price = 156
+hue = 0
+
+[[item]]
+id = "0x2b6a_t2a"
+base_id = "base_woodland_gauntlets"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 178
+sell_price = 88
+hue = 0
+
+[[item]]
+id = "0x2b6b_t2a"
+base_id = "base_woodland_leggings"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 239
+sell_price = 119
+hue = 0
+
+[[item]]
+id = "0x2b69_t2a"
+base_id = "base_woodland_gorget"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 170
+sell_price = 90
+hue = 0
+
+[[item]]
+id = "0x2b6e_t2a"
+base_id = "base_circlet"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 37
+sell_price = 17
+hue = 0
+
+[[item]]
+id = "0x2b6f_t2a"
+base_id = "base_royal_circlet"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 37
+sell_price = 17
+hue = 0
+
+[[item]]
+id = "0x2b70_t2a"
+base_id = "base_gemmed_circlet"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 37
+sell_price = 17
+hue = 0
+
+[[item]]
+id = "0x2b71_t2a"
+base_id = "base_raven_helm"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 188
+sell_price = 86
+hue = 0
+
+[[item]]
+id = "0x2b72_t2a"
+base_id = "base_vulture_helm"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 188
+sell_price = 86
+hue = 0
+
+[[item]]
+id = "0x2b73_t2a"
+base_id = "base_winged_helm"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 188
+sell_price = 86
+hue = 0
+
+[[item]]
+id = "0x2fb8_t2a"
+base_id = "base_elven_glasses"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 73
+sell_price = 33
+hue = 0
+
+[[item]]
+id = "0x0404_t2a"
+base_id = "base_gargish_cloth_arms"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 57
+sell_price = 28
+hue = 0
+
+[[item]]
+id = "0x0403_t2a"
+base_id = "base_female_gargish_cloth_arms"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 57
+sell_price = 28
+hue = 0
+
+[[item]]
+id = "0x0406_t2a"
+base_id = "base_gargish_cloth_chest"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 107
+sell_price = 62
+hue = 0
+
+[[item]]
+id = "0x0405_t2a"
+base_id = "base_female_gargish_cloth_chest"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 114
+sell_price = 59
+hue = 0
+
+[[item]]
+id = "0x040a_t2a"
+base_id = "base_gargish_cloth_leggings"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 60
+sell_price = 26
+hue = 0
+
+[[item]]
+id = "0x0409_t2a"
+base_id = "base_female_gargish_cloth_leggings"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 65
+sell_price = 24
+hue = 0
+
+[[item]]
+id = "0x0408_t2a"
+base_id = "base_gargish_cloth_kilt"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 51
+sell_price = 26
+hue = 0
+
+[[item]]
+id = "0x0407_t2a"
+base_id = "base_female_gargish_cloth_kilt"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 52
+sell_price = 24
+hue = 0
+
+[[item]]
+id = "0x45a4_t2a"
+base_id = "base_gargish_cloth_wing_armor"
+item_id = 0
+rarity = "common"
+weight = 2.0
+hue = 0
+
+[[item]]
+id = "0x0302_t2a"
+base_id = "base_gargish_leather_arms"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 74
+sell_price = 38
+hue = 0
+
+[[item]]
+id = "0x0301_t2a"
+base_id = "base_gargish_leather_arms"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 68
+sell_price = 39
+hue = 0
+
+[[item]]
+id = "0x0304_t2a"
+base_id = "base_gargish_leather_chest"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 106
+sell_price = 64
+hue = 0
+
+[[item]]
+id = "0x0303_t2a"
+base_id = "base_female_gargish_leather_chest"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 106
+sell_price = 64
+hue = 0
+
+[[item]]
+id = "0x0306_t2a"
+base_id = "base_gargish_leather_leggings"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 61
+sell_price = 27
+hue = 0
+
+[[item]]
+id = "0x0305_t2a"
+base_id = "base_female_gargish_leather_leggings"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 61
+sell_price = 27
+hue = 0
+
+[[item]]
+id = "0x0311_t2a"
+base_id = "base_gargish_leather_kilt"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 77
+sell_price = 39
+hue = 0
+
+[[item]]
+id = "0x0310_t2a"
+base_id = "base_female_gargish_leather_kilt"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 84
+sell_price = 37
+hue = 0
+
+[[item]]
+id = "0x457e_t2a"
+base_id = "base_gargish_leather_wing_armor"
+item_id = 0
+rarity = "common"
+weight = 2.0
+hue = 0
+
+[[item]]
+id = "0x0308_t2a"
+base_id = "base_gargish_plate_arms"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 304
+sell_price = 152
+hue = 0
+
+[[item]]
+id = "0x0307_t2a"
+base_id = "base_female_gargish_plate_arms"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 336
+sell_price = 168
+hue = 0
+
+[[item]]
+id = "0x030a_t2a"
+base_id = "base_gargish_plate_chest"
+item_id = 0
+rarity = "common"
+weight = 11.0
+buy_price = 635
+sell_price = 338
+hue = 0
+
+[[item]]
+id = "0x0309_t2a"
+base_id = "base_female_gargish_plate_chest"
+item_id = 0
+rarity = "common"
+weight = 11.0
+buy_price = 661
+sell_price = 98
+hue = 0
+
+[[item]]
+id = "0x030e_t2a"
+base_id = "base_gargish_plate_leggings"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 323
+sell_price = 143
+hue = 0
+
+[[item]]
+id = "0x030d_t2a"
+base_id = "base_female_gargish_plate_leggings"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 338
+sell_price = 150
+hue = 0
+
+[[item]]
+id = "0x030c_t2a"
+base_id = "base_gargish_plate_kilt"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 336
+sell_price = 149
+hue = 0
+
+[[item]]
+id = "0x030b_t2a"
+base_id = "base_female_gargish_plate_kilt"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 307
+sell_price = 137
+hue = 0
+
+[[item]]
+id = "0x0284_t2a"
+base_id = "base_gargish_stone_arms"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 107
+sell_price = 54
+hue = 0
+
+[[item]]
+id = "0x0283_t2a"
+base_id = "base_female_gargish_stone_arms"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 107
+sell_price = 54
+hue = 0
+
+[[item]]
+id = "0x0286_t2a"
+base_id = "base_gargish_stone_chest"
+item_id = 0
+rarity = "common"
+weight = 16.0
+buy_price = 195
+sell_price = 104
+hue = 0
+
+[[item]]
+id = "0x0285_t2a"
+base_id = "base_female_gargish_stone_chest"
+item_id = 0
+rarity = "common"
+weight = 16.0
+buy_price = 185
+sell_price = 98
+hue = 0
+
+[[item]]
+id = "0x028a_t2a"
+base_id = "base_gargish_stone_leggings"
+item_id = 0
+rarity = "common"
+weight = 16.0
+buy_price = 103
+sell_price = 45
+hue = 0
+
+[[item]]
+id = "0x0289_t2a"
+base_id = "base_female_gargish_stone_leggings"
+item_id = 0
+rarity = "common"
+weight = 16.0
+buy_price = 105
+sell_price = 47
+hue = 0
+
+[[item]]
+id = "0x0288_t2a"
+base_id = "base_gargish_stone_kilt"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 120
+sell_price = 53
+hue = 0
+
+[[item]]
+id = "0x0287_t2a"
+base_id = "base_female_gargish_stone_kilt"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 123
+sell_price = 54
+hue = 0
+
+[[item]]
+id = "0x782e_t2a"
+base_id = "base_dragon_turtle_hide_arms"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 134
+sell_price = 67
+hue = 0
+
+[[item]]
+id = "0x782a_t2a"
+base_id = "base_dragon_turtle_hide_chest"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 234
+sell_price = 117
+hue = 0
+
+[[item]]
+id = "0x782b_t2a"
+base_id = "base_dragon_turtle_hide_bustier"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 234
+sell_price = 117
+hue = 0
+
+[[item]]
+id = "0x782d_t2a"
+base_id = "base_dragon_turtle_hide_helm"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 157
+sell_price = 71
+hue = 0
+
+[[item]]
+id = "0x782c_t2a"
+base_id = "base_dragon_turtle_hide_leggings"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 179
+sell_price = 89
+hue = 0
+
+[[item]]
+id = "0x7822_t2a"
+base_id = "base_tiger_pelt_chest"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 172
+sell_price = 86
+hue = 0
+
+[[item]]
+id = "0x7823_t2a"
+base_id = "base_tiger_pelt_bustier"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 172
+sell_price = 86
+hue = 0
+
+[[item]]
+id = "0x7828_t2a"
+base_id = "base_tiger_pelt_helm"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 115
+sell_price = 52
+hue = 0
+
+[[item]]
+id = "0x7824_t2a"
+base_id = "base_tiger_pelt_leggings"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 131
+sell_price = 65
+hue = 0
+
+[[item]]
+id = "0x7825_t2a"
+base_id = "base_tiger_pelt_shorts"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 131
+sell_price = 65
+hue = 0
+
+[[item]]
+id = "0x7826_t2a"
+base_id = "base_tiger_pelt_long_skirt"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 131
+sell_price = 65
+hue = 0
+
+[[item]]
+id = "0x7827_t2a"
+base_id = "base_tiger_pelt_skirt"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 131
+sell_price = 65
+hue = 0
+
+[[item]]
+id = "0x7829_t2a"
+base_id = "base_tiger_pelt_collar"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 94
+sell_price = 49
+hue = 0
+
+[[item]]
+id = "0x1b72_t2a"
+base_id = "base_bronze_shield"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 91
+sell_price = 45
+hue = 0
+
+[[item]]
+id = "0x1b73_t2a"
+base_id = "base_buckler"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 66
+sell_price = 33
+hue = 0
+
+[[item]]
+id = "0x1b74_t2a"
+base_id = "base_metal_kite_shield"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 135
+sell_price = 67
+hue = 0
+
+[[item]]
+id = "0x1b76_t2a"
+base_id = "base_heater_shield"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 175
+sell_price = 87
+hue = 0
+
+[[item]]
+id = "0x1b7b_t2a"
+base_id = "base_metal_shield"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 98
+sell_price = 49
+hue = 0
+
+[[item]]
+id = "0x1b78_t2a"
+base_id = "base_wooden_kite_shield"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 121
+sell_price = 60
+hue = 0
+
+[[item]]
+id = "0x1b7a_t2a"
+base_id = "base_wooden_shield"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 62
+sell_price = 31
+hue = 0
+
+[[item]]
+id = "0x1bc4_t2a"
+base_id = "base_order_shield"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 196
+sell_price = 98
+hue = 0
+
+[[item]]
+id = "0x1bc3_t2a"
+base_id = "base_chaos_shield"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 209
+sell_price = 104
+hue = 0
+
+[[item]]
+id = "0x4228_t2a"
+base_id = "base_gargish_chaos_shield"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 209
+sell_price = 104
+hue = 0
+
+[[item]]
+id = "0x4201_t2a"
+base_id = "base_gargish_kite_shield"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 118
+sell_price = 59
+hue = 0
+
+[[item]]
+id = "0x422a_t2a"
+base_id = "base_gargish_order_shield"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 196
+sell_price = 98
+hue = 0
+
+[[item]]
+id = "0x4204_t2a"
+base_id = "base_large_plate_shield"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 209
+sell_price = 104
+hue = 0
+
+[[item]]
+id = "0x4205_t2a"
+base_id = "base_large_stone_shield"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 59
+sell_price = 29
+hue = 0
+
+[[item]]
+id = "0x4203_t2a"
+base_id = "base_medium_plate_shield"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 118
+sell_price = 59
+hue = 0
+
+[[item]]
+id = "0x4202_t2a"
+base_id = "base_small_plate_shield"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 59
+sell_price = 29
+hue = 0
+
+[[item]]
+id = "0x4200_t2a"
+base_id = "base_gargish_wooden_shield"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 62
+sell_price = 31
+hue = 0

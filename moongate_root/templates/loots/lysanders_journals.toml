@@ -1,3 +1,37 @@
 [[loot]]
 id = "lysanders_journals"
-entries = []
+[[loot.entries]]
+weight = 1
+item_id = "lysanders_notebook_1"
+comment = "Lysander's Notebook"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "lysanders_notebook_2"
+comment = "Lysander's Notebook"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "lysanders_notebook_3"
+comment = "Lysander's Notebook"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "lysanders_notebook_7"
+comment = "Lysander's Notebook"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "lysanders_notebook_8"
+comment = "Lysander's Notebook"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "lysanders_notebook_11"
+comment = "Lysander's Notebook"
+amount = 1

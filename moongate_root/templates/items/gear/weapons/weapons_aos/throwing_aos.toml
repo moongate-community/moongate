@@ -1,0 +1,29 @@
+[[item]]
+id = "0x090a_aos"
+base_id = "base_soul_glaive"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 69
+sell_price = 32
+hue = 0
+
+[[item]]
+id = "0x08ff_aos"
+base_id = "base_boomerang"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 29
+sell_price = 13
+hue = 0
+
+[[item]]
+id = "0x0901_aos"
+base_id = "base_cyclone"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 48
+sell_price = 22
+hue = 0

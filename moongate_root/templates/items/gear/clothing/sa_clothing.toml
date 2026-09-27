@@ -9,6 +9,13 @@ decays = true
 hue = 0
 
 [[item]]
+id = "gargishclothwingarmor"
+base_id = "0x45a4_gargish_cloth_wing_armor"
+item_id = 0
+rarity = "common"
+hue = 0
+
+[[item]]
 id = "0x4002_gargish_fancy_robe"
 base_id = "base_item"
 item_id = 16386

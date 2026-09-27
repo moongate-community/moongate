@@ -175,6 +175,14 @@ rarity = "common"
 hue = 0
 
 [[item]]
+id = "glacialstaff"
+base_id = "0x0df1"
+item_id = 0
+name = "magic staff"
+rarity = "common"
+hue = 1152
+
+[[item]]
 id = "orcishkinmask"
 base_id = "base_item"
 item_id = 5148
