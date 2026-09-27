@@ -94,14 +94,16 @@ karma and skills (template points × 10, the tenths the mobile stores). `title` 
 1. rejects a location outside the map, before anything else, and a template that resolves
    to no body and no race;
 2. creates the mobile and places it;
-3. publishes `MobileBeforeSpawnEvent`: a handler may change the mobile;
+3. publishes `MobileBeforeSpawnEvent`: a handler may change the mobile, even move it; the
+   place is checked against the map again afterwards;
 4. in one transaction, saves the mobile (its serial comes from the mobile range) and
    creates each equipment entry through `IItemFactoryService`: an entry with a `gender`
    is skipped for the other gender; the item is worn on its layer (the template's, else
    tiledata's for a wearable graphic); an item with no layer, or whose layer is taken,
    is dropped, since NPCs have no backpack yet;
-5. after the commit, publishes `MobileMovedToWorldEvent` and then
-   `MobileAfterSpawnEvent`.
+5. after the commit, publishes `MobileMovedToWorldEvent` (with the place the mobile was
+   saved at) and then `MobileAfterSpawnEvent`, without cancellation: the mobile is saved
+   by then. A failure before the commit leaves the in-memory mobile without a serial.
 
 The event bus logs a handler's exception and goes on, so a handler cannot stop or undo a
 spawn.

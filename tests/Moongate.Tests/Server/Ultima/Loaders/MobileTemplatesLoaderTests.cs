@@ -79,6 +79,34 @@ public sealed class MobileTemplatesLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_AChildWithoutItsOwnSkills_GetsACopy()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/mobiles/a.toml",
+            "[[mobile]]\nid = \"p\"\nbody = 1\nskills = { tactics = \"60\" }\n\n[[mobile]]\nid = \"c\"\nbase_id = \"p\"\n"
+        );
+
+        var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+        templates["c"].Skills!["tactics"] = DiceSpec.FromValue(1);
+
+        Assert.Equal("60", templates["p"].Skills!["tactics"].ToString());
+    }
+
+    [Fact]
+    public async Task LoadDataAsync_TheGenderNameListWithoutAFemaleList_Throws()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/mobiles/a.toml", "[[mobile]]\nid = \"guard\"\nbody = 400\nname_list = \"{gender}\"\n");
+        var loader = new MobileTemplatesLoader(
+            new DirectoriesConfig(root.Path, ["templates"]),
+            new StubDataLoaderService().With(new NameList { Id = "male", Names = ["Aaron"] })
+        );
+
+        Assert.Contains("female", (await Assert.ThrowsAsync<InvalidDataException>(() => loader.LoadDataAsync())).Message);
+    }
+
+    [Fact]
     public async Task LoadDataAsync_TheGenderNameList_IsAccepted()
     {
         using var root = new TemporaryDirectory();
@@ -92,7 +120,11 @@ public sealed class MobileTemplatesLoaderTests
         return new(
             new DirectoriesConfig(root.Path, ["templates"]),
             new StubDataLoaderService()
-                .With(new NameList { Id = "orc", Names = ["Grok"] }, new NameList { Id = "male", Names = ["Aaron"] })
+                .With(
+                    new NameList { Id = "orc", Names = ["Grok"] },
+                    new NameList { Id = "male", Names = ["Aaron"] },
+                    new NameList { Id = "female", Names = ["Alice"] }
+                )
                 .With(new ItemTemplate { Id = "club", ItemId = new Serial(0x13B4) }, new ItemTemplate { Id = "axe", ItemId = new Serial(0x0F49) })
         );
     }

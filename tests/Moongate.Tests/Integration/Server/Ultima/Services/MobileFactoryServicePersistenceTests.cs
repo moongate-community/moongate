@@ -196,6 +196,70 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SpawnAsync_ABeforeSpawnMoveOutsideTheMap_IsRejected_AndAMoveInsideIsWhereItIsSaved()
+    {
+        var move = new Point3D(300, 20, 0);
+        _bus.Subscribe<MobileBeforeSpawnEvent>(
+            (e, _) =>
+            {
+                e.Mobile.Location = move;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        await Assert.ThrowsAsync<ArgumentOutOfRangeException>(
+            () => _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0))
+        );
+        Assert.Empty(await _mobiles.QueryAsync(m => m.TemplateId == "guard"));
+
+        move = new Point3D(50, 60, 5);
+        var spawned = await _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0));
+
+        Assert.Equal(move, (await _mobiles.GetByIdAsync(spawned.Mobile.Id))!.Location);
+        Assert.Equal(move, _published.OfType<MobileMovedToWorldEvent>().Single().Location);
+    }
+
+    [Fact]
+    public async Task SpawnAsync_AFailureAfterTheMobileUpsert_LeavesItWithoutASerial()
+    {
+        MobileEntity? seen = null;
+        _bus.Subscribe<MobileBeforeSpawnEvent>(
+            (e, _) =>
+            {
+                seen = e.Mobile;
+
+                return Task.CompletedTask;
+            }
+        );
+
+        await Assert.ThrowsAsync<KeyNotFoundException>(
+            () => _factory.SpawnAsync("broken", MapType.Felucca, new Point3D(10, 20, 0))
+        );
+
+        Assert.Equal(Serial.Zero, seen!.Id);
+    }
+
+    [Fact]
+    public async Task SpawnAsync_CancelledAfterTheCommit_StillReturnsTheSavedMobile()
+    {
+        using var cancellation = new CancellationTokenSource();
+        _bus.Subscribe<MobileMovedToWorldEvent>(
+            (_, _) =>
+            {
+                cancellation.Cancel();
+
+                return Task.CompletedTask;
+            }
+        );
+
+        var spawned = await _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0), cancellation.Token);
+
+        Assert.NotNull(await _mobiles.GetByIdAsync(spawned.Mobile.Id));
+        Assert.Contains(_published, e => e is MobileAfterSpawnEvent);
+    }
+
+    [Fact]
     public async Task SaveAsync_UpdatesAnExistingMobile_AndRejectsANewOne()
     {
         var spawned = await _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0));

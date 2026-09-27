@@ -508,6 +508,13 @@ attack = 40
 id = "base_raiju"
 base_id = "base_elemental"
 name = "a Rai-Ju"
+body = 199
+[mobile.sounds]
+start_attack = 278
+idle = 279
+attack = 280
+hurt = 281
+death = 282
 
 [[mobile]]
 id = "raiju"

@@ -465,11 +465,17 @@ internal static class MobileTemplateBuilder
     }
 
     /// <summary>
-    ///     Parses a UOX3 number, hex with <c>0x</c> or decimal.
+    ///     Parses a UOX3 number, hex with <c>0x</c> or decimal. A doubled prefix, as in UOX3's <c>ID=0x0xc7</c>, is read
+    ///     as one.
     /// </summary>
     public static bool TryParseNumber(string text, out int value)
     {
         text = text.Trim();
+
+        if (text.StartsWith("0x0x", StringComparison.OrdinalIgnoreCase))
+        {
+            text = text[2..];
+        }
 
         return text.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
             ? int.TryParse(text[2..], NumberStyles.HexNumber, null, out value)

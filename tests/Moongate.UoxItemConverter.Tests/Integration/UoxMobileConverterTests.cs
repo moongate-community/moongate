@@ -124,6 +124,18 @@ public sealed class UoxMobileConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_ADoubledHexPrefix_IsReadAsOne()
+    {
+        // UOX3's base_raiju has ID=0x0xc7.
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource("npc/a.dfn", "[x]\n{\nID=0x0xc7\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Equal(0xC7, ReadMobiles("a.toml")["x"].Body);
+    }
+
+    [Fact]
     public void Run_NumbersBecomeDice()
     {
         WriteItemsAndNames();

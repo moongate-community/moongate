@@ -8,6 +8,7 @@ using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Races;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
@@ -66,7 +67,11 @@ public class MobileFactoryService : IMobileFactoryService
 
     public MobileEntity Create(string templateId)
     {
-        var template = _templates.Get(templateId);
+        return Create(_templates.Get(templateId));
+    }
+
+    private MobileEntity Create(MobileTemplate template)
+    {
         var gender = template.Gender switch
         {
             MobileGenderType.Female => GenderType.Female,
@@ -134,7 +139,7 @@ public class MobileFactoryService : IMobileFactoryService
         }
 
         var template = _templates.Get(templateId);
-        var mobile = Create(templateId);
+        var mobile = Create(template);
 
         if (mobile.Body == 0)
         {
@@ -147,9 +152,49 @@ public class MobileFactoryService : IMobileFactoryService
         mobile.Location = location;
         await _eventBus.PublishAsync(new MobileBeforeSpawnEvent(mobile, map, location), cancellationToken);
 
+        // A handler may have moved the mobile: it must still be on its map.
+        if (!_maps.Contains(mobile.Map, mobile.Location.X, mobile.Location.Y))
+        {
+            throw new ArgumentOutOfRangeException(
+                nameof(location),
+                mobile.Location,
+                $"A MobileBeforeSpawnEvent handler moved the mobile to {mobile.Location}, outside {mobile.Map}."
+            );
+        }
+
         var equipment = new List<ItemEntity>();
 
-        await _persistence.ExecuteInTransactionAsync(
+        try
+        {
+            await SaveSpawnAsync(template, mobile, equipment, cancellationToken);
+        }
+        catch
+        {
+            // The rollback undid the rows; the in-memory mobile must not keep a serial that does not exist.
+            mobile.Id = Serial.Zero;
+
+            throw;
+        }
+
+        var spawned = new SpawnedMobile(mobile, equipment);
+
+        // After the commit the mobile is saved whatever happens: the events are published without cancellation.
+        await _eventBus.PublishAsync(new MobileMovedToWorldEvent(mobile, mobile.Map, mobile.Location), CancellationToken.None);
+        await _eventBus.PublishAsync(new MobileAfterSpawnEvent(spawned), CancellationToken.None);
+
+        return spawned;
+    }
+
+    private Task SaveSpawnAsync(
+        MobileTemplate template,
+        MobileEntity mobile,
+        List<ItemEntity> equipment,
+        CancellationToken cancellationToken
+    )
+    {
+        var templateId = template.Id;
+
+        return _persistence.ExecuteInTransactionAsync(
             PersistenceDatabaseTarget.Realm,
             async transaction =>
             {
@@ -190,12 +235,6 @@ public class MobileFactoryService : IMobileFactoryService
             },
             cancellationToken
         );
-
-        var spawned = new SpawnedMobile(mobile, equipment);
-        await _eventBus.PublishAsync(new MobileMovedToWorldEvent(mobile, map, location), cancellationToken);
-        await _eventBus.PublishAsync(new MobileAfterSpawnEvent(spawned), cancellationToken);
-
-        return spawned;
     }
 
     public Task SaveAsync(MobileEntity mobile, CancellationToken cancellationToken = default)

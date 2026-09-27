@@ -81,6 +81,14 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
                                         .Select(template => template.Id)
                                         .ToHashSet(StringComparer.Ordinal);
 
+        if (resolved.Values.Any(template => template.NameList == GenderNameList) &&
+            new[] { "male", "female" }.FirstOrDefault(list => !nameLists.Contains(list)) is { } missingList)
+        {
+            throw new InvalidDataException(
+                $"A mobile template uses name_list \"{GenderNameList}\", but the '{missingList}' name list does not exist."
+            );
+        }
+
         foreach (var template in resolved.Values)
         {
             template.Validate();
