@@ -153,20 +153,31 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         Assert.Single(_created);
     }
 
-    [Theory, InlineData(0), InlineData(7), InlineData(-1)]
-    public async Task CreateAsync_SlotInUseOrOutOfRange_IsRefused(int slot)
+    [Theory, InlineData(0), InlineData(7), InlineData(-1), InlineData(200)]
+    public async Task CreateAsync_SlotInUseOrOutOfRange_TakesTheFirstFreeSlot(int slot)
     {
         var service = CreateService();
         await service.CreateAsync(Account, Request());
 
         var result = await service.CreateAsync(Account, Request() with { Slot = slot, Name = "Bran" });
 
-        Assert.Equal(CharacterCreationRefusalType.SlotUnavailable, result.Refusal);
-        Assert.Single(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account));
+        Assert.True(result.IsCreated);
+        var bran = Assert.Single(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account && mobile.Name == "Bran"));
+        Assert.Equal((byte?)1, bran.Slot);
     }
 
     [Fact]
-    public async Task CreateAsync_SlotTakenByAConcurrentCreate_IsRefused()
+    public async Task CreateAsync_FreeRequestedSlot_IsKept()
+    {
+        var service = CreateService();
+
+        await service.CreateAsync(Account, Request() with { Slot = 4 });
+
+        Assert.Equal((byte?)4, Assert.Single(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account)).Slot);
+    }
+
+    [Fact]
+    public async Task CreateAsync_ConcurrentCreatesForOneSlot_NeverShareIt()
     {
         var service = CreateService();
 
@@ -175,11 +186,16 @@ public sealed class CharacterServiceTests : IAsyncLifetime
             service.CreateAsync(Account, Request() with { Slot = 3, Name = "Bran" })
         );
 
-        Assert.Single(results, result => result.IsCreated);
-        Assert.Single(results, result => result.Refusal == CharacterCreationRefusalType.SlotUnavailable);
-        var stored = Assert.Single(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account));
-        Assert.Single(await _items.QueryAsync(item => item.MobileId == stored.Id));
-        Assert.Single(_created);
+        // Depending on timing the second either sees the first and takes another slot, or collides on the unique
+        // index and is refused; the two never end up in one slot.
+        Assert.All(
+            results.Where(result => !result.IsCreated),
+            result => Assert.Equal(CharacterCreationRefusalType.SlotUnavailable, result.Refusal)
+        );
+        var stored = await _mobiles.QueryAsync(mobile => mobile.AccountId == Account);
+        Assert.Equal(results.Count(result => result.IsCreated), stored.Count);
+        Assert.Equal(stored.Count, stored.Select(mobile => mobile.Slot).Distinct().Count());
+        Assert.Equal(stored.Count, _created.Count);
     }
 
     [Fact]

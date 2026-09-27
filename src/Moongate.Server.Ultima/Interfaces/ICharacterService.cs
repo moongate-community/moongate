@@ -10,9 +10,9 @@ namespace Moongate.Server.Ultima.Interfaces;
 public interface ICharacterService
 {
     /// <summary>
-    ///     Creates a character for the account: refuses it only when the account is at its limit or the slot is taken
-    ///     or out of range, replaces every other bad choice with a safe value, and saves the character and its starting
-    ///     items in one transaction. Publishes <see cref="Data.Events.CharacterCreatedEvent" /> after the commit.
+    ///     Creates a character for the account: refuses it only when the account is at its limit, puts it in the
+    ///     requested slot when that is free and otherwise in the first free one, replaces every other bad choice with a
+    ///     safe value, and saves the character and its starting items in one transaction. Publishes <see cref="Data.Events.CharacterCreatedEvent" /> after the commit.
     /// </summary>
     Task<CharacterCreationResult> CreateAsync(
         Serial accountId,
