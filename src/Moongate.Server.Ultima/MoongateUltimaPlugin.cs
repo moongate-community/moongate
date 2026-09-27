@@ -135,6 +135,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddMoongateService<IMapService, MapService>(-4);
             // After IUltimaDataService: the multis come from the client directory.
             container.AddMoongateService<IMultiService, MultiService>(-4);
+            // After the loaders and the item templates: checks the configured backpack and gold templates exist.
+            container.AddMoongateService<IStartingItemsService, StartingItemsService>(-3);
         }
     }
 }
