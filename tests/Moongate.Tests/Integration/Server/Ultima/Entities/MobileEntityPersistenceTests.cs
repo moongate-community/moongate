@@ -1,5 +1,8 @@
+using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Extensions;
+using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
@@ -257,5 +260,38 @@ public sealed class MobileEntityPersistenceTests
         character.Z = -5;
 
         Assert.Equal(new Point3D(1, 2, -5), character.Location);
+    }
+
+    [Fact]
+    public async Task Slot_IsStored_AndTwoCharactersOfOneAccountCannotShareIt()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        host.Container.AddPersistenceWorld<MobileEntity>();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var account = new Serial(0x42);
+
+        await mobiles.UpsertAsync(new MobileEntity { Name = "Aria", AccountId = account, Slot = 2 });
+
+        Assert.Equal((byte?)2, Assert.Single(await mobiles.QueryAsync(mobile => mobile.AccountId == account)).Slot);
+        await Assert.ThrowsAnyAsync<Exception>(() =>
+            mobiles.UpsertAsync(new MobileEntity { Name = "Bran", AccountId = account, Slot = 2 })
+        );
+    }
+
+    [Fact]
+    public async Task Slot_NpcsWithoutAccountOrSlotNeverCollide()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        host.Container.AddPersistenceWorld<MobileEntity>();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+
+        await mobiles.UpsertAsync(new MobileEntity { Name = "an orc" });
+        await mobiles.UpsertAsync(new MobileEntity { Name = "an orc" });
+
+        Assert.Equal(2, (await mobiles.QueryAsync(mobile => mobile.Name == "an orc")).Count);
     }
 }

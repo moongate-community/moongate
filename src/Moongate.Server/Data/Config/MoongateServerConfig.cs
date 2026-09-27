@@ -40,6 +40,8 @@ public class MoongateServerConfig
 
     public StartingItemsConfig StartingItems { get; set; } = new();
 
+    public CharactersConfig Characters { get; set; } = new();
+
     /// <summary>
     ///     Validates configuration before server services begin startup.
     /// </summary>
@@ -133,5 +135,12 @@ public class MoongateServerConfig
         }
 
         StartingItems.Validate();
+
+        if (Characters is null)
+        {
+            throw new InvalidOperationException("The characters configuration section cannot be null.");
+        }
+
+        Characters.Validate();
     }
 }
