@@ -83,6 +83,12 @@ language = "eng" # Reads <root>/data/messages/eng.toml.
 
 [line_of_sight]
 max_distance = 25 # Farthest cells along X or Y a point can see.
+
+[starting_items]
+backpack_template = "0x0e75_backpack" # Item template of every new character's backpack.
+gold_template = "0x0eed_gold_coin"    # Item template of the starting gold.
+gold = 1000                           # Starting gold; 0 gives none.
+best_skills = 3                       # How many of the highest skills pick skill sets.
 ```
 
 Only the databases for the active role must already exist and accept connections:
@@ -133,6 +139,9 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 | `localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
 | `line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
+| `starting_items.backpack_template`, `gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Both must exist in `templates/items/` or the game server stops at startup. See [Starting items](data-files.md#starting-items). |
+| `starting_items.gold` | 0 or more; default 1000. Gold coins put in a new character's backpack. |
+| `starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
 
 Redis is required at runtime in all three modes, including standalone. `redis.connection_string` is a StackExchange.Redis configuration string or an environment reference resolved at startup; the Docker example uses `redis:6379,password=...` on its private bridge. `redis.handoff_secret` is an independent cluster-wide secret, also supplied through an environment reference. Give the login and every game process the same values. The Docker example reads both from separate Compose secrets; keep the actual values out of TOML and the repository. A Redis connection failure prevents startup. A later Redis outage stops new realm lists and handoffs while existing game sessions continue; pending tickets are lost on Redis restart and game processes republish their leases. Configure Redis with `maxmemory-policy noeviction`.
 

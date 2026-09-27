@@ -43,7 +43,7 @@ it.
 | `regions/<map>.toml` | `RegionContent` | weather (every profile must exist), maps | No |
 | `messages/<lang>.toml` | `MessageContent` | regions | Yes, through `ILocalizationService` |
 | `names.toml` | `NameList` | messages | Yes, through `INameService` |
-| `starting_items.toml` | `StartingItemsFile` | not loaded yet | No |
+| `starting_items.toml` | `StartingItemSet` | names (after the item templates of `templates/items/`, which every item must name) | Yes, through `IStartingItemsService` |
 
 "No" means the file is loaded and validated, but no game system reads it yet. A
 mistake in such a file still stops the server.
@@ -353,9 +353,9 @@ The server stops when:
 
 ## Starting items
 
-`starting_items.toml` holds the items a new character gets. The server does not load it
-yet: it is written by [`mg-uoxconv`](uox3-migration.md#starting-items) from UOX3's
-`newbie.dfn`, ready for the character creation code.
+`starting_items.toml` holds the items a new character gets. The shipped file is written
+by [`mg-uoxconv`](uox3-migration.md#starting-items) from UOX3's `newbie.dfn`.
+`IStartingItemsService.GiveAsync` applies it to a new character.
 
 A character gets every `[[set]]` with `common = true`, plus every set whose filters it
 matches.
@@ -384,10 +384,37 @@ equip = true
 | `amount` | How many, as dice; unset is 1 |
 | `hue` | The hue to give the item; unset keeps its own |
 | `equip` | `true` puts the item on the character, `false` in the backpack |
-| `newbie` | Whether the item stays on death; unset is the server's default |
+| `newbie` | `false` makes the item drop on death; unset or `true` makes it `Newbied` (kept) |
 
-How many best skills count (UOX3 takes three, four with extended starting skills) and
-the starting gold are left to the character creation code.
+`GiveAsync` works in one transaction on the world database; if anything fails, the
+character gets nothing:
+
+1. It takes the character's `starting_items.best_skills` highest skills (default 3; ties
+   go to the lower skill id; skills at 0 do not count).
+2. It applies, in order, the sets of those skills, the common sets, then the sets of
+   the character's race and gender.
+3. It creates the backpack (`starting_items.backpack_template`) and puts it on the
+   `Backpack` layer.
+4. For each entry it picks one item. A stackable item gets the whole `amount`;
+   any other item is created `amount` times.
+5. `equip = true` wears the item on its layer: the template's `layer`, or else the
+   client's tiledata layer. If there is no layer, or the layer is taken, the item goes
+   in the backpack instead, so the first item on a layer wins.
+6. Worn shirts and robes take the shirt hue picked at creation, pants and skirts the
+   pants hue; a hue of 0 keeps the item's own.
+7. Items in the backpack go to a random spot inside its `containers.toml` bounds.
+8. Last, `starting_items.gold` coins (default 1000, 0 for none) of
+   `starting_items.gold_template` go in the backpack.
+
+### Validation at startup
+
+The server stops when:
+
+- `starting_items.toml` does not exist;
+- a set has no items, or is not common and has no skill, race or gender;
+- an entry has no items, names an item that is not an item template, or has an
+  `amount` that can roll below 1;
+- `starting_items.backpack_template` or `gold_template` is not an item template.
 
 ## Containers
 

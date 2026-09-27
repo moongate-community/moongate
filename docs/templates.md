@@ -13,13 +13,45 @@ the same way a service or a metric provider is.
 The loader contract, `DataLoaderService`, `EnumValueSpec<TEnum>`, `RangeValueSpec<T>`
 and the converter registry are in place and tested. The `ItemTemplate`,
 `MobileTemplate` and `LootTemplate` data shapes exist, and [a converter](uox3-migration.md) produces them
-from UOX3 data. **No loader reads them yet:** `IDataLoader<ItemTemplate>` and
-`IDataLoader<LootTemplate>` have not been written or registered, so template files
-under `templates/` are not loaded by the current server. This page documents the
-mechanism a loader plugs into; the item and loot guides follow once a loader exists.
+from UOX3 data. **Item templates are loaded** (see [Item templates at runtime](#item-templates-at-runtime));
+mobile and loot templates are not loaded yet.
 The same contract already loads the files under `data/`, such as maps, races and
 regions: see [Shard data files](data-files.md) for working loaders.
 See [Implementation status](implementation-status.md).
+
+## Item templates at runtime
+
+`ItemTemplatesLoader` reads every `*.toml` under `templates/items/`, subfolders
+included, when the game server starts, and resolves `base_id` once:
+
+- a field that can be left unset (`name`, `layer`, `weight`, `amount`, `stackable`, …)
+  and is left unset takes the parent's value, up the chain;
+- `item_id = 0` takes the parent's graphic;
+- `hue` and `rarity` always have a value, so the template's own is kept;
+- `tags`, when set, replace the parent's; they are not merged.
+
+The server stops when an id is empty or used twice (the message names both files),
+a `base_id` names no template, `base_id` loops back (`a` → `b` → `a`), or a resolved
+template fails `ItemTemplate.Validate()`.
+
+`IItemTemplateService` serves the resolved templates (`TryGet`, `Get`, `Count`; ids
+match case). `IItemFactoryService` makes items from them:
+
+```csharp
+var coin = factory.Create("0x0eed_gold_coin", amount: 250);
+coin.PutInContainer(backpack.Id, x, y); // or PlaceOnGround / Equip
+await factory.SaveAsync(coin);          // the database gives it its serial
+```
+
+`Create` builds the `ItemEntity` in memory, with no serial and no location. Random
+template values (`hue`, `amount`, `rarity`) are picked once, there, and stored with
+the item; nothing else is copied from the template, so `name`, `movable` and
+`visibility` stay null and the template's values apply. An amount above 1 on an item
+that does not stack (`stackable`, else the tiledata `Generic` flag) throws. Saving
+refuses an item with no location and gives a new item a serial from
+`world.items_id_seq`, inside `Serial.MinItem..MaxItem`. `SaveAsync(items)` saves a
+list in one transaction, in order (a container before its contents), and
+`SaveAsync(transaction, item)` saves inside a transaction the caller opened.
 
 ## The loader contract
 

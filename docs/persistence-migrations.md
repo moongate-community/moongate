@@ -166,7 +166,9 @@ its value; a development-generated sequence that is already attached is retained
 The fourth adds the `can_access_api` column, `false` for every existing account. Existing
 duplicate usernames, or null usernames or password hashes, must be resolved before
 the constraint migration can apply; no account is silently deleted. The core world
-catalog has `0001_mobiles.sql`, `0002_items.sql` and `0003_world_column_comments.sql`. Their table and sequence DDL comes
+catalog has `0001_mobiles.sql`, `0002_items.sql`, `0003_world_column_comments.sql` and
+`0004_item_rarity.sql`, which adds the `rarity` column (existing items become Common) and
+its `ck_items_rarity` check. Their table and sequence DDL comes
 from the development generator; the foreign keys, CHECK constraints and partial indexes
 are written by hand, since the generator produces only columns and sequences, and the
 startup schema check accepts them. The sample plugin ships
