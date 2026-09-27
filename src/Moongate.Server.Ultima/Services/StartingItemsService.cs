@@ -1,4 +1,5 @@
 using Moongate.Core.Random;
+using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Data.Config;
@@ -85,38 +86,47 @@ public class StartingItemsService : IStartingItemsService
         CancellationToken cancellationToken = default
     )
     {
-        var entries = SelectSets(request).SelectMany(set => set.Items).ToList();
-        var given = new List<ItemEntity>();
+        IReadOnlyList<ItemEntity> given = [];
 
         await _persistence.ExecuteInTransactionAsync(
             PersistenceDatabaseTarget.Realm,
-            async transaction =>
-            {
-                var backpack = _factory.Create(_items.BackpackTemplate);
-                backpack.Equip(request.MobileId, LayerType.Backpack);
-                await _factory.SaveAsync(transaction, backpack, cancellationToken);
-                given.Add(backpack);
-                var usedLayers = new HashSet<LayerType> { LayerType.Backpack };
-
-                foreach (var entry in entries)
-                {
-                    foreach (var item in CreateEntry(entry, request, backpack, usedLayers))
-                    {
-                        await _factory.SaveAsync(transaction, item, cancellationToken);
-                        given.Add(item);
-                    }
-                }
-
-                if (_config.Gold > 0)
-                {
-                    var gold = _factory.Create(_items.GoldTemplate, _config.Gold);
-                    PutInBackpack(gold, backpack);
-                    await _factory.SaveAsync(transaction, gold, cancellationToken);
-                    given.Add(gold);
-                }
-            },
+            async transaction => given = await GiveAsync(transaction, request, cancellationToken),
             cancellationToken
         );
+
+        return given;
+    }
+
+    public async Task<IReadOnlyList<ItemEntity>> GiveAsync(
+        IPersistenceTransaction transaction,
+        StartingItemsRequest request,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var entries = SelectSets(request).SelectMany(set => set.Items).ToList();
+        var given = new List<ItemEntity>();
+        var backpack = _factory.Create(_items.BackpackTemplate);
+        backpack.Equip(request.MobileId, LayerType.Backpack);
+        await _factory.SaveAsync(transaction, backpack, cancellationToken);
+        given.Add(backpack);
+        var usedLayers = new HashSet<LayerType> { LayerType.Backpack };
+
+        foreach (var entry in entries)
+        {
+            foreach (var item in CreateEntry(entry, request, backpack, usedLayers))
+            {
+                await _factory.SaveAsync(transaction, item, cancellationToken);
+                given.Add(item);
+            }
+        }
+
+        if (_config.Gold > 0)
+        {
+            var gold = _factory.Create(_items.GoldTemplate, _config.Gold);
+            PutInBackpack(gold, backpack);
+            await _factory.SaveAsync(transaction, gold, cancellationToken);
+            given.Add(gold);
+        }
 
         return given;
     }
