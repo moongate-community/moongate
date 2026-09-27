@@ -48,6 +48,8 @@ dotnet nuget-license \
     echo "listed here belong to that executable and do not replace server dependencies."
     echo
     sed '/^|[- |]*|$/s/ /-/g' "$runner_table"
+    echo
+    cat src/Moongate.Network.Packets/Encryption/NOTICE.md
 } >"$output"
 
 echo "Wrote $output"
