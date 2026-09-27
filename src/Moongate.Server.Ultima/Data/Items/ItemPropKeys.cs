@@ -26,7 +26,7 @@ public static class ItemPropKeys
     public const string MaxDurability = "max_durability";
 
     /// <summary>
-    ///     The crafting quality, such as <c>exceptional</c>.
+    ///     The crafting quality, an <c>ItemQualityType</c>; an item without it is <c>Regular</c>.
     /// </summary>
     public const string Quality = "quality";
 

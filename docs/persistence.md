@@ -256,15 +256,17 @@ some items have, such as charges, durability and script tags, go in the `props` 
 column, a key-value dictionary read and written through the item:
 
 ```csharp
-item.SetProp(ItemPropKeys.Quality, "exceptional");      // null removes the key
+item.SetProp(ItemPropKeys.Quality, ItemQualityType.Exceptional); // null removes the key
 var charges = item.GetProp<int>(ItemPropKeys.Charges);   // default(T) when missing
-var quality = item.GetProp(ItemPropKeys.Quality, "regular");
+var quality = item.GetProp(ItemPropKeys.Quality, ItemQualityType.Regular);
 if (item.TryGetProp<LootType>(ItemPropKeys.LootType, out var lootType)) { /* ... */ }
 item.RemoveProp(ItemPropKeys.Charges);
 ```
 
 `ItemPropKeys` names the keys the server reads (`loot_type`, `charges`, `durability`,
-`max_durability`, `quality`, `crafter_id`); scripts may use any other key. A prop holds a
+`max_durability`, `quality`, `crafter_id`); scripts may use any other key. `quality` holds
+an `ItemQualityType` (`Low`, `Regular`, `Exceptional`, as ModernUO); an item without it is
+`Regular`. A prop holds a
 string, a number, a bool or an enum; anything else is rejected when set. The column gives
 whole numbers back as `long` and enums as their number, so `GetProp<T>` converts to the
 type asked for, and throws `InvalidCastException` naming the key when the stored value

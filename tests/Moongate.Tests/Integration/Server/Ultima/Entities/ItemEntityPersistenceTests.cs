@@ -7,6 +7,7 @@ using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Ultima.Types;
@@ -44,6 +45,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var coin = Item(0x40000002, i => i.PutInContainer(backpack.Id, new Point2D(44, 65)));
         var wand = Item(0x40000003, i => i.PlaceOnGround(MapType.Trammel, new Point3D(1602, 1591, 20)));
         wand.SetProp(ItemPropKeys.Charges, 12);
+        wand.SetProp(ItemPropKeys.Quality, ItemQualityType.Exceptional);
         wand.SetProp("quest_step", "3");
         wand.Visibility = AccountType.GameMaster;
         coin.Amount = 250;
@@ -60,6 +62,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         Assert.Equal((backpack.Id, new Point2D(44, 65), 250), (loadedCoin.ContainerId!.Value, loadedCoin.GridLocation!.Value, loadedCoin.Amount));
         Assert.Equal((MapType.Trammel, new Point3D(1602, 1591, 20)), (loadedWand.Map!.Value, loadedWand.GroundLocation!.Value));
         Assert.Equal(12, loadedWand.GetProp<int>(ItemPropKeys.Charges));
+        Assert.Equal(ItemQualityType.Exceptional, loadedWand.GetProp(ItemPropKeys.Quality, ItemQualityType.Regular));
         Assert.Equal(AccountType.GameMaster, loadedWand.Visibility);
         Assert.Null(loadedCoin.Visibility);
         Assert.Equal("3", loadedWand.GetProp<string>("quest_step"));

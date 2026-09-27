@@ -166,4 +166,16 @@ public sealed class ItemEntityTests
         Assert.Throws<ArgumentException>(() => item.SetProp("list", new List<int> { 1 }));
         Assert.Throws<ArgumentException>(() => item.SetProp(" ", 1));
     }
+
+    [Fact]
+    public void Quality_IsRegularUnlessSet()
+    {
+        var item = new ItemEntity();
+
+        Assert.Equal(ItemQualityType.Regular, item.GetProp(ItemPropKeys.Quality, ItemQualityType.Regular));
+
+        item.SetProp(ItemPropKeys.Quality, ItemQualityType.Exceptional);
+
+        Assert.Equal(ItemQualityType.Exceptional, item.GetProp(ItemPropKeys.Quality, ItemQualityType.Regular));
+    }
 }
