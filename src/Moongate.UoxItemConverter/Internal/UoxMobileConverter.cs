@@ -24,8 +24,6 @@ internal static class UoxMobileConverter
                                        # Fields:
                                        #   id      the list id, unique ignoring case
                                        #   names   the names; none may be empty
-                                       #
-                                       # Source: UOX3 dfndata/npc/namelists.dfn, converted by mg-uoxconv.
                                        # ==============================================================================
 
 

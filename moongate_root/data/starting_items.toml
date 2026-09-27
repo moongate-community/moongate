@@ -17,8 +17,6 @@
 #   hue     the hue to give the item; unset keeps its own
 #   equip   true puts it on the character, false in the backpack
 #   newbie  whether it stays on death; unset is the server's default
-#
-# Source: UOX3 dfndata/newbie/newbie.dfn, converted by mg-uoxconv.
 # ==============================================================================
 
 [[set]]
