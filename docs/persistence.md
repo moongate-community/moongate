@@ -181,7 +181,8 @@ Console.WriteLine(account.Id); // Assigned on this same instance.
   `1..4294967295`, never cycle, and are shared across processes using that database.
   An entity whose serials live in a range that does not start at 1 declares it with
   `[SerialRange(min, max)]` (`Moongate.Core.Attributes`): a generated sequence then
-  starts at `min`, so an empty table reserves `min` first. `ItemEntity` declares
+  starts at `min`, so an empty table reserves `min` first, and a sequence left below
+  `min` by an older generated schema is moved forward to it. `ItemEntity` declares
   `Serial.MinItem..Serial.MaxItem`. The attribute does not cap the top of the range;
   a reviewed migration can add a check constraint, as `world.items` does. Supply
   gameplay serials explicitly when domain rules require shared identity.
