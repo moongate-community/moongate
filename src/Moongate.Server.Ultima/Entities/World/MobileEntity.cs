@@ -14,8 +14,8 @@ namespace Moongate.Server.Ultima.Entities.World;
 ///     NPC is the one without an <see cref="AccountId" />.
 /// </summary>
 /// <remarks>
-///     Names are not unique here, because NPCs repeat them; the uniqueness of player character names is checked when a
-///     character is created.
+///     Names are not unique, for NPCs or player characters; character creation checks only their form and banned
+///     words.
 /// </remarks>
 [Table(Name = "world.mobiles")]
 public class MobileEntity : IMoongateEntity
@@ -30,6 +30,11 @@ public class MobileEntity : IMoongateEntity
     /// </summary>
     [Column(MapType = typeof(long?), IsNullable = true)]
     public Serial? AccountId { get; set; }
+
+    /// <summary>
+    ///     The character-list slot of a player character; <see langword="null" /> for an NPC.
+    /// </summary>
+    public byte? Slot { get; set; }
 
     /// <summary>
     ///     Gets whether this mobile is an NPC, that is, it belongs to no account.
