@@ -208,6 +208,7 @@ public sealed class EventsModuleTests : IDisposable
 
         _loop.RefuseTryPost = false;
         Assert.Null(Assert.Single(engine.Call("check").Values));
+        Assert.Equal(1, engine.GetMetrics().EventsDropped);
     }
 
     [Fact]

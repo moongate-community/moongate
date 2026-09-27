@@ -36,6 +36,10 @@ namespace Moongate.Scripting.Data.Scripts;
 ///     Calls refused because their result would have exceeded the string cap; each one raised a script
 ///     error in the caller.
 /// </param>
+/// <param name="EventsDropped">
+///     Server events a script subscribed to that never reached Lua because the game loop refused the work, for
+///     instance with its queue full; each one is logged as a warning.
+/// </param>
 public sealed record ScriptExecutionMetrics(
     int FilesLoaded,
     long CallsStarted,
@@ -44,5 +48,6 @@ public sealed record ScriptExecutionMetrics(
     long Errors,
     long BudgetAborts,
     int ActiveCoroutines,
-    long StringCapHits
+    long StringCapHits,
+    long EventsDropped
 );

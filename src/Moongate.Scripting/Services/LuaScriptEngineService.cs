@@ -172,6 +172,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private long _callsStarted;
     private long _chunkBudgetAborts;
     private long _memoryCapHits;
+    private long _eventsDropped;
     private bool _disposed;
 
     /// <summary>
@@ -265,7 +266,8 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             scheduler?.Errors ?? 0,
             (scheduler?.BudgetAborts ?? 0) + _chunkBudgetAborts,
             scheduler?.ActiveCount ?? 0,
-            _memoryCapHits
+            _memoryCapHits,
+            Interlocked.Read(ref _eventsDropped)
         );
     }
 
@@ -551,9 +553,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             return;
         }
 
+        // TryPost also refuses while the loop runs with a full queue, so a drop is worth a warning: a script
+        // hook that silently never ran is otherwise impossible to diagnose.
         if (!_gameLoop.TryPost(new ScriptEventDispatchWorkItem(Dispatch, eventName, values)))
         {
-            _logger.Debug("Script event {EventName} could not be queued; the game loop is not accepting work", eventName);
+            Interlocked.Increment(ref _eventsDropped);
+            _logger.Warning("Script event {EventName} was dropped; the game loop is not accepting work", eventName);
         }
     }
 

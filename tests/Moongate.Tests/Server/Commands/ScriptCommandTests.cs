@@ -18,7 +18,7 @@ public sealed class ScriptCommandTests
     [Fact]
     public async Task ExecuteAsync_Metrics_PrintsOneLinePerCounter()
     {
-        _engine.Metrics = new(3, 12, 40, 7, 2, 1, 5, 4);
+        _engine.Metrics = new(3, 12, 40, 7, 2, 1, 5, 4, 6);
         var service = await CreateStartedServiceAsync();
 
         var lines = await service.ExecuteAsync("script metrics");
@@ -32,7 +32,8 @@ public sealed class ScriptCommandTests
                 "Coroutine errors: 2",
                 "Budget aborts: 1",
                 "Active coroutines: 5",
-                "String cap hits: 4"
+                "String cap hits: 4",
+                "Events dropped: 6"
             ],
             lines.Select(line => line.Text).ToArray()
         );
