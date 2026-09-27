@@ -48,6 +48,20 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Contains(templates, t => t.Id == new StartingItemsConfig().GoldTemplate);
     }
 
+    [Fact]
+    public async Task ShippedMobileTemplates_LoadAgainstTheShippedNamesAndItems()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loader = new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items));
+
+        var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        Assert.Equal(667, mobiles.Count);
+        Assert.Equal("{gender}", mobiles["guard"].NameList);
+    }
+
     private static DirectoriesConfig Directories()
     {
         return new(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data", "templates"]);

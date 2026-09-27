@@ -18,6 +18,7 @@ using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
@@ -108,6 +109,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<NamesLoader, NameList>(11);
             container.AddUltimaDataLoader<ItemTemplatesLoader, ItemTemplate>(12);
             container.AddUltimaDataLoader<StartingItemsLoader, StartingItemSet>(13);
+            container.AddUltimaDataLoader<MobileTemplatesLoader, MobileTemplate>(14);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
@@ -118,6 +120,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ILocalizationService, LocalizationService>(Reuse.Singleton);
             container.Register<INameService, NameService>(Reuse.Singleton);
             container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
+            container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
             container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
             container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
             container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
