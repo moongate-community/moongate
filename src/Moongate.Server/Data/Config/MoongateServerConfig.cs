@@ -36,6 +36,8 @@ public class MoongateServerConfig
 
     public LineOfSightConfig LineOfSight { get; set; } = new();
 
+    public StartingItemsConfig StartingItems { get; set; } = new();
+
     /// <summary>
     ///     Validates configuration before server services begin startup.
     /// </summary>
@@ -115,5 +117,12 @@ public class MoongateServerConfig
         }
 
         LineOfSight.Validate();
+
+        if (StartingItems is null)
+        {
+            throw new InvalidOperationException("The starting items configuration section cannot be null.");
+        }
+
+        StartingItems.Validate();
     }
 }

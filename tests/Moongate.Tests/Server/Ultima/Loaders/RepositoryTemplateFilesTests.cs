@@ -1,7 +1,9 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Server.Ultima.Loaders;
 
@@ -28,6 +30,22 @@ public sealed class RepositoryTemplateFilesTests
         Assert.True(templates.Count > 7000, $"only {templates.Count} templates");
         Assert.Equal(0x0E75u, templates["0x0e75_backpack"].ItemId.Value);
         Assert.True(templates["0x0eed_gold_coin"].Stackable);
+    }
+
+    [Fact]
+    public async Task ShippedStartingItems_ResolveAgainstTheShippedTemplates()
+    {
+        var directories = Directories();
+        var templates = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var loader = new StartingItemsLoader(directories, new StubDataLoaderService().With(templates));
+        await loader.InitializeAsync();
+
+        var sets = (await loader.LoadDataAsync()).Entities;
+
+        Assert.Equal(56, sets.Count);
+        Assert.Single(sets, set => set.Common);
+        Assert.Contains(templates, t => t.Id == new StartingItemsConfig().BackpackTemplate);
+        Assert.Contains(templates, t => t.Id == new StartingItemsConfig().GoldTemplate);
     }
 
     private static DirectoriesConfig Directories()

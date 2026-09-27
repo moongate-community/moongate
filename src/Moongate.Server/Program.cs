@@ -208,6 +208,7 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
                     services.RegisterInstance(serverConfig.Localization);
                     services.RegisterInstance(serverConfig.LineOfSight);
+                    services.RegisterInstance(serverConfig.StartingItems);
                     services.RegisterInstance(TimeProvider.System);
                     services.RegisterMoongatePersistence(
                             serverConfig.Persistence.ToOptions(

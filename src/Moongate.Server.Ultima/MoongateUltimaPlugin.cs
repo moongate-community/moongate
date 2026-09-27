@@ -18,6 +18,7 @@ using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Regions;
@@ -106,6 +107,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
             container.AddUltimaDataLoader<NamesLoader, NameList>(11);
             container.AddUltimaDataLoader<ItemTemplatesLoader, ItemTemplate>(12);
+            container.AddUltimaDataLoader<StartingItemsLoader, StartingItemSet>(13);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
