@@ -1,0 +1,30 @@
+---
+import manifest from '../../../.release-please-manifest.json';
+
+const version = manifest['.'];
+const releaseUrl = `https://github.com/moongate-community/moongate/releases/tag/v${version}`;
+const downloadUrl = `https://github.com/moongate-community/moongate/releases/download/v${version}`;
+const platforms = [
+  { name: 'Linux x64', rid: 'linux-x64', detail: 'Intel / AMD · glibc' },
+  { name: 'Linux ARM64', rid: 'linux-arm64', detail: 'ARM 64-bit · glibc' },
+  { name: 'Windows x64', rid: 'win-x64', detail: 'Intel / AMD · 64-bit' },
+  { name: 'macOS Apple Silicon', rid: 'osx-arm64', detail: 'Apple M-series · ARM64' },
+];
+---
+
+<p>Release <strong>v{version}</strong>. These archives include the .NET runtime.</p>
+
+<nav class="docs-paths" aria-label="Release downloads">
+  {platforms.map(({ name, rid, detail }) => (
+    <a href={`${downloadUrl}/moongate-${rid}-${version}.tar.gz`}>
+      <strong>{name}</strong>
+      <span>{detail}</span>
+      <span>Download .tar.gz <span aria-hidden="true">↓</span></span>
+    </a>
+  ))}
+</nav>
+
+<p>
+  <a href={releaseUrl}>Release notes and SHA-256 checksums</a> ·
+  <a href="/start/getting-started/">First-start guide</a>
+</p>

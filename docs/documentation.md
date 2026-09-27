@@ -35,7 +35,9 @@ Keep the source text in its existing location:
 - `docs/*.md` contains server, reference, and contributor guides.
 - `src/*/README.md` contains library documentation and NuGet examples.
 - The root `README.md` supplies the overview.
-- `website/src/content/docs/index.md` is the authored landing page.
+- `website/src/content/docs/index.mdx` is the authored landing page. Its download
+  cards use `website/src/components/Downloads.astro` and the version in
+  `.release-please-manifest.json` to link to the matching release archives.
 
 Do not edit or commit `website/src/content/docs/generated/` or
 `website/public/generated/`. The importer replaces these directories.

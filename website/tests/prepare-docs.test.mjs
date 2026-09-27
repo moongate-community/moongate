@@ -12,7 +12,7 @@ async function fixture(t) {
   const generated = join(websiteRoot, 'src/content/docs/generated');
   await mkdir(generated, { recursive: true });
   await writeFile(join(generated, 'stale.md'), 'last successful build');
-  await writeFile(join(websiteRoot, 'src/content/docs/index.md'), 'authored home');
+  await writeFile(join(websiteRoot, 'src/content/docs/index.mdx'), 'authored home');
   await mkdir(join(repositoryRoot, 'images'));
   await writeFile(join(repositoryRoot, 'images/logo.png'), 'image bytes');
   await writeFile(join(repositoryRoot, 'README.md'), '# Title\n\n![Logo](images/logo.png)\n');
@@ -31,7 +31,7 @@ test('regeneration replaces stale generated pages, copies assets, and preserves 
   assert.equal(await readFile(join(options.websiteRoot, 'public/generated/images/logo.png'), 'utf8'), 'image bytes');
   assert.equal(await readFile(join(options.websiteRoot, 'public/install.sh'), 'utf8'), '#!/bin/sh\necho install\n');
   assert.deepEqual(await readFile(join(options.repositoryRoot, 'README.md')), before);
-  assert.equal(await readFile(join(options.websiteRoot, 'src/content/docs/index.md'), 'utf8'), 'authored home');
+  assert.equal(await readFile(join(options.websiteRoot, 'src/content/docs/index.mdx'), 'utf8'), 'authored home');
 });
 
 for (const defect of ['missing source', 'duplicate slug', 'invalid slug', 'unresolved link', 'source escape', 'missing installer']) {
@@ -45,7 +45,7 @@ for (const defect of ['missing source', 'duplicate slug', 'invalid slug', 'unres
     if (defect === 'missing installer') await rm(join(options.repositoryRoot, 'scripts/install.sh'));
     await assert.rejects(prepareDocs(options));
     assert.equal(await readFile(join(options.generated, 'stale.md'), 'utf8'), 'last successful build');
-    assert.equal(await readFile(join(options.websiteRoot, 'src/content/docs/index.md'), 'utf8'), 'authored home');
+    assert.equal(await readFile(join(options.websiteRoot, 'src/content/docs/index.mdx'), 'utf8'), 'authored home');
   });
 }
 
