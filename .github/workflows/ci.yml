@@ -7,8 +7,7 @@ on:
       - main
   pull_request:
 
-# A single self-hosted runner serves this repository, so a superseded run would
-# otherwise hold the queue against the run that replaced it.
+# Superseded runs should release the shared runner capacity promptly.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -31,6 +30,7 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_USER: postgres
         options: >-
+          --tmpfs /var/lib/postgresql/data:rw,size=1g
           --health-cmd "pg_isready -h 127.0.0.1 -U postgres -d postgres"
           --health-interval 2s
           --health-timeout 5s
@@ -78,7 +78,16 @@ jobs:
       - name: Test
         # Test projects share PostgreSQL and Redis services; run their hosts one at a time.
         # The run also collects code coverage and merges it into artifacts/coverage.
-        run: bash scripts/coverage.sh all -c Release --no-build
+        run: bash scripts/coverage.sh all -c Release --no-build --logger trx
+
+      - name: Upload test timings
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: artifacts/coverage/results/**/*.trx
+          if-no-files-found: ignore
+          retention-days: 14
 
       - name: Publish coverage summary
         run: cat artifacts/coverage/Summary.md >> "$GITHUB_STEP_SUMMARY"

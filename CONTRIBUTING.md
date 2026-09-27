@@ -87,6 +87,13 @@ Without the variables and without Docker, the integration tests fail; they do no
 silently skip. Run test projects serially with `-m:1`, as CI does, because their
 hosts share the database services.
 
+CI keeps its disposable PostgreSQL data directory on a `tmpfs` mount capped at
+1 GiB. Repeated database creation and removal would otherwise force hundreds of
+disk checkpoints on the shared runner. PostgreSQL's `fsync`, WAL, and synchronous
+commit settings stay enabled, and CI still runs the full suite with coverage.
+The `test-results` CI artifact contains TRX reports with individual test timings,
+including reports from failed runs, and is retained for 14 days.
+
 Run these commands from the repository root to match the solution checks in CI:
 
 ```sh
