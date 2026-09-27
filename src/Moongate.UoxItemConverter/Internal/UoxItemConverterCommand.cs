@@ -26,12 +26,20 @@ internal static class UoxItemConverterCommand
         TextWriter error,
         string? mobileSource = null,
         string? mobileDestination = null,
-        string? namesDestination = null
+        string? namesDestination = null,
+        string? startingItemsDestination = null
     )
     {
         if ((mobileSource is null) != (mobileDestination is null) || (mobileSource is null) != (namesDestination is null))
         {
             error.WriteLine("--mobile-source, --mobile-destination and --names-destination go together: give all three or none.");
+
+            return 2;
+        }
+
+        if (startingItemsDestination is not null && mobileSource is null)
+        {
+            error.WriteLine("--starting-items-destination needs --mobile-source, which holds newbie/newbie.dfn.");
 
             return 2;
         }
@@ -259,10 +267,23 @@ internal static class UoxItemConverterCommand
 
         var items = new ItemIndex(idByHeader, blocksByHeader, knownLootIds);
 
-        return UoxMobileConverter.Run(
+        var mobileResult = UoxMobileConverter.Run(
             Path.GetFullPath(mobileSource),
             Path.GetFullPath(mobileDestination!),
             Path.GetFullPath(namesDestination!),
+            items,
+            output,
+            error
+        );
+
+        if (mobileResult != 0 || startingItemsDestination is null)
+        {
+            return mobileResult;
+        }
+
+        return UoxStartingItemsConverter.Run(
+            Path.GetFullPath(mobileSource),
+            Path.GetFullPath(startingItemsDestination),
             items,
             output,
             error

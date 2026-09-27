@@ -43,6 +43,7 @@ it.
 | `regions/<map>.toml` | `RegionContent` | weather (every profile must exist), maps | No |
 | `messages/<lang>.toml` | `MessageContent` | regions | Yes, through `ILocalizationService` |
 | `names.toml` | `NameList` | messages | Yes, through `INameService` |
+| `starting_items.toml` | `StartingItemsFile` | not loaded yet | No |
 
 "No" means the file is loaded and validated, but no game system reads it yet. A
 mistake in such a file still stops the server.
@@ -349,6 +350,43 @@ The server stops when:
 - `names.toml` does not exist;
 - a list id is empty, or used twice ignoring case;
 - a list is empty, or a name is empty after trimming.
+
+## Starting items
+
+`starting_items.toml` holds the items a new character gets. The server does not load it
+yet: it is written by [`mg-uoxconv`](uox3-migration.md#starting-items) from UOX3's
+`newbie.dfn`, ready for the character creation code.
+
+A character gets every `[[set]]` whose filters it matches; a set with no filter goes to
+everyone.
+
+```toml
+[[set]]
+skill = "alchemy"
+[[set.items]]
+items = ["0x0f7a_black_pearl"]
+amount = 3
+equip = false
+
+[[set.items]]
+items = ["0x1f03_robe"]
+hue = 1226
+equip = true
+```
+
+| Field | Meaning |
+| --- | --- |
+| `skill` | Given to characters starting with this skill among their best ones |
+| `race` | `human`, `elf` or `gargoyle`; unset is every race |
+| `gender` | `male` or `female`; unset is both |
+| `items` | Item template ids; one is picked at random |
+| `amount` | How many, as dice; unset is 1 |
+| `hue` | The hue to give the item; unset keeps its own |
+| `equip` | `true` puts the item on the character, `false` in the backpack |
+| `newbie` | Whether the item stays on death; unset is the server's default |
+
+How many best skills count (UOX3 takes three, four with extended starting skills) and
+the starting gold are left to the character creation code.
 
 ## Containers
 

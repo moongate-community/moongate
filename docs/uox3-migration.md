@@ -13,7 +13,8 @@ From a source checkout:
 ```sh
 dotnet run --project src/Moongate.UoxItemConverter -- \
   --source <file-or-directory> --destination <dir> [--loot-destination <dir>] \
-  [--mobile-source <dfndata> --mobile-destination <dir> --names-destination <file>]
+  [--mobile-source <dfndata> --mobile-destination <dir> --names-destination <file>] \
+  [--starting-items-destination <file>]
 ```
 
 Docker images after 0.6.0 bundle the same tool at `/app/mg-uoxconv`; see
@@ -150,6 +151,27 @@ tags without a field. The run prints how often each kind of value was dropped.
 
 The written mobiles are read back as well: ids unique, every `base_id`, equipment item,
 loot table and name list resolves, and every template passes `MobileTemplate.Validate()`.
+
+## Starting items
+
+With `--starting-items-destination <file>` (which needs `--mobile-source`), the run also
+converts `newbie/newbie.dfn` into one `starting_items.toml` of `[[set]]`s, after the
+mobiles and against the same item ids.
+
+| UOX3 | Set | Note |
+| --- | --- | --- |
+| `[BESTSKILL n]` | `skill` | the skill with id n; `[BESTSKILL X]` and empty sections are skipped |
+| `[DEFAULT ALL]` | no filter | |
+| `[DEFAULT MALE]`, `[DEFAULT FEMALE]` | `race = "human"`, `gender` | UOX3 gives these to the human bodies only |
+| `[DEFAULT ELF MALE]`, `[DEFAULT GARG FEMALE]`, … | `race`, `gender` | |
+| `PACKITEM=item,amount,newbie` | `[[set.items]]`, `equip = false` | `amount` 1 is left unset; `newbie` 0 or 1 becomes `false` or `true` |
+| `EQUIPITEM=item,hue,newbie` | `[[set.items]]`, `equip = true` | |
+
+Items resolve as npc equipment does: `listobjectN` gives every item of `[ITEMLIST N]`,
+an item block with no `id=` of its own is followed. Items that resolve to nothing are
+dropped and counted. The file is read back and every item must exist. UOX3's own rules
+(the three best skills, four with extended starting skills, and `STARTGOLD`) are not data
+and are not converted.
 
 ## Verifying the output
 

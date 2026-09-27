@@ -11,6 +11,7 @@ internal sealed class ConverterTestDirectories : IDisposable
     public string MobileSourceDirectory { get; }
     public string MobileDestinationDirectory { get; }
     public string NamesDestinationPath { get; }
+    public string StartingItemsDestinationPath { get; }
 
     public ConverterTestDirectories()
     {
@@ -21,6 +22,7 @@ internal sealed class ConverterTestDirectories : IDisposable
         MobileSourceDirectory = Path.Combine(root, "dfndata");
         MobileDestinationDirectory = Path.Combine(root, "mobile-destination");
         NamesDestinationPath = Path.Combine(root, "names", "names.toml");
+        StartingItemsDestinationPath = Path.Combine(root, "starting", "starting_items.toml");
         Directory.CreateDirectory(SourceDirectory);
     }
 

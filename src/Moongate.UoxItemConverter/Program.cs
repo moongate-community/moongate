@@ -24,7 +24,8 @@ internal static class Cli
         string? lootDestination = null,
         string? mobileSource = null,
         string? mobileDestination = null,
-        string? namesDestination = null
+        string? namesDestination = null,
+        string? startingItemsDestination = null
     )
     {
         return UoxItemConverterCommand.Run(
@@ -35,7 +36,8 @@ internal static class Cli
             Console.Error,
             mobileSource,
             mobileDestination,
-            namesDestination
+            namesDestination,
+            startingItemsDestination
         );
     }
 }

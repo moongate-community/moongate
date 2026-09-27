@@ -366,92 +366,14 @@ internal static class MobileTemplateBuilder
 
     private static MobileEquipmentEntry? BuildEquipment(string value, MobileBuildContext context)
     {
-        List<string> headers;
-
-        if (value.StartsWith("listobject", StringComparison.OrdinalIgnoreCase) &&
-            int.TryParse(value["listobject".Length..], out var listNumber))
+        if (ItemReferences.TryGetListNumber(value, out var listNumber) && HairItemLists.Contains(listNumber))
         {
-            if (HairItemLists.Contains(listNumber))
-            {
-                return null;
-            }
-
-            if (!context.Items.ItemBlocksByHeader.TryGetValue($"ITEMLIST {listNumber}", out var list))
-            {
-                context.Report.Count("unresolved item list");
-
-                return null;
-            }
-
-            // Lines are "weight|item" or "item"; "blank" is a chance of nothing. Items is an even pick, so the weights
-            // and the blanks are dropped.
-            headers = [];
-
-            foreach (var line in list.Entries)
-            {
-                var item = line.Split(' ', 2)[0].Trim();
-                var bar = item.IndexOf('|');
-
-                if (bar >= 0)
-                {
-                    item = item[(bar + 1)..];
-                    context.Report.Count("item list weight or blank dropped");
-                }
-
-                if (item.Equals("blank", StringComparison.OrdinalIgnoreCase))
-                {
-                    if (bar < 0)
-                    {
-                        context.Report.Count("item list weight or blank dropped");
-                    }
-
-                    continue;
-                }
-
-                headers.Add(item);
-            }
-        }
-        else
-        {
-            headers = [value];
+            return null;
         }
 
-        var items = new List<string>();
-
-        foreach (var header in headers)
-        {
-            var resolved = ResolveItemIds(header, context.Items, 0);
-
-            if (resolved.Count == 0)
-            {
-                context.Report.Count("unresolved item");
-            }
-
-            items.AddRange(resolved.Where(id => !items.Contains(id)));
-        }
+        var items = ItemReferences.Resolve(value, context.Items, context.Report);
 
         return items.Count == 0 ? null : new MobileEquipmentEntry { Items = items };
-    }
-
-    // An item block without an id of its own is an alias: getlbr=x is x in UOX3's default era, get=a b is a or b.
-    // Items already picks one evenly, so a random get becomes every target.
-    private static List<string> ResolveItemIds(string header, ItemIndex items, int depth)
-    {
-        if (items.ItemIdByHeader.TryGetValue(header, out var id))
-        {
-            return [id];
-        }
-
-        if (depth > 8 || !items.ItemBlocksByHeader.TryGetValue(header, out var block))
-        {
-            return [];
-        }
-
-        var targets = block.Fields.TryGetValue("GETLBR", out var eraTarget)
-            ? [eraTarget.Trim()]
-            : GetTargets(block);
-
-        return targets.SelectMany(target => ResolveItemIds(target, items, depth + 1)).Distinct().ToList();
     }
 
     private static void ApplyColorList(string value, MobileBuildContext context, Action<HueSpec> apply)
