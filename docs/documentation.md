@@ -86,6 +86,11 @@ After the initial documentation-only publication, automatic documentation builds
 and deployments run **when the existing release workflow creates a release**. Commits to `develop`, ordinary `main` pushes, and pull
 requests do not build or publish the website.
 
+Documentation builds never wait for the server CI. They include coverage only when
+a successful CI run already has a report for the exact commit being published.
+Otherwise the coverage page says no report was available; publish again after CI
+finishes to include it.
+
 The `docs` job in `.github/workflows/release.yml` calls the reusable
 `.github/workflows/docs.yml`, passing the released SHA and tag. It checks out
 that SHA and displays the tag in the site title. This direct call also works

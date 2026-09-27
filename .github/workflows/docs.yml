@@ -40,18 +40,15 @@ jobs:
         with:
           ref: ${{ inputs.release_sha }}
 
-      # The coverage page shows the CI report of the commit being published. A release
-      # starts this workflow while CI may still be testing the same commit, so wait for it.
-      # Without a successful run the page says no report was available.
-      - name: Download test coverage
+      # Coverage is optional and must never hold up documentation publication.
+      # Only use a successful run of this exact commit; otherwise the page states
+      # that no report was available. Publishing again later can include it.
+      - name: Download available test coverage
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           sha=$(git rev-parse HEAD)
-          run=$(gh run list --workflow CI --commit "$sha" --limit 1 --json databaseId --jq '.[0].databaseId // empty')
-          if [ -n "$run" ]; then
-            gh run watch "$run" --exit-status --interval 30 > /dev/null || true
-          fi
+          run=$(gh run list --workflow CI --commit "$sha" --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
           if [ -n "$run" ] && gh run download "$run" --name coverage-report --dir artifacts/coverage; then
             echo "MOONGATE_COVERAGE_COMMIT=${sha:0:7}" >> "$GITHUB_ENV"
           else
