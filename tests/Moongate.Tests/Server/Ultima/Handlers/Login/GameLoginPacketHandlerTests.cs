@@ -1,14 +1,18 @@
 using System.Net;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Services.Sessions;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.Login;
+using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Characters;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Login;
@@ -28,7 +32,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
             context,
             new(AuthKey, "user", "password"),
             CancellationToken.None
@@ -43,6 +47,29 @@ public sealed class GameLoginPacketHandlerTests
 
         // Supported features (0xB9) and the character list (0xA9).
         Assert.Equal(2, sender.SentCount);
+    }
+
+    [Fact]
+    public async Task HandleAsync_ValidTicket_ListsTheAccountsCharactersInTheirSlots()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        session.NetworkSession.SetSeed(AuthKey);
+        var sender = new StubPacketSendService();
+        var context = new PacketContext(session, fixture.Loop, sessions, sender);
+        var characters = new RecordingCharacterService { Characters = [new MobileEntity { Name = "Aria", Slot = 2 }] };
+
+        await new GameLoginPacketHandler(
+            Realm(),
+            new RecordingHandoffStore { Result = Handoff() },
+            new StubDataLoaderService(),
+            characters,
+            new CharactersConfig { MaxPerAccount = 5 }
+        ).HandleAsync(context, new(AuthKey, "user", "password"), CancellationToken.None);
+
+        var list = Assert.Single(sender.Sent.OfType<CharacterListPacket>());
+        Assert.Equal([null, null, "Aria", null, null], list.Characters);
     }
 
     [Theory, InlineData(null, AuthKey), InlineData(0x23456789u, AuthKey)]
@@ -61,7 +88,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
             context,
             new(packetKey, "user", "password"),
             CancellationToken.None
@@ -84,7 +111,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
             context,
             new(AuthKey, "user", "wrong-password"),
             CancellationToken.None
@@ -107,7 +134,7 @@ public sealed class GameLoginPacketHandlerTests
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);
 
-        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService()).HandleAsync(
+        await new GameLoginPacketHandler(Realm(), store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
             context,
             new(AuthKey, "user", "password"),
             CancellationToken.None

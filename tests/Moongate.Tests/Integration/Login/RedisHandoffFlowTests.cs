@@ -1,5 +1,6 @@
 using System.Net;
 using Moongate.Network.Packets.Outgoing.Login;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
@@ -9,12 +10,13 @@ using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Tests.Support.Sessions;
+using Moongate.Tests.TestSupport.Containers;
 using Moongate.Tests.TestSupport.Login;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Server.Ultima;
+using Moongate.Tests.TestSupport.Ultima.Characters;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
-using Moongate.Tests.TestSupport.Containers;
 
 namespace Moongate.Tests.Integration.Login;
 
@@ -94,7 +96,7 @@ public sealed class RedisHandoffFlowTests
                 gameSessions,
                 new StubPacketSendService()
             );
-            await new GameLoginPacketHandler(realm, handoffs, new StubDataLoaderService()).HandleAsync(
+            await new GameLoginPacketHandler(realm, handoffs, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig()).HandleAsync(
                 gameContext,
                 new(redirect.AuthKey, "Alice", "password"),
                 CancellationToken.None

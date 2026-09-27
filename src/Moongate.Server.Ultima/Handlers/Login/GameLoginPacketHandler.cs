@@ -2,14 +2,17 @@ using Moongate.Core.Types.Expansions;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Types.Login;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Sessions;
+using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Types.Characters;
@@ -27,13 +30,22 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
     private readonly ILogger _logger = Log.ForContext<GameLoginPacketHandler>();
 
     private readonly IDataLoaderService _dataLoaderService;
+    private readonly ICharacterService _characters;
+    private readonly CharactersConfig _charactersConfig;
 
-
-    public GameLoginPacketHandler(RealmInstance realm, IGameHandoffStore handoffs, IDataLoaderService dataLoaderService)
+    public GameLoginPacketHandler(
+        RealmInstance realm,
+        IGameHandoffStore handoffs,
+        IDataLoaderService dataLoaderService,
+        ICharacterService characters,
+        CharactersConfig charactersConfig
+    )
     {
         _realm = realm;
         _handoffs = handoffs;
         _dataLoaderService = dataLoaderService;
+        _characters = characters;
+        _charactersConfig = charactersConfig;
     }
 
     public async ValueTask HandleAsync(
@@ -106,23 +118,23 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
             )
             .ConfigureAwait(false);
 
+        var characters = await _characters.GetCharactersAsync(handoff.AccountId, cancellationToken).ConfigureAwait(false);
+        var maxPerAccount = _charactersConfig.MaxPerAccount;
+        var characterListPacket = new CharacterListPacket(
+            CharacterListBuilder.Names(characters, maxPerAccount),
+            _dataLoaderService.GetEntities<StartingCityContent>(),
+            CharacterListFlags.Default | CharacterListBuilder.SlotFlags(maxPerAccount)
+        );
+
         await context.RunOnGameLoopAsync(
-            session =>
-            {
-
-                var characterListPacket = new CharacterListPacket(
-                    [null, null, null,null, null, null, null],
-                    _dataLoaderService.GetEntities<StartingCityContent>(),
-                    CharacterListFlags.Default |
-                    CharacterListFlags.SixthCharacterSlot |
-                    CharacterListFlags.SeventhCharacterSlot
-                );
-
-                context.TrySend(new SupportFeaturesPacket(FeatureFlags.ExpansionEj | FeatureFlags.SeventhCharacterSlot));
-                context.TrySend(characterListPacket);
-
-
-            }, cancellationToken);
+                _ =>
+                {
+                    context.TrySend(new SupportFeaturesPacket(CharacterListBuilder.Features(maxPerAccount)));
+                    context.TrySend(characterListPacket);
+                },
+                cancellationToken
+            )
+            .ConfigureAwait(false);
     }
 
     private static async Task DenyAsync(PacketContext context, CancellationToken cancellationToken)
