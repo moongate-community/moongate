@@ -13,6 +13,19 @@ internal static class PolEncryptionFixture
         return doc.RootElement.GetProperty("Vectors").EnumerateArray().Select(x => x.Clone()).ToArray();
     }
 
+    internal static byte[] EncryptModernLogin(byte[] plaintext, bool game, string version = "67.0.117.0")
+    {
+        var vector = Read().First(x => x.GetProperty("Version").GetString() == version);
+        var knownPlaintext = PlainLogin(vector.GetProperty("Seed").GetUInt32(), game);
+        var ciphertext = Convert.FromHexString(vector.GetProperty(game ? "GameLogin" : "LoginPacket").GetString()!);
+        // Modern login and Twofish receive streams are XOR: derive the stream from independent POL fixtures.
+        for (var i = 0; i < ciphertext.Length; i++)
+        {
+            ciphertext[i] ^= (byte)(knownPlaintext[i] ^ plaintext[i]);
+        }
+        return ciphertext;
+    }
+
     internal static byte[] Seed(uint seed, bool versioned)
     {
         var data = new byte[versioned ? 21 : 4];

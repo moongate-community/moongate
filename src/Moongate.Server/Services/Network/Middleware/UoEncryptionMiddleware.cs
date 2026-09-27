@@ -3,6 +3,7 @@ using Moongate.Network.Client;
 using Moongate.Network.Interfaces.Middleware;
 using Moongate.Network.Packets.Data.Encryption;
 using Moongate.Network.Packets.Encryption;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Types.Encryption;
 using Moongate.Server.Types.Network;
 
@@ -191,10 +192,10 @@ public sealed class UoEncryptionMiddleware : INetMiddleware
 
     private bool IsValidLogin(ReadOnlySpan<byte> data)
     {
-        // Both fixed-width credential fields must have their trailing NUL. Opcode alone is ambiguous ciphertext.
+        // Reuse the packet contract: full-width ASCII and padding after NUL are valid; malformed credentials are not.
         return _gameConnection
-            ? data[0] == 0x91 && data[34] == 0 && data[64] == 0
-            : data[0] == 0x80 && data[30] == 0 && data[60] == 0;
+            ? GameLoginPacket.TryParse(data, out _)
+            : AccountLoginPacket.TryParse(data, out _);
     }
 
     private void RequireValidLogin(ReadOnlySpan<byte> data)

@@ -1,4 +1,5 @@
 using Moongate.Network.Packets.Data.Encryption;
+using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Server.Services.Network.Middleware;
 using Moongate.Server.Types.Network;
 using Moongate.Tests.TestSupport.Network;
@@ -40,6 +41,73 @@ public sealed class UoEncryptionMiddlewareTests
         Assert.Equal(ping, (await optional.ProcessSendAsync(null, ping)).ToArray());
         var required = new UoEncryptionMiddleware(NetworkEncryptionMode.Required, UoEncryptionProfile.Parse("67.0.117.0"), game);
         await Assert.ThrowsAsync<InvalidDataException>(async () => await required.ProcessAsync(null, wire));
+    }
+
+    [Theory, InlineData(false, false), InlineData(true, false), InlineData(false, true), InlineData(true, true)]
+    public async Task ProcessAsync_ValidFullWidthOrPaddedCredentials_PreserveCanonicalPacketBehavior(bool game, bool fullWidth)
+    {
+        const uint seed = 0x12345678;
+        var profile = UoEncryptionProfile.Parse("67.0.117.0");
+        var plaintext = PolEncryptionFixture.PlainLogin(seed, game);
+        var credentials = plaintext.AsSpan(game ? 5 : 1, 60);
+        if (fullWidth)
+        {
+            credentials.Fill((byte)'a');
+        }
+        else
+        {
+            // Padding after an earlier NUL is ignored by both canonical parsers.
+            credentials[29] = 0xFE;
+            credentials[59] = 0xFE;
+        }
+        Assert.True(game ? GameLoginPacket.TryParse(plaintext, out _) : AccountLoginPacket.TryParse(plaintext, out _));
+        foreach (var mode in new[] { NetworkEncryptionMode.Optional, NetworkEncryptionMode.Required })
+        {
+            foreach (var encrypted in new[] { false, true })
+            {
+                byte[] prefix = PolEncryptionFixture.Seed(seed, !game);
+                byte[] wire = [.. prefix, .. (encrypted ? PolEncryptionFixture.EncryptModernLogin(plaintext, game) : plaintext)];
+                var middleware = new UoEncryptionMiddleware(mode, profile, game);
+                if (!encrypted && mode == NetworkEncryptionMode.Required)
+                {
+                    await Assert.ThrowsAsync<InvalidDataException>(async () => await middleware.ProcessAsync(null, wire));
+                }
+                else
+                {
+                    Assert.Equal(prefix.Concat(plaintext), (await middleware.ProcessAsync(null, wire)).ToArray());
+                }
+            }
+        }
+    }
+
+    [Theory, InlineData(false), InlineData(true)]
+    public async Task ProcessAsync_MalformedCredentialsWithValidOpcodeAndTerminators_FailClosed(bool game)
+    {
+        const uint seed = 0x12345678;
+        var plaintext = PolEncryptionFixture.PlainLogin(seed, game);
+        plaintext[game ? 5 : 1] = 0xFF;
+        Assert.False(game ? GameLoginPacket.TryParse(plaintext, out _) : AccountLoginPacket.TryParse(plaintext, out _));
+        foreach (var mode in new[] { NetworkEncryptionMode.Optional, NetworkEncryptionMode.Required })
+        {
+            byte[] wire = [.. PolEncryptionFixture.Seed(seed, !game), .. PolEncryptionFixture.EncryptModernLogin(plaintext, game)];
+            var middleware = new UoEncryptionMiddleware(mode, UoEncryptionProfile.Parse("67.0.117.0"), game);
+            await Assert.ThrowsAsync<InvalidDataException>(async () => await middleware.ProcessAsync(null, wire));
+            await Assert.ThrowsAsync<InvalidDataException>(async () => await middleware.ProcessAsync(null, wire));
+        }
+    }
+
+    [Theory, InlineData(NetworkEncryptionMode.Optional), InlineData(NetworkEncryptionMode.Required)]
+    public async Task ProcessAsync_WrongProfilePreservingOpcodeAndTerminators_FailsBeforePublishing(NetworkEncryptionMode mode)
+    {
+        const uint seed = 0x12345678;
+        var plaintext = PolEncryptionFixture.PlainLogin(seed, false);
+        plaintext.AsSpan(1, 30).Clear();
+        plaintext.AsSpan(31, 30).Clear();
+        plaintext.AsSpan(1, 20).Fill((byte)'a');
+        plaintext.AsSpan(31, 20).Fill((byte)'b');
+        byte[] wire = [.. PolEncryptionFixture.Seed(seed, true), .. PolEncryptionFixture.EncryptModernLogin(plaintext, false, "7.0.117.0")];
+        var middleware = new UoEncryptionMiddleware(mode, UoEncryptionProfile.Parse("67.0.117.0"), false);
+        await Assert.ThrowsAsync<InvalidDataException>(async () => await middleware.ProcessAsync(null, wire));
     }
 
     [Fact]

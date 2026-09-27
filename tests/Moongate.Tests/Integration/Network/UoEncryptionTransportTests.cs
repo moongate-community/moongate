@@ -75,8 +75,8 @@ public sealed class UoEncryptionTransportTests
         }
     }
 
-    [Theory, InlineData(false), InlineData(true)]
-    public async Task InvalidEncryptedHandshake_ClosesSocketWithoutDispatchingFrames(bool game)
+    [Theory, InlineData(false, false), InlineData(true, false), InlineData(false, true), InlineData(true, true)]
+    public async Task InvalidEncryptedHandshake_ClosesSocketWithoutDispatchingFrames(bool game, bool matchingSentinels)
     {
         using var timeout = new CancellationTokenSource(TimeSpan.FromSeconds(10));
         var token = timeout.Token;
@@ -94,7 +94,14 @@ public sealed class UoEncryptionTransportTests
             await network.StartAsync();
             using var peer = new TcpClient();
             await peer.ConnectAsync(network.Listeners[0].Endpoint, token);
-            byte[] wire = [.. PolEncryptionFixture.Seed(0x12345678, !game), .. Enumerable.Repeat((byte)0xAA, game ? 65 : 62)];
+            var payload = Enumerable.Repeat((byte)0xAA, game ? 65 : 62).ToArray();
+            if (matchingSentinels)
+            {
+                payload = PolEncryptionFixture.PlainLogin(0x12345678, game);
+                payload[game ? 5 : 1] = 0xFF;
+                payload = PolEncryptionFixture.EncryptModernLogin(payload, game);
+            }
+            byte[] wire = [.. PolEncryptionFixture.Seed(0x12345678, !game), .. payload];
             await peer.GetStream().WriteAsync(wire, token);
             await closed.Task.WaitAsync(token);
             Assert.Equal(0, Volatile.Read(ref frames));
