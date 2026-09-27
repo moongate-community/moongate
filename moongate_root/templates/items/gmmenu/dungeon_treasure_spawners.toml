@@ -1,0 +1,346 @@
+[[item]]
+id = "base_dungeon_treasure"
+base_id = "base_spawner"
+item_id = 0
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_woodbox_1"
+base_id = "base_spawner"
+item_id = 2474
+name = "wooden box"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_woodbox_2"
+base_id = "base_spawner"
+item_id = 2474
+name = "wooden box"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_woodbox_3"
+base_id = "base_spawner"
+item_id = 2474
+name = "wooden box"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_woodbox_4"
+base_id = "base_spawner"
+item_id = 2474
+name = "wooden box"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_woodchest_1"
+base_id = "base_spawner"
+item_id = 3650
+name = "wooden chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_woodchest_2"
+base_id = "base_spawner"
+item_id = 3650
+name = "wooden chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_woodchest_3"
+base_id = "base_spawner"
+item_id = 3650
+name = "wooden chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_woodchest_4"
+base_id = "base_spawner"
+item_id = 3650
+name = "wooden chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_metalchest_1"
+base_id = "base_spawner"
+item_id = 2475
+name = "metal chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_metalchest_2"
+base_id = "base_spawner"
+item_id = 2475
+name = "metal chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_metalchest_3"
+base_id = "base_spawner"
+item_id = 2475
+name = "metal chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_metalchest_4"
+base_id = "base_spawner"
+item_id = 2475
+name = "metal chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_goldmetalchest_1"
+base_id = "base_spawner"
+item_id = 3648
+name = "metal chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_goldmetalchest_2"
+base_id = "base_spawner"
+item_id = 3648
+name = "metal chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_goldmetalchest_3"
+base_id = "base_spawner"
+item_id = 3648
+name = "metal chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_goldmetalchest_4"
+base_id = "base_spawner"
+item_id = 3648
+name = "metal chest"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_smallcrate_1"
+base_id = "base_spawner"
+item_id = 2473
+name = "small crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_smallcrate_2"
+base_id = "base_spawner"
+item_id = 2473
+name = "small crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_smallcrate_3"
+base_id = "base_spawner"
+item_id = 2473
+name = "small crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_smallcrate_4"
+base_id = "base_spawner"
+item_id = 2473
+name = "small crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_mediumcrate_1"
+base_id = "base_spawner"
+item_id = 3646
+name = "crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_mediumcrate_2"
+base_id = "base_spawner"
+item_id = 3646
+name = "crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_mediumcrate_3"
+base_id = "base_spawner"
+item_id = 3646
+name = "crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_mediumcrate_4"
+base_id = "base_spawner"
+item_id = 3646
+name = "crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_largecrate_1"
+base_id = "base_spawner"
+item_id = 3644
+name = "crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_largecrate_2"
+base_id = "base_spawner"
+item_id = 3644
+name = "crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_largecrate_3"
+base_id = "base_spawner"
+item_id = 3644
+name = "crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000
+
+[[item]]
+id = "d_largecrate_4"
+base_id = "base_spawner"
+item_id = 3644
+name = "crate"
+rarity = "common"
+movable = false
+weight = 20.0
+amount = 1
+visibility = "regular"
+max_weight = 400000

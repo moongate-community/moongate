@@ -11,8 +11,6 @@
 #   The number is the message id the code asks for, the same in every language.
 #   {0}, {1}, ... are the values the code fills in, in order; {0,6} pads to 6
 #   characters and {0:x} writes in hex. Write {{ and }} for a literal brace.
-#
-# Source: the UOX3 dictionaries (data/dictionaries/dictionary.*).
 # ==============================================================================
 
 [messages]

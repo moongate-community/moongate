@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Text.Json.Nodes;
 using Moongate.Network.Packets.Data.Clients;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
@@ -10,9 +11,10 @@ using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Tests.Support.Sessions;
-using Moongate.Tests.TestSupport.Packets;
-using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Containers;
+using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Characters;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Integration.Realms;
 
@@ -132,7 +134,7 @@ public sealed class RedisGameHandoffStoreTests : IAsyncLifetime
             ),
             _instanceId
         );
-        var handler = new GameLoginPacketHandler(realm, _store, new StubDataLoaderService());
+        var handler = new GameLoginPacketHandler(realm, _store, new StubDataLoaderService(), new RecordingCharacterService(), new CharactersConfig());
 
         await handler.HandleAsync(
             context,

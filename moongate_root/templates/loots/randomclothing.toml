@@ -166,6 +166,12 @@ amount = 1
 
 [[loot.entries]]
 weight = 13
+item_id = "0x1ffd_surcoat"
+comment = "surcoat"
+amount = 1
+
+[[loot.entries]]
+weight = 13
 item_id = "0x1f9f_jester_suit"
 comment = "jester suit"
 amount = 1

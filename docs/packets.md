@@ -13,6 +13,7 @@ Directions are relative to the server. This is the default table, not the whole 
 
 | Opcode | Class | Direction | Length | Default host handler |
 | --- | --- | --- | --- | --- |
+| `0x53` | `PopupMessagePacket` | Outgoing | Fixed 2 | Game: sent before disconnecting when character creation is refused or fails |
 | `0x55` | `LoginCompletePacket` | Outgoing | Fixed 1 | — |
 | `0x73` | `PingPacket` | Both | Fixed 2 | Game: `PingPacketHandler`; Login: `LoginRolePingPacketHandler` |
 | `0x80` | `AccountLoginPacket` | Incoming | Fixed 62 | Login: async account check, then `0xA8` list or `0x82` denial |
@@ -32,10 +33,10 @@ The Ultima plugin adds these packets in game and standalone modes, with
 
 | Opcode | Class | Direction | Length | Handler |
 | --- | --- | --- | --- | --- |
-| `0x8D` | `CreateCharacterEnhancedPacket` | Incoming | Variable | None yet: decoded only |
+| `0x8D` | `CreateCharacterEnhancedPacket` | Incoming | Variable | `CreateCharacterEnhancedPacketHandler`: creates and saves the character and starting items |
 | `0xA9` | `CharacterListPacket` | Outgoing | Variable, minimum 6 | — |
 | `0xD9` | `ClientHardwareInfoPacket` | Incoming | Fixed 268 | None yet: decoded only |
-| `0xF8` | `CreateCharacterPacket` | Incoming | Fixed 106 | None yet: decoded only |
+| `0xF8` | `CreateCharacterPacket` | Incoming | Fixed 106 | `CreateCharacterPacketHandler`: creates and saves the character and starting items |
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
@@ -50,9 +51,11 @@ still works on game listeners.
 
 After a valid `0x91` the game server copies the client version from the ticket to
 the session, turns on Huffman compression for everything it sends from then on,
-and sends `0xB9` followed by `0xA9`: seven empty character slots and the starting
-cities from `data/starting_cities.toml`. Creating, selecting and entering the
-world with a character are future work.
+and sends `0xB9` followed by `0xA9`: the account's saved characters in the
+configured number of slots (`characters.max_per_account`, default 7), plus the
+starting cities from `data/starting_cities.toml`. The creation handlers save a new
+character and its starting items in one transaction. Selection and world entry
+remain future work.
 
 `TryGetDescriptor(opCode, out descriptor)` prefers incoming, then outgoing;
 `descriptor.PacketType.Name` gives its class name. The overload accepting

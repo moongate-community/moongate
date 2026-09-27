@@ -1,74 +1,111 @@
 [[item]]
+id = "base_coin"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+weight = 0.02
+amount = 1
+stackable = true
+decays = true
+
+[[item]]
 id = "0x0eed_gold_coin"
+base_id = "base_item"
 item_id = 3821
 name = "gold coin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.02
+amount = 1
+stackable = true
+decays = true
 
 [[item]]
 id = "0x0eed_4_gold_coin"
+base_id = "base_item"
 item_id = 3821
 name = "gold coin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.02
+amount = 4
+stackable = true
+decays = true
 
 [[item]]
 id = "0xeed_20_gold_coin"
+base_id = "base_item"
 item_id = 3821
 name = "gold coin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.02
+amount = 20
+stackable = true
+decays = true
 
 [[item]]
 id = "0x0ef2_silver_coin"
+base_id = "base_item"
 item_id = 3826
 name = "silver coin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.02
+amount = 1
+stackable = true
+decays = true
 
 [[item]]
 id = "0x0ef2_4_silver_coin"
+base_id = "base_item"
 item_id = 3826
 name = "silver coin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.02
+amount = 4
+stackable = true
+decays = true
 
 [[item]]
 id = "0x0ef2_20_silver_coin"
+base_id = "base_item"
 item_id = 3826
 name = "silver coin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.02
+amount = 20
+stackable = true
+decays = true
 
 [[item]]
 id = "0x0eea_copper_coin"
+base_id = "base_item"
 item_id = 3818
 name = "copper coin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.02
+amount = 1
+stackable = true
+decays = true
 
 [[item]]
 id = "0x0eea_4_copper_coin"
+base_id = "base_item"
 item_id = 3819
 name = "copper coin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.02
+amount = 4
+stackable = true
+decays = true
 
 [[item]]
 id = "0x0eea_20_copper_coin"
+base_id = "base_item"
 item_id = 3820
 name = "copper coin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.02
+amount = 20
+stackable = true
+decays = true
 
 [[item]]
 id = "bankcheck"
@@ -76,5 +113,8 @@ base_id = "base_item"
 item_id = 5360
 name = "a bank check"
 rarity = "common"
-movable = false
+weight = 1.0
+stackable = false
+decays = true
+loot_type = "newbied"
 hue = 52

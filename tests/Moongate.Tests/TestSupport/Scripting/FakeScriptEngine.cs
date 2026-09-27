@@ -37,7 +37,7 @@ public sealed class FakeScriptEngine : IScriptEngine
     /// <inheritdoc />
     public ScriptExecutionMetrics GetMetrics()
     {
-        return Metrics ?? new ScriptExecutionMetrics(Loaded.Count, 0, 0, 0, 0, 0, 0, 0);
+        return Metrics ?? new ScriptExecutionMetrics(Loaded.Count, 0, 0, 0, 0, 0, 0, 0, 0);
     }
 
     /// <inheritdoc />

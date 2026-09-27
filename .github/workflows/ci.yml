@@ -5,10 +5,18 @@ on:
     branches:
       - develop
       - main
+    # Documentation-only changes cannot affect the build or the tests; the docs workflow checks the site.
+    paths-ignore:
+      - docs/**
+      - website/**
+      - '**/*.md'
   pull_request:
+    paths-ignore:
+      - docs/**
+      - website/**
+      - '**/*.md'
 
-# A single self-hosted runner serves this repository, so a superseded run would
-# otherwise hold the queue against the run that replaced it.
+# Superseded runs should release the shared runner capacity promptly.
 concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
@@ -22,6 +30,10 @@ jobs:
 
     container:
       image: mcr.microsoft.com/dotnet/sdk:10.0
+      # The runner is dedicated, so NuGet packages persist in a Docker volume on its host instead of an
+      # actions/cache archive, which was re-downloaded and re-uploaded (hundreds of MB) on every project change.
+      volumes:
+        - moongate-nuget-packages:/nuget-packages
 
     services:
       postgres:
@@ -31,6 +43,7 @@ jobs:
           POSTGRES_HOST_AUTH_METHOD: trust
           POSTGRES_USER: postgres
         options: >-
+          --tmpfs /var/lib/postgresql/data:rw,size=1g
           --health-cmd "pg_isready -h 127.0.0.1 -U postgres -d postgres"
           --health-interval 2s
           --health-timeout 5s
@@ -48,6 +61,7 @@ jobs:
       DOTNET_CLI_TELEMETRY_OPTOUT: 1
       DOTNET_NOLOGO: 1
       DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      NUGET_PACKAGES: /nuget-packages
       MOONGATE_TEST_POSTGRES_CONNECTION_STRING: Host=postgres;Port=5432;Database=postgres;Username=postgres;Pooling=false
       MOONGATE_REDIS_CONNECTION_STRING: redis:6379
       MOONGATE_TEST_REDIS_CONNECTION_STRING: redis:6379
@@ -57,14 +71,6 @@ jobs:
     steps:
       - name: Checkout
         uses: actions/checkout@v7
-
-      - name: Cache NuGet packages
-        uses: actions/cache@v6
-        with:
-          path: ~/.nuget/packages
-          key: nuget-${{ runner.os }}-${{ hashFiles('**/*.csproj', 'Directory.Build.props', 'Directory.Build.targets') }}
-          restore-keys: |
-            nuget-${{ runner.os }}-
 
       - name: Restore
         run: dotnet restore Moongate.slnx
@@ -77,20 +83,48 @@ jobs:
 
       - name: Test
         # Test projects share PostgreSQL and Redis services; run their hosts one at a time.
-        run: bash scripts/test.sh all -c Release --no-build
+        # The run also collects code coverage and merges it into artifacts/coverage.
+        run: bash scripts/coverage.sh all -c Release --no-build --logger trx
 
+      - name: Upload test timings
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: test-results
+          path: artifacts/coverage/results/**/*.trx
+          if-no-files-found: ignore
+          retention-days: 14
+
+      - name: Publish coverage summary
+        run: cat artifacts/coverage/Summary.md >> "$GITHUB_STEP_SUMMARY"
+
+      - name: Upload coverage report
+        uses: actions/upload-artifact@v7
+        with:
+          name: coverage-report
+          path: |
+            artifacts/coverage
+            !artifacts/coverage/results
+          # Documentation publishes the report of the released commit, possibly long after it ran.
+          retention-days: ${{ github.ref == 'refs/heads/main' && 90 || 14 }}
+
+      # The distribution checks below guard what a release ships; develop pushes skip them, since every change
+      # reaches develop through a pull request that already ran them.
       - name: Verify portable administration client
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: |
           apt-get update
           apt-get install -y --no-install-recommends python3-venv
           bash scripts/verify-admin-protos.sh
 
       - name: Verify NuGet packages and README examples
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: bash scripts/verify-packages.sh
 
       # The notices ship beside the binaries, so a dependency change that does not
       # reach them would distribute the wrong attributions.
       - name: Verify the third-party notices are current
+        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: |
           ./scripts/third-party-notices.sh
           git diff --exit-code -- THIRD-PARTY-NOTICES.md

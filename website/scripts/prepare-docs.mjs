@@ -1,9 +1,10 @@
-import { mkdir, mkdtemp, readFile, writeFile, copyFile, rename, rm, lstat, realpath } from 'node:fs/promises';
+import { cp, mkdir, mkdtemp, readFile, writeFile, copyFile, rename, rm, lstat, realpath } from 'node:fs/promises';
 import path from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { contentEntries } from '../content-manifest.mjs';
 import { repositoryFile } from './document-links.mjs';
 import { compileDocument } from './compile-document.mjs';
+import { coverageMarker, missingCoverageMarkdown, readCoverage } from './coverage.mjs';
 
 async function exists(file) {
   try { await lstat(file); return true; }
@@ -24,7 +25,7 @@ async function ensureOwnedParent(websiteRoot, destination) {
   }
 }
 
-export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'develop', entries = contentEntries }) {
+export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'develop', entries = contentEntries, coverage }) {
   const slugs = new Set();
   const sources = new Set();
   for (const entry of entries) {
@@ -38,17 +39,20 @@ export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'de
     repositoryFile(repositoryRoot, entry.source);
   }
   const assets = new Map();
+  const report = coverage ? await readCoverage(coverage) : null;
   // Compile in memory before touching previous generated output.
   const pages = [];
   for (const entry of entries) {
-    const markdown = await readFile(repositoryFile(repositoryRoot, entry.source), 'utf8');
+    const markdown = (await readFile(repositoryFile(repositoryRoot, entry.source), 'utf8'))
+      .replace(coverageMarker, report?.markdown ?? missingCoverageMarkdown);
     pages.push({ entry, markdown: compileDocument(entry, markdown, { repositoryRoot, sourceRef, entries, assets }) });
   }
   const installer = await readFile(repositoryFile(repositoryRoot, 'scripts/install.sh'));
   await mkdir(websiteRoot, { recursive: true });
   websiteRoot = await realpath(websiteRoot);
   const destinations = [path.join(websiteRoot, 'src/content/docs/generated'), path.join(websiteRoot, 'public/generated')];
-  for (const destination of destinations) await ensureOwnedParent(websiteRoot, destination);
+  const coverageDestination = path.join(websiteRoot, 'public/coverage');
+  for (const destination of [...destinations, coverageDestination]) await ensureOwnedParent(websiteRoot, destination);
   const stage = await mkdtemp(path.join(websiteRoot, '.docs-stage-'));
   const staged = [path.join(stage, 'pages'), path.join(stage, 'assets')];
   const backups = destinations.map((_, index) => path.join(stage, `backup-${index}`));
@@ -87,6 +91,15 @@ export async function prepareDocs({ repositoryRoot, websiteRoot, sourceRef = 'de
     const installerStage = path.join(stage, 'install.sh');
     await writeFile(installerStage, installer);
     await rename(installerStage, installerFile);
+    // The browsable coverage report, served at /coverage/. The raw per-project
+    // results beside it are inputs to the merge, not part of the report.
+    await rm(coverageDestination, { recursive: true, force: true });
+    if (report) {
+      await cp(report.directory, coverageDestination, {
+        recursive: true,
+        filter: source => path.relative(report.directory, source).split(path.sep)[0] !== 'results',
+      });
+    }
   } finally {
     await rm(stage, { recursive: true, force: true });
   }
@@ -98,6 +111,10 @@ if (process.argv[1] && import.meta.url === pathToFileURL(path.resolve(process.ar
   const result = await prepareDocs({
     repositoryRoot: path.resolve(websiteRoot, '..'), websiteRoot,
     sourceRef: process.env.MOONGATE_DOCS_REF || 'develop',
+    coverage: {
+      directory: process.env.MOONGATE_COVERAGE_DIR || path.resolve(websiteRoot, '../artifacts/coverage'),
+      commit: process.env.MOONGATE_COVERAGE_COMMIT,
+    },
   });
   console.log(`Imported ${result.pages} pages and ${result.assets} assets.`);
 }

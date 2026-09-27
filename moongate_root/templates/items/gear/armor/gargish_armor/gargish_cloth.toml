@@ -1,63 +1,101 @@
 [[item]]
+id = "0x0404"
+base_id = "0x0404_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
 id = "0x4060"
+base_id = "0x0404_lbr"
 item_id = 16480
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x0403"
+base_id = "0x0403_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x405f"
+base_id = "0x0403_lbr"
 item_id = 16479
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x0406"
+base_id = "0x0406_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x4062"
+base_id = "0x0405_lbr"
 item_id = 16482
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x0405"
+base_id = "0x0405_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x4061"
+base_id = "0x0405_lbr"
 item_id = 16481
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x040a"
+base_id = "0x040a_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x4066"
+base_id = "0x040a_lbr"
 item_id = 16486
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x0409"
+base_id = "0x0409_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x4065"
+base_id = "0x0409_lbr"
 item_id = 16485
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x0408"
+base_id = "0x0408_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x4064"
+base_id = "0x0408_lbr"
 item_id = 16484
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x0407"
+base_id = "0x0407_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x4063"
+base_id = "0x0407_lbr"
 item_id = 16483
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "0x45a5"
 base_id = "0x45a4_gargish_cloth_wing_armor"
 item_id = 17829
 rarity = "common"
-movable = false
-hue = 0

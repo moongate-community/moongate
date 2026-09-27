@@ -4,5 +4,327 @@ base_id = "0x14ec_blank_map"
 item_id = 5356
 name = "map"
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "smallworldmap"
+base_id = "base_map"
+item_id = 0
+name = "small world map"
+rarity = "common"
+[item.tags]
+Map = "1"
+
+[[item]]
+id = "largeworldmap"
+base_id = "base_map"
+item_id = 0
+name = "large world map"
+rarity = "common"
+[item.tags]
+Map = "2"
+
+[[item]]
+id = "britainmap"
+base_id = "base_map"
+item_id = 0
+name = "britain map"
+rarity = "common"
+[item.tags]
+Map = "3"
+
+[[item]]
+id = "britaintoskarabraemap"
+base_id = "base_map"
+item_id = 0
+name = "britain to skara brae map"
+rarity = "common"
+[item.tags]
+Map = "4"
+
+[[item]]
+id = "britaintotrinsicmap"
+base_id = "base_map"
+item_id = 0
+name = "britain to trinsic map"
+rarity = "common"
+[item.tags]
+Map = "5"
+
+[[item]]
+id = "bucsdenmap"
+base_id = "base_map"
+item_id = 0
+name = "bucs den map"
+rarity = "common"
+[item.tags]
+Map = "6"
+
+[[item]]
+id = "bucsdentomaginciamap"
+base_id = "base_map"
+item_id = 0
+name = "bucs den to magincia map"
+rarity = "common"
+[item.tags]
+Map = "7"
+
+[[item]]
+id = "bucsdentoocllomap"
+base_id = "base_map"
+item_id = 0
+name = "bucs den to ocllo map"
+rarity = "common"
+[item.tags]
+Map = "8"
+
+[[item]]
+id = "jhelommap"
+base_id = "base_map"
+item_id = 0
+name = "jhelom map"
+rarity = "common"
+[item.tags]
+Map = "9"
+
+[[item]]
+id = "maginciamap"
+base_id = "base_map"
+item_id = 0
+name = "magincia map"
+rarity = "common"
+[item.tags]
+Map = "10"
+
+[[item]]
+id = "maginciatoocllomap"
+base_id = "base_map"
+item_id = 0
+name = "magincia to ocllo map"
+rarity = "common"
+[item.tags]
+Map = "11"
+
+[[item]]
+id = "minocmap"
+base_id = "base_map"
+item_id = 0
+name = "minoc map"
+rarity = "common"
+[item.tags]
+Map = "12"
+
+[[item]]
+id = "minoctoyewmap"
+base_id = "base_map"
+item_id = 0
+name = "minoc to yew map"
+rarity = "common"
+[item.tags]
+Map = "13"
+
+[[item]]
+id = "minoctovespermap"
+base_id = "base_map"
+item_id = 0
+name = "minoc to vesper map"
+rarity = "common"
+[item.tags]
+Map = "14"
+
+[[item]]
+id = "moonglowmap"
+base_id = "base_map"
+item_id = 0
+name = "moonglow map"
+rarity = "common"
+[item.tags]
+Map = "15"
+
+[[item]]
+id = "moonglowtonujelmmap"
+base_id = "base_map"
+item_id = 0
+name = "moonglow to nujelm map"
+rarity = "common"
+[item.tags]
+Map = "16"
+
+[[item]]
+id = "nujelmmap"
+base_id = "base_map"
+item_id = 0
+name = "nujelm map"
+rarity = "common"
+[item.tags]
+Map = "17"
+
+[[item]]
+id = "nujelmtomaginciamap"
+base_id = "base_map"
+item_id = 0
+name = "nujelm to magincia map"
+rarity = "common"
+[item.tags]
+Map = "18"
+
+[[item]]
+id = "occlomap"
+base_id = "base_map"
+item_id = 0
+name = "occlo map"
+rarity = "common"
+[item.tags]
+Map = "19"
+
+[[item]]
+id = "serpentsholdmap"
+base_id = "base_map"
+item_id = 0
+name = "serpents hold map"
+rarity = "common"
+[item.tags]
+Map = "20"
+
+[[item]]
+id = "serpentsholdtoocllomap"
+base_id = "base_map"
+item_id = 0
+name = "serpents hold to ocllo map"
+rarity = "common"
+[item.tags]
+Map = "21"
+
+[[item]]
+id = "skarabraemap"
+base_id = "base_map"
+item_id = 0
+name = "skara brae map"
+rarity = "common"
+[item.tags]
+Map = "22"
+
+[[item]]
+id = "trinsicmap"
+base_id = "base_map"
+item_id = 0
+name = "trinsic map"
+rarity = "common"
+[item.tags]
+Map = "23"
+
+[[item]]
+id = "trinsictobucsdenmap"
+base_id = "base_map"
+item_id = 0
+name = "trinsic to bucs den map"
+rarity = "common"
+[item.tags]
+Map = "24"
+
+[[item]]
+id = "trinsictojhelommap"
+base_id = "base_map"
+item_id = 0
+name = "trinsic to jhelom map"
+rarity = "common"
+[item.tags]
+Map = "25"
+
+[[item]]
+id = "vespermap"
+base_id = "base_map"
+item_id = 0
+name = "vesper map"
+rarity = "common"
+[item.tags]
+Map = "26"
+
+[[item]]
+id = "vespertonujelmmap"
+base_id = "base_map"
+item_id = 0
+name = "vesper to nujelm map"
+rarity = "common"
+[item.tags]
+Map = "27"
+
+[[item]]
+id = "yewmap"
+base_id = "base_map"
+item_id = 0
+name = "yew map"
+rarity = "common"
+[item.tags]
+Map = "28"
+
+[[item]]
+id = "yewtobritainmap"
+base_id = "base_map"
+item_id = 0
+name = "yew to britain map"
+rarity = "common"
+[item.tags]
+Map = "29"
+
+[[item]]
+id = "tokunomap"
+base_id = "base_map"
+item_id = 0
+name = "tokunomap"
+rarity = "common"
+[item.tags]
+Map = "30"
+
+[[item]]
+id = "malasmap"
+base_id = "base_map"
+item_id = 0
+name = "malas map"
+rarity = "common"
+[item.tags]
+Map = "31"
+
+[[item]]
+id = "ilshenarmap"
+base_id = "base_map"
+item_id = 0
+name = "ilshenar map"
+rarity = "common"
+[item.tags]
+Map = "32"
+
+[[item]]
+id = "termurmap"
+base_id = "base_map"
+item_id = 0
+name = "termur map"
+rarity = "common"
+[item.tags]
+Map = "33"
+
+[[item]]
+id = "craftedlocalmap"
+base_id = "base_map"
+item_id = 0
+name = "local map"
+rarity = "common"
+[item.tags]
+Map = "50"
+
+[[item]]
+id = "craftedcitymap"
+base_id = "base_map"
+item_id = 0
+name = "city map"
+rarity = "common"
+[item.tags]
+Map = "50"
+
+[[item]]
+id = "craftedseachart"
+base_id = "base_map"
+item_id = 0
+name = "sea chart"
+rarity = "common"
+[item.tags]
+Map = "50"

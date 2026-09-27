@@ -3,189 +3,189 @@ id = "smallsnphousedeed"
 item_id = 5360
 name = "small stone & plaster house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 43800
+sell_price = 43800
 
 [[item]]
 id = "smallstonehousedeed"
 item_id = 5360
 name = "small stone house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 43800
+sell_price = 43800
 
 [[item]]
 id = "smallbrickhousedeed"
 item_id = 5360
 name = "small brick house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 43800
+sell_price = 43800
 
 [[item]]
 id = "smallwoodhousedeed"
 item_id = 5360
 name = "small wood house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 43800
+sell_price = 43800
 
 [[item]]
 id = "smallwnphousedeed"
 item_id = 5360
 name = "small wood & plaster house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 43800
+sell_price = 43800
 
 [[item]]
 id = "smallwoodstrawhousedeed"
 item_id = 5360
 name = "small wood house with straw roof deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 43800
+sell_price = 43800
 
 [[item]]
 id = "bluetentdeed"
 item_id = 5360
 name = "blue tent deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 22800
+sell_price = 22800
 
 [[item]]
 id = "greententdeed"
 item_id = 5360
 name = "green tent deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 22800
+sell_price = 22800
 
 [[item]]
 id = "3roombrickhousedeed"
 item_id = 5360
 name = "3 room brick house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 144500
+sell_price = 144500
 
 [[item]]
 id = "2storywnphousedeed"
 item_id = 5360
 name = "2 story wood & plaster house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 192400
+sell_price = 192400
 
 [[item]]
 id = "2storysnphousedeed"
 item_id = 5360
 name = "2 story stone & plaster house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 192400
+sell_price = 192400
 
 [[item]]
 id = "towerdeed"
 item_id = 5360
 name = "tower deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 433200
+sell_price = 433200
 
 [[item]]
 id = "keepdeed"
 item_id = 5360
 name = "keep deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 665200
+sell_price = 665200
 
 [[item]]
 id = "castledeed"
 item_id = 5360
 name = "castle deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 1022800
+sell_price = 1022800
 
 [[item]]
 id = "largeshoppatio"
 item_id = 5360
 name = "large patio deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 152800
+sell_price = 152800
 
 [[item]]
 id = "largesmithydeed"
 item_id = 5360
 name = "large smithy deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 152800
+sell_price = 152800
 
 [[item]]
 id = "smalltowerdeed"
 item_id = 5360
 name = "small tower deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 88000
+sell_price = 88000
 
 [[item]]
 id = "smallmarbleshopdeed"
 item_id = 5360
 name = "small marble shop deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 63000
+sell_price = 63000
 
 [[item]]
 id = "smallstoneshopdeed"
 item_id = 5360
 name = "small stone shop deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 60000
+sell_price = 60000
 
 [[item]]
 id = "2storyvilladeed"
 item_id = 5360
 name = "2 story villa deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 136000
+sell_price = 136000
 
 [[item]]
 id = "sandstonepatiohousedeed"
 item_id = 5360
 name = "standstone patio house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 90000
+sell_price = 90000
 
 [[item]]
 id = "2storylogcabindeed"
 item_id = 5360
 name = "2 story log cabin deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 97000
+sell_price = 97000
 
 [[item]]
 id = "largemarblepatiohousedeed"
 item_id = 5360
 name = "large marble patio house deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 192000
+sell_price = 192000
 
 [[item]]
 id = "farmerscabindeed"
 item_id = 5360
 name = "farmer's cabin deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 55000
+sell_price = 55000

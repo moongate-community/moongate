@@ -5,15 +5,43 @@
 <h1 align="center">Moongate</h1>
 
 <p align="center">
-  <a href="https://github.com/moongate-community/moongate/actions/workflows/ci.yml"><img src="https://github.com/moongate-community/moongate/actions/workflows/ci.yml/badge.svg?branch=develop" alt="CI"></a>
-  <a href="https://github.com/moongate-community/moongate/actions/workflows/security.yml"><img src="https://github.com/moongate-community/moongate/actions/workflows/security.yml/badge.svg?branch=main" alt="Security Audit"></a>
-  <a href="https://github.com/moongate-community/moongate/pkgs/container/moongate"><img src="https://img.shields.io/badge/ghcr.io-moongate-2496ED?logo=docker&logoColor=white" alt="Container image"></a>
-  <img src="https://img.shields.io/badge/platform-.NET%2010-blueviolet" alt=".NET 10">
-  <img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="AGPL-3.0-or-later">
+  <a href="https://github.com/moongate-community/moongate/actions/workflows/ci.yml?query=branch%3Adevelop"><img src="https://img.shields.io/github/actions/workflow/status/moongate-community/moongate/ci.yml?branch=develop&amp;label=CI%20%28develop%29" alt="CI on develop"></a>
+  <a href="https://github.com/moongate-community/moongate/actions/workflows/security.yml?query=branch%3Amain"><img src="https://img.shields.io/github/actions/workflow/status/moongate-community/moongate/security.yml?branch=main&amp;label=security%20%28main%29" alt="Dependency security audit on main"></a>
+  <a href="https://github.com/moongate-community/moongate/releases/latest"><img src="https://img.shields.io/github/v/release/moongate-community/moongate?label=release" alt="Latest release"></a>
+  <a href="LICENSE"><img src="https://img.shields.io/badge/license-AGPL--3.0--or--later-blue" alt="License: AGPL-3.0-or-later"></a>
 </p>
 
-An Ultima Online server written in C# on .NET 10, with reusable libraries for
-networking, PostgreSQL persistence, Redis-backed realm handoff and scripting.
+<p align="center">
+  <a href="https://moongate.sh/"><img src="https://img.shields.io/badge/docs-moongate.sh-3867D6" alt="Documentation at moongate.sh"></a>
+  <a href="https://github.com/moongate-community/moongate/pkgs/container/moongate"><img src="https://img.shields.io/badge/ghcr.io-moongate-2496ED?logo=docker&amp;logoColor=white" alt="Container image"></a>
+  <a href="https://dotnet.microsoft.com/en-us/download/dotnet/10.0"><img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&amp;logoColor=white" alt=".NET 10"></a>
+  <a href="docs/scripting.md"><img src="https://img.shields.io/badge/Lua-5.2-2C2D72?logo=lua&amp;logoColor=white" alt="Lua 5.2 scripting"></a>
+</p>
+
+Moongate is an open-source Ultima Online server emulator written in C# on .NET 10.
+It combines Lua scripting, PostgreSQL persistence and Redis-backed login-to-game
+handoff, with reusable libraries for building server tools and services.
+
+## Status
+
+**Under active development; there is no playable world yet.** Login lists the
+account's saved characters. New characters are created and saved with their
+starting items; character selection and world entry are not implemented.
+
+The networking and packet pipeline, Lua runtime, persistence infrastructure,
+shard data loading, and client-file readers with movement and line-of-sight
+queries are in place. See [Implementation status](docs/implementation-status.md)
+for supported behavior and remaining work.
+
+## Getting started
+
+To run Moongate, you need your own Ultima Online client data files, PostgreSQL,
+and Redis 7+. Client data is not included. The [First start guide](docs/getting-started.md)
+walks through preparing the server root, configuring these dependencies, applying
+database migrations, and starting the server.
+
+Choose an installation method below. The Linux installer and container image
+include the .NET runtime; building from source requires the **.NET 10 SDK**.
 
 ## Install on Linux
 
@@ -21,14 +49,10 @@ networking, PostgreSQL persistence, Redis-backed realm handoff and scripting.
 curl -fsSL https://moongate.sh/install.sh | sh
 ```
 
-Installs the latest release into `/opt/moongate` and links it as `moongate`. See
-[Install on Linux](docs/installation.md) for the options, upgrades and removal.
-
-## Getting started
-
-Use [First start](docs/getting-started.md) to build and configure the server, or
-follow the Docker guide below. The [configuration reference](docs/server-configuration.md)
-lists all TOML settings, CLI options and current implementation limits.
+Installs the latest release into `/opt/moongate` and makes `moongate` and `mgboot`
+available on your path. Supports Linux x64 and ARM64 with glibc. Keep your server
+root outside the installation directory so upgrades preserve your configuration
+and data. See [Install on Linux](docs/installation.md) for options, upgrades and removal.
 
 ## Docker
 
@@ -37,29 +61,24 @@ Every release publishes a `linux/amd64` image to
 See [Run with Docker](docs/docker.md) for first-start configuration, persistent
 storage, Docker Compose, logs, and upgrades.
 
-## Server guides
+## Build from source
 
-- [PostgreSQL persistence and world saves](docs/persistence.md): Auth/World registration, async queries, transactions, schema operations and autosave.
-- [Packets and handlers](docs/packets.md): wire formats, default opcodes and typed game handlers.
-- [Game loop and timers](docs/game-loop-and-timers.md): thread ownership, bounded queues, scheduling and shutdown.
-- [Writing Lua scripts](docs/scripting.md): bootstrap, modules, timers, reload and editor support.
-- [Diagnostics](docs/diagnostics.md): metrics and events; [dependency security](docs/security-audit.md) covers package auditing.
+```sh
+git clone https://github.com/moongate-community/moongate.git
+cd moongate
+git switch develop
+dotnet build Moongate.slnx -c Release
+```
 
-## Status
-
-Moongate is under active development. The transport, packet pipeline, scripting,
-persistence, shard data files, client-file readers (tiledata, maps, multis) with movement
-and line-of-sight checks, and Redis-backed login-to-game handoff are in place, and
-the game sends an empty character list after login; character creation, selection and
-a playable world are not. [Implementation status](docs/implementation-status.md)
-lists what works today, area by area.
+`develop` contains unreleased work. Use a [release tag](https://github.com/moongate-community/moongate/releases)
+to build a published version. Continue with [First start](docs/getting-started.md)
+to configure and run it, or [Contributing](CONTRIBUTING.md) to work on the code.
 
 ## Scripting
 
-Shard content runs in an embedded Lua 5.2 runtime (`Moongate.Scripting`, on
-[LuaCSharp](https://github.com/nuskey8/Lua-CSharp)) that lives entirely on the game
-loop thread. Scripts sit under `scripts/` in the server root; `init.lua` runs at
-startup, and `require` resolves only inside that directory, symbolic links included.
+Scripts run on the game loop thread in a sandboxed Lua 5.2 runtime powered by
+[LuaCSharp](https://github.com/nuskey8/Lua-CSharp). Put your startup script in
+`scripts/init.lua` under the server root:
 
 ```lua
 -- scripts/init.lua
@@ -67,53 +86,39 @@ log.info("booted {Engine} {Version}", engine.name, engine.version)
 
 timer.every(30, function()
     log.info("tick")
-    wait(2)                 -- parks this coroutine on the timer wheel
+    wait(2) -- suspends this coroutine without blocking the game loop
     log.info("two seconds later")
 end)
 ```
 
-- **Modules:** `engine` (name, version, codename, platform), `log` (`debug`, `info`, `warning`,
-  `error`, Serilog templates), `timer` (`after`, `every`, `cancel`) and the global
-  `wait(seconds)`; `print` goes to the server log. Host modules are C# classes marked
-  `[ScriptModule]` / `[ScriptFunction]` / `[ScriptConstant]`, registered with
-  `AddScriptModule<T>()` in `Program.cs`.
-- **Budget:** a deterministic instruction count, not a wall clock. A coroutine resume
-  may run 150,000 instructions and a top-level chunk 10,000,000 before it is aborted
-  with a script error; `string.rep` refuses results longer than 16,777,216 characters. The budget bounds VM execution; C# bindings must avoid blocking, and total memory is not capped.
-- **Sandbox:** base, `string`, `table`, `math`, `coroutine` and `package` only; no `io`,
-  `os`, `debug`, `dofile`, `loadfile`, `rawset` or script-created coroutines.
-- **Errors:** every failure is logged with file and line and published as
-  `ScriptErrorEvent` on the event bus; only an `init.lua` failure refuses the start.
-- **Tooling:** at startup the engine writes `scripts/definitions.lua` and
-  `scripts/.luarc.json`, so an editor with the Lua language server completes every
-  bound module, function, constant and enum. The console offers `script reload <file>`
-  and `script metrics`.
+The runtime provides logging, timers, events, instruction budgets, and generated
+editor definitions. See [Writing Lua scripts](docs/scripting.md) for available
+APIs, reload commands and configuration, and the
+[package README](src/Moongate.Scripting/README.md) for C# bindings and sandbox limits.
 
-```toml
-[scripting]
-bootstrap_file = "init.lua"
-max_instructions_per_resume = 150000
-max_instructions_per_chunk = 10000000
-hook_interval = 1000
-write_definitions = true
-max_string_length = 16777216
-```
+## Server guides
 
-Start with [Writing Lua scripts](docs/scripting.md). The
-[package README](src/Moongate.Scripting/README.md) documents the binding model and sandbox.
+| Area | Guides |
+| --- | --- |
+| Configuration and operation | [Server configuration](docs/server-configuration.md), [diagnostics](docs/diagnostics.md) |
+| Storage | [PostgreSQL persistence and world saves](docs/persistence.md) |
+| Protocol and execution | [Packets and handlers](docs/packets.md), [game loop and timers](docs/game-loop-and-timers.md) |
+| Client data | [Client files, movement and line-of-sight queries](docs/world-queries.md) |
+| Validation | [Test coverage](docs/test-coverage.md), [dependency security audits](docs/security-audit.md) |
 
 ## Extending Moongate
 
-- [Writing a plugin](docs/plugins.md): an assembly under `plugins/` that registers services, commands, Lua modules and metric providers before the server starts.
-- [Writing a Lua module](docs/lua-modules.md): a C# class with `[ScriptModule]` and `[ScriptFunction]` that scripts call as a read-only table.
-- [Registering a metric provider](docs/metric-providers.md): an `IMetricProvider` whose samples join the diagnostics snapshot.
-- [Localization](docs/localization.md): the server language, the `data/messages` files and `ILocalizationService`.
-- [Shard data files](docs/data-files.md): the TOML files under `data/` (maps, regions, races, skills and the rest), their fields and the checks that stop the server at startup.
-- [Client files and world queries](docs/world-queries.md): `ITileDataService`, `IMapService` and `IMultiService` over the client files, plus `IMovementService` and `ILineOfSightService` for steps and sight.
-- [Loading TOML templates](docs/templates.md): an `IDataLoader<TEntity>` that reads shard content once at startup, plus `EnumValueSpec<TEnum>` for fields that resolve randomly.
-- [TOML value types](docs/toml-types.md): every TOML converter (points, rectangles, hues, serials, value specs, account types, server mode), the forms it reads and writes, and how to add one.
+| Goal | Guides |
+| --- | --- |
+| Add server behavior | [Plugins](docs/plugins.md), [Lua modules in C#](docs/lua-modules.md) |
+| Add diagnostics | [Metric providers](docs/metric-providers.md) |
+| Define shard content | [Shard data files](docs/data-files.md), [TOML templates](docs/templates.md) |
+| Customize data formats | [TOML value types](docs/toml-types.md) |
+| Translate server messages | [Localization](docs/localization.md) |
 
-The first three are shown by one compiled sample, [samples/Moongate.Sample.Plugin](samples/Moongate.Sample.Plugin/), which the test suite loads through the real plugin loader.
+The compiled [sample plugin](samples/Moongate.Sample.Plugin/) demonstrates plugin
+registration, Lua bindings and a metric provider. The test suite loads it through
+the real plugin loader.
 
 ## Libraries
 
@@ -123,12 +128,20 @@ package list, dependencies, and the local verification command.
 
 ## Documentation
 
-The [documentation website](https://moongate.sh/)
-includes the [changelog](CHANGELOG.md), server guides, and library documentation.
-Releases publish the site automatically, and the same workflow can be run by hand between releases. See [Writing documentation](docs/documentation.md)
-for local preview commands and how to contribute a page.
+Browse the full guides and library documentation at **[moongate.sh](https://moongate.sh/)**.
+See the [changelog](CHANGELOG.md) for release history and
+[Writing documentation](docs/documentation.md) for local previews and page contributions.
 
 ## Contributing
 
 Read [CONTRIBUTING.md](CONTRIBUTING.md) for development setup, coding conventions,
 validation commands, and the pull request workflow. Contributions target `develop`.
+
+Moongate is also a personal project built for the enjoyment of programming.
+[How I use AI](docs/ai-usage.md) explains the maintainer's approach to AI-assisted
+migration, testing and design, and the code he chooses to write by hand.
+
+## License
+
+Moongate is licensed under [AGPL-3.0-or-later](LICENSE).
+Third-party attribution is listed in [THIRD-PARTY-NOTICES.md](THIRD-PARTY-NOTICES.md).

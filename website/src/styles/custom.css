@@ -39,3 +39,67 @@
 .site-title img {
   image-rendering: pixelated;
 }
+
+/* The landing page echoes the portal without adding motion or image assets. */
+.hero {
+  border-bottom: 1px solid var(--sl-color-accent-low);
+}
+
+.hero .copy::before {
+  content: '';
+  display: block;
+  width: 2.5rem;
+  height: 1.75rem;
+  border: 2px solid var(--sl-color-accent);
+  border-bottom: 0;
+  border-radius: 1.5rem 1.5rem 0 0;
+}
+
+.hero .tagline {
+  max-width: 34ch;
+}
+
+.sl-markdown-content .docs-paths {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 1rem;
+  margin-block: 1.5rem;
+}
+
+.sl-markdown-content .docs-paths a {
+  display: grid;
+  align-content: start;
+  gap: 0.5rem;
+  margin: 0;
+  padding: 1.25rem;
+  border: 1px solid var(--sl-color-gray-5);
+  border-top: 2px solid var(--sl-color-accent);
+  border-radius: 0.25rem;
+  background: var(--sl-color-gray-7);
+  text-decoration: none;
+}
+
+.sl-markdown-content .docs-paths strong {
+  color: var(--sl-color-white);
+  font-size: 1.125rem;
+}
+
+.sl-markdown-content .docs-paths span {
+  margin: 0;
+  color: var(--sl-color-gray-2);
+}
+
+.sl-markdown-content .docs-paths a:hover {
+  border-color: var(--sl-color-accent);
+}
+
+.sl-markdown-content .docs-paths a:focus-visible {
+  outline: 2px solid var(--sl-color-accent);
+  outline-offset: 3px;
+}
+
+@media (max-width: 40rem) {
+  .sl-markdown-content .docs-paths {
+    grid-template-columns: 1fr;
+  }
+}

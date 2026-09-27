@@ -3,22 +3,10 @@ name: Docker
 # Development images. Released images are built by the release workflow, which
 # tags them with the version; this one only ever moves the develop tag.
 on:
-  push:
-    branches:
-      - develop
-    paths:
-      - src/**
-      - Directory.Build.props
-      - Directory.Build.targets
-      - global.json
-      - .editorconfig
-      - migrations/**
-      # The image carries these, and .dockerignore decides what reaches the build
-      # context at all, so a change to any of them can break or alter the image.
-      - .dockerignore
-      - LICENSE
-      - THIRD-PARTY-NOTICES.md
-      - .github/workflows/docker.yml
+  # Nightly rather than on every push: the build takes about as long as CI on the same single runner, and a
+  # develop image a few hours old is enough for testing. Run it by hand when a fresh image is needed now.
+  schedule:
+    - cron: '30 2 * * *'
   workflow_dispatch:
 
 concurrency:

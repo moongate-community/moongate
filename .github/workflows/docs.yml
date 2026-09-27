@@ -28,6 +28,8 @@ on:
 
 permissions:
   contents: read
+  # Read the CI run and its coverage artifact for the published commit.
+  actions: read
 
 jobs:
   build:
@@ -37,6 +39,21 @@ jobs:
         uses: actions/checkout@v7
         with:
           ref: ${{ inputs.release_sha }}
+
+      # Coverage is optional and must never hold up documentation publication.
+      # Only use a successful run of this exact commit; otherwise the page states
+      # that no report was available. Publishing again later can include it.
+      - name: Download available test coverage
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          sha=$(git rev-parse HEAD)
+          run=$(gh run list --workflow CI --commit "$sha" --status success --limit 1 --json databaseId --jq '.[0].databaseId // empty')
+          if [ -n "$run" ] && gh run download "$run" --name coverage-report --dir artifacts/coverage; then
+            echo "MOONGATE_COVERAGE_COMMIT=${sha:0:7}" >> "$GITHUB_ENV"
+          else
+            echo "::warning::No CI coverage report for $sha; the coverage page will say so."
+          fi
 
       - name: Set up Node
         uses: actions/setup-node@v7

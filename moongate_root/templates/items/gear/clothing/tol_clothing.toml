@@ -4,6 +4,8 @@ base_id = "base_clothing"
 item_id = 41462
 name = "First Aid Belt"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+layer = "earrings"
 max_weight = 40000
+[item.tags]
+healingBonus = "15"

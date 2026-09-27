@@ -18,4 +18,8 @@
         <PackageTags>moongate;ultima-online;protocol;packets</PackageTags>
     </PropertyGroup>
 
+    <ItemGroup>
+        <None Update="Encryption/NOTICE.md" Pack="true" PackagePath="NOTICE.md"/>
+    </ItemGroup>
+
 </Project>

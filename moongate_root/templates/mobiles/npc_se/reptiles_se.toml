@@ -1,0 +1,24 @@
+[[mobile]]
+id = "yamandon_se"
+base_id = "base_yamandon"
+strength = "1d146+784"
+dexterity = "1d116+249"
+intelligence = "1d21+99"
+hits = "1d201+1599"
+damage = "1d78+89"
+armor = "1d21+64"
+karma = -10000
+fame = 10000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl5loot"]
+gold = "1d501+1999"
+[mobile.resistances]
+fire = "1d21+69"
+cold = "1d21+49"
+poison = "1d21+49"
+energy = "1d21+49"
+[mobile.skills]
+wrestling = "1d11+109"
+tactics = "1d6+114"
+resisting_spells = "1d6+114"
+anatomy = "1d6+114"
+poisoning = 120

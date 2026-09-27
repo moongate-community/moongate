@@ -3,3 +3,8 @@ id = "treasure_map_lvl6loot"
 [[loot.entries]]
 weight = 990
 amount = 1
+
+[[loot.entries]]
+weight = 10
+item_id = "treasuremaplvl6"
+amount = 1

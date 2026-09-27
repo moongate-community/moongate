@@ -3,3 +3,9 @@ id = "kraken_loot"
 [[loot.entries]]
 weight = 80
 amount = 1
+
+[[loot.entries]]
+weight = 20
+item_id = "0x14f8_rope"
+comment = "rope"
+amount = 1

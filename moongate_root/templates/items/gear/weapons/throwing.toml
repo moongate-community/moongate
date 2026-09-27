@@ -5,14 +5,20 @@ item_id = 2314
 name = "soul glaive"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x090a"
+base_id = "0x090a_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x406b"
+base_id = "0x090a_lbr"
 item_id = 16491
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_boomerang"
@@ -21,14 +27,20 @@ item_id = 2303
 name = "boomerang"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x08ff"
+base_id = "0x08ff_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x4067"
+base_id = "0x08ff_lbr"
 item_id = 16487
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_cyclone"
@@ -37,11 +49,17 @@ item_id = 2305
 name = "cyclone"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x0901"
+base_id = "0x0901_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x406c"
+base_id = "0x0901_lbr"
 item_id = 16492
 rarity = "common"
-movable = false
-hue = 0

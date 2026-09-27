@@ -3,3 +3,33 @@ id = "pixie_loot"
 [[loot.entries]]
 weight = 80
 amount = 1
+
+[[loot.entries]]
+weight = 4
+item_id = "0x1224_statue"
+comment = "statue"
+amount = 1
+
+[[loot.entries]]
+weight = 4
+item_id = "0x1226_statue"
+comment = "statue"
+amount = 1
+
+[[loot.entries]]
+weight = 4
+item_id = "0x1227_statue"
+comment = "statue"
+amount = 1
+
+[[loot.entries]]
+weight = 4
+item_id = "0x12cb_bust"
+comment = "bust"
+amount = 1
+
+[[loot.entries]]
+weight = 4
+item_id = "0x12ca_bust"
+comment = "bust"
+amount = 1

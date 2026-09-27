@@ -3,3 +3,9 @@ id = "gianticeserpent_loot"
 [[loot.entries]]
 weight = 95
 amount = 1
+
+[[loot.entries]]
+weight = 5
+item_id = "glacialstaff"
+comment = "magic staff"
+amount = 1

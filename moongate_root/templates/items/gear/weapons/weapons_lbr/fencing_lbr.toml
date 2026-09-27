@@ -1,0 +1,206 @@
+[[item]]
+id = "0x0f62_lbr"
+base_id = "base_spear"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 38
+sell_price = 36
+
+[[item]]
+id = "tribalspear_lbr"
+base_id = "base_spear"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 38
+sell_price = 36
+
+[[item]]
+id = "0x1400_lbr"
+base_id = "base_kryss"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 42
+sell_price = 21
+
+[[item]]
+id = "0x1402_lbr"
+base_id = "base_short_spear"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 32
+sell_price = 16
+
+[[item]]
+id = "0x1404_lbr"
+base_id = "base_war_fork"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 30
+sell_price = 15
+
+[[item]]
+id = "0x0e87_lbr"
+base_id = "base_pitchfork"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 25
+sell_price = 12
+
+[[item]]
+id = "0x26be_lbr"
+base_id = "base_pike"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 51
+sell_price = 31
+
+[[item]]
+id = "0x26c0_lbr"
+base_id = "base_lance"
+item_id = 0
+rarity = "common"
+weight = 12.0
+buy_price = 44
+sell_price = 27
+
+[[item]]
+id = "0x27a7_lbr"
+base_id = "base_lajatang"
+item_id = 0
+rarity = "common"
+weight = 12.0
+buy_price = 141
+sell_price = 87
+
+[[item]]
+id = "0x27ab_lbr"
+base_id = "base_tekagi"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 72
+sell_price = 35
+
+[[item]]
+id = "0x27ad_lbr"
+base_id = "base_kama"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 80
+sell_price = 48
+
+[[item]]
+id = "0x27af_lbr"
+base_id = "base_sai"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 73
+sell_price = 45
+
+[[item]]
+id = "0x2d23_lbr"
+base_id = "base_war_cleaver"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 39
+sell_price = 20
+
+[[item]]
+id = "0x2d20_lbr"
+base_id = "base_elven_spellblade"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 73
+sell_price = 37
+
+[[item]]
+id = "0x48be_lbr"
+base_id = "base_gargish_war_fork"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 30
+sell_price = 15
+
+[[item]]
+id = "0x0907_lbr"
+base_id = "base_shortblade"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 77
+sell_price = 41
+
+[[item]]
+id = "0x08fe_lbr"
+base_id = "base_bloodblade"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 63
+sell_price = 34
+
+[[item]]
+id = "0x48bc_lbr"
+base_id = "base_gargish_kryss"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 42
+sell_price = 21
+
+[[item]]
+id = "0x48ca_lbr"
+base_id = "base_gargish_lance"
+item_id = 0
+rarity = "common"
+weight = 12.0
+buy_price = 44
+sell_price = 27
+
+[[item]]
+id = "0x48c8_lbr"
+base_id = "base_gargish_pike"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 51
+sell_price = 31
+
+[[item]]
+id = "0x0904_lbr"
+base_id = "base_dual_pointed_spear"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 70
+sell_price = 35
+
+[[item]]
+id = "0x48ce_lbr"
+base_id = "base_gargish_tekagi"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 72
+sell_price = 35
+
+[[item]]
+id = "0xa28a_lbr"
+base_id = "base_spiked_whip"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 27
+sell_price = 14

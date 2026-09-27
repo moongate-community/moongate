@@ -1,0 +1,108 @@
+[[mobile]]
+id = "craftedgolem"
+name = "golem"
+body = 752
+strength = "1d100+250"
+dexterity = "1d25+75"
+intelligence = "1d50+100"
+damage = "1d22+7"
+armor = "1d19+11"
+notoriety = "attackable"
+karma = 10
+fame = 10
+[mobile.skills]
+resisting_spells = 120
+parrying = "1d41+59"
+tactics = "1d41+59"
+wrestling = "1d41+59"
+[mobile.sounds]
+start_attack = 541
+idle = 542
+attack = 543
+hurt = 543
+death = 545
+[mobile.tags]
+repairResource = "0x1f1c"
+
+[[mobile]]
+id = "golem"
+base_id = "craftedgolem"
+loot = ["arcane_gems", "randomgems", "randomgems", "golem_loot"]
+
+[[mobile]]
+id = "exodusoverseer"
+name = "exodus overseer"
+body = 756
+strength = "1d100+550"
+dexterity = "1d20+75"
+intelligence = "1d30+60"
+damage = "1d9+11"
+armor = 25
+notoriety = "attackable"
+karma = -10000
+fame = 10000
+loot = ["exodus_overseer_loot", "arcane_gems"]
+gold = "1d221+29"
+[mobile.skills]
+resisting_spells = "1d19+79"
+parrying = "1d19+79"
+tactics = "1d19+79"
+wrestling = "1d19+79"
+[mobile.sounds]
+start_attack = 620
+idle = 536
+attack = 562
+hurt = 320
+death = 529
+
+[[mobile]]
+id = "exodusminionlord"
+name = "exodus minion lord"
+body = 763
+strength = "1d101+1499"
+dexterity = "1d10+70"
+intelligence = "1d30+60"
+damage = "1d17+13"
+armor = 35
+notoriety = "attackable"
+karma = -15000
+fame = 15000
+loot = ["exodus_minion_lord_loot", "exodus_minion_lord_loot", "arcane_gems"]
+gold = "1d621+79"
+[mobile.skills]
+resisting_spells = "1d2+98"
+parrying = "1d2+98"
+tactics = "1d2+98"
+wrestling = "1d2+98"
+[mobile.sounds]
+start_attack = 620
+idle = 536
+attack = 562
+hurt = 320
+death = 529
+
+[[mobile]]
+id = "exodusminion"
+name = "exodus minion"
+body = 757
+strength = "1d100+850"
+dexterity = "1d10+70"
+intelligence = "1d30+60"
+damage = "1d13+12"
+armor = 30
+notoriety = "attackable"
+karma = -18000
+fame = 18000
+loot = ["exodus_minion_loot", "arcane_gems"]
+gold = "1d196+24"
+[mobile.skills]
+resisting_spells = "1d2+98"
+parrying = "1d2+98"
+tactics = "1d2+98"
+wrestling = "1d2+98"
+[mobile.sounds]
+start_attack = 620
+idle = 536
+attack = 562
+hurt = 320
+death = 529

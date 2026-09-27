@@ -1,3 +1,55 @@
 [[loot]]
 id = "grimmochs_journals"
-entries = []
+[[loot.entries]]
+weight = 1
+item_id = "grimmoch_journal_1"
+comment = "The Daily Journal Of Grimmoch Drummel"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "grimmoch_journal_2"
+comment = "The Daily Journal Of Grimmoch Drummel"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "grimmoch_journal_3"
+comment = "The Daily Journal Of Grimmoch Drummel"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "grimmoch_journal_6"
+comment = "The Daily Journal Of Grimmoch Drummel"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "grimmoch_journal_7"
+comment = "The Daily Journal Of Grimmoch Drummel"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "grimmoch_journal_11"
+comment = "The Daily Journal Of Grimmoch Drummel"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "grimmoch_journal_14"
+comment = "The Daily Journal Of Grimmoch Drummel"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "grimmoch_journal_17"
+comment = "The Daily Journal Of Grimmoch Drummel"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "grimmoch_journal_23"
+comment = "The Daily Journal Of Grimmoch Drummel"
+amount = 1

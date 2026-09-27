@@ -4,5 +4,19 @@ base_id = "base_item"
 item_id = 5703
 name = "a lightsource"
 rarity = "common"
-movable = false
-hue = 0
+decays = false
+loot_type = "newbied"
+
+[[item]]
+id = "wispglow"
+base_id = "0x1647_a_lightsource"
+item_id = 0
+rarity = "common"
+layer = "talisman"
+
+[[item]]
+id = "shadowwispglow"
+base_id = "0x1647_a_lightsource"
+item_id = 0
+rarity = "common"
+layer = "talisman"

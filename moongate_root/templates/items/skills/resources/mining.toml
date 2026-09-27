@@ -1,11 +1,70 @@
 [[item]]
+id = "0x19b7_iron_ore"
+base_id = "base_item"
+item_id = 6583
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 2.0
+stackable = true
+decays = true
+
+[[item]]
+id = "0x19b8_iron_ore"
+base_id = "base_item"
+item_id = 6584
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 7.0
+stackable = true
+decays = true
+
+[[item]]
+id = "0x19b9_iron_ore"
+base_id = "base_item"
+item_id = 6585
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 12.0
+stackable = true
+decays = true
+
+[[item]]
+id = "0x19ba_iron_ore"
+base_id = "base_item"
+item_id = 6586
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 7.0
+stackable = true
+decays = true
+
+[[item]]
+id = "shadow_iron_ore"
+base_id = "base_item"
+item_id = 6585
+name = "iron ore"
+rarity = "common"
+movable = true
+weight = 12.0
+stackable = true
+decays = true
+hue = 2406
+
+[[item]]
 id = "sand"
 base_id = "base_item"
 item_id = 16954
 name = "sand"
 rarity = "common"
 movable = true
-hue = 0
+weight = 0.1
+stackable = true
+decays = true
+hue = 2413
 
 [[item]]
 id = "base_granite"
@@ -14,4 +73,68 @@ item_id = 6009
 name = "high quality granite"
 rarity = "common"
 movable = true
-hue = 0
+weight = 1.0
+stackable = true
+decays = true
+
+[[item]]
+id = "irongranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "dullcoppergranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 2419
+
+[[item]]
+id = "shadowirongranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 2406
+
+[[item]]
+id = "coppergranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 2413
+
+[[item]]
+id = "bronzegranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 2418
+
+[[item]]
+id = "goldgranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 2213
+
+[[item]]
+id = "agapitegranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 2425
+
+[[item]]
+id = "veritegranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 2207
+
+[[item]]
+id = "valoritegranite"
+base_id = "base_granite"
+item_id = 0
+rarity = "common"
+hue = 2219

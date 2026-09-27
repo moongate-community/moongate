@@ -4,8 +4,65 @@ base_id = "base_item"
 item_id = 3834
 name = "a spellbook"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+layer = "one_handed"
+buy_price = 22
+sell_price = 11
+decays = true
+
+[[item]]
+id = "spellbook"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "spellbook1"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "spellbook1to2"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "spellbook1to3"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "spellbook1to4"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "spellbook1to5"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "spellbook1to6"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "spellbook1to7"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "spellbook1to8"
+base_id = "0x0efa_a_spellbook"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x1f14_a_recall_rune"
@@ -13,8 +70,16 @@ base_id = "base_item"
 item_id = 7956
 name = "a recall rune"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 18
+sell_price = 9
+decays = true
+
+[[item]]
+id = "usedrecallrune"
+base_id = "0x1f14_a_recall_rune"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x1f17_a_recall_rune"
@@ -22,8 +87,16 @@ base_id = "base_item"
 item_id = 7959
 name = "a recall rune"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 18
+sell_price = 9
+decays = true
+
+[[item]]
+id = "recallrune"
+base_id = "0x1f17_a_recall_rune"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0e2d_crystal_ball"
@@ -31,8 +104,27 @@ base_id = "base_item"
 item_id = 3629
 name = "crystal ball"
 rarity = "common"
-movable = false
-hue = 0
+weight = 10.0
+buy_price = 2
+sell_price = 1
+
+[[item]]
+id = "crystalball"
+base_id = "0x0e2d_crystal_ball"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x0e2e"
+base_id = "0x0e2d_crystal_ball"
+item_id = 3630
+rarity = "common"
+
+[[item]]
+id = "sparklingcrystalball"
+base_id = "0x0e2e"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "crystalballofpetsummoning"
@@ -40,8 +132,9 @@ base_id = "base_item"
 item_id = 3630
 name = "crystal ball of pet summoning"
 rarity = "common"
-movable = false
-hue = 0
+weight = 10.0
+buy_price = 2
+sell_price = 1
 
 [[item]]
 id = "0x2252_paladin_spellbook"
@@ -49,8 +142,16 @@ base_id = "base_item"
 item_id = 8786
 name = "paladin spellbook"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
+
+[[item]]
+id = "paladinspellbook"
+base_id = "0x2252_paladin_spellbook"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x2253_necromancer_book"
@@ -58,8 +159,16 @@ base_id = "base_item"
 item_id = 8787
 name = "necromancer book"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
+
+[[item]]
+id = "necromancerbook"
+base_id = "0x2253_necromancer_book"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x2d9d_mystic_book"
@@ -67,8 +176,16 @@ base_id = "base_item"
 item_id = 11677
 name = "mystic book"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 22
+sell_price = 11
+decays = true
+
+[[item]]
+id = "mysticbook"
+base_id = "0x2d9d_mystic_book"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "moonstone"
@@ -76,8 +193,10 @@ base_id = "base_item"
 item_id = 3979
 name = "moonstone"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
 
 [[item]]
 id = "runebook"
@@ -85,5 +204,9 @@ base_id = "base_item"
 item_id = 8901
 name = "a runebook"
 rarity = "common"
-movable = false
+weight = 0.0
+buy_price = 22
+sell_price = 11
+decays = true
+loot_type = "newbied"
 hue = 1121

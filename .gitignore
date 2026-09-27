@@ -603,6 +603,7 @@ website/dist/
 website/src/content/docs/generated/
 website/public/generated/
 website/public/install.sh
+website/public/coverage/
 website/.docs-stage-*/
 
 # Cooperative development migration generation locks

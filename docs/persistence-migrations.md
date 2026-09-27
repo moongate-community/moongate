@@ -145,6 +145,13 @@ supported renames and review its DDL. Write explicit SQL for backfills, value
 splits, unit conversions, data merges and new invariants. Data-only files follow
 the same numbering and history rules, and block normal startup until applied.
 
+FreeSql also compares comments: the XML doc (`/// <summary>`) of an entity and of its
+properties becomes the table and column comment, word for word, and a difference
+stops startup like any other schema change. Editing the docs of a persisted entity
+therefore needs a migration with `COMMENT ON` statements, as
+`migrations/world/0003_world_column_comments.sql` does. Every build configuration
+generates the XML docs, so a Debug test run sees the same schema as a Release server.
+
 Test against representative data. Apply the reviewed files, confirm `status`
 reports no pending changes and `preview` reports no schema changes, then start the
 new server. Downgrades and nontransactional maintenance are operator-managed.
@@ -159,7 +166,16 @@ its value; a development-generated sequence that is already attached is retained
 The fourth adds the `can_access_api` column, `false` for every existing account. Existing
 duplicate usernames, or null usernames or password hashes, must be resolved before
 the constraint migration can apply; no account is silently deleted. The core world
-catalog has no files yet. The sample plugin ships `world/0001_create_notes.sql`.
+catalog has `0001_mobiles.sql`, `0002_items.sql`, `0003_world_column_comments.sql` and
+`0004_item_rarity.sql`, which adds the `rarity` column (existing items become Common) and
+its `ck_items_rarity` check, and `0005_mobile_npc_fields.sql`, which adds the NPC columns
+of `world.mobiles` (template id, title, notoriety, hits, mana, stamina, fame, karma,
+armor, resistances, props; existing rows get 0 or null) and its `ck_mobiles_notoriety`
+check. Their table and sequence DDL comes
+from the development generator; the foreign keys, CHECK constraints and partial indexes
+are written by hand, since the generator produces only columns and sequences, and the
+startup schema check accepts them. The sample plugin ships
+`world/0001_create_notes.sql`.
 
 ## Automatic development migrations
 

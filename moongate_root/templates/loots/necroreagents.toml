@@ -1,3 +1,26 @@
 [[loot]]
 id = "necroreagents"
-entries = []
+[[loot.entries]]
+weight = 1
+item_id = "pigiron"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "noxcrystal"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "daemonblood"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "gravedust"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "batwing"
+amount = 1

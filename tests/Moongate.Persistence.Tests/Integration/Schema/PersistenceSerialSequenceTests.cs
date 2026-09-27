@@ -45,6 +45,71 @@ public sealed class PersistenceSerialSequenceTests
     }
 
     [Fact]
+    public async Task InitializeAsync_SerialRange_EmptyTableStartsAtTheRangeMinimum()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = new MoongatePersistenceService(
+            new([new(PersistenceDatabaseTarget.Realm, database.ConnectionString)], true)
+        );
+        var store = owner.RegisterEntity<RangedEntity>(target: PersistenceDatabaseTarget.Realm);
+
+        Assert.Contains("START WITH 1000", Assert.Single(await owner.PreviewSchemaAsync()).Ddl);
+        await owner.InitializeAsync();
+        var first = new RangedEntity { Name = "first" };
+        var second = new RangedEntity { Name = "second" };
+        await store.UpsertAsync(first);
+        await store.UpsertAsync(second);
+
+        Assert.Equal((new Serial(1000), new Serial(1001)), (first.Id, second.Id));
+        Assert.Empty(await owner.PreviewSchemaAsync());
+    }
+
+    [Fact]
+    public async Task InitializeAsync_SerialRange_ExistingRowsContinueAfterTheHighest()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await database.ExecuteAsync(
+            "CREATE SCHEMA plugin_ranged; CREATE TABLE plugin_ranged.things " +
+            "(id bigint PRIMARY KEY, name varchar(160)); INSERT INTO plugin_ranged.things VALUES (1500, 'existing');"
+        );
+        await using var owner = new MoongatePersistenceService(
+            new([new(PersistenceDatabaseTarget.Realm, database.ConnectionString)], true)
+        );
+        var store = owner.RegisterEntity<RangedEntity>(target: PersistenceDatabaseTarget.Realm);
+        await owner.InitializeAsync();
+        var entity = new RangedEntity { Name = "next" };
+
+        await store.UpsertAsync(entity);
+
+        Assert.Equal(new Serial(1501), entity.Id);
+    }
+
+    [Fact]
+    public async Task InitializeAsync_SerialRange_ExistingSequenceBelowTheRangeIsMovedForward()
+    {
+        // A development database generated before the entity declared its range kept a sequence at 1.
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await database.ExecuteAsync(
+            "CREATE SCHEMA plugin_ranged; CREATE TABLE plugin_ranged.things (id bigint PRIMARY KEY, name varchar(160)); " +
+            "CREATE SEQUENCE plugin_ranged.things_id_seq AS bigint MINVALUE 1 MAXVALUE 4294967295 START WITH 1 NO CYCLE; " +
+            "ALTER SEQUENCE plugin_ranged.things_id_seq OWNED BY plugin_ranged.things.id; " +
+            "SELECT nextval('plugin_ranged.things_id_seq');"
+        );
+        await using var owner = new MoongatePersistenceService(
+            new([new(PersistenceDatabaseTarget.Realm, database.ConnectionString)], true)
+        );
+        var store = owner.RegisterEntity<RangedEntity>(target: PersistenceDatabaseTarget.Realm);
+
+        Assert.Contains("setval", Assert.Single(await owner.PreviewSchemaAsync()).Ddl);
+        await owner.InitializeAsync();
+        var entity = new RangedEntity { Name = "after repair" };
+        await store.UpsertAsync(entity);
+
+        Assert.Equal(new Serial(1000), entity.Id);
+        Assert.Empty(await owner.PreviewSchemaAsync());
+    }
+
+    [Fact]
     public async Task InitializeAsync_ExistingRows_SeedsAboveMaximumAndDoesNotResetReservations()
     {
         await using var database = await _postgres.CreateDatabaseAsync();

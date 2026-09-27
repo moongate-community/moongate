@@ -1,0 +1,8 @@
+[[item]]
+id = "0x0df2_tol"
+base_id = "base_wand"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 26
+sell_price = 12

@@ -5,14 +5,20 @@ item_id = 3778
 name = "cleaver"
 rarity = "common"
 movable = true
-hue = 0
+layer = "one_handed"
+decays = true
+
+[[item]]
+id = "0x0ec2"
+base_id = "0x0ec2_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0ec3"
+base_id = "0x0ec2_lbr"
 item_id = 3779
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_skinning_knife"
@@ -21,14 +27,20 @@ item_id = 3780
 name = "skinning knife"
 rarity = "common"
 movable = true
-hue = 0
+layer = "one_handed"
+decays = true
+
+[[item]]
+id = "0x0ec4"
+base_id = "0x0ec4_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0ec5"
+base_id = "0x0ec4_lbr"
 item_id = 3781
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_dagger"
@@ -37,14 +49,20 @@ item_id = 3921
 name = "dagger"
 rarity = "common"
 movable = true
-hue = 0
+layer = "one_handed"
+decays = true
+
+[[item]]
+id = "0x0f51"
+base_id = "0x0f51_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0f52"
+base_id = "0x0f51_lbr"
 item_id = 3922
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_butcher_knife"
@@ -53,14 +71,20 @@ item_id = 5110
 name = "butcher knife"
 rarity = "common"
 movable = true
-hue = 0
+layer = "one_handed"
+decays = true
+
+[[item]]
+id = "0x13f6"
+base_id = "0x13f6_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x13f7"
+base_id = "0x13f6_lbr"
 item_id = 5111
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_leafblade"
@@ -69,14 +93,20 @@ item_id = 11554
 name = "leafblade"
 rarity = "common"
 movable = true
-hue = 0
+layer = "one_handed"
+decays = true
+
+[[item]]
+id = "0x2d22"
+base_id = "0x2d22_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x2d2e"
+base_id = "0x2d22_lbr"
 item_id = 11566
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_assassin_spike"
@@ -85,14 +115,20 @@ item_id = 11553
 name = "assassin spike"
 rarity = "common"
 movable = true
-hue = 0
+layer = "one_handed"
+decays = true
+
+[[item]]
+id = "0x2d21"
+base_id = "0x2d21_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x2d2d"
+base_id = "0x2d21_lbr"
 item_id = 11565
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_gargish_dagger"
@@ -101,11 +137,17 @@ item_id = 2306
 name = "gargish dagger"
 rarity = "common"
 movable = true
-hue = 0
+layer = "one_handed"
+decays = true
+
+[[item]]
+id = "0x0902"
+base_id = "0x0902_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x406a"
+base_id = "0x0902_lbr"
 item_id = 16490
 rarity = "common"
-movable = false
-hue = 0

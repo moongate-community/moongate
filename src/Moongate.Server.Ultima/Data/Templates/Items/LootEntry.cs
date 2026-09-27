@@ -40,7 +40,8 @@ public class LootEntry
     public string? Comment { get; set; }
 
     /// <summary>
-    ///     How many of <see cref="ItemId" /> to create. Meaningless when <see cref="LootTemplateId" /> is set instead.
+    ///     How many of <see cref="ItemId" /> to create, or how many times to roll <see cref="LootTemplateId" />
+    ///     (<c>LOOTLIST=table,2</c> rolls it twice). From 1 to 65535.
     /// </summary>
     public RangeValueSpec<int> Amount { get; set; } = RangeValueSpec<int>.FromValue(1);
 }

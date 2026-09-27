@@ -1,0 +1,170 @@
+[[item]]
+id = "0x13af_aos"
+base_id = "base_war_axe"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 38
+sell_price = 19
+
+[[item]]
+id = "0x13e3_aos"
+base_id = "base_smiths_hammer"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 36
+sell_price = 18
+
+[[item]]
+id = "0x13b3_aos"
+base_id = "base_club"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 27
+sell_price = 13
+
+[[item]]
+id = "0x0fb4_aos"
+base_id = "base_sledge_hammer"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 32
+sell_price = 16
+
+[[item]]
+id = "0x0f5c_aos"
+base_id = "base_mace"
+item_id = 0
+rarity = "common"
+weight = 14.0
+buy_price = 38
+sell_price = 30
+
+[[item]]
+id = "0x1406_aos"
+base_id = "base_war_mace"
+item_id = 0
+rarity = "common"
+weight = 17.0
+buy_price = 37
+sell_price = 18
+
+[[item]]
+id = "0x1438_aos"
+base_id = "base_war_hammer"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 27
+sell_price = 13
+
+[[item]]
+id = "0x143a_aos"
+base_id = "base_maul"
+item_id = 0
+rarity = "common"
+weight = 14.0
+buy_price = 31
+sell_price = 15
+
+[[item]]
+id = "0x143c_aos"
+base_id = "base_hammer_pick"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 31
+sell_price = 15
+
+[[item]]
+id = "0x26bc_aos"
+base_id = "base_scepter"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 34
+sell_price = 17
+
+[[item]]
+id = "0x27a3_aos"
+base_id = "base_tessen"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 80
+sell_price = 40
+
+[[item]]
+id = "0x27a6_aos"
+base_id = "base_tetsubo"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 42
+sell_price = 21
+
+[[item]]
+id = "0x27ae_aos"
+base_id = "base_nunchaku"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 34
+sell_price = 17
+
+[[item]]
+id = "0x2d24_aos"
+base_id = "base_diamond_mace"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 28
+sell_price = 14
+
+[[item]]
+id = "0x48c2_aos"
+base_id = "base_gargish_maul"
+item_id = 0
+rarity = "common"
+weight = 14.0
+buy_price = 31
+sell_price = 15
+
+[[item]]
+id = "0x0903_aos"
+base_id = "base_disc_mace"
+item_id = 0
+rarity = "common"
+weight = 14.0
+buy_price = 54
+sell_price = 27
+
+[[item]]
+id = "0x48c0_aos"
+base_id = "base_gargish_war_hammer"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 27
+sell_price = 13
+
+[[item]]
+id = "0x48cc_aos"
+base_id = "base_gargish_tessen"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 80
+sell_price = 40
+
+[[item]]
+id = "0xa289_aos"
+base_id = "base_barbed_whip"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 28
+sell_price = 14

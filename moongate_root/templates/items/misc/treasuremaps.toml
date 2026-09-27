@@ -4,8 +4,66 @@ base_id = "base_item"
 item_id = 5356
 name = "a treasure map"
 rarity = "common"
-movable = false
-hue = 0
+decays = true
+[item.tags]
+Map = "100"
+Level = "0"
+
+[[item]]
+id = "treasuremaplvl0"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "0"
+
+[[item]]
+id = "treasuremaplvl1"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "1"
+
+[[item]]
+id = "treasuremaplvl2"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "2"
+
+[[item]]
+id = "treasuremaplvl3"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "3"
+
+[[item]]
+id = "treasuremaplvl4"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "4"
+
+[[item]]
+id = "treasuremaplvl5"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "5"
+
+[[item]]
+id = "treasuremaplvl6"
+base_id = "base_treasure_map"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "6"
 
 [[item]]
 id = "treasuredirt"
@@ -13,8 +71,6 @@ base_id = "base_item"
 item_id = 2323
 name = "dirt"
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_treasure_chest"
@@ -23,5 +79,63 @@ item_id = 3648
 name = "Treasure Chest"
 rarity = "common"
 movable = true
-hue = 0
+weight = 30.0
 max_weight = 400000
+
+[[item]]
+id = "treasurechestlevel0"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "0"
+
+[[item]]
+id = "treasurechestlevel1"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "1"
+
+[[item]]
+id = "treasurechestlevel2"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "2"
+
+[[item]]
+id = "treasurechestlevel3"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "3"
+
+[[item]]
+id = "treasurechestlevel4"
+base_id = "base_treasure_chest"
+item_id = 0
+rarity = "common"
+[item.tags]
+Level = "4"
+
+[[item]]
+id = "treasurechestlevel5"
+base_id = "base_treasure_chest"
+item_id = 0
+name = "Treasure Chest"
+rarity = "common"
+[item.tags]
+Level = "5"
+
+[[item]]
+id = "treasurechestlevel6"
+base_id = "base_treasure_chest"
+item_id = 0
+name = "Treasure Chest"
+rarity = "common"
+[item.tags]
+Level = "6"

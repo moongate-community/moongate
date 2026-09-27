@@ -5,14 +5,20 @@ item_id = 3919
 name = "crossbow"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x0f4f"
+base_id = "0x0f4f_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0f50"
+base_id = "0x0f4f_lbr"
 item_id = 3920
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_heavy_crossbow"
@@ -21,14 +27,20 @@ item_id = 5116
 name = "heavy crossbow"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x13fc"
+base_id = "0x13fc_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x13fd"
+base_id = "0x13fc_lbr"
 item_id = 5117
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_bow"
@@ -37,14 +49,20 @@ item_id = 5041
 name = "bow"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x13b1"
+base_id = "0x13b1_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x13b2"
+base_id = "0x13b1_lbr"
 item_id = 5042
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_composite_bow"
@@ -53,14 +71,20 @@ item_id = 9922
 name = "composite bow"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x26c2"
+base_id = "0x26c2_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x26cc"
+base_id = "0x26c2_lbr"
 item_id = 9932
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_repeating_crossbow"
@@ -69,14 +93,21 @@ item_id = 9923
 name = "repeating crossbow"
 rarity = "common"
 movable = true
-hue = 0
+weight = 6.0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x26c3"
+base_id = "0x26c3_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x26cd"
+base_id = "0x26c3_lbr"
 item_id = 9933
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_yumi"
@@ -85,14 +116,20 @@ item_id = 10149
 name = "yumi"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x27a5"
+base_id = "0x27a5_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x27f0"
+base_id = "0x27a5_lbr"
 item_id = 10224
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_elven_composite_longbow"
@@ -101,14 +138,20 @@ item_id = 11550
 name = "elven composite longbow"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x2d1e"
+base_id = "0x2d1e_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x2d2a"
+base_id = "0x2d1e_lbr"
 item_id = 11562
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_magical_shortbow"
@@ -117,11 +160,17 @@ item_id = 11563
 name = "magical shortbow"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x2d2b"
+base_id = "0x2d2b_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x2d1f"
+base_id = "0x2d2b_lbr"
 item_id = 11551
 rarity = "common"
-movable = false
-hue = 0

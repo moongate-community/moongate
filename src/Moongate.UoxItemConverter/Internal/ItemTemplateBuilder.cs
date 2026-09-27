@@ -2,6 +2,8 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Ultima.Types;
 
 namespace Moongate.UoxItemConverter.Internal;
 
@@ -21,13 +23,16 @@ internal static class ItemTemplateBuilder
     /// </summary>
     public static bool TryComputeId(DfnBlock block, out string id, out Serial itemId)
     {
-        if (!block.Fields.TryGetValue("id", out var idText) || !Serial.TryParse(idText, out itemId))
+        // UOX3 picks one id of a list (id=0x0c4f 0x0c50) at random; a template has one graphic, so the first is kept.
+        if (!block.Fields.TryGetValue("id", out var idText) || !UoxNumber.TryParse(idText, out var graphic) || graphic < 0)
         {
             id = "";
             itemId = default;
 
             return false;
         }
+
+        itemId = new Serial((uint)graphic);
 
         // The header alone is always unique (duplicates are caught and warned about while every
         // block is being read). name= is not: UOX3 reuses it across many facing, material or
@@ -44,26 +49,44 @@ internal static class ItemTemplateBuilder
         return true;
     }
 
+    /// <summary>
+    ///     Gets the one parent a block inherits from (<see cref="DfnBlockExtensions.ParentTargets" />); false for none
+    ///     or for a random <c>get=a b</c>.
+    /// </summary>
+    public static bool TryGetSingleParent(DfnBlock block, out string parent)
+    {
+        var targets = block.ParentTargets();
+        parent = targets.Length == 1 ? targets[0] : "";
+
+        return targets.Length == 1;
+    }
+
     public static ItemTemplate? Build(DfnBlock block, IReadOnlyDictionary<string, string> idByHeader)
     {
-        if (!TryComputeId(block, out var id, out var itemId))
+        // The Id is the one precomputed up front. A block with no id= of its own keeps item_id 0, which the server's
+        // loader fills from its base_id.
+        if (!idByHeader.TryGetValue(block.Header, out var id))
         {
             return null;
         }
+
+        TryComputeId(block, out _, out var itemId);
 
         var template = new ItemTemplate
         {
             Id = id,
             ItemId = itemId,
-            Movable = block.Fields.TryGetValue("movable", out var movable) && movable == "1"
+            Movable = ReadMovable(block)
         };
+
+        ApplyBaseFields(block, template);
 
         // UOX3's visible= is 0 for everyone; 1 (hidden), 2 (magically invisible) and 3 (GM hidden) all keep the
         // item from players, the closest being visible to staff only.
-        if (block.Fields.TryGetValue("visible", out var visibleText) && int.TryParse(visibleText, out var visible) &&
-            visible is >= 1 and <= 3)
+        if (block.Fields.TryGetValue("visible", out var visibleText) && UoxNumber.TryParse(visibleText, out var visible))
         {
-            template.Visibility = AccountType.GameMaster;
+            // 0 is everyone, written out so it overrides a hidden parent such as base_spawner.
+            template.Visibility = visible is >= 1 and <= 3 ? AccountType.GameMaster : AccountType.Regular;
         }
 
         if (block.Fields.TryGetValue("name", out var displayName) && displayName.Length > 0)
@@ -71,27 +94,24 @@ internal static class ItemTemplateBuilder
             template.Name = displayName;
         }
 
-        if (block.Fields.TryGetValue("color", out var colorText) && HueSpec.TryParse(colorText, out var hue))
+        // UOX3 reads COLOR and COLOUR as one tag.
+        if ((block.Fields.TryGetValue("color", out var colorText) || block.Fields.TryGetValue("colour", out colorText)) &&
+            HueSpec.TryParse(colorText, out var hue))
         {
             template.Hue = hue;
         }
 
-        if (block.Fields.TryGetValue("weightmax", out var weightMaxText) && int.TryParse(weightMaxText, out var weightMax))
+        if (block.Fields.TryGetValue("weightmax", out var weightMaxText) && UoxNumber.TryParse(weightMaxText, out var weightMax))
         {
             template.MaxWeight = weightMax;
         }
 
-        if (block.Fields.TryGetValue("get", out var getText))
+        // Only single-parent inheritance maps onto BaseId. get=a b names an alias, not a parent; an unresolved single
+        // target (never converted) is dropped the same as any other field this converter cannot carry over
+        // faithfully. A block that gets itself (UOX3 data has [0x27c2] with get=0x27c2) inherits nothing.
+        if (TryGetSingleParent(block, out var parent) && idByHeader.TryGetValue(parent, out var baseId) && baseId != id)
         {
-            var targets = getText.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-
-            // Only single-parent inheritance maps onto BaseId. get=a b names an alias, not a parent;
-            // an unresolved single target (its own block had no id=, or was never converted) is
-            // dropped the same as any other field this converter cannot carry over faithfully.
-            if (targets.Length == 1 && idByHeader.TryGetValue(targets[0], out var baseId))
-            {
-                template.BaseId = baseId;
-            }
+            template.BaseId = baseId;
         }
 
         return template;
@@ -100,5 +120,103 @@ internal static class ItemTemplateBuilder
     private static bool IsBareHex(string header)
     {
         return header.StartsWith("0x", StringComparison.OrdinalIgnoreCase);
+    }
+
+    // UOX3 movable= is 0 for the client default, 1 always, 2 never and 3 owner only; the default stays unset so the
+    // template follows tiledata.
+    private static bool? ReadMovable(DfnBlock block)
+    {
+        if (!block.Fields.TryGetValue("movable", out var text))
+        {
+            return null;
+        }
+
+        return text switch
+        {
+            "1" or "3" => true,
+            "2" => false,
+            _ => null
+        };
+    }
+
+    private static void ApplyBaseFields(DfnBlock block, ItemTemplate template)
+    {
+        // UOX3 weighs in hundredths of a stone: weight=700 is 7 stones, a coin's weight=2 is 0.02.
+        if (block.Fields.TryGetValue("weight", out var weightText) && UoxNumber.TryParse(weightText, out var hundredths))
+        {
+            template.Weight = hundredths / 100m;
+        }
+
+        if (block.Fields.TryGetValue("amount", out var amountText) && UoxNumber.TryParse(amountText, out var amount) && amount >= 1)
+        {
+            template.Amount = RangeValueSpec<int>.FromValue(amount);
+        }
+
+        if (block.Fields.TryGetValue("pileable", out var pileableText) && UoxNumber.TryParse(pileableText, out var pileable))
+        {
+            template.Stackable = pileable != 0;
+        }
+
+        if (block.Fields.TryGetValue("layer", out var layerText) && UoxNumber.TryParse(layerText, out var layer) &&
+            layer is > 0 and <= byte.MaxValue && Enum.IsDefined((LayerType)layer))
+        {
+            template.Layer = (LayerType)layer;
+        }
+
+        // value=buy sell; one number sets both.
+        if (block.Fields.TryGetValue("value", out var valueText))
+        {
+            var prices = valueText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
+
+            if (prices.Length >= 1 && UoxNumber.TryParse(prices[0], out var buy))
+            {
+                template.BuyPrice = buy;
+                template.SellPrice = prices.Length >= 2 && UoxNumber.TryParse(prices[1], out var sell) ? sell : buy;
+            }
+        }
+
+        if (block.Fields.TryGetValue("decay", out var decayText) && UoxNumber.TryParse(decayText, out var decay))
+        {
+            template.Decays = decay != 0;
+        }
+
+        // newbie is usually a bare flag line, sometimes newbie=1.
+        if (block.Entries.Any(line => line.Trim().Equals("newbie", StringComparison.OrdinalIgnoreCase)) ||
+            block.Fields.TryGetValue("newbie", out var newbie) && newbie == "1")
+        {
+            template.LootType = LootType.Newbied;
+        }
+
+        ApplyTags(block, template);
+    }
+
+    // custominttag=name value and customstringtag=name text can repeat, so they are read from every line.
+    private static void ApplyTags(DfnBlock block, ItemTemplate template)
+    {
+        foreach (var line in block.Entries)
+        {
+            var separator = line.IndexOf('=');
+
+            if (separator < 0)
+            {
+                continue;
+            }
+
+            var key = line[..separator].Trim();
+
+            if (!key.Equals("custominttag", StringComparison.OrdinalIgnoreCase) &&
+                !key.Equals("customstringtag", StringComparison.OrdinalIgnoreCase))
+            {
+                continue;
+            }
+
+            var parts = line[(separator + 1)..].Trim().Split(' ', 2, StringSplitOptions.TrimEntries);
+
+            if (parts.Length == 2 && parts[0].Length > 0)
+            {
+                template.Tags ??= new();
+                template.Tags[parts[0]] = parts[1];
+            }
+        }
     }
 }

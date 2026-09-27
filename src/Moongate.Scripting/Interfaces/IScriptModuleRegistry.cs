@@ -1,3 +1,5 @@
+using Moongate.Scripting.Data.Scripts;
+
 namespace Moongate.Scripting.Interfaces;
 
 /// <summary>
@@ -20,9 +22,20 @@ public interface IScriptModuleRegistry
     IReadOnlyList<Type> EnumTypes { get; }
 
     /// <summary>
+    ///     Gets the bus events published to Lua, in registration order.
+    /// </summary>
+    IReadOnlyList<ScriptEventRegistration> EventRegistrations { get; }
+
+    /// <summary>
     ///     Adds an enum type. Adding the same type twice is ignored.
     /// </summary>
     void AddEnum(Type enumType);
+
+    /// <summary>
+    ///     Adds a bus event for Lua. A name that is not snake_case throws <see cref="ArgumentException" />; a name or
+    ///     event type already registered throws <see cref="InvalidOperationException" />.
+    /// </summary>
+    void AddEvent(ScriptEventRegistration registration);
 
     /// <summary>
     ///     Adds a module type. Adding the same type twice throws.

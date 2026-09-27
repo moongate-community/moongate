@@ -4,26 +4,29 @@ base_id = "base_item"
 item_id = 3570
 name = "wand"
 rarity = "common"
-movable = false
-hue = 0
+layer = "one_handed"
+decays = true
+
+[[item]]
+id = "0x0df2"
+base_id = "0x0df2_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0df3"
+base_id = "0x0df2_lbr"
 item_id = 3571
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "0x0df4"
+base_id = "0x0df2_lbr"
 item_id = 3572
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "0x0df5"
+base_id = "0x0df2_lbr"
 item_id = 3573
 rarity = "common"
-movable = false
-hue = 0

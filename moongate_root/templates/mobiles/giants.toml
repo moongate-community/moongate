@@ -1,0 +1,233 @@
+[[mobile]]
+id = "ettin"
+name = "an ettin"
+body = 2
+strength = "1d30+135"
+dexterity = "1d20+55"
+intelligence = "1d25+30"
+damage = "1d17+3"
+armor = 19
+notoriety = "attackable"
+karma = -3000
+fame = 3000
+loot = ["randomgems", "randompotions", "randompotions", "random_useless_junk", "treasure_map_lvl1loot"]
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d16+39"
+parrying = "1d11+49"
+tactics = "1d21+49"
+wrestling = "1d11+49"
+[mobile.sounds]
+start_attack = 367
+idle = 368
+attack = 369
+hurt = 370
+death = 371
+
+[[mobile]]
+id = "hammerettin"
+base_id = "ettin"
+body = 18
+[mobile.sounds]
+start_attack = 367
+idle = 368
+attack = 369
+hurt = 370
+death = 371
+
+[[mobile]]
+id = "ogre"
+name = "an ogre"
+body = 1
+strength = "1d30+165"
+dexterity = "1d20+45"
+intelligence = "1d25+45"
+mana = 0
+damage = "1d11+4"
+armor = 16
+notoriety = "attackable"
+karma = -3000
+fame = 3000
+loot = ["randomgems", "randomgems", "randompotions", "random_useless_junk", "treasure_map_lvl1loot"]
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d16+54"
+parrying = "1d11+44"
+tactics = "1d11+59"
+wrestling = "1d11+69"
+[mobile.sounds]
+start_attack = 427
+idle = 428
+attack = 429
+hurt = 430
+death = 431
+
+[[mobile]]
+id = "ogrelord"
+name = "an ogre lord"
+body = 84
+strength = "1d179+766"
+dexterity = "1d10+65"
+intelligence = "1d25+45"
+damage = "1d26+9"
+armor = 25
+notoriety = "attackable"
+karma = -15000
+fame = 15000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "random_useless_junk", "treasure_map_lvl3loot"]
+gold = "1d101+649"
+[mobile.skills]
+resisting_spells = 120
+parrying = "1d11+74"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 427
+idle = 428
+attack = 429
+hurt = 430
+death = 431
+
+[[mobile]]
+id = "arcticogrelord"
+name = "an arctic ogre lord"
+body = 135
+strength = "1d179+766"
+dexterity = "1d10+65"
+intelligence = "1d25+45"
+damage = "1d26+9"
+armor = 25
+notoriety = "attackable"
+karma = -15000
+fame = 15000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "random_useless_junk", "treasure_map_lvl3loot"]
+gold = "1d201+499"
+[mobile.skills]
+resisting_spells = 120
+parrying = "1d11+74"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 639
+idle = 640
+attack = 641
+hurt = 642
+death = 643
+
+[[mobile]]
+id = "troll"
+name = "a troll"
+body = 54
+strength = "1d30+175"
+dexterity = "1d20+45"
+intelligence = "1d25+45"
+damage = "1d13+4"
+armor = 20
+notoriety = "attackable"
+karma = -3500
+fame = 3500
+loot = ["randompotions", "randompotions", "randomgems", "random_useless_junk", "treasure_map_lvl1loot"]
+gold = "1d151+49"
+[mobile.skills]
+resisting_spells = "1d16+44"
+parrying = "1d16+44"
+tactics = "1d21+49"
+wrestling = "1d21+49"
+[mobile.sounds]
+start_attack = 461
+idle = 462
+attack = 463
+hurt = 464
+death = 465
+
+[[mobile]]
+id = "axetroll"
+base_id = "troll"
+body = 53
+[mobile.sounds]
+start_attack = 461
+idle = 462
+attack = 463
+hurt = 464
+death = 465
+
+[[mobile]]
+id = "frosttroll"
+name = "a frost troll"
+body = 55
+strength = "1d39+226"
+dexterity = "1d20+65"
+intelligence = "1d25+45"
+damage = "1d17+8"
+armor = 25
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["randomgems", "randompotions", "randompotions", "randompotions", "randompotions", "randommidlevelweapons", "treasure_map_lvl2loot"]
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d16+64"
+parrying = "1d16+64"
+tactics = "1d21+79"
+wrestling = "1d21+79"
+[mobile.sounds]
+start_attack = 461
+idle = 462
+attack = 463
+hurt = 464
+death = 465
+
+[[mobile]]
+id = "cyclops"
+name = "a cyclopean warrior"
+body = 75
+strength = "1d50+335"
+dexterity = "1d20+95"
+intelligence = "1d25+30"
+mana = 0
+damage = "1d23+3"
+armor = 24
+notoriety = "attackable"
+karma = -4500
+fame = 4500
+loot = ["randompotions", "randompotions", "randomgems", "treasure_map_lvl3loot"]
+gold = "1d201+449"
+[mobile.skills]
+resisting_spells = "1d46+59"
+parrying = "1d11+69"
+tactics = "1d21+79"
+wrestling = "1d11+79"
+[mobile.sounds]
+start_attack = 604
+idle = 605
+attack = 606
+hurt = 607
+death = 608
+
+[[mobile]]
+id = "titan"
+name = "a titan"
+body = 76
+strength = "1d50+535"
+dexterity = "1d20+125"
+intelligence = "1d25+280"
+damage = "1d16+6"
+armor = 20
+notoriety = "attackable"
+karma = -11500
+fame = 11500
+loot = ["midlevelscrolls", "treasure_map_lvl5loot"]
+gold = "1d301+499"
+[mobile.skills]
+evaluating_intelligence = "1d11+64"
+magery = "1d16+84"
+resisting_spells = "1d31+79"
+parrying = "1d31+59"
+tactics = "1d21+59"
+wrestling = "1d11+39"
+[mobile.sounds]
+start_attack = 609
+idle = 610
+attack = 611
+hurt = 612
+death = 613

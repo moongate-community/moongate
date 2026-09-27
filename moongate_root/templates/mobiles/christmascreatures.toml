@@ -1,0 +1,72 @@
+[[mobile]]
+id = "winterreaper"
+base_id = "reaper"
+name = "a winter reaper"
+skin_hue = 2498
+
+[[mobile]]
+id = "krampus"
+name = "Krampus"
+body = 1484
+strength = "1d51+699"
+dexterity = "1d101+799"
+intelligence = "1d101+499"
+hits = "1d10001+29999"
+damage = "1d8+27"
+armor = 30
+notoriety = "murderer"
+karma = -30000
+fame = 30000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "midlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls", "highlevelscrolls"]
+gold = "1d201+1199"
+[mobile.resistances]
+fire = "1d11+79"
+cold = "1d11+79"
+poison = "1d11+79"
+energy = "1d11+79"
+[mobile.skills]
+anatomy = 99
+magery = "1d11+29"
+resisting_spells = "1d2+98"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d4+89"
+[mobile.sounds]
+start_attack = 1586
+idle = 1589
+attack = 1586
+hurt = 1588
+death = 1587
+
+[[mobile]]
+id = "krampus_minion"
+name = "Minion"
+body = 1485
+strength = "1d30+475"
+dexterity = "1d20+75"
+intelligence = "1d25+300"
+hits = "1d15+285"
+damage = "1d8+6"
+armor = 20
+notoriety = "murderer"
+karma = -3000
+fame = 3000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "randomgems", "lowlevelscrolls", "lowlevelscrolls"]
+gold = "1d101+99"
+[mobile.resistances]
+fire = "1d11+59"
+cold = "1d11+59"
+poison = "1d11+59"
+energy = "1d11+59"
+[mobile.skills]
+anatomy = 99
+resisting_spells = "1d2+98"
+parrying = "1d41+54"
+tactics = "1d3+97"
+wrestling = "1d4+89"
+[mobile.sounds]
+start_attack = 422
+idle = 423
+attack = 424
+hurt = 425
+death = 426

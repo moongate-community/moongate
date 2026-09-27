@@ -6,7 +6,57 @@ amount = 1
 
 [[loot.entries]]
 weight = 22
+item_id = "0x1c04"
+amount = 1
+
+[[loot.entries]]
+weight = 22
 item_id = "0x1c05"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1410"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1410"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1411"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1413"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1413"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1414"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1414"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1414"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1415"
 amount = 1
 
 [[loot.entries]]
@@ -46,12 +96,27 @@ amount = 1
 
 [[loot.entries]]
 weight = 22
+item_id = "0x1412"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1412"
+amount = 1
+
+[[loot.entries]]
+weight = 22
 item_id = "0x1419"
 amount = 1
 
 [[loot.entries]]
 weight = 22
 item_id = "0x1419"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1408"
 amount = 1
 
 [[loot.entries]]
@@ -61,7 +126,17 @@ amount = 1
 
 [[loot.entries]]
 weight = 22
+item_id = "0x140c"
+amount = 1
+
+[[loot.entries]]
+weight = 22
 item_id = "0x140d"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x140e"
 amount = 1
 
 [[loot.entries]]
@@ -71,7 +146,17 @@ amount = 1
 
 [[loot.entries]]
 weight = 22
+item_id = "0x1b74"
+amount = 1
+
+[[loot.entries]]
+weight = 22
 item_id = "0x1b75"
+amount = 1
+
+[[loot.entries]]
+weight = 22
+item_id = "0x1b76"
 amount = 1
 
 [[loot.entries]]

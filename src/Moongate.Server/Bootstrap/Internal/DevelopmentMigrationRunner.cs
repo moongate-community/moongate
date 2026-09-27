@@ -79,7 +79,7 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
 
         try
         {
-            await process.WaitForExitAsync(cancellationToken).ConfigureAwait(false);
+            await process.WaitForExitAsync(cancellationToken);
         }
         catch (OperationCanceledException)
         {
@@ -95,14 +95,14 @@ internal sealed class DevelopmentMigrationRunner : IDevelopmentMigrationRunner
             {
             }
 
-            await process.WaitForExitAsync(CancellationToken.None).ConfigureAwait(false);
-            await Task.WhenAll(stdout, stderr).ConfigureAwait(false);
+            await process.WaitForExitAsync(CancellationToken.None);
+            await Task.WhenAll(stdout, stderr);
 
             throw;
         }
 
-        var output = await stdout.ConfigureAwait(false);
-        var error = await stderr.ConfigureAwait(false);
+        var output = await stdout;
+        var error = await stderr;
 
         if (process.ExitCode != 0)
         {

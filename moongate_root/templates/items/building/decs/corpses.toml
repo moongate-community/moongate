@@ -1,11 +1,130 @@
 [[item]]
+id = "0x1cdd_arm"
+base_id = "base_item"
+item_id = 7389
+name = "arm"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1cde_body"
+base_id = "base_item"
+item_id = 7390
+name = "body"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1cdf_body"
+base_id = "base_item"
+item_id = 7391
+name = "body"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1ce0_torso"
+base_id = "base_item"
+item_id = 7392
+name = "torso"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1ce1_head"
+base_id = "base_item"
+item_id = 7393
+name = "head"
+rarity = "common"
+weight = 1.0
+
+[[item]]
 id = "0x1ce2_leg"
 base_id = "base_item"
 item_id = 7394
 name = "leg"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x1ce3_body_part"
+base_id = "base_item"
+item_id = 7395
+name = "body part"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1ce4_body_part"
+base_id = "base_item"
+item_id = 7396
+name = "body part"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1ce5_arm"
+base_id = "base_item"
+item_id = 7397
+name = "arm"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1ce6_body"
+base_id = "base_item"
+item_id = 7398
+name = "body"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1ce7_body"
+base_id = "base_item"
+item_id = 7399
+name = "body"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1ce8_torso"
+base_id = "base_item"
+item_id = 7400
+name = "torso"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1ce9_head"
+base_id = "base_item"
+item_id = 7401
+name = "head"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1cea_leg"
+base_id = "base_item"
+item_id = 7402
+name = "leg"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1ceb_body_part"
+base_id = "base_item"
+item_id = 7403
+name = "body part"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1cec_body_part"
+base_id = "base_item"
+item_id = 7404
+name = "body part"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x1ced_heart"
@@ -13,8 +132,7 @@ base_id = "base_item"
 item_id = 7405
 name = "heart"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1cee_liver"
@@ -22,8 +140,7 @@ base_id = "base_item"
 item_id = 7406
 name = "liver"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1cef_entrails"
@@ -31,8 +148,7 @@ base_id = "base_item"
 item_id = 7407
 name = "entrails"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1cf0_brain"
@@ -40,8 +156,39 @@ base_id = "base_item"
 item_id = 7408
 name = "brain"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x1d8a_body"
+base_id = "base_item"
+item_id = 7562
+name = "body"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1d8b_body"
+base_id = "base_item"
+item_id = 7563
+name = "body"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1d8c_body"
+base_id = "base_item"
+item_id = 7564
+name = "body"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1d8d_body"
+base_id = "base_item"
+item_id = 7565
+name = "body"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x1d9f_torso"
@@ -49,8 +196,7 @@ base_id = "base_item"
 item_id = 7583
 name = "torso"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1da0_head"
@@ -58,8 +204,7 @@ base_id = "base_item"
 item_id = 7584
 name = "head"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1da1_left_arm"
@@ -67,8 +212,7 @@ base_id = "base_item"
 item_id = 7585
 name = "left arm"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1da2_right_arm"
@@ -76,8 +220,7 @@ base_id = "base_item"
 item_id = 7586
 name = "right arm"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1da3_left_leg"
@@ -85,8 +228,7 @@ base_id = "base_item"
 item_id = 7587
 name = "left leg"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1da4_right_leg"
@@ -94,8 +236,7 @@ base_id = "base_item"
 item_id = 7588
 name = "right leg"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1dad_torso"
@@ -103,8 +244,7 @@ base_id = "base_item"
 item_id = 7597
 name = "torso"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1dae_head"
@@ -112,8 +252,7 @@ base_id = "base_item"
 item_id = 7598
 name = "head"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1daf_left_arm"
@@ -121,8 +260,7 @@ base_id = "base_item"
 item_id = 7599
 name = "left arm"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1db0_right_arm"
@@ -130,8 +268,7 @@ base_id = "base_item"
 item_id = 7600
 name = "right arm"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1db1_left_leg"
@@ -139,8 +276,7 @@ base_id = "base_item"
 item_id = 7601
 name = "left leg"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1db2_right_leg"
@@ -148,5 +284,4 @@ base_id = "base_item"
 item_id = 7602
 name = "right leg"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0

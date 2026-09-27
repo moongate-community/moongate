@@ -198,6 +198,7 @@ await ConsoleApp.RunAsync(
 
         var serverConfig = ConfigHelper.Load(Path.Combine(directoriesConfig["config"], "moongate.toml"));
         Log.Information("Server mode: {ServerMode}", serverConfig.Mode);
+        Log.Information("Client encryption: {Encryption}", serverConfig.Network.Encryption.GetDescription());
 
         var bootstrap = new MoongateServerBootstrap(container, cancellationToken)
             .RegisterServices(services =>
@@ -208,6 +209,9 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
                     services.RegisterInstance(serverConfig.Localization);
                     services.RegisterInstance(serverConfig.LineOfSight);
+                    services.RegisterInstance(serverConfig.Items);
+                    services.RegisterInstance(serverConfig.StartingItems);
+                    services.RegisterInstance(serverConfig.Characters);
                     services.RegisterInstance(TimeProvider.System);
                     services.RegisterMoongatePersistence(
                             serverConfig.Persistence.ToOptions(

@@ -4,8 +4,12 @@ base_id = "base_item"
 item_id = 5371
 name = "lockpick"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.1
+amount = 1
+stackable = true
+buy_price = 12
+sell_price = 7
+decays = true
 
 [[item]]
 id = "0x14fc_lockpick"
@@ -13,8 +17,12 @@ base_id = "base_item"
 item_id = 5372
 name = "lockpick"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.1
+amount = 1
+stackable = true
+buy_price = 12
+sell_price = 7
+decays = true
 
 [[item]]
 id = "0x14fd_lockpicks"
@@ -22,8 +30,12 @@ base_id = "base_item"
 item_id = 5373
 name = "lockpicks"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 18
+sell_price = 9
+decays = true
 
 [[item]]
 id = "0x14fe_lockpicks"
@@ -31,8 +43,12 @@ base_id = "base_item"
 item_id = 5374
 name = "lockpicks"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 18
+sell_price = 9
+decays = true
 
 [[item]]
 id = "disguise_kit"
@@ -41,4 +57,43 @@ item_id = 3589
 name = "disguise kit"
 rarity = "common"
 movable = true
-hue = 0
+weight = 1.0
+buy_price = 500
+sell_price = 0
+decays = true
+
+[[item]]
+id = "0x1e2c_pickpocket_dip"
+base_id = "base_item"
+item_id = 7724
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0
+
+[[item]]
+id = "0x1ec1_pickpocket_dip"
+base_id = "base_item"
+item_id = 7872
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0
+
+[[item]]
+id = "0x1e2d_pickpocket_dip"
+base_id = "base_item"
+item_id = 7725
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0
+
+[[item]]
+id = "0x1ec4_pickpocket_dip"
+base_id = "base_item"
+item_id = 7875
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0

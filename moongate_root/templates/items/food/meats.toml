@@ -1,127 +1,191 @@
 [[item]]
 id = "0x1e1f_sliced_ham"
+base_id = "base_item"
 item_id = 7711
 name = "sliced ham"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 0.2
+stackable = true
+buy_price = 4
+sell_price = 2
 
 [[item]]
 id = "0x0976_slab_of_bacon"
+base_id = "base_item"
 item_id = 2422
 name = "slab of bacon"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 4.0
+stackable = true
+buy_price = 8
+sell_price = 4
 
 [[item]]
 id = "0x0977_slab_of_bacon"
+base_id = "base_item"
 item_id = 2423
 name = "slab of bacon"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 4.0
+stackable = true
+buy_price = 8
+sell_price = 4
 
 [[item]]
 id = "0x0978_slice_of_bacon"
+base_id = "base_item"
 item_id = 2424
 name = "slice of bacon"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
 
 [[item]]
 id = "0x0979_slice_of_bacon"
+base_id = "base_item"
 item_id = 2425
 name = "slice of bacon"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
 
 [[item]]
 id = "0x09b7_cooked_bird"
+base_id = "base_item"
 item_id = 2487
 name = "cooked bird"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 6
+sell_price = 3
 
 [[item]]
 id = "0x09b8_cooked_bird"
+base_id = "base_item"
 item_id = 2488
 name = "cooked bird"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 6
+sell_price = 3
 
 [[item]]
 id = "0x09bb_roast_pig"
+base_id = "base_item"
 item_id = 2491
 name = "roast pig"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 45.0
+stackable = true
+buy_price = 128
+sell_price = 64
 
 [[item]]
 id = "0x09bc_roast_pig"
+base_id = "base_item"
 item_id = 2492
 name = "roast pig"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 45.0
+stackable = true
+buy_price = 128
+sell_price = 64
 
 [[item]]
 id = "0x09c0_sausage"
+base_id = "base_item"
 item_id = 2496
 name = "sausage"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 20
+sell_price = 10
 
 [[item]]
 id = "0x09c1_sausage"
+base_id = "base_item"
 item_id = 2497
 name = "sausage"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 20
+sell_price = 10
 
 [[item]]
 id = "0x09c9_ham"
+base_id = "base_item"
 item_id = 2505
 name = "ham"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 24
+sell_price = 12
 
 [[item]]
 id = "0x09d3_ham"
+base_id = "base_item"
 item_id = 2515
 name = "ham"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 24
+sell_price = 12
 
 [[item]]
 id = "0x09f2_cooked_ribs"
+base_id = "base_item"
 item_id = 2546
 name = "cooked ribs"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 12
+sell_price = 6
 
 [[item]]
 id = "0x1608_chicken_leg"
+base_id = "base_item"
 item_id = 5640
 name = "chicken leg"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 6
+sell_price = 3
 
 [[item]]
 id = "0x160a_leg_of_lamb"
+base_id = "base_item"
 item_id = 5642
 name = "leg of lamb"
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+buy_price = 12
+sell_price = 6

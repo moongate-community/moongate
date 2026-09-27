@@ -1,41 +1,83 @@
 [[item]]
+id = "0x13d4"
+base_id = "0x13d4_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
 id = "0x13dc"
+base_id = "0x13d4_lbr"
 item_id = 5084
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x13d5"
+base_id = "0x13d5_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x13dd"
+base_id = "0x13d5_lbr"
 item_id = 5085
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x13d6"
+base_id = "0x13d6_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "studdedgorget"
+base_id = "0x13d6_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x13da"
+base_id = "0x13da_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x13e1"
+base_id = "0x13da_lbr"
 item_id = 5089
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x13db"
+base_id = "0x13db_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x13e2"
+base_id = "0x13db_lbr"
 item_id = 5090
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x1c02"
+base_id = "0x1c02_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x1c03"
+base_id = "0x1c02_lbr"
 item_id = 7171
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x1c0c"
+base_id = "0x1c0c_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x1c0d"
+base_id = "0x1c0c_lbr"
 item_id = 7181
 rarity = "common"
-movable = false
-hue = 0

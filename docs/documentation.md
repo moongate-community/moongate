@@ -35,7 +35,9 @@ Keep the source text in its existing location:
 - `docs/*.md` contains server, reference, and contributor guides.
 - `src/*/README.md` contains library documentation and NuGet examples.
 - The root `README.md` supplies the overview.
-- `website/src/content/docs/index.md` is the authored landing page.
+- `website/src/content/docs/index.mdx` is the authored landing page. Its download
+  cards use `website/src/components/Downloads.astro` and the version in
+  `.release-please-manifest.json` to link to the matching release archives.
 
 Do not edit or commit `website/src/content/docs/generated/` or
 `website/public/generated/`. The importer replaces these directories.
@@ -43,6 +45,13 @@ It preserves the original files, including NuGet smoke-test markers and code exa
 
 The importer also copies `scripts/install.sh` to `website/public/install.sh`, which the site
 serves at `https://moongate.sh/install.sh`. Edit the script, never the copy.
+
+The [Test coverage](test-coverage.md) page is filled from the coverage report in
+`artifacts/coverage` (or `MOONGATE_COVERAGE_DIR`): the importer replaces the
+`<!-- coverage-summary -->` marker with the per-assembly table and copies the HTML
+report to `website/public/coverage/`, served at `https://moongate.sh/coverage/`.
+`MOONGATE_COVERAGE_COMMIT` names the measured commit on the page. Without a report the
+page says none was available. Run `scripts/coverage.sh all` first to preview it locally.
 
 After editing an imported source while the dev server is running, run this in a
 second terminal:
@@ -78,6 +87,11 @@ content and the authored homepage intact.
 After the initial documentation-only publication, automatic documentation builds
 and deployments run **when the existing release workflow creates a release**. Commits to `develop`, ordinary `main` pushes, and pull
 requests do not build or publish the website.
+
+Documentation builds never wait for the server CI. They include coverage only when
+a successful CI run already has a report for the exact commit being published.
+Otherwise the coverage page says no report was available; publish again after CI
+finishes to include it.
 
 The `docs` job in `.github/workflows/release.yml` calls the reusable
 `.github/workflows/docs.yml`, passing the released SHA and tag. It checks out

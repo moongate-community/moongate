@@ -1,0 +1,51 @@
+[[mobile]]
+id = "ladyofthesnow_se"
+base_id = "base_lady_of_the_snow"
+strength = "1d31+274"
+dexterity = "1d21+104"
+intelligence = "1d21+469"
+hits = "1d31+594"
+damage = "1d8+12"
+armor = "1d11+44"
+karma = -15200
+fame = 15200
+gold = "1d201+799"
+[mobile.resistances]
+fire = "1d11+44"
+cold = "1d21+69"
+poison = "1d11+59"
+energy = "1d16+69"
+[mobile.skills]
+resisting_spells = "1d16+89"
+magery = "1d11+94"
+meditation = "1d6+84"
+tactics = "1d16+84"
+wrestling = "1d16+84"
+anatomy = 0
+
+[[mobile]]
+id = "revenant_lion_se"
+base_id = "base_revenant_lion"
+strength = "1d46+274"
+dexterity = "1d21+154"
+intelligence = "1d31+74"
+hits = "1d31+249"
+damage = "1d17+41"
+armor = "1d21+39"
+karma = -4000
+fame = 4000
+loot = ["midlevelscrolls", "midlevelscrolls"]
+gold = "1d151+549"
+[mobile.resistances]
+fire = "1d11+19"
+cold = "1d11+49"
+poison = "1d11+54"
+energy = "1d11+39"
+[mobile.skills]
+resisting_spells = "1d21+69"
+magery = "1d11+79"
+evaluating_intelligence = "1d11+79"
+meditation = "1d11+84"
+tactics = "1d21+59"
+wrestling = "1d11+79"
+anatomy = 0

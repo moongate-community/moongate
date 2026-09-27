@@ -4,8 +4,11 @@ base_id = "base_item"
 item_id = 4000
 name = "spool of thread"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 21
+sell_price = 10
+decays = true
 
 [[item]]
 id = "0x0fa1_spool_of_thread"
@@ -13,8 +16,11 @@ base_id = "base_item"
 item_id = 4001
 name = "spool of thread"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 21
+sell_price = 10
+decays = true
 
 [[item]]
 id = "0x1420_roll_of_string"
@@ -22,8 +28,11 @@ base_id = "base_item"
 item_id = 5152
 name = "roll of string"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 21
+sell_price = 10
+decays = true
 
 [[item]]
 id = "0x1421_roll_of_string"
@@ -31,8 +40,11 @@ base_id = "base_item"
 item_id = 5153
 name = "roll of string"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
+stackable = true
+buy_price = 21
+sell_price = 10
+decays = true
 
 [[item]]
 id = "0x101f_pile_of_wool"
@@ -40,8 +52,11 @@ base_id = "base_item"
 item_id = 4127
 name = "pile of wool"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
+stackable = true
+buy_price = 74
+sell_price = 37
+decays = true
 
 [[item]]
 id = "0x0df8_pile_of_wool"
@@ -49,8 +64,11 @@ base_id = "base_item"
 item_id = 3576
 name = "pile of wool"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
+stackable = true
+buy_price = 74
+sell_price = 37
+decays = true
 
 [[item]]
 id = "0x0def_raw_cotton"
@@ -59,7 +77,11 @@ item_id = 3567
 name = "raw cotton"
 rarity = "common"
 movable = true
-hue = 0
+weight = 4.0
+stackable = false
+buy_price = 122
+sell_price = 61
+decays = true
 
 [[item]]
 id = "0x0df9_bale_of_cotton"
@@ -67,8 +89,11 @@ base_id = "base_item"
 item_id = 3577
 name = "bale of cotton"
 rarity = "common"
-movable = false
-hue = 0
+weight = 4.0
+stackable = true
+buy_price = 122
+sell_price = 61
+decays = true
 
 [[item]]
 id = "0x1a9c_flax_bundle"
@@ -76,8 +101,11 @@ base_id = "base_item"
 item_id = 6812
 name = "flax bundle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 122
+sell_price = 61
+decays = true
 
 [[item]]
 id = "0x1a9d_flax_bundle"
@@ -85,8 +113,11 @@ base_id = "base_item"
 item_id = 6813
 name = "flax bundle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 122
+sell_price = 61
+decays = true
 
 [[item]]
 id = "0x0e1d_ball_of_yarn"
@@ -94,8 +125,11 @@ base_id = "base_item"
 item_id = 3613
 name = "ball of yarn"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 21
+sell_price = 10
+decays = true
 
 [[item]]
 id = "0x0e1e_ball_of_yarn"
@@ -103,8 +137,11 @@ base_id = "base_item"
 item_id = 3614
 name = "ball of yarn"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 21
+sell_price = 10
+decays = true
 
 [[item]]
 id = "0x0e1f_ball_of_yarn"
@@ -112,8 +149,11 @@ base_id = "base_item"
 item_id = 3615
 name = "ball of yarn"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 21
+sell_price = 10
+decays = true
 
 [[item]]
 id = "0x0f95_bolt_of_cloth"
@@ -121,8 +161,36 @@ base_id = "base_item"
 item_id = 3989
 name = "bolt of cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 5.0
+amount = 1
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
+
+[[item]]
+id = "0x0f96_bolt_of_cloth"
+base_id = "base_item"
+item_id = 3990
+name = "bolt of cloth"
+rarity = "common"
+weight = 5.0
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
+
+[[item]]
+id = "0x0f97_bolt_of_cloth"
+base_id = "base_item"
+item_id = 3991
+name = "bolt of cloth"
+rarity = "common"
+weight = 5.0
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
 
 [[item]]
 id = "0x0f98_bolt_of_cloth"
@@ -130,8 +198,12 @@ base_id = "base_item"
 item_id = 3992
 name = "bolt of cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 5.0
+amount = 1
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
 
 [[item]]
 id = "0x0f99_bolt_of_cloth"
@@ -139,8 +211,12 @@ base_id = "base_item"
 item_id = 3993
 name = "bolt of cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 5.0
+amount = 1
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
 
 [[item]]
 id = "0x0f9a_bolt_of_cloth"
@@ -148,8 +224,36 @@ base_id = "base_item"
 item_id = 3994
 name = "bolt of cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 5.0
+amount = 1
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
+
+[[item]]
+id = "0x0f9b_bolt_of_cloth"
+base_id = "base_item"
+item_id = 3995
+name = "bolt of cloth"
+rarity = "common"
+weight = 5.0
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
+
+[[item]]
+id = "0x0f9c_bolt_of_cloth"
+base_id = "base_item"
+item_id = 3996
+name = "bolt of cloth"
+rarity = "common"
+weight = 5.0
+stackable = true
+buy_price = 120
+sell_price = 60
+decays = true
 
 [[item]]
 id = "0x175d_folded_cloth"
@@ -157,8 +261,11 @@ base_id = "base_item"
 item_id = 5981
 name = "folded cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x175e_folded_cloth"
@@ -166,8 +273,11 @@ base_id = "base_item"
 item_id = 5982
 name = "folded cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x175f_folded_cloth"
@@ -175,8 +285,11 @@ base_id = "base_item"
 item_id = 5983
 name = "folded cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x1760_folded_cloth"
@@ -184,8 +297,11 @@ base_id = "base_item"
 item_id = 5984
 name = "folded cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x1761_folded_cloth"
@@ -193,8 +309,11 @@ base_id = "base_item"
 item_id = 5985
 name = "folded cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x1762_folded_cloth"
@@ -202,8 +321,11 @@ base_id = "base_item"
 item_id = 5986
 name = "folded cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x1763_folded_cloth"
@@ -211,8 +333,17 @@ base_id = "base_item"
 item_id = 5987
 name = "folded cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
+
+[[item]]
+id = "folded_cloth"
+base_id = "0x1763_folded_cloth"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x1764_folded_cloth"
@@ -220,8 +351,11 @@ base_id = "base_item"
 item_id = 5988
 name = "folded cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x1765_cloth"
@@ -229,8 +363,11 @@ base_id = "base_item"
 item_id = 5989
 name = "cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x1766_cut_cloth"
@@ -238,8 +375,11 @@ base_id = "base_item"
 item_id = 5990
 name = "cut cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x1767_cloth"
@@ -247,8 +387,11 @@ base_id = "base_item"
 item_id = 5991
 name = "cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x1768_cut_cloth"
@@ -256,8 +399,11 @@ base_id = "base_item"
 item_id = 5992
 name = "cut cloth"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 3
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x0df6_knitting"
@@ -265,8 +411,8 @@ base_id = "base_item"
 item_id = 3574
 name = "knitting"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+decays = true
 
 [[item]]
 id = "0x0df7_knitting"
@@ -274,8 +420,8 @@ base_id = "base_item"
 item_id = 3575
 name = "knitting"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+decays = true
 
 [[item]]
 id = "arcane_gem"
@@ -283,5 +429,7 @@ base_id = "base_item"
 item_id = 7847
 name = "arcane gem"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+decays = true
+hue = 2117

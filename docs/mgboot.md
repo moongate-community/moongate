@@ -82,7 +82,7 @@ Distribute only `admin.crt`; clients must verify trust and hostname.
 | `config/moongate.toml` | Current server defaults serialized as snake_case TOML |
 | `logs/`, `plugins/`, `scripts/` | Standard server directories |
 | `migrations/auth/` | The core auth SQL files included in the distribution |
-| `migrations/world/` | World migration directory; initially empty if no core World SQL is shipped |
+| `migrations/world/` | The core World SQL files included in the distribution: the mobiles and items tables |
 | `data/` | The shard data files included in the distribution: maps, regions, races, skills, messages and the rest; see [Shard data files](data-files.md) |
 | `.mgboot.lock` | Retained file used to prevent simultaneous initialization |
 

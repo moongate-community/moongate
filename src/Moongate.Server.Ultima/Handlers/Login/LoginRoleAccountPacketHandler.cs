@@ -39,8 +39,7 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
         CancellationToken cancellationToken
     )
     {
-        var result = await _flow.AuthenticateAsync(packet.Account, packet.Password, cancellationToken)
-            .ConfigureAwait(false);
+        var result = await _flow.AuthenticateAsync(packet.Account, packet.Password, cancellationToken);
 
         if (cancellationToken.IsCancellationRequested ||
             !_sessions.IsCurrent(session) ||
@@ -55,7 +54,7 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
 
             if (!_sender.TrySend(session.SessionId, connection, new LoginDeniedPacket(result.DenialReason!.Value)))
             {
-                await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
+                await connection.CloseAsync(CancellationToken.None);
             }
 
             return;
@@ -80,7 +79,7 @@ public sealed class LoginRoleAccountPacketHandler : ILoginPacketHandler<AccountL
             if (!_sender.TrySend(session.SessionId, connection, new ServerListPacket(result.Servers)))
             {
                 session.ClearAccount();
-                await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
+                await connection.CloseAsync(CancellationToken.None);
 
                 return;
             }

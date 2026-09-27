@@ -22,6 +22,10 @@ game_port = 2595
 listen_address = "0.0.0.0"
 enable_ping_server = true # Reserved: currently not consumed by the host.
 
+[network.encryption]
+mode = "Disabled"
+client_version = ""
+
 [redis]
 connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
 handoff_secret = "$MOONGATE_HANDOFF_SECRET"
@@ -83,6 +87,17 @@ language = "eng" # Reads <root>/data/messages/eng.toml.
 
 [line_of_sight]
 max_distance = 25 # Farthest cells along X or Y a point can see.
+
+[items]
+backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
+gold_template = "0x0eed_gold_coin"    # Item template of gold coins.
+
+[starting_items]
+gold = 1000                           # Starting gold; 0 gives none.
+best_skills = 3                       # How many of the highest skills pick skill sets.
+
+[characters]
+max_per_account = 7                   # Characters an account may hold: 1, 5, 6 or 7.
 ```
 
 Only the databases for the active role must already exist and accept connections:
@@ -109,6 +124,8 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `network.game_port` | Game TCP listener port; default 2595. Used in game and standalone modes. Standalone rejects equal login and game ports. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create an endpoint for each active role on every address, including IPv6 addresses; it is not a single wildcard listener. Standalone therefore starts two listeners per address. Use a specific IP to restrict binding. |
 | `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
+| `network.encryption.mode` | `Disabled` (default), `Optional` or `Required`; applies to both UO listeners. See [UO client encryption](#uo-client-encryption). |
+| `network.encryption.client_version` | Raw POL wire version used to derive login keys and select the game cipher family. Required for `Optional` and `Required`; ignored when `Disabled`. Default empty. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. It must contain `tiledata.mul`, the map and statics files of every map in `data/maps.toml`, and `MultiCollection.uop` or `multi.idx` with `multi.mul`; the server stops at startup when one is missing. |
 | `persistence.auto_sync_schema` | Defaults to false. Normal startup checks versioned SQL history; when false it also fails if registered entities require DDL. Generate and review SQL, then apply it with the separate migration runner. Enable only as an explicit development convenience. |
 | `persistence.accounts.connection_string` | Accounts/login PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Accounts. |
@@ -133,6 +150,10 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 | `localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
 | `line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
+| `items.backpack_template`, `items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack and gold of new characters and spawned NPCs. Both must exist in `templates/items/`, and the gold template must stack, or the game server stops at startup. These keys used to be under `[starting_items]`, where they are now ignored: move any custom value to `[items]`. See [Starting items](data-files/starting-items.md). |
+| `starting_items.gold` | From 0 to 65535 (one pile); default 1000. Gold coins put in a new character's backpack; above 1 the gold template must stack, or the game server stops at startup. |
+| `starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
+| `characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
 
 Redis is required at runtime in all three modes, including standalone. `redis.connection_string` is a StackExchange.Redis configuration string or an environment reference resolved at startup; the Docker example uses `redis:6379,password=...` on its private bridge. `redis.handoff_secret` is an independent cluster-wide secret, also supplied through an environment reference. Give the login and every game process the same values. The Docker example reads both from separate Compose secrets; keep the actual values out of TOML and the repository. A Redis connection failure prevents startup. A later Redis outage stops new realm lists and handoffs while existing game sessions continue; pending tickets are lost on Redis restart and game processes republish their leases. Configure Redis with `maxmemory-policy noeviction`.
 
@@ -193,3 +214,58 @@ it. See [Generate, review and apply](persistence-migrations.md#generate-review-a
 ## Administration endpoint
 
 `[admin_api]` configures the embedded gRPC plugin. It is disabled by default and uses server TLS on port 2590 when enabled. Certificate paths resolve relative to the root; password environment references are resolved only for enabled endpoints. Use [mgboot certificate setup](mgboot.md#generate-an-administration-certificate) to generate a passwordless PFX and enable the endpoint offline. See [Administration API](admin-api.md) for roles, permissions, first-admin provisioning and all limits.
+
+## UO client encryption
+
+`MoongateServerConfig.Network.Encryption` configures both UO listeners. `Mode` is the
+`NetworkEncryptionMode` enum: `Disabled` (default), `Optional`, or `Required`.
+
+| Mode | Connections accepted |
+| --- | --- |
+| `Disabled` | Existing plaintext protocol; no encryption middleware is installed. |
+| `Optional` | Valid plaintext login packets, or login packets that decrypt correctly with the configured profile. |
+| `Required` | Rejects plaintext login packets; requires a valid login packet after decryption with the configured profile. |
+
+Enabled modes require an explicit POL client version and select one encrypted
+profile per configuration; they do not try multiple versions. Login keys are
+derived from that version, while game encryption is selected as OldBlowfish,
+Blowfish12536, Blowfish, BlowfishTwofish, or Twofish. Versions in the same modern
+Twofish family share the game cipher, so this setting is not an exact client-version
+check on the game listener. The special version `2.0.0x` is supported. Empty or
+malformed versions and the no-crypt aliases `none`, `ignition` and `uorice` prevent
+startup in `Optional` and `Required` modes.
+
+`Optional` first checks the initial login packet with the normal packet parser.
+If it is not valid plaintext, the server attempts decryption and validates the
+result; failed validation rejects the connection. It does not fall back to
+plaintext after failed decryption. For a legacy four-byte login seed, enabled
+encryption supplies the configured version to the login handler because the
+client has not sent a version with that seed.
+
+For Enhanced Client 67.0.117.0, use:
+
+```toml
+[network.encryption]
+mode = "Optional"
+client_version = "67.0.117.0"
+```
+
+Use the **wire version**, including the Enhanced Client's 60 major-version offset.
+The inspected Enhanced Client executable with file version `4.0.117.0` uses the
+keys for wire version `67.0.117.0`; using `4.0.117.0` or `7.0.117.0` produces
+different login keys. Keep the original client encryption enabled when testing
+this configuration. A launcher that removes encryption needs `Optional` or
+`Disabled`. Changing the setting requires a restart; startup reports, for example:
+
+```text
+Client encryption: Optional; client 67.0.117.0; login XOR; game Twofish / MD5-XOR
+```
+
+For separate login and game processes, configure the same policy and profile on
+each and restart both after changes. See [Network](network.md) for handshake and
+transport details.
+The feature provides POL protocol interoperability, not TLS or authenticated
+transport. It does not implement the old Kingdom Reborn AES/E3 negotiation.
+Automated tests compare against original POL C++ vectors and exercise real TCP
+framing and compression; successful interactive login and gameplay with a specific
+Enhanced Client build still require a client-side test.

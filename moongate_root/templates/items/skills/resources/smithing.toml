@@ -4,8 +4,12 @@ base_id = "base_item"
 item_id = 7151
 name = "iron ingot"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 9
+sell_price = 4
+decays = true
 
 [[item]]
 id = "0x1bf2_iron_ingot"
@@ -13,8 +17,12 @@ base_id = "base_item"
 item_id = 7154
 name = "iron ingot"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 9
+sell_price = 4
+decays = true
 
 [[item]]
 id = "0x0fb7_forged_metal"
@@ -23,7 +31,8 @@ item_id = 4023
 name = "forged metal"
 rarity = "common"
 movable = true
-hue = 0
+weight = 1.0
+decays = true
 
 [[item]]
 id = "0x0fb8_forged_metal"
@@ -32,4 +41,5 @@ item_id = 4024
 name = "forged metal"
 rarity = "common"
 movable = true
-hue = 0
+weight = 1.0
+decays = true

@@ -6,10 +6,11 @@ Copy `.env.example` to `.env`, set `UO_DATA_PATH`, and export the nine named sec
 
 ```sh
 docker compose config --quiet
-docker compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply migration-status
+docker compose build login game-1 game-2 auth-schema-apply schema-preview schema-apply schema-apply-realm-2 migration-status
 docker compose up -d --wait postgres redis
 docker compose --profile schema run --rm auth-schema-apply
 docker compose --profile schema run --rm schema-apply
+docker compose --profile schema run --rm schema-apply-realm-2
 docker compose up -d login game-1 game-2
 ```
 

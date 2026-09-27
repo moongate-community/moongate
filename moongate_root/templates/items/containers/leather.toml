@@ -1,12 +1,68 @@
 [[item]]
+id = "0x09b0_pouch"
+base_id = "base_item"
+item_id = 2480
+name = "pouch"
+rarity = "common"
+weight = 1.0
+buy_price = 7
+sell_price = 3
+decays = true
+max_weight = 40000
+
+[[item]]
+id = "0x0e79_pouch"
+base_id = "base_item"
+item_id = 3705
+name = "pouch"
+rarity = "common"
+weight = 1.0
+buy_price = 7
+sell_price = 3
+decays = true
+max_weight = 40000
+
+[[item]]
+id = "0x09b2_backpack"
+base_id = "base_item"
+item_id = 2482
+name = "backpack"
+rarity = "common"
+weight = 1.0
+buy_price = 18
+sell_price = 9
+decays = true
+max_weight = 40000
+
+[[item]]
+id = "0x0e75_backpack"
+base_id = "base_item"
+item_id = 3701
+name = "backpack"
+rarity = "common"
+weight = 1.0
+buy_price = 18
+sell_price = 9
+decays = true
+max_weight = 40000
+
+[[item]]
 id = "0x0e76_bag"
 base_id = "base_item"
 item_id = 3702
 name = "bag"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 7
+sell_price = 3
+decays = true
 max_weight = 40000
+
+[[item]]
+id = "bag"
+base_id = "0x0e76_bag"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "bagofsending"
@@ -14,8 +70,8 @@ base_id = "base_item"
 item_id = 3702
 name = "bag of sending"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
+decays = true
 
 [[item]]
 id = "0x0e7a_picnic_basket"
@@ -23,6 +79,14 @@ base_id = "base_item"
 item_id = 3706
 name = "picnic basket"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 10
+sell_price = 5
+decays = true
 max_weight = 40000
+
+[[item]]
+id = "picnicbasket"
+base_id = "0x0e7a_picnic_basket"
+item_id = 0
+rarity = "common"

@@ -1,0 +1,8 @@
+[[item]]
+id = "0x27aa_aos"
+base_id = "base_fukiya"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 52
+sell_price = 34

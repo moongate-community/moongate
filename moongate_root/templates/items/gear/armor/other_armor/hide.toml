@@ -1,41 +1,131 @@
 [[item]]
+id = "0x2b77"
+base_id = "0x2b77_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
 id = "0x316e"
+base_id = "0x2b77_lbr"
 item_id = 12654
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x2b74"
+base_id = "0x2b74_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x316b"
+base_id = "0x2b74_lbr"
 item_id = 12651
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x2b79"
+base_id = "0x2b79_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x3170"
+base_id = "0x2b79_lbr"
 item_id = 12656
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x2b75"
+base_id = "0x2b75_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x316c"
+base_id = "0x2b75_lbr"
 item_id = 12652
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x2b78"
+base_id = "0x2b78_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x316f"
+base_id = "0x2b78_lbr"
 item_id = 12655
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x2b76"
+base_id = "0x2b76_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x316d"
+base_id = "0x2b76_lbr"
 item_id = 12653
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "0x782e"
+base_id = "0x782e_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "dragonturtlehidearms"
+base_id = "0x782e_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x782a"
+base_id = "0x782a_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "dragonturtlehidechest"
+base_id = "0x782a_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x782b"
+base_id = "0x782b_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "dragonturtlehidebustier"
+base_id = "0x782b_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x782d"
+base_id = "0x782d_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "dragonturtlehidehelm"
+base_id = "0x782d_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x782c"
+base_id = "0x782c_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "dragonturtlehideleggings"
+base_id = "0x782c_lbr"
+item_id = 0
+rarity = "common"

@@ -1,0 +1,232 @@
+[[mobile]]
+id = "orc_tol"
+base_id = "base_orc"
+strength = "1d25+95"
+dexterity = "1d25+80"
+intelligence = "1d25+35"
+hits = "1d15+57"
+damage = "1d3+4"
+armor = 27
+karma = -1500
+fame = 1500
+loot = ["treasure_map_lvl1loot"]
+gold = "1d51+49"
+[mobile.resistances]
+fire = 25
+cold = 15
+poison = 25
+energy = 15
+[mobile.skills]
+resisting_spells = "1d26+49"
+tactics = "1d26+54"
+wrestling = "1d21+49"
+
+[[mobile]]
+id = "orccaptain_tol"
+base_id = "base_orccaptain"
+strength = "1d35+110"
+dexterity = "1d35+100"
+intelligence = "1d25+85"
+hits = "1d21+66"
+damage = "1d11+4"
+armor = 32
+karma = -2500
+fame = 2500
+gold = "1d51+99"
+[mobile.resistances]
+fire = 15
+cold = 20
+poison = 7
+energy = 7
+[mobile.skills]
+resisting_spells = "1d16+69"
+tactics = "1d16+84"
+swordsmanship = "1d26+69"
+
+[[mobile]]
+id = "orcmage_tol"
+base_id = "base_orcmage"
+strength = "1d35+115"
+dexterity = "1d25+90"
+intelligence = "1d26+159"
+hits = "1d21+69"
+damage = "1d11+3"
+armor = 27
+karma = -3000
+fame = 3000
+loot = ["treasure_map_lvl1loot"]
+gold = "1d51+124"
+[mobile.resistances]
+fire = 35
+cold = 25
+poison = 35
+energy = 35
+[mobile.skills]
+resisting_spells = "1d16+59"
+tactics = "1d16+49"
+magery = "1d13+59"
+evaluating_intelligence = "1d13+59"
+wrestling = "1d11+39"
+
+[[mobile]]
+id = "orclord_tol"
+base_id = "base_orclord"
+strength = "1d69+146"
+dexterity = "1d25+90"
+intelligence = "1d25+60"
+hits = "1d29+94"
+damage = "1d11+3"
+armor = 27
+karma = -2500
+fame = 2500
+loot = ["treasure_map_lvl1loot"]
+gold = "1d51+174"
+[mobile.resistances]
+fire = 35
+cold = 25
+poison = 35
+energy = 35
+[mobile.skills]
+resisting_spells = "1d16+69"
+tactics = "1d16+74"
+swordsmanship = "1d26+59"
+wrestling = "1d26+59"
+
+[[mobile]]
+id = "orcbomber_tol"
+base_id = "base_orcbomber"
+strength = "1d69+146"
+dexterity = "1d25+90"
+intelligence = "1d25+60"
+hits = "1d29+94"
+damage = "1d8"
+armor = 30
+karma = -2500
+fame = 2500
+gold = "1d51+174"
+[mobile.resistances]
+fire = 35
+cold = 20
+poison = 27
+energy = 17
+[mobile.skills]
+resisting_spells = "1d16+69"
+tactics = "1d16+74"
+wrestling = "1d26+59"
+swordsmanship = "1d26+59"
+
+[[mobile]]
+id = "orcscout_tol"
+base_id = "base_orcscout"
+strength = "1d25+95"
+dexterity = "1d30+100"
+intelligence = "1d25+35"
+hits = "1d15+57"
+damage = "1d3+4"
+armor = 30
+karma = -1500
+fame = 1500
+gold = "1d51+124"
+[mobile.resistances]
+fire = 35
+cold = 20
+poison = 27
+energy = 17
+[mobile.skills]
+archery = "1d31+59"
+resisting_spells = "1d26+49"
+healing = "1d31+59"
+tactics = "1d26+54"
+fencing = "1d21+49"
+
+[[mobile]]
+id = "lizardman_tol"
+base_id = "base_lizardman"
+strength = "1d25+95"
+dexterity = "1d20+85"
+intelligence = "1d25+35"
+hits = "1d15+57"
+damage = "1d3+4"
+armor = 27
+karma = -1500
+fame = 1500
+gold = "1d26+49"
+[mobile.resistances]
+fire = 7
+cold = 7
+poison = 15
+energy = 15
+[mobile.skills]
+resisting_spells = "1d26+34"
+tactics = "1d26+54"
+wrestling = "1d21+49"
+
+[[mobile]]
+id = "ratman_tol"
+base_id = "base_ratman"
+strength = "1d25+95"
+dexterity = "1d20+80"
+intelligence = "1d25+35"
+hits = "1d15+57"
+damage = "1d2+3"
+armor = 27
+karma = -1500
+fame = 1500
+gold = "1d51+49"
+[mobile.resistances]
+fire = 15
+cold = 15
+poison = 15
+energy = 15
+[mobile.skills]
+resisting_spells = "1d26+34"
+tactics = "1d26+49"
+wrestling = "1d26+49"
+
+[[mobile]]
+id = "ratmanmage_tol"
+base_id = "base_ratmanmage"
+strength = "1d35+145"
+dexterity = "1d30+100"
+intelligence = "1d25+185"
+hits = "1d21+87"
+damage = "1d8+6"
+armor = 42
+karma = -7500
+fame = 7500
+gold = "1d78+274"
+[mobile.resistances]
+fire = 15
+cold = 15
+poison = 15
+energy = 15
+[mobile.skills]
+resisting_spells = "1d26+64"
+tactics = "1d26+49"
+wrestling = "1d26+49"
+magery = "1d11+69"
+evaluating_intelligence = "1d11+69"
+
+[[mobile]]
+id = "ratmanarcher_tol"
+base_id = "base_ratmanarcher"
+strength = "1d35+145"
+dexterity = "1d30+100"
+intelligence = "1d25+115"
+hits = "1d21+87"
+damage = "1d7+3"
+armor = 47
+karma = -6500
+fame = 6500
+gold = "1d51+299"
+[mobile.resistances]
+fire = 15
+cold = 15
+poison = 15
+energy = 15
+[mobile.skills]
+anatomy = "1d41+59"
+resisting_spells = "1d26+64"
+tactics = "1d26+49"
+wrestling = "1d26+49"
+archery = "1d11+79"

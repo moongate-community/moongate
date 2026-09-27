@@ -90,3 +90,20 @@ listed here belong to that executable and do not replace server dependencies.
 | ShaiRandom                                            | 0.0.2    | Expression                 | MIT                | https://licenses.nuget.org/MIT          | Copyright © 2021-2022 Tommy Ettinger (tommyettinger)       | tommyettinger                                                                                                                     | https://github.com/tommyettinger/ShaiRandom    |
 | Tomlyn                                                | 2.10.1   | Expression                 | BSD-2-Clause       | https://licenses.nuget.org/BSD-2-Clause | Alexandre Mutel                                            | Alexandre Mutel                                                                                                                   | https://xoofx.github.io/Tomlyn/                |
 | ZLinq                                                 | 1.5.6    | Expression                 | MIT                | https://licenses.nuget.org/MIT          | © Cysharp, Inc.                                            | Cysharp                                                                                                                           | https://github.com/Cysharp/ZLinq               |
+
+## POL client encryption
+
+The UO encryption profiles and algorithms in `src/Moongate.Network.Packets/Data/Encryption/`,
+`Types/Encryption/` and `Encryption/` are adapted from the POL Project's
+`pol-core/pol/crypt/` implementation: https://github.com/polserver/polserver.
+The test vector generator builds the original POL sources supplied by the developer;
+`pol-vectors.json` records the reference commit.
+
+Original cryptography implementation: Copyright (C) 1999-2000 Bruno 'Beosil' Heidelberger.
+POL adaptation and encryption keys: TJ Houston (Myrathi) and POL contributors.
+
+The original cryptography module grants permission under the GNU General Public License,
+version 2 or (at your option) any later version. It is provided WITHOUT ANY WARRANTY,
+including implied warranties of MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.
+See https://www.gnu.org/licenses/old-licenses/gpl-2.0.html for the original license text.
+This project is distributed under the GNU Affero General Public License version 3; see LICENSE.

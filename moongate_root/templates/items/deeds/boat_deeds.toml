@@ -3,45 +3,45 @@ id = "smallshipdeed"
 item_id = 5360
 name = "small ship deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 12000
+sell_price = 12000
 
 [[item]]
 id = "mediumshipdeed"
 item_id = 5360
 name = "medium ship deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 14000
+sell_price = 14000
 
 [[item]]
 id = "largeshipdeed"
 item_id = 5360
 name = "large ship deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 16000
+sell_price = 16000
 
 [[item]]
 id = "smalldragonshipdeed"
 item_id = 5360
 name = "small dragon ship deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 12000
+sell_price = 12000
 
 [[item]]
 id = "mediumdragonshipdeed"
 item_id = 5360
 name = "medium dragon ship deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 14000
+sell_price = 14000
 
 [[item]]
 id = "largedragonshipdeed"
 item_id = 5360
 name = "large dragon ship deed"
 rarity = "common"
-movable = false
-hue = 0
+buy_price = 16000
+sell_price = 16000

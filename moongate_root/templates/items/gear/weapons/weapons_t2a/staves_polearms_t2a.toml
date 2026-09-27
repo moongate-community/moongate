@@ -1,0 +1,143 @@
+[[item]]
+id = "0x13f4_t2a"
+base_id = "base_crook"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 33
+sell_price = 24
+
+[[item]]
+id = "0x0e81_t2a"
+base_id = "base_shepherds_crook"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 33
+sell_price = 24
+
+[[item]]
+id = "0x13f8_t2a"
+base_id = "base_gnarled_staff"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 24
+sell_price = 12
+
+[[item]]
+id = "0x0df0_t2a"
+base_id = "base_black_staff"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 27
+sell_price = 24
+
+[[item]]
+id = "0x0e89_t2a"
+base_id = "base_quarter_staff"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 30
+sell_price = 15
+
+[[item]]
+id = "0x143e_t2a"
+base_id = "base_halberd"
+item_id = 0
+rarity = "common"
+weight = 16.0
+buy_price = 50
+sell_price = 25
+
+[[item]]
+id = "0x0f4d_t2a"
+base_id = "base_bardiche"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 68
+sell_price = 34
+
+[[item]]
+id = "0x26ba_t2a"
+base_id = "base_scythe"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 43
+sell_price = 23
+
+[[item]]
+id = "0x26bd_t2a"
+base_id = "base_bladed_staff"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 45
+sell_price = 25
+
+[[item]]
+id = "0x26bf_t2a"
+base_id = "base_double_bladed_staff"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 46
+sell_price = 27
+
+[[item]]
+id = "0x2d25_t2a"
+base_id = "base_wild_staff"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 29
+sell_price = 15
+
+[[item]]
+id = "0x48b4_t2a"
+base_id = "base_gargish_bardiche"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 68
+sell_price = 34
+
+[[item]]
+id = "0x48c4_t2a"
+base_id = "base_gargish_scythe"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 43
+sell_price = 23
+
+[[item]]
+id = "0x0906_t2a"
+base_id = "base_serpentstone_staff"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 45
+sell_price = 25
+
+[[item]]
+id = "0x48b8_t2a"
+base_id = "base_gargish_gnarled_staff"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 24
+sell_price = 12
+
+[[item]]
+id = "0x0905_t2a"
+base_id = "base_glass_staff"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 16
+sell_price = 8

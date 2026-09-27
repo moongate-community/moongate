@@ -1,0 +1,233 @@
+[[item]]
+id = "0x1440_tol"
+base_id = "base_cutlass"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 24
+sell_price = 12
+
+[[item]]
+id = "0x13fe_tol"
+base_id = "base_katana"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 33
+sell_price = 20
+
+[[item]]
+id = "0x0f5e_tol"
+base_id = "base_broadsword"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 35
+sell_price = 17
+
+[[item]]
+id = "0x0f60_tol"
+base_id = "base_longsword"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 55
+sell_price = 27
+
+[[item]]
+id = "0x13b7_tol"
+base_id = "base_long_sword"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 55
+sell_price = 27
+
+[[item]]
+id = "0x13b5_tol"
+base_id = "base_scimitar"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 36
+sell_price = 18
+
+[[item]]
+id = "0x13b9_tol"
+base_id = "base_viking_sword"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 55
+sell_price = 27
+
+[[item]]
+id = "0x26bb_tol"
+base_id = "base_bone_harvester"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 35
+sell_price = 17
+
+[[item]]
+id = "0x26c1_tol"
+base_id = "base_crescent_blade"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 48
+sell_price = 42
+
+[[item]]
+id = "0x26ce_tol"
+base_id = "base_paladin_sword"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 44
+sell_price = 41
+
+[[item]]
+id = "0x27a2_tol"
+base_id = "base_no_dachi"
+item_id = 0
+rarity = "common"
+weight = 10.0
+buy_price = 82
+sell_price = 41
+
+[[item]]
+id = "0x27a4_tol"
+base_id = "base_wakizashi"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 38
+sell_price = 19
+
+[[item]]
+id = "0x27a8_tol"
+base_id = "base_bokuto"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 21
+sell_price = 10
+
+[[item]]
+id = "0x27a9_tol"
+base_id = "base_daisho"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 66
+sell_price = 33
+
+[[item]]
+id = "0x2d29_tol"
+base_id = "base_radiant_scimitar"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 32
+sell_price = 23
+
+[[item]]
+id = "0x2d26_tol"
+base_id = "base_rune_blade"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 48
+sell_price = 42
+
+[[item]]
+id = "0x090b_tol"
+base_id = "base_dread_sword"
+item_id = 0
+rarity = "common"
+weight = 7.0
+buy_price = 31
+sell_price = 23
+
+[[item]]
+id = "0x48c6_tol"
+base_id = "base_gargish_bone_harvester"
+item_id = 0
+rarity = "common"
+weight = 3.0
+buy_price = 30
+sell_price = 15
+
+[[item]]
+id = "0x090c_tol"
+base_id = "base_glass_sword"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 28
+sell_price = 14
+
+[[item]]
+id = "0x48ae_tol"
+base_id = "base_gargish_cleaver"
+item_id = 0
+rarity = "common"
+weight = 2.0
+buy_price = 8
+sell_price = 4
+
+[[item]]
+id = "0x48ba_tol"
+base_id = "base_gargish_katana"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 17
+sell_price = 8
+
+[[item]]
+id = "0x48b6_tol"
+base_id = "base_gargish_butcher_knife"
+item_id = 0
+rarity = "common"
+weight = 1.0
+buy_price = 8
+sell_price = 4
+
+[[item]]
+id = "0x0900_tol"
+base_id = "base_stone_war_sword"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 31
+sell_price = 23
+
+[[item]]
+id = "0x0908_tol"
+base_id = "base_gargish_talwar"
+item_id = 0
+rarity = "common"
+weight = 16.0
+buy_price = 63
+sell_price = 31
+
+[[item]]
+id = "0x48d0_tol"
+base_id = "base_gargish_daisho"
+item_id = 0
+rarity = "common"
+weight = 8.0
+buy_price = 23
+sell_price = 11
+
+[[item]]
+id = "0xa28b_tol"
+base_id = "base_bladed_whip"
+item_id = 0
+rarity = "common"
+weight = 5.0
+buy_price = 32
+sell_price = 25

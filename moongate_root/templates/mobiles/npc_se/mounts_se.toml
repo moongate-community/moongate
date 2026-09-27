@@ -1,0 +1,53 @@
+[[mobile]]
+id = "hiryu_se"
+base_id = "base_hiryu"
+strength = "1d211+1199"
+dexterity = "1d101+169"
+intelligence = "1d26+299"
+hits = "1d201+899"
+damage = "1d43+10"
+armor = "1d16+54"
+karma = -15000
+fame = 15000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl5loot"]
+gold = "1d401+1499"
+[mobile.resistances]
+fire = "1d21+69"
+cold = "1d11+14"
+poison = "1d11+39"
+energy = "1d11+39"
+[mobile.skills]
+anatomy = "1d6+74"
+resisting_spells = "1d16+84"
+tactics = "1d11+99"
+wrestling = "1d21+99"
+
+[[mobile]]
+id = "lesser_hiryu_se"
+base_id = "base_hiryu"
+strength = "1d111+299"
+dexterity = "1d101+169"
+intelligence = "1d26+299"
+hits = "1d201+399"
+damage = "1d43+10"
+armor = "1d26+44"
+karma = -10000
+fame = 10000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "treasure_map_lvl3loot"]
+gold = "1d201+999"
+[mobile.resistances]
+fire = "1d21+59"
+cold = "1d11+4"
+poison = "1d11+29"
+energy = "1d11+29"
+[mobile.skills]
+anatomy = "1d6+74"
+resisting_spells = "1d16+84"
+tactics = "1d11+99"
+wrestling = "1d21+99"
+
+[[mobile]]
+id = "etherealhiryu"
+base_id = "hiryu_se"
+name = "an ethereal hiryu"
+skin_hue = 16385

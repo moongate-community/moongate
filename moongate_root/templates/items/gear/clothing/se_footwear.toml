@@ -4,8 +4,15 @@ base_id = "base_item"
 item_id = 10134
 name = "samurai tabi"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
+layer = "shoes"
+decays = true
+
+[[item]]
+id = "samuraitabi"
+base_id = "0x2796_samurai_tabi"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x2797_ninja_tall_tabi"
@@ -13,5 +20,12 @@ base_id = "base_item"
 item_id = 10135
 name = "ninja tall tabi"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
+layer = "shoes"
+decays = true
+
+[[item]]
+id = "ninjatalltabi"
+base_id = "0x2797_ninja_tall_tabi"
+item_id = 0
+rarity = "common"

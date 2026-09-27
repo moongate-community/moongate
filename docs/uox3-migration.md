@@ -1,7 +1,8 @@
 # Migrate from UOX3
 
 `mg-uoxconv` converts [UOX3](https://github.com/UOX3DevTeam/UOX3) `.dfn` item
-definitions and loot lists into Moongate's `ItemTemplate` and `LootTemplate` TOML.
+definitions and loot lists into Moongate's `ItemTemplate` and `LootTemplate` TOML, and
+UOX3 NPCs and name lists into `MobileTemplate` TOML and `names.toml`.
 The shapes it writes are described in [Loading TOML templates](templates.md#the-template-shapes);
 no loader reads them yet, so the output is content prepared for that loader.
 
@@ -11,7 +12,9 @@ From a source checkout:
 
 ```sh
 dotnet run --project src/Moongate.UoxItemConverter -- \
-  --source <file-or-directory> --destination <dir> [--loot-destination <dir>]
+  --source <file-or-directory> --destination <dir> [--loot-destination <dir>] \
+  [--mobile-source <dfndata> --mobile-destination <dir> --names-destination <file>] \
+  [--starting-items-destination <file>]
 ```
 
 Docker images after 0.6.0 bundle the same tool at `/app/mg-uoxconv`; see
@@ -23,12 +26,14 @@ example when there is no local .NET SDK.
 same relative path, holding one `[[item]]` per block that has an `id=` of its own.
 `--loot-destination` is optional; without it, `LOOTLIST` blocks are skipped. A bare
 invocation prints the help and exits `0`; a missing required argument exits `1`.
+The three mobile arguments go together (see [Mobiles and name lists](#mobiles-and-name-lists)).
 
 Every block from every source file is read before any `get=` chain is resolved,
 because a chain's target can live in another file: UOX3's own data keeps a sword's
 facing variants beside its base definition but a shared `base_item` elsewhere. A
 trailing `//comment` is stripped from every line first, as the UOX3 engine does;
 real data glues one straight onto a block's opening brace (`{//approximately 1%`).
+Text after the opening brace (`{ Random Hair`) is a label, not a line of the block.
 
 ## What maps
 
@@ -36,20 +41,47 @@ Verified against real UOX3 data:
 
 | UOX3 | ItemTemplate | Note |
 | --- | --- | --- |
-| The block's own `id=` | `ItemId` | Required; a block with no `id=` is not converted at all |
+| The block's own `id=` | `ItemId` | A list (`id=0x0c4f 0x0c50`, one picked at random in UOX3) keeps its first graphic; typos such as `0x0x04FC` and `0x15b6]` are forgiven. A block with no `id=` of its own converts only when it has one parent (below), with `item_id = 0`: the server's loader takes the parent's graphic |
 | The block header, or `name=` when the header is a bare hex | `Id` | Run through `StringUtils.ToSnakeCase`; `name=` is free text ("pitcher of wine") |
 | `name=` | `Name` | Carried as-is; UOX3 does not separate an identifier from display text |
-| A single-target `get=` | `BaseId` | Only when that target itself converted; `get=a b`, an alias with no `id=` of its own, converts nothing |
-| `movable=1` | `Movable` | Anything else, including absent, is `false` |
-| `color=` | `Hue` | A fixed value, not a range |
+| A single-target `get=` (else `getlbr=`) | `BaseId` | Only when that target itself converted; `get=a b`, a random alias with no `id=` of its own, converts nothing |
+| `movable=1` or `3` / `2` | `Movable = true` / `false` | `0` or absent leaves it unset, so tiledata decides |
+| `weight=` | `Weight` | Divided by 100: UOX3 weighs in hundredths of a stone |
+| `amount=` | `Amount` | A fixed stack size |
+| `pileable=` | `Stackable` | |
+| `layer=` | `Layer` | The UOX3 layer number as a `LayerType` name |
+| `value=buy sell` | `BuyPrice`, `SellPrice` | One number sets both |
+| `decay=` | `Decays` | `1` is true, anything else false |
+| `newbie` or `newbie=1` | `LootType = newbied` | |
+| `custominttag=name value`, `customstringtag=name text` | `Tags` | Every line, so a block can set several |
+| `color=` or `colour=` | `Hue` | A fixed value, not a range; unset writes no hue, so the server's loader takes the base template's |
 | `weightmax=` | `MaxWeight` | |
-| `visible=1`, `2` or `3` | `Visibility = game_master` | Hidden, magically invisible or GM hidden all keep the item from players; `visible=0` or absent leaves it unset, visible to everyone |
+| `visible=1`, `2` or `3` / `visible=0` | `Visibility = game_master` / `regular` | Hidden, magically invisible or GM hidden all keep the item from players; `visible=0` is written out so it overrides a hidden parent; absent leaves it unset |
 
-Everything else has no home in `ItemTemplate` yet and is dropped: weight, value,
-layer, the combat stat fields, `colorlist`, `pileable` (tiledata already carries it),
-`script=`, and the multi and geometry fields. `BaseId` is a pointer only: the
+Everything else has no home in `ItemTemplate` yet and is dropped: the combat stat
+fields, `colorlist`, `script=`, and the multi and geometry fields. `BaseId` is a pointer only: the
 converter does not flatten a parent's fields into its children; the loader will
-resolve the chain once it exists.
+resolve the chain once it exists. A parent block with no `id=` of its own, such as
+`[base_coin]`, has its lines inlined into every child that `get=` it, as UOX3 does, with
+the child's own lines winning. A coin so gets `weight = 0.02` and `stackable = true`, and
+its `base_id` is the first ancestor that has an `id=` (`base_item`). An inherited `name=`
+becomes the template's name but never part of its id: ids come from each block's own
+lines only.
+
+Numbers are read as UOX3 reads them (`stoi(value, nullptr, 0)`): hex with `0x` or
+decimal, so `layer=0x08` is a ring. A tag with no value, such as `baseitem.dfn`'s bare
+`decay=`, is ignored as UOX3 ignores it. A header defined twice keeps its **last**
+definition, as UOX3 does, and source files are read in ordinal order so the result does
+not depend on the filesystem. `[BESTSKILL n]` follows UOX3's own skill numbers, where
+Imbuing is 55 and Mysticism 56 (the other way round from `SkillType`).
+
+A block with no `id=` of its own but a single parent (`get=x`, else `getlbr=x`) that
+converted is a template too, id = its header: UOX3's magic items, journals and other
+variants (`[glacialstaff] get=0x0df1 name=glacial staff color=0x0480`) and single-target
+aliases. It keeps `item_id = 0`, which the server's loader fills from its `base_id`, and
+the chain is resolved over repeated passes, so a variant of a variant converts too. The
+shipped data has 9665 item templates this way; loot entries and NPC equipment that name
+such a block now resolve to it.
 
 ## Loot tables
 
@@ -81,6 +113,88 @@ maps onto `LootEntry.Amount`, a `RangeValueSpec<int>`.
 `ITEMLIST=`, UOX3's "spawn every entry" sibling, is a different mechanic, not a
 weighted pick, and never appears in real `lootlists.dfn` data; it is dropped, as is
 any entry the converter cannot resolve.
+
+## Mobiles and name lists
+
+With `--mobile-source` set to UOX3's `dfndata` folder, the same run converts, after the
+items:
+
+- every block under `npc/` (not `npc/npclists`) into a `[[mobile]]` template, one file
+  per source file under `--mobile-destination`, id = the header in snake_case;
+- the twenty `[RANDOMNAME n]` lists of `npc/namelists.dfn` into `--names-destination`.
+
+It also reads `creatures/creatures.dfn` (sounds), `colors/colors.dfn` (colour lists) and
+`../dictionaries/dictionary.ENG` (numeric names and titles). Equipment and loot are
+resolved against the items and loot tables of the same run.
+
+Every npc block is converted, so inheritance stays a `base_id` instead of being copied
+in: `GET=x` and `GETLBR=x` become `base_id = "x"`. LBR is UOX3's default era; the other
+era tags (`GETUO`, `GETAOS`, …) are ignored, although the blocks they name are converted
+too.
+
+| UOX3 | Template | Note |
+| --- | --- | --- |
+| `ID=0x0190` / `0x0191` | `race = "human"`, `gender` | elf 0x25D/0x25E and gargoyle 0x29A/0x29B likewise; the race gives the body |
+| `ID=` other | `body` | |
+| `RACE=0/1/2` | `race` human / elf / gargoyle | only when the block sets no non-human body (UOX3's `[giantrat]` has `RACE=2` on a rat); UOX3's other races are dropped |
+| `NAME=`, `TITLE=` | `name`, `title` | a number is a dictionary id; `#` takes the line's `//` comment |
+| `NAMELIST=n` | `name_list` | 1 `male`, 2 `female`, 3 `orc`, 5 `daemon`, …; `male`/`female` follow the gender, as UOX3 data has female NPCs on the male list |
+| `STR`, `DEX`, `INT` | `strength`, … | `96 120` becomes the die `1d25+95`; one value a constant |
+| `HPMAX` (else `HP`), `MANAMAX`, `STAMINAMAX` | `hits`, `mana`, `stamina` | dice |
+| `DAMAGE`, `DEF` | `damage`, `armor` | dice |
+| `RESISTFIRE/COLD/POISON/LIGHTNING`, `ELEMENTRESIST` | `resistances` | lightning is energy |
+| skill tags (`MAGERY=500 700`) | `[mobile.skills]` | tenths to points, capped at 120; `MAGICRESISTANCE` is `resisting_spells` |
+| `KARMA`, `FAME`, `GOLD` | `karma`, `fame`, `gold` | dice |
+| `FLAG=INNOCENT/NEUTRAL/EVIL` | `notoriety` innocent / attackable / murderer | |
+| `EQUIPITEM=x`, `EQUIPITEM=listobjectN` | `[[mobile.equipment]]` | a list gives every item of `[ITEMLIST N]`, one picked at random; its weights and `blank` lines are dropped; the hair and beard lists 13–15 are skipped. An item block with no `id=` of its own is followed: `getlbr=x` gives x, `get=a b` gives both |
+| `COLOR`, `COLORLIST` after an `EQUIPITEM` | that entry's `hue` | a colour list only when it is one unbroken run of hues |
+| `LOOT=list,n` | `loot` | the loot table, n times |
+| `CUSTOMINTTAG`, `CUSTOMSTRINGTAG` | `tags` | |
+| `[CREATURE id]` sounds | `[mobile.sounds]` | on the template whose own block sets the body |
+
+`GET=m_guard f_guard`, a male and a female of the same race, becomes one `guard` with
+`gender = "random"`, `name_list = "{gender}"` and the equipment only one of them wears
+filtered by `gender`. Sounds the two set differently (humans die with a male or a female
+scream) are left unset rather than giving a female the male sound; any other field set
+differently takes the male value and is reported. An `f_` or `m_` NPC whose body is the
+other gender's (UOX3's `[f_scribe]` has `ID=0x0190`) takes the prefix's gender, so its
+pair still merges. Any other two-target `GET` (`[dragon] GET=graydragon reddragon`, a
+random pick in UOX3) becomes a template whose `base_id` is the first target, and is
+counted; a pair whose targets do not exist (`shepherd`) is skipped.
+
+Two known mistakes in UOX3's item data are corrected as the blocks are read
+(`UoxDataFixes`): `necro_sleeves` and `necro_leggings` name the leather gloves and a
+leather tunic as their parents; they get the leather sleeves (`0x13cd`) and leggings
+(`0x13cb`).
+
+Dropped, no home yet: AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
+taming and bard skills (`TOTAME`, `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), shops
+(`SHOPKEEPER`, `SHOPLIST`), `PACKITEM`, `CARVE`, `FOOD`, `PRIV`, `SCRIPT` and the other
+tags without a field. The run prints how often each kind of value was dropped.
+
+The written mobiles are read back as well: ids unique, every `base_id`, equipment item,
+loot table and name list resolves, and every template passes `MobileTemplate.Validate()`.
+
+## Starting items
+
+With `--starting-items-destination <file>` (which needs `--mobile-source`), the run also
+converts `newbie/newbie.dfn` into one `starting_items.toml` of `[[set]]`s, after the
+mobiles and against the same item ids.
+
+| UOX3 | Set | Note |
+| --- | --- | --- |
+| `[BESTSKILL n]` | `skill` | the skill with id n; `[BESTSKILL X]` and empty sections are skipped |
+| `[DEFAULT ALL]` | `common = true` | every character gets it |
+| `[DEFAULT MALE]`, `[DEFAULT FEMALE]` | `race = "human"`, `gender` | UOX3 gives these to the human bodies only |
+| `[DEFAULT ELF MALE]`, `[DEFAULT GARG FEMALE]`, … | `race`, `gender` | |
+| `PACKITEM=item,amount,newbie` | `[[set.items]]`, `equip = false` | `amount` 1 is left unset; `newbie` 0 or 1 becomes `false` or `true` |
+| `EQUIPITEM=item,hue,newbie` | `[[set.items]]`, `equip = true` | |
+
+Items resolve as npc equipment does: `listobjectN` gives every item of `[ITEMLIST N]`,
+an item block with no `id=` of its own is followed. Items that resolve to nothing are
+dropped and counted. The file is read back and every item must exist. UOX3's own rules
+(the three best skills, four with extended starting skills, and `STARTGOLD`) are not data
+and are not converted.
 
 ## Verifying the output
 

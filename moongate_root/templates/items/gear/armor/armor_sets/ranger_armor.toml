@@ -1,27 +1,86 @@
 [[item]]
-id = "0x13dc_ranger"
-item_id = 5084
+id = "0x13d4_ranger"
+base_id = "0x13d4_lbr"
+item_id = 0
+name = "studded sleeves, ranger armor"
 rarity = "common"
-movable = false
-hue = 0
+hue = 1436
+
+[[item]]
+id = "0x13dc_ranger"
+base_id = "0x13d4_lbr"
+item_id = 5084
+name = "studded sleeves, ranger armor"
+rarity = "common"
+hue = 1436
+
+[[item]]
+id = "0x13d5_ranger"
+base_id = "0x13d5_lbr"
+item_id = 0
+name = "studded gloves, ranger armor"
+rarity = "common"
+hue = 1436
 
 [[item]]
 id = "0x13dd_ranger"
+base_id = "0x13d5_lbr"
 item_id = 5085
+name = "studded gloves, ranger armor"
 rarity = "common"
-movable = false
-hue = 0
+hue = 1436
+
+[[item]]
+id = "0x13d6_ranger"
+base_id = "0x13d6_lbr"
+item_id = 0
+name = "studded gorget, ranger armor"
+rarity = "common"
+hue = 1436
+
+[[item]]
+id = "rangergorget"
+base_id = "0x13d6_lbr"
+item_id = 0
+name = "studded gorget, ranger armor"
+rarity = "common"
+hue = 1436
+
+[[item]]
+id = "0x13da_ranger"
+base_id = "0x13da_lbr"
+item_id = 0
+name = "studded leggings, ranger armor"
+rarity = "common"
+hue = 1436
 
 [[item]]
 id = "0x13e1_ranger"
+base_id = "0x13da_lbr"
 item_id = 5089
+name = "studded leggings, ranger armor"
 rarity = "common"
-movable = false
-hue = 0
+hue = 1436
+
+[[item]]
+id = "0x13db_ranger"
+base_id = "0x13db_lbr"
+item_id = 0
+name = "studded tunic, ranger armor"
+rarity = "common"
+hue = 1436
 
 [[item]]
 id = "0x13e2_ranger"
+base_id = "0x13db_lbr"
 item_id = 5090
+name = "studded tunic, ranger armor"
 rarity = "common"
-movable = false
-hue = 0
+hue = 1436
+
+[[item]]
+id = "rangerarmorset"
+base_id = "0x0e76_bag"
+item_id = 0
+rarity = "common"
+hue = 1436

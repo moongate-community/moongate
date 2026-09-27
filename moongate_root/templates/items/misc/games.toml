@@ -5,7 +5,7 @@ item_id = 4002
 name = "playing cards"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0fa3_playing_cards"
@@ -14,7 +14,34 @@ item_id = 4003
 name = "playing cards"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x0fa4_checkers"
+base_id = "base_item"
+item_id = 4004
+name = "checkers"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x0fa5_checkers"
+base_id = "base_item"
+item_id = 4005
+name = "checkers"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x0fa8_chess_pieces"
+base_id = "base_item"
+item_id = 4008
+name = "chess pieces"
+rarity = "common"
+movable = false
+weight = 1.0
 
 [[item]]
 id = "0x0fad_backgammon_game"
@@ -23,7 +50,10 @@ item_id = 4013
 name = "backgammon game"
 rarity = "common"
 movable = true
-hue = 0
+weight = 5.0
+buy_price = 2
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x0fa6_a_checker_board"
@@ -32,7 +62,10 @@ item_id = 4006
 name = "a checker board"
 rarity = "common"
 movable = true
-hue = 0
+weight = 5.0
+buy_price = 2
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x0fa6_chess_a_chess_board"
@@ -41,7 +74,10 @@ item_id = 4006
 name = "a chess board"
 rarity = "common"
 movable = true
-hue = 0
+weight = 5.0
+buy_price = 2
+sell_price = 1
+decays = true
 max_weight = 1000
 
 [[item]]
@@ -51,7 +87,37 @@ item_id = 4007
 name = "dice and Cup"
 rarity = "common"
 movable = true
-hue = 0
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
+
+[[item]]
+id = "0x0e12_chessmen"
+base_id = "base_item"
+item_id = 3602
+name = "chessmen"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x0e13_chessmen"
+base_id = "base_item"
+item_id = 3603
+name = "chessmen"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x0e14_chessmen"
+base_id = "base_item"
+item_id = 3604
+name = "chessmen"
+rarity = "common"
+movable = false
+weight = 1.0
 
 [[item]]
 id = "0x0e15_cards"
@@ -60,7 +126,7 @@ item_id = 3605
 name = "cards"
 rarity = "common"
 movable = false
-hue = 0
+weight = 0.1
 
 [[item]]
 id = "0x0e16_cards"
@@ -69,7 +135,7 @@ item_id = 3606
 name = "cards"
 rarity = "common"
 movable = false
-hue = 0
+weight = 0.1
 
 [[item]]
 id = "0x0e17_cards"
@@ -78,7 +144,7 @@ item_id = 3607
 name = "cards"
 rarity = "common"
 movable = false
-hue = 0
+weight = 0.1
 
 [[item]]
 id = "0x0e18_cards"
@@ -87,7 +153,7 @@ item_id = 3608
 name = "cards"
 rarity = "common"
 movable = false
-hue = 0
+weight = 0.1
 
 [[item]]
 id = "0x0e19_cards"
@@ -96,7 +162,25 @@ item_id = 3609
 name = "cards"
 rarity = "common"
 movable = false
-hue = 0
+weight = 0.1
+
+[[item]]
+id = "0x0e1a_checkers"
+base_id = "base_item"
+item_id = 3610
+name = "checkers"
+rarity = "common"
+movable = false
+weight = 0.1
+
+[[item]]
+id = "0x0e1b_checkers"
+base_id = "base_item"
+item_id = 3611
+name = "checkers"
+rarity = "common"
+movable = false
+weight = 0.1
 
 [[item]]
 id = "0x0e1c_backgammon_board"
@@ -105,7 +189,72 @@ item_id = 3612
 name = "backgammon board"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
+buy_price = 2
+sell_price = 1
+
+[[item]]
+id = "0x12a6_tarot"
+base_id = "base_item"
+item_id = 4774
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x12a7_tarot"
+base_id = "base_item"
+item_id = 4775
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x12a8_tarot"
+base_id = "base_item"
+item_id = 4776
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x12a9_tarot"
+base_id = "base_item"
+item_id = 4777
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x12aa_tarot"
+base_id = "base_item"
+item_id = 4778
+name = "tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x12ab_deck_of_tarot"
+base_id = "base_item"
+item_id = 4779
+name = "deck of tarot"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x12ac_deck_of_tarot"
+base_id = "base_item"
+item_id = 4780
+name = "deck of tarot"
+rarity = "common"
+movable = false
+weight = 1.0
 
 [[item]]
 id = "0x3584_white_checker"
@@ -113,8 +262,7 @@ base_id = "base_item"
 item_id = 13700
 name = "white checker"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x358b_black_checker"
@@ -122,8 +270,7 @@ base_id = "base_item"
 item_id = 13707
 name = "black checker"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x3585_white_bishop"
@@ -131,8 +278,7 @@ base_id = "base_item"
 item_id = 13701
 name = "white bishop"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x3586_white_rook"
@@ -140,8 +286,7 @@ base_id = "base_item"
 item_id = 13702
 name = "white rook"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x3587_white_king"
@@ -149,8 +294,7 @@ base_id = "base_item"
 item_id = 13703
 name = "white king"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x3588_white_knight"
@@ -158,8 +302,7 @@ base_id = "base_item"
 item_id = 13704
 name = "white knight"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x3589_white_pawn"
@@ -167,8 +310,7 @@ base_id = "base_item"
 item_id = 13705
 name = "white pawn"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x358a_white_queen"
@@ -176,8 +318,7 @@ base_id = "base_item"
 item_id = 13706
 name = "white queen"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x358c_black_bishop"
@@ -185,8 +326,7 @@ base_id = "base_item"
 item_id = 13708
 name = "black bishop"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x358d_black_rook"
@@ -194,8 +334,7 @@ base_id = "base_item"
 item_id = 13709
 name = "black rook"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x358e_black_king"
@@ -203,8 +342,7 @@ base_id = "base_item"
 item_id = 13710
 name = "black king"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x358f_black_knight"
@@ -212,8 +350,7 @@ base_id = "base_item"
 item_id = 13711
 name = "black knight"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x3590_black_pawn"
@@ -221,8 +358,7 @@ base_id = "base_item"
 item_id = 13712
 name = "black pawn"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0
 
 [[item]]
 id = "0x3591_black_queen"
@@ -230,5 +366,4 @@ base_id = "base_item"
 item_id = 13713
 name = "black queen"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.0

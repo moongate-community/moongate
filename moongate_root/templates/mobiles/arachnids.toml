@@ -1,0 +1,223 @@
+[[mobile]]
+id = "giantblackwidow"
+name = "a giant black widow"
+body = 157
+strength = "1d25+75"
+dexterity = "1d20+95"
+intelligence = "1d25+35"
+damage = "1d19+1"
+armor = 12
+notoriety = "attackable"
+karma = -3500
+fame = 3500
+loot = ["giantblackwidow_loot"]
+[mobile.skills]
+anatomy = "1d46+29"
+resisting_spells = "1d16+44"
+parrying = "1d11+34"
+poisoning = "1d21+59"
+tactics = "1d16+64"
+wrestling = "1d16+69"
+[mobile.sounds]
+start_attack = 387
+idle = 388
+attack = 389
+hurt = 390
+death = 391
+
+[[mobile]]
+id = "dreadspider"
+name = "a dread spider"
+body = 11
+strength = "1d25+195"
+dexterity = "1d20+125"
+intelligence = "1d25+285"
+damage = "1d17+2"
+armor = 18
+notoriety = "attackable"
+karma = -5000
+fame = 5000
+loot = ["giantblackwidow_loot", "giantblackwidow_loot", "treasure_map_lvl3loot"]
+gold = "1d51+199"
+[mobile.skills]
+magery = "1d16+64"
+resisting_spells = "1d16+44"
+parrying = "1d11+34"
+tactics = "1d16+54"
+wrestling = "1d16+59"
+[mobile.sounds]
+start_attack = 387
+idle = 388
+attack = 389
+hurt = 390
+death = 391
+
+[[mobile]]
+id = "frostspider"
+name = "a frost spider"
+body = 20
+strength = "1d25+75"
+dexterity = "1d20+125"
+intelligence = "1d25+35"
+hits = "1d15+45"
+damage = "1d17+2"
+armor = 14
+notoriety = "attackable"
+karma = -775
+fame = 775
+gold = "1d51+24"
+[mobile.skills]
+anatomy = 83
+hiding = "1d23+42"
+resisting_spells = "1d16+24"
+parrying = "1d21+74"
+tactics = "1d16+34"
+wrestling = "1d16+49"
+[mobile.sounds]
+start_attack = 1170
+idle = 1171
+attack = 1172
+hurt = 1173
+death = 1174
+
+[[mobile]]
+id = "giantspider"
+name = "a giant spider"
+body = 28
+strength = "1d25+75"
+dexterity = "1d20+75"
+intelligence = "1d25+35"
+damage = "1d13+2"
+armor = 8
+notoriety = "attackable"
+karma = -600
+fame = 600
+gold = "1d26-1"
+[mobile.skills]
+anatomy = 70
+hiding = "1d31+49"
+resisting_spells = "1d16+24"
+parrying = "1d11+34"
+poisoning = "1d21+59"
+tactics = "1d16+34"
+wrestling = "1d16+49"
+[mobile.sounds]
+start_attack = 387
+idle = 388
+attack = 389
+hurt = 390
+death = 391
+
+[[mobile]]
+id = "teradrone"
+name = "terathan drone"
+body = 71
+strength = "1d30+35"
+dexterity = "1d50+95"
+intelligence = "1d25+20"
+mana = 0
+damage = "1d11+3"
+armor = 12
+notoriety = "attackable"
+karma = -2000
+fame = 2000
+gold = "1d26-1"
+[mobile.skills]
+resisting_spells = "1d16+29"
+parrying = "1d11+29"
+poisoning = "1d21+39"
+tactics = "1d21+29"
+wrestling = "1d11+39"
+[mobile.sounds]
+start_attack = 594
+idle = 595
+attack = 596
+hurt = 597
+death = 598
+
+[[mobile]]
+id = "terawarrior"
+name = "terathan warrior"
+body = 70
+strength = "1d50+165"
+dexterity = "1d50+95"
+intelligence = "1d25+40"
+mana = 0
+damage = "1d17+3"
+armor = 15
+notoriety = "attackable"
+karma = -4000
+fame = 4000
+loot = ["randompotions", "randompotions", "treasure_map_lvl1loot"]
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d16+59"
+parrying = "1d11+54"
+poisoning = "1d21+59"
+tactics = "1d21+79"
+wrestling = "1d11+79"
+[mobile.sounds]
+start_attack = 589
+idle = 590
+attack = 591
+hurt = 592
+death = 593
+
+[[mobile]]
+id = "teraavenger"
+name = "terathan avenger"
+body = 152
+skin_hue = 1645
+strength = "1d179+466"
+dexterity = "1d19+76"
+intelligence = "1d25+125"
+mana = "1d25+45"
+damage = "1d21+9"
+armor = 25
+notoriety = "attackable"
+karma = -15000
+fame = 15000
+loot = ["randomgems", "randomgems", "randomgems", "randomgems", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl3loot"]
+gold = "1d51+199"
+[mobile.skills]
+magery = "1d31+69"
+resisting_spells = "1d21+64"
+parrying = "1d11+74"
+poisoning = "1d21+59"
+tactics = "1d11+89"
+wrestling = "1d11+89"
+[mobile.sounds]
+start_attack = 589
+idle = 590
+attack = 591
+hurt = 592
+death = 593
+
+[[mobile]]
+id = "teramatriarch"
+name = "terathan matriarch"
+body = 72
+skin_hue = 0
+strength = "1d90+315"
+dexterity = "1d20+95"
+intelligence = "1d90+365"
+damage = "1d16+4"
+armor = 25
+notoriety = "attackable"
+karma = -10000
+fame = 10000
+loot = ["randomgems", "midlevelscrolls", "midlevelscrolls", "treasure_map_lvl4loot"]
+gold = "1d151+149"
+[mobile.skills]
+magery = "1d11+89"
+resisting_spells = "1d11+89"
+meditation = "1d26+4"
+parrying = "1d11+54"
+tactics = "1d21+49"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 599
+idle = 600
+attack = 601
+hurt = 602
+death = 603

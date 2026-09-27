@@ -1,11 +1,22 @@
 [[item]]
+id = "0x14eb_map"
+base_id = "base_item"
+item_id = 5355
+name = "map"
+rarity = "common"
+weight = 1.0
+buy_price = 3
+sell_price = 1
+decays = true
+
+[[item]]
 id = "0x1876_iron_wire"
 base_id = "base_item"
 item_id = 6262
 name = "iron wire"
 rarity = "common"
 movable = false
-hue = 0
+weight = 5.0
 
 [[item]]
 id = "0x1877_silver_wire"
@@ -14,7 +25,7 @@ item_id = 6263
 name = "silver wire"
 rarity = "common"
 movable = false
-hue = 0
+weight = 5.0
 
 [[item]]
 id = "0x1878_gold_wire"
@@ -23,7 +34,7 @@ item_id = 6264
 name = "gold wire"
 rarity = "common"
 movable = false
-hue = 0
+weight = 5.0
 
 [[item]]
 id = "0x1879_copper_wire"
@@ -32,7 +43,7 @@ item_id = 6265
 name = "copper wire"
 rarity = "common"
 movable = false
-hue = 0
+weight = 5.0
 
 [[item]]
 id = "0x26b1_scale"
@@ -41,7 +52,7 @@ item_id = 9905
 name = "scale"
 rarity = "common"
 movable = true
-hue = 0
+weight = 4.0
 
 [[item]]
 id = "0x26b2_scale"
@@ -50,7 +61,7 @@ item_id = 9906
 name = "scale"
 rarity = "common"
 movable = true
-hue = 0
+weight = 4.0
 
 [[item]]
 id = "0x26b3_scale"
@@ -59,7 +70,7 @@ item_id = 9907
 name = "scale"
 rarity = "common"
 movable = true
-hue = 0
+weight = 4.0
 
 [[item]]
 id = "0x26b4_scale"
@@ -68,7 +79,7 @@ item_id = 9908
 name = "scale"
 rarity = "common"
 movable = true
-hue = 0
+weight = 4.0
 
 [[item]]
 id = "0x26b5_scale"
@@ -77,7 +88,7 @@ item_id = 9909
 name = "scale"
 rarity = "common"
 movable = true
-hue = 0
+weight = 4.0
 
 [[item]]
 id = "0x26b6_scale"
@@ -86,4 +97,132 @@ item_id = 9910
 name = "scale"
 rarity = "common"
 movable = true
-hue = 0
+weight = 4.0
+
+[[item]]
+id = "0x1be4_copper_ingots"
+base_id = "base_item"
+item_id = 7140
+name = "copper ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1be5_copper_ingots"
+base_id = "base_item"
+item_id = 7141
+name = "copper ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1be7_copper_ingots"
+base_id = "base_item"
+item_id = 7143
+name = "copper ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1be8_copper_ingots"
+base_id = "base_item"
+item_id = 7144
+name = "copper ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bea_gold_ingots"
+base_id = "base_item"
+item_id = 7146
+name = "gold ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1beb_gold_ingots"
+base_id = "base_item"
+item_id = 7147
+name = "gold ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bed_gold_ingots"
+base_id = "base_item"
+item_id = 7149
+name = "gold ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bee_gold_ingots"
+base_id = "base_item"
+item_id = 7150
+name = "gold ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bf0_iron_ingots"
+base_id = "base_item"
+item_id = 7152
+name = "iron ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bf1_iron_ingots"
+base_id = "base_item"
+item_id = 7153
+name = "iron ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bf3_iron_ingots"
+base_id = "base_item"
+item_id = 7155
+name = "iron ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bf4_iron_ingots"
+base_id = "base_item"
+item_id = 7156
+name = "iron ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bf6_silver_ingots"
+base_id = "base_item"
+item_id = 7158
+name = "silver ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bf7_silver_ingots"
+base_id = "base_item"
+item_id = 7159
+name = "silver ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bf9_silver_ingots"
+base_id = "base_item"
+item_id = 7161
+name = "silver ingots"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1bfa_silver_ingots"
+base_id = "base_item"
+item_id = 7162
+name = "silver ingots"
+rarity = "common"
+weight = 1.0

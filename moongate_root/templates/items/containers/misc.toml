@@ -5,8 +5,17 @@ item_id = 2448
 name = "basket"
 rarity = "common"
 movable = true
-hue = 0
+weight = 2.0
+buy_price = 8
+sell_price = 4
+decays = true
 max_weight = 40000
+
+[[item]]
+id = "roundbasket"
+base_id = "0x0990_basket"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0e77_barrel"
@@ -15,18 +24,23 @@ item_id = 3703
 name = "barrel"
 rarity = "common"
 movable = true
-hue = 0
+weight = 5.0
+buy_price = 12
+sell_price = 6
+decays = true
 max_weight = 40000
 
 [[item]]
-id = "0x0e7f_keg"
-base_id = "base_item"
-item_id = 3711
-name = "keg"
+id = "barrel"
+base_id = "0x0e77_barrel"
+item_id = 0
 rarity = "common"
-movable = true
-hue = 0
-max_weight = 40000
+
+[[item]]
+id = "keg"
+base_id = "0x0e7f_an_open_keg"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0e83_empty_tub"
@@ -35,8 +49,17 @@ item_id = 3715
 name = "empty tub"
 rarity = "common"
 movable = true
-hue = 0
+weight = 3.0
+buy_price = 10
+sell_price = 5
+decays = true
 max_weight = 40000
+
+[[item]]
+id = "emptytub"
+base_id = "0x0e83_empty_tub"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x09ac_bushel"
@@ -45,8 +68,17 @@ item_id = 2476
 name = "bushel"
 rarity = "common"
 movable = true
-hue = 0
+weight = 2.0
+buy_price = 10
+sell_price = 5
+decays = true
 max_weight = 40000
+
+[[item]]
+id = "bushel"
+base_id = "0x09ac_bushel"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "trash_barrel"
@@ -55,5 +87,7 @@ item_id = 3703
 name = "trash barrel"
 rarity = "common"
 movable = false
+weight = 5.0
+decays = false
 hue = 946
 max_weight = 40000

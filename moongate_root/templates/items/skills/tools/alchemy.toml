@@ -4,8 +4,16 @@ base_id = "base_item"
 item_id = 3739
 name = "mortar & pestle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 9
+sell_price = 4
+decays = true
+
+[[item]]
+id = "mortarandpestle"
+base_id = "0x0e9b_mortar_&_pestle"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0f0e_empty_bottle"
@@ -13,8 +21,18 @@ base_id = "base_item"
 item_id = 3854
 name = "empty bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+amount = 1
+stackable = true
+buy_price = 6
+sell_price = 3
+decays = true
+
+[[item]]
+id = "emptybottle"
+base_id = "0x0f0e_empty_bottle"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x1829_flask_stand"
@@ -22,8 +40,72 @@ base_id = "base_item"
 item_id = 6185
 name = "flask stand"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 8
+sell_price = 4
+decays = true
+
+[[item]]
+id = "flaskstand"
+base_id = "0x1829_flask_stand"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x1849_heating_stand"
+base_id = "base_item"
+item_id = 6217
+name = "heating stand"
+rarity = "common"
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
+
+[[item]]
+id = "unlitheatingstand"
+base_id = "0x1849_heating_stand"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x184a_heating_stand"
+base_id = "base_item"
+item_id = 6218
+name = "heating stand"
+rarity = "common"
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
+
+[[item]]
+id = "litheatingstand"
+base_id = "0x184a_heating_stand"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x184d_heating_stand"
+base_id = "base_item"
+item_id = 6221
+name = "heating stand"
+rarity = "common"
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
+
+[[item]]
+id = "0x184e_heating_stand"
+base_id = "base_item"
+item_id = 6222
+name = "heating stand"
+rarity = "common"
+weight = 1.0
+buy_price = 2
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x0e24_empty_vial"
@@ -31,8 +113,14 @@ base_id = "base_item"
 item_id = 3620
 name = "empty vial"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+
+[[item]]
+id = "emptyvial"
+base_id = "0x0e24_empty_vial"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0e25_bottle"
@@ -40,8 +128,7 @@ base_id = "base_item"
 item_id = 3621
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0e26_bottle"
@@ -49,8 +136,7 @@ base_id = "base_item"
 item_id = 3622
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0e27_bottle"
@@ -58,8 +144,7 @@ base_id = "base_item"
 item_id = 3623
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0e28_bottle"
@@ -67,8 +152,7 @@ base_id = "base_item"
 item_id = 3624
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0e29_bottle"
@@ -76,8 +160,7 @@ base_id = "base_item"
 item_id = 3625
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0e2a_bottle"
@@ -85,8 +168,7 @@ base_id = "base_item"
 item_id = 3626
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0e2b_bottle"
@@ -94,8 +176,7 @@ base_id = "base_item"
 item_id = 3627
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0e2c_bottle"
@@ -103,8 +184,7 @@ base_id = "base_item"
 item_id = 3628
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0efb_bottle"
@@ -112,8 +192,7 @@ base_id = "base_item"
 item_id = 3835
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0efc_bottle"
@@ -121,8 +200,7 @@ base_id = "base_item"
 item_id = 3836
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0efd_bottle"
@@ -130,8 +208,7 @@ base_id = "base_item"
 item_id = 3837
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0efe_bottle"
@@ -139,8 +216,7 @@ base_id = "base_item"
 item_id = 3838
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0eff_bottle"
@@ -148,8 +224,7 @@ base_id = "base_item"
 item_id = 3839
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0f00_bottle"
@@ -157,8 +232,7 @@ base_id = "base_item"
 item_id = 3840
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0f01_bottle"
@@ -166,8 +240,7 @@ base_id = "base_item"
 item_id = 3841
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0f02_bottle"
@@ -175,8 +248,7 @@ base_id = "base_item"
 item_id = 3842
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0f03_bottle"
@@ -184,8 +256,7 @@ base_id = "base_item"
 item_id = 3843
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0f04_bottle"
@@ -193,8 +264,7 @@ base_id = "base_item"
 item_id = 3844
 name = "bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x182a_medium_flask"
@@ -202,8 +272,7 @@ base_id = "base_item"
 item_id = 6186
 name = "Medium flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x182b_medium_flask"
@@ -211,8 +280,7 @@ base_id = "base_item"
 item_id = 6187
 name = "Medium flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x182c_medium_flask"
@@ -220,8 +288,7 @@ base_id = "base_item"
 item_id = 6188
 name = "Medium flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x182d_medium_flask"
@@ -229,8 +296,7 @@ base_id = "base_item"
 item_id = 6189
 name = "Medium flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x182e_small_flask"
@@ -238,8 +304,7 @@ base_id = "base_item"
 item_id = 6190
 name = "Small flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x182f_small_flask"
@@ -247,8 +312,7 @@ base_id = "base_item"
 item_id = 6191
 name = "Small flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1830_small_flask"
@@ -256,8 +320,7 @@ base_id = "base_item"
 item_id = 6192
 name = "Small flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1831_small_flask"
@@ -265,8 +328,7 @@ base_id = "base_item"
 item_id = 6193
 name = "Small flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1832_curved_flask"
@@ -274,8 +336,7 @@ base_id = "base_item"
 item_id = 6194
 name = "Curved flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1833_curved_flask"
@@ -283,8 +344,7 @@ base_id = "base_item"
 item_id = 6195
 name = "Curved flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1834_curved_flask"
@@ -292,8 +352,7 @@ base_id = "base_item"
 item_id = 6196
 name = "Curved flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1835_curved_flask"
@@ -301,8 +360,7 @@ base_id = "base_item"
 item_id = 6197
 name = "Curved flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1836_curved_flask"
@@ -310,8 +368,7 @@ base_id = "base_item"
 item_id = 6198
 name = "Curved flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1837_curved_flask"
@@ -319,8 +376,7 @@ base_id = "base_item"
 item_id = 6199
 name = "Curved flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1838_large_flask"
@@ -328,8 +384,7 @@ base_id = "base_item"
 item_id = 6200
 name = "Large flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1839_large_flask"
@@ -337,8 +392,7 @@ base_id = "base_item"
 item_id = 6201
 name = "Large flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x183a_large_flask"
@@ -346,8 +400,7 @@ base_id = "base_item"
 item_id = 6202
 name = "Large flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x183b_large_flask"
@@ -355,8 +408,7 @@ base_id = "base_item"
 item_id = 6203
 name = "large flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x183c_large_flask"
@@ -364,8 +416,7 @@ base_id = "base_item"
 item_id = 6204
 name = "large flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x183d_large_flask"
@@ -373,8 +424,7 @@ base_id = "base_item"
 item_id = 6205
 name = "large flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x183e_bubbling_red_flask"
@@ -382,8 +432,13 @@ base_id = "base_item"
 item_id = 6206
 name = "bubbling red flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "bubblingredflask"
+base_id = "0x183e_bubbling_red_flask"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x183f_bubbling_red_flask"
@@ -391,8 +446,7 @@ base_id = "base_item"
 item_id = 6207
 name = "bubbling red flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1840_bubbling_red_flask"
@@ -400,8 +454,7 @@ base_id = "base_item"
 item_id = 6208
 name = "bubbling red flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1841_bubbling_purple_flask"
@@ -409,8 +462,13 @@ base_id = "base_item"
 item_id = 6209
 name = "bubbling purple flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "bubblingpurpleflask"
+base_id = "0x1841_bubbling_purple_flask"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x1842_bubbling_purple_flask"
@@ -418,8 +476,7 @@ base_id = "base_item"
 item_id = 6210
 name = "bubbling purple flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1843_bubbling_purple_flask"
@@ -427,8 +484,7 @@ base_id = "base_item"
 item_id = 6211
 name = "bubbling purple flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1844_bubbling_blue_flask"
@@ -436,8 +492,13 @@ base_id = "base_item"
 item_id = 6212
 name = "bubbling blue flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "bubblingblueflask"
+base_id = "0x1844_bubbling_blue_flask"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x1845_bubbling_blue_flask"
@@ -445,8 +506,7 @@ base_id = "base_item"
 item_id = 6213
 name = "bubbling blue flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1846_bubbling_blue_flask"
@@ -454,8 +514,7 @@ base_id = "base_item"
 item_id = 6214
 name = "bubbling blue flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1847_flask"
@@ -463,8 +522,7 @@ base_id = "base_item"
 item_id = 6215
 name = "flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1848_flask"
@@ -472,8 +530,18 @@ base_id = "base_item"
 item_id = 6216
 name = "flask"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x1c19_oil_flask"
+base_id = "base_item"
+item_id = 7193
+name = "oil flask"
+rarity = "common"
+weight = 1.0
+buy_price = 4
+sell_price = 4
+decays = true
 
 [[item]]
 id = "0x185b_empty_vials"
@@ -481,8 +549,8 @@ base_id = "base_item"
 item_id = 6235
 name = "empty vials"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+decays = true
 
 [[item]]
 id = "0x185c_empty_vials"
@@ -490,8 +558,8 @@ base_id = "base_item"
 item_id = 6236
 name = "empty vials"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+decays = true
 
 [[item]]
 id = "0x185d_full_vials"
@@ -499,8 +567,8 @@ base_id = "base_item"
 item_id = 6237
 name = "full vials"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+decays = true
 
 [[item]]
 id = "0x185e_full_vials"
@@ -508,8 +576,8 @@ base_id = "base_item"
 item_id = 6238
 name = "full vials"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+decays = true
 
 [[item]]
 id = "0x1810_spinning_hourglass"
@@ -518,7 +586,8 @@ item_id = 6160
 name = "Spinning Hourglass"
 rarity = "common"
 movable = true
-hue = 0
+weight = 1.0
+decays = true
 
 [[item]]
 id = "0x1811_spinning_hourglass"
@@ -527,7 +596,8 @@ item_id = 6160
 name = "Spinning Hourglass"
 rarity = "common"
 movable = true
-hue = 0
+weight = 1.0
+decays = true
 
 [[item]]
 id = "blowpipe"
@@ -535,8 +605,11 @@ base_id = "base_item"
 item_id = 3722
 name = "blowpipe"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 9
+sell_price = 4
+decays = true
+hue = 953
 
 [[item]]
 id = "glassblowingbook"
@@ -545,4 +618,8 @@ item_id = 4084
 name = "Crafting glass with Glassblowing"
 rarity = "common"
 movable = true
-hue = 0
+weight = 5.0
+stackable = true
+buy_price = 10637
+sell_price = 5318
+decays = true

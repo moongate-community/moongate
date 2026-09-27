@@ -4,8 +4,9 @@ base_id = "base_item"
 item_id = 3616
 name = "bloody bandage"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+decays = true
 
 [[item]]
 id = "0x0e21_clean_bandage"
@@ -13,8 +14,11 @@ base_id = "base_item"
 item_id = 3617
 name = "clean bandage"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 6
+sell_price = 3
+decays = true
 
 [[item]]
 id = "0x0e22_bloody_bandage"
@@ -22,8 +26,9 @@ base_id = "base_item"
 item_id = 3618
 name = "bloody bandage"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+decays = true
 
 [[item]]
 id = "0x0ee9_clean_bandage"
@@ -31,5 +36,8 @@ base_id = "base_item"
 item_id = 3817
 name = "clean bandage"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+stackable = true
+buy_price = 6
+sell_price = 3
+decays = true

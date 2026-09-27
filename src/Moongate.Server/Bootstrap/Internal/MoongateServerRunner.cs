@@ -11,8 +11,8 @@ internal static class MoongateServerRunner
 
         try
         {
-            await bootstrap.StartAsync().ConfigureAwait(false);
-            await bootstrap.RunAsync().ConfigureAwait(false);
+            await bootstrap.StartAsync();
+            await bootstrap.RunAsync();
         }
         catch (Exception exception)
         {
@@ -21,7 +21,7 @@ internal static class MoongateServerRunner
 
         try
         {
-            await bootstrap.StopAsync().ConfigureAwait(false);
+            await bootstrap.StopAsync();
         }
         catch (Exception shutdownFailure)
         {

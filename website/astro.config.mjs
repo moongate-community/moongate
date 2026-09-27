@@ -36,6 +36,7 @@ export default defineConfig({
     description: 'An Ultima Online server and reusable .NET libraries.',
     logo: { src: '../images/moongate_mark.png', alt: 'Moongate' },
     customCss: ['./src/styles/custom.css'],
+    components: { Footer: './src/components/Footer.astro' },
     social: [{ icon: 'github', label: 'GitHub', href: 'https://github.com/moongate-community/moongate' }],
     sidebar: sidebarGroups.map(label => ({ label, items: sidebarItems(contentEntries.filter(entry => entry.group === label)) })),
   })],

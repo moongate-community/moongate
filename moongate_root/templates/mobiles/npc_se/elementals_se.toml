@@ -1,0 +1,23 @@
+[[mobile]]
+id = "raiju_se"
+base_id = "base_raiju"
+strength = "1d71+154"
+dexterity = "1d51+84"
+intelligence = "1d6+174"
+hits = "1d81+199"
+damage = "1d15+19"
+armor = "1d21+44"
+karma = -2500
+fame = 2500
+loot = ["randomgems", "randomgems"]
+gold = "1d151+499"
+[mobile.resistances]
+fire = "1d16+69"
+cold = "1d31+29"
+poison = "1d21+49"
+energy = "1d21+59"
+[mobile.skills]
+wrestling = "1d11+84"
+tactics = "1d11+54"
+resisting_spells = "1d11+109"
+anatomy = "1d11+24"

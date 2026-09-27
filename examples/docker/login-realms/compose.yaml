@@ -251,6 +251,31 @@ services:
       - schema-job-data:/data
       - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
 
+  # Realm 2 runs without the sample plugin, so it applies only the core world catalog.
+  schema-apply-realm-2:
+    <<: *moongate
+    profiles:
+      - schema
+    command:
+      - migrations
+      - apply
+      - --root-directory
+      - /data
+      - --target
+      - world
+    environment:
+      MOONGATE_REALM_SCHEMA_DATABASE_FILE: /run/secrets/realm-2-schema-password
+      MOONGATE_REALM_DATABASE_NAME: ${REALM_2_DATABASE:-moongate_realm_2}
+      MOONGATE_REALM_SCHEMA_USER: ${REALM_2_SCHEMA_USER:-moongate_realm_2_schema}
+    secrets:
+      - realm-2-schema-password
+    configs:
+      - source: game-2-schema-config
+        target: /data/config/moongate.toml
+    volumes:
+      - schema-job-data-realm-2:/data
+      - ./container-entrypoint.sh:/opt/moongate/container-entrypoint.sh:ro
+
   migration-status:
     <<: *moongate-sample
     profiles:
@@ -284,6 +309,8 @@ configs:
     file: ./config/game-2.toml
   game-1-schema-config:
     file: ./config/game-1-schema.toml
+  game-2-schema-config:
+    file: ./config/game-2-schema.toml
   auth-schema-config:
     file: ./config/auth-schema.toml
 
@@ -313,6 +340,7 @@ volumes:
   game-1-data:
   game-2-data:
   schema-job-data:
+  schema-job-data-realm-2:
 
 networks:
   moongate:

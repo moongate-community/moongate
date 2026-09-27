@@ -1,9 +1,43 @@
 [[item]]
 id = "base_magic_fish"
+base_id = "base_item"
 item_id = 3542
 rarity = "common"
-movable = false
-hue = 0
+movable = true
+weight = 1.0
+stackable = true
+
+[[item]]
+id = "prized_magic_fish"
+base_id = "base_magic_fish"
+item_id = 0
+name = "prized fish"
+rarity = "common"
+hue = 81
+
+[[item]]
+id = "wondrous_magic_fish"
+base_id = "base_magic_fish"
+item_id = 0
+name = "wondrous fish"
+rarity = "common"
+hue = 134
+
+[[item]]
+id = "truly_rare_magic_fish"
+base_id = "base_magic_fish"
+item_id = 0
+name = "truly rare fish"
+rarity = "common"
+hue = 118
+
+[[item]]
+id = "highly_peculiar_magic_fish"
+base_id = "base_magic_fish"
+item_id = 0
+name = "highly peculiar fish"
+rarity = "common"
+hue = 102
 
 [[item]]
 id = "big_fish"
@@ -11,8 +45,124 @@ base_id = "base_item"
 item_id = 2508
 name = "big fish"
 rarity = "common"
-movable = false
 hue = 1420
+
+[[item]]
+id = "shipwreck_painting"
+base_id = "base_item"
+item_id = 3784
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_painting_2"
+base_id = "base_item"
+item_id = 3785
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_portrait"
+base_id = "base_item"
+item_id = 3815
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_portrait_2"
+base_id = "base_item"
+item_id = 3743
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_painting_3"
+base_id = "base_item"
+item_id = 3744
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_painting_4"
+base_id = "base_item"
+item_id = 3745
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_painting_5"
+base_id = "base_item"
+item_id = 3746
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_painting_6"
+base_id = "base_item"
+item_id = 3747
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_painting_7"
+base_id = "base_item"
+item_id = 3748
+name = "painting recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_portrait_3"
+base_id = "base_item"
+item_id = 3749
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_portrait_4"
+base_id = "base_item"
+item_id = 3750
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_portrait_5"
+base_id = "base_item"
+item_id = 3751
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
+
+[[item]]
+id = "shipwreck_portrait_6"
+base_id = "base_item"
+item_id = 3752
+name = "portrait recovered from a shipwreck"
+rarity = "common"
+weight = 1.0
+decays = true
 
 [[item]]
 id = "messageinabottle"
@@ -20,8 +170,9 @@ base_id = "base_item"
 item_id = 2463
 name = "message in a bottle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 8
+sell_price = 4
 
 [[item]]
 id = "waterstainedsos"
@@ -29,13 +180,41 @@ base_id = "base_item"
 item_id = 5358
 name = "waterstained SOS"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+buy_price = 8
+sell_price = 4
 
 [[item]]
 id = "waterstainedsos_tol"
 base_id = "waterstainedsos"
 item_id = 41740
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "shipwreck_treasure_1"
+base_id = "0x0e42_wooden_chest"
+item_id = 0
+name = "treasure chest recovered from a shipwreck"
+rarity = "common"
+
+[[item]]
+id = "shipwreck_treasure_2"
+base_id = "0x0e7c_metal_chest"
+item_id = 0
+name = "treasure chest recovered from a shipwreck"
+rarity = "common"
+
+[[item]]
+id = "shipwreck_treasure_3"
+base_id = "0x0e40_metal_chest"
+item_id = 0
+name = "treasure chest recovered from a shipwreck"
+rarity = "common"
+
+[[item]]
+id = "shipwreck_treasure_4"
+base_id = "0x0e40_metal_chest"
+item_id = 0
+name = "treasure chest recovered from a shipwreck"
+rarity = "common"
+hue = 1153

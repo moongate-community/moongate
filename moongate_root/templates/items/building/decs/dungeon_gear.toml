@@ -1,11 +1,245 @@
 [[item]]
+id = "0x10b8_web"
+base_id = "base_item"
+item_id = 4280
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10b9_web"
+base_id = "base_item"
+item_id = 4281
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10ba_web"
+base_id = "base_item"
+item_id = 4282
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10bb_web"
+base_id = "base_item"
+item_id = 4283
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10bc_web"
+base_id = "base_item"
+item_id = 4284
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10bd_web"
+base_id = "base_item"
+item_id = 4285
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10be_web"
+base_id = "base_item"
+item_id = 4286
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10bf_web"
+base_id = "base_item"
+item_id = 4287
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c0_web"
+base_id = "base_item"
+item_id = 4288
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c1_web"
+base_id = "base_item"
+item_id = 4289
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c2_web"
+base_id = "base_item"
+item_id = 4290
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c3_web"
+base_id = "base_item"
+item_id = 4291
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c4_web"
+base_id = "base_item"
+item_id = 4292
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c5_web"
+base_id = "base_item"
+item_id = 4293
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c6_web"
+base_id = "base_item"
+item_id = 4294
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c7_web"
+base_id = "base_item"
+item_id = 4295
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c8_web"
+base_id = "base_item"
+item_id = 4296
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10c9_web"
+base_id = "base_item"
+item_id = 4297
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10ca_web"
+base_id = "base_item"
+item_id = 4298
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10cb_web"
+base_id = "base_item"
+item_id = 4299
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10cc_web"
+base_id = "base_item"
+item_id = 4300
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10cd_web"
+base_id = "base_item"
+item_id = 4301
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10ce_web"
+base_id = "base_item"
+item_id = 4302
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10cf_web"
+base_id = "base_item"
+item_id = 4303
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10d0_web"
+base_id = "base_item"
+item_id = 4304
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x10d1_web"
+base_id = "base_item"
+item_id = 4305
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
 id = "0x10d2_small_web"
 base_id = "base_item"
 item_id = 4306
 name = "small web"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10d3_small_web"
@@ -14,7 +248,7 @@ item_id = 4307
 name = "small web"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10d4_small_web"
@@ -23,7 +257,7 @@ item_id = 4308
 name = "small web"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10d5_small_web"
@@ -32,7 +266,7 @@ item_id = 4309
 name = "small web"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10d6_small_web"
@@ -41,7 +275,7 @@ item_id = 4310
 name = "small web"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10d7_small_web"
@@ -50,7 +284,7 @@ item_id = 4311
 name = "small web"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10d8_egg_case_web"
@@ -59,7 +293,7 @@ item_id = 4312
 name = "egg case web"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10d9_egg_case"
@@ -68,7 +302,7 @@ item_id = 4313
 name = "egg case"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10da_cocoon"
@@ -77,7 +311,7 @@ item_id = 4314
 name = "cocoon"
 rarity = "common"
 movable = false
-hue = 0
+weight = 15.0
 
 [[item]]
 id = "0x10db_cocoon"
@@ -86,7 +320,7 @@ item_id = 4315
 name = "cocoon"
 rarity = "common"
 movable = false
-hue = 0
+weight = 15.0
 
 [[item]]
 id = "0x10dc_cocoon"
@@ -95,7 +329,16 @@ item_id = 4316
 name = "cocoon"
 rarity = "common"
 movable = false
-hue = 0
+weight = 15.0
+
+[[item]]
+id = "0x10dd_web"
+base_id = "base_item"
+item_id = 4317
+name = "web"
+rarity = "common"
+movable = false
+weight = 1.0
 
 [[item]]
 id = "0x10ee_garbage"
@@ -104,7 +347,7 @@ item_id = 4334
 name = "garbage"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10ef_garbage"
@@ -113,7 +356,7 @@ item_id = 4335
 name = "garbage"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10f0_garbage"
@@ -122,7 +365,7 @@ item_id = 4336
 name = "garbage"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10f1_garbage"
@@ -131,7 +374,7 @@ item_id = 4337
 name = "garbage"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10f2_pile_of_garbage"
@@ -140,7 +383,7 @@ item_id = 4338
 name = "pile of garbage"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x10f3_pile_of_garbage"
@@ -149,7 +392,106 @@ item_id = 4339
 name = "pile of garbage"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x1230_guillotine"
+base_id = "base_item"
+item_id = 4656
+name = "Guillotine"
+rarity = "common"
+movable = false
+weight = 20.0
+
+[[item]]
+id = "0x1245_guillotine"
+base_id = "base_item"
+item_id = 4677
+name = "guillotine"
+rarity = "common"
+movable = false
+weight = 20.0
+
+[[item]]
+id = "0x1249_iron_maiden"
+base_id = "base_item"
+item_id = 4681
+name = "iron maiden"
+rarity = "common"
+movable = false
+weight = 20.0
+
+[[item]]
+id = "0x124a_iron_maiden"
+base_id = "base_item"
+item_id = 4682
+name = "iron maiden"
+rarity = "common"
+movable = false
+weight = 20.0
+
+[[item]]
+id = "0x124b_iron_maiden"
+base_id = "base_item"
+item_id = 4683
+name = "iron maiden"
+rarity = "common"
+movable = false
+weight = 20.0
+
+[[item]]
+id = "0x124c_iron_maiden"
+base_id = "base_item"
+item_id = 4684
+name = "iron maiden"
+rarity = "common"
+movable = false
+weight = 20.0
+
+[[item]]
+id = "0x124d_iron_maiden"
+base_id = "base_item"
+item_id = 4685
+name = "iron maiden"
+rarity = "common"
+movable = false
+weight = 20.0
+
+[[item]]
+id = "0x125e_guillotine"
+base_id = "base_item"
+item_id = 4702
+name = "Guillotine"
+rarity = "common"
+movable = false
+weight = 20.0
+
+[[item]]
+id = "0x125f_guillotine"
+base_id = "base_item"
+item_id = 4703
+name = "guillotine"
+rarity = "common"
+movable = false
+weight = 20.0
+
+[[item]]
+id = "0x1262_shackles"
+base_id = "base_item"
+item_id = 4706
+name = "shackles"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x1263_shackles"
+base_id = "base_item"
+item_id = 4707
+name = "shackles"
+rarity = "common"
+movable = false
+weight = 1.0
 
 [[item]]
 id = "0x166d_shackle"
@@ -158,7 +500,7 @@ item_id = 5741
 name = "shackle"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x166e_whip"
@@ -167,7 +509,43 @@ item_id = 5742
 name = "whip"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x166f_whip"
+base_id = "base_item"
+item_id = 5743
+name = "whip"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x1640_shackles"
+base_id = "base_item"
+item_id = 5696
+name = "shackles"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x1a07_chains"
+base_id = "base_item"
+item_id = 6663
+name = "chains"
+rarity = "common"
+movable = false
+weight = 1.0
+
+[[item]]
+id = "0x1a08_chains"
+base_id = "base_item"
+item_id = 6664
+name = "chains"
+rarity = "common"
+movable = false
+weight = 1.0
 
 [[item]]
 id = "0x1ad4_nest_with_eggs"
@@ -176,7 +554,7 @@ item_id = 6868
 name = "nest with eggs"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1ad5_nest"
@@ -185,4 +563,4 @@ item_id = 6869
 name = "nest"
 rarity = "common"
 movable = false
-hue = 0
+weight = 1.0

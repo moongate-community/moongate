@@ -1,0 +1,178 @@
+[[mobile]]
+id = "corpser"
+name = "a corpser"
+body = 8
+strength = "1d25+155"
+dexterity = "1d20+25"
+intelligence = "1d15+25"
+mana = 0
+damage = "1d28+2"
+armor = 9
+notoriety = "attackable"
+karma = -1000
+fame = 1000
+gold = "1d51-1"
+[mobile.skills]
+resisting_spells = "1d6+14"
+parrying = "1d11+14"
+tactics = "1d16+44"
+wrestling = "1d16+44"
+[mobile.sounds]
+start_attack = 353
+attack = 354
+hurt = 355
+death = 356
+
+[[mobile]]
+id = "reaper"
+name = "a reaper"
+body = 47
+strength = "1d150+65"
+dexterity = "1d10+65"
+intelligence = "1d150+100"
+stamina = 0
+damage = "1d11+4"
+armor = 20
+notoriety = "attackable"
+karma = -3500
+fame = 3500
+loot = ["treasure_map_lvl2loot"]
+gold = "1d101+49"
+[mobile.skills]
+magery = "1d11+89"
+evaluating_intelligence = "1d26-1"
+resisting_spells = "1d21+99"
+parrying = "1d11+49"
+tactics = "1d16+44"
+wrestling = "1d11+49"
+[mobile.sounds]
+start_attack = 442
+idle = 443
+attack = 444
+hurt = 445
+death = 446
+
+[[mobile]]
+id = "swamptentacle"
+name = "a swamp tentacle"
+body = 66
+strength = "1d25+95"
+dexterity = "1d20+65"
+intelligence = "1d15+15"
+mana = 0
+damage = "1d13+2"
+armor = 15
+notoriety = "attackable"
+karma = -3000
+fame = 3000
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d6+14"
+parrying = "1d11+54"
+tactics = "1d16+64"
+wrestling = "1d16+64"
+[mobile.sounds]
+start_attack = 850
+idle = 851
+attack = 852
+hurt = 853
+death = 854
+
+[[mobile]]
+id = "whippingvine"
+name = "a whipping vine"
+body = 8
+strength = "1d50+250"
+dexterity = "1d25+75"
+intelligence = "1d15+25"
+mana = 0
+damage = "1d40+8"
+armor = 10
+notoriety = "attackable"
+karma = -1000
+fame = 1000
+[mobile.skills]
+resisting_spells = 70
+parrying = 50
+tactics = 70
+wrestling = 70
+[mobile.sounds]
+start_attack = 353
+attack = 354
+hurt = 355
+death = 356
+
+[[mobile]]
+id = "quagmire"
+name = "a quagmire"
+body = 789
+strength = "1d30+100"
+dexterity = "1d20+65"
+intelligence = "1d25+30"
+damage = "1d12+5"
+armor = 20
+notoriety = "attackable"
+karma = -1500
+fame = 1500
+gold = "1d101+49"
+[mobile.skills]
+resisting_spells = "1d11+64"
+parrying = 50
+tactics = "1d11+49"
+wrestling = "1d21+59"
+[mobile.sounds]
+start_attack = 353
+attack = 354
+hurt = 355
+death = 356
+
+[[mobile]]
+id = "bogthing"
+name = "a bog thing"
+body = 780
+strength = "1d100+800"
+dexterity = "1d20+45"
+intelligence = "1d15+35"
+mana = 0
+damage = "1d41+6"
+armor = 20
+notoriety = "attackable"
+karma = -8000
+fame = 8000
+gold = "1d51+99"
+[mobile.skills]
+resisting_spells = "1d6+89"
+parrying = "1d16+49"
+tactics = "1d16+69"
+wrestling = "1d16+64"
+[mobile.sounds]
+start_attack = 357
+idle = 358
+attack = 359
+hurt = 360
+death = 361
+
+[[mobile]]
+id = "bogling"
+name = "a bogling"
+body = 779
+strength = "1d25+95"
+dexterity = "1d25+90"
+intelligence = "1d25+20"
+damage = "1d5+7"
+armor = 15
+notoriety = "attackable"
+karma = -450
+fame = 450
+gold = "1d21+39"
+[mobile.skills]
+resisting_spells = "1d26+74"
+parrying = "1d6+49"
+tactics = "1d26+54"
+wrestling = "1d21+54"
+[mobile.sounds]
+start_attack = 422
+idle = 423
+attack = 424
+hurt = 425
+death = 426

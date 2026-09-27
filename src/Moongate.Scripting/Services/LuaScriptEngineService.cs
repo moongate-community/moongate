@@ -162,14 +162,17 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private readonly IEventBusService _eventBus;
     private readonly IScriptThreadGuard _guard;
     private readonly List<BoundModule> _boundModules = [];
+    private readonly List<IDisposable> _busSubscriptions = [];
     private List<Type> _publishedEnums = [];
     private LuaState? _state;
     private ScriptFileLoader? _files;
     private CoroutineScheduler? _scheduler;
+    private ScriptEventSubscriptions? _eventSubscriptions;
     private InstructionBudget? _budget;
     private long _callsStarted;
     private long _chunkBudgetAborts;
     private long _memoryCapHits;
+    private long _eventsDropped;
     private bool _disposed;
 
     /// <summary>
@@ -263,7 +266,8 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             scheduler?.Errors ?? 0,
             (scheduler?.BudgetAborts ?? 0) + _chunkBudgetAborts,
             scheduler?.ActiveCount ?? 0,
-            _memoryCapHits
+            _memoryCapHits,
+            Interlocked.Read(ref _eventsDropped)
         );
     }
 
@@ -273,6 +277,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _guard.EnsureScriptThread(nameof(Invalidate));
         var key = ScriptFileLoader.Normalize(relativePath);
         Ready(_scheduler).CancelOwned(key);
+        Ready(_eventSubscriptions).RemoveOwner(key);
         Ready(_files).Invalidate(key);
     }
 
@@ -335,14 +340,23 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         await RunOnLoopAsync(Dispose, "stop").ConfigureAwait(false);
     }
 
-    private void BindModules(LuaState state, CoroutineScheduler scheduler, ScriptOwnership ownership)
+    private void BindModules(
+        LuaState state,
+        CoroutineScheduler scheduler,
+        ScriptOwnership ownership,
+        ScriptEventSubscriptions events
+    )
     {
         var binder = new LuaModuleBinder(_guard);
         _boundModules.Clear();
 
-        // Built-ins first: engine and timer depend on engine internals, so the host cannot register them.
+        // Built-ins first: engine, timer and events depend on engine internals, so the host cannot register them.
         _boundModules.Add(binder.Bind(state, new EngineModule()));
         _boundModules.Add(binder.Bind(state, new TimerModule(_timers, scheduler, ownership)));
+        var eventNames = _registry.EventRegistrations
+            .Select(registration => registration.Name)
+            .ToHashSet(StringComparer.Ordinal);
+        _boundModules.Add(binder.Bind(state, new EventsModule(events, scheduler, eventNames)));
 
         foreach (var moduleType in _registry.ModuleTypes)
         {
@@ -507,6 +521,91 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         );
     }
 
+    /// <summary>
+    ///     Maps a published event and hands it to the loop. Called on the publishing thread: it only reads the event and
+    ///     the subscription store, and never touches the Lua state.
+    /// </summary>
+    private void Deliver(string eventName, Func<IReadOnlyDictionary<string, object?>> map)
+    {
+        var subscriptions = _eventSubscriptions;
+
+        if (_disposed || subscriptions is null || !subscriptions.HasSubscribers(eventName))
+        {
+            return;
+        }
+
+        List<KeyValuePair<string, LuaValue>> values;
+
+        try
+        {
+            values = map()
+                .Select(pair => KeyValuePair.Create(
+                        pair.Key,
+                        LuaValueConverter.ToLua(pair.Value, pair.Value?.GetType() ?? typeof(object))
+                    )
+                )
+                .ToList();
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception, "Script event {EventName} could not be mapped for Lua; skipped", eventName);
+
+            return;
+        }
+
+        // TryPost also refuses while the loop runs with a full queue, so a drop is worth a warning: a script
+        // hook that silently never ran is otherwise impossible to diagnose.
+        if (!_gameLoop.TryPost(new ScriptEventDispatchWorkItem(Dispatch, eventName, values)))
+        {
+            Interlocked.Increment(ref _eventsDropped);
+            _logger.Warning("Script event {EventName} was dropped; the game loop is not accepting work", eventName);
+        }
+    }
+
+    /// <summary>
+    ///     Starts every current Lua handler of <paramref name="eventName" /> as a coroutine owned by the file that
+    ///     subscribed it, each with its own table. Runs on the loop thread.
+    ///     A handler the scheduler refuses to start is reported as a script error and the rest still run.
+    /// </summary>
+    internal void Dispatch(string eventName, IReadOnlyList<KeyValuePair<string, LuaValue>> values)
+    {
+        var scheduler = _scheduler;
+        var subscriptions = _eventSubscriptions;
+
+        if (scheduler is null || subscriptions is null)
+        {
+            return;
+        }
+
+        foreach (var subscription in subscriptions.Snapshot(eventName))
+        {
+            var table = new LuaTable();
+
+            foreach (var (key, value) in values)
+            {
+                table[key] = value;
+            }
+
+            // Handler errors are already reported by the scheduler; this catches the scheduler refusing to start one
+            // at all. The work item runs on the loop, where an escaping exception would fault the whole loop.
+            try
+            {
+                scheduler.Start(subscription.Function, subscription.Owner, table);
+            }
+            catch (Exception exception)
+            {
+                ReportError(
+                    new(
+                        subscription.Owner,
+                        0,
+                        $"handler for event '{eventName}' could not start: {exception.Message}",
+                        null
+                    )
+                );
+            }
+        }
+    }
+
     private void ReportError(ScriptErrorInfo error)
     {
         _logger.Error("Script error at {File}:{Line}: {Message}", error.File, error.Line, error.Message);
@@ -621,6 +720,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         ScriptFileLoader files;
         CoroutineScheduler scheduler;
         InstructionBudget budget;
+        var eventSubscriptions = new ScriptEventSubscriptions();
 
         try
         {
@@ -645,7 +745,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             budget.Install();
             scheduler = new(state, _timers, budget, ownership, ReportError, () => files.CurrentFile);
 
-            BindModules(state, scheduler, ownership);
+            BindModules(state, scheduler, ownership, eventSubscriptions);
             state.Environment["print"] = new(CreatePrint(scheduler));
             WriteDefinitions();
             budget.Chunk(token =>
@@ -668,7 +768,14 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _state = state;
         _files = files;
         _scheduler = scheduler;
+        _eventSubscriptions = eventSubscriptions;
         _budget = budget;
+
+        foreach (var registration in _registry.EventRegistrations)
+        {
+            var name = registration.Name;
+            _busSubscriptions.Add(registration.Subscribe(_eventBus, map => Deliver(name, map)));
+        }
 
         RunBootstrap();
         _logger.Information(
@@ -677,7 +784,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             _options.ScriptsDirectory
         );
 
-        // Module count includes the two built-ins, engine and timer.
+        // Module count includes the three built-ins: engine, timer and events.
     }
 
     /// <summary>
@@ -727,7 +834,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             return;
         }
 
-        LuaDefinitionsGenerator.Write(_options.ScriptsDirectory, _boundModules, _publishedEnums);
+        LuaDefinitionsGenerator.Write(
+            _options.ScriptsDirectory,
+            _boundModules,
+            _publishedEnums,
+            _registry.EventRegistrations.Select(registration => registration.Name).ToList()
+        );
     }
 
     /// <summary>
@@ -745,11 +857,19 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         // Cancel every timer and coroutine the scheduler knows about before the state goes away: a
         // periodic timer.every callback that fires after this point must not reach CreateCoroutine on
         // a disposed state (the timer wheel and the loop stop after this service does).
+        foreach (var subscription in _busSubscriptions)
+        {
+            subscription.Dispose();
+        }
+
+        _busSubscriptions.Clear();
         _scheduler?.CancelAll();
+        _eventSubscriptions?.Clear();
         _state?.Dispose();
         _state = null;
         _files = null;
         _scheduler = null;
+        _eventSubscriptions = null;
         _budget = null;
     }
 }

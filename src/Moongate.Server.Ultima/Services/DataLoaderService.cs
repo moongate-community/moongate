@@ -26,15 +26,15 @@ public sealed class DataLoaderService : IDataLoaderService
 
         foreach (var registration in registrations.OrderBy(registration => registration.Priority))
         {
-            _logger.Information(
-                "Running data loader for {EntityType} using {LoaderType}.",
+            _logger.Debug(
+                "Running data loader for {EntityType} using {LoaderType}",
                 registration.EntityType.Name,
                 registration.LoaderType.Name
             );
             var startTime = Stopwatch.GetTimestamp();
             _entitiesByType[registration.EntityType] = await registration.RunAsync(_resolver, CancellationToken.None);
-            _logger.Information(
-                "Data loader for {EntityType} completed in {ElapsedMilliseconds} ms.",
+            _logger.Debug(
+                "Data loader for {EntityType} completed in {ElapsedMilliseconds} ms",
                 registration.EntityType.Name,
                 Stopwatch.GetElapsedTime(startTime)
             );

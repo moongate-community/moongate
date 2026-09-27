@@ -28,7 +28,7 @@ public sealed class LoginRolePingPacketHandler : ILoginPacketHandler<PingPacket>
 
         if (!_sender.TrySend(session.SessionId, connection, packet))
         {
-            await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
+            await connection.CloseAsync(CancellationToken.None);
         }
     }
 }

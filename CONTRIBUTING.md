@@ -87,6 +87,13 @@ Without the variables and without Docker, the integration tests fail; they do no
 silently skip. Run test projects serially with `-m:1`, as CI does, because their
 hosts share the database services.
 
+CI keeps its disposable PostgreSQL data directory on a `tmpfs` mount capped at
+1 GiB. Repeated database creation and removal would otherwise force hundreds of
+disk checkpoints on the shared runner. PostgreSQL's `fsync`, WAL, and synchronous
+commit settings stay enabled, and CI still runs the full suite with coverage.
+The `test-results` CI artifact contains TRX reports with individual test timings,
+including reports from failed runs, and is retained for 14 days.
+
 Run these commands from the repository root to match the solution checks in CI:
 
 ```sh
@@ -96,6 +103,12 @@ dotnet build Moongate.slnx -c Release --no-restore
 bash scripts/test.sh all -c Release --no-build
 ```
 
+`scripts/coverage.sh` takes the same arguments, runs the tests with code coverage,
+and writes a merged report to `artifacts/coverage/index.html`. CI runs it in place
+of `scripts/test.sh`, shows the per-assembly summary on the run page, and keeps the
+HTML report as the `coverage-report` artifact. The published documentation shows the
+report of its commit on the [Test coverage](docs/test-coverage.md) page.
+
 For opt-in concurrent database load tests, see [Stress-test PostgreSQL persistence](docs/persistence-stress.md).
 
 Add or update tests for changed behavior. For bug fixes, include a regression test
@@ -103,8 +116,13 @@ that demonstrates the failure. Follow the test layout in `CODE_CONVENTION.md` an
 keep assertions focused on observable behavior. Prose-only corrections do not
 need new C# tests.
 
-CI also verifies the portable administration client, NuGet packages, runnable README
-examples, and third-party notices. The administration check uses the same test
+CI runs on pull requests and on pushes to `develop` and `main`; changes that touch only
+`docs/`, `website/` or Markdown files skip it. On pull requests and `main` it also verifies
+the portable administration client, NuGet packages, runnable README examples, and
+third-party notices; pushes to `develop` skip these, since every change reaches `develop`
+through a pull request that already ran them. The development Docker image
+(`ghcr.io/moongate-community/moongate:develop`) is rebuilt nightly, or on demand from the
+Actions tab. The administration check uses the same test
 connections and requires Python 3 with `venv` support and access to install the
 dependencies in `samples/admin-python/requirements.txt`:
 

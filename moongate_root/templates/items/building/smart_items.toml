@@ -1,98 +1,287 @@
 [[item]]
+id = "base_smart_object"
+base_id = "base_item"
+item_id = 0
+rarity = "common"
+movable = false
+decays = false
+
+[[item]]
 id = "smart_brazier"
+base_id = "base_item"
 item_id = 7979
 rarity = "common"
 movable = false
-hue = 0
+decays = false
+[item.tags]
+inactiveID = "0x1f2b"
+activeID = "0x19bb"
 
 [[item]]
 id = "smart_skullcandle"
+base_id = "base_item"
 item_id = 6231
 rarity = "common"
 movable = false
-hue = 0
+decays = false
+[item.tags]
+inactiveID = "0x1857"
+activeID = "0x1858"
 
 [[item]]
 id = "smart_stonewall_0x01d0"
+base_id = "base_item"
 item_id = 464
 name = "stone wall"
 rarity = "common"
 movable = false
-hue = 0
+decays = false
+[item.tags]
+inactiveID = "0x01d0"
+activeID = "0x1"
 
 [[item]]
 id = "smart_cavefloor_0x053b_hidden"
+base_id = "base_item"
 item_id = 1
 name = "cave floor"
 rarity = "common"
 movable = false
-hue = 0
+decays = false
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x053b"
+
+[[item]]
+id = "smart_cavefloor_0x053d_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x053d"
+
+[[item]]
+id = "smart_cavefloor_0x0544_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x0544"
+
+[[item]]
+id = "smart_cavefloor_0x0545_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x0545"
+
+[[item]]
+id = "smart_cavefloor_0x0546_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x0546"
+
+[[item]]
+id = "smart_cavefloor_0x0548_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x0548"
+
+[[item]]
+id = "smart_cavefloor_0x054a_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x054a"
+
+[[item]]
+id = "smart_cavefloor_0x054b_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x054b"
+
+[[item]]
+id = "smart_cavefloor_0x054c_hidden"
+base_id = "smart_cavefloor_0x053b_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x054c"
 
 [[item]]
 id = "smart_stonewall_0x01d0_hidden"
+base_id = "base_item"
 item_id = 1
 name = "stone wall"
 rarity = "common"
 movable = false
-hue = 0
+decays = false
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x1d0"
+
+[[item]]
+id = "smart_stonewall_0x01d1_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01d1"
+
+[[item]]
+id = "smart_stonearch_0x01e3_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+name = "stone arch"
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e3"
+
+[[item]]
+id = "smart_stonearch_0x01e4_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+name = "stone arch"
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e4"
+
+[[item]]
+id = "smart_stonearch_0x01e5_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+name = "stone arch"
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e5"
+
+[[item]]
+id = "smart_stonewall_0x01e8_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e8"
+
+[[item]]
+id = "smart_stonewall_0x01e9_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01e9"
+
+[[item]]
+id = "smart_stonewall_0x01ea_hidden"
+base_id = "smart_stonewall_0x01d0_hidden"
+item_id = 0
+rarity = "common"
+[item.tags]
+inactiveID = "0x0001"
+activeID = "0x01ea"
 
 [[item]]
 id = "smart_teleporter_0x17dc"
+base_id = "base_item"
 item_id = 6108
 name = "teleporter"
 rarity = "common"
 movable = false
-hue = 0
+decays = false
+[item.tags]
+inactiveID = "0x17dc"
+activeID = "0x17ee"
 
 [[item]]
 id = "smart_teleporter_0x17ee"
+base_id = "base_item"
 item_id = 6126
 name = "teleporter"
 rarity = "common"
 movable = false
-hue = 0
+decays = false
+[item.tags]
+inactiveID = "0x17ee"
+activeID = "0x17dc"
 
 [[item]]
 id = "smart_sound_object_0x0102"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
 movable = false
+decays = false
 visibility = "game_master"
-hue = 0
+[item.tags]
+inRangeSFX = "0x0102"
 
 [[item]]
 id = "smart_sound_object_0x00f5"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
 movable = false
+decays = false
 visibility = "game_master"
-hue = 0
+[item.tags]
+inRangeSFX = "0x00f5"
 
 [[item]]
 id = "smart_sound_object_0x0220"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
 movable = false
+decays = false
 visibility = "game_master"
-hue = 0
+[item.tags]
+inRangeSFX = "0x0220"
 
 [[item]]
 id = "smart_sound_object_0x0244"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
 movable = false
+decays = false
 visibility = "game_master"
-hue = 0
+[item.tags]
+inRangeSFX = "0x0244"
 
 [[item]]
 id = "smart_sound_object_0x0014"
+base_id = "base_item"
 item_id = 3762
 name = "smart sound object"
 rarity = "common"
 movable = false
+decays = false
 visibility = "game_master"
-hue = 0
+[item.tags]
+inRangeSFX = "0x0014"

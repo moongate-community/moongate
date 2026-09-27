@@ -1,3 +1,25 @@
 [[loot]]
 id = "ironore"
-entries = []
+[[loot.entries]]
+weight = 1
+item_id = "0x19b7_iron_ore"
+comment = "iron ore"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x19b8_iron_ore"
+comment = "iron ore"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x19b9_iron_ore"
+comment = "iron ore"
+amount = 1
+
+[[loot.entries]]
+weight = 1
+item_id = "0x19ba_iron_ore"
+comment = "iron ore"
+amount = 1

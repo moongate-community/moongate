@@ -1,0 +1,17 @@
+# Administrative schema jobs use this config while the game process is stopped.
+mode = "game"
+
+[persistence]
+auto_sync_schema = false
+migrations_directory = "/app/migrations"
+
+[persistence.realm]
+connection_string = "$MOONGATE_REALM_SCHEMA_DATABASE"
+
+
+[realm_directory]
+realm_id = "realm-2"
+name = "Moongate Realm 2"
+server_index = 2
+advertised_address = "127.0.0.1"
+advertised_port = 2596

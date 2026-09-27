@@ -27,7 +27,7 @@ public sealed class LoginAccountFlow
         CancellationToken cancellationToken
     )
     {
-        var account = await _accounts.LoginAsync(username, password, cancellationToken).ConfigureAwait(false);
+        var account = await _accounts.LoginAsync(username, password, cancellationToken);
 
         if (account is null)
         {
@@ -43,7 +43,7 @@ public sealed class LoginAccountFlow
 
         try
         {
-            available = await _directory.GetAvailableAsync(account.AccountType, cancellationToken).ConfigureAwait(false);
+            available = await _directory.GetAvailableAsync(account.AccountType, cancellationToken);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {

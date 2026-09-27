@@ -5,15 +5,18 @@ using Moongate.Core.Utils;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
+using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Plugins;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
+using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Containers;
+using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Data.Names;
@@ -21,13 +24,17 @@ using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Data.Skills;
+using Moongate.Server.Ultima.Data.Templates.Items;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Data.Weather;
 using Moongate.Server.Ultima.Entities.Auth;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Handlers.Characters;
 using Moongate.Server.Ultima.Handlers.Login;
-using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
-using Moongate.Scripting.Extensions.Scripts;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Characters;
@@ -66,6 +73,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         TomlUtils.AddTomlConverter(new Rectangle2DTomlConverter());
         TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
         TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
+        TomlUtils.AddTomlConverter(new DiceSpecTomlConverter());
 
         var mode = container.IsRegistered<ServerMode>() ? container.Resolve<ServerMode>() : ServerMode.Standalone;
 
@@ -101,25 +109,47 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<WeatherLoader, WeatherContent>(8);
             container.AddUltimaDataLoader<RegionsLoader, RegionContent>(9);
             container.AddUltimaDataLoader<MessagesLoader, MessageContent>(10);
+            container.AddUltimaDataLoader<NamesLoader, NameList>(11);
+            container.AddUltimaDataLoader<ItemTemplatesLoader, ItemTemplate>(12);
+            container.AddUltimaDataLoader<StartingItemsLoader, StartingItemSet>(13);
+            container.AddUltimaDataLoader<LootTemplatesLoader, LootTemplate>(14);
+            container.AddUltimaDataLoader<MobileTemplatesLoader, MobileTemplate>(15);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
             container.RegisterIncomingPacket<ClientHardwareInfoPacket>();
             container.RegisterIncomingPacket<CreateCharacterPacket>();
             container.RegisterIncomingPacket<CreateCharacterEnhancedPacket>();
+            container.RegisterAsyncPacketHandler<CreateCharacterPacket, CreateCharacterPacketHandler>();
+            container.RegisterAsyncPacketHandler<CreateCharacterEnhancedPacket, CreateCharacterEnhancedPacketHandler>();
 
             container.Register<ILocalizationService, LocalizationService>(Reuse.Singleton);
+            container.Register<INameService, NameService>(Reuse.Singleton);
+            container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
+            container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
+            container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
+            container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
+            container.Register<ILootService, LootService>(Reuse.Singleton);
+            container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
+            container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
+            container.AddScriptEvent<CharacterCreatedEvent>("character_created", CharacterScriptEvents.CharacterCreated);
             container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
             container.Register<IMovementService, MovementService>(Reuse.Singleton);
             container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
+            container.AddScriptModule<DiceModule>();
             container.AddScriptModule<LocalizationModule>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
+            container.AddPersistenceWorld<MobileEntity>();
+            container.AddPersistenceWorld<ItemEntity>();
+
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
             // After the loaders: the maps come from data/maps.toml.
             container.AddMoongateService<IMapService, MapService>(-4);
             // After IUltimaDataService: the multis come from the client directory.
             container.AddMoongateService<IMultiService, MultiService>(-4);
+            // After the loaders and the item templates: checks the configured backpack and gold templates exist.
+            container.AddMoongateService<IStartingItemsService, StartingItemsService>(-3);
         }
     }
 }

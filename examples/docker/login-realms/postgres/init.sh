@@ -50,6 +50,23 @@ SELECT format('ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA sample_greeter GRA
 SQL
 }
 
+# The core world catalog creates tables and ID sequences in the world schema; the runtime role reads and writes
+# them and draws IDs, the schema role owns them.
+provision_world_schema()
+{
+    psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$1" \
+        --set=schema_role="$2" \
+        --set=runtime_role="$3" <<'SQL'
+SELECT format('CREATE SCHEMA IF NOT EXISTS world AUTHORIZATION %I', :'schema_role') \gexec
+REVOKE ALL ON SCHEMA world FROM PUBLIC;
+SELECT format('GRANT USAGE ON SCHEMA world TO %I', :'runtime_role') \gexec
+SELECT format('GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA world TO %I', :'runtime_role') \gexec
+SELECT format('GRANT USAGE, SELECT ON ALL SEQUENCES IN SCHEMA world TO %I', :'runtime_role') \gexec
+SELECT format('ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA world GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO %I', :'schema_role', :'runtime_role') \gexec
+SELECT format('ALTER DEFAULT PRIVILEGES FOR ROLE %I IN SCHEMA world GRANT USAGE, SELECT ON SEQUENCES TO %I', :'schema_role', :'runtime_role') \gexec
+SQL
+}
+
 provision_auth_schema()
 {
     psql -v ON_ERROR_STOP=1 --username "$POSTGRES_USER" --dbname "$MOONGATE_ACCOUNTS_DATABASE" \
@@ -77,3 +94,5 @@ provision_database "$MOONGATE_REALM_1_DATABASE" "$MOONGATE_REALM_1_SCHEMA_USER" 
 provision_database "$MOONGATE_REALM_2_DATABASE" "$MOONGATE_REALM_2_SCHEMA_USER" "$MOONGATE_REALM_2_RUNTIME_USER"
 provision_auth_schema
 provision_sample_schema
+provision_world_schema "$MOONGATE_REALM_1_DATABASE" "$MOONGATE_REALM_1_SCHEMA_USER" "$MOONGATE_REALM_1_RUNTIME_USER"
+provision_world_schema "$MOONGATE_REALM_2_DATABASE" "$MOONGATE_REALM_2_SCHEMA_USER" "$MOONGATE_REALM_2_RUNTIME_USER"

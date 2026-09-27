@@ -5,7 +5,16 @@ item_id = 9900
 name = "bola"
 rarity = "common"
 movable = true
-hue = 0
+weight = 4.0
+buy_price = 46
+sell_price = 23
+decays = true
+
+[[item]]
+id = "bola"
+base_id = "0x26ac_bola"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "base_fukiya"
@@ -14,4 +23,17 @@ item_id = 10154
 name = "fukiya"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x27aa"
+base_id = "0x27aa_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "0x27f5"
+base_id = "0x27aa_lbr"
+item_id = 10229
+rarity = "common"

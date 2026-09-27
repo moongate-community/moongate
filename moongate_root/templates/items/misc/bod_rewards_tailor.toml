@@ -4,5 +4,33 @@ base_id = "base_item"
 item_id = 5360
 name = "a clothing bless deed"
 rarity = "common"
-movable = false
-hue = 0
+
+[[item]]
+id = "base_runic_sewing_kit"
+base_id = "0x0f9d_sewing_kit"
+item_id = 0
+rarity = "common"
+
+[[item]]
+id = "spined_runic_sewing_kit"
+base_id = "0x0f9d_sewing_kit"
+item_id = 0
+name = "spined runic sewing kit"
+rarity = "common"
+hue = 643
+
+[[item]]
+id = "horned_runic_sewing_kit"
+base_id = "0x0f9d_sewing_kit"
+item_id = 0
+name = "horned runic sewing kit"
+rarity = "common"
+hue = 551
+
+[[item]]
+id = "barbed_runic_sewing_kit"
+base_id = "0x0f9d_sewing_kit"
+item_id = 0
+name = "barbed runic sewing kit"
+rarity = "common"
+hue = 449

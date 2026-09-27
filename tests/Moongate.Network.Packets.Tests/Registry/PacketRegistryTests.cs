@@ -33,6 +33,7 @@ public class PacketRegistryTests
         var expected =
             new (byte OpCode, Type Type, PacketSizing Sizing, int? Fixed, int Minimum, PacketDirection Direction)[]
             {
+                (0x53, typeof(PopupMessagePacket), PacketSizing.Fixed, 2, 2, PacketDirection.Outgoing),
                 (0x55, typeof(LoginCompletePacket), PacketSizing.Fixed, 1, 1, PacketDirection.Outgoing),
                 (0x73, typeof(PingPacket), PacketSizing.Fixed, 2, 2, PacketDirection.Both),
                 (0x80, typeof(AccountLoginPacket), PacketSizing.Fixed, 62, 62, PacketDirection.Incoming),

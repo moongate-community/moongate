@@ -5,14 +5,20 @@ item_id = 5114
 name = "large battle axe"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x13fa"
+base_id = "0x13fa_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x13fb"
+base_id = "0x13fa_lbr"
 item_id = 5115
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_two_handed_axe"
@@ -21,14 +27,20 @@ item_id = 5186
 name = "two handed axe"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x1442"
+base_id = "0x1442_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x1443"
+base_id = "0x1442_lbr"
 item_id = 5187
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_hatchet"
@@ -37,14 +49,20 @@ item_id = 3907
 name = "hatchet"
 rarity = "common"
 movable = true
-hue = 0
+layer = "one_handed"
+decays = true
+
+[[item]]
+id = "0x0f43"
+base_id = "0x0f43_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0f44"
+base_id = "0x0f43_lbr"
 item_id = 3908
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_executioners_axe"
@@ -53,14 +71,20 @@ item_id = 3909
 name = "executioner's axe"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x0f45"
+base_id = "0x0f45_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0f46"
+base_id = "0x0f45_lbr"
 item_id = 3910
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_battle_axe"
@@ -69,14 +93,20 @@ item_id = 3911
 name = "battle axe"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x0f47"
+base_id = "0x0f47_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0f48"
+base_id = "0x0f47_lbr"
 item_id = 3912
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_axe"
@@ -85,14 +115,20 @@ item_id = 3913
 name = "axe"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x0f49"
+base_id = "0x0f49_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0f4a"
+base_id = "0x0f49_lbr"
 item_id = 3914
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_double_axe"
@@ -101,14 +137,20 @@ item_id = 3915
 name = "double axe"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x0f4b"
+base_id = "0x0f4b_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x0f4c"
+base_id = "0x0f4b_lbr"
 item_id = 3916
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_ornate_axe"
@@ -117,14 +159,20 @@ item_id = 11560
 name = "ornate axe"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x2d28"
+base_id = "0x2d28_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x2d34"
+base_id = "0x2d28_lbr"
 item_id = 11572
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_gargish_battle_axe"
@@ -133,14 +181,20 @@ item_id = 18608
 name = "gargish battle axe"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x48b0"
+base_id = "0x48b0_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x48b1"
+base_id = "0x48b0_lbr"
 item_id = 18609
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_dual_short_axes"
@@ -149,14 +203,20 @@ item_id = 2301
 name = "dual short axes"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x08fd"
+base_id = "0x08fd_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x4068"
+base_id = "0x08fd_lbr"
 item_id = 16488
 rarity = "common"
-movable = false
-hue = 0
 
 [[item]]
 id = "base_gargish_axe"
@@ -165,11 +225,17 @@ item_id = 18610
 name = "gargish axe"
 rarity = "common"
 movable = true
-hue = 0
+layer = "two_handed"
+decays = true
+
+[[item]]
+id = "0x48b2"
+base_id = "0x48b2_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x48b3"
+base_id = "0x48b2_lbr"
 item_id = 18611
 rarity = "common"
-movable = false
-hue = 0

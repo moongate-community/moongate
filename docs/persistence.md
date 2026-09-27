@@ -179,8 +179,13 @@ Console.WriteLine(account.Id); // Assigned on this same instance.
   exposes only a getter.
 - Each table has its own sequence in its schema. Sequences use the range
   `1..4294967295`, never cycle, and are shared across processes using that database.
-  These are persistence IDs, not a UO mobile or item range allocator. Supply gameplay
-  serials explicitly when domain rules require particular ranges or shared identity.
+  An entity whose serials live in a range that does not start at 1 declares it with
+  `[SerialRange(min, max)]` (`Moongate.Core.Attributes`): a generated sequence then
+  starts at `min`, so an empty table reserves `min` first, and a sequence left below
+  `min` by an older generated schema is moved forward to it. `ItemEntity` declares
+  `Serial.MinItem..Serial.MaxItem`. The attribute does not cap the top of the range;
+  a reviewed migration can add a check constraint, as `world.items` does. Supply
+  gameplay serials explicitly when domain rules require shared identity.
 - Sequence creation belongs to schema migrations, never to `UpsertAsync`. The
   runtime role needs `USAGE` on the sequences as well as the table permissions.
 
@@ -230,6 +235,55 @@ save-only failure do not poison the barrier.
 
 How often saves run, and how the final save behaves at shutdown, is described in
 [Operate PostgreSQL](persistence-operations.md#world-saves).
+
+## World items
+
+`ItemEntity` (`world.items`) and `MobileEntity` (`world.mobiles`) are registered by the
+Ultima plugin for the Realm database in game and standalone modes. An item is in exactly
+one place, and the database checks it:
+
+| Place | Columns | Set with |
+| --- | --- | --- |
+| On the ground | `map`, `x`, `y`, `z` | `PlaceOnGround(map, location)` |
+| In a container item | `container_id`, `grid_x`, `grid_y` | `PutInContainer(containerId, gridLocation)`; read back as `GridLocation` |
+| Worn by a mobile | `mobile_id`, `layer` | `Equip(mobileId, layer)` |
+
+Each helper clears the other two groups, so move an item only through them. The
+database also rejects an item inside itself and two items on the same layer of one
+mobile. Deleting a container or a mobile deletes what it holds, recursively: a backpack
+and everything inside it disappear with the mobile that wears it.
+
+A new item with `Id = Serial.Zero` gets its id from `world.items_id_seq`, which starts at
+`Serial.MinItem`; a CHECK caps it at `Serial.MaxItem`, and mobiles are held to
+`Serial.MinMobile..MaxMobile` the same way. Only what differs from the item template is
+stored: a null `name`, `movable` or `visibility` means the template's value. Values only
+some items have, such as charges, durability and script tags, go in the `props` JSONB
+column, a key-value dictionary read and written through the item:
+
+```csharp
+item.SetProp(ItemPropKeys.Quality, ItemQualityType.Exceptional); // null removes the key
+var charges = item.GetProp<int>(ItemPropKeys.Charges);   // default(T) when missing
+var quality = item.GetProp(ItemPropKeys.Quality, ItemQualityType.Regular);
+if (item.TryGetProp<LootType>(ItemPropKeys.LootType, out var lootType)) { /* ... */ }
+item.RemoveProp(ItemPropKeys.Charges);
+```
+
+`ItemPropKeys` names the keys the server reads (`loot_type`, `charges`, `durability`,
+`max_durability`, `quality`, `crafter_id`); scripts may use any other key. `quality` holds
+an `ItemQualityType` (`Low`, `Regular`, `Exceptional`, as ModernUO); an item without it is
+`Regular`. A prop holds a
+string, a number, a bool or an enum; anything else is rejected when set. The column gives
+whole numbers back as `long` and enums as their number, so `GetProp<T>` converts to the
+type asked for, and throws `InvalidCastException` naming the key when the stored value
+does not convert. An item with no props stores `NULL`.
+
+A mobile keeps what its template rolled when it was made: `template_id` (null for a
+player character), `hits`/`hits_max`, `mana`/`mana_max`, `stamina`/`stamina_max`,
+`fame`, `karma`, `armor` and the five `resist_*` columns, besides name, body, looks,
+stats and skills. `title` and `notoriety` are stored only when they differ from the
+template's (null means the template's); a CHECK keeps `notoriety` between 1 and 7.
+`MobileEntity` has the same `props` dictionary and `SetProp`/`GetProp`/`TryGetProp`/
+`RemoveProp` helpers as items, with the same rules.
 
 ## Accounts
 

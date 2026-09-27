@@ -5,7 +5,10 @@ item_id = 5637
 name = "a large wooden bowl"
 rarity = "common"
 movable = true
-hue = 0
+weight = 2.0
+buy_price = 2
+sell_price = 1
+decays = true
 
 [[item]]
 id = "0x15fd_a_pewter_bowl"
@@ -14,7 +17,48 @@ item_id = 5629
 name = "a pewter bowl"
 rarity = "common"
 movable = true
-hue = 0
+weight = 0.01
+buy_price = 2
+sell_price = 1
+decays = true
+
+[[item]]
+id = "0x0974_cauldron"
+base_id = "base_item"
+item_id = 2420
+name = "cauldron"
+rarity = "common"
+weight = 10.0
+
+[[item]]
+id = "0x0975_cauldron"
+base_id = "base_item"
+item_id = 2421
+name = "cauldron"
+rarity = "common"
+weight = 10.0
+
+[[item]]
+id = "0x0991_tray"
+base_id = "base_item"
+item_id = 2449
+name = "tray"
+rarity = "common"
+weight = 1.0
+buy_price = 6
+sell_price = 3
+decays = true
+
+[[item]]
+id = "0x0992_tray"
+base_id = "base_item"
+item_id = 2450
+name = "tray"
+rarity = "common"
+weight = 1.0
+buy_price = 6
+sell_price = 3
+decays = true
 
 [[item]]
 id = "0x0995_ceramic_mug"
@@ -22,8 +66,7 @@ base_id = "base_item"
 item_id = 2453
 name = "ceramic mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0996_ceramic_mug"
@@ -31,8 +74,7 @@ base_id = "base_item"
 item_id = 2454
 name = "ceramic mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0997_ceramic_mug"
@@ -40,8 +82,7 @@ base_id = "base_item"
 item_id = 2455
 name = "ceramic mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0998_ceramic_mug"
@@ -49,8 +90,7 @@ base_id = "base_item"
 item_id = 2456
 name = "ceramic mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0999_ceramic_mug"
@@ -58,8 +98,7 @@ base_id = "base_item"
 item_id = 2457
 name = "ceramic mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x099a_goblet"
@@ -67,8 +106,39 @@ base_id = "base_item"
 item_id = 2458
 name = "goblet"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x09a3_fork"
+base_id = "base_item"
+item_id = 2467
+name = "fork"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09a4_fork"
+base_id = "base_item"
+item_id = 2468
+name = "fork"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09a5_knife"
+base_id = "base_item"
+item_id = 2469
+name = "knife"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09a6_knife"
+base_id = "base_item"
+item_id = 2470
+name = "knife"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x09a7_glass_pitcher"
@@ -77,7 +147,10 @@ item_id = 2471
 name = "glass pitcher"
 rarity = "common"
 movable = true
-hue = 0
+weight = 0.5
+buy_price = 6
+sell_price = 3
+decays = true
 
 [[item]]
 id = "0x09ae_dirty_plate"
@@ -85,8 +158,55 @@ base_id = "base_item"
 item_id = 2478
 name = "dirty plate"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x09b3_goblet"
+base_id = "base_item"
+item_id = 2483
+name = "goblet"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09bd_silverware"
+base_id = "base_item"
+item_id = 2493
+name = "silverware"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09be_silverware"
+base_id = "base_item"
+item_id = 2494
+name = "silverware"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09bf_goblet"
+base_id = "base_item"
+item_id = 2495
+name = "goblet"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09c2_spoon"
+base_id = "base_item"
+item_id = 2498
+name = "spoon"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09c3_spoon"
+base_id = "base_item"
+item_id = 2499
+name = "spoon"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x09ca_ceramic_mug"
@@ -94,8 +214,7 @@ base_id = "base_item"
 item_id = 2506
 name = "ceramic mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x09cb_goblet"
@@ -103,8 +222,23 @@ base_id = "base_item"
 item_id = 2507
 name = "goblet"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x09d4_silverware"
+base_id = "base_item"
+item_id = 2516
+name = "silverware"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09d5_silverware"
+base_id = "base_item"
+item_id = 2517
+name = "silverware"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x09d6_pitcher"
@@ -112,8 +246,7 @@ base_id = "base_item"
 item_id = 2518
 name = "pitcher"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x09d7_plate"
@@ -121,8 +254,7 @@ base_id = "base_item"
 item_id = 2519
 name = "plate"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x09da_dirty_plate"
@@ -130,8 +262,23 @@ base_id = "base_item"
 item_id = 2522
 name = "dirty plate"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x09dc_dirty_pot"
+base_id = "base_item"
+item_id = 2524
+name = "dirty pot"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09dd_dirty_pot"
+base_id = "base_item"
+item_id = 2525
+name = "dirty pot"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x09de_dirty_frypan"
@@ -139,8 +286,71 @@ base_id = "base_item"
 item_id = 2526
 name = "dirty frypan"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x09df_dirty_pot"
+base_id = "base_item"
+item_id = 2527
+name = "dirty pot"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09e0_pot"
+base_id = "base_item"
+item_id = 2528
+name = "pot"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09e1_pot"
+base_id = "base_item"
+item_id = 2529
+name = "pot"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09e3_pot"
+base_id = "base_item"
+item_id = 2531
+name = "pot"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09e4_pot"
+base_id = "base_item"
+item_id = 2532
+name = "pot"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09e5_pot"
+base_id = "base_item"
+item_id = 2533
+name = "pot"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09e6_dirty_pot"
+base_id = "base_item"
+item_id = 2534
+name = "dirty pot"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09e7_dirty_pot"
+base_id = "base_item"
+item_id = 2535
+name = "dirty pot"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x09e8_dirty_pan"
@@ -148,8 +358,7 @@ base_id = "base_item"
 item_id = 2536
 name = "dirty pan"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x09ed_kettle"
@@ -157,8 +366,7 @@ base_id = "base_item"
 item_id = 2541
 name = "kettle"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x09f3_pan"
@@ -166,8 +374,55 @@ base_id = "base_item"
 item_id = 2547
 name = "pan"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x09f4_fork"
+base_id = "base_item"
+item_id = 2548
+name = "fork"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09f5_fork"
+base_id = "base_item"
+item_id = 2549
+name = "fork"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09f6_knife"
+base_id = "base_item"
+item_id = 2550
+name = "knife"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09f7_knife"
+base_id = "base_item"
+item_id = 2551
+name = "knife"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09f8_spoon"
+base_id = "base_item"
+item_id = 2552
+name = "spoon"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x09f9_spoon"
+base_id = "base_item"
+item_id = 2553
+name = "spoon"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x0a19_dirty_plate"
@@ -175,8 +430,7 @@ base_id = "base_item"
 item_id = 2585
 name = "dirty plate"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0e78_basin"
@@ -184,8 +438,7 @@ base_id = "base_item"
 item_id = 3704
 name = "basin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0ff6_glass_pitcher"
@@ -193,8 +446,7 @@ base_id = "base_item"
 item_id = 4086
 name = "glass pitcher"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.5
 
 [[item]]
 id = "0x0ff7_glass_pitcher"
@@ -202,8 +454,7 @@ base_id = "base_item"
 item_id = 4087
 name = "glass pitcher"
 rarity = "common"
-movable = false
-hue = 0
+weight = 0.5
 
 [[item]]
 id = "0x0ffa_bucket_of_water"
@@ -211,8 +462,7 @@ base_id = "base_item"
 item_id = 4090
 name = "bucket of water"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0ffb_skull_mug"
@@ -220,8 +470,7 @@ base_id = "base_item"
 item_id = 4091
 name = "skull mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0ffc_skull_mug"
@@ -229,8 +478,7 @@ base_id = "base_item"
 item_id = 4092
 name = "skull mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0ffd_skull_mug"
@@ -238,8 +486,7 @@ base_id = "base_item"
 item_id = 4093
 name = "skull mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0ffe_skull_mug"
@@ -247,8 +494,7 @@ base_id = "base_item"
 item_id = 4094
 name = "skull mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x0fff_pewter_mug"
@@ -256,8 +502,7 @@ base_id = "base_item"
 item_id = 4095
 name = "pewter mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1000_pewter_mug"
@@ -265,8 +510,7 @@ base_id = "base_item"
 item_id = 4096
 name = "pewter mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1001_pewter_mug"
@@ -274,8 +518,7 @@ base_id = "base_item"
 item_id = 4097
 name = "pewter mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1002_pewter_mug"
@@ -283,8 +526,7 @@ base_id = "base_item"
 item_id = 4098
 name = "pewter mug"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1003_spittoon"
@@ -292,8 +534,7 @@ base_id = "base_item"
 item_id = 4099
 name = "spittoon"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1005_empty_jar"
@@ -301,8 +542,7 @@ base_id = "base_item"
 item_id = 4101
 name = "empty jar"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1006_full_jar"
@@ -310,8 +550,7 @@ base_id = "base_item"
 item_id = 4102
 name = "full jar"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1007_half_empty_jar"
@@ -319,8 +558,7 @@ base_id = "base_item"
 item_id = 4103
 name = "half empty jar"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1008_wash_basin"
@@ -328,8 +566,7 @@ base_id = "base_item"
 item_id = 4104
 name = "wash basin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 5.0
 
 [[item]]
 id = "0x1009_basin"
@@ -337,8 +574,7 @@ base_id = "base_item"
 item_id = 4105
 name = "basin"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
 
 [[item]]
 id = "0x10e3_dough_bowl"
@@ -346,8 +582,135 @@ base_id = "base_item"
 item_id = 4323
 name = "dough bowl"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
+
+[[item]]
+id = "0x10e8_small_wooden_spoon"
+base_id = "base_item"
+item_id = 4328
+name = "small wooden spoon"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x10e9_large_wooden_spoon"
+base_id = "base_item"
+item_id = 4329
+name = "large wooden spoon"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1871_beef_carcass"
+base_id = "base_item"
+item_id = 6257
+name = "beef carcass"
+rarity = "common"
+weight = 5.0
+
+[[item]]
+id = "0x1872_beef_carcass"
+base_id = "base_item"
+item_id = 6258
+name = "beef carcass"
+rarity = "common"
+weight = 5.0
+
+[[item]]
+id = "0x1873_sheep_carcass"
+base_id = "base_item"
+item_id = 6259
+name = "sheep carcass"
+rarity = "common"
+weight = 5.0
+
+[[item]]
+id = "0x1874_sheep_carcass"
+base_id = "base_item"
+item_id = 6260
+name = "sheep carcass"
+rarity = "common"
+weight = 5.0
+
+[[item]]
+id = "0x1941_glass_mugs"
+base_id = "base_item"
+item_id = 6465
+name = "glass mugs"
+rarity = "common"
+weight = 10.0
+
+[[item]]
+id = "0x1942_goblets"
+base_id = "base_item"
+item_id = 6466
+name = "goblets"
+rarity = "common"
+weight = 10.0
+
+[[item]]
+id = "0x1943_tankards"
+base_id = "base_item"
+item_id = 6467
+name = "tankards"
+rarity = "common"
+weight = 10.0
+
+[[item]]
+id = "0x1ad6_keg"
+base_id = "base_item"
+item_id = 6870
+name = "keg"
+rarity = "common"
+weight = 10.0
+
+[[item]]
+id = "0x1ad7_keg"
+base_id = "base_item"
+item_id = 6871
+name = "keg"
+rarity = "common"
+weight = 10.0
+
+[[item]]
+id = "0x1e83_bird"
+base_id = "base_item"
+item_id = 7811
+name = "bird"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1e84_bird"
+base_id = "base_item"
+item_id = 7812
+name = "bird"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1e85_bird"
+base_id = "base_item"
+item_id = 7813
+name = "bird"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1e86_bird"
+base_id = "base_item"
+item_id = 7814
+name = "bird"
+rarity = "common"
+weight = 1.0
+
+[[item]]
+id = "0x1e87_chicken"
+base_id = "base_item"
+item_id = 7815
+name = "chicken"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x1e88_skinned_goat"
@@ -355,8 +718,7 @@ base_id = "base_item"
 item_id = 7816
 name = "skinned goat"
 rarity = "common"
-movable = false
-hue = 0
+weight = 10.0
 
 [[item]]
 id = "0x1e89_skinned_goat"
@@ -364,8 +726,7 @@ base_id = "base_item"
 item_id = 7817
 name = "skinned goat"
 rarity = "common"
-movable = false
-hue = 0
+weight = 10.0
 
 [[item]]
 id = "0x1e8a_lard"
@@ -373,8 +734,7 @@ base_id = "base_item"
 item_id = 7818
 name = "lard"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1e8b_plucked_chicken"
@@ -382,8 +742,7 @@ base_id = "base_item"
 item_id = 7819
 name = "plucked chicken"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1e8c_pig's_feet"
@@ -391,8 +750,7 @@ base_id = "base_item"
 item_id = 7820
 name = "pig's feet"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1e8d_pig's_feet"
@@ -400,8 +758,7 @@ base_id = "base_item"
 item_id = 7821
 name = "pig's feet"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1e8e_pig's_head"
@@ -409,8 +766,7 @@ base_id = "base_item"
 item_id = 7822
 name = "pig's head"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1e8f_pig's_head"
@@ -418,8 +774,7 @@ base_id = "base_item"
 item_id = 7823
 name = "pig's head"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1e90_skinned_deer"
@@ -427,8 +782,7 @@ base_id = "base_item"
 item_id = 7824
 name = "skinned deer"
 rarity = "common"
-movable = false
-hue = 0
+weight = 10.0
 
 [[item]]
 id = "0x1e91_skinned_deer"
@@ -436,8 +790,7 @@ base_id = "base_item"
 item_id = 7825
 name = "skinned deer"
 rarity = "common"
-movable = false
-hue = 0
+weight = 10.0
 
 [[item]]
 id = "0x1e92_skinned_rabbit"
@@ -445,8 +798,7 @@ base_id = "base_item"
 item_id = 7826
 name = "skinned rabbit"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
 
 [[item]]
 id = "0x1e93_skinned_rabbit"
@@ -454,8 +806,7 @@ base_id = "base_item"
 item_id = 7827
 name = "skinned rabbit"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
 
 [[item]]
 id = "0x1e94_chicken_on_a_spit"
@@ -463,8 +814,7 @@ base_id = "base_item"
 item_id = 7828
 name = "chicken on a spit"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
 
 [[item]]
 id = "0x1e95_rabbit_on_a_spit"
@@ -472,8 +822,7 @@ base_id = "base_item"
 item_id = 7829
 name = "rabbit on a spit"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
 
 [[item]]
 id = "0x1e96_spit"
@@ -481,8 +830,7 @@ base_id = "base_item"
 item_id = 7830
 name = "spit"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1e97_chicken_on_a_spit"
@@ -490,8 +838,7 @@ base_id = "base_item"
 item_id = 7831
 name = "chicken on a spit"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
 
 [[item]]
 id = "0x1e98_rabbit_on_a_spit"
@@ -499,8 +846,7 @@ base_id = "base_item"
 item_id = 7832
 name = "rabbit on a spit"
 rarity = "common"
-movable = false
-hue = 0
+weight = 2.0
 
 [[item]]
 id = "0x1e99_spit"
@@ -508,8 +854,7 @@ base_id = "base_item"
 item_id = 7833
 name = "spit"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1f81_glass"
@@ -517,8 +862,7 @@ base_id = "base_item"
 item_id = 8065
 name = "glass"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1f82_glass"
@@ -526,8 +870,7 @@ base_id = "base_item"
 item_id = 8066
 name = "glass"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1f83_glass"
@@ -535,8 +878,7 @@ base_id = "base_item"
 item_id = 8067
 name = "glass"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1f84_glass"
@@ -544,8 +886,7 @@ base_id = "base_item"
 item_id = 8068
 name = "glass"
 rarity = "common"
-movable = false
-hue = 0
+weight = 1.0
 
 [[item]]
 id = "0x1882_winnowing_basket"
@@ -554,4 +895,4 @@ item_id = 6274
 name = "winnowing basket"
 rarity = "common"
 movable = true
-hue = 0
+weight = 3.0

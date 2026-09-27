@@ -171,3 +171,57 @@ cleanup; `IsConnected == false` or a close event alone does not.
 
 This framing sample does not parse UO packets. See [Packets and handlers](packets.md)
 and [Transport and game ownership](network-game-separation.md) for host integration.
+
+
+## UO host encryption middleware
+
+The UO host installs a fresh `UoEncryptionMiddleware` through
+`UoNetworkOptionsFactory` for each accepted login/game connection when
+`network.encryption.mode` is `Optional` or `Required`. See
+[client encryption configuration](server-configuration.md#uo-client-encryption).
+
+Incoming bytes pass through decryption before `UoPacketFramer` or `GameSeedFramer`.
+The middleware retains at most 86 handshake bytes: a four-byte raw seed or 21-byte
+`0xEF` seed, followed by the complete 62-byte account login or 65-byte game login.
+It first checks for plaintext using the canonical `AccountLoginPacket.TryParse`
+or `GameLoginPacket.TryParse` contract, including credential validation. `Optional`
+accepts a valid plaintext login; `Required` rejects it. Otherwise, it decrypts with
+the configured profile and requires the same complete packet validation before
+releasing any seed or login frames. Full-width ASCII credentials and padding after
+a NUL follow the normal packet parser rules.
+
+Fragmented handshakes wait for more input; bytes coalesced after the login continue
+through the established cipher without decrypting a byte twice. On the login
+listener, raw legacy seeds become `0xEF` frames using the version components from
+`network.encryption.client_version`. Game seed bytes and existing versioned seeds
+remain intact; their version fields do not select another encryption profile.
+Zero seeds and the legacy KR `0xFFFFFFFF` seed handshake are rejected.
+
+Outgoing game data runs through `UoCompressionMiddleware` first and the encryption
+middleware second; compression starts only when enabled for the session.
+POL profiles cover the old, 1.25.36 and standard login XOR variants, Blowfish game
+streams, combined Blowfish/Twofish, and Twofish with server-to-client MD5-XOR.
+Only the Twofish profile transforms outgoing game bytes; the Blowfish and combined
+profiles leave them unencrypted, as POL does. Login-server replies remain plaintext.
+Cipher state belongs to the connection, with independent inbound and outbound
+positions. The transport serializes send transformations together with socket
+writes, preserving cipher order even when callers send concurrently.
+
+A rejected seed or login throws before any handshake frames are dispatched, and
+the transport closes the connection. This is structural validation, not
+authenticated encryption: a wrong profile can theoretically produce a valid packet.
+The listener uses one configured profile, without automatic client-version
+detection or fallback to other profiles. POL vector and loopback tests cover the
+implemented streams, fragmentation, coalescing and connection isolation; they do
+not establish live Enhanced Client interoperability, which has not been tested.
+
+Golden vectors under `tests/Moongate.Network.Packets.Tests/TestSupport/Encryption`
+come from the original POL C++ algorithms. To regenerate them from a POL checkout:
+
+```sh
+python3 tests/Moongate.Network.Packets.Tests/TestSupport/Encryption/generate-pol-vectors.py /path/to/polserver
+```
+
+The generator requires Python 3, Git and a C++20 `g++` compiler. It rewrites
+`pol-vectors.json` and records the source checkout's commit. Production uses C#
+cipher implementations and .NET's MD5 API, without a POL binary dependency.

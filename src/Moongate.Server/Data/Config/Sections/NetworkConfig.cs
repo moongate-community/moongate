@@ -4,6 +4,8 @@ namespace Moongate.Server.Data.Config.Sections;
 
 public class NetworkConfig
 {
+    public NetworkEncryptionConfig Encryption { get; set; } = new();
+
     public int LoginPort { get; set; } = 2593;
 
     public int GamePort { get; set; } = 2595;
@@ -14,6 +16,13 @@ public class NetworkConfig
 
     public void Validate(ServerMode mode)
     {
+        if (Encryption is null)
+        {
+            throw new InvalidOperationException("network.encryption cannot be null.");
+        }
+
+        Encryption.Validate();
+
         if ((mode & ServerMode.Login) != 0 && LoginPort is < 0 or > 65535)
         {
             throw new InvalidOperationException("network.login_port must be between 0 and 65535.");

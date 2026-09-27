@@ -1,6 +1,11 @@
 [[item]]
+id = "0x2fb8"
+base_id = "0x2fb8_lbr"
+item_id = 0
+rarity = "common"
+
+[[item]]
 id = "0x3172"
+base_id = "0x2fb8_lbr"
 item_id = 12658
 rarity = "common"
-movable = false
-hue = 0

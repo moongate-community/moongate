@@ -42,6 +42,8 @@
     <ItemGroup>
         <Content Include="../../migrations/auth/*.sql"
                  Link="AccountMigrations/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"/>
+        <Content Include="../../migrations/world/*.sql"
+                 Link="WorldMigrations/%(Filename)%(Extension)" CopyToOutputDirectory="PreserveNewest"/>
     </ItemGroup>
 
     <ItemGroup>
@@ -107,4 +109,8 @@
     <ItemGroup>
         <ProjectReference Include="../../src/Moongate.Server.Admin/Moongate.Server.Admin.csproj"/>
     </ItemGroup>
+    <ItemGroup>
+        <EmbeddedResource Include="../Moongate.Network.Packets.Tests/TestSupport/Encryption/pol-vectors.json" LogicalName="Moongate.Tests.TestSupport.Network.pol-vectors.json"/>
+    </ItemGroup>
+
 </Project>

@@ -2,14 +2,18 @@ using Moongate.Core.Types.Expansions;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Types.Login;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Sessions;
+using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Types.Characters;
@@ -27,13 +31,22 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
     private readonly ILogger _logger = Log.ForContext<GameLoginPacketHandler>();
 
     private readonly IDataLoaderService _dataLoaderService;
+    private readonly ICharacterService _characters;
+    private readonly CharactersConfig _charactersConfig;
 
-
-    public GameLoginPacketHandler(RealmInstance realm, IGameHandoffStore handoffs, IDataLoaderService dataLoaderService)
+    public GameLoginPacketHandler(
+        RealmInstance realm,
+        IGameHandoffStore handoffs,
+        IDataLoaderService dataLoaderService,
+        ICharacterService characters,
+        CharactersConfig charactersConfig
+    )
     {
         _realm = realm;
         _handoffs = handoffs;
         _dataLoaderService = dataLoaderService;
+        _characters = characters;
+        _charactersConfig = charactersConfig;
     }
 
     public async ValueTask HandleAsync(
@@ -44,7 +57,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
     {
         if (packet.AuthKey == 0 || context.Seed != packet.AuthKey)
         {
-            await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+            await DenyAsync(context, cancellationToken);
 
             return;
         }
@@ -60,8 +73,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
                     packet.Account,
                     packet.Password,
                     cancellationToken
-                )
-                .ConfigureAwait(false);
+                );
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -70,7 +82,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         catch (Exception exception)
         {
             _logger.Warning("Game handoff lookup failed: {FailureType}", exception.GetType().Name);
-            await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+            await DenyAsync(context, cancellationToken);
 
             return;
         }
@@ -81,7 +93,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
             handoff.InstanceId != _realm.InstanceId ||
             !StringComparer.Ordinal.Equals(handoff.Username, packet.Account))
         {
-            await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+            await DenyAsync(context, cancellationToken);
 
             return;
         }
@@ -103,26 +115,41 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
                     session.NetworkSession.EnableCompression();
                 },
                 cancellationToken
-            )
-            .ConfigureAwait(false);
+            );
+
+        IReadOnlyList<MobileEntity> characters;
+
+        try
+        {
+            characters = await _characters.GetCharactersAsync(handoff.AccountId, cancellationToken);
+        }
+        catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
+        {
+            return;
+        }
+        catch (Exception exception)
+        {
+            // The client is already authenticated and waits for its character list; deny rather than leave it hanging.
+            _logger.Error(exception, "Character list lookup for account {AccountId} failed", handoff.AccountId);
+            await DenyAsync(context, cancellationToken);
+
+            return;
+        }
+        var maxPerAccount = _charactersConfig.MaxPerAccount;
+        var characterListPacket = new CharacterListPacket(
+            CharacterListBuilder.Names(characters, maxPerAccount),
+            _dataLoaderService.GetEntities<StartingCityContent>(),
+            CharacterListFlags.Default | CharacterListBuilder.SlotFlags(maxPerAccount)
+        );
 
         await context.RunOnGameLoopAsync(
-            session =>
-            {
-
-                var characterListPacket = new CharacterListPacket(
-                    [null, null, null,null, null, null, null],
-                    _dataLoaderService.GetEntities<StartingCityContent>(),
-                    CharacterListFlags.Default |
-                    CharacterListFlags.SixthCharacterSlot |
-                    CharacterListFlags.SeventhCharacterSlot
-                );
-
-                context.TrySend(new SupportFeaturesPacket(FeatureFlags.ExpansionEj | FeatureFlags.SeventhCharacterSlot));
-                context.TrySend(characterListPacket);
-
-
-            }, cancellationToken);
+                _ =>
+                {
+                    context.TrySend(new SupportFeaturesPacket(CharacterListBuilder.Features(maxPerAccount)));
+                    context.TrySend(characterListPacket);
+                },
+                cancellationToken
+            );
     }
 
     private static async Task DenyAsync(PacketContext context, CancellationToken cancellationToken)
@@ -130,7 +157,6 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         await context.SendAndDisconnectAsync(
                 new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem),
                 cancellationToken
-            )
-            .ConfigureAwait(false);
+            );
     }
 }

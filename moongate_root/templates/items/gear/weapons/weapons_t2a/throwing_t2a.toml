@@ -1,0 +1,26 @@
+[[item]]
+id = "0x090a_t2a"
+base_id = "base_soul_glaive"
+item_id = 0
+rarity = "common"
+weight = 9.0
+buy_price = 77
+sell_price = 39
+
+[[item]]
+id = "0x08ff_t2a"
+base_id = "base_boomerang"
+item_id = 0
+rarity = "common"
+weight = 4.0
+buy_price = 32
+sell_price = 16
+
+[[item]]
+id = "0x0901_t2a"
+base_id = "base_cyclone"
+item_id = 0
+rarity = "common"
+weight = 6.0
+buy_price = 53
+sell_price = 26
