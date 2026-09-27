@@ -1,4 +1,5 @@
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Data.Config;
@@ -35,6 +36,7 @@ public sealed class CharacterService : ICharacterService
     private readonly IDataLoaderService _data;
     private readonly IStartingItemsService _startingItems;
     private readonly MoongatePersistenceService _persistence;
+    private readonly IDataAccess<MobileEntity> _mobiles;
     private readonly IMoongateEventBus _events;
     private readonly CharactersConfig _config;
 
@@ -42,6 +44,7 @@ public sealed class CharacterService : ICharacterService
         IDataLoaderService data,
         IStartingItemsService startingItems,
         MoongatePersistenceService persistence,
+        IDataAccess<MobileEntity> mobiles,
         IMoongateEventBus events,
         CharactersConfig config
     )
@@ -49,6 +52,7 @@ public sealed class CharacterService : ICharacterService
         _data = data;
         _startingItems = startingItems;
         _persistence = persistence;
+        _mobiles = mobiles;
         _events = events;
         _config = config;
     }
@@ -132,14 +136,9 @@ public sealed class CharacterService : ICharacterService
         CancellationToken cancellationToken = default
     )
     {
-        IReadOnlyList<MobileEntity> characters = [];
-
-        await _persistence.ExecuteInTransactionAsync(
-            PersistenceDatabaseTarget.Realm,
-            async transaction => characters = await transaction.GetDataAccess<MobileEntity>()
-                                                                .QueryAsync(mobile => mobile.AccountId == accountId, cancellationToken),
-            cancellationToken
-        );
+        // A plain read: a transaction would queue behind every realm write. The unique slot index, not this count,
+        // is what stops two creates from sharing a slot.
+        var characters = await _mobiles.QueryAsync(mobile => mobile.AccountId == accountId, cancellationToken);
 
         return characters.OrderBy(character => character.Slot ?? byte.MaxValue).ThenBy(character => character.Id).ToList();
     }

@@ -3,6 +3,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
+using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
@@ -194,6 +195,38 @@ public sealed class CharacterServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task GetCharactersAsync_DoesNotWaitForARealmWriteInProgress()
+    {
+        var service = CreateService();
+        await service.CreateAsync(Account, Request());
+        var writeStarted = new TaskCompletionSource();
+        var releaseWrite = new TaskCompletionSource();
+        var write = _host.Owner.ExecuteInTransactionAsync(
+            PersistenceDatabaseTarget.Realm,
+            async _ =>
+            {
+                writeStarted.SetResult();
+                await releaseWrite.Task;
+            },
+            CancellationToken.None
+        );
+        await writeStarted.Task;
+
+        try
+        {
+            var read = service.GetCharactersAsync(Account);
+
+            Assert.Same(read, await Task.WhenAny(read, Task.Delay(TimeSpan.FromSeconds(5))));
+            Assert.Single(await read);
+        }
+        finally
+        {
+            releaseWrite.SetResult();
+            await write;
+        }
+    }
+
+    [Fact]
     public async Task GetCharactersAsync_ReturnsOnlyThatAccountsPlayers_BySlot()
     {
         var service = CreateService();
@@ -263,6 +296,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
             loaders,
             startingItems,
             _host.Owner,
+            _mobiles,
             _eventContainer.Resolve<IMoongateEventBus>(),
             new CharactersConfig { MaxPerAccount = maxPerAccount }
         );

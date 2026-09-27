@@ -1,6 +1,7 @@
 using System.Net;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
+using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Services;
@@ -70,6 +71,29 @@ public sealed class GameLoginPacketHandlerTests
 
         var list = Assert.Single(sender.Sent.OfType<CharacterListPacket>());
         Assert.Equal([null, null, "Aria", null, null], list.Characters);
+    }
+
+    [Fact]
+    public async Task HandleAsync_CharacterLookupFails_DeniesAndDisconnects()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        session.NetworkSession.SetSeed(AuthKey);
+        var sender = new StubPacketSendService();
+        var context = new PacketContext(session, fixture.Loop, sessions, sender);
+        var characters = new RecordingCharacterService { Failure = new InvalidOperationException("database down") };
+
+        await new GameLoginPacketHandler(
+            Realm(),
+            new RecordingHandoffStore { Result = Handoff() },
+            new StubDataLoaderService(),
+            characters,
+            new CharactersConfig()
+        ).HandleAsync(context, new(AuthKey, "user", "password"), CancellationToken.None);
+
+        Assert.IsType<LoginDeniedPacket>(Assert.Single(sender.Sent));
+        Assert.False(fixture.Client.IsConnected);
     }
 
     [Theory, InlineData(null, AuthKey), InlineData(0x23456789u, AuthKey)]

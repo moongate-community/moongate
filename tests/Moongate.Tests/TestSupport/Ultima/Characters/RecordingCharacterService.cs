@@ -24,6 +24,11 @@ public sealed class RecordingCharacterService : ICharacterService
     /// </summary>
     public List<MobileEntity> Characters { get; set; } = [];
 
+    /// <summary>
+    ///     Gets or sets an exception both members throw instead of answering, as a failing database would.
+    /// </summary>
+    public Exception? Failure { get; set; }
+
     public Task<CharacterCreationResult> CreateAsync(
         Serial accountId,
         CharacterCreationRequest request,
@@ -34,6 +39,11 @@ public sealed class RecordingCharacterService : ICharacterService
         CreatedFor = accountId;
         Request = request;
 
+        if (Failure is not null)
+        {
+            return Task.FromException<CharacterCreationResult>(Failure);
+        }
+
         return Task.FromResult(
             Result ?? CharacterCreationResult.Created(new MobileEntity { Id = new(1), Name = request.Name }, [])
         );
@@ -41,6 +51,11 @@ public sealed class RecordingCharacterService : ICharacterService
 
     public Task<IReadOnlyList<MobileEntity>> GetCharactersAsync(Serial accountId, CancellationToken cancellationToken = default)
     {
+        if (Failure is not null)
+        {
+            return Task.FromException<IReadOnlyList<MobileEntity>>(Failure);
+        }
+
         return Task.FromResult<IReadOnlyList<MobileEntity>>(Characters);
     }
 }
