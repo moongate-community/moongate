@@ -1,4 +1,5 @@
 using FreeSql.DataAnnotations;
+using Moongate.Core.Attributes;
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
@@ -21,6 +22,7 @@ namespace Moongate.Server.Ultima.Entities.World;
 ///     or <see cref="Visibility" /> means the template's value.
 /// </remarks>
 [Table(Name = "world.items")]
+[SerialRange(Serial.MinItem, Serial.MaxItem)]
 public class ItemEntity : IMoongateEntity
 {
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
