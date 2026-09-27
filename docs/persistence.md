@@ -272,6 +272,14 @@ whole numbers back as `long` and enums as their number, so `GetProp<T>` converts
 type asked for, and throws `InvalidCastException` naming the key when the stored value
 does not convert. An item with no props stores `NULL`.
 
+A mobile keeps what its template rolled when it was made: `template_id` (null for a
+player character), `hits`/`hits_max`, `mana`/`mana_max`, `stamina`/`stamina_max`,
+`fame`, `karma`, `armor` and the five `resist_*` columns, besides name, body, looks,
+stats and skills. `title` and `notoriety` are stored only when they differ from the
+template's (null means the template's); a CHECK keeps `notoriety` between 1 and 7.
+`MobileEntity` has the same `props` dictionary and `SetProp`/`GetProp`/`TryGetProp`/
+`RemoveProp` helpers as items, with the same rules.
+
 ## Accounts
 
 The built-in Ultima plugin registers `AccountEntity` in the Accounts database and

@@ -13,8 +13,9 @@ the same way a service or a metric provider is.
 The loader contract, `DataLoaderService`, `EnumValueSpec<TEnum>`, `RangeValueSpec<T>`
 and the converter registry are in place and tested. The `ItemTemplate`,
 `MobileTemplate` and `LootTemplate` data shapes exist, and [a converter](uox3-migration.md) produces them
-from UOX3 data. **Item templates are loaded** (see [Item templates at runtime](#item-templates-at-runtime));
-mobile and loot templates are not loaded yet.
+from UOX3 data. **Item and mobile templates are loaded** (see
+[Item templates at runtime](#item-templates-at-runtime) and
+[Mobile templates at runtime](#mobile-templates-at-runtime)); loot templates are not loaded yet.
 The same contract already loads the files under `data/`, such as maps, races and
 regions: see [Shard data files](data-files.md) for working loaders.
 See [Implementation status](implementation-status.md).
@@ -52,6 +53,58 @@ refuses an item with no location and gives a new item a serial from
 `world.items_id_seq`, inside `Serial.MinItem..MaxItem`. `SaveAsync(items)` saves a
 list in one transaction, in order (a container before its contents), and
 `SaveAsync(transaction, item)` saves inside a transaction the caller opened.
+
+## Mobile templates at runtime
+
+`MobileTemplatesLoader` reads every `*.toml` under `templates/mobiles/`, subfolders
+included, after the item templates, and resolves `base_id` once, as UOX3's `GET` does
+(the child inherits everything and overrides what it sets):
+
+- a field left unset takes the parent's value, up the chain;
+- `skills`, `resistances` and `sounds` are inherited key by key: the child's entries
+  override, the parent's other entries stay;
+- `tags` merge: the child's keys add to and override the parent's;
+- `equipment` and `loot`, when set, replace the parent's;
+- everything inherited is copied, never shared between templates.
+
+The server stops when an id is empty or used twice, a `base_id` names no template or
+loops back, a template fails `MobileTemplate.Validate()`, a `name_list` names no list of
+`data/names.toml` (`{gender}` is always accepted), or an equipment item is not an item
+template. `IMobileTemplateService` serves the resolved templates (`TryGet`, `Get`,
+`Count`).
+
+`IMobileFactoryService` makes NPCs from them:
+
+```csharp
+var spawned = await mobiles.SpawnAsync("guard", MapType.Felucca, new Point3D(1602, 1591, 20));
+// spawned.Mobile is saved with its serial; spawned.Equipment is what it wears.
+```
+
+`Create(templateId)` builds the `MobileEntity` in memory and rolls every random value
+once: gender (`random` or unset is 50/50), body (the template's, else the race body for
+the gender from `races.toml`), name (the template's, else one of `name_list`, where
+`{gender}` picks the `male` or `female` list), skin, hair and beard (from the template,
+else the race; `hair = []` is bald; females get no beard), stats, hits, mana and stamina
+(which default to strength, intelligence and dexterity), armor, resistances, fame,
+karma and skills (template points × 10, the tenths the mobile stores). `title` and
+`notoriety` stay null: the template's apply.
+
+`SpawnAsync(templateId, map, location)`:
+
+1. rejects a location outside the map, before anything else;
+2. creates the mobile and places it;
+3. publishes `MobileBeforeSpawnEvent`: a handler may change the mobile; an exception
+   stops the spawn with nothing saved;
+4. in one transaction, saves the mobile (its serial comes from the mobile range) and
+   creates each equipment entry through `IItemFactoryService`: an entry with a `gender`
+   is skipped for the other gender; the item is worn on its layer (the template's, else
+   tiledata's for a wearable graphic); an item with no layer, or whose layer is taken,
+   is dropped, since NPCs have no backpack yet;
+5. after the commit, publishes `MobileMovedToWorldEvent` and then
+   `MobileAfterSpawnEvent`. An exception in one of those reaches the caller, but the
+   mobile stays saved.
+
+`SaveAsync(mobile)` saves a mobile that already has its serial.
 
 ## The loader contract
 

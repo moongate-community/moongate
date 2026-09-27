@@ -168,7 +168,10 @@ duplicate usernames, or null usernames or password hashes, must be resolved befo
 the constraint migration can apply; no account is silently deleted. The core world
 catalog has `0001_mobiles.sql`, `0002_items.sql`, `0003_world_column_comments.sql` and
 `0004_item_rarity.sql`, which adds the `rarity` column (existing items become Common) and
-its `ck_items_rarity` check. Their table and sequence DDL comes
+its `ck_items_rarity` check, and `0005_mobile_npc_fields.sql`, which adds the NPC columns
+of `world.mobiles` (template id, title, notoriety, hits, mana, stamina, fame, karma,
+armor, resistances, props; existing rows get 0 or null) and its `ck_mobiles_notoriety`
+check. Their table and sequence DDL comes
 from the development generator; the foreign keys, CHECK constraints and partial indexes
 are written by hand, since the generator produces only columns and sequences, and the
 startup schema check accepts them. The sample plugin ships
