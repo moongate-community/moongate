@@ -1,0 +1,119 @@
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Names;
+using Moongate.Server.Ultima.Data.Races;
+using Moongate.Server.Ultima.Data.Templates.Mobiles;
+using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Ultima.Types;
+
+namespace Moongate.Tests.Server.Ultima.Services;
+
+public sealed class MobileFactoryServiceTests
+{
+    private readonly MobileFactoryService _factory;
+
+    public MobileFactoryServiceTests()
+    {
+        var loaders = new StubDataLoaderService()
+                      .With(
+                          new MobileTemplate
+                          {
+                              Id = "guard", Race = RaceType.Human, Gender = MobileGenderType.Random, NameList = "{gender}",
+                              Strength = DiceSpec.Parse("1d10+90"), Dexterity = DiceSpec.FromValue(80),
+                              Intelligence = DiceSpec.FromValue(70), Mana = DiceSpec.FromValue(5),
+                              Resistances = new MobileResistances { Fire = DiceSpec.FromValue(30) },
+                              Skills = new() { ["tactics"] = DiceSpec.FromValue(95) },
+                              Fame = DiceSpec.FromValue(500), Karma = DiceSpec.FromValue(-100), Armor = DiceSpec.FromValue(20)
+                          },
+                          new MobileTemplate
+                          {
+                              Id = "bald_monk", Race = RaceType.Human, Gender = MobileGenderType.Male, Name = "a monk", Hair = []
+                          },
+                          new MobileTemplate { Id = "orc", Body = 17, NameList = "orc" }
+                      )
+                      .With(
+                          new RaceContent
+                          {
+                              Race = RaceType.Human, Name = "Human",
+                              SkinHues = [HueSpec.FromRange(0x3EA, 0x422)], HairHues = [HueSpec.FromRange(0x44E, 0x47D)],
+                              Male = new RaceGenderContent { Body = 400, Hair = [0x203B], Beard = [0x203E] },
+                              Female = new RaceGenderContent { Body = 401, Hair = [0x203C], Beard = [] }
+                          }
+                      )
+                      .With(
+                          new NameList { Id = "male", Names = ["Aaron"] },
+                          new NameList { Id = "female", Names = ["Alice"] },
+                          new NameList { Id = "orc", Names = ["Grok"] }
+                      );
+
+        // Create touches no persistence, map, items or events; the integration tests cover SpawnAsync.
+        _factory = new MobileFactoryService(
+            new MobileTemplateService(loaders),
+            new NameService(loaders),
+            loaders,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!,
+            null!
+        );
+    }
+
+    [Fact]
+    public void Create_ARandomGenderHuman_GetsTheBodyNameAndLooksOfTheRolledGender()
+    {
+        var genders = new HashSet<GenderType>();
+
+        for (var i = 0; i < 200; i++)
+        {
+            var guard = _factory.Create("guard");
+            genders.Add(guard.Gender);
+            var male = guard.Gender == GenderType.Male;
+
+            Assert.Equal((male ? 400 : 401, male ? "Aaron" : "Alice"), (guard.Body, guard.Name));
+            Assert.Equal(male ? 0x203B : 0x203C, guard.HairStyle);
+            Assert.Equal(male ? 0x203E : 0, guard.BeardStyle);
+            Assert.InRange(guard.SkinHue.Value, 0x3EA, 0x422);
+            Assert.InRange(guard.HairHue.Value, 0x44E, 0x47D);
+        }
+
+        Assert.Equal(2, genders.Count);
+    }
+
+    [Fact]
+    public void Create_RollsStatsOnce_WithHitsAndStaminaFromStrAndDexWhenUnset()
+    {
+        var guard = _factory.Create("guard");
+
+        Assert.Equal(("guard", Serial.Zero, (Serial?)null), (guard.TemplateId, guard.Id, guard.AccountId));
+        Assert.InRange(guard.Strength, 91, 100);
+        Assert.Equal(
+            (guard.Strength, guard.Strength, 80, 80, 5, 5),
+            (guard.Hits, guard.HitsMax, guard.Stamina, guard.StaminaMax, guard.Mana, guard.ManaMax)
+        );
+        Assert.Equal((500, -100, 20, 30, 0), (guard.Fame, guard.Karma, guard.Armor, guard.ResistFire, guard.ResistCold));
+        var tactics = Assert.Single(guard.Skills);
+        Assert.Equal((SkillType.Tactics, 950), (tactics.Skill, tactics.Base));
+        Assert.Null(guard.Title);
+        Assert.Null(guard.Notoriety);
+    }
+
+    [Fact]
+    public void Create_AnEmptyHairList_IsBald_AndABodyTemplateHasNoRaceLooks()
+    {
+        var monk = _factory.Create("bald_monk");
+        var orc = _factory.Create("orc");
+
+        Assert.Equal(("a monk", 0), (monk.Name, monk.HairStyle));
+        Assert.Equal((17, "Grok", 0, 0, (ushort)0), (orc.Body, orc.Name, orc.HairStyle, orc.BeardStyle, orc.SkinHue.Value));
+        Assert.Equal(RaceType.Human, orc.Race);
+    }
+
+    [Fact]
+    public void Create_AnUnknownTemplate_Throws()
+    {
+        Assert.Contains("'ettin'", Assert.Throws<KeyNotFoundException>(() => _factory.Create("ettin")).Message);
+    }
+}

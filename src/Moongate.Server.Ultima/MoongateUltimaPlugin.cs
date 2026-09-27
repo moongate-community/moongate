@@ -123,6 +123,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<IMobileTemplateService, MobileTemplateService>(Reuse.Singleton);
             container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
             container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
+            container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
             container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
             container.Register<IMovementService, MovementService>(Reuse.Singleton);
             container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
