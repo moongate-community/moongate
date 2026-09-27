@@ -812,7 +812,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             return;
         }
 
-        LuaDefinitionsGenerator.Write(_options.ScriptsDirectory, _boundModules, _publishedEnums);
+        LuaDefinitionsGenerator.Write(
+            _options.ScriptsDirectory,
+            _boundModules,
+            _publishedEnums,
+            _registry.EventRegistrations.Select(registration => registration.Name).ToList()
+        );
     }
 
     /// <summary>
