@@ -230,16 +230,18 @@ internal static class UoxMobileConverter
             return null;
         }
 
-        return GenderPairMerger.TryMerge(
-            StringUtils.ToSnakeCase(block.Header),
-            first,
-            second,
-            template => Resolve(template, byId),
-            report,
-            out var merged
-        )
-            ? merged
-            : null;
+        var id = StringUtils.ToSnakeCase(block.Header);
+
+        if (GenderPairMerger.TryMerge(id, first, second, template => Resolve(template, byId), report, out var merged))
+        {
+            return merged;
+        }
+
+        // Not a gender pair ([dragon] GET=graydragon reddragon): UOX3 picks one at random; a template has one base, so
+        // the first is kept.
+        report.Count("two-target get, first target kept");
+
+        return new MobileTemplate { Id = id, BaseId = first.Id };
     }
 
     // Race and gender may come from a base: walk the base_id chain until each is found.

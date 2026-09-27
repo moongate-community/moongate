@@ -115,7 +115,7 @@ items = ["0x1410"]
 [[mobile]]
 id = "f_murderer_archmage"
 base_id = "basehuman"
-name_list = "male"
+name_list = "female"
 title = "the Archmage"
 gender = "female"
 race = "human"
@@ -292,7 +292,7 @@ items = ["0x170b_boots"]
 [[mobile]]
 id = "f_paladin"
 base_id = "basehuman"
-name_list = "male"
+name_list = "female"
 title = "the Paladin"
 gender = "female"
 race = "human"
@@ -340,7 +340,7 @@ items = ["0x1515_cloak"]
 [[mobile]]
 id = "f_warrior"
 base_id = "basehuman"
-name_list = "male"
+name_list = "female"
 title = "the Warrior"
 gender = "female"
 race = "human"
@@ -538,7 +538,7 @@ hue = "0x0835-0x0852"
 [[mobile]]
 id = "f_thief_guildmaster"
 base_id = "basehuman"
-name_list = "male"
+name_list = "female"
 title = "the Thief Guildmaster"
 gender = "female"
 race = "human"
@@ -1193,7 +1193,7 @@ hue = 2117
 [[mobile]]
 id = "f_executioner"
 base_id = "basehuman"
-name_list = "male"
+name_list = "female"
 title = "the Executioner"
 gender = "female"
 race = "human"

@@ -120,7 +120,7 @@ rarity = "common"
 
 [[item]]
 id = "necro_sleeves"
-base_id = "0x13c6_lbr"
+base_id = "0x13cd"
 item_id = 0
 rarity = "common"
 hue = 707
@@ -141,7 +141,7 @@ hue = 707
 
 [[item]]
 id = "necro_leggings"
-base_id = "0x13cc_lbr"
+base_id = "0x13cb_lbr"
 item_id = 0
 rarity = "common"
 hue = 707

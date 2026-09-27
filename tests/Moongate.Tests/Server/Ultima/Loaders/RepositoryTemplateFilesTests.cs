@@ -63,7 +63,7 @@ public sealed class RepositoryTemplateFilesTests
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
-        Assert.Equal(667, mobiles.Count);
+        Assert.Equal(671, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
     }
 

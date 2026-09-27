@@ -1301,6 +1301,37 @@ hue = "0x0835-0x0852"
 gender = "female"
 
 [[mobile]]
+id = "scribe"
+base_id = "basevendor"
+name_list = "{gender}"
+title = "the Scribe"
+gender = "random"
+race = "human"
+[mobile.skills]
+evaluating_intelligence = "1d24+59"
+inscription = "1d11+89"
+[mobile.sounds]
+death = 348
+[[mobile.equipment]]
+items = ["0x1efd_fancy_shirt"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x152e_short_pants", "0x1539_long_pants"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x170b_boots", "0x170f_shoes", "0x1711_thigh_boots"]
+
+[[mobile.equipment]]
+items = ["0x1f03_robe"]
+hue = "0x0515-0x054A"
+
+[[mobile.equipment]]
+items = ["0x1515_cloak"]
+hue = "0x0515-0x054A"
+
+[[mobile]]
 id = "shipwright"
 base_id = "basevendor"
 name_list = "{gender}"

@@ -39,6 +39,10 @@ hurt = 365
 death = 366
 
 [[mobile]]
+id = "dragon"
+base_id = "graydragon"
+
+[[mobile]]
 id = "graydrake"
 name = "a drake"
 body = 60
@@ -75,6 +79,10 @@ idle = 363
 attack = 364
 hurt = 365
 death = 366
+
+[[mobile]]
+id = "drake"
+base_id = "graydrake"
 
 [[mobile]]
 id = "shadowwyrm"

@@ -86,6 +86,8 @@ internal static class UoxItemConverterCommand
 
             foreach (var block in blocks)
             {
+                UoxDataFixes.Apply(block);
+
                 // UOX3 keeps the last definition of a header (scriptc.cpp overwrites defEntries[section]); files are read
                 // in ordinal order so the result does not depend on the filesystem.
                 if (blocksByHeader.ContainsKey(block.Header))

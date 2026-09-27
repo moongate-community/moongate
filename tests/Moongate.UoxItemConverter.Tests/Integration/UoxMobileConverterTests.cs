@@ -94,11 +94,17 @@ public sealed class UoxMobileConverterTests : IDisposable
     }
 
     [Theory,
-     InlineData("ID=0x0190", RaceType.Human, MobileGenderType.Male, null),
-     InlineData("ID=0x0191", RaceType.Human, MobileGenderType.Female, null),
-     InlineData("ID=0x025E", RaceType.Elf, MobileGenderType.Female, null),
-     InlineData("ID=0x0033\nRACE=22", null, null, 0x33)]
-    public void Run_HumanoidBodiesBecomeRaceAndGender(string lines, RaceType? race, MobileGenderType? gender, int? body)
+     InlineData("ID=0x0190", RaceType.Human, MobileGenderType.Male, null, "male"),
+     InlineData("ID=0x0191", RaceType.Human, MobileGenderType.Female, null, "female"),
+     InlineData("ID=0x025E", RaceType.Elf, MobileGenderType.Female, null, "female"),
+     InlineData("ID=0x0033\nRACE=22", null, null, 0x33, "female")]
+    public void Run_HumanoidBodiesBecomeRaceAndGender(
+        string lines,
+        RaceType? race,
+        MobileGenderType? gender,
+        int? body,
+        string nameList
+    )
     {
         WriteItemsAndNames();
         _dirs.WriteMobileSource("npc/a.dfn", $"[x]\n{{\n{lines}\nNAMELIST=2\n}}\n");
@@ -106,7 +112,8 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         var x = ReadMobiles("a.toml")["x"];
-        Assert.Equal((race, gender, body, "female"), (x.Race, x.Gender, x.Body, x.NameList));
+        // NAMELIST=2 (female) follows the gender on a male body.
+        Assert.Equal((race, gender, body, nameList), (x.Race, x.Gender, x.Body, x.NameList));
     }
 
     private int Run()
@@ -133,6 +140,64 @@ public sealed class UoxMobileConverterTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         Assert.Equal(0xC7, ReadMobiles("a.toml")["x"].Body);
+    }
+
+    [Fact]
+    public void Run_ARandomPickOfTwoCreatures_BecomesTheFirst()
+    {
+        // UOX3's [dragon] GET=graydragon reddragon: a template has one base, so the first is kept and counted.
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource(
+            "npc/dragons.dfn",
+            "[graydragon]\n{\nID=0x000c\n}\n[reddragon]\n{\nID=0x003b\n}\n[dragon]\n{\nGET=graydragon reddragon\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Equal("graydragon", ReadMobiles("dragons.toml")["dragon"].BaseId);
+        Assert.Contains("1 x two-target get, first target kept", _output.ToString());
+    }
+
+    [Fact]
+    public void Run_AnFPrefixedNpcWithAMaleBody_IsFemale_SoItsPairMerges()
+    {
+        // UOX3's femalevendors.dfn gives [f_scribe] the male body 0x0190.
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource(
+            "npc/vendors.dfn",
+            "[m_scribe]\n{\nID=0x0190\nNAMELIST=1\n}\n[f_scribe]\n{\nID=0x0190\nNAMELIST=2\n}\n[scribe]\n{\nGET=m_scribe f_scribe\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var mobiles = ReadMobiles("vendors.toml");
+        Assert.Equal(MobileGenderType.Female, mobiles["f_scribe"].Gender);
+        Assert.Equal((MobileGenderType.Random, "{gender}"), (mobiles["scribe"].Gender!.Value, mobiles["scribe"].NameList));
+    }
+
+    [Fact]
+    public void Run_ARaceOnANonHumanBody_IsDropped()
+    {
+        // UOX3's [giantrat] has RACE=2 (gargoyle) on the rat body.
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource("npc/a.dfn", "[giantrat]\n{\nID=0x00d7\nRACE=2\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var rat = ReadMobiles("a.toml")["giantrat"];
+        Assert.Equal(((int?)0xD7, (RaceType?)null), (rat.Body, rat.Race));
+    }
+
+    [Theory, InlineData("ID=0x0191\nNAMELIST=1", "female"), InlineData("ID=0x0190\nNAMELIST=2", "male")]
+    public void Run_AMaleOrFemaleNameList_FollowsTheGender(string lines, string list)
+    {
+        // UOX3's [f_paladin] and others use the male list on a female body.
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource("npc/a.dfn", $"[x]\n{{\n{lines}\n}}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Equal(list, ReadMobiles("a.toml")["x"].NameList);
     }
 
     [Fact]
@@ -341,9 +406,10 @@ public sealed class UoxMobileConverterTests : IDisposable
             guard.Equipment!.Select(entry => $"{string.Join(",", entry.Items)}:{entry.Gender}")
         );
         Assert.True(mobiles.ContainsKey("m_guard"));
-        Assert.False(mobiles.ContainsKey("dragon"));
+        // Not a gender pair: the first target is kept as its base.
+        Assert.Equal("m_guard", mobiles["dragon"].BaseId);
         Assert.Contains("differs between the male and female", CombinedOutput);
-        Assert.Contains("not a gender pair", CombinedOutput);
+        Assert.Contains("two-target get, first target kept", CombinedOutput);
     }
 
     [Fact]

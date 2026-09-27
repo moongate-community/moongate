@@ -37,8 +37,6 @@ internal static class GenderPairMerger
             (firstGender, secondGender) is not ((MobileGenderType.Male, MobileGenderType.Female) or
                                              (MobileGenderType.Female, MobileGenderType.Male)))
         {
-            report.Count("two-target get, not a gender pair");
-
             return false;
         }
 

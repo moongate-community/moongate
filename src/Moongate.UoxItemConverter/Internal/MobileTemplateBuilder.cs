@@ -110,7 +110,8 @@ internal static class MobileTemplateBuilder
             }
         }
 
-        if (template.Race is null && block.Fields.TryGetValue("RACE", out var raceText))
+        // RACE= only means something on a human-shaped body: UOX3's [giantrat] has RACE=2 on a rat.
+        if (template.Race is null && template.Body is null && block.Fields.TryGetValue("RACE", out var raceText))
         {
             template.Race = raceText.Trim() switch
             {
@@ -128,6 +129,24 @@ internal static class MobileTemplateBuilder
         {
             template.NameList = NameListsBuilder.ListId(list);
         }
+
+        // UOX3 data has f_ NPCs with the male body ([f_scribe] ID=0x0190) and m_ ones with the female body.
+        var prefixGender = block.Header.StartsWith("f_", StringComparison.OrdinalIgnoreCase) ? MobileGenderType.Female :
+                           block.Header.StartsWith("m_", StringComparison.OrdinalIgnoreCase) ? MobileGenderType.Male : (MobileGenderType?)null;
+
+        if (template.Race is not null && prefixGender is { } expected && template.Gender is { } gender && gender != expected)
+        {
+            template.Gender = expected;
+            context.Report.Count("f_ or m_ npc with the other gender's body, gender follows the prefix");
+        }
+
+        // And female NPCs using the male name list, or the other way round ([f_paladin] NAMELIST=1).
+        template.NameList = (template.Gender, template.NameList) switch
+        {
+            (MobileGenderType.Female, "male") => "female",
+            (MobileGenderType.Male, "female") => "male",
+            _ => template.NameList
+        };
     }
 
     // A number is a dictionary id; "#" means "the comment is the text"; anything else is the text itself.

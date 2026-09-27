@@ -1010,7 +1010,7 @@ id = "f_scribe"
 base_id = "basevendor"
 name_list = "female"
 title = "the Scribe"
-gender = "male"
+gender = "female"
 race = "human"
 [mobile.skills]
 evaluating_intelligence = "1d24+59"

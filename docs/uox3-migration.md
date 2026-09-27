@@ -56,7 +56,7 @@ Verified against real UOX3 data:
 | `custominttag=name value`, `customstringtag=name text` | `Tags` | Every line, so a block can set several |
 | `color=` or `colour=` | `Hue` | A fixed value, not a range; unset writes no hue, so the server's loader takes the base template's |
 | `weightmax=` | `MaxWeight` | |
-| `visible=1`, `2` or `3` | `Visibility = game_master` | Hidden, magically invisible or GM hidden all keep the item from players; `visible=0` or absent leaves it unset, visible to everyone |
+| `visible=1`, `2` or `3` / `visible=0` | `Visibility = game_master` / `regular` | Hidden, magically invisible or GM hidden all keep the item from players; `visible=0` is written out so it overrides a hidden parent; absent leaves it unset |
 
 Everything else has no home in `ItemTemplate` yet and is dropped: the combat stat
 fields, `colorlist`, `script=`, and the multi and geometry fields. `BaseId` is a pointer only: the
@@ -136,9 +136,9 @@ too.
 | --- | --- | --- |
 | `ID=0x0190` / `0x0191` | `race = "human"`, `gender` | elf 0x25D/0x25E and gargoyle 0x29A/0x29B likewise; the race gives the body |
 | `ID=` other | `body` | |
-| `RACE=0/1/2` | `race` human / elf / gargoyle | UOX3's other races are dropped |
+| `RACE=0/1/2` | `race` human / elf / gargoyle | only when the block sets no non-human body (UOX3's `[giantrat]` has `RACE=2` on a rat); UOX3's other races are dropped |
 | `NAME=`, `TITLE=` | `name`, `title` | a number is a dictionary id; `#` takes the line's `//` comment |
-| `NAMELIST=n` | `name_list` | 1 `male`, 2 `female`, 3 `orc`, 5 `daemon`, … |
+| `NAMELIST=n` | `name_list` | 1 `male`, 2 `female`, 3 `orc`, 5 `daemon`, …; `male`/`female` follow the gender, as UOX3 data has female NPCs on the male list |
 | `STR`, `DEX`, `INT` | `strength`, … | `96 120` becomes the die `1d25+95`; one value a constant |
 | `HPMAX` (else `HP`), `MANAMAX`, `STAMINAMAX` | `hits`, `mana`, `stamina` | dice |
 | `DAMAGE`, `DEF` | `damage`, `armor` | dice |
@@ -156,8 +156,16 @@ too.
 `gender = "random"`, `name_list = "{gender}"` and the equipment only one of them wears
 filtered by `gender`. Sounds the two set differently (humans die with a male or a female
 scream) are left unset rather than giving a female the male sound; any other field set
-differently takes the male value and is reported. Any other two-target
-`GET` (`graydragon reddragon`) is skipped.
+differently takes the male value and is reported. An `f_` or `m_` NPC whose body is the
+other gender's (UOX3's `[f_scribe]` has `ID=0x0190`) takes the prefix's gender, so its
+pair still merges. Any other two-target `GET` (`[dragon] GET=graydragon reddragon`, a
+random pick in UOX3) becomes a template whose `base_id` is the first target, and is
+counted; a pair whose targets do not exist (`shepherd`) is skipped.
+
+Two known mistakes in UOX3's item data are corrected as the blocks are read
+(`UoxDataFixes`): `necro_sleeves` and `necro_leggings` name the leather gloves and a
+leather tunic as their parents; they get the leather sleeves (`0x13cd`) and leggings
+(`0x13cb`).
 
 Dropped, no home yet: AI and wandering (`NPCAI`, `NPCWANDER`, `FX*`, speeds, `FLEEAT`),
 taming and bard skills (`TOTAME`, `CONTROLSLOTS`, `TOPROV`, `TOPEACE`), shops

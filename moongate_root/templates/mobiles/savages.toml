@@ -117,6 +117,10 @@ items = ["0x1452"]
 items = ["0x154b_tribal_mask", "0x154c"]
 
 [[mobile]]
+id = "savagewarrior"
+base_id = "f_savagewarrior"
+
+[[mobile]]
 id = "savagerider"
 base_id = "basesavage"
 body = 185

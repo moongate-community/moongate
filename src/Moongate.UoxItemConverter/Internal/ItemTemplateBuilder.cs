@@ -93,10 +93,10 @@ internal static class ItemTemplateBuilder
 
         // UOX3's visible= is 0 for everyone; 1 (hidden), 2 (magically invisible) and 3 (GM hidden) all keep the
         // item from players, the closest being visible to staff only.
-        if (block.Fields.TryGetValue("visible", out var visibleText) && UoxNumber.TryParse(visibleText, out var visible) &&
-            visible is >= 1 and <= 3)
+        if (block.Fields.TryGetValue("visible", out var visibleText) && UoxNumber.TryParse(visibleText, out var visible))
         {
-            template.Visibility = AccountType.GameMaster;
+            // 0 is everyone, written out so it overrides a hidden parent such as base_spawner.
+            template.Visibility = visible is >= 1 and <= 3 ? AccountType.GameMaster : AccountType.Regular;
         }
 
         if (block.Fields.TryGetValue("name", out var displayName) && displayName.Length > 0)

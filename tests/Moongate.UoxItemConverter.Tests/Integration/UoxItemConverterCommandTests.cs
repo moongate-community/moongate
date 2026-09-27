@@ -144,7 +144,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
 
     [Theory,
      InlineData("", null),
-     InlineData("visible=0", null),
+     InlineData("visible=0", AccountType.Regular),
      InlineData("visible=1", AccountType.GameMaster),
      InlineData("visible=2", AccountType.GameMaster),
      InlineData("visible=3", AccountType.GameMaster)]
@@ -967,6 +967,32 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.True(Run() == 0, CombinedOutput);
 
         Assert.Equal("radiant scimitar", Assert.Single(ReadItems("swords.toml").Values).Name);
+    }
+
+    [Fact]
+    public void Run_Visible0_IsVisibleToEveryone_OverridingAHiddenParent()
+    {
+        _dirs.WriteSource("items.dfn", "[base_spawner]\n{\nid=0x1f14\nvisible=1\n}\n[d_woodbox_1]\n{\nget=base_spawner\nid=0x09aa\nvisible=0\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Equal((AccountType?)AccountType.Regular, ReadItems()["d_woodbox_1"].Visibility);
+    }
+
+    [Fact]
+    public void Run_TheNecromancerSleevesAndLeggings_GetTheirRealGraphics()
+    {
+        // UOX3's leather.dfn has necro_sleeves get=0x13c6 (gloves) and necro_leggings get=0x13cc (a tunic).
+        _dirs.WriteSource(
+            "leather.dfn",
+            "[0x13c6]\n{\nid=0x13c6\n}\n[0x13cc]\n{\nid=0x13cc\n}\n[0x13cd]\n{\nid=0x13cd\n}\n[0x13cb]\n{\nid=0x13cb\n}\n" +
+            "[necro_sleeves]\n{\nget=0x13c6\ncolor=0x2C3\n}\n[necro_leggings]\n{\nget=0x13cc\ncolor=0x2C3\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems("leather.toml");
+        Assert.Equal(("0x13cd", "0x13cb"), (items["necro_sleeves"].BaseId, items["necro_leggings"].BaseId));
     }
 
     private Dictionary<string, Moongate.Server.Ultima.Data.Templates.Items.ItemTemplate> ReadItems(string file = "items.toml")
