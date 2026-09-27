@@ -4,6 +4,7 @@ using Moongate.Core.Primitives;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Types.Persistence;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Types.Templates;
@@ -43,6 +44,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var coin = Item(0x40000002, i => i.PutInContainer(backpack.Id, 44, 65));
         var wand = Item(0x40000003, i => i.PlaceOnGround(MapType.Trammel, new Point3D(1602, 1591, 20)));
         wand.Props = new ItemProps { Charges = 12, Tags = new() { ["quest_step"] = "3" } };
+        wand.Visibility = AccountType.GameMaster;
         coin.Amount = 250;
 
         foreach (var item in new[] { backpack, coin, wand })
@@ -55,10 +57,12 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var loadedPack = (await _items.GetByIdAsync(backpack.Id))!;
 
         Assert.Equal((backpack.Id, (short)44, (short)65, 250), (loadedCoin.ContainerId!.Value, loadedCoin.GridX!.Value, loadedCoin.GridY!.Value, loadedCoin.Amount));
-        Assert.Equal((MapType.Trammel, new Point3D(1602, 1591, 20)), (loadedWand.GroundMap!.Value, loadedWand.GroundLocation!.Value));
+        Assert.Equal((MapType.Trammel, new Point3D(1602, 1591, 20)), (loadedWand.Map!.Value, loadedWand.GroundLocation!.Value));
         Assert.Equal(12, loadedWand.Props!.Charges);
+        Assert.Equal(AccountType.GameMaster, loadedWand.Visibility);
+        Assert.Null(loadedCoin.Visibility);
         Assert.Equal("3", loadedWand.Props.Tags!["quest_step"]);
-        Assert.Equal((mobile.Id, LayerType.Backpack), (loadedPack.MobileId!.Value, loadedPack.WornLayer!.Value));
+        Assert.Equal((mobile.Id, LayerType.Backpack), (loadedPack.MobileId!.Value, loadedPack.Layer!.Value));
     }
 
     [Fact]
@@ -73,7 +77,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var mobile = await NewMobileAsync();
         var item = Item(0x40000011, i => i.PlaceOnGround(MapType.Felucca, new Point3D(1, 1, 0)));
         item.MobileId = mobile.Id;
-        item.Layer = (byte)LayerType.Helm;
+        item.Layer = LayerType.Helm;
 
         await AssertRejectedAsync(item);
     }

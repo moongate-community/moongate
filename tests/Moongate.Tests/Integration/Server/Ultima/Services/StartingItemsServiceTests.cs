@@ -55,19 +55,19 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         var given = await service.GiveAsync(Request(new() { [SkillType.Alchemy] = 50, [SkillType.Magery] = 0 }, 0x20, 0));
 
         var backpack = given[0];
-        Assert.Equal((_mobile.Id, LayerType.Backpack), (backpack.MobileId!.Value, backpack.WornLayer!.Value));
+        Assert.Equal((_mobile.Id, LayerType.Backpack), (backpack.MobileId!.Value, backpack.Layer!.Value));
         var stored = await _items.QueryAsync(item => item.MobileId == _mobile.Id || item.ContainerId == backpack.Id);
         Assert.Equal(given.Count, stored.Count);
 
         var shirt = stored.Single(item => item.TemplateId == "shirt");
-        Assert.Equal((LayerType.Shirt, (ushort)0x20), (shirt.WornLayer!.Value, shirt.Hue.Value));
+        Assert.Equal((LayerType.Shirt, (ushort)0x20), (shirt.Layer!.Value, shirt.Hue.Value));
 
         // A second item on the Shirt layer goes to the backpack.
         Assert.Equal(backpack.Id, stored.Single(item => item.TemplateId == "fancy_shirt").ContainerId);
 
         // PantsHue 0 keeps the template hue.
         var pants = stored.Single(item => item.TemplateId == "pants");
-        Assert.Equal((LayerType.Pants, (ushort)0x100), (pants.WornLayer!.Value, pants.Hue.Value));
+        Assert.Equal((LayerType.Pants, (ushort)0x100), (pants.Layer!.Value, pants.Hue.Value));
 
         Assert.Equal(3, stored.Single(item => item.TemplateId == "pearl").Amount);
         Assert.Equal(2, stored.Count(item => item.TemplateId == "bottle"));

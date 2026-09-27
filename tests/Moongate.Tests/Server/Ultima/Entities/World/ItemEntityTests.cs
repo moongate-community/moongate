@@ -26,7 +26,7 @@ public sealed class ItemEntityTests
         item.PlaceOnGround(MapType.Trammel, new Point3D(1602, 1591, 20));
 
         Assert.Equal(ItemLocationType.Ground, item.Location);
-        Assert.Equal(MapType.Trammel, item.GroundMap);
+        Assert.Equal(MapType.Trammel, item.Map);
         Assert.Equal(new Point3D(1602, 1591, 20), item.GroundLocation);
         Assert.Null(item.ContainerId);
         Assert.Null(item.GridX);
@@ -60,7 +60,7 @@ public sealed class ItemEntityTests
 
         Assert.Equal(ItemLocationType.Equipped, item.Location);
         Assert.Equal(Mobile, item.MobileId);
-        Assert.Equal(LayerType.OneHanded, item.WornLayer);
+        Assert.Equal(LayerType.OneHanded, item.Layer);
         Assert.Null(item.ContainerId);
         Assert.Null(item.GridX);
         Assert.Null(item.GridY);
@@ -91,19 +91,6 @@ public sealed class ItemEntityTests
     public void Equip_TheNoneLayer_Throws()
     {
         Assert.Throws<ArgumentException>(() => new ItemEntity().Equip(Mobile, LayerType.None));
-    }
-
-    [Fact]
-    public void VisibilityType_ReadsAndWritesTheStoredByte()
-    {
-        var item = new ItemEntity { VisibilityType = AccountType.GameMaster };
-
-        Assert.Equal((byte)AccountType.GameMaster, item.Visibility);
-        Assert.Equal(AccountType.GameMaster, item.VisibilityType);
-
-        item.VisibilityType = null;
-
-        Assert.Null(item.Visibility);
     }
 
     private static ItemEntity InContainer()

@@ -54,7 +54,8 @@ public class ItemEntity : IMoongateEntity
     /// <summary>
     ///     The <see cref="Moongate.Ultima.Types.MapType" /> value when the item is on the ground.
     /// </summary>
-    public byte? Map { get; set; }
+    [Column(MapType = typeof(byte?))]
+    public MapType? Map { get; set; }
 
     public int? X { get; set; }
 
@@ -81,7 +82,8 @@ public class ItemEntity : IMoongateEntity
     /// <summary>
     ///     The <see cref="Moongate.Ultima.Types.LayerType" /> value when the item is worn.
     /// </summary>
-    public byte? Layer { get; set; }
+    [Column(MapType = typeof(byte?))]
+    public LayerType? Layer { get; set; }
 
     /// <summary>
     ///     Whether the item can be picked up, when it differs from the template's.
@@ -91,7 +93,8 @@ public class ItemEntity : IMoongateEntity
     /// <summary>
     ///     The <see cref="AccountType" /> value that sees the item, when it differs from the template's.
     /// </summary>
-    public byte? Visibility { get; set; }
+    [Column(MapType = typeof(byte?))]
+    public AccountType? Visibility { get; set; }
 
     /// <summary>
     ///     When the item decays, in UTC; null never decays.
@@ -109,26 +112,7 @@ public class ItemEntity : IMoongateEntity
         ItemLocationType.None;
 
     [Column(IsIgnore = true)]
-    public MapType? GroundMap => Map is { } map ? (MapType)map : null;
-
-    [Column(IsIgnore = true)]
     public Point3D? GroundLocation => Map is null ? null : new Point3D(X!.Value, Y!.Value, Z!.Value);
-
-    [Column(IsIgnore = true)]
-    public LayerType? WornLayer => Layer is { } layer ? (LayerType)layer : null;
-
-    [Column(IsIgnore = true)]
-    public AccountType? VisibilityType
-    {
-        get
-        {
-            return Visibility is { } visibility ? (AccountType)visibility : null;
-        }
-        set
-        {
-            Visibility = value is { } type ? (byte)type : null;
-        }
-    }
 
     /// <summary>
     ///     Puts the item on the ground of <paramref name="map" /> at <paramref name="location" />.
@@ -136,7 +120,7 @@ public class ItemEntity : IMoongateEntity
     public void PlaceOnGround(MapType map, Point3D location)
     {
         ClearLocation();
-        Map = (byte)map;
+        Map = map;
         X = location.X;
         Y = location.Y;
         Z = (short)location.Z;
@@ -182,7 +166,7 @@ public class ItemEntity : IMoongateEntity
 
         ClearLocation();
         MobileId = mobileId;
-        Layer = (byte)layer;
+        Layer = layer;
     }
 
     private void ClearLocation()
