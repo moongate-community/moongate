@@ -1,6 +1,7 @@
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Tests.TestSupport.Persistence;
+using Npgsql;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Entities;
 
@@ -16,5 +17,22 @@ public sealed class WorldMigrationsTests
 
         // Without development migrations, startup compares the model with the database and fails on any difference.
         await host.Owner.InitializeAsync();
+    }
+
+    [Fact]
+    public async Task ANotorietyOutsideTheEnum_IsRejectedByTheDatabase()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+
+        var exception = await Record.ExceptionAsync(() => host.Database.ExecuteAsync(
+            "INSERT INTO world.mobiles (id, name, gender, race, body, skin_hue, strength, dexterity, intelligence, hair_style, " +
+            "hair_hue, beard_style, beard_hue, created_at, x, y, z, map, hits, hits_max, mana, mana_max, stamina, stamina_max, " +
+            "fame, karma, armor, resist_physical, resist_fire, resist_cold, resist_poison, resist_energy, notoriety) " +
+            "VALUES (5, 'a', 0, 0, 400, 0, 0, 0, 0, 0, 0, 0, 0, now(), 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 9)"
+        ));
+
+        Assert.IsType<PostgresException>(exception);
+        Assert.Equal("ck_mobiles_notoriety", ((PostgresException)exception!).ConstraintName);
     }
 }

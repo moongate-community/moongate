@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Ultima.Types;
 
@@ -180,6 +181,33 @@ public sealed class MobileEntityPersistenceTests
         await orm.Insert(new MobileEntity { Id = new(2), Name = "a guard" }).ExecuteAffrowsAsync();
 
         Assert.Equal(2L, await database.ScalarAsync<long>("SELECT count(*) FROM world.mobiles WHERE name = 'a guard'"));
+    }
+
+    [Fact]
+    public async Task NpcFields_AndProps_RoundTrip()
+    {
+        await using var database = await new PostgreSqlFixture().CreateDatabaseAsync();
+        using var fixture = new DevelopmentMigrationFixture(database.ConnectionString);
+        await using var coordinator = fixture.Create(typeof(MobileEntity));
+        await coordinator.InitializeAsync();
+        var orm = coordinator.GetDatabase(PersistenceDatabaseTarget.Realm).Orm;
+        var orc = new MobileEntity
+        {
+            Id = new(7), Name = "an orc", TemplateId = "orc", Title = "the Brute", Notoriety = NotorietyType.Murderer,
+            Hits = 50, HitsMax = 60, Mana = 10, ManaMax = 20, Stamina = 30, StaminaMax = 40,
+            Fame = 1500, Karma = -1500, Armor = 28,
+            ResistPhysical = 25, ResistFire = 20, ResistCold = 10, ResistPoison = 15, ResistEnergy = 22
+        };
+        orc.SetProp("quest_step", 3);
+
+        await orm.Insert(orc).ExecuteAffrowsAsync();
+        var loaded = await orm.Select<MobileEntity>().Where(m => m.Id == orc.Id).FirstAsync();
+
+        Assert.Equal(("orc", "the Brute", (NotorietyType?)NotorietyType.Murderer), (loaded.TemplateId, loaded.Title, loaded.Notoriety));
+        Assert.Equal((50, 60, 10, 20, 30, 40), (loaded.Hits, loaded.HitsMax, loaded.Mana, loaded.ManaMax, loaded.Stamina, loaded.StaminaMax));
+        Assert.Equal((1500, -1500, 28), (loaded.Fame, loaded.Karma, loaded.Armor));
+        Assert.Equal((25, 20, 10, 15, 22), (loaded.ResistPhysical, loaded.ResistFire, loaded.ResistCold, loaded.ResistPoison, loaded.ResistEnergy));
+        Assert.Equal(3, loaded.GetProp<int>("quest_step"));
     }
 
     [Fact]

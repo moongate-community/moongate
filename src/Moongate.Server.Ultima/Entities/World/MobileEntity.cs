@@ -3,6 +3,8 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Server.Ultima.Entities.Internal;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Entities.World;
@@ -76,6 +78,95 @@ public class MobileEntity : IMoongateEntity
     [JsonMap, Column(DbType = "jsonb", IsNullable = true)]
     public List<MobileSkill> Skills { get; set; } = [];
 
+    /// <summary>
+    ///     The id of the mobile template an NPC was made from; <see langword="null" /> for a player character.
+    /// </summary>
+    public string? TemplateId { get; set; }
+
+    /// <summary>
+    ///     The title when it differs from the template's; null uses the template's.
+    /// </summary>
+    public string? Title { get; set; }
+
+    /// <summary>
+    ///     The notoriety when it differs from the template's; null uses the template's.
+    /// </summary>
+    [Column(MapType = typeof(byte?))]
+    public NotorietyType? Notoriety { get; set; }
+
+    /// <summary>
+    ///     The current hit points.
+    /// </summary>
+    public int Hits { get; set; }
+
+    /// <summary>
+    ///     The hit points when fully healed.
+    /// </summary>
+    public int HitsMax { get; set; }
+
+    /// <summary>
+    ///     The current mana.
+    /// </summary>
+    public int Mana { get; set; }
+
+    /// <summary>
+    ///     The mana when full.
+    /// </summary>
+    public int ManaMax { get; set; }
+
+    /// <summary>
+    ///     The current stamina.
+    /// </summary>
+    public int Stamina { get; set; }
+
+    /// <summary>
+    ///     The stamina when fully rested.
+    /// </summary>
+    public int StaminaMax { get; set; }
+
+    /// <summary>
+    ///     The fame; an NPC's is rolled from its template.
+    /// </summary>
+    public int Fame { get; set; }
+
+    /// <summary>
+    ///     The karma; an NPC's is rolled from its template.
+    /// </summary>
+    public int Karma { get; set; }
+
+    /// <summary>
+    ///     The armor rating; an NPC's is rolled from its template.
+    /// </summary>
+    public int Armor { get; set; }
+
+    /// <summary>
+    ///     The physical resistance, in percent.
+    /// </summary>
+    public int ResistPhysical { get; set; }
+
+    /// <summary>
+    ///     The fire resistance, in percent.
+    /// </summary>
+    public int ResistFire { get; set; }
+
+    /// <summary>
+    ///     The cold resistance, in percent.
+    /// </summary>
+    public int ResistCold { get; set; }
+
+    /// <summary>
+    ///     The poison resistance, in percent.
+    /// </summary>
+    public int ResistPoison { get; set; }
+
+    /// <summary>
+    ///     The energy resistance, in percent.
+    /// </summary>
+    public int ResistEnergy { get; set; }
+
+    [JsonMap, Column(DbType = "jsonb", IsNullable = true)]
+    public Dictionary<string, object?>? Props { get; set; }
+
     public DateTime CreatedAt { get; set; }
 
     public int X { get; set; }
@@ -99,5 +190,45 @@ public class MobileEntity : IMoongateEntity
     {
         get => new(X, Y, Z);
         set => (X, Y, Z) = (value.X, value.Y, value.Z);
+    }
+
+    /// <summary>
+    ///     Sets the prop <paramref name="key" />, such as a quest step for a script; null removes it.
+    /// </summary>
+    /// <exception cref="ArgumentException">
+    ///     The key is empty, or the value is not a string, a number, a bool or an enum.
+    /// </exception>
+    public void SetProp(string key, object? value)
+    {
+        Props = PropsDictionary.Set(Props, key, value);
+    }
+
+    /// <summary>
+    ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />, or <paramref name="defaultValue" /> when
+    ///     the mobile does not have it.
+    /// </summary>
+    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    public T GetProp<T>(string key, T defaultValue = default!)
+    {
+        return TryGetProp<T>(key, out var value) ? value : defaultValue;
+    }
+
+    /// <summary>
+    ///     Gets the prop <paramref name="key" /> as <typeparamref name="T" />; false when the mobile does not have it.
+    /// </summary>
+    /// <exception cref="InvalidCastException">The prop holds a value that does not convert to <typeparamref name="T" />.</exception>
+    public bool TryGetProp<T>(string key, out T value)
+    {
+        return PropsDictionary.TryGet(Props, key, out value);
+    }
+
+    /// <summary>
+    ///     Removes the prop <paramref name="key" />; false when the mobile did not have it.
+    /// </summary>
+    public bool RemoveProp(string key)
+    {
+        Props = PropsDictionary.Remove(Props, key, out var removed);
+
+        return removed;
     }
 }
