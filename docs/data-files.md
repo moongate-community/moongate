@@ -398,7 +398,7 @@ character gets nothing:
 4. For each entry it picks one item. A stackable item gets the whole `amount`;
    any other item is created `amount` times.
 5. `equip = true` wears the item on its layer: the template's `layer`, or else the
-   client's tiledata layer. If there is no layer, or the layer is taken, the item goes
+   client's tiledata layer when tiledata marks the graphic wearable. If there is no layer, or the layer is taken, the item goes
    in the backpack instead, so the first item on a layer wins.
 6. Worn shirts and robes take the shirt hue picked at creation, pants and skirts the
    pants hue; a hue of 0 keeps the item's own.

@@ -15,7 +15,9 @@ public sealed class ItemTemplateExtensionsTests
         // 0x0EED gold: stackable (Generic), weight 1. 0x0E75 backpack: weight 3, worn on the backpack layer. 0x0FAF anvil: weight 255.
         _tiles.Item(0x0EED, TileFlagType.Generic, 0, weight: 1)
               .Item(0x0E75, TileFlagType.Container | TileFlagType.Wearable, 0, weight: 3, layer: (byte)LayerType.Backpack)
-              .Item(0x0FAF, TileFlagType.None, 0, weight: 255);
+              .Item(0x0FAF, TileFlagType.None, 0, weight: 255)
+              // 0x0A12 torch on a wall: not wearable, but its tiledata quality (the layer byte) holds a light id.
+              .Item(0x0A12, TileFlagType.None, 0, layer: 29);
     }
 
     [Fact]
@@ -32,6 +34,12 @@ public sealed class ItemTemplateExtensionsTests
         Assert.Null(gold.EffectiveLayer(_tiles));
         Assert.True(backpack.EffectiveMovable(_tiles));
         Assert.False(anvil.EffectiveMovable(_tiles));
+    }
+
+    [Fact]
+    public void EffectiveLayer_TiledataLayerOfANonWearableGraphic_IsIgnored()
+    {
+        Assert.Null(Template(0x0A12).EffectiveLayer(_tiles));
     }
 
     [Fact]

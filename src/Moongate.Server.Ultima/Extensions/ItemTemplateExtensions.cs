@@ -32,7 +32,9 @@ public static class ItemTemplateExtensions
     }
 
     /// <summary>
-    ///     Gets the layer the item is worn on: the template's, or the tiledata layer; null when neither has one.
+    ///     Gets the layer the item is worn on: the template's, or the tiledata layer of a graphic with the
+    ///     <see cref="TileFlagType.Wearable" /> flag; null when neither has one. Other graphics use the same tiledata
+    ///     byte for something else, such as a light source's light id.
     /// </summary>
     public static LayerType? EffectiveLayer(this ItemTemplate template, ITileDataService tiles)
     {
@@ -41,7 +43,14 @@ public static class ItemTemplateExtensions
             return layer;
         }
 
-        var tiledataLayer = (LayerType)Tile(template, tiles).Layer;
+        var tile = Tile(template, tiles);
+
+        if ((tile.Flags & TileFlagType.Wearable) == 0)
+        {
+            return null;
+        }
+
+        var tiledataLayer = (LayerType)tile.Layer;
 
         return tiledataLayer == LayerType.None ? null : tiledataLayer;
     }
