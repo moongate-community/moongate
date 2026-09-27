@@ -116,6 +116,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ILocalizationService, LocalizationService>(Reuse.Singleton);
             container.Register<INameService, NameService>(Reuse.Singleton);
             container.Register<IItemTemplateService, ItemTemplateService>(Reuse.Singleton);
+            container.Register<IContainerLayoutService, ContainerLayoutService>(Reuse.Singleton);
             container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
             container.Register<IMovementService, MovementService>(Reuse.Singleton);
             container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
