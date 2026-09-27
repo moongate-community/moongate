@@ -155,7 +155,8 @@ This makes cancellation on reload predictable. Engine shutdown cancels all owned
 scheduled work before disposing its Lua state.
 
 `script metrics` shows file loads, calls, coroutine resumes/completions/errors,
-active coroutines, budget aborts and string-cap hits. Script errors include source
+active coroutines, budget aborts, string-cap hits and server events dropped
+because the game loop refused them (each drop is also logged as a warning). Script errors include source
 information where available, are logged, and publish `ScriptErrorEvent`. Ordinary
 runtime errors are reported by the scheduler; host C# callers of `LoadFile` must
 handle its exceptions. Missing files and cancellation have their own failure paths.
