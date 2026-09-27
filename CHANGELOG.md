@@ -3,6 +3,13 @@
 ## [0.9.0](https://github.com/moongate-community/moongate/compare/v0.8.0...v0.9.0) (2026-09-27)
 
 
+### Upgrade notes
+
+- Apply the included world database migrations before starting the updated server; use the [migration guide](https://moongate.sh/server/persistence-migrations/).
+- Move custom `backpack_template` and `gold_template` settings from `[starting_items]` to `[items]`. The old keys are ignored; the shared settings now serve player characters and spawned mobiles.
+- Run `mgboot` again to add missing root files and compare your edited data with the shipped files; existing files are preserved.
+- Character creation and saved-character lists are implemented. Character selection, world entry and a playable world are not yet available.
+
 ### Features
 
 * **characters:** add the characters config section and the mobile slot column ([c91340a](https://github.com/moongate-community/moongate/commit/c91340a193018c4764bf5f72378c224fd824e200))
