@@ -2,10 +2,11 @@
 # Moongate - starting_items.toml
 #
 # What it is for:
-#   The items a new character gets. A character gets every set whose filters it
-#   matches; a set with no filter goes to everyone.
+#   The items a new character gets: every common set, plus every set whose
+#   filters it matches.
 #
 # Fields of a [[set]]:
+#   common  true gives the set to every character
 #   skill   given to characters starting with this skill among their best ones
 #   race    human, elf or gargoyle; unset is every race
 #   gender  male or female; unset is both
@@ -20,6 +21,7 @@
 # Source: UOX3 dfndata/newbie/newbie.dfn, converted by mg-uoxconv.
 # ==============================================================================
 [[set]]
+common = false
 skill = "alchemy"
 [[set.items]]
 items = ["0x0f7a_black_pearl"]
@@ -56,6 +58,7 @@ hue = 1226
 equip = true
 
 [[set]]
+common = false
 skill = "anatomy"
 [[set.items]]
 items = ["0x1f03_robe"]
@@ -68,6 +71,7 @@ amount = 3
 equip = false
 
 [[set]]
+common = false
 skill = "animal_lore"
 [[set.items]]
 items = ["0x13f5"]
@@ -79,24 +83,28 @@ hue = 1326
 equip = true
 
 [[set]]
+common = false
 skill = "item_identification"
 [[set.items]]
 items = ["base_gnarled_staff"]
 equip = true
 
 [[set]]
+common = false
 skill = "parrying"
 [[set.items]]
 items = ["base_wooden_shield"]
 equip = false
 
 [[set]]
+common = false
 skill = "begging"
 [[set.items]]
 items = ["base_gnarled_staff"]
 equip = true
 
 [[set]]
+common = false
 skill = "blacksmithy"
 [[set.items]]
 items = ["0x153b_half_apron"]
@@ -125,6 +133,7 @@ items = ["0x0e85_pickaxe"]
 equip = false
 
 [[set]]
+common = false
 skill = "bowcraft_fletching"
 [[set.items]]
 items = ["0x1bd1_feather"]
@@ -146,12 +155,14 @@ items = ["0x1022_fletcher's_tools"]
 equip = false
 
 [[set]]
+common = false
 skill = "peacemaking"
 [[set.items]]
 items = ["0x0e9c_drum", "0x0e9d_tambourine", "0x0e9e_tambourine", "0x0eb1_standing_harp", "0x0eb2_lap_harp", "0x0eb3_lute", "0x0eb4_lute"]
 equip = false
 
 [[set]]
+common = false
 skill = "camping"
 [[set.items]]
 items = ["0x0a58_a_bedroll"]
@@ -163,6 +174,7 @@ amount = 5
 equip = false
 
 [[set]]
+common = false
 skill = "carpentry"
 [[set.items]]
 items = ["0x1bd7_board"]
@@ -179,6 +191,7 @@ hue = 1726
 equip = true
 
 [[set]]
+common = false
 skill = "cartography"
 [[set.items]]
 items = ["0x14eb_blank_map"]
@@ -190,6 +203,7 @@ items = ["0x1057_sextant"]
 equip = false
 
 [[set]]
+common = false
 skill = "cooking"
 [[set.items]]
 items = ["0x0de1_kindling"]
@@ -217,18 +231,21 @@ items = ["0x1f9e_pitcher_of_water"]
 equip = false
 
 [[set]]
+common = false
 skill = "detecting_hidden"
 [[set.items]]
 items = ["0x1515_cloak"]
 equip = true
 
 [[set]]
+common = false
 skill = "discordance"
 [[set.items]]
 items = ["0x0e9c_drum", "0x0e9d_tambourine", "0x0e9e_tambourine", "0x0eb1_standing_harp", "0x0eb2_lap_harp", "0x0eb3_lute", "0x0eb4_lute"]
 equip = false
 
 [[set]]
+common = false
 skill = "healing"
 [[set.items]]
 items = ["0x0e21_clean_bandage"]
@@ -240,6 +257,7 @@ items = ["0x0f9e_scissors"]
 equip = false
 
 [[set]]
+common = false
 skill = "fishing"
 [[set.items]]
 items = ["0x0dbf_fishing_pole"]
@@ -251,24 +269,28 @@ hue = 1726
 equip = true
 
 [[set]]
+common = false
 skill = "herding"
 [[set.items]]
 items = ["0x13f5"]
 equip = true
 
 [[set]]
+common = false
 skill = "hiding"
 [[set.items]]
 items = ["0x1515_cloak"]
 equip = true
 
 [[set]]
+common = false
 skill = "provocation"
 [[set.items]]
 items = ["0x0e9c_drum", "0x0e9d_tambourine", "0x0e9e_tambourine", "0x0eb1_standing_harp", "0x0eb2_lap_harp", "0x0eb3_lute", "0x0eb4_lute"]
 equip = false
 
 [[set]]
+common = false
 skill = "inscription"
 [[set.items]]
 items = ["0x0e34_a_blank_scroll"]
@@ -280,6 +302,7 @@ items = ["0x0fc0_pen_and_ink"]
 equip = false
 
 [[set]]
+common = false
 skill = "lockpicking"
 [[set.items]]
 items = ["0x14fb_lockpick"]
@@ -287,6 +310,7 @@ amount = 20
 equip = false
 
 [[set]]
+common = false
 skill = "magery"
 [[set.items]]
 items = ["0x1f2d_reactive_armor_scroll", "0x1f2e_clumsy_scroll", "0x1f2f_create_food_scroll", "0x1f30_feeblemind_scroll", "0x1f31_heal_scroll", "0x1f32_magic_arrow_scroll", "0x1f33_night_sight_scroll", "0x1f34_weaken_scroll", "0x1f35_agility_scroll", "0x1f36_cunning_scroll", "0x1f37_cure_scroll", "0x1f38_harm_scroll", "0x1f39_magic_trap_scroll", "0x1f3a_magic_untrap_scroll", "0x1f3b_protection_scroll", "0x1f3c_strength_scroll", "0x1f3d_bless_scroll", "0x1f3e_fireball_scroll", "0x1f3f_magic_lock_scroll", "0x1f40_poison_scroll", "0x1f41_telekinisis_scroll", "0x1f42_teleport_scroll", "0x1f43_unlock_scroll", "0x1f44_wall_of_stone_scroll", "0x1f45_archcure_scroll", "0x1f46_archprotection_scroll", "0x1f47_curse_scroll", "0x1f48_fire_field_scroll", "0x1f49_greater_heal_scroll", "0x1f4a_lightning_scroll", "0x1f4b_mana_drain_scroll", "0x1f4c_recall_scroll"]
@@ -321,12 +345,14 @@ items = ["0x0efa_a_spellbook"]
 equip = true
 
 [[set]]
+common = false
 skill = "tactics"
 [[set.items]]
 items = ["base_katana"]
 equip = false
 
 [[set]]
+common = false
 skill = "snooping"
 [[set.items]]
 items = ["0x14fb_lockpick"]
@@ -334,12 +360,14 @@ amount = 20
 equip = false
 
 [[set]]
+common = false
 skill = "musicianship"
 [[set.items]]
 items = ["0x0e9c_drum", "0x0e9d_tambourine", "0x0e9e_tambourine", "0x0eb1_standing_harp", "0x0eb2_lap_harp", "0x0eb3_lute", "0x0eb4_lute"]
 equip = false
 
 [[set]]
+common = false
 skill = "poisoning"
 [[set.items]]
 items = ["0x0f0a_green_potion"]
@@ -347,6 +375,7 @@ amount = 2
 equip = false
 
 [[set]]
+common = false
 skill = "archery"
 [[set.items]]
 items = ["practice_bow"]
@@ -362,12 +391,14 @@ amount = 25
 equip = false
 
 [[set]]
+common = false
 skill = "spirit_speak"
 [[set.items]]
 items = ["0x1515_cloak"]
 equip = true
 
 [[set]]
+common = false
 skill = "stealing"
 [[set.items]]
 items = ["0x14fb_lockpick"]
@@ -375,6 +406,7 @@ amount = 20
 equip = false
 
 [[set]]
+common = false
 skill = "tailoring"
 [[set.items]]
 items = ["0x0f95_bolt_of_cloth"]
@@ -385,12 +417,14 @@ items = ["0x0f9d_sewing_kit"]
 equip = false
 
 [[set]]
+common = false
 skill = "animal_taming"
 [[set.items]]
 items = ["0x13f5"]
 equip = true
 
 [[set]]
+common = false
 skill = "taste_identification"
 [[set.items]]
 items = ["0x0f06_black_potion", "0x0f07_orange_potion", "0x0f07_b_orange_potion", "0x0f07_c_orange_potion", "0x0f08_blue_potion", "0x0f08_b_blue_potion", "0x0f09_white_potion", "0x0f09_b_white_potion", "0x0f0a_green_potion", "0x0f0a_b_green_potion", "0x0f0a_c_green_potion", "0x0f0a_d_green_potion", "0x0f0b_red_potion", "0x0f0b_b_red_potion", "0x0f0c_yellow_potion", "0x0f0c_b_yellow_potion", "0x0f0c_c_yellow_potion", "0x0f0d_purple_potion", "0x0f0d_b_purple_potion", "0x0f0d_c_purple_potion"]
@@ -398,12 +432,14 @@ amount = 3
 equip = false
 
 [[set]]
+common = false
 skill = "tinkering"
 [[set.items]]
 items = ["0x1eb8_tool_kit"]
 equip = false
 
 [[set]]
+common = false
 skill = "tracking"
 [[set.items]]
 items = ["0x170b_boots"]
@@ -415,6 +451,7 @@ items = ["base_skinning_knife"]
 equip = true
 
 [[set]]
+common = false
 skill = "veterinary"
 [[set.items]]
 items = ["0x0e21_clean_bandage"]
@@ -426,42 +463,49 @@ items = ["0x0f9e_scissors"]
 equip = false
 
 [[set]]
+common = false
 skill = "swordsmanship"
 [[set.items]]
 items = ["base_katana"]
 equip = true
 
 [[set]]
+common = false
 skill = "mace_fighting"
 [[set.items]]
 items = ["base_club"]
 equip = false
 
 [[set]]
+common = false
 skill = "fencing"
 [[set.items]]
 items = ["base_kryss"]
 equip = false
 
 [[set]]
+common = false
 skill = "wrestling"
 [[set.items]]
 items = ["base_leather_gloves"]
 equip = true
 
 [[set]]
+common = false
 skill = "lumberjacking"
 [[set.items]]
 items = ["base_hatchet"]
 equip = false
 
 [[set]]
+common = false
 skill = "mining"
 [[set.items]]
 items = ["0x0e85_pickaxe"]
 equip = false
 
 [[set]]
+common = false
 skill = "necromancy"
 [[set.items]]
 items = ["0x2253_necromancer_book"]
@@ -529,6 +573,7 @@ items = ["0x170d_sandals"]
 equip = true
 
 [[set]]
+common = false
 skill = "focus"
 [[set.items]]
 items = ["0x1f03_robe"]
@@ -540,6 +585,7 @@ items = ["base_dagger"]
 equip = true
 
 [[set]]
+common = false
 skill = "chivalry"
 [[set.items]]
 items = ["0x2252_paladin_spellbook"]
@@ -586,6 +632,7 @@ items = ["base_helmet"]
 equip = true
 
 [[set]]
+common = false
 skill = "bushido"
 [[set.items]]
 items = ["0x279a_hakama"]
@@ -616,6 +663,7 @@ items = ["0x238c_book_of_bushido"]
 equip = false
 
 [[set]]
+common = false
 skill = "ninjitsu"
 [[set.items]]
 items = ["0x2798_kasa"]
@@ -642,6 +690,7 @@ items = ["0x23a0_book_of_ninjitsu"]
 equip = false
 
 [[set]]
+common = false
 skill = "mysticism"
 [[set.items]]
 items = ["0x1f03_robe"]
@@ -649,12 +698,14 @@ hue = 1626
 equip = true
 
 [[set]]
+common = false
 skill = "imbuing"
 [[set.items]]
 items = ["0x2d9d_mystic_book"]
 equip = false
 
 [[set]]
+common = false
 race = "human"
 gender = "male"
 [[set.items]]
@@ -670,6 +721,7 @@ items = ["0x170f_shoes"]
 equip = true
 
 [[set]]
+common = false
 race = "human"
 gender = "female"
 [[set.items]]
@@ -685,6 +737,7 @@ items = ["0x170f_shoes"]
 equip = true
 
 [[set]]
+common = false
 race = "elf"
 gender = "male"
 [[set.items]]
@@ -700,6 +753,7 @@ items = ["0x170f_shoes"]
 equip = true
 
 [[set]]
+common = false
 race = "elf"
 gender = "female"
 [[set.items]]
@@ -715,6 +769,7 @@ items = ["0x170f_shoes"]
 equip = true
 
 [[set]]
+common = false
 race = "gargoyle"
 gender = "male"
 [[set.items]]
@@ -722,6 +777,7 @@ items = ["0x1f03_robe"]
 equip = true
 
 [[set]]
+common = false
 race = "gargoyle"
 gender = "female"
 [[set.items]]
@@ -729,6 +785,7 @@ items = ["0x1f03_robe"]
 equip = true
 
 [[set]]
+common = true
 [[set.items]]
 items = ["base_dagger"]
 equip = false

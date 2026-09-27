@@ -357,8 +357,8 @@ The server stops when:
 yet: it is written by [`mg-uoxconv`](uox3-migration.md#starting-items) from UOX3's
 `newbie.dfn`, ready for the character creation code.
 
-A character gets every `[[set]]` whose filters it matches; a set with no filter goes to
-everyone.
+A character gets every `[[set]]` with `common = true`, plus every set whose filters it
+matches.
 
 ```toml
 [[set]]
@@ -376,6 +376,7 @@ equip = true
 
 | Field | Meaning |
 | --- | --- |
+| `common` | `true` gives the set to every character, whatever the filters |
 | `skill` | Given to characters starting with this skill among their best ones |
 | `race` | `human`, `elf` or `gargoyle`; unset is every race |
 | `gender` | `male` or `female`; unset is both |

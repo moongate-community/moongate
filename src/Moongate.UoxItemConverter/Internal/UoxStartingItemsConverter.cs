@@ -13,10 +13,11 @@ internal static class UoxStartingItemsConverter
                                   # Moongate - starting_items.toml
                                   #
                                   # What it is for:
-                                  #   The items a new character gets. A character gets every set whose filters it
-                                  #   matches; a set with no filter goes to everyone.
+                                  #   The items a new character gets: every common set, plus every set whose
+                                  #   filters it matches.
                                   #
                                   # Fields of a [[set]]:
+                                  #   common  true gives the set to every character
                                   #   skill   given to characters starting with this skill among their best ones
                                   #   race    human, elf or gargoyle; unset is every race
                                   #   gender  male or female; unset is both

@@ -59,19 +59,24 @@ public sealed class UoxStartingItemsConverterTests : IDisposable
     }
 
     [Theory,
-     InlineData("DEFAULT ALL", null, null),
-     InlineData("DEFAULT MALE", RaceType.Human, GenderType.Male),
-     InlineData("DEFAULT FEMALE", RaceType.Human, GenderType.Female),
-     InlineData("DEFAULT ELF FEMALE", RaceType.Elf, GenderType.Female),
-     InlineData("DEFAULT GARG MALE", RaceType.Gargoyle, GenderType.Male)]
-    public void Run_DefaultSections_BecomeRaceAndGenderFilters(string header, RaceType? race, GenderType? gender)
+     InlineData("DEFAULT ALL", true, null, null),
+     InlineData("DEFAULT MALE", false, RaceType.Human, GenderType.Male),
+     InlineData("DEFAULT FEMALE", false, RaceType.Human, GenderType.Female),
+     InlineData("DEFAULT ELF FEMALE", false, RaceType.Elf, GenderType.Female),
+     InlineData("DEFAULT GARG MALE", false, RaceType.Gargoyle, GenderType.Male)]
+    public void Run_DefaultSections_BecomeCommonOrRaceAndGenderFilters(
+        string header,
+        bool common,
+        RaceType? race,
+        GenderType? gender
+    )
     {
         WriteSources($"[{header}]\n{{\nEQUIPITEM=0x1f03\n}}\n");
 
         Assert.True(Run() == 0, CombinedOutput);
 
         var set = Assert.Single(ReadSets());
-        Assert.Equal((null, race, gender), (set.Skill, set.Race, set.Gender));
+        Assert.Equal((common, null, race, gender), (set.Common, set.Skill, set.Race, set.Gender));
     }
 
     [Fact]

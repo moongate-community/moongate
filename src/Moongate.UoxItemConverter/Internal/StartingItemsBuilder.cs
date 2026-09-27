@@ -12,11 +12,12 @@ internal static class StartingItemsBuilder
 {
     private const string SkillPrefix = "BESTSKILL ";
 
+    private const string CommonHeader = "DEFAULT ALL";
+
     // UOX3 picks the DEFAULT section by body: MALE and FEMALE are the human bodies only.
-    private static readonly Dictionary<string, (RaceType? Race, GenderType? Gender)> Defaults =
+    private static readonly Dictionary<string, (RaceType Race, GenderType Gender)> Defaults =
         new(StringComparer.OrdinalIgnoreCase)
         {
-            ["DEFAULT ALL"] = (null, null),
             ["DEFAULT MALE"] = (RaceType.Human, GenderType.Male),
             ["DEFAULT FEMALE"] = (RaceType.Human, GenderType.Female),
             ["DEFAULT ELF MALE"] = (RaceType.Elf, GenderType.Male),
@@ -36,7 +37,11 @@ internal static class StartingItemsBuilder
         {
             StartingItemSet set;
 
-            if (Defaults.TryGetValue(block.Header, out var filter))
+            if (block.Header.Equals(CommonHeader, StringComparison.OrdinalIgnoreCase))
+            {
+                set = new() { Common = true };
+            }
+            else if (Defaults.TryGetValue(block.Header, out var filter))
             {
                 set = new() { Race = filter.Race, Gender = filter.Gender };
             }

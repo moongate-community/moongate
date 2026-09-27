@@ -161,7 +161,7 @@ mobiles and against the same item ids.
 | UOX3 | Set | Note |
 | --- | --- | --- |
 | `[BESTSKILL n]` | `skill` | the skill with id n; `[BESTSKILL X]` and empty sections are skipped |
-| `[DEFAULT ALL]` | no filter | |
+| `[DEFAULT ALL]` | `common = true` | every character gets it |
 | `[DEFAULT MALE]`, `[DEFAULT FEMALE]` | `race = "human"`, `gender` | UOX3 gives these to the human bodies only |
 | `[DEFAULT ELF MALE]`, `[DEFAULT GARG FEMALE]`, … | `race`, `gender` | |
 | `PACKITEM=item,amount,newbie` | `[[set.items]]`, `equip = false` | `amount` 1 is left unset; `newbie` 0 or 1 becomes `false` or `true` |
