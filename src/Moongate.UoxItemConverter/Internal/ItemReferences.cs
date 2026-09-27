@@ -99,10 +99,6 @@ internal static class ItemReferences
             return [];
         }
 
-        var targets = block.Fields.TryGetValue("GETLBR", out var eraTarget)
-            ? [eraTarget.Trim()]
-            : MobileTemplateBuilder.GetTargets(block);
-
-        return targets.SelectMany(target => ResolveItemIds(target, items, depth + 1)).Distinct().ToList();
+        return block.ParentTargets().SelectMany(target => ResolveItemIds(target, items, depth + 1)).Distinct().ToList();
     }
 }

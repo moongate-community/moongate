@@ -50,25 +50,15 @@ internal static class ItemTemplateBuilder
     }
 
     /// <summary>
-    ///     Gets the one parent a block names with <c>get=</c>, else with <c>getlbr=</c> (UOX3's default era); false for
-    ///     none or for a random <c>get=a b</c>.
+    ///     Gets the one parent a block inherits from (<see cref="DfnBlockExtensions.ParentTargets" />); false for none
+    ///     or for a random <c>get=a b</c>.
     /// </summary>
     public static bool TryGetSingleParent(DfnBlock block, out string parent)
     {
-        foreach (var key in new[] { "get", "getlbr" })
-        {
-            if (block.Fields.TryGetValue(key, out var text))
-            {
-                var targets = text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
-                parent = targets.Length == 1 ? targets[0] : "";
+        var targets = block.ParentTargets();
+        parent = targets.Length == 1 ? targets[0] : "";
 
-                return targets.Length == 1;
-            }
-        }
-
-        parent = "";
-
-        return false;
+        return targets.Length == 1;
     }
 
     public static ItemTemplate? Build(DfnBlock block, IReadOnlyDictionary<string, string> idByHeader)

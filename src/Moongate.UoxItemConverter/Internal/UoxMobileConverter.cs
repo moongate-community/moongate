@@ -216,7 +216,7 @@ internal static class UoxMobileConverter
         ConversionReport report
     )
     {
-        var targets = MobileTemplateBuilder.GetTargets(block);
+        var targets = block.GetTargets();
 
         if (MobileTemplateBuilder.IsSpecialSection(block.Header) || targets.Length != 2)
         {

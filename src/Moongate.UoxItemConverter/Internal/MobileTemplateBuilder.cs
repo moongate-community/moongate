@@ -34,22 +34,12 @@ internal static class MobileTemplateBuilder
     }
 
     /// <summary>
-    ///     Gets the <c>GET=</c> targets of a block, empty when it has none.
-    /// </summary>
-    public static string[] GetTargets(DfnBlock block)
-    {
-        return block.Fields.TryGetValue("GET", out var text)
-            ? text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries)
-            : [];
-    }
-
-    /// <summary>
     ///     Builds the template, or null for a section that is not an npc or a block whose <c>GET</c> names two
     ///     targets (a gender pair, merged separately).
     /// </summary>
     public static MobileTemplate? Build(DfnBlock block, MobileBuildContext context)
     {
-        if (IsSpecialSection(block.Header) || GetTargets(block).Length > 1)
+        if (IsSpecialSection(block.Header) || block.GetTargets().Length > 1)
         {
             return null;
         }
@@ -66,10 +56,7 @@ internal static class MobileTemplateBuilder
 
     private static void ApplyInheritance(DfnBlock block, MobileTemplate template, MobileBuildContext context)
     {
-        // GETLBR wins over GET: LBR is UOX3's default era, the other era tags are ignored.
-        var target = block.Fields.TryGetValue("GETLBR", out var eraTarget)
-            ? eraTarget.Trim()
-            : GetTargets(block).SingleOrDefault();
+        var target = block.ParentTargets() is [var single] ? single : null;
 
         if (target is null)
         {

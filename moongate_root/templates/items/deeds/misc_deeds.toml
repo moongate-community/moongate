@@ -31,7 +31,7 @@ rarity = "common"
 
 [[item]]
 id = "smallbod_blacksmith"
-base_id = "base_item"
+base_id = "smallbod_oldid"
 item_id = 8792
 name = "a bulk order deed"
 rarity = "common"
@@ -42,7 +42,7 @@ bodType = "1"
 
 [[item]]
 id = "smallbod_tailor"
-base_id = "base_item"
+base_id = "smallbod_oldid"
 item_id = 8792
 name = "a bulk order deed"
 rarity = "common"
