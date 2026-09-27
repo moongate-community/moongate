@@ -83,6 +83,34 @@ public sealed class LuaDefinitionsGeneratorTests
     }
 
     [Fact]
+    public void Render_EventNames_WritesAnAliasListingThem()
+    {
+        var text = LuaDefinitionsGenerator.Render([], [], ["probe_fired", "character_created"]);
+
+        Assert.Contains("---@alias EventName \"character_created\"|\"probe_fired\"\n", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Render_NoEventNames_AliasFallsBackToString()
+    {
+        var text = LuaDefinitionsGenerator.Render([], []);
+
+        Assert.Contains("---@alias EventName string\n", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
+    public void Render_ParameterWithScriptParameterType_UsesThatType()
+    {
+        using var state = LuaState.Create();
+        var binder = new LuaModuleBinder(NoThreadGuard.Instance);
+        var module = binder.Bind(state, new TypedParameterModule());
+
+        var text = LuaDefinitionsGenerator.Render([module], []);
+
+        Assert.Contains("---@param name EventName\n", text, StringComparison.Ordinal);
+    }
+
+    [Fact]
     public void Render_EmptyInput_StillDeclaresWait()
     {
         var text = LuaDefinitionsGenerator.Render([], []);

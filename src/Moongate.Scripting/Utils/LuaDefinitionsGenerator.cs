@@ -2,6 +2,7 @@ using System.Globalization;
 using System.Reflection;
 using System.Text;
 using Lua;
+using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Scripting.Data.Binding;
 using Moongate.Scripting.Data.Luarc;
 
@@ -28,6 +29,10 @@ internal static class LuaDefinitionsGenerator
     /// <param name="enums">
     ///     Every enum published as a global table, in any order.
     /// </param>
+    /// <param name="eventNames">
+    ///     The names published with <c>AddScriptEvent</c>; they become the <c>EventName</c> alias, which falls back to
+    ///     <c>string</c> when there are none.
+    /// </param>
     /// <returns>
     ///     The contents of
     ///     <c>
@@ -39,7 +44,11 @@ internal static class LuaDefinitionsGenerator
     ///     </c>
     ///     line endings, regardless of platform.
     /// </returns>
-    public static string Render(IReadOnlyList<BoundModule> modules, IReadOnlyList<Type> enums)
+    public static string Render(
+        IReadOnlyList<BoundModule> modules,
+        IReadOnlyList<Type> enums,
+        IReadOnlyList<string>? eventNames = null
+    )
     {
         ArgumentNullException.ThrowIfNull(modules);
         ArgumentNullException.ThrowIfNull(enums);
@@ -53,6 +62,12 @@ internal static class LuaDefinitionsGenerator
         builder.Append("---@param seconds number").Append('\n');
         builder.Append("---@return number seconds The seconds actually waited.").Append('\n');
         builder.Append("function wait(seconds) end").Append('\n');
+        builder.Append('\n');
+
+        var names = (eventNames ?? []).Order(StringComparer.Ordinal).ToList();
+        builder.Append("---@alias EventName ")
+            .Append(names.Count == 0 ? "string" : string.Join('|', names.Select(name => $"\"{name}\"")))
+            .Append('\n');
         builder.Append('\n');
 
         foreach (var enumType in enums.OrderBy(type => type.Name, StringComparer.Ordinal))
@@ -139,11 +154,19 @@ internal static class LuaDefinitionsGenerator
     /// <param name="enums">
     ///     Every enum published as a global table, in any order.
     /// </param>
-    public static void Write(string scriptsDirectory, IReadOnlyList<BoundModule> modules, IReadOnlyList<Type> enums)
+    /// <param name="eventNames">
+    ///     The names published with <c>AddScriptEvent</c>, for the <c>EventName</c> alias.
+    /// </param>
+    public static void Write(
+        string scriptsDirectory,
+        IReadOnlyList<BoundModule> modules,
+        IReadOnlyList<Type> enums,
+        IReadOnlyList<string>? eventNames = null
+    )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(scriptsDirectory);
         Directory.CreateDirectory(scriptsDirectory);
-        File.WriteAllText(Path.Combine(scriptsDirectory, DefinitionsFile), Render(modules, enums), new UTF8Encoding(false));
+        File.WriteAllText(Path.Combine(scriptsDirectory, DefinitionsFile), Render(modules, enums, eventNames), new UTF8Encoding(false));
 
         var globals = modules.Select(module => module.Name)
             .Concat(enums.Select(type => type.Name))
@@ -179,9 +202,11 @@ internal static class LuaDefinitionsGenerator
 
             // The converter also accepts an enum member by name, so a script may pass the string; returns
             // stay the bare enum because the engine always hands back the number.
-            var typeName = (Nullable.GetUnderlyingType(type) ?? type).IsEnum
-                ? LuaTypeName(type) + "|string"
-                : LuaTypeName(type);
+            // A declared Lua type (such as the EventName alias) wins over the one derived from the CLR type.
+            var typeName = parameter.GetCustomAttribute<ScriptParameterTypeAttribute>()?.LuaType ??
+                           ((Nullable.GetUnderlyingType(type) ?? type).IsEnum
+                               ? LuaTypeName(type) + "|string"
+                               : LuaTypeName(type));
             builder.Append("---@param ").Append(name).Append(optional).Append(' ').Append(typeName).Append('\n');
             names.Add(name);
         }
