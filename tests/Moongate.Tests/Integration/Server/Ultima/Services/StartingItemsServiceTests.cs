@@ -127,6 +127,17 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task StartAsync_AGoldTemplateThatDoesNotStack_Throws_EvenWithoutStartingGold()
+    {
+        var service = CreateService(
+            new StartingItemsConfig { Gold = 0 },
+            new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "shirt" }
+        );
+
+        await Assert.ThrowsAsync<InvalidDataException>(service.StartAsync);
+    }
+
+    [Fact]
     public async Task StartAsync_AGoldTemplateThatDoesNotStack_Throws()
     {
         var service = CreateService(new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "shirt" });

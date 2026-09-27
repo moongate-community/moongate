@@ -51,6 +51,9 @@ public sealed class LootTemplatesLoaderTests
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nloot_template_id = \"missing\"\n"),
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nweight = 0\nitem_id = \"ruby\"\n"),
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"ruby\"\namount = 0\n"),
+     InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nitem_id = \"ruby\"\namount = 70000\n"),
+     InlineData("[[loot]]\nid = \"b\"\n[[loot.entries]]\nitem_id = \"ruby\"\n\n[[loot]]\nid = \"a\"\n[[loot.entries]]\nloot_template_id = \"b\"\namount = 0\n"),
+     InlineData("[[loot]]\nid = \" \"\n[[loot.entries]]\nitem_id = \"ruby\"\n"),
      InlineData("[[loot]]\nid = \"a\"\n[[loot.entries]]\nloot_template_id = \"b\"\n\n[[loot]]\nid = \"b\"\n[[loot.entries]]\nloot_template_id = \"a\"\n")]
     public async Task LoadDataAsync_ABadTable_ThrowsInvalidDataException(string toml)
     {

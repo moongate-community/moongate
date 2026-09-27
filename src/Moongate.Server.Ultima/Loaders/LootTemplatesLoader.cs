@@ -122,9 +122,10 @@ public class LootTemplatesLoader : IDataLoader<LootTemplate>
                 throw new InvalidDataException($"{where} has a weight below 1.");
             }
 
-            if (entry.ItemId is not null && entry.Amount.Min < 1)
+            if ((entry.ItemId is not null || entry.LootTemplateId is not null) &&
+                (entry.Amount.Min < 1 || entry.Amount.Max > ushort.MaxValue))
             {
-                throw new InvalidDataException($"{where} has an amount that can roll below 1.");
+                throw new InvalidDataException($"{where} has an amount that can roll outside 1 to 65535.");
             }
         }
     }

@@ -37,6 +37,11 @@ public readonly struct RangeValueSpec<T> where T : struct, INumber<T>
     /// </summary>
     public T Min => IsRandom ? _min : _fixedValue;
 
+    /// <summary>
+    ///     Gets the largest value <see cref="Resolve" /> can return: the fixed value, or the top of the range.
+    /// </summary>
+    public T Max => IsRandom ? _max : _fixedValue;
+
     private RangeValueSpec(T fixedValue)
     {
         _fixedValue = fixedValue;

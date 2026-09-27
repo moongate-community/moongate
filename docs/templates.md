@@ -121,15 +121,16 @@ spawn.
 `LootTemplatesLoader` reads every `*.toml` under `templates/loots/`, subfolders included,
 before the mobile templates. The server stops when an id is empty or used twice, an entry
 sets both `item_id` and `loot_template_id`, an `item_id` is not an item template, a
-`loot_template_id` names no table, a `weight` is below 1, an `amount` can roll below 1,
-or nested tables loop. A table with no entries is kept, logged as a warning, and gives
+`loot_template_id` names no table, a `weight` is below 1, an `amount` can roll outside 1
+to 65535, or nested tables loop. A table with no entries is kept, logged as a warning, and gives
 nothing: five shipped UOX3 tables are empty because their items have no `id=` of their
 own, which the converter does not convert.
 
 `ILootService.Roll(tableId)` picks **one** entry, in proportion to `weight`, and returns
 what it gives, built through `IItemFactoryService` with no serial and no location: nothing
 for an entry with neither id (UOX3's `blank`), one pile for a stackable item, that many
-separate items otherwise, and the roll of a nested table.
+separate items otherwise, and, for a nested table, `amount` rolls of it (UOX3's
+`LOOTLIST=randomgems,2` rolls `randomgems` twice).
 
 ## The loader contract
 

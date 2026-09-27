@@ -107,4 +107,10 @@ public sealed class RangeValueSpecTests
 
         Assert.Equal(original.ToString(), restored.ToString());
     }
+
+    [Fact]
+    public void Max_IsTheFixedValueOrTheTopOfTheRange()
+    {
+        Assert.Equal((7, 20), (RangeValueSpec<int>.FromValue(7).Max, RangeValueSpec<int>.FromRange(5, 20).Max));
+    }
 }

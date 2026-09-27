@@ -3,6 +3,10 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
+using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Events;
+using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Races;
@@ -11,10 +15,6 @@ using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
-using Moongate.Server.Core.Data.Config;
-using Moongate.Server.Ultima.Data.Containers;
-using Moongate.Server.Core.Extensions;
-using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Maps;
@@ -182,6 +182,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
         );
 
         Assert.Empty(await _mobiles.QueryAsync(m => m.TemplateId == "lost_loot"));
+        Assert.Empty(await _items.QueryAsync(item => item.TemplateId == "backpack"));
     }
 
     [Fact]

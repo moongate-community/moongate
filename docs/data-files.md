@@ -415,7 +415,7 @@ The server stops when:
 - an entry has no items, names an item that is not an item template, or has an
   `amount` that can roll below 1;
 - `items.backpack_template` or `items.gold_template` is not an item template;
-- `starting_items.gold` is above 1 and the gold template does not stack.
+- the gold template does not stack.
 
 ## Containers
 

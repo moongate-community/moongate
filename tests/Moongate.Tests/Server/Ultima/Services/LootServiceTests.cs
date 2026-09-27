@@ -24,6 +24,7 @@ public sealed class LootServiceTests
                           Table("arrows", new LootEntry { ItemId = "arrow", Amount = RangeValueSpec<int>.FromValue(30) }),
                           Table("bottles", new LootEntry { ItemId = "bottle", Amount = RangeValueSpec<int>.FromValue(3) }),
                           Table("nested", new LootEntry { LootTemplateId = "arrows" }),
+                          Table("nested_twice", new LootEntry { LootTemplateId = "arrows", Amount = RangeValueSpec<int>.FromValue(2) }),
                           Table("empty")
                       );
         var tiles = new FakeTileDataService().Item(0x0F13, TileFlagType.None, 0)
@@ -56,6 +57,13 @@ public sealed class LootServiceTests
         Assert.Equal("arrow", Assert.Single(_loot.Roll("nested")).TemplateId);
         Assert.Contains("'gems'", Assert.Throws<KeyNotFoundException>(() => _loot.Roll("gems")).Message);
         Assert.Empty(_loot.Roll("empty"));
+    }
+
+    [Fact]
+    public void Roll_ANestedEntryWithAnAmount_RollsTheTableThatManyTimes()
+    {
+        // UOX3: LOOTLIST=randomgems,2 rolls randomgems twice.
+        Assert.Equal([30, 30], _loot.Roll("nested_twice").Select(item => item.Amount));
     }
 
     private static LootTemplate Table(string id, params LootEntry[] entries)

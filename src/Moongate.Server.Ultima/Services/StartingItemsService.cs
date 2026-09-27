@@ -64,10 +64,11 @@ public class StartingItemsService : IStartingItemsService
             }
         }
 
-        if (_config.Gold > 1 && !_templates.Get(_items.GoldTemplate).EffectiveStackable(_tiles))
+        // Spawned NPCs get gold piles too, so the gold template must stack whatever the starting gold is.
+        if (!_templates.Get(_items.GoldTemplate).EffectiveStackable(_tiles))
         {
             throw new InvalidDataException(
-                $"items.gold_template '{_items.GoldTemplate}' does not stack, so it cannot hold {_config.Gold} coins."
+                $"items.gold_template '{_items.GoldTemplate}' does not stack, so it cannot hold a pile of coins."
             );
         }
 
