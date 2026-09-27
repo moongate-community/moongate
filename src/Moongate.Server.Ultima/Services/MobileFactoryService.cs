@@ -2,8 +2,10 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Random;
 using Moongate.Core.Utils;
+using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Mobiles;
@@ -27,6 +29,9 @@ public class MobileFactoryService : IMobileFactoryService
 {
     private const string GenderNameList = "{gender}";
 
+    // The client shows an amount in 16 bits, so gold goes in piles of at most this.
+    private const int MaxPile = ushort.MaxValue;
+
     // MobileTemplate: "Unset is 10" for strength, dexterity and intelligence.
     private const int DefaultStat = 10;
 
@@ -35,6 +40,9 @@ public class MobileFactoryService : IMobileFactoryService
     private readonly IDataLoaderService _dataLoaderService;
     private readonly IItemFactoryService _itemFactory;
     private readonly IItemTemplateService _itemTemplates;
+    private readonly ILootService _loot;
+    private readonly IContainerLayoutService _layout;
+    private readonly ItemsConfig _items;
     private readonly ITileDataService _tiles;
     private readonly IMapService _maps;
     private readonly IMoongateEventBus _eventBus;
@@ -48,6 +56,9 @@ public class MobileFactoryService : IMobileFactoryService
         IDataLoaderService dataLoaderService,
         IItemFactoryService itemFactory,
         IItemTemplateService itemTemplates,
+        ILootService loot,
+        IContainerLayoutService layout,
+        ItemsConfig items,
         ITileDataService tiles,
         IMapService maps,
         IMoongateEventBus eventBus,
@@ -59,6 +70,9 @@ public class MobileFactoryService : IMobileFactoryService
         _dataLoaderService = dataLoaderService;
         _itemFactory = itemFactory;
         _itemTemplates = itemTemplates;
+        _loot = loot;
+        _layout = layout;
+        _items = items;
         _tiles = tiles;
         _maps = maps;
         _eventBus = eventBus;
@@ -163,10 +177,12 @@ public class MobileFactoryService : IMobileFactoryService
         }
 
         var equipment = new List<ItemEntity>();
+        var backpackItems = new List<ItemEntity>();
+        ItemEntity backpack;
 
         try
         {
-            await SaveSpawnAsync(template, mobile, equipment, cancellationToken);
+            backpack = await SaveSpawnAsync(template, mobile, equipment, backpackItems, cancellationToken);
         }
         catch
         {
@@ -176,7 +192,7 @@ public class MobileFactoryService : IMobileFactoryService
             throw;
         }
 
-        var spawned = new SpawnedMobile(mobile, equipment);
+        var spawned = new SpawnedMobile(mobile, equipment, backpack, backpackItems);
 
         // After the commit the mobile is saved whatever happens: the events are published without cancellation.
         await _eventBus.PublishAsync(new MobileMovedToWorldEvent(mobile, mobile.Map, mobile.Location), CancellationToken.None);
@@ -185,16 +201,19 @@ public class MobileFactoryService : IMobileFactoryService
         return spawned;
     }
 
-    private Task SaveSpawnAsync(
+    // Saves the mobile, its backpack, what it wears, and in the backpack what it cannot wear, its gold and its loot.
+    private async Task<ItemEntity> SaveSpawnAsync(
         MobileTemplate template,
         MobileEntity mobile,
         List<ItemEntity> equipment,
+        List<ItemEntity> backpackItems,
         CancellationToken cancellationToken
     )
     {
         var templateId = template.Id;
+        ItemEntity? backpack = null;
 
-        return _persistence.ExecuteInTransactionAsync(
+        await _persistence.ExecuteInTransactionAsync(
             PersistenceDatabaseTarget.Realm,
             async transaction =>
             {
@@ -207,7 +226,10 @@ public class MobileFactoryService : IMobileFactoryService
                     );
                 }
 
-                var usedLayers = new HashSet<LayerType>();
+                backpack = _itemFactory.Create(_items.BackpackTemplate);
+                backpack.Equip(mobile.Id, LayerType.Backpack);
+                await _itemFactory.SaveAsync(transaction, backpack, cancellationToken);
+                var usedLayers = new HashSet<LayerType> { LayerType.Backpack };
 
                 foreach (var entry in template.Equipment ?? [])
                 {
@@ -220,10 +242,11 @@ public class MobileFactoryService : IMobileFactoryService
                     var item = _itemFactory.Create(itemId, hue: entry.Hue?.Resolve());
                     var layer = _itemTemplates.Get(itemId).EffectiveLayer(_tiles);
 
-                    // NPCs have no backpack yet, so what cannot be worn is dropped.
+                    // As UOX3: what cannot be worn goes into the backpack.
                     if (layer is null || !usedLayers.Add(layer.Value))
                     {
-                        _logger.Debug("Mobile {TemplateId} drops {ItemId}: no free layer", templateId, itemId);
+                        _logger.Debug("Mobile {TemplateId} packs {ItemId}: no free layer", templateId, itemId);
+                        await PackAsync(transaction, backpack, item, backpackItems, cancellationToken);
 
                         continue;
                     }
@@ -232,9 +255,38 @@ public class MobileFactoryService : IMobileFactoryService
                     await _itemFactory.SaveAsync(transaction, item, cancellationToken);
                     equipment.Add(item);
                 }
+
+                for (var gold = template.Gold?.Roll() ?? 0; gold > 0; gold -= MaxPile)
+                {
+                    var pile = _itemFactory.Create(_items.GoldTemplate, Math.Min(gold, MaxPile));
+                    await PackAsync(transaction, backpack, pile, backpackItems, cancellationToken);
+                }
+
+                foreach (var lootId in template.Loot ?? [])
+                {
+                    foreach (var item in _loot.Roll(lootId))
+                    {
+                        await PackAsync(transaction, backpack, item, backpackItems, cancellationToken);
+                    }
+                }
             },
             cancellationToken
         );
+
+        return backpack!;
+    }
+
+    private async Task PackAsync(
+        IPersistenceTransaction transaction,
+        ItemEntity backpack,
+        ItemEntity item,
+        List<ItemEntity> backpackItems,
+        CancellationToken cancellationToken
+    )
+    {
+        item.PutInContainer(backpack.Id, _layout.RandomGridPosition(backpack.ItemId));
+        await _itemFactory.SaveAsync(transaction, item, cancellationToken);
+        backpackItems.Add(item);
     }
 
     public Task SaveAsync(MobileEntity mobile, CancellationToken cancellationToken = default)

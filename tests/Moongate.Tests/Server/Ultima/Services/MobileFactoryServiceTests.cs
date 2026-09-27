@@ -58,6 +58,9 @@ public sealed class MobileFactoryServiceTests
             null!,
             null!,
             null!,
+            null!,
+            null!,
+            null!,
             null!
         );
     }

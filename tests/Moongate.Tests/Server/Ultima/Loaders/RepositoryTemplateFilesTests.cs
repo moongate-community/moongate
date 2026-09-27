@@ -76,7 +76,7 @@ public sealed class RepositoryTemplateFilesTests
                        .LoadDataAsync()).Entities.ToArray();
         var loaders = new StubDataLoaderService().With(names).With(races).With(mobiles);
         var factory = new MobileFactoryService(
-            new MobileTemplateService(loaders), new NameService(loaders), loaders, null!, null!, null!, null!, null!, null!
+            new MobileTemplateService(loaders), new NameService(loaders), loaders, null!, null!, null!, null!, null!, null!, null!, null!, null!
         );
 
         var guard = factory.Create("guard");

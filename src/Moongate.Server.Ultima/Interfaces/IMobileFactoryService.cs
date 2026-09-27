@@ -20,7 +20,9 @@ public interface IMobileFactoryService
 
     /// <summary>
     ///     Creates a mobile from template <paramref name="templateId" />, puts it at <paramref name="location" /> on
-    ///     <paramref name="map" />, and saves it with the equipment of its template in one transaction. Publishes
+    ///     <paramref name="map" />, and saves it with the equipment of its template in one transaction. It always wears a
+    ///     backpack, which holds the equipment it cannot wear, its gold (piles of at most 65535) and one roll of each of
+    ///     its loot tables. Publishes
     ///     <c>MobileBeforeSpawnEvent</c> before saving (a handler may change the mobile), then
     ///     <c>MobileMovedToWorldEvent</c> and <c>MobileAfterSpawnEvent</c> after the commit. The event bus logs a handler's
     ///     exception and goes on, so a handler cannot stop or undo a spawn.
