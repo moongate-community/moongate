@@ -41,6 +41,7 @@ public static class PacketTable
 
         // Outgoing only.
         registry.RegisterOutgoing<LoginDeniedPacket>();
+        registry.RegisterOutgoing<PopupMessagePacket>();
         registry.RegisterOutgoing<LoginCompletePacket>();
         registry.RegisterOutgoing<ClientVersionRequestPacket>();
         registry.RegisterOutgoing<ServerListPacket>();
