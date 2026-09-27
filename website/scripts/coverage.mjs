@@ -1,8 +1,8 @@
 import { readFile } from 'node:fs/promises';
 import path from 'node:path';
 
-// The authored coverage page carries this marker; the importer replaces it.
-export const coverageMarker = '<!-- coverage-summary -->';
+// Match the placeholder on its own line, not inline code documenting its use.
+export const coverageMarker = /^<!-- coverage-summary -->\r?$/m;
 
 // Reads the merged report written by scripts/coverage.sh (or the CI artifact of the
 // same name). Returns null when no report is present.

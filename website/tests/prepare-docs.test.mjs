@@ -87,3 +87,14 @@ test('without a coverage report the page says so and a previous report is remove
   assert.doesNotMatch(page, /\/coverage\//);
   await assert.rejects(access(join(options.websiteRoot, 'public/coverage')));
 });
+
+test('coverage insertion preserves inline marker documentation before the report placeholder', async t => {
+  const options = await coverageFixture(t);
+  await writeFile(join(options.repositoryRoot, 'coverage.md'),
+    '# Test coverage\n\nUse `<!-- coverage-summary -->` to insert the report.\n\n<!-- coverage-summary -->\n');
+  await prepareDocs(options);
+  const page = await coveragePage(options);
+  assert.match(page, /Use `<!-- coverage-summary -->` to insert the report\./);
+  assert.match(page, /commit `abc1234`/);
+  assert.equal(page.match(/<!-- coverage-summary -->/g)?.length, 1);
+});
