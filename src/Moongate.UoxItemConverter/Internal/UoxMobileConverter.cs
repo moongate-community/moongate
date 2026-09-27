@@ -207,7 +207,7 @@ internal static class UoxMobileConverter
     {
         var targets = block.GetTargets();
 
-        if (MobileTemplateBuilder.IsSpecialSection(block.Header) || targets.Length != 2)
+        if (targets.Length != 2)
         {
             return null;
         }

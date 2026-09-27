@@ -24,6 +24,9 @@ internal static class MobileTemplateBuilder
         [0x29B] = (RaceType.Gargoyle, MobileGenderType.Female)
     };
 
+    // Hair and beard item lists: the race gives hair and beard instead.
+    private static readonly HashSet<int> HairItemLists = [13, 14, 15];
+
     /// <summary>
     ///     Gets whether <paramref name="header" /> is a section that is not an npc, such as a name list.
     /// </summary>
@@ -307,9 +310,6 @@ internal static class MobileTemplateBuilder
             }
         }
     }
-
-    // Hair and beard item lists: the race gives hair and beard instead.
-    private static readonly HashSet<int> HairItemLists = [13, 14, 15];
 
     // EQUIPITEM opens an entry; COLOR, COLOUR and COLORLIST after it colour that entry, as UOX3 colours the last item
     // it created.

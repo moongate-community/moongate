@@ -1,7 +1,8 @@
 namespace Moongate.UoxItemConverter.Internal;
 
 /// <summary>
-///     Counts what the mobile pass dropped or could not carry over, by reason, for the summary it prints.
+///     Counts what a pass (mobiles, starting items) dropped or could not carry over, by reason, for the summary it
+///     prints.
 /// </summary>
 internal sealed class ConversionReport
 {
