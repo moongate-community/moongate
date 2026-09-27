@@ -1,3 +1,4 @@
+using Moongate.Core.Geometry;
 using Moongate.Server.Ultima.Data.Containers;
 
 namespace Moongate.Server.Ultima.Interfaces;
@@ -15,5 +16,5 @@ public interface IContainerLayoutService
     /// <summary>
     ///     Picks a random point inside the bounds of the container <paramref name="itemId" />, for an item put in it.
     /// </summary>
-    (short X, short Y) RandomGridPosition(int itemId);
+    Point2D RandomGridPosition(int itemId);
 }

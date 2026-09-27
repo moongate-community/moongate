@@ -41,7 +41,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     {
         var mobile = await NewMobileAsync();
         var backpack = Item(0x40000001, i => i.Equip(mobile.Id, LayerType.Backpack));
-        var coin = Item(0x40000002, i => i.PutInContainer(backpack.Id, 44, 65));
+        var coin = Item(0x40000002, i => i.PutInContainer(backpack.Id, new Point2D(44, 65)));
         var wand = Item(0x40000003, i => i.PlaceOnGround(MapType.Trammel, new Point3D(1602, 1591, 20)));
         wand.Props = new ItemProps { Charges = 12, Tags = new() { ["quest_step"] = "3" } };
         wand.Visibility = AccountType.GameMaster;
@@ -56,7 +56,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var loadedWand = (await _items.GetByIdAsync(wand.Id))!;
         var loadedPack = (await _items.GetByIdAsync(backpack.Id))!;
 
-        Assert.Equal((backpack.Id, (short)44, (short)65, 250), (loadedCoin.ContainerId!.Value, loadedCoin.GridX!.Value, loadedCoin.GridY!.Value, loadedCoin.Amount));
+        Assert.Equal((backpack.Id, new Point2D(44, 65), 250), (loadedCoin.ContainerId!.Value, loadedCoin.GridLocation!.Value, loadedCoin.Amount));
         Assert.Equal((MapType.Trammel, new Point3D(1602, 1591, 20)), (loadedWand.Map!.Value, loadedWand.GroundLocation!.Value));
         Assert.Equal(12, loadedWand.Props!.Charges);
         Assert.Equal(AccountType.GameMaster, loadedWand.Visibility);
@@ -109,8 +109,8 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     public async Task DeletingAContainer_DeletesItsContentsRecursively()
     {
         var chest = Item(0x40000030, i => i.PlaceOnGround(MapType.Felucca, new Point3D(1, 1, 0)));
-        var bag = Item(0x40000031, i => i.PutInContainer(chest.Id, 1, 1));
-        var gem = Item(0x40000032, i => i.PutInContainer(bag.Id, 2, 2));
+        var bag = Item(0x40000031, i => i.PutInContainer(chest.Id, new Point2D(1, 1)));
+        var gem = Item(0x40000032, i => i.PutInContainer(bag.Id, new Point2D(2, 2)));
 
         foreach (var item in new[] { chest, bag, gem })
         {
@@ -128,7 +128,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     {
         var mobile = await NewMobileAsync();
         var backpack = Item(0x40000040, i => i.Equip(mobile.Id, LayerType.Backpack));
-        var coin = Item(0x40000041, i => i.PutInContainer(backpack.Id, 1, 1));
+        var coin = Item(0x40000041, i => i.PutInContainer(backpack.Id, new Point2D(1, 1)));
 
         await _items.UpsertAsync(backpack);
         await _items.UpsertAsync(coin);
@@ -157,7 +157,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
             {
                 var items = transaction.GetDataAccess<ItemEntity>();
                 await items.UpsertAsync(Item(0x40000050, i => i.PlaceOnGround(MapType.Felucca, new Point3D(1, 1, 0))));
-                await items.UpsertAsync(Item(0x40000051, i => i.PutInContainer(new Serial(0x40000050), 1, 1)));
+                await items.UpsertAsync(Item(0x40000051, i => i.PutInContainer(new Serial(0x40000050), new Point2D(1, 1))));
             }
         );
 

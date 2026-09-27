@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using Moongate.Core.Geometry;
 using Moongate.Core.Random;
 using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Interfaces;
@@ -33,11 +34,11 @@ public class ContainerLayoutService : IContainerLayoutService
     }
 
     // Bounds hold the first corner and exclude the second.
-    public (short X, short Y) RandomGridPosition(int itemId)
+    public Point2D RandomGridPosition(int itemId)
     {
         var bounds = GetLayout(itemId).Bounds;
 
-        return ((short)Pick(bounds.Start.X, bounds.End.X), (short)Pick(bounds.Start.Y, bounds.End.Y));
+        return new(Pick(bounds.Start.X, bounds.End.X), Pick(bounds.Start.Y, bounds.End.Y));
     }
 
     private static int Pick(int start, int end)

@@ -39,7 +39,7 @@ match case). `IItemFactoryService` makes items from them:
 
 ```csharp
 var coin = factory.Create("0x0eed_gold_coin", amount: 250);
-coin.PutInContainer(backpack.Id, x, y); // or PlaceOnGround / Equip
+coin.PutInContainer(backpack.Id, layout.RandomGridPosition(backpack.ItemId)); // or PlaceOnGround / Equip
 await factory.SaveAsync(coin);          // the database gives it its serial
 ```
 

@@ -66,8 +66,8 @@ public sealed class ItemFactoryServicePersistenceTests : IAsyncLifetime
         await _factory.SaveAsync(chest);
         var a = _factory.Create("gem");
         var b = _factory.Create("gem");
-        a.PutInContainer(chest.Id, 1, 1);
-        b.PutInContainer(chest.Id, 2, 2);
+        a.PutInContainer(chest.Id, new Point2D(1, 1));
+        b.PutInContainer(chest.Id, new Point2D(2, 2));
 
         await _factory.SaveAsync([a, b]);
 

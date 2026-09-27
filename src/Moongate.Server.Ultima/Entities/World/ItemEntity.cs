@@ -114,6 +114,9 @@ public class ItemEntity : IMoongateEntity
     [Column(IsIgnore = true)]
     public Point3D? GroundLocation => Map is null ? null : new Point3D(X!.Value, Y!.Value, Z!.Value);
 
+    [Column(IsIgnore = true)]
+    public Point2D? GridLocation => ContainerId is null ? null : new Point2D(GridX!.Value, GridY!.Value);
+
     /// <summary>
     ///     Puts the item on the ground of <paramref name="map" /> at <paramref name="location" />.
     /// </summary>
@@ -132,17 +135,25 @@ public class ItemEntity : IMoongateEntity
     /// <exception cref="ArgumentException">
     ///     <paramref name="containerId" /> is not an item serial, or is this item.
     /// </exception>
-    public void PutInContainer(Serial containerId, short gridX, short gridY)
+    /// <exception cref="ArgumentOutOfRangeException">
+    ///     A coordinate of <paramref name="gridLocation" /> does not fit the 16-bit grid columns.
+    /// </exception>
+    public void PutInContainer(Serial containerId, Point2D gridLocation)
     {
         if (!containerId.IsItem || containerId == Id)
         {
             throw new ArgumentException($"{containerId} is not another item that can hold this one.", nameof(containerId));
         }
 
+        if (gridLocation.X is < short.MinValue or > short.MaxValue || gridLocation.Y is < short.MinValue or > short.MaxValue)
+        {
+            throw new ArgumentOutOfRangeException(nameof(gridLocation), gridLocation, "A grid position must fit in 16 bits.");
+        }
+
         ClearLocation();
         ContainerId = containerId;
-        GridX = gridX;
-        GridY = gridY;
+        GridX = (short)gridLocation.X;
+        GridY = (short)gridLocation.Y;
     }
 
     /// <summary>

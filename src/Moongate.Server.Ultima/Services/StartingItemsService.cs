@@ -194,7 +194,6 @@ public class StartingItemsService : IStartingItemsService
 
     private void PutInBackpack(ItemEntity item, ItemEntity backpack)
     {
-        var (x, y) = _layout.RandomGridPosition(backpack.ItemId);
-        item.PutInContainer(backpack.Id, x, y);
+        item.PutInContainer(backpack.Id, _layout.RandomGridPosition(backpack.ItemId));
     }
 }

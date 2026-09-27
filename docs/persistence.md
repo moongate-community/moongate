@@ -240,7 +240,7 @@ one place, and the database checks it:
 | Place | Columns | Set with |
 | --- | --- | --- |
 | On the ground | `map`, `x`, `y`, `z` | `PlaceOnGround(map, location)` |
-| In a container item | `container_id`, `grid_x`, `grid_y` | `PutInContainer(containerId, gridX, gridY)` |
+| In a container item | `container_id`, `grid_x`, `grid_y` | `PutInContainer(containerId, gridLocation)`; read back as `GridLocation` |
 | Worn by a mobile | `mobile_id`, `layer` | `Equip(mobileId, layer)` |
 
 Each helper clears the other two groups, so move an item only through them. The

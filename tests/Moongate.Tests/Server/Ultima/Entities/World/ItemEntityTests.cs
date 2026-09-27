@@ -29,7 +29,7 @@ public sealed class ItemEntityTests
         Assert.Equal(MapType.Trammel, item.Map);
         Assert.Equal(new Point3D(1602, 1591, 20), item.GroundLocation);
         Assert.Null(item.ContainerId);
-        Assert.Null(item.GridX);
+        Assert.Null(item.GridLocation);
         Assert.Null(item.MobileId);
         Assert.Null(item.Layer);
     }
@@ -40,12 +40,11 @@ public sealed class ItemEntityTests
         var item = new ItemEntity { Id = new(0x40000002) };
         item.PlaceOnGround(MapType.Felucca, new Point3D(1, 2, 3));
 
-        item.PutInContainer(Backpack, 44, 65);
+        item.PutInContainer(Backpack, new Point2D(44, 65));
 
         Assert.Equal(ItemLocationType.Container, item.Location);
         Assert.Equal(Backpack, item.ContainerId);
-        Assert.Equal((short)44, item.GridX);
-        Assert.Equal((short)65, item.GridY);
+        Assert.Equal(new Point2D(44, 65), item.GridLocation);
         Assert.Null(item.Map);
         Assert.Null(item.X);
         Assert.Null(item.MobileId);
@@ -62,8 +61,7 @@ public sealed class ItemEntityTests
         Assert.Equal(Mobile, item.MobileId);
         Assert.Equal(LayerType.OneHanded, item.Layer);
         Assert.Null(item.ContainerId);
-        Assert.Null(item.GridX);
-        Assert.Null(item.GridY);
+        Assert.Null(item.GridLocation);
         Assert.Null(item.Map);
     }
 
@@ -72,13 +70,19 @@ public sealed class ItemEntityTests
     {
         var item = new ItemEntity { Id = Backpack };
 
-        Assert.Throws<ArgumentException>(() => item.PutInContainer(Backpack, 0, 0));
+        Assert.Throws<ArgumentException>(() => item.PutInContainer(Backpack, new Point2D(0, 0)));
+    }
+
+    [Theory, InlineData(40000, 10), InlineData(10, -40000)]
+    public void PutInContainer_AGridPointOutsideShort_Throws(int x, int y)
+    {
+        Assert.Throws<ArgumentOutOfRangeException>(() => new ItemEntity { Id = new(0x40000003) }.PutInContainer(Backpack, new Point2D(x, y)));
     }
 
     [Fact]
     public void PutInContainer_AMobileSerial_Throws()
     {
-        Assert.Throws<ArgumentException>(() => new ItemEntity { Id = new(0x40000003) }.PutInContainer(Mobile, 0, 0));
+        Assert.Throws<ArgumentException>(() => new ItemEntity { Id = new(0x40000003) }.PutInContainer(Mobile, new Point2D(0, 0)));
     }
 
     [Theory, InlineData(0x40000001u), InlineData(0u)]
@@ -96,7 +100,7 @@ public sealed class ItemEntityTests
     private static ItemEntity InContainer()
     {
         var item = new ItemEntity { Id = new(0x40000005) };
-        item.PutInContainer(Backpack, 10, 20);
+        item.PutInContainer(Backpack, new Point2D(10, 20));
 
         return item;
     }

@@ -75,7 +75,7 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         Assert.DoesNotContain(stored, item => item.TemplateId is "elven_boots" or "spellbook");
         Assert.All(
             stored.Where(item => item.ContainerId == backpack.Id),
-            item => Assert.True(item.GridX is >= 44 and < 186 && item.GridY is >= 65 and < 159)
+            item => Assert.True(item.GridLocation!.Value is { X: >= 44 and < 186, Y: >= 65 and < 159 })
         );
         Assert.Equal(LootType.Newbied, stored.Single(item => item.TemplateId == "pearl").Props!.LootType);
     }
