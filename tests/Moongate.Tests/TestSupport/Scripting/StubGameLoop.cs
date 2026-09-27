@@ -24,6 +24,11 @@ public sealed class StubGameLoop : IGameLoopService
     public bool SimulateLoopThreadWhilePosting { get; set; }
 
     /// <summary>
+    ///     Gets or sets whether TryPost refuses work, as a stopping loop does.
+    /// </summary>
+    public bool RefuseTryPost { get; set; }
+
+    /// <summary>
     ///     When true, PostAsync refuses the item with the real loop's "not accepting work" error after counting the attempt.
     /// </summary>
     public bool ThrowOnPost { get; set; }
@@ -89,6 +94,11 @@ public sealed class StubGameLoop : IGameLoopService
 
     public bool TryPost(IGameLoopWorkItem workItem)
     {
+        if (RefuseTryPost)
+        {
+            return false;
+        }
+
         PostedWorkItems++;
         workItem.Execute();
 
