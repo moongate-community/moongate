@@ -3,41 +3,79 @@ title: Moongate documentation
 description: Build, run, and extend the Moongate Ultima Online server and its reusable .NET libraries.
 template: splash
 hero:
-  title: Moongate documentation
-  tagline: An Ultima Online server with reusable .NET libraries for networking, persistence and scripting, plus Redis-backed realm handoff.
+  title: Moongate
+  tagline: An open-source Ultima Online server, built for the joy of programming.
   image:
     file: ../../../../images/moongate_logo.png
   actions:
     - text: Start here
       link: /start/getting-started/
       icon: right-arrow
-    - text: Docker login and realms
-      link: /server/docker-login-realms/
+    - text: Explore documentation
+      link: /#find-your-starting-point
       variant: secondary
 ---
 
-## Install in one line
+Moongate is a personal project for revisiting Ultima Online, exploring ideas and
+enjoying the work of building a server. After 25 years of programming, there is
+still plenty to learn—and plenty worth writing by hand.
+
+The foundation is C# and .NET 10, with Lua scripting, PostgreSQL persistence and
+Redis-backed realm handoff. Its libraries can also be used on their own.
+
+> **A work in progress.** There is no playable world yet.
+> [See what works today](/start/implementation-status/) before setting up a server.
+
+## Find your starting point
+
+<nav class="docs-paths" aria-label="Documentation paths">
+  <a href="/start/getting-started/">
+    <strong>Run the server</strong>
+    <span>Prepare a server root, configure its dependencies and make your first connection.</span>
+  </a>
+  <a href="/server/scripting/">
+    <strong>Script and create content</strong>
+    <span>Write Lua scripts and define the shard with data files and TOML templates.</span>
+  </a>
+  <a href="/server/plugins/">
+    <strong>Extend with C#</strong>
+    <span>Add plugins, commands and Lua modules using the server's extension points.</span>
+  </a>
+  <a href="/reference/nuget-packaging/">
+    <strong>Use the libraries</strong>
+    <span>Bring networking, persistence and other Moongate libraries into your own projects.</span>
+  </a>
+</nav>
+
+Looking for a reference? Browse [data files](/server/data-files/),
+[server configuration](/server/configuration/), [Docker](/server/docker/),
+or [migrating from UOX3](/server/uox3-migration/).
+
+## Install on Linux
+
+<span id="install-in-one-line"></span>
 
 ```sh
 curl -fsSL https://moongate.sh/install.sh | sh
 ```
 
-Installs the latest release on Linux, x64 and arm64: the archive's contents land in
-`/opt/moongate` and the command becomes `moongate`. Start it with a root directory of its own,
-`moongate --root-directory /srv/moongate`, because upgrades replace the installation directory.
-[What it installs, how to upgrade, how to remove it](/start/install/), and how to read the
-script before running it.
+The installer downloads the latest release for Linux x64 or ARM64 into
+`/opt/moongate`. Keep your server root outside that directory, because upgrades
+replace the installation. Follow [First start](/start/getting-started/) to prepare
+the client files, databases and configuration before running the server.
 
-## Find your starting point
+[Read the installation guide](/start/install/) for the script, installation options,
+upgrades and removal.
 
-- **Run a shard:** [Install on Linux](/start/install/), [first start](/start/getting-started/), [Docker](/server/docker/), [configuration](/server/configuration/) and [operating PostgreSQL](/server/persistence-operations/).
-- **Scripting and content:** [Lua scripts](/server/scripting/), [TOML templates](/server/templates/) and [migrating from UOX3](/server/uox3-migration/).
-- **Extend with C#:** [plugins](/server/plugins/), [entities and data access](/server/persistence/), [migrations](/server/persistence-migrations/), [packets and handlers](/server/packets/) and [game loop and timers](/server/game-loop-and-timers/).
-- **Libraries:** [NuGet packages](/reference/nuget-packaging/) and the [standalone TCP cookbook](/libraries/network-cookbook/).
-- **Contribute:** [Contribution guide](/contributing/getting-started/) and [writing documentation](/contributing/documentation/).
+## Built to learn
 
-[Implementation status](/start/implementation-status/) says what the server does
-today and what it does not.
+The process matters as much as the result. [How I use AI](/start/ai-usage/) explains
+where it helps with migration, tests and design, and why writing code by hand
+remains part of the project.
+
+To take part, start with the [contribution guide](/contributing/getting-started/).
+Code, tests, examples and [documentation](/contributing/documentation/) are all
+ways to contribute.
 
 ## Releases
 
