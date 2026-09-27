@@ -118,6 +118,14 @@ internal static class VerifyNuGetPackages
                     $"Missing or changed portable contract: {path}");
             }
         }
+        if (id == "Moongate.Network.Packets")
+        {
+            // The client encryption is derived from POL; its attribution travels with the package.
+            allowed.Add("NOTICE.md");
+            Require(ReadEntry(archive, "NOTICE.md")
+                    .SequenceEqual(File.ReadAllBytes(Path.Combine(repository, "src", id, "Encryption", "NOTICE.md"))),
+                "NOTICE.md does not match the encryption attribution.");
+        }
         VerifyPayload(archive, id, allowed);
         VerifyDependencies(metadata, project, id, version);
 
