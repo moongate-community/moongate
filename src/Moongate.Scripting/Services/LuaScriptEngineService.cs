@@ -162,6 +162,7 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     private readonly IEventBusService _eventBus;
     private readonly IScriptThreadGuard _guard;
     private readonly List<BoundModule> _boundModules = [];
+    private readonly List<IDisposable> _busSubscriptions = [];
     private List<Type> _publishedEnums = [];
     private LuaState? _state;
     private ScriptFileLoader? _files;
@@ -518,6 +519,71 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         );
     }
 
+    /// <summary>
+    ///     Maps a published event and hands it to the loop. Called on the publishing thread: it only reads the event and
+    ///     the subscription store, and never touches the Lua state.
+    /// </summary>
+    private void Deliver(string eventName, Func<IReadOnlyDictionary<string, object?>> map)
+    {
+        var subscriptions = _eventSubscriptions;
+
+        if (_disposed || subscriptions is null || !subscriptions.HasSubscribers(eventName))
+        {
+            return;
+        }
+
+        List<KeyValuePair<string, LuaValue>> values;
+
+        try
+        {
+            values = map()
+                .Select(pair => KeyValuePair.Create(
+                        pair.Key,
+                        LuaValueConverter.ToLua(pair.Value, pair.Value?.GetType() ?? typeof(object))
+                    )
+                )
+                .ToList();
+        }
+        catch (Exception exception)
+        {
+            _logger.Error(exception, "Script event {EventName} could not be mapped for Lua; skipped", eventName);
+
+            return;
+        }
+
+        if (!_gameLoop.TryPost(new ScriptEventDispatchWorkItem(Dispatch, eventName, values)))
+        {
+            _logger.Debug("Script event {EventName} could not be queued; the game loop is not accepting work", eventName);
+        }
+    }
+
+    /// <summary>
+    ///     Starts every current Lua handler of <paramref name="eventName" /> as a coroutine owned by the file that
+    ///     subscribed it, each with its own table. Runs on the loop thread.
+    /// </summary>
+    internal void Dispatch(string eventName, IReadOnlyList<KeyValuePair<string, LuaValue>> values)
+    {
+        var scheduler = _scheduler;
+        var subscriptions = _eventSubscriptions;
+
+        if (scheduler is null || subscriptions is null)
+        {
+            return;
+        }
+
+        foreach (var subscription in subscriptions.Snapshot(eventName))
+        {
+            var table = new LuaTable();
+
+            foreach (var (key, value) in values)
+            {
+                table[key] = value;
+            }
+
+            scheduler.Start(subscription.Function, subscription.Owner, table);
+        }
+    }
+
     private void ReportError(ScriptErrorInfo error)
     {
         _logger.Error("Script error at {File}:{Line}: {Message}", error.File, error.Line, error.Message);
@@ -683,6 +749,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         _eventSubscriptions = eventSubscriptions;
         _budget = budget;
 
+        foreach (var registration in _registry.EventRegistrations)
+        {
+            var name = registration.Name;
+            _busSubscriptions.Add(registration.Subscribe(_eventBus, map => Deliver(name, map)));
+        }
+
         RunBootstrap();
         _logger.Information(
             "Script engine started with {ModuleCount} modules from {ScriptsDirectory}",
@@ -758,6 +830,12 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         // Cancel every timer and coroutine the scheduler knows about before the state goes away: a
         // periodic timer.every callback that fires after this point must not reach CreateCoroutine on
         // a disposed state (the timer wheel and the loop stop after this service does).
+        foreach (var subscription in _busSubscriptions)
+        {
+            subscription.Dispose();
+        }
+
+        _busSubscriptions.Clear();
         _scheduler?.CancelAll();
         _eventSubscriptions?.Clear();
         _state?.Dispose();
