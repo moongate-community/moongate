@@ -41,8 +41,13 @@ public sealed class NetworkEncryptionConfig
     public string GetDescription()
     {
         Validate();
-        return Mode == NetworkEncryptionMode.Disabled
-            ? "Disabled (plaintext)"
-            : $"{Mode}; client {ClientVersion}; login XOR; game {UoEncryptionProfile.Parse(ClientVersion).Type}";
+        if (Mode == NetworkEncryptionMode.Disabled)
+        {
+            return "Disabled (plaintext)";
+        }
+
+        var type = UoEncryptionProfile.Parse(ClientVersion).Type;
+        var algorithm = type == UoEncryptionType.Twofish ? "Twofish / MD5-XOR" : type.ToString();
+        return $"{Mode}; client {ClientVersion}; login XOR; game {algorithm}";
     }
 }

@@ -6,6 +6,8 @@ using Moongate.Network.Packets.Registry;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Data.Config;
 using Moongate.Server.Services.Network.Framing;
+using Moongate.Server.Services.Network.Middleware;
+using Moongate.Server.Types.Network;
 
 namespace Moongate.Tests.Server.Bootstrap.Internal;
 
@@ -81,6 +83,37 @@ public sealed class UoNetworkOptionsFactoryTests
 
         Assert.Same(middleware, Assert.Single(game.ConnectionPipelineFactory!().Middlewares!));
         Assert.Null(login.ConnectionPipelineFactory!().Middlewares);
+    }
+
+    [Fact]
+    public void Create_EnabledEncryptionIsFreshPerConnectionAndFollowsExistingMiddleware()
+    {
+        var config = new MoongateServerConfig { Network = new() { ListenAddress = "127.0.0.1" } };
+        config.Network.Encryption.Mode = NetworkEncryptionMode.Optional;
+        config.Network.Encryption.ClientVersion = "67.0.117.0";
+        var preceding = new PassThroughMiddleware();
+        var supplied = new List<INetMiddleware> { preceding };
+        var game = UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, supplied);
+        var login = UoNetworkOptionsFactory.CreateLogin(config, PacketRegistry.Default);
+        config.Network.Encryption.Mode = NetworkEncryptionMode.Disabled;
+        config.Network.Encryption.ClientVersion = "bad";
+        supplied.Clear();
+        var first = game.ConnectionPipelineFactory!();
+        var second = game.ConnectionPipelineFactory!();
+        Assert.Equal(2, first.Middlewares!.Count);
+        Assert.Same(preceding, first.Middlewares[0]);
+        Assert.IsType<UoEncryptionMiddleware>(first.Middlewares[1]);
+        Assert.NotSame(first.Middlewares[1], second.Middlewares![1]);
+        Assert.IsType<UoEncryptionMiddleware>(Assert.Single(login.ConnectionPipelineFactory!().Middlewares!));
+    }
+
+    [Fact]
+    public void Create_InvalidEnabledEncryptionFailsBeforeListenerCreation()
+    {
+        var config = new MoongateServerConfig();
+        config.Network.Encryption.Mode = NetworkEncryptionMode.Required;
+        Assert.Throws<InvalidOperationException>(() => UoNetworkOptionsFactory.CreateLogin(config, PacketRegistry.Default));
+        Assert.Throws<InvalidOperationException>(() => UoNetworkOptionsFactory.CreateGame(config, PacketRegistry.Default, []));
     }
 
     private sealed class PassThroughMiddleware : INetMiddleware

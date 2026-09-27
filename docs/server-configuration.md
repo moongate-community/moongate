@@ -22,6 +22,10 @@ game_port = 2595
 listen_address = "0.0.0.0"
 enable_ping_server = true # Reserved: currently not consumed by the host.
 
+[network.encryption]
+mode = "Disabled"
+client_version = ""
+
 [redis]
 connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
 handoff_secret = "$MOONGATE_HANDOFF_SECRET"
@@ -204,3 +208,47 @@ it. See [Generate, review and apply](persistence-migrations.md#generate-review-a
 ## Administration endpoint
 
 `[admin_api]` configures the embedded gRPC plugin. It is disabled by default and uses server TLS on port 2590 when enabled. Certificate paths resolve relative to the root; password environment references are resolved only for enabled endpoints. Use [mgboot certificate setup](mgboot.md#generate-an-administration-certificate) to generate a passwordless PFX and enable the endpoint offline. See [Administration API](admin-api.md) for roles, permissions, first-admin provisioning and all limits.
+
+## UO client encryption
+
+`MoongateServerConfig.Network.Encryption` configures both UO listeners. `Mode` is the
+`NetworkEncryptionMode` enum: `Disabled` (default), `Optional`, or `Required`.
+
+| Mode | Connections accepted |
+| --- | --- |
+| `Disabled` | Existing plaintext protocol; no encryption middleware is installed. |
+| `Optional` | Plaintext clients and encrypted clients matching `client_version`. |
+| `Required` | Only encrypted clients matching `client_version`. |
+
+Enabled modes require an explicit POL client version. One encrypted version per
+configuration matches POL's listener model. Login keys are derived from that
+version, while game encryption is selected as OldBlowfish, Blowfish12536,
+Blowfish, BlowfishTwofish, or Twofish. The special version `2.0.0x` is supported.
+No-crypt aliases are only valid when parsing a standalone protocol profile;
+`Optional` and `Required` reject them as configuration errors.
+
+For Enhanced Client 67.0.117.0, use:
+
+```toml
+[network.encryption]
+mode = "Optional"
+client_version = "67.0.117.0"
+```
+
+Use the **wire version**, including the Enhanced Client's 60 major-version offset.
+The inspected Enhanced Client executable with file version `4.0.117.0` uses the
+keys for wire version `67.0.117.0`; using `4.0.117.0` or `7.0.117.0` produces
+different login keys. Keep the original client encryption enabled when testing
+this configuration. A launcher that removes encryption needs `Optional` or
+`Disabled`. Changing the setting requires a restart; startup reports, for example:
+
+```text
+Client encryption: Optional; client 67.0.117.0; login XOR; game Twofish / MD5-XOR
+```
+
+For separate login and game processes, configure the same profile on each.
+The feature provides POL protocol interoperability, not TLS or authenticated
+transport. It does not implement the old Kingdom Reborn AES/E3 negotiation.
+Automated tests compare against original POL C++ vectors and exercise real TCP
+framing and compression; successful interactive login and gameplay with a specific
+Enhanced Client build still require a client-side test.

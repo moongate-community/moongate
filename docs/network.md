@@ -171,3 +171,34 @@ cleanup; `IsConnected == false` or a close event alone does not.
 
 This framing sample does not parse UO packets. See [Packets and handlers](packets.md)
 and [Transport and game ownership](network-game-separation.md) for host integration.
+
+
+## UO host encryption middleware
+
+The UO host installs a fresh `UoEncryptionMiddleware` through
+`UoNetworkOptionsFactory` for each accepted login/game connection when
+`network.encryption.mode` is `Optional` or `Required`. See
+[client encryption configuration](server-configuration.md#uo-client-encryption).
+
+Incoming bytes pass through decryption before `UoPacketFramer` or `GameSeedFramer`.
+The middleware buffers only the seed and initial login (at most 86 bytes), validates
+the configured cipher against the complete login, and then transforms the stream.
+It handles fragmented and coalesced TCP reads without decrypting a byte twice.
+Raw legacy login seeds become a versioned seed frame for existing login handlers;
+game seed bytes and existing versioned seeds remain intact.
+
+Outgoing game data runs through `UoCompressionMiddleware` first and the encryption
+middleware second. Login-server replies remain plaintext. Cipher state belongs to
+the connection, and inbound and outbound positions are independent. Invalid
+handshakes throw before any decrypted frames are dispatched; the transport closes
+the connection. No mutable cipher instance is shared between clients.
+
+Golden vectors under `tests/Moongate.Network.Packets.Tests/TestSupport/Encryption`
+come from the original POL C++ algorithms. To regenerate them from a POL checkout:
+
+```sh
+python3 tests/Moongate.Network.Packets.Tests/TestSupport/Encryption/generate-pol-vectors.py /path/to/polserver
+```
+
+The generator requires Python 3 and a C++20 `g++` compiler. Production uses only
+managed .NET code and does not depend on POL binaries or native crypto libraries.

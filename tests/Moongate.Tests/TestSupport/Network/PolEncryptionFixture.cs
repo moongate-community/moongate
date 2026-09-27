@@ -8,7 +8,7 @@ internal static class PolEncryptionFixture
 {
     internal static IEnumerable<JsonElement> Read()
     {
-        using var stream = typeof(PolEncryptionFixture).Assembly.GetManifestResourceStream("pol-vectors.json")!;
+        using var stream = typeof(PolEncryptionFixture).Assembly.GetManifestResourceStream("Moongate.Tests.TestSupport.Network.pol-vectors.json")!;
         using var doc = JsonDocument.Parse(stream);
         return doc.RootElement.GetProperty("Vectors").EnumerateArray().Select(x => x.Clone()).ToArray();
     }

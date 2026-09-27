@@ -110,7 +110,7 @@
         <ProjectReference Include="../../src/Moongate.Server.Admin/Moongate.Server.Admin.csproj"/>
     </ItemGroup>
     <ItemGroup>
-        <EmbeddedResource Include="../Moongate.Network.Packets.Tests/TestSupport/Encryption/pol-vectors.json" LogicalName="pol-vectors.json"/>
+        <EmbeddedResource Include="../Moongate.Network.Packets.Tests/TestSupport/Encryption/pol-vectors.json" LogicalName="Moongate.Tests.TestSupport.Network.pol-vectors.json"/>
     </ItemGroup>
 
 </Project>
