@@ -84,9 +84,11 @@ language = "eng" # Reads <root>/data/messages/eng.toml.
 [line_of_sight]
 max_distance = 25 # Farthest cells along X or Y a point can see.
 
+[items]
+backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
+gold_template = "0x0eed_gold_coin"    # Item template of gold coins.
+
 [starting_items]
-backpack_template = "0x0e75_backpack" # Item template of every new character's backpack.
-gold_template = "0x0eed_gold_coin"    # Item template of the starting gold.
 gold = 1000                           # Starting gold; 0 gives none.
 best_skills = 3                       # How many of the highest skills pick skill sets.
 ```
@@ -139,7 +141,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 | `localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
 | `line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
-| `starting_items.backpack_template`, `gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Both must exist in `templates/items/` or the game server stops at startup. See [Starting items](data-files.md#starting-items). |
+| `items.backpack_template`, `items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack and gold of new characters and spawned NPCs. Both must exist in `templates/items/` or the game server stops at startup. See [Starting items](data-files.md#starting-items). |
 | `starting_items.gold` | From 0 to 65535 (one pile); default 1000. Gold coins put in a new character's backpack; above 1 the gold template must stack, or the game server stops at startup. |
 | `starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
 

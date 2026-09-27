@@ -10,21 +10,16 @@ public sealed class StartingItemsConfigTests
         var config = new StartingItemsConfig();
 
         config.Validate();
-        Assert.Equal(
-            ("0x0e75_backpack", "0x0eed_gold_coin", 1000, 3),
-            (config.BackpackTemplate, config.GoldTemplate, config.Gold, config.BestSkills)
-        );
+        Assert.Equal((1000, 3), (config.Gold, config.BestSkills));
     }
 
     [Theory,
-     InlineData("", "g", 0, 3),
-     InlineData("b", " ", 0, 3),
-     InlineData("b", "g", -1, 3),
-     InlineData("b", "g", 0, 0),
-     InlineData("b", "g", 65536, 3)]
-    public void Validate_BadValues_Throw(string backpack, string gold, int amount, int bestSkills)
+     InlineData(-1, 3),
+     InlineData(0, 0),
+     InlineData(65536, 3)]
+    public void Validate_BadValues_Throw(int amount, int bestSkills)
     {
-        var config = new StartingItemsConfig { BackpackTemplate = backpack, GoldTemplate = gold, Gold = amount, BestSkills = bestSkills };
+        var config = new StartingItemsConfig { Gold = amount, BestSkills = bestSkills };
 
         Assert.Throws<InvalidOperationException>(config.Validate);
     }

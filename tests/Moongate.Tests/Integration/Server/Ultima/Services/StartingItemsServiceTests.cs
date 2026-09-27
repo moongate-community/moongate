@@ -109,7 +109,7 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
     {
         // Gold on a template that does not stack makes Create throw after the other items were saved.
         var service = CreateService(
-            new StartingItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "shirt" },
+            new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "shirt" },
             Set(common: true, entries: [Entry("bottle")])
         );
 
@@ -121,7 +121,7 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
     [Fact]
     public async Task StartAsync_AMissingConfiguredTemplate_Throws()
     {
-        var service = CreateService(new StartingItemsConfig { BackpackTemplate = "chest", GoldTemplate = "gold" });
+        var service = CreateService(new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "chest", GoldTemplate = "gold" });
 
         await Assert.ThrowsAsync<InvalidDataException>(service.StartAsync);
     }
@@ -129,17 +129,17 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
     [Fact]
     public async Task StartAsync_AGoldTemplateThatDoesNotStack_Throws()
     {
-        var service = CreateService(new StartingItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "shirt" });
+        var service = CreateService(new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "shirt" });
 
         await Assert.ThrowsAsync<InvalidDataException>(service.StartAsync);
     }
 
     private StartingItemsService CreateService(params StartingItemSet[] sets)
     {
-        return CreateService(new StartingItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" }, sets);
+        return CreateService(new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" }, sets);
     }
 
-    private StartingItemsService CreateService(StartingItemsConfig config, params StartingItemSet[] sets)
+    private StartingItemsService CreateService(StartingItemsConfig config, ItemsConfig items, params StartingItemSet[] sets)
     {
         var loaders = new StubDataLoaderService()
                       .With(
@@ -174,7 +174,8 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
             new ContainerLayoutService(loaders),
             tiles,
             _host.Owner,
-            config
+            config,
+            items
         );
     }
 

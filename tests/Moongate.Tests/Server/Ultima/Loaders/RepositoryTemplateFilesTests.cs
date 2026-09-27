@@ -45,8 +45,8 @@ public sealed class RepositoryTemplateFilesTests
 
         Assert.Equal(56, sets.Count);
         Assert.Single(sets, set => set.Common);
-        Assert.Contains(templates, t => t.Id == new StartingItemsConfig().BackpackTemplate);
-        Assert.Contains(templates, t => t.Id == new StartingItemsConfig().GoldTemplate);
+        Assert.Contains(templates, t => t.Id == new ItemsConfig().BackpackTemplate);
+        Assert.Contains(templates, t => t.Id == new ItemsConfig().GoldTemplate);
     }
 
     [Fact]

@@ -28,6 +28,7 @@ public class StartingItemsService : IStartingItemsService
     private readonly ITileDataService _tiles;
     private readonly MoongatePersistenceService _persistence;
     private readonly StartingItemsConfig _config;
+    private readonly ItemsConfig _items;
 
     public StartingItemsService(
         IDataLoaderService dataLoaderService,
@@ -36,7 +37,8 @@ public class StartingItemsService : IStartingItemsService
         IContainerLayoutService layout,
         ITileDataService tiles,
         MoongatePersistenceService persistence,
-        StartingItemsConfig config
+        StartingItemsConfig config,
+        ItemsConfig items
     )
     {
         _dataLoaderService = dataLoaderService;
@@ -46,25 +48,26 @@ public class StartingItemsService : IStartingItemsService
         _tiles = tiles;
         _persistence = persistence;
         _config = config;
+        _items = items;
     }
 
     public Task StartAsync()
     {
         foreach (var (key, templateId) in new[]
                  {
-                     ("backpack_template", _config.BackpackTemplate), ("gold_template", _config.GoldTemplate)
+                     ("backpack_template", _items.BackpackTemplate), ("gold_template", _items.GoldTemplate)
                  })
         {
             if (!_templates.TryGet(templateId, out _))
             {
-                throw new InvalidDataException($"starting_items.{key} '{templateId}' is not an item template.");
+                throw new InvalidDataException($"items.{key} '{templateId}' is not an item template.");
             }
         }
 
-        if (_config.Gold > 1 && !_templates.Get(_config.GoldTemplate).EffectiveStackable(_tiles))
+        if (_config.Gold > 1 && !_templates.Get(_items.GoldTemplate).EffectiveStackable(_tiles))
         {
             throw new InvalidDataException(
-                $"starting_items.gold_template '{_config.GoldTemplate}' does not stack, so it cannot hold {_config.Gold} coins."
+                $"items.gold_template '{_items.GoldTemplate}' does not stack, so it cannot hold {_config.Gold} coins."
             );
         }
 
@@ -88,7 +91,7 @@ public class StartingItemsService : IStartingItemsService
             PersistenceDatabaseTarget.Realm,
             async transaction =>
             {
-                var backpack = _factory.Create(_config.BackpackTemplate);
+                var backpack = _factory.Create(_items.BackpackTemplate);
                 backpack.Equip(request.MobileId, LayerType.Backpack);
                 await _factory.SaveAsync(transaction, backpack, cancellationToken);
                 given.Add(backpack);
@@ -105,7 +108,7 @@ public class StartingItemsService : IStartingItemsService
 
                 if (_config.Gold > 0)
                 {
-                    var gold = _factory.Create(_config.GoldTemplate, _config.Gold);
+                    var gold = _factory.Create(_items.GoldTemplate, _config.Gold);
                     PutInBackpack(gold, backpack);
                     await _factory.SaveAsync(transaction, gold, cancellationToken);
                     given.Add(gold);

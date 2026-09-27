@@ -1,20 +1,11 @@
 namespace Moongate.Server.Core.Data.Config;
 
 /// <summary>
-///     TOML settings for what every new character gets besides the sets of <c>data/starting_items.toml</c>.
+///     TOML settings for what every new character gets besides the sets of <c>data/starting_items.toml</c>; the
+///     backpack and gold templates are in <see cref="ItemsConfig" />.
 /// </summary>
 public sealed class StartingItemsConfig
 {
-    /// <summary>
-    ///     Gets or sets the item template of the backpack every new character wears.
-    /// </summary>
-    public string BackpackTemplate { get; set; } = "0x0e75_backpack";
-
-    /// <summary>
-    ///     Gets or sets the item template of the starting gold.
-    /// </summary>
-    public string GoldTemplate { get; set; } = "0x0eed_gold_coin";
-
     /// <summary>
     ///     Gets or sets how much gold goes in the backpack, up to 65535 (one pile); 0 gives none.
     /// </summary>
@@ -30,11 +21,6 @@ public sealed class StartingItemsConfig
     /// </summary>
     public void Validate()
     {
-        if (string.IsNullOrWhiteSpace(BackpackTemplate) || string.IsNullOrWhiteSpace(GoldTemplate))
-        {
-            throw new InvalidOperationException("starting_items.backpack_template and gold_template must be set.");
-        }
-
         if (Gold is < 0 or > ushort.MaxValue)
         {
             throw new InvalidOperationException($"starting_items.gold must be from 0 to 65535, found {Gold}.");

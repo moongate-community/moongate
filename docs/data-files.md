@@ -393,7 +393,7 @@ character gets nothing:
    go to the lower skill id; skills at 0 do not count).
 2. It applies, in order, the sets of those skills, the common sets, then the sets of
    the character's race and gender.
-3. It creates the backpack (`starting_items.backpack_template`) and puts it on the
+3. It creates the backpack (`items.backpack_template`) and puts it on the
    `Backpack` layer.
 4. For each entry it picks one item. A stackable item gets the whole `amount`;
    any other item is created `amount` times.
@@ -404,7 +404,7 @@ character gets nothing:
    pants hue; a hue of 0 keeps the item's own.
 7. Items in the backpack go to a random spot inside its `containers.toml` bounds.
 8. Last, `starting_items.gold` coins (default 1000, 0 for none) of
-   `starting_items.gold_template` go in the backpack.
+   `items.gold_template` go in the backpack.
 
 ### Validation at startup
 
@@ -414,7 +414,7 @@ The server stops when:
 - a set has no items, or is not common and has no skill, race or gender;
 - an entry has no items, names an item that is not an item template, or has an
   `amount` that can roll below 1;
-- `starting_items.backpack_template` or `gold_template` is not an item template;
+- `items.backpack_template` or `items.gold_template` is not an item template;
 - `starting_items.gold` is above 1 and the gold template does not stack.
 
 ## Containers
