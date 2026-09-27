@@ -30,18 +30,9 @@ internal static class UoxItemConverterCommand
         string? startingItemsDestination = null
     )
     {
-        if ((mobileSource is null) != (mobileDestination is null) || (mobileSource is null) != (namesDestination is null))
+        if (ValidateOptions(mobileSource, mobileDestination, namesDestination, startingItemsDestination, error) is { } invalid)
         {
-            error.WriteLine("--mobile-source, --mobile-destination and --names-destination go together: give all three or none.");
-
-            return 2;
-        }
-
-        if (startingItemsDestination is not null && mobileSource is null)
-        {
-            error.WriteLine("--starting-items-destination needs --mobile-source, which holds newbie/newbie.dfn.");
-
-            return 2;
+            return invalid;
         }
 
         source = Path.GetFullPath(source);
@@ -55,14 +46,7 @@ internal static class UoxItemConverterCommand
             return 2;
         }
 
-        AppContext.SetSwitch("Tomlyn.TomlSerializer.IsReflectionEnabledByDefault", true);
-        TomlUtils.AddTomlConverter(new SerialTomlConverter());
-        TomlUtils.AddTomlConverter(new Point2DTomlConverter());
-        TomlUtils.AddTomlConverter(new Point3DTomlConverter());
-        TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
-        TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
-        TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
-        TomlUtils.AddTomlConverter(new DiceSpecTomlConverter());
+        RegisterTomlConverters();
 
         var sourceFiles = File.Exists(source)
             ? [source]
@@ -75,110 +59,102 @@ internal static class UoxItemConverterCommand
             return 2;
         }
 
-        var blocksByFile = new Dictionary<string, List<DfnBlock>>(StringComparer.Ordinal);
-        var blocksByHeader = new Dictionary<string, DfnBlock>(StringComparer.OrdinalIgnoreCase);
-        var flatByHeader = new Dictionary<string, DfnBlock>(StringComparer.OrdinalIgnoreCase);
+        var (blocksByFile, blocksByHeader) = ReadBlocks(sourceFiles, error);
+        var flatByHeader = FlattenBlocks(blocksByFile, blocksByHeader);
 
-        foreach (var file in sourceFiles)
-        {
-            var blocks = DfnParser.Parse(File.ReadAllLines(file));
-            blocksByFile[file] = blocks;
-
-            foreach (var block in blocks)
-            {
-                UoxDataFixes.Apply(block);
-
-                // UOX3 keeps the last definition of a header (scriptc.cpp overwrites defEntries[section]); files are read
-                // in ordinal order so the result does not depend on the filesystem.
-                if (blocksByHeader.ContainsKey(block.Header))
-                {
-                    error.WriteLine($"Duplicate block '[{block.Header}]' in {file}; keeping this later one, as UOX3 does.");
-                }
-
-                blocksByHeader[block.Header] = block;
-            }
-        }
-
-        // Inlined for the fields only: Ids below come from each block's own lines, so an inherited name= never
-        // renames a bare-hex block.
-        foreach (var blocks in blocksByFile.Values)
-        {
-            for (var i = 0; i < blocks.Count; i++)
-            {
-                var isKept = ReferenceEquals(blocksByHeader[blocks[i].Header], blocks[i]);
-                blocks[i] = DfnBlockFlattener.Flatten(blocks[i], blocksByHeader);
-
-                if (isKept)
-                {
-                    flatByHeader[blocks[i].Header] = blocks[i];
-                }
-            }
-        }
-
-        // Every block's own Id is computed once, up front, from the block alone - never from another
-        // block's Id - so a get= chain or a loot entry resolves the same way no matter which order
-        // the source files happen to scan in.
         var convertLoot = lootDestination is not null;
         var idByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var itemNameById = new Dictionary<string, string>(StringComparer.Ordinal);
         var lootIdByHeader = new Dictionary<string, string>(StringComparer.OrdinalIgnoreCase);
         var knownLootIds = new HashSet<string>(StringComparer.OrdinalIgnoreCase);
+        ComputeIds(blocksByHeader, convertLoot, idByHeader, itemNameById, lootIdByHeader, knownLootIds);
 
-        foreach (var block in blocksByHeader.Values)
+        WriteItemsAndLoot(
+            source,
+            destination,
+            lootDestination,
+            blocksByFile,
+            flatByHeader,
+            idByHeader,
+            itemNameById,
+            lootIdByHeader,
+            knownLootIds,
+            output
+        );
+
+        // A real read-back of what was actually written to disk, not a re-check of the resolution
+        // that already ran in memory: it also catches a TOML round-trip going wrong, and a Serial
+        // pair like "Base-Item"/"base_item" that would collide only after ToSnakeCase, neither of
+        // which the in-memory resolution above could ever see going wrong.
+        var errors = VerifyOutput(
+            destination,
+            lootDestination,
+            out var verifiedItems,
+            out var verifiedLoot
+        );
+
+        if (ConverterOutput.ReportErrors(error, errors, "output") != 0)
         {
-            if (convertLoot && LootTemplateBuilder.TryGetLootId(block.Header, out var lootId))
-            {
-                lootIdByHeader[block.Header] = lootId;
-                knownLootIds.Add(lootId);
-            }
-            else if (ItemTemplateBuilder.TryComputeId(block, out var id, out _))
-            {
-                idByHeader[block.Header] = id;
-
-                // Carried only so a loot entry can leave a human-readable Comment behind: an id
-                // alone, "0x19b7", says nothing to someone reading the loot file by hand.
-                if (block.Fields.TryGetValue("name", out var itemName) && itemName.Length > 0)
-                {
-                    itemNameById[id] = itemName;
-                }
-            }
+            return 1;
         }
 
-        // A block with no id= of its own but one parent that converted (UOX3's magic items, journals and other
-        // variants: get=0x0df1 plus a name and a colour) is a template too, id = its header, inheriting the graphic.
-        // Repeated until nothing changes, so a variant of a variant converts once its parent has.
-        for (var added = true; added;)
+        output.WriteLine(
+            $"Verified {verifiedItems} item(s) and {verifiedLoot} loot table(s) read back from disk: " +
+            "no duplicate ids, every BaseId and loot reference resolves."
+        );
+
+        if (mobileSource is null)
         {
-            added = false;
-
-            foreach (var block in blocksByHeader.Values)
-            {
-                if (idByHeader.ContainsKey(block.Header) ||
-                    lootIdByHeader.ContainsKey(block.Header) ||
-                    !ItemTemplateBuilder.TryGetSingleParent(block, out var parent) ||
-                    !idByHeader.ContainsKey(parent))
-                {
-                    continue;
-                }
-
-                var id = StringUtils.ToSnakeCase(block.Header);
-                idByHeader[block.Header] = id;
-                added = true;
-
-                if (block.Fields.TryGetValue("name", out var itemName) && itemName.Length > 0)
-                {
-                    itemNameById[id] = itemName;
-                }
-            }
+            return 0;
         }
 
+        var items = new ItemIndex(idByHeader, blocksByHeader, knownLootIds);
+
+        mobileSource = Path.GetFullPath(mobileSource);
+        var mobileResult = UoxMobileConverter.Run(
+            mobileSource,
+            Path.GetFullPath(mobileDestination!),
+            Path.GetFullPath(namesDestination!),
+            items,
+            output,
+            error
+        );
+
+        if (mobileResult != 0 || startingItemsDestination is null)
+        {
+            return mobileResult;
+        }
+
+        return UoxStartingItemsConverter.Run(
+            mobileSource,
+            Path.GetFullPath(startingItemsDestination),
+            items,
+            output,
+            error
+        );
+    }
+
+    // Writes one item file per source file and one loot file per table, then the summary of what was skipped.
+    private static void WriteItemsAndLoot(
+        string source,
+        string destination,
+        string? lootDestination,
+        Dictionary<string, List<DfnBlock>> blocksByFile,
+        Dictionary<string, DfnBlock> flatByHeader,
+        Dictionary<string, string> idByHeader,
+        Dictionary<string, string> itemNameById,
+        Dictionary<string, string> lootIdByHeader,
+        HashSet<string> knownLootIds,
+        TextWriter output
+    )
+    {
         var written = 0;
         var lootWritten = 0;
         var skippedDuplicate = 0;
         var skippedNoId = 0;
         var skippedUnresolvedLootEntry = 0;
 
-        if (convertLoot)
+        if (lootDestination is not null)
         {
             Directory.CreateDirectory(lootDestination!);
         }
@@ -201,7 +177,7 @@ internal static class UoxItemConverterCommand
                     continue;
                 }
 
-                if (convertLoot && lootIdByHeader.TryGetValue(block.Header, out var lootId))
+                if (lootDestination is not null && lootIdByHeader.TryGetValue(block.Header, out var lootId))
                 {
                     var lootTemplate = LootTemplateBuilder.Build(
                         block,
@@ -263,56 +239,158 @@ internal static class UoxItemConverterCommand
             $"id= of their own, {skippedDuplicate} duplicate of an already-converted header, and " +
             $"{skippedUnresolvedLootEntry} loot entry/entries pointing at nothing this converter could resolve."
         );
+    }
 
-        // A real read-back of what was actually written to disk, not a re-check of the resolution
-        // that already ran in memory: it also catches a TOML round-trip going wrong, and a Serial
-        // pair like "Base-Item"/"base_item" that would collide only after ToSnakeCase, neither of
-        // which the in-memory resolution above could ever see going wrong.
-        var errors = VerifyOutput(
-            destination,
-            convertLoot ? lootDestination : null,
-            out var verifiedItems,
-            out var verifiedLoot
-        );
-
-        if (ConverterOutput.ReportErrors(error, errors, "output") != 0)
+    // The mobile options go together, and starting items need the mobile source that holds newbie/newbie.dfn.
+    private static int? ValidateOptions(
+        string? mobileSource,
+        string? mobileDestination,
+        string? namesDestination,
+        string? startingItemsDestination,
+        TextWriter error
+    )
+    {
+        if ((mobileSource is null) != (mobileDestination is null) || (mobileSource is null) != (namesDestination is null))
         {
-            return 1;
+            error.WriteLine("--mobile-source, --mobile-destination and --names-destination go together: give all three or none.");
+
+            return 2;
         }
 
-        output.WriteLine(
-            $"Verified {verifiedItems} item(s) and {verifiedLoot} loot table(s) read back from disk: " +
-            "no duplicate ids, every BaseId and loot reference resolves."
-        );
-
-        if (mobileSource is null)
+        if (startingItemsDestination is not null && mobileSource is null)
         {
-            return 0;
+            error.WriteLine("--starting-items-destination needs --mobile-source, which holds newbie/newbie.dfn.");
+
+            return 2;
         }
 
-        var items = new ItemIndex(idByHeader, blocksByHeader, knownLootIds);
+        return null;
+    }
 
-        var mobileResult = UoxMobileConverter.Run(
-            Path.GetFullPath(mobileSource),
-            Path.GetFullPath(mobileDestination!),
-            Path.GetFullPath(namesDestination!),
-            items,
-            output,
-            error
-        );
+    private static void RegisterTomlConverters()
+    {
+        AppContext.SetSwitch("Tomlyn.TomlSerializer.IsReflectionEnabledByDefault", true);
+        TomlUtils.AddTomlConverter(new SerialTomlConverter());
+        TomlUtils.AddTomlConverter(new Point2DTomlConverter());
+        TomlUtils.AddTomlConverter(new Point3DTomlConverter());
+        TomlUtils.AddTomlConverter(new HueSpecTomlConverter());
+        TomlUtils.AddTomlConverter(new EnumValueSpecTomlConverterFactory());
+        TomlUtils.AddTomlConverter(new RangeValueSpecTomlConverterFactory());
+        TomlUtils.AddTomlConverter(new DiceSpecTomlConverter());
+    }
 
-        if (mobileResult != 0 || startingItemsDestination is null)
+    // Parses every file; UOX3 keeps the last definition of a header (scriptc.cpp overwrites defEntries[section]), and
+    // the files come in ordinal order so the result does not depend on the filesystem.
+    private static (Dictionary<string, List<DfnBlock>> ByFile, Dictionary<string, DfnBlock> ByHeader) ReadBlocks(
+        string[] sourceFiles,
+        TextWriter error
+    )
+    {
+        var blocksByFile = new Dictionary<string, List<DfnBlock>>(StringComparer.Ordinal);
+        var blocksByHeader = new Dictionary<string, DfnBlock>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var file in sourceFiles)
         {
-            return mobileResult;
+            var blocks = DfnParser.Parse(File.ReadAllLines(file));
+            blocksByFile[file] = blocks;
+
+            foreach (var block in blocks)
+            {
+                UoxDataFixes.Apply(block);
+
+                if (blocksByHeader.ContainsKey(block.Header))
+                {
+                    error.WriteLine($"Duplicate block '[{block.Header}]' in {file}; keeping this later one, as UOX3 does.");
+                }
+
+                blocksByHeader[block.Header] = block;
+            }
         }
 
-        return UoxStartingItemsConverter.Run(
-            Path.GetFullPath(mobileSource),
-            Path.GetFullPath(startingItemsDestination),
-            items,
-            output,
-            error
-        );
+        return (blocksByFile, blocksByHeader);
+    }
+
+    // Inlined for the fields only: ids come from each block's own lines, so an inherited name= never renames a
+    // bare-hex block. Returns the flattened block kept for each header.
+    private static Dictionary<string, DfnBlock> FlattenBlocks(
+        Dictionary<string, List<DfnBlock>> blocksByFile,
+        Dictionary<string, DfnBlock> blocksByHeader
+    )
+    {
+        var flatByHeader = new Dictionary<string, DfnBlock>(StringComparer.OrdinalIgnoreCase);
+
+        foreach (var blocks in blocksByFile.Values)
+        {
+            for (var i = 0; i < blocks.Count; i++)
+            {
+                var isKept = ReferenceEquals(blocksByHeader[blocks[i].Header], blocks[i]);
+                blocks[i] = DfnBlockFlattener.Flatten(blocks[i], blocksByHeader);
+
+                if (isKept)
+                {
+                    flatByHeader[blocks[i].Header] = blocks[i];
+                }
+            }
+        }
+
+        return flatByHeader;
+    }
+
+    // Every block's id is computed once, up front, from the block alone, so a get= chain or a loot entry resolves the
+    // same way whatever order the files scan in. A block with no id= of its own but one parent that converted (UOX3's
+    // magic items, journals and other variants: get=0x0df1 plus a name and a colour) is a template too, id = its
+    // header; repeated until nothing changes, so a variant of a variant converts once its parent has.
+    private static void ComputeIds(
+        Dictionary<string, DfnBlock> blocksByHeader,
+        bool convertLoot,
+        Dictionary<string, string> idByHeader,
+        Dictionary<string, string> itemNameById,
+        Dictionary<string, string> lootIdByHeader,
+        HashSet<string> knownLootIds
+    )
+    {
+        void AddItem(DfnBlock block, string id)
+        {
+            idByHeader[block.Header] = id;
+
+            // Carried only so a loot entry can leave a readable comment: "0x19b7" alone says nothing.
+            if (block.Fields.TryGetValue("name", out var itemName) && itemName.Length > 0)
+            {
+                itemNameById[id] = itemName;
+            }
+        }
+
+        foreach (var block in blocksByHeader.Values)
+        {
+            if (convertLoot && LootTemplateBuilder.TryGetLootId(block.Header, out var lootId))
+            {
+                lootIdByHeader[block.Header] = lootId;
+                knownLootIds.Add(lootId);
+            }
+            else if (ItemTemplateBuilder.TryComputeId(block, out var id, out _))
+            {
+                AddItem(block, id);
+            }
+        }
+
+        for (var added = true; added;)
+        {
+            added = false;
+
+            foreach (var block in blocksByHeader.Values)
+            {
+                if (idByHeader.ContainsKey(block.Header) ||
+                    lootIdByHeader.ContainsKey(block.Header) ||
+                    !ItemTemplateBuilder.TryGetSingleParent(block, out var parent) ||
+                    !idByHeader.ContainsKey(parent))
+                {
+                    continue;
+                }
+
+                AddItem(block, StringUtils.ToSnakeCase(block.Header));
+                added = true;
+            }
+        }
     }
 
     /// <summary>
