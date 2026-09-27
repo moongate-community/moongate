@@ -26,6 +26,9 @@ public class MobileFactoryService : IMobileFactoryService
 {
     private const string GenderNameList = "{gender}";
 
+    // MobileTemplate: "Unset is 10" for strength, dexterity and intelligence.
+    private const int DefaultStat = 10;
+
     private readonly IMobileTemplateService _templates;
     private readonly INameService _names;
     private readonly IDataLoaderService _dataLoaderService;
@@ -66,17 +69,17 @@ public class MobileFactoryService : IMobileFactoryService
         var template = _templates.Get(templateId);
         var gender = template.Gender switch
         {
-            MobileGenderType.Male => GenderType.Male,
             MobileGenderType.Female => GenderType.Female,
-            _ => BuiltInRng.Next(2) == 0 ? GenderType.Male : GenderType.Female
+            MobileGenderType.Random => BuiltInRng.Next(2) == 0 ? GenderType.Male : GenderType.Female,
+            _ => GenderType.Male
         };
         var race = template.Race is { } templateRace
             ? _dataLoaderService.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == templateRace)
             : null;
         var looks = race?.For(gender);
-        var strength = Roll(template.Strength);
-        var dexterity = Roll(template.Dexterity);
-        var intelligence = Roll(template.Intelligence);
+        var strength = template.Strength?.Roll() ?? DefaultStat;
+        var dexterity = template.Dexterity?.Roll() ?? DefaultStat;
+        var intelligence = template.Intelligence?.Roll() ?? DefaultStat;
         var hits = template.Hits?.Roll() ?? strength;
         var mana = template.Mana?.Roll() ?? intelligence;
         var stamina = template.Stamina?.Roll() ?? dexterity;
@@ -132,6 +135,14 @@ public class MobileFactoryService : IMobileFactoryService
 
         var template = _templates.Get(templateId);
         var mobile = Create(templateId);
+
+        if (mobile.Body == 0)
+        {
+            throw new InvalidDataException(
+                $"Mobile template '{templateId}' has no body and no race, so it cannot be spawned."
+            );
+        }
+
         mobile.Map = map;
         mobile.Location = location;
         await _eventBus.PublishAsync(new MobileBeforeSpawnEvent(mobile, map, location), cancellationToken);

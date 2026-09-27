@@ -30,7 +30,8 @@ public sealed class MobileFactoryServiceTests
                           {
                               Id = "bald_monk", Race = RaceType.Human, Gender = MobileGenderType.Male, Name = "a monk", Hair = []
                           },
-                          new MobileTemplate { Id = "orc", Body = 17, NameList = "orc" }
+                          new MobileTemplate { Id = "orc", Body = 17, NameList = "orc" },
+                          new MobileTemplate { Id = "lord", Race = RaceType.Human, Name = "Lord British" }
                       )
                       .With(
                           new RaceContent
@@ -109,6 +110,14 @@ public sealed class MobileFactoryServiceTests
         Assert.Equal(("a monk", 0), (monk.Name, monk.HairStyle));
         Assert.Equal((17, "Grok", 0, 0, (ushort)0), (orc.Body, orc.Name, orc.HairStyle, orc.BeardStyle, orc.SkinHue.Value));
         Assert.Equal(RaceType.Human, orc.Race);
+    }
+
+    [Fact]
+    public void Create_UnsetGenderIsMale_AndUnsetStatsAreTen_AsTheTemplateContractSays()
+    {
+        Assert.All(Enumerable.Range(0, 50), _ => Assert.Equal(GenderType.Male, _factory.Create("lord").Gender));
+        var lord = _factory.Create("lord");
+        Assert.Equal((10, 10, 10, 10, 10, 10), (lord.Strength, lord.Dexterity, lord.Intelligence, lord.HitsMax, lord.StaminaMax, lord.ManaMax));
     }
 
     [Fact]

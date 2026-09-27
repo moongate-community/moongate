@@ -11,7 +11,8 @@ using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
-using Moongate.Tests.TestSupport.Events;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Maps;
@@ -26,7 +27,9 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     private HostPersistenceFixture _host = null!;
     private IDataAccess<MobileEntity> _mobiles = null!;
     private IDataAccess<ItemEntity> _items = null!;
-    private InProcessEventBus _bus = null!;
+    private readonly List<IMoongateEvent> _published = [];
+    private Container _busContainer = null!;
+    private IMoongateEventBus _bus = null!;
     private MobileFactoryService _factory = null!;
 
     public async Task InitializeAsync()
@@ -37,7 +40,18 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
         await _host.Owner.InitializeAsync();
         _mobiles = _host.Container.Resolve<IDataAccess<MobileEntity>>();
         _items = _host.Container.Resolve<IDataAccess<ItemEntity>>();
-        _bus = new InProcessEventBus();
+        // The real bus: it runs handlers in order and logs, rather than rethrows, a handler's exception.
+        _busContainer = new Container();
+        _busContainer.RegisterMoongateEventBus();
+        _bus = _busContainer.Resolve<IMoongateEventBus>();
+        _bus.SubscribeAll(
+            (e, _) =>
+            {
+                _published.Add(e);
+
+                return Task.CompletedTask;
+            }
+        );
         var loaders = new StubDataLoaderService()
                       .With(
                           new MobileTemplate
@@ -52,6 +66,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
                                   new MobileEquipmentEntry { Items = ["torch_on_wall"] }
                               ]
                           },
+                          new MobileTemplate { Id = "shapeless", Name = "a shapeless thing" },
                           new MobileTemplate
                           {
                               Id = "broken", Body = 17, Equipment = [new MobileEquipmentEntry { Items = ["missing_at_runtime"] }]
@@ -94,6 +109,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
 
     public async Task DisposeAsync()
     {
+        _busContainer.Dispose();
         await _host.DisposeAsync();
     }
 
@@ -118,7 +134,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
             () => _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(500, 20, 0))
         );
 
-        Assert.Empty(_bus.Published);
+        Assert.Empty(_published);
         Assert.Empty(await _mobiles.QueryAsync(m => m.TemplateId == "guard"));
     }
 
@@ -138,23 +154,33 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
 
         Assert.Equal(
             [typeof(MobileBeforeSpawnEvent), typeof(MobileMovedToWorldEvent), typeof(MobileAfterSpawnEvent)],
-            _bus.Published.Select(e => e.GetType())
+            _published.Select(e => e.GetType())
         );
         Assert.Equal("Captain Rook", (await _mobiles.GetByIdAsync(spawned.Mobile.Id))!.Name);
-        Assert.Same(spawned, ((MobileAfterSpawnEvent)_bus.Published[2]).Spawned);
+        Assert.Same(spawned, ((MobileAfterSpawnEvent)_published[2]).Spawned);
     }
 
     [Fact]
-    public async Task SpawnAsync_ABeforeSpawnHandlerThatThrows_SavesNothing()
+    public async Task SpawnAsync_AHandlerThatThrows_IsLoggedByTheBus_AndTheSpawnGoesOn()
     {
         _bus.Subscribe<MobileBeforeSpawnEvent>((_, _) => throw new InvalidOperationException("no guards today"));
 
-        await Assert.ThrowsAsync<InvalidOperationException>(
-            () => _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0))
+        var spawned = await _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0));
+
+        Assert.NotNull(await _mobiles.GetByIdAsync(spawned.Mobile.Id));
+        Assert.Equal(3, _published.Count);
+    }
+
+    [Fact]
+    public async Task SpawnAsync_ATemplateWithNoBodyAndNoRace_IsRejectedBeforeAnything()
+    {
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(
+            () => _factory.SpawnAsync("shapeless", MapType.Felucca, new Point3D(10, 20, 0))
         );
 
-        Assert.Single(_bus.Published);
-        Assert.Empty(await _mobiles.QueryAsync(m => m.TemplateId == "guard"));
+        Assert.Contains("'shapeless'", exception.Message);
+        Assert.Empty(_published);
+        Assert.Empty(await _mobiles.QueryAsync(m => m.TemplateId == "shapeless"));
     }
 
     [Fact]
@@ -166,7 +192,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
         );
 
         Assert.Empty(await _mobiles.QueryAsync(m => m.TemplateId == "broken"));
-        Assert.DoesNotContain(_bus.Published, e => e is MobileMovedToWorldEvent or MobileAfterSpawnEvent);
+        Assert.DoesNotContain(_published, e => e is MobileMovedToWorldEvent or MobileAfterSpawnEvent);
     }
 
     [Fact]

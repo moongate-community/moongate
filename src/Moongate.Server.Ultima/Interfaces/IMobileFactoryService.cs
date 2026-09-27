@@ -21,11 +21,12 @@ public interface IMobileFactoryService
     /// <summary>
     ///     Creates a mobile from template <paramref name="templateId" />, puts it at <paramref name="location" /> on
     ///     <paramref name="map" />, and saves it with the equipment of its template in one transaction. Publishes
-    ///     <c>MobileBeforeSpawnEvent</c> before saving (a handler may change the mobile; an exception stops the spawn
-    ///     with nothing saved), then <c>MobileMovedToWorldEvent</c> and <c>MobileAfterSpawnEvent</c> after the commit: an
-    ///     exception in one of those reaches the caller, but the mobile stays saved.
+    ///     <c>MobileBeforeSpawnEvent</c> before saving (a handler may change the mobile), then
+    ///     <c>MobileMovedToWorldEvent</c> and <c>MobileAfterSpawnEvent</c> after the commit. The event bus logs a handler's
+    ///     exception and goes on, so a handler cannot stop or undo a spawn.
     /// </summary>
     /// <exception cref="KeyNotFoundException">No template has that id.</exception>
+    /// <exception cref="InvalidDataException">The template resolves to no body and no race.</exception>
     /// <exception cref="ArgumentOutOfRangeException">The location is outside the map.</exception>
     Task<SpawnedMobile> SpawnAsync(
         string templateId,

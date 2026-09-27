@@ -3,6 +3,7 @@ using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Loaders;
+using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Server.Ultima.Loaders;
@@ -60,6 +61,28 @@ public sealed class RepositoryTemplateFilesTests
 
         Assert.Equal(667, mobiles.Count);
         Assert.Equal("{gender}", mobiles["guard"].NameList);
+    }
+
+    [Fact]
+    public async Task ShippedGuardAndOrc_CreateWithTheShippedRacesAndNames()
+    {
+        var directories = Directories();
+        var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var races = (await new RacesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items))
+                       .LoadDataAsync()).Entities.ToArray();
+        var loaders = new StubDataLoaderService().With(names).With(races).With(mobiles);
+        var factory = new MobileFactoryService(
+            new MobileTemplateService(loaders), new NameService(loaders), loaders, null!, null!, null!, null!, null!, null!
+        );
+
+        var guard = factory.Create("guard");
+        var orc = factory.Create("orc");
+
+        Assert.Contains(guard.Body, new[] { 400, 401 });
+        Assert.False(string.IsNullOrWhiteSpace(guard.Name));
+        Assert.True(orc.Body > 0 && orc.HitsMax > 0 && !string.IsNullOrWhiteSpace(orc.Name), $"{orc.Body} {orc.Name}");
     }
 
     private static DirectoriesConfig Directories()

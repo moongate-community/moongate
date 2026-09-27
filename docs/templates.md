@@ -81,28 +81,30 @@ var spawned = await mobiles.SpawnAsync("guard", MapType.Felucca, new Point3D(160
 ```
 
 `Create(templateId)` builds the `MobileEntity` in memory and rolls every random value
-once: gender (`random` or unset is 50/50), body (the template's, else the race body for
+once: gender (`random` is 50/50, unset is male), body (the template's, else the race body for
 the gender from `races.toml`), name (the template's, else one of `name_list`, where
 `{gender}` picks the `male` or `female` list), skin, hair and beard (from the template,
-else the race; `hair = []` is bald; females get no beard), stats, hits, mana and stamina
-(which default to strength, intelligence and dexterity), armor, resistances, fame,
+else the race; `hair = []` is bald; females get no beard), stats (unset is 10), hits,
+mana and stamina (which default to strength, intelligence and dexterity), armor, resistances, fame,
 karma and skills (template points × 10, the tenths the mobile stores). `title` and
 `notoriety` stay null: the template's apply.
 
 `SpawnAsync(templateId, map, location)`:
 
-1. rejects a location outside the map, before anything else;
+1. rejects a location outside the map, before anything else, and a template that resolves
+   to no body and no race;
 2. creates the mobile and places it;
-3. publishes `MobileBeforeSpawnEvent`: a handler may change the mobile; an exception
-   stops the spawn with nothing saved;
+3. publishes `MobileBeforeSpawnEvent`: a handler may change the mobile;
 4. in one transaction, saves the mobile (its serial comes from the mobile range) and
    creates each equipment entry through `IItemFactoryService`: an entry with a `gender`
    is skipped for the other gender; the item is worn on its layer (the template's, else
    tiledata's for a wearable graphic); an item with no layer, or whose layer is taken,
    is dropped, since NPCs have no backpack yet;
 5. after the commit, publishes `MobileMovedToWorldEvent` and then
-   `MobileAfterSpawnEvent`. An exception in one of those reaches the caller, but the
-   mobile stays saved.
+   `MobileAfterSpawnEvent`.
+
+The event bus logs a handler's exception and goes on, so a handler cannot stop or undo a
+spawn.
 
 `SaveAsync(mobile)` saves a mobile that already has its serial.
 
