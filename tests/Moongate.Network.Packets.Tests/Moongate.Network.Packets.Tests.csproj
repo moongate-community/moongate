@@ -22,4 +22,8 @@
         <ProjectReference Include="../../src/Moongate.Network.Packets/Moongate.Network.Packets.csproj"/>
     </ItemGroup>
 
+    <ItemGroup>
+        <EmbeddedResource Include="TestSupport/Encryption/pol-vectors.json" LogicalName="pol-vectors.json"/>
+    </ItemGroup>
+
 </Project>
