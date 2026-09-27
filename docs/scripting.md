@@ -57,12 +57,14 @@ exists but fails compilation/execution aborts server startup.
 | `timer.every(seconds, fn)` | Repeating callbacks with a positive interval; returns a handle |
 | `timer.cancel(handle)` | Cancels a pending registration; returns false if no timer remains |
 | `wait(seconds)` | Parks the current scheduled coroutine, then resumes it on the loop |
+| `events.on(name, fn)` | Runs `fn` with the event's table each time the named server event happens; returns a handle. See [Events](#events) |
+| `events.off(handle)` | Removes a subscription; returns false when the handle is unknown |
 | `dice.roll(expression)` | Rolls dice notation such as `"1d4+2"` or `"4d6k3"`, the forms of [DiceSpec](toml-types.md#dicespec); a malformed expression raises an error naming it |
 | `dice.try_roll(expression)` | The same roll, or `nil` when the expression is malformed: `dice.try_roll(text) or 0` |
 | `localization.get(id, ...)` | Message `id` of `data/messages` in the server language, with `{0}`, `{1}`, ... filled by the extra arguments; see [Localization](localization.md#read-a-message-from-lua) |
 | `localization.text(id)`, `localization.language()` | The raw text of a message, or `nil`; the server language code |
 
-The default host registers `log`; the engine supplies `engine`, `timer` and `wait`.
+The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
 The Ultima plugin registers `dice` and `localization` in game and standalone modes.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
@@ -80,6 +82,54 @@ next run only after its work finishes.
 There are no built-in world, character or inventory APIs yet
 ([Implementation status](implementation-status.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
+
+## Events
+
+Scripts react to server events with the built-in `events` module:
+
+```lua
+local handle = events.on("character_created", function(e)
+    log.info("New character {Name}", e.name)
+end)
+
+events.off(handle) -- returns false when the handle is unknown
+```
+
+- Each handler runs on the game loop as a coroutine, so it may call `wait()`.
+- Handlers of one event run in the order they subscribed. Subscribing or
+  unsubscribing inside a handler takes effect from the next event.
+- Every handler receives its own table; changing it does not affect other handlers.
+- Events are notifications: a handler cannot cancel or change what happened. An
+  error in a handler is reported like any script error, and the other handlers
+  still run.
+- Subscriptions belong to the file that made them. Reloading or invalidating the
+  file removes them, like its timers; stopping the engine removes all of them.
+- An unknown event name raises an error in `events.on`. The generated
+  `definitions.lua` lists the valid names as the `EventName` alias, so editors
+  complete them.
+
+### Available events
+
+| Event | Fields |
+| --- | --- |
+| — | No events are published yet. |
+
+### Publishing an event from C#
+
+Hosts and plugins publish a bus event to Lua with an explicit registration,
+before the engine starts:
+
+```csharp
+container.AddScriptEvent<MyEvent>(
+    "my_event",
+    e => new Dictionary<string, object?> { ["name"] = e.Name, ["amount"] = e.Amount });
+```
+
+The name must be snake_case and unique, and each event type is published once.
+The mapping runs on the publishing thread and must only read the event. It may
+return strings, booleans, numbers, enums (sent as numbers) or null. A mapping
+that fails is logged, and the event is skipped for Lua only. Events published
+while no script is subscribed cost one lookup and are not queued.
 
 ## Reload and ownership
 
