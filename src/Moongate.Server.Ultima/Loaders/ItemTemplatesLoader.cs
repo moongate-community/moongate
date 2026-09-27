@@ -135,7 +135,8 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         child.Decays ??= parent.Decays;
         child.DecayMinutes ??= parent.DecayMinutes;
         child.LootType ??= parent.LootType;
-        child.Tags ??= parent.Tags;
+        // A copy, so changing one template's tags never changes its parent's or a sibling's.
+        child.Tags ??= parent.Tags is null ? null : new Dictionary<string, string>(parent.Tags);
         child.Visibility ??= parent.Visibility;
         child.MaxItems ??= parent.MaxItems;
         child.MaxWeight ??= parent.MaxWeight;

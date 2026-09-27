@@ -62,6 +62,21 @@ public sealed class ItemTemplatesLoaderTests
         Assert.Equal(["b"], templates["c"].Tags!.Keys);
     }
 
+    [Fact]
+    public async Task LoadDataAsync_InheritedTags_AreACopy()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/items/a.toml",
+            "[[item]]\nid = \"p\"\nitem_id = 1\ntags = { a = \"1\" }\n\n[[item]]\nid = \"c\"\nbase_id = \"p\"\nitem_id = 1\n"
+        );
+
+        var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+        templates["c"].Tags!["b"] = "2";
+
+        Assert.Equal(["a"], templates["p"].Tags!.Keys);
+    }
+
     [Theory,
      InlineData("[[item]]\nid = \"a\"\nitem_id = 1\n", "[[item]]\nid = \"a\"\nitem_id = 2\n"),
      InlineData("[[item]]\nid = \"a\"\nbase_id = \"missing\"\nitem_id = 1\n", ""),
