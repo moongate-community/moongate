@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Internal;
+using Moongate.Server.Core.Interfaces.Events;
 
 namespace Moongate.Scripting.Extensions.Scripts;
 
@@ -45,6 +46,47 @@ public static class ContainerScriptingExtensions
             ArgumentNullException.ThrowIfNull(container);
             GetRegistry(container).AddModule(typeof(TModule));
             container.Register<TModule>(Reuse.Singleton);
+
+            return container;
+        }
+
+        /// <summary>
+        ///     Publishes a bus event to Lua: scripts subscribe with <c>events.on(name, fn)</c> and receive the table
+        ///     <paramref name="map" /> builds. Events are notifications; a script cannot veto them.
+        /// </summary>
+        /// <typeparam name="TEvent">
+        ///     The bus event type; each type is published under one name only.
+        /// </typeparam>
+        /// <param name="name">
+        ///     The snake_case name scripts subscribe with.
+        /// </param>
+        /// <param name="map">
+        ///     Builds the values Lua receives: strings, booleans, numbers, enums (sent as numbers) or null. It runs on the
+        ///     publishing thread, so it must only read the event.
+        /// </param>
+        /// <returns>
+        ///     The same container, for chaining.
+        /// </returns>
+        public Container AddScriptEvent<TEvent>(string name, Func<TEvent, IReadOnlyDictionary<string, object?>> map)
+            where TEvent : class, IMoongateEvent
+        {
+            ArgumentNullException.ThrowIfNull(container);
+            ArgumentNullException.ThrowIfNull(name);
+            ArgumentNullException.ThrowIfNull(map);
+            GetRegistry(container)
+                .AddEvent(
+                    new(
+                        name,
+                        typeof(TEvent),
+                        (bus, deliver) => bus.Subscribe<TEvent>((evt, _) =>
+                            {
+                                deliver(() => map(evt));
+
+                                return Task.CompletedTask;
+                            }
+                        )
+                    )
+                );
 
             return container;
         }
