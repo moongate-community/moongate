@@ -14,6 +14,7 @@ creation, selection and a playable world are not.
 | Area | Works today | Not built yet |
 | --- | --- | --- |
 | Transport | Framed TCP listener and client, per-connection pipelines, connection and session registries, graceful shutdown | |
+| UO client encryption | Configurable POL-compatible login and game encryption with `Disabled`, `Optional` and `Required` policies, per-connection stream state and startup diagnostics; [configuration](server-configuration.md#uo-client-encryption) | Old Kingdom Reborn AES/E3 negotiation; interactive Enhanced Client interoperability has not been verified |
 | Packets | Wire table, typed packet definitions and game-loop/async handlers; plugins add incoming packets with `RegisterIncomingPacket`; `0x80` login, `0xA8` list, `0xA0` selection, `0x8C` redirect, raw game seed, `0x91` handoff, then Huffman-compressed `0xB9` features and `0xA9` character list (empty slots, starting cities); `0xF8`, `0x8D` and `0xD9` are decoded | Character creation and selection handlers, movement and world packets |
 | Login and realms | `mode` selects separate login/game services or combined standalone. Redis leases advertise live realms; login filters by account level and issues one-use handoff tickets | Character creation, selection and world entry |
 | Game loop | Single owner thread, bounded queues, timer wheel, admission and completion semantics | |

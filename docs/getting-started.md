@@ -113,6 +113,11 @@ use the documentation published for that version.
    needs the same Redis endpoint, Redis password and handoff secret.
    The [configuration reference](server-configuration.md) lists every setting.
 
+   UO client encryption is disabled by default. For a client that sends encrypted
+   traffic, configure `[network.encryption]` using the
+   [client encryption guide](server-configuration.md#uo-client-encryption) before
+   starting the server. Apply the same profile to separate login and game processes.
+
 3. **Provision PostgreSQL and Redis.** Create the Accounts and World databases and
    role-specific credentials before starting Moongate. The server never creates
    databases or roles. Use a DML-only runtime role and a separate schema role;

@@ -121,6 +121,8 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `network.game_port` | Game TCP listener port; default 2595. Used in game and standalone modes. Standalone rejects equal login and game ports. |
 | `network.listen_address` | IP literal, not a DNS hostname. `0.0.0.0` makes the host enumerate local unicast addresses and create an endpoint for each active role on every address, including IPv6 addresses; it is not a single wildcard listener. Standalone therefore starts two listeners per address. Use a specific IP to restrict binding. |
 | `network.enable_ping_server` | Serialized setting with no current runtime consumer. It does not disable the registered UO ping handler. |
+| `network.encryption.mode` | `Disabled` (default), `Optional` or `Required`; applies to both UO listeners. See [UO client encryption](#uo-client-encryption). |
+| `network.encryption.client_version` | Raw POL wire version used to derive login keys and select the game cipher family. Required for `Optional` and `Required`; ignored when `Disabled`. Default empty. |
 | `ultima.ultima_path` | Existing, readable client data directory. Path and environment expansion apply; relative paths use the process working directory. It must contain `tiledata.mul`, the map and statics files of every map in `data/maps.toml`, and `MultiCollection.uop` or `multi.idx` with `multi.mul`; the server stops at startup when one is missing. |
 | `persistence.auto_sync_schema` | Defaults to false. Normal startup checks versioned SQL history; when false it also fails if registered entities require DDL. Generate and review SQL, then apply it with the separate migration runner. Enable only as an explicit development convenience. |
 | `persistence.accounts.connection_string` | Accounts/login PostgreSQL URI, or `$NAME` / `${NAME}` environment reference. Resolved only when registered entities use Accounts. |
@@ -217,15 +219,24 @@ it. See [Generate, review and apply](persistence-migrations.md#generate-review-a
 | Mode | Connections accepted |
 | --- | --- |
 | `Disabled` | Existing plaintext protocol; no encryption middleware is installed. |
-| `Optional` | Plaintext clients and encrypted clients matching `client_version`. |
-| `Required` | Only encrypted clients matching `client_version`. |
+| `Optional` | Valid plaintext login packets, or login packets that decrypt correctly with the configured profile. |
+| `Required` | Rejects plaintext login packets; requires a valid login packet after decryption with the configured profile. |
 
-Enabled modes require an explicit POL client version. One encrypted version per
-configuration matches POL's listener model. Login keys are derived from that
-version, while game encryption is selected as OldBlowfish, Blowfish12536,
-Blowfish, BlowfishTwofish, or Twofish. The special version `2.0.0x` is supported.
-No-crypt aliases are only valid when parsing a standalone protocol profile;
-`Optional` and `Required` reject them as configuration errors.
+Enabled modes require an explicit POL client version and select one encrypted
+profile per configuration; they do not try multiple versions. Login keys are
+derived from that version, while game encryption is selected as OldBlowfish,
+Blowfish12536, Blowfish, BlowfishTwofish, or Twofish. Versions in the same modern
+Twofish family share the game cipher, so this setting is not an exact client-version
+check on the game listener. The special version `2.0.0x` is supported. Empty or
+malformed versions and the no-crypt aliases `none`, `ignition` and `uorice` prevent
+startup in `Optional` and `Required` modes.
+
+`Optional` first checks the initial login packet with the normal packet parser.
+If it is not valid plaintext, the server attempts decryption and validates the
+result; failed validation rejects the connection. It does not fall back to
+plaintext after failed decryption. For a legacy four-byte login seed, enabled
+encryption supplies the configured version to the login handler because the
+client has not sent a version with that seed.
 
 For Enhanced Client 67.0.117.0, use:
 
@@ -246,7 +257,9 @@ this configuration. A launcher that removes encryption needs `Optional` or
 Client encryption: Optional; client 67.0.117.0; login XOR; game Twofish / MD5-XOR
 ```
 
-For separate login and game processes, configure the same profile on each.
+For separate login and game processes, configure the same policy and profile on
+each and restart both after changes. See [Network](network.md) for handshake and
+transport details.
 The feature provides POL protocol interoperability, not TLS or authenticated
 transport. It does not implement the old Kingdom Reborn AES/E3 negotiation.
 Automated tests compare against original POL C++ vectors and exercise real TCP
