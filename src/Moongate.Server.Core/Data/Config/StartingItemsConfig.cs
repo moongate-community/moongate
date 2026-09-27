@@ -16,7 +16,7 @@ public sealed class StartingItemsConfig
     public string GoldTemplate { get; set; } = "0x0eed_gold_coin";
 
     /// <summary>
-    ///     Gets or sets how much gold goes in the backpack; 0 gives none.
+    ///     Gets or sets how much gold goes in the backpack, up to 65535 (one pile); 0 gives none.
     /// </summary>
     public int Gold { get; set; } = 1000;
 
@@ -35,9 +35,9 @@ public sealed class StartingItemsConfig
             throw new InvalidOperationException("starting_items.backpack_template and gold_template must be set.");
         }
 
-        if (Gold < 0)
+        if (Gold is < 0 or > ushort.MaxValue)
         {
-            throw new InvalidOperationException($"starting_items.gold must be 0 or more, found {Gold}.");
+            throw new InvalidOperationException($"starting_items.gold must be from 0 to 65535, found {Gold}.");
         }
 
         if (BestSkills < 1)

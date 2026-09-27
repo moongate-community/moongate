@@ -61,6 +61,13 @@ public class StartingItemsService : IStartingItemsService
             }
         }
 
+        if (_config.Gold > 1 && !_templates.Get(_config.GoldTemplate).EffectiveStackable(_tiles))
+        {
+            throw new InvalidDataException(
+                $"starting_items.gold_template '{_config.GoldTemplate}' does not stack, so it cannot hold {_config.Gold} coins."
+            );
+        }
+
         return Task.CompletedTask;
     }
 

@@ -125,6 +125,14 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
         await Assert.ThrowsAsync<InvalidDataException>(service.StartAsync);
     }
 
+    [Fact]
+    public async Task StartAsync_AGoldTemplateThatDoesNotStack_Throws()
+    {
+        var service = CreateService(new StartingItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "shirt" });
+
+        await Assert.ThrowsAsync<InvalidDataException>(service.StartAsync);
+    }
+
     private StartingItemsService CreateService(params StartingItemSet[] sets)
     {
         return CreateService(new StartingItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" }, sets);

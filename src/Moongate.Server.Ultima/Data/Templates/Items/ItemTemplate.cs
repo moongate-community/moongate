@@ -132,7 +132,7 @@ public class ItemTemplate
     public LootType? LootType { get; set; }
 
     /// <summary>
-    ///     Free values for scripts, such as a quest step. A child template's tags add to and override its base's.
+    ///     Free values for scripts, such as a quest step. A child template's tags, when set, replace its base's; they are not merged.
     /// </summary>
     public Dictionary<string, string>? Tags { get; set; }
 

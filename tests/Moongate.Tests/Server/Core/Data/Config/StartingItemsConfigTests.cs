@@ -20,7 +20,8 @@ public sealed class StartingItemsConfigTests
      InlineData("", "g", 0, 3),
      InlineData("b", " ", 0, 3),
      InlineData("b", "g", -1, 3),
-     InlineData("b", "g", 0, 0)]
+     InlineData("b", "g", 0, 0),
+     InlineData("b", "g", 65536, 3)]
     public void Validate_BadValues_Throw(string backpack, string gold, int amount, int bestSkills)
     {
         var config = new StartingItemsConfig { BackpackTemplate = backpack, GoldTemplate = gold, Gold = amount, BestSkills = bestSkills };
