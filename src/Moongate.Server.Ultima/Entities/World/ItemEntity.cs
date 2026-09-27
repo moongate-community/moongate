@@ -106,11 +106,11 @@ public class ItemEntity : IMoongateEntity
     public Dictionary<string, object?>? Props { get; set; }
 
     [Column(IsIgnore = true)]
-    public ItemLocationType Location =>
-        Map is not null ? ItemLocationType.Ground :
-        ContainerId is not null ? ItemLocationType.Container :
-        MobileId is not null ? ItemLocationType.Equipped :
-        ItemLocationType.None;
+    public ItemLocationType Location
+        => Map is not null ? ItemLocationType.Ground :
+            ContainerId is not null ? ItemLocationType.Container :
+            MobileId is not null ? ItemLocationType.Equipped :
+            ItemLocationType.None;
 
     [Column(IsIgnore = true)]
     public Point3D? GroundLocation => Map is null ? null : new Point3D(X!.Value, Y!.Value, Z!.Value);
@@ -148,7 +148,11 @@ public class ItemEntity : IMoongateEntity
 
         if (gridLocation.X is < short.MinValue or > short.MaxValue || gridLocation.Y is < short.MinValue or > short.MaxValue)
         {
-            throw new ArgumentOutOfRangeException(nameof(gridLocation), gridLocation, "A grid position must fit in 16 bits.");
+            throw new ArgumentOutOfRangeException(
+                nameof(gridLocation),
+                gridLocation,
+                "A grid position must fit in 16 bits."
+            );
         }
 
         ClearLocation();
@@ -201,8 +205,20 @@ public class ItemEntity : IMoongateEntity
             return;
         }
 
-        if (value is not (string or bool or Enum or byte or sbyte or short or ushort or int or uint or long or ulong or float
-                          or double or decimal))
+        if (value is not (string or
+            bool or
+            Enum or
+            byte or
+            sbyte or
+            short or
+            ushort or
+            int or
+            uint or
+            long or
+            ulong or
+            float or
+            double or
+            decimal))
         {
             throw new ArgumentException(
                 $"Item prop '{key}' cannot hold a {value.GetType().Name}: use a string, a number, a bool or an enum.",
@@ -281,8 +297,10 @@ public class ItemEntity : IMoongateEntity
 
             return (T)converted;
         }
-        catch (Exception exception) when (exception is FormatException or InvalidCastException or OverflowException
-                                              or ArgumentException)
+        catch (Exception exception) when (exception is FormatException or
+                                              InvalidCastException or
+                                              OverflowException or
+                                              ArgumentException)
         {
             throw new InvalidCastException(
                 $"Item prop '{key}' holds {stored} ({stored.GetType().Name}), which is not a {typeof(T).Name}.",
