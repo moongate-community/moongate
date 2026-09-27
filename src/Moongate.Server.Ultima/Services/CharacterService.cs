@@ -23,7 +23,7 @@ using Npgsql;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Creates player characters: refuses only a full account, picks a free slot, sanitizes every other choice with
+///     Creates player characters: refuses a full account or a concurrent slot collision, picks a free slot, sanitizes other choices with
 ///     <see cref="CharacterCreationRules" />, and saves the character with its starting items in one transaction.
 /// </summary>
 public sealed class CharacterService : ICharacterService
