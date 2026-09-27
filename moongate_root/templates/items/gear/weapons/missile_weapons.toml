@@ -9,14 +9,12 @@ weight = 4.0
 buy_price = 46
 sell_price = 23
 decays = true
-hue = 0
 
 [[item]]
 id = "bola"
 base_id = "0x26ac_bola"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_fukiya"
@@ -27,18 +25,15 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27aa"
 base_id = "0x27aa_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x27f5"
 base_id = "0x27aa_lbr"
 item_id = 10229
 rarity = "common"
-hue = 0

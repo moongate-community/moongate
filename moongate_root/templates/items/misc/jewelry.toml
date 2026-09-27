@@ -7,7 +7,6 @@ weight = 1.0
 buy_price = 26
 sell_price = 13
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1085_necklace"
@@ -16,10 +15,10 @@ item_id = 4229
 name = "necklace"
 rarity = "common"
 weight = 1.0
+layer = "neck"
 buy_price = 26
 sell_price = 13
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1086_bracelet"
@@ -28,10 +27,10 @@ item_id = 4230
 name = "bracelet"
 rarity = "common"
 weight = 1.0
+layer = "bracelet"
 buy_price = 26
 sell_price = 13
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1087_earrings"
@@ -40,10 +39,10 @@ item_id = 4231
 name = "earrings"
 rarity = "common"
 weight = 1.0
+layer = "earrings"
 buy_price = 26
 sell_price = 13
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1088_necklace"
@@ -52,10 +51,10 @@ item_id = 4232
 name = "necklace"
 rarity = "common"
 weight = 1.0
+layer = "neck"
 buy_price = 26
 sell_price = 13
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1089_necklace"
@@ -64,10 +63,10 @@ item_id = 4233
 name = "necklace"
 rarity = "common"
 weight = 1.0
+layer = "neck"
 buy_price = 26
 sell_price = 13
 decays = true
-hue = 0
 
 [[item]]
 id = "0x108a_ring"
@@ -76,10 +75,10 @@ item_id = 4234
 name = "ring"
 rarity = "common"
 weight = 1.0
+layer = "ring"
 buy_price = 26
 sell_price = 13
 decays = true
-hue = 0
 
 [[item]]
 id = "weddingband"
@@ -88,7 +87,6 @@ item_id = 0
 name = "weddingband"
 rarity = "common"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x108b_beads"
@@ -100,4 +98,3 @@ weight = 1.0
 buy_price = 26
 sell_price = 13
 decays = true
-hue = 0

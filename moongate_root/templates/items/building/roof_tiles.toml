@@ -5,7 +5,6 @@ item_id = 1360
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0554_stone_roof"
@@ -14,7 +13,6 @@ item_id = 1364
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0555_stone_roof"
@@ -23,7 +21,6 @@ item_id = 1365
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0556_stone_roof"
@@ -32,7 +29,6 @@ item_id = 1366
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0557_stone_roof"
@@ -41,7 +37,6 @@ item_id = 1367
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0558_stone_roof"
@@ -50,7 +45,6 @@ item_id = 1368
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0559_stone_roof"
@@ -59,7 +53,6 @@ item_id = 1369
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x055a_stone_roof"
@@ -68,7 +61,6 @@ item_id = 1370
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x055b_stone_roof"
@@ -77,7 +69,6 @@ item_id = 1371
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x055c_stone_roof"
@@ -86,7 +77,6 @@ item_id = 1372
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x055d_stone_roofs"
@@ -95,7 +85,6 @@ item_id = 1373
 name = "stone roofs"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x055e_stone_roof"
@@ -104,7 +93,6 @@ item_id = 1374
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x055f_stone_roof"
@@ -113,7 +101,6 @@ item_id = 1375
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0560_stone_roof"
@@ -122,7 +109,6 @@ item_id = 1376
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0561_stone_roof"
@@ -131,7 +117,6 @@ item_id = 1377
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0562_stone_roof"
@@ -140,7 +125,6 @@ item_id = 1378
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0563_stone_roof"
@@ -149,7 +133,6 @@ item_id = 1379
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0564_stone_roof"
@@ -158,7 +141,6 @@ item_id = 1380
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0565_stone_roof"
@@ -167,7 +149,6 @@ item_id = 1381
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0566_stone_roof"
@@ -176,7 +157,6 @@ item_id = 1382
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0567_stone_roof"
@@ -185,7 +165,6 @@ item_id = 1383
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0568_stone_roof"
@@ -194,7 +173,6 @@ item_id = 1384
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0569_stone_roof"
@@ -203,7 +181,6 @@ item_id = 1385
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x056a_cave_floor"
@@ -212,7 +189,6 @@ item_id = 1386
 name = "cave floor"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x056b_stone_roof"
@@ -221,7 +197,6 @@ item_id = 1387
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x056c_stone_roof"
@@ -230,7 +205,6 @@ item_id = 1388
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x056d_stone_roof"
@@ -239,7 +213,6 @@ item_id = 1389
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x056e_stone_roof"
@@ -248,7 +221,6 @@ item_id = 1390
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x056f_stone_roof"
@@ -257,7 +229,6 @@ item_id = 1391
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0570_stone_roof"
@@ -266,7 +237,6 @@ item_id = 1392
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0571_stone_roof"
@@ -275,7 +245,6 @@ item_id = 1393
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0572_stone_roof"
@@ -284,7 +253,6 @@ item_id = 1394
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0573_stone_roof"
@@ -293,7 +261,6 @@ item_id = 1395
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0574_stone_roof"
@@ -302,7 +269,6 @@ item_id = 1396
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0575_stone_roof"
@@ -311,7 +277,6 @@ item_id = 1397
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0576_stone_roof"
@@ -320,7 +285,6 @@ item_id = 1398
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0577_stone_roof"
@@ -329,7 +293,6 @@ item_id = 1399
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0578_stone_roof"
@@ -338,7 +301,6 @@ item_id = 1400
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0579_stone_roof"
@@ -347,7 +309,6 @@ item_id = 1401
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x057a_stone_roof"
@@ -356,7 +317,6 @@ item_id = 1402
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x057b_stone_roof"
@@ -365,7 +325,6 @@ item_id = 1403
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x057c_stone_roof"
@@ -374,7 +333,6 @@ item_id = 1404
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x057d_stone_roof"
@@ -383,7 +341,6 @@ item_id = 1405
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x057e_stone_roof"
@@ -392,7 +349,6 @@ item_id = 1406
 name = "stone roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x057f_slate_roof"
@@ -401,7 +357,6 @@ item_id = 1407
 name = "slate roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0580_slate_roof"
@@ -410,7 +365,6 @@ item_id = 1408
 name = "slate roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0581_slate_roof"
@@ -419,7 +373,6 @@ item_id = 1409
 name = "slate roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0582_slate_roof"
@@ -428,7 +381,6 @@ item_id = 1410
 name = "slate roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0583_slate_roof"
@@ -437,7 +389,6 @@ item_id = 1411
 name = "slate roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0584_slate_roof"
@@ -446,7 +397,6 @@ item_id = 1412
 name = "slate roof"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0585_slate_roof"
@@ -455,4 +405,3 @@ item_id = 1413
 name = "slate roof"
 rarity = "common"
 movable = false
-hue = 0

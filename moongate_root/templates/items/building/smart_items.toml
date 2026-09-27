@@ -5,7 +5,6 @@ item_id = 0
 rarity = "common"
 movable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "smart_brazier"
@@ -14,7 +13,6 @@ item_id = 7979
 rarity = "common"
 movable = false
 decays = false
-hue = 0
 [item.tags]
 inactiveID = "0x1f2b"
 activeID = "0x19bb"
@@ -26,7 +24,6 @@ item_id = 6231
 rarity = "common"
 movable = false
 decays = false
-hue = 0
 [item.tags]
 inactiveID = "0x1857"
 activeID = "0x1858"
@@ -39,7 +36,6 @@ name = "stone wall"
 rarity = "common"
 movable = false
 decays = false
-hue = 0
 [item.tags]
 inactiveID = "0x01d0"
 activeID = "0x1"
@@ -52,7 +48,6 @@ name = "cave floor"
 rarity = "common"
 movable = false
 decays = false
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x053b"
@@ -62,7 +57,6 @@ id = "smart_cavefloor_0x053d_hidden"
 base_id = "smart_cavefloor_0x053b_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x053d"
@@ -72,7 +66,6 @@ id = "smart_cavefloor_0x0544_hidden"
 base_id = "smart_cavefloor_0x053b_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x0544"
@@ -82,7 +75,6 @@ id = "smart_cavefloor_0x0545_hidden"
 base_id = "smart_cavefloor_0x053b_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x0545"
@@ -92,7 +84,6 @@ id = "smart_cavefloor_0x0546_hidden"
 base_id = "smart_cavefloor_0x053b_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x0546"
@@ -102,7 +93,6 @@ id = "smart_cavefloor_0x0548_hidden"
 base_id = "smart_cavefloor_0x053b_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x0548"
@@ -112,7 +102,6 @@ id = "smart_cavefloor_0x054a_hidden"
 base_id = "smart_cavefloor_0x053b_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x054a"
@@ -122,7 +111,6 @@ id = "smart_cavefloor_0x054b_hidden"
 base_id = "smart_cavefloor_0x053b_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x054b"
@@ -132,7 +120,6 @@ id = "smart_cavefloor_0x054c_hidden"
 base_id = "smart_cavefloor_0x053b_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x054c"
@@ -145,7 +132,6 @@ name = "stone wall"
 rarity = "common"
 movable = false
 decays = false
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x1d0"
@@ -155,7 +141,6 @@ id = "smart_stonewall_0x01d1_hidden"
 base_id = "smart_stonewall_0x01d0_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x01d1"
@@ -166,7 +151,6 @@ base_id = "smart_stonewall_0x01d0_hidden"
 item_id = 0
 name = "stone arch"
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x01e3"
@@ -177,7 +161,6 @@ base_id = "smart_stonewall_0x01d0_hidden"
 item_id = 0
 name = "stone arch"
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x01e4"
@@ -188,7 +171,6 @@ base_id = "smart_stonewall_0x01d0_hidden"
 item_id = 0
 name = "stone arch"
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x01e5"
@@ -198,7 +180,6 @@ id = "smart_stonewall_0x01e8_hidden"
 base_id = "smart_stonewall_0x01d0_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x01e8"
@@ -208,7 +189,6 @@ id = "smart_stonewall_0x01e9_hidden"
 base_id = "smart_stonewall_0x01d0_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x01e9"
@@ -218,7 +198,6 @@ id = "smart_stonewall_0x01ea_hidden"
 base_id = "smart_stonewall_0x01d0_hidden"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 inactiveID = "0x0001"
 activeID = "0x01ea"
@@ -231,7 +210,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 decays = false
-hue = 0
 [item.tags]
 inactiveID = "0x17dc"
 activeID = "0x17ee"
@@ -244,7 +222,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 decays = false
-hue = 0
 [item.tags]
 inactiveID = "0x17ee"
 activeID = "0x17dc"
@@ -258,7 +235,6 @@ rarity = "common"
 movable = false
 decays = false
 visibility = "game_master"
-hue = 0
 [item.tags]
 inRangeSFX = "0x0102"
 
@@ -271,7 +247,6 @@ rarity = "common"
 movable = false
 decays = false
 visibility = "game_master"
-hue = 0
 [item.tags]
 inRangeSFX = "0x00f5"
 
@@ -284,7 +259,6 @@ rarity = "common"
 movable = false
 decays = false
 visibility = "game_master"
-hue = 0
 [item.tags]
 inRangeSFX = "0x0220"
 
@@ -297,7 +271,6 @@ rarity = "common"
 movable = false
 decays = false
 visibility = "game_master"
-hue = 0
 [item.tags]
 inRangeSFX = "0x0244"
 
@@ -310,6 +283,5 @@ rarity = "common"
 movable = false
 decays = false
 visibility = "game_master"
-hue = 0
 [item.tags]
 inRangeSFX = "0x0014"

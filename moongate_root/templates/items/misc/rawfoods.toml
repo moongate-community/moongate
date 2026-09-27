@@ -4,7 +4,6 @@ base_id = "base_item"
 item_id = 0
 rarity = "common"
 stackable = true
-hue = 0
 
 [[item]]
 id = "0x09f1_cut_of_raw_ribs"
@@ -16,7 +15,6 @@ weight = 1.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x1e15_raw_fish"
@@ -28,7 +26,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1e16_raw_fish"
@@ -40,7 +37,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1e17_raw_fish"
@@ -52,7 +48,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1e18_raw_fish"
@@ -64,7 +59,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1e19_fish_head"
@@ -76,7 +70,6 @@ weight = 0.5
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1e1b_fish_heads"
@@ -88,7 +81,6 @@ weight = 1.5
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1e1a_fish_head"
@@ -100,7 +92,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1609_raw_leg_of_lamb"
@@ -112,7 +103,6 @@ weight = 2.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x1607_raw_chicken_leg"
@@ -124,7 +114,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1042_unbaked_pie"
@@ -136,7 +125,6 @@ weight = 1.0
 stackable = true
 buy_price = 4
 sell_price = 2
-hue = 0
 
 [[item]]
 id = "0x097a_raw_fish_steak"
@@ -148,7 +136,6 @@ weight = 0.1
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09b9_raw_bird"
@@ -160,7 +147,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09ba_raw_bird"
@@ -172,7 +158,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09cc_fish"
@@ -184,7 +169,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09cd_fish"
@@ -196,7 +180,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09ce_fish"
@@ -208,7 +191,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09cf_fish"
@@ -220,7 +202,6 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0dd6_small_fish"
@@ -232,7 +213,6 @@ weight = 5.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0dd7_small_fish"
@@ -244,7 +224,6 @@ weight = 5.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0dd8_small_fish"
@@ -256,7 +235,6 @@ weight = 5.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0dd9_small_fish"
@@ -268,7 +246,6 @@ weight = 5.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x1083_uncooked_pizza"
@@ -280,7 +257,6 @@ weight = 1.0
 stackable = true
 buy_price = 4
 sell_price = 2
-hue = 0
 
 [[item]]
 id = "0x09b5_eggs"
@@ -292,4 +268,3 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0

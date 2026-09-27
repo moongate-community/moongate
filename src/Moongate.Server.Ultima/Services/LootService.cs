@@ -72,7 +72,7 @@ public class LootService : ILootService
 
         var entry = Pick(entries);
 
-        // As UOX3's LOOTLIST=table,n: a nested entry rolls its table amount times.
+        // LOOTLIST=table,n rolls the table n times: what the data plainly means (UOX3 itself spawns nothing for it).
         if (entry.LootTemplateId is { } nested)
         {
             for (var times = entry.Amount.Resolve(); times > 0; times--)

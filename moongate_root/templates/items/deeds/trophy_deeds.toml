@@ -5,7 +5,6 @@ name = "a brown bear trophy deed"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "polarbeartrophydeed"
@@ -14,7 +13,6 @@ name = "a polar bear trophy deed"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "stagtrophydeed"
@@ -23,7 +21,6 @@ name = "a stag trophy deed"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "largefishtrophydeed"
@@ -32,7 +29,6 @@ name = "a large fish trophy deed"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "orctrophydeed"
@@ -41,7 +37,6 @@ name = "an orc trophy deed"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "gorillatrophydeed"
@@ -50,7 +45,6 @@ name = "a gorilla trophy deed"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "trolltrophydeed"
@@ -59,7 +53,6 @@ name = "a troll trophy deed"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "bigfishdeed"
@@ -68,4 +61,3 @@ name = "a big fish trophy deed"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0

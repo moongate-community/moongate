@@ -6,7 +6,6 @@ name = "jack o lantern"
 rarity = "common"
 weight = 3.0
 decays = true
-hue = 0
 [item.tags]
 jackolantern = "1"
 
@@ -18,7 +17,6 @@ name = "pumpkin"
 rarity = "common"
 weight = 3.0
 decays = true
-hue = 0
 [item.tags]
 pumpkin = "1"
 
@@ -31,7 +29,7 @@ rarity = "common"
 movable = true
 weight = 1.0
 stackable = true
-hue = 0
+hue = 57
 
 [[item]]
 id = "caramel_apple"
@@ -42,7 +40,7 @@ rarity = "common"
 movable = true
 weight = 1.0
 stackable = true
-hue = 0
+hue = 1097
 
 [[item]]
 id = "rock_candy"
@@ -53,7 +51,7 @@ rarity = "common"
 movable = true
 weight = 1.0
 stackable = true
-hue = 0
+hue = 101
 
 [[item]]
 id = "candied_apple"
@@ -64,7 +62,7 @@ rarity = "common"
 movable = true
 weight = 1.0
 stackable = true
-hue = 0
+hue = 4500
 
 [[item]]
 id = "brightlycoloredrockcandy"
@@ -75,7 +73,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 stackable = true
-hue = 0
 
 [[item]]
 id = "black_licorice"
@@ -86,7 +83,7 @@ rarity = "common"
 movable = true
 weight = 1.0
 stackable = true
-hue = 0
+hue = 4469
 
 [[item]]
 id = "mr_plains_cookies"
@@ -97,7 +94,7 @@ rarity = "common"
 movable = true
 weight = 1.0
 stackable = true
-hue = 0
+hue = 244
 
 [[item]]
 id = "pumpkinpizza"
@@ -108,7 +105,7 @@ rarity = "common"
 movable = true
 weight = 1.0
 stackable = true
-hue = 0
+hue = 243
 
 [[item]]
 id = "creepy_cake"
@@ -120,7 +117,7 @@ movable = true
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
+hue = 996
 
 [[item]]
 id = "harvest_wine"
@@ -129,7 +126,7 @@ item_id = 2503
 name = "Harvest Wine"
 rarity = "common"
 weight = 1.0
-hue = 0
+hue = 224
 
 [[item]]
 id = "murky_milk"
@@ -138,7 +135,7 @@ item_id = 2477
 name = "Murky Milk"
 rarity = "common"
 weight = 2.0
-hue = 0
+hue = 997
 
 [[item]]
 id = "2008small_webleft"
@@ -148,14 +145,12 @@ name = "small web"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "2008small_webright"
 base_id = "2008small_webleft"
 item_id = 4311
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "lollipop1"
@@ -167,21 +162,18 @@ movable = true
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "lollipop2"
 base_id = "lollipop1"
 item_id = 18062
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "lollipop3"
 base_id = "lollipop1"
 item_id = 18063
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "wrappedcandy"
@@ -193,7 +185,6 @@ movable = true
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "jellybeans"
@@ -205,7 +196,6 @@ movable = true
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "taffy"
@@ -217,7 +207,6 @@ movable = true
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "nougatswirl"
@@ -229,7 +218,6 @@ movable = true
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "grim_warning"
@@ -241,7 +229,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "skulls_on_pike"
@@ -253,7 +240,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "menacingjackolantern"
@@ -264,7 +250,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "leeringjackolantern"
@@ -275,7 +260,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "blackcat"
@@ -287,14 +271,12 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "blackcateast"
 base_id = "blackcat"
 item_id = 18057
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "pumpkinscarecrow"
@@ -306,14 +288,12 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "pumpkinscarecroweast"
 base_id = "pumpkinscarecrow"
 item_id = 18076
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "ruined_tapestry"
@@ -325,14 +305,12 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "ruinedtapestryeast"
 base_id = "ruined_tapestry"
 item_id = 18074
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "chair_in_a_ghost_costume"
@@ -343,7 +321,6 @@ weight = 5.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "excellent_iron_maiden"
@@ -354,7 +331,6 @@ weight = 5.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "halloween_guillotine"
@@ -365,7 +341,6 @@ weight = 5.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "painted_evil_clown_mask"
@@ -376,7 +351,6 @@ weight = 5.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 [item.tags]
 paintedmask = "1"
 
@@ -389,7 +363,6 @@ weight = 5.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 [item.tags]
 paintedmask = "2"
 
@@ -402,7 +375,6 @@ weight = 5.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 [item.tags]
 paintedmask = "3"
 
@@ -415,7 +387,6 @@ weight = 5.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 [item.tags]
 paintedmask = "4"
 
@@ -428,7 +399,6 @@ weight = 5.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 [item.tags]
 paintedmask = "5"
 
@@ -442,14 +412,12 @@ weight = 5.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "pumpkin_carving_kit_east"
 base_id = "pumpkin_carving_kit"
 item_id = 39214
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "carvable_pumpkin"
@@ -461,7 +429,6 @@ weight = 16.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "tallwitch"
@@ -471,7 +438,6 @@ name = "unlit tall witch"
 rarity = "common"
 weight = 16.0
 decays = true
-hue = 0
 
 [[item]]
 id = "talluo"
@@ -481,7 +447,6 @@ name = "unlit tall uo"
 rarity = "common"
 weight = 16.0
 decays = true
-hue = 0
 
 [[item]]
 id = "tallankh"
@@ -491,7 +456,6 @@ name = "unlit tall ankh"
 rarity = "common"
 weight = 16.0
 decays = true
-hue = 0
 
 [[item]]
 id = "tallspider"
@@ -501,7 +465,6 @@ name = "unlit tall spider"
 rarity = "common"
 weight = 16.0
 decays = true
-hue = 0
 
 [[item]]
 id = "tallbat"
@@ -511,7 +474,6 @@ name = "unlit tall bat"
 rarity = "common"
 weight = 16.0
 decays = true
-hue = 0
 
 [[item]]
 id = "tallskull"
@@ -521,7 +483,6 @@ name = "unlit tall skull"
 rarity = "common"
 weight = 16.0
 decays = true
-hue = 0
 
 [[item]]
 id = "talldemon"
@@ -531,7 +492,6 @@ name = "unlit tall demon"
 rarity = "common"
 weight = 16.0
 decays = true
-hue = 0
 
 [[item]]
 id = "tallspirit"
@@ -541,7 +501,6 @@ name = "unlit tall spirit"
 rarity = "common"
 weight = 16.0
 decays = true
-hue = 0
 
 [[item]]
 id = "tallscalele"
@@ -551,7 +510,6 @@ name = "unlit tall scalele"
 rarity = "common"
 weight = 16.0
 decays = true
-hue = 0
 
 [[item]]
 id = "tallrottenpumpkin"
@@ -563,7 +521,6 @@ weight = 16.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "carvable_gord"
@@ -575,7 +532,6 @@ weight = 18.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "gordtallwitch"
@@ -585,7 +541,6 @@ name = "unlit gord tall witch"
 rarity = "common"
 weight = 18.0
 decays = true
-hue = 0
 
 [[item]]
 id = "gordtallzombie"
@@ -595,7 +550,6 @@ name = "unlit gord tall zombie"
 rarity = "common"
 weight = 18.0
 decays = true
-hue = 0
 
 [[item]]
 id = "obsidian_skull"
@@ -607,7 +561,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "crystal_skull"
@@ -619,7 +572,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "jade_skull"
@@ -631,7 +583,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "trayof_pumpkin_spice_cider"
@@ -643,7 +594,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "tray_of_candy_apples"
@@ -655,7 +605,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "mrs_trouble_makers_head_on_a_spike"
@@ -667,7 +616,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "brutrins_head_on_a_spike"
@@ -679,7 +627,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "stethuns_head_on_a_spike"
@@ -691,7 +638,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "rakbans_head_on_a_spike"
@@ -703,7 +649,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "thatbloks_head_on_a_spike"
@@ -715,7 +660,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "gryphons_head_on_a_spike"
@@ -727,7 +671,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "kyronixs_head_on_a_spike"
@@ -739,7 +682,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "misks_head_on_a_spike"
@@ -751,7 +693,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "bleaks_head_on_a_spike"
@@ -763,7 +704,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "onifrks_head_on_a_spike"
@@ -775,7 +715,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "mesannas_head_on_a_spike"
@@ -787,7 +726,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "twilight_lantern"
@@ -797,7 +735,6 @@ name = "Twilight Lantern"
 rarity = "common"
 buy_price = 5000
 sell_price = 2500
-hue = 0
 
 [[item]]
 id = "halloween_ghoul_statue"
@@ -809,7 +746,6 @@ weight = 1.0
 buy_price = 5000
 sell_price = 2500
 decays = true
-hue = 0
 
 [[item]]
 id = "base_halloween_spawner"
@@ -820,7 +756,6 @@ movable = false
 weight = 500.0
 decays = false
 visibility = "game_master"
-hue = 0
 
 [[item]]
 id = "halloweenmonsterpawn"
@@ -829,7 +764,6 @@ item_id = 7956
 name = "Halloween Monsters"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "halloweenpumpkinpawn"
@@ -838,4 +772,3 @@ item_id = 7956
 name = "Halloween Pumpkin spawner"
 rarity = "common"
 amount = 1
-hue = 0

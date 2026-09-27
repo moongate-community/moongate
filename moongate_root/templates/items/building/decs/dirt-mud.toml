@@ -6,7 +6,6 @@ name = "dirt patch"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0912_dirt_patch"
@@ -16,7 +15,6 @@ name = "dirt patch"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0913_dirt_patch"
@@ -26,7 +24,6 @@ name = "dirt patch"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0914_dirt_patch"
@@ -36,7 +33,6 @@ name = "dirt patch"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1b27_dirt"
@@ -46,7 +42,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b28_dirt"
@@ -56,7 +51,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b29_dirt"
@@ -66,7 +60,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b2a_dirt"
@@ -76,7 +69,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b2b_dirt"
@@ -86,7 +78,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b2c_dirt"
@@ -96,7 +87,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b2d_dirt"
@@ -106,7 +96,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b2e_dirt"
@@ -116,7 +105,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b2f_dirt"
@@ -126,7 +114,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b30_dirt"
@@ -136,7 +123,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b31_dirt"
@@ -146,7 +132,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b32_dirt"
@@ -156,7 +141,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b33_dirt"
@@ -166,7 +150,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b34_dirt"
@@ -176,7 +159,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b35_dirt"
@@ -186,7 +168,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b36_dirt"
@@ -196,7 +177,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b37_dirt"
@@ -206,7 +186,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b38_dirt"
@@ -216,7 +195,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b39_dirt"
@@ -226,7 +204,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b3a_dirt"
@@ -236,7 +213,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b3b_dirt"
@@ -246,7 +222,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b3c_dirt"
@@ -256,7 +231,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b3d_dirt"
@@ -266,7 +240,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b3e_dirt"
@@ -276,7 +249,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b71_hole"
@@ -286,7 +258,6 @@ name = "hole"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1dfd_dirt"
@@ -296,7 +267,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1dfe_dirt"
@@ -306,7 +276,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1dff_dirt"
@@ -316,7 +285,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e00_dirt"
@@ -326,7 +294,6 @@ name = "dirt"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e01_mud"
@@ -336,7 +303,6 @@ name = "mud"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e02_mud"
@@ -346,7 +312,6 @@ name = "mud"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e03_footprints"
@@ -356,7 +321,6 @@ name = "footprints"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e04_footprints"
@@ -366,7 +330,6 @@ name = "footprints"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e05_footprints"
@@ -376,7 +339,6 @@ name = "footprints"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e06_footprints"
@@ -386,4 +348,3 @@ name = "footprints"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0

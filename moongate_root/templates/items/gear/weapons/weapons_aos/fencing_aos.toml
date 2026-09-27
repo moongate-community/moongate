@@ -6,7 +6,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 38
 sell_price = 36
-hue = 0
 
 [[item]]
 id = "tribalspear_aos"
@@ -16,7 +15,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 38
 sell_price = 36
-hue = 0
 
 [[item]]
 id = "0x1400_aos"
@@ -26,7 +24,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 42
 sell_price = 21
-hue = 0
 
 [[item]]
 id = "0x1402_aos"
@@ -36,7 +33,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 32
 sell_price = 16
-hue = 0
 
 [[item]]
 id = "0x1404_aos"
@@ -46,7 +42,6 @@ rarity = "common"
 weight = 9.0
 buy_price = 32
 sell_price = 17
-hue = 0
 
 [[item]]
 id = "0x0e87_aos"
@@ -56,7 +51,6 @@ rarity = "common"
 weight = 10.0
 buy_price = 25
 sell_price = 12
-hue = 0
 
 [[item]]
 id = "0x26be_aos"
@@ -66,7 +60,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 53
 sell_price = 27
-hue = 0
 
 [[item]]
 id = "0x26c0_aos"
@@ -76,7 +69,6 @@ rarity = "common"
 weight = 12.0
 buy_price = 46
 sell_price = 23
-hue = 0
 
 [[item]]
 id = "0x27a7_aos"
@@ -86,7 +78,6 @@ rarity = "common"
 weight = 12.0
 buy_price = 145
 sell_price = 73
-hue = 0
 
 [[item]]
 id = "0x27ab_aos"
@@ -96,7 +87,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 74
 sell_price = 37
-hue = 0
 
 [[item]]
 id = "0x27af_aos"
@@ -106,7 +96,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 75
 sell_price = 38
-hue = 0
 
 [[item]]
 id = "0x2d23_aos"
@@ -116,7 +105,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 39
 sell_price = 20
-hue = 0
 
 [[item]]
 id = "0x2d20_aos"
@@ -126,7 +114,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 73
 sell_price = 37
-hue = 0
 
 [[item]]
 id = "0x48be_aos"
@@ -136,7 +123,6 @@ rarity = "common"
 weight = 9.0
 buy_price = 32
 sell_price = 17
-hue = 0
 
 [[item]]
 id = "0x0907_aos"
@@ -146,7 +132,6 @@ rarity = "common"
 weight = 9.0
 buy_price = 45
 sell_price = 23
-hue = 0
 
 [[item]]
 id = "0x08fe_aos"
@@ -156,7 +141,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 37
 sell_price = 19
-hue = 0
 
 [[item]]
 id = "0x48bc_aos"
@@ -166,7 +150,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 42
 sell_price = 21
-hue = 0
 
 [[item]]
 id = "0x48ca_aos"
@@ -176,7 +159,6 @@ rarity = "common"
 weight = 12.0
 buy_price = 49
 sell_price = 25
-hue = 0
 
 [[item]]
 id = "0x48c8_aos"
@@ -186,7 +168,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 57
 sell_price = 29
-hue = 0
 
 [[item]]
 id = "0x0904_aos"
@@ -196,7 +177,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 70
 sell_price = 35
-hue = 0
 
 [[item]]
 id = "0x48ce_aos"
@@ -206,7 +186,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 80
 sell_price = 40
-hue = 0
 
 [[item]]
 id = "0xa28a_aos"
@@ -216,4 +195,3 @@ rarity = "common"
 weight = 5.0
 buy_price = 25
 sell_price = 13
-hue = 0

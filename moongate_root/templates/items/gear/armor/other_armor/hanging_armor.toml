@@ -6,7 +6,6 @@ name = "chainmail leggings"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13bd_chainmail_tunic"
@@ -16,7 +15,6 @@ name = "chainmail tunic"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13c1_chainmail_leggings"
@@ -26,7 +24,6 @@ name = "chainmail leggings"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13c2_chainmail_tunic"
@@ -36,7 +33,6 @@ name = "chainmail tunic"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13c8_leather_sleeves"
@@ -46,7 +42,6 @@ name = "leather sleeves"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13c9_leather_leggings"
@@ -56,7 +51,6 @@ name = "leather leggings"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13ca_leather_tunic"
@@ -66,7 +60,6 @@ name = "leather tunic"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13cf_leather_sleeves"
@@ -76,7 +69,6 @@ name = "leather sleeves"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13d0_leather_leggings"
@@ -86,7 +78,6 @@ name = "leather leggings"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13d1_leather_tunic"
@@ -96,7 +87,6 @@ name = "leather tunic"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13d7_studded_sleeves"
@@ -106,7 +96,6 @@ name = "studded sleeves"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13d8_studded_leggings"
@@ -116,7 +105,6 @@ name = "studded leggings"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13d9_studded_tunic"
@@ -126,7 +114,6 @@ name = "studded tunic"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13de_studded_sleeves"
@@ -136,7 +123,6 @@ name = "studded sleeves"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13df_studded_leggings"
@@ -146,7 +132,6 @@ name = "studded leggings"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13e0_studded_tunic"
@@ -156,7 +141,6 @@ name = "studded tunic"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13e5_ringmail_leggings"
@@ -166,7 +150,6 @@ name = "ringmail leggings"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13e6_ringmail_leggings"
@@ -176,7 +159,6 @@ name = "ringmail leggings"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13e7_ringmail_armor"
@@ -186,7 +168,6 @@ name = "ringmail armor"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13e8_ringmail_armor"
@@ -196,7 +177,6 @@ name = "ringmail armor"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13e9_ringmail_sleeves"
@@ -206,7 +186,6 @@ name = "ringmail sleeves"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x13ea_ringmail_sleeves"
@@ -216,7 +195,6 @@ name = "ringmail sleeves"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1508_decorative_armor"
@@ -226,7 +204,6 @@ name = "decorative armor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1509_decorative_armor"
@@ -236,7 +213,6 @@ name = "decorative armor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1512_decorative_armor"
@@ -246,7 +222,6 @@ name = "decorative armor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1513_decorative_armor"
@@ -256,7 +231,6 @@ name = "decorative armor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x151a_decorative_armor"
@@ -266,7 +240,6 @@ name = "decorative armor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x151b_decorative_armor"
@@ -276,7 +249,6 @@ name = "decorative armor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x151c_decorative_armor"
@@ -286,7 +258,6 @@ name = "decorative armor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x151d_decorative_armor"
@@ -296,7 +267,6 @@ name = "decorative armor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x13e5_a_ringmail_leggings"
@@ -313,7 +283,6 @@ id = "0x13e6_a"
 base_id = "0x13e5_a_ringmail_leggings"
 item_id = 5094
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e7_a_ringmail_tunic"
@@ -330,7 +299,6 @@ id = "0x13e8_a"
 base_id = "0x13e7_a_ringmail_tunic"
 item_id = 5096
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e9_a_ringmail_sleeves"
@@ -347,7 +315,6 @@ id = "0x13ea_a"
 base_id = "0x13e9_a_ringmail_sleeves"
 item_id = 5098
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bc_a_chainmail_leggings"
@@ -364,7 +331,6 @@ id = "0x13c1_a"
 base_id = "0x13bc_a_chainmail_leggings"
 item_id = 5057
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bd_a_chainmail_tunic"
@@ -381,7 +347,6 @@ id = "0x13c2_a"
 base_id = "0x13bd_a_chainmail_tunic"
 item_id = 5058
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e5_b_ringmail_leggings"
@@ -398,7 +363,6 @@ id = "0x13e6_b"
 base_id = "0x13e5_b_ringmail_leggings"
 item_id = 5094
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e7_b_ringmail_tunic"
@@ -415,7 +379,6 @@ id = "0x13e8_b"
 base_id = "0x13e7_b_ringmail_tunic"
 item_id = 5096
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e9_b_ringmail_sleeves"
@@ -432,7 +395,6 @@ id = "0x13ea_b"
 base_id = "0x13e9_b_ringmail_sleeves"
 item_id = 5098
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bc_b_chainmail_leggings"
@@ -449,7 +411,6 @@ id = "0x13c1_b"
 base_id = "0x13bc_b_chainmail_leggings"
 item_id = 5057
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bd_b_chainmail_tunic"
@@ -466,7 +427,6 @@ id = "0x13c2_b"
 base_id = "0x13bd_b_chainmail_tunic"
 item_id = 5058
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e5_c_ringmail_leggings"
@@ -483,7 +443,6 @@ id = "0x13e6_c"
 base_id = "0x13e5_c_ringmail_leggings"
 item_id = 5094
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e7_c_ringmail_tunic"
@@ -500,7 +459,6 @@ id = "0x13e8_c"
 base_id = "0x13e7_c_ringmail_tunic"
 item_id = 5096
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e9_c_ringmail_sleeves"
@@ -517,7 +475,6 @@ id = "0x13ea_c"
 base_id = "0x13e9_c_ringmail_sleeves"
 item_id = 5098
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bc_c_chainmail_leggings"
@@ -534,7 +491,6 @@ id = "0x13c1_c"
 base_id = "0x13bc_c_chainmail_leggings"
 item_id = 5057
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bd_c_chainmail_tunic"
@@ -551,7 +507,6 @@ id = "0x13c2_c"
 base_id = "0x13bd_c_chainmail_tunic"
 item_id = 5058
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e5_d_ringmail_leggings"
@@ -568,7 +523,6 @@ id = "0x13e6_d"
 base_id = "0x13e5_d_ringmail_leggings"
 item_id = 5094
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e7_d_ringmail_tunic"
@@ -585,7 +539,6 @@ id = "0x13e8_d"
 base_id = "0x13e7_d_ringmail_tunic"
 item_id = 5096
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e9_d_ringmail_sleeves"
@@ -602,7 +555,6 @@ id = "0x13ea_d"
 base_id = "0x13e9_d_ringmail_sleeves"
 item_id = 5098
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bc_d_chainmail_leggings"
@@ -619,7 +571,6 @@ id = "0x13c1_d"
 base_id = "0x13bc_d_chainmail_leggings"
 item_id = 5057
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bd_d_chainmail_tunic"
@@ -636,7 +587,6 @@ id = "0x13c2_d"
 base_id = "0x13bd_d_chainmail_tunic"
 item_id = 5058
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e5_g_ringmail_leggings"
@@ -653,7 +603,6 @@ id = "0x13e6_g"
 base_id = "0x13e5_g_ringmail_leggings"
 item_id = 5094
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e7_g_ringmail_tunic"
@@ -670,7 +619,6 @@ id = "0x13e8_g"
 base_id = "0x13e7_g_ringmail_tunic"
 item_id = 5096
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e9_g_ringmail_sleeves"
@@ -687,7 +635,6 @@ id = "0x13ea_g"
 base_id = "0x13e9_g_ringmail_sleeves"
 item_id = 5098
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bc_g_chainmail_leggings"
@@ -704,7 +651,6 @@ id = "0x13c1_g"
 base_id = "0x13bc_g_chainmail_leggings"
 item_id = 5057
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bd_g_chainmail_tunic"
@@ -721,7 +667,6 @@ id = "0x13c2_g"
 base_id = "0x13bd_g_chainmail_tunic"
 item_id = 5058
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e5_s_ringmail_leggings"
@@ -738,7 +683,6 @@ id = "0x13e6_s"
 base_id = "0x13e5_s_ringmail_leggings"
 item_id = 5094
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e7_s_ringmail_tunic"
@@ -755,7 +699,6 @@ id = "0x13e8_s"
 base_id = "0x13e7_s_ringmail_tunic"
 item_id = 5096
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e9_s_ringmail_sleeves"
@@ -772,7 +715,6 @@ id = "0x13ea_s"
 base_id = "0x13e9_s_ringmail_sleeves"
 item_id = 5098
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bc_s_chainmail_leggings"
@@ -789,7 +731,6 @@ id = "0x13c1_s"
 base_id = "0x13bc_s_chainmail_leggings"
 item_id = 5057
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bd_s_chainmail_tunic"
@@ -806,7 +747,6 @@ id = "0x13c2_s"
 base_id = "0x13bd_s_chainmail_tunic"
 item_id = 5058
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e5_va_ringmail_leggings"
@@ -823,7 +763,6 @@ id = "0x13e6_va"
 base_id = "0x13e5_va_ringmail_leggings"
 item_id = 5094
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e7_va_ringmail_tunic"
@@ -840,7 +779,6 @@ id = "0x13e8_va"
 base_id = "0x13e7_va_ringmail_tunic"
 item_id = 5096
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e9_va_ringmail_sleeves"
@@ -857,7 +795,6 @@ id = "0x13ea_va"
 base_id = "0x13e9_va_ringmail_sleeves"
 item_id = 5098
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bc_va_chainmail_leggings"
@@ -874,7 +811,6 @@ id = "0x13c1_va"
 base_id = "0x13bc_va_chainmail_leggings"
 item_id = 5057
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bd_va_chainmail_tunic"
@@ -891,7 +827,6 @@ id = "0x13c2_va"
 base_id = "0x13bd_va_chainmail_tunic"
 item_id = 5058
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e5_ve_ringmail_leggings"
@@ -908,7 +843,6 @@ id = "0x13e6_ve"
 base_id = "0x13e5_ve_ringmail_leggings"
 item_id = 5094
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e7_ve_ringmail_tunic"
@@ -925,7 +859,6 @@ id = "0x13e8_ve"
 base_id = "0x13e7_ve_ringmail_tunic"
 item_id = 5096
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13e9_ve_ringmail_sleeves"
@@ -942,7 +875,6 @@ id = "0x13ea_ve"
 base_id = "0x13e9_ve_ringmail_sleeves"
 item_id = 5098
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bc_ve_chainmail_leggings"
@@ -959,7 +891,6 @@ id = "0x13c1_ve"
 base_id = "0x13bc_ve_chainmail_leggings"
 item_id = 5057
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13bd_ve_chainmail_tunic"
@@ -976,4 +907,3 @@ id = "0x13c2_ve"
 base_id = "0x13bd_ve_chainmail_tunic"
 item_id = 5058
 rarity = "common"
-hue = 0

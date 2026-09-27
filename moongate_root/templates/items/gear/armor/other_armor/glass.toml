@@ -3,11 +3,9 @@ id = "0x2fb8"
 base_id = "0x2fb8_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x3172"
 base_id = "0x2fb8_lbr"
 item_id = 12658
 rarity = "common"
-hue = 0

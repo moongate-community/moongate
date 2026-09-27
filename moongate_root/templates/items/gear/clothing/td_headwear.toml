@@ -5,10 +5,10 @@ item_id = 9797
 name = "dragon helm"
 rarity = "common"
 weight = 5.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2646_dragon_helm"
@@ -17,10 +17,10 @@ item_id = 9798
 name = "dragon helm"
 rarity = "common"
 weight = 5.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2689_winged_helmet"
@@ -29,10 +29,10 @@ item_id = 9865
 name = "winged helmet"
 rarity = "common"
 weight = 5.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x268a_winged_helmet"
@@ -41,10 +41,10 @@ item_id = 9866
 name = "winged helmet"
 rarity = "common"
 weight = 5.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x268b_hachimaki"
@@ -53,10 +53,10 @@ item_id = 9867
 name = "hachimaki"
 rarity = "common"
 weight = 1.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x268c_hachimaki"
@@ -65,10 +65,10 @@ item_id = 9868
 name = "hachimaki"
 rarity = "common"
 weight = 1.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x268d_kabuto"
@@ -77,10 +77,10 @@ item_id = 9869
 name = "kabuto"
 rarity = "common"
 weight = 5.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x268e_kabuto"
@@ -89,10 +89,10 @@ item_id = 9870
 name = "kabuto"
 rarity = "common"
 weight = 5.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x268f_kabuto_mempo"
@@ -101,10 +101,10 @@ item_id = 9871
 name = "kabuto mempo"
 rarity = "common"
 weight = 5.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2690_kabuto_mempo"
@@ -113,10 +113,10 @@ item_id = 9872
 name = "kabuto mempo"
 rarity = "common"
 weight = 5.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2691_leather_cap"
@@ -125,10 +125,10 @@ item_id = 9873
 name = "leather cap"
 rarity = "common"
 weight = 1.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2692_leather_cap"
@@ -137,10 +137,10 @@ item_id = 9874
 name = "leather cap"
 rarity = "common"
 weight = 1.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x269d_robin_hood_cap"
@@ -149,10 +149,10 @@ item_id = 9885
 name = "robin hood cap"
 rarity = "common"
 weight = 1.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x26a1_feathered_mask"
@@ -161,10 +161,10 @@ item_id = 9889
 name = "feathered mask"
 rarity = "common"
 weight = 2.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x26a2_feathered_mask"
@@ -173,10 +173,10 @@ item_id = 9890
 name = "feathered mask"
 rarity = "common"
 weight = 2.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x26a3_ninja_mask"
@@ -185,10 +185,10 @@ item_id = 9891
 name = "ninja mask"
 rarity = "common"
 weight = 1.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x26a4_ninja_mask"
@@ -197,7 +197,7 @@ item_id = 9892
 name = "ninja mask"
 rarity = "common"
 weight = 1.0
+layer = "helm"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0

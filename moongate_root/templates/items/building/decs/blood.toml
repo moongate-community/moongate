@@ -6,7 +6,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x122b_blood"
@@ -16,7 +15,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x122c_blood"
@@ -26,7 +24,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x122d_blood"
@@ -36,7 +33,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x122e_blood"
@@ -46,7 +42,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x122f_blood_smear"
@@ -56,7 +51,6 @@ name = "blood smear"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1645_blood"
@@ -66,7 +60,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cc7_blood"
@@ -76,7 +69,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cc8_blood"
@@ -86,7 +78,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cc9_blood"
@@ -96,7 +87,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cca_blood"
@@ -106,7 +96,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ccb_blood"
@@ -116,7 +105,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ccc_blood"
@@ -126,7 +114,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ccd_blood"
@@ -136,7 +123,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cce_blood"
@@ -146,7 +132,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ccf_blood"
@@ -156,7 +141,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd0_blood"
@@ -166,7 +150,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd1_blood"
@@ -176,7 +159,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd2_blood"
@@ -186,7 +168,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd3_blood"
@@ -196,7 +177,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd4_blood"
@@ -206,7 +186,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd5_blood"
@@ -216,7 +195,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd6_blood"
@@ -226,7 +204,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd7_blood"
@@ -236,7 +213,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd8_blood"
@@ -246,7 +222,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cd9_blood"
@@ -256,7 +231,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cda_blood"
@@ -266,7 +240,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cdb_blood"
@@ -276,7 +249,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cdc_blood"
@@ -286,7 +258,6 @@ name = "blood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cf1_blood_patch"
@@ -296,7 +267,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cf2_blood_patch"
@@ -306,7 +276,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cf3_blood_patch"
@@ -316,7 +285,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cf4_blood_patch"
@@ -326,7 +294,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cf5_blood_patch"
@@ -336,7 +303,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cf6_blood_patch"
@@ -346,7 +312,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cf7_blood_patch"
@@ -356,7 +321,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cf8_blood_patch"
@@ -366,7 +330,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cf9_blood_patch"
@@ -376,7 +339,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cfa_blood_patch"
@@ -386,7 +348,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cfb_blood_patch"
@@ -396,7 +357,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cfc_blood_patch"
@@ -406,7 +366,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cfd_blood_patch"
@@ -416,7 +375,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cfe_blood_patch"
@@ -426,7 +384,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1cff_blood_patch"
@@ -436,7 +393,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d00_blood_patch"
@@ -446,7 +402,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d01_blood_patch"
@@ -456,7 +411,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d02_blood_patch"
@@ -466,7 +420,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d03_blood_patch"
@@ -476,7 +429,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d04_blood_patch"
@@ -486,7 +438,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d05_blood_patch"
@@ -496,7 +447,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d06_blood_patch"
@@ -506,7 +456,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d07_blood_patch"
@@ -516,7 +465,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d08_blood_patch"
@@ -526,7 +474,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d09_blood_patch"
@@ -536,7 +483,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d0a_blood_patch"
@@ -546,7 +492,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d0b_blood_patch"
@@ -556,7 +501,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d0c_blood_patch"
@@ -566,7 +510,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d0d_blood_patch"
@@ -576,7 +519,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d0e_blood_patch"
@@ -586,7 +528,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d0f_blood_patch"
@@ -596,7 +537,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d10_blood_patch"
@@ -606,7 +546,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d11_blood_patch"
@@ -616,7 +555,6 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d12_blood_patch"
@@ -626,4 +564,3 @@ name = "blood patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0

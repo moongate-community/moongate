@@ -9,7 +9,6 @@ weight = 0.2
 stackable = true
 buy_price = 4
 sell_price = 2
-hue = 0
 
 [[item]]
 id = "0x0976_slab_of_bacon"
@@ -22,7 +21,6 @@ weight = 4.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x0977_slab_of_bacon"
@@ -35,7 +33,6 @@ weight = 4.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x0978_slice_of_bacon"
@@ -48,7 +45,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0979_slice_of_bacon"
@@ -61,7 +57,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09b7_cooked_bird"
@@ -74,7 +69,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x09b8_cooked_bird"
@@ -87,7 +81,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x09bb_roast_pig"
@@ -100,7 +93,6 @@ weight = 45.0
 stackable = true
 buy_price = 128
 sell_price = 64
-hue = 0
 
 [[item]]
 id = "0x09bc_roast_pig"
@@ -113,7 +105,6 @@ weight = 45.0
 stackable = true
 buy_price = 128
 sell_price = 64
-hue = 0
 
 [[item]]
 id = "0x09c0_sausage"
@@ -126,7 +117,6 @@ weight = 1.0
 stackable = true
 buy_price = 20
 sell_price = 10
-hue = 0
 
 [[item]]
 id = "0x09c1_sausage"
@@ -139,7 +129,6 @@ weight = 1.0
 stackable = true
 buy_price = 20
 sell_price = 10
-hue = 0
 
 [[item]]
 id = "0x09c9_ham"
@@ -152,7 +141,6 @@ weight = 1.0
 stackable = true
 buy_price = 24
 sell_price = 12
-hue = 0
 
 [[item]]
 id = "0x09d3_ham"
@@ -165,7 +153,6 @@ weight = 1.0
 stackable = true
 buy_price = 24
 sell_price = 12
-hue = 0
 
 [[item]]
 id = "0x09f2_cooked_ribs"
@@ -178,7 +165,6 @@ weight = 1.0
 stackable = true
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1608_chicken_leg"
@@ -191,7 +177,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x160a_leg_of_lamb"
@@ -204,4 +189,3 @@ weight = 1.0
 stackable = true
 buy_price = 12
 sell_price = 6
-hue = 0

@@ -5,7 +5,6 @@ item_id = 0
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ad3_donuts"
@@ -18,7 +17,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1e1c_cooked_fish"
@@ -31,7 +29,6 @@ weight = 1.0
 stackable = true
 buy_price = 16
 sell_price = 8
-hue = 0
 
 [[item]]
 id = "0x1e1d_cooked_fish"
@@ -44,7 +41,6 @@ weight = 1.0
 stackable = true
 buy_price = 16
 sell_price = 8
-hue = 0
 
 [[item]]
 id = "0x1e1e_cooked_fish"
@@ -57,7 +53,6 @@ weight = 0.5
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x097b_fish_steak"
@@ -70,7 +65,6 @@ weight = 0.1
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x097e_wheel_of_cheese"
@@ -83,7 +77,6 @@ weight = 0.1
 stackable = true
 buy_price = 24
 sell_price = 12
-hue = 0
 
 [[item]]
 id = "0x097c_wedge_of_cheese"
@@ -96,7 +89,6 @@ weight = 0.02
 stackable = true
 buy_price = 4
 sell_price = 2
-hue = 0
 
 [[item]]
 id = "0x097d_wedge_of_cheese"
@@ -109,7 +101,6 @@ weight = 0.1
 stackable = true
 buy_price = 20
 sell_price = 10
-hue = 0
 
 [[item]]
 id = "0x098c_french_bread"
@@ -122,7 +113,6 @@ weight = 2.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x09ea_muffin"
@@ -135,7 +125,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09eb_muffins"
@@ -148,7 +137,6 @@ weight = 3.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x09fa_muffins"
@@ -161,7 +149,6 @@ weight = 2.0
 stackable = true
 buy_price = 4
 sell_price = 2
-hue = 0
 
 [[item]]
 id = "0x09e9_cake"
@@ -174,7 +161,6 @@ weight = 1.0
 stackable = true
 buy_price = 11
 sell_price = 5
-hue = 0
 
 [[item]]
 id = "0x09af_plate_of_food"
@@ -186,7 +172,6 @@ movable = true
 weight = 1.0
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x160b_pan_of_cookies"
@@ -198,7 +183,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x160c_plate_of_cookies"
@@ -210,7 +194,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09d8_plate_of_food"
@@ -222,7 +205,6 @@ movable = true
 weight = 1.0
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x09d9_plate_of_food"
@@ -234,7 +216,6 @@ movable = true
 weight = 1.0
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x09db_plate_of_food"
@@ -246,7 +227,6 @@ movable = true
 weight = 1.0
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x09b6_fried_eggs"
@@ -259,7 +239,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x103b_bread_loaf"
@@ -272,7 +251,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x103c_bread_loaf"
@@ -285,7 +263,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x1040_pizza"
@@ -298,7 +275,6 @@ weight = 1.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "sausage_pizza"
@@ -311,7 +287,6 @@ weight = 1.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "cheese_pizza"
@@ -324,7 +299,6 @@ weight = 1.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x1041_baked_pie"
@@ -336,7 +310,6 @@ movable = true
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "baked_apple_pie"
@@ -348,7 +321,6 @@ movable = true
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "baked_pumpkin_pie"
@@ -360,7 +332,6 @@ movable = true
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "baked_meat_pie"
@@ -372,7 +343,6 @@ movable = true
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "baked_fruit_pie"
@@ -384,7 +354,6 @@ movable = true
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "baked_peach_cobbler"
@@ -396,7 +365,6 @@ movable = true
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "baked_quiche"
@@ -408,7 +376,6 @@ movable = true
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x15f9_bowl_of_carrots"
@@ -420,7 +387,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x15fa_bowl_of_corn"
@@ -432,7 +398,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x15fb_bowl_of_lettuce"
@@ -444,7 +409,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x15fc_bowl_of_peas"
@@ -456,7 +420,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x15fe_bowl_of_carrots"
@@ -468,7 +431,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x15ff_bowl_of_corn"
@@ -480,7 +442,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1600_bowl_of_lettuce"
@@ -492,7 +453,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1601_bowl_of_peas"
@@ -504,7 +464,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1602_bowl_of_patatoes"
@@ -516,7 +475,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1604_bowl_of_stew"
@@ -528,7 +486,6 @@ movable = true
 weight = 0.02
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1606_tomato_soup"
@@ -540,7 +497,6 @@ movable = true
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09b4_eggshells"
@@ -549,7 +505,6 @@ item_id = 2484
 name = "eggshells"
 rarity = "common"
 weight = 0.5
-hue = 0
 
 [[item]]
 id = "0x15f8_wooden_bowl"
@@ -558,4 +513,3 @@ item_id = 5624
 name = "wooden bowl"
 rarity = "common"
 weight = 0.5
-hue = 0

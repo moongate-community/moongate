@@ -9,7 +9,6 @@ weight = 5.0
 buy_price = 8
 sell_price = 4
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -23,7 +22,6 @@ weight = 5.0
 buy_price = 8
 sell_price = 4
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -37,7 +35,6 @@ weight = 7.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -51,7 +48,6 @@ weight = 7.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -64,7 +60,6 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -75,7 +70,6 @@ name = "dresser"
 rarity = "common"
 weight = 50.0
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -86,7 +80,6 @@ name = "dresser"
 rarity = "common"
 weight = 5.0
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -97,7 +90,6 @@ name = "dresser"
 rarity = "common"
 weight = 5.0
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -108,7 +100,6 @@ name = "dresser"
 rarity = "common"
 weight = 5.0
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -122,7 +113,6 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -136,7 +126,6 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -150,7 +139,6 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -164,7 +152,6 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -178,7 +165,6 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -192,7 +178,6 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -206,7 +191,6 @@ weight = 20.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -220,7 +204,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -234,7 +217,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -248,7 +230,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -262,7 +243,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -276,7 +256,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -290,7 +269,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -304,7 +282,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -318,7 +295,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -332,7 +308,6 @@ weight = 6.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -346,7 +321,6 @@ weight = 6.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -360,7 +334,6 @@ weight = 5.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -374,7 +347,6 @@ weight = 5.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -388,7 +360,6 @@ weight = 30.0
 buy_price = 30
 sell_price = 15
 decays = true
-hue = 0
 max_weight = 40000
 
 [[item]]
@@ -402,5 +373,4 @@ weight = 30.0
 buy_price = 30
 sell_price = 15
 decays = true
-hue = 0
 max_weight = 40000

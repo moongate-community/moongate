@@ -124,6 +124,13 @@ internal static class DfnParser
 
             var key = line[..separator].Trim();
             var value = line[(separator + 1)..].Trim();
+
+            // UOX3 skips a tag with no value (ssection.cpp), such as baseitem.dfn's bare decay= and pileable=.
+            if (value.Length == 0)
+            {
+                continue;
+            }
+
             fields[key] = value;
 
             if (comment is not null)

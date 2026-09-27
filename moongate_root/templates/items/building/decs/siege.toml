@@ -6,7 +6,6 @@ name = "cannon ball"
 rarity = "common"
 movable = false
 weight = 0.1
-hue = 0
 
 [[item]]
 id = "0x0e74_cannon_balls"
@@ -16,7 +15,6 @@ name = "cannon balls"
 rarity = "common"
 movable = false
 weight = 0.5
-hue = 0
 
 [[item]]
 id = "0x0e8b_cannon"
@@ -26,7 +24,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e8c_cannon"
@@ -36,7 +33,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e8d_cannon"
@@ -46,7 +42,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e8e_cannon"
@@ -56,7 +51,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e8f_cannon"
@@ -66,7 +60,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e90_cannon"
@@ -76,7 +69,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e91_cannon"
@@ -86,7 +78,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e92_cannon"
@@ -96,7 +87,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e93_cannon"
@@ -106,7 +96,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e94_cannon"
@@ -116,7 +105,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e95_cannon"
@@ -126,7 +114,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x0e96_cannon"
@@ -136,7 +123,6 @@ name = "cannon"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1648_catapult"
@@ -146,7 +132,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1649_catapult"
@@ -156,7 +141,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x164a_catapult"
@@ -166,7 +150,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x164b_catapult"
@@ -176,7 +159,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x164c_catapult"
@@ -186,7 +168,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x164d_catapult"
@@ -196,7 +177,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x164e_catapult"
@@ -206,7 +186,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x164f_catapult"
@@ -216,7 +195,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1650_catapult"
@@ -226,7 +204,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1651_catapult"
@@ -236,7 +213,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1652_catapult"
@@ -246,7 +222,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1653_catapult"
@@ -256,7 +231,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1654_catapult"
@@ -266,7 +240,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1655_catapult"
@@ -276,7 +249,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1656_catapult"
@@ -286,7 +258,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1657_catapult"
@@ -296,7 +267,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1658_catapult"
@@ -306,7 +276,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1659_catapult"
@@ -316,7 +285,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x165a_catapult"
@@ -326,7 +294,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x165b_catapult"
@@ -336,7 +303,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x165c_catapult"
@@ -346,7 +312,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x165d_catapult"
@@ -356,7 +321,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x165e_catapult"
@@ -366,7 +330,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x165f_catapult"
@@ -376,7 +339,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1660_catapult"
@@ -386,7 +348,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1661_catapult"
@@ -396,7 +357,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1662_catapult"
@@ -406,7 +366,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1663_catapult"
@@ -416,7 +375,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1664_catapult"
@@ -426,7 +384,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1665_catapult"
@@ -436,7 +393,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1666_catapult"
@@ -446,7 +402,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1672_catapult"
@@ -456,7 +411,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1673_catapult"
@@ -466,7 +420,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1674_catapult"
@@ -476,7 +429,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1675_catapult"
@@ -486,7 +438,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1676_catapult"
@@ -496,7 +447,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1677_catapult"
@@ -506,7 +456,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1678_catapult"
@@ -516,7 +465,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1679_catapult"
@@ -526,7 +474,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x167a_catapult"
@@ -536,7 +483,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x167b_catapult"
@@ -546,7 +492,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x167c_catapult"
@@ -556,7 +501,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x167d_catapult"
@@ -566,7 +510,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x167e_catapult"
@@ -576,7 +519,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x167f_catapult"
@@ -586,7 +528,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1680_catapult"
@@ -596,7 +537,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1681_catapult"
@@ -606,7 +546,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1682_catapult"
@@ -616,7 +555,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1683_catapult"
@@ -626,7 +564,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1684_catapult"
@@ -636,7 +573,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1685_catapult"
@@ -646,7 +582,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1686_catapult"
@@ -656,7 +591,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1687_catapult"
@@ -666,7 +600,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1688_catapult"
@@ -676,7 +609,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1689_catapult"
@@ -686,7 +618,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x168a_catapult"
@@ -696,7 +627,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x168b_catapult"
@@ -706,7 +636,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x168c_catapult"
@@ -716,7 +645,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x168d_catapult"
@@ -726,7 +654,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x168e_catapult"
@@ -736,7 +663,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x168f_catapult"
@@ -746,7 +672,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1690_catapult"
@@ -756,7 +681,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1694_catapult"
@@ -766,7 +690,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1695_catapult"
@@ -776,7 +699,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1696_catapult"
@@ -786,7 +708,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1697_catapult"
@@ -796,7 +717,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1698_catapult"
@@ -806,7 +726,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x1699_catapult"
@@ -816,7 +735,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x169a_catapult"
@@ -826,7 +744,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x169b_catapult"
@@ -836,7 +753,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x169c_catapult"
@@ -846,7 +762,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x169d_catapult"
@@ -856,7 +771,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x169e_catapult"
@@ -866,7 +780,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x169f_catapult"
@@ -876,7 +789,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a0_catapult"
@@ -886,7 +798,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a1_catapult"
@@ -896,7 +807,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a2_catapult"
@@ -906,7 +816,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a3_catapult"
@@ -916,7 +825,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a4_catapult"
@@ -926,7 +834,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a5_catapult"
@@ -936,7 +843,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a6_catapult"
@@ -946,7 +852,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a7_catapult"
@@ -956,7 +861,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a8_catapult"
@@ -966,7 +870,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16a9_catapult"
@@ -976,7 +879,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16aa_catapult"
@@ -986,7 +888,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16ab_catapult"
@@ -996,7 +897,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16ac_catapult"
@@ -1006,7 +906,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16ad_catapult"
@@ -1016,7 +915,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16ae_catapult"
@@ -1026,7 +924,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16af_catapult"
@@ -1036,7 +933,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b0_catapult"
@@ -1046,7 +942,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b1_catapult"
@@ -1056,7 +951,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b2_catapult"
@@ -1066,7 +960,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b3_catapult"
@@ -1076,7 +969,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b4_catapult"
@@ -1086,7 +978,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b9_catapult"
@@ -1096,7 +987,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b_a_catapult"
@@ -1106,7 +996,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16bb_catapult"
@@ -1116,7 +1005,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16bc_catapult"
@@ -1126,7 +1014,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b_d_catapult"
@@ -1136,7 +1023,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b_e_catapult"
@@ -1146,7 +1032,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16b_f_catapult"
@@ -1156,7 +1041,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c0_catapult"
@@ -1166,7 +1050,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c1_catapult"
@@ -1176,7 +1059,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c2_catapult"
@@ -1186,7 +1068,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c3_catapult"
@@ -1196,7 +1077,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c4_catapult"
@@ -1206,7 +1086,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c5_catapult"
@@ -1216,7 +1095,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c6_catapult"
@@ -1226,7 +1104,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c7_catapult"
@@ -1236,7 +1113,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c8_catapult"
@@ -1246,7 +1122,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c9_catapult"
@@ -1256,7 +1131,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c_a_catapult"
@@ -1266,7 +1140,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16cb_catapult"
@@ -1276,7 +1149,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16cc_catapult"
@@ -1286,7 +1158,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "ox16c_d"
@@ -1296,7 +1167,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c_e_catapult"
@@ -1306,7 +1176,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16c_f_catapult"
@@ -1316,7 +1185,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d0_catapult"
@@ -1326,7 +1194,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d1_catapult"
@@ -1336,7 +1203,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d2_catapult"
@@ -1346,7 +1212,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d3_catapult"
@@ -1356,7 +1221,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d4_catapult"
@@ -1366,7 +1230,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d5_catapult"
@@ -1376,7 +1239,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d6_catapult"
@@ -1386,7 +1248,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d7_catapult"
@@ -1396,7 +1257,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d8_catapult"
@@ -1406,7 +1266,6 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0
 
 [[item]]
 id = "0x16d9_catapult"
@@ -1416,4 +1275,3 @@ name = "catapult"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0

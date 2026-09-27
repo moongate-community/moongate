@@ -48,7 +48,7 @@ public class ItemFactoryService : IItemFactoryService
         {
             TemplateId = template.Id,
             ItemId = (int)template.ItemId.Value,
-            Hue = hue ?? template.Hue.Resolve(),
+            Hue = hue ?? template.Hue?.Resolve() ?? default,
             Amount = resolvedAmount,
             Rarity = template.Rarity.Resolve()
         };

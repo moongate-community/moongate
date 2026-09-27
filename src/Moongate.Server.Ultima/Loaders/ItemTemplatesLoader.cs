@@ -111,7 +111,7 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         return template;
     }
 
-    // Hue and rarity always have a value, so the child's own is kept.
+    // Rarity always has a value, so the child's own is kept.
     private static void Inherit(ItemTemplate child, ItemTemplate parent)
     {
         if (child.ItemId.Value == 0)
@@ -125,6 +125,7 @@ public class ItemTemplatesLoader : IDataLoader<ItemTemplate>
         }
 
         child.Name ??= parent.Name;
+        child.Hue ??= parent.Hue;
         child.Movable ??= parent.Movable;
         child.Weight ??= parent.Weight;
         child.Amount ??= parent.Amount;

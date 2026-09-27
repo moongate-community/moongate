@@ -5,17 +5,16 @@ item_id = 9813
 name = "jester shoes"
 rarity = "common"
 weight = 1.0
+layer = "shoes"
 buy_price = 100
 sell_price = 100
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2656"
 base_id = "0x2655_jester_shoes"
 item_id = 9814
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x26af_arcane_thigh_boots"
@@ -25,17 +24,16 @@ name = "arcane thigh boots"
 rarity = "common"
 movable = true
 weight = 4.0
+layer = "shoes"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "tdarcanethighboots"
 base_id = "0x26af_arcane_thigh_boots"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tdarcanethighboots_newbie"
@@ -43,7 +41,6 @@ base_id = "0x26af_arcane_thigh_boots"
 item_id = 0
 rarity = "common"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2653_waraji"
@@ -52,14 +49,13 @@ item_id = 9811
 name = "waraji"
 rarity = "common"
 weight = 1.0
+layer = "shoes"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2654"
 base_id = "0x2653_waraji"
 item_id = 9812
 rarity = "common"
-hue = 0

@@ -9,7 +9,6 @@ stackable = true
 buy_price = 21
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0fa1_spool_of_thread"
@@ -22,7 +21,6 @@ stackable = true
 buy_price = 21
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1420_roll_of_string"
@@ -35,7 +33,6 @@ stackable = true
 buy_price = 21
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1421_roll_of_string"
@@ -48,7 +45,6 @@ stackable = true
 buy_price = 21
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x101f_pile_of_wool"
@@ -61,7 +57,6 @@ stackable = true
 buy_price = 74
 sell_price = 37
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0df8_pile_of_wool"
@@ -74,7 +69,6 @@ stackable = true
 buy_price = 74
 sell_price = 37
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0def_raw_cotton"
@@ -88,7 +82,6 @@ stackable = false
 buy_price = 122
 sell_price = 61
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0df9_bale_of_cotton"
@@ -101,7 +94,6 @@ stackable = true
 buy_price = 122
 sell_price = 61
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1a9c_flax_bundle"
@@ -114,7 +106,6 @@ stackable = true
 buy_price = 122
 sell_price = 61
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1a9d_flax_bundle"
@@ -127,7 +118,6 @@ stackable = true
 buy_price = 122
 sell_price = 61
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e1d_ball_of_yarn"
@@ -140,7 +130,6 @@ stackable = true
 buy_price = 21
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e1e_ball_of_yarn"
@@ -153,7 +142,6 @@ stackable = true
 buy_price = 21
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e1f_ball_of_yarn"
@@ -166,7 +154,6 @@ stackable = true
 buy_price = 21
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f95_bolt_of_cloth"
@@ -180,7 +167,6 @@ stackable = true
 buy_price = 120
 sell_price = 60
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f96_bolt_of_cloth"
@@ -193,7 +179,6 @@ stackable = true
 buy_price = 120
 sell_price = 60
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f97_bolt_of_cloth"
@@ -206,7 +191,6 @@ stackable = true
 buy_price = 120
 sell_price = 60
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f98_bolt_of_cloth"
@@ -220,7 +204,6 @@ stackable = true
 buy_price = 120
 sell_price = 60
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f99_bolt_of_cloth"
@@ -234,7 +217,6 @@ stackable = true
 buy_price = 120
 sell_price = 60
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f9a_bolt_of_cloth"
@@ -248,7 +230,6 @@ stackable = true
 buy_price = 120
 sell_price = 60
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f9b_bolt_of_cloth"
@@ -261,7 +242,6 @@ stackable = true
 buy_price = 120
 sell_price = 60
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f9c_bolt_of_cloth"
@@ -274,7 +254,6 @@ stackable = true
 buy_price = 120
 sell_price = 60
 decays = true
-hue = 0
 
 [[item]]
 id = "0x175d_folded_cloth"
@@ -287,7 +266,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x175e_folded_cloth"
@@ -300,7 +278,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x175f_folded_cloth"
@@ -313,7 +290,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1760_folded_cloth"
@@ -326,7 +302,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1761_folded_cloth"
@@ -339,7 +314,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1762_folded_cloth"
@@ -352,7 +326,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1763_folded_cloth"
@@ -365,14 +338,12 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "folded_cloth"
 base_id = "0x1763_folded_cloth"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1764_folded_cloth"
@@ -385,7 +356,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1765_cloth"
@@ -398,7 +368,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1766_cut_cloth"
@@ -411,7 +380,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1767_cloth"
@@ -424,7 +392,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1768_cut_cloth"
@@ -437,7 +404,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0df6_knitting"
@@ -447,7 +413,6 @@ name = "knitting"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0df7_knitting"
@@ -457,7 +422,6 @@ name = "knitting"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "arcane_gem"
@@ -468,4 +432,4 @@ rarity = "common"
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
+hue = 2117

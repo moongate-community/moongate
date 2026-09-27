@@ -6,7 +6,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e61_trophy"
@@ -16,7 +15,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e62_trophy"
@@ -26,7 +24,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e63_trophy"
@@ -36,7 +33,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e64_trophy"
@@ -46,7 +42,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e65_trophy"
@@ -56,7 +51,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e66_trophy"
@@ -66,7 +60,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e67_trophy"
@@ -76,7 +69,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e68_trophy"
@@ -86,7 +78,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e69_trophy"
@@ -96,7 +87,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e6a_trophy"
@@ -106,7 +96,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e6b_trophy"
@@ -116,7 +105,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e6c_trophy"
@@ -126,7 +114,6 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e6d_trophy"
@@ -136,4 +123,3 @@ name = "trophy"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0

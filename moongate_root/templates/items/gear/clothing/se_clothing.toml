@@ -4,17 +4,16 @@ base_id = "base_item"
 item_id = 10114
 name = "male kimono"
 rarity = "common"
+layer = "middle_torso"
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27cd"
 base_id = "0x2782_male_kimono"
 item_id = 10189
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2783_female_kimono"
@@ -22,17 +21,16 @@ base_id = "base_item"
 item_id = 10115
 name = "female kimono"
 rarity = "common"
+layer = "middle_torso"
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27ce"
 base_id = "0x2783_female_kimono"
 item_id = 10190
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2794_cloth_ninja_jacket"
@@ -41,15 +39,14 @@ item_id = 10132
 name = "cloth ninja jacket"
 rarity = "common"
 weight = 5.0
+layer = "shirt"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27df"
 base_id = "0x2794_cloth_ninja_jacket"
 item_id = 10207
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2799_kamishimo"
@@ -58,15 +55,14 @@ item_id = 10137
 name = "kamishimo"
 rarity = "common"
 weight = 3.0
+layer = "middle_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27e4"
 base_id = "0x2799_kamishimo"
 item_id = 10212
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x279a_hakama"
@@ -75,15 +71,14 @@ item_id = 10138
 name = "hakama"
 rarity = "common"
 weight = 2.0
+layer = "outer_legs"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27e5"
 base_id = "0x279a_hakama"
 item_id = 10213
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x279b_tattsuke_hakama"
@@ -92,15 +87,14 @@ item_id = 10139
 name = "tattsuke-hakama"
 rarity = "common"
 weight = 2.0
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27e6"
 base_id = "0x279b_tattsuke_hakama"
 item_id = 10214
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x279c_hakama_shita"
@@ -109,15 +103,14 @@ item_id = 10140
 name = "hakama-shita"
 rarity = "common"
 weight = 3.0
+layer = "shirt"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27e7"
 base_id = "0x279c_hakama_shita"
 item_id = 10215
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x27a0_obi"
@@ -126,15 +119,14 @@ item_id = 10144
 name = "obi"
 rarity = "common"
 weight = 1.0
+layer = "waist"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27eb"
 base_id = "0x27a0_obi"
 item_id = 10219
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x27a1_jin_baori"
@@ -143,12 +135,11 @@ item_id = 10145
 name = "jin-baori"
 rarity = "common"
 weight = 3.0
+layer = "middle_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27ec"
 base_id = "0x27a1_jin_baori"
 item_id = 10220
 rarity = "common"
-hue = 0

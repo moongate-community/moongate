@@ -24,14 +24,12 @@ id = "prospectors_tool"
 item_id = 4020
 name = "prospector's tool"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "mining_gloves_1"
 item_id = 5070
 name = "leather gloves of mining"
 rarity = "common"
-hue = 0
 [item.tags]
 skillBonusID = "45"
 skillBonusVal = "10"
@@ -41,7 +39,6 @@ id = "mining_gloves_3"
 item_id = 5070
 name = "studded leather gloves of mining"
 rarity = "common"
-hue = 0
 [item.tags]
 skillBonusID = "45"
 skillBonusVal = "30"
@@ -51,7 +48,6 @@ id = "mining_gloves_5"
 item_id = 5106
 name = "ringmail gloves of mining +5"
 rarity = "common"
-hue = 0
 [item.tags]
 skillBonusID = "45"
 skillBonusVal = "50"
@@ -60,7 +56,6 @@ skillBonusVal = "50"
 id = "base_runic_hammer"
 item_id = 5091
 rarity = "common"
-hue = 0
 [item.tags]
 runicHammer = "1"
 
@@ -239,7 +234,6 @@ base_id = "base_power_scroll"
 item_id = 0
 name = "wonderous scoll of blacksmithing"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "power_scroll_blacksmith_10"
@@ -247,7 +241,6 @@ base_id = "base_power_scroll"
 item_id = 0
 name = "exalted scroll of blacksmithing"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "power_scroll_blacksmith_15"
@@ -255,7 +248,6 @@ base_id = "base_power_scroll"
 item_id = 0
 name = "mythical scroll of blacksmithing"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "power_scroll_blacksmith_20"
@@ -263,4 +255,3 @@ base_id = "base_power_scroll"
 item_id = 0
 name = "legendary scroll of blacksmithing"
 rarity = "common"
-hue = 0

@@ -9,7 +9,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0d3a_turnip"
@@ -22,7 +21,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c61_turnip"
@@ -35,7 +33,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c62_turnip"
@@ -48,7 +45,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c63_turnip"
@@ -61,7 +57,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c64_gourd"
@@ -74,7 +69,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c65_gourd"
@@ -87,7 +81,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c66_gourd"
@@ -100,7 +93,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c67_gourd"
@@ -113,7 +105,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c6a_pumpkin"
@@ -126,7 +117,6 @@ weight = 1.0
 stackable = true
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x0c6b_pumpkin"
@@ -139,7 +129,6 @@ weight = 1.0
 stackable = true
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x0c6c_pumpkin"
@@ -152,7 +141,6 @@ weight = 1.0
 stackable = true
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x0c6d_onion"
@@ -165,7 +153,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c6e_onion"
@@ -178,7 +165,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c70_head_of_lettuce"
@@ -191,7 +177,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c71_head_of_lettuce"
@@ -204,7 +189,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c72_squash"
@@ -217,7 +201,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c73_squash"
@@ -230,7 +213,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c74_honeydew_melon"
@@ -243,7 +225,6 @@ weight = 1.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x0c75_honeydew_melon"
@@ -256,7 +237,6 @@ weight = 1.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x0c77_carrot"
@@ -269,7 +249,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c78_carrot"
@@ -282,7 +261,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c79_canteloupe"
@@ -295,7 +273,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c7a_canteloupe"
@@ -308,7 +285,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c7b_head_of_cabbage"
@@ -321,7 +297,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c7c_head_of_cabbage"
@@ -334,7 +309,6 @@ weight = 1.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0c7f_ear_of_corn"
@@ -347,7 +321,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c81_ear_of_corn"
@@ -360,7 +333,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c82_ear_of_corn"
@@ -373,4 +345,3 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0

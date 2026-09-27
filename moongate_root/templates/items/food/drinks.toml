@@ -3,7 +3,6 @@ id = "base_drink"
 base_id = "base_item"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1f9e_pitcher_of_water"
@@ -14,7 +13,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f9d_pitcher_of_water"
@@ -25,7 +23,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f9c_pitcher_of_wine"
@@ -36,7 +33,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f9b_pitcher_of_wine"
@@ -47,7 +43,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f9a_pitcher_of_liquor"
@@ -58,7 +53,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f99_pitcher_of_liquor"
@@ -69,7 +63,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f98_pitcher_of_ale"
@@ -80,7 +73,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f97_pitcher_of_ale"
@@ -91,7 +83,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f96_pitcher_of_ale"
@@ -102,7 +93,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f95_pitcher_of_ale"
@@ -113,7 +103,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1f94_glass_of_water"
@@ -124,7 +113,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f93_glass_of_water"
@@ -135,7 +123,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f92_glass_of_water"
@@ -146,7 +133,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f91_glass_of_water"
@@ -157,7 +143,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f90_glass_of_wine"
@@ -168,7 +153,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f8f_glass_of_wine"
@@ -179,7 +163,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f8e_glass_of_wine"
@@ -190,7 +173,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f8d_glass_of_wine"
@@ -201,7 +183,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f8c_glass_of_milk"
@@ -212,7 +193,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f8b_glass_of_milk"
@@ -223,7 +203,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f8a_glass_of_milk"
@@ -234,7 +213,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f89_glass_of_milk"
@@ -245,7 +223,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f88_glass_of_liquor"
@@ -256,7 +233,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f87_glass_of_liquor"
@@ -267,7 +243,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f86_glass_of_liquor"
@@ -278,7 +253,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f85_glass_of_liquor"
@@ -289,7 +263,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f80_glass_of_cider"
@@ -300,7 +273,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f7f_glass_of_cider"
@@ -311,7 +283,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f7e_glass_of_cider"
@@ -322,7 +293,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1f7d_glass_of_cider"
@@ -333,7 +303,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x099b_bottle_of_liquor"
@@ -344,7 +313,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x099c_bottles_of_liquor"
@@ -355,7 +323,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 8
 sell_price = 8
-hue = 0
 
 [[item]]
 id = "0x099d_bottles_of_liquor"
@@ -366,7 +333,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 12
 sell_price = 12
-hue = 0
 
 [[item]]
 id = "0x099e_bottles_of_liquor"
@@ -377,7 +343,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 16
 sell_price = 16
-hue = 0
 
 [[item]]
 id = "0x099f_bottle_of_ale"
@@ -388,7 +353,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x09a0_bottles_of_ale"
@@ -399,7 +363,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 8
 sell_price = 8
-hue = 0
 
 [[item]]
 id = "0x09a1_bottles_of_ale"
@@ -410,7 +373,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 12
 sell_price = 12
-hue = 0
 
 [[item]]
 id = "0x09a2_bottles_of_ale"
@@ -421,7 +383,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 16
 sell_price = 16
-hue = 0
 
 [[item]]
 id = "0x09ad_pitcher_of_milk"
@@ -432,7 +393,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x0ff8_pitcher_of_water"
@@ -443,7 +403,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x0ff9_pitcher_of_water"
@@ -454,7 +413,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 13
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x09c7_bottle_of_wine"
@@ -465,7 +423,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x09c6_bottles_of_wine"
@@ -476,7 +433,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 16
 sell_price = 8
-hue = 0
 
 [[item]]
 id = "0x09c5_bottles_of_wine"
@@ -487,7 +443,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 24
 sell_price = 12
-hue = 0
 
 [[item]]
 id = "0x09c4_bottles_of_wine"
@@ -498,7 +453,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 32
 sell_price = 16
-hue = 0
 
 [[item]]
 id = "0x09c8_jug_of_cider"
@@ -509,19 +463,6 @@ rarity = "common"
 weight = 11.0
 buy_price = 15
 sell_price = 7
-hue = 0
-
-[[item]]
-id = "0x09ec_jar_of_honey"
-base_id = "base_item"
-item_id = 2540
-name = "jar of honey"
-rarity = "common"
-weight = 2.0
-stackable = true
-buy_price = 3
-sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09f0_pitcher_of_milk"
@@ -532,7 +473,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x09ee_mug_of_ale"
@@ -543,7 +483,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09ef_mug_of_ale"
@@ -554,7 +493,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x098d_jugs_of_cider"
@@ -565,7 +503,6 @@ rarity = "common"
 weight = 33.0
 buy_price = 42
 sell_price = 21
-hue = 0
 
 [[item]]
 id = "0x098e_jugs_of_cider"
@@ -576,4 +513,3 @@ rarity = "common"
 weight = 22.0
 buy_price = 28
 sell_price = 14
-hue = 0

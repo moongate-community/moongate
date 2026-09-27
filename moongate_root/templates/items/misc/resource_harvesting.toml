@@ -7,7 +7,6 @@ rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "onion_resource"
@@ -18,7 +17,6 @@ rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "turnip_resource"
@@ -29,7 +27,6 @@ rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "cabbage_resource"
@@ -40,29 +37,26 @@ rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "cotton_resource"
 base_id = "base_item"
-item_id = 0
+item_id = 3151
 name = "cotton"
 rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "wheat_resource"
 base_id = "base_item"
-item_id = 0
+item_id = 3160
 name = "wheat"
 rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "flax_resource"
@@ -73,7 +67,6 @@ rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "watermelon_resource"
@@ -84,62 +77,56 @@ rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "gourd_resource"
 base_id = "base_item"
-item_id = 0
+item_id = 3174
 name = "gourd"
 rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "pumpkin_resource"
 base_id = "base_item"
-item_id = 0
+item_id = 3178
 name = "pumpkin"
 rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "squash_resource"
 base_id = "base_item"
-item_id = 0
+item_id = 3186
 name = "squash"
 rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "honeydewmelon_resource"
 base_id = "base_item"
-item_id = 0
+item_id = 3188
 name = "honeydew melon"
 rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "canteloupe_resource"
 base_id = "base_item"
-item_id = 0
+item_id = 3193
 name = "canteloupe"
 rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0
 
 [[item]]
 id = "garlic_resource"
@@ -150,4 +137,3 @@ rarity = "common"
 movable = false
 weight = 255.0
 decays = false
-hue = 0

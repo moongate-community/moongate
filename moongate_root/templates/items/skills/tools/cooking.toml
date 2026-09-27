@@ -5,7 +5,6 @@ item_id = 4163
 name = "rolling pin"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x097f_skillet"
@@ -17,14 +16,12 @@ weight = 1.0
 buy_price = 6
 sell_price = 3
 decays = true
-hue = 0
 
 [[item]]
 id = "0x09e2"
 base_id = "0x097f_skillet"
 item_id = 2530
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x103e_sifter"
@@ -36,7 +33,6 @@ weight = 1.0
 buy_price = 6
 sell_price = 3
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0461_oven"
@@ -45,7 +41,6 @@ item_id = 1121
 name = "oven"
 rarity = "common"
 weight = 50.0
-hue = 0
 
 [[item]]
 id = "0x0462_oven"
@@ -54,7 +49,6 @@ item_id = 1122
 name = "oven"
 rarity = "common"
 weight = 50.0
-hue = 0
 
 [[item]]
 id = "0x046c_oven"
@@ -63,7 +57,6 @@ item_id = 1132
 name = "oven"
 rarity = "common"
 weight = 50.0
-hue = 0
 
 [[item]]
 id = "0x046f_oven"
@@ -72,7 +65,6 @@ item_id = 1135
 name = "oven"
 rarity = "common"
 weight = 50.0
-hue = 0
 
 [[item]]
 id = "0x092b_oven"
@@ -81,7 +73,6 @@ item_id = 2347
 name = "oven"
 rarity = "common"
 weight = 50.0
-hue = 0
 
 [[item]]
 id = "0x092c_oven"
@@ -90,7 +81,6 @@ item_id = 2348
 name = "oven"
 rarity = "common"
 weight = 50.0
-hue = 0
 
 [[item]]
 id = "0x0931_oven"
@@ -99,7 +89,6 @@ item_id = 2353
 name = "oven"
 rarity = "common"
 weight = 50.0
-hue = 0
 
 [[item]]
 id = "0x0930_oven"
@@ -108,4 +97,3 @@ item_id = 2352
 name = "oven"
 rarity = "common"
 weight = 50.0
-hue = 0

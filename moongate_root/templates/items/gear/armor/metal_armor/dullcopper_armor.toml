@@ -401,7 +401,6 @@ hue = 2419
 id = "0x140b_d"
 item_id = 5131
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x140c_d"
@@ -554,4 +553,3 @@ hue = 2419
 id = "0x1bc5_d"
 item_id = 7109
 rarity = "common"
-hue = 0

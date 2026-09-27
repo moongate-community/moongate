@@ -8,7 +8,6 @@ weight = 2.0
 buy_price = 16
 sell_price = 8
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0fbc_tongs"
@@ -20,7 +19,6 @@ weight = 2.0
 buy_price = 16
 sell_price = 8
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0faf_anvil"
@@ -30,11 +28,9 @@ name = "anvil"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0fb0"
 base_id = "0x0faf_anvil"
 item_id = 4016
 rarity = "common"
-hue = 0

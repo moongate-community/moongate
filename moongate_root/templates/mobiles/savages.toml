@@ -10,6 +10,7 @@ notoriety = "murderer"
 id = "savageshaman"
 base_id = "basesavage"
 name = "savage shaman"
+body = 183
 strength = "1d20+125"
 dexterity = "1d20+90"
 intelligence = "1d25+160"
@@ -118,6 +119,7 @@ items = ["0x154b_tribal_mask", "0x154c"]
 [[mobile]]
 id = "savagerider"
 base_id = "basesavage"
+body = 185
 strength = "1d25+90"
 dexterity = "1d30+85"
 intelligence = "1d15+50"

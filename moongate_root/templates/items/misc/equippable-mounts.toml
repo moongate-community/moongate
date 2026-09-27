@@ -5,7 +5,6 @@ name = "a skeletal mount"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "darksteed"
@@ -14,7 +13,6 @@ name = "a dark steed"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "etherealhorse"
@@ -23,7 +21,6 @@ name = "an ethereal horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "nightmare"
@@ -32,7 +29,6 @@ name = "a nightmare"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "silversteed"
@@ -41,7 +37,6 @@ name = "a silver steed"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "britwarhorse"
@@ -50,7 +45,6 @@ name = "a war horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "comwarhorse"
@@ -59,7 +53,6 @@ name = "a war horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "minaxwarhorse"
@@ -68,7 +61,6 @@ name = "a war horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "slwarhorse"
@@ -77,7 +69,6 @@ name = "a war horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "unicorn"
@@ -86,16 +77,6 @@ name = "a unicorn"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
-
-[[item]]
-id = "kirin"
-item_id = 16045
-name = "a kirin"
-rarity = "common"
-layer = "mount"
-loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "seahorse"
@@ -104,7 +85,6 @@ name = "a sea horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "firebeetle"
@@ -113,7 +93,6 @@ name = "a fire beetle"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "ethereal_llama"
@@ -122,7 +101,6 @@ name = "an ethereal llama"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "etherealostard"
@@ -131,7 +109,6 @@ name = "an ethereal ostard"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "nightmare2"
@@ -140,7 +117,6 @@ name = "a nightmare"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "nightmare3"
@@ -149,7 +125,6 @@ name = "a nightmare"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "tdnightmare"
@@ -158,7 +133,6 @@ name = "a nightmare"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "ridgeback"
@@ -167,7 +141,6 @@ name = "a ridgeback"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "firesteed"
@@ -176,7 +149,6 @@ name = "a fire steed"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "etherealkirin"
@@ -185,7 +157,6 @@ name = "an ethereal kirin"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "horse1"
@@ -194,7 +165,6 @@ name = "a horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "etherealunicorn"
@@ -203,7 +173,6 @@ name = "an ethereal unicorn"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "etherealridgeback"
@@ -212,7 +181,6 @@ name = "an ethereal ridgeback"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "etherealswampdragon"
@@ -221,7 +189,6 @@ name = "an ethereal swampdragon"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "etherealbeetle"
@@ -230,7 +197,6 @@ name = "an ethereal beetle"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "horse2"
@@ -239,7 +205,6 @@ name = "a horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "desertostard"
@@ -248,7 +213,6 @@ name = "a desert ostard"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "frenziedostard"
@@ -257,7 +221,6 @@ name = "a frenzied ostard"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "forestostard"
@@ -266,7 +229,6 @@ name = "a forest ostard"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "llama"
@@ -275,7 +237,6 @@ name = "a llama"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "horse3"
@@ -284,7 +245,6 @@ name = "a horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "horse4"
@@ -293,7 +253,6 @@ name = "a horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "hiryu"
@@ -302,7 +261,6 @@ name = "a hiryu"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "reptalon"
@@ -311,7 +269,6 @@ name = "a reptalon"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "cusidhe"
@@ -320,7 +277,6 @@ name = "a cusidhe"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "mondainsteed"
@@ -329,7 +285,6 @@ name = "mondain's steed"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "giantbeetle"
@@ -338,7 +293,6 @@ name = "a giant beetle"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "swampdragon"
@@ -356,7 +310,14 @@ name = "an armored swampdragon"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
+
+[[item]]
+id = "kirin"
+item_id = 16045
+name = "a kirin"
+rarity = "common"
+layer = "mount"
+loot_type = "newbied"
 
 [[item]]
 id = "boura"
@@ -365,7 +326,6 @@ name = "a horse"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "tiger"
@@ -374,4 +334,3 @@ name = "a tiger"
 rarity = "common"
 layer = "mount"
 loot_type = "newbied"
-hue = 0

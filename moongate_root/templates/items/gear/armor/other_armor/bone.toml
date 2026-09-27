@@ -3,81 +3,69 @@ id = "0x144e"
 base_id = "0x144e_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1453"
 base_id = "0x144e_lbr"
 item_id = 5203
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x144f"
 base_id = "0x144f_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1454"
 base_id = "0x144f_lbr"
 item_id = 5204
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1450"
 base_id = "0x1450_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1455"
 base_id = "0x1450_lbr"
 item_id = 5205
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1451"
 base_id = "0x1451_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1456"
 base_id = "0x1451_lbr"
 item_id = 5206
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1452"
 base_id = "0x1452_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1457"
 base_id = "0x1452_lbr"
 item_id = 5207
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1f0b"
 base_id = "0x1f0b_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "orchelm"
 base_id = "0x1f0b_lbr"
 item_id = 0
 rarity = "common"
-hue = 0

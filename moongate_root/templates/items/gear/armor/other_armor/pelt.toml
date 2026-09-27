@@ -3,109 +3,93 @@ id = "0x7822"
 base_id = "0x7822_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tigerpeltchest"
 base_id = "0x7822_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x7823"
 base_id = "0x7823_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tigerpeltbustier"
 base_id = "0x7823_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x7828"
 base_id = "0x7828_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tigerpelthelm"
 base_id = "0x7828_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x7824"
 base_id = "0x7824_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tigerpeltleggings"
 base_id = "0x7824_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x7825"
 base_id = "0x7825_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tigerpeltshorts"
 base_id = "0x7825_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x7826"
 base_id = "0x7826_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tigerpeltlongskirt"
 base_id = "0x7826_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x7827"
 base_id = "0x7827_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tigerpeltskirt"
 base_id = "0x7827_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x7829"
 base_id = "0x7829_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tigerpeltcollar"
 base_id = "0x7829_lbr"
 item_id = 0
 rarity = "common"
-hue = 0

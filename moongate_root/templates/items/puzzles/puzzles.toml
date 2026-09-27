@@ -4,7 +4,7 @@ item_id = 115
 name = "power generator"
 rarity = "common"
 weight = 2.55
-hue = 0
+hue = 1105
 
 [[item]]
 id = "powergenerator_2"
@@ -12,7 +12,7 @@ item_id = 118
 name = "power generator"
 rarity = "common"
 weight = 2.55
-hue = 0
+hue = 1105
 
 [[item]]
 id = "powergenerator_3"
@@ -20,7 +20,7 @@ item_id = 117
 name = "power generator"
 rarity = "common"
 weight = 2.55
-hue = 0
+hue = 1105
 
 [[item]]
 id = "powergenerator_4"
@@ -28,7 +28,7 @@ item_id = 14324
 name = "power generator"
 rarity = "common"
 weight = 2.55
-hue = 0
+hue = 1105
 
 [[item]]
 id = "powergenerator_ctrlpanel"
@@ -36,4 +36,4 @@ item_id = 3036
 name = "control panel"
 rarity = "common"
 weight = 2.55
-hue = 0
+hue = 2101

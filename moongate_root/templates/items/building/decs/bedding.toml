@@ -6,7 +6,6 @@ name = "folded sheet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0a93_folded_sheet"
@@ -16,7 +15,6 @@ name = "folded sheet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0a94_folded_sheet"
@@ -26,7 +24,6 @@ name = "folded sheet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0a95_folded_sheet"
@@ -36,7 +33,6 @@ name = "folded sheet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0a6c_folded_blanket"
@@ -46,7 +42,6 @@ name = "folded blanket"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0a6d_folded_blanket"
@@ -56,7 +51,6 @@ name = "folded blanket"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0a6e_folded_blanket"
@@ -66,7 +60,6 @@ name = "folded blanket"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0a6f_folded_blanket"
@@ -76,7 +69,6 @@ name = "folded blanket"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1397_pillow"
@@ -87,7 +79,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13a4_pillow"
@@ -98,7 +89,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13a5_pillow"
@@ -109,7 +99,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13a6_pillow"
@@ -122,7 +111,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13a7_pillow"
@@ -135,7 +123,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13a8_pillow"
@@ -148,7 +135,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13a9_pillow"
@@ -161,7 +147,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13aa_pillow"
@@ -174,7 +159,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13ab_pillow"
@@ -187,7 +171,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13ac_pillow"
@@ -200,7 +183,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13ad_pillow"
@@ -213,7 +195,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13ae_pillow"
@@ -226,7 +207,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x163a_pillow"
@@ -239,7 +219,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x163b_pillow"
@@ -252,7 +231,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x163c_pillow"
@@ -265,7 +243,6 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1914_towel"
@@ -275,7 +252,6 @@ name = "towel"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1915_pillow"
@@ -288,4 +264,3 @@ weight = 1.0
 buy_price = 0
 sell_price = 0
 decays = true
-hue = 0

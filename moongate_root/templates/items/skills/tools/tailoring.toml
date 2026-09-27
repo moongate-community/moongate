@@ -8,14 +8,12 @@ weight = 2.0
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "sewing_kit"
 base_id = "0x0f9d_sewing_kit"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f9e_scissors"
@@ -27,7 +25,6 @@ weight = 1.0
 buy_price = 13
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f9f_scissors"
@@ -39,7 +36,6 @@ weight = 1.0
 buy_price = 13
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0fa9_dyes"
@@ -51,7 +47,6 @@ weight = 3.0
 buy_price = 8
 sell_price = 4
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0fab_dying_tub"
@@ -63,7 +58,6 @@ weight = 10.0
 buy_price = 9
 sell_price = 4
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1015_spinning_wheel"
@@ -73,7 +67,6 @@ name = "spinning wheel"
 rarity = "common"
 movable = true
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x1016_spinning_wheel"
@@ -83,7 +76,6 @@ name = "spinning wheel"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x1019_spinning_wheel"
@@ -93,7 +85,6 @@ name = "spinning wheel"
 rarity = "common"
 movable = true
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x101a_spinning_wheel"
@@ -103,7 +94,6 @@ name = "spinning wheel"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x101c_spinning_wheel"
@@ -113,7 +103,6 @@ name = "spinning wheel"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x101d_spinning_wheel"
@@ -123,7 +112,6 @@ name = "spinning wheel"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x10a4_spinning_wheel"
@@ -133,7 +121,6 @@ name = "spinning wheel"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x10a5_spinning_wheel"
@@ -143,7 +130,6 @@ name = "spinning wheel"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x105f_upright_loom"
@@ -153,7 +139,6 @@ name = "upright loom"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x1060_upright_loom"
@@ -163,7 +148,6 @@ name = "upright loom"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x1061_upright_loom"
@@ -173,7 +157,6 @@ name = "upright loom"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x1062_upright_loom"
@@ -183,7 +166,6 @@ name = "upright loom"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x1063_upright_loom"
@@ -193,7 +175,6 @@ name = "upright loom"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x1064_upright_loom"
@@ -203,7 +184,6 @@ name = "upright loom"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x1065_upright_loom"
@@ -213,7 +193,6 @@ name = "upright loom"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x1066_upright_loom"
@@ -223,7 +202,6 @@ name = "upright loom"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x0ec6_dress_form"
@@ -233,7 +211,6 @@ name = "dress form"
 rarity = "common"
 movable = true
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0ec7_dress_form"
@@ -243,4 +220,3 @@ name = "dress form"
 rarity = "common"
 movable = true
 weight = 20.0
-hue = 0

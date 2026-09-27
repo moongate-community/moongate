@@ -7,7 +7,6 @@ weight = 0.02
 amount = 1
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0eed_gold_coin"
@@ -19,7 +18,6 @@ weight = 0.02
 amount = 1
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0eed_4_gold_coin"
@@ -31,7 +29,6 @@ weight = 0.02
 amount = 4
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0xeed_20_gold_coin"
@@ -43,7 +40,6 @@ weight = 0.02
 amount = 20
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0ef2_silver_coin"
@@ -55,7 +51,6 @@ weight = 0.02
 amount = 1
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0ef2_4_silver_coin"
@@ -67,7 +62,6 @@ weight = 0.02
 amount = 4
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0ef2_20_silver_coin"
@@ -79,7 +73,6 @@ weight = 0.02
 amount = 20
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0eea_copper_coin"
@@ -91,7 +84,6 @@ weight = 0.02
 amount = 1
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0eea_4_copper_coin"
@@ -103,7 +95,6 @@ weight = 0.02
 amount = 4
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0eea_20_copper_coin"
@@ -115,7 +106,6 @@ weight = 0.02
 amount = 20
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "bankcheck"

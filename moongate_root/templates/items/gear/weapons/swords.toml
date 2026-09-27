@@ -7,21 +7,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1440"
 base_id = "0x1440_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1441"
 base_id = "0x1440_lbr"
 item_id = 5185
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_katana"
@@ -31,21 +28,18 @@ name = "katana"
 rarity = "common"
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13fe"
 base_id = "0x13fe_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13ff"
 base_id = "0x13fe_lbr"
 item_id = 5119
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_broadsword"
@@ -55,21 +49,18 @@ name = "broadsword"
 rarity = "common"
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f5e"
 base_id = "0x0f5e_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f5f"
 base_id = "0x0f5e_lbr"
 item_id = 3935
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_longsword"
@@ -79,21 +70,18 @@ name = "longsword"
 rarity = "common"
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f60"
 base_id = "0x0f60_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f61"
 base_id = "0x0f60_lbr"
 item_id = 3937
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_long_sword"
@@ -103,21 +91,18 @@ name = "long sword"
 rarity = "common"
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13b7"
 base_id = "0x13b7_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13b8"
 base_id = "0x13b7_lbr"
 item_id = 5048
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_scimitar"
@@ -127,21 +112,18 @@ name = "scimitar"
 rarity = "common"
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13b5"
 base_id = "0x13b5_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13b6"
 base_id = "0x13b5_lbr"
 item_id = 5046
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_viking_sword"
@@ -151,21 +133,18 @@ name = "viking sword"
 rarity = "common"
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x13b9"
 base_id = "0x13b9_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x13ba"
 base_id = "0x13b9_lbr"
 item_id = 5050
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_bone_harvester"
@@ -176,21 +155,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x26bb"
 base_id = "0x26bb_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x26c5"
 base_id = "0x26bb_lbr"
 item_id = 9925
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_crescent_blade"
@@ -201,21 +177,18 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x26c1"
 base_id = "0x26c1_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x26cb"
 base_id = "0x26c1_lbr"
 item_id = 9931
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_paladin_sword"
@@ -226,21 +199,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x26ce"
 base_id = "0x26ce_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x26cf"
 base_id = "0x26ce_lbr"
 item_id = 9935
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_no_dachi"
@@ -251,21 +221,18 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27a2"
 base_id = "0x27a2_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x27ed"
 base_id = "0x27a2_lbr"
 item_id = 10221
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_wakizashi"
@@ -276,21 +243,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27a4"
 base_id = "0x27a4_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x27ef"
 base_id = "0x27a4_lbr"
 item_id = 10223
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_bokuto"
@@ -301,21 +265,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27a8"
 base_id = "0x27a8_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x27f3"
 base_id = "0x27a8_lbr"
 item_id = 10227
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_daisho"
@@ -326,21 +287,18 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x27a9"
 base_id = "0x27a9_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x27f4"
 base_id = "0x27a9_lbr"
 item_id = 10228
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_elven_machete"
@@ -351,21 +309,12 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
-
-[[item]]
-id = "0x2d29"
-base_id = "0x2d29_lbr"
-item_id = 0
-rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2d35"
 base_id = "0x2d29_lbr"
 item_id = 11573
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_radiant_scimitar"
@@ -376,14 +325,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
+
+[[item]]
+id = "0x2d29"
+base_id = "0x2d29_lbr"
+item_id = 0
+rarity = "common"
 
 [[item]]
 id = "0x2d33"
 base_id = "0x2d29_lbr"
 item_id = 11571
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_rune_blade"
@@ -394,21 +347,18 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2d26"
 base_id = "0x2d26_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2d32"
 base_id = "0x2d26_lbr"
 item_id = 11570
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_dread_sword"
@@ -419,21 +369,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x090b"
 base_id = "0x090b_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x4074"
 base_id = "0x090b_lbr"
 item_id = 16500
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_gargish_bone_harvester"
@@ -444,21 +391,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x48c6"
 base_id = "0x48c6_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x48c7"
 base_id = "0x48c6_lbr"
 item_id = 18631
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_glass_sword"
@@ -469,21 +413,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x090c"
 base_id = "0x090c_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x4073"
 base_id = "0x090c_lbr"
 item_id = 16499
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_gargish_cleaver"
@@ -494,21 +435,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x48ae"
 base_id = "0x48ae_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x48af"
 base_id = "0x48ae_lbr"
 item_id = 18607
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_gargish_katana"
@@ -519,21 +457,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x48ba"
 base_id = "0x48ba_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x48bb"
 base_id = "0x48ba_lbr"
 item_id = 18619
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_gargish_butcher_knife"
@@ -544,21 +479,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x48b6"
 base_id = "0x48b6_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x48b7"
 base_id = "0x48b6_lbr"
 item_id = 18615
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_stone_war_sword"
@@ -569,21 +501,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0900"
 base_id = "0x0900_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x4071"
 base_id = "0x0900_lbr"
 item_id = 16497
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_gargish_talwar"
@@ -594,21 +523,18 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0908"
 base_id = "0x0908_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x4075"
 base_id = "0x0908_lbr"
 item_id = 16501
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_gargish_daisho"
@@ -619,21 +545,18 @@ rarity = "common"
 movable = true
 layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x48d0"
 base_id = "0x48d0_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x48d1"
 base_id = "0x48d0_lbr"
 item_id = 18641
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_bladed_whip"
@@ -644,18 +567,15 @@ rarity = "common"
 movable = true
 layer = "one_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "0xa28b"
 base_id = "0xa28b_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0xa293"
 base_id = "0xa28b_lbr"
 item_id = 41619
 rarity = "common"
-hue = 0

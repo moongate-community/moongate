@@ -8,7 +8,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x186a_stone_of_compassion"
@@ -20,7 +19,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x186b_stone_of_honesty"
@@ -32,7 +30,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x186c_stone_of_valor"
@@ -44,7 +41,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x186d_stone_of_humility"
@@ -56,7 +52,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x186e_stone_of_sacrifice"
@@ -68,7 +63,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x186f_stone_of_justice"
@@ -80,7 +74,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x1870_stone_of_spirituality"
@@ -92,7 +85,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x1f13_a_worldgem_bit"
@@ -104,7 +96,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x1ea7_a_worldgem_bit"
@@ -116,7 +107,6 @@ movable = true
 weight = 2.0
 buy_price = 10000
 sell_price = 10000
-hue = 0
 
 [[item]]
 id = "0x1c12_bell_of_courage"
@@ -128,7 +118,6 @@ movable = true
 weight = 2.0
 buy_price = 30000
 sell_price = 30000
-hue = 0
 
 [[item]]
 id = "0x1c13_book_of_truth"
@@ -140,7 +129,6 @@ movable = true
 weight = 2.0
 buy_price = 30000
 sell_price = 30000
-hue = 0
 
 [[item]]
 id = "0x1c14_candle_of_love"
@@ -152,7 +140,6 @@ movable = true
 weight = 2.0
 buy_price = 30000
 sell_price = 30000
-hue = 0
 
 [[item]]
 id = "0x1c15_candle_of_love"
@@ -164,7 +151,6 @@ movable = true
 weight = 2.0
 buy_price = 30000
 sell_price = 30000
-hue = 0
 
 [[item]]
 id = "0x1c16_unlit_candle_of_love"
@@ -176,4 +162,3 @@ movable = true
 weight = 2.0
 buy_price = 30000
 sell_price = 30000
-hue = 0

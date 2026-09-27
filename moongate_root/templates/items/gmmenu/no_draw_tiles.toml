@@ -6,4 +6,3 @@ name = "nodraw_blocking_tile"
 rarity = "common"
 movable = false
 decays = false
-hue = 0

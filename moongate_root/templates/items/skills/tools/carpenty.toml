@@ -8,7 +8,6 @@ weight = 1.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1027_chisels"
@@ -20,7 +19,6 @@ weight = 1.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1028_dovetail_saw"
@@ -32,7 +30,6 @@ weight = 1.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1029_dovetail_saw"
@@ -44,7 +41,6 @@ weight = 1.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x102a_hammer"
@@ -56,7 +52,6 @@ weight = 2.0
 buy_price = 28
 sell_price = 14
 decays = true
-hue = 0
 
 [[item]]
 id = "0x102b_hammer"
@@ -68,7 +63,6 @@ weight = 2.0
 buy_price = 28
 sell_price = 14
 decays = true
-hue = 0
 
 [[item]]
 id = "0x102c_moulding_plane"
@@ -80,7 +74,6 @@ weight = 2.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x102d_moulding_plane"
@@ -92,7 +85,6 @@ weight = 2.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x102e_nails"
@@ -104,7 +96,6 @@ weight = 2.0
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x102f_nails"
@@ -116,7 +107,6 @@ weight = 2.0
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1030_jointing_plane"
@@ -128,7 +118,6 @@ weight = 1.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1031_jointing_plane"
@@ -140,7 +129,6 @@ weight = 1.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1032_smoothing_plane"
@@ -152,7 +140,6 @@ weight = 1.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1033_smoothing_plane"
@@ -164,7 +151,6 @@ weight = 1.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1034_saw"
@@ -176,7 +162,6 @@ weight = 2.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1035_saw"
@@ -188,7 +173,6 @@ weight = 2.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x10e4_draw_knife"
@@ -200,7 +184,6 @@ weight = 1.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x10e5_froe"
@@ -212,7 +195,6 @@ weight = 1.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x10e6_inshave"
@@ -224,7 +206,6 @@ weight = 1.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x10e7_scorp"
@@ -236,4 +217,3 @@ weight = 1.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0

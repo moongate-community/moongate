@@ -470,15 +470,6 @@ internal static class MobileTemplateBuilder
     /// </summary>
     public static bool TryParseNumber(string text, out int value)
     {
-        text = text.Trim();
-
-        if (text.StartsWith("0x0x", StringComparison.OrdinalIgnoreCase))
-        {
-            text = text[2..];
-        }
-
-        return text.StartsWith("0x", StringComparison.OrdinalIgnoreCase)
-            ? int.TryParse(text[2..], NumberStyles.HexNumber, null, out value)
-            : int.TryParse(text, NumberStyles.AllowLeadingSign, CultureInfo.InvariantCulture, out value);
+        return UoxNumber.TryParse(text, out value);
     }
 }

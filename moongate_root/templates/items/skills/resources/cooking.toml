@@ -5,7 +5,6 @@ item_id = 4159
 name = "cookie mix"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "cake_mix"
@@ -14,7 +13,6 @@ item_id = 4159
 name = "cake mix"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x103d_dough"
@@ -24,7 +22,6 @@ name = "dough"
 rarity = "common"
 weight = 1.0
 stackable = true
-hue = 0
 
 [[item]]
 id = "sweet_dough"
@@ -34,7 +31,14 @@ name = "sweet dough"
 rarity = "common"
 weight = 1.0
 stackable = true
-hue = 0
+
+[[item]]
+id = "0x09ec_jar_honey"
+base_id = "base_item"
+item_id = 2540
+name = "jar honey"
+rarity = "common"
+weight = 1.0
 
 [[item]]
 id = "0x1039_sack_of_flour"
@@ -43,7 +47,6 @@ item_id = 4153
 name = "sack of flour"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1045_sack_of_flour"
@@ -52,7 +55,6 @@ item_id = 4165
 name = "sack of flour"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1046_open_sack_of_flour"
@@ -61,7 +63,6 @@ item_id = 4166
 name = "open sack of flour"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x103a_open_sack_of_flour"
@@ -70,7 +71,6 @@ item_id = 4154
 name = "open sack of flour"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0a1e_bowl_of_flour"
@@ -82,7 +82,6 @@ movable = true
 weight = 4.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x1ebd_#"
@@ -94,4 +93,3 @@ weight = 1.0
 stackable = true
 buy_price = 2
 sell_price = 1
-hue = 0

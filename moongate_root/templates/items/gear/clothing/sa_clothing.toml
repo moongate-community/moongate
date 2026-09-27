@@ -5,15 +5,14 @@ item_id = 17828
 name = "gargish cloth wing armor"
 rarity = "common"
 weight = 2.0
+layer = "cloak"
 decays = true
-hue = 0
 
 [[item]]
 id = "gargishclothwingarmor"
 base_id = "0x45a4_gargish_cloth_wing_armor"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x4002_gargish_fancy_robe"
@@ -22,15 +21,14 @@ item_id = 16386
 name = "gargish fancy robe"
 rarity = "common"
 weight = 3.0
+layer = "cloak"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x4003"
 base_id = "0x4002_gargish_fancy_robe"
 item_id = 16387
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x4000_gargish_robe"
@@ -39,12 +37,11 @@ item_id = 16384
 name = "gargish robe"
 rarity = "common"
 weight = 3.0
+layer = "cloak"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x4001"
 base_id = "0x4000_gargish_robe"
 item_id = 16385
 rarity = "common"
-hue = 0

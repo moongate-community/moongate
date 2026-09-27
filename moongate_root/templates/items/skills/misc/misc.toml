@@ -6,7 +6,6 @@ name = "easel"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f66_easel_with_canvas"
@@ -16,7 +15,6 @@ name = "easel with canvas"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f67_easel"
@@ -26,7 +24,6 @@ name = "easel"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f68_easel_with_canvas"
@@ -36,7 +33,6 @@ name = "easel with canvas"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f69_easel"
@@ -46,7 +42,6 @@ name = "easel"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f6a_easel_with_canvas"
@@ -56,7 +51,6 @@ name = "easel with canvas"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f71_rack_of_canvases"
@@ -66,7 +60,6 @@ name = "rack of canvases"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f72_rack_of_canvases"
@@ -78,7 +71,6 @@ movable = false
 weight = 20.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x0f73_rack_of_canvases"
@@ -88,7 +80,6 @@ name = "rack of canvases"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f74_rack_of_canvases"
@@ -98,7 +89,6 @@ name = "rack of canvases"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f75_rack_of_canvases"
@@ -108,7 +98,6 @@ name = "rack of canvases"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0f76_rack_of_canvases"
@@ -118,7 +107,6 @@ name = "rack of canvases"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x091a_beehive"
@@ -128,7 +116,6 @@ name = "beehive"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0dcc_fishing_weight"
@@ -140,7 +127,6 @@ movable = true
 weight = 2.0
 buy_price = 5
 sell_price = 5
-hue = 0
 
 [[item]]
 id = "0x0dcd_fishing_weight"
@@ -152,7 +138,6 @@ movable = true
 weight = 2.0
 buy_price = 5
 sell_price = 5
-hue = 0
 
 [[item]]
 id = "0x0dce_fishing_weight"
@@ -164,7 +149,6 @@ movable = true
 weight = 2.0
 buy_price = 5
 sell_price = 5
-hue = 0
 
 [[item]]
 id = "0x0dcf_fishing_weight"
@@ -176,7 +160,6 @@ movable = true
 weight = 2.0
 buy_price = 5
 sell_price = 5
-hue = 0
 
 [[item]]
 id = "0x1428_dipping_stick"
@@ -187,7 +170,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1429_dipping_stick"
@@ -198,7 +180,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x142a_pot_of_wax"
@@ -209,7 +190,6 @@ rarity = "common"
 movable = true
 weight = 3.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x142b_pot_of_wax"
@@ -220,7 +200,6 @@ rarity = "common"
 movable = true
 weight = 2.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1422_beeswax"
@@ -232,7 +211,6 @@ movable = true
 weight = 0.1
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1423_beeswax"
@@ -244,4 +222,3 @@ movable = true
 weight = 0.1
 stackable = true
 decays = true
-hue = 0

@@ -10,7 +10,6 @@ stackable = true
 buy_price = 9
 sell_price = 4
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1bf2_iron_ingot"
@@ -24,7 +23,6 @@ stackable = true
 buy_price = 9
 sell_price = 4
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0fb7_forged_metal"
@@ -35,7 +33,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0fb8_forged_metal"
@@ -46,4 +43,3 @@ rarity = "common"
 movable = true
 weight = 1.0
 decays = true
-hue = 0

@@ -6,7 +6,7 @@ name = "Short Hair"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x203c_long_hair"
@@ -16,7 +16,7 @@ name = "Long Hair"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x203d_pony_tail"
@@ -26,7 +26,7 @@ name = "Pony Tail"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2044_mohawk"
@@ -36,7 +36,7 @@ name = "Mohawk"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2045_pageboy"
@@ -46,7 +46,7 @@ name = "Pageboy"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2046_buns"
@@ -56,7 +56,7 @@ name = "Buns"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2047_afro"
@@ -66,7 +66,7 @@ name = "Afro"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2048_receding_hair"
@@ -76,7 +76,7 @@ name = "Receding Hair"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2049_pig_tails"
@@ -86,7 +86,7 @@ name = "Pig Tails"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x204a_krisna_hair"
@@ -96,7 +96,7 @@ name = "Krisna Hair"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x203e_long_beard"
@@ -107,7 +107,6 @@ rarity = "common"
 movable = false
 weight = 0.01
 layer = "facial_hair"
-hue = 0
 
 [[item]]
 id = "0x203f_short_beard"
@@ -118,7 +117,6 @@ rarity = "common"
 movable = false
 weight = 0.01
 layer = "facial_hair"
-hue = 0
 
 [[item]]
 id = "0x2040_goatee"
@@ -129,7 +127,6 @@ rarity = "common"
 movable = false
 weight = 0.01
 layer = "facial_hair"
-hue = 0
 
 [[item]]
 id = "0x2041_mustache"
@@ -140,7 +137,6 @@ rarity = "common"
 movable = false
 weight = 0.01
 layer = "facial_hair"
-hue = 0
 
 [[item]]
 id = "0x204b_medium_short_beard"
@@ -151,7 +147,6 @@ rarity = "common"
 movable = false
 weight = 0.01
 layer = "facial_hair"
-hue = 0
 
 [[item]]
 id = "0x204c_long_short_beard"
@@ -162,7 +157,6 @@ rarity = "common"
 movable = false
 weight = 0.01
 layer = "facial_hair"
-hue = 0
 
 [[item]]
 id = "0x204d_vandyke"
@@ -173,7 +167,6 @@ rarity = "common"
 movable = false
 weight = 0.01
 layer = "facial_hair"
-hue = 0
 
 [[item]]
 id = "0x2fbf_mid_long_elf"
@@ -183,7 +176,7 @@ name = "Mid Long Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fc0_long_feather_elf"
@@ -193,7 +186,7 @@ name = "Long Feather Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fc1_short_elf"
@@ -203,7 +196,7 @@ name = "Short Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fc2_mullet_elf"
@@ -213,7 +206,7 @@ name = "Mullet Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fcc_flower_elf"
@@ -223,7 +216,7 @@ name = "Flower Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fcd_long_elf"
@@ -233,7 +226,7 @@ name = "Long Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fce_topknot_elf"
@@ -243,7 +236,7 @@ name = "Topknot Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fcf_long_braid_elf"
@@ -253,7 +246,7 @@ name = "Long Braid Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fd0_buns_elf"
@@ -263,7 +256,7 @@ name = "Buns Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fd1_spiked_elf"
@@ -273,7 +266,7 @@ name = "Spiked Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"
 
 [[item]]
 id = "0x2fd2_long_elf"
@@ -283,4 +276,4 @@ name = "Long Elf"
 rarity = "common"
 movable = false
 weight = 0.01
-hue = 0
+layer = "hair"

@@ -7,7 +7,6 @@ rarity = "common"
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e21_clean_bandage"
@@ -20,7 +19,6 @@ stackable = true
 buy_price = 6
 sell_price = 3
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e22_bloody_bandage"
@@ -31,7 +29,6 @@ rarity = "common"
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0ee9_clean_bandage"
@@ -44,4 +41,3 @@ stackable = true
 buy_price = 6
 sell_price = 3
 decays = true
-hue = 0

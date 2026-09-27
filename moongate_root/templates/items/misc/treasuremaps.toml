@@ -5,7 +5,6 @@ item_id = 5356
 name = "a treasure map"
 rarity = "common"
 decays = true
-hue = 0
 [item.tags]
 Map = "100"
 Level = "0"
@@ -15,7 +14,6 @@ id = "treasuremaplvl0"
 base_id = "base_treasure_map"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "0"
 
@@ -24,7 +22,6 @@ id = "treasuremaplvl1"
 base_id = "base_treasure_map"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "1"
 
@@ -33,7 +30,6 @@ id = "treasuremaplvl2"
 base_id = "base_treasure_map"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "2"
 
@@ -42,7 +38,6 @@ id = "treasuremaplvl3"
 base_id = "base_treasure_map"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "3"
 
@@ -51,7 +46,6 @@ id = "treasuremaplvl4"
 base_id = "base_treasure_map"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "4"
 
@@ -60,7 +54,6 @@ id = "treasuremaplvl5"
 base_id = "base_treasure_map"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "5"
 
@@ -69,7 +62,6 @@ id = "treasuremaplvl6"
 base_id = "base_treasure_map"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "6"
 
@@ -79,7 +71,6 @@ base_id = "base_item"
 item_id = 2323
 name = "dirt"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "base_treasure_chest"
@@ -89,7 +80,6 @@ name = "Treasure Chest"
 rarity = "common"
 movable = true
 weight = 30.0
-hue = 0
 max_weight = 400000
 
 [[item]]
@@ -97,7 +87,6 @@ id = "treasurechestlevel0"
 base_id = "base_treasure_chest"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "0"
 
@@ -106,7 +95,6 @@ id = "treasurechestlevel1"
 base_id = "base_treasure_chest"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "1"
 
@@ -115,7 +103,6 @@ id = "treasurechestlevel2"
 base_id = "base_treasure_chest"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "2"
 
@@ -124,7 +111,6 @@ id = "treasurechestlevel3"
 base_id = "base_treasure_chest"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "3"
 
@@ -133,7 +119,6 @@ id = "treasurechestlevel4"
 base_id = "base_treasure_chest"
 item_id = 0
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "4"
 
@@ -143,7 +128,6 @@ base_id = "base_treasure_chest"
 item_id = 0
 name = "Treasure Chest"
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "5"
 
@@ -153,6 +137,5 @@ base_id = "base_treasure_chest"
 item_id = 0
 name = "Treasure Chest"
 rarity = "common"
-hue = 0
 [item.tags]
 Level = "6"

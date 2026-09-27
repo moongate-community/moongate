@@ -5,10 +5,10 @@ item_id = 3519
 name = "fishing pole"
 rarity = "common"
 weight = 8.0
+layer = "two_handed"
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dc0_fishing_pole"
@@ -17,10 +17,10 @@ item_id = 3520
 name = "fishing pole"
 rarity = "common"
 weight = 8.0
+layer = "two_handed"
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "specialfishingnet"
@@ -33,7 +33,6 @@ weight = 15.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 [item.tags]
 fabledNet = "1"
 
@@ -60,7 +59,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dc9_fishing_net"
@@ -72,7 +70,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dca_fishing_net"
@@ -84,7 +81,6 @@ weight = 15.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dcb_fishing_net"
@@ -96,7 +92,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dd0_fishing_net"
@@ -108,7 +103,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dd1_fishing_net"
@@ -120,7 +114,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dd2_fishing_net"
@@ -132,7 +125,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dd3_fishing_net"
@@ -144,7 +136,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dd4_fishing_net"
@@ -156,7 +147,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0dd5_fishing_net"
@@ -168,4 +158,3 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0

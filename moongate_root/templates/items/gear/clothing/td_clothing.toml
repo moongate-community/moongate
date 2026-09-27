@@ -6,17 +6,16 @@ name = "jester pants"
 rarity = "common"
 movable = true
 weight = 2.0
+layer = "pants"
 buy_price = 50
 sell_price = 50
 decays = true
-hue = 0
 
 [[item]]
 id = "0x264a"
 base_id = "0x2649_jester_pants"
 item_id = 9802
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x264d_haidate"
@@ -26,17 +25,16 @@ name = "haidate"
 rarity = "common"
 movable = true
 weight = 5.0
+layer = "pants"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x264e"
 base_id = "0x264d_haidate"
 item_id = 9806
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x264f_kobakama"
@@ -46,17 +44,16 @@ name = "kobakama"
 rarity = "common"
 movable = true
 weight = 3.0
+layer = "pants"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2650"
 base_id = "0x264f_kobakama"
 item_id = 9808
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2651_ninja_pants"
@@ -66,17 +63,16 @@ name = "ninja pants"
 rarity = "common"
 movable = true
 weight = 1.0
+layer = "pants"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2652"
 base_id = "0x2651_ninja_pants"
 item_id = 9810
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x265f_shirt"
@@ -86,17 +82,16 @@ name = "shirt"
 rarity = "common"
 movable = true
 weight = 2.0
+layer = "shirt"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2660"
 base_id = "0x265f_shirt"
 item_id = 9824
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2661_shirt"
@@ -106,17 +101,16 @@ name = "shirt"
 rarity = "common"
 movable = true
 weight = 2.0
+layer = "shirt"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2662"
 base_id = "0x2661_shirt"
 item_id = 9826
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2663_shirt"
@@ -126,17 +120,16 @@ name = "shirt"
 rarity = "common"
 movable = true
 weight = 2.0
+layer = "shirt"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2664"
 base_id = "0x2663_shirt"
 item_id = 9828
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2665_shirt"
@@ -146,17 +139,16 @@ name = "shirt"
 rarity = "common"
 movable = true
 weight = 2.0
+layer = "shirt"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2666"
 base_id = "0x2665_shirt"
 item_id = 9830
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2667_ninja_shirt"
@@ -166,17 +158,16 @@ name = "ninja shirt"
 rarity = "common"
 movable = true
 weight = 2.0
+layer = "shirt"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2668"
 base_id = "0x2667_ninja_shirt"
 item_id = 9832
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x267b_fancy_dress"
@@ -186,17 +177,16 @@ name = "fancy dress"
 rarity = "common"
 movable = true
 weight = 3.0
+layer = "middle_torso"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x267c"
 base_id = "0x267b_fancy_dress"
 item_id = 9852
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x267d_fancy_dress"
@@ -206,17 +196,16 @@ name = "fancy dress"
 rarity = "common"
 movable = true
 weight = 3.0
+layer = "middle_torso"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x267e"
 base_id = "0x267d_fancy_dress"
 item_id = 9854
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x267f_long_dress"
@@ -226,17 +215,16 @@ name = "long dress"
 rarity = "common"
 movable = true
 weight = 3.0
+layer = "middle_torso"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2680"
 base_id = "0x267f_long_dress"
 item_id = 9856
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2681_kimono"
@@ -246,17 +234,35 @@ name = "kimono"
 rarity = "common"
 movable = true
 weight = 1.0
+layer = "middle_torso"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2682"
 base_id = "0x2681_kimono"
 item_id = 9858
 rarity = "common"
-hue = 0
+
+[[item]]
+id = "0x2683_hooded_shroud"
+base_id = "base_item"
+item_id = 9859
+name = "hooded shroud"
+rarity = "common"
+movable = true
+weight = 1.0
+layer = "outer_torso"
+buy_price = 50
+sell_price = 25
+decays = true
+
+[[item]]
+id = "0x2684"
+base_id = "0x2683_hooded_shroud"
+item_id = 9860
+rarity = "common"
 
 [[item]]
 id = "0x2685_death_shroud"
@@ -266,17 +272,16 @@ name = "death shroud"
 rarity = "common"
 movable = true
 weight = 3.0
+layer = "outer_torso"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2686"
 base_id = "0x2685_death_shroud"
 item_id = 9862
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x26ad_arcane_cloak"
@@ -286,17 +291,16 @@ name = "Arcane Cloak"
 rarity = "common"
 movable = true
 weight = 5.0
+layer = "cloak"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "tdarcanecloak"
 base_id = "0x26ad_arcane_cloak"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tdarcanecloak_newbie"
@@ -304,7 +308,6 @@ base_id = "0x26ad_arcane_cloak"
 item_id = 0
 rarity = "common"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x26ae_arcane_robe"
@@ -314,17 +317,16 @@ name = "Arcane Robe"
 rarity = "common"
 movable = true
 weight = 3.0
+layer = "outer_torso"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "tdarcanerobe"
 base_id = "0x26ae_arcane_robe"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tdarcanerobe_newbie"
@@ -332,7 +334,6 @@ base_id = "0x26ae_arcane_robe"
 item_id = 0
 rarity = "common"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x26b0_arcane_gloves"
@@ -342,17 +343,16 @@ name = "Arcane Gloves"
 rarity = "common"
 movable = true
 weight = 1.0
+layer = "gloves"
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "tdarcanegloves"
 base_id = "0x26b0_arcane_gloves"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "tdarcanegloves_newbie"
@@ -360,4 +360,22 @@ base_id = "0x26b0_arcane_gloves"
 item_id = 0
 rarity = "common"
 loot_type = "newbied"
-hue = 0
+
+[[item]]
+id = "0x2309_fur_cape"
+base_id = "base_item"
+item_id = 8969
+name = "fur cape"
+rarity = "common"
+movable = true
+weight = 4.0
+layer = "gloves"
+buy_price = 50
+sell_price = 25
+decays = true
+
+[[item]]
+id = "0x230a"
+base_id = "0x2309_fur_cape"
+item_id = 8970
+rarity = "common"

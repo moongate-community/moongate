@@ -6,7 +6,6 @@ name = "gruesome standard"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0420_gruesome_standard"
@@ -16,7 +15,6 @@ name = "gruesome standard"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0428_gruesome_standard"
@@ -26,7 +24,6 @@ name = "gruesome standard"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0429_gruesome_standard"
@@ -36,7 +33,6 @@ name = "gruesome standard"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b45_large_vase"
@@ -46,7 +42,6 @@ name = "large vase"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x0b46_vase"
@@ -56,7 +51,6 @@ name = "vase"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x0b47_large_vase"
@@ -66,7 +60,6 @@ name = "large vase"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x0b48_vase"
@@ -76,7 +69,6 @@ name = "vase"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x0c39_peg_board"
@@ -86,7 +78,6 @@ name = "peg board"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0c3a_peg_board"
@@ -96,7 +87,6 @@ name = "peg board"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0dfe_cut_hair"
@@ -106,7 +96,6 @@ name = "cut hair"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0dff_wig"
@@ -116,7 +105,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e00_wig"
@@ -126,7 +114,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e01_wig"
@@ -136,7 +123,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e02_wig"
@@ -146,7 +132,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e03_wig"
@@ -156,7 +141,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e04_wig"
@@ -166,7 +150,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e05_wig"
@@ -176,7 +159,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e06_wig"
@@ -186,7 +168,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e07_wig_stand"
@@ -196,7 +177,6 @@ name = "wig stand"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e08_wig_stand"
@@ -206,7 +186,6 @@ name = "wig stand"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e09_wig_stand"
@@ -216,7 +195,6 @@ name = "wig stand"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e0a_wig"
@@ -226,7 +204,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e0b_wig"
@@ -236,7 +213,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e0c_wig"
@@ -246,7 +222,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e0d_wig"
@@ -256,7 +231,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e0e_wig"
@@ -266,7 +240,6 @@ name = "wig"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e23_bloody_water"
@@ -276,7 +249,6 @@ name = "bloody water"
 rarity = "common"
 movable = false
 weight = 0.1
-hue = 0
 
 [[item]]
 id = "0x0e44_empty_jars"
@@ -286,7 +258,6 @@ name = "empty jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e45_empty_jars"
@@ -296,7 +267,6 @@ name = "empty jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e46_empty_jars"
@@ -306,7 +276,6 @@ name = "empty jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e47_empty_jars"
@@ -316,7 +285,6 @@ name = "empty jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e48_full_jars"
@@ -326,7 +294,6 @@ name = "full jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e49_full_jars"
@@ -336,7 +303,6 @@ name = "full jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e4a_full_jars"
@@ -346,7 +312,6 @@ name = "full jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e4b_full_jars"
@@ -356,7 +321,6 @@ name = "full jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e4c_jars"
@@ -366,7 +330,6 @@ name = "jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e4d_jars"
@@ -376,7 +339,6 @@ name = "jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e4e_jars"
@@ -386,7 +348,6 @@ name = "jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e4f_jars"
@@ -396,7 +357,6 @@ name = "jars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e7b_water_tub"
@@ -406,7 +366,6 @@ name = "water tub"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0f37_saddle"
@@ -416,7 +375,6 @@ name = "saddle"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0f38_saddle"
@@ -426,7 +384,6 @@ name = "saddle"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0f3b_horse_dung"
@@ -436,7 +393,6 @@ name = "horse dung"
 rarity = "common"
 movable = false
 weight = 0.1
-hue = 0
 
 [[item]]
 id = "0x0f3c_horse_dung"
@@ -446,7 +402,6 @@ name = "horse dung"
 rarity = "common"
 movable = false
 weight = 0.1
-hue = 0
 
 [[item]]
 id = "0x0fb6_horse_shoes"
@@ -456,7 +411,6 @@ name = "horse shoes"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fc1_paints_and_brush"
@@ -466,7 +420,6 @@ name = "paints and brush"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fc4_conch_shell"
@@ -476,7 +429,6 @@ name = "conch shell"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fc5_shells"
@@ -486,7 +438,6 @@ name = "shells"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fc6_shells"
@@ -496,7 +447,6 @@ name = "shells"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fc7_nautilus"
@@ -506,7 +456,6 @@ name = "nautilus"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fc8_shell"
@@ -516,7 +465,6 @@ name = "shell"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fc9_shells"
@@ -526,7 +474,6 @@ name = "shells"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fca_shells"
@@ -536,7 +483,6 @@ name = "shells"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fcb_shell"
@@ -546,7 +492,6 @@ name = "shell"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0fcc_shell"
@@ -556,7 +501,6 @@ name = "shell"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x11c6_flower_pot"
@@ -566,7 +510,6 @@ name = "flower pot"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x11c7_flower_pot"
@@ -576,7 +519,6 @@ name = "flower pot"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x10ac_hanging_pole"
@@ -586,7 +528,6 @@ name = "hanging pole"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x10ad_hanging_pole"
@@ -596,7 +537,6 @@ name = "hanging pole"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x10ae_hanging_pole"
@@ -606,7 +546,6 @@ name = "hanging pole"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x10af_hanging_pole"
@@ -616,7 +555,6 @@ name = "hanging pole"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x10b0_hanging_pole"
@@ -626,7 +564,6 @@ name = "hanging pole"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x10b1_hanging_pole"
@@ -636,7 +573,6 @@ name = "hanging pole"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1449_loose_grain"
@@ -646,7 +582,6 @@ name = "loose grain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14e0_bucket"
@@ -656,7 +591,6 @@ name = "bucket"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14e7_hitching_post"
@@ -666,7 +600,6 @@ name = "hitching post"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14e8_hitching_post"
@@ -676,7 +609,6 @@ name = "hitching post"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14f3_ship_model"
@@ -686,7 +618,6 @@ name = "ship model"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14f4_ship_model"
@@ -696,7 +627,6 @@ name = "ship model"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14f7_anchor"
@@ -706,7 +636,6 @@ name = "anchor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x14f8_rope"
@@ -716,7 +645,6 @@ name = "rope"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14f9_anchor"
@@ -726,7 +654,6 @@ name = "anchor"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x14fa_rope"
@@ -736,7 +663,6 @@ name = "rope"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1500_plough"
@@ -746,7 +672,6 @@ name = "plough"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x1501_plough"
@@ -756,7 +681,6 @@ name = "plough"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x1502_plough"
@@ -766,7 +690,6 @@ name = "plough"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x1503_plough"
@@ -776,7 +699,6 @@ name = "plough"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x1504_harrow"
@@ -786,7 +708,6 @@ name = "harrow"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1505_harrow"
@@ -796,7 +717,6 @@ name = "harrow"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1506_harrow"
@@ -806,7 +726,6 @@ name = "harrow"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1507_harrow"
@@ -816,7 +735,6 @@ name = "harrow"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1514_serpent_crest"
@@ -826,7 +744,6 @@ name = "Serpent Crest"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x154d_water_barrel"
@@ -836,7 +753,6 @@ name = "water barrel"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x187e_spilled_flour"
@@ -846,7 +762,6 @@ name = "spilled flour"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x187f_spilled_flour"
@@ -856,7 +771,6 @@ name = "spilled flour"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1880_spilled_flour"
@@ -866,7 +780,6 @@ name = "spilled flour"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1881_spilled_flour"
@@ -876,7 +789,6 @@ name = "spilled flour"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b1f_leaves"
@@ -886,7 +798,6 @@ name = "leaves"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b20_leaves"
@@ -896,7 +807,6 @@ name = "leaves"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b21_leaves"
@@ -906,7 +816,6 @@ name = "leaves"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b22_leaves"
@@ -916,7 +825,6 @@ name = "leaves"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b23_leaves"
@@ -926,7 +834,6 @@ name = "leaves"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b24_leaves"
@@ -936,7 +843,6 @@ name = "leaves"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b25_leaves"
@@ -946,7 +852,6 @@ name = "leaves"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b26_leaves"
@@ -956,7 +861,6 @@ name = "leaves"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e26_oar"
@@ -966,7 +870,6 @@ name = "oar"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e27_oar"
@@ -976,7 +879,6 @@ name = "oar"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e28_oar"
@@ -986,7 +888,6 @@ name = "oar"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e29_oar"
@@ -996,7 +897,6 @@ name = "oar"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e2a_oars"
@@ -1006,7 +906,6 @@ name = "oars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e2b_oars"
@@ -1016,7 +915,6 @@ name = "oars"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e34_scarecrow"
@@ -1026,7 +924,6 @@ name = "scarecrow"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e35_scarecrow"
@@ -1036,7 +933,6 @@ name = "scarecrow"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e5e_bulletin_board"
@@ -1047,7 +943,6 @@ rarity = "common"
 movable = false
 weight = 5.0
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1e5f_bulletin_board"
@@ -1058,7 +953,6 @@ rarity = "common"
 movable = false
 weight = 5.0
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1e9a_hook"
@@ -1068,7 +962,6 @@ name = "hook"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e9b_hook"
@@ -1078,7 +971,6 @@ name = "hook"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e9c_pullies"
@@ -1088,7 +980,6 @@ name = "pullies"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e9d_pullies"
@@ -1098,7 +989,6 @@ name = "pullies"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e9e_pulley"
@@ -1108,7 +998,6 @@ name = "pulley"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e9f_pulley"
@@ -1118,7 +1007,6 @@ name = "pulley"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ea0_rope"
@@ -1128,7 +1016,6 @@ name = "rope"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ea1_rope"
@@ -1138,7 +1025,6 @@ name = "rope"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ea2_rope"
@@ -1148,7 +1034,6 @@ name = "rope"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ea3_net"
@@ -1158,7 +1043,6 @@ name = "net"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ea4_net"
@@ -1168,7 +1052,6 @@ name = "net"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ea5_net"
@@ -1178,7 +1061,6 @@ name = "net"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ea6_net"
@@ -1188,7 +1070,6 @@ name = "net"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1376_horse_barding"
@@ -1198,7 +1079,6 @@ name = "horse barding"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1377_horse_barding"
@@ -1208,7 +1088,6 @@ name = "horse barding"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1378_horse_barding"
@@ -1218,7 +1097,6 @@ name = "horse barding"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1379_horse_barding"
@@ -1228,7 +1106,6 @@ name = "horse barding"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1374_bridle"
@@ -1238,7 +1115,6 @@ name = "bridle"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1375_bridle"
@@ -1248,7 +1124,6 @@ name = "bridle"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1a82_ore_cart"
@@ -1258,7 +1133,6 @@ name = "ore cart"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a83_ore_cart"
@@ -1268,7 +1142,6 @@ name = "ore cart"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a86_ore_cart"
@@ -1278,7 +1151,6 @@ name = "ore cart"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a87_ore_cart"
@@ -1288,7 +1160,6 @@ name = "ore cart"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a88_ore_cart"
@@ -1298,7 +1169,6 @@ name = "ore cart"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a8b_ore_cart"
@@ -1308,7 +1178,6 @@ name = "ore cart"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1036_hay"
@@ -1318,7 +1187,6 @@ name = "hay"
 rarity = "common"
 movable = false
 weight = 0.1
-hue = 0
 
 [[item]]
 id = "0x1037_hay"
@@ -1328,7 +1196,6 @@ name = "hay"
 rarity = "common"
 movable = false
 weight = 0.1
-hue = 0
 
 [[item]]
 id = "0x1038_wood_curls"
@@ -1338,7 +1205,6 @@ name = "wood curls"
 rarity = "common"
 movable = false
 weight = 0.1
-hue = 0
 
 [[item]]
 id = "0x0377_patch"
@@ -1348,7 +1214,6 @@ name = "patch"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0379_dagges"
@@ -1358,7 +1223,6 @@ name = "dagges"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0f36_sheaf_of_hay"
@@ -1368,7 +1232,6 @@ name = "sheaf of hay"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x100c_hay_sheave"
@@ -1378,7 +1241,6 @@ name = "hay sheave"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x100d_hay_sheave"
@@ -1388,7 +1250,6 @@ name = "hay sheave"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "fakeflourbees"
@@ -1398,4 +1259,3 @@ name = "flour"
 rarity = "common"
 movable = false
 weight = 2.55
-hue = 0

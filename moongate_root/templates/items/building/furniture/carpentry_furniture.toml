@@ -6,7 +6,6 @@ name = "moulding board"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19fb_cooper's_bench"
@@ -16,7 +15,6 @@ name = "cooper's bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19fc_cooper's_bench"
@@ -26,7 +24,6 @@ name = "cooper's bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19f1_woodworkers_bench"
@@ -36,7 +33,6 @@ name = "woodworkers bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19f2_woodworkers_bench"
@@ -46,7 +42,6 @@ name = "woodworkers bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19f3_woodworkers_bench"
@@ -56,7 +51,6 @@ name = "woodworkers bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19f4_vise"
@@ -66,7 +60,6 @@ name = "vise"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19f5_woodworkers_bench"
@@ -76,7 +69,6 @@ name = "woodworkers bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19f6_woodworkers_bench"
@@ -86,7 +78,6 @@ name = "woodworkers bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19f7_woodworkers_bench"
@@ -96,7 +87,6 @@ name = "woodworkers bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19f8_vise"
@@ -106,7 +96,6 @@ name = "vise"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19f9_cooper's_bench"
@@ -116,7 +105,6 @@ name = "cooper's bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x19fa_cooper's_bench"
@@ -126,7 +114,6 @@ name = "cooper's bench"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x12b1_scaffold"
@@ -136,7 +123,6 @@ name = "scaffold"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x12b2_scaffold"
@@ -146,7 +132,6 @@ name = "scaffold"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x12c8_scaffold"
@@ -156,7 +141,6 @@ name = "scaffold"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x12c9_scaffold"
@@ -166,7 +150,6 @@ name = "scaffold"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
 
 [[item]]
 id = "0x14e9_moulding_board"
@@ -176,4 +159,3 @@ name = "moulding board"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0

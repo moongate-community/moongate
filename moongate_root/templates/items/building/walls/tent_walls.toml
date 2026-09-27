@@ -5,7 +5,6 @@ item_id = 496
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x01f1_tent_wall"
@@ -14,7 +13,6 @@ item_id = 497
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x01f2_tent_wall"
@@ -23,7 +21,6 @@ item_id = 498
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x01f3_tent_pole"
@@ -32,7 +29,6 @@ item_id = 499
 name = "tent pole"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x01f4_tent_wall"
@@ -41,7 +37,6 @@ item_id = 500
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x01f5_tent_wall"
@@ -50,7 +45,6 @@ item_id = 501
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x01f6_tent_wall"
@@ -59,7 +53,6 @@ item_id = 502
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x01f7_tent_wall"
@@ -68,7 +61,6 @@ item_id = 503
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x01f8_tent_wall"
@@ -77,7 +69,6 @@ item_id = 504
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x01f9_tent_wall"
@@ -86,7 +77,6 @@ item_id = 505
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0230_tent_wall"
@@ -95,7 +85,6 @@ item_id = 560
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0231_tent_wall"
@@ -104,7 +93,6 @@ item_id = 561
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0232_tent_wall"
@@ -113,7 +101,6 @@ item_id = 562
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0233_tent_pole"
@@ -122,7 +109,6 @@ item_id = 563
 name = "tent pole"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0234_tent_wall"
@@ -131,7 +117,6 @@ item_id = 564
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0235_tent_wall"
@@ -140,7 +125,6 @@ item_id = 565
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0236_tent_wall"
@@ -149,7 +133,6 @@ item_id = 566
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0237_tent_wall"
@@ -158,7 +141,6 @@ item_id = 567
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0238_tent_wall"
@@ -167,7 +149,6 @@ item_id = 568
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0239_tent_wall"
@@ -176,7 +157,6 @@ item_id = 569
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02de_tent_wall"
@@ -185,7 +165,6 @@ item_id = 734
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02df_tent_wall"
@@ -194,7 +173,6 @@ item_id = 735
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e0_tent_wall"
@@ -203,7 +181,6 @@ item_id = 736
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e1_wooden_pole"
@@ -212,7 +189,6 @@ item_id = 737
 name = "wooden pole"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e2_tent_wall"
@@ -221,7 +197,6 @@ item_id = 738
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e3_tent_wall"
@@ -230,7 +205,6 @@ item_id = 739
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e4_tent_wall"
@@ -239,7 +213,6 @@ item_id = 740
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e5_tent_wall"
@@ -248,7 +221,6 @@ item_id = 741
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e6_tent_wall"
@@ -257,7 +229,6 @@ item_id = 742
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e7_tent_wall"
@@ -266,7 +237,6 @@ item_id = 743
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e8_tent_wall"
@@ -275,7 +245,6 @@ item_id = 744
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02e9_tent_wall"
@@ -284,7 +253,6 @@ item_id = 745
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02ea_tent_wall"
@@ -293,7 +261,6 @@ item_id = 746
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02eb_tent_wall"
@@ -302,7 +269,6 @@ item_id = 747
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02ec_tent_wall"
@@ -311,7 +277,6 @@ item_id = 748
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02ef_patch"
@@ -320,7 +285,6 @@ item_id = 751
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02f0_patch"
@@ -329,7 +293,6 @@ item_id = 752
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02f1_patch"
@@ -338,7 +301,6 @@ item_id = 753
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02f2_patch"
@@ -347,7 +309,6 @@ item_id = 754
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02f3_patch"
@@ -356,7 +317,6 @@ item_id = 755
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x02f4_patch"
@@ -365,7 +325,6 @@ item_id = 756
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0368_tent_wall"
@@ -374,7 +333,6 @@ item_id = 872
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0369_tent_wall"
@@ -383,7 +341,6 @@ item_id = 873
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x036a_tent_wall"
@@ -392,7 +349,6 @@ item_id = 874
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x036b_tent_pole"
@@ -401,7 +357,6 @@ item_id = 875
 name = "tent pole"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x036c_tent_wall"
@@ -410,7 +365,6 @@ item_id = 876
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x036d_tent_wall"
@@ -419,7 +373,6 @@ item_id = 877
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0365e_tent_wall"
@@ -428,7 +381,6 @@ item_id = 878
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x036f_tent_wall"
@@ -437,7 +389,6 @@ item_id = 879
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0370_tent_wall"
@@ -446,7 +397,6 @@ item_id = 880
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0371_tent_wall"
@@ -455,7 +405,6 @@ item_id = 881
 name = "tent wall"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0372_patch"
@@ -464,7 +413,6 @@ item_id = 882
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0373_patch"
@@ -473,7 +421,6 @@ item_id = 883
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0374_patch"
@@ -482,7 +429,6 @@ item_id = 884
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0375_patch"
@@ -491,7 +437,6 @@ item_id = 885
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0376_patch"
@@ -500,7 +445,6 @@ item_id = 886
 name = "patch"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x0378_dagges"
@@ -509,7 +453,6 @@ item_id = 888
 name = "dagges"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x037a_dagges"
@@ -518,7 +461,6 @@ item_id = 890
 name = "dagges"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x037b_dagges"
@@ -527,7 +469,6 @@ item_id = 891
 name = "dagges"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x037c_dagges"
@@ -536,7 +477,6 @@ item_id = 892
 name = "dagges"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x037d_dagges"
@@ -545,4 +485,3 @@ item_id = 893
 name = "dagges"
 rarity = "common"
 movable = false
-hue = 0

@@ -10,7 +10,6 @@ stackable = true
 buy_price = 12
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x14fc_lockpick"
@@ -24,7 +23,6 @@ stackable = true
 buy_price = 12
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x14fd_lockpicks"
@@ -38,7 +36,6 @@ stackable = true
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x14fe_lockpicks"
@@ -52,7 +49,6 @@ stackable = true
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "disguise_kit"
@@ -65,7 +61,6 @@ weight = 1.0
 buy_price = 500
 sell_price = 0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1e2c_pickpocket_dip"
@@ -75,7 +70,15 @@ name = "pickpocket dip"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
+
+[[item]]
+id = "0x1ec1_pickpocket_dip"
+base_id = "base_item"
+item_id = 7872
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0
 
 [[item]]
 id = "0x1e2d_pickpocket_dip"
@@ -85,4 +88,12 @@ name = "pickpocket dip"
 rarity = "common"
 movable = false
 weight = 60.0
-hue = 0
+
+[[item]]
+id = "0x1ec4_pickpocket_dip"
+base_id = "base_item"
+item_id = 7875
+name = "pickpocket dip"
+rarity = "common"
+movable = false
+weight = 60.0

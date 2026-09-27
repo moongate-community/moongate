@@ -6,7 +6,6 @@ name = "Mini House: Stone and Plaster"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x22de_mini_house:_field_stone"
@@ -16,7 +15,6 @@ name = "Mini House: Field Stone"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x22df_mini_house:_small_brick"
@@ -26,7 +24,6 @@ name = "Mini House: Small Brick"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x22c9_mini_house:_wooden"
@@ -36,7 +33,6 @@ name = "Mini House: Wooden"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x22e0_mini_house:_wood_and_plaster"
@@ -46,7 +42,6 @@ name = "Mini House: Wood and Plaster"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x22e1_mini_house:_thatched_roof_cottage"
@@ -56,7 +51,6 @@ name = "Mini House: Thatched-Roof Cottage"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x22cd_mini_house:_brick_part_1"
@@ -66,7 +60,6 @@ name = "Mini House: Brick Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x22cb_mini_house:_brick_part_2"
@@ -76,7 +69,6 @@ name = "Mini House: Brick Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x22cc_mini_house:_brick_part_3"
@@ -86,7 +78,6 @@ name = "Mini House: Brick Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x22ca_mini_house:_brick_part_4"
@@ -96,7 +87,6 @@ name = "Mini House: Brick Part 4"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x2301_mini_house:_two_story_wood_and_plaster_part_1"
@@ -106,7 +96,6 @@ name = "Mini House: Two-Story Wood and Plaster Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x2302_mini_house:_two_story_wood_and_plaster_part_2"
@@ -116,7 +105,6 @@ name = "Mini House: Two-Story Wood and Plaster Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x2304_mini_house:_two_story_wood_and_plaster_part_3"
@@ -126,7 +114,6 @@ name = "Mini House: Two-Story Wood and Plaster Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x2303_mini_house:_two_story_wood_and_plaster_part_4"
@@ -136,7 +123,6 @@ name = "Mini House: Two-Story Wood and Plaster Part 4"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x2316_mini_house:_malas_mountain_pass_part_1"
@@ -146,7 +132,6 @@ name = "Mini House: Malas Mountain Pass Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x2315_mini_house:_malas_mountain_pass_part_2"
@@ -156,7 +141,6 @@ name = "Mini House: Malas Mountain Pass Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x2314_mini_house:_malas_mountain_pass_part_3"
@@ -166,7 +150,6 @@ name = "Mini House: Malas Mountain Pass Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x2313_mini_house:_malas_mountain_pass_part_4"
@@ -176,7 +159,6 @@ name = "Mini House: Malas Mountain Pass Part 4"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x2318_mini_house:_church_at_night"
@@ -186,4 +168,3 @@ name = "Mini House: Church at Night"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0

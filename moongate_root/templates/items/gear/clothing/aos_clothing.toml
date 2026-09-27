@@ -1,39 +1,19 @@
 [[item]]
-id = "0x2684_hooded_shroud_of_shadows"
-base_id = "base_clothing"
-item_id = 9860
-name = "hooded shroud of shadows"
-rarity = "common"
-weight = 3.0
-buy_price = 68
-sell_price = 34
-loot_type = "newbied"
-hue = 0
-
-[[item]]
-id = "0x2683"
-base_id = "0x2684_hooded_shroud_of_shadows"
-item_id = 9859
-rarity = "common"
-hue = 0
-
-[[item]]
 id = "0x2310_formal_shirt"
 base_id = "base_clothing"
 item_id = 8976
 name = "formal shirt"
 rarity = "common"
 weight = 1.0
+layer = "shirt"
 buy_price = 55
 sell_price = 27
-hue = 0
 
 [[item]]
 id = "0x230f"
 base_id = "0x2310_formal_shirt"
 item_id = 8975
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2307_fur_boots"
@@ -42,35 +22,16 @@ item_id = 8967
 name = "fur boots"
 rarity = "common"
 weight = 3.0
+layer = "shoes"
 buy_price = 45
 sell_price = 22
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2308"
 base_id = "0x2307_fur_boots"
 item_id = 8968
 rarity = "common"
-hue = 0
-
-[[item]]
-id = "0x230a_fur_cap"
-base_id = "base_clothing"
-item_id = 8970
-name = "fur cap"
-rarity = "common"
-weight = 5.0
-buy_price = 43
-sell_price = 21
-hue = 0
-
-[[item]]
-id = "0x2309"
-base_id = "0x230a_fur_cap"
-item_id = 8969
-rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x230c_fur_sarong"
@@ -79,16 +40,15 @@ item_id = 8972
 name = "fur sarong"
 rarity = "common"
 weight = 2.0
+layer = "outer_legs"
 buy_price = 31
 sell_price = 15
-hue = 0
 
 [[item]]
 id = "0x230b"
 base_id = "0x230c_fur_sarong"
 item_id = 8971
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x230e_gilded_dress"
@@ -97,13 +57,12 @@ item_id = 8974
 name = "gilded dress"
 rarity = "common"
 weight = 2.0
+layer = "middle_torso"
 buy_price = 56
 sell_price = 28
-hue = 0
 
 [[item]]
 id = "0x230d"
 base_id = "0x230e_gilded_dress"
 item_id = 8973
 rarity = "common"
-hue = 0

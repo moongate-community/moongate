@@ -5,17 +5,16 @@ item_id = 5899
 name = "boots"
 rarity = "common"
 weight = 3.0
+layer = "shoes"
 buy_price = 45
 sell_price = 22
 decays = true
-hue = 0
 
 [[item]]
 id = "0x170c"
 base_id = "0x170b_boots"
 item_id = 5900
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x170d_sandals"
@@ -24,24 +23,16 @@ item_id = 5901
 name = "sandals"
 rarity = "common"
 weight = 1.0
+layer = "shoes"
 buy_price = 24
 sell_price = 12
 decays = true
-hue = 0
-
-[[item]]
-id = "sandals"
-base_id = "0x170d_sandals"
-item_id = 0
-rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x170e"
 base_id = "0x170d_sandals"
 item_id = 5902
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x170f_shoes"
@@ -50,17 +41,16 @@ item_id = 5903
 name = "shoes"
 rarity = "common"
 weight = 2.0
+layer = "shoes"
 buy_price = 27
 sell_price = 13
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1710"
 base_id = "0x170f_shoes"
 item_id = 5904
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1711_thigh_boots"
@@ -69,14 +59,13 @@ item_id = 5905
 name = "thigh boots"
 rarity = "common"
 weight = 4.0
+layer = "shoes"
 buy_price = 56
 sell_price = 28
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1712"
 base_id = "0x1711_thigh_boots"
 item_id = 5906
 rarity = "common"
-hue = 0

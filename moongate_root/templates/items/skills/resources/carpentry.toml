@@ -9,7 +9,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1bd8_boards"
@@ -19,7 +18,6 @@ name = "boards"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bd9_boards"
@@ -29,7 +27,6 @@ name = "boards"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bda_board"
@@ -42,7 +39,6 @@ stackable = true
 buy_price = 1
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1bdb_boards"
@@ -52,7 +48,6 @@ name = "boards"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bdc_boards"
@@ -62,4 +57,3 @@ name = "boards"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0

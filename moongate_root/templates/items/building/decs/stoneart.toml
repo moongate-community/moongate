@@ -6,7 +6,6 @@ name = "ankh"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0003_ankh"
@@ -16,7 +15,6 @@ name = "ankh"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0004_ankh"
@@ -26,7 +24,6 @@ name = "ankh"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0005_ankh"
@@ -36,7 +33,6 @@ name = "ankh"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1223_pedistal"
@@ -47,7 +43,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1224_statue"
@@ -58,7 +53,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1225_statue"
@@ -69,7 +63,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1226_statue"
@@ -80,7 +73,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1227_statue"
@@ -91,7 +83,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1228_statue"
@@ -102,7 +93,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x129f_statue"
@@ -112,7 +102,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x12a0_statue"
@@ -122,7 +111,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x12a1_statue"
@@ -132,7 +120,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x12a2_statue"
@@ -142,7 +129,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x12a3_statue"
@@ -152,7 +138,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x12a4_wall_carving"
@@ -162,7 +147,6 @@ name = "wall carving"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x12ca_bust"
@@ -173,7 +157,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x12cb_bust"
@@ -184,7 +167,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x12d8_statue"
@@ -195,7 +177,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x12d9_statue"
@@ -206,7 +187,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x139a_statue"
@@ -217,7 +197,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x139b_statue"
@@ -228,7 +207,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x139c_statue"
@@ -239,7 +217,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x139d_statue"
@@ -250,7 +227,6 @@ rarity = "common"
 movable = true
 weight = 10.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x139e_statue"
@@ -260,7 +236,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x139f_statue"
@@ -270,7 +245,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x13a0_statue"
@@ -280,7 +254,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x13a1_statue"
@@ -290,7 +263,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x13a2_statue"
@@ -300,7 +272,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x13a3_statue"
@@ -310,7 +281,6 @@ name = "statue"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x149f_honesty"
@@ -320,7 +290,6 @@ name = "Honesty"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a0_honesty"
@@ -330,7 +299,6 @@ name = "Honesty"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a1_honesty"
@@ -340,7 +308,6 @@ name = "Honesty"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a2_honesty"
@@ -350,7 +317,6 @@ name = "Honesty"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a3_honesty"
@@ -360,7 +326,6 @@ name = "Honesty"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a4_honesty"
@@ -370,7 +335,6 @@ name = "Honesty"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a5_honesty"
@@ -380,7 +344,6 @@ name = "Honesty"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a6_honesty"
@@ -390,7 +353,6 @@ name = "Honesty"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a7_compassion"
@@ -400,7 +362,6 @@ name = "Compassion"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a8_compassion"
@@ -410,7 +371,6 @@ name = "Compassion"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14a9_compassion"
@@ -420,7 +380,6 @@ name = "Compassion"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14aa_compassion"
@@ -430,7 +389,6 @@ name = "Compassion"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14ab_compassion"
@@ -440,7 +398,6 @@ name = "Compassion"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14ac_compassion"
@@ -450,7 +407,6 @@ name = "Compassion"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14ad_compassion"
@@ -460,7 +416,6 @@ name = "Compassion"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14ae_compassion"
@@ -470,7 +425,6 @@ name = "Compassion"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14af_justice"
@@ -480,7 +434,6 @@ name = "Justice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b0_justice"
@@ -490,7 +443,6 @@ name = "Justice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b1_justice"
@@ -500,7 +452,6 @@ name = "Justice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b2_justice"
@@ -510,7 +461,6 @@ name = "Justice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b3_justice"
@@ -520,7 +470,6 @@ name = "Justice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b4_justice"
@@ -530,7 +479,6 @@ name = "Justice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b5_justice"
@@ -540,7 +488,6 @@ name = "Justice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b6_justice"
@@ -550,7 +497,6 @@ name = "Justice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b7_valor"
@@ -560,7 +506,6 @@ name = "Valor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b8_valor"
@@ -570,7 +515,6 @@ name = "Valor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14b9_valor"
@@ -580,7 +524,6 @@ name = "Valor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14ba_valor"
@@ -590,7 +533,6 @@ name = "Valor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14bb_valor"
@@ -600,7 +542,6 @@ name = "Valor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14bc_valor"
@@ -610,7 +551,6 @@ name = "Valor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14bd_valor"
@@ -620,7 +560,6 @@ name = "Valor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14be_valor"
@@ -630,7 +569,6 @@ name = "Valor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14bf_spirituality"
@@ -640,7 +578,6 @@ name = "Spirituality"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c0_spirituality"
@@ -650,7 +587,6 @@ name = "Spirituality"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c1_spirituality"
@@ -660,7 +596,6 @@ name = "Spirituality"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c2_spirituality"
@@ -670,7 +605,6 @@ name = "Spirituality"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c3_spirituality"
@@ -680,7 +614,6 @@ name = "Spirituality"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c4_spirituality"
@@ -690,7 +623,6 @@ name = "Spirituality"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c5_spirituality"
@@ -700,7 +632,6 @@ name = "Spirituality"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c6_spirituality"
@@ -710,7 +641,6 @@ name = "Spirituality"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c7_honor"
@@ -720,7 +650,6 @@ name = "Honor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c8_honor"
@@ -730,7 +659,6 @@ name = "Honor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14c9_honor"
@@ -740,7 +668,6 @@ name = "Honor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14ca_honor"
@@ -750,7 +677,6 @@ name = "Honor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14cb_honor"
@@ -760,7 +686,6 @@ name = "Honor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14cc_honor"
@@ -770,7 +695,6 @@ name = "Honor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14cd_honor"
@@ -780,7 +704,6 @@ name = "Honor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14ce_honor"
@@ -790,7 +713,6 @@ name = "Honor"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14cf_humility"
@@ -800,7 +722,6 @@ name = "Humility"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d0_humility"
@@ -810,7 +731,6 @@ name = "Humility"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d1_humility"
@@ -820,7 +740,6 @@ name = "Humility"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d2_humility"
@@ -830,7 +749,6 @@ name = "Humility"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d3_humility"
@@ -840,7 +758,6 @@ name = "Humility"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d4_humility"
@@ -850,7 +767,6 @@ name = "Humility"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d5_humility"
@@ -860,7 +776,6 @@ name = "Humility"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d6_humility"
@@ -870,7 +785,6 @@ name = "Humility"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x150a_sacrifice"
@@ -880,7 +794,6 @@ name = "Sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x150b_sacrifice"
@@ -890,7 +803,6 @@ name = "Sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x150c_sacrifice"
@@ -900,7 +812,6 @@ name = "Sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x150d_sacrifice"
@@ -910,7 +821,6 @@ name = "Sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x150e_sacrifice"
@@ -920,7 +830,6 @@ name = "Sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x150f_sacrifice"
@@ -930,7 +839,6 @@ name = "Sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1510_sacrifice"
@@ -940,7 +848,6 @@ name = "Sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1511_sacrifice"
@@ -950,7 +857,6 @@ name = "Sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1731_fountain"
@@ -960,7 +866,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1732_fountain"
@@ -970,7 +875,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1733_fountain"
@@ -980,7 +884,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1734_fountain"
@@ -990,7 +893,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1735_fountain"
@@ -1000,7 +902,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1736_fountain"
@@ -1010,7 +911,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1737_fountain"
@@ -1020,7 +920,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1738_fountain"
@@ -1030,7 +929,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1739_fountain"
@@ -1040,7 +938,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x173a_fountain"
@@ -1050,7 +947,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x173b_fountain"
@@ -1060,7 +956,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x173c_fountain"
@@ -1070,7 +965,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x173d_fountain"
@@ -1080,7 +974,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x173e_fountain"
@@ -1090,7 +983,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x173f_fountain"
@@ -1100,7 +992,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1741_fountain"
@@ -1110,7 +1001,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17cf_teleporter"
@@ -1120,7 +1010,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d0_teleporter"
@@ -1130,7 +1019,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d1_teleporter"
@@ -1140,7 +1028,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d2_teleporter"
@@ -1150,7 +1037,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d3_teleporter"
@@ -1160,7 +1046,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d4_teleporter"
@@ -1170,7 +1055,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d5_teleporter"
@@ -1180,7 +1064,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d6_teleporter"
@@ -1190,7 +1073,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d7_teleporter"
@@ -1200,7 +1082,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d8_teleporter"
@@ -1210,7 +1091,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17d9_teleporter"
@@ -1220,7 +1100,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17da_teleporter"
@@ -1230,7 +1109,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17db_teleporter"
@@ -1240,7 +1118,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17dc_teleporter"
@@ -1250,7 +1127,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17dd_teleporter"
@@ -1260,7 +1136,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17de_teleporter"
@@ -1270,7 +1145,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17df_teleporter"
@@ -1280,7 +1154,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e0_teleporter"
@@ -1290,7 +1163,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e1_teleporter"
@@ -1300,7 +1172,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e2_teleporter"
@@ -1310,7 +1181,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e3_teleporter"
@@ -1320,7 +1190,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e4_teleporter"
@@ -1330,7 +1199,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e5_teleporter"
@@ -1340,7 +1208,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e6_teleporter"
@@ -1350,7 +1217,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e7_teleporter"
@@ -1360,7 +1226,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e8_teleporter"
@@ -1370,7 +1235,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17e9_teleporter"
@@ -1380,7 +1244,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17ea_teleporter"
@@ -1390,7 +1253,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17eb_teleporter"
@@ -1400,7 +1262,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17ec_teleporter"
@@ -1410,7 +1271,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17ed_teleporter"
@@ -1420,7 +1280,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17ee_teleporter"
@@ -1430,7 +1289,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17ef_teleporter"
@@ -1440,7 +1298,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17f0_teleporter"
@@ -1450,7 +1307,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17f1_teleporter"
@@ -1460,7 +1316,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17f2_teleporter"
@@ -1470,7 +1325,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17fc_teleporter"
@@ -1480,7 +1334,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17fd_teleporter"
@@ -1490,7 +1343,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17fe_teleporter"
@@ -1500,7 +1352,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x17ff_teleporter"
@@ -1510,7 +1361,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1800_teleporter"
@@ -1520,7 +1370,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1801_teleporter"
@@ -1530,7 +1379,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1802_teleporter"
@@ -1540,7 +1388,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1803_teleporter"
@@ -1550,7 +1397,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1804_teleporter"
@@ -1560,7 +1406,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1805_teleporter"
@@ -1570,7 +1415,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1806_teleporter"
@@ -1580,7 +1424,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1807_teleporter"
@@ -1590,7 +1433,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1808_teleporter"
@@ -1600,7 +1442,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1809_teleporter"
@@ -1610,7 +1451,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x180a_teleporter"
@@ -1620,7 +1460,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x180b_teleporter"
@@ -1630,7 +1469,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x180c_teleporter"
@@ -1640,7 +1478,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x180d_teleporter"
@@ -1650,7 +1487,6 @@ name = "teleporter"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x181d_alchemical_symbol"
@@ -1660,7 +1496,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x181e_alchemical_symbol"
@@ -1670,7 +1505,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x181f_alchemical_symbol"
@@ -1680,7 +1514,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1820_alchemical_symbol"
@@ -1690,7 +1523,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1821_alchemical_symbol"
@@ -1700,7 +1532,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1822_alchemical_symbol"
@@ -1710,7 +1541,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1823_alchemical_symbol"
@@ -1720,7 +1550,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1824_alchemical_symbol"
@@ -1730,7 +1559,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1825_alchemical_symbol"
@@ -1740,7 +1568,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1826_alchemical_symbol"
@@ -1750,7 +1577,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1827_alchemical_symbol"
@@ -1760,7 +1586,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1828_alchemical_symbol"
@@ -1770,7 +1595,6 @@ name = "alchemical symbol"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19c3_fountain"
@@ -1780,7 +1604,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19c4_fountain"
@@ -1790,7 +1613,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19c5_fountain"
@@ -1800,7 +1622,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19c6_fountain"
@@ -1810,7 +1631,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19c7_fountain"
@@ -1820,7 +1640,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19c8_fountain"
@@ -1830,7 +1649,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19c9_fountain"
@@ -1840,7 +1658,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19ca_fountain"
@@ -1850,7 +1667,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19cb_fountain"
@@ -1860,7 +1676,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19cc_fountain"
@@ -1870,7 +1685,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19cd_fountain"
@@ -1880,7 +1694,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19ce_fountain"
@@ -1890,7 +1703,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19cf_fountain"
@@ -1900,7 +1712,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19d0_fountain"
@@ -1910,7 +1721,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19d1_fountain"
@@ -1920,7 +1730,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x19d3_fountain"
@@ -1930,7 +1739,6 @@ name = "fountain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d97_ankh_of_sacrifice"
@@ -1940,7 +1748,6 @@ name = "ankh of sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1d98_ankh_of_sacrifice"
@@ -1950,7 +1757,6 @@ name = "ankh of sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e5c_ankh_of_sacrifice"
@@ -1960,7 +1766,6 @@ name = "ankh of sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e5d_ankh_of_sacrifice"
@@ -1970,7 +1775,6 @@ name = "ankh of sacrifice"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ed4_gravestone"
@@ -1980,7 +1784,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0ed5_gravestone"
@@ -1990,7 +1793,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0ed6_gravestone"
@@ -2000,7 +1802,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0ed7_gravestone"
@@ -2010,7 +1811,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0ed8_gravestone"
@@ -2020,7 +1820,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0ed9_gravestone"
@@ -2030,7 +1829,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0eda_gravestone"
@@ -2040,7 +1838,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0edb_gravestone"
@@ -2050,7 +1847,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0edc_gravestone"
@@ -2060,7 +1856,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0edd_gravestone"
@@ -2070,7 +1865,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x0ede_gravestone"
@@ -2080,7 +1874,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1165_gravestone"
@@ -2090,7 +1883,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1166_gravestone"
@@ -2100,7 +1892,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1167_gravestone"
@@ -2110,7 +1901,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1168_gravestone"
@@ -2120,7 +1910,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1169_gravestone"
@@ -2130,7 +1919,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x116a_gravestone"
@@ -2140,7 +1928,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x116b_gravestone"
@@ -2150,7 +1937,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x116c_gravestone"
@@ -2160,7 +1946,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x116d_gravestone"
@@ -2170,7 +1955,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x116e_gravestone"
@@ -2180,7 +1964,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x116f_gravestone"
@@ -2190,7 +1973,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1170_gravestone"
@@ -2200,7 +1982,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1171_gravestone"
@@ -2210,7 +1991,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1172_gravestone"
@@ -2220,7 +2000,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1173_gravestone"
@@ -2230,7 +2009,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1174_gravestone"
@@ -2240,7 +2018,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1175_gravestone"
@@ -2250,7 +2027,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1176_gravestone"
@@ -2260,7 +2036,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1177_gravestone"
@@ -2270,7 +2045,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1178_gravestone"
@@ -2280,7 +2054,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1179_gravestone"
@@ -2290,7 +2063,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x117a_gravestone"
@@ -2300,7 +2072,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x117b_gravestone"
@@ -2310,7 +2081,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x117c_gravestone"
@@ -2320,7 +2090,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x117d_gravestone"
@@ -2330,7 +2099,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x117e_gravestone"
@@ -2340,7 +2108,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x117f_gravestone"
@@ -2350,7 +2117,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1180_gravestone"
@@ -2360,7 +2126,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1181_gravestone"
@@ -2370,7 +2135,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1182_gravestone"
@@ -2380,7 +2144,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1183_gravestone"
@@ -2390,7 +2153,6 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0
 
 [[item]]
 id = "0x1184_gravestone"
@@ -2400,4 +2162,3 @@ name = "gravestone"
 rarity = "common"
 movable = false
 weight = 30.0
-hue = 0

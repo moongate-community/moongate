@@ -6,7 +6,6 @@ name = "music stand"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x0eb6_music_stand"
@@ -16,7 +15,6 @@ name = "music stand"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x0eb7_music_stand"
@@ -26,7 +24,6 @@ name = "music stand"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x0eb8_music_stand"
@@ -36,7 +33,6 @@ name = "music stand"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x0eb9_music_stand"
@@ -46,7 +42,6 @@ name = "music stand"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x0eba_music_stand"
@@ -56,7 +51,6 @@ name = "music stand"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x0ebb_music_stand"
@@ -66,7 +60,6 @@ name = "music stand"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x0ebc_music_stand"
@@ -76,7 +69,6 @@ name = "music stand"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x0ebd_sheet_music"
@@ -86,7 +78,6 @@ name = "sheet music"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ebe_sheet_music"
@@ -96,7 +87,6 @@ name = "sheet music"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ebf_sheet_music"
@@ -106,7 +96,6 @@ name = "sheet music"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ec0_sheet_music"
@@ -116,4 +105,3 @@ name = "sheet music"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0

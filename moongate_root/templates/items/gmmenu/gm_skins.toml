@@ -6,9 +6,9 @@ name = "Lord British"
 rarity = "common"
 movable = true
 weight = 0.3
+layer = "inner_torso"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2043_lord_blackthorne"
@@ -18,9 +18,9 @@ name = "Lord Blackthorne"
 rarity = "common"
 movable = true
 weight = 0.3
+layer = "inner_torso"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2050_dupre_the_fighter"
@@ -30,9 +30,9 @@ name = "Dupre the Fighter"
 rarity = "common"
 movable = true
 weight = 0.3
+layer = "inner_torso"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x204e_death_shroud"
@@ -42,9 +42,9 @@ name = "death shroud"
 rarity = "common"
 movable = true
 weight = 0.3
+layer = "outer_torso"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x204f_u_gm_robe"
@@ -57,7 +57,6 @@ weight = 0.3
 layer = "inner_torso"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "00x204f_b"

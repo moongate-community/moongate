@@ -49,7 +49,7 @@ internal static class StartingItemsBuilder
                      int.TryParse(block.Header[SkillPrefix.Length..].Trim(), out var skill) &&
                      Enum.IsDefined((SkillType)skill))
             {
-                set = new() { Skill = (SkillType)skill };
+                set = new() { Skill = FromUoxSkillNumber(skill) };
             }
             else
             {
@@ -120,5 +120,17 @@ internal static class StartingItemsBuilder
         }
 
         return entry;
+    }
+
+    // UOX3 numbers IMBUING 55 and MYSTICISM 56 (enums.h); SkillType has them the other way round. Every other number
+    // matches.
+    private static SkillType FromUoxSkillNumber(int number)
+    {
+        return number switch
+        {
+            55 => SkillType.Imbuing,
+            56 => SkillType.Mysticism,
+            _ => (SkillType)number
+        };
     }
 }

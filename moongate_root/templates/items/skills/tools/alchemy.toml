@@ -8,14 +8,12 @@ weight = 1.0
 buy_price = 9
 sell_price = 4
 decays = true
-hue = 0
 
 [[item]]
 id = "mortarandpestle"
 base_id = "0x0e9b_mortar_&_pestle"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f0e_empty_bottle"
@@ -29,14 +27,12 @@ stackable = true
 buy_price = 6
 sell_price = 3
 decays = true
-hue = 0
 
 [[item]]
 id = "emptybottle"
 base_id = "0x0f0e_empty_bottle"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1829_flask_stand"
@@ -48,14 +44,12 @@ weight = 1.0
 buy_price = 8
 sell_price = 4
 decays = true
-hue = 0
 
 [[item]]
 id = "flaskstand"
 base_id = "0x1829_flask_stand"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1849_heating_stand"
@@ -67,14 +61,12 @@ weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "unlitheatingstand"
 base_id = "0x1849_heating_stand"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x184a_heating_stand"
@@ -86,14 +78,12 @@ weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "litheatingstand"
 base_id = "0x184a_heating_stand"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x184d_heating_stand"
@@ -105,7 +95,6 @@ weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x184e_heating_stand"
@@ -117,7 +106,6 @@ weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e24_empty_vial"
@@ -127,14 +115,12 @@ name = "empty vial"
 rarity = "common"
 weight = 1.0
 stackable = true
-hue = 0
 
 [[item]]
 id = "emptyvial"
 base_id = "0x0e24_empty_vial"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0e25_bottle"
@@ -143,7 +129,6 @@ item_id = 3621
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e26_bottle"
@@ -152,7 +137,6 @@ item_id = 3622
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e27_bottle"
@@ -161,7 +145,6 @@ item_id = 3623
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e28_bottle"
@@ -170,7 +153,6 @@ item_id = 3624
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e29_bottle"
@@ -179,7 +161,6 @@ item_id = 3625
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e2a_bottle"
@@ -188,7 +169,6 @@ item_id = 3626
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e2b_bottle"
@@ -197,7 +177,6 @@ item_id = 3627
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0e2c_bottle"
@@ -206,7 +185,6 @@ item_id = 3628
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0efb_bottle"
@@ -215,7 +193,6 @@ item_id = 3835
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0efc_bottle"
@@ -224,7 +201,6 @@ item_id = 3836
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0efd_bottle"
@@ -233,7 +209,6 @@ item_id = 3837
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0efe_bottle"
@@ -242,7 +217,6 @@ item_id = 3838
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0eff_bottle"
@@ -251,7 +225,6 @@ item_id = 3839
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0f00_bottle"
@@ -260,7 +233,6 @@ item_id = 3840
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0f01_bottle"
@@ -269,7 +241,6 @@ item_id = 3841
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0f02_bottle"
@@ -278,7 +249,6 @@ item_id = 3842
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0f03_bottle"
@@ -287,7 +257,6 @@ item_id = 3843
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0f04_bottle"
@@ -296,7 +265,6 @@ item_id = 3844
 name = "bottle"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x182a_medium_flask"
@@ -305,7 +273,6 @@ item_id = 6186
 name = "Medium flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x182b_medium_flask"
@@ -314,7 +281,6 @@ item_id = 6187
 name = "Medium flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x182c_medium_flask"
@@ -323,7 +289,6 @@ item_id = 6188
 name = "Medium flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x182d_medium_flask"
@@ -332,7 +297,6 @@ item_id = 6189
 name = "Medium flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x182e_small_flask"
@@ -341,7 +305,6 @@ item_id = 6190
 name = "Small flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x182f_small_flask"
@@ -350,7 +313,6 @@ item_id = 6191
 name = "Small flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1830_small_flask"
@@ -359,7 +321,6 @@ item_id = 6192
 name = "Small flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1831_small_flask"
@@ -368,7 +329,6 @@ item_id = 6193
 name = "Small flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1832_curved_flask"
@@ -377,7 +337,6 @@ item_id = 6194
 name = "Curved flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1833_curved_flask"
@@ -386,7 +345,6 @@ item_id = 6195
 name = "Curved flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1834_curved_flask"
@@ -395,7 +353,6 @@ item_id = 6196
 name = "Curved flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1835_curved_flask"
@@ -404,7 +361,6 @@ item_id = 6197
 name = "Curved flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1836_curved_flask"
@@ -413,7 +369,6 @@ item_id = 6198
 name = "Curved flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1837_curved_flask"
@@ -422,7 +377,6 @@ item_id = 6199
 name = "Curved flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1838_large_flask"
@@ -431,7 +385,6 @@ item_id = 6200
 name = "Large flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1839_large_flask"
@@ -440,7 +393,6 @@ item_id = 6201
 name = "Large flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x183a_large_flask"
@@ -449,7 +401,6 @@ item_id = 6202
 name = "Large flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x183b_large_flask"
@@ -458,7 +409,6 @@ item_id = 6203
 name = "large flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x183c_large_flask"
@@ -467,7 +417,6 @@ item_id = 6204
 name = "large flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x183d_large_flask"
@@ -476,7 +425,6 @@ item_id = 6205
 name = "large flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x183e_bubbling_red_flask"
@@ -485,14 +433,12 @@ item_id = 6206
 name = "bubbling red flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "bubblingredflask"
 base_id = "0x183e_bubbling_red_flask"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x183f_bubbling_red_flask"
@@ -501,7 +447,6 @@ item_id = 6207
 name = "bubbling red flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1840_bubbling_red_flask"
@@ -510,7 +455,6 @@ item_id = 6208
 name = "bubbling red flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1841_bubbling_purple_flask"
@@ -519,14 +463,12 @@ item_id = 6209
 name = "bubbling purple flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "bubblingpurpleflask"
 base_id = "0x1841_bubbling_purple_flask"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1842_bubbling_purple_flask"
@@ -535,7 +477,6 @@ item_id = 6210
 name = "bubbling purple flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1843_bubbling_purple_flask"
@@ -544,7 +485,6 @@ item_id = 6211
 name = "bubbling purple flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1844_bubbling_blue_flask"
@@ -553,14 +493,12 @@ item_id = 6212
 name = "bubbling blue flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "bubblingblueflask"
 base_id = "0x1844_bubbling_blue_flask"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1845_bubbling_blue_flask"
@@ -569,7 +507,6 @@ item_id = 6213
 name = "bubbling blue flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1846_bubbling_blue_flask"
@@ -578,7 +515,6 @@ item_id = 6214
 name = "bubbling blue flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1847_flask"
@@ -587,7 +523,6 @@ item_id = 6215
 name = "flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1848_flask"
@@ -596,7 +531,6 @@ item_id = 6216
 name = "flask"
 rarity = "common"
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1c19_oil_flask"
@@ -608,7 +542,6 @@ weight = 1.0
 buy_price = 4
 sell_price = 4
 decays = true
-hue = 0
 
 [[item]]
 id = "0x185b_empty_vials"
@@ -618,7 +551,6 @@ name = "empty vials"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x185c_empty_vials"
@@ -628,7 +560,6 @@ name = "empty vials"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x185d_full_vials"
@@ -638,7 +569,6 @@ name = "full vials"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x185e_full_vials"
@@ -648,7 +578,6 @@ name = "full vials"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1810_spinning_hourglass"
@@ -659,7 +588,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1811_spinning_hourglass"
@@ -670,7 +598,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "blowpipe"
@@ -682,7 +609,7 @@ weight = 1.0
 buy_price = 9
 sell_price = 4
 decays = true
-hue = 0
+hue = 953
 
 [[item]]
 id = "glassblowingbook"
@@ -696,4 +623,3 @@ stackable = true
 buy_price = 10637
 sell_price = 5318
 decays = true
-hue = 0

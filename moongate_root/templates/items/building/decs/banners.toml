@@ -6,7 +6,6 @@ name = "tattered banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0427_tattered_banner"
@@ -16,7 +15,6 @@ name = "tattered banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x042a_tattered_banner"
@@ -26,7 +24,6 @@ name = "tattered banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x042b_tattered_banner"
@@ -36,7 +33,6 @@ name = "tattered banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x042c_tattered_banner"
@@ -46,7 +42,6 @@ name = "tattered banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x042d_tattered_banner"
@@ -56,7 +51,6 @@ name = "tattered banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x042e_tattered_banner"
@@ -66,7 +60,6 @@ name = "tattered banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x042f_tattered_banner"
@@ -76,7 +69,6 @@ name = "tattered banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1586_banner"
@@ -86,7 +78,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1587_banner"
@@ -96,7 +87,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1588_banner"
@@ -106,7 +96,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1589_banner"
@@ -116,7 +105,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x158a_banner"
@@ -126,7 +114,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x158b_banner"
@@ -136,7 +123,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x158c_banner"
@@ -146,7 +132,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x158d_banner"
@@ -156,7 +141,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x158e_banner"
@@ -166,7 +150,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x158f_banner_hanger"
@@ -176,7 +159,6 @@ name = "banner hanger"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1590_banner"
@@ -186,7 +168,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1591_banner"
@@ -196,7 +177,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1592_banner"
@@ -206,7 +186,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1593_banner"
@@ -216,7 +195,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1594_banner"
@@ -226,7 +204,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1595_banner"
@@ -236,7 +213,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1596_banner"
@@ -246,7 +222,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1598_banner"
@@ -256,7 +231,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x159b_banner"
@@ -266,7 +240,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x159c_banner"
@@ -276,7 +249,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1599_banner"
@@ -286,7 +258,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x159a_banner"
@@ -296,7 +267,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x159d_banner"
@@ -306,7 +276,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x159e_curtain"
@@ -316,7 +285,6 @@ name = "curtain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x159f_curtain"
@@ -326,7 +294,6 @@ name = "curtain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a0_banner"
@@ -336,7 +303,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a1_banner"
@@ -346,7 +312,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a2_banner"
@@ -356,7 +321,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a3_banner"
@@ -366,7 +330,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a4_banner"
@@ -376,7 +339,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a5_banner"
@@ -386,7 +348,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a6_banner"
@@ -396,7 +357,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a7_banner"
@@ -406,7 +366,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a8_banner"
@@ -416,7 +375,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15a9_banner"
@@ -426,7 +384,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15aa_banner"
@@ -436,7 +393,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ab_banner"
@@ -446,7 +402,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ac_banner"
@@ -456,7 +411,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ad_banner"
@@ -466,7 +420,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ae_banner"
@@ -476,7 +429,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15af_banner"
@@ -486,7 +438,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15b0_banner"
@@ -496,7 +447,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15b1_banner"
@@ -506,7 +456,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15b2_banner"
@@ -516,7 +465,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15b3_banner"
@@ -526,7 +474,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15b4_banner"
@@ -536,7 +483,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15b5_banner"
@@ -546,17 +492,15 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
-id = "0x15b6"
+id = "0x15b6_banner"
 base_id = "base_item"
-item_id = 0
+item_id = 5558
 name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15b7_banner"
@@ -566,7 +510,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15b8_banner"
@@ -576,7 +519,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15b9_banner"
@@ -586,7 +528,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ba_banner"
@@ -596,7 +537,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15bb_banner"
@@ -606,7 +546,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15bc_banner"
@@ -616,7 +555,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15bd_banner"
@@ -626,7 +564,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15be_banner"
@@ -636,7 +573,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15bf_banner"
@@ -646,7 +582,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c0_banner"
@@ -656,7 +591,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c1_banner"
@@ -666,7 +600,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c2_banner"
@@ -676,7 +609,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c3_banner"
@@ -686,7 +618,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c4_banner"
@@ -696,7 +627,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c5_banner"
@@ -706,7 +636,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c6_banner"
@@ -716,7 +645,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c7_banner"
@@ -726,7 +654,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c8_banner"
@@ -736,7 +663,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15c9_banner"
@@ -746,7 +672,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ca_banner"
@@ -756,7 +681,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15cb_banner"
@@ -766,7 +690,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15cc_banner"
@@ -776,7 +699,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15cd_banner"
@@ -786,7 +708,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ce_banner"
@@ -796,7 +717,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15cf_banner"
@@ -806,7 +726,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d0_banner"
@@ -816,7 +735,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d1_banner"
@@ -826,7 +744,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d2_banner"
@@ -836,7 +753,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d3_banner"
@@ -846,7 +762,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d4_banner"
@@ -856,7 +771,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d5_banner"
@@ -866,7 +780,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d6_banner"
@@ -876,7 +789,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d7_banner"
@@ -886,7 +798,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d8_banner"
@@ -896,7 +807,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15d9_banner"
@@ -906,7 +816,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15da_banner"
@@ -916,7 +825,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15db_banner"
@@ -926,7 +834,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15dc_banner"
@@ -936,7 +843,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15dd_banner"
@@ -946,7 +852,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15de_banner"
@@ -956,7 +861,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15df_banner"
@@ -966,7 +870,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e0_banner"
@@ -976,7 +879,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e1_banner"
@@ -986,7 +888,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e2_banner"
@@ -996,7 +897,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e3_banner"
@@ -1006,7 +906,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e4_banner"
@@ -1016,7 +915,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e5_banner"
@@ -1026,7 +924,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e6_banner"
@@ -1036,7 +933,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e7_banner"
@@ -1046,7 +942,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e8_banner"
@@ -1056,7 +951,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15e9_banner"
@@ -1066,7 +960,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ea_banner"
@@ -1076,7 +969,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15eb_banner"
@@ -1086,7 +978,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ec_banner"
@@ -1096,7 +987,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ed_banner"
@@ -1106,7 +996,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ee_banner"
@@ -1116,7 +1005,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15ef_banner"
@@ -1126,7 +1014,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15f0_banner"
@@ -1136,7 +1023,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15f1_banner"
@@ -1146,7 +1032,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15f2_banner"
@@ -1156,7 +1041,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15f3_banner"
@@ -1166,7 +1050,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15f4_banner"
@@ -1176,7 +1059,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15f5_banner"
@@ -1186,7 +1068,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15f6_curtain"
@@ -1196,7 +1077,6 @@ name = "curtain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x15f7_curtain"
@@ -1206,7 +1086,6 @@ name = "curtain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x160d_curtain"
@@ -1216,7 +1095,6 @@ name = "curtain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x160e_curtain"
@@ -1226,7 +1104,6 @@ name = "curtain"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x160f_banner"
@@ -1236,7 +1113,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1610_banner"
@@ -1246,7 +1122,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1611_banner"
@@ -1256,7 +1131,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1612_banner"
@@ -1266,7 +1140,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1613_banner"
@@ -1276,7 +1149,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1614_banner"
@@ -1286,7 +1158,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1615_banner"
@@ -1296,7 +1167,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1616_banner"
@@ -1306,7 +1176,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1617_banner"
@@ -1316,7 +1185,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1618_banner"
@@ -1326,7 +1194,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1619_banner"
@@ -1336,7 +1203,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x161a_banner"
@@ -1346,7 +1212,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x161b_banner"
@@ -1356,7 +1221,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x161c_banner"
@@ -1366,7 +1230,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x161d_banner"
@@ -1376,7 +1239,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x161e_banner"
@@ -1386,7 +1248,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x161f_banner"
@@ -1396,7 +1257,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1620_banner"
@@ -1406,7 +1266,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1621_banner"
@@ -1416,7 +1275,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1622_banner"
@@ -1426,7 +1284,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1623_banner"
@@ -1436,7 +1293,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1624_banner"
@@ -1446,7 +1302,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1625_banner"
@@ -1456,7 +1311,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1626_banner_hanger"
@@ -1466,7 +1320,6 @@ name = "banner hanger"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1627_banner"
@@ -1476,7 +1329,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1628_banner"
@@ -1486,7 +1338,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1629_banner"
@@ -1496,7 +1347,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x162a_banner"
@@ -1506,7 +1356,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x162b_banner"
@@ -1516,7 +1365,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x162c_banner"
@@ -1526,7 +1374,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x162d_banner"
@@ -1536,7 +1383,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x162e_banner"
@@ -1546,7 +1392,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1631_banner"
@@ -1556,7 +1401,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1632_banner"
@@ -1566,7 +1410,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x162f_banner"
@@ -1576,7 +1419,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1630_banner"
@@ -1586,7 +1428,6 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1633_banner"
@@ -1596,4 +1437,3 @@ name = "banner"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0

@@ -415,6 +415,7 @@ name = "an ophidian zealot"
 body = 85
 strength = "1d25+280"
 dexterity = "1d25+190"
+intelligence = 189
 hits = "1d34+122"
 damage = "1d13+8"
 armor = 10

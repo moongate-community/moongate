@@ -9,21 +9,18 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "bagofreagents"
 base_id = "0x0e76_bag"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "smallbagofreagents"
 base_id = "0x0e76_bag"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f7a_black_pearl"
@@ -33,14 +30,12 @@ name = "black pearl"
 rarity = "common"
 buy_price = 6
 sell_price = 2
-hue = 0
 
 [[item]]
 id = "blackpearl"
 base_id = "0x0f7a_black_pearl"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f7b_blood_moss"
@@ -50,14 +45,12 @@ name = "blood moss"
 rarity = "common"
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "bloodmoss"
 base_id = "0x0f7b_blood_moss"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f84_garlic"
@@ -65,14 +58,12 @@ base_id = "base_reagent"
 item_id = 3972
 name = "garlic"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "garlic"
 base_id = "0x0f84_garlic"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f85_ginseng"
@@ -80,14 +71,12 @@ base_id = "base_reagent"
 item_id = 3973
 name = "ginseng"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "ginseng"
 base_id = "0x0f85_ginseng"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f86_mandrake_root"
@@ -95,14 +84,12 @@ base_id = "base_reagent"
 item_id = 3974
 name = "mandrake root"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "mandrakeroot"
 base_id = "0x0f86_mandrake_root"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f88_nightshade"
@@ -110,14 +97,12 @@ base_id = "base_reagent"
 item_id = 3976
 name = "nightshade"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "nightshade"
 base_id = "0x0f88_nightshade"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f8c_sulfurous_ash"
@@ -125,14 +110,12 @@ base_id = "base_reagent"
 item_id = 3980
 name = "sulfurous ash"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "sulfurousash"
 base_id = "0x0f8c_sulfurous_ash"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f8d_spider_silk"
@@ -140,14 +123,12 @@ base_id = "base_reagent"
 item_id = 3981
 name = "spider silk"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "spidersilk"
 base_id = "0x0f8d_spider_silk"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f78_bat_wing"
@@ -155,14 +136,12 @@ base_id = "base_reagent"
 item_id = 3960
 name = "bat wing"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "batwing"
 base_id = "0x0f78_bat_wing"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f79_blackmoore"
@@ -170,14 +149,12 @@ base_id = "base_reagent"
 item_id = 3961
 name = "blackmoore"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "blackmoore"
 base_id = "0x0f79_blackmoore"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f7c_blood_spawn"
@@ -185,14 +162,12 @@ base_id = "base_reagent"
 item_id = 3964
 name = "blood spawn"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "bloodspawn"
 base_id = "0x0f7c_blood_spawn"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f7e_bone"
@@ -200,14 +175,12 @@ base_id = "base_reagent"
 item_id = 3966
 name = "bone"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "bonereg"
 base_id = "0x0f7e_bone"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f7f_brimstone"
@@ -215,14 +188,12 @@ base_id = "base_reagent"
 item_id = 3967
 name = "brimstone"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "brimstone"
 base_id = "0x0f7f_brimstone"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f80_daemon_bone"
@@ -230,14 +201,12 @@ base_id = "base_reagent"
 item_id = 3968
 name = "daemon bone"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "daemonbone"
 base_id = "0x0f80_daemon_bone"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f90_dead_wood"
@@ -245,14 +214,12 @@ base_id = "base_reagent"
 item_id = 3984
 name = "dead wood"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "deadwood"
 base_id = "0x0f90_dead_wood"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f82_dragon's_blood"
@@ -260,14 +227,12 @@ base_id = "base_reagent"
 item_id = 3970
 name = "dragon's blood"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "dragonsblood"
 base_id = "0x0f82_dragon's_blood"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f83_executioner's_cap"
@@ -275,14 +240,12 @@ base_id = "base_reagent"
 item_id = 3971
 name = "executioner's cap"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "executionerscap"
 base_id = "0x0f83_executioner's_cap"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f87_eye_of_newt"
@@ -290,14 +253,12 @@ base_id = "base_reagent"
 item_id = 3975
 name = "eye of newt"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "eyeofnewt"
 base_id = "0x0f87_eye_of_newt"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f81_fertile_dirt"
@@ -305,14 +266,12 @@ base_id = "base_reagent"
 item_id = 3969
 name = "fertile dirt"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "fertiledirt"
 base_id = "0x0f81_fertile_dirt"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f89_obsidian"
@@ -320,14 +279,12 @@ base_id = "base_reagent"
 item_id = 3977
 name = "obsidian"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "obsidian"
 base_id = "0x0f89_obsidian"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f8a_pig_iron"
@@ -335,14 +292,12 @@ base_id = "base_reagent"
 item_id = 3978
 name = "pig iron"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "pigiron"
 base_id = "0x0f8a_pig_iron"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f8b_pumice"
@@ -350,14 +305,12 @@ base_id = "base_reagent"
 item_id = 3979
 name = "pumice"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "pumice"
 base_id = "0x0f8b_pumice"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f8e_nox_crystal"
@@ -365,14 +318,12 @@ base_id = "base_reagent"
 item_id = 3982
 name = "nox crystal"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "noxcrystal"
 base_id = "0x0f8e_nox_crystal"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f7d_daemon_blood"
@@ -380,14 +331,12 @@ base_id = "base_reagent"
 item_id = 3965
 name = "daemon blood"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "daemonblood"
 base_id = "0x0f7d_daemon_blood"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f8f_grave_dust"
@@ -395,14 +344,12 @@ base_id = "base_reagent"
 item_id = 3983
 name = "grave dust"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "gravedust"
 base_id = "0x0f8f_grave_dust"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f91_wyrm's_heart"
@@ -410,14 +357,12 @@ base_id = "base_reagent"
 item_id = 3985
 name = "wyrm's heart"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "wyrmsheart"
 base_id = "0x0f91_wyrm's_heart"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0f7a_10_black_pearl"
@@ -428,7 +373,6 @@ rarity = "common"
 amount = 10
 buy_price = 6
 sell_price = 2
-hue = 0
 
 [[item]]
 id = "0x0f7b_10_blood_moss"
@@ -439,7 +383,6 @@ rarity = "common"
 amount = 10
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x0f84_10_garlic"
@@ -448,7 +391,6 @@ item_id = 3972
 name = "garlic"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f85_10_ginseng"
@@ -457,7 +399,6 @@ item_id = 3973
 name = "ginseng"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f86_10_mandrake_root"
@@ -466,7 +407,6 @@ item_id = 3974
 name = "mandrake root"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f88_10_nightshade"
@@ -475,7 +415,6 @@ item_id = 3976
 name = "nightshade"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f8c_10_sulfurous_ash"
@@ -484,7 +423,6 @@ item_id = 3980
 name = "sulfurous ash"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f8d_10_spider_silk"
@@ -493,7 +431,6 @@ item_id = 3981
 name = "spider silk"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f78_10_bat_wing"
@@ -502,7 +439,6 @@ item_id = 3960
 name = "bat wing"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f79_10_blackmoore"
@@ -511,7 +447,6 @@ item_id = 3961
 name = "blackmoore"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f7c_10_blood_spawn"
@@ -520,7 +455,6 @@ item_id = 3964
 name = "blood spawn"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f7e_10_bone"
@@ -529,7 +463,6 @@ item_id = 3966
 name = "bone"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f7f_10_brimstone"
@@ -538,7 +471,6 @@ item_id = 3967
 name = "brimstone"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f80_10_daemon_bone"
@@ -547,7 +479,6 @@ item_id = 3968
 name = "daemon bone"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f90_10_dead_wood"
@@ -556,7 +487,6 @@ item_id = 3984
 name = "dead wood"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f82_10_dragon's_blood"
@@ -565,7 +495,6 @@ item_id = 3970
 name = "dragon's blood"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f83_10_executioner's_cap"
@@ -574,7 +503,6 @@ item_id = 3971
 name = "executioner's cap"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f87_10_eye_of_newt"
@@ -583,7 +511,6 @@ item_id = 3975
 name = "eye of newt"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f81_10_fertile_dirt"
@@ -592,7 +519,6 @@ item_id = 3969
 name = "fertile dirt"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f89_10_obsidian"
@@ -601,7 +527,6 @@ item_id = 3977
 name = "obsidian"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f8a_10_pig_iron"
@@ -610,7 +535,6 @@ item_id = 3978
 name = "pig iron"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f8b_10_pumice"
@@ -619,7 +543,6 @@ item_id = 3979
 name = "pumice"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f8e_10_nox_crystal"
@@ -628,7 +551,6 @@ item_id = 3982
 name = "nox crystal"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f7d_10_daemon_blood"
@@ -637,7 +559,6 @@ item_id = 3965
 name = "daemon blood"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f8f_10_grave_dust"
@@ -646,7 +567,6 @@ item_id = 3983
 name = "grave dust"
 rarity = "common"
 amount = 10
-hue = 0
 
 [[item]]
 id = "0x0f91_10_wyrm's_heart"
@@ -655,4 +575,3 @@ item_id = 3985
 name = "wyrm's heart"
 rarity = "common"
 amount = 10
-hue = 0

@@ -9,7 +9,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1079_pile_of_hides"
@@ -22,7 +21,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1067_cut_up_leather"
@@ -35,7 +33,6 @@ stackable = true
 buy_price = 7
 sell_price = 3
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1068_cut_up_leather"
@@ -48,7 +45,6 @@ stackable = true
 buy_price = 7
 sell_price = 3
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1069_stretched_hide"
@@ -58,7 +54,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x106a_stretched_hide"
@@ -68,7 +63,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x106b_stretched_hide"
@@ -78,7 +72,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x106c_stretched_hide"
@@ -88,7 +81,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x106d_stretched_hide"
@@ -98,7 +90,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x106e_stretched_hide"
@@ -108,7 +99,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x106f_stretched_hide"
@@ -118,7 +108,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x107a_stretched_hide"
@@ -128,7 +117,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x107b_stretched_hide"
@@ -138,7 +126,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x107c_stretched_hide"
@@ -148,7 +135,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x107d_stretched_hide"
@@ -158,7 +144,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x107e_stretched_hide"
@@ -168,7 +153,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x107f_stretched_hide"
@@ -178,7 +162,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x1080_stretched_hide"
@@ -188,7 +171,6 @@ name = "stretched hide"
 rarity = "common"
 movable = false
 weight = 3.0
-hue = 0
 
 [[item]]
 id = "0x1081_cut_up_leather"
@@ -201,7 +183,6 @@ stackable = true
 buy_price = 7
 sell_price = 3
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1082_cut_up_leather"
@@ -215,7 +196,6 @@ stackable = true
 buy_price = 7
 sell_price = 3
 decays = true
-hue = 0
 
 [[item]]
 id = "0x11f4_a_fur"
@@ -228,7 +208,6 @@ stackable = true
 buy_price = 4
 sell_price = 2
 decays = true
-hue = 0
 
 [[item]]
 id = "0x11f8_a_fur"
@@ -241,4 +220,3 @@ stackable = true
 buy_price = 4
 sell_price = 2
 decays = true
-hue = 0

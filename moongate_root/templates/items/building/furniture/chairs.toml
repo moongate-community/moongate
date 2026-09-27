@@ -9,7 +9,6 @@ weight = 10.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0a2b_a_stool"
@@ -22,7 +21,6 @@ weight = 10.0
 buy_price = 12
 sell_price = 6
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b2c_wooden_bench"
@@ -35,7 +33,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b2d_wooden_bench"
@@ -48,7 +45,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b2e_wooden_chair"
@@ -61,7 +57,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b2f_wooden_chair"
@@ -74,7 +69,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b30_wooden_chair"
@@ -87,7 +81,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b31_wooden_chair"
@@ -100,7 +93,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b32_throne"
@@ -113,7 +105,6 @@ weight = 40.0
 buy_price = 48
 sell_price = 24
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b33_throne"
@@ -126,7 +117,6 @@ weight = 40.0
 buy_price = 48
 sell_price = 24
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b4e_chair"
@@ -139,7 +129,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b4f_chair"
@@ -152,7 +141,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b50_chair"
@@ -165,7 +153,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b51_chair"
@@ -178,7 +165,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b52_chair"
@@ -191,7 +177,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b53_chair"
@@ -204,7 +189,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b54_chair"
@@ -217,7 +201,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b55_chair"
@@ -230,7 +213,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b56_chair"
@@ -243,7 +225,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b57_chair"
@@ -256,7 +237,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b58_chair"
@@ -269,7 +249,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b59_chair"
@@ -282,7 +261,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b5a_chair"
@@ -295,7 +273,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b5b_chair"
@@ -308,7 +285,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b5c_chair"
@@ -321,7 +297,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b5d_chair"
@@ -334,7 +309,6 @@ weight = 20.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b5e_foot_stool"
@@ -347,7 +321,6 @@ weight = 10.0
 buy_price = 10
 sell_price = 5
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b5f_bench"
@@ -357,7 +330,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b60_bench"
@@ -367,7 +339,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b61_bench"
@@ -377,7 +348,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b62_bench"
@@ -387,7 +357,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b63_bench"
@@ -397,7 +366,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b64_bench"
@@ -407,7 +375,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b65_bench"
@@ -417,7 +384,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b66_bench"
@@ -427,7 +393,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b67_bench"
@@ -437,7 +402,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b68_bench"
@@ -447,7 +411,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b69_bench"
@@ -457,7 +420,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b6a_bench"
@@ -467,7 +429,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b91_bench"
@@ -477,7 +438,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b92_bench"
@@ -487,7 +447,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b93_bench"
@@ -497,7 +456,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x0b94_bench"
@@ -507,7 +465,6 @@ name = "bench"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x1049_loom_bench"
@@ -520,7 +477,6 @@ weight = 10.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x104a_loom_bench"
@@ -533,7 +489,6 @@ weight = 10.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x11fc_bamboo_stool"
@@ -546,7 +501,6 @@ weight = 10.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1207_stone_bench"
@@ -556,7 +510,6 @@ name = "stone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1208_stone_bench"
@@ -566,7 +519,6 @@ name = "stone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1209_stone_bench"
@@ -576,7 +528,6 @@ name = "stone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x120a_stone_bench"
@@ -586,7 +537,6 @@ name = "stone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x120b_stone_bench"
@@ -596,7 +546,6 @@ name = "stone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x120c_stone_bench"
@@ -606,7 +555,6 @@ name = "stone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1218_stone_chair"
@@ -619,7 +567,6 @@ weight = 40.0
 buy_price = 30
 sell_price = 15
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1219_stone_chair"
@@ -632,7 +579,6 @@ weight = 40.0
 buy_price = 30
 sell_price = 15
 decays = true
-hue = 0
 
 [[item]]
 id = "0x121a_stone_chair"
@@ -645,7 +591,6 @@ weight = 40.0
 buy_price = 30
 sell_price = 15
 decays = true
-hue = 0
 
 [[item]]
 id = "0x121b_stone_chair"
@@ -658,7 +603,6 @@ weight = 40.0
 buy_price = 30
 sell_price = 15
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1526_throne"
@@ -668,7 +612,6 @@ name = "throne"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1527_throne"
@@ -678,7 +621,6 @@ name = "throne"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dc7_sandstone_bench"
@@ -688,7 +630,6 @@ name = "sandstone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dc8_sandstone_bench"
@@ -698,7 +639,6 @@ name = "sandstone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dc9_sandstone_bench"
@@ -708,7 +648,6 @@ name = "sandstone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dca_sandstone_bench"
@@ -718,7 +657,6 @@ name = "sandstone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dcb_sandstone_bench"
@@ -728,7 +666,6 @@ name = "sandstone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dcc_sandstone_bench"
@@ -738,7 +675,6 @@ name = "sandstone bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dcd_marble_bench"
@@ -748,7 +684,6 @@ name = "marble bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dce_marble_bench"
@@ -758,7 +693,6 @@ name = "marble bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dcf_marble_bench"
@@ -768,7 +702,6 @@ name = "marble bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dd0_marble_bench"
@@ -778,7 +711,6 @@ name = "marble bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dd1_marble_bench"
@@ -788,7 +720,6 @@ name = "marble bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x1dd2_marble_bench"
@@ -798,7 +729,6 @@ name = "marble bench"
 rarity = "common"
 movable = false
 weight = 40.0
-hue = 0
 
 [[item]]
 id = "0x3dff_bench"
@@ -811,7 +741,6 @@ weight = 40.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x3e00_bench"
@@ -824,4 +753,3 @@ weight = 40.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0

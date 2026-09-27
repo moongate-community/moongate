@@ -6,7 +6,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 68
 sell_price = 34
-hue = 0
 
 [[item]]
 id = "0x08ff_tol"
@@ -16,7 +15,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 28
 sell_price = 14
-hue = 0
 
 [[item]]
 id = "0x0901_tol"
@@ -26,4 +24,3 @@ rarity = "common"
 weight = 6.0
 buy_price = 47
 sell_price = 23
-hue = 0

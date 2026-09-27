@@ -51,7 +51,7 @@ public sealed class UoxItemConverterCommandTests : IDisposable
         Assert.Equal((uint)0x0f6b, item.ItemId.Value);
         Assert.Equal("torch", item.Name);
         Assert.True(item.Movable);
-        Assert.Equal(new Hue(0x0010), item.Hue.Resolve());
+        Assert.Equal(new Hue(0x0010), item.Hue!.Value.Resolve());
         Assert.Equal(10, item.MaxWeight);
         Assert.Null(item.BaseId);
     }
@@ -897,6 +897,82 @@ public sealed class UoxItemConverterCommandTests : IDisposable
             CombinedOutput,
             StringComparison.Ordinal
         );
+    }
+
+    [Fact]
+    public void Run_AnIdListOrATypoedId_KeepsTheFirstGraphic()
+    {
+        // UOX3 picks one id of a list at random (items.cpp); real data also has id=0x0x04FC and id=0x15b6].
+        _dirs.WriteSource(
+            "items.dfn",
+            "[base_item]\n{\nid=0x0000\n}\n[cotton]\n{\nget=base_item\nid=0x0c4f 0x0c50\n}\n" +
+            "[0x04fc]\n{\nid=0x0x04FC\n}\n[0x15b6]\n{\nid=0x15b6]\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        Assert.Equal((0x0C4Fu, "base_item"), (items["cotton"].ItemId.Value, items["cotton"].BaseId));
+        Assert.Equal(0x04FCu, items["0x04fc"].ItemId.Value);
+        Assert.Equal(0x15B6u, items["0x15b6"].ItemId.Value);
+    }
+
+    [Fact]
+    public void Run_ATagWithNoValue_IsIgnored_AsUox3Does()
+    {
+        _dirs.WriteSource("items.dfn", "[base_item]\n{\nid=0x0000\ndecay=\npileable=\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var item = ReadItems()["base_item"];
+        Assert.Null(item.Decays);
+        Assert.Null(item.Stackable);
+    }
+
+    [Fact]
+    public void Run_ColourIsReadLikeColor_AndAnItemWithNoColourWritesNoHue()
+    {
+        _dirs.WriteSource(
+            "items.dfn",
+            "[0x0001]\n{\nid=0x0001\ncolour=0x44E\n}\n[0x0002]\n{\nget=0x0001\nid=0x0002\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        Assert.Equal("0x044E", items["0x0001"].Hue.ToString());
+        // No colour of its own: the server's loader takes the parent's.
+        Assert.Null(items["0x0002"].Hue);
+    }
+
+    [Fact]
+    public void Run_NumbersMayBeHex_AsUox3Reads()
+    {
+        _dirs.WriteSource("items.dfn", "[ring]\n{\nid=0x108a\nlayer=0x08\nweight=0x64\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var ring = ReadItems()["ring"];
+        Assert.Equal(((LayerType?)LayerType.Ring, (decimal?)1.0m), (ring.Layer, ring.Weight));
+    }
+
+    [Fact]
+    public void Run_AHeaderDefinedTwice_KeepsTheLastDefinition_AsUox3Does()
+    {
+        _dirs.WriteSource(
+            "swords.dfn",
+            "[0x2d29_lbr]\n{\nid=0x2d29\nname=machete\n}\n[0x2d29_lbr]\n{\nid=0x2d29\nname=radiant scimitar\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Equal("radiant scimitar", Assert.Single(ReadItems("swords.toml").Values).Name);
+    }
+
+    private Dictionary<string, Moongate.Server.Ultima.Data.Templates.Items.ItemTemplate> ReadItems(string file = "items.toml")
+    {
+        return TomlUtils.DeserializeFromFile<ConvertedItemFile>(Path.Combine(_dirs.DestinationDirectory, file))!
+                        .Item.ToDictionary(item => item.Id);
     }
 
     private int Run(bool includeLootDestination = true)

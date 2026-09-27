@@ -5,7 +5,6 @@ item_id = 0
 rarity = "common"
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x_c000_barbed_hide"
@@ -14,7 +13,6 @@ item_id = 4216
 name = "barbed hide"
 rarity = "common"
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x_c001_horned_hide"
@@ -23,7 +21,6 @@ item_id = 4216
 name = "horned hide"
 rarity = "common"
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x_c002_spined_hide"
@@ -32,7 +29,6 @@ item_id = 4216
 name = "spined hide"
 rarity = "common"
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x_c003_black_scale"

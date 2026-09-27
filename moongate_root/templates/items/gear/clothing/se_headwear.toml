@@ -7,14 +7,12 @@ rarity = "common"
 weight = 3.0
 buy_price = 14
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x2306"
 base_id = "0x2305_flower_garland"
 item_id = 8966
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x278f_cloth_ninja_hood"
@@ -25,14 +23,12 @@ rarity = "common"
 weight = 3.0
 buy_price = 14
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x27da"
 base_id = "0x278f_cloth_ninja_hood"
 item_id = 10202
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2798_kasa"
@@ -43,11 +39,9 @@ rarity = "common"
 weight = 3.0
 buy_price = 14
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x27e3"
 base_id = "0x2797_ninja_tall_tabi"
 item_id = 10211
 rarity = "common"
-hue = 0

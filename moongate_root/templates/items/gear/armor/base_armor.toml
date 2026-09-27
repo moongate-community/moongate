@@ -4,8 +4,8 @@ base_id = "base_item"
 item_id = 5099
 name = "ringmail gloves"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_ring_tunic"
@@ -13,8 +13,8 @@ base_id = "base_item"
 item_id = 5100
 name = "ringmail tunic"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_ring_sleeves"
@@ -22,8 +22,8 @@ base_id = "base_item"
 item_id = 5102
 name = "ringmail sleeves"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_ring_leggings"
@@ -31,8 +31,8 @@ base_id = "base_item"
 item_id = 5104
 name = "ringmail leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_chain_coif"
@@ -40,8 +40,8 @@ base_id = "base_item"
 item_id = 5051
 name = "chainmail coif"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_chain_leggings"
@@ -49,8 +49,8 @@ base_id = "base_item"
 item_id = 5054
 name = "chainmail leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_chain_tunic"
@@ -58,8 +58,8 @@ base_id = "base_item"
 item_id = 5055
 name = "chainmail tunic"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_fem_plate"
@@ -67,8 +67,8 @@ base_id = "base_item"
 item_id = 7172
 name = "plate armor"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_plate_arms"
@@ -76,8 +76,8 @@ base_id = "base_item"
 item_id = 5136
 name = "platemail arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_plate_leggings"
@@ -85,8 +85,8 @@ base_id = "base_item"
 item_id = 5137
 name = "platemail legs"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_plate_gorget"
@@ -94,8 +94,8 @@ base_id = "base_item"
 item_id = 5139
 name = "platemail gorget"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_plate_gloves"
@@ -103,8 +103,8 @@ base_id = "base_item"
 item_id = 5140
 name = "platemail gloves"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_plate_chest"
@@ -112,8 +112,8 @@ base_id = "base_item"
 item_id = 5141
 name = "platemail"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_sleeves"
@@ -121,8 +121,8 @@ base_id = "base_item"
 item_id = 5061
 name = "leather sleeves"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_gloves"
@@ -130,8 +130,8 @@ base_id = "base_item"
 item_id = 5062
 name = "leather gloves"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_gorget"
@@ -139,8 +139,8 @@ base_id = "base_item"
 item_id = 5063
 name = "leather gorget"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_cap"
@@ -148,8 +148,8 @@ base_id = "base_item"
 item_id = 7609
 name = "leather cap"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_leggings"
@@ -157,8 +157,8 @@ base_id = "base_item"
 item_id = 5067
 name = "leather leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_tunic"
@@ -166,8 +166,8 @@ base_id = "base_item"
 item_id = 5068
 name = "leather tunic"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_shorts"
@@ -175,8 +175,8 @@ base_id = "base_item"
 item_id = 7168
 name = "leather shorts"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_armor"
@@ -184,8 +184,8 @@ base_id = "base_item"
 item_id = 7174
 name = "leather armor"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_skirt"
@@ -193,8 +193,8 @@ base_id = "base_item"
 item_id = 7176
 name = "leather skirt"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_bustier"
@@ -202,8 +202,8 @@ base_id = "base_item"
 item_id = 7178
 name = "leather bustier"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_sleeves"
@@ -211,8 +211,8 @@ base_id = "base_item"
 item_id = 5076
 name = "studded sleeves"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_gloves"
@@ -220,8 +220,8 @@ base_id = "base_item"
 item_id = 5077
 name = "studded gloves"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_gorget"
@@ -229,8 +229,8 @@ base_id = "base_item"
 item_id = 5078
 name = "studded gorget"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_leggings"
@@ -238,8 +238,8 @@ base_id = "base_item"
 item_id = 5082
 name = "studded leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_tunic"
@@ -247,8 +247,8 @@ base_id = "base_item"
 item_id = 5083
 name = "studded tunic"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_armor"
@@ -256,8 +256,8 @@ base_id = "base_item"
 item_id = 7170
 name = "studded armor"
 rarity = "common"
+layer = "shirt"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_bustier"
@@ -265,8 +265,8 @@ base_id = "base_item"
 item_id = 7180
 name = "studded bustier"
 rarity = "common"
+layer = "shirt"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_bone_arms"
@@ -274,8 +274,8 @@ base_id = "base_item"
 item_id = 5198
 name = "bone arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_bone_armor"
@@ -283,8 +283,8 @@ base_id = "base_item"
 item_id = 5199
 name = "bone armor"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_bone_gauntlets"
@@ -292,8 +292,8 @@ base_id = "base_item"
 item_id = 5200
 name = "bone gauntlets"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_bone_helm"
@@ -301,8 +301,8 @@ base_id = "base_item"
 item_id = 5201
 name = "bone helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_bone_legs"
@@ -310,8 +310,8 @@ base_id = "base_item"
 item_id = 5202
 name = "bone legs"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_orc_helm"
@@ -322,7 +322,6 @@ rarity = "common"
 movable = true
 layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_close_helm"
@@ -330,8 +329,8 @@ base_id = "base_item"
 item_id = 5128
 name = "close helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_helmet"
@@ -339,8 +338,8 @@ base_id = "base_item"
 item_id = 5130
 name = "helmet"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_bascinet"
@@ -348,8 +347,8 @@ base_id = "base_item"
 item_id = 5132
 name = "bascinet"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_norse_helm"
@@ -357,8 +356,8 @@ base_id = "base_item"
 item_id = 5134
 name = "norse helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_plate_helm"
@@ -366,8 +365,8 @@ base_id = "base_item"
 item_id = 5138
 name = "plate helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_heavy_platemail_jingasa"
@@ -375,8 +374,8 @@ base_id = "base_item"
 item_id = 10103
 name = "heavy platemail jingasa"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_decorative_platemail_kabuto"
@@ -384,8 +383,8 @@ base_id = "base_item"
 item_id = 10104
 name = "decorative platemail kabuto"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_platemail_do"
@@ -393,8 +392,8 @@ base_id = "base_item"
 item_id = 10109
 name = "platemail do"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_platemail_hiro_sode"
@@ -402,8 +401,8 @@ base_id = "base_item"
 item_id = 10112
 name = "platemail hiro sode"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_light_platemail_jingasa"
@@ -411,8 +410,8 @@ base_id = "base_item"
 item_id = 10113
 name = "light platemail jingasa"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_small_platemail_jingasa"
@@ -420,8 +419,8 @@ base_id = "base_item"
 item_id = 10116
 name = "small platemail jingasa"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_platemail_battle_kabuto"
@@ -429,8 +428,8 @@ base_id = "base_item"
 item_id = 10117
 name = "platemail battle kabuto"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_platemail_suneate"
@@ -438,8 +437,8 @@ base_id = "base_item"
 item_id = 10120
 name = "platemail suneate"
 rarity = "common"
+layer = "inner_legs"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_platemail_kabuto"
@@ -447,8 +446,8 @@ base_id = "base_item"
 item_id = 10121
 name = "platemail kabuto"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_kabuto"
@@ -456,8 +455,8 @@ base_id = "base_item"
 item_id = 9068
 name = "kabuto"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_platemail_haidate"
@@ -465,8 +464,8 @@ base_id = "base_item"
 item_id = 10125
 name = "platemail haidate"
 rarity = "common"
+layer = "outer_legs"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_chainmail_hatsuburi"
@@ -474,8 +473,8 @@ base_id = "base_item"
 item_id = 10100
 name = "chainmail hatsuburi"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_platemail_hatsuburi"
@@ -483,8 +482,8 @@ base_id = "base_item"
 item_id = 10101
 name = "platemail hatsuburi"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_platemail_mempo"
@@ -492,8 +491,8 @@ base_id = "base_item"
 item_id = 10105
 name = "platemail mempo"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_ninja_hood"
@@ -501,8 +500,8 @@ base_id = "base_item"
 item_id = 10126
 name = "leather ninja hood"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_ninja_belt"
@@ -510,8 +509,8 @@ base_id = "base_item"
 item_id = 10128
 name = "leather ninja belt"
 rarity = "common"
+layer = "waist"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_ninja_pants"
@@ -519,8 +518,8 @@ base_id = "base_item"
 item_id = 10129
 name = "leather ninja pants"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_ninja_mitts"
@@ -528,8 +527,8 @@ base_id = "base_item"
 item_id = 10130
 name = "leather ninja mitts"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_ninja_jacket"
@@ -537,8 +536,8 @@ base_id = "base_item"
 item_id = 10131
 name = "leather ninja jacket"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_jingasa"
@@ -546,8 +545,8 @@ base_id = "base_item"
 item_id = 10102
 name = "leather jingasa"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_mempo"
@@ -555,8 +554,8 @@ base_id = "base_item"
 item_id = 10106
 name = "leather mempo"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_do"
@@ -564,8 +563,8 @@ base_id = "base_item"
 item_id = 10107
 name = "leather do"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_hiro_sode"
@@ -573,8 +572,8 @@ base_id = "base_item"
 item_id = 10110
 name = "leather hiro sode"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_suneate"
@@ -582,8 +581,8 @@ base_id = "base_item"
 item_id = 10118
 name = "leather suneate"
 rarity = "common"
+layer = "inner_legs"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leather_haidate"
@@ -591,8 +590,8 @@ base_id = "base_item"
 item_id = 10122
 name = "leather haidate"
 rarity = "common"
+layer = "outer_legs"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_do"
@@ -600,8 +599,8 @@ base_id = "base_item"
 item_id = 10108
 name = "studded do"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_hiro_sode"
@@ -609,8 +608,8 @@ base_id = "base_item"
 item_id = 10111
 name = "studded hiro sode"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_suneate"
@@ -618,8 +617,8 @@ base_id = "base_item"
 item_id = 10119
 name = "studded suneate"
 rarity = "common"
+layer = "inner_legs"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_haidate"
@@ -627,8 +626,8 @@ base_id = "base_item"
 item_id = 10123
 name = "studded haidate"
 rarity = "common"
+layer = "outer_legs"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_studded_mempo"
@@ -636,8 +635,8 @@ base_id = "base_item"
 item_id = 10141
 name = "studded mempo"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leaf_arms"
@@ -645,8 +644,8 @@ base_id = "base_item"
 item_id = 12232
 name = "leaf arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leaf_tunic"
@@ -654,8 +653,8 @@ base_id = "base_item"
 item_id = 12229
 name = "leaf tunic"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leaf_armor"
@@ -663,8 +662,8 @@ base_id = "base_item"
 item_id = 12235
 name = "leaf armor"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leaf_gloves"
@@ -672,8 +671,8 @@ base_id = "base_item"
 item_id = 12230
 name = "leaf gloves"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leaf_gorget"
@@ -681,8 +680,8 @@ base_id = "base_item"
 item_id = 12231
 name = "leaf gorget"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leaf_leggings"
@@ -690,8 +689,8 @@ base_id = "base_item"
 item_id = 12233
 name = "leaf leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_leaf_tonlet"
@@ -699,8 +698,8 @@ base_id = "base_item"
 item_id = 12234
 name = "leaf tonlet"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_hide_pauldrons"
@@ -708,8 +707,8 @@ base_id = "base_item"
 item_id = 11127
 name = "hide pauldrons"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_hide_tunic"
@@ -717,8 +716,8 @@ base_id = "base_item"
 item_id = 11124
 name = "hide tunic"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_hide_armor"
@@ -726,8 +725,8 @@ base_id = "base_item"
 item_id = 11129
 name = "hide armor"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_hide_gloves"
@@ -735,8 +734,8 @@ base_id = "base_item"
 item_id = 11125
 name = "hide gloves"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_hide_pants"
@@ -744,8 +743,8 @@ base_id = "base_item"
 item_id = 11128
 name = "hide pants"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_hide_gorget"
@@ -753,8 +752,8 @@ base_id = "base_item"
 item_id = 11126
 name = "hide gorget"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_sleeves"
@@ -762,8 +761,8 @@ base_id = "base_item"
 item_id = 9815
 name = "dragon sleeves"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_breastplate"
@@ -771,8 +770,8 @@ base_id = "base_item"
 item_id = 9793
 name = "dragon breastplate"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_gloves"
@@ -780,8 +779,8 @@ base_id = "base_item"
 item_id = 9795
 name = "dragon gloves"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_helm"
@@ -789,8 +788,8 @@ base_id = "base_item"
 item_id = 9797
 name = "dragon helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_leggings"
@@ -798,8 +797,8 @@ base_id = "base_item"
 item_id = 9799
 name = "dragon leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_woodland_arms"
@@ -807,8 +806,8 @@ base_id = "base_item"
 item_id = 11116
 name = "woodland arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_woodland_chest"
@@ -816,8 +815,8 @@ base_id = "base_item"
 item_id = 11111
 name = "woodland chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_woodland_armor"
@@ -825,8 +824,8 @@ base_id = "base_item"
 item_id = 11117
 name = "woodland armor"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_woodland_gauntlets"
@@ -834,8 +833,8 @@ base_id = "base_item"
 item_id = 11114
 name = "woodland gauntlets"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_woodland_leggings"
@@ -843,8 +842,8 @@ base_id = "base_item"
 item_id = 11115
 name = "woodland leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_woodland_gorget"
@@ -852,8 +851,8 @@ base_id = "base_item"
 item_id = 11113
 name = "woodland gorget"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_circlet"
@@ -861,8 +860,8 @@ base_id = "base_item"
 item_id = 11118
 name = "circlet"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_royal_circlet"
@@ -870,8 +869,8 @@ base_id = "base_item"
 item_id = 11119
 name = "royal circlet"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gemmed_circlet"
@@ -879,8 +878,8 @@ base_id = "base_item"
 item_id = 11120
 name = "gemmed circlet"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_raven_helm"
@@ -888,8 +887,8 @@ base_id = "base_item"
 item_id = 11121
 name = "raven helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_vulture_helm"
@@ -897,8 +896,8 @@ base_id = "base_item"
 item_id = 11122
 name = "vulture helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_winged_helm"
@@ -906,8 +905,8 @@ base_id = "base_item"
 item_id = 11123
 name = "winged helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_elven_glasses"
@@ -915,8 +914,8 @@ base_id = "base_item"
 item_id = 12216
 name = "elven glasses"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_cloth_arms"
@@ -924,8 +923,8 @@ base_id = "base_item"
 item_id = 1028
 name = "gargish cloth arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_cloth_arms"
@@ -933,8 +932,8 @@ base_id = "base_item"
 item_id = 1027
 name = "gargish cloth arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_cloth_chest"
@@ -942,8 +941,8 @@ base_id = "base_item"
 item_id = 1030
 name = "gargish cloth chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_cloth_chest"
@@ -951,8 +950,8 @@ base_id = "base_item"
 item_id = 1029
 name = "gargish cloth chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_cloth_leggings"
@@ -960,8 +959,8 @@ base_id = "base_item"
 item_id = 1034
 name = "gargish cloth leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_cloth_leggings"
@@ -969,8 +968,8 @@ base_id = "base_item"
 item_id = 1033
 name = "gargish cloth leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_cloth_kilt"
@@ -978,8 +977,8 @@ base_id = "base_item"
 item_id = 1032
 name = "gargish cloth kilt"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_cloth_kilt"
@@ -987,8 +986,8 @@ base_id = "base_item"
 item_id = 1031
 name = "gargish cloth kilt"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_cloth_wing_armor"
@@ -996,17 +995,17 @@ base_id = "base_item"
 item_id = 17828
 name = "gargish cloth wing armor"
 rarity = "common"
+layer = "cloak"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_leather_arms"
 base_id = "base_item"
-item_id = 770
+item_id = 769
 name = "gargish leather arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_leather_chest"
@@ -1014,8 +1013,8 @@ base_id = "base_item"
 item_id = 772
 name = "gargish leather chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_leather_chest"
@@ -1023,8 +1022,8 @@ base_id = "base_item"
 item_id = 771
 name = "gargish leather chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_leather_leggings"
@@ -1032,8 +1031,8 @@ base_id = "base_item"
 item_id = 774
 name = "gargish leather leggings"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_leather_leggings"
@@ -1041,8 +1040,8 @@ base_id = "base_item"
 item_id = 773
 name = "gargish leather leggings"
 rarity = "common"
+layer = "pants"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_leather_kilt"
@@ -1050,8 +1049,8 @@ base_id = "base_item"
 item_id = 785
 name = "gargish leather kilt"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_leather_kilt"
@@ -1059,8 +1058,8 @@ base_id = "base_item"
 item_id = 784
 name = "gargish leather kilt"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_leather_wing_armor"
@@ -1068,8 +1067,8 @@ base_id = "base_item"
 item_id = 17790
 name = "gargish leather wing armor"
 rarity = "common"
+layer = "cloak"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_plate_arms"
@@ -1077,8 +1076,8 @@ base_id = "base_item"
 item_id = 776
 name = "gargish plate arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_plate_arms"
@@ -1086,8 +1085,8 @@ base_id = "base_item"
 item_id = 775
 name = "gargish plate arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_plate_chest"
@@ -1095,8 +1094,8 @@ base_id = "base_item"
 item_id = 778
 name = "gargish plate chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_plate_chest"
@@ -1104,8 +1103,8 @@ base_id = "base_item"
 item_id = 777
 name = "gargish plate chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_plate_leggings"
@@ -1113,8 +1112,8 @@ base_id = "base_item"
 item_id = 782
 name = "gargish plate leggings"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_plate_leggings"
@@ -1122,8 +1121,8 @@ base_id = "base_item"
 item_id = 781
 name = "gargish plate leggings"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_plate_kilt"
@@ -1131,8 +1130,8 @@ base_id = "base_item"
 item_id = 780
 name = "gargish plate kilt"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_plate_kilt"
@@ -1140,8 +1139,8 @@ base_id = "base_item"
 item_id = 779
 name = "gargish plate kilt"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_stone_arms"
@@ -1149,8 +1148,8 @@ base_id = "base_item"
 item_id = 644
 name = "gargish stone arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_stone_arms"
@@ -1158,8 +1157,8 @@ base_id = "base_item"
 item_id = 643
 name = "gargish stone arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_stone_chest"
@@ -1167,8 +1166,8 @@ base_id = "base_item"
 item_id = 646
 name = "gargish stone chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_stone_chest"
@@ -1176,8 +1175,8 @@ base_id = "base_item"
 item_id = 645
 name = "gargish stone chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_stone_leggings"
@@ -1185,8 +1184,8 @@ base_id = "base_item"
 item_id = 650
 name = "gargish stone leggings"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_stone_leggings"
@@ -1194,8 +1193,8 @@ base_id = "base_item"
 item_id = 649
 name = "gargish stone leggings"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_stone_kilt"
@@ -1203,8 +1202,8 @@ base_id = "base_item"
 item_id = 648
 name = "gargish stone kilt"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_female_gargish_stone_kilt"
@@ -1212,8 +1211,8 @@ base_id = "base_item"
 item_id = 647
 name = "gargish stone kilt"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_turtle_hide_arms"
@@ -1221,8 +1220,8 @@ base_id = "base_item"
 item_id = 30766
 name = "dragon turtle hide arms"
 rarity = "common"
+layer = "arms"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_turtle_hide_chest"
@@ -1230,8 +1229,8 @@ base_id = "base_item"
 item_id = 30762
 name = "dragon turtle hide chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_turtle_hide_bustier"
@@ -1239,8 +1238,8 @@ base_id = "base_item"
 item_id = 30763
 name = "dragon turtle hide bustier"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_turtle_hide_helm"
@@ -1248,8 +1247,8 @@ base_id = "base_item"
 item_id = 30765
 name = "dragon turtle hide helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_dragon_turtle_hide_leggings"
@@ -1257,8 +1256,8 @@ base_id = "base_item"
 item_id = 30764
 name = "dragon turtle hide leggings"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_tiger_pelt_chest"
@@ -1266,8 +1265,8 @@ base_id = "base_item"
 item_id = 30754
 name = "tiger pelt chest"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_tiger_pelt_bustier"
@@ -1275,8 +1274,8 @@ base_id = "base_item"
 item_id = 30755
 name = "tiger pelt bustier"
 rarity = "common"
+layer = "inner_torso"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_tiger_pelt_helm"
@@ -1284,8 +1283,8 @@ base_id = "base_item"
 item_id = 30760
 name = "tiger pelt helm"
 rarity = "common"
+layer = "helm"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_tiger_pelt_leggings"
@@ -1293,8 +1292,8 @@ base_id = "base_item"
 item_id = 30756
 name = "tiger pelt leggings"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_tiger_pelt_shorts"
@@ -1302,8 +1301,8 @@ base_id = "base_item"
 item_id = 30757
 name = "tiger pelt shorts"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_tiger_pelt_long_skirt"
@@ -1311,8 +1310,8 @@ base_id = "base_item"
 item_id = 30758
 name = "tiger pelt long skirt"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_tiger_pelt_skirt"
@@ -1320,8 +1319,8 @@ base_id = "base_item"
 item_id = 30759
 name = "tiger pelt skirt"
 rarity = "common"
+layer = "gloves"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_tiger_pelt_collar"
@@ -1329,8 +1328,8 @@ base_id = "base_item"
 item_id = 30761
 name = "tiger pelt collar"
 rarity = "common"
+layer = "neck"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_shield"
@@ -1338,8 +1337,8 @@ base_id = "base_item"
 item_id = 0
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_bronze_shield"
@@ -1348,8 +1347,8 @@ item_id = 7026
 name = "bronze shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_buckler"
@@ -1358,8 +1357,8 @@ item_id = 7027
 name = "buckler"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_metal_kite_shield"
@@ -1368,8 +1367,8 @@ item_id = 7028
 name = "metal kite shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_heater_shield"
@@ -1378,8 +1377,8 @@ item_id = 7030
 name = "heater shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_metal_shield"
@@ -1388,8 +1387,8 @@ item_id = 7035
 name = "metal shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_wooden_kite_shield"
@@ -1398,8 +1397,8 @@ item_id = 7032
 name = "kite shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_wooden_shield"
@@ -1408,8 +1407,8 @@ item_id = 7034
 name = "wooden shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_order_shield"
@@ -1418,8 +1417,8 @@ item_id = 7108
 name = "order shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_chaos_shield"
@@ -1428,8 +1427,8 @@ item_id = 7107
 name = "chaos shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_chaos_shield"
@@ -1438,8 +1437,8 @@ item_id = 16936
 name = "gargish chaos shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_kite_shield"
@@ -1448,8 +1447,8 @@ item_id = 16897
 name = "gargish kite shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_order_shield"
@@ -1458,8 +1457,8 @@ item_id = 16938
 name = "gargish order shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_large_plate_shield"
@@ -1468,8 +1467,8 @@ item_id = 16900
 name = "large plate shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_large_stone_shield"
@@ -1478,8 +1477,8 @@ item_id = 16901
 name = "large stone shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_medium_plate_shield"
@@ -1488,8 +1487,8 @@ item_id = 16899
 name = "medium plate shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_small_plate_shield"
@@ -1498,8 +1497,8 @@ item_id = 16898
 name = "small plate shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0
 
 [[item]]
 id = "base_gargish_wooden_shield"
@@ -1508,5 +1507,5 @@ item_id = 16896
 name = "gargish wooden shield"
 rarity = "common"
 movable = true
+layer = "two_handed"
 decays = true
-hue = 0

@@ -6,7 +6,6 @@ name = "Elven Bed (East) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x304c_elven_bed_(east)_part_2"
@@ -16,7 +15,6 @@ name = "Elven Bed (East) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3050_elven_bed_(south)_part_1"
@@ -26,7 +24,6 @@ name = "Elven Bed (South) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3051_elven_bed_(south)_part_2"
@@ -36,7 +33,6 @@ name = "Elven Bed (South) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3077_alchemist_table_(east)_part_1"
@@ -46,7 +42,6 @@ name = "Alchemist Table (East) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3078_alchemist_table_(east)_part_2"
@@ -56,7 +51,6 @@ name = "Alchemist Table (East) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3079_alchemist_table_(south)_part_1"
@@ -66,7 +60,6 @@ name = "Alchemist Table (South) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x307a_alchemist_table_(south)_part_2"
@@ -76,7 +69,6 @@ name = "Alchemist Table (South) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3089_elven_loveseat_(east)_part_1"
@@ -86,7 +78,6 @@ name = "Elven Loveseat (East) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3088_elven_loveseat_(east)_part_2"
@@ -96,7 +87,6 @@ name = "Elven Loveseat (East) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x308a_elven_loveseat_(south)_part_1"
@@ -106,7 +96,6 @@ name = "Elven Loveseat (South) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x308b_elven_loveseat_(south)_part_2"
@@ -116,7 +105,6 @@ name = "Elven Loveseat (South) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x30df_elven_wash_basin_(east)_part_1"
@@ -126,7 +114,6 @@ name = "Elven Wash Basin (East) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x30e0_elven_wash_basin_(east)_part_2"
@@ -136,7 +123,6 @@ name = "Elven Wash Basin (East) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x30e1_elven_wash_basin_(south)_part_1"
@@ -146,7 +132,6 @@ name = "Elven Wash Basin (South) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x30e2_elven_wash_basin_(south)_part_2"
@@ -156,7 +141,6 @@ name = "Elven Wash Basin (South) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c8c_fancy_couch_(east)_part_1"
@@ -166,7 +150,6 @@ name = "Fancy Couch (East) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c8a_fancy_couch_(east)_part_2"
@@ -176,7 +159,6 @@ name = "Fancy Couch (East) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c8b_fancy_couch_(east)_part_3"
@@ -186,7 +168,6 @@ name = "Fancy Couch (East) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x9c62_fancy_couch_(north)_part_1"
@@ -196,7 +177,6 @@ name = "Fancy Couch (North) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x9c61_fancy_couch_(north)_part_2"
@@ -206,7 +186,6 @@ name = "Fancy Couch (North) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x9c60_fancy_couch_(north)_part_3"
@@ -216,7 +195,6 @@ name = "Fancy Couch (North) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c8d_fancy_couch_(south)_part_1"
@@ -226,7 +204,6 @@ name = "Fancy Couch (South) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c8e_fancy_couch_(south)_part_2"
@@ -236,7 +213,6 @@ name = "Fancy Couch (South) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c8f_fancy_couch_(south)_part_3"
@@ -246,7 +222,6 @@ name = "Fancy Couch (South) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x9c5f_fancy_couch_(west)_part_1"
@@ -256,7 +231,6 @@ name = "Fancy Couch (West) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x9c5e_fancy_couch_(west)_part_2"
@@ -266,7 +240,6 @@ name = "Fancy Couch (West) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x9c5d_fancy_couch_(west)_part_3"
@@ -276,7 +249,6 @@ name = "Fancy Couch (West) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3094_hardwood_table_(east)_part_1"
@@ -286,7 +258,6 @@ name = "Hardwood Table (East) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3093_hardwood_table_(east)_part_2"
@@ -296,7 +267,6 @@ name = "Hardwood Table (East) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3092_hardwood_table_(east)_part_3"
@@ -306,7 +276,6 @@ name = "Hardwood Table (East) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3095_hardwood_table_(south)_part_1"
@@ -316,7 +285,6 @@ name = "Hardwood Table (South) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3096_hardwood_table_(south)_part_2"
@@ -326,7 +294,6 @@ name = "Hardwood Table (South) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3097_hardwood_table_(south)_part_3"
@@ -336,7 +303,6 @@ name = "Hardwood Table (South) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x308f_ornate_table_(east)_part_1"
@@ -346,7 +312,6 @@ name = "Ornate Table (East) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3090_ornate_table_(east)_part_2"
@@ -356,7 +321,6 @@ name = "Ornate Table (East) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3091_ornate_table_(east)_part_3"
@@ -366,7 +330,6 @@ name = "Ornate Table (East) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x308e_ornate_table_(south)_part_1"
@@ -376,7 +339,6 @@ name = "Ornate Table (South) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x308d_ornate_table_(south)_part_2"
@@ -386,7 +348,6 @@ name = "Ornate Table (South) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x308c_ornate_table_(south)_part_3"
@@ -396,7 +357,6 @@ name = "Ornate Table (South) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c84_plush_loveseat_(east)_part_1"
@@ -406,7 +366,6 @@ name = "Plush Loveseat (East) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c85_plush_loveseat_(east)_part_2"
@@ -416,7 +375,6 @@ name = "Plush Loveseat (East) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c83_plush_loveseat_(south)_part_1"
@@ -426,7 +384,6 @@ name = "Plush Loveseat (South) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x4c82_plush_loveseat_(south)_part_2"
@@ -436,7 +393,6 @@ name = "Plush Loveseat (South) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3054_tall_elven_bed_(east)_part_1"
@@ -446,7 +402,6 @@ name = "Tall Elven Bed (East) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3053_tall_elven_bed_(east)_part_2"
@@ -456,7 +411,6 @@ name = "Tall Elven Bed (East) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3055_tall_elven_bed_(east)_part_3"
@@ -466,7 +420,6 @@ name = "Tall Elven Bed (East) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3052_tall_elven_bed_(east)_part_4"
@@ -476,7 +429,6 @@ name = "Tall Elven Bed (East) Part 4"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3058_tall_elven_bed_(south)_part_1"
@@ -486,7 +438,6 @@ name = "Tall Elven Bed (South) Part 1"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3057_tall_elven_bed_(south)_part_2"
@@ -496,7 +447,6 @@ name = "Tall Elven Bed (South) Part 2"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3059_tall_elven_bed_(south)_part_3"
@@ -506,7 +456,6 @@ name = "Tall Elven Bed (South) Part 3"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x3056_tall_elven_bed_(south)_part_4"
@@ -516,4 +465,3 @@ name = "Tall Elven Bed (South) Part 4"
 rarity = "common"
 movable = true
 weight = 10.0
-hue = 0

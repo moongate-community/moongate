@@ -5,7 +5,6 @@ item_id = 0
 rarity = "common"
 movable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e9c_drum"
@@ -18,7 +17,6 @@ weight = 3.0
 buy_price = 25
 sell_price = 12
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0eb1_standing_harp"
@@ -31,7 +29,6 @@ weight = 20.0
 buy_price = 50
 sell_price = 25
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0eb2_lap_harp"
@@ -44,7 +41,6 @@ weight = 10.0
 buy_price = 25
 sell_price = 12
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0eb3_lute"
@@ -57,7 +53,6 @@ weight = 5.0
 buy_price = 24
 sell_price = 12
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0eb4_lute"
@@ -70,7 +65,6 @@ weight = 5.0
 buy_price = 24
 sell_price = 12
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e9d_tambourine"
@@ -83,7 +77,6 @@ weight = 1.0
 buy_price = 24
 sell_price = 12
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e9e_tambourine"
@@ -96,7 +89,6 @@ weight = 1.0
 buy_price = 24
 sell_price = 12
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2805_bamboo_flute"
@@ -109,7 +101,6 @@ weight = 1.0
 buy_price = 24
 sell_price = 12
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2807_bamboo_flute"
@@ -122,4 +113,3 @@ weight = 1.0
 buy_price = 24
 sell_price = 12
 decays = true
-hue = 0

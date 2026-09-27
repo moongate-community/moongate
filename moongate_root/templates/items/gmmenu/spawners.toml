@@ -7,7 +7,6 @@ movable = false
 weight = 500.0
 decays = false
 visibility = "game_master"
-hue = 0
 
 [[item]]
 id = "orcspawn"
@@ -16,7 +15,6 @@ item_id = 7956
 name = "Orc Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "orclordspawn"
@@ -25,7 +23,6 @@ item_id = 7956
 name = "Orc Lord Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "orccaptspawn"
@@ -34,7 +31,6 @@ item_id = 7956
 name = "Orc Capt Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "orcmagespawn"
@@ -43,7 +39,6 @@ item_id = 7956
 name = "Orc Mage Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "ettinspawn"
@@ -52,7 +47,6 @@ item_id = 7956
 name = "Ettin Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "goatspawn"
@@ -61,7 +55,6 @@ item_id = 7956
 name = "Goat Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "harpyspawn"
@@ -70,7 +63,6 @@ item_id = 7956
 name = "Harpy Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "randorcspawn"
@@ -79,7 +71,6 @@ item_id = 7956
 name = "Random Orc Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "randlizardspawn"
@@ -88,7 +79,6 @@ item_id = 7956
 name = "Random Lizard Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "randratmanspawn"
@@ -97,7 +87,6 @@ item_id = 7956
 name = "Random Ratman Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "randdragon"
@@ -106,7 +95,6 @@ item_id = 7956
 name = "Random Dragon Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "randbarn"
@@ -115,7 +103,6 @@ item_id = 7956
 name = "Random Barn Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "airelemspawn"
@@ -124,7 +111,6 @@ item_id = 7956
 name = "Air Elemental Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "earthelemspawn"
@@ -133,7 +119,6 @@ item_id = 7956
 name = "Earth Elemental Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "fireelemspawn"
@@ -142,7 +127,6 @@ item_id = 7956
 name = "Fire Elemental Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "waterelemspawn"
@@ -151,7 +135,6 @@ item_id = 7956
 name = "Water Elemental Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "poiselemspawn"
@@ -160,7 +143,6 @@ item_id = 7956
 name = "Poison Elemental Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "gserpentspawn"
@@ -169,7 +151,6 @@ item_id = 7956
 name = "Giant Serpent Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "gspiderspawn"
@@ -178,7 +159,6 @@ item_id = 7956
 name = "Giant Spider Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "gscorppawn"
@@ -187,7 +167,6 @@ item_id = 7956
 name = "Giant Scorpion Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "lichspawn"
@@ -196,7 +175,6 @@ item_id = 7956
 name = "Lich Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "lichlordspawn"
@@ -205,7 +183,6 @@ item_id = 7956
 name = "Lich Lord Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "bonemagespawn"
@@ -214,7 +191,6 @@ item_id = 7956
 name = "Bone Mage Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "boneknightspawn"
@@ -223,7 +199,6 @@ item_id = 7956
 name = "Bone Knight Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "boneaxespawn"
@@ -232,7 +207,6 @@ item_id = 7956
 name = "Bone Axeman Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "arcticspawn"
@@ -241,7 +215,6 @@ item_id = 7956
 name = "Arctic Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "cavespawn"
@@ -250,7 +223,6 @@ item_id = 7956
 name = "Cave Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "desertspawn"
@@ -259,7 +231,6 @@ item_id = 7956
 name = "Desert Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "dungeonspawn"
@@ -268,7 +239,6 @@ item_id = 7956
 name = "Dungeon Spawner"
 rarity = "common"
 amount = 3
-hue = 0
 
 [[item]]
 id = "eeriespawn"
@@ -277,7 +247,6 @@ item_id = 7956
 name = "Eerie Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "farmspawn"
@@ -286,7 +255,6 @@ item_id = 7956
 name = "Farm Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "forestspawn"
@@ -295,7 +263,6 @@ item_id = 7956
 name = "Forest Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "junglespawn"
@@ -304,7 +271,6 @@ item_id = 7956
 name = "Jungle Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "mountainspawn"
@@ -313,7 +279,6 @@ item_id = 7956
 name = "Mountain Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "oceanspawn"
@@ -322,7 +287,6 @@ item_id = 7956
 name = "Ocean Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "swampspawn"
@@ -331,7 +295,6 @@ item_id = 7956
 name = "Swamp Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "townspawn"
@@ -340,7 +303,6 @@ item_id = 7956
 name = "Town Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "volcanicspawn"
@@ -349,7 +311,6 @@ item_id = 7956
 name = "Volcanic Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "diablospawn"
@@ -358,7 +319,6 @@ item_id = 7956
 name = "Diablo Spawner"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "dogandcat"
@@ -367,7 +327,6 @@ item_id = 7956
 name = "Dog and Cat spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "allbears"
@@ -376,7 +335,6 @@ item_id = 7956
 name = "All Bear Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "swampcreatures"
@@ -385,7 +343,6 @@ item_id = 7956
 name = "Swamp Creature Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "junglecreatures"
@@ -394,7 +351,6 @@ item_id = 7956
 name = "Jungle Creature Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "livestock"
@@ -403,7 +359,6 @@ item_id = 7956
 name = "Livestock Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "allbirds"
@@ -412,7 +367,6 @@ item_id = 7956
 name = "All Birds Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "allanimals"
@@ -421,7 +375,6 @@ item_id = 7956
 name = "All Animals Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "smallanimals"
@@ -430,7 +383,6 @@ item_id = 7956
 name = "Small Animal Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "prodanimals"
@@ -439,7 +391,6 @@ item_id = 7956
 name = "Productive Animal Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "strongundead"
@@ -448,7 +399,6 @@ item_id = 7956
 name = "Strong Undead Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "weakundead"
@@ -457,7 +407,6 @@ item_id = 7956
 name = "Weak Undead Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "allundead"
@@ -466,7 +415,6 @@ item_id = 7956
 name = "All Undead Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "ettinsogres"
@@ -475,7 +423,6 @@ item_id = 7956
 name = "Ettins,Ogres and Trolls"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "weakorcs"
@@ -484,7 +431,6 @@ item_id = 7956
 name = "Weak Orc Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "strongorcs"
@@ -493,7 +439,6 @@ item_id = 7956
 name = "Strong Orc Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "orckin"
@@ -502,7 +447,6 @@ item_id = 7956
 name = "Orc Kin Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "daemons"
@@ -511,7 +455,6 @@ item_id = 7956
 name = "All Daemons Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "elemsdaemons"
@@ -520,7 +463,6 @@ item_id = 7956
 name = "Elemental & Daemon Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "elementals"
@@ -529,7 +471,6 @@ item_id = 7956
 name = "All Elementals Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "overworld"
@@ -538,7 +479,6 @@ item_id = 7956
 name = "All Overworld Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "alch_spawn"
@@ -547,7 +487,6 @@ item_id = 5015
 name = "Alchemist Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "anim_spawn"
@@ -556,7 +495,6 @@ item_id = 5015
 name = "Anim Trainer Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "armourer_spawn"
@@ -565,7 +503,6 @@ item_id = 5015
 name = "Armourer Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "architect_spawn"
@@ -574,7 +511,6 @@ item_id = 5015
 name = "Architect Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "baker_spawn"
@@ -583,7 +519,6 @@ item_id = 5015
 name = "Baker Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "banker_spawn"
@@ -592,7 +527,6 @@ item_id = 5015
 name = "Banker Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "bard_spawn"
@@ -601,7 +535,6 @@ item_id = 5015
 name = "Bard Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "smith_spawn"
@@ -610,7 +543,6 @@ item_id = 5015
 name = "Blacksmith Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "bee_spawn"
@@ -619,7 +551,6 @@ item_id = 5015
 name = "Beekeeper Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "bowyer_spawn"
@@ -628,7 +559,6 @@ item_id = 5015
 name = "Bowyer Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "butcher_spawn"
@@ -637,7 +567,6 @@ item_id = 5015
 name = "Butcher Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "carptenter_spawn"
@@ -646,7 +575,6 @@ item_id = 5015
 name = "Carpenter Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "cobbler_spawn"
@@ -655,7 +583,6 @@ item_id = 5015
 name = "Cobbler Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "cook_spawn"
@@ -664,7 +591,6 @@ item_id = 5015
 name = "Cook Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "farmer_spawn"
@@ -673,7 +599,6 @@ item_id = 5015
 name = "Farmer Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "fisher_spawn"
@@ -682,7 +607,6 @@ item_id = 5015
 name = "Fisherman Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "healer_spawn"
@@ -691,7 +615,6 @@ item_id = 5015
 name = "Healer Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "whealer_spawn"
@@ -700,7 +623,6 @@ item_id = 5015
 name = "Wandering Healer Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "herbal_spawn"
@@ -709,7 +631,6 @@ item_id = 5015
 name = "Herbalist Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "innkeep_spawn"
@@ -718,7 +639,6 @@ item_id = 5015
 name = "Innkeeper Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "tavernkeep_spawn"
@@ -727,7 +647,6 @@ item_id = 5015
 name = "Tavernkeeper Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "waiter_spawn"
@@ -736,7 +655,6 @@ item_id = 5015
 name = "Waiter Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "jewler_spawn"
@@ -745,7 +663,6 @@ item_id = 5015
 name = "Jewler Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "leather_spawn"
@@ -754,7 +671,6 @@ item_id = 5015
 name = "Leatherworker Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "furtrader_spawn"
@@ -763,7 +679,6 @@ item_id = 5015
 name = "Furtrader Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "tanner_spawn"
@@ -772,7 +687,6 @@ item_id = 5015
 name = "Tanner Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "mage_spawn"
@@ -781,7 +695,6 @@ item_id = 5015
 name = "Mage Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "miner_spawn"
@@ -790,7 +703,6 @@ item_id = 5015
 name = "Miner Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "provision_spawn"
@@ -799,7 +711,6 @@ item_id = 5015
 name = "Provisioner Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "scribe_spawn"
@@ -808,7 +719,6 @@ item_id = 5015
 name = "Scribe Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "shipwright_spawn"
@@ -817,7 +727,6 @@ item_id = 5015
 name = "Shipwright Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "mapmaker_spawn"
@@ -826,7 +735,6 @@ item_id = 5015
 name = "Mapmaker Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "spinner_spawn"
@@ -835,7 +743,6 @@ item_id = 5015
 name = "Spinner Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "tailor_spawn"
@@ -844,7 +751,6 @@ item_id = 5015
 name = "Tailor Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "tinker_spawn"
@@ -853,7 +759,6 @@ item_id = 5015
 name = "Tinker Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "weaponsmith_spawn"
@@ -862,7 +767,6 @@ item_id = 5015
 name = "Weaponsmith Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "weaver_spawn"
@@ -871,7 +775,6 @@ item_id = 5015
 name = "Weaver Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "basichuman_spawn"
@@ -880,7 +783,6 @@ item_id = 5015
 name = "Basic Human Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "guard_spawn"
@@ -889,7 +791,6 @@ item_id = 5015
 name = "Guard Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "archmage_spawn"
@@ -898,7 +799,6 @@ item_id = 5015
 name = "Archmage Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "pirate_spawn"
@@ -907,7 +807,6 @@ item_id = 5015
 name = "Pirate Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "fighter_spawn"
@@ -916,7 +815,6 @@ item_id = 5015
 name = "Fighter Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "ranger_spawn"
@@ -925,7 +823,6 @@ item_id = 5015
 name = "Ranger Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "sailor_spawn"
@@ -934,7 +831,6 @@ item_id = 5015
 name = "Sailor Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "gambler_spawn"
@@ -943,7 +839,6 @@ item_id = 5015
 name = "Gambler Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "judge_spawn"
@@ -952,7 +847,6 @@ item_id = 5015
 name = "Judge Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "miller_spawn"
@@ -961,7 +855,6 @@ item_id = 5015
 name = "Miller Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "monk_spawn"
@@ -970,7 +863,6 @@ item_id = 5015
 name = "Monk Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "rancher_spawn"
@@ -979,7 +871,6 @@ item_id = 5015
 name = "Rancher Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "prisoner_spawn"
@@ -988,7 +879,6 @@ item_id = 5015
 name = "Prisoner Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "sculptor_spawn"
@@ -997,7 +887,6 @@ item_id = 5015
 name = "Sculptor Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "brigand_spawn"
@@ -1006,7 +895,6 @@ item_id = 5015
 name = "Brigand Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "beggar_spawn"
@@ -1015,7 +903,6 @@ item_id = 5015
 name = "Beggar Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "noble_spawn"
@@ -1024,7 +911,6 @@ item_id = 5015
 name = "Noble Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "thief_spawn"
@@ -1033,7 +919,6 @@ item_id = 5015
 name = "Thief Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "peasant_spawn"
@@ -1042,7 +927,6 @@ item_id = 5015
 name = "Peasant Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "gypsy_spawn"
@@ -1051,7 +935,6 @@ item_id = 5015
 name = "Gypsy Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "seeker_spawn"
@@ -1060,7 +943,6 @@ item_id = 5015
 name = "Seeker Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "jailer_spawn"
@@ -1069,7 +951,6 @@ item_id = 5015
 name = "Jailer Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "towncrier_spawn"
@@ -1078,7 +959,6 @@ item_id = 5015
 name = "Towncrier Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "artist_spawn"
@@ -1087,7 +967,6 @@ item_id = 5015
 name = "Artist Spawn"
 rarity = "common"
 amount = 2
-hue = 0
 
 [[item]]
 id = "escortspawn"
@@ -1096,7 +975,6 @@ item_id = 7956
 name = "Escort Spawn"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "puzzlechest_spawn"
@@ -1104,7 +982,6 @@ base_id = "base_spawner"
 item_id = 0
 name = "Puzzle Chest Spawn"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "puzzlechest_spawn_ns"
@@ -1112,7 +989,6 @@ base_id = "base_spawner"
 item_id = 0
 name = "Puzzle Chest Spawn"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "puzzlestrongbox_spawn"
@@ -1120,7 +996,6 @@ base_id = "base_spawner"
 item_id = 0
 name = "Puzzle Chest Spawn"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "puzzlestrongbox_spawn_ns"
@@ -1128,7 +1003,6 @@ base_id = "base_spawner"
 item_id = 0
 name = "Puzzle Chest Spawn"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "carrotspawn"
@@ -1137,7 +1011,6 @@ item_id = 7956
 name = "Carrot Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "onionspawn"
@@ -1146,7 +1019,6 @@ item_id = 7956
 name = "Onion Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "turnipspawn"
@@ -1155,7 +1027,6 @@ item_id = 7956
 name = "Turnip Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "cabbagespawn"
@@ -1164,7 +1035,6 @@ item_id = 7956
 name = "Cabbage Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "watermelonspawn"
@@ -1173,7 +1043,6 @@ item_id = 7956
 name = "Watermelon Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "gourdspawn"
@@ -1182,7 +1051,6 @@ item_id = 7956
 name = "Gourd Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "pumpkinspawn"
@@ -1191,7 +1059,6 @@ item_id = 7956
 name = "Pumpkin Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "squashspawn"
@@ -1200,7 +1067,6 @@ item_id = 7956
 name = "Squash Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "honeydewmelonspawn"
@@ -1209,7 +1075,6 @@ item_id = 7956
 name = "Honeydew Melon Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "canteloupespawn"
@@ -1218,7 +1083,6 @@ item_id = 7956
 name = "Canteloupe Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "garlicspawn"
@@ -1227,7 +1091,6 @@ item_id = 7956
 name = "Garlic Spawner"
 rarity = "common"
 amount = 1
-hue = 0
 
 [[item]]
 id = "flaxspawn"
@@ -1236,4 +1099,3 @@ item_id = 7956
 name = "Flax Spawner"
 rarity = "common"
 amount = 1
-hue = 0

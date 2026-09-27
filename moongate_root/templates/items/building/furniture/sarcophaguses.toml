@@ -5,7 +5,6 @@ item_id = 7264
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c61_sarcophagus"
@@ -14,7 +13,6 @@ item_id = 7265
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c62_sarcophagus"
@@ -23,7 +21,6 @@ item_id = 7266
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c63_sarcophagus"
@@ -32,7 +29,6 @@ item_id = 7267
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c64_sarcophagus"
@@ -41,7 +37,6 @@ item_id = 7268
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c65_sarcophagus"
@@ -50,7 +45,6 @@ item_id = 7269
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c66_sarcophagus_lid"
@@ -59,7 +53,6 @@ item_id = 7270
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c67_sarcophagus_lid"
@@ -68,7 +61,6 @@ item_id = 7271
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c68_sarcophagus_lid"
@@ -77,7 +69,6 @@ item_id = 7272
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c69_sarcophagus"
@@ -86,7 +77,6 @@ item_id = 7273
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c6a_sarcophagus"
@@ -95,7 +85,6 @@ item_id = 7274
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c6b_sarcophagus"
@@ -104,7 +93,6 @@ item_id = 7275
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c6c_sarcophagus"
@@ -113,7 +101,6 @@ item_id = 7276
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c6d_sarcophagus"
@@ -122,7 +109,6 @@ item_id = 7277
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c6e_sarcophagus"
@@ -131,7 +117,6 @@ item_id = 7278
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c6f_sarcophagus"
@@ -140,7 +125,6 @@ item_id = 7279
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c70_sarcophagus"
@@ -149,7 +133,6 @@ item_id = 7280
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c71_sarcophagus"
@@ -158,7 +141,6 @@ item_id = 7281
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c72_sarcophagus"
@@ -167,7 +149,6 @@ item_id = 7282
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c73_sarcophagus"
@@ -176,7 +157,6 @@ item_id = 7283
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c74_sarcophagus"
@@ -185,7 +165,6 @@ item_id = 7284
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c75_sarcophagus"
@@ -194,7 +173,6 @@ item_id = 7285
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c76_sarcophagus"
@@ -203,7 +181,6 @@ item_id = 7286
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c77_sarcophagus"
@@ -212,7 +189,6 @@ item_id = 7287
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c78_sarcophagus"
@@ -221,7 +197,6 @@ item_id = 7288
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c79_sarcophagus"
@@ -230,7 +205,6 @@ item_id = 7289
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c7a_sarcophagus"
@@ -239,7 +213,6 @@ item_id = 7290
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c7b_sarcophagus"
@@ -248,7 +221,6 @@ item_id = 7291
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c7c_sarcophagus"
@@ -257,7 +229,6 @@ item_id = 7292
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c7d_sarcophagus_lid"
@@ -266,7 +237,6 @@ item_id = 7293
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c7e_sarcophagus_lid"
@@ -275,7 +245,6 @@ item_id = 7294
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c7f_sarcophagus_lid"
@@ -284,7 +253,6 @@ item_id = 7295
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c80_sarcophagus"
@@ -293,7 +261,6 @@ item_id = 7296
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c81_sarcophagus"
@@ -302,7 +269,6 @@ item_id = 7297
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c82_sarcophagus"
@@ -311,7 +277,6 @@ item_id = 7298
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c83_sarcophagus"
@@ -320,7 +285,6 @@ item_id = 7299
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c84_sarcophagus"
@@ -329,7 +293,6 @@ item_id = 7300
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c85_sarcophagus"
@@ -338,7 +301,6 @@ item_id = 7301
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c86_sarcophagus"
@@ -347,7 +309,6 @@ item_id = 7302
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c87_sarcophagus"
@@ -356,7 +317,6 @@ item_id = 7303
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c88_sarcophagus"
@@ -365,7 +325,6 @@ item_id = 7304
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c89_sarcophagus"
@@ -374,7 +333,6 @@ item_id = 7305
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c8a_sarcophagus"
@@ -383,7 +341,6 @@ item_id = 7306
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c8b_sarcophagus"
@@ -392,7 +349,6 @@ item_id = 7307
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c8c_sarcophagus"
@@ -401,7 +357,6 @@ item_id = 7308
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c8d_sarcophagus"
@@ -410,7 +365,6 @@ item_id = 7309
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c8e_sarcophagus"
@@ -419,7 +373,6 @@ item_id = 7310
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c8f_sarcophagus"
@@ -428,7 +381,6 @@ item_id = 7311
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c90_sarcophagus"
@@ -437,7 +389,6 @@ item_id = 7312
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c91_sarcophagus"
@@ -446,7 +397,6 @@ item_id = 7313
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c92_sarcophagus"
@@ -455,7 +405,6 @@ item_id = 7314
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c93_sarcophagus"
@@ -464,7 +413,6 @@ item_id = 7315
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c94_sarcophagus"
@@ -473,7 +421,6 @@ item_id = 7316
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c95_sarcophagus"
@@ -482,7 +429,6 @@ item_id = 7317
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c96_sarcophagus_lid"
@@ -491,7 +437,6 @@ item_id = 7318
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c97_sarcophagus_lid"
@@ -500,7 +445,6 @@ item_id = 7319
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c98_sarcophagus_lid"
@@ -509,7 +453,6 @@ item_id = 7320
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c99_sarcophagus"
@@ -518,7 +461,6 @@ item_id = 7321
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c9a_sarcophagus"
@@ -527,7 +469,6 @@ item_id = 7322
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c9b_sarcophagus"
@@ -536,7 +477,6 @@ item_id = 7323
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c9c_sarcophagus"
@@ -545,7 +485,6 @@ item_id = 7324
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c9d_sarcophagus"
@@ -554,7 +493,6 @@ item_id = 7325
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c9e_sarcophagus"
@@ -563,7 +501,6 @@ item_id = 7326
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1c9f_sarcophagus"
@@ -572,7 +509,6 @@ item_id = 7327
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca0_sarcophagus"
@@ -581,7 +517,6 @@ item_id = 7328
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca1_sarcophagus"
@@ -590,7 +525,6 @@ item_id = 7329
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca2_sarcophagus"
@@ -599,7 +533,6 @@ item_id = 7330
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca3_sarcophagus"
@@ -608,7 +541,6 @@ item_id = 7331
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca4_sarcophagus"
@@ -617,7 +549,6 @@ item_id = 7332
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca5_sarcophagus"
@@ -626,7 +557,6 @@ item_id = 7333
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca6_sarcophagus"
@@ -635,7 +565,6 @@ item_id = 7334
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca7_sarcophagus"
@@ -644,7 +573,6 @@ item_id = 7335
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca8_sarcophagus"
@@ -653,7 +581,6 @@ item_id = 7336
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1ca9_sarcophagus"
@@ -662,7 +589,6 @@ item_id = 7337
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1caa_sarcophagus"
@@ -671,7 +597,6 @@ item_id = 7338
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cab_sarcophagus"
@@ -680,7 +605,6 @@ item_id = 7339
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cac_sarcophagus"
@@ -689,7 +613,6 @@ item_id = 7340
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cad_sarcophagus_lid"
@@ -698,7 +621,6 @@ item_id = 7341
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cae_sarcophagus_lid"
@@ -707,7 +629,6 @@ item_id = 7342
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1caf_sarcophagus_lid"
@@ -716,7 +637,6 @@ item_id = 7343
 name = "sarcophagus lid"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb0_sarcophagus"
@@ -725,7 +645,6 @@ item_id = 7344
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb1_sarcophagus"
@@ -734,7 +653,6 @@ item_id = 7345
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb2_sarcophagus"
@@ -743,7 +661,6 @@ item_id = 7346
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb3_sarcophagus"
@@ -752,7 +669,6 @@ item_id = 7347
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb4_sarcophagus"
@@ -761,7 +677,6 @@ item_id = 7348
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb5_sarcophagus"
@@ -770,7 +685,6 @@ item_id = 7349
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb6_sarcophagus"
@@ -779,7 +693,6 @@ item_id = 7350
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb7_sarcophagus"
@@ -788,7 +701,6 @@ item_id = 7351
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb8_sarcophagus"
@@ -797,7 +709,6 @@ item_id = 7352
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cb9_sarcophagus"
@@ -806,7 +717,6 @@ item_id = 7353
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cba_sarcophagus"
@@ -815,7 +725,6 @@ item_id = 7354
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cbb_sarcophagus"
@@ -824,7 +733,6 @@ item_id = 7355
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cbc_sarcophagus"
@@ -833,7 +741,6 @@ item_id = 7356
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cbd_sarcophagus"
@@ -842,7 +749,6 @@ item_id = 7357
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cbe_sarcophagus"
@@ -851,7 +757,6 @@ item_id = 7358
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x1cbf_sarcophagus"
@@ -860,4 +765,3 @@ item_id = 7359
 name = "sarcophagus"
 rarity = "common"
 movable = false
-hue = 0

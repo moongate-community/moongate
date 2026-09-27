@@ -8,7 +8,6 @@ movable = true
 weight = 2.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x19b8_iron_ore"
@@ -20,7 +19,6 @@ movable = true
 weight = 7.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x19b9_iron_ore"
@@ -32,7 +30,6 @@ movable = true
 weight = 12.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x19ba_iron_ore"
@@ -44,7 +41,6 @@ movable = true
 weight = 7.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "shadow_iron_ore"
@@ -56,7 +52,7 @@ movable = true
 weight = 12.0
 stackable = true
 decays = true
-hue = 0
+hue = 2406
 
 [[item]]
 id = "sand"
@@ -68,7 +64,7 @@ movable = true
 weight = 0.1
 stackable = true
 decays = true
-hue = 0
+hue = 2413
 
 [[item]]
 id = "base_granite"
@@ -80,67 +76,65 @@ movable = true
 weight = 1.0
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "irongranite"
 base_id = "base_granite"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "dullcoppergranite"
 base_id = "base_granite"
 item_id = 0
 rarity = "common"
-hue = 0
+hue = 2419
 
 [[item]]
 id = "shadowirongranite"
 base_id = "base_granite"
 item_id = 0
 rarity = "common"
-hue = 0
+hue = 2406
 
 [[item]]
 id = "coppergranite"
 base_id = "base_granite"
 item_id = 0
 rarity = "common"
-hue = 0
+hue = 2413
 
 [[item]]
 id = "bronzegranite"
 base_id = "base_granite"
 item_id = 0
 rarity = "common"
-hue = 0
+hue = 2418
 
 [[item]]
 id = "goldgranite"
 base_id = "base_granite"
 item_id = 0
 rarity = "common"
-hue = 0
+hue = 2213
 
 [[item]]
 id = "agapitegranite"
 base_id = "base_granite"
 item_id = 0
 rarity = "common"
-hue = 0
+hue = 2425
 
 [[item]]
 id = "veritegranite"
 base_id = "base_granite"
 item_id = 0
 rarity = "common"
-hue = 0
+hue = 2207
 
 [[item]]
 id = "valoritegranite"
 base_id = "base_granite"
 item_id = 0
 rarity = "common"
-hue = 0
+hue = 2219

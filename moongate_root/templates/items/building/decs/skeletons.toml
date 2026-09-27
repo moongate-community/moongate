@@ -6,7 +6,6 @@ name = "skeleton"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a02_skeleton"
@@ -16,7 +15,6 @@ name = "skeleton"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a03_skeleton"
@@ -26,7 +24,6 @@ name = "skeleton"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a04_skeleton"
@@ -36,7 +33,6 @@ name = "skeleton"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a05_skeleton"
@@ -46,7 +42,6 @@ name = "skeleton"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a06_skeleton"
@@ -56,7 +51,6 @@ name = "skeleton"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a09_skeleton"
@@ -66,7 +60,6 @@ name = "skeleton"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1a0a_skeleton"
@@ -76,7 +69,6 @@ name = "skeleton"
 rarity = "common"
 movable = false
 weight = 5.0
-hue = 0
 
 [[item]]
 id = "0x1ad8_pile_of_skulls"
@@ -86,7 +78,6 @@ name = "pile of skulls"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ad9_pile_of_skulls"
@@ -96,7 +87,6 @@ name = "pile of skulls"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ada_pile_of_skulls"
@@ -106,7 +96,6 @@ name = "pile of skulls"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1adb_pile_of_skulls"
@@ -116,7 +105,6 @@ name = "pile of skulls"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1adc_pile_of_skulls"
@@ -126,7 +114,6 @@ name = "pile of skulls"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1add_pile_of_skulls"
@@ -136,7 +123,6 @@ name = "pile of skulls"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ade_pile_of_skulls"
@@ -146,7 +132,6 @@ name = "pile of skulls"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1adf_pile_of_skulls"
@@ -156,7 +141,6 @@ name = "pile of skulls"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ae0_skull"
@@ -166,7 +150,6 @@ name = "skull"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ae1_skull"
@@ -176,7 +159,6 @@ name = "skull"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ae2_skull"
@@ -186,7 +168,6 @@ name = "skull"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ae3_skull"
@@ -196,7 +177,6 @@ name = "skull"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ae4_skull"
@@ -206,7 +186,6 @@ name = "skull"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b09_bone_pile"
@@ -216,7 +195,6 @@ name = "bone pile"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b0a_bone_pile"
@@ -226,7 +204,6 @@ name = "bone pile"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b0b_bone_pile"
@@ -236,7 +213,6 @@ name = "bone pile"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b0c_bone_pile"
@@ -246,7 +222,6 @@ name = "bone pile"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b0d_bone_pile"
@@ -256,7 +231,6 @@ name = "bone pile"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b0e_bone_pile"
@@ -266,7 +240,6 @@ name = "bone pile"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b0f_bone_pile"
@@ -276,7 +249,6 @@ name = "bone pile"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b10_bone_pile"
@@ -286,7 +258,6 @@ name = "bone pile"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b11_bone"
@@ -296,7 +267,6 @@ name = "bone"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b12_bone"
@@ -306,7 +276,6 @@ name = "bone"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b13_jaw_bone"
@@ -316,7 +285,6 @@ name = "jaw bone"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b14_jaw_bone"
@@ -326,7 +294,6 @@ name = "jaw bone"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b15_pelvis_bone"
@@ -336,7 +303,6 @@ name = "pelvis bone"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b16_pelvis_bone"
@@ -346,7 +312,6 @@ name = "pelvis bone"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b17_rib_cage"
@@ -356,7 +321,6 @@ name = "rib cage"
 rarity = "common"
 movable = true
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b18_rib_cage"
@@ -366,7 +330,6 @@ name = "rib cage"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b19_bone_shards"
@@ -376,7 +339,6 @@ name = "bone shards"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b1a_bone_shards"
@@ -386,7 +348,6 @@ name = "bone shards"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b1b_spine"
@@ -396,7 +357,6 @@ name = "spine"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b1c_spine"
@@ -406,7 +366,6 @@ name = "spine"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b1d_skeletong_with_meat"
@@ -416,7 +375,6 @@ name = "skeletong with meat"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1b1e_skeletong_with_meat"
@@ -426,4 +384,3 @@ name = "skeletong with meat"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0

@@ -8,7 +8,6 @@ movable = true
 weight = 4.0
 buy_price = 20
 sell_price = 10
-hue = 0
 
 [[item]]
 id = "0x1023_fletcher's_tools"
@@ -20,4 +19,3 @@ movable = true
 weight = 4.0
 buy_price = 20
 sell_price = 10
-hue = 0

@@ -13,7 +13,6 @@ id = "savagekinpaint"
 base_id = "tribalpaint"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "haironlydye"
@@ -24,7 +23,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 30000
 sell_price = 15000
-hue = 0
 
 [[item]]
 id = "beardonlydye"
@@ -35,7 +33,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 30000
 sell_price = 15000
-hue = 0
 
 [[item]]
 id = "hairdye"
@@ -46,7 +43,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 50
 sell_price = 25
-hue = 0
 
 [[item]]
 id = "specialhaironlydye"
@@ -57,7 +53,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 30000
 sell_price = 15000
-hue = 0
 
 [[item]]
 id = "specialbeardonlydye"
@@ -68,7 +63,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 30000
 sell_price = 15000
-hue = 0
 
 [[item]]
 id = "specialhairdye"
@@ -79,7 +73,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 50
 sell_price = 25
-hue = 0
 
 [[item]]
 id = "manadraught"
@@ -113,7 +106,6 @@ item_id = 0
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "balmofprotection"
@@ -135,7 +127,6 @@ name = "balm of strength"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 [item.tags]
 consumableID = "4"
 
@@ -147,7 +138,6 @@ name = "balm of swiftness"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 [item.tags]
 consumableID = "5"
 
@@ -159,7 +149,6 @@ name = "balm of wisdom"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 [item.tags]
 consumableID = "6"
 
@@ -171,7 +160,6 @@ name = "life shield lotion"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 [item.tags]
 consumableID = "7"
 
@@ -183,7 +171,6 @@ name = "stone skin lotion"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 [item.tags]
 consumableID = "8"
 
@@ -205,7 +192,6 @@ item_id = 5360
 name = "new player ticket"
 rarity = "common"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "elixirofmetalconversion"
@@ -216,7 +202,7 @@ rarity = "common"
 amount = 1
 stackable = true
 decays = true
-hue = 0
+hue = 1159
 [item.tags]
 typeID = "1"
 
@@ -226,7 +212,7 @@ base_id = "elixirofmetalconversion"
 item_id = 0
 name = "Elixir of Agapite Conversion"
 rarity = "common"
-hue = 0
+hue = 2425
 [item.tags]
 typeID = "2"
 
@@ -236,7 +222,7 @@ base_id = "elixirofmetalconversion"
 item_id = 0
 name = "Elixir of Gold Conversion"
 rarity = "common"
-hue = 0
+hue = 2213
 [item.tags]
 typeID = "3"
 
@@ -246,7 +232,7 @@ base_id = "elixirofmetalconversion"
 item_id = 0
 name = "Elixir of Valorite Conversion"
 rarity = "common"
-hue = 0
+hue = 2219
 [item.tags]
 typeID = "4"
 
@@ -256,7 +242,7 @@ base_id = "elixirofmetalconversion"
 item_id = 0
 name = "Elixir of Verite Conversion"
 rarity = "common"
-hue = 0
+hue = 2207
 [item.tags]
 typeID = "5"
 
@@ -280,4 +266,3 @@ rarity = "common"
 amount = 1
 stackable = true
 decays = true
-hue = 0

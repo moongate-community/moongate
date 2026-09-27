@@ -144,10 +144,10 @@ public class ItemTemplate
     public AccountType? Visibility { get; set; }
 
     /// <summary>
-    ///     The hue to apply over the graphic's own art, or a range to pick a fresh one from on every spawn.
-    ///     0, the default, means the art's native coloring: no override.
+    ///     The hue to apply over the graphic's own art, or a range to pick a fresh one from on every spawn. 0 means the
+    ///     art's native coloring. Unset takes the base template's hue, else 0.
     /// </summary>
-    public HueSpec Hue { get; set; } = HueSpec.FromValue(0);
+    public HueSpec? Hue { get; set; }
 
     /// <summary>
     ///     Maximum item count for a container template; null for anything that is not a container.

@@ -6,7 +6,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0aa0_display_case"
@@ -16,7 +15,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0aa1_display_case"
@@ -26,7 +24,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0aa2_display_case"
@@ -36,7 +33,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0aa3_display_case"
@@ -46,7 +42,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0aa4_display_case"
@@ -56,7 +51,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0aa5_display_case"
@@ -66,7 +60,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b18_display_case"
@@ -76,7 +69,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b0f_display_case"
@@ -86,7 +78,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b10_display_case"
@@ -96,7 +87,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b11_display_case"
@@ -106,7 +96,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b12_display_case"
@@ -116,7 +105,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b13_display_case"
@@ -126,7 +114,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b14_display_case"
@@ -136,7 +123,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b15_display_case"
@@ -146,7 +132,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b16_display_case"
@@ -156,7 +141,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b17_display_case"
@@ -166,7 +150,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0afd_display_case"
@@ -176,7 +159,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0afe_display_case"
@@ -186,7 +168,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0aff_display_case"
@@ -196,7 +177,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b00_display_case"
@@ -206,7 +186,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b01_display_case"
@@ -216,7 +195,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b02_display_case"
@@ -226,7 +204,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b03_display_case"
@@ -236,7 +213,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b04_display_case"
@@ -246,7 +222,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b05_display_case"
@@ -256,7 +231,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b06_display_case"
@@ -266,7 +240,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b07_display_case"
@@ -276,7 +249,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b08_display_case"
@@ -286,7 +258,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b0b_display_case"
@@ -296,7 +267,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b09_display_case"
@@ -306,7 +276,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b0c_display_case"
@@ -316,7 +285,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b0a_display_case"
@@ -326,7 +294,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b0d_display_case"
@@ -336,7 +303,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b0e_display_case"
@@ -346,7 +312,6 @@ name = "display case"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b34_table"
@@ -359,7 +324,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b35_table"
@@ -372,7 +336,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b36_table"
@@ -385,7 +348,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b37_table"
@@ -395,7 +357,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b38_table"
@@ -405,7 +366,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b39_table"
@@ -415,7 +375,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b3a_table"
@@ -428,7 +387,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b3c_table"
@@ -441,7 +399,6 @@ weight = 10.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b3d_counter"
@@ -451,7 +408,6 @@ name = "counter"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b3e_counter"
@@ -461,7 +417,6 @@ name = "counter"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b3f_counter"
@@ -471,7 +426,6 @@ name = "counter"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b40_counter"
@@ -481,7 +435,6 @@ name = "counter"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b49_writing_table"
@@ -494,7 +447,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b4a_writing_table"
@@ -507,7 +459,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b4b_writing_table"
@@ -520,7 +471,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b4c_writing_table"
@@ -533,7 +483,6 @@ weight = 20.0
 buy_price = 18
 sell_price = 9
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b6b_table"
@@ -543,7 +492,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b6c_table"
@@ -553,7 +501,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b6d_table"
@@ -563,7 +510,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b6e_table"
@@ -573,7 +519,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b6f_table"
@@ -583,7 +528,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b70_table"
@@ -593,7 +537,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b71_table"
@@ -603,7 +546,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b72_table"
@@ -613,7 +555,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b73_table"
@@ -623,7 +564,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b74_table"
@@ -633,7 +573,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b75_table"
@@ -643,7 +582,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b76_table"
@@ -653,7 +591,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b77_table"
@@ -663,7 +600,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b78_table"
@@ -673,7 +609,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b79_table"
@@ -683,7 +618,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b7a_table"
@@ -693,7 +627,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b7b_table"
@@ -703,7 +636,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b7c_table"
@@ -716,7 +648,6 @@ weight = 30.0
 buy_price = 10
 sell_price = 5
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b7d_table"
@@ -729,7 +660,6 @@ weight = 30.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b7e_table"
@@ -739,7 +669,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b7f_table"
@@ -749,7 +678,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b80_table"
@@ -759,7 +687,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b81_table"
@@ -769,7 +696,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b82_table"
@@ -779,7 +705,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b83_table"
@@ -789,7 +714,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b84_table"
@@ -799,7 +723,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b85_table"
@@ -809,7 +732,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b86_table"
@@ -819,7 +741,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b87_table"
@@ -829,7 +750,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b88_table"
@@ -839,7 +759,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b89_table"
@@ -849,7 +768,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b8a_table"
@@ -859,7 +777,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b8b_table"
@@ -869,7 +786,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b8c_table"
@@ -879,7 +795,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b8d_table"
@@ -889,7 +804,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b8e_table"
@@ -899,7 +813,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b8f_table"
@@ -912,7 +825,6 @@ weight = 30.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0b90_table"
@@ -925,7 +837,6 @@ weight = 30.0
 buy_price = 20
 sell_price = 10
 decays = true
-hue = 0
 
 [[item]]
 id = "0x118b_table"
@@ -935,7 +846,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x118c_table"
@@ -945,7 +855,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x118d_table"
@@ -955,7 +864,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x118e_table"
@@ -965,7 +873,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x118f_table"
@@ -975,7 +882,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1190_table"
@@ -985,7 +891,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1191_table"
@@ -995,7 +900,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1192_table"
@@ -1005,7 +909,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11d6_bamboo_table"
@@ -1015,7 +918,6 @@ name = "bamboo table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11d7_bamboo_table"
@@ -1025,7 +927,6 @@ name = "bamboo table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11d8_bamboo_table"
@@ -1035,7 +936,6 @@ name = "bamboo table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11d9_bamboo_table"
@@ -1045,7 +945,6 @@ name = "bamboo table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11da_bamboo_table"
@@ -1055,7 +954,6 @@ name = "bamboo table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11db_bamboo_table"
@@ -1065,7 +963,6 @@ name = "bamboo table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11dc_log_table"
@@ -1075,7 +972,6 @@ name = "log table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11dd_log_table"
@@ -1085,7 +981,6 @@ name = "log table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11de_log_table"
@@ -1095,7 +990,6 @@ name = "log table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11df_log_table"
@@ -1105,7 +999,6 @@ name = "log table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11e0_log_table"
@@ -1115,7 +1008,6 @@ name = "log table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x11e1_log_table"
@@ -1125,7 +1017,6 @@ name = "log table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1201_stone_table"
@@ -1135,7 +1026,6 @@ name = "stone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1202_stone_table"
@@ -1145,7 +1035,6 @@ name = "stone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1203_stone_table"
@@ -1155,7 +1044,6 @@ name = "stone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1204_stone_table"
@@ -1165,7 +1053,6 @@ name = "stone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1205_stone_table"
@@ -1175,7 +1062,6 @@ name = "stone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1206_stone_table"
@@ -1185,7 +1071,6 @@ name = "stone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1667_table"
@@ -1195,7 +1080,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1668_table"
@@ -1205,7 +1089,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1669_table"
@@ -1215,7 +1098,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x166a_table"
@@ -1225,7 +1107,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x166b_table"
@@ -1235,7 +1116,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x166c_table"
@@ -1245,7 +1125,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1916_massage_table"
@@ -1255,7 +1134,6 @@ name = "massage table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1917_massage_table"
@@ -1265,7 +1143,6 @@ name = "massage table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1910_bar"
@@ -1275,7 +1152,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1911_bar"
@@ -1285,7 +1161,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1912_bar"
@@ -1295,7 +1170,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1913_bar"
@@ -1305,7 +1179,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1918_bar"
@@ -1315,7 +1188,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1919_bar"
@@ -1325,7 +1197,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x191a_bar"
@@ -1335,7 +1206,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x191b_bar"
@@ -1345,7 +1215,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x191c_bar"
@@ -1355,7 +1224,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x191d_bar"
@@ -1365,7 +1233,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x191e_bar"
@@ -1375,7 +1242,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x191f_bar"
@@ -1385,7 +1251,6 @@ name = "bar"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1da5_table"
@@ -1395,7 +1260,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1da6_table"
@@ -1405,7 +1269,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1da7_table"
@@ -1415,7 +1278,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1da8_table"
@@ -1425,7 +1287,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1da9_table"
@@ -1435,7 +1296,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1daa_table"
@@ -1445,7 +1305,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dab_table"
@@ -1455,7 +1314,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dac_table"
@@ -1465,7 +1323,6 @@ name = "table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dbb_sandstone_table"
@@ -1475,7 +1332,6 @@ name = "sandstone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dbc_sandstone_table"
@@ -1485,7 +1341,6 @@ name = "sandstone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dbd_sandstone_table"
@@ -1495,7 +1350,6 @@ name = "sandstone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dbe_sandstone_table"
@@ -1505,7 +1359,6 @@ name = "sandstone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dbf_sandstone_table"
@@ -1515,7 +1368,6 @@ name = "sandstone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dc0_sandstone_table"
@@ -1525,7 +1377,6 @@ name = "sandstone table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dc1_marble_table"
@@ -1535,7 +1386,6 @@ name = "marble table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dc2_marble_table"
@@ -1545,7 +1395,6 @@ name = "marble table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dc3_marble_table"
@@ -1555,7 +1404,6 @@ name = "marble table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dc4_marble_table"
@@ -1565,7 +1413,6 @@ name = "marble table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dc5_marble_table"
@@ -1575,7 +1422,6 @@ name = "marble table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1dc6_marble_table"
@@ -1585,4 +1431,3 @@ name = "marble table"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0

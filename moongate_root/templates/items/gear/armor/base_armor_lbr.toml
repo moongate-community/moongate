@@ -6,7 +6,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 122
 sell_price = 61
-hue = 0
 
 [[item]]
 id = "0x13ec_lbr"
@@ -16,7 +15,6 @@ rarity = "common"
 weight = 15.0
 buy_price = 218
 sell_price = 109
-hue = 0
 
 [[item]]
 id = "0x13ee_lbr"
@@ -26,7 +24,6 @@ rarity = "common"
 weight = 15.0
 buy_price = 147
 sell_price = 73
-hue = 0
 
 [[item]]
 id = "0x13f0_lbr"
@@ -36,7 +33,6 @@ rarity = "common"
 weight = 15.0
 buy_price = 147
 sell_price = 73
-hue = 0
 
 [[item]]
 id = "0x13bb_lbr"
@@ -46,7 +42,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 130
 sell_price = 65
-hue = 0
 
 [[item]]
 id = "0x13be_lbr"
@@ -56,7 +51,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 166
 sell_price = 83
-hue = 0
 
 [[item]]
 id = "0x13bf_lbr"
@@ -66,7 +60,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 207
 sell_price = 103
-hue = 0
 
 [[item]]
 id = "0x1c04_lbr"
@@ -76,7 +69,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 245
 sell_price = 122
-hue = 0
 
 [[item]]
 id = "0x1410_lbr"
@@ -86,7 +78,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 181
 sell_price = 90
-hue = 0
 
 [[item]]
 id = "0x1411_lbr"
@@ -96,7 +87,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 218
 sell_price = 109
-hue = 0
 
 [[item]]
 id = "0x1413_lbr"
@@ -106,7 +96,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 124
 sell_price = 70
-hue = 0
 
 [[item]]
 id = "0x1414_lbr"
@@ -116,7 +105,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 145
 sell_price = 72
-hue = 0
 
 [[item]]
 id = "0x1415_lbr"
@@ -126,7 +114,6 @@ rarity = "common"
 weight = 10.0
 buy_price = 273
 sell_price = 136
-hue = 0
 
 [[item]]
 id = "0x13c5_lbr"
@@ -136,7 +123,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 80
 sell_price = 40
-hue = 0
 
 [[item]]
 id = "0x13c6_lbr"
@@ -146,7 +132,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 60
 sell_price = 30
-hue = 0
 
 [[item]]
 id = "0x13c7_lbr"
@@ -156,7 +141,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 74
 sell_price = 37
-hue = 0
 
 [[item]]
 id = "0x1db9_lbr"
@@ -166,7 +150,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 68
 sell_price = 31
-hue = 0
 
 [[item]]
 id = "0x13cb_lbr"
@@ -176,7 +159,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 80
 sell_price = 40
-hue = 0
 
 [[item]]
 id = "0x13cc_lbr"
@@ -186,7 +168,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 101
 sell_price = 52
-hue = 0
 
 [[item]]
 id = "0x1c00_lbr"
@@ -196,7 +177,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 86
 sell_price = 43
-hue = 0
 
 [[item]]
 id = "0x1c06_lbr"
@@ -206,7 +186,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 116
 sell_price = 58
-hue = 0
 
 [[item]]
 id = "0x1c08_lbr"
@@ -216,7 +195,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 87
 sell_price = 43
-hue = 0
 
 [[item]]
 id = "0x1c0a_lbr"
@@ -226,7 +204,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 97
 sell_price = 48
-hue = 0
 
 [[item]]
 id = "0x13d4_lbr"
@@ -236,7 +213,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 87
 sell_price = 43
-hue = 0
 
 [[item]]
 id = "0x13d5_lbr"
@@ -246,7 +222,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 79
 sell_price = 39
-hue = 0
 
 [[item]]
 id = "0x13d6_lbr"
@@ -256,7 +231,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 73
 sell_price = 36
-hue = 0
 
 [[item]]
 id = "0x13da_lbr"
@@ -266,7 +240,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 103
 sell_price = 51
-hue = 0
 
 [[item]]
 id = "0x13db_lbr"
@@ -276,7 +249,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 128
 sell_price = 64
-hue = 0
 
 [[item]]
 id = "0x1c02_lbr"
@@ -286,7 +258,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 142
 sell_price = 71
-hue = 0
 
 [[item]]
 id = "0x1c0c_lbr"
@@ -296,7 +267,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 120
 sell_price = 60
-hue = 0
 
 [[item]]
 id = "0x144e_lbr"
@@ -306,7 +276,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 156
 sell_price = 78
-hue = 0
 
 [[item]]
 id = "0x144f_lbr"
@@ -316,7 +285,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 234
 sell_price = 117
-hue = 0
 
 [[item]]
 id = "0x1450_lbr"
@@ -326,7 +294,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 133
 sell_price = 66
-hue = 0
 
 [[item]]
 id = "0x1451_lbr"
@@ -336,7 +303,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 157
 sell_price = 71
-hue = 0
 
 [[item]]
 id = "0x1452_lbr"
@@ -346,7 +312,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 179
 sell_price = 89
-hue = 0
 
 [[item]]
 id = "0x1f0b_lbr"
@@ -356,7 +321,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 105
 sell_price = 48
-hue = 0
 
 [[item]]
 id = "0x1408_lbr"
@@ -366,7 +330,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 145
 sell_price = 72
-hue = 0
 
 [[item]]
 id = "0x140a_lbr"
@@ -376,7 +339,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 116
 sell_price = 58
-hue = 0
 
 [[item]]
 id = "0x140c_lbr"
@@ -386,7 +348,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 127
 sell_price = 46
-hue = 0
 
 [[item]]
 id = "0x140e_lbr"
@@ -396,7 +357,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 145
 sell_price = 53
-hue = 0
 
 [[item]]
 id = "0x1412_lbr"
@@ -406,7 +366,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 170
 sell_price = 85
-hue = 0
 
 [[item]]
 id = "0x2777_lbr"
@@ -416,7 +375,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 555
 sell_price = 285
-hue = 0
 
 [[item]]
 id = "0x2778_lbr"
@@ -426,7 +384,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 694
 sell_price = 352
-hue = 0
 
 [[item]]
 id = "0x277d_lbr"
@@ -436,7 +393,6 @@ rarity = "common"
 weight = 11.0
 buy_price = 426
 sell_price = 227
-hue = 0
 
 [[item]]
 id = "0x2780_lbr"
@@ -446,7 +402,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 206
 sell_price = 103
-hue = 0
 
 [[item]]
 id = "0x2781_lbr"
@@ -456,7 +411,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 267
 sell_price = 121
-hue = 0
 
 [[item]]
 id = "0x2784_lbr"
@@ -466,7 +420,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 267
 sell_price = 121
-hue = 0
 
 [[item]]
 id = "0x2785_lbr"
@@ -476,7 +429,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 225
 sell_price = 102
-hue = 0
 
 [[item]]
 id = "0x2788_lbr"
@@ -486,7 +438,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 204
 sell_price = 90
-hue = 0
 
 [[item]]
 id = "0x2789_lbr"
@@ -496,7 +447,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 225
 sell_price = 102
-hue = 0
 
 [[item]]
 id = "0x236c_lbr"
@@ -506,7 +456,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 188
 sell_price = 86
-hue = 0
 
 [[item]]
 id = "0x278d_lbr"
@@ -516,7 +465,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 214
 sell_price = 95
-hue = 0
 
 [[item]]
 id = "0x2774_lbr"
@@ -526,7 +474,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 555
 sell_price = 285
-hue = 0
 
 [[item]]
 id = "0x2775_lbr"
@@ -536,7 +483,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 555
 sell_price = 285
-hue = 0
 
 [[item]]
 id = "0x2779_lbr"
@@ -546,7 +492,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 166
 sell_price = 87
-hue = 0
 
 [[item]]
 id = "0x278e_lbr"
@@ -556,7 +501,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 73
 sell_price = 33
-hue = 0
 
 [[item]]
 id = "0x2790_lbr"
@@ -566,7 +510,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 36
 sell_price = 16
-hue = 0
 
 [[item]]
 id = "0x2791_lbr"
@@ -576,7 +519,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 45
 sell_price = 20
-hue = 0
 
 [[item]]
 id = "0x2792_lbr"
@@ -586,7 +528,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 71
 sell_price = 35
-hue = 0
 
 [[item]]
 id = "0x2793_lbr"
@@ -596,7 +537,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 70
 sell_price = 38
-hue = 0
 
 [[item]]
 id = "0x2776_lbr"
@@ -606,7 +546,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 80
 sell_price = 37
-hue = 0
 
 [[item]]
 id = "0x277a_lbr"
@@ -616,7 +555,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 64
 sell_price = 34
-hue = 0
 
 [[item]]
 id = "0x277b_lbr"
@@ -626,7 +564,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 120
 sell_price = 62
-hue = 0
 
 [[item]]
 id = "0x277e_lbr"
@@ -636,7 +573,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 45
 sell_price = 21
-hue = 0
 
 [[item]]
 id = "0x2786_lbr"
@@ -646,7 +582,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 50
 sell_price = 21
-hue = 0
 
 [[item]]
 id = "0x278a_lbr"
@@ -656,7 +591,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 49
 sell_price = 23
-hue = 0
 
 [[item]]
 id = "0x277c_lbr"
@@ -666,7 +600,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 179
 sell_price = 97
-hue = 0
 
 [[item]]
 id = "0x277f_lbr"
@@ -676,7 +609,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 68
 sell_price = 30
-hue = 0
 
 [[item]]
 id = "0x2787_lbr"
@@ -686,7 +618,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 71
 sell_price = 32
-hue = 0
 
 [[item]]
 id = "0x278b_lbr"
@@ -696,7 +627,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 69
 sell_price = 30
-hue = 0
 
 [[item]]
 id = "0x279d_lbr"
@@ -706,7 +636,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 66
 sell_price = 32
-hue = 0
 
 [[item]]
 id = "0x2fc8_lbr"
@@ -716,7 +645,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 71
 sell_price = 35
-hue = 0
 
 [[item]]
 id = "0x2fc5_lbr"
@@ -726,7 +654,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 117
 sell_price = 59
-hue = 0
 
 [[item]]
 id = "0x2fcb_lbr"
@@ -736,7 +663,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 117
 sell_price = 59
-hue = 0
 
 [[item]]
 id = "0x2fc6_lbr"
@@ -746,7 +672,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 71
 sell_price = 35
-hue = 0
 
 [[item]]
 id = "0x2fc7_lbr"
@@ -756,7 +681,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 64
 sell_price = 34
-hue = 0
 
 [[item]]
 id = "0x2fc9_lbr"
@@ -766,7 +690,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 90
 sell_price = 45
-hue = 0
 
 [[item]]
 id = "0x2fca_lbr"
@@ -776,7 +699,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 90
 sell_price = 45
-hue = 0
 
 [[item]]
 id = "0x2b77_lbr"
@@ -786,7 +708,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 107
 sell_price = 54
-hue = 0
 
 [[item]]
 id = "0x2b74_lbr"
@@ -796,7 +717,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 172
 sell_price = 86
-hue = 0
 
 [[item]]
 id = "0x2b79_lbr"
@@ -806,7 +726,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 172
 sell_price = 86
-hue = 0
 
 [[item]]
 id = "0x2b75_lbr"
@@ -816,7 +735,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 107
 sell_price = 53
-hue = 0
 
 [[item]]
 id = "0x2b78_lbr"
@@ -826,7 +744,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 131
 sell_price = 65
-hue = 0
 
 [[item]]
 id = "0x2b76_lbr"
@@ -836,7 +753,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 98
 sell_price = 52
-hue = 0
 
 [[item]]
 id = "0x2657_lbr"
@@ -846,7 +762,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 98
 sell_price = 49
-hue = 0
 
 [[item]]
 id = "0x2641_lbr"
@@ -856,7 +771,6 @@ rarity = "common"
 weight = 11.0
 buy_price = 172
 sell_price = 86
-hue = 0
 
 [[item]]
 id = "0x2643_lbr"
@@ -866,7 +780,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 98
 sell_price = 49
-hue = 0
 
 [[item]]
 id = "0x2645_lbr"
@@ -876,7 +789,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 115
 sell_price = 52
-hue = 0
 
 [[item]]
 id = "0x2647_lbr"
@@ -886,7 +798,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 131
 sell_price = 65
-hue = 0
 
 [[item]]
 id = "0x2b6c_lbr"
@@ -896,7 +807,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 179
 sell_price = 89
-hue = 0
 
 [[item]]
 id = "0x2b67_lbr"
@@ -906,7 +816,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 313
 sell_price = 156
-hue = 0
 
 [[item]]
 id = "0x2b6d_lbr"
@@ -916,7 +825,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 313
 sell_price = 156
-hue = 0
 
 [[item]]
 id = "0x2b6a_lbr"
@@ -926,7 +834,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 178
 sell_price = 88
-hue = 0
 
 [[item]]
 id = "0x2b6b_lbr"
@@ -936,7 +843,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 239
 sell_price = 119
-hue = 0
 
 [[item]]
 id = "0x2b69_lbr"
@@ -946,7 +852,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 170
 sell_price = 90
-hue = 0
 
 [[item]]
 id = "0x2b6e_lbr"
@@ -956,7 +861,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 37
 sell_price = 17
-hue = 0
 
 [[item]]
 id = "0x2b6f_lbr"
@@ -966,7 +870,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 37
 sell_price = 17
-hue = 0
 
 [[item]]
 id = "0x2b70_lbr"
@@ -976,7 +879,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 37
 sell_price = 17
-hue = 0
 
 [[item]]
 id = "0x2b71_lbr"
@@ -986,7 +888,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 188
 sell_price = 86
-hue = 0
 
 [[item]]
 id = "0x2b72_lbr"
@@ -996,7 +897,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 188
 sell_price = 86
-hue = 0
 
 [[item]]
 id = "0x2b73_lbr"
@@ -1006,7 +906,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 188
 sell_price = 86
-hue = 0
 
 [[item]]
 id = "0x2fb8_lbr"
@@ -1016,7 +915,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 73
 sell_price = 33
-hue = 0
 
 [[item]]
 id = "0x0404_lbr"
@@ -1026,7 +924,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 57
 sell_price = 28
-hue = 0
 
 [[item]]
 id = "0x0403_lbr"
@@ -1036,7 +933,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 57
 sell_price = 28
-hue = 0
 
 [[item]]
 id = "0x0406_lbr"
@@ -1046,7 +942,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 107
 sell_price = 62
-hue = 0
 
 [[item]]
 id = "0x0405_lbr"
@@ -1056,7 +951,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 114
 sell_price = 59
-hue = 0
 
 [[item]]
 id = "0x040a_lbr"
@@ -1066,7 +960,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 60
 sell_price = 26
-hue = 0
 
 [[item]]
 id = "0x0409_lbr"
@@ -1076,7 +969,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 65
 sell_price = 24
-hue = 0
 
 [[item]]
 id = "0x0408_lbr"
@@ -1086,7 +978,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 51
 sell_price = 26
-hue = 0
 
 [[item]]
 id = "0x0407_lbr"
@@ -1096,7 +987,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 52
 sell_price = 24
-hue = 0
 
 [[item]]
 id = "0x45a4_lbr"
@@ -1104,7 +994,6 @@ base_id = "base_gargish_cloth_wing_armor"
 item_id = 0
 rarity = "common"
 weight = 2.0
-hue = 0
 
 [[item]]
 id = "0x0302_lbr"
@@ -1114,7 +1003,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 74
 sell_price = 38
-hue = 0
 
 [[item]]
 id = "0x0301_lbr"
@@ -1124,7 +1012,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 68
 sell_price = 39
-hue = 0
 
 [[item]]
 id = "0x0304_lbr"
@@ -1134,7 +1021,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 106
 sell_price = 64
-hue = 0
 
 [[item]]
 id = "0x0303_lbr"
@@ -1144,7 +1030,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 106
 sell_price = 64
-hue = 0
 
 [[item]]
 id = "0x0306_lbr"
@@ -1154,7 +1039,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 61
 sell_price = 27
-hue = 0
 
 [[item]]
 id = "0x0305_lbr"
@@ -1164,7 +1048,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 61
 sell_price = 27
-hue = 0
 
 [[item]]
 id = "0x0311_lbr"
@@ -1174,7 +1057,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 77
 sell_price = 39
-hue = 0
 
 [[item]]
 id = "0x0310_lbr"
@@ -1184,7 +1066,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 84
 sell_price = 37
-hue = 0
 
 [[item]]
 id = "0x457e_lbr"
@@ -1192,7 +1073,6 @@ base_id = "base_gargish_leather_wing_armor"
 item_id = 0
 rarity = "common"
 weight = 2.0
-hue = 0
 
 [[item]]
 id = "0x0308_lbr"
@@ -1202,7 +1082,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 304
 sell_price = 152
-hue = 0
 
 [[item]]
 id = "0x0307_lbr"
@@ -1212,7 +1091,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 336
 sell_price = 168
-hue = 0
 
 [[item]]
 id = "0x030a_lbr"
@@ -1222,7 +1100,6 @@ rarity = "common"
 weight = 11.0
 buy_price = 635
 sell_price = 338
-hue = 0
 
 [[item]]
 id = "0x0309_lbr"
@@ -1232,7 +1109,6 @@ rarity = "common"
 weight = 11.0
 buy_price = 661
 sell_price = 98
-hue = 0
 
 [[item]]
 id = "0x030e_lbr"
@@ -1242,7 +1118,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 323
 sell_price = 143
-hue = 0
 
 [[item]]
 id = "0x030d_lbr"
@@ -1252,7 +1127,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 338
 sell_price = 150
-hue = 0
 
 [[item]]
 id = "0x030c_lbr"
@@ -1262,7 +1136,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 336
 sell_price = 149
-hue = 0
 
 [[item]]
 id = "0x030b_lbr"
@@ -1272,7 +1145,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 307
 sell_price = 137
-hue = 0
 
 [[item]]
 id = "0x0284_lbr"
@@ -1282,7 +1154,6 @@ rarity = "common"
 weight = 10.0
 buy_price = 107
 sell_price = 54
-hue = 0
 
 [[item]]
 id = "0x0283_lbr"
@@ -1292,7 +1163,6 @@ rarity = "common"
 weight = 10.0
 buy_price = 107
 sell_price = 54
-hue = 0
 
 [[item]]
 id = "0x0286_lbr"
@@ -1302,7 +1172,6 @@ rarity = "common"
 weight = 16.0
 buy_price = 195
 sell_price = 104
-hue = 0
 
 [[item]]
 id = "0x0285_lbr"
@@ -1312,7 +1181,6 @@ rarity = "common"
 weight = 16.0
 buy_price = 185
 sell_price = 98
-hue = 0
 
 [[item]]
 id = "0x028a_lbr"
@@ -1322,7 +1190,6 @@ rarity = "common"
 weight = 16.0
 buy_price = 103
 sell_price = 45
-hue = 0
 
 [[item]]
 id = "0x0289_lbr"
@@ -1332,7 +1199,6 @@ rarity = "common"
 weight = 16.0
 buy_price = 105
 sell_price = 47
-hue = 0
 
 [[item]]
 id = "0x0288_lbr"
@@ -1342,7 +1208,6 @@ rarity = "common"
 weight = 10.0
 buy_price = 120
 sell_price = 53
-hue = 0
 
 [[item]]
 id = "0x0287_lbr"
@@ -1352,7 +1217,6 @@ rarity = "common"
 weight = 10.0
 buy_price = 123
 sell_price = 54
-hue = 0
 
 [[item]]
 id = "0x782e_lbr"
@@ -1362,7 +1226,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 134
 sell_price = 67
-hue = 0
 
 [[item]]
 id = "0x782a_lbr"
@@ -1372,7 +1235,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 234
 sell_price = 117
-hue = 0
 
 [[item]]
 id = "0x782b_lbr"
@@ -1382,7 +1244,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 234
 sell_price = 117
-hue = 0
 
 [[item]]
 id = "0x782d_lbr"
@@ -1392,7 +1253,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 157
 sell_price = 71
-hue = 0
 
 [[item]]
 id = "0x782c_lbr"
@@ -1402,7 +1262,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 179
 sell_price = 89
-hue = 0
 
 [[item]]
 id = "0x7822_lbr"
@@ -1412,7 +1271,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 172
 sell_price = 86
-hue = 0
 
 [[item]]
 id = "0x7823_lbr"
@@ -1422,7 +1280,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 172
 sell_price = 86
-hue = 0
 
 [[item]]
 id = "0x7828_lbr"
@@ -1432,7 +1289,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 115
 sell_price = 52
-hue = 0
 
 [[item]]
 id = "0x7824_lbr"
@@ -1442,7 +1298,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 131
 sell_price = 65
-hue = 0
 
 [[item]]
 id = "0x7825_lbr"
@@ -1452,7 +1307,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 131
 sell_price = 65
-hue = 0
 
 [[item]]
 id = "0x7826_lbr"
@@ -1462,7 +1316,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 131
 sell_price = 65
-hue = 0
 
 [[item]]
 id = "0x7827_lbr"
@@ -1472,7 +1325,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 131
 sell_price = 65
-hue = 0
 
 [[item]]
 id = "0x7829_lbr"
@@ -1482,7 +1334,6 @@ rarity = "common"
 weight = 2.0
 buy_price = 94
 sell_price = 49
-hue = 0
 
 [[item]]
 id = "0x1b72_lbr"
@@ -1492,7 +1343,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 91
 sell_price = 45
-hue = 0
 
 [[item]]
 id = "0x1b73_lbr"
@@ -1502,7 +1352,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 66
 sell_price = 33
-hue = 0
 
 [[item]]
 id = "0x1b74_lbr"
@@ -1512,7 +1361,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 135
 sell_price = 67
-hue = 0
 
 [[item]]
 id = "0x1b76_lbr"
@@ -1522,7 +1370,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 175
 sell_price = 87
-hue = 0
 
 [[item]]
 id = "0x1b7b_lbr"
@@ -1532,7 +1379,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 98
 sell_price = 49
-hue = 0
 
 [[item]]
 id = "0x1b78_lbr"
@@ -1542,7 +1388,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 121
 sell_price = 60
-hue = 0
 
 [[item]]
 id = "0x1b7a_lbr"
@@ -1552,7 +1397,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 62
 sell_price = 31
-hue = 0
 
 [[item]]
 id = "0x1bc4_lbr"
@@ -1562,7 +1406,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 196
 sell_price = 98
-hue = 0
 
 [[item]]
 id = "0x1bc3_lbr"
@@ -1572,7 +1415,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 209
 sell_price = 104
-hue = 0
 
 [[item]]
 id = "0x4228_lbr"
@@ -1582,7 +1424,6 @@ rarity = "common"
 weight = 5.0
 buy_price = 209
 sell_price = 104
-hue = 0
 
 [[item]]
 id = "0x4201_lbr"
@@ -1592,7 +1433,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 118
 sell_price = 59
-hue = 0
 
 [[item]]
 id = "0x422a_lbr"
@@ -1602,7 +1442,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 196
 sell_price = 98
-hue = 0
 
 [[item]]
 id = "0x4204_lbr"
@@ -1612,7 +1451,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 209
 sell_price = 104
-hue = 0
 
 [[item]]
 id = "0x4205_lbr"
@@ -1622,7 +1460,6 @@ rarity = "common"
 weight = 7.0
 buy_price = 59
 sell_price = 29
-hue = 0
 
 [[item]]
 id = "0x4203_lbr"
@@ -1632,7 +1469,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 118
 sell_price = 59
-hue = 0
 
 [[item]]
 id = "0x4202_lbr"
@@ -1642,7 +1478,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 59
 sell_price = 29
-hue = 0
 
 [[item]]
 id = "0x4200_lbr"
@@ -1652,4 +1487,3 @@ rarity = "common"
 weight = 5.0
 buy_price = 62
 sell_price = 31
-hue = 0

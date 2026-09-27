@@ -6,7 +6,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aaa_rug"
@@ -16,7 +15,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aab_rug"
@@ -26,7 +24,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aac_rug"
@@ -36,7 +33,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aad_rug"
@@ -46,7 +42,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aae_rug"
@@ -56,7 +51,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aaf_rug"
@@ -66,7 +60,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ab6_rug"
@@ -76,7 +69,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ab7_rug"
@@ -86,7 +78,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ab8_rug"
@@ -96,7 +87,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ab9_rug"
@@ -106,7 +96,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aba_rug"
@@ -116,7 +105,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0abb_rug"
@@ -126,7 +114,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0abc_rug"
@@ -136,7 +123,6 @@ name = "rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0abd_carpet"
@@ -146,7 +132,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0abe_carpet"
@@ -156,7 +141,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0abf_carpet"
@@ -166,7 +150,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac0_carpet"
@@ -176,7 +159,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac1_carpet"
@@ -186,7 +168,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac2_carpet"
@@ -196,7 +177,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac3_carpet"
@@ -206,7 +186,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac4_carpet"
@@ -216,7 +195,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac5_carpet"
@@ -226,7 +204,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af6_carpet"
@@ -236,7 +213,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af7_carpet"
@@ -246,7 +222,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af8_carpet"
@@ -256,7 +231,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af9_carpet"
@@ -266,7 +240,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac6_carpet"
@@ -276,7 +249,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac7_carpet"
@@ -286,7 +258,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac8_carpet"
@@ -296,7 +267,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ac9_carpet"
@@ -306,7 +276,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aca_carpet"
@@ -316,7 +285,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0acb_carpet"
@@ -326,7 +294,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0acc_carpet"
@@ -336,7 +303,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0acd_carpet"
@@ -346,7 +312,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ace_carpet"
@@ -356,7 +321,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0acf_carpet"
@@ -366,7 +330,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad0_carpet"
@@ -376,7 +339,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad1_carpet"
@@ -386,7 +348,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad2_carpet"
@@ -396,7 +357,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad3_carpet"
@@ -406,7 +366,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad4_carpet"
@@ -416,7 +375,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad5_carpet"
@@ -426,7 +384,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad6_carpet"
@@ -436,7 +393,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad7_carpet"
@@ -446,7 +402,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad8_carpet"
@@ -456,7 +411,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ad9_carpet"
@@ -466,7 +420,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ada_carpet"
@@ -476,7 +429,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0adb_carpet"
@@ -486,7 +438,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0adc_carpet"
@@ -496,7 +447,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0add_carpet"
@@ -506,7 +456,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ade_carpet"
@@ -516,7 +465,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0adf_carpet"
@@ -526,7 +474,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae0_carpet"
@@ -536,7 +483,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae1_carpet"
@@ -546,7 +492,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae2_carpet"
@@ -556,7 +501,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae3_carpet"
@@ -566,7 +510,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae4_carpet"
@@ -576,7 +519,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae5_carpet"
@@ -586,7 +528,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae6_carpet"
@@ -596,7 +537,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae7_carpet"
@@ -606,7 +546,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae8_carpet"
@@ -616,7 +555,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0ae9_carpet"
@@ -626,7 +564,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aea_carpet"
@@ -636,7 +573,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aee_carpet"
@@ -646,7 +582,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aef_carpet"
@@ -656,7 +591,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af0_carpet"
@@ -666,7 +600,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af1_carpet"
@@ -676,7 +609,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af2_carpet"
@@ -686,7 +618,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af3_carpet"
@@ -696,7 +627,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af4_carpet"
@@ -706,7 +636,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0af5_carpet"
@@ -716,7 +645,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aeb_carpet"
@@ -726,7 +654,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aec_carpet"
@@ -736,7 +663,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0aed_carpet"
@@ -746,7 +672,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x0afa_carpet"
@@ -756,7 +681,6 @@ name = "carpet"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e36_bearskin_rug"
@@ -766,7 +690,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e37_bearskin_rug"
@@ -776,7 +699,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e38_bearskin_rug"
@@ -786,7 +708,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e39_bearskin_rug"
@@ -796,7 +717,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e3a_bearskin_rug"
@@ -806,7 +726,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e3b_bearskin_rug"
@@ -816,7 +735,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e3c_bearskin_rug"
@@ -826,7 +744,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e3d_bearskin_rug"
@@ -836,7 +753,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e3e_bearskin_rug"
@@ -846,7 +762,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e40_bearskin_rug"
@@ -856,7 +771,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e41_bearskin_rug"
@@ -866,7 +780,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e42_bearskin_rug"
@@ -876,7 +789,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e43_bearskin_rug"
@@ -886,7 +798,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e44_bearskin_rug"
@@ -896,7 +807,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e45_bearskin_rug"
@@ -906,7 +816,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e46_bearskin_rug"
@@ -916,7 +825,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e47_bearskin_rug"
@@ -926,7 +834,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e48_bearskin_rug"
@@ -936,7 +843,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e49_bearskin_rug"
@@ -946,7 +852,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e4a_bearskin_rug"
@@ -956,7 +861,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e4b_bearskin_rug"
@@ -966,7 +870,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e4c_bearskin_rug"
@@ -976,7 +879,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e4d_bearskin_rug"
@@ -986,7 +888,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e4e_bearskin_rug"
@@ -996,7 +897,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e4f_bearskin_rug"
@@ -1006,7 +906,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e50_bearskin_rug"
@@ -1016,7 +915,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e51_bearskin_rug"
@@ -1026,7 +924,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e53_bearskin_rug"
@@ -1036,7 +933,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e54_bearskin_rug"
@@ -1046,7 +942,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e55_bearskin_rug"
@@ -1056,7 +951,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e56_bearskin_rug"
@@ -1066,7 +960,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e57_bearskin_rug"
@@ -1076,7 +969,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e58_bearskin_rug"
@@ -1086,7 +978,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e59_bearskin_rug"
@@ -1096,7 +987,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e5a_bearskin_rug"
@@ -1106,7 +996,6 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e5b_bearskin_rug"
@@ -1116,4 +1005,3 @@ name = "bearskin rug"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0

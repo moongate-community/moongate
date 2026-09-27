@@ -31,6 +31,9 @@ public sealed class RepositoryTemplateFilesTests
         Assert.True(templates.Count > 7000, $"only {templates.Count} templates");
         Assert.Equal(0x0E75u, templates["0x0e75_backpack"].ItemId.Value);
         Assert.True(templates["0x0eed_gold_coin"].Stackable);
+
+        // Only abstract base templates may resolve to no graphic; anything else would spawn invisible.
+        Assert.Empty(templates.Values.Where(t => t.ItemId.Value == 0 && !t.Id.Contains("base")).Select(t => t.Id));
     }
 
     [Fact]

@@ -66,7 +66,7 @@ internal static class UoxItemConverterCommand
 
         var sourceFiles = File.Exists(source)
             ? [source]
-            : Directory.EnumerateFiles(source, "*.dfn", SearchOption.AllDirectories).ToArray();
+            : Directory.EnumerateFiles(source, "*.dfn", SearchOption.AllDirectories).Order(StringComparer.Ordinal).ToArray();
 
         if (sourceFiles.Length == 0)
         {
@@ -86,12 +86,14 @@ internal static class UoxItemConverterCommand
 
             foreach (var block in blocks)
             {
-                // A later duplicate header is a malformed source; keep the first one and say so,
-                // rather than silently letting the second overwrite what the first already resolved to.
-                if (!blocksByHeader.TryAdd(block.Header, block))
+                // UOX3 keeps the last definition of a header (scriptc.cpp overwrites defEntries[section]); files are read
+                // in ordinal order so the result does not depend on the filesystem.
+                if (blocksByHeader.ContainsKey(block.Header))
                 {
-                    error.WriteLine($"Duplicate block '[{block.Header}]' in {file}; keeping the first one seen.");
+                    error.WriteLine($"Duplicate block '[{block.Header}]' in {file}; keeping this later one, as UOX3 does.");
                 }
+
+                blocksByHeader[block.Header] = block;
             }
         }
 

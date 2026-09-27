@@ -8,7 +8,6 @@ movable = false
 weight = 50.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1884_millstone"
@@ -20,7 +19,6 @@ movable = false
 weight = 50.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1885_millstone"
@@ -32,7 +30,6 @@ movable = false
 weight = 50.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1886_millstone"
@@ -44,7 +41,6 @@ movable = false
 weight = 50.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1887_millstone"
@@ -56,7 +52,6 @@ movable = false
 weight = 50.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1888_millstone"
@@ -68,7 +63,6 @@ movable = false
 weight = 50.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1889_millstones"
@@ -80,7 +74,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x188a_millstones"
@@ -92,7 +85,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1920_flour_mill"
@@ -104,7 +96,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1922_flour_mill"
@@ -116,7 +107,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1921_flour_mill"
@@ -128,7 +118,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1925_flour_mill"
@@ -140,7 +129,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1923_flour_mill"
@@ -152,7 +140,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1926_flour_mill"
@@ -164,7 +151,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1924_crank"
@@ -176,7 +162,6 @@ movable = false
 weight = 10.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1928_crank"
@@ -188,7 +173,6 @@ movable = false
 weight = 10.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x192c_flour_mill"
@@ -200,7 +184,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x192e_flour_mill"
@@ -212,7 +195,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x192d_flour_mill"
@@ -224,7 +206,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1931_flour_mill"
@@ -236,7 +217,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x192f_flour_mill"
@@ -248,7 +228,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1932_flour_mill"
@@ -260,7 +239,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1930_crank"
@@ -272,7 +250,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1934_crank"
@@ -284,7 +261,6 @@ movable = false
 weight = 100.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1070_training_dummy"
@@ -296,7 +272,6 @@ movable = true
 weight = 60.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1071_training_dummy"
@@ -308,7 +283,6 @@ movable = false
 weight = 60.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1074_training_dummy"
@@ -320,7 +294,6 @@ movable = true
 weight = 60.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1075_training_dummy"
@@ -332,7 +305,6 @@ movable = false
 weight = 60.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x100a_archery_butte"
@@ -344,7 +316,6 @@ movable = false
 weight = 80.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x100b_archery_butte"
@@ -356,7 +327,6 @@ movable = false
 weight = 80.0
 stackable = false
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1ec0_pickpocket_dip"
@@ -368,19 +338,6 @@ movable = true
 weight = 60.0
 stackable = false
 decays = false
-hue = 0
-
-[[item]]
-id = "0x1ec1_pickpocket_dip"
-base_id = "base_item"
-item_id = 7873
-name = "pickpocket dip"
-rarity = "common"
-movable = false
-weight = 60.0
-stackable = false
-decays = false
-hue = 0
 
 [[item]]
 id = "0x1ec3_pickpocket_dip"
@@ -392,19 +349,6 @@ movable = true
 weight = 60.0
 stackable = false
 decays = false
-hue = 0
-
-[[item]]
-id = "0x1ec4_pickpocket_dip"
-base_id = "base_item"
-item_id = 7876
-name = "pickpocket dip"
-rarity = "common"
-movable = false
-weight = 60.0
-stackable = false
-decays = false
-hue = 0
 
 [[item]]
 id = "0x0b41_water_trough"
@@ -414,7 +358,6 @@ name = "water trough"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b42_water_trough"
@@ -424,7 +367,6 @@ name = "water trough"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b43_water_trough"
@@ -434,7 +376,6 @@ name = "water trough"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x0b44_water_trough"
@@ -444,7 +385,6 @@ name = "water trough"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "brownbearrug1"
@@ -455,7 +395,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug2"
@@ -466,7 +405,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug3"
@@ -477,7 +415,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug4"
@@ -488,7 +425,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug5"
@@ -499,7 +435,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug6"
@@ -510,7 +445,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug7"
@@ -521,7 +455,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug8"
@@ -532,7 +465,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug9"
@@ -543,7 +475,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug10"
@@ -554,7 +485,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug11"
@@ -565,7 +495,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug12"
@@ -576,7 +505,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug13"
@@ -587,7 +515,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug14"
@@ -598,7 +525,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug15"
@@ -609,7 +535,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug16"
@@ -620,7 +545,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug17"
@@ -631,7 +555,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "brownbearrug18"
@@ -642,7 +565,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug1"
@@ -653,7 +575,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug2"
@@ -664,7 +585,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug3"
@@ -675,7 +595,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug4"
@@ -686,7 +605,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug5"
@@ -697,7 +615,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug6"
@@ -708,7 +625,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug7"
@@ -719,7 +635,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug8"
@@ -730,7 +645,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug9"
@@ -741,7 +655,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug10"
@@ -752,7 +665,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug11"
@@ -763,7 +675,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug12"
@@ -774,7 +685,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug13"
@@ -785,7 +695,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug14"
@@ -796,7 +705,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug15"
@@ -807,7 +715,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug16"
@@ -818,7 +725,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug17"
@@ -829,7 +735,6 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0
 
 [[item]]
 id = "polarbearrug18"
@@ -840,4 +745,3 @@ rarity = "common"
 movable = false
 weight = 10.0
 decays = false
-hue = 0

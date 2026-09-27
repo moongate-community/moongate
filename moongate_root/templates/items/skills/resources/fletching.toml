@@ -9,7 +9,6 @@ stackable = true
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1bd4_shaft"
@@ -22,7 +21,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1bd4_5_shaft"
@@ -36,7 +34,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1bd4_20_shaft"
@@ -50,7 +47,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1bd4_50_shaft"
@@ -64,4 +60,3 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0

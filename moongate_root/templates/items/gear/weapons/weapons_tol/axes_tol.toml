@@ -6,7 +6,6 @@ rarity = "common"
 weight = 6.0
 buy_price = 33
 sell_price = 16
-hue = 0
 
 [[item]]
 id = "0x1442_tol"
@@ -16,7 +15,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 32
 sell_price = 16
-hue = 0
 
 [[item]]
 id = "0x0f43_tol"
@@ -26,7 +24,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 27
 sell_price = 12
-hue = 0
 
 [[item]]
 id = "0x0f45_tol"
@@ -36,7 +33,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 30
 sell_price = 15
-hue = 0
 
 [[item]]
 id = "0x0f47_tol"
@@ -46,7 +42,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 26
 sell_price = 13
-hue = 0
 
 [[item]]
 id = "0x0f49_tol"
@@ -56,7 +51,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 40
 sell_price = 20
-hue = 0
 
 [[item]]
 id = "0x0f4b_tol"
@@ -66,7 +60,6 @@ rarity = "common"
 weight = 8.0
 buy_price = 52
 sell_price = 26
-hue = 0
 
 [[item]]
 id = "0x2d28_tol"
@@ -76,7 +69,6 @@ rarity = "common"
 weight = 12.0
 buy_price = 47
 sell_price = 41
-hue = 0
 
 [[item]]
 id = "0x48b0_tol"
@@ -86,7 +78,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 22
 sell_price = 11
-hue = 0
 
 [[item]]
 id = "0x08fd_tol"
@@ -96,7 +87,6 @@ rarity = "common"
 weight = 4.0
 buy_price = 83
 sell_price = 41
-hue = 0
 
 [[item]]
 id = "0x48b2_tol"
@@ -106,4 +96,3 @@ rarity = "common"
 weight = 4.0
 buy_price = 23
 sell_price = 11
-hue = 0

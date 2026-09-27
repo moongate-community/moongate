@@ -8,7 +8,6 @@ movable = true
 weight = 20.0
 buy_price = 14
 sell_price = 7
-hue = 0
 max_weight = 400000
 
 [[item]]
@@ -21,7 +20,6 @@ movable = true
 weight = 20.0
 buy_price = 14
 sell_price = 7
-hue = 0
 max_weight = 400000
 
 [[item]]
@@ -31,7 +29,6 @@ item_id = 3712
 name = "strongbox"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "ballotbox_east"
@@ -40,7 +37,6 @@ item_id = 3712
 name = "ballot box"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "ballotbox_south"
@@ -49,7 +45,6 @@ item_id = 2472
 name = "ballot box"
 rarity = "common"
 movable = false
-hue = 0
 
 [[item]]
 id = "0x09ab_metal_chest"
@@ -61,7 +56,6 @@ movable = true
 weight = 20.0
 buy_price = 40
 sell_price = 20
-hue = 0
 max_weight = 400000
 
 [[item]]
@@ -74,7 +68,6 @@ movable = true
 weight = 20.0
 buy_price = 40
 sell_price = 20
-hue = 0
 max_weight = 400000
 
 [[item]]
@@ -87,7 +80,6 @@ movable = true
 weight = 30.0
 buy_price = 40
 sell_price = 20
-hue = 0
 max_weight = 400000
 
 [[item]]
@@ -100,7 +92,6 @@ movable = true
 weight = 30.0
 buy_price = 40
 sell_price = 20
-hue = 0
 max_weight = 400000
 
 [[item]]
@@ -126,11 +117,9 @@ id = "puzzlestrongbox"
 base_id = "puzzlechest"
 item_id = 2472
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "puzzlestrongbox_ns"
 base_id = "puzzlechest"
 item_id = 3712
 rarity = "common"
-hue = 0

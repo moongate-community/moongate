@@ -6,18 +6,17 @@ name = "a lightsource"
 rarity = "common"
 decays = false
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "wispglow"
 base_id = "0x1647_a_lightsource"
 item_id = 0
 rarity = "common"
-hue = 0
+layer = "talisman"
 
 [[item]]
 id = "shadowwispglow"
 base_id = "0x1647_a_lightsource"
 item_id = 0
 rarity = "common"
-hue = 0
+layer = "talisman"

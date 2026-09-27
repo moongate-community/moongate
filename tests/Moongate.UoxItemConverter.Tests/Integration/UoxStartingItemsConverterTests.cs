@@ -104,6 +104,17 @@ public sealed class UoxStartingItemsConverterTests : IDisposable
         Assert.Equal((bool?)false, set.Items[1].Newbie);
     }
 
+    [Theory, InlineData(55, SkillType.Imbuing), InlineData(56, SkillType.Mysticism)]
+    public void Run_BestSkillNumbers_FollowUox3sOwnNumbering(int number, SkillType skill)
+    {
+        // UOX3 numbers IMBUING 55 and MYSTICISM 56; SkillType has them the other way round.
+        WriteSources($"[BESTSKILL {number}]\n{{\nPACKITEM=0x0f7a\n}}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Equal((SkillType?)skill, Assert.Single(ReadSets()).Skill);
+    }
+
     [Fact]
     public void Run_AnUnresolvedItem_IsDroppedAndCounted()
     {

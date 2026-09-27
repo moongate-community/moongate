@@ -41,7 +41,7 @@ Verified against real UOX3 data:
 
 | UOX3 | ItemTemplate | Note |
 | --- | --- | --- |
-| The block's own `id=` | `ItemId` | A block with no `id=` of its own converts only when it has one parent (below), with `item_id = 0`: the server's loader takes the parent's graphic |
+| The block's own `id=` | `ItemId` | A list (`id=0x0c4f 0x0c50`, one picked at random in UOX3) keeps its first graphic; typos such as `0x0x04FC` and `0x15b6]` are forgiven. A block with no `id=` of its own converts only when it has one parent (below), with `item_id = 0`: the server's loader takes the parent's graphic |
 | The block header, or `name=` when the header is a bare hex | `Id` | Run through `StringUtils.ToSnakeCase`; `name=` is free text ("pitcher of wine") |
 | `name=` | `Name` | Carried as-is; UOX3 does not separate an identifier from display text |
 | A single-target `get=` (else `getlbr=`) | `BaseId` | Only when that target itself converted; `get=a b`, a random alias with no `id=` of its own, converts nothing |
@@ -54,7 +54,7 @@ Verified against real UOX3 data:
 | `decay=` | `Decays` | `1` is true, anything else false |
 | `newbie` or `newbie=1` | `LootType = newbied` | |
 | `custominttag=name value`, `customstringtag=name text` | `Tags` | Every line, so a block can set several |
-| `color=` | `Hue` | A fixed value, not a range |
+| `color=` or `colour=` | `Hue` | A fixed value, not a range; unset writes no hue, so the server's loader takes the base template's |
 | `weightmax=` | `MaxWeight` | |
 | `visible=1`, `2` or `3` | `Visibility = game_master` | Hidden, magically invisible or GM hidden all keep the item from players; `visible=0` or absent leaves it unset, visible to everyone |
 
@@ -67,6 +67,13 @@ the child's own lines winning. A coin so gets `weight = 0.02` and `stackable = t
 its `base_id` is the first ancestor that has an `id=` (`base_item`). An inherited `name=`
 becomes the template's name but never part of its id: ids come from each block's own
 lines only.
+
+Numbers are read as UOX3 reads them (`stoi(value, nullptr, 0)`): hex with `0x` or
+decimal, so `layer=0x08` is a ring. A tag with no value, such as `baseitem.dfn`'s bare
+`decay=`, is ignored as UOX3 ignores it. A header defined twice keeps its **last**
+definition, as UOX3 does, and source files are read in ordinal order so the result does
+not depend on the filesystem. `[BESTSKILL n]` follows UOX3's own skill numbers, where
+Imbuing is 55 and Mysticism 56 (the other way round from `SkillType`).
 
 A block with no `id=` of its own but a single parent (`get=x`, else `getlbr=x`) that
 converted is a template too, id = its header: UOX3's magic items, journals and other

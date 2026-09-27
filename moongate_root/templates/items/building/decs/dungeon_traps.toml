@@ -7,7 +7,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x111b_wall_spikes"
@@ -18,7 +17,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x119a_floor_spikes"
@@ -29,7 +27,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x11a0_floor_spikes"
@@ -40,7 +37,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1103_floor_saw"
@@ -51,7 +47,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1116_floor_saw"
@@ -62,7 +57,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x11ac_floor_saw"
@@ -73,7 +67,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x11b1_floor_saw"
@@ -84,7 +77,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x11c0_crumbling_floor"
@@ -95,7 +87,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x113c_gas_trap"
@@ -106,7 +97,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1147_gas_trap"
@@ -117,7 +107,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x11a8_gas_trap"
@@ -128,7 +117,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x10f5_stone_face"
@@ -139,7 +127,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x10fc_stone_face"
@@ -150,7 +137,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x110f_stone_face"
@@ -161,7 +147,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x1125_mushroom"
@@ -172,7 +157,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0
 
 [[item]]
 id = "0x11c4_flame_spurt_trap_base"
@@ -184,7 +168,6 @@ movable = false
 weight = 2.55
 decays = false
 visibility = "game_master"
-hue = 0
 
 [[item]]
 id = "flame_spurt_trap_fx"
@@ -195,7 +178,6 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1d99_giant_floor_spike"
@@ -206,4 +188,3 @@ rarity = "common"
 movable = false
 weight = 2.55
 decays = false
-hue = 0

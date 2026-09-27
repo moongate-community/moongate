@@ -193,7 +193,7 @@ equip = true
 common = false
 skill = "cartography"
 [[set.items]]
-items = ["0x14eb_blank_map"]
+items = ["0x14eb_map"]
 amount = 4
 equip = false
 
@@ -690,7 +690,7 @@ equip = false
 
 [[set]]
 common = false
-skill = "mysticism"
+skill = "imbuing"
 [[set.items]]
 items = ["0x1f03_robe"]
 hue = 1626
@@ -698,7 +698,7 @@ equip = true
 
 [[set]]
 common = false
-skill = "imbuing"
+skill = "mysticism"
 [[set.items]]
 items = ["0x2d9d_mystic_book"]
 equip = false

@@ -7,7 +7,6 @@ rarity = "common"
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "tent_key"
@@ -18,7 +17,6 @@ rarity = "common"
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "boat_key"
@@ -29,4 +27,3 @@ rarity = "common"
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0

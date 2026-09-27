@@ -6,7 +6,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a5b_bed"
@@ -16,7 +15,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a63_bed"
@@ -26,7 +24,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a5c_bed"
@@ -36,7 +33,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a5d_bed"
@@ -46,7 +42,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a62_bed"
@@ -56,7 +51,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a5e_bed"
@@ -66,7 +60,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a5f_bed"
@@ -76,7 +69,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a60_bed"
@@ -86,7 +78,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a61_bed"
@@ -96,7 +87,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a64_bed"
@@ -106,7 +96,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a65_bed"
@@ -116,7 +105,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a66_bed"
@@ -126,7 +114,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a67_bed"
@@ -136,7 +123,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a68_bed"
@@ -146,7 +132,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a69_bed"
@@ -156,7 +141,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a6a_bed"
@@ -166,7 +150,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a6b_bed"
@@ -176,7 +159,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a70_bed"
@@ -186,7 +168,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a71_bed"
@@ -196,7 +177,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a72_bed"
@@ -206,7 +186,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a73_bed"
@@ -216,7 +195,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a74_bed"
@@ -226,7 +204,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a75_bed"
@@ -236,7 +213,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a76_bed"
@@ -246,7 +222,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a77_bed"
@@ -256,7 +231,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a78_bed"
@@ -266,7 +240,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a79_bed"
@@ -276,7 +249,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a7a_bed"
@@ -286,7 +258,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a7b_bed"
@@ -296,7 +267,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a7c_bed"
@@ -306,7 +276,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a7d_bed"
@@ -316,7 +285,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a7e_bed"
@@ -326,7 +294,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a7f_bed"
@@ -336,7 +303,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a80_bed"
@@ -346,7 +312,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a81_bed"
@@ -356,7 +321,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a82_bed"
@@ -366,7 +330,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a83_bed"
@@ -376,7 +339,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a84_bed"
@@ -386,7 +348,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a85_bed"
@@ -396,7 +357,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a86_bed"
@@ -406,7 +366,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a87_bed"
@@ -416,7 +375,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a88_bed"
@@ -426,7 +384,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a89_bed"
@@ -436,7 +393,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a8a_bed"
@@ -446,7 +402,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a8b_bed"
@@ -456,7 +411,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a8c_bed"
@@ -466,7 +420,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a8d_bed"
@@ -476,7 +429,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a8e_bed"
@@ -486,7 +438,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a8f_bed"
@@ -496,7 +447,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a90_bed"
@@ -506,7 +456,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0a91_bed"
@@ -516,7 +465,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0ab0_bed"
@@ -526,7 +474,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0ab1_bed"
@@ -536,7 +483,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0ab2_bed"
@@ -546,7 +492,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0ab3_bed"
@@ -556,7 +501,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0ab4_bed"
@@ -566,7 +510,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x0ab5_bed"
@@ -576,7 +519,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11ce_bed"
@@ -586,7 +528,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11cd_bed"
@@ -596,7 +537,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11d0_bed"
@@ -606,7 +546,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11d1_bed"
@@ -616,7 +555,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11d2_bed"
@@ -626,7 +564,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11d3_bed"
@@ -636,7 +573,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11d4_bed"
@@ -646,7 +582,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11d5_bed"
@@ -656,7 +591,6 @@ name = "bed"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11f0_hammock"
@@ -666,7 +600,6 @@ name = "hammock"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11f1_hammock"
@@ -676,7 +609,6 @@ name = "hammock"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11f2_hammock"
@@ -686,7 +618,6 @@ name = "hammock"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11f3_hammock"
@@ -696,7 +627,6 @@ name = "hammock"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11fd_cot"
@@ -706,7 +636,6 @@ name = "cot"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11fe_cot"
@@ -716,7 +645,6 @@ name = "cot"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x11ff_cot"
@@ -726,7 +654,6 @@ name = "cot"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1200_cot"
@@ -736,4 +663,3 @@ name = "cot"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0

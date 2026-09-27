@@ -5,7 +5,6 @@ item_id = 0
 rarity = "common"
 movable = false
 decays = true
-hue = 0
 
 [[item]]
 id = "brownbeartrophy"
@@ -15,7 +14,6 @@ name = "a brown bear trophy"
 rarity = "common"
 movable = false
 decays = true
-hue = 0
 
 [[item]]
 id = "stagtrophy"
@@ -25,7 +23,6 @@ name = "a stag trophy"
 rarity = "common"
 movable = false
 decays = true
-hue = 0
 
 [[item]]
 id = "bigfishtrophy"
@@ -35,7 +32,6 @@ name = "a big fish trophy"
 rarity = "common"
 movable = false
 decays = true
-hue = 0
 
 [[item]]
 id = "gorillatrophy"
@@ -45,7 +41,6 @@ name = "a gorilla trophy"
 rarity = "common"
 movable = false
 decays = true
-hue = 0
 
 [[item]]
 id = "orctrophy"
@@ -55,7 +50,6 @@ name = "an orc trophy"
 rarity = "common"
 movable = false
 decays = true
-hue = 0
 
 [[item]]
 id = "polarbeartrophy"
@@ -65,7 +59,6 @@ name = "a polar bear trophy"
 rarity = "common"
 movable = false
 decays = true
-hue = 0
 
 [[item]]
 id = "trolltrophy"
@@ -75,4 +68,3 @@ name = "a troll trophy"
 rarity = "common"
 movable = false
 decays = true
-hue = 0

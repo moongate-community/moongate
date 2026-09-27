@@ -10,7 +10,6 @@ stackable = true
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1051_axle_with_gears"
@@ -24,7 +23,6 @@ stackable = true
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1db7_barrel_hoop"
@@ -35,7 +33,6 @@ rarity = "common"
 weight = 5.0
 amount = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1db8_barrel_lid"
@@ -46,7 +43,6 @@ rarity = "common"
 weight = 2.0
 amount = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1eb2_barrel_stave"
@@ -57,7 +53,6 @@ rarity = "common"
 weight = 1.0
 amount = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1004_barrel_tap"
@@ -68,7 +63,6 @@ rarity = "common"
 weight = 1.0
 amount = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x104b_clock"
@@ -81,7 +75,6 @@ amount = 1
 buy_price = 24
 sell_price = 12
 decays = true
-hue = 0
 
 [[item]]
 id = "0x104c_clock"
@@ -94,7 +87,6 @@ amount = 1
 buy_price = 24
 sell_price = 12
 decays = true
-hue = 0
 
 [[item]]
 id = "0x104d_clock_frame"
@@ -106,7 +98,6 @@ weight = 2.0
 amount = 1
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x104e_clock_frame"
@@ -118,7 +109,6 @@ weight = 2.0
 amount = 1
 stackable = true
 decays = true
-hue = 0
 
 [[item]]
 id = "0x104f_clock_parts"
@@ -131,7 +121,6 @@ amount = 1
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1053_gears"
@@ -144,7 +133,6 @@ amount = 1
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1047_globe"
@@ -154,7 +142,6 @@ name = "globe"
 rarity = "common"
 weight = 4.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1048_globe"
@@ -164,7 +151,6 @@ name = "globe"
 rarity = "common"
 weight = 4.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1055_hinge"
@@ -178,7 +164,15 @@ stackable = true
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
+
+[[item]]
+id = "0x0e7f_an_open_keg"
+base_id = "base_item"
+item_id = 3711
+name = "an open keg"
+rarity = "common"
+weight = 15.0
+decays = true
 
 [[item]]
 id = "0x1851_scales"
@@ -188,7 +182,6 @@ name = "scales"
 rarity = "common"
 weight = 4.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1852_scales"
@@ -198,7 +191,6 @@ name = "scales"
 rarity = "common"
 weight = 4.0
 decays = true
-hue = 0
 
 [[item]]
 id = "0x1057_sextant"
@@ -210,14 +202,12 @@ weight = 2.0
 buy_price = 15
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "sextant"
 base_id = "0x1057_sextant"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x1059_sextant_parts"
@@ -231,7 +221,6 @@ stackable = true
 buy_price = 6
 sell_price = 3
 decays = true
-hue = 0
 
 [[item]]
 id = "0x105d_springs"
@@ -245,7 +234,6 @@ stackable = true
 buy_price = 3
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x14f5_spyglass"
@@ -257,7 +245,6 @@ weight = 1.0
 buy_price = 2
 sell_price = 1
 decays = true
-hue = 0
 
 [[item]]
 id = "0x14f6_spyglass"
@@ -265,7 +252,6 @@ base_id = "0x14f5_spyglass"
 item_id = 5366
 name = "spyglass"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "power_crystal"
@@ -275,7 +261,6 @@ name = "power crystal"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "clockwork_assembly"
@@ -285,4 +270,4 @@ name = "clockwork assembly"
 rarity = "common"
 weight = 50.0
 decays = true
-hue = 0
+hue = 1102

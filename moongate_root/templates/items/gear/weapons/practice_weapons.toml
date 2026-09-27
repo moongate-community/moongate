@@ -6,7 +6,6 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "practice_hatchet"
@@ -16,7 +15,6 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "practice_axe"
@@ -26,7 +24,6 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "practice_mace"
@@ -36,7 +33,6 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "practice_longsword"
@@ -46,7 +42,6 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "practice_spear"
@@ -56,7 +51,6 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "practice_bow"
@@ -66,7 +60,6 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "practice_club"
@@ -76,7 +69,6 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "practice_crook"
@@ -86,7 +78,6 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "practice_gnarled_staff"
@@ -96,4 +87,3 @@ rarity = "common"
 layer = "one_handed"
 decays = true
 loot_type = "newbied"
-hue = 0

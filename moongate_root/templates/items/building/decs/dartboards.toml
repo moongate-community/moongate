@@ -6,7 +6,6 @@ name = "dartboard"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e2f_dartboard"
@@ -16,7 +15,6 @@ name = "dartboard"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e30_dartboard_w/axe"
@@ -26,7 +24,6 @@ name = "dartboard w/axe"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e31_dartboard_w/axe"
@@ -36,7 +33,6 @@ name = "dartboard w/axe"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e32_dartboard_w/knives"
@@ -46,7 +42,6 @@ name = "dartboard w/knives"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1e33_dartboard_w/knives"
@@ -56,4 +51,3 @@ name = "dartboard w/knives"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0

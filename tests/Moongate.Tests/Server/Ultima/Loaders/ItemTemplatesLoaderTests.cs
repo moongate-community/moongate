@@ -49,6 +49,22 @@ public sealed class ItemTemplatesLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_AnUnsetHue_TakesTheParentHue()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/items/a.toml",
+            "[[item]]\nid = \"box\"\nitem_id = 1\nhue = 0x089E\n\n[[item]]\nid = \"puzzle_box\"\nbase_id = \"box\"\nitem_id = 1\n\n" +
+            "[[item]]\nid = \"plain_box\"\nbase_id = \"box\"\nitem_id = 1\nhue = 0\n"
+        );
+
+        var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        Assert.Equal(0x089E, templates["puzzle_box"].Hue!.Value.Resolve().Value);
+        Assert.Equal(0, templates["plain_box"].Hue!.Value.Resolve().Value);
+    }
+
+    [Fact]
     public async Task LoadDataAsync_ChildTags_ReplaceTheParentTags()
     {
         using var root = new TemporaryDirectory();

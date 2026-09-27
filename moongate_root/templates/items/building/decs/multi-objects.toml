@@ -6,7 +6,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b82_wood"
@@ -16,7 +15,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b83_wood"
@@ -26,7 +24,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b84_wood"
@@ -36,7 +33,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b85_wood"
@@ -46,7 +42,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b86_wood"
@@ -56,7 +51,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b87_wood"
@@ -66,7 +60,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b88_wood"
@@ -76,7 +69,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b89_wood"
@@ -86,7 +78,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b8a_wood"
@@ -96,7 +87,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b8b_wood"
@@ -106,7 +96,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b8c_wood"
@@ -116,7 +105,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b8d_wood"
@@ -126,7 +114,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b8e_wood"
@@ -136,7 +123,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b8f_wood"
@@ -146,7 +132,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b90_wood"
@@ -156,7 +141,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b91_wood"
@@ -166,7 +150,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b92_wood"
@@ -176,7 +159,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b93_wood"
@@ -186,7 +168,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b97_wood"
@@ -196,7 +177,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b98_wood"
@@ -206,7 +186,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b99_wood"
@@ -216,7 +195,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b9a_wood"
@@ -226,7 +204,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b9b_wood"
@@ -236,7 +213,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b9c_wood"
@@ -246,7 +222,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b9d_wood"
@@ -256,7 +231,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b9e_wood"
@@ -266,7 +240,6 @@ name = "wood"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1b9f_refuse"
@@ -276,7 +249,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba0_refuse"
@@ -286,7 +258,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba1_refuse"
@@ -296,7 +267,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba2_refuse"
@@ -306,7 +276,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba3_refuse"
@@ -316,7 +285,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba4_refuse"
@@ -326,7 +294,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba5_refuse"
@@ -336,7 +303,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba6_refuse"
@@ -346,7 +312,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba7_refuse"
@@ -356,7 +321,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba8_refuse"
@@ -366,7 +330,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1ba9_refuse"
@@ -376,7 +339,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1baa_refuse"
@@ -386,7 +348,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bab_refuse"
@@ -396,7 +357,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bac_refuse"
@@ -406,7 +366,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bad_refuse"
@@ -416,7 +375,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bae_refuse"
@@ -426,7 +384,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1baf_refuse"
@@ -436,7 +393,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bb0_refuse"
@@ -446,7 +402,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bb1_refuse"
@@ -456,7 +411,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bb2_refuse"
@@ -466,7 +420,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bb4_refuse"
@@ -476,7 +429,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bb5_refuse"
@@ -486,7 +438,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bb6_refuse"
@@ -496,7 +447,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bb7_refuse"
@@ -506,7 +456,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bb8_refuse"
@@ -516,7 +465,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bb9_refuse"
@@ -526,7 +474,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bba_refuse"
@@ -536,7 +483,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bbb_refuse"
@@ -546,7 +492,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bbc_refuse"
@@ -556,7 +501,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1bbd_refuse"
@@ -566,7 +510,6 @@ name = "refuse"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d7_vat"
@@ -576,7 +519,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d8_vat"
@@ -586,7 +528,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14e1_vat"
@@ -596,7 +537,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14d9_vat"
@@ -606,7 +546,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14da_vat"
@@ -616,7 +555,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14e2_vat"
@@ -626,7 +564,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14db_vat"
@@ -636,7 +573,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14dc_vat"
@@ -646,7 +582,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14dd_vat"
@@ -656,7 +591,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14de_vat"
@@ -666,7 +600,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x14df_vat"
@@ -676,7 +609,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x151e_vat"
@@ -686,7 +618,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x151f_vat"
@@ -696,7 +627,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1520_vat"
@@ -706,7 +636,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1521_vat"
@@ -716,7 +645,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1522_vat"
@@ -726,7 +654,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1523_vat"
@@ -736,7 +663,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1524_vat"
@@ -746,7 +672,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1525_vat"
@@ -756,7 +681,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1550_vat"
@@ -766,7 +690,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1551_vat"
@@ -776,7 +699,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1552_vat"
@@ -786,7 +708,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1553_vat"
@@ -796,7 +717,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1554_vat"
@@ -806,7 +726,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1555_vat"
@@ -816,7 +735,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1556_vat"
@@ -826,7 +744,6 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0
 
 [[item]]
 id = "0x1558_vat"
@@ -836,4 +753,3 @@ name = "vat"
 rarity = "common"
 movable = false
 weight = 1.0
-hue = 0

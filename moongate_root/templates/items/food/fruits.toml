@@ -9,7 +9,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09d1_grape_bunch"
@@ -22,7 +21,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0d1a_grape_bunch"
@@ -35,7 +33,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x09d2_peach"
@@ -48,7 +45,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x172c_peach"
@@ -61,7 +57,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0994_pear"
@@ -74,7 +69,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x172d_pear"
@@ -87,7 +81,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x172b_lemons"
@@ -100,7 +93,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x172a_lemon"
@@ -113,7 +105,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1729_limes"
@@ -126,7 +117,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1728_lime"
@@ -139,7 +129,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1727_bunch_of_dates"
@@ -152,7 +141,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x1726_coconut"
@@ -165,7 +153,6 @@ weight = 2.0
 stackable = true
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1725_coconut"
@@ -178,7 +165,6 @@ weight = 2.0
 stackable = true
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1724_coconut"
@@ -191,7 +177,6 @@ weight = 2.0
 stackable = true
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1723_coconut"
@@ -204,7 +189,6 @@ weight = 2.0
 stackable = true
 buy_price = 12
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "0x1722_bananas"
@@ -216,7 +200,6 @@ weight = 3.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x1721_bananas"
@@ -228,7 +211,6 @@ weight = 3.0
 stackable = true
 buy_price = 6
 sell_price = 3
-hue = 0
 
 [[item]]
 id = "0x1720_banana"
@@ -241,7 +223,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x171f_banana"
@@ -254,7 +235,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x171e_banana"
@@ -267,7 +247,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x171d_banana"
@@ -280,7 +259,6 @@ weight = 1.0
 stackable = true
 buy_price = 3
 sell_price = 1
-hue = 0
 
 [[item]]
 id = "0x0c5c_watermelon"
@@ -293,7 +271,6 @@ weight = 5.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x0c5d_watermelon"
@@ -306,7 +283,6 @@ weight = 5.0
 stackable = true
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "0x0993_fruit_basket"
@@ -318,7 +294,6 @@ movable = true
 weight = 5.0
 buy_price = 100
 sell_price = 50
-hue = 0
 
 [[item]]
 id = "tribalberry"
@@ -328,4 +303,4 @@ name = "tribal berry"
 rarity = "common"
 weight = 1.0
 stackable = true
-hue = 0
+hue = 6

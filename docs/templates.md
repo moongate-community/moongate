@@ -129,8 +129,9 @@ UOX3's own data.
 `ILootService.Roll(tableId)` picks **one** entry, in proportion to `weight`, and returns
 what it gives, built through `IItemFactoryService` with no serial and no location: nothing
 for an entry with neither id (UOX3's `blank`), one pile for a stackable item, that many
-separate items otherwise, and, for a nested table, `amount` rolls of it (UOX3's
-`LOOTLIST=randomgems,2` rolls `randomgems` twice).
+separate items otherwise, and, for a nested table, `amount` rolls of it: `LOOTLIST=randomgems,2` rolls `randomgems` twice. (UOX3 itself
+looks the nested entry up as an item list and spawns nothing; Moongate does what the data
+plainly means.)
 
 ## The loader contract
 

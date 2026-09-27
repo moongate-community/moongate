@@ -6,7 +6,6 @@ rarity = "common"
 movable = true
 weight = 1.0
 stackable = true
-hue = 0
 
 [[item]]
 id = "prized_magic_fish"
@@ -56,7 +55,6 @@ name = "painting recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_painting_2"
@@ -66,7 +64,6 @@ name = "painting recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_portrait"
@@ -76,7 +73,6 @@ name = "portrait recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_portrait_2"
@@ -86,7 +82,6 @@ name = "portrait recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_painting_3"
@@ -96,7 +91,6 @@ name = "painting recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_painting_4"
@@ -106,7 +100,6 @@ name = "painting recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_painting_5"
@@ -116,7 +109,6 @@ name = "painting recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_painting_6"
@@ -126,7 +118,6 @@ name = "painting recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_painting_7"
@@ -136,7 +127,6 @@ name = "painting recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_portrait_3"
@@ -146,7 +136,6 @@ name = "portrait recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_portrait_4"
@@ -156,7 +145,6 @@ name = "portrait recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_portrait_5"
@@ -166,7 +154,6 @@ name = "portrait recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "shipwreck_portrait_6"
@@ -176,7 +163,6 @@ name = "portrait recovered from a shipwreck"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "messageinabottle"
@@ -187,7 +173,6 @@ rarity = "common"
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "waterstainedsos"
@@ -198,14 +183,12 @@ rarity = "common"
 weight = 1.0
 buy_price = 8
 sell_price = 4
-hue = 0
 
 [[item]]
 id = "waterstainedsos_tol"
 base_id = "waterstainedsos"
 item_id = 41740
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "shipwreck_treasure_1"
@@ -213,7 +196,6 @@ base_id = "0x0e42_wooden_chest"
 item_id = 0
 name = "treasure chest recovered from a shipwreck"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "shipwreck_treasure_2"
@@ -221,7 +203,6 @@ base_id = "0x0e7c_metal_chest"
 item_id = 0
 name = "treasure chest recovered from a shipwreck"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "shipwreck_treasure_3"
@@ -229,7 +210,6 @@ base_id = "0x0e40_metal_chest"
 item_id = 0
 name = "treasure chest recovered from a shipwreck"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "shipwreck_treasure_4"

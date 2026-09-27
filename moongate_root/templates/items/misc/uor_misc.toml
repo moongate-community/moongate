@@ -9,7 +9,6 @@ buy_price = 5000
 sell_price = 2500
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "taxidermykit"
@@ -21,4 +20,3 @@ weight = 1.0
 buy_price = 90000
 sell_price = 45000
 decays = true
-hue = 0

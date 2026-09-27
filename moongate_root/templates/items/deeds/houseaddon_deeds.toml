@@ -5,7 +5,6 @@ name = "pentagram deed"
 rarity = "common"
 buy_price = 750
 sell_price = 350
-hue = 0
 
 [[item]]
 id = "brownbearrugdeedeast"
@@ -14,7 +13,6 @@ name = "brown bear rug (east)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "brownbearrugdeedsouth"
@@ -23,7 +21,6 @@ name = "brown bear rug (south)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "polarbearrugdeedeast"
@@ -32,7 +29,6 @@ name = "polar bear rug (east)"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "polarbearrugdeedsouth"
@@ -41,7 +37,6 @@ name = "polar bear rug (south)"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "loomdeed"
@@ -50,7 +45,6 @@ name = "loom (east)"
 rarity = "common"
 buy_price = 400
 sell_price = 200
-hue = 0
 
 [[item]]
 id = "loomdeedsouth"
@@ -59,7 +53,6 @@ name = "loom (south)"
 rarity = "common"
 buy_price = 400
 sell_price = 200
-hue = 0
 
 [[item]]
 id = "smallforgedeed"
@@ -68,7 +61,6 @@ name = "small forge"
 rarity = "common"
 buy_price = 750
 sell_price = 375
-hue = 0
 
 [[item]]
 id = "anvildeedeast"
@@ -77,14 +69,12 @@ name = "anvil (east)"
 rarity = "common"
 buy_price = 2000
 sell_price = 1000
-hue = 0
 
 [[item]]
 id = "anvildeedsouth"
 item_id = 5360
 name = "anvil (south)"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "spinningwheeldeednorth"
@@ -93,7 +83,6 @@ name = "spinning wheel (north)"
 rarity = "common"
 buy_price = 400
 sell_price = 200
-hue = 0
 
 [[item]]
 id = "spinningwheeldeedsouth"
@@ -102,7 +91,6 @@ name = "spinning wheel (south)"
 rarity = "common"
 buy_price = 400
 sell_price = 200
-hue = 0
 
 [[item]]
 id = "spinningwheeldeedeast"
@@ -111,7 +99,6 @@ name = "spinning wheel (east)"
 rarity = "common"
 buy_price = 400
 sell_price = 200
-hue = 0
 
 [[item]]
 id = "spinningwheeldeedwest"
@@ -120,7 +107,6 @@ name = "spinning wheel (west)"
 rarity = "common"
 buy_price = 400
 sell_price = 200
-hue = 0
 
 [[item]]
 id = "smallbed1deedsouth"
@@ -129,7 +115,6 @@ name = "small bed 1 (south)"
 rarity = "common"
 buy_price = 750
 sell_price = 375
-hue = 0
 
 [[item]]
 id = "smallbed2deedsouth"
@@ -138,7 +123,6 @@ name = "small bed 2 (south)"
 rarity = "common"
 buy_price = 750
 sell_price = 375
-hue = 0
 
 [[item]]
 id = "smallbed1deedeast"
@@ -147,7 +131,6 @@ name = "small bed 1 (east)"
 rarity = "common"
 buy_price = 750
 sell_price = 375
-hue = 0
 
 [[item]]
 id = "smallbed2deedeast"
@@ -156,7 +139,6 @@ name = "small bed 2 (east)"
 rarity = "common"
 buy_price = 750
 sell_price = 375
-hue = 0
 
 [[item]]
 id = "largebed1deedeast"
@@ -165,7 +147,6 @@ name = "large bed 1 (east)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "largebed2deedeast"
@@ -174,7 +155,6 @@ name = "large bed 2 (east)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "largebed1deedsouth"
@@ -183,7 +163,6 @@ name = "large bed 1 (south)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "largebed2deedsouth"
@@ -192,7 +171,6 @@ name = "large bed 2 (south)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "trainingdummydeedeast"
@@ -201,7 +179,6 @@ name = "training dummy (east)"
 rarity = "common"
 buy_price = 400
 sell_price = 200
-hue = 0
 
 [[item]]
 id = "trainingdummydeedsouth"
@@ -210,7 +187,6 @@ name = "training dummy (south)"
 rarity = "common"
 buy_price = 400
 sell_price = 200
-hue = 0
 
 [[item]]
 id = "pickpocketdipdeedeast"
@@ -219,7 +195,6 @@ name = "pickpocket dip (east)"
 rarity = "common"
 buy_price = 500
 sell_price = 250
-hue = 0
 
 [[item]]
 id = "pickpocketdipdeedsouth"
@@ -228,7 +203,6 @@ name = "pickpocket dip (east)"
 rarity = "common"
 buy_price = 500
 sell_price = 250
-hue = 0
 
 [[item]]
 id = "dresserdeedeast"
@@ -237,7 +211,6 @@ name = "dresser (east)"
 rarity = "common"
 buy_price = 150
 sell_price = 75
-hue = 0
 
 [[item]]
 id = "dresserdeedsouth"
@@ -246,7 +219,6 @@ name = "dresser (south)"
 rarity = "common"
 buy_price = 150
 sell_price = 75
-hue = 0
 
 [[item]]
 id = "abattoirdeed"
@@ -255,7 +227,6 @@ name = "abattoir"
 rarity = "common"
 buy_price = 750
 sell_price = 375
-hue = 0
 
 [[item]]
 id = "flourmilldeedeast"
@@ -264,7 +235,6 @@ name = "flour mill (east)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "flourmilldeedsouth"
@@ -273,7 +243,6 @@ name = "flour mill (south)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "sandstoneovendeedeast"
@@ -282,7 +251,6 @@ name = "sandstone oven (east)"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "sandstoneovendeedsouth"
@@ -291,7 +259,6 @@ name = "sandstone oven (south)"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "brickovendeedeast"
@@ -300,7 +267,6 @@ name = "brick oven (east)"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "brickovendeedsouth"
@@ -309,7 +275,6 @@ name = "brick oven (south)"
 rarity = "common"
 buy_price = 1500
 sell_price = 750
-hue = 0
 
 [[item]]
 id = "largeforgedeedeast"
@@ -318,7 +283,6 @@ name = "large forge (east)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "largeforgedeedwest"
@@ -327,7 +291,6 @@ name = "large forge (west)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "largeforgedeednorth"
@@ -336,7 +299,6 @@ name = "large forge (north)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "largeforgedeedsouth"
@@ -345,7 +307,6 @@ name = "large forge (south)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "waterthroughdeedeast"
@@ -354,7 +315,6 @@ name = "water trough (east)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "waterthroughdeedsouth"
@@ -363,7 +323,6 @@ name = "water trough (south)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "dartboarddeedeast"
@@ -372,7 +331,6 @@ name = "dart board (east)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "dartboarddeedsouth"
@@ -381,7 +339,6 @@ name = "dart board (south)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "ballotboxdeedeast"
@@ -390,7 +347,6 @@ name = "ballot box (east)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "ballotboxdeedsouth"
@@ -399,7 +355,6 @@ name = "ballot box (south)"
 rarity = "common"
 buy_price = 1000
 sell_price = 500
-hue = 0
 
 [[item]]
 id = "dc_anvil_deed"

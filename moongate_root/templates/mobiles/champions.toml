@@ -391,7 +391,7 @@ death = 337
 items = ["skeletalmount"]
 
 [[mobile.equipment]]
-items = ["0x2684_hooded_shroud_of_shadows"]
+items = ["0x2684"]
 hue = 1109
 
 [[mobile.equipment]]

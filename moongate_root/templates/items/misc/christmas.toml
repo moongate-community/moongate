@@ -6,7 +6,6 @@ name = "Happy Holidays!"
 rarity = "common"
 weight = 1.0
 decays = true
-hue = 0
 
 [[item]]
 id = "seasongreetings"
@@ -16,7 +15,6 @@ name = "Seasons Greetings"
 rarity = "common"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "bottleofpinkchampaine"
@@ -25,7 +23,6 @@ item_id = 2503
 name = "bottle of pink Champaine"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "pinkchampaineflute"
@@ -34,7 +31,6 @@ item_id = 2458
 name = "a pink Champaine Flute"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "santagloves"
@@ -43,6 +39,7 @@ item_id = 5085
 name = "Santa Gloves"
 rarity = "common"
 weight = 2.0
+layer = "gloves"
 decays = true
 hue = 4112
 
@@ -64,7 +61,6 @@ name = "Maybe next year you will get a nicer gift"
 rarity = "common"
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "coal"
@@ -80,7 +76,6 @@ item_id = 4164
 name = "Spam"
 rarity = "common"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "holidaytreedeed"
@@ -88,7 +83,6 @@ item_id = 5360
 name = "Holiday Tree Deed"
 rarity = "common"
 decays = true
-hue = 0
 
 [[item]]
 id = "pottedplantdeed"
@@ -97,7 +91,6 @@ item_id = 5360
 name = "A deed for a potted plant"
 rarity = "common"
 decays = true
-hue = 0
 
 [[item]]
 id = "0x2bdd_a_candy_cane"
@@ -109,14 +102,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2bde"
 base_id = "0x2bdd_a_candy_cane"
 item_id = 11230
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2bdf_a_candy_cane"
@@ -128,14 +119,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2be0"
 base_id = "0x2bdf_a_candy_cane"
 item_id = 11232
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2be1_a_ginger_bread_cookie"
@@ -147,14 +136,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2be2"
 base_id = "base_item"
 item_id = 11234
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "wreathdeed"
@@ -163,7 +150,6 @@ item_id = 5360
 name = "a holiday wreath deed"
 rarity = "common"
 decays = true
-hue = 0
 [item.tags]
 addondeed = "1"
 
@@ -177,7 +163,6 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 [item.tags]
 HolidayAddon = "1"
 
@@ -186,7 +171,6 @@ id = "0x232c"
 base_id = "0x232d_a_wreath"
 item_id = 9004
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2328"
@@ -197,14 +181,12 @@ movable = true
 weight = 10.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2329"
 base_id = "0x2328"
 item_id = 9001
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x232e_snowflake"
@@ -216,14 +198,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "bluesnowflake"
 base_id = "0x232e_snowflake"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x232f_snowflake"
@@ -235,14 +215,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "whitesnowflake"
 base_id = "0x232f_snowflake"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2330_poinsettia"
@@ -254,14 +232,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "redpoinsettia"
 base_id = "0x2330_poinsettia"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2331_poinsettia"
@@ -273,14 +249,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "whitepoinsettia"
 base_id = "0x2331_poinsettia"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "wrist_watch"
@@ -289,11 +263,11 @@ item_id = 4230
 name = "a wrist watch"
 rarity = "common"
 weight = 1.0
+layer = "bracelet"
 buy_price = 26
 sell_price = 13
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x236e"
@@ -304,14 +278,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "lightofthewintersolstice"
 base_id = "0x236e"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "holiday_timepiece"
@@ -320,11 +292,11 @@ item_id = 4230
 name = "a holiday timepiece"
 rarity = "common"
 weight = 1.0
+layer = "bracelet"
 buy_price = 26
 sell_price = 13
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "holidaybell"
@@ -332,7 +304,6 @@ base_id = "base_item"
 item_id = 7186
 rarity = "common"
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "snowpile"
@@ -344,7 +315,7 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
+hue = 1153
 
 [[item]]
 id = "0x2377_a_snowy_tree"
@@ -356,7 +327,6 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2bd9_a_stocking"
@@ -368,14 +338,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2bda"
 base_id = "0x2bd9_a_stocking"
 item_id = 11226
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2bdb_a_stocking"
@@ -387,14 +355,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2bdc"
 base_id = "0x2bdb_a_stocking"
 item_id = 11228
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x232a_a_holiday_giftbox"
@@ -406,14 +372,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x232b"
 base_id = "0x232a_a_holiday_giftbox"
 item_id = 9003
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x_a12e"
@@ -424,14 +388,12 @@ movable = true
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x_a12f"
 base_id = "0x_a12e"
 item_id = 41263
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x46fa_a_red_angel_decoration"
@@ -442,14 +404,12 @@ rarity = "common"
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x46fb"
 base_id = "0x46fa_a_red_angel_decoration"
 item_id = 18171
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x4214_a_decorative_rocking_horse"
@@ -460,14 +420,12 @@ rarity = "common"
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x4215"
 base_id = "0x4214_a_decorative_rocking_horse"
 item_id = 16917
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x2376_a_festive_cactus"
@@ -478,7 +436,6 @@ rarity = "common"
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "0x2378_a_decorative_topiary"
@@ -489,7 +446,6 @@ rarity = "common"
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "base_snowglobe"
@@ -499,42 +455,36 @@ rarity = "common"
 weight = 1.0
 decays = true
 loot_type = "newbied"
-hue = 0
 
 [[item]]
 id = "snowglobe"
 base_id = "snowglobe_lbr"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "snowglobe_t2a"
 base_id = "base_snowglobe"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "snowglobe_lbr"
 base_id = "base_snowglobe"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "snowglobe_aos"
 base_id = "base_snowglobe"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "snowglobe_tol"
 base_id = "base_snowglobe"
 item_id = 0
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "krampusminionboots"
@@ -542,7 +492,6 @@ base_id = "0x170b_boots"
 item_id = 41613
 name = "krampus minion boots"
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "krampusminionearrings"
@@ -551,10 +500,10 @@ item_id = 41621
 name = "krampus minion earrings"
 rarity = "common"
 weight = 1.0
+layer = "earrings"
 buy_price = 26
 sell_price = 13
 decays = true
-hue = 0
 
 [[item]]
 id = "krampusminionhat"
@@ -565,7 +514,6 @@ rarity = "common"
 weight = 3.0
 buy_price = 14
 sell_price = 6
-hue = 0
 
 [[item]]
 id = "krampusminiontalons"
@@ -573,14 +521,13 @@ base_id = "0x170b_boots"
 item_id = 41620
 name = "krampus minion talons"
 rarity = "common"
-hue = 0
+hue = 1153
 
 [[item]]
 id = "treeneedles"
 item_id = 3287
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament1"
@@ -588,7 +535,6 @@ item_id = 3855
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament2"
@@ -596,7 +542,6 @@ item_id = 3856
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament3"
@@ -604,7 +549,6 @@ item_id = 3858
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament4"
@@ -612,7 +556,6 @@ item_id = 3859
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament5"
@@ -620,7 +563,6 @@ item_id = 3860
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament6"
@@ -628,7 +570,6 @@ item_id = 3861
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament7"
@@ -636,7 +577,6 @@ item_id = 3862
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament8"
@@ -644,7 +584,6 @@ item_id = 3863
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament9"
@@ -652,7 +591,6 @@ item_id = 3864
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament10"
@@ -660,7 +598,6 @@ item_id = 3865
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament11"
@@ -668,7 +605,6 @@ item_id = 3872
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament12"
@@ -676,7 +612,6 @@ item_id = 3874
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament13"
@@ -684,7 +619,6 @@ item_id = 3875
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament14"
@@ -692,7 +626,6 @@ item_id = 3876
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament15"
@@ -700,7 +633,6 @@ item_id = 3878
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament16"
@@ -708,7 +640,6 @@ item_id = 3879
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament17"
@@ -716,7 +647,6 @@ item_id = 3881
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament18"
@@ -724,7 +654,6 @@ item_id = 3888
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament19"
@@ -732,7 +661,6 @@ item_id = 3866
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament20"
@@ -740,7 +668,6 @@ item_id = 3867
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament21"
@@ -748,7 +675,6 @@ item_id = 3868
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament22"
@@ -756,7 +682,6 @@ item_id = 3870
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament23"
@@ -764,7 +689,6 @@ item_id = 3871
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament24"
@@ -772,7 +696,6 @@ item_id = 3882
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament25"
@@ -780,7 +703,6 @@ item_id = 3883
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament26"
@@ -788,7 +710,6 @@ item_id = 3887
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0
 
 [[item]]
 id = "treeornament27"
@@ -796,4 +717,3 @@ item_id = 3880
 name = "a tree ornament"
 rarity = "common"
 decays = false
-hue = 0

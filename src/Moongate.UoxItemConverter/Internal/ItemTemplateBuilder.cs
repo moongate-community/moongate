@@ -23,13 +23,16 @@ internal static class ItemTemplateBuilder
     /// </summary>
     public static bool TryComputeId(DfnBlock block, out string id, out Serial itemId)
     {
-        if (!block.Fields.TryGetValue("id", out var idText) || !Serial.TryParse(idText, out itemId))
+        // UOX3 picks one id of a list (id=0x0c4f 0x0c50) at random; a template has one graphic, so the first is kept.
+        if (!block.Fields.TryGetValue("id", out var idText) || !UoxNumber.TryParse(idText, out var graphic) || graphic < 0)
         {
             id = "";
             itemId = default;
 
             return false;
         }
+
+        itemId = new Serial((uint)graphic);
 
         // The header alone is always unique (duplicates are caught and warned about while every
         // block is being read). name= is not: UOX3 reuses it across many facing, material or
@@ -90,7 +93,7 @@ internal static class ItemTemplateBuilder
 
         // UOX3's visible= is 0 for everyone; 1 (hidden), 2 (magically invisible) and 3 (GM hidden) all keep the
         // item from players, the closest being visible to staff only.
-        if (block.Fields.TryGetValue("visible", out var visibleText) && int.TryParse(visibleText, out var visible) &&
+        if (block.Fields.TryGetValue("visible", out var visibleText) && UoxNumber.TryParse(visibleText, out var visible) &&
             visible is >= 1 and <= 3)
         {
             template.Visibility = AccountType.GameMaster;
@@ -101,12 +104,14 @@ internal static class ItemTemplateBuilder
             template.Name = displayName;
         }
 
-        if (block.Fields.TryGetValue("color", out var colorText) && HueSpec.TryParse(colorText, out var hue))
+        // UOX3 reads COLOR and COLOUR as one tag.
+        if ((block.Fields.TryGetValue("color", out var colorText) || block.Fields.TryGetValue("colour", out colorText)) &&
+            HueSpec.TryParse(colorText, out var hue))
         {
             template.Hue = hue;
         }
 
-        if (block.Fields.TryGetValue("weightmax", out var weightMaxText) && int.TryParse(weightMaxText, out var weightMax))
+        if (block.Fields.TryGetValue("weightmax", out var weightMaxText) && UoxNumber.TryParse(weightMaxText, out var weightMax))
         {
             template.MaxWeight = weightMax;
         }
@@ -147,23 +152,23 @@ internal static class ItemTemplateBuilder
     private static void ApplyBaseFields(DfnBlock block, ItemTemplate template)
     {
         // UOX3 weighs in hundredths of a stone: weight=700 is 7 stones, a coin's weight=2 is 0.02.
-        if (block.Fields.TryGetValue("weight", out var weightText) && int.TryParse(weightText, out var hundredths))
+        if (block.Fields.TryGetValue("weight", out var weightText) && UoxNumber.TryParse(weightText, out var hundredths))
         {
             template.Weight = hundredths / 100m;
         }
 
-        if (block.Fields.TryGetValue("amount", out var amountText) && int.TryParse(amountText, out var amount) && amount >= 1)
+        if (block.Fields.TryGetValue("amount", out var amountText) && UoxNumber.TryParse(amountText, out var amount) && amount >= 1)
         {
             template.Amount = RangeValueSpec<int>.FromValue(amount);
         }
 
-        if (block.Fields.TryGetValue("pileable", out var pileable))
+        if (block.Fields.TryGetValue("pileable", out var pileableText) && UoxNumber.TryParse(pileableText, out var pileable))
         {
-            template.Stackable = pileable == "1";
+            template.Stackable = pileable != 0;
         }
 
-        if (block.Fields.TryGetValue("layer", out var layerText) && byte.TryParse(layerText, out var layer) &&
-            Enum.IsDefined((LayerType)layer) && layer != 0)
+        if (block.Fields.TryGetValue("layer", out var layerText) && UoxNumber.TryParse(layerText, out var layer) &&
+            layer is > 0 and <= byte.MaxValue && Enum.IsDefined((LayerType)layer))
         {
             template.Layer = (LayerType)layer;
         }
@@ -173,16 +178,16 @@ internal static class ItemTemplateBuilder
         {
             var prices = valueText.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-            if (prices.Length >= 1 && int.TryParse(prices[0], out var buy))
+            if (prices.Length >= 1 && UoxNumber.TryParse(prices[0], out var buy))
             {
                 template.BuyPrice = buy;
-                template.SellPrice = prices.Length >= 2 && int.TryParse(prices[1], out var sell) ? sell : buy;
+                template.SellPrice = prices.Length >= 2 && UoxNumber.TryParse(prices[1], out var sell) ? sell : buy;
             }
         }
 
-        if (block.Fields.TryGetValue("decay", out var decay))
+        if (block.Fields.TryGetValue("decay", out var decayText) && UoxNumber.TryParse(decayText, out var decay))
         {
-            template.Decays = decay == "1";
+            template.Decays = decay != 0;
         }
 
         // newbie is usually a bare flag line, sometimes newbie=1.

@@ -8,14 +8,12 @@ weight = 5.0
 buy_price = 14
 sell_price = 7
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0f3a"
 base_id = "0x0f39_a_shovel"
 item_id = 3898
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0e85_pickaxe"
@@ -28,14 +26,12 @@ layer = "two_handed"
 buy_price = 34
 sell_price = 17
 decays = true
-hue = 0
 
 [[item]]
 id = "0x0e86"
 base_id = "0x0e85_pickaxe"
 item_id = 3718
 rarity = "common"
-hue = 0
 
 [[item]]
 id = "0x0fb1_forge"
@@ -45,7 +41,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 20.0
-hue = 0
 
 [[item]]
 id = "0x197a_bellows"
@@ -55,7 +50,6 @@ name = "bellows"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x197e_forge"
@@ -65,7 +59,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1982_forge"
@@ -75,7 +68,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x197d_bellows"
@@ -85,7 +77,6 @@ name = "bellows"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1981_forge"
@@ -95,7 +86,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1985_forge"
@@ -105,7 +95,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1986_bellows"
@@ -115,7 +104,6 @@ name = "bellows"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x198a_forge"
@@ -125,7 +113,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x198e_forge"
@@ -135,7 +122,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1989_bellows"
@@ -145,7 +131,6 @@ name = "bellows"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x198d_forge"
@@ -155,7 +140,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1991_forge"
@@ -165,7 +149,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1992_bellows"
@@ -175,7 +158,6 @@ name = "bellows"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1996_forge"
@@ -185,7 +167,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x199a_forge"
@@ -195,7 +176,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1995_bellows"
@@ -205,7 +185,6 @@ name = "bellows"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x1999_forge"
@@ -215,7 +194,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x199d_forge"
@@ -225,7 +203,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x199e_bellows"
@@ -235,7 +212,6 @@ name = "bellows"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x19a2_forge"
@@ -245,7 +221,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x19a6_forge"
@@ -255,7 +230,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x19a1_bellows"
@@ -265,7 +239,6 @@ name = "bellows"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x19a5_forge"
@@ -275,7 +248,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "0x19a9_forge"
@@ -285,7 +257,6 @@ name = "forge"
 rarity = "common"
 movable = false
 weight = 100.0
-hue = 0
 
 [[item]]
 id = "sandminingbook"
@@ -299,7 +270,6 @@ stackable = true
 buy_price = 10637
 sell_price = 5318
 decays = true
-hue = 0
 
 [[item]]
 id = "stoneminingbook"
@@ -313,4 +283,3 @@ stackable = true
 buy_price = 10637
 sell_price = 5318
 decays = true
-hue = 0

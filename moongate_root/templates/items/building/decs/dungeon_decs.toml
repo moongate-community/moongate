@@ -6,7 +6,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x126c_block"
@@ -16,7 +15,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x126d_block"
@@ -26,7 +24,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x126e_block"
@@ -36,7 +33,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x126f_block"
@@ -46,7 +42,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1270_block"
@@ -56,7 +51,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1271_block"
@@ -66,7 +60,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1272_block"
@@ -76,7 +69,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1273_block"
@@ -86,7 +78,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1274_block"
@@ -96,7 +87,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1275_block"
@@ -106,7 +96,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1276_block"
@@ -116,7 +105,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1277_block"
@@ -126,7 +114,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1278_block"
@@ -136,7 +123,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1279_block"
@@ -146,7 +132,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x127a_block"
@@ -156,7 +141,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x127b_block"
@@ -166,7 +150,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x127c_block"
@@ -176,7 +159,6 @@ name = "block"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x127e_pillory"
@@ -186,7 +168,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x127f_pillory"
@@ -196,7 +177,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1280_pillory"
@@ -206,7 +186,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1281_pillory"
@@ -216,7 +195,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1282_pillory"
@@ -226,7 +204,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1283_pillory"
@@ -236,7 +213,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1284_pillory"
@@ -246,7 +222,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1285_pillory"
@@ -256,7 +231,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1286_pillory"
@@ -266,7 +240,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1287_pillory"
@@ -276,7 +249,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1288_pillory"
@@ -286,7 +258,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1289_pillory"
@@ -296,7 +267,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x128a_pillory"
@@ -306,7 +276,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x128b_pillory"
@@ -316,7 +285,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x128c_pillory"
@@ -326,7 +294,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x128d_pillory"
@@ -336,7 +303,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x128e_pillory"
@@ -346,7 +312,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x128f_pillory"
@@ -356,7 +321,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1290_pillory"
@@ -366,7 +330,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1291_pillory"
@@ -376,7 +339,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1292_pillory"
@@ -386,7 +348,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1293_pillory"
@@ -396,7 +357,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1294_pillory"
@@ -406,7 +366,6 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
 
 [[item]]
 id = "0x1295_pillory"
@@ -416,4 +375,3 @@ name = "pillory"
 rarity = "common"
 movable = false
 weight = 10.0
-hue = 0
