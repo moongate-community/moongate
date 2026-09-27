@@ -29,7 +29,8 @@ included, when the game server starts, and resolves `base_id` once:
 - a field that can be left unset (`name`, `layer`, `weight`, `amount`, `stackable`, …)
   and is left unset takes the parent's value, up the chain;
 - `item_id = 0` takes the parent's graphic;
-- `hue` and `rarity` always have a value, so the template's own is kept;
+- `hue` inherits when unset; without a value anywhere in the chain, it uses 0;
+- `rarity` always has a value, so the template's own is kept;
 - `tags`, when set, replace the parent's; they are not merged.
 
 The server stops when an id is empty or used twice (the message names both files),
@@ -270,10 +271,10 @@ own, see [TOML value types](toml-types.md).
 | --- | --- |
 | `Id` | The stable name a loot table, a spawn or `additem` names this template by |
 | `BaseId` | Another template's `Id` to inherit unset fields from; the loader resolves the chain |
-| `ItemId` | The base client graphic; physical properties come from `IItemCatalog`, not this type |
+| `ItemId` | The base client graphic; runtime physical properties come from `ITileDataService` unless overridden |
 | `Name`, `Comment` | A display name override, and a designer note nobody reads at runtime |
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
-| `ScriptId` | Names the Lua module handling this template's behaviour |
+| `ScriptId` | Reserved Lua module identifier; stored and inherited, but template hooks are not dispatched yet |
 | `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted" |
 | `Weight` | Stones to two decimals (`weight = 0.02` for a coin); unset uses the whole-stone tiledata weight |
 | `Amount` | `RangeValueSpec<int>`: the stack size of a new item, fixed or `"10-20"`; unset is 1 |
@@ -282,7 +283,7 @@ own, see [TOML value types](toml-types.md).
 | `BuyPrice`, `SellPrice` | What vendors sell it for and pay for it; unset means vendors do not trade it |
 | `Decays`, `DecayMinutes` | Unset decays when movable, after 60 minutes |
 | `LootType` | `regular`, `newbied`, `blessed` or `cursed`: what happens when the owner dies; unset is `regular` |
-| `Tags` | Free script values in an `[item.tags]` table; a child's tags add to and override its base's |
+| `Tags` | Free script values in an `[item.tags]` table; a child's explicit tags replace the entire base map |
 | `Visibility` | The lowest account type that sees the item: `regular`, `game_master` or `administrator`, as `realm_directory.minimum_account_type`. Unset by default, so a template inherits it through `BaseId`; an item with none anywhere is visible to everyone. `IsVisibleTo(accountType)` answers for one viewer |
 | `Hue` | `HueSpec`, `0` meaning the art's native coloring; a quoted `"min-max"` range picks one per spawn |
 | `MaxItems`, `MaxWeight` | Nullable; set only on a container template |
@@ -335,10 +336,11 @@ to 120; a constant is a bare integer.
 | `Notoriety` | `innocent`, `ally`, `attackable`, `criminal`, `enemy`, `murderer` or `invulnerable`, the name colour; unset is `innocent` |
 | `Karma`, `Fame` | Dice; karma may be negative |
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
-| `Loot`, `Gold` | Loot template ids rolled into the corpse, and dice for the gold in the backpack |
+| `Loot`, `Gold` | Loot template ids and gold dice rolled into the backpack at spawn; no corpse system yet |
 | `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death` |
-| `ScriptId` | The Lua module handling the mobile's behaviour, AI included |
-| `Visibility`, `Tags` | As in `ItemTemplate` |
+| `ScriptId` | Reserved Lua module identifier; stored and inherited, but template hooks and AI are not dispatched yet |
+| `Visibility` | As in `ItemTemplate` |
+| `Tags` | Free script values; child keys add to and override parent keys |
 
 `Resistances`, `Sounds`, `Skills` and `Tags` are inherited key by key, so a base such as
 `base_orc` sets the five sounds once and every orc keeps them; every other field a child

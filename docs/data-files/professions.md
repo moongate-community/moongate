@@ -34,7 +34,8 @@ skills = [
 
 The shipped professions give 90 stat points and 120 skill points, the totals of
 `CharacterCreationRules` (`StatTotal = 90`, skill totals of 100 or 120). The loader
-does not check these totals. Character creation does not read this file yet.
+does not check these totals. Character creation uses a matching profession's stats
+and skills; custom choices are validated separately by `CharacterCreationRules`.
 
 ## Validation at startup
 

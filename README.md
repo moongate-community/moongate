@@ -24,9 +24,9 @@ handoff, with reusable libraries for building server tools and services.
 
 ## Status
 
-**Under active development; there is no playable world yet.** Login currently
-reaches an empty character list. Character creation and selection are not
-implemented.
+**Under active development; there is no playable world yet.** Login lists the
+account's saved characters. New characters are created and saved with their
+starting items; character selection and world entry are not implemented.
 
 The networking and packet pipeline, Lua runtime, persistence infrastructure,
 shard data loading, and client-file readers with movement and line-of-sight

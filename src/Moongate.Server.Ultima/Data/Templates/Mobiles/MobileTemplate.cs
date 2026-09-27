@@ -173,7 +173,8 @@ public class MobileTemplate
     public MobileSounds? Sounds { get; set; }
 
     /// <summary>
-    ///     Names the Lua module handling this template's behaviour, AI included. Unset is none.
+    ///     Reserved Lua module identifier, stored and inherited with the template. Unset is none.
+    ///     The engine does not dispatch template hooks or AI yet.
     /// </summary>
     public string? ScriptId { get; set; }
 

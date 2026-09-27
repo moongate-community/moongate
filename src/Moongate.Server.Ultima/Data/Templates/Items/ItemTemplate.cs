@@ -38,7 +38,7 @@ public class ItemTemplate
     ///     The base client graphic. Physical properties tiledata already carries, weight, layer,
     ///     stackability, are read from it through
     ///     <c>
-    ///         IItemCatalog
+    ///         ITileDataService
     ///     </c>
     ///     at the point of use, not restated here.
     /// </summary>
@@ -61,21 +61,8 @@ public class ItemTemplate
         EnumValueSpec<ItemRarityType>.FromValue(ItemRarityType.Common);
 
     /// <summary>
-    ///     Names a Lua module handling this template's behaviour. The engine calls whichever of its
-    ///     well-known functions exists,
-    ///     <c>
-    ///         on_use
-    ///     </c>
-    ///     ,
-    ///     <c>
-    ///         on_equip
-    ///     </c>
-    ///     ,
-    ///     <c>
-    ///         on_unequip
-    ///     </c>
-    ///     and so on; a
-    ///     template with nothing to react to leaves this unset.
+    ///     Reserved Lua module identifier, stored and inherited with the template.
+    ///     The engine does not dispatch template hooks such as on_use or on_equip yet.
     /// </summary>
     public string ScriptId { get; set; }
 

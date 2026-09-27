@@ -36,10 +36,10 @@ it.
 | <span id="maps"></span><span id="validation-at-startup"></span><span id="read-the-map-from-code"></span>[`maps.toml`](data-files/maps.md) | `MapContent` | first; its `weather` is checked by the regions loader | Yes, `IMapService` opens the client files of each map |
 | <span id="starting-cities"></span><span id="validation-at-startup-1"></span>[`starting_cities.toml`](data-files/starting-cities.md) | `StartingCityContent` | maps | Yes, in the character list |
 | <span id="skills"></span><span id="validation-at-startup-2"></span>[`skills.toml`](data-files/skills.md) | `SkillContent` | starting cities | No |
-| <span id="professions"></span><span id="validation-at-startup-3"></span>[`professions.toml`](data-files/professions.md) | `ProfessionContent` | skills (every starting skill must exist) | No |
-| <span id="races"></span><span id="validation-at-startup-4"></span>[`races.toml`](data-files/races.md) | `RaceContent` | professions | No |
-| <span id="banned-names"></span><span id="validation-at-startup-5"></span>[`banned_names.toml`](data-files/banned-names.md) | `BannedNamesContent` | races | No |
-| <span id="containers"></span><span id="validation-at-startup-8"></span>[`containers.toml`](data-files/containers.md) | `ContainerContent` | banned names | No |
+| <span id="professions"></span><span id="validation-at-startup-3"></span>[`professions.toml`](data-files/professions.md) | `ProfessionContent` | skills (every starting skill must exist) | Yes, character creation |
+| <span id="races"></span><span id="validation-at-startup-4"></span>[`races.toml`](data-files/races.md) | `RaceContent` | professions | Yes, character creation and mobile appearance |
+| <span id="banned-names"></span><span id="validation-at-startup-5"></span>[`banned_names.toml`](data-files/banned-names.md) | `BannedNamesContent` | races | Yes, character name validation |
+| <span id="containers"></span><span id="validation-at-startup-8"></span>[`containers.toml`](data-files/containers.md) | `ContainerContent` | banned names | Yes, backpack item placement |
 | <span id="bodies"></span><span id="validation-at-startup-9"></span>[`bodies.toml`](data-files/bodies.md) | `BodyContent` | containers | No |
 | <span id="weather"></span><span id="validation-at-startup-10"></span>[`weather.toml`](data-files/weather.md) | `WeatherContent` | bodies | No |
 | <span id="regions"></span><span id="areas"></span><span id="parents-and-overlaps"></span><span id="travel-zones"></span><span id="validation-at-startup-11"></span><span id="add-a-region"></span>[`regions/<map>.toml`](data-files/regions.md) | `RegionContent` | weather (every profile must exist), maps | No |
@@ -75,7 +75,7 @@ A value that does not match its form fails to parse and stops the server.
 Before restarting a server, load the repository files with the real loaders:
 
 ```sh
-dotnet test --filter RepositoryDataFiles
+scripts/test.sh fast --filter 'FullyQualifiedName~RepositoryDataFiles'
 ```
 
 The test loads every file of `moongate_root/data`, in the server's order, and every
