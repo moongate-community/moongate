@@ -28,6 +28,7 @@ using Moongate.Server.Ultima.Data.Weather;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Handlers.Characters;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
@@ -117,6 +118,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterIncomingPacket<ClientHardwareInfoPacket>();
             container.RegisterIncomingPacket<CreateCharacterPacket>();
             container.RegisterIncomingPacket<CreateCharacterEnhancedPacket>();
+            container.RegisterAsyncPacketHandler<CreateCharacterPacket, CreateCharacterPacketHandler>();
+            container.RegisterAsyncPacketHandler<CreateCharacterEnhancedPacket, CreateCharacterEnhancedPacketHandler>();
 
             container.Register<ILocalizationService, LocalizationService>(Reuse.Singleton);
             container.Register<INameService, NameService>(Reuse.Singleton);

@@ -7,6 +7,11 @@ namespace Moongate.Tests.TestSupport.Packets;
 public sealed class StubPacketSendService : IPacketSendService
 {
     public int SentCount { get; private set; }
+
+    /// <summary>
+    ///     Gets every packet handed to TrySend, in order.
+    /// </summary>
+    public List<IOutgoingPacket> Sent { get; } = [];
     public INetworkConnection? ExpectedConnection { get; private set; }
     public bool RejectTerminalSend { get; init; }
 
@@ -28,6 +33,7 @@ public sealed class StubPacketSendService : IPacketSendService
     public bool TrySend(long sessionId, IOutgoingPacket packet)
     {
         SentCount++;
+        Sent.Add(packet);
 
         return true;
     }
