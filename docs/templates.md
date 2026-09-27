@@ -15,7 +15,8 @@ and the converter registry are in place and tested. The `ItemTemplate`,
 `MobileTemplate` and `LootTemplate` data shapes exist, and [a converter](uox3-migration.md) produces them
 from UOX3 data. **Item and mobile templates are loaded** (see
 [Item templates at runtime](#item-templates-at-runtime) and
-[Mobile templates at runtime](#mobile-templates-at-runtime)); loot templates are not loaded yet.
+[Mobile templates at runtime](#mobile-templates-at-runtime)), and so are loot tables (see
+[Loot tables at runtime](#loot-tables-at-runtime)).
 The same contract already loads the files under `data/`, such as maps, races and
 regions: see [Shard data files](data-files.md) for working loaders.
 See [Implementation status](implementation-status.md).
@@ -69,8 +70,8 @@ included, after the item templates, and resolves `base_id` once, as UOX3's `GET`
 
 The server stops when an id is empty or used twice, a `base_id` names no template or
 loops back, a template fails `MobileTemplate.Validate()`, a `name_list` names no list of
-`data/names.toml` (`{gender}` is always accepted), or an equipment item is not an item
-template. `IMobileTemplateService` serves the resolved templates (`TryGet`, `Get`,
+`data/names.toml` (`{gender}` needs the `male` and `female` lists), an equipment item is
+not an item template, or a `loot` id is not a loot table. `IMobileTemplateService` serves the resolved templates (`TryGet`, `Get`,
 `Count`).
 
 `IMobileFactoryService` makes NPCs from them:
@@ -96,11 +97,16 @@ karma and skills (template points × 10, the tenths the mobile stores). `title` 
 2. creates the mobile and places it;
 3. publishes `MobileBeforeSpawnEvent`: a handler may change the mobile, even move it; the
    place is checked against the map again afterwards;
-4. in one transaction, saves the mobile (its serial comes from the mobile range) and
-   creates each equipment entry through `IItemFactoryService`: an entry with a `gender`
-   is skipped for the other gender; the item is worn on its layer (the template's, else
-   tiledata's for a wearable graphic); an item with no layer, or whose layer is taken,
-   is dropped, since NPCs have no backpack yet;
+4. in one transaction, saves the mobile (its serial comes from the mobile range), then:
+   - a backpack (`items.backpack_template`) worn on the `Backpack` layer, for every NPC;
+   - each equipment entry through `IItemFactoryService`: an entry with a `gender` is
+     skipped for the other gender; the item is worn on its layer (the template's, else
+     tiledata's for a wearable graphic); an item with no layer, or whose layer is taken,
+     goes into the backpack, as UOX3 does;
+   - the rolled `gold`, as `items.gold_template` piles of at most 65535, into the backpack;
+   - one roll of each `loot` table (a table listed twice is rolled twice), into the
+     backpack;
+   - everything in the backpack lands at a random spot inside its `containers.toml` bounds;
 5. after the commit, publishes `MobileMovedToWorldEvent` (with the place the mobile was
    saved at) and then `MobileAfterSpawnEvent`, without cancellation: the mobile is saved
    by then. A failure before the commit leaves the in-memory mobile without a serial.
@@ -109,6 +115,21 @@ The event bus logs a handler's exception and goes on, so a handler cannot stop o
 spawn.
 
 `SaveAsync(mobile)` saves a mobile that already has its serial.
+
+## Loot tables at runtime
+
+`LootTemplatesLoader` reads every `*.toml` under `templates/loots/`, subfolders included,
+before the mobile templates. The server stops when an id is empty or used twice, an entry
+sets both `item_id` and `loot_template_id`, an `item_id` is not an item template, a
+`loot_template_id` names no table, a `weight` is below 1, an `amount` can roll below 1,
+or nested tables loop. A table with no entries is kept, logged as a warning, and gives
+nothing: five shipped UOX3 tables are empty because their items have no `id=` of their
+own, which the converter does not convert.
+
+`ILootService.Roll(tableId)` picks **one** entry, in proportion to `weight`, and returns
+what it gives, built through `IItemFactoryService` with no serial and no location: nothing
+for an entry with neither id (UOX3's `blank`), one pile for a stackable item, that many
+separate items otherwise, and the roll of a nested table.
 
 ## The loader contract
 
