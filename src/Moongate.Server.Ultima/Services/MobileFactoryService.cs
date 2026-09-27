@@ -3,10 +3,13 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Random;
 using Moongate.Core.Utils;
 using Moongate.Persistence.Services;
+using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Interfaces.Events;
+using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Races;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -114,19 +117,90 @@ public class MobileFactoryService : IMobileFactoryService
         };
     }
 
-    public Task<SpawnedMobile> SpawnAsync(
+    public async Task<SpawnedMobile> SpawnAsync(
         string templateId,
         MapType map,
         Point3D location,
         CancellationToken cancellationToken = default
     )
     {
-        throw new NotImplementedException();
+        // Checked before anything is built, so an out-of-map spawn fires no event.
+        if (!_maps.Contains(map, location.X, location.Y))
+        {
+            throw new ArgumentOutOfRangeException(nameof(location), location, $"{location} is outside {map}.");
+        }
+
+        var template = _templates.Get(templateId);
+        var mobile = Create(templateId);
+        mobile.Map = map;
+        mobile.Location = location;
+        await _eventBus.PublishAsync(new MobileBeforeSpawnEvent(mobile, map, location), cancellationToken);
+
+        var equipment = new List<ItemEntity>();
+
+        await _persistence.ExecuteInTransactionAsync(
+            PersistenceDatabaseTarget.Realm,
+            async transaction =>
+            {
+                await transaction.GetDataAccess<MobileEntity>().UpsertAsync(mobile, cancellationToken);
+
+                if (!mobile.Id.IsMobile)
+                {
+                    throw new InvalidOperationException(
+                        $"Mobile '{templateId}' was saved with {mobile.Id}, outside the mobile range."
+                    );
+                }
+
+                var usedLayers = new HashSet<LayerType>();
+
+                foreach (var entry in template.Equipment ?? [])
+                {
+                    if (entry.Gender is { } gender && gender != mobile.Gender)
+                    {
+                        continue;
+                    }
+
+                    var itemId = entry.Items[BuiltInRng.Next(entry.Items.Count)];
+                    var item = _itemFactory.Create(itemId, hue: entry.Hue?.Resolve());
+                    var layer = _itemTemplates.Get(itemId).EffectiveLayer(_tiles);
+
+                    // NPCs have no backpack yet, so what cannot be worn is dropped.
+                    if (layer is null || !usedLayers.Add(layer.Value))
+                    {
+                        _logger.Debug("Mobile {TemplateId} drops {ItemId}: no free layer", templateId, itemId);
+
+                        continue;
+                    }
+
+                    item.Equip(mobile.Id, layer.Value);
+                    await _itemFactory.SaveAsync(transaction, item, cancellationToken);
+                    equipment.Add(item);
+                }
+            },
+            cancellationToken
+        );
+
+        var spawned = new SpawnedMobile(mobile, equipment);
+        await _eventBus.PublishAsync(new MobileMovedToWorldEvent(mobile, map, location), cancellationToken);
+        await _eventBus.PublishAsync(new MobileAfterSpawnEvent(spawned), cancellationToken);
+
+        return spawned;
     }
 
     public Task SaveAsync(MobileEntity mobile, CancellationToken cancellationToken = default)
     {
-        throw new NotImplementedException();
+        if (mobile.Id == Serial.Zero)
+        {
+            throw new InvalidOperationException(
+                $"Mobile '{mobile.TemplateId}' has no serial yet: spawn it with SpawnAsync before saving it."
+            );
+        }
+
+        return _persistence.ExecuteInTransactionAsync(
+            PersistenceDatabaseTarget.Realm,
+            transaction => transaction.GetDataAccess<MobileEntity>().UpsertAsync(mobile, cancellationToken),
+            cancellationToken
+        );
     }
 
     // Template skills are whole points; the mobile stores tenths (1000 is 100.0).
