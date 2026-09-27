@@ -116,8 +116,13 @@ that demonstrates the failure. Follow the test layout in `CODE_CONVENTION.md` an
 keep assertions focused on observable behavior. Prose-only corrections do not
 need new C# tests.
 
-CI also verifies the portable administration client, NuGet packages, runnable README
-examples, and third-party notices. The administration check uses the same test
+CI runs on pull requests and on pushes to `develop` and `main`; changes that touch only
+`docs/`, `website/` or Markdown files skip it. On pull requests and `main` it also verifies
+the portable administration client, NuGet packages, runnable README examples, and
+third-party notices; pushes to `develop` skip these, since every change reaches `develop`
+through a pull request that already ran them. The development Docker image
+(`ghcr.io/moongate-community/moongate:develop`) is rebuilt nightly, or on demand from the
+Actions tab. The administration check uses the same test
 connections and requires Python 3 with `venv` support and access to install the
 dependencies in `samples/admin-python/requirements.txt`:
 
