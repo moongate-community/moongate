@@ -15,7 +15,7 @@ internal static class PersistencePreparation
     {
         if (container.IsRegistered<MoongatePersistenceService>())
         {
-            await container.Resolve<MoongatePersistenceService>().DisposeAsync().ConfigureAwait(false);
+            await container.Resolve<MoongatePersistenceService>().DisposeAsync();
         }
     }
 
@@ -38,8 +38,7 @@ internal static class PersistencePreparation
             try
             {
                 await container.Resolve<MoongatePersistenceService>()
-                    .InitializeAsync(cancellationToken)
-                    .ConfigureAwait(false);
+                    .InitializeAsync(cancellationToken);
             }
             catch (InvalidOperationException exception) when (exception.Message.StartsWith(
                                                                   "PostgreSQL schema changes are required",

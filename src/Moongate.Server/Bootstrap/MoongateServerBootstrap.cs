@@ -64,15 +64,15 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
 
         if (_gameLoopCompletion is null)
         {
-            await shutdownRequested.Task.ConfigureAwait(false);
+            await shutdownRequested.Task;
         }
         else
         {
-            await Task.WhenAny(_gameLoopCompletion, shutdownRequested.Task).ConfigureAwait(false);
+            await Task.WhenAny(_gameLoopCompletion, shutdownRequested.Task);
 
             if (_gameLoopCompletion.IsCompleted)
             {
-                await _gameLoopCompletion.ConfigureAwait(false);
+                await _gameLoopCompletion;
 
                 return;
             }
@@ -107,7 +107,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     {
         try
         {
-            await operation().ConfigureAwait(false);
+            await operation();
         }
         catch (Exception exception)
         {
@@ -130,16 +130,15 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         await CaptureFailureAsync(
                 () => _eventBus.Value.PublishAsync(new MoongateStoppingEvent(), CancellationToken.None),
                 failures
-            )
-            .ConfigureAwait(false);
+            );
 
-        failures.AddRange(await _services.StopAsync(_startupSucceeded).ConfigureAwait(false));
+        failures.AddRange(await _services.StopAsync(_startupSucceeded));
 
         if (_gameLoopCompletion is not null)
         {
             try
             {
-                await _gameLoopCompletion.ConfigureAwait(false);
+                await _gameLoopCompletion;
             }
             catch (Exception exception)
             {
@@ -154,18 +153,15 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         await CaptureFailureAsync(
                 () => _eventBus.Value.PublishAsync(new MoongateStoppedEvent(), CancellationToken.None),
                 failures
-            )
-            .ConfigureAwait(false);
+            );
 
-        await CaptureFailureAsync(StopPersistenceAsync, failures)
-            .ConfigureAwait(false);
+        await CaptureFailureAsync(StopPersistenceAsync, failures);
         CaptureFailure(_container.Dispose, failures);
         _logger.Information("Moongate Server stopped.");
         await CaptureFailureAsync(
-                async () => await Log.CloseAndFlushAsync().ConfigureAwait(false),
+                async () => await Log.CloseAndFlushAsync(),
                 failures
-            )
-            .ConfigureAwait(false);
+            );
 
         return failures;
     }
@@ -174,12 +170,11 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     {
         try
         {
-            _persistenceInitialized = await PersistencePreparation.InitializeAsync(_container, _cancellationToken)
-                .ConfigureAwait(false);
+            _persistenceInitialized = await PersistencePreparation.InitializeAsync(_container, _cancellationToken);
 
             if (_persistenceInitialized)
             {
-                await _eventBus.Value.PublishAsync(new PersistenceReadyEvent(), _cancellationToken).ConfigureAwait(false);
+                await _eventBus.Value.PublishAsync(new PersistenceReadyEvent(), _cancellationToken);
             }
 
             await _services.StartAsync(service =>
@@ -190,15 +185,14 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
                             _gameLoopCompletion = gameLoop.Completion;
                         }
                     }
-                )
-                .ConfigureAwait(false);
+                );
 
             if (_gameLoopCompletion is { IsCompleted: true })
             {
-                await _gameLoopCompletion.ConfigureAwait(false);
+                await _gameLoopCompletion;
             }
 
-            await _eventBus.Value.PublishAsync(new MoongateStartedEvent(), _cancellationToken).ConfigureAwait(false);
+            await _eventBus.Value.PublishAsync(new MoongateStartedEvent(), _cancellationToken);
             _services.ActivateWorldSaving();
             _startupSucceeded = true;
             _services.ActivateAdministration();
@@ -206,7 +200,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         }
         catch (Exception exception)
         {
-            var cleanupFailures = await _lifecycle.ShutdownAsync(ShutdownCoreAsync).ConfigureAwait(false);
+            var cleanupFailures = await _lifecycle.ShutdownAsync(ShutdownCoreAsync);
             cleanupFailures.RemoveAll(failure => ReferenceEquals(failure, exception));
 
             if (cleanupFailures.Count == 0)
@@ -222,12 +216,12 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
 
     private async Task StopPersistenceAsync()
     {
-        await PersistencePreparation.DisposePersistenceAsync(_container).ConfigureAwait(false);
+        await PersistencePreparation.DisposePersistenceAsync(_container);
 
         if (_persistenceInitialized)
         {
             _persistenceInitialized = false;
-            await _eventBus.Value.PublishAsync(new PersistenceStoppedEvent(), CancellationToken.None).ConfigureAwait(false);
+            await _eventBus.Value.PublishAsync(new PersistenceStoppedEvent(), CancellationToken.None);
         }
     }
 
@@ -239,7 +233,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         {
             try
             {
-                await startupTask.ConfigureAwait(false);
+                await startupTask;
             }
             catch (Exception)
             {
@@ -247,7 +241,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             }
         }
 
-        var failures = await _lifecycle.ShutdownAsync(ShutdownCoreAsync).ConfigureAwait(false);
+        var failures = await _lifecycle.ShutdownAsync(ShutdownCoreAsync);
 
         if (!startupFailed)
         {

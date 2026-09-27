@@ -38,7 +38,7 @@ internal static class PersistenceSchemaCommand
         );
         container.RegisterInstance<IPluginLoaderService>(new PluginLoaderService(container, directories));
         await using var persistence = container.Resolve<MoongatePersistenceService>();
-        await RunAsync(container, mode, output, cancellationToken, migrationOutput, migrationTarget).ConfigureAwait(false);
+        await RunAsync(container, mode, output, cancellationToken, migrationOutput, migrationTarget);
     }
 
     public static async Task RunAsync(
@@ -68,9 +68,9 @@ internal static class PersistenceSchemaCommand
         {
             selectedTarget = migrationTarget switch
             {
-                "auth"  => PersistenceDatabaseTarget.Accounts,
+                "auth" => PersistenceDatabaseTarget.Accounts,
                 "world" => PersistenceDatabaseTarget.Realm,
-                _       => throw new InvalidOperationException("Generate requires --migration-target auth|world.")
+                _ => throw new InvalidOperationException("Generate requires --migration-target auth|world.")
             };
 
             if (migrationOutput is null ||
@@ -94,7 +94,7 @@ internal static class PersistenceSchemaCommand
 
         PersistencePreparation.LoadPlugins(container);
         var persistence = container.Resolve<MoongatePersistenceService>();
-        var changes = await persistence.PreviewSchemaAsync(cancellationToken).ConfigureAwait(false);
+        var changes = await persistence.PreviewSchemaAsync(cancellationToken);
 
         if (mode == PersistenceSchemaMode.Generate)
         {
@@ -115,8 +115,7 @@ internal static class PersistenceSchemaCommand
 
             try
             {
-                await File.WriteAllTextAsync(temporary, sql, new UTF8Encoding(false), cancellationToken)
-                    .ConfigureAwait(false);
+                await File.WriteAllTextAsync(temporary, sql, new UTF8Encoding(false), cancellationToken);
                 cancellationToken.ThrowIfCancellationRequested();
                 File.Move(temporary, path, false);
             }

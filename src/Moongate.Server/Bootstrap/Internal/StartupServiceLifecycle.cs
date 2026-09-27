@@ -74,7 +74,7 @@ internal sealed class StartupServiceLifecycle
 
             try
             {
-                await service.StartAsync().ConfigureAwait(false);
+                await service.StartAsync();
             }
             catch (Exception exception)
             {
@@ -103,11 +103,11 @@ internal sealed class StartupServiceLifecycle
             {
                 if (services[index] is IWorldSaveService worldSave)
                 {
-                    await worldSave.StopAsync(saveWorld).ConfigureAwait(false);
+                    await worldSave.StopAsync(saveWorld);
                 }
                 else
                 {
-                    await services[index].StopAsync().ConfigureAwait(false);
+                    await services[index].StopAsync();
                 }
             }
             catch (Exception exception)

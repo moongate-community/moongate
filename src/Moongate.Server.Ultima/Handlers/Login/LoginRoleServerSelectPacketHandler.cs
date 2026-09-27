@@ -54,7 +54,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
             ) ||
             !accountId.IsValid)
         {
-            await RejectAsync(session, connection, LoginDeniedReason.InvalidCredentials).ConfigureAwait(false);
+            await RejectAsync(session, connection, LoginDeniedReason.InvalidCredentials);
 
             return;
         }
@@ -65,8 +65,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
 
             try
             {
-                realm = await _catalog.FindByIndexAsync(packet.ServerIndex, accountType, cancellationToken)
-                    .ConfigureAwait(false);
+                realm = await _catalog.FindByIndexAsync(packet.ServerIndex, accountType, cancellationToken);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -75,7 +74,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
             catch (Exception exception)
             {
                 _logger.Warning(exception, "Realm selection lookup failed for index {ServerIndex}", packet.ServerIndex);
-                await RejectAsync(session, connection, LoginDeniedReason.CommunicationProblem).ConfigureAwait(false);
+                await RejectAsync(session, connection, LoginDeniedReason.CommunicationProblem);
 
                 return;
             }
@@ -89,7 +88,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
                 realm.Descriptor.ServerIndex != packet.ServerIndex ||
                 realm.Descriptor.MinimumAccountType > accountType)
             {
-                await RejectAsync(session, connection, LoginDeniedReason.CommunicationProblem).ConfigureAwait(false);
+                await RejectAsync(session, connection, LoginDeniedReason.CommunicationProblem);
 
                 return;
             }
@@ -106,7 +105,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
 
             try
             {
-                authKey = await _handoffs.IssueAsync(handoff, credentialKey, cancellationToken).ConfigureAwait(false);
+                authKey = await _handoffs.IssueAsync(handoff, credentialKey, cancellationToken);
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
             {
@@ -119,7 +118,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
                     "Realm redirect ticket issuance failed for index {ServerIndex}",
                     packet.ServerIndex
                 );
-                await RejectAsync(session, connection, LoginDeniedReason.CommunicationProblem).ConfigureAwait(false);
+                await RejectAsync(session, connection, LoginDeniedReason.CommunicationProblem);
 
                 return;
             }
@@ -138,8 +137,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
                             connection,
                             redirect,
                             CancellationToken.None
-                        )
-                        .ConfigureAwait(false);
+                        );
                 }
             }
             catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
@@ -156,8 +154,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
                 {
                     try
                     {
-                        await _handoffs.RevokeAsync(realm.Descriptor.RealmId, authKey, CancellationToken.None)
-                            .ConfigureAwait(false);
+                        await _handoffs.RevokeAsync(realm.Descriptor.RealmId, authKey, CancellationToken.None);
                     }
                     catch (Exception exception)
                     {
@@ -172,7 +169,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
 
             if (!delivered && !cancellationToken.IsCancellationRequested)
             {
-                await RejectAsync(session, connection, LoginDeniedReason.CommunicationProblem).ConfigureAwait(false);
+                await RejectAsync(session, connection, LoginDeniedReason.CommunicationProblem);
             }
         }
         finally
@@ -200,8 +197,7 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
                         connection,
                         new LoginDeniedPacket(reason),
                         CancellationToken.None
-                    )
-                    .ConfigureAwait(false))
+                    ))
             {
                 return;
             }
@@ -211,6 +207,6 @@ public sealed class LoginRoleServerSelectPacketHandler : ILoginPacketHandler<Ser
             _logger.Warning(exception, "Login denial delivery failed for session {SessionId}", session.SessionId);
         }
 
-        await connection.CloseAsync(CancellationToken.None).ConfigureAwait(false);
+        await connection.CloseAsync(CancellationToken.None);
     }
 }

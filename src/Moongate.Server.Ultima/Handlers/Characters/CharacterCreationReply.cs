@@ -25,14 +25,12 @@ internal static class CharacterCreationReply
     )
     {
         var accountId = Serial.Zero;
-        await context.RunOnGameLoopAsync(session => accountId = session.AccountId, cancellationToken)
-                     .ConfigureAwait(false);
+        await context.RunOnGameLoopAsync(session => accountId = session.AccountId, cancellationToken);
 
         if (!accountId.IsValid)
         {
             logger.Warning("Character creation from session {SessionId} without an account", context.SessionId);
-            await context.SendAndDisconnectAsync(new PopupMessagePacket(PopupMessageType.CouldNotAttach), cancellationToken)
-                         .ConfigureAwait(false);
+            await context.SendAndDisconnectAsync(new PopupMessagePacket(PopupMessageType.CouldNotAttach), cancellationToken);
 
             return;
         }
@@ -41,14 +39,13 @@ internal static class CharacterCreationReply
 
         try
         {
-            result = await characters.CreateAsync(accountId, request, cancellationToken).ConfigureAwait(false);
+            result = await characters.CreateAsync(accountId, request, cancellationToken);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             // Without an answer the client waits on its spinner until it times out; tell it and close instead.
             logger.Error(exception, "Character creation for account {AccountId} failed", accountId);
-            await context.SendAndDisconnectAsync(new PopupMessagePacket(PopupMessageType.CouldNotAttach), cancellationToken)
-                         .ConfigureAwait(false);
+            await context.SendAndDisconnectAsync(new PopupMessagePacket(PopupMessageType.CouldNotAttach), cancellationToken);
 
             return;
         }
@@ -60,8 +57,7 @@ internal static class CharacterCreationReply
                 accountId,
                 refusal
             );
-            await context.SendAndDisconnectAsync(new PopupMessagePacket(ToPopup(refusal)), cancellationToken)
-                         .ConfigureAwait(false);
+            await context.SendAndDisconnectAsync(new PopupMessagePacket(ToPopup(refusal)), cancellationToken);
 
             return;
         }

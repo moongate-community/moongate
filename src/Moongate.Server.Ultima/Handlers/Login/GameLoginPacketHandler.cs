@@ -57,7 +57,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
     {
         if (packet.AuthKey == 0 || context.Seed != packet.AuthKey)
         {
-            await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+            await DenyAsync(context, cancellationToken);
 
             return;
         }
@@ -73,8 +73,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
                     packet.Account,
                     packet.Password,
                     cancellationToken
-                )
-                .ConfigureAwait(false);
+                );
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -83,7 +82,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         catch (Exception exception)
         {
             _logger.Warning("Game handoff lookup failed: {FailureType}", exception.GetType().Name);
-            await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+            await DenyAsync(context, cancellationToken);
 
             return;
         }
@@ -94,7 +93,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
             handoff.InstanceId != _realm.InstanceId ||
             !StringComparer.Ordinal.Equals(handoff.Username, packet.Account))
         {
-            await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+            await DenyAsync(context, cancellationToken);
 
             return;
         }
@@ -116,14 +115,13 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
                     session.NetworkSession.EnableCompression();
                 },
                 cancellationToken
-            )
-            .ConfigureAwait(false);
+            );
 
         IReadOnlyList<MobileEntity> characters;
 
         try
         {
-            characters = await _characters.GetCharactersAsync(handoff.AccountId, cancellationToken).ConfigureAwait(false);
+            characters = await _characters.GetCharactersAsync(handoff.AccountId, cancellationToken);
         }
         catch (OperationCanceledException) when (cancellationToken.IsCancellationRequested)
         {
@@ -133,7 +131,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         {
             // The client is already authenticated and waits for its character list; deny rather than leave it hanging.
             _logger.Error(exception, "Character list lookup for account {AccountId} failed", handoff.AccountId);
-            await DenyAsync(context, cancellationToken).ConfigureAwait(false);
+            await DenyAsync(context, cancellationToken);
 
             return;
         }
@@ -151,8 +149,7 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
                     context.TrySend(characterListPacket);
                 },
                 cancellationToken
-            )
-            .ConfigureAwait(false);
+            );
     }
 
     private static async Task DenyAsync(PacketContext context, CancellationToken cancellationToken)
@@ -160,7 +157,6 @@ public sealed class GameLoginPacketHandler : IAsyncPacketHandler<GameLoginPacket
         await context.SendAndDisconnectAsync(
                 new LoginDeniedPacket(LoginDeniedReason.CommunicationProblem),
                 cancellationToken
-            )
-            .ConfigureAwait(false);
+            );
     }
 }
