@@ -47,17 +47,13 @@ internal static class UoxStartingItemsConverter
         var report = new ConversionReport();
         var sets = StartingItemsBuilder.Build(DfnParser.Parse(File.ReadAllLines(source)), items, report);
 
-        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(destination))!);
-        File.WriteAllText(destination, Header + TomlUtils.Serialize(new StartingItemsFile { Set = sets }));
+        ConverterOutput.WriteToml(destination, Header, new StartingItemsFile { Set = sets });
         output.WriteLine($"Converted {sets.Count} starting item set(s) to {destination}.");
 
-        foreach (var (reason, count) in report.Lines)
-        {
-            output.WriteLine($"  {count} x {reason}");
-        }
+        ConverterOutput.WriteReport(output, report);
 
         // Read back as the server will, and check every item exists.
-        var itemIds = items.ItemIdByHeader.Values.ToHashSet(StringComparer.Ordinal);
+        var itemIds = items.ItemIds;
         var written = TomlUtils.DeserializeFromFile<StartingItemsFile>(destination)?.Set ?? [];
         var errors = written.SelectMany(set => set.Items)
                             .SelectMany(entry => entry.Items)
@@ -65,12 +61,7 @@ internal static class UoxStartingItemsConverter
                             .Select(item => $"starting item '{item}' does not exist")
                             .ToList();
 
-        foreach (var verificationError in errors)
-        {
-            error.WriteLine($"Verification failed: {verificationError}");
-        }
-
-        if (errors.Count > 0)
+        if (ConverterOutput.ReportErrors(error, errors, "starting items") != 0)
         {
             return 1;
         }

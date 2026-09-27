@@ -8,4 +8,10 @@ internal sealed record ItemIndex(
     IReadOnlyDictionary<string, string> ItemIdByHeader,
     IReadOnlyDictionary<string, DfnBlock> ItemBlocksByHeader,
     IReadOnlySet<string> LootIds
-);
+)
+{
+    /// <summary>
+    ///     Gets every item template id the item pass computed.
+    /// </summary>
+    public IReadOnlySet<string> ItemIds { get; } = ItemIdByHeader.Values.ToHashSet(StringComparer.Ordinal);
+}

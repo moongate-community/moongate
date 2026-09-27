@@ -21,7 +21,7 @@ internal static class UoxCreatureSounds
         foreach (var block in DfnParser.Parse(File.ReadAllLines(creaturesPath)))
         {
             if (!block.Header.StartsWith(HeaderPrefix, StringComparison.OrdinalIgnoreCase) ||
-                !MobileTemplateBuilder.TryParseNumber(block.Header[HeaderPrefix.Length..], out var body))
+                !UoxNumber.TryParse(block.Header[HeaderPrefix.Length..], out var body))
             {
                 continue;
             }
@@ -47,7 +47,7 @@ internal static class UoxCreatureSounds
 
     private static int? Sound(DfnBlock block, string key)
     {
-        return block.Fields.TryGetValue(key, out var text) && MobileTemplateBuilder.TryParseNumber(text, out var sound)
+        return block.Fields.TryGetValue(key, out var text) && UoxNumber.TryParse(text, out var sound)
             ? sound
             : null;
     }

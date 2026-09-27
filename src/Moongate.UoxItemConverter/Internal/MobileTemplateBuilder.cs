@@ -75,7 +75,7 @@ internal static class MobileTemplateBuilder
 
     private static void ApplyIdentity(DfnBlock block, MobileTemplate template, MobileBuildContext context)
     {
-        if (block.Fields.TryGetValue("ID", out var idText) && TryParseNumber(idText, out var body))
+        if (block.Fields.TryGetValue("ID", out var idText) && UoxNumber.TryParse(idText, out var body))
         {
             // The block that sets the body carries its sounds; templates inheriting from it get them through base_id.
             if (context.CreatureSounds.TryGetValue(body, out var sounds))
@@ -163,7 +163,7 @@ internal static class MobileTemplateBuilder
     {
         var parts = text.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
 
-        if (parts.Length is < 1 or > 2 || !parts.All(part => TryParseNumber(part, out _)))
+        if (parts.Length is < 1 or > 2 || !parts.All(part => UoxNumber.TryParse(part, out _)))
         {
             return null;
         }
@@ -427,7 +427,7 @@ internal static class MobileTemplateBuilder
     {
         var parts = value.Split(' ', StringSplitOptions.RemoveEmptyEntries);
 
-        if (parts.Length != 4 || !parts.All(part => TryParseNumber(part, out _)))
+        if (parts.Length != 4 || !parts.All(part => UoxNumber.TryParse(part, out _)))
         {
             context.Report.Count("bad number");
 
@@ -465,17 +465,8 @@ internal static class MobileTemplateBuilder
 
     private static int ParseNumber(string text)
     {
-        TryParseNumber(text, out var value);
+        UoxNumber.TryParse(text, out var value);
 
         return value;
-    }
-
-    /// <summary>
-    ///     Parses a UOX3 number, hex with <c>0x</c> or decimal. A doubled prefix, as in UOX3's <c>ID=0x0xc7</c>, is read
-    ///     as one.
-    /// </summary>
-    public static bool TryParseNumber(string text, out int value)
-    {
-        return UoxNumber.TryParse(text, out value);
     }
 }

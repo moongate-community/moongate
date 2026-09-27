@@ -275,15 +275,8 @@ internal static class UoxItemConverterCommand
             out var verifiedLoot
         );
 
-        if (errors.Count > 0)
+        if (ConverterOutput.ReportErrors(error, errors, "output") != 0)
         {
-            foreach (var verificationError in errors)
-            {
-                error.WriteLine($"Verification failed: {verificationError}");
-            }
-
-            error.WriteLine($"{errors.Count} verification error(s) found reading the converted output back.");
-
             return 1;
         }
 

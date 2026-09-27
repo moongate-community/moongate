@@ -31,7 +31,7 @@ internal static class UoxColorLists
 
             foreach (var entry in block.Entries)
             {
-                if (!MobileTemplateBuilder.TryParseNumber(entry, out var hue))
+                if (!UoxNumber.TryParse(entry, out var hue))
                 {
                     hues.Clear();
 

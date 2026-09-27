@@ -102,7 +102,7 @@ internal static class StartingItemsBuilder
 
         var entry = new StartingItemEntry { Items = ids, Equip = key == "EQUIPITEM" };
 
-        if (parts.Length >= 2 && MobileTemplateBuilder.TryParseNumber(parts[1], out var value))
+        if (parts.Length >= 2 && UoxNumber.TryParse(parts[1], out var value))
         {
             if (entry.Equip)
             {
@@ -114,7 +114,7 @@ internal static class StartingItemsBuilder
             }
         }
 
-        if (parts.Length >= 3 && MobileTemplateBuilder.TryParseNumber(parts[2], out var newbie))
+        if (parts.Length >= 3 && UoxNumber.TryParse(parts[2], out var newbie))
         {
             entry.Newbie = newbie != 0;
         }

@@ -44,8 +44,7 @@ internal static class UoxMobileConverter
             ? NameListsBuilder.Build(DfnParser.Parse(File.ReadAllLines(nameListsPath)), dictionary)
             : [];
 
-        Directory.CreateDirectory(Path.GetDirectoryName(Path.GetFullPath(namesDestination))!);
-        File.WriteAllText(namesDestination, NamesHeader + TomlUtils.Serialize(new NameListFile { Names = nameLists }));
+        ConverterOutput.WriteToml(namesDestination, NamesHeader, new NameListFile { Names = nameLists });
         output.WriteLine($"Converted {nameLists.Count} name list(s) to {namesDestination}.");
 
         var npcDirectory = Path.Combine(mobileSource, "npc");
@@ -117,22 +116,12 @@ internal static class UoxMobileConverter
 
         output.WriteLine($"Converted {written} mobile(s).");
 
-        foreach (var (reason, count) in report.Lines)
-        {
-            output.WriteLine($"  {count} x {reason}");
-        }
+        ConverterOutput.WriteReport(output, report);
 
         var errors = Verify(mobileDestination, namesDestination, items, out var verifiedMobiles, out var verifiedLists);
 
-        if (errors.Count > 0)
+        if (ConverterOutput.ReportErrors(error, errors, "mobiles") != 0)
         {
-            foreach (var verificationError in errors)
-            {
-                error.WriteLine($"Verification failed: {verificationError}");
-            }
-
-            error.WriteLine($"{errors.Count} verification error(s) found reading the converted mobiles back.");
-
             return 1;
         }
 
@@ -163,7 +152,7 @@ internal static class UoxMobileConverter
                        .ToList()
             : [];
         var ids = new HashSet<string>(StringComparer.Ordinal);
-        var itemIds = items.ItemIdByHeader.Values.ToHashSet(StringComparer.Ordinal);
+        var itemIds = items.ItemIds;
 
         foreach (var mobile in mobiles.Where(mobile => !ids.Add(mobile.Id)))
         {
