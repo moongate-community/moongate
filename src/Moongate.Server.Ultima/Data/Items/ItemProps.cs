@@ -1,3 +1,5 @@
+using Moongate.Server.Ultima.Types.Templates;
+
 namespace Moongate.Server.Ultima.Data.Items;
 
 /// <summary>
@@ -30,6 +32,11 @@ public sealed class ItemProps
     ///     Gets or sets the serial value of the mobile that crafted the item.
     /// </summary>
     public uint? CrafterId { get; set; }
+
+    /// <summary>
+    ///     Gets or sets what happens to the item when its owner dies, when it differs from the template's.
+    /// </summary>
+    public LootType? LootType { get; set; }
 
     /// <summary>
     ///     Gets or sets free values scripts attach to the item.

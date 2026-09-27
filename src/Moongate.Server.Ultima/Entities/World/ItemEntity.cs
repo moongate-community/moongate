@@ -5,6 +5,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Types.Items;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Entities.World;
@@ -38,6 +39,12 @@ public class ItemEntity : IMoongateEntity
     public Hue Hue { get; set; }
 
     public int Amount { get; set; } = 1;
+
+    /// <summary>
+    ///     The rarity picked when the item was made.
+    /// </summary>
+    [Column(MapType = typeof(byte))]
+    public ItemRarityType Rarity { get; set; }
 
     /// <summary>
     ///     The name when it differs from the template's; null uses the template's or tiledata's name.

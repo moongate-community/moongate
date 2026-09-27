@@ -6,6 +6,7 @@ using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Ultima.Types;
 using Npgsql;
@@ -165,6 +166,30 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var exception = await Record.ExceptionAsync(() => _host.Database.ExecuteAsync(
             "INSERT INTO world.items (id, template_id, item_id, hue, amount, map, x, y, z) " +
             "VALUES (1073741900, NULL, 1, 0, 1, 0, 1, 1, 0)"
+        ));
+
+        Assert.IsType<PostgresException>(exception);
+    }
+
+    [Fact]
+    public async Task RarityAndLootType_RoundTrip()
+    {
+        var item = Item(0x40000060, i => i.PlaceOnGround(MapType.Felucca, new Point3D(1, 1, 0)));
+        item.Rarity = ItemRarityType.Epic;
+        item.Props = new ItemProps { LootType = LootType.Newbied };
+
+        await _items.UpsertAsync(item);
+        var loaded = (await _items.GetByIdAsync(item.Id))!;
+
+        Assert.Equal((ItemRarityType.Epic, (LootType?)LootType.Newbied), (loaded.Rarity, loaded.Props!.LootType));
+    }
+
+    [Fact]
+    public async Task ARarityOutsideTheEnum_IsRejectedByTheDatabase()
+    {
+        var exception = await Record.ExceptionAsync(() => _host.Database.ExecuteAsync(
+            "INSERT INTO world.items (id, template_id, item_id, hue, amount, rarity, map, x, y, z) " +
+            "VALUES (1073741901, 't', 1, 0, 1, 9, 0, 1, 1, 0)"
         ));
 
         Assert.IsType<PostgresException>(exception);
