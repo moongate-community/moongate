@@ -225,7 +225,7 @@ Errors:
 | `{ bounds = "(1, 2)..(3, 4)", top = 5 }` | `Unknown region area field 'top'.` |
 
 Used by: `areas` in `data/regions/<map>.toml`. See
-[Region areas](data-files.md#areas).
+[Region areas](data-files/regions.md#areas).
 
 ## HueSpec
 
