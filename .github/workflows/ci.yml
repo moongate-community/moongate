@@ -90,7 +90,8 @@ jobs:
           path: |
             artifacts/coverage
             !artifacts/coverage/results
-          retention-days: 14
+          # Documentation publishes the report of the released commit, possibly long after it ran.
+          retention-days: ${{ github.ref == 'refs/heads/main' && 90 || 14 }}
 
       - name: Verify portable administration client
         run: |

@@ -48,3 +48,42 @@ for (const defect of ['missing source', 'duplicate slug', 'invalid slug', 'unres
     assert.equal(await readFile(join(options.websiteRoot, 'src/content/docs/index.md'), 'utf8'), 'authored home');
   });
 }
+
+async function coverageFixture(t) {
+  const options = await fixture(t);
+  await writeFile(join(options.repositoryRoot, 'coverage.md'), '# Test coverage\n\nIntro.\n\n<!-- coverage-summary -->\n');
+  options.entries.push({ source: 'coverage.md', slug: 'contributing/test-coverage', title: 'Test coverage' });
+  const report = join(options.repositoryRoot, 'report');
+  await mkdir(join(report, 'results/run'), { recursive: true });
+  await writeFile(join(report, 'Summary.md'), '# Summary - Moongate\n\n|**Assembly**|**Line coverage**|\n|:---|---:|\n|**Moongate.Core**|**92.7%**|\n');
+  await writeFile(join(report, 'Cobertura.xml'), '<?xml version="1.0"?>\n<coverage line-rate="0.657" timestamp="1790517600">\n</coverage>\n');
+  await writeFile(join(report, 'index.html'), '<html>report</html>');
+  await writeFile(join(report, 'results/run/coverage.cobertura.xml'), 'raw');
+  return { ...options, coverage: { directory: report, commit: 'abc1234' } };
+}
+
+const coveragePage = options => readFile(join(options.generated, 'contributing/test-coverage.md'), 'utf8');
+
+test('a coverage report fills the coverage page and is published under /coverage/', async t => {
+  const options = await coverageFixture(t);
+  await prepareDocs(options);
+  const page = await coveragePage(options);
+  assert.match(page, /Moongate\.Core\*\* *\| *\*\*92\.7%/);
+  assert.doesNotMatch(page, /Summary - Moongate/);
+  assert.match(page, /commit `abc1234`/);
+  assert.match(page, /2026-09-27/);
+  assert.match(page, /\]\(\/coverage\/\)/);
+  assert.equal(await readFile(join(options.websiteRoot, 'public/coverage/index.html'), 'utf8'), '<html>report</html>');
+  await assert.rejects(access(join(options.websiteRoot, 'public/coverage/results')));
+});
+
+test('without a coverage report the page says so and a previous report is removed', async t => {
+  const options = await coverageFixture(t);
+  await prepareDocs(options);
+  await rm(options.coverage.directory, { recursive: true });
+  await prepareDocs(options);
+  const page = await coveragePage(options);
+  assert.match(page, /No coverage report was available/);
+  assert.doesNotMatch(page, /\/coverage\//);
+  await assert.rejects(access(join(options.websiteRoot, 'public/coverage')));
+});

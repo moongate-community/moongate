@@ -44,6 +44,13 @@ It preserves the original files, including NuGet smoke-test markers and code exa
 The importer also copies `scripts/install.sh` to `website/public/install.sh`, which the site
 serves at `https://moongate.sh/install.sh`. Edit the script, never the copy.
 
+The [Test coverage](test-coverage.md) page is filled from the coverage report in
+`artifacts/coverage` (or `MOONGATE_COVERAGE_DIR`): the importer replaces the
+`<!-- coverage-summary -->` marker with the per-assembly table and copies the HTML
+report to `website/public/coverage/`, served at `https://moongate.sh/coverage/`.
+`MOONGATE_COVERAGE_COMMIT` names the measured commit on the page. Without a report the
+page says none was available. Run `scripts/coverage.sh all` first to preview it locally.
+
 After editing an imported source while the dev server is running, run this in a
 second terminal:
 

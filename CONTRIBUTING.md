@@ -99,7 +99,8 @@ bash scripts/test.sh all -c Release --no-build
 `scripts/coverage.sh` takes the same arguments, runs the tests with code coverage,
 and writes a merged report to `artifacts/coverage/index.html`. CI runs it in place
 of `scripts/test.sh`, shows the per-assembly summary on the run page, and keeps the
-HTML report as the `coverage-report` artifact for 14 days.
+HTML report as the `coverage-report` artifact. The published documentation shows the
+report of its commit on the [Test coverage](docs/test-coverage.md) page.
 
 For opt-in concurrent database load tests, see [Stress-test PostgreSQL persistence](docs/persistence-stress.md).
 

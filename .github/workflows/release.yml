@@ -191,6 +191,8 @@ jobs:
     if: needs.release-please.outputs.release_created == 'true'
     permissions:
       contents: read
+      # The documentation reads the CI coverage artifact of the released commit.
+      actions: read
       pages: write
       id-token: write
     uses: ./.github/workflows/docs.yml
