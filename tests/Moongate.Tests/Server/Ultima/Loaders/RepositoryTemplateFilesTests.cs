@@ -55,7 +55,8 @@ public sealed class RepositoryTemplateFilesTests
         var directories = Directories();
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var loader = new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items));
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var loader = new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots));
 
         var mobiles = (await loader.LoadDataAsync()).Entities.ToDictionary(t => t.Id);
 
@@ -70,7 +71,8 @@ public sealed class RepositoryTemplateFilesTests
         var names = (await new NamesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var races = (await new RacesLoader(directories).LoadDataAsync()).Entities.ToArray();
         var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
-        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items))
+        var loots = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities.ToArray();
+        var mobiles = (await new MobileTemplatesLoader(directories, new StubDataLoaderService().With(names).With(items).With(loots))
                        .LoadDataAsync()).Entities.ToArray();
         var loaders = new StubDataLoaderService().With(names).With(races).With(mobiles);
         var factory = new MobileFactoryService(
@@ -83,6 +85,17 @@ public sealed class RepositoryTemplateFilesTests
         Assert.Contains(guard.Body, new[] { 400, 401 });
         Assert.False(string.IsNullOrWhiteSpace(guard.Name));
         Assert.True(orc.Body > 0 && orc.HitsMax > 0 && !string.IsNullOrWhiteSpace(orc.Name), $"{orc.Body} {orc.Name}");
+    }
+
+    [Fact]
+    public async Task ShippedLootTables_LoadAgainstTheShippedItems()
+    {
+        var directories = Directories();
+        var items = (await new ItemTemplatesLoader(directories).LoadDataAsync()).Entities.ToArray();
+
+        var tables = (await new LootTemplatesLoader(directories, new StubDataLoaderService().With(items)).LoadDataAsync()).Entities;
+
+        Assert.Equal(71, tables.Count);
     }
 
     private static DirectoriesConfig Directories()

@@ -13,8 +13,8 @@ namespace Moongate.Server.Ultima.Loaders;
 ///     Loads every <c>*.toml</c> under <c>templates/mobiles/</c>, recursively, and resolves <c>base_id</c> as documented
 ///     on <see cref="MobileTemplate" />: unset fields come from the parent; skills, resistances and sounds key by key;
 ///     tags merge; equipment and loot, when set, replace. Inherited values are copies. A duplicate or missing id, a
-///     cycle, an invalid template, an unknown name list or an equipment item that is not an item template stops the
-///     server at startup.
+///     cycle, an invalid template, an unknown name list, an equipment item that is not an item template or a loot id
+///     that is not a loot table stops the server at startup.
 /// </summary>
 public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
 {
@@ -80,6 +80,9 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         var itemIds = _dataLoaderService.GetEntities<ItemTemplate>()
                                         .Select(template => template.Id)
                                         .ToHashSet(StringComparer.Ordinal);
+        var lootIds = _dataLoaderService.GetEntities<LootTemplate>()
+                                        .Select(table => table.Id)
+                                        .ToHashSet(StringComparer.Ordinal);
 
         if (resolved.Values.Any(template => template.NameList == GenderNameList) &&
             new[] { "male", "female" }.FirstOrDefault(list => !nameLists.Contains(list)) is { } missingList)
@@ -103,6 +106,13 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
             {
                 throw new InvalidDataException(
                     $"Mobile template '{template.Id}' equips '{missing}', which is not an item template."
+                );
+            }
+
+            if (template.Loot?.FirstOrDefault(loot => !lootIds.Contains(loot)) is { } missingLoot)
+            {
+                throw new InvalidDataException(
+                    $"Mobile template '{template.Id}' has loot '{missingLoot}', which is not a loot table."
                 );
             }
         }

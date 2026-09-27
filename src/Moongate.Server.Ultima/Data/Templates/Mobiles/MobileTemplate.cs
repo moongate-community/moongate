@@ -157,7 +157,8 @@ public class MobileTemplate
     public List<MobileEquipmentEntry>? Equipment { get; set; }
 
     /// <summary>
-    ///     Loot template ids rolled into the corpse. Unset is none.
+    ///     Loot template ids, each rolled once into the backpack when the mobile spawns; list one twice to roll it
+    ///     twice. Unset is none.
     /// </summary>
     public List<string>? Loot { get; set; }
 

@@ -69,7 +69,8 @@ public sealed class MobileTemplatesLoaderTests
      InlineData("[[mobile]]\nid = \"a\"\nbase_id = \"b\"\n\n[[mobile]]\nid = \"b\"\nbase_id = \"a\"\n"),
      InlineData("[[mobile]]\nid = \"a\"\nbody = 1\nname_list = \"elf\"\n"),
      InlineData("[[mobile]]\nid = \"a\"\nbody = 1\nequipment = [{ items = [\"cape\"] }]\n"),
-     InlineData("[[mobile]]\nid = \"a\"\nbody = 1\nskills = { flying = \"10\" }\n")]
+     InlineData("[[mobile]]\nid = \"a\"\nbody = 1\nskills = { flying = \"10\" }\n"),
+     InlineData("[[mobile]]\nid = \"a\"\nbody = 1\nloot = [\"treasure\"]\n")]
     public async Task LoadDataAsync_ABadTemplate_ThrowsInvalidDataException(string toml)
     {
         using var root = new TemporaryDirectory();
@@ -107,6 +108,15 @@ public sealed class MobileTemplatesLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_AKnownLootTable_IsAccepted()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("templates/mobiles/a.toml", "[[mobile]]\nid = \"orc\"\nbody = 17\nloot = [\"gems\", \"gems\"]\n");
+
+        Assert.Equal(["gems", "gems"], Assert.Single((await CreateLoader(root).LoadDataAsync()).Entities).Loot);
+    }
+
+    [Fact]
     public async Task LoadDataAsync_TheGenderNameList_IsAccepted()
     {
         using var root = new TemporaryDirectory();
@@ -126,6 +136,7 @@ public sealed class MobileTemplatesLoaderTests
                     new NameList { Id = "female", Names = ["Alice"] }
                 )
                 .With(new ItemTemplate { Id = "club", ItemId = new Serial(0x13B4) }, new ItemTemplate { Id = "axe", ItemId = new Serial(0x0F49) })
+                .With(new LootTemplate { Id = "gems", Entries = [new LootEntry()] })
         );
     }
 }
