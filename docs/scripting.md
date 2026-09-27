@@ -112,7 +112,7 @@ events.off(handle) -- returns false when the handle is unknown
 
 | Event | Fields |
 | --- | --- |
-| — | No events are published yet. |
+| `character_created` | `serial`, `account_id`, `name`, `race` and `gender` (numbers of `RaceType` and `GenderType`), `map`, `x`, `y`, `z`. Raised after a new character and its starting items are saved. |
 
 ### Publishing an event from C#
 
