@@ -32,6 +32,7 @@ internal static class UoxStartingItemsConverter
                                   # Source: UOX3 dfndata/newbie/newbie.dfn, converted by mg-uoxconv.
                                   # ==============================================================================
 
+
                                   """;
 
     public static int Run(string mobileSource, string destination, ItemIndex items, TextWriter output, TextWriter error)

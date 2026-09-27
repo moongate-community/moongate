@@ -28,6 +28,7 @@ internal static class UoxMobileConverter
                                        # Source: UOX3 dfndata/npc/namelists.dfn, converted by mg-uoxconv.
                                        # ==============================================================================
 
+
                                        """;
 
     public static int Run(

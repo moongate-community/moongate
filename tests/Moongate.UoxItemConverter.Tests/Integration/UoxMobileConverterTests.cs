@@ -45,6 +45,16 @@ public sealed class UoxMobileConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_TheNamesHeader_IsFollowedByABlankLine()
+    {
+        WriteItemsAndNames();
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Contains("====\n\n[[names]]", File.ReadAllText(_dirs.NamesDestinationPath));
+    }
+
+    [Fact]
     public void Run_InheritanceFollowsGetAndTheLbrEra()
     {
         WriteItemsAndNames();

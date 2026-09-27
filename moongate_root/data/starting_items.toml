@@ -20,6 +20,7 @@
 #
 # Source: UOX3 dfndata/newbie/newbie.dfn, converted by mg-uoxconv.
 # ==============================================================================
+
 [[set]]
 common = false
 skill = "alchemy"

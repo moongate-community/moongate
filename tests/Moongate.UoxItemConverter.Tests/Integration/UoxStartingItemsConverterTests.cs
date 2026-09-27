@@ -115,6 +115,16 @@ public sealed class UoxStartingItemsConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_TheHeader_IsFollowedByABlankLine()
+    {
+        WriteSources("[DEFAULT ALL]\n{\nPACKITEM=0x0f7a\n}\n");
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        Assert.Contains("====\n\n[[set]]", File.ReadAllText(_dirs.StartingItemsDestinationPath));
+    }
+
+    [Fact]
     public void Run_StartingItemsWithoutMobileSource_IsRejected()
     {
         _dirs.WriteSource("items.dfn", "[0x0f7a]\n{\nid=0x0f7a\n}\n");
