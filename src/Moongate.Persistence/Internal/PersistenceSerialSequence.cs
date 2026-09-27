@@ -1,6 +1,8 @@
 using System.Data.Common;
+using System.Reflection;
 using System.Security.Cryptography;
 using System.Text;
+using Moongate.Core.Attributes;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
 using Npgsql;
@@ -70,6 +72,10 @@ internal static class PersistenceSerialSequence
             }
 
             var sequence = Quote(parts[0]) + "." + Quote(name);
+
+            // An entity whose serials live in a range (world items) starts its sequence at the range minimum; rows
+            // already stored continue after the highest id, as for every other entity.
+            var first = type.GetCustomAttribute<SerialRangeAttribute>()?.Min ?? 1;
             var quotedTable = Quote(parts[0]) + "." + Quote(parts[1]);
             var quotedColumn = Quote(column.Attribute.Name);
 
@@ -84,10 +90,10 @@ internal static class PersistenceSerialSequence
                       IF highest_id < 0 OR highest_id > {{uint.MaxValue}} THEN
                           RAISE EXCEPTION 'Existing identity is outside the Serial range';
                       END IF;
-                      CREATE SEQUENCE {{sequence}} AS bigint MINVALUE 1 MAXVALUE {{uint.MaxValue}} START WITH 1 NO CYCLE;
+                      CREATE SEQUENCE {{sequence}} AS bigint MINVALUE 1 MAXVALUE {{uint.MaxValue}} START WITH {{first}} NO CYCLE;
                       ALTER SEQUENCE {{sequence}} OWNED BY {{quotedTable}}.{{quotedColumn}};
                       PERFORM setval('{{sequence.Replace("'", "''", StringComparison.Ordinal)}}'::regclass,
-                          GREATEST(highest_id, 1), highest_id > 0);
+                          GREATEST(highest_id, {{first}}), highest_id >= {{first}});
                   END
                   $moongate_serial$;
                   """

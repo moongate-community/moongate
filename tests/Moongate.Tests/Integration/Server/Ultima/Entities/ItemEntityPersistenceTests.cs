@@ -38,6 +38,23 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task ASchemaGeneratedFromTheEntities_GivesTheFirstItemTheFirstItemSerial()
+    {
+        // A development root with no reviewed migrations gets its schema generated from the entities; the item
+        // sequence must still start in the item range, not at 1.
+        await using var host = await HostPersistenceFixture.CreateAsync();
+        host.Container.AddPersistenceWorld<ItemEntity>();
+        await host.Owner.InitializeAsync();
+        var items = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var item = new ItemEntity { TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        item.PlaceOnGround(MapType.Felucca, new Point3D(1, 1, 0));
+
+        await items.UpsertAsync(item);
+
+        Assert.Equal(new Serial(Serial.MinItem), item.Id);
+    }
+
+    [Fact]
     public async Task EveryLocation_AndProps_RoundTrip()
     {
         var mobile = await NewMobileAsync();

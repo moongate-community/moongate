@@ -179,8 +179,12 @@ Console.WriteLine(account.Id); // Assigned on this same instance.
   exposes only a getter.
 - Each table has its own sequence in its schema. Sequences use the range
   `1..4294967295`, never cycle, and are shared across processes using that database.
-  These are persistence IDs, not a UO mobile or item range allocator. Supply gameplay
-  serials explicitly when domain rules require particular ranges or shared identity.
+  An entity whose serials live in a range that does not start at 1 declares it with
+  `[SerialRange(min, max)]` (`Moongate.Core.Attributes`): a generated sequence then
+  starts at `min`, so an empty table reserves `min` first. `ItemEntity` declares
+  `Serial.MinItem..Serial.MaxItem`. The attribute does not cap the top of the range;
+  a reviewed migration can add a check constraint, as `world.items` does. Supply
+  gameplay serials explicitly when domain rules require shared identity.
 - Sequence creation belongs to schema migrations, never to `UpsertAsync`. The
   runtime role needs `USAGE` on the sequences as well as the table permissions.
 
