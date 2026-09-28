@@ -50,6 +50,7 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x08` | `DropRequestPacket` | Incoming | Fixed 15 | `DropRequestPacketHandler`: drops the held item into a carried container |
 | `0x25` | `ContainerItemUpdatePacket` | Outgoing | Fixed 21, or 20 before client 6.0.1.7 | — |
 | `0x27` | `LiftRejectPacket` | Outgoing | Fixed 2 | — |
+| `0x1D` | `RemoveEntityPacket` | Outgoing | Fixed 5 | — |
 | `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: bounces the held item back (equipping is not built yet) |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x12`, `0xAD`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `UnicodeSpeechRequestPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
@@ -91,8 +92,16 @@ puts it into a carried container at the drop position, brought inside the gump b
 random spot when dropped on the container's icon; dropped on a carried item that is not a
 container, it goes into that item's container at that item's position. The ground, mobiles,
 items not carried, and a container into itself or anything inside it bounce the item back. Every
-drop frees the hand and sends `0x25` with the item's real position. Stacks are neither split nor
-merged yet. A held item dropped on a paperdoll (`0x13`) bounces back to its container with `0x25`
+drop frees the hand and sends `0x25` with the item's real position.
+
+Lifting part of a stackable item (tiledata `Generic`) splits it: the held part keeps the serial,
+since the client drags it, and the rest takes a serial from `IItemSerialPool` (64 serials reserved
+from the items sequence, refilled below 16), stays where the stack was and is shown with `0x25`.
+With no reserved serial left the lift is refused with `Inspecific`. Dropping the held item onto a
+carried stack of the same graphic and hue, up to 60000, merges them: the stack grows (`0x25`), the
+held item is removed from the client (`0x1D`) and from memory, and its row is deleted by the next
+world save in the same transaction as the grown stack, or by the leave save. Dropping onto a
+container never merges. A held item dropped on a paperdoll (`0x13`) bounces back to its container with `0x25`
 and frees the hand: equipping is not built yet.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
