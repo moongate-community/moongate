@@ -1,0 +1,5 @@
+# Lines are sent privately when a character enters the world.
+# Variables use the ${variable_name} syntax; plugins may register more.
+lines = [
+    "Welcome to Moongate!",
+]

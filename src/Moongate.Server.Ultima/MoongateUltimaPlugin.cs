@@ -23,6 +23,7 @@ using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
+using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Data.Names;
 using Moongate.Server.Ultima.Data.Professions;
 using Moongate.Server.Ultima.Data.Races;
@@ -121,6 +122,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<StartingItemsLoader, StartingItemSet>(13);
             container.AddUltimaDataLoader<LootTemplatesLoader, LootTemplate>(14);
             container.AddUltimaDataLoader<MobileTemplatesLoader, MobileTemplate>(15);
+            container.AddUltimaDataLoader<MotdLoader, MotdLine>(16);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();

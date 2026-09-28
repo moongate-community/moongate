@@ -4,6 +4,7 @@ using Moongate.Core.Utils;
 using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Motd;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 
 namespace Moongate.Tests.Server.Ultima.Loaders;
@@ -14,6 +15,14 @@ namespace Moongate.Tests.Server.Ultima.Loaders;
 /// </summary>
 public sealed class RepositoryTemplateFilesTests
 {
+    [Fact]
+    public async Task ShippedMotd_Loads()
+    {
+        var loader = new MotdLoader(Directories(), new MotdVariableRegistry());
+
+        Assert.NotEmpty((await loader.LoadDataAsync()).Entities);
+    }
+
     public RepositoryTemplateFilesTests()
     {
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
