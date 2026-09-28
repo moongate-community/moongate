@@ -294,4 +294,22 @@ public sealed class MobileEntityPersistenceTests
 
         Assert.Equal(2, (await mobiles.QueryAsync(mobile => mobile.Name == "an orc")).Count);
     }
+
+    [Fact]
+    public async Task DeletionRequestedAt_IsStoredInUtcAndReadBack()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        host.Container.AddPersistenceWorld<MobileEntity>();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var requested = new DateTime(2026, 9, 28, 10, 30, 0, DateTimeKind.Utc);
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, DeletionRequestedAt = requested };
+
+        await mobiles.UpsertAsync(aria);
+
+        var stored = (await mobiles.GetByIdAsync(aria.Id))!;
+        Assert.Equal(requested, stored.DeletionRequestedAt);
+        Assert.Equal(DateTimeKind.Utc, stored.DeletionRequestedAt!.Value.Kind);
+    }
 }
