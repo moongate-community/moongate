@@ -120,6 +120,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterIncomingPacket<ClientHardwareInfoPacket>();
             container.RegisterIncomingPacket<CreateCharacterPacket>();
             container.RegisterIncomingPacket<CreateCharacterEnhancedPacket>();
+            container.RegisterIncomingPacket<DeleteCharacterPacket>();
             container.RegisterAsyncPacketHandler<CreateCharacterPacket, CreateCharacterPacketHandler>();
             container.RegisterAsyncPacketHandler<CreateCharacterEnhancedPacket, CreateCharacterEnhancedPacketHandler>();
 
