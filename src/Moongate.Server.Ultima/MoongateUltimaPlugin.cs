@@ -41,6 +41,7 @@ using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Handlers.Movement;
+using Moongate.Server.Ultima.Handlers.Targeting;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Interfaces;
@@ -146,6 +147,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterIncomingPacket<UnicodeSpeechRequestPacket>();
             container.RegisterAsyncPacketHandler<UnicodeSpeechRequestPacket, SpeechRequestPacketHandler>();
             container.RegisterIncomingPacket<TargetResponsePacket>();
+            container.RegisterPacketHandler<TargetResponsePacket, TargetResponsePacketHandler>();
             container.RegisterIncomingPacket<LiftRequestPacket>();
             container.RegisterPacketHandler<LiftRequestPacket, LiftRequestPacketHandler>();
             container.RegisterIncomingPacket<DropRequestPacket>();
