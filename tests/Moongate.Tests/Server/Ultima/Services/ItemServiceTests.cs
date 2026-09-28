@@ -361,6 +361,66 @@ public sealed class ItemServiceTests
         Assert.False(items.CanReach(_aria, gold));
     }
 
+    [Fact]
+    public void Release_ThenTakeReleasedOf_GivesTheLiveItemsOnce()
+    {
+        var items = TestItems.Create();
+        var gold = Item(0x40000050);
+        var gone = Item(0x40000051);
+        items.Add([gold, gone]);
+        items.Release(gold, Aria);
+        items.Release(gone, Aria);
+        items.Remove([gone.Id]);
+
+        Assert.Equal([gold], items.TakeReleasedOf(Aria));
+        Assert.Empty(items.TakeReleasedOf(Aria));
+    }
+
+    [Fact]
+    public void Absorb_WithAnOwner_QueuesTheDeletionForThatOwner()
+    {
+        var items = TestItems.Create();
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        items.Absorb(gold, Aria);
+
+        Assert.Equal([gold.Id], items.TombstonesOf(Aria));
+    }
+
+    [Fact]
+    public void GetWorn_GivesOnlyWhatTheMobileWears()
+    {
+        var items = TestItems.Create();
+        var shirt = Item(0x40000050);
+        var coins = Item(0x40000051);
+        shirt.Equip(Aria, LayerType.Shirt);
+        coins.PutInContainer(new Serial(0x40000052), new Point2D(1, 1));
+        items.Add([shirt, coins]);
+
+        Assert.Equal([shirt], items.GetWorn(Aria));
+
+        items.Remove([shirt.Id]);
+
+        Assert.Empty(items.GetWorn(Aria));
+    }
+
+    [Fact]
+    public void IsLyingOnGround_IsFalseWhileHeld()
+    {
+        var items = TestItems.Create();
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        Assert.True(items.IsLyingOnGround(gold));
+
+        items.Hide(gold);
+
+        Assert.False(items.IsLyingOnGround(gold));
+    }
+
     private static ItemEntity Item(uint serial)
     {
         return new() { Id = new(serial), TemplateId = "item", ItemId = 0x0E75, Amount = 1 };

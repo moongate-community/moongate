@@ -80,6 +80,8 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
         if (mobile is not null && TryMergeOnGround(mobile, item, packet.Destination, out var groundStack))
         {
+            // The character's leave saves the grown stack and deletes the absorbed item in one transaction.
+            _items.Release(groundStack, session.CharacterId);
             _view.ItemAppeared(groundStack);
             _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
 
@@ -90,6 +92,8 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         {
             if (mobile is not null && _items.TryDropOnGround(mobile, item, packet.X, packet.Y))
             {
+                // Its row still says the character carries it: the character's leave saves where it lies now.
+                _items.Release(item, session.CharacterId);
                 _view.ItemAppeared(item);
 
                 return;
@@ -132,7 +136,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         }
 
         stack.Amount += item.Amount;
-        _items.Absorb(item);
+        _items.Absorb(item, session.CharacterId);
 
         return true;
     }
@@ -152,7 +156,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         }
 
         stack.Amount += item.Amount;
-        _items.Absorb(item);
+        _items.Absorb(item, mobile.Id);
 
         return true;
     }

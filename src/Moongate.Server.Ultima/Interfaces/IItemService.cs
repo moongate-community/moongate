@@ -56,6 +56,11 @@ public interface IItemService : IPersistenceDeletionSource
     IReadOnlyList<ItemEntity> GetOwnedBy(Serial mobile);
 
     /// <summary>
+    ///     Gets the live items the mobile wears, from an index kept by wearer.
+    /// </summary>
+    IReadOnlyList<ItemEntity> GetWorn(Serial mobile);
+
+    /// <summary>
     ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump.
     /// </summary>
     void MoveToContainer(ItemEntity item, Serial container, Point2D position);
@@ -77,6 +82,22 @@ public interface IItemService : IPersistenceDeletionSource
     ///     shows it to the players in range.
     /// </summary>
     bool TryDropOnGround(MobileEntity mobile, ItemEntity item, int x, int y);
+
+    /// <summary>
+    ///     Gets whether the item lies on the ground in the sector grid: false while a player holds it.
+    /// </summary>
+    bool IsLyingOnGround(ItemEntity item);
+
+    /// <summary>
+    ///     Records that the character changed an item that no longer belongs to it, such as one it dropped on the ground
+    ///     or a ground stack it grew, so its leave saves the item in the same transaction as its own.
+    /// </summary>
+    void Release(ItemEntity item, Serial owner);
+
+    /// <summary>
+    ///     Takes the live items the character released; from then on only the caller saves them.
+    /// </summary>
+    IReadOnlyList<ItemEntity> TakeReleasedOf(Serial owner);
 
     /// <summary>
     ///     Takes a ground item out of the sector grid while a player holds it; it keeps its location.
@@ -101,6 +122,12 @@ public interface IItemService : IPersistenceDeletionSource
     ///     Forgets the item, merged into another, and queues its row for deletion by the next save.
     /// </summary>
     void Absorb(ItemEntity item);
+
+    /// <summary>
+    ///     Forgets the item as <see cref="Absorb(ItemEntity)" /> does, but queues its deletion for
+    ///     <paramref name="owner" />: the character that grew the stack, whose leave then deletes the row.
+    /// </summary>
+    void Absorb(ItemEntity item, Serial owner);
 
     /// <summary>
     ///     Gets the queued deletions of the items <paramref name="owner" /> carried when they were absorbed.

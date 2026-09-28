@@ -114,6 +114,11 @@ public sealed class SectorService : ISectorService
         }
     }
 
+    public bool ContainsItem(ItemEntity item)
+    {
+        return _itemSectorOf.ContainsKey(item.Id);
+    }
+
     public IReadOnlyList<ItemEntity> GetItemsInRange(MapType map, Point3D center, int range)
     {
         var found = new List<ItemEntity>();

@@ -149,7 +149,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         // another player's item must not be revealed.
         if (item?.GroundLocation is not null)
         {
-            _view.ItemAppeared(item);
+            // Only to this player, and only when it lies there: an item someone holds must stay off every screen.
+            if (_items.IsLyingOnGround(item) && _mobiles.TryGet(session.CharacterId, out var mobile))
+            {
+                _view.ShowItemTo(mobile, item);
+            }
         }
         else if (item?.ContainerId is not null &&
                  session.CharacterId.IsValid &&

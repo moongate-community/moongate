@@ -261,6 +261,9 @@ one place, and the database checks it:
 Items lying on the ground live in `IItemService` and the sector grid while the server runs:
 `GroundItemsLoadService` loads them, and everything inside them, at startup (migration `0010`
 indexes them by map), and the world save writes them with the characters' items.
+What a character drops on the ground, or a ground stack it grows, is also saved by its leave, in
+the same transaction as its own items and its merged stacks' deletions: its rows would otherwise
+still say the character carries them until the next world save.
 
 Each helper clears the other two groups, so move an item only through them. The
 database also rejects an item inside itself and two items on the same layer of one

@@ -97,6 +97,26 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnSessionClosed_SavesWhatTheCharacterReleasedOnTheGround()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var gold = new ItemEntity { Id = new(0x40000050), TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        _items.Add([gold]);
+        _items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1497, 1628, 0));
+        _items.Release(gold, _aria.Id);
+        var service = Service();
+
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+        await service.StopAsync().WaitAsync(Timeout);
+
+        var saved = Assert.Single(_world.Items.Upserted, item => item.Id == gold.Id);
+        Assert.NotSame(gold, saved);
+        Assert.Equal(new Point3D(1497, 1628, 0), saved.GroundLocation);
+        Assert.True(_items.TryGet(gold.Id, out _));
+    }
+
+    [Fact]
     public async Task OnSessionClosed_TheCharacterLeavesTheWorldBeforeTheSaveFinishes()
     {
         await using var fixture = await SessionFixture.CreateAsync();

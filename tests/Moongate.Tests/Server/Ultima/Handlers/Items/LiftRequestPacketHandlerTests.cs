@@ -97,7 +97,20 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
         Assert.Null(_session.Get(ItemSessionKeys.Held));
         Assert.Equal(LiftRejectReasonType.OutOfRange, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
-        Assert.Equal([$"Appeared {_groundGold.Id.Value}"], _view.Calls);
+        Assert.Equal([$"ShownTo 2 {_groundGold.Id.Value}"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemSomeoneHolds_IsRefusedWithoutShowingIt()
+    {
+        _items.Hide(_groundGold);
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent));
+        Assert.Empty(_view.Calls);
     }
 
     [Fact]

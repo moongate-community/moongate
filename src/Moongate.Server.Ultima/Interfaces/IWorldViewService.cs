@@ -38,6 +38,11 @@ public interface IWorldViewService
     void ItemAppeared(ItemEntity item);
 
     /// <summary>
+    ///     Shows a ground item to one player only, such as the one whose lift of it was refused.
+    /// </summary>
+    void ShowItemTo(MobileEntity viewer, ItemEntity item);
+
+    /// <summary>
     ///     Removes a ground item from the screens in range (0x1D); call it when it is lifted, merged or deleted, with its
     ///     location still set.
     /// </summary>

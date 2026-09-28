@@ -62,12 +62,19 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         var snapshot = character.Snapshot();
         var carried = _items.GetOwnedBy(character.Id);
         var items = carried.Select(item => item.Snapshot()).ToList();
+        var carriedIds = carried.Select(item => item.Id).ToHashSet();
+        // What it dropped on the ground or grew there: its rows still say what they were before.
+        var released = _items.TakeReleasedOf(character.Id)
+                             .Where(item => !carriedIds.Contains(item.Id))
+                             .Select(item => item.Snapshot())
+                             .ToList();
         // Taken on the loop: from now on only this leave deletes them, in the transaction that saves their stacks.
         var merged = _items.TakeTombstonesOf(character.Id);
         _items.Remove(carried.Select(item => item.Id));
         // Still in the sector grid: the players around it can be found and told.
         _view.Left(character);
         _mobiles.LeaveWorld(character.Id);
+        items.AddRange(released);
         Track(Task.Run(() => SaveAndPublishAsync(snapshot, items, merged)), character.AccountId);
     }
 

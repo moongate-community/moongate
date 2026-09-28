@@ -139,7 +139,8 @@ stacked on, so two items on one tile overlap. It is shown to everyone in range, 
 included: `0x1A` for clients before 7.0.0.0, `0xF3` after, two bytes longer from 7.0.9.0.
 Anyone can pick up (`0x07`) a ground item within 2 tiles in line of sight; it leaves every screen
 (`0x1D`) while held, and a partial lift leaves the rest on the ground with a new serial. Too far
-or out of sight is refused with `OutOfRange` or `OutOfSight`, and the item is shown again. A held
+or out of sight is refused with `OutOfRange` or `OutOfSight`, and the item is shown again to that
+player only; an item someone else holds is never shown. A held
 ground item that bounces goes back where it lay, and one still held when the session closes is
 put back too. Dropping onto a ground stack within reach merges them as in the backpack. Players
 walking into range of a ground item, or entering the world near it, get it with the same old and

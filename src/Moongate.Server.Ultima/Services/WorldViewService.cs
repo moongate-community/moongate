@@ -91,7 +91,10 @@ public sealed class WorldViewService : IWorldViewService
 
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
-                _sender.TrySend(viewer.SessionId, sawIt ? moving ??= Moving(mobile, running) : incoming ??= Incoming(mobile));
+                _sender.TrySend(
+                    viewer.SessionId,
+                    sawIt ? moving ??= Moving(mobile, running) : incoming ??= Incoming(mobile)
+                );
             }
 
             // The mover's client drops what it walks away from by itself, as in ModernUO; it only needs the newcomers.
@@ -146,6 +149,14 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
+    public void ShowItemTo(MobileEntity viewer, ItemEntity item)
+    {
+        if (item.GroundLocation is not null && _sessions.TryGetValue(viewer.Id, out var session))
+        {
+            _sender.TrySend(session.SessionId, WorldItem(item, session.Version));
+        }
+    }
+
     public void ItemDisappeared(ItemEntity item)
     {
         if (item.Map is not { } map || item.GroundLocation is not { } spot)
@@ -181,7 +192,7 @@ public sealed class WorldViewService : IWorldViewService
 
     private MobileIncomingPacket Incoming(MobileEntity mobile)
     {
-        var worn = _items.GetOwnedBy(mobile.Id).Where(item => item.MobileId == mobile.Id);
+        var worn = _items.GetWorn(mobile.Id);
 
         return new(
             mobile.Id,

@@ -274,6 +274,20 @@ public sealed class WorldViewServiceTests
         Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
     }
 
+    [Fact]
+    public void ShowItemTo_SendsItOnlyToThatPlayer()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var gold = Ground(0x40000050, 1498, 1628);
+        ClearSent();
+
+        _view.ShowItemTo(aria, gold);
+
+        Assert.Equal(gold.Id, Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent)).Serial);
+        Assert.Equal([AriaSession], _sender.SentSessionIds);
+    }
+
     private ItemEntity Ground(uint serial, int x, int y)
     {
         var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };

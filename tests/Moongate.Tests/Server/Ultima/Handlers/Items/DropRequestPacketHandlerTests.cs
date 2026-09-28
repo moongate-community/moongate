@@ -241,6 +241,41 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_OnTheGround_IsReleasedByTheCharacterForItsLeaveSave()
+    {
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 1497, 1628, Ground);
+
+        Assert.Equal([_coins], _items.TakeReleasedOf(Aria));
+    }
+
+    [Fact]
+    public async Task Handle_OntoAGroundStack_QueuesTheDeletionAndReleasesTheStackForTheCharacter()
+    {
+        _items.PlaceOnGround(_pile, MapType.Trammel, new Point3D(1497, 1628, 0));
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, _pile.Id);
+
+        Assert.Equal([_coins.Id], _items.TombstonesOf(Aria));
+        Assert.Equal([_pile], _items.TakeReleasedOf(Aria));
+    }
+
+    [Fact]
+    public async Task Handle_AHeldGroundItemOntoACarriedStack_QueuesTheDeletionForTheCharacter()
+    {
+        _items.PlaceOnGround(_pile, MapType.Trammel, new Point3D(1497, 1628, 0));
+        _items.Hide(_pile);
+        await HoldingAsync(_pile);
+
+        await DropAsync(_pile.Id, 0, 0, _coins.Id);
+
+        Assert.Equal(100, _coins.Amount);
+        Assert.Equal([_pile.Id], _items.TombstonesOf(Aria));
+    }
+
+    [Fact]
     public async Task Handle_OnTheGroundTooFar_BouncesBackIntoTheContainer()
     {
         await HoldingAsync(_coins);

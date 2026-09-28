@@ -44,6 +44,11 @@ public interface ISectorService
     void RemoveItem(ItemEntity item);
 
     /// <summary>
+    ///     Gets whether the ground item is in the grid.
+    /// </summary>
+    bool ContainsItem(ItemEntity item);
+
+    /// <summary>
     ///     Gets the ground items on the map within <paramref name="range" /> tiles of the center on both axes.
     /// </summary>
     IReadOnlyList<ItemEntity> GetItemsInRange(MapType map, Point3D center, int range);
