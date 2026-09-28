@@ -1,3 +1,4 @@
+using Moongate.Persistence.Interfaces;
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
@@ -73,6 +74,25 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task WaitForAccountAsync_CompletesOnlyAfterThatAccountsLeaveSave()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var hold = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        _world.Hold = hold.Task;
+        var service = Service();
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+
+        var waiting = service.WaitForAccountAsync(new Serial(42));
+
+        Assert.False(waiting.IsCompleted);
+        Assert.True(service.WaitForAccountAsync(new Serial(99)).IsCompleted);
+        hold.SetResult();
+        await waiting.WaitAsync(Timeout);
+        Assert.Single(_world.Mobiles.Upserted);
+    }
+
+    [Fact]
     public async Task OnSessionClosed_AFailedSave_StillRemovesTheCharacterAndPublishesTheEvent()
     {
         await using var fixture = await SessionFixture.CreateAsync();
@@ -125,7 +145,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     }
 
     [Fact]
-    public async Task OnSessionClosed_AFailedItemSave_SavesNothing_KeepsTheDeletionsQueuedAndPublishes()
+    public async Task OnSessionClosed_AFailedItemSave_SavesNothing_DropsTheDeletionsAndPublishes()
     {
         await using var fixture = await SessionFixture.CreateAsync();
         var session = await SessionWithCharacterAsync(fixture);
@@ -148,7 +168,9 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
 
         Assert.Empty(_world.Mobiles.Upserted);
         Assert.Empty(_world.Items.Upserted);
-        Assert.Equal([absorbed.Id], _items.TombstonesOf(_aria.Id));
+        // The database still holds both stacks as before the merge: deleting the absorbed one now would lose it.
+        Assert.Empty(_items.TombstonesOf(_aria.Id));
+        Assert.Empty(((IPersistenceDeletionSource)_items).Capture());
         Assert.Single(_left);
     }
 

@@ -22,6 +22,7 @@ public sealed class ItemService : IItemService
         foreach (var item in items)
         {
             _items[item.Id] = item;
+            _tombstones.TryRemove(item.Id, out _);
         }
     }
 
@@ -97,6 +98,21 @@ public sealed class ItemService : IItemService
     public IReadOnlyCollection<Serial> TombstonesOf(Serial owner)
     {
         return _tombstones.Where(pair => pair.Value == owner).Select(pair => pair.Key).ToArray();
+    }
+
+    public IReadOnlyCollection<Serial> TakeTombstonesOf(Serial owner)
+    {
+        var taken = new List<Serial>();
+
+        foreach (var serial in TombstonesOf(owner))
+        {
+            if (_tombstones.TryRemove(serial, out _))
+            {
+                taken.Add(serial);
+            }
+        }
+
+        return taken;
     }
 
     public IReadOnlyCollection<Serial> Capture()

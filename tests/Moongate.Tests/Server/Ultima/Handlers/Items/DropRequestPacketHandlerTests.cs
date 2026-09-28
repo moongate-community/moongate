@@ -9,6 +9,7 @@ using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -133,6 +134,37 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     {
         await HoldingAsync(_coins);
         _pile.Hue = new(0x0481);
+
+        await DropAsync(_coins.Id, 0, 0, _pile.Id);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(120, 100));
+        Assert.Equal((30, 70), (_coins.Amount, _pile.Amount));
+    }
+
+    [Theory]
+    [InlineData("template")]
+    [InlineData("name")]
+    [InlineData("rarity")]
+    [InlineData("props")]
+    public async Task Handle_OntoAStackThatDiffersBeyondItsGraphic_IsPlacedBesideIt(string difference)
+    {
+        await HoldingAsync(_coins);
+
+        switch (difference)
+        {
+            case "template":
+                _pile.TemplateId = "rare_gold";
+                break;
+            case "name":
+                _pile.Name = "cursed gold";
+                break;
+            case "rarity":
+                _pile.Rarity = ItemRarityType.Rare;
+                break;
+            default:
+                _pile.SetProp("minted", 3);
+                break;
+        }
 
         await DropAsync(_coins.Id, 0, 0, _pile.Id);
 

@@ -75,15 +75,14 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
     }
 
-    // Onto a carried stack of the same graphic and hue: the stack grows and the held item is absorbed.
+    // Onto a carried stack of the same kind: the stack grows and the held item is absorbed.
     private bool TryMerge(GameSession session, ItemEntity item, Serial destination, out ItemEntity stack)
     {
         if (!_items.TryGet(destination, out stack!) ||
             stack.Id == item.Id ||
             stack.ContainerId is null ||
             _items.GetOwner(stack) != session.CharacterId ||
-            stack.ItemId != item.ItemId ||
-            stack.Hue != item.Hue ||
+            !IsSameKind(stack, item) ||
             (long)stack.Amount + item.Amount > MaxStack ||
             !IsStackable(stack))
         {
@@ -94,6 +93,18 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         _items.Absorb(item);
 
         return true;
+    }
+
+    // As ModernUO, two stacks merge only when nothing tells them apart: a rare stack must not absorb common coins.
+    private static bool IsSameKind(ItemEntity stack, ItemEntity item)
+    {
+        return stack.ItemId == item.ItemId &&
+               stack.Hue == item.Hue &&
+               stack.TemplateId == item.TemplateId &&
+               stack.Name == item.Name &&
+               stack.Rarity == item.Rarity &&
+               stack.Props is not { Count: > 0 } &&
+               item.Props is not { Count: > 0 };
     }
 
     private bool TryPlace(GameSession session, ItemEntity item, DropRequestPacket packet)
