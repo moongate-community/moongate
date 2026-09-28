@@ -124,7 +124,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterIncomingPacket<CreateCharacterEnhancedPacket>();
             container.RegisterIncomingPacket<DeleteCharacterPacket>();
             container.RegisterIncomingPacket<PlayCharacterPacket>();
-            container.RegisterPacketHandler<PlayCharacterPacket, PlayCharacterPacketHandler>();
+            container.RegisterAsyncPacketHandler<PlayCharacterPacket, PlayCharacterPacketHandler>();
 
             // Sent by the client right after it enters the world; recognised so it is not disconnected.
             container.RegisterIncomingPacket<MoveRequestPacket>();
