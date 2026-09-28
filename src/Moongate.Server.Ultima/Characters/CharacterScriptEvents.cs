@@ -43,4 +43,23 @@ public static class CharacterScriptEvents
             ["name"] = character.Name
         };
     }
+
+    /// <summary>
+    ///     The fields of <c>character_entered_world</c>: the character's serial, account and name, and where it is.
+    /// </summary>
+    public static IReadOnlyDictionary<string, object?> CharacterEnteredWorld(CharacterEnteredWorldEvent evt)
+    {
+        var character = evt.Character;
+
+        return new Dictionary<string, object?>
+        {
+            ["serial"] = (long)character.Id.Value,
+            ["account_id"] = character.AccountId is { } account ? (long)account.Value : null,
+            ["name"] = character.Name,
+            ["map"] = character.Map,
+            ["x"] = character.X,
+            ["y"] = character.Y,
+            ["z"] = character.Z
+        };
+    }
 }
