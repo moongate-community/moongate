@@ -42,7 +42,6 @@ public sealed class IgnoredPacketHandlerTests
     [InlineData(0xBF, 5)]
     [InlineData(0xD6, 3)]
     [InlineData(0x12, 3)]
-    [InlineData(0xAD, 3)]
     [InlineData(0xE1, 3)]
     public void VariableFollowUpPackets_DecodeWithTheirDeclaredLength(byte opCode, int minimum)
     {
@@ -85,7 +84,6 @@ public sealed class IgnoredPacketHandlerTests
         container.RegisterIncomingPacket<TextCommandPacket>();
         container.RegisterIncomingPacket<EquipRequestPacket>();
         container.RegisterIncomingPacket<ResynchronizeRequestPacket>();
-        container.RegisterIncomingPacket<UnicodeSpeechRequestPacket>();
         container.RegisterIncomingPacket<OpenChatWindowPacket>();
         container.RegisterIncomingPacket<ClientTypePacket>();
         container.RegisterIncomingPacket<PublicHouseContentPacket>();
