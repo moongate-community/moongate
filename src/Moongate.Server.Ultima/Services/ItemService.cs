@@ -1,5 +1,6 @@
 using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
@@ -68,5 +69,10 @@ public sealed class ItemService : IItemService
     public IReadOnlyList<ItemEntity> GetOwnedBy(Serial mobile)
     {
         return _items.Values.Where(item => GetOwner(item) == mobile).ToList();
+    }
+
+    public void MoveToContainer(ItemEntity item, Serial container, Point2D position)
+    {
+        item.PutInContainer(container, position);
     }
 }

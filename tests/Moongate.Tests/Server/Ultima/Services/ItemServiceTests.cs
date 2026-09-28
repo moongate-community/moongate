@@ -84,6 +84,17 @@ public sealed class ItemServiceTests
         );
     }
 
+    [Fact]
+    public void MoveToContainer_PutsTheLiveItemInTheContainerAtThePosition()
+    {
+        var items = Service();
+
+        items.MoveToContainer(_dagger, _bag.Id, new Point2D(12, 34));
+
+        Assert.Equal((_bag.Id, new Point2D(12, 34)), (_dagger.ContainerId!.Value, _dagger.GridLocation!.Value));
+        Assert.Equal([_coin, _dagger], items.GetContents(_bag.Id));
+    }
+
     private ItemService Service()
     {
         var items = new ItemService();
