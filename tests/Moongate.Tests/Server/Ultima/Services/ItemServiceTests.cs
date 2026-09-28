@@ -142,6 +142,29 @@ public sealed class ItemServiceTests
         Assert.Equal([_dagger.Id], items.TombstonesOf(Aria));
     }
 
+    [Fact]
+    public void TakeTombstonesOf_HandsThemOverAndTheSaveNoLongerSeesThem()
+    {
+        var items = Service();
+        items.Absorb(_coin);
+
+        Assert.Equal([_coin.Id], items.TakeTombstonesOf(Aria));
+
+        Assert.Empty(items.TombstonesOf(Aria));
+        Assert.Empty(((IPersistenceDeletionSource)items).Capture());
+    }
+
+    [Fact]
+    public void Add_AnItemThatWasTombstoned_ClearsItsTombstone()
+    {
+        var items = Service();
+        items.Absorb(_coin);
+
+        items.Add([_coin]);
+
+        Assert.Empty(((IPersistenceDeletionSource)items).Capture());
+    }
+
     private ItemService Service()
     {
         var items = new ItemService();

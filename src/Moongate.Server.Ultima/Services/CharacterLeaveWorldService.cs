@@ -16,11 +16,11 @@ namespace Moongate.Server.Ultima.Services;
 ///     then off the loop saves the character, then its items, and publishes <see cref="CharacterLeftWorldEvent" />.
 ///     Stopping waits for the saves still running.
 /// </summary>
-public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoongateStartupService
+public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, ISessionClosedListener, IMoongateStartupService
 {
     private readonly ILogger _logger = Log.ForContext<CharacterLeaveWorldService>();
     private readonly Lock _gate = new();
-    private readonly HashSet<Task> _pending = [];
+    private readonly Dictionary<Task, Serial?> _pending = [];
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
     private readonly IWorldTransactionService _world;
@@ -49,10 +49,11 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
         var snapshot = character.Snapshot();
         var carried = _items.GetOwnedBy(character.Id);
         var items = carried.Select(item => item.Snapshot()).ToList();
-        var merged = _items.TombstonesOf(character.Id);
+        // Taken on the loop: from now on only this leave deletes them, in the transaction that saves their stacks.
+        var merged = _items.TakeTombstonesOf(character.Id);
         _items.Remove(carried.Select(item => item.Id));
         _mobiles.LeaveWorld(character.Id);
-        Track(Task.Run(() => SaveAndPublishAsync(snapshot, items, merged)));
+        Track(Task.Run(() => SaveAndPublishAsync(snapshot, items, merged)), character.AccountId);
     }
 
     public Task StartAsync()
@@ -66,7 +67,7 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
 
         lock (_gate)
         {
-            pending = _pending.ToArray();
+            pending = _pending.Keys.ToArray();
         }
 
         await Task.WhenAll(pending);
@@ -99,11 +100,11 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
                     }
                 }
             );
-            _items.Committed(merged);
             _logger.Information("{Character} left the world", character);
         }
         catch (Exception exception)
         {
+            // Nothing was written: the database still holds the stacks as before the merges, so the deletions are dropped.
             _logger.Error(exception, "Saving {Character} and its items as it left the world failed", character);
         }
 
@@ -117,11 +118,23 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
         }
     }
 
-    private void Track(Task task)
+    public Task WaitForAccountAsync(Serial account)
+    {
+        Task[] pending;
+
+        lock (_gate)
+        {
+            pending = _pending.Where(pair => pair.Value == account).Select(pair => pair.Key).ToArray();
+        }
+
+        return Task.WhenAll(pending);
+    }
+
+    private void Track(Task task, Serial? account)
     {
         lock (_gate)
         {
-            _pending.Add(task);
+            _pending[task] = account;
         }
 
         _ = task.ContinueWith(

@@ -192,6 +192,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             // the leave saves before the final save and persistence shut down.
             container.AddMoongateService<CharacterLeaveWorldService>(50);
             container.RegisterMapping<ISessionClosedListener, CharacterLeaveWorldService>();
+            container.RegisterMapping<ICharacterLeaveWorldService, CharacterLeaveWorldService>();
             container.RegisterCommand<CharacterCommand>(
                 "character",
                 "Pending character deletions: character pending [account-serial]; character restore <character-serial>.",

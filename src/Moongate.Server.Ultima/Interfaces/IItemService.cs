@@ -22,7 +22,8 @@ public interface IItemService : IPersistenceDeletionSource
     IReadOnlyCollection<ItemEntity> Items { get; }
 
     /// <summary>
-    ///     Keeps the items as the live ones; each replaces an instance with the same serial.
+    ///     Keeps the items as the live ones; each replaces an instance with the same serial. An item loaded again is no
+    ///     longer queued for deletion.
     /// </summary>
     void Add(IEnumerable<ItemEntity> items);
 
@@ -75,4 +76,10 @@ public interface IItemService : IPersistenceDeletionSource
     ///     Gets the queued deletions of the items <paramref name="owner" /> carried when they were absorbed.
     /// </summary>
     IReadOnlyCollection<Serial> TombstonesOf(Serial owner);
+
+    /// <summary>
+    ///     Hands over the queued deletions of <paramref name="owner" />'s items: the world save no longer deletes them,
+    ///     the caller does, together with the stacks they were merged into.
+    /// </summary>
+    IReadOnlyCollection<Serial> TakeTombstonesOf(Serial owner);
 }

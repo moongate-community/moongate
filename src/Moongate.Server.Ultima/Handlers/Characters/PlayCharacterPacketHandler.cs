@@ -33,6 +33,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     private readonly ICharacterService _characters;
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
+    private readonly ICharacterLeaveWorldService _leaves;
     private readonly IDataLoaderService _data;
     private readonly IMoongateEventBus _events;
     private readonly ISessionService _sessions;
@@ -41,6 +42,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         ICharacterService characters,
         IMobileService mobiles,
         IItemService items,
+        ICharacterLeaveWorldService leaves,
         IDataLoaderService data,
         IMoongateEventBus events,
         ISessionService sessions
@@ -49,6 +51,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         _characters = characters;
         _mobiles = mobiles;
         _items = items;
+        _leaves = leaves;
         _data = data;
         _events = events;
         _sessions = sessions;
@@ -75,6 +78,8 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
 
         try
         {
+            // A save of this account's last session may still be running: read what it writes, never the rows before it.
+            await _leaves.WaitForAccountAsync(accountId);
             play = await _characters.GetForPlayAsync(accountId, packet.CharacterIndex, cancellationToken);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)

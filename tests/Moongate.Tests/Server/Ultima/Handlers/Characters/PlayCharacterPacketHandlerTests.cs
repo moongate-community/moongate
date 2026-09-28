@@ -34,6 +34,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     private readonly Container _events = new();
     private readonly MobileService _mobiles = new(new StubMovementService());
     private readonly ItemService _items = new();
+    private StubCharacterLeaveWorldService _leaves = new();
     private SessionService _sessions = null!;
     private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
 
@@ -111,6 +112,24 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             sender.Sent.OfType<MobileIncomingPacket>().Single().Equipment,
             entry => entry.Serial == new Serial(0x40000002)
         );
+    }
+
+    [Fact]
+    public async Task HandleAsync_WaitsForTheAccountsLeaveSavesBeforeLoading()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        _leaves = new StubCharacterLeaveWorldService(false);
+        var characters = new RecordingCharacterService { ForPlay = Aria() };
+
+        var handling = Handler(characters, sender).HandleAsync(context, Packet(0), CancellationToken.None).AsTask();
+        await Task.Delay(50);
+
+        Assert.Null(characters.PlayIndex);
+        Assert.Equal([new Serial(42)], _leaves.WaitedFor);
+        _leaves.Pending.SetResult();
+        await handling.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.Equal(0, characters.PlayIndex);
     }
 
     [Fact]
@@ -223,7 +242,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             new MapContent { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Season = SeasonType.Winter, Name = "Trammel" }
         );
 
-        return new(characters, mobiles ?? _mobiles, _items, loaders, bus, _sessions);
+        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions);
     }
 
     private static CharacterForPlay Aria(int hair = 0x203C, int beard = 0)

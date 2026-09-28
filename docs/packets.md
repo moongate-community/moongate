@@ -109,10 +109,14 @@ Lifting part of a stackable item (tiledata `Generic`) splits it: the held part k
 since the client drags it, and the rest takes a serial from `IItemSerialPool` (64 serials reserved
 from the items sequence, refilled below 16), stays where the stack was and is shown with `0x25`.
 With no reserved serial left the lift is refused with `Inspecific`. Dropping the held item onto a
-carried stack of the same graphic and hue, up to 60000, merges them: the stack grows (`0x25`), the
+carried stack of the same kind (graphic, hue, template, name and rarity, neither with props), up
+to 60000, merges them: the stack grows (`0x25`), the
 held item is removed from the client (`0x1D`) and from memory, and its row is deleted by the next
-world save in the same transaction as the grown stack, or by the leave save. Dropping onto a
-container never merges. A held item dropped on a paperdoll (`0x13`) bounces back to its container with `0x25`
+world save in the same transaction as the grown stack, or by the leave save, which takes over the
+character's pending deletions and drops them if it fails (the database then still holds both
+stacks as before the merge). Dropping onto a container never merges. `0x5D` waits for the leave
+saves of the account's last session before it loads the character, so it never reads rows older
+than what that session saved. A held item dropped on a paperdoll (`0x13`) bounces back to its container with `0x25`
 and frees the hand: equipping is not built yet.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
