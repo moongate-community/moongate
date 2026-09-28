@@ -19,6 +19,13 @@ public sealed class IgnoredPacketHandlerTests
     [InlineData(0x34, 10)]
     [InlineData(0x72, 5)]
     [InlineData(0xC8, 2)]
+    [InlineData(0x05, 5)]
+    [InlineData(0x07, 7)]
+    [InlineData(0x08, 15)]
+    [InlineData(0x13, 10)]
+    [InlineData(0x22, 3)]
+    [InlineData(0xB5, 64)]
+    [InlineData(0xFB, 2)]
     public void FixedFollowUpPackets_DecodeAtTheirLengthOnly(byte opCode, int length)
     {
         var registry = Registry();
@@ -34,6 +41,9 @@ public sealed class IgnoredPacketHandlerTests
     [Theory]
     [InlineData(0xBF, 5)]
     [InlineData(0xD6, 3)]
+    [InlineData(0x12, 3)]
+    [InlineData(0xAD, 3)]
+    [InlineData(0xE1, 3)]
     public void VariableFollowUpPackets_DecodeWithTheirDeclaredLength(byte opCode, int minimum)
     {
         var registry = Registry();
@@ -69,6 +79,16 @@ public sealed class IgnoredPacketHandlerTests
         container.RegisterIncomingPacket<UpdateRangePacket>();
         container.RegisterIncomingPacket<ExtendedCommandPacket>();
         container.RegisterIncomingPacket<QueryPropertiesPacket>();
+        container.RegisterIncomingPacket<AttackRequestPacket>();
+        container.RegisterIncomingPacket<LiftRequestPacket>();
+        container.RegisterIncomingPacket<DropRequestPacket>();
+        container.RegisterIncomingPacket<TextCommandPacket>();
+        container.RegisterIncomingPacket<EquipRequestPacket>();
+        container.RegisterIncomingPacket<ResynchronizeRequestPacket>();
+        container.RegisterIncomingPacket<UnicodeSpeechRequestPacket>();
+        container.RegisterIncomingPacket<OpenChatWindowPacket>();
+        container.RegisterIncomingPacket<ClientTypePacket>();
+        container.RegisterIncomingPacket<PublicHouseContentPacket>();
         PacketRegistryFactory.Register(container);
 
         return container.Resolve<PacketRegistry>();
