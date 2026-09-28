@@ -35,6 +35,7 @@ public sealed class CharacterService : ICharacterService
     private readonly IStartingItemsService _startingItems;
     private readonly MoongatePersistenceService _persistence;
     private readonly IDataAccess<MobileEntity> _mobiles;
+    private readonly IDataAccess<ItemEntity> _items;
     private readonly IMoongateEventBus _events;
     private readonly CharactersConfig _config;
     private readonly ICharacterPresence _presence;
@@ -44,6 +45,7 @@ public sealed class CharacterService : ICharacterService
         IStartingItemsService startingItems,
         MoongatePersistenceService persistence,
         IDataAccess<MobileEntity> mobiles,
+        IDataAccess<ItemEntity> items,
         IMoongateEventBus events,
         CharactersConfig config,
         ICharacterPresence presence
@@ -53,6 +55,7 @@ public sealed class CharacterService : ICharacterService
         _startingItems = startingItems;
         _persistence = persistence;
         _mobiles = mobiles;
+        _items = items;
         _events = events;
         _config = config;
         _presence = presence;
@@ -130,6 +133,25 @@ public sealed class CharacterService : ICharacterService
         var characters = await _mobiles.QueryAsync(mobile => mobile.AccountId == accountId, cancellationToken);
 
         return BySlot(characters);
+    }
+
+    public async Task<CharacterForPlay?> GetForPlayAsync(
+        Serial accountId,
+        int listIndex,
+        CancellationToken cancellationToken = default
+    )
+    {
+        // The client names the character by its position in the list it was sent, laid out as for deletion.
+        var layout = CharacterListBuilder.Layout(await GetCharactersAsync(accountId, cancellationToken), _config.MaxPerAccount);
+
+        if (listIndex < 0 || listIndex >= layout.Length || layout[listIndex] is not { } character)
+        {
+            return null;
+        }
+
+        var equipment = await _items.QueryAsync(item => item.MobileId == character.Id, cancellationToken);
+
+        return new(character, equipment);
     }
 
     public async Task<IReadOnlyList<MobileEntity>> GetPendingDeletionsAsync(

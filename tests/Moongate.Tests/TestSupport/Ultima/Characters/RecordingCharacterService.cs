@@ -100,4 +100,21 @@ public sealed class RecordingCharacterService : ICharacterService
     {
         return Task.FromResult(Characters.FirstOrDefault(c => c.Id == characterId && c.DeletionRequestedAt is not null));
     }
+
+    /// <summary>
+    ///     Gets or sets what <see cref="GetForPlayAsync" /> returns.
+    /// </summary>
+    public CharacterForPlay? ForPlay { get; set; }
+
+    /// <summary>
+    ///     Gets the list index of the last play request.
+    /// </summary>
+    public int? PlayIndex { get; private set; }
+
+    public Task<CharacterForPlay?> GetForPlayAsync(Serial accountId, int listIndex, CancellationToken cancellationToken = default)
+    {
+        PlayIndex = listIndex;
+
+        return Failure is not null ? Task.FromException<CharacterForPlay?>(Failure) : Task.FromResult(ForPlay);
+    }
 }
