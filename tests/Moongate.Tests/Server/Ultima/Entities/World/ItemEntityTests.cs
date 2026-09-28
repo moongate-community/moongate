@@ -214,4 +214,23 @@ public sealed class ItemEntityTests
 
         Assert.Equal(ItemQualityType.Exceptional, item.GetProp(ItemPropKeys.Quality, ItemQualityType.Regular));
     }
+
+    [Fact]
+    public void Snapshot_IsADetachedCopyWithTheSameValues()
+    {
+        var coins = new ItemEntity { Id = new(0x40000012), TemplateId = "gold", ItemId = 0x0EED, Amount = 250 };
+        coins.PutInContainer(Backpack, new Point2D(44, 65));
+        coins.SetProp("minted", 3);
+
+        var snapshot = coins.Snapshot();
+        coins.Amount = 1;
+        coins.PutInContainer(new Serial(0x40000099), new Point2D(1, 1));
+        coins.SetProp("minted", 4);
+
+        Assert.NotSame(coins, snapshot);
+        Assert.Equal(
+            (new Serial(0x40000012), 250, Backpack, new Point2D(44, 65), 3),
+            (snapshot.Id, snapshot.Amount, snapshot.ContainerId!.Value, snapshot.GridLocation!.Value, snapshot.GetProp<int>("minted"))
+        );
+    }
 }

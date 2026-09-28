@@ -229,6 +229,17 @@ public class ItemEntity : IMoongateEntity
     }
 
     /// <summary>
+    ///     Gets a detached copy to save: the live item keeps changing on the game loop while the copy is written.
+    /// </summary>
+    public ItemEntity Snapshot()
+    {
+        var copy = (ItemEntity)MemberwiseClone();
+        copy.Props = Props is null ? null : new Dictionary<string, object?>(Props);
+
+        return copy;
+    }
+
+    /// <summary>
     ///     A one-line description for logs and debugging: serial, its own name or the template id, graphic, amount above 1
     ///     and where the item is. For the name a player sees use <c>ItemEntityExtensions.DisplayName</c>.
     /// </summary>
