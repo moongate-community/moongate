@@ -43,7 +43,7 @@ public sealed class GroundItemsLoadService : IMoongateStartupService
         }
 
         // The live items and the sector grid change only on the game loop.
-        var work = new GroundItemsAddWorkItem(() => _live.Add(loaded));
+        var work = new LoopActionWorkItem(() => _live.Add(loaded));
         await _loop.PostAsync(work);
         await work.Completion;
         _logger.Information("Loaded {Roots} items on the ground, {Total} with their contents", roots.Count, loaded.Count);

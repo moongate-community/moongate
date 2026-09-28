@@ -204,6 +204,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddMoongateService<CharacterLeaveWorldService>(50);
             container.RegisterMapping<ISessionClosedListener, CharacterLeaveWorldService>();
             container.RegisterMapping<ICharacterLeaveWorldService, CharacterLeaveWorldService>();
+            container.Register<ITargetService, TargetService>(Reuse.Singleton);
+            container.RegisterMapping<ISessionClosedListener, ITargetService>();
             container.RegisterCommand<CharacterCommand>(
                 "character",
                 "Pending character deletions: character pending [account-serial]; character restore <character-serial>.",

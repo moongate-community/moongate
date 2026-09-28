@@ -5,23 +5,23 @@ namespace Moongate.Server.Ultima.Services.Internal;
 /// <summary>
 ///     Runs one step on the game loop and completes when it has run, with its exception if it threw.
 /// </summary>
-public sealed class GroundItemsAddWorkItem : IGameLoopWorkItem
+public sealed class LoopActionWorkItem : IGameLoopWorkItem
 {
-    private readonly Action _add;
+    private readonly Action _action;
     private readonly TaskCompletionSource _completion = new(TaskCreationOptions.RunContinuationsAsynchronously);
 
     public Task Completion => _completion.Task;
 
-    public GroundItemsAddWorkItem(Action add)
+    public LoopActionWorkItem(Action action)
     {
-        _add = add;
+        _action = action;
     }
 
     public void Execute()
     {
         try
         {
-            _add();
+            _action();
             _completion.TrySetResult();
         }
         catch (Exception exception)
