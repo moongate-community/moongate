@@ -26,6 +26,7 @@ using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Characters;
@@ -35,6 +36,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     private readonly Container _events = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly ItemService _items = new();
+    private readonly RecordingWorldViewService _view = new();
     private StubCharacterLeaveWorldService _leaves = new();
     private SessionService _sessions = null!;
     private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
@@ -71,6 +73,20 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         Assert.Equal(sender.Sent.Count, entered.SentBefore);
         Assert.Equal("Aria", entered.Event.Character.Name);
         Assert.True(fixture.Client.IsConnected);
+    }
+
+    [Fact]
+    public async Task HandleAsync_AfterTheEnterWorldSequence_ShowsThePlayerToTheWorldView()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, session, sender) = await Context(fixture, new Serial(42));
+        var sentBefore = -1;
+        _view.OnCall = _ => sentBefore = sender.Sent.Count;
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.Equal([$"Entered 2 {session.SessionId}"], _view.Calls);
+        Assert.Equal(sender.Sent.Count, sentBefore);
     }
 
     [Fact]
@@ -186,6 +202,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         Assert.Equal(Serial.Zero, session.CharacterId);
         Assert.False(fixture.Client.IsConnected);
         Assert.Empty(_entered);
+        Assert.Empty(_view.Calls);
     }
 
     [Fact]
@@ -243,7 +260,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             new MapContent { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Season = SeasonType.Winter, Name = "Trammel" }
         );
 
-        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions);
+        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions, _view);
     }
 
     private static CharacterForPlay Aria(int hair = 0x203C, int beard = 0)

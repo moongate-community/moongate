@@ -13,6 +13,7 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -25,6 +26,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly RecordingWorldTransactionService _world = new();
     private readonly ItemService _items = new();
+    private readonly RecordingWorldViewService _view = new();
     private readonly List<Serial> _saveOrder = [];
     private readonly List<CharacterLeftWorldEvent> _left = [];
     private readonly MobileEntity _aria = new()
@@ -53,6 +55,23 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         Assert.NotSame(_aria, saved);
         Assert.Equal((_aria.Id, new Point3D(1497, 1628, 12)), (saved.Id, saved.Location));
         Assert.Same(saved, Assert.Single(_left).Character);
+    }
+
+    [Fact]
+    public async Task OnSessionClosed_TellsTheWorldViewWhileTheCharacterIsStillInTheWorld()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var service = Service();
+        bool? inWorld = null;
+        _view.OnCall = _ => inWorld = _mobiles.IsInWorld(_aria.Id);
+
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+        await service.StopAsync().WaitAsync(Timeout);
+
+        Assert.Equal(["Left 2"], _view.Calls);
+        Assert.True(inWorld);
+        Assert.False(_mobiles.IsInWorld(_aria.Id));
     }
 
     [Fact]
@@ -243,6 +262,6 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
             }
         );
 
-        return new(_mobiles, _items, _world, bus);
+        return new(_mobiles, _items, _view, _world, bus);
     }
 }

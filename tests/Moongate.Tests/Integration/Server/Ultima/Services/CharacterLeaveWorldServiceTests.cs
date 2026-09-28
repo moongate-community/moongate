@@ -14,6 +14,7 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Services;
@@ -54,6 +55,7 @@ public sealed class CharacterLeaveWorldServiceTests
         var service = new CharacterLeaveWorldService(
             mobiles,
             items,
+            new RecordingWorldViewService(),
             new WorldTransactionService(host.Owner),
             host.Container.Resolve<IMoongateEventBus>()
         );

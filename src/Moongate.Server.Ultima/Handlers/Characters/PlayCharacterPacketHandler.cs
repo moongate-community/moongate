@@ -37,6 +37,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     private readonly IDataLoaderService _data;
     private readonly IMoongateEventBus _events;
     private readonly ISessionService _sessions;
+    private readonly IWorldViewService _view;
 
     public PlayCharacterPacketHandler(
         ICharacterService characters,
@@ -45,7 +46,8 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         ICharacterLeaveWorldService leaves,
         IDataLoaderService data,
         IMoongateEventBus events,
-        ISessionService sessions
+        ISessionService sessions,
+        IWorldViewService view
     )
     {
         _characters = characters;
@@ -55,6 +57,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         _data = data;
         _events = events;
         _sessions = sessions;
+        _view = view;
     }
 
     public async ValueTask HandleAsync(
@@ -139,6 +142,9 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         {
             context.TrySend(outgoing);
         }
+
+        // After the sequence: the client must know where it stands before it is shown the others.
+        await context.RunOnGameLoopAsync(session => _view.Entered(character, session.SessionId), cancellationToken);
 
         _logger.Information(
             "Session {SessionId}: account {AccountId} entered the world with {Character}",

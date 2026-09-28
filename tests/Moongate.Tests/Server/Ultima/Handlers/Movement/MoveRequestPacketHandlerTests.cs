@@ -14,6 +14,7 @@ using Moongate.Tests.Support.Timing;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Movement;
@@ -23,6 +24,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
     private readonly ManualTimeProvider _time = new();
     private readonly StubMovementService _movement = new() { LandingZ = 10 };
     private readonly StubPacketSendService _sender = new();
+    private readonly RecordingWorldViewService _view = new();
     private readonly MobileService _mobiles;
     private readonly MobileEntity _aria = new()
     {
@@ -189,6 +191,59 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
         Assert.Empty(_sender.Sent);
     }
 
+    [Fact]
+    public async Task Handle_AnAcceptedStep_TellsTheWorldViewTheOldLocation()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0);
+
+        Assert.Equal(["Moved 2 1496,1628,10"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_ATurn_TellsTheWorldView()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.North, 0);
+
+        Assert.Equal(["Moved 2 1496,1628,10"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_ARunningStep_TellsTheWorldViewItRuns()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0, true);
+
+        Assert.Equal(["Moved 2 1496,1628,10 run"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_ARejectedStep_TellsTheWorldViewNothing()
+    {
+        await EnterAsync();
+        _movement.Allow = false;
+
+        await StepAsync(DirectionType.East, 0);
+        await StepAsync(DirectionType.East, 7);
+
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AStepTooSoon_TellsTheWorldViewOnlyTheFirst()
+    {
+        await EnterAsync();
+
+        await StepAsync(DirectionType.East, 0);
+        await StepAsync(DirectionType.East, 1);
+
+        Assert.Equal(["Moved 2 1496,1628,10"], _view.Calls);
+    }
+
     private async Task EnterAsync()
     {
         _fixture = await SessionFixture.CreateAsync();
@@ -199,7 +254,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
 
     private Task StepAsync(DirectionType direction, byte sequence, bool running = false)
     {
-        var handler = new MoveRequestPacketHandler(_mobiles, _sender, _time);
+        var handler = new MoveRequestPacketHandler(_mobiles, _view, _sender, _time);
         var packet = new MoveRequestPacket { Direction = direction, Running = running, Sequence = sequence, FastWalkKey = 0 };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));
