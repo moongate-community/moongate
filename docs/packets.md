@@ -39,7 +39,10 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0xF8` | `CreateCharacterPacket` | Incoming | Fixed 106 | `CreateCharacterPacketHandler`: creates and saves the character and starting items |
 | `0x5D` | `PlayCharacterPacket` | Incoming | Fixed 73 | `PlayCharacterPacketHandler`: brings the chosen character into the world |
 | `0x83` | `DeleteCharacterPacket` | Incoming | Fixed 39 | `DeleteCharacterPacketHandler`: marks the character for deletion |
-| `0x02`, `0x06`, `0x09`, `0x34`, `0x72`, `0xC8` | `MoveRequestPacket`, `UseRequestPacket`, `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 7, 5, 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x02` | `MoveRequestPacket` | Incoming | Fixed 7 | `MoveRequestPacketHandler`: turns or steps the character, answered with `0x22` or `0x21` |
+| `0x22` | `MovementAckPacket` | Outgoing | Fixed 3 | — |
+| `0x21` | `MovementRejectPacket` | Outgoing | Fixed 8 | — |
+| `0x06`, `0x09`, `0x34`, `0x72`, `0xC8` | `UseRequestPacket`, `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 5, 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x05`, `0x07`, `0x08`, `0x13`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `LiftRequestPacket`, `DropRequestPacket`, `EquipRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 7, 15, 10, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x12`, `0xAD`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `UnicodeSpeechRequestPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 
@@ -48,7 +51,19 @@ ServUO, UOX3, POL and Source-X): `0x1B` login confirm, `0xBF` subcommand `0x08` 
 season, `0x4F` and `0x4E` light, `0x20` the player, `0x78` the player with worn items, hair and
 beard (virtual serials from `IMobileService`), `0x11` status (version 5), `0x72` peace, `0x55`
 login complete and `0x5B` time; then `CharacterEnteredWorldEvent` is published. The outgoing
-classes live in `Moongate.Server.Ultima.Packets.World`.
+classes live in `Moongate.Server.Ultima.Packets.World`. The character is then a live `MobileEntity`
+in `IMobileService`, facing the direction it was saved with.
+
+A step (`0x02`) carries the direction, a running bit (`0x80`) and a sequence. The sequence is 0
+after login or a refused step, then 1 to 255 and round again from 1; any other value is refused.
+A direction the character does not face only turns it and uses no time. A step in the faced
+direction books the next one 400 ms later walking or 200 ms running, and may come up to 200 ms
+early; an earlier step, or one `IMovementService` blocks, is refused. `0x22` accepts the step with
+the character's notoriety; `0x21` refuses it and puts the client back at the real position.
+
+When the session closes, `CharacterLeaveWorldService` (an `ISessionClosedListener`) copies the
+character, removes it from the world, saves the copy and publishes `CharacterLeftWorldEvent`. The
+world save writes the live characters too, so a crash loses at most the steps since the last save.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
