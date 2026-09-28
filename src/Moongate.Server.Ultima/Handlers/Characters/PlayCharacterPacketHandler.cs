@@ -144,7 +144,10 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         }
 
         // After the sequence: the client must know where it stands before it is shown the others.
-        if (!await context.RunOnGameLoopAsync(session => _view.Entered(character, session.SessionId), cancellationToken))
+        if (!await context.RunOnGameLoopAsync(
+                session => _view.Entered(character, session.SessionId, session.ClientVersion),
+                cancellationToken
+            ))
         {
             // The session closed during the sequence: its leave already ran, so the login never completed.
             _logger.Information("Session {SessionId} closed while {Character} entered the world", context.SessionId, character);

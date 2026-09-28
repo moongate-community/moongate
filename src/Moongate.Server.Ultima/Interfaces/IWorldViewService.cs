@@ -1,4 +1,5 @@
 using Moongate.Core.Geometry;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Ultima.Entities.World;
 
 namespace Moongate.Server.Ultima.Interfaces;
@@ -13,9 +14,10 @@ namespace Moongate.Server.Ultima.Interfaces;
 public interface IWorldViewService
 {
     /// <summary>
-    ///     Registers the player's session, shows it everyone in range and shows it to the players in range.
+    ///     Registers the player's session, shows it everyone and every ground item in range and shows it to the players in
+    ///     range. <paramref name="version" /> is its client's, null when unknown (the newest formats).
     /// </summary>
-    void Entered(MobileEntity mobile, long sessionId);
+    void Entered(MobileEntity mobile, long sessionId, ClientVersion? version);
 
     /// <summary>
     ///     Tells the players in range that the mobile, now at its current location, moved from
@@ -28,4 +30,16 @@ public interface IWorldViewService
     ///     mobile is still in the sector grid.
     /// </summary>
     void Left(MobileEntity mobile);
+
+    /// <summary>
+    ///     Shows a ground item to the players in range (0x1A before client 7.0.0.0, 0xF3 after); also after its amount
+    ///     changed.
+    /// </summary>
+    void ItemAppeared(ItemEntity item);
+
+    /// <summary>
+    ///     Removes a ground item from the screens in range (0x1D); call it when it is lifted, merged or deleted, with its
+    ///     location still set.
+    /// </summary>
+    void ItemDisappeared(ItemEntity item);
 }
