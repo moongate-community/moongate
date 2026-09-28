@@ -1,4 +1,5 @@
 using System.Diagnostics.CodeAnalysis;
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 
@@ -48,4 +49,9 @@ public interface IItemService
     ///     Gets the live items the mobile wears and everything inside them, at any depth.
     /// </summary>
     IReadOnlyList<ItemEntity> GetOwnedBy(Serial mobile);
+
+    /// <summary>
+    ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump.
+    /// </summary>
+    void MoveToContainer(ItemEntity item, Serial container, Point2D position);
 }

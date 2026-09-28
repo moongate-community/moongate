@@ -136,6 +136,12 @@ public sealed class ServerRoleRegistrationTests
             );
             Assert.True(container.IsRegistered<MoveRequestPacketHandler>());
             Assert.True(container.IsRegistered<UseRequestPacketHandler>());
+            Assert.True(container.IsRegistered<LiftRequestPacketHandler>());
+            Assert.True(container.IsRegistered<DropRequestPacketHandler>());
+            Assert.True(container.IsRegistered<EquipRequestPacketHandler>());
+            Assert.False(container.IsRegistered<IgnoredPacketHandler<EquipRequestPacket>>());
+            Assert.False(container.IsRegistered<IgnoredPacketHandler<DropRequestPacket>>());
+            Assert.False(container.IsRegistered<IgnoredPacketHandler<LiftRequestPacket>>());
             Assert.False(container.IsRegistered<IgnoredPacketHandler<UseRequestPacket>>());
             Assert.False(container.IsRegistered<IgnoredPacketHandler<MoveRequestPacket>>());
             Assert.Contains(typeof(MoveRequestPacket), container.Resolve<PacketHandlerRegistry>().Registrations.Keys);

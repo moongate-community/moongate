@@ -49,7 +49,12 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x24` | `DisplayContainerPacket` | Outgoing | Fixed 7, or 9 from client 7.0.9.0 | — |
 | `0x3C` | `ContainerContentPacket` | Outgoing | Variable, minimum 5 | — |
 | `0x09`, `0x34`, `0x72`, `0xC8` | `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0x05`, `0x07`, `0x08`, `0x13`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `LiftRequestPacket`, `DropRequestPacket`, `EquipRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 7, 15, 10, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x07` | `LiftRequestPacket` | Incoming | Fixed 7 | `LiftRequestPacketHandler`: picks up a whole item the character carries |
+| `0x08` | `DropRequestPacket` | Incoming | Fixed 15 | `DropRequestPacketHandler`: drops the held item into a carried container |
+| `0x25` | `ContainerItemUpdatePacket` | Outgoing | Fixed 21, or 20 before client 6.0.1.7 | — |
+| `0x27` | `LiftRejectPacket` | Outgoing | Fixed 2 | — |
+| `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: bounces the held item back (equipping is not built yet) |
+| `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x12`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 
 Normal speech (`say`) reaches the speaker and other player characters within 15
@@ -84,6 +89,19 @@ carries it, worn or inside something worn: `0x24` with the gump from `containers
 default entry when the graphic has none), then `0x3C` with its direct contents, even when empty.
 Clients before 7.0.9.0 get the 7-byte `0x24`, and before 6.0.1.7 a `0x3C` without the grid byte;
 an unknown version gets the modern formats. Other double clicks are not handled yet.
+
+Picking an item up (`0x07`) records it as held in the session; it stays in its container until
+the drop. Only a whole item inside a container the character carries can be picked up: holding
+another item already (`AreHolding`), part of a stack, a worn item, or an item not carried is
+refused with `0x27` (`CannotLift`), and an item of the character's inside a container is shown back with
+`0x25`; another player's item is never shown. Dropping it (`0x08`)
+puts it into a carried container at the drop position, brought inside the gump bounds, or at a
+random spot when dropped on the container's icon; dropped on a carried item that is not a
+container, it goes into that item's container at that item's position. The ground, mobiles,
+items not carried, and a container into itself or anything inside it bounce the item back. Every
+drop frees the hand and sends `0x25` with the item's real position. Stacks are neither split nor
+merged yet. A held item dropped on a paperdoll (`0x13`) bounces back to its container with `0x25`
+and frees the hand: equipping is not built yet.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
