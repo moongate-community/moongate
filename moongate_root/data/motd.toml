@@ -1,0 +1,21 @@
+# ==============================================================================
+# Moongate - motd.toml
+#
+# What it is for:
+#   The private message shown in chat each time a character enters the world.
+#   Each nonblank line is sent as a separate Unicode system message.
+#
+# Fields:
+#   lines   the message lines, in send order; blank lines are skipped
+#
+# Variables:
+#   Use ${name} to insert a registered variable. Built-in names are version,
+#   codename, server_name, realm_name, player_name and users_online. Plugins may
+#   register more. Restart the game server after editing this file.
+# ==============================================================================
+
+lines = [
+    "Welcome to ${server_name}, ${player_name}.",
+    "Realm: ${realm_name} | Adventurers online: ${users_online}",
+    "Moongate ${version} (${codename}) — your next story starts here.",
+]

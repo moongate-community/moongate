@@ -443,11 +443,11 @@
         "name": "Serial",
         "type": "uint",
         "size": "4",
-        "description": "Item or mobile identifier"
+        "description": "Entity to remove from the client."
       }
     ],
-    "notes": "Removes an item or a mobile from the client.",
-    "handler": "Sent when a merged stack goes away, and by WorldViewService when a mobile leaves a player's view or the world."
+    "notes": "Removes an item or mobile from the client view.",
+    "handler": "Outgoing packet emitted by world visibility and item handling"
   },
   "0x20:outgoing": {
     "category": "World",
@@ -2416,8 +2416,8 @@
         "description": "Unicode text (UTF-16 big endian), zero terminated"
       }
     ],
-    "notes": "Shows speech or a system message in Unicode.",
-    "handler": "Player speech and private command output."
+    "notes": "Shows player speech, private command output or the MOTD in Unicode.",
+    "handler": "Player speech, private command output and MOTD delivery."
   },
   "0x1A:outgoing": {
     "category": "World",
