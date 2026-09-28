@@ -42,7 +42,10 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x02` | `MoveRequestPacket` | Incoming | Fixed 7 | `MoveRequestPacketHandler`: turns or steps the character, answered with `0x22` or `0x21` |
 | `0x22` | `MovementAckPacket` | Outgoing | Fixed 3 | — |
 | `0x21` | `MovementRejectPacket` | Outgoing | Fixed 8 | — |
-| `0x06`, `0x09`, `0x34`, `0x72`, `0xC8` | `UseRequestPacket`, `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 5, 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x06` | `UseRequestPacket` | Incoming | Fixed 5 | `UseRequestPacketHandler`: opens a container the character carries |
+| `0x24` | `DisplayContainerPacket` | Outgoing | Fixed 7, or 9 from client 7.0.9.0 | — |
+| `0x3C` | `ContainerContentPacket` | Outgoing | Variable, minimum 5 | — |
+| `0x09`, `0x34`, `0x72`, `0xC8` | `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x05`, `0x07`, `0x08`, `0x13`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `LiftRequestPacket`, `DropRequestPacket`, `EquipRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 7, 15, 10, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x12`, `0xAD`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `UnicodeSpeechRequestPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 
@@ -64,6 +67,15 @@ the character's notoriety; `0x21` refuses it and puts the client back at the rea
 When the session closes, `CharacterLeaveWorldService` (an `ISessionClosedListener`) copies the
 character, removes it from the world, saves the copy and publishes `CharacterLeftWorldEvent`. The
 world save writes the live characters too, so a crash loses at most the steps since the last save.
+
+The items a character wears, and everything inside them at any depth, are loaded at `0x5D` and
+live in `IItemService` while it plays; they leave the world, and are saved after the character,
+when its session closes, and the world save writes them too. A double click (`0x06`) on a live
+item opens it when its graphic has the tiledata Container flag and the session's character
+carries it, worn or inside something worn: `0x24` with the gump from `containers.toml` (the
+default entry when the graphic has none), then `0x3C` with its direct contents, even when empty.
+Clients before 7.0.9.0 get the 7-byte `0x24`, and before 6.0.1.7 a `0x3C` without the grid byte;
+an unknown version gets the modern formats. Other double clicks are not handled yet.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
