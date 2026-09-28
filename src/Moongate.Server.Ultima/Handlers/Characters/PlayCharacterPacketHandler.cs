@@ -13,6 +13,7 @@ using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -37,6 +38,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     private readonly IDataLoaderService _data;
     private readonly IMoongateEventBus _events;
     private readonly ISessionService _sessions;
+    private readonly IMotdService _motd;
     private readonly IWorldViewService _view;
 
     public PlayCharacterPacketHandler(
@@ -47,7 +49,8 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         IDataLoaderService data,
         IMoongateEventBus events,
         ISessionService sessions,
-        IWorldViewService view
+        IWorldViewService view,
+        IMotdService motd
     )
     {
         _characters = characters;
@@ -57,6 +60,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         _data = data;
         _events = events;
         _sessions = sessions;
+        _motd = motd;
         _view = view;
     }
 
@@ -158,6 +162,8 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
             accountId,
             character
         );
+
+        await _motd.SendAsync(context, character, cancellationToken);
 
         // As in every emulator, the login hook runs once the client knows the login is complete.
         await _events.PublishAsync(new CharacterEnteredWorldEvent(character), CancellationToken.None);
