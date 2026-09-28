@@ -420,6 +420,29 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         Assert.Equal((bran.Character.Id, LayerType.Backpack), (backpack.MobileId!.Value, backpack.Layer!.Value));
     }
 
+    [Fact]
+    public async Task GetForPlayAsync_LoadsEverythingInsideTheWornContainers()
+    {
+        var service = CreateService(maxPerAccount: 5);
+        var aria = await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
+        var backpack = (await _items.QueryAsync(item => item.MobileId == aria.Character!.Id)).Single();
+        var packed = await _items.QueryAsync(item => item.ContainerId == backpack.Id);
+        var bag = new ItemEntity { TemplateId = "bag", ItemId = 0x0E76, Amount = 1 };
+        bag.PutInContainer(backpack.Id, new Point2D(44, 65));
+        await _items.UpsertAsync(bag);
+        var coin = new ItemEntity { TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        coin.PutInContainer(bag.Id, new Point2D(30, 30));
+        await _items.UpsertAsync(coin);
+
+        var play = await service.GetForPlayAsync(Account, 0);
+
+        Assert.Equal([backpack.Id], play!.Equipment.Select(item => item.Id));
+        Assert.Equal(
+            packed.Select(item => item.Id).Append(bag.Id).Append(coin.Id).Order(),
+            play.Contents.Select(item => item.Id).Order()
+        );
+    }
+
     [Theory, InlineData(1), InlineData(5), InlineData(-1)]
     public async Task GetForPlayAsync_EmptyOrOutOfRangePosition_IsNull(int index)
     {

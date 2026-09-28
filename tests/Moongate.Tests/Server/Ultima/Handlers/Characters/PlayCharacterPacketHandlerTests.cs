@@ -33,6 +33,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
 {
     private readonly Container _events = new();
     private readonly MobileService _mobiles = new(new StubMovementService());
+    private readonly ItemService _items = new();
     private SessionService _sessions = null!;
     private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
 
@@ -95,6 +96,21 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
 
         // Entering on the loop, with the session's character, orders it before any session retirement.
         Assert.Equal([true], mobiles.EnteredOnLoop);
+    }
+
+    [Fact]
+    public async Task HandleAsync_KeepsTheWornItemsAndTheirContentsLive_ButShowsOnlyTheWornOnes()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.Equal([new Serial(0x40000001), new Serial(0x40000002)], _items.Items.Select(item => item.Id).Order());
+        Assert.DoesNotContain(
+            sender.Sent.OfType<MobileIncomingPacket>().Single().Equipment,
+            entry => entry.Serial == new Serial(0x40000002)
+        );
     }
 
     [Fact]
@@ -207,7 +223,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             new MapContent { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Season = SeasonType.Winter, Name = "Trammel" }
         );
 
-        return new(characters, mobiles ?? _mobiles, loaders, bus, _sessions);
+        return new(characters, mobiles ?? _mobiles, _items, loaders, bus, _sessions);
     }
 
     private static CharacterForPlay Aria(int hair = 0x203C, int beard = 0)
@@ -223,7 +239,10 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         var backpack = new ItemEntity { Id = new(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
         backpack.Equip(aria.Id, LayerType.Backpack);
 
-        return new(aria, [backpack]);
+        var dagger = new ItemEntity { Id = new(0x40000002), TemplateId = "dagger", ItemId = 0x0F52, Amount = 1 };
+        dagger.PutInContainer(backpack.Id, new Point2D(44, 65));
+
+        return new(aria, [backpack], [dagger]);
     }
 
     private static PlayCharacterPacket Packet(int index)
