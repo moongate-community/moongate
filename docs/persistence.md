@@ -258,6 +258,10 @@ one place, and the database checks it:
 | In a container item | `container_id`, `grid_x`, `grid_y` | `PutInContainer(containerId, gridLocation)`; read back as `GridLocation` |
 | Worn by a mobile | `mobile_id`, `layer` | `Equip(mobileId, layer)` |
 
+Items lying on the ground live in `IItemService` and the sector grid while the server runs:
+`GroundItemsLoadService` loads them, and everything inside them, at startup (migration `0010`
+indexes them by map), and the world save writes them with the characters' items.
+
 Each helper clears the other two groups, so move an item only through them. The
 database also rejects an item inside itself and two items on the same layer of one
 mobile. Deleting a container or a mobile deletes what it holds, recursively: a backpack

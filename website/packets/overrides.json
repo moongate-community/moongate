@@ -2418,5 +2418,195 @@
     ],
     "notes": "Shows speech or a system message in Unicode.",
     "handler": "Player speech and private command output."
+  },
+  "0x1A:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Item identifier; bit 0x80000000 says an amount follows"
+      },
+      {
+        "offset": "7",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item graphic (14 bits)"
+      },
+      {
+        "offset": "9",
+        "name": "Amount",
+        "type": "ushort",
+        "size": "2",
+        "description": "Stack amount"
+      },
+      {
+        "offset": "11",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "World X"
+      },
+      {
+        "offset": "13",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "World Y; bit 0x8000 says a hue follows"
+      },
+      {
+        "offset": "15",
+        "name": "Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "World Z"
+      },
+      {
+        "offset": "16",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item hue, only when set"
+      }
+    ],
+    "notes": "Shows an item on the ground to clients before 7.0.0.0.",
+    "handler": "WorldViewService: sent to the players in range when an item is dropped, and when they come into range of it."
+  },
+  "0xF3:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Command",
+        "type": "ushort",
+        "size": "2",
+        "description": "Always 0x0001."
+      },
+      {
+        "offset": "3",
+        "name": "Type",
+        "type": "byte",
+        "size": "1",
+        "description": "0 item, 1 mobile, 2 multi"
+      },
+      {
+        "offset": "4",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Item identifier"
+      },
+      {
+        "offset": "8",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item graphic"
+      },
+      {
+        "offset": "10",
+        "name": "Direction",
+        "type": "byte",
+        "size": "1",
+        "description": "Always 0 for items"
+      },
+      {
+        "offset": "11",
+        "name": "Amount",
+        "type": "ushort",
+        "size": "2",
+        "description": "Stack amount"
+      },
+      {
+        "offset": "13",
+        "name": "Amount",
+        "type": "ushort",
+        "size": "2",
+        "description": "Stack amount again"
+      },
+      {
+        "offset": "15",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "World X"
+      },
+      {
+        "offset": "17",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "World Y"
+      },
+      {
+        "offset": "19",
+        "name": "Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "World Z"
+      },
+      {
+        "offset": "20",
+        "name": "Light",
+        "type": "byte",
+        "size": "1",
+        "description": "Light or layer, 0"
+      },
+      {
+        "offset": "21",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item hue"
+      },
+      {
+        "offset": "23",
+        "name": "Flags",
+        "type": "byte",
+        "size": "1",
+        "description": "Item flags, 0"
+      },
+      {
+        "offset": "24",
+        "name": "Unknown",
+        "type": "ushort",
+        "size": "2",
+        "description": "High Seas clients (7.0.9.0) only, 0"
+      }
+    ],
+    "notes": "Shows an item on the ground to clients from 7.0.0.0; 26 bytes from 7.0.9.0.",
+    "handler": "WorldViewService: sent to the players in range when an item is dropped, and when they come into range of it."
   }
 }

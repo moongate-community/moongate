@@ -53,11 +53,13 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x24` | `DisplayContainerPacket` | Outgoing | Fixed 7, or 9 from client 7.0.9.0 | — |
 | `0x3C` | `ContainerContentPacket` | Outgoing | Variable, minimum 5 | — |
 | `0x09`, `0x34`, `0x72`, `0xC8` | `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0x07` | `LiftRequestPacket` | Incoming | Fixed 7 | `LiftRequestPacketHandler`: picks up a whole item the character carries |
-| `0x08` | `DropRequestPacket` | Incoming | Fixed 15 | `DropRequestPacketHandler`: drops the held item into a carried container |
+| `0x07` | `LiftRequestPacket` | Incoming | Fixed 7 | `LiftRequestPacketHandler`: picks up an item the character carries, or one on the ground within 2 tiles |
+| `0x08` | `DropRequestPacket` | Incoming | Fixed 15 | `DropRequestPacketHandler`: drops the held item into a carried container or on the ground |
 | `0x25` | `ContainerItemUpdatePacket` | Outgoing | Fixed 21, or 20 before client 6.0.1.7 | — |
 | `0x27` | `LiftRejectPacket` | Outgoing | Fixed 2 | — |
 | `0x1D` | `RemoveEntityPacket` | Outgoing | Fixed 5 | — |
+| `0x1A` | `WorldItemPacket` | Outgoing | Variable, minimum 16 | — |
+| `0xF3` | `WorldItemSaPacket` | Outgoing | 24, or 26 from client 7.0.9.0 | — |
 | `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: bounces the held item back (equipping is not built yet) |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x12`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
@@ -111,9 +113,9 @@ refused with `0x27` (`CannotLift`), and an item of the character's inside a cont
 `0x25`; another player's item is never shown. Dropping it (`0x08`)
 puts it into a carried container at the drop position, brought inside the gump bounds, or at a
 random spot when dropped on the container's icon; dropped on a carried item that is not a
-container, it goes into that item's container at that item's position. The ground, mobiles,
-items not carried, and a container into itself or anything inside it bounce the item back. Every
-drop frees the hand and sends `0x25` with the item's real position.
+container, it goes into that item's container at that item's position. Mobiles, items not
+carried, and a container into itself or anything inside it bounce the item back. Every drop frees
+the hand and sends `0x25` with the item's real position, or shows a ground item where it lies.
 
 Lifting part of a stackable item (tiledata `Generic`) splits it: the held part keeps the serial,
 since the client drags it, and the rest takes a serial from `IItemSerialPool` (64 serials reserved
@@ -128,6 +130,22 @@ stacks as before the merge). Dropping onto a container never merges. `0x5D` wait
 saves of the account's last session before it loads the character, so it never reads rows older
 than what that session saved. A held item dropped on a paperdoll (`0x13`) bounces back to its container with `0x25`
 and frees the hand: equipping is not built yet.
+
+Items on the ground live in the sector grid with the mobiles. Dropping the held item on the
+ground (`0x08` with destination `0xFFFFFFFF`) works within 2 tiles of the character, in line of
+sight from its eyes: the client's Z is ignored and the item lands on the highest surface of the
+land or a static up to 16 above the character's feet, as ModernUO; other ground items are not
+stacked on, so two items on one tile overlap. It is shown to everyone in range, the dropper
+included: `0x1A` for clients before 7.0.0.0, `0xF3` after, two bytes longer from 7.0.9.0.
+Anyone can pick up (`0x07`) a ground item within 2 tiles in line of sight; it leaves every screen
+(`0x1D`) while held, and a partial lift leaves the rest on the ground with a new serial. Too far
+or out of sight is refused with `OutOfRange` or `OutOfSight`, and the item is shown again. A held
+ground item that bounces goes back where it lay, and one still held when the session closes is
+put back too. Dropping onto a ground stack within reach merges them as in the backpack. Players
+walking into range of a ground item, or entering the world near it, get it with the same old and
+new position test as the mobiles. The items on the ground and everything inside them are loaded
+at startup and saved by the world save; they do not decay yet, and a container on the ground
+cannot be opened yet.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
