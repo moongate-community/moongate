@@ -9,13 +9,14 @@ the [changelog](../CHANGELOG.md) records what each published release added.
 client-file readers with movement and line-of-sight checks, and Redis-backed realm
 discovery and login-to-game handoff are in place; account
 authentication reaches a game session, which lists the account's characters; a new character
-is created and saved with its starting items; character selection and a playable world are not.
+is created and saved with its starting items, and a deleted character is kept restorable for 24 hours;
+character selection and a playable world are not.
 
 | Area | Works today | Not built yet |
 | --- | --- | --- |
 | Transport | Framed TCP listener and client, per-connection pipelines, connection and session registries, graceful shutdown | |
 | UO client encryption | Configurable POL-compatible login and game encryption with `Disabled`, `Optional` and `Required` policies, per-connection stream state and startup diagnostics; [configuration](server-configuration.md#uo-client-encryption) | Old Kingdom Reborn AES/E3 negotiation; interactive Enhanced Client interoperability has not been verified |
-| Packets | Wire table, typed packet definitions and game-loop/async handlers; plugins add incoming packets with `RegisterIncomingPacket`; `0x80` login, `0xA8` list, `0xA0` selection, `0x8C` redirect, raw game seed, `0x91` handoff, then Huffman-compressed `0xB9` features and `0xA9` character list (the account's characters in their slots, starting cities); `0xF8` and `0x8D` create and save a character (refusals answered with popup `0x53`); `0xD9` is decoded | Character selection handler, movement and world packets |
+| Packets | Wire table, typed packet definitions and game-loop/async handlers; plugins add incoming packets with `RegisterIncomingPacket`; `0x80` login, `0xA8` list, `0xA0` selection, `0x8C` redirect, raw game seed, `0x91` handoff, then Huffman-compressed `0xB9` features and `0xA9` character list (the account's characters in their slots, starting cities); `0xF8` and `0x8D` create and save a character (refusals answered with popup `0x53`); `0x83` marks a character for deletion (answered with `0x86` or `0x85`); `0xD9` is decoded | Character selection handler, movement and world packets |
 | Login and realms | `mode` selects separate login/game services or combined standalone. Redis leases advertise live realms; login filters by account level and issues one-use handoff tickets | Character selection and world entry |
 | Game loop | Single owner thread, bounded queues, timer wheel, admission and completion semantics | |
 | Scripting | Sandboxed Lua 5.2, deterministic instruction budget, `engine`, `log`, `timer`, `events` modules, `wait`, reload, editor definitions; C# modules from plugins | World, character and inventory APIs |
