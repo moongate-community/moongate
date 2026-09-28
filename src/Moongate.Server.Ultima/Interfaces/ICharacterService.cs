@@ -21,7 +21,36 @@ public interface ICharacterService
     );
 
     /// <summary>
-    ///     Returns the account's player characters, by slot.
+    ///     Returns the account's active player characters, by slot; characters pending deletion are left out.
     /// </summary>
     Task<IReadOnlyList<MobileEntity>> GetCharactersAsync(Serial accountId, CancellationToken cancellationToken = default);
+
+    /// <summary>
+    ///     Returns the player characters pending deletion, of one account or of all when <paramref name="accountId" /> is
+    ///     null.
+    /// </summary>
+    Task<IReadOnlyList<MobileEntity>> GetPendingDeletionsAsync(
+        Serial? accountId,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    ///     Marks for deletion the character at <paramref name="listIndex" /> of the list the client was sent. It disappears
+    ///     from the list but keeps its slot, and stays restorable until it is removed. Refused when the position is empty
+    ///     or out of range, or when the character is in the world. Publishes
+    ///     <see cref="Data.Events.CharacterDeletionRequestedEvent" /> after the save.
+    /// </summary>
+    Task<CharacterDeletionResult> RequestDeletionAsync(
+        Serial accountId,
+        int listIndex,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
+    ///     Cancels the deletion of a pending character.
+    /// </summary>
+    /// <returns>
+    ///     The restored character, or null when <paramref name="characterId" /> is not a player character pending deletion.
+    /// </returns>
+    Task<MobileEntity?> RestoreAsync(Serial characterId, CancellationToken cancellationToken = default);
 }

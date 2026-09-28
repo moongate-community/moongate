@@ -132,6 +132,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
             container.Register<ILootService, LootService>(Reuse.Singleton);
             container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
+            container.Register<ICharacterPresence, SessionCharacterPresence>(Reuse.Singleton);
             container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
             container.AddScriptEvent<CharacterCreatedEvent>("character_created", CharacterScriptEvents.CharacterCreated);
             container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
