@@ -35,12 +35,13 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | --- | --- | --- | --- | --- |
 | `0x8D` | `CreateCharacterEnhancedPacket` | Incoming | Variable | `CreateCharacterEnhancedPacketHandler`: creates and saves the character and starting items |
 | `0xA9` | `CharacterListPacket` | Outgoing | Variable, minimum 6 | — |
-| `0xD9` | `ClientHardwareInfoPacket` | Incoming | Fixed 268 | None yet: decoded only |
+| `0xD9` | `ClientHardwareInfoPacket` | Incoming | Fixed 268 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0xF8` | `CreateCharacterPacket` | Incoming | Fixed 106 | `CreateCharacterPacketHandler`: creates and saves the character and starting items |
 | `0x5D` | `PlayCharacterPacket` | Incoming | Fixed 73 | `PlayCharacterPacketHandler`: brings the chosen character into the world |
 | `0x83` | `DeleteCharacterPacket` | Incoming | Fixed 39 | `DeleteCharacterPacketHandler`: marks the character for deletion |
 | `0x02`, `0x06`, `0x09`, `0x34`, `0x72`, `0xC8` | `MoveRequestPacket`, `UseRequestPacket`, `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 7, 5, 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0xBF`, `0xD6` | `ExtendedCommandPacket`, `QueryPropertiesPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x05`, `0x07`, `0x08`, `0x13`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `LiftRequestPacket`, `DropRequestPacket`, `EquipRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 7, 15, 10, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x12`, `0xAD`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `UnicodeSpeechRequestPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 
 When a character enters the world the server sends, in this order (ModernUO's, checked against
 ServUO, UOX3, POL and Source-X): `0x1B` login confirm, `0xBF` subcommand `0x08` map, `0xBC`
@@ -253,9 +254,11 @@ When the result must change game state, return to the loop with
 It returns `false` if the original session disconnected before the action ran.
 An async handler must not mutate a session directly after an `await`.
 
-Only one async packet may be in flight for a session. Until it finishes, the
-dispatcher rejects further packets from that session; its executor accepts at
-most 64 operations at once and runs at most four handlers concurrently.
+Only one async packet may be in flight for a session. Packets the session sends
+meanwhile wait, up to 32 (`PacketDispatchService.MaxPendingPerSession`), and are
+dispatched in arrival order when it finishes; one more is rejected and the client
+disconnected. The executor accepts at most 64 operations at once and runs at most
+four handlers concurrently.
 Admission stays nonblocking. Disconnect and server shutdown cancel the
 handler token; observe it in every awaited I/O call. Exceptions are logged
 without packet payloads and do not stop the game loop.
@@ -273,7 +276,10 @@ container.RegisterPacketHandler<ExamplePacket, ExamplePacketHandler>();
 At startup the host builds one registry from `PacketTable` plus every
 `RegisterIncomingPacket` call, freezes it, and gives it to the framers, the login
 and game listeners and the dispatcher. Outgoing packets need no registration to be
-sent. A packet registered without a handler is decoded, logged at debug level and ignored.
+sent. A packet registered without a handler is decoded but rejected, and the game
+server closes the connection, as it does for an unknown opcode. Register
+`IgnoredPacketHandler<T>` for a packet the client sends that the server does not
+act on yet.
 
 The host also registers LoginSeed and an async AccountLogin handler. The latter
 checks credentials against `IAccountService`, sends `0x82` for denied login or

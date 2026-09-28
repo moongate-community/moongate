@@ -19,6 +19,8 @@ using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima;
 using Moongate.Tests.TestSupport.Directories;
 
+using Moongate.Server.Ultima.Packets.General;
+
 namespace Moongate.Tests.Server.Bootstrap.Internal;
 
 public sealed class ServerRoleRegistrationTests
@@ -109,6 +111,15 @@ public sealed class ServerRoleRegistrationTests
             Assert.Contains(
                 typeof(CreateCharacterEnhancedPacket),
                 container.Resolve<PacketHandlerRegistry>().Registrations.Keys
+            );
+            Assert.All(
+                [
+                    typeof(ClientHardwareInfoPacket), typeof(AttackRequestPacket), typeof(LiftRequestPacket),
+                    typeof(DropRequestPacket), typeof(TextCommandPacket), typeof(EquipRequestPacket),
+                    typeof(ResynchronizeRequestPacket), typeof(UnicodeSpeechRequestPacket), typeof(OpenChatWindowPacket),
+                    typeof(ClientTypePacket), typeof(PublicHouseContentPacket)
+                ],
+                packet => Assert.Contains(packet, container.Resolve<PacketHandlerRegistry>().Registrations.Keys)
             );
             Assert.Contains(
                 "character_created",

@@ -4,6 +4,7 @@ using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Persistence.Extensions;
 using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Core.Data.Plugins;
@@ -119,30 +120,32 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();
-            container.RegisterIncomingPacket<ClientHardwareInfoPacket>();
             container.RegisterIncomingPacket<CreateCharacterPacket>();
             container.RegisterIncomingPacket<CreateCharacterEnhancedPacket>();
             container.RegisterIncomingPacket<DeleteCharacterPacket>();
             container.RegisterIncomingPacket<PlayCharacterPacket>();
             container.RegisterAsyncPacketHandler<PlayCharacterPacket, PlayCharacterPacketHandler>();
 
-            // Sent by the client right after it enters the world; recognised so it is not disconnected.
-            container.RegisterIncomingPacket<MoveRequestPacket>();
-            container.RegisterPacketHandler<MoveRequestPacket, IgnoredPacketHandler<MoveRequestPacket>>();
-            container.RegisterIncomingPacket<UseRequestPacket>();
-            container.RegisterPacketHandler<UseRequestPacket, IgnoredPacketHandler<UseRequestPacket>>();
-            container.RegisterIncomingPacket<LookRequestPacket>();
-            container.RegisterPacketHandler<LookRequestPacket, IgnoredPacketHandler<LookRequestPacket>>();
-            container.RegisterIncomingPacket<MobileQueryPacket>();
-            container.RegisterPacketHandler<MobileQueryPacket, IgnoredPacketHandler<MobileQueryPacket>>();
-            container.RegisterIncomingPacket<WarModeRequestPacket>();
-            container.RegisterPacketHandler<WarModeRequestPacket, IgnoredPacketHandler<WarModeRequestPacket>>();
-            container.RegisterIncomingPacket<UpdateRangePacket>();
-            container.RegisterPacketHandler<UpdateRangePacket, IgnoredPacketHandler<UpdateRangePacket>>();
-            container.RegisterIncomingPacket<ExtendedCommandPacket>();
-            container.RegisterPacketHandler<ExtendedCommandPacket, IgnoredPacketHandler<ExtendedCommandPacket>>();
-            container.RegisterIncomingPacket<QueryPropertiesPacket>();
-            container.RegisterPacketHandler<QueryPropertiesPacket, IgnoredPacketHandler<QueryPropertiesPacket>>();
+            // Sent by the client around and after entering the world; recognised so it is not disconnected.
+            RegisterIgnoredPacket<ClientHardwareInfoPacket>(container);
+            RegisterIgnoredPacket<MoveRequestPacket>(container);
+            RegisterIgnoredPacket<UseRequestPacket>(container);
+            RegisterIgnoredPacket<LookRequestPacket>(container);
+            RegisterIgnoredPacket<MobileQueryPacket>(container);
+            RegisterIgnoredPacket<WarModeRequestPacket>(container);
+            RegisterIgnoredPacket<UpdateRangePacket>(container);
+            RegisterIgnoredPacket<ExtendedCommandPacket>(container);
+            RegisterIgnoredPacket<QueryPropertiesPacket>(container);
+            RegisterIgnoredPacket<AttackRequestPacket>(container);
+            RegisterIgnoredPacket<LiftRequestPacket>(container);
+            RegisterIgnoredPacket<DropRequestPacket>(container);
+            RegisterIgnoredPacket<TextCommandPacket>(container);
+            RegisterIgnoredPacket<EquipRequestPacket>(container);
+            RegisterIgnoredPacket<ResynchronizeRequestPacket>(container);
+            RegisterIgnoredPacket<UnicodeSpeechRequestPacket>(container);
+            RegisterIgnoredPacket<OpenChatWindowPacket>(container);
+            RegisterIgnoredPacket<ClientTypePacket>(container);
+            RegisterIgnoredPacket<PublicHouseContentPacket>(container);
             container.RegisterAsyncPacketHandler<DeleteCharacterPacket, DeleteCharacterPacketHandler>();
             container.RegisterAsyncPacketHandler<CreateCharacterPacket, CreateCharacterPacketHandler>();
             container.RegisterAsyncPacketHandler<CreateCharacterEnhancedPacket, CreateCharacterEnhancedPacketHandler>();
@@ -191,5 +194,12 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             // After the loaders and the item templates: checks the configured backpack and gold templates exist.
             container.AddMoongateService<IStartingItemsService, StartingItemsService>(-3);
         }
+    }
+
+    private static void RegisterIgnoredPacket<TPacket>(Container container)
+        where TPacket : class, IIncomingPacket<TPacket>
+    {
+        container.RegisterIncomingPacket<TPacket>();
+        container.RegisterPacketHandler<TPacket, IgnoredPacketHandler<TPacket>>();
     }
 }
