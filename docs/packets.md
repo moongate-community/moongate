@@ -37,6 +37,17 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0xA9` | `CharacterListPacket` | Outgoing | Variable, minimum 6 | — |
 | `0xD9` | `ClientHardwareInfoPacket` | Incoming | Fixed 268 | None yet: decoded only |
 | `0xF8` | `CreateCharacterPacket` | Incoming | Fixed 106 | `CreateCharacterPacketHandler`: creates and saves the character and starting items |
+| `0x5D` | `PlayCharacterPacket` | Incoming | Fixed 73 | `PlayCharacterPacketHandler`: brings the chosen character into the world |
+| `0x83` | `DeleteCharacterPacket` | Incoming | Fixed 39 | `DeleteCharacterPacketHandler`: marks the character for deletion |
+| `0x02`, `0x06`, `0x09`, `0x34`, `0x72`, `0xC8` | `MoveRequestPacket`, `UseRequestPacket`, `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 7, 5, 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0xBF`, `0xD6` | `ExtendedCommandPacket`, `QueryPropertiesPacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+
+When a character enters the world the server sends, in this order (ModernUO's, checked against
+ServUO, UOX3, POL and Source-X): `0x1B` login confirm, `0xBF` subcommand `0x08` map, `0xBC`
+season, `0x4F` and `0x4E` light, `0x20` the player, `0x78` the player with worn items, hair and
+beard (virtual serials from `IMobileService`), `0x11` status (version 5), `0x72` peace, `0x55`
+login complete and `0x5B` time; then `CharacterEnteredWorldEvent` is published. The outgoing
+classes live in `Moongate.Server.Ultima.Packets.World`.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
