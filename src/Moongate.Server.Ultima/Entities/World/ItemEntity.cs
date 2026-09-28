@@ -1,4 +1,5 @@
 using FreeSql.DataAnnotations;
+using Humanizer;
 using Moongate.Core.Attributes;
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
@@ -8,6 +9,7 @@ using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.Internal;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Ultima.Io;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Entities.World;
@@ -21,8 +23,7 @@ namespace Moongate.Server.Ultima.Entities.World;
 ///     the other two. Only what differs from the template is stored: a null <see cref="Name" />, <see cref="Movable" />
 ///     or <see cref="Visibility" /> means the template's value.
 /// </remarks>
-[Table(Name = "world.items")]
-[SerialRange(Serial.MinItem, Serial.MaxItem)]
+[Table(Name = "world.items"), SerialRange(Serial.MinItem, Serial.MaxItem)]
 public class ItemEntity : IMoongateEntity
 {
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
