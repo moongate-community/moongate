@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Data.Sessions;
@@ -21,6 +22,7 @@ using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Characters;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Characters;
@@ -28,7 +30,7 @@ namespace Moongate.Tests.Server.Ultima.Handlers.Characters;
 public sealed class PlayCharacterPacketHandlerTests : IDisposable
 {
     private readonly Container _events = new();
-    private readonly MobileService _mobiles = new();
+    private readonly MobileService _mobiles = new(new StubMovementService());
     private SessionService _sessions = null!;
     private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
 
@@ -58,6 +60,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         Assert.Equal(2, characters.PlayIndex);
         Assert.Equal(new Serial(0x00000002), session.CharacterId);
         Assert.True(_mobiles.IsInWorld(new Serial(0x00000002)));
+        Assert.True(_mobiles.TryGet(new Serial(0x00000002), out var live));
+        Assert.Same(characters.ForPlay!.Character, live);
         var entered = Assert.Single(_entered);
         Assert.Equal(sender.Sent.Count, entered.SentBefore);
         Assert.Equal("Aria", entered.Event.Character.Name);
@@ -75,6 +79,20 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         var confirm = sender.Sent.OfType<LoginConfirmPacket>().Single();
         Assert.Equal((7168, 4096), (confirm.MapWidth, confirm.MapHeight));
         Assert.Equal(SeasonType.Winter, sender.Sent.OfType<SeasonChangePacket>().Single().Season);
+    }
+
+    [Fact]
+    public async Task HandleAsync_TheCharacterFacesTheWayItWasSaved()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var play = Aria();
+        play.Character.Direction = DirectionType.West;
+
+        await Handler(new RecordingCharacterService { ForPlay = play }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.Equal(DirectionType.West, sender.Sent.OfType<LoginConfirmPacket>().Single().Direction);
+        Assert.Equal(DirectionType.West, sender.Sent.OfType<MobileUpdatePacket>().Single().Direction);
     }
 
     [Fact]

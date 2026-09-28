@@ -124,7 +124,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
             return;
         }
 
-        _mobiles.EnterWorld(character.Id);
+        _mobiles.EnterWorld(character);
 
         foreach (var outgoing in EnterWorldSequence(play))
         {
@@ -148,7 +148,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         var map = _data.GetEntities<MapContent>().FirstOrDefault(content => content.Map == character.Map);
         var body = new Body((ushort)character.Body);
         var flags = character.Gender == GenderType.Female ? MobileFlagsType.Female : MobileFlagsType.None;
-        const DirectionType direction = DirectionType.South;
+        var direction = character.Direction;
 
         yield return new LoginConfirmPacket(
             character.Id,

@@ -1,6 +1,10 @@
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Movement;
+using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -10,7 +14,7 @@ public sealed class MobileServiceTests
     [Fact]
     public void HairAndBeardSerials_AreVirtualDistinctAndStablePerMobile()
     {
-        var mobiles = new MobileService();
+        var mobiles = new MobileService(new StubMovementService());
         var aria = new Serial(0x00000002);
 
         var hair = mobiles.HairSerial(aria);
@@ -26,7 +30,7 @@ public sealed class MobileServiceTests
     [Fact]
     public void HairSerials_OfDifferentMobiles_Differ()
     {
-        var mobiles = new MobileService();
+        var mobiles = new MobileService(new StubMovementService());
 
         Assert.NotEqual(mobiles.HairSerial(new Serial(2)), mobiles.HairSerial(new Serial(3)));
     }
@@ -34,26 +38,109 @@ public sealed class MobileServiceTests
     [Fact]
     public void FirstVirtualSerial_IsTheStartOfTheVirtualRange()
     {
-        Assert.Equal(new Serial(Serial.MinVirtual), new MobileService().HairSerial(new Serial(2)));
+        Assert.Equal(new Serial(Serial.MinVirtual), new MobileService(new StubMovementService()).HairSerial(new Serial(2)));
     }
 
     [Fact]
-    public void EnterWorld_MarksTheMobileInTheWorld()
+    public void EnterWorld_KeepsTheLiveMobile()
     {
-        var mobiles = new MobileService();
-        var aria = new Serial(2);
+        var mobiles = new MobileService(new StubMovementService());
+        var aria = Aria();
 
         mobiles.EnterWorld(aria);
 
-        Assert.True(mobiles.IsInWorld(aria));
+        Assert.True(mobiles.IsInWorld(aria.Id));
         Assert.False(mobiles.IsInWorld(new Serial(3)));
-        Assert.Equal([aria], mobiles.InWorld);
+        Assert.Equal([aria.Id], mobiles.InWorld);
+        Assert.True(mobiles.TryGet(aria.Id, out var live));
+        Assert.Same(aria, live);
+        Assert.Equal([aria], mobiles.Mobiles);
+    }
+
+    [Fact]
+    public void LeaveWorld_ForgetsTheMobile()
+    {
+        var mobiles = new MobileService(new StubMovementService());
+        var aria = Aria();
+        mobiles.EnterWorld(aria);
+
+        Assert.True(mobiles.LeaveWorld(aria.Id));
+
+        Assert.False(mobiles.IsInWorld(aria.Id));
+        Assert.False(mobiles.TryGet(aria.Id, out _));
+        Assert.False(mobiles.LeaveWorld(aria.Id));
+    }
+
+    [Fact]
+    public void TryMove_ADifferentDirection_OnlyTurns()
+    {
+        var movement = new StubMovementService();
+        var aria = Aria();
+        aria.Direction = DirectionType.South;
+
+        var result = new MobileService(movement).TryMove(aria, DirectionType.East);
+
+        Assert.Equal(MoveResultType.Turned, result);
+        Assert.Equal(DirectionType.East, aria.Direction);
+        Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
+        Assert.Empty(movement.Checks);
+    }
+
+    [Fact]
+    public void TryMove_TheFacedDirection_StepsToTheNextCellAtTheLandingHeight()
+    {
+        var movement = new StubMovementService { LandingZ = 12 };
+        var aria = Aria();
+        aria.Direction = DirectionType.East;
+
+        var result = new MobileService(movement).TryMove(aria, DirectionType.East);
+
+        Assert.Equal(MoveResultType.Moved, result);
+        Assert.Equal(new Point3D(1497, 1628, 12), aria.Location);
+        Assert.Equal((MapType.Trammel, new Point3D(1496, 1628, 10), DirectionType.East), Assert.Single(movement.Checks));
+    }
+
+    [Fact]
+    public void TryMove_TheRunningBit_IsNotPartOfTheDirection()
+    {
+        var aria = Aria();
+        aria.Direction = DirectionType.East;
+
+        var result = new MobileService(new StubMovementService()).TryMove(aria, DirectionType.East | DirectionType.Running);
+
+        Assert.Equal(MoveResultType.Moved, result);
+        Assert.Equal(DirectionType.East, aria.Direction);
+        Assert.Equal(new Point3D(1497, 1628, 0), aria.Location);
+    }
+
+    [Fact]
+    public void TryMove_ABlockedStep_LeavesTheMobileWhereItIs()
+    {
+        var aria = Aria();
+        aria.Direction = DirectionType.East;
+
+        var result = new MobileService(new StubMovementService { Allow = false }).TryMove(aria, DirectionType.East);
+
+        Assert.Equal(MoveResultType.Blocked, result);
+        Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
+    }
+
+    [Fact]
+    public void TryMove_OnAMapThatIsNotLoaded_IsBlocked()
+    {
+        var aria = Aria();
+        aria.Direction = DirectionType.East;
+
+        var result = new MobileService(new StubMovementService { ThrowMapNotLoaded = true }).TryMove(aria, DirectionType.East);
+
+        Assert.Equal(MoveResultType.Blocked, result);
+        Assert.Equal(new Point3D(1496, 1628, 10), aria.Location);
     }
 
     [Fact]
     public void GetStatus_MapsTheMobileWithTheStatCapAndFollowersMax()
     {
-        var status = new MobileService().GetStatus(Aria());
+        var status = new MobileService(new StubMovementService()).GetStatus(Aria());
 
         Assert.Equal(
             (new Serial(2), "Aria", 60, 61, true, 62, 20, 10, 21, 22, 11, 12, RaceType.Elf),
@@ -68,7 +155,7 @@ public sealed class MobileServiceTests
     [Fact]
     public void GetEquipment_ListsWornItemsThenHairAndBeardWithVirtualSerials()
     {
-        var mobiles = new MobileService();
+        var mobiles = new MobileService(new StubMovementService());
         var aria = Aria(beard: 0x203E);
 
         var equipment = mobiles.GetEquipment(aria, [Worn(0x40000001, LayerType.Backpack)]);
@@ -82,7 +169,7 @@ public sealed class MobileServiceTests
     [Fact]
     public void GetEquipment_NoHairOrBeardStyle_AddsNoEntryForThem()
     {
-        var equipment = new MobileService().GetEquipment(Aria(hair: 0), []);
+        var equipment = new MobileService(new StubMovementService()).GetEquipment(Aria(hair: 0), []);
 
         Assert.Empty(equipment);
     }
@@ -90,7 +177,7 @@ public sealed class MobileServiceTests
     [Fact]
     public void GetEquipment_AnItemOnTheHairLayer_TakesItsPlace()
     {
-        var equipment = new MobileService().GetEquipment(Aria(), [Worn(0x40000005, LayerType.Hair)]);
+        var equipment = new MobileService(new StubMovementService()).GetEquipment(Aria(), [Worn(0x40000005, LayerType.Hair)]);
 
         Assert.Equal(new Serial(0x40000005), Assert.Single(equipment).Serial);
     }
@@ -100,7 +187,7 @@ public sealed class MobileServiceTests
     {
         var unworn = new ItemEntity { Id = new(0x40000009), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
 
-        var equipment = new MobileService().GetEquipment(
+        var equipment = new MobileService(new StubMovementService()).GetEquipment(
             Aria(hair: 0),
             [Worn(0x40000001, LayerType.Shirt), Worn(0x40000002, LayerType.Shirt), unworn]
         );
@@ -115,7 +202,8 @@ public sealed class MobileServiceTests
             Id = new(2), AccountId = new Serial(42), Name = "Aria", Gender = GenderType.Female, Race = RaceType.Elf,
             HairStyle = hair, HairHue = new(0x044E), BeardStyle = beard, BeardHue = new(0x044E), Hits = 60, HitsMax = 61,
             Strength = 62, Dexterity = 20, Intelligence = 10, Stamina = 21, StaminaMax = 22, Mana = 11, ManaMax = 12,
-            ResistPhysical = 1, ResistFire = 2, ResistCold = 3, ResistPoison = 4, ResistEnergy = 5
+            ResistPhysical = 1, ResistFire = 2, ResistCold = 3, ResistPoison = 4, ResistEnergy = 5,
+            Map = MapType.Trammel, Location = new Point3D(1496, 1628, 10)
         };
     }
 

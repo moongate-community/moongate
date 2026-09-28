@@ -1,27 +1,42 @@
 using System.Collections.Concurrent;
+using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Ultima.Types;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Keeps the mobiles in the world and hands out virtual serials for hair and beard the first time they are needed,
-///     counting up from <see cref="Serial.MinVirtual" /> as ModernUO does.
+///     Keeps the live mobiles in the world, moves them over <see cref="IMovementService" />, and hands out virtual
+///     serials for hair and beard the first time they are needed, counting up from <see cref="Serial.MinVirtual" /> as
+///     ModernUO does.
 /// </summary>
 public sealed class MobileService : IMobileService
 {
     private const int StatCap = 225;
     private const int FollowersMax = 5;
+    private const byte DirectionMask = 0x07;
 
     private readonly ConcurrentDictionary<Serial, Serial> _hair = new();
     private readonly ConcurrentDictionary<Serial, Serial> _beard = new();
-    private readonly ConcurrentDictionary<Serial, byte> _inWorld = new();
+    private readonly ConcurrentDictionary<Serial, MobileEntity> _inWorld = new();
+    private readonly IMovementService _movement;
+    private readonly ILogger _logger = Log.ForContext<MobileService>();
     private long _nextVirtual = Serial.MinVirtual;
 
     public IReadOnlyCollection<Serial> InWorld => _inWorld.Keys.ToArray();
+
+    public IReadOnlyCollection<MobileEntity> Mobiles => _inWorld.Values.ToArray();
+
+    public MobileService(IMovementService movement)
+    {
+        _movement = movement;
+    }
 
     public Serial HairSerial(Serial mobile)
     {
@@ -33,9 +48,52 @@ public sealed class MobileService : IMobileService
         return _beard.GetOrAdd(mobile, _ => NextVirtual());
     }
 
-    public void EnterWorld(Serial mobile)
+    public void EnterWorld(MobileEntity mobile)
     {
-        _inWorld[mobile] = 0;
+        _inWorld[mobile.Id] = mobile;
+    }
+
+    public bool TryGet(Serial serial, [NotNullWhen(true)] out MobileEntity? mobile)
+    {
+        return _inWorld.TryGetValue(serial, out mobile);
+    }
+
+    public bool LeaveWorld(Serial serial)
+    {
+        return _inWorld.TryRemove(serial, out _);
+    }
+
+    public MoveResultType TryMove(MobileEntity mobile, DirectionType direction)
+    {
+        var facing = (DirectionType)((byte)direction & DirectionMask);
+
+        if (facing != mobile.Direction)
+        {
+            mobile.Direction = facing;
+
+            return MoveResultType.Turned;
+        }
+
+        int newZ;
+
+        try
+        {
+            if (!_movement.CheckMovement(mobile.Map, mobile.Location, facing, MovementAbilityType.Walk, out newZ))
+            {
+                return MoveResultType.Blocked;
+            }
+        }
+        catch (KeyNotFoundException exception)
+        {
+            _logger.Error(exception, "{Mobile} cannot move: its map is not loaded", mobile);
+
+            return MoveResultType.Blocked;
+        }
+
+        var next = mobile.Location.Move(facing);
+        mobile.Location = new(next.X, next.Y, newZ);
+
+        return MoveResultType.Moved;
     }
 
     public bool IsInWorld(Serial mobile)
