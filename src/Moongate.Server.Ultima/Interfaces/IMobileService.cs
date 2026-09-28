@@ -1,15 +1,19 @@
+using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Types.Movement;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
-///     The mobiles in the world while the server runs: which are there, the virtual serials the client needs for
-///     things a mobile shows but that are not items, such as hair and beard, and what the client is told about them.
+///     The mobiles in the world while the server runs: the live instances, the virtual serials the client needs for
+///     things a mobile shows but that are not items, such as hair and beard, what the client is told about them, and
+///     their steps.
 /// </summary>
 /// <remarks>
-///     Everything here lives in memory and is not saved. Members may be called from any thread.
+///     The live mobiles change on the game loop: move them only there. The world save writes their snapshots.
 /// </remarks>
 public interface IMobileService
 {
@@ -17,6 +21,11 @@ public interface IMobileService
     ///     Gets the mobiles in the world.
     /// </summary>
     IReadOnlyCollection<Serial> InWorld { get; }
+
+    /// <summary>
+    ///     Gets the live mobiles in the world.
+    /// </summary>
+    IReadOnlyCollection<MobileEntity> Mobiles { get; }
 
     /// <summary>
     ///     Gets the virtual serial of the mobile's hair, the same every time while the server runs.
@@ -29,9 +38,25 @@ public interface IMobileService
     Serial BeardSerial(Serial mobile);
 
     /// <summary>
-    ///     Records that the mobile is in the world.
+    ///     Keeps the mobile as the live one in the world; it replaces an instance with the same serial.
     /// </summary>
-    void EnterWorld(Serial mobile);
+    void EnterWorld(MobileEntity mobile);
+
+    /// <summary>
+    ///     Gets the live mobile with the serial, when it is in the world.
+    /// </summary>
+    bool TryGet(Serial serial, [NotNullWhen(true)] out MobileEntity? mobile);
+
+    /// <summary>
+    ///     Forgets the mobile; false when it was not in the world.
+    /// </summary>
+    bool LeaveWorld(Serial serial);
+
+    /// <summary>
+    ///     Turns the mobile towards <paramref name="direction" /> or, when it already faces that way, steps it to the next
+    ///     cell if <see cref="IMovementService" /> allows it. The running bit is ignored.
+    /// </summary>
+    MoveResultType TryMove(MobileEntity mobile, DirectionType direction);
 
     /// <summary>
     ///     Gets whether the mobile is in the world.

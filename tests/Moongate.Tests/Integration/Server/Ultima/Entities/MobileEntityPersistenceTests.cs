@@ -7,8 +7,12 @@ using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Persistence;
+using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Entities;
@@ -327,5 +331,27 @@ public sealed class MobileEntityPersistenceTests
         await mobiles.UpsertAsync(aria);
 
         Assert.Equal(DirectionType.West, (await mobiles.GetByIdAsync(aria.Id))!.Direction);
+    }
+
+    [Fact]
+    public async Task WorldSave_WritesTheLiveMobilesAsTheyAreNow()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var mobiles = new MobileService(new StubMovementService());
+        host.Container.RegisterInstance<IMobileService>(mobiles);
+        host.Container.AddLiveWorldMobiles();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var data = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Map = MapType.Trammel };
+        await data.UpsertAsync(aria);
+        mobiles.EnterWorld(aria);
+        aria.Location = new Point3D(1497, 1628, 12);
+        aria.Direction = DirectionType.East;
+
+        await host.Owner.SaveAllAsync();
+
+        var stored = (await data.GetByIdAsync(aria.Id))!;
+        Assert.Equal((new Point3D(1497, 1628, 12), DirectionType.East), (stored.Location, stored.Direction));
     }
 }
