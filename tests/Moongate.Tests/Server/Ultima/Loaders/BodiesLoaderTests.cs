@@ -1,7 +1,7 @@
 using Moongate.Core.Directories;
-using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Directories;
+using Moongate.Ultima.Primitives;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Loaders;

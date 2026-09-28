@@ -1,4 +1,4 @@
-using Moongate.Core.Primitives;
+using Moongate.Ultima.Primitives;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Data.Bodies;

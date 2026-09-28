@@ -5,6 +5,7 @@ using Moongate.Network.Packets.Serialization;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Ultima.Primitives;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Packets.World;
@@ -15,7 +16,7 @@ public sealed class MobileIncomingPacketTests
     public void Encode_WritesTheMobileThenEveryItemWithItsHueAndATerminator()
     {
         var packet = new MobileIncomingPacket(
-            new Serial(0x00000002), 0x0191, new Point3D(1496, 1628, -5), DirectionType.South, new Hue(0x83EA),
+            new Serial(0x00000002), new Body(0x0191), new Point3D(1496, 1628, -5), DirectionType.South, new Hue(0x83EA),
             MobileFlagsType.Female, NotorietyType.Innocent,
             [
                 new(new Serial(0x40000001), 0x0E75, LayerType.Backpack, new Hue(0)),
@@ -40,7 +41,7 @@ public sealed class MobileIncomingPacketTests
     public void Constructor_TwoItemsOnOneLayer_Throws()
     {
         Assert.Throws<ArgumentException>(() => new MobileIncomingPacket(
-                new Serial(2), 0x0191, new Point3D(0, 0, 0), DirectionType.North, new Hue(0), MobileFlagsType.None,
+                new Serial(2), new Body(0x0191), new Point3D(0, 0, 0), DirectionType.North, new Hue(0), MobileFlagsType.None,
                 NotorietyType.Innocent,
                 [
                     new(new Serial(0x40000001), 0x1517, LayerType.Shirt, new Hue(0)),

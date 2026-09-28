@@ -6,6 +6,7 @@ using Moongate.Network.Packets.Base;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Spans;
 using Moongate.Network.Packets.Types.Packets;
+using Moongate.Ultima.Primitives;
 
 namespace Moongate.Server.Ultima.Packets.World;
 
@@ -18,7 +19,7 @@ public sealed class LoginConfirmPacket : BaseFixedPacket<LoginConfirmPacket>, IO
 {
     public Serial Serial { get; }
 
-    public int Body { get; }
+    public Body Body { get; }
 
     public Point3D Location { get; }
 
@@ -28,7 +29,7 @@ public sealed class LoginConfirmPacket : BaseFixedPacket<LoginConfirmPacket>, IO
 
     public int MapHeight { get; }
 
-    public LoginConfirmPacket(Serial serial, int body, Point3D location, DirectionType direction, int mapWidth, int mapHeight)
+    public LoginConfirmPacket(Serial serial, Body body, Point3D location, DirectionType direction, int mapWidth, int mapHeight)
     {
         Serial = serial;
         Body = body;
@@ -44,7 +45,7 @@ public sealed class LoginConfirmPacket : BaseFixedPacket<LoginConfirmPacket>, IO
         writer.WriteByte(OpCode);
         writer.WriteSerial(Serial);
         writer.WriteUInt32BigEndian(0);
-        writer.WriteUInt16BigEndian((ushort)Body);
+        writer.WriteUInt16BigEndian(Body.Value);
         writer.WriteUInt16BigEndian((ushort)Location.X);
         writer.WriteUInt16BigEndian((ushort)Location.Y);
         writer.WriteUInt16BigEndian(unchecked((ushort)(short)Location.Z));

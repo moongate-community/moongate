@@ -1,6 +1,6 @@
-using Moongate.Core.Primitives;
+using Moongate.Ultima.Primitives;
 
-namespace Moongate.Tests.Core.Primitives;
+namespace Moongate.Tests.Ultima.Primitives;
 
 public sealed class BodyTests
 {

@@ -1,6 +1,6 @@
 using System.Globalization;
 
-namespace Moongate.Core.Primitives;
+namespace Moongate.Ultima.Primitives;
 
 /// <summary>
 ///     The body id of a mobile: which figure the client draws, such as 400 for a male human. What kind of creature a

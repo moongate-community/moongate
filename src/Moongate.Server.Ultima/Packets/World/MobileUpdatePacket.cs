@@ -7,6 +7,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Spans;
 using Moongate.Network.Packets.Types.Packets;
 using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Ultima.Primitives;
 
 namespace Moongate.Server.Ultima.Packets.World;
 
@@ -18,7 +19,7 @@ public sealed class MobileUpdatePacket : BaseFixedPacket<MobileUpdatePacket>, IO
 {
     public Serial Serial { get; }
 
-    public int Body { get; }
+    public Body Body { get; }
 
     public Hue Hue { get; }
 
@@ -30,7 +31,7 @@ public sealed class MobileUpdatePacket : BaseFixedPacket<MobileUpdatePacket>, IO
 
     public MobileUpdatePacket(
         Serial serial,
-        int body,
+        Body body,
         Hue hue,
         MobileFlagsType flags,
         Point3D location,
@@ -50,7 +51,7 @@ public sealed class MobileUpdatePacket : BaseFixedPacket<MobileUpdatePacket>, IO
         writer.EnsureCapacity(Length);
         writer.WriteByte(OpCode);
         writer.WriteSerial(Serial);
-        writer.WriteUInt16BigEndian((ushort)Body);
+        writer.WriteUInt16BigEndian(Body.Value);
         writer.WriteByte(0);
         writer.WriteUInt16BigEndian(Hue.Value);
         writer.WriteByte((byte)Flags);
