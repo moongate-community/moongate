@@ -45,6 +45,7 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x02` | `MoveRequestPacket` | Incoming | Fixed 7 | `MoveRequestPacketHandler`: turns or steps the character, answered with `0x22` or `0x21` |
 | `0x22` | `MovementAckPacket` | Outgoing | Fixed 3 | — |
 | `0x21` | `MovementRejectPacket` | Outgoing | Fixed 8 | — |
+| `0x77` | `MobileMovingPacket` | Outgoing | Fixed 17 | — |
 | `0x06` | `UseRequestPacket` | Incoming | Fixed 5 | `UseRequestPacketHandler`: opens a container the character carries |
 | `0x03` | `AsciiSpeechRequestPacket` | Incoming | Variable, minimum 9 | `SpeechRequestPacketHandler`: local say or in-game dot command |
 | `0xAD` | `UnicodeSpeechRequestPacket` | Incoming | Variable, minimum 14 | `SpeechRequestPacketHandler`: Unicode and encoded-keyword say or dot command |
@@ -80,6 +81,15 @@ A direction the character does not face only turns it and uses no time. A step i
 direction books the next one 400 ms later walking or 200 ms running, and may come up to 200 ms
 early; an earlier step, or one `IMovementService` blocks, is refused. `0x22` accepts the step with
 the character's notoriety; `0x21` refuses it and puts the client back at the real position.
+
+Players see each other within 18 tiles on both axes. `ISectorService` keeps the live mobiles in
+16×16 sectors per map, and `IWorldViewService` recomputes what changed from the old and new
+position of each step, as ModernUO and POL do. After the enter-world sequence the player gets
+`0x78` of everyone in range and they get its `0x78`. An accepted step or turn sends `0x77` (bit
+`0x80` of the direction marks a run) to the players that already saw the mover, `0x78` both ways
+to the players that just came into range, and `0x1D` to the players that lost it; the mover's
+client drops what it walks away from by itself. When a character leaves the world the players in
+range get its `0x1D`. `0xC8` is still ignored, so the range stays 18.
 
 When the session closes, `CharacterLeaveWorldService` (an `ISessionClosedListener`) copies the
 character, removes it from the world, saves the copy and publishes `CharacterLeftWorldEvent`. The
