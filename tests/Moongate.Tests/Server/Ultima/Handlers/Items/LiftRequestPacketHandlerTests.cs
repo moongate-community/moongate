@@ -78,13 +78,24 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task Handle_AnotherCharactersItem_IsRefused()
+    public async Task Handle_AnotherCharactersItem_IsRefusedWithoutShowingIt()
     {
         await StartAsync(Aria);
 
         await LiftAsync(_otherDagger.Id, 1);
 
-        AssertRefused(LiftRejectReasonType.CannotLift, _otherDagger);
+        Assert.Equal(LiftRejectReasonType.CannotLift, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
+    }
+
+    [Fact]
+    public async Task Handle_AnotherCharactersItemWhileHolding_DoesNotShowIt()
+    {
+        await StartAsync(Aria);
+        await LiftAsync(_coins.Id, 250);
+
+        await LiftAsync(_otherDagger.Id, 1);
+
+        Assert.Equal(LiftRejectReasonType.AreHolding, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
     }
 
     [Fact]
