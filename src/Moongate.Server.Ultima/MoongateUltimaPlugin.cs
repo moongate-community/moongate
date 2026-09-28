@@ -145,6 +145,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterAsyncPacketHandler<AsciiSpeechRequestPacket, SpeechRequestPacketHandler>();
             container.RegisterIncomingPacket<UnicodeSpeechRequestPacket>();
             container.RegisterAsyncPacketHandler<UnicodeSpeechRequestPacket, SpeechRequestPacketHandler>();
+            container.RegisterIncomingPacket<TargetResponsePacket>();
             container.RegisterIncomingPacket<LiftRequestPacket>();
             container.RegisterPacketHandler<LiftRequestPacket, LiftRequestPacketHandler>();
             container.RegisterIncomingPacket<DropRequestPacket>();
