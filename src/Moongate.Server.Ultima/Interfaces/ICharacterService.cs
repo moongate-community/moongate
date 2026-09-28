@@ -27,6 +27,16 @@ public interface ICharacterService
     Task<IReadOnlyList<MobileEntity>> GetCharactersAsync(Serial accountId, CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     Returns the character at <paramref name="listIndex" /> of the list the client was sent, with the items it
+    ///     wears; null when that position is empty or out of range.
+    /// </summary>
+    Task<CharacterForPlay?> GetForPlayAsync(
+        Serial accountId,
+        int listIndex,
+        CancellationToken cancellationToken = default
+    );
+
+    /// <summary>
     ///     Returns the player characters pending deletion, of one account or of all when <paramref name="accountId" /> is
     ///     null.
     /// </summary>

@@ -407,6 +407,39 @@ public sealed class CharacterServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task GetForPlayAsync_ReturnsTheCharacterAtThePositionWithItsWornItems()
+    {
+        var service = CreateService(maxPerAccount: 5);
+        await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
+        var bran = await service.CreateAsync(Account, Request() with { Slot = 3, Name = "Bran" });
+
+        var play = await service.GetForPlayAsync(Account, 3);
+
+        Assert.Equal(bran.Character!.Id, play!.Character.Id);
+        var backpack = Assert.Single(play.Equipment);
+        Assert.Equal((bran.Character.Id, LayerType.Backpack), (backpack.MobileId!.Value, backpack.Layer!.Value));
+    }
+
+    [Theory, InlineData(1), InlineData(5), InlineData(-1)]
+    public async Task GetForPlayAsync_EmptyOrOutOfRangePosition_IsNull(int index)
+    {
+        var service = CreateService(maxPerAccount: 5);
+        await service.CreateAsync(Account, Request() with { Slot = 0 });
+
+        Assert.Null(await service.GetForPlayAsync(Account, index));
+    }
+
+    [Fact]
+    public async Task GetForPlayAsync_PendingDeletion_IsNotPlayable()
+    {
+        var service = CreateService(maxPerAccount: 5);
+        await service.CreateAsync(Account, Request() with { Slot = 0 });
+        await service.RequestDeletionAsync(Account, 0);
+
+        Assert.Null(await service.GetForPlayAsync(Account, 0));
+    }
+
+    [Fact]
     public async Task GetCharactersAsync_ReturnsOnlyThatAccountsPlayers_BySlot()
     {
         var service = CreateService();
@@ -477,6 +510,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
             startingItems,
             _host.Owner,
             _mobiles,
+            _items,
             _eventContainer.Resolve<IMoongateEventBus>(),
             new CharactersConfig { MaxPerAccount = maxPerAccount },
             _presence
