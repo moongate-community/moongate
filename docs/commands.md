@@ -1,13 +1,14 @@
 # Server commands
 
 Moongate accepts commands through its interactive server console. Press `*` to
-unlock the prompt after startup. Commands are separated on whitespace; quoted
-arguments and passwords containing spaces are not supported.
+unlock the prompt after startup. In game, type a command with a leading dot,
+such as `.help`. Commands are separated on whitespace; quoted arguments and
+passwords containing spaces are not supported.
 
-The command registry also describes which commands may run from `InGame` and their
-minimum account level. No packet handler currently submits in-game commands, so
-the console is the available input path. The console is treated as an administrator;
-in-game access, when added, will use the invoking session's account level.
+The command registry describes which commands may run from `InGame` and their
+minimum account level. The console is treated as an administrator; in-game
+commands use the invoking session's account level. The command and its output
+are never broadcast to nearby players. Use `..text` to say `.text` literally.
 
 | Command | Console | In-game registration | Minimum in-game level | Purpose |
 | --- | --- | --- | --- | --- |
@@ -63,9 +64,9 @@ token while it is typed and does not include the raw command line in its error l
 The account is stored in the shared Accounts PostgreSQL database.
 Game-only processes do not register this command or receive Accounts credentials.
 
-The command is registered for in-game administrators, but there is no in-game
-command input yet. Before enabling one, its input path must protect the password
-from display and logs.
+In-game administrators can type `.account create ...`. The server does not echo
+or broadcast the input and does not write it to its logs. The UO client may
+retain the typed command in its own local history.
 
 Plugins can add commands through `RegisterCommand<TExecutor>`; see
 [Writing a plugin](plugins.md#console-commands).

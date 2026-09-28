@@ -43,11 +43,9 @@ public sealed class UnicodeSpeechRequestPacket : BasePacket<UnicodeSpeechRequest
         }
 
         var languageBytes = data[8..12];
-        var languageEnd = languageBytes.IndexOf((byte)0);
-        languageEnd = languageEnd < 0 ? languageBytes.Length : languageEnd;
 
-        if (languageBytes[..languageEnd].IndexOfAnyExceptInRange((byte)'A', (byte)'Z') >= 0 ||
-            (languageEnd < languageBytes.Length && languageBytes[languageEnd..].IndexOfAnyExcept((byte)0) >= 0))
+        if (languageBytes[..3].IndexOfAnyExceptInRange((byte)'A', (byte)'Z') >= 0 ||
+            languageBytes[3] is not (0 or (byte)' '))
         {
             return false;
         }
@@ -102,7 +100,7 @@ public sealed class UnicodeSpeechRequestPacket : BasePacket<UnicodeSpeechRequest
                     (SpeechType)(data[3] & ~EncodedBit),
                     new Hue(BinaryPrimitives.ReadUInt16BigEndian(data[4..6])),
                     (SpeechFontType)BinaryPrimitives.ReadUInt16BigEndian(data[6..8]),
-                    Encoding.ASCII.GetString(languageBytes[..languageEnd]),
+                    Encoding.ASCII.GetString(languageBytes[..3]),
                     text
                 )
             );

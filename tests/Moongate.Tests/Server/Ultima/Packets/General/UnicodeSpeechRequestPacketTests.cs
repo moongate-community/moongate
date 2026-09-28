@@ -40,6 +40,15 @@ public sealed class UnicodeSpeechRequestPacketTests
     }
 
     [Fact]
+    public void TryDecode_SpacePaddedLanguage_ReadsThreeLetterCode()
+    {
+        var frame = Convert.FromHexString("AD00180003B20003454E552000480065006C006C006F0000");
+
+        Assert.True(PacketCodec.TryDecode<UnicodeSpeechRequestPacket>(frame, out var packet));
+        Assert.Equal("ENU", packet.Speech.Language);
+    }
+
+    [Fact]
     public void TryDecode_TruncatedKeywordIds_ReturnsFalse()
     {
         var frame = Convert.FromHexString("AD000E8003B20003454E55000010");
