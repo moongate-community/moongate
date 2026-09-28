@@ -150,8 +150,20 @@ public sealed class CharacterService : ICharacterService
         }
 
         var equipment = await _items.QueryAsync(item => item.MobileId == character.Id, cancellationToken);
+        var contents = new List<ItemEntity>();
+        var visited = equipment.Select(item => item.Id).ToHashSet();
+        var containers = visited.Select(serial => (Serial?)serial).ToList();
 
-        return new(character, equipment);
+        // One level of containers at a time; the visited set stops a cycle.
+        while (containers.Count > 0)
+        {
+            var level = await _items.QueryAsync(item => containers.Contains(item.ContainerId), cancellationToken);
+            var fresh = level.Where(item => visited.Add(item.Id)).ToList();
+            contents.AddRange(fresh);
+            containers = fresh.Select(item => (Serial?)item.Id).ToList();
+        }
+
+        return new(character, equipment, contents);
     }
 
     public async Task<IReadOnlyList<MobileEntity>> GetPendingDeletionsAsync(

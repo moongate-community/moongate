@@ -32,6 +32,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     private readonly ILogger _logger = Log.ForContext<PlayCharacterPacketHandler>();
     private readonly ICharacterService _characters;
     private readonly IMobileService _mobiles;
+    private readonly IItemService _items;
     private readonly IDataLoaderService _data;
     private readonly IMoongateEventBus _events;
     private readonly ISessionService _sessions;
@@ -39,6 +40,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     public PlayCharacterPacketHandler(
         ICharacterService characters,
         IMobileService mobiles,
+        IItemService items,
         IDataLoaderService data,
         IMoongateEventBus events,
         ISessionService sessions
@@ -46,6 +48,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     {
         _characters = characters;
         _mobiles = mobiles;
+        _items = items;
         _data = data;
         _events = events;
         _sessions = sessions;
@@ -113,6 +116,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
                     // Together on the loop: a session retirement then always finds the character live.
                     session.Set(SessionKeys.CharacterId, character.Id);
                     _mobiles.EnterWorld(character);
+                    _items.Add(play.Equipment.Concat(play.Contents));
                     admitted = true;
                 },
                 cancellationToken
