@@ -30,8 +30,7 @@ public sealed class DeleteCharacterPacketHandler : IAsyncPacketHandler<DeleteCha
     )
     {
         var accountId = Serial.Zero;
-        await context.RunOnGameLoopAsync(session => accountId = session.AccountId, cancellationToken)
-                     .ConfigureAwait(false);
+        await context.RunOnGameLoopAsync(session => accountId = session.AccountId, cancellationToken);
 
         if (!accountId.IsValid)
         {
@@ -39,8 +38,7 @@ public sealed class DeleteCharacterPacketHandler : IAsyncPacketHandler<DeleteCha
             await context.SendAndDisconnectAsync(
                              new CharacterDeleteResultPacket(CharacterDeleteResultType.RequestFailed),
                              cancellationToken
-                         )
-                         .ConfigureAwait(false);
+                         );
 
             return;
         }
@@ -49,8 +47,7 @@ public sealed class DeleteCharacterPacketHandler : IAsyncPacketHandler<DeleteCha
 
         try
         {
-            result = await _characters.RequestDeletionAsync(accountId, packet.CharacterIndex, cancellationToken)
-                                      .ConfigureAwait(false);
+            result = await _characters.RequestDeletionAsync(accountId, packet.CharacterIndex, cancellationToken);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {

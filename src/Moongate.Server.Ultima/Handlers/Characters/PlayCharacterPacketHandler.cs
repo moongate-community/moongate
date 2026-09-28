@@ -72,8 +72,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
 
         try
         {
-            play = await _characters.GetForPlayAsync(accountId, packet.CharacterIndex, cancellationToken)
-                .ConfigureAwait(false);
+            play = await _characters.GetForPlayAsync(accountId, packet.CharacterIndex, cancellationToken);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
@@ -115,8 +114,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
                     admitted = true;
                 },
                 cancellationToken
-            )
-            .ConfigureAwait(false);
+            );
 
         if (!admitted)
         {
@@ -183,6 +181,6 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
 
     private static async Task RefuseAsync(PacketContext context, PopupMessageType popup, CancellationToken cancellationToken)
     {
-        await context.SendAndDisconnectAsync(new PopupMessagePacket(popup), cancellationToken).ConfigureAwait(false);
+        await context.SendAndDisconnectAsync(new PopupMessagePacket(popup), cancellationToken);
     }
 }
