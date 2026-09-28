@@ -1,6 +1,7 @@
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Types.Persistence;
@@ -311,5 +312,20 @@ public sealed class MobileEntityPersistenceTests
         var stored = (await mobiles.GetByIdAsync(aria.Id))!;
         Assert.Equal(requested, stored.DeletionRequestedAt);
         Assert.Equal(DateTimeKind.Utc, stored.DeletionRequestedAt!.Value.Kind);
+    }
+
+    [Fact]
+    public async Task Direction_IsStoredAndReadBack()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        host.Container.AddPersistenceWorld<MobileEntity>();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Direction = DirectionType.West };
+
+        await mobiles.UpsertAsync(aria);
+
+        Assert.Equal(DirectionType.West, (await mobiles.GetByIdAsync(aria.Id))!.Direction);
     }
 }
