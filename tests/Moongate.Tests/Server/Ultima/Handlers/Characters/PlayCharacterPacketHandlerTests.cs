@@ -17,6 +17,7 @@ using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
+using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Characters;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -28,6 +29,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
 {
     private readonly Container _events = new();
     private readonly MobileService _mobiles = new();
+    private SessionService _sessions = null!;
     private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
 
     public void Dispose()
@@ -117,6 +119,29 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     }
 
     [Fact]
+    public async Task HandleAsync_AnotherCharacterOfTheAccountInTheWorld_RefusesWithCharacterInWorld()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, session, sender) = await Context(fixture, new Serial(42));
+        using var otherClient = new ControlledNetworkConnection(9_001);
+        var other = _sessions.GetOrCreate(otherClient);
+        await fixture.ExecuteOnLoopAsync(() =>
+            {
+                other.Set(SessionKeys.AccountId, new Serial(42));
+                other.Set(SessionKeys.CharacterId, new Serial(7));
+            }
+        );
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.Equal(PopupMessageType.CharacterInWorld, Assert.IsType<PopupMessagePacket>(Assert.Single(sender.Sent)).Type);
+        Assert.Equal(Serial.Zero, session.CharacterId);
+        Assert.False(_mobiles.IsInWorld(new Serial(2)));
+        Assert.False(fixture.Client.IsConnected);
+        Assert.Empty(_entered);
+    }
+
+    [Fact]
     public async Task HandleAsync_WithoutAccount_DisconnectsWithoutLoading()
     {
         await using var fixture = await SessionFixture.CreateAsync();
@@ -144,7 +169,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             new MapContent { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Season = SeasonType.Winter, Name = "Trammel" }
         );
 
-        return new(characters, _mobiles, loaders, bus);
+        return new(characters, _mobiles, loaders, bus, _sessions);
     }
 
     private static CharacterForPlay Aria(int hair = 0x203C, int beard = 0)
@@ -168,12 +193,13 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         return new() { Name = "Aria", ClientFlags = ClientFlags.None, LoginCount = 1, CharacterIndex = index };
     }
 
-    private static async Task<(PacketContext Context, GameSession Session, StubPacketSendService Sender)> Context(
+    private async Task<(PacketContext Context, GameSession Session, StubPacketSendService Sender)> Context(
         SessionFixture fixture,
         Serial? account
     )
     {
         var sessions = new SessionService(fixture.Loop);
+        _sessions = sessions;
         var session = sessions.GetOrCreate(fixture.Client);
         var sender = new StubPacketSendService();
         var context = new PacketContext(session, fixture.Loop, sessions, sender);

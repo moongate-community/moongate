@@ -6,6 +6,7 @@ using Moongate.Network.Packets.Types.Login;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Packets;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Ultima.Data.Characters;
 using Moongate.Server.Ultima.Data.Events;
@@ -38,18 +39,21 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     private readonly IMobileService _mobiles;
     private readonly IDataLoaderService _data;
     private readonly IMoongateEventBus _events;
+    private readonly ISessionService _sessions;
 
     public PlayCharacterPacketHandler(
         ICharacterService characters,
         IMobileService mobiles,
         IDataLoaderService data,
-        IMoongateEventBus events
+        IMoongateEventBus events,
+        ISessionService sessions
     )
     {
         _characters = characters;
         _mobiles = mobiles;
         _data = data;
         _events = events;
+        _sessions = sessions;
     }
 
     public async ValueTask HandleAsync(
@@ -98,8 +102,33 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         }
 
         var character = play.Character;
-        await context.RunOnGameLoopAsync(session => session.Set(SessionKeys.CharacterId, character.Id), cancellationToken)
+        var admitted = false;
+        await context.RunOnGameLoopAsync(
+                         session =>
+                         {
+                             // As ModernUO: one character per account in the world at a time.
+                             if (_sessions.GetAll().Any(other => other.SessionId != session.SessionId &&
+                                                                 other.AccountId == accountId &&
+                                                                 other.CharacterId.IsValid))
+                             {
+                                 return;
+                             }
+
+                             session.Set(SessionKeys.CharacterId, character.Id);
+                             admitted = true;
+                         },
+                         cancellationToken
+                     )
                      .ConfigureAwait(false);
+
+        if (!admitted)
+        {
+            _logger.Information("Account {AccountId} already has a character in the world", accountId);
+            await RefuseAsync(context, PopupMessageType.CharacterInWorld, cancellationToken).ConfigureAwait(false);
+
+            return;
+        }
+
         _mobiles.EnterWorld(character.Id);
 
         foreach (var outgoing in EnterWorldSequence(play))
