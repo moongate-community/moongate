@@ -17,7 +17,19 @@ public sealed class StubMovementService : IMovementService
 
     public bool ThrowMapNotLoaded { get; set; }
 
+    /// <summary>
+    ///     Gets or sets the height a dropped item lands at; null means there is no surface.
+    /// </summary>
+    public int? DropZ { get; set; } = 0;
+
     public List<(MapType Map, Point3D From, DirectionType Direction)> Checks { get; } = [];
+
+    public bool TryGetDropZ(MapType map, int x, int y, int maxZ, out int z)
+    {
+        z = DropZ ?? 0;
+
+        return DropZ is not null;
+    }
 
     public int GetAverageZ(MapType map, int x, int y)
     {
