@@ -41,7 +41,8 @@ public sealed class WhereCommand : ICommandExecutor
 
                 break;
             case TargetResultType.Location:
-                context.Print("{0} ({1}, {2}, {3})", result.Map, result.Location.X, result.Location.Y, result.Location.Z);
+                var spot = result.Location;
+                context.Print("{0} ({1}, {2}, {3})", result.Map, spot.X, spot.Y, spot.Z);
 
                 break;
             default:

@@ -61,6 +61,8 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x1A` | `WorldItemPacket` | Outgoing | Variable, minimum 16 | — |
 | `0xF3` | `WorldItemSaPacket` | Outgoing | 24, or 26 from client 7.0.9.0 | — |
 | `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: bounces the held item back (equipping is not built yet) |
+| `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
+| `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0x12`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 
@@ -147,6 +149,17 @@ walking into range of a ground item, or entering the world near it, get it with 
 new position test as the mobiles. The items on the ground and everything inside them are loaded
 at startup and saved by the world save; they do not decay yet, and a container on the ground
 cannot be opened yet.
+
+`ITargetService` shows a player the target cursor (`0x6C`) and hands the pick to a callback on the
+game loop, or to a command awaiting `RequestAsync`. A player has one target at a time: a new one
+ends the old as overridden, `Cancel` sends `0x6C` with flags 3 and id 0, and a closing session ends
+it as disconnected. Cursor ids count up per session, and a response with another id is ignored.
+The response is resolved as ModernUO does: x and y -1 with no serial is the player's cancel; a
+serial must be a live item or mobile; the ground takes the map's average height, not the client's;
+a static must really be there and gives its top (half the height of a bridge). Range and line of
+sight are left to the caller. In-game commands run detached from the speech packet, so a command
+waiting for a target does not hold back the session's packets; its output arrives when it ends.
+`.where` (game masters) prints what a target picks.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.
 The realm list is filtered by the authenticated account's minimum realm level.
