@@ -14,7 +14,10 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Items;
@@ -29,7 +32,10 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private static readonly Serial Bran = new(0x00000003);
     private static readonly Serial Ground = new(0xFFFFFFFF);
 
-    private readonly ItemService _items = TestItems.Create();
+    private readonly StubLineOfSightService _sight = new();
+    private readonly RecordingWorldViewService _view = new();
+    private readonly ItemService _items;
+    private readonly MobileService _mobiles;
     private readonly StubPacketSendService _sender = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                   .Item(BackpackGraphic, TileFlagType.Container, 0)
@@ -49,6 +55,10 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
 
     public DropRequestPacketHandlerTests()
     {
+        var sectors = TestSectors.Create();
+        _items = TestItems.Create(sectors, new StubMovementService { DropZ = 0 }, _sight);
+        _mobiles = new(new StubMovementService(), sectors);
+        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) });
         _backpack.Equip(Aria, LayerType.Backpack);
         _bag.PutInContainer(_backpack.Id, new Point2D(50, 50));
         _innerBag.PutInContainer(_bag.Id, new Point2D(30, 30));
@@ -217,12 +227,91 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task Handle_OnTheGround_Bounces()
+    public async Task Handle_OnTheGroundNearby_LaysItThereAndShowsIt()
     {
         await HoldingAsync(_coins);
 
-        await DropAsync(_coins.Id, 1496, 1628, Ground);
+        await DropAsync(_coins.Id, 1497, 1628, Ground);
 
+        Assert.Equal((MapType.Trammel, new Point3D(1497, 1628, 0)), (_coins.Map!.Value, _coins.GroundLocation!.Value));
+        Assert.Null(_coins.ContainerId);
+        Assert.Equal([$"Appeared {_coins.Id.Value}"], _view.Calls);
+        Assert.Empty(_sender.Sent);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
+    public async Task Handle_OnTheGroundTooFar_BouncesBackIntoTheContainer()
+    {
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 1500, 1628, Ground);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_OnTheGroundOutOfSight_BouncesBackIntoTheContainer()
+    {
+        _sight.Allow = false;
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 1497, 1628, Ground);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
+    }
+
+    [Fact]
+    public async Task Handle_AHeldGroundItemThatBounces_IsShownAgainWhereItLies()
+    {
+        _items.PlaceOnGround(_pile, MapType.Trammel, new Point3D(1497, 1628, 0));
+        _items.Hide(_pile);
+        await HoldingAsync(_pile);
+
+        await DropAsync(_pile.Id, 1500, 1628, Ground);
+
+        Assert.Equal(new Point3D(1497, 1628, 0), _pile.GroundLocation);
+        Assert.Equal([$"Appeared {_pile.Id.Value}"], _view.Calls);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_AHeldGroundItemIntoTheBackpack_GoesThere()
+    {
+        _items.PlaceOnGround(_pile, MapType.Trammel, new Point3D(1497, 1628, 0));
+        _items.Hide(_pile);
+        await HoldingAsync(_pile);
+
+        await DropAsync(_pile.Id, 80, 70, _backpack.Id);
+
+        AssertAt(_pile, _backpack.Id, new Point2D(80, 70));
+        Assert.Null(_pile.GroundLocation);
+    }
+
+    [Fact]
+    public async Task Handle_OntoAGroundStackNearby_MergesAndRefreshesIt()
+    {
+        _items.PlaceOnGround(_pile, MapType.Trammel, new Point3D(1497, 1628, 0));
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, _pile.Id);
+
+        Assert.Equal(100, _pile.Amount);
+        Assert.False(_items.TryGet(_coins.Id, out _));
+        Assert.Equal([$"Appeared {_pile.Id.Value}"], _view.Calls);
+        Assert.Equal(_coins.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent)).Serial);
+    }
+
+    [Fact]
+    public async Task Handle_OntoAGroundStackTooFar_Bounces()
+    {
+        _items.PlaceOnGround(_pile, MapType.Trammel, new Point3D(1500, 1628, 0));
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, _pile.Id);
+
+        Assert.Equal(70, _pile.Amount);
         AssertAt(_coins, _backpack.Id, new Point2D(44, 65));
     }
 
@@ -319,7 +408,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
                 }
             )
         );
-        var handler = new DropRequestPacketHandler(_items, _tiles, layouts, _sender);
+        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender);
         var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, Destination = destination };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));

@@ -13,7 +13,10 @@ using Moongate.Server.Ultima.Types.Items;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Items;
@@ -23,7 +26,11 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     private static readonly Serial Aria = new(0x00000002);
     private static readonly Serial Bran = new(0x00000003);
 
-    private readonly ItemService _items = TestItems.Create();
+    private readonly StubLineOfSightService _sight = new();
+    private readonly RecordingWorldViewService _view = new();
+    private readonly ItemService _items;
+    private readonly MobileService _mobiles;
+    private readonly ItemEntity _groundGold = Item(0x40000007, 100);
     private readonly StubPacketSendService _sender = new();
     private readonly ItemEntity _backpack = Item(0x40000001, 1);
     private readonly ItemEntity _coins = Item(0x40000002, 250);
@@ -39,6 +46,10 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     public LiftRequestPacketHandlerTests()
     {
+        var sectors = TestSectors.Create();
+        _items = TestItems.Create(sectors, sight: _sight);
+        _mobiles = new(new StubMovementService(), sectors);
+        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) });
         _backpack.Equip(Aria, LayerType.Backpack);
         _coins.PutInContainer(_backpack.Id, new Point2D(44, 65));
         _dagger.PutInContainer(_backpack.Id, new Point2D(60, 80));
@@ -47,6 +58,58 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         _bolts.PutInContainer(_backpack.Id, new Point2D(70, 90));
         _items.Add([_backpack, _coins, _dagger, _otherBackpack, _otherDagger, _bolts]);
         _pool.Serials.Enqueue(new Serial(0x40000100));
+        _items.Add([_groundGold]);
+        _items.PlaceOnGround(_groundGold, MapType.Trammel, new Point3D(1497, 1628, 0));
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemNearby_LiftsItAndTakesItOffEveryScreen()
+    {
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Equal(new HeldItem(_groundGold.Id), _session.Get(ItemSessionKeys.Held));
+        Assert.Equal([$"Disappeared {_groundGold.Id.Value}"], _view.Calls);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_PartOfAGroundStack_LeavesTheRestOnTheGround()
+    {
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 40);
+
+        Assert.True(_items.TryGet(new Serial(0x40000100), out var rest));
+        Assert.Equal((60, _groundGold.GroundLocation), (rest.Amount, rest.GroundLocation));
+        Assert.Equal([$"Appeared {rest.Id.Value}", $"Disappeared {_groundGold.Id.Value}"], _view.Calls);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemTooFar_IsRefusedAndShownAgain()
+    {
+        _items.PlaceOnGround(_groundGold, MapType.Trammel, new Point3D(1499, 1628, 0));
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(LiftRejectReasonType.OutOfRange, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
+        Assert.Equal([$"Appeared {_groundGold.Id.Value}"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemOutOfSight_IsRefused()
+    {
+        _sight.Allow = false;
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(LiftRejectReasonType.OutOfSight, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
     }
 
     [Fact]
@@ -196,7 +259,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private Task LiftAsync(Serial item, int amount)
     {
-        var handler = new LiftRequestPacketHandler(_items, _pool, _tiles, _sender);
+        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new LiftRequestPacket { Item = item, Amount = amount }));
     }

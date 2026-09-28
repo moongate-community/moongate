@@ -7,6 +7,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Data.Events;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
@@ -73,6 +74,26 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         Assert.Equal(["Left 2"], _view.Calls);
         Assert.True(inWorld);
         Assert.False(_mobiles.IsInWorld(_aria.Id));
+    }
+
+    [Fact]
+    public async Task OnSessionClosed_HoldingAGroundItem_PutsItBackAndShowsIt()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var gold = new ItemEntity { Id = new(0x40000050), TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        _items.Add([gold]);
+        _items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1497, 1628, 0));
+        _items.Hide(gold);
+        await fixture.ExecuteOnLoopAsync(() => session.Set(ItemSessionKeys.Held, new(gold.Id)));
+        var service = Service();
+
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+        await service.StopAsync().WaitAsync(Timeout);
+
+        Assert.Contains($"Appeared {gold.Id.Value}", _view.Calls);
+        Assert.True(_items.TryGet(gold.Id, out _));
+        Assert.Empty(_world.Items.Upserted.Where(item => item.Id == gold.Id));
     }
 
     [Fact]

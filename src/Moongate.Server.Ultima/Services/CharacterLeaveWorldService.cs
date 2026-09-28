@@ -4,6 +4,7 @@ using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Data.Events;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Serilog;
@@ -47,6 +48,15 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         if (!session.CharacterId.IsValid || !_mobiles.TryGet(session.CharacterId, out var character))
         {
             return;
+        }
+
+        // A lifted ground item still lies where it was: it goes back before the player's items leave.
+        if (session.Get(ItemSessionKeys.Held) is { } held &&
+            _items.TryGet(held.Item, out var lifted) &&
+            lifted.GroundLocation is not null)
+        {
+            _items.Show(lifted);
+            _view.ItemAppeared(lifted);
         }
 
         var snapshot = character.Snapshot();

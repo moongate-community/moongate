@@ -117,9 +117,12 @@ public sealed class ItemService : IItemService
 
     public bool CanReach(MobileEntity mobile, ItemEntity item)
     {
-        return item.Map == mobile.Map &&
+        // Lying in the grid: a ground item someone holds keeps its location but is out of reach.
+        return item.Map is { } map &&
+               map == mobile.Map &&
                item.GroundLocation is { } spot &&
                IsNear(mobile.Location, spot.X, spot.Y) &&
+               _sectors.GetItemsInRange(map, spot, 0).Any(other => other.Id == item.Id) &&
                Sees(mobile, spot);
     }
 

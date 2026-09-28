@@ -333,6 +333,19 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void CanReach_AGroundItemSomeoneHolds_IsFalse()
+    {
+        var items = TestItems.Create(sight: _sight);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1497, 1628, 10));
+
+        items.Hide(gold);
+
+        Assert.False(items.CanReach(_aria, gold));
+    }
+
+    [Fact]
     public void CanReach_FarOrOnAnotherMapOrNotOnTheGround_IsFalse()
     {
         var items = TestItems.Create(sight: _sight);
