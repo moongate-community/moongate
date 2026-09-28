@@ -16,6 +16,11 @@ public sealed class StubPacketSendService : IPacketSendService
     public INetworkConnection? ExpectedConnection { get; private set; }
     public bool RejectTerminalSend { get; init; }
 
+    /// <summary>
+    ///     Runs after each packet handed to TrySend is recorded.
+    /// </summary>
+    public Action<IOutgoingPacket>? OnSent { get; set; }
+
     public Task StartAsync()
     {
         return Task.CompletedTask;
@@ -36,6 +41,7 @@ public sealed class StubPacketSendService : IPacketSendService
         SentCount++;
         Sent.Add(packet);
         SentSessionIds.Add(sessionId);
+        OnSent?.Invoke(packet);
 
         return true;
     }

@@ -13,6 +13,7 @@ using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Entities;
@@ -337,7 +338,7 @@ public sealed class MobileEntityPersistenceTests
     public async Task WorldSave_WritesTheLiveMobilesAsTheyAreNow()
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);
-        var mobiles = new MobileService(new StubMovementService());
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
         host.Container.RegisterInstance<IMobileService>(mobiles);
         host.Container.AddLiveWorldMobiles();
         await CoreMigrationFiles.ApplyAsync(host.Database, "world");

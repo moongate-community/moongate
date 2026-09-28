@@ -15,7 +15,8 @@ namespace Moongate.Server.Ultima.Handlers.Movement;
 
 /// <summary>
 ///     Moves the session's character one step (0x02): checks the sequence and the speed, then turns or steps it through
-///     <see cref="IMobileService" /> and answers 0x22, or 0x21 with the real position.
+///     <see cref="IMobileService" /> and answers 0x22, or 0x21 with the real position; the players in range see the step or
+///     the turn through <see cref="IWorldViewService" />.
 /// </summary>
 /// <remarks>
 ///     Each step books the next one 400 ms later walking, 200 ms running; a step may come up to 200 ms early, which
@@ -30,12 +31,19 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 
     private readonly ILogger _logger = Log.ForContext<MoveRequestPacketHandler>();
     private readonly IMobileService _mobiles;
+    private readonly IWorldViewService _view;
     private readonly IPacketSendService _sender;
     private readonly TimeProvider _time;
 
-    public MoveRequestPacketHandler(IMobileService mobiles, IPacketSendService sender, TimeProvider time)
+    public MoveRequestPacketHandler(
+        IMobileService mobiles,
+        IWorldViewService view,
+        IPacketSendService sender,
+        TimeProvider time
+    )
     {
         _mobiles = mobiles;
+        _view = view;
         _sender = sender;
         _time = time;
     }
@@ -64,10 +72,13 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
             return;
         }
 
+        var oldLocation = mobile.Location;
+
         if (packet.Direction != mobile.Direction)
         {
             _mobiles.TryMove(mobile, packet.Direction);
             Accept(session, state, mobile, packet.Sequence);
+            _view.Moved(mobile, oldLocation, packet.Running);
 
             return;
         }
@@ -83,6 +94,7 @@ public sealed class MoveRequestPacketHandler : IPacketHandler<MoveRequestPacket>
 
         state.NextStepAt = Math.Max(now, state.NextStepAt) + (packet.Running ? RunDelayMs : WalkDelayMs);
         Accept(session, state, mobile, packet.Sequence);
+        _view.Moved(mobile, oldLocation, packet.Running);
     }
 
     private void Accept(GameSession session, MovementState state, MobileEntity mobile, byte sequence)

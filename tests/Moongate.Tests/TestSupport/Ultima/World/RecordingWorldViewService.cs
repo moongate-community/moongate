@@ -1,0 +1,37 @@
+using Moongate.Core.Geometry;
+using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Interfaces;
+
+namespace Moongate.Tests.TestSupport.Ultima.World;
+
+/// <summary>
+///     Records the calls it gets, in order, as "Entered 2 10", "Moved 2 1496,1628,10 run" and "Left 2", running
+///     <see cref="OnCall" /> first so a test can look at the state at that moment.
+/// </summary>
+public sealed class RecordingWorldViewService : IWorldViewService
+{
+    public List<string> Calls { get; } = [];
+
+    public Action<string>? OnCall { get; set; }
+
+    public void Entered(MobileEntity mobile, long sessionId)
+    {
+        Record($"Entered {mobile.Id.Value} {sessionId}");
+    }
+
+    public void Moved(MobileEntity mobile, Point3D oldLocation, bool running)
+    {
+        Record($"Moved {mobile.Id.Value} {oldLocation.X},{oldLocation.Y},{oldLocation.Z}{(running ? " run" : "")}");
+    }
+
+    public void Left(MobileEntity mobile)
+    {
+        Record($"Left {mobile.Id.Value}");
+    }
+
+    private void Record(string call)
+    {
+        OnCall?.Invoke(call);
+        Calls.Add(call);
+    }
+}

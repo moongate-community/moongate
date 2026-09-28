@@ -5,6 +5,7 @@ using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -12,9 +13,9 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Keeps the live mobiles in the world, moves them over <see cref="IMovementService" />, and hands out virtual
-///     serials for hair and beard the first time they are needed, counting up from <see cref="Serial.MinVirtual" /> as
-///     ModernUO does.
+///     Keeps the live mobiles in the world and in the sector grid of <see cref="ISectorService" />, moves them over
+///     <see cref="IMovementService" />, and hands out virtual serials for hair and beard the first time they are needed,
+///     counting up from <see cref="Serial.MinVirtual" /> as ModernUO does.
 /// </summary>
 public sealed class MobileService : IMobileService
 {
@@ -26,6 +27,7 @@ public sealed class MobileService : IMobileService
     private readonly ConcurrentDictionary<Serial, Serial> _beard = new();
     private readonly ConcurrentDictionary<Serial, MobileEntity> _inWorld = new();
     private readonly IMovementService _movement;
+    private readonly ISectorService _sectors;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
     private long _nextVirtual = Serial.MinVirtual;
 
@@ -33,9 +35,10 @@ public sealed class MobileService : IMobileService
 
     public IReadOnlyCollection<MobileEntity> Mobiles => _inWorld.Values.ToArray();
 
-    public MobileService(IMovementService movement)
+    public MobileService(IMovementService movement, ISectorService sectors)
     {
         _movement = movement;
+        _sectors = sectors;
     }
 
     public Serial HairSerial(Serial mobile)
@@ -50,7 +53,13 @@ public sealed class MobileService : IMobileService
 
     public void EnterWorld(MobileEntity mobile)
     {
+        if (_inWorld.TryGetValue(mobile.Id, out var previous))
+        {
+            _sectors.Remove(previous);
+        }
+
         _inWorld[mobile.Id] = mobile;
+        _sectors.Add(mobile);
     }
 
     public bool TryGet(Serial serial, [NotNullWhen(true)] out MobileEntity? mobile)
@@ -60,7 +69,14 @@ public sealed class MobileService : IMobileService
 
     public bool LeaveWorld(Serial serial)
     {
-        return _inWorld.TryRemove(serial, out _);
+        if (!_inWorld.TryRemove(serial, out var mobile))
+        {
+            return false;
+        }
+
+        _sectors.Remove(mobile);
+
+        return true;
     }
 
     public MoveResultType TryMove(MobileEntity mobile, DirectionType direction)
@@ -92,6 +108,7 @@ public sealed class MobileService : IMobileService
 
         var next = mobile.Location.Move(facing);
         mobile.Location = new(next.X, next.Y, newZ);
+        _sectors.Move(mobile);
 
         return MoveResultType.Moved;
     }
@@ -99,6 +116,11 @@ public sealed class MobileService : IMobileService
     public bool IsInWorld(Serial mobile)
     {
         return _inWorld.ContainsKey(mobile);
+    }
+
+    public MobileFlagsType GetFlags(MobileEntity mobile)
+    {
+        return mobile.Gender == GenderType.Female ? MobileFlagsType.Female : MobileFlagsType.None;
     }
 
     public MobileStatusInfo GetStatus(MobileEntity mobile)

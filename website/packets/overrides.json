@@ -424,6 +424,31 @@
     "notes": "First world-entry packet; initializes the player position and map bounds.",
     "handler": "PlayCharacterPacketHandler: starts the world-entry packet sequence."
   },
+  "0x1D:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Entity to remove from the client."
+      }
+    ],
+    "notes": "Removes an item or mobile from the client view.",
+    "handler": "Outgoing packet emitted by world visibility and item handling"
+  },
   "0x20:outgoing": {
     "category": "World",
     "tags": [
@@ -607,6 +632,87 @@
     ],
     "notes": "Acknowledges an accepted step.",
     "handler": "MoveRequestPacketHandler: acknowledges an accepted step."
+  },
+  "0x77:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Mobile identifier"
+      },
+      {
+        "offset": "5",
+        "name": "Body",
+        "type": "ushort",
+        "size": "2",
+        "description": "Body graphic"
+      },
+      {
+        "offset": "7",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "World X"
+      },
+      {
+        "offset": "9",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "World Y"
+      },
+      {
+        "offset": "11",
+        "name": "Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "World Z"
+      },
+      {
+        "offset": "12",
+        "name": "Direction",
+        "type": "byte",
+        "size": "1",
+        "description": "Facing direction; bit 0x80 marks a run"
+      },
+      {
+        "offset": "13",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Body hue"
+      },
+      {
+        "offset": "15",
+        "name": "Flags",
+        "type": "byte",
+        "size": "1",
+        "description": "Mobile flags (female)"
+      },
+      {
+        "offset": "16",
+        "name": "Notoriety",
+        "type": "enum",
+        "size": "1",
+        "description": "Notoriety"
+      }
+    ],
+    "notes": "Moves or turns a mobile the client already shows.",
+    "handler": "WorldViewService: sent to the players that already saw a mobile when it steps or turns."
   },
   "0x24:outgoing": {
     "category": "Items",
@@ -2198,64 +2304,39 @@
         "name": "Length",
         "type": "ushort",
         "size": "2",
-        "description": "Packet length."
+        "description": "Total packet length in bytes."
       },
       {
         "offset": "3",
-        "name": "Speech type",
-        "type": "enum",
+        "name": "Type",
+        "type": "byte",
         "size": "1",
-        "description": "Speech mode and flags."
+        "description": "Speech type"
       },
       {
         "offset": "4",
         "name": "Hue",
         "type": "ushort",
         "size": "2",
-        "description": "Text hue."
+        "description": "Text hue"
       },
       {
         "offset": "6",
         "name": "Font",
         "type": "ushort",
         "size": "2",
-        "description": "Font identifier."
+        "description": "Font"
       },
       {
         "offset": "8",
         "name": "Text",
         "type": "ascii",
         "size": "variable",
-        "description": "NUL-terminated speech text."
+        "description": "ASCII text, zero terminated"
       }
     ],
-    "notes": "Normal speech is local; dot-prefixed text enters the command system.",
-    "handler": "SpeechRequestPacketHandler: routes speech or executes a command"
-  },
-  "0x1D:outgoing": {
-    "category": "World",
-    "tags": [
-      "World",
-      "Ultima plugin"
-    ],
-    "fields": [
-      {
-        "offset": "0",
-        "name": "Opcode",
-        "type": "byte",
-        "size": "1",
-        "description": "Packet identifier."
-      },
-      {
-        "offset": "1",
-        "name": "Serial",
-        "type": "uint",
-        "size": "4",
-        "description": "Entity to remove from the client."
-      }
-    ],
-    "notes": "Removes an item or mobile from the client view.",
-    "handler": "Outgoing packet emitted by world visibility and item handling"
+    "notes": "Speech typed by the player in ASCII.",
+    "handler": "SpeechRequestPacketHandler: local say or in-game dot command."
   },
   "0xAE:outgoing": {
     "category": "Speech",
@@ -2276,66 +2357,66 @@
         "name": "Length",
         "type": "ushort",
         "size": "2",
-        "description": "Packet length."
+        "description": "Total packet length in bytes."
       },
       {
         "offset": "3",
         "name": "Serial",
         "type": "uint",
         "size": "4",
-        "description": "Speaker serial."
+        "description": "Speaker identifier"
       },
       {
         "offset": "7",
         "name": "Body",
         "type": "ushort",
         "size": "2",
-        "description": "Speaker body."
+        "description": "Speaker body graphic"
       },
       {
         "offset": "9",
-        "name": "Speech type",
-        "type": "enum",
+        "name": "Type",
+        "type": "byte",
         "size": "1",
-        "description": "Speech mode."
+        "description": "Speech type"
       },
       {
         "offset": "10",
         "name": "Hue",
         "type": "ushort",
         "size": "2",
-        "description": "Text hue."
+        "description": "Text hue"
       },
       {
         "offset": "12",
         "name": "Font",
         "type": "ushort",
         "size": "2",
-        "description": "Font identifier."
+        "description": "Font"
       },
       {
         "offset": "14",
         "name": "Language",
         "type": "ascii",
         "size": "4",
-        "description": "Three-letter language code and terminator."
+        "description": "Language code"
       },
       {
         "offset": "18",
         "name": "Name",
-        "type": "byte[]",
+        "type": "ascii",
         "size": "30",
-        "description": "Speaker name, padded to 30 bytes."
+        "description": "Speaker name"
       },
       {
         "offset": "48",
         "name": "Text",
         "type": "byte[]",
         "size": "variable",
-        "description": "Big-endian Unicode text and terminator."
+        "description": "Unicode text (UTF-16 big endian), zero terminated"
       }
     ],
-    "notes": "System speech is sent privately to one client; player speech may be sent to nearby clients.",
-    "handler": "Outgoing packet emitted by speech and MOTD services"
+    "notes": "Shows player speech, private command output or the MOTD in Unicode.",
+    "handler": "Player speech, private command output and MOTD delivery."
   }
 }
