@@ -16,6 +16,17 @@ public sealed class CharacterListBuilderTests
     }
 
     [Fact]
+    public void Names_PendingDeletion_KeepsItsPositionEmpty()
+    {
+        var pending = Character("Carla", 2);
+        pending.DeletionRequestedAt = DateTime.UtcNow;
+
+        var names = CharacterListBuilder.Names([Character("Aaron", 0), pending, Character("Fabio", 6)], 5);
+
+        Assert.Equal(["Aaron", "Fabio", null, null, null], names);
+    }
+
+    [Fact]
     public void Names_CharacterBeyondTheLimit_TakesTheFirstFreeSlot()
     {
         var names = CharacterListBuilder.Names([Character("Far", 6), Character("A", 0)], 5);

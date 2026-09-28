@@ -21,7 +21,8 @@ public interface ICharacterService
     );
 
     /// <summary>
-    ///     Returns the account's active player characters, by slot; characters pending deletion are left out.
+    ///     Returns the account's player characters by slot, those pending deletion included: they keep their slot until
+    ///     removed. <see cref="Characters.CharacterListBuilder" /> leaves them out of the list the client sees.
     /// </summary>
     Task<IReadOnlyList<MobileEntity>> GetCharactersAsync(Serial accountId, CancellationToken cancellationToken = default);
 

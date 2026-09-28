@@ -70,6 +70,14 @@ from display and logs.
 Plugins can add commands through `RegisterCommand<TExecutor>`; see
 [Writing a plugin](plugins.md#console-commands).
 
+### Local API access provisioning
+
+```text
+account api-access <username> <on|off>
+```
+
+Available only in the Login/Standalone local console, even when the caller is an in-game Administrator. Accounts created with `account create` start with API access disabled. Enable an existing Administrator to provision the first panel user; disabling access revokes its administrative sessions across hosts. Game login is unaffected. See [Administration API](admin-api.md).
+
 ## Character
 
 ```text
@@ -78,17 +86,12 @@ character restore <character-serial>
 ```
 
 A character a player deletes from the character list is only marked for deletion:
-it disappears from the list but keeps its slot, and stays restorable for
-`characters.deletion_delay_hours` (default 24). `character pending` lists every
+it disappears from the list but keeps its slot and still counts toward
+`characters.max_per_account`, so on a full account deleting a character does not
+make room for a new one yet. It stays restorable until it is removed; after
+`characters.deletion_delay_hours` (default 24) it becomes eligible for removal,
+by a job that is not built yet. `character pending` lists every
 pending character, or those of one account, with when the deletion was requested
 and when the character becomes eligible for removal. `character restore` cancels
 the deletion; the character appears in the list again at the next login. Serials
 are hexadecimal with `0x` (`0x0000002A`) or decimal.
-
-### Local API access provisioning
-
-```text
-account api-access <username> <on|off>
-```
-
-Available only in the Login/Standalone local console, even when the caller is an in-game Administrator. Accounts created with `account create` start with API access disabled. Enable an existing Administrator to provision the first panel user; disabling access revokes its administrative sessions across hosts. Game login is unaffected. See [Administration API](admin-api.md).

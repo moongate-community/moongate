@@ -98,7 +98,7 @@ best_skills = 3                       # How many of the highest skills pick skil
 
 [characters]
 max_per_account = 7                   # Characters an account may hold: 1, 5, 6 or 7.
-deletion_delay_hours = 24             # Hours a deleted character stays restorable.
+deletion_delay_hours = 24             # Hours before a deleted character may be removed.
 ```
 
 Only the databases for the active role must already exist and accept connections:
