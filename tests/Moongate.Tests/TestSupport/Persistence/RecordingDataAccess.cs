@@ -22,9 +22,39 @@ public sealed class RecordingDataAccess<T> : IDataAccess<T> where T : class, IMo
     /// </summary>
     public Action<T>? OnUpsert { get; set; }
 
+    /// <summary>
+    ///     Gets or sets the next serial <see cref="ReserveSerialAsync" /> hands out.
+    /// </summary>
+    public uint NextSerial { get; set; } = 0x40000100;
+
+    /// <summary>
+    ///     Gets or sets what fails every reservation.
+    /// </summary>
+    public Exception? FailReservations { get; set; }
+
+    /// <summary>
+    ///     Gets how many serials were reserved.
+    /// </summary>
+    public int Reserved { get; private set; }
+
     public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(Upserted.RemoveAll(entity => entity.Id == id) > 0);
+    }
+
+    public Task<Serial> ReserveSerialAsync(CancellationToken cancellationToken = default)
+    {
+        if (FailReservations is not null)
+        {
+            return Task.FromException<Serial>(FailReservations);
+        }
+
+        lock (Upserted)
+        {
+            Reserved++;
+
+            return Task.FromResult(new Serial(NextSerial++));
+        }
     }
 
     public Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)

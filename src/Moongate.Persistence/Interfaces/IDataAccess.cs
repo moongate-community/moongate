@@ -18,6 +18,12 @@ public interface IDataAccess<T> where T : class, IMoongateEntity
     Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default);
 
     /// <summary>
+    ///     Takes the next identity from this entity's sequence without writing a row, for an entity created in memory
+    ///     and saved later. An identity that already has a row is skipped.
+    /// </summary>
+    Task<Serial> ReserveSerialAsync(CancellationToken cancellationToken = default);
+
+    /// <summary>
     ///     Reads all detached entities. This is an intentionally unbounded startup/admin operation.
     /// </summary>
     Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default);

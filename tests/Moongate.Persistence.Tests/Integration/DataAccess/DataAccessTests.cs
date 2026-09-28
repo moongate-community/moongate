@@ -33,6 +33,25 @@ public sealed class DataAccessTests
     }
 
     [Fact]
+    public async Task ReserveSerialAsync_ReturnsIncreasingSerialsThatAutomaticInsertsNeverReuse()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        var store = owner.RegisterEntity<CharacterEntity>();
+        owner.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+
+        var first = await store.ReserveSerialAsync();
+        var second = await store.ReserveSerialAsync();
+        var inserted = new CharacterEntity { Name = "new" };
+        await store.UpsertAsync(inserted);
+
+        Assert.True(first.IsValid);
+        Assert.True(second.Value > first.Value);
+        Assert.True(inserted.Id.Value > second.Value);
+    }
+
+    [Fact]
     public async Task UpsertAsync_AutomaticId_DoesNotOverwriteExplicitIdentity()
     {
         await using var database = await _postgres.CreateDatabaseAsync();

@@ -272,6 +272,12 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
                                         token
                                     )
                                     .ConfigureAwait(false);
+
+                                foreach (var source in group)
+                                {
+                                    source.Committed();
+                                }
+
                                 savedCount += targetCount;
                                 _logger.Information(
                                     "PostgreSQL snapshot committed for {Target}: {EntityCount} entities in {ElapsedMilliseconds} ms",
@@ -318,7 +324,8 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
     internal DataAccess<T> RegisterEntity<T>(
         Func<IEnumerable<T>>? source = null,
         Func<T, T>? snapshot = null,
-        PersistenceDatabaseTarget? target = null
+        PersistenceDatabaseTarget? target = null,
+        IPersistenceDeletionSource? deletions = null
     ) where T : class, IMoongateEntity
     {
         lock (_registrationSync)
@@ -328,6 +335,11 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
             if (source is null != snapshot is null)
             {
                 throw new ArgumentException("A live source requires an explicit snapshot function.");
+            }
+
+            if (deletions is not null && source is null)
+            {
+                throw new ArgumentException("A deletion source requires a live source.");
             }
 
             _registry.RegisterEntity(typeof(T), target);
@@ -341,7 +353,7 @@ public sealed class MoongatePersistenceService : IAsyncDisposable
 
             if (source is not null)
             {
-                _sources.Add(new PersistenceEntityRegistration<T>(source, snapshot!));
+                _sources.Add(new PersistenceEntityRegistration<T>(source, snapshot!, deletions));
             }
 
             return new(this);
