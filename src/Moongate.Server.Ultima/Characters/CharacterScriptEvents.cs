@@ -62,4 +62,23 @@ public static class CharacterScriptEvents
             ["z"] = character.Z
         };
     }
+
+    /// <summary>
+    ///     The fields of <c>character_left_world</c>: the character's serial, account and name, and where it left.
+    /// </summary>
+    public static IReadOnlyDictionary<string, object?> CharacterLeftWorld(CharacterLeftWorldEvent evt)
+    {
+        var character = evt.Character;
+
+        return new Dictionary<string, object?>
+        {
+            ["serial"] = (long)character.Id.Value,
+            ["account_id"] = character.AccountId is { } account ? (long)account.Value : null,
+            ["name"] = character.Name,
+            ["map"] = character.Map,
+            ["x"] = character.X,
+            ["y"] = character.Y,
+            ["z"] = character.Z
+        };
+    }
 }

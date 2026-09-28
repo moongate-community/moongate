@@ -63,4 +63,22 @@ public sealed class CharacterScriptEventsTests
             fields
         );
     }
+
+    [Fact]
+    public void CharacterLeftWorld_MapsSerialAccountNameAndLocation()
+    {
+        var character = new MobileEntity
+        {
+            Id = new(0x00000002), AccountId = new Serial(0x2A), Name = "Aria", Map = MapType.Trammel,
+            Location = new Point3D(1497, 1628, 12)
+        };
+
+        var fields = CharacterScriptEvents.CharacterLeftWorld(new CharacterLeftWorldEvent(character));
+
+        Assert.Equal(2L, fields["serial"]);
+        Assert.Equal(0x2AL, fields["account_id"]);
+        Assert.Equal("Aria", fields["name"]);
+        Assert.Equal(MapType.Trammel, fields["map"]);
+        Assert.Equal((1497, 1628, 12), ((int)fields["x"]!, (int)fields["y"]!, (int)fields["z"]!));
+    }
 }
