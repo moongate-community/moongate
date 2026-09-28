@@ -6,7 +6,9 @@ using Moongate.Server.Ultima.Interfaces.Motd;
 
 namespace Moongate.Server.Ultima.Services.Motd;
 
-/// <summary>Expands registered variables in a single pass over the original template.</summary>
+/// <summary>
+///     Expands registered variables in a single pass over the original template.
+/// </summary>
 public sealed class MotdRenderer
 {
     private readonly IMotdVariableRegistry _variables;

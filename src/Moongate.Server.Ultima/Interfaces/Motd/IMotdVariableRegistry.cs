@@ -7,15 +7,23 @@ namespace Moongate.Server.Ultima.Interfaces.Motd;
 /// </summary>
 public interface IMotdVariableRegistry
 {
-    /// <summary>Returns whether a variable is registered.</summary>
+    /// <summary>
+    ///     Returns whether a variable is registered.
+    /// </summary>
     bool Contains(string name);
 
-    /// <summary>Closes registration after all plugins have registered.</summary>
+    /// <summary>
+    ///     Closes registration after all plugins have registered.
+    /// </summary>
     void Freeze();
 
-    /// <summary>Registers a uniquely named variable resolver.</summary>
+    /// <summary>
+    ///     Registers a uniquely named variable resolver.
+    /// </summary>
     void Register(string name, Func<MotdContext, CancellationToken, ValueTask<string>> resolver);
 
-    /// <summary>Resolves one variable for the current character entry.</summary>
+    /// <summary>
+    ///     Resolves one variable for the current character entry.
+    /// </summary>
     ValueTask<string> ResolveAsync(string name, MotdContext context, CancellationToken cancellationToken);
 }

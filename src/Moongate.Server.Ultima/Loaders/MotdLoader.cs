@@ -11,7 +11,9 @@ using Serilog;
 
 namespace Moongate.Server.Ultima.Loaders;
 
-/// <summary>Loads and validates the optional MOTD before characters may enter the world.</summary>
+/// <summary>
+///     Loads and validates the optional MOTD before characters may enter the world.
+/// </summary>
 public sealed class MotdLoader : IDataLoader<MotdLine>
 {
     private readonly DirectoriesConfig _directories;

@@ -2,7 +2,9 @@ using System.Text.RegularExpressions;
 
 namespace Moongate.Server.Ultima.Services.Motd;
 
-/// <summary>Recognizes complete MOTD variable tokens in the original template text.</summary>
+/// <summary>
+///     Recognizes complete MOTD variable tokens in the original template text.
+/// </summary>
 public static partial class MotdTemplateTokens
 {
     [GeneratedRegex(@"\$\{([^}]*)\}", RegexOptions.CultureInvariant)]

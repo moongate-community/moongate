@@ -12,7 +12,9 @@ using Serilog;
 
 namespace Moongate.Server.Ultima.Services.Motd;
 
-/// <summary>Renders and queues the MOTD only for the character's original game connection.</summary>
+/// <summary>
+///     Renders and queues the MOTD only for the character's original game connection.
+/// </summary>
 public sealed class MotdService : IMotdService
 {
     private static readonly Hue MessageHue = new(0x03B2);
