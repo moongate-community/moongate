@@ -42,4 +42,25 @@ public sealed class CharacterScriptEventsTests
             fields
         );
     }
+
+    [Fact]
+    public void CharacterEnteredWorld_MapsSerialAccountNameAndLocation()
+    {
+        var character = new MobileEntity
+        {
+            Id = new(0x0002), AccountId = new Serial(42), Name = "Aria", Map = MapType.Trammel,
+            Location = new Point3D(1496, 1628, 10)
+        };
+
+        var fields = CharacterScriptEvents.CharacterEnteredWorld(new CharacterEnteredWorldEvent(character));
+
+        Assert.Equal(
+            new Dictionary<string, object?>
+            {
+                ["serial"] = 2L, ["account_id"] = 42L, ["name"] = "Aria", ["map"] = MapType.Trammel, ["x"] = 1496,
+                ["y"] = 1628, ["z"] = 10
+            },
+            fields
+        );
+    }
 }

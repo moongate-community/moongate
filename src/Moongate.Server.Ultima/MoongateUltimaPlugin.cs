@@ -163,6 +163,10 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 "character_deletion_requested",
                 CharacterScriptEvents.CharacterDeletionRequested
             );
+            container.AddScriptEvent<CharacterEnteredWorldEvent>(
+                "character_entered_world",
+                CharacterScriptEvents.CharacterEnteredWorld
+            );
             container.RegisterCommand<CharacterCommand>(
                 "character",
                 "Pending character deletions: character pending [account-serial]; character restore <character-serial>.",
