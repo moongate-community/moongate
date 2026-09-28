@@ -199,7 +199,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddLiveWorldMobiles();
-            container.AddPersistenceWorld<ItemEntity>();
+            container.AddLiveWorldItems();
 
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
             // After the loaders: the maps come from data/maps.toml.

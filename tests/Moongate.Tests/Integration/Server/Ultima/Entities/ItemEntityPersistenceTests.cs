@@ -7,9 +7,13 @@ using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Persistence;
+using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Ultima.Types;
 using Npgsql;
 
@@ -245,5 +249,35 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
             exception is PostgresException || exception.InnerException is PostgresException,
             exception.ToString()
         );
+    }
+
+    [Fact]
+    public async Task WorldSave_WritesTheLiveItemsAsTheyAreNow()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = new ItemService();
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService()));
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Map = MapType.Trammel };
+        await mobiles.UpsertAsync(aria);
+        var backpack = new ItemEntity { TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(aria.Id, LayerType.Backpack);
+        await data.UpsertAsync(backpack);
+        var coins = new ItemEntity { TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        coins.PutInContainer(backpack.Id, new Point2D(44, 65));
+        await data.UpsertAsync(coins);
+        items.Add([backpack, coins]);
+        coins.Amount = 7;
+        coins.PutInContainer(backpack.Id, new Point2D(90, 90));
+
+        await host.Owner.SaveAllAsync();
+
+        var stored = (await data.GetByIdAsync(coins.Id))!;
+        Assert.Equal((7, new Point2D(90, 90)), (stored.Amount, stored.GridLocation!.Value));
     }
 }

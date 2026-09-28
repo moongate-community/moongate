@@ -22,6 +22,9 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     private readonly Container _events = new();
     private readonly MobileService _mobiles = new(new StubMovementService());
     private readonly RecordingDataAccess<MobileEntity> _data = new();
+    private readonly ItemService _items = new();
+    private readonly RecordingDataAccess<ItemEntity> _itemData = new();
+    private readonly List<Serial> _saveOrder = [];
     private readonly List<CharacterLeftWorldEvent> _left = [];
     private readonly MobileEntity _aria = new()
     {
@@ -87,6 +90,47 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task OnSessionClosed_RemovesTheCharactersItemsAndSavesThemAfterTheCharacter()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var (backpack, coin, ground) = CarriedItems();
+        _data.OnUpsert = mobile => _saveOrder.Add(mobile.Id);
+        _itemData.OnUpsert = item => _saveOrder.Add(item.Id);
+        var service = Service();
+
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+        await service.StopAsync().WaitAsync(Timeout);
+
+        Assert.Equal([ground], _items.Items);
+        Assert.Equal(_aria.Id, _saveOrder[0]);
+        Assert.Equal([backpack.Id, coin.Id], _saveOrder.Skip(1).Order());
+        Assert.All(_itemData.Upserted, saved => Assert.NotSame(backpack, saved));
+    }
+
+    [Fact]
+    public async Task OnSessionClosed_AFailedItemSave_StillSavesTheOthersAndPublishes()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var (backpack, coin, _) = CarriedItems();
+        _itemData.OnUpsert = item =>
+        {
+            if (item.Id == backpack.Id)
+            {
+                throw new InvalidOperationException("database down");
+            }
+        };
+        var service = Service();
+
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+        await service.StopAsync().WaitAsync(Timeout);
+
+        Assert.Equal([coin.Id], _itemData.Upserted.Select(item => item.Id));
+        Assert.Single(_left);
+    }
+
+    [Fact]
     public async Task OnSessionClosed_WithoutACharacter_DoesNothing()
     {
         await using var fixture = await SessionFixture.CreateAsync();
@@ -126,6 +170,19 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         return session;
     }
 
+    private (ItemEntity Backpack, ItemEntity Coin, ItemEntity Ground) CarriedItems()
+    {
+        var backpack = new ItemEntity { Id = new(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        backpack.Equip(_aria.Id, LayerType.Backpack);
+        var coin = new ItemEntity { Id = new(0x40000002), TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        coin.PutInContainer(backpack.Id, new Point2D(44, 65));
+        var ground = new ItemEntity { Id = new(0x40000003), TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        ground.PlaceOnGround(MapType.Trammel, new Point3D(1, 1, 0));
+        _items.Add([backpack, coin, ground]);
+
+        return (backpack, coin, ground);
+    }
+
     private CharacterLeaveWorldService Service()
     {
         _events.RegisterMoongateEventBus();
@@ -141,6 +198,6 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
             }
         );
 
-        return new(_mobiles, _data, bus);
+        return new(_mobiles, _data, _items, _itemData, bus);
     }
 }
