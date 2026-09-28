@@ -33,6 +33,7 @@ using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Handlers.Characters;
+using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces;
@@ -124,6 +125,24 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterIncomingPacket<DeleteCharacterPacket>();
             container.RegisterIncomingPacket<PlayCharacterPacket>();
             container.RegisterPacketHandler<PlayCharacterPacket, PlayCharacterPacketHandler>();
+
+            // Sent by the client right after it enters the world; recognised so it is not disconnected.
+            container.RegisterIncomingPacket<MoveRequestPacket>();
+            container.RegisterPacketHandler<MoveRequestPacket, IgnoredPacketHandler<MoveRequestPacket>>();
+            container.RegisterIncomingPacket<UseRequestPacket>();
+            container.RegisterPacketHandler<UseRequestPacket, IgnoredPacketHandler<UseRequestPacket>>();
+            container.RegisterIncomingPacket<LookRequestPacket>();
+            container.RegisterPacketHandler<LookRequestPacket, IgnoredPacketHandler<LookRequestPacket>>();
+            container.RegisterIncomingPacket<MobileQueryPacket>();
+            container.RegisterPacketHandler<MobileQueryPacket, IgnoredPacketHandler<MobileQueryPacket>>();
+            container.RegisterIncomingPacket<WarModeRequestPacket>();
+            container.RegisterPacketHandler<WarModeRequestPacket, IgnoredPacketHandler<WarModeRequestPacket>>();
+            container.RegisterIncomingPacket<UpdateRangePacket>();
+            container.RegisterPacketHandler<UpdateRangePacket, IgnoredPacketHandler<UpdateRangePacket>>();
+            container.RegisterIncomingPacket<ExtendedCommandPacket>();
+            container.RegisterPacketHandler<ExtendedCommandPacket, IgnoredPacketHandler<ExtendedCommandPacket>>();
+            container.RegisterIncomingPacket<QueryPropertiesPacket>();
+            container.RegisterPacketHandler<QueryPropertiesPacket, IgnoredPacketHandler<QueryPropertiesPacket>>();
             container.RegisterAsyncPacketHandler<DeleteCharacterPacket, DeleteCharacterPacketHandler>();
             container.RegisterAsyncPacketHandler<CreateCharacterPacket, CreateCharacterPacketHandler>();
             container.RegisterAsyncPacketHandler<CreateCharacterEnhancedPacket, CreateCharacterEnhancedPacketHandler>();
