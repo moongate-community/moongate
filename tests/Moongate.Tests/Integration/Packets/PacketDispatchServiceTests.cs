@@ -1,6 +1,9 @@
 using DryIoc;
 using Moongate.Network.Packets.General;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Core.Primitives;
+using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Sessions;
@@ -10,6 +13,7 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Tests.Support.GameLoop;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Sessions;
 
 namespace Moongate.Tests.Integration.Packets;
 
@@ -232,6 +236,46 @@ public sealed class PacketDispatchServiceTests
         Assert.Equal(0, invoked);
         await dispatcher.StopAsync();
         Assert.False(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));
+    }
+
+    [Fact]
+    public async Task Disconnect_TellsTheSessionClosedListenersOnTheLoopBeforeRemovingTheSession()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        using var container = CreateContainer();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        var listener = new RecordingSessionClosedListener(fixture.Loop, sessions);
+        container.RegisterInstance<ISessionClosedListener>(listener);
+        var dispatcher = CreateDispatcher(fixture, sessions, container);
+        await dispatcher.StartAsync();
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, new Serial(2)));
+
+        await dispatcher.DisconnectAsync(session.SessionId).WaitAsync(Timeout);
+
+        Assert.Equal((session.SessionId, new Serial(2), true, true), Assert.Single(listener.Closed));
+        Assert.False(sessions.TryGet(session.SessionId, out _));
+        await dispatcher.StopAsync();
+    }
+
+    [Fact]
+    public async Task Disconnect_AThrowingListener_StillRetiresTheSession()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        using var container = CreateContainer();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        var listener = new RecordingSessionClosedListener(fixture.Loop, sessions) { Throw = new InvalidOperationException("listener") };
+        container.RegisterInstance<ISessionClosedListener>(listener);
+        var dispatcher = CreateDispatcher(fixture, sessions, container);
+        await dispatcher.StartAsync();
+
+        await dispatcher.DisconnectAsync(session.SessionId).WaitAsync(Timeout);
+
+        Assert.Single(listener.Closed);
+        Assert.False(sessions.TryGet(session.SessionId, out _));
+        Assert.False(fixture.Loop.Completion.IsCompleted);
+        await dispatcher.StopAsync();
     }
 
     private static Container CreateContainer()
