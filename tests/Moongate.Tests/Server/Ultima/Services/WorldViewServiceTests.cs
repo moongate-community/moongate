@@ -151,6 +151,22 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void Left_WithoutHavingEntered_StillRemovesItFromThoseInRange()
+    {
+        // In the grid but never registered: its session closed between the two login passes on the loop.
+        var aria = Mobile(2, 1496, 1628);
+        _mobiles.EnterWorld(aria);
+        Enter(3, 1500, 1628, BorisSession);
+        ClearSent();
+
+        _view.Left(aria);
+
+        var remove = Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(aria.Id, remove.Serial);
+        Assert.Equal([BorisSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
     public void Left_AnUnknownMobile_SendsNothing()
     {
         _view.Left(Mobile(9, 1496, 1628));

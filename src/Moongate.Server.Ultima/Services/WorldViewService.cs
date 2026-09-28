@@ -93,11 +93,8 @@ public sealed class WorldViewService : IWorldViewService
 
     public void Left(MobileEntity mobile)
     {
-        if (!_sessions.Remove(mobile.Id))
-        {
-            return;
-        }
-
+        // Told even when it never registered: others may have seen it between the two login passes on the loop.
+        _sessions.Remove(mobile.Id);
         var remove = new RemoveEntityPacket(mobile.Id);
 
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))

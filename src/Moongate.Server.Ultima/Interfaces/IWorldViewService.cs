@@ -24,8 +24,8 @@ public interface IWorldViewService
     void Moved(MobileEntity mobile, Point3D oldLocation, bool running);
 
     /// <summary>
-    ///     Removes the player from the screens in range and forgets its session; call it while the mobile is still in the
-    ///     sector grid.
+    ///     Removes the mobile from the screens in range, registered or not, and forgets its session; call it while the
+    ///     mobile is still in the sector grid.
     /// </summary>
     void Left(MobileEntity mobile);
 }

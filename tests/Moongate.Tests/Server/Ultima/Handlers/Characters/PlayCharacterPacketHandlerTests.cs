@@ -90,6 +90,25 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     }
 
     [Fact]
+    public async Task HandleAsync_TheSessionClosesDuringTheSequence_NeitherShowsThePlayerNorPublishesTheEvent()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        sender.OnSent = packet =>
+        {
+            if (packet is CurrentTimePacket)
+            {
+                fixture.Client.CloseAsync().GetAwaiter().GetResult();
+            }
+        };
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender).HandleAsync(context, Packet(0), CancellationToken.None);
+
+        Assert.Empty(_view.Calls);
+        Assert.Empty(_entered);
+    }
+
+    [Fact]
     public async Task HandleAsync_TellsTheClientTheMapSizeAndSeason()
     {
         await using var fixture = await SessionFixture.CreateAsync();
