@@ -20,6 +20,8 @@ using Moongate.Server.Ultima;
 using Moongate.Tests.TestSupport.Directories;
 
 using Moongate.Server.Ultima.Packets.General;
+using Moongate.Server.Ultima.Handlers.Movement;
+using Moongate.Server.Ultima.Handlers.General;
 
 namespace Moongate.Tests.Server.Bootstrap.Internal;
 
@@ -121,6 +123,9 @@ public sealed class ServerRoleRegistrationTests
                 ],
                 packet => Assert.Contains(packet, container.Resolve<PacketHandlerRegistry>().Registrations.Keys)
             );
+            Assert.True(container.IsRegistered<MoveRequestPacketHandler>());
+            Assert.False(container.IsRegistered<IgnoredPacketHandler<MoveRequestPacket>>());
+            Assert.Contains(typeof(MoveRequestPacket), container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
             Assert.Contains(
                 "character_created",
                 container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(registration => registration.Name)
