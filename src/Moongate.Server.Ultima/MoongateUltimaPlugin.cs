@@ -1,5 +1,6 @@
 using DryIoc;
 using Moongate.Core.Directories;
+using Moongate.Core.Extensions.Container;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Network.Packets.General;
@@ -10,6 +11,7 @@ using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Plugins;
+using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
@@ -172,6 +174,14 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 "character_entered_world",
                 CharacterScriptEvents.CharacterEnteredWorld
             );
+            container.AddScriptEvent<CharacterLeftWorldEvent>(
+                "character_left_world",
+                CharacterScriptEvents.CharacterLeftWorld
+            );
+            // Between the packet dispatcher (60), which closes the sessions, and the world save (40): stopping waits for
+            // the leave saves before the final save and persistence shut down.
+            container.AddMoongateService<CharacterLeaveWorldService>(50);
+            container.RegisterMapping<ISessionClosedListener, CharacterLeaveWorldService>();
             container.RegisterCommand<CharacterCommand>(
                 "character",
                 "Pending character deletions: character pending [account-serial]; character restore <character-serial>.",

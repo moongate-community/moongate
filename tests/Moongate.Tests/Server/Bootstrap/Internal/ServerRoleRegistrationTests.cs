@@ -5,6 +5,7 @@ using Moongate.Persistence.Extensions;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Data.Realms;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Hosting;
@@ -17,11 +18,13 @@ using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima;
+using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Directories;
 
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Handlers.Movement;
 using Moongate.Server.Ultima.Handlers.General;
+using Moongate.Server.Core.Interfaces.Sessions;
 
 namespace Moongate.Tests.Server.Bootstrap.Internal;
 
@@ -122,6 +125,13 @@ public sealed class ServerRoleRegistrationTests
                     typeof(ClientTypePacket), typeof(PublicHouseContentPacket)
                 ],
                 packet => Assert.Contains(packet, container.Resolve<PacketHandlerRegistry>().Registrations.Keys)
+            );
+            // The host registers the event bus; this test container does not.
+            container.RegisterMoongateEventBus();
+            Assert.IsType<CharacterLeaveWorldService>(Assert.Single(container.ResolveMany<ISessionClosedListener>()));
+            Assert.Contains(
+                "character_left_world",
+                container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(registration => registration.Name)
             );
             Assert.True(container.IsRegistered<MoveRequestPacketHandler>());
             Assert.False(container.IsRegistered<IgnoredPacketHandler<MoveRequestPacket>>());
