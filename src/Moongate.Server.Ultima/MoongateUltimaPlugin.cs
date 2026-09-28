@@ -208,6 +208,12 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterMapping<ICharacterLeaveWorldService, CharacterLeaveWorldService>();
             container.Register<ITargetService, TargetService>(Reuse.Singleton);
             container.RegisterMapping<ISessionClosedListener, ITargetService>();
+            container.RegisterCommand<WhereCommand>(
+                "where",
+                "Shows what you target: its serial, or the map and location of a spot.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster
+            );
             container.RegisterCommand<CharacterCommand>(
                 "character",
                 "Pending character deletions: character pending [account-serial]; character restore <character-serial>.",
