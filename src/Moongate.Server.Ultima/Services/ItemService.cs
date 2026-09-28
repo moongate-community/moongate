@@ -13,6 +13,7 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class ItemService : IItemService
 {
     private readonly ConcurrentDictionary<Serial, ItemEntity> _items = new();
+    private readonly ConcurrentDictionary<Serial, Serial?> _tombstones = new();
 
     public IReadOnlyCollection<ItemEntity> Items => _items.Values.ToArray();
 
@@ -74,5 +75,40 @@ public sealed class ItemService : IItemService
     public void MoveToContainer(ItemEntity item, Serial container, Point2D position)
     {
         item.PutInContainer(container, position);
+    }
+
+    public ItemEntity Split(ItemEntity item, int amount, Serial serial)
+    {
+        var rest = item.Snapshot();
+        rest.Id = serial;
+        rest.Amount = item.Amount - amount;
+        item.Amount = amount;
+        _items[rest.Id] = rest;
+
+        return rest;
+    }
+
+    public void Absorb(ItemEntity item)
+    {
+        _tombstones[item.Id] = GetOwner(item);
+        _items.TryRemove(item.Id, out _);
+    }
+
+    public IReadOnlyCollection<Serial> TombstonesOf(Serial owner)
+    {
+        return _tombstones.Where(pair => pair.Value == owner).Select(pair => pair.Key).ToArray();
+    }
+
+    public IReadOnlyCollection<Serial> Capture()
+    {
+        return _tombstones.Keys.ToArray();
+    }
+
+    public void Committed(IReadOnlyCollection<Serial> serials)
+    {
+        foreach (var serial in serials)
+        {
+            _tombstones.TryRemove(serial, out _);
+        }
     }
 }

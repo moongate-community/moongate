@@ -280,4 +280,27 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         var stored = (await data.GetByIdAsync(coins.Id))!;
         Assert.Equal((7, new Point2D(90, 90)), (stored.Amount, stored.GridLocation!.Value));
     }
+
+    [Fact]
+    public async Task WorldSave_DeletesTheItemsAbsorbedIntoOtherStacks()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = new ItemService();
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService()));
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var gold = new ItemEntity { TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        gold.PlaceOnGround(MapType.Trammel, new Point3D(1, 1, 0));
+        await data.UpsertAsync(gold);
+        items.Add([gold]);
+
+        items.Absorb(gold);
+        await host.Owner.SaveAllAsync();
+
+        Assert.Null(await data.GetByIdAsync(gold.Id));
+        Assert.Empty(((IPersistenceDeletionSource)items).Capture());
+    }
 }
