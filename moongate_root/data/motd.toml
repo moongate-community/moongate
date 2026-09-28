@@ -1,5 +1,6 @@
 # Lines are sent privately when a character enters the world.
 # Variables use the ${variable_name} syntax; plugins may register more.
 lines = [
-    "Welcome to Moongate!",
+    "Welcome ${player_name} to ${server_name} (${codename} ${version})!",
+    "Realm: ${realm_name} — players online: ${users_online}",
 ]

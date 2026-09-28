@@ -42,12 +42,14 @@ using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Handlers.Movement;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Motd;
 
 namespace Moongate.Server.Ultima;
 
@@ -106,6 +108,9 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
         if ((mode & ServerMode.Game) != 0)
         {
+            container.Register<IMotdVariableRegistry, MotdVariableRegistry>(Reuse.Singleton);
+            MotdRenderer.RegisterBuiltins(container.Resolve<IMotdVariableRegistry>());
+            container.Register<MotdRenderer>(Reuse.Singleton);
             container.AddUltimaDataLoader<MapLoader, MapContent>(0);
             container.AddUltimaDataLoader<StartingCitiesLoader, StartingCityContent>(1);
             container.AddUltimaDataLoader<SkillsLoader, SkillContent>(2);

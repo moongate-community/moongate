@@ -19,6 +19,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Tests.TestSupport.Directories;
 
 using Moongate.Server.Ultima.Packets.General;
@@ -46,6 +47,7 @@ public sealed class ServerRoleRegistrationTests
         ServerRoleRegistration.Register(container, config, directories);
 
         Assert.Equal("Moongate", container.Resolve<RealmInstance>().Descriptor.Name);
+        Assert.Equal("Città di Luna", container.Resolve<MotdServerIdentity>().ServerName);
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
@@ -70,6 +72,7 @@ public sealed class ServerRoleRegistrationTests
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginServerService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginPacketHandlerRegistry>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IDataLoaderService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<MotdServerIdentity>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());
         Assert.True(container.IsRegistered<RedisConnectionService>());
         Assert.True(container.IsRegistered<IRealmCatalog>());

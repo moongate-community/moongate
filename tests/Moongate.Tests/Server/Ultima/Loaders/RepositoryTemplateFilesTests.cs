@@ -18,7 +18,9 @@ public sealed class RepositoryTemplateFilesTests
     [Fact]
     public async Task ShippedMotd_Loads()
     {
-        var loader = new MotdLoader(Directories(), new MotdVariableRegistry());
+        var registry = new MotdVariableRegistry();
+        MotdRenderer.RegisterBuiltins(registry);
+        var loader = new MotdLoader(Directories(), registry);
 
         Assert.NotEmpty((await loader.LoadDataAsync()).Entities);
     }

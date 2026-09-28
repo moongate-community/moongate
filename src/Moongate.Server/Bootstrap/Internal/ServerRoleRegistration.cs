@@ -28,6 +28,7 @@ using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Ultima;
 using Moongate.Server.Ultima.Handlers.General;
+using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Handlers.Login;
 
 namespace Moongate.Server.Bootstrap.Internal;
@@ -116,6 +117,7 @@ internal static class ServerRoleRegistration
 
     private static void RegisterGame(Container container, MoongateServerConfig config, DirectoriesConfig directories)
     {
+        container.RegisterInstance(new MotdServerIdentity(config.Shard.ShardName));
         container.RegisterInstance(config.WorldSave.ToOptions());
         container.RegisterInstance(config.Scripting.ToOptions(directories["scripts"]));
         container.RegisterInstance(new GameLoopOptions());
