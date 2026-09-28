@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
@@ -12,6 +13,17 @@ namespace Moongate.Tests.Server.Services.Commands;
 
 public sealed class CommandSystemServiceTests
 {
+    [Fact]
+    public void Register_ThroughProductionContainer_ResolvesCommandService()
+    {
+        using var container = new Container();
+        container.Register<CommandRegistry>(Reuse.Singleton);
+
+        container.AddMoongateService<ICommandSystemService, CommandSystemService>();
+
+        Assert.IsType<CommandSystemService>(container.Resolve<ICommandSystemService>());
+    }
+
     [Fact]
     public async Task ExecuteAsync_BeforeStartAndAfterStopIsRejected()
     {

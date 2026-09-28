@@ -30,7 +30,7 @@ public sealed class CommandSystemService : ICommandSystemService
     {
     }
 
-    public CommandSystemService(CommandRegistry registry, IResolverContext resolver, ILogger logger)
+    internal CommandSystemService(CommandRegistry registry, IResolverContext resolver, ILogger logger)
     {
         _registry = registry;
         _resolver = resolver;
