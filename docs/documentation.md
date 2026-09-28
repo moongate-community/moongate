@@ -46,6 +46,13 @@ It preserves the original files, including NuGet smoke-test markers and code exa
 The importer also copies `scripts/install.sh` to `website/public/install.sh`, which the site
 serves at `https://moongate.sh/install.sh`. Edit the script, never the copy.
 
+The packet reference at `/packets/` is an Astro route. `npm run dev` and `npm run build`
+regenerate `website/src/generated/packets.json` from the C# registry and attributed Ultima
+packet types, then merge it with `website/packets/overrides.json`. The generated JSON is
+ignored by Git. Each packet needs an override keyed by `opcode:direction` (for example
+`0xBD:incoming`); subcommands use IDs such as `0xBF/0x08:outgoing`. Build fails when
+either source has an entry the other lacks. The dump requires the .NET 10 SDK.
+
 The [Test coverage](test-coverage.md) page is filled from the coverage report in
 `artifacts/coverage` (or `MOONGATE_COVERAGE_DIR`): the importer replaces the
 `<!-- coverage-summary -->` marker with the per-assembly table and copies the HTML

@@ -1,5 +1,8 @@
 # Packets and handlers
 
+Browse the [interactive packet reference](/packets/) for every registered packet, its wire
+structure, direction, size, handler summary, and source file.
+
 `Moongate.Network.Packets` defines wire formats independently of TCP and the game
 server. `PacketRegistry` describes frames and decodes incoming packets;
 `IPacketHandler<TPacket>` supplies synchronous game behavior, while

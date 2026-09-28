@@ -1,0 +1,2182 @@
+{
+  "0x02:incoming": {
+    "category": "Movement",
+    "tags": [
+      "Movement",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Direction",
+        "type": "bitfield",
+        "size": "1",
+        "description": "Direction and running flag"
+      },
+      {
+        "offset": "2",
+        "name": "Sequence",
+        "type": "byte",
+        "size": "1",
+        "description": "Movement sequence"
+      },
+      {
+        "offset": "3",
+        "name": "Fast walk key",
+        "type": "uint",
+        "size": "4",
+        "description": "Client walk key."
+      }
+    ],
+    "notes": "Turns or steps the character. The high direction bit marks running.",
+    "handler": "MoveRequestPacketHandler: turns or steps the character, answered with 0x22 or 0x21"
+  },
+  "0x05:incoming": {
+    "category": "Combat",
+    "tags": [
+      "Combat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Target serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Requested attack target."
+      }
+    ],
+    "notes": "Recognized and ignored until combat handling is available.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0x06:incoming": {
+    "category": "Items",
+    "tags": [
+      "Items",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Target serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Item or mobile selected by the client."
+      }
+    ],
+    "notes": "A double click opens a carried container when its graphic has the Container flag.",
+    "handler": "UseRequestPacketHandler: opens a container the character carries"
+  },
+  "0x07:incoming": {
+    "category": "Items",
+    "tags": [
+      "Items",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Item serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Item to lift"
+      },
+      {
+        "offset": "5",
+        "name": "Amount",
+        "type": "ushort",
+        "size": "2",
+        "description": "Requested stack amount."
+      }
+    ],
+    "notes": "Only a whole carried item can be lifted. Rejection sends 0x27.",
+    "handler": "LiftRequestPacketHandler: picks up a whole item the character carries"
+  },
+  "0x08:incoming": {
+    "category": "Items",
+    "tags": [
+      "Items",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Item serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Held item"
+      },
+      {
+        "offset": "5",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Target X coordinate"
+      },
+      {
+        "offset": "7",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Target Y coordinate"
+      },
+      {
+        "offset": "9",
+        "name": "Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Target Z coordinate"
+      },
+      {
+        "offset": "10",
+        "name": "Grid index",
+        "type": "byte",
+        "size": "1",
+        "description": "Grid position"
+      },
+      {
+        "offset": "11",
+        "name": "Destination serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Target object."
+      }
+    ],
+    "notes": "Drops a held item into a carried container; invalid destinations bounce it back.",
+    "handler": "DropRequestPacketHandler: drops the held item into a carried container"
+  },
+  "0x09:incoming": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Target serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Object to inspect."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0x11:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Mobile serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Character identifier"
+      },
+      {
+        "offset": "7",
+        "name": "Name",
+        "type": "ascii",
+        "size": "30",
+        "description": "Fixed ASCII name"
+      },
+      {
+        "offset": "37",
+        "name": "Hits",
+        "type": "ushort",
+        "size": "2",
+        "description": "Current hit points"
+      },
+      {
+        "offset": "39",
+        "name": "Max hits",
+        "type": "ushort",
+        "size": "2",
+        "description": "Maximum hit points"
+      },
+      {
+        "offset": "41",
+        "name": "Can rename",
+        "type": "bool",
+        "size": "1",
+        "description": "Renaming permission"
+      },
+      {
+        "offset": "42",
+        "name": "Status version",
+        "type": "byte",
+        "size": "1",
+        "description": "Status layout version"
+      },
+      {
+        "offset": "43",
+        "name": "Attributes",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Stats and extended status values."
+      }
+    ],
+    "notes": "Version 5 status payload; fields after the basic header depend on the status version.",
+    "handler": "PlayCharacterPacketHandler: sends the player status in the world-entry sequence."
+  },
+  "0x12:incoming": {
+    "category": "Chat",
+    "tags": [
+      "Chat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Command payload",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Text command bytes."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0x13:incoming": {
+    "category": "Items",
+    "tags": [
+      "Items",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Item serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Item to equip"
+      },
+      {
+        "offset": "5",
+        "name": "Layer",
+        "type": "byte",
+        "size": "1",
+        "description": "Equipment layer"
+      },
+      {
+        "offset": "6",
+        "name": "Mobile serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Target character."
+      }
+    ],
+    "notes": "Equipping is pending; the server returns the held item to its container.",
+    "handler": "EquipRequestPacketHandler: bounces the held item back (equipping is not built yet)"
+  },
+  "0x1B:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Player identifier"
+      },
+      {
+        "offset": "9",
+        "name": "Body",
+        "type": "ushort",
+        "size": "2",
+        "description": "Body graphic"
+      },
+      {
+        "offset": "11",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "World X coordinate"
+      },
+      {
+        "offset": "13",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "World Y coordinate"
+      },
+      {
+        "offset": "15",
+        "name": "Z",
+        "type": "short",
+        "size": "2",
+        "description": "World Z coordinate"
+      },
+      {
+        "offset": "17",
+        "name": "Direction",
+        "type": "byte",
+        "size": "1",
+        "description": "Facing direction"
+      },
+      {
+        "offset": "27",
+        "name": "Map width",
+        "type": "ushort",
+        "size": "2",
+        "description": "Map width"
+      },
+      {
+        "offset": "29",
+        "name": "Map height",
+        "type": "ushort",
+        "size": "2",
+        "description": "Map height."
+      }
+    ],
+    "notes": "First world-entry packet; initializes the player position and map bounds.",
+    "handler": "PlayCharacterPacketHandler: starts the world-entry packet sequence."
+  },
+  "0x20:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Player identifier"
+      },
+      {
+        "offset": "5",
+        "name": "Body",
+        "type": "ushort",
+        "size": "2",
+        "description": "Body graphic"
+      },
+      {
+        "offset": "8",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Body hue"
+      },
+      {
+        "offset": "10",
+        "name": "Flags",
+        "type": "bitfield",
+        "size": "1",
+        "description": "Mobile flags"
+      },
+      {
+        "offset": "11",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "World X"
+      },
+      {
+        "offset": "13",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "World Y"
+      },
+      {
+        "offset": "17",
+        "name": "Direction",
+        "type": "byte",
+        "size": "1",
+        "description": "Facing direction"
+      },
+      {
+        "offset": "18",
+        "name": "Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "World Z."
+      }
+    ],
+    "notes": "Updates the player mobile after world entry.",
+    "handler": "PlayCharacterPacketHandler: sends the player mobile update during world entry."
+  },
+  "0x21:outgoing": {
+    "category": "Movement",
+    "tags": [
+      "Movement",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Sequence",
+        "type": "byte",
+        "size": "1",
+        "description": "Rejected sequence"
+      },
+      {
+        "offset": "2",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Actual X coordinate"
+      },
+      {
+        "offset": "4",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Actual Y coordinate"
+      },
+      {
+        "offset": "6",
+        "name": "Direction",
+        "type": "byte",
+        "size": "1",
+        "description": "Actual facing"
+      },
+      {
+        "offset": "7",
+        "name": "Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "Actual Z coordinate."
+      }
+    ],
+    "notes": "Refuses a step and restores the client to the server position.",
+    "handler": "MoveRequestPacketHandler: rejects the step and restores the server position."
+  },
+  "0x22:incoming": {
+    "category": "Movement",
+    "tags": [
+      "Movement",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Request data",
+        "type": "byte[]",
+        "size": "2",
+        "description": "Resynchronization payload."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0x22:outgoing": {
+    "category": "Movement",
+    "tags": [
+      "Movement",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Sequence",
+        "type": "byte",
+        "size": "1",
+        "description": "Accepted sequence"
+      },
+      {
+        "offset": "2",
+        "name": "Notoriety",
+        "type": "enum",
+        "size": "1",
+        "description": "Current notoriety."
+      }
+    ],
+    "notes": "Acknowledges an accepted step.",
+    "handler": "MoveRequestPacketHandler: acknowledges an accepted step."
+  },
+  "0x24:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Items",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Container serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Opened container"
+      },
+      {
+        "offset": "5",
+        "name": "Gump",
+        "type": "ushort",
+        "size": "2",
+        "description": "Container display layout"
+      },
+      {
+        "offset": "7",
+        "name": "Container type",
+        "type": "ushort",
+        "size": "2",
+        "description": "Present in the nine-byte variant."
+      }
+    ],
+    "notes": "Seven bytes for older clients; nine bytes from client 7.0.9.0. This version-dependent packet has no on-wire length header.",
+    "handler": "UseRequestPacketHandler: opens the carried container gump."
+  },
+  "0x25:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Items",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Item serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Item identifier"
+      },
+      {
+        "offset": "5",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item graphic"
+      },
+      {
+        "offset": "8",
+        "name": "Amount",
+        "type": "ushort",
+        "size": "2",
+        "description": "Stack amount"
+      },
+      {
+        "offset": "10",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "Container X position"
+      },
+      {
+        "offset": "12",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "Container Y position"
+      },
+      {
+        "offset": "14",
+        "name": "Grid index",
+        "type": "byte",
+        "size": "1",
+        "description": "Present in newer client format"
+      },
+      {
+        "offset": "15",
+        "name": "Container serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Parent container"
+      },
+      {
+        "offset": "19",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item hue."
+      }
+    ],
+    "notes": "Twenty bytes before client 6.0.1.7; newer clients receive a grid byte. This version-dependent packet has no on-wire length header.",
+    "handler": "Item handlers: refresh the item after a lift or drop, or bounce it back."
+  },
+  "0x27:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Items",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Reason",
+        "type": "enum",
+        "size": "1",
+        "description": "Lift rejection reason."
+      }
+    ],
+    "notes": "Rejects a lift; the host may also send an item update to restore its position.",
+    "handler": "LiftRequestPacketHandler: reports why a lift was refused."
+  },
+  "0x34:incoming": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Query data",
+        "type": "byte[]",
+        "size": "9",
+        "description": "Mobile query payload."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0x3C:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Items",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Item count",
+        "type": "ushort",
+        "size": "2",
+        "description": "Number of entries"
+      },
+      {
+        "offset": "5",
+        "name": "Items",
+        "type": "loop",
+        "size": "variable",
+        "description": "Repeated container item entries."
+      }
+    ],
+    "notes": "Each item uses 19 bytes, or 20 with the grid byte for newer clients.",
+    "handler": "UseRequestPacketHandler: sends the opened container contents."
+  },
+  "0x4E:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Target mobile"
+      },
+      {
+        "offset": "5",
+        "name": "Light level",
+        "type": "byte",
+        "size": "1",
+        "description": "Personal light."
+      }
+    ],
+    "notes": "Sets the light level for one mobile.",
+    "handler": "PlayCharacterPacketHandler: sends personal light during world entry."
+  },
+  "0x4F:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Light level",
+        "type": "byte",
+        "size": "1",
+        "description": "Global light."
+      }
+    ],
+    "notes": "Sets ambient world light.",
+    "handler": "PlayCharacterPacketHandler: sends global light during world entry."
+  },
+  "0x53:outgoing": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Message type",
+        "type": "enum",
+        "size": "1",
+        "description": "Popup message code."
+      }
+    ],
+    "notes": "Sent before disconnect when character creation is refused or fails.",
+    "handler": "Game: sent before disconnecting when character creation is refused or fails"
+  },
+  "0x55:outgoing": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      }
+    ],
+    "notes": "Marks completion of login and world entry.",
+    "handler": "PlayCharacterPacketHandler: ends the world-entry sequence."
+  },
+  "0x5B:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Hour",
+        "type": "byte",
+        "size": "1",
+        "description": "Hour"
+      },
+      {
+        "offset": "2",
+        "name": "Minute",
+        "type": "byte",
+        "size": "1",
+        "description": "Minute"
+      },
+      {
+        "offset": "3",
+        "name": "Second",
+        "type": "byte",
+        "size": "1",
+        "description": "Second."
+      }
+    ],
+    "notes": "Sets the in-game clock on world entry.",
+    "handler": "PlayCharacterPacketHandler: sends the in-game time during world entry."
+  },
+  "0x5D:incoming": {
+    "category": "Characters",
+    "tags": [
+      "Characters",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Name",
+        "type": "ascii",
+        "size": "30",
+        "description": "Selected character name"
+      },
+      {
+        "offset": "33",
+        "name": "Client flags",
+        "type": "bitfield",
+        "size": "4",
+        "description": "Client feature flags"
+      },
+      {
+        "offset": "41",
+        "name": "Login count",
+        "type": "uint",
+        "size": "4",
+        "description": "Client login count"
+      },
+      {
+        "offset": "61",
+        "name": "Slot index",
+        "type": "uint",
+        "size": "4",
+        "description": "Selected slot."
+      }
+    ],
+    "notes": "Selects a character slot and starts world entry.",
+    "handler": "PlayCharacterPacketHandler: brings the chosen character into the world"
+  },
+  "0x72:incoming": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "War mode",
+        "type": "bool",
+        "size": "1",
+        "description": "Requested combat stance"
+      },
+      {
+        "offset": "2",
+        "name": "Trailing bytes",
+        "type": "byte[]",
+        "size": "3",
+        "description": "Protocol padding."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0x72:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "War mode",
+        "type": "bool",
+        "size": "1",
+        "description": "Whether combat stance is enabled"
+      },
+      {
+        "offset": "2",
+        "name": "Trailing bytes",
+        "type": "byte[]",
+        "size": "3",
+        "description": "Fixed protocol bytes."
+      }
+    ],
+    "notes": "Tells the client its current war mode.",
+    "handler": "PlayCharacterPacketHandler: sends peace mode during world entry."
+  },
+  "0x73:both": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Sequence",
+        "type": "byte",
+        "size": "1",
+        "description": "Ping sequence echoed by the host."
+      }
+    ],
+    "notes": "Bidirectional keepalive packet.",
+    "handler": "Game: PingPacketHandler; Login: LoginRolePingPacketHandler"
+  },
+  "0x78:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Mobile serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Mobile identifier"
+      },
+      {
+        "offset": "7",
+        "name": "Body",
+        "type": "ushort",
+        "size": "2",
+        "description": "Body graphic"
+      },
+      {
+        "offset": "9",
+        "name": "X",
+        "type": "ushort",
+        "size": "2",
+        "description": "World X"
+      },
+      {
+        "offset": "11",
+        "name": "Y",
+        "type": "ushort",
+        "size": "2",
+        "description": "World Y"
+      },
+      {
+        "offset": "13",
+        "name": "Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "World Z"
+      },
+      {
+        "offset": "14",
+        "name": "Direction",
+        "type": "byte",
+        "size": "1",
+        "description": "Facing direction"
+      },
+      {
+        "offset": "15",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Body hue"
+      },
+      {
+        "offset": "18",
+        "name": "Notoriety",
+        "type": "enum",
+        "size": "1",
+        "description": "Notoriety"
+      },
+      {
+        "offset": "19",
+        "name": "Worn items",
+        "type": "loop",
+        "size": "variable",
+        "description": "Equipment entries terminated by zero serial."
+      }
+    ],
+    "notes": "Introduces the mobile and its worn items; ends with a zero serial.",
+    "handler": "PlayCharacterPacketHandler: sends the player and worn items during world entry."
+  },
+  "0x80:incoming": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Account",
+        "type": "ascii",
+        "size": "30",
+        "description": "Account name"
+      },
+      {
+        "offset": "31",
+        "name": "Password",
+        "type": "ascii",
+        "size": "30",
+        "description": "Password"
+      },
+      {
+        "offset": "61",
+        "name": "Next login key",
+        "type": "byte",
+        "size": "1",
+        "description": "Login handshake byte."
+      }
+    ],
+    "notes": "Checks credentials and returns a realm list or denial.",
+    "handler": "Login: async account check, then 0xA8 list or 0x82 denial"
+  },
+  "0x82:outgoing": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Reason",
+        "type": "enum",
+        "size": "1",
+        "description": "Denial reason."
+      }
+    ],
+    "notes": "Rejects login with a reason code.",
+    "handler": "AccountLoginPacketHandler: denies a failed account login."
+  },
+  "0x83:incoming": {
+    "category": "Characters",
+    "tags": [
+      "Characters",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Password bytes",
+        "type": "byte[]",
+        "size": "30",
+        "description": "Password field"
+      },
+      {
+        "offset": "31",
+        "name": "Slot index",
+        "type": "uint",
+        "size": "4",
+        "description": "Character slot."
+      }
+    ],
+    "notes": "Marks the selected character for deletion.",
+    "handler": "DeleteCharacterPacketHandler: marks the character for deletion"
+  },
+  "0x85:outgoing": {
+    "category": "Characters",
+    "tags": [
+      "Characters",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Result",
+        "type": "enum",
+        "size": "1",
+        "description": "Deletion result code."
+      }
+    ],
+    "notes": "Reports the result of a deletion request.",
+    "handler": "DeleteCharacterPacketHandler: reports the result of a deletion request."
+  },
+  "0x86:outgoing": {
+    "category": "Characters",
+    "tags": [
+      "Characters",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Character count",
+        "type": "byte",
+        "size": "1",
+        "description": "Number of slots"
+      },
+      {
+        "offset": "4",
+        "name": "Characters",
+        "type": "loop",
+        "size": "variable",
+        "description": "Fixed-width character entries."
+      }
+    ],
+    "notes": "Updates character slots without a full city list.",
+    "handler": "Character list update response after a character slot changes."
+  },
+  "0x8C:outgoing": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "IPv4 address",
+        "type": "byte[]",
+        "size": "4",
+        "description": "Realm address"
+      },
+      {
+        "offset": "5",
+        "name": "Port",
+        "type": "ushort",
+        "size": "2",
+        "description": "Realm port"
+      },
+      {
+        "offset": "7",
+        "name": "Auth key",
+        "type": "uint",
+        "size": "4",
+        "description": "One-use handoff key."
+      }
+    ],
+    "notes": "Redirects to the selected realm after ticket issue.",
+    "handler": "Login: sent after a valid 0xA0, before closing the login connection"
+  },
+  "0x8D:incoming": {
+    "category": "Characters",
+    "tags": [
+      "Characters",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Character slot",
+        "type": "uint",
+        "size": "4",
+        "description": "Requested slot"
+      },
+      {
+        "offset": "7",
+        "name": "Name",
+        "type": "ascii",
+        "size": "30",
+        "description": "Character name"
+      },
+      {
+        "offset": "67",
+        "name": "Profession",
+        "type": "byte",
+        "size": "1",
+        "description": "Profession choice"
+      },
+      {
+        "offset": "68",
+        "name": "Starting city",
+        "type": "byte",
+        "size": "1",
+        "description": "City index"
+      },
+      {
+        "offset": "69",
+        "name": "Gender",
+        "type": "enum",
+        "size": "1",
+        "description": "Gender choice"
+      },
+      {
+        "offset": "70",
+        "name": "Race",
+        "type": "enum",
+        "size": "1",
+        "description": "Race choice"
+      },
+      {
+        "offset": "71",
+        "name": "Strength",
+        "type": "byte",
+        "size": "1",
+        "description": "Chosen strength"
+      },
+      {
+        "offset": "72",
+        "name": "Dexterity",
+        "type": "byte",
+        "size": "1",
+        "description": "Chosen dexterity"
+      },
+      {
+        "offset": "73",
+        "name": "Intelligence",
+        "type": "byte",
+        "size": "1",
+        "description": "Chosen intelligence"
+      },
+      {
+        "offset": "74",
+        "name": "Skin hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Appearance hue"
+      },
+      {
+        "offset": "84",
+        "name": "Skills",
+        "type": "loop",
+        "size": "8",
+        "description": "Four skill and value pairs"
+      },
+      {
+        "offset": "92",
+        "name": "Appearance",
+        "type": "byte[]",
+        "size": "54",
+        "description": "Hair and clothing choices."
+      }
+    ],
+    "notes": "Enhanced Client creation request. Only the current 146-byte layout is parsed.",
+    "handler": "CreateCharacterEnhancedPacketHandler: creates and saves the character and starting items"
+  },
+  "0x91:incoming": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Auth key",
+        "type": "uint",
+        "size": "4",
+        "description": "Handoff key"
+      },
+      {
+        "offset": "5",
+        "name": "Account",
+        "type": "ascii",
+        "size": "30",
+        "description": "Account name"
+      },
+      {
+        "offset": "35",
+        "name": "Password",
+        "type": "ascii",
+        "size": "30",
+        "description": "Password."
+      }
+    ],
+    "notes": "Consumes the one-use handoff ticket and starts the game session.",
+    "handler": "Game: validates and consumes the one-use handoff ticket, then sends 0xB9 and 0xA9"
+  },
+  "0xA0:incoming": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Server index",
+        "type": "ushort",
+        "size": "2",
+        "description": "Selected realm."
+      }
+    ],
+    "notes": "Selects an eligible live realm.",
+    "handler": "Login: checks realm eligibility, issues ticket and redirects"
+  },
+  "0xA8:outgoing": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "System info",
+        "type": "byte",
+        "size": "1",
+        "description": "Client system flag"
+      },
+      {
+        "offset": "4",
+        "name": "Server count",
+        "type": "ushort",
+        "size": "2",
+        "description": "Number of realms"
+      },
+      {
+        "offset": "6",
+        "name": "Servers",
+        "type": "loop",
+        "size": "variable",
+        "description": "Repeated server entries."
+      }
+    ],
+    "notes": "Lists realms eligible for the authenticated account.",
+    "handler": "AccountLoginPacketHandler: sends eligible realms after authentication."
+  },
+  "0xA9:outgoing": {
+    "category": "Characters",
+    "tags": [
+      "Characters",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Character count",
+        "type": "byte",
+        "size": "1",
+        "description": "Number of slots"
+      },
+      {
+        "offset": "4",
+        "name": "Characters",
+        "type": "loop",
+        "size": "variable",
+        "description": "Character slot records followed by city records and flags."
+      }
+    ],
+    "notes": "Sends saved characters and starting cities after game login.",
+    "handler": "GameLoginPacketHandler: sends saved characters and starting cities."
+  },
+  "0xAD:incoming": {
+    "category": "Chat",
+    "tags": [
+      "Chat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Speech payload",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Speech mode and Unicode text."
+      }
+    ],
+    "notes": "Recognized by the Ultima plugin; packet handler status follows the current server registration.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0xB5:incoming": {
+    "category": "Chat",
+    "tags": [
+      "Chat",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Chat data",
+        "type": "byte[]",
+        "size": "63",
+        "description": "Fixed chat window payload."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0xB9:outgoing": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Feature flags",
+        "type": "bitfield",
+        "size": "4",
+        "description": "Locked feature mask."
+      }
+    ],
+    "notes": "Enables client features after game login.",
+    "handler": "Game: sent after a valid 0x91"
+  },
+  "0xBC:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Season",
+        "type": "enum",
+        "size": "1",
+        "description": "Season identifier"
+      },
+      {
+        "offset": "2",
+        "name": "Play sound",
+        "type": "bool",
+        "size": "1",
+        "description": "Whether the client plays the season sound."
+      }
+    ],
+    "notes": "Sets the displayed season.",
+    "handler": "PlayCharacterPacketHandler: sends the season during world entry."
+  },
+  "0xBD:incoming": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Version",
+        "type": "ascii",
+        "size": "variable",
+        "description": "Client version string."
+      }
+    ],
+    "notes": "Records the client version on the session.",
+    "handler": "ClientVersionPacketHandler: records the client version on the session"
+  },
+  "0xBD:outgoing": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Packet length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Fixed value of three bytes."
+      }
+    ],
+    "notes": "Requests the client version.",
+    "handler": "Login host: requests the client version before further processing."
+  },
+  "0xBF/0x08:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "ushort",
+        "size": "2",
+        "description": "Value 0x08"
+      },
+      {
+        "offset": "5",
+        "name": "Map",
+        "type": "enum",
+        "size": "1",
+        "description": "Map identifier."
+      }
+    ],
+    "notes": "Extended command subcommand 0x08 changes the client map.",
+    "handler": "PlayCharacterPacketHandler: sends the selected map during world entry."
+  },
+  "0xBF:incoming": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Subcommand",
+        "type": "ushort",
+        "size": "2",
+        "description": "Extended command identifier"
+      },
+      {
+        "offset": "5",
+        "name": "Payload",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Subcommand data."
+      }
+    ],
+    "notes": "Recognized and ignored for now; outgoing 0xBF/0x08 is a separate map subcommand.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0xC8:incoming": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Range",
+        "type": "byte",
+        "size": "1",
+        "description": "Requested update range."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0xD6:incoming": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Query data",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Property query payload."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0xD9:incoming": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Client type",
+        "type": "byte",
+        "size": "1",
+        "description": "Client family"
+      },
+      {
+        "offset": "2",
+        "name": "Instance ID",
+        "type": "uint",
+        "size": "4",
+        "description": "Client instance"
+      },
+      {
+        "offset": "6",
+        "name": "OS version",
+        "type": "byte[]",
+        "size": "12",
+        "description": "Major minor and revision values"
+      },
+      {
+        "offset": "18",
+        "name": "Hardware details",
+        "type": "byte[]",
+        "size": "250",
+        "description": "CPU memory display and video data."
+      }
+    ],
+    "notes": "Recognized and ignored for now; hardware data is not stored.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0xE1:incoming": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Total packet length in bytes."
+      },
+      {
+        "offset": "3",
+        "name": "Client type payload",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Client identifier data."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0xEF:incoming": {
+    "category": "Login",
+    "tags": [
+      "Login",
+      "Built-in"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Seed",
+        "type": "uint",
+        "size": "4",
+        "description": "Connection seed"
+      },
+      {
+        "offset": "5",
+        "name": "Major",
+        "type": "uint",
+        "size": "4",
+        "description": "Major version"
+      },
+      {
+        "offset": "9",
+        "name": "Minor",
+        "type": "uint",
+        "size": "4",
+        "description": "Minor version"
+      },
+      {
+        "offset": "13",
+        "name": "Revision",
+        "type": "uint",
+        "size": "4",
+        "description": "Revision"
+      },
+      {
+        "offset": "17",
+        "name": "Patch",
+        "type": "uint",
+        "size": "4",
+        "description": "Patch version."
+      }
+    ],
+    "notes": "Records the client version when sent on login listeners.",
+    "handler": "LoginSeedPacketHandler; on login listeners it also records the client version, which the handoff ticket carries to the game session"
+  },
+  "0xF8:incoming": {
+    "category": "Characters",
+    "tags": [
+      "Characters",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "10",
+        "name": "Name",
+        "type": "ascii",
+        "size": "30",
+        "description": "Character name"
+      },
+      {
+        "offset": "42",
+        "name": "Client flags",
+        "type": "bitfield",
+        "size": "4",
+        "description": "Client flags"
+      },
+      {
+        "offset": "54",
+        "name": "Profession",
+        "type": "byte",
+        "size": "1",
+        "description": "Profession choice"
+      },
+      {
+        "offset": "70",
+        "name": "Gender and race",
+        "type": "bitfield",
+        "size": "1",
+        "description": "Combined choice"
+      },
+      {
+        "offset": "71",
+        "name": "Strength",
+        "type": "byte",
+        "size": "1",
+        "description": "Chosen strength"
+      },
+      {
+        "offset": "72",
+        "name": "Dexterity",
+        "type": "byte",
+        "size": "1",
+        "description": "Chosen dexterity"
+      },
+      {
+        "offset": "73",
+        "name": "Intelligence",
+        "type": "byte",
+        "size": "1",
+        "description": "Chosen intelligence"
+      },
+      {
+        "offset": "74",
+        "name": "Skills",
+        "type": "loop",
+        "size": "8",
+        "description": "Four skill and value pairs"
+      },
+      {
+        "offset": "82",
+        "name": "Skin hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Appearance hue"
+      },
+      {
+        "offset": "84",
+        "name": "Appearance",
+        "type": "byte[]",
+        "size": "22",
+        "description": "Hair beard clothing and city choices."
+      }
+    ],
+    "notes": "ClassicUO character creation request. Raw choices are validated before saving.",
+    "handler": "CreateCharacterPacketHandler: creates and saves the character and starting items"
+  },
+  "0xFB:incoming": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "House data",
+        "type": "byte[]",
+        "size": "1",
+        "description": "Public house content flag."
+      }
+    ],
+    "notes": "Recognized and ignored for now.",
+    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  }
+}
