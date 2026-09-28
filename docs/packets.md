@@ -159,6 +159,8 @@ serial must be a live item or mobile; the ground takes the map's average height,
 a static must really be there and gives its top (half the height of a bridge). Range and line of
 sight are left to the caller. In-game commands run detached from the speech packet, so a command
 waiting for a target does not hold back the session's packets; its output arrives when it ends.
+A player runs one command at a time: another one meanwhile is refused with "A command is already
+running."
 `.where` (game masters) prints what a target picks.
 
 The same opcode can have different definitions in each direction, as with `0xBD`.

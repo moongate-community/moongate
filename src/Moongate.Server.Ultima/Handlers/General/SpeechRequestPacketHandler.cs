@@ -29,7 +29,7 @@ public sealed class SpeechRequestPacketHandler :
     private static readonly Hue ErrorHue = new(0x0021);
 
     private readonly ILogger _logger = Log.ForContext<SpeechRequestPacketHandler>();
-    private readonly ConcurrentDictionary<Task, byte> _running = new();
+    private readonly ConcurrentDictionary<long, Task> _running = new();
     private readonly ICommandSystemService _commands;
     private readonly ISessionService _sessions;
     private readonly IMobileService _mobiles;
@@ -135,7 +135,15 @@ public sealed class SpeechRequestPacketHandler :
             return;
         }
 
-        Track(RunCommandAsync(context, text[1..], invoker));
+        // One command at a time per session, as when commands held the session's packets.
+        if (_running.TryGetValue(invoker.SessionId, out var running) && !running.IsCompleted)
+        {
+            context.TrySend(SpeechMessageHelper.CreateSystem("A command is already running.", WarningHue));
+
+            return;
+        }
+
+        Track(invoker.SessionId, RunCommandAsync(context, text[1..], invoker));
     }
 
     /// <summary>
@@ -143,7 +151,7 @@ public sealed class SpeechRequestPacketHandler :
     /// </summary>
     internal Task WaitForCommandsAsync()
     {
-        return Task.WhenAll(_running.Keys);
+        return Task.WhenAll(_running.Values);
     }
 
     // Detached from the packet: a command waiting for the player, such as for a target, must not hold back the
@@ -180,9 +188,9 @@ public sealed class SpeechRequestPacketHandler :
         }
     }
 
-    private void Track(Task task)
+    private void Track(long sessionId, Task task)
     {
-        _running[task] = 0;
-        task.ContinueWith(done => _running.TryRemove(done, out _), TaskScheduler.Default);
+        _running[sessionId] = task;
+        task.ContinueWith(done => _running.TryRemove(new(sessionId, done)), TaskScheduler.Default);
     }
 }

@@ -156,6 +156,24 @@ public sealed class SpeechRequestPacketHandlerTests
     }
 
     [Fact]
+    public async Task Handle_ASecondCommandWhileOneRuns_IsRefused()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".wait"), CancellationToken.None);
+        await fixture.DelayedExecutor.Started.WaitAsync(TimeSpan.FromSeconds(5));
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".help"), CancellationToken.None);
+
+        Assert.Equal(
+            "A command is already running.",
+            Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent)).Text
+        );
+        fixture.DelayedExecutor.Release();
+        await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
     public async Task Handle_ASlowCommand_DoesNotHoldTheSessionAndRepliesWhenItEnds()
     {
         await using var fixture = await SpeechHandlerFixture.CreateAsync();

@@ -82,14 +82,20 @@ public sealed class TargetResponsePacketHandler : IPacketHandler<TargetResponseP
             return TargetResult.ForLocation(map, new Point3D(packet.X, packet.Y, z));
         }
 
-        // As ModernUO's StaticTarget: the static must be there, and the spot is its top (half a bridge's height).
+        // As ModernUO's StaticTarget: the static clicked must be there, at the height clicked (its base, or its top
+        // from High Seas clients), and the spot is its top (half a bridge's height).
         foreach (var tile in _maps.GetStatics(map, packet.X, packet.Y))
         {
-            if (tile.Id == packet.Graphic)
+            if (tile.Id != packet.Graphic)
             {
-                var top = tile.Z + _tiles.GetItem(tile.Id).StandHeight;
+                continue;
+            }
 
-                return TargetResult.ForLocation(map, new Point3D(packet.X, packet.Y, top));
+            var item = _tiles.GetItem(tile.Id);
+
+            if (tile.Z == packet.Z || tile.Z + item.Height == packet.Z)
+            {
+                return TargetResult.ForLocation(map, new Point3D(packet.X, packet.Y, tile.Z + item.StandHeight));
             }
         }
 

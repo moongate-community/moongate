@@ -161,6 +161,29 @@ public sealed class TargetServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task RequestAsync_WhenAReplacedCallbackStartsAnotherTarget_TheTokenLeavesThatOneAlone()
+    {
+        await StartAsync();
+        // The target the request replaces starts a new one from its callback.
+        await OnLoopAsync(
+            () => _targets.Begin(
+                _session,
+                TargetCursorType.Location,
+                TargetFlagsType.Neutral,
+                (session, _) => _targets.Begin(session, TargetCursorType.Location, TargetFlagsType.Neutral, Record)
+            )
+        );
+        using var cancellation = new CancellationTokenSource();
+        var request = _targets.RequestAsync(_session, TargetCursorType.Location, TargetFlagsType.Neutral, cancellation.Token);
+        Assert.Equal(TargetCancelType.Overridden, (await request.WaitAsync(Timeout)).CancelReason);
+
+        await cancellation.CancelAsync();
+        await OnLoopAsync(() => { });
+
+        Assert.Empty(_results);
+    }
+
+    [Fact]
     public async Task RequestAsync_SessionCloses_CompletesAsDisconnected()
     {
         await StartAsync();

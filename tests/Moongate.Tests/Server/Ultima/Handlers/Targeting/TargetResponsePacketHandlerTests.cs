@@ -95,6 +95,23 @@ public sealed class TargetResponsePacketHandlerTests : IAsyncDisposable
         Assert.Equal(new Point3D(6, 6, 8), Assert.Single(_results).Location);
     }
 
+    [Theory]
+    [InlineData(20, 26)]
+    [InlineData(26, 26)]
+    [InlineData(0, 6)]
+    public async Task Handle_TwoStaticsWithTheSameGraphic_TakesTheOneClicked(sbyte clickedZ, int expectedZ)
+    {
+        // Two floors of one graphic; High Seas clients send the top of a surface, older ones its base.
+        _tiles.Item(0x0B34, TileFlagType.Surface, 6);
+        _map.AddStatic(6, 6, 0x0B34, 0);
+        _map.AddStatic(6, 6, 0x0B34, 20);
+        await PendingAsync();
+
+        await RespondAsync(1, 0, 6, 6, clickedZ, 0x0B34);
+
+        Assert.Equal(new Point3D(6, 6, expectedZ), Assert.Single(_results).Location);
+    }
+
     [Fact]
     public async Task Handle_AStaticThatIsNotThere_Cancels()
     {
