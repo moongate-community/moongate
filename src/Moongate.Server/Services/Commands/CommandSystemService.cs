@@ -19,16 +19,22 @@ public sealed class CommandSystemService : ICommandSystemService
     private readonly Lock _gate = new();
     private readonly CommandRegistry _registry;
     private readonly IResolverContext _resolver;
-    private readonly ILogger _logger = Log.ForContext<CommandSystemService>();
+    private readonly ILogger _logger;
 
     private FrozenDictionary<string, BoundCommand> _commands = FrozenDictionary<string, BoundCommand>.Empty;
     private bool _running;
     private bool _stopped;
 
     public CommandSystemService(CommandRegistry registry, IResolverContext resolver)
+        : this(registry, resolver, Log.ForContext<CommandSystemService>())
+    {
+    }
+
+    public CommandSystemService(CommandRegistry registry, IResolverContext resolver, ILogger logger)
     {
         _registry = registry;
         _resolver = resolver;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -58,13 +64,13 @@ public sealed class CommandSystemService : ICommandSystemService
             return [];
         }
 
-        var tokens = commandLine.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var tokens = commandLine.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         var name = tokens[0].ToLowerInvariant();
         var context = new CommandContext(commandLine, name, tokens[1..], source, session, cancellationToken);
 
         if (!commands.TryGetValue(name, out var command))
         {
-            _logger.Verbose("Command '{Command}' is not registered", name);
+            _logger.Verbose("An unregistered command was requested");
             context.PrintError("Unknown command: {0}", name);
 
             return context.Output;

@@ -22,6 +22,7 @@ using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Ultima.Types;
+using Serilog;
 
 namespace Moongate.Tests.TestSupport.Ultima.Speech;
 
@@ -40,7 +41,7 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
     public DelayedCommandExecutor DelayedExecutor => _container.Resolve<DelayedCommandExecutor>();
     public SpeechRequestPacketHandler Handler { get; }
 
-    private SpeechHandlerFixture(SessionFixture network)
+    private SpeechHandlerFixture(SessionFixture network, ILogger? commandLogger)
     {
         _network = network;
         Sessions = new(network.Loop);
@@ -61,13 +62,15 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
             source: CommandSourceType.InGame,
             minimumAccountType: AccountType.Regular
         );
-        Commands = new(_container.Resolve<CommandRegistry>(), _container);
+        Commands = commandLogger is null
+            ? new(_container.Resolve<CommandRegistry>(), _container)
+            : new(_container.Resolve<CommandRegistry>(), _container, commandLogger);
         Handler = new(Commands, Sessions, Mobiles, Sender);
     }
 
-    public static async Task<SpeechHandlerFixture> CreateAsync()
+    public static async Task<SpeechHandlerFixture> CreateAsync(ILogger? commandLogger = null)
     {
-        var fixture = new SpeechHandlerFixture(await SessionFixture.CreateAsync());
+        var fixture = new SpeechHandlerFixture(await SessionFixture.CreateAsync(), commandLogger);
         await fixture.Commands.StartAsync();
 
         return fixture;

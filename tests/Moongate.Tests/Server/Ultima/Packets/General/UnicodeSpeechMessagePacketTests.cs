@@ -72,5 +72,6 @@ public sealed class UnicodeSpeechMessagePacketTests
         Assert.Throws<ArgumentException>(() => Create("ENGLISH", "Alice", "hello"));
         Assert.Throws<ArgumentException>(() => Create("ENU", new string('A', 31), "hello"));
         Assert.Throws<ArgumentException>(() => Create("ENU", "Alice", new string('A', 33000)));
+        Assert.Throws<ArgumentException>(() => Create("ENU", "Alice", "before\0after"));
     }
 }

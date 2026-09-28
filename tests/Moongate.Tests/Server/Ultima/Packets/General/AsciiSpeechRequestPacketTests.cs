@@ -20,6 +20,16 @@ public sealed class AsciiSpeechRequestPacketTests
         Assert.Equal("ENU", packet.Speech.Language);
     }
 
+    [Theory]
+    [InlineData("03000DC003B2000362616E6B00", SpeechType.Regular)]
+    [InlineData("03000DC803B2000362616E6B00", SpeechType.Whisper)]
+    public void TryDecode_KeywordFlaggedAsciiFrame_ReadsUnderlyingSpeechType(string hex, SpeechType expectedType)
+    {
+        Assert.True(PacketCodec.TryDecode<AsciiSpeechRequestPacket>(Convert.FromHexString(hex), out var packet));
+        Assert.Equal(expectedType, packet.Speech.Type);
+        Assert.Equal("bank", packet.Speech.Text);
+    }
+
     [Fact]
     public void TryDecode_MalformedFrame_ReturnsFalse()
     {

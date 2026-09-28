@@ -17,6 +17,8 @@ namespace Moongate.Server.Ultima.Packets.General;
 [PacketHandler(0x03, PacketSizing.Variable, MinimumLength = 9, Description = "ASCII speech request")]
 public sealed class AsciiSpeechRequestPacket : BasePacket<AsciiSpeechRequestPacket>, IIncomingPacket<AsciiSpeechRequestPacket>
 {
+    private const byte EncodedFlags = 0xC0;
+
     public override int Length { get; }
 
     public SpeechRequestData Speech { get; }
@@ -46,7 +48,7 @@ public sealed class AsciiSpeechRequestPacket : BasePacket<AsciiSpeechRequestPack
         packet = new(
             data.Length,
             new(
-                (SpeechType)data[3],
+                (SpeechType)(data[3] & ~EncodedFlags),
                 new Hue(BinaryPrimitives.ReadUInt16BigEndian(data[4..6])),
                 (SpeechFontType)BinaryPrimitives.ReadUInt16BigEndian(data[6..8]),
                 "ENU",

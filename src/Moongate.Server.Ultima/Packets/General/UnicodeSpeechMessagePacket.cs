@@ -62,6 +62,11 @@ public sealed class UnicodeSpeechMessagePacket : BasePacket<UnicodeSpeechMessage
             throw new ArgumentException("The name must fit 30 Latin-1 bytes without NUL.", nameof(name));
         }
 
+        if (text.Contains('\0'))
+        {
+            throw new ArgumentException("The text must not contain NUL.", nameof(text));
+        }
+
         int textBytes;
 
         try

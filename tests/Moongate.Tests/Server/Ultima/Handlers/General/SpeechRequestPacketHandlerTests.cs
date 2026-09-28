@@ -3,6 +3,9 @@ using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Ultima.Types;
+using Serilog;
+using Serilog.Core;
+using Serilog.Events;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.General;
 
@@ -97,6 +100,39 @@ public sealed class SpeechRequestPacketHandlerTests
         Assert.Equal(["create", "bob", "secret"], invocation.Arguments);
         Assert.All(fixture.Sender.SentSessionIds, id => Assert.Equal(fixture.Speaker.SessionId, id));
         Assert.Equal("ok", Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent)).Text);
+    }
+
+    [Fact]
+    public async Task Handle_AccountCommandWithTabs_InvokesCommandWithoutBroadcastingPassword()
+    {
+        var sink = new CapturingSink();
+        using var logger = new LoggerConfiguration().MinimumLevel.Verbose().WriteTo.Sink(sink).CreateLogger();
+        await using var fixture = await SpeechHandlerFixture.CreateAsync(logger);
+        await fixture.EnterSpeakerAsync(AccountType.Administrator);
+        await fixture.AddPlayerAsync(1001, 2, "Near", MapType.Trammel, 101, 100);
+
+        await fixture.Handler.HandleAsync(
+            fixture.Context(),
+            fixture.Unicode(".account\tcreate\tbob\tsecret"),
+            CancellationToken.None
+        );
+
+        var invocation = Assert.Single(fixture.AccountExecutor.Invocations);
+        Assert.Equal(["create", "bob", "secret"], invocation.Arguments);
+        Assert.All(fixture.Sender.SentSessionIds, id => Assert.Equal(fixture.Speaker.SessionId, id));
+        Assert.DoesNotContain(fixture.Sender.Sent, packet =>
+            Assert.IsType<UnicodeSpeechMessagePacket>(packet).Text.Contains("secret", StringComparison.Ordinal));
+        Assert.DoesNotContain(sink.Events, entry => entry.RenderMessage().Contains("secret", StringComparison.Ordinal));
+    }
+
+    private sealed class CapturingSink : ILogEventSink
+    {
+        public List<LogEvent> Events { get; } = [];
+
+        public void Emit(LogEvent logEvent)
+        {
+            Events.Add(logEvent);
+        }
     }
 
     [Fact]
