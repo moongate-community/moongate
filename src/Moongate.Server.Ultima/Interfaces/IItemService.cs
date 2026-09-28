@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Entities.World;
 
 namespace Moongate.Server.Ultima.Interfaces;
@@ -10,9 +11,10 @@ namespace Moongate.Server.Ultima.Interfaces;
 ///     depth. The world save writes their snapshots.
 /// </summary>
 /// <remarks>
-///     The live items change on the game loop: add, remove and move them only there.
+///     The live items change on the game loop: add, remove and move them only there. It is also the deletion source of
+///     the items absorbed into other stacks: the world save deletes their rows.
 /// </remarks>
-public interface IItemService
+public interface IItemService : IPersistenceDeletionSource
 {
     /// <summary>
     ///     Gets the live items.
@@ -54,4 +56,23 @@ public interface IItemService
     ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump.
     /// </summary>
     void MoveToContainer(ItemEntity item, Serial container, Point2D position);
+
+    /// <summary>
+    ///     Splits <paramref name="item" />: it keeps its serial and <paramref name="amount" />, and the rest becomes a new
+    ///     live item with <paramref name="serial" />, in the same place, with the same template, graphic, hue and props.
+    /// </summary>
+    /// <returns>
+    ///     The rest.
+    /// </returns>
+    ItemEntity Split(ItemEntity item, int amount, Serial serial);
+
+    /// <summary>
+    ///     Forgets the item, merged into another, and queues its row for deletion by the next save.
+    /// </summary>
+    void Absorb(ItemEntity item);
+
+    /// <summary>
+    ///     Gets the queued deletions of the items <paramref name="owner" /> carried when they were absorbed.
+    /// </summary>
+    IReadOnlyCollection<Serial> TombstonesOf(Serial owner);
 }

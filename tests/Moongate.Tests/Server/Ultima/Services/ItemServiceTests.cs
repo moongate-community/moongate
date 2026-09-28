@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Ultima.Types;
@@ -93,6 +94,52 @@ public sealed class ItemServiceTests
 
         Assert.Equal((_bag.Id, new Point2D(12, 34)), (_dagger.ContainerId!.Value, _dagger.GridLocation!.Value));
         Assert.Equal([_coin, _dagger], items.GetContents(_bag.Id));
+    }
+
+    [Fact]
+    public void Split_LeavesTheRestAsANewLiveItemWhereTheStackWas()
+    {
+        var items = Service();
+        _coin.Amount = 100;
+        _coin.Hue = new(0x0481);
+        _coin.SetProp("minted", 3);
+
+        var rest = items.Split(_coin, 30, new Serial(0x40000100));
+
+        Assert.Equal(30, _coin.Amount);
+        Assert.Equal(
+            (new Serial(0x40000100), 70, _coin.TemplateId, _coin.ItemId, (ushort)0x0481, _bag.Id, new Point2D(30, 30), 3),
+            (rest.Id, rest.Amount, rest.TemplateId, rest.ItemId, rest.Hue.Value, rest.ContainerId!.Value,
+                rest.GridLocation!.Value, rest.GetProp<int>("minted"))
+        );
+        Assert.True(items.TryGet(rest.Id, out var live));
+        Assert.Same(rest, live);
+    }
+
+    [Fact]
+    public void Absorb_ForgetsTheItemAndQueuesItsDeletionForItsOwner()
+    {
+        var items = Service();
+
+        items.Absorb(_coin);
+
+        Assert.False(items.TryGet(_coin.Id, out _));
+        Assert.Equal([_coin.Id], items.TombstonesOf(Aria));
+        Assert.Equal([_coin.Id], ((IPersistenceDeletionSource)items).Capture());
+    }
+
+    [Fact]
+    public void Committed_ClearsOnlyTheTombstonesThatWereSaved()
+    {
+        var items = Service();
+        items.Absorb(_coin);
+        var captured = ((IPersistenceDeletionSource)items).Capture();
+        items.Absorb(_dagger);
+
+        ((IPersistenceDeletionSource)items).Committed(captured);
+
+        Assert.Equal([_dagger.Id], ((IPersistenceDeletionSource)items).Capture());
+        Assert.Equal([_dagger.Id], items.TombstonesOf(Aria));
     }
 
     private ItemService Service()

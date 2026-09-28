@@ -13,13 +13,15 @@ public static class WorldItemsContainerExtensions
 {
     /// <summary>
     ///     Registers <see cref="ItemEntity" /> in the world database with the live items as the save source, each saved
-    ///     through <see cref="ItemEntity.Snapshot" />. Register it after the mobiles: worn items point at their rows.
+    ///     through <see cref="ItemEntity.Snapshot" />, and the items absorbed into other stacks as its deletions. Register
+    ///     it after the mobiles, whose rows worn items point at, and after <see cref="IItemService" />.
     /// </summary>
     public static Container AddLiveWorldItems(this Container container)
     {
         return container.AddPersistenceWorld<ItemEntity>(
             () => container.Resolve<IItemService>().Items,
-            item => item.Snapshot()
+            item => item.Snapshot(),
+            container.Resolve<IItemService>()
         );
     }
 }
