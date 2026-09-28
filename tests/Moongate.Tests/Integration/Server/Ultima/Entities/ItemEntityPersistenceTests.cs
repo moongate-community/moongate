@@ -13,6 +13,7 @@ using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Persistence;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
@@ -256,7 +257,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     public async Task WorldSave_WritesTheLiveItemsAsTheyAreNow()
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);
-        var items = new ItemService();
+        var items = TestItems.Create();
         host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
         host.Container.RegisterInstance<IItemService>(items);
         host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
@@ -286,7 +287,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     public async Task WorldSave_DeletesTheItemsAbsorbedIntoOtherStacks()
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);
-        var items = new ItemService();
+        var items = TestItems.Create();
         host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
         host.Container.RegisterInstance<IItemService>(items);
         host.Container.AddLiveWorldMobiles().AddLiveWorldItems();

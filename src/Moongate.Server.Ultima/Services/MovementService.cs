@@ -33,6 +33,53 @@ public class MovementService : IMovementService
         return average;
     }
 
+    public bool TryGetDropZ(MapType map, int x, int y, int maxZ, out int z)
+    {
+        z = 0;
+
+        if (!_mapService.Maps.Contains(map) || !_mapService.Contains(map, x, y))
+        {
+            return false;
+        }
+
+        // ModernUO Item.DropToWorld: the highest surface at or below the ceiling, from the land and the statics.
+        var found = false;
+        var land = _mapService.GetLand(map, x, y);
+
+        if (!LandHeights.IsIgnored(land.Id) &&
+            (_tileDataService.GetLand(land.Id & 0x3FFF).Flags & TileFlagType.Impassable) == 0)
+        {
+            var average = GetAverageZ(map, x, y);
+
+            if (average <= maxZ)
+            {
+                z = average;
+                found = true;
+            }
+        }
+
+        foreach (var tile in _mapService.GetStatics(map, x, y))
+        {
+            var item = _tileDataService.GetItem(tile.Id);
+
+            if ((item.Flags & TileFlagType.Surface) == 0)
+            {
+                continue;
+            }
+
+            // StandHeight is already half the height for a bridge.
+            var top = tile.Z + item.StandHeight;
+
+            if (top <= maxZ && (!found || top > z))
+            {
+                z = top;
+                found = true;
+            }
+        }
+
+        return found;
+    }
+
     public bool CheckMovement(
         MapType map,
         Point3D from,

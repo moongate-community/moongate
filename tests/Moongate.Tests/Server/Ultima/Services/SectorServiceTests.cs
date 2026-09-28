@@ -122,6 +122,61 @@ public sealed class SectorServiceTests
         Assert.Empty(sectors.GetMobilesInRange(MapType.Trammel, new Point3D(7167, 4095, 0), 18));
     }
 
+    [Fact]
+    public void GetItemsInRange_FindsAGroundItem()
+    {
+        var sectors = TestSectors.Create();
+        var gold = GroundItem(0x40000001, 1496, 1628);
+
+        sectors.AddItem(gold);
+
+        Assert.Equal([gold], sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496 + 19, 1628, 0), 18));
+        Assert.Empty(sectors.GetItemsInRange(MapType.Felucca, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void RemoveItem_ForgetsIt()
+    {
+        var sectors = TestSectors.Create();
+        var gold = GroundItem(0x40000001, 1496, 1628);
+        sectors.AddItem(gold);
+
+        sectors.RemoveItem(gold);
+        sectors.RemoveItem(gold);
+
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void AddItem_NotOnTheGround_IsIgnored()
+    {
+        var sectors = TestSectors.Create();
+        var coins = new ItemEntity { Id = new(0x40000002), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        coins.PutInContainer(new Serial(0x40000009), new Point2D(1, 1));
+
+        sectors.AddItem(coins);
+
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(0, 0, 0), 7000));
+    }
+
+    [Fact]
+    public void GetMobilesInRange_DoesNotReturnItems()
+    {
+        var sectors = TestSectors.Create();
+        sectors.AddItem(GroundItem(0x40000001, 1496, 1628));
+
+        Assert.Empty(sectors.GetMobilesInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    private static ItemEntity GroundItem(uint serial, int x, int y)
+    {
+        var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        item.PlaceOnGround(MapType.Trammel, new Point3D(x, y, 0));
+
+        return item;
+    }
+
     private static MobileEntity Mobile(uint serial, int x, int y, MapType map = MapType.Trammel)
     {
         return new() { Id = new Serial(serial), Name = $"M{serial}", Map = map, Location = new Point3D(x, y, 0) };

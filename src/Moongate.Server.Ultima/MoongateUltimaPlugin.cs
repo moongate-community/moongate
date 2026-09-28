@@ -228,6 +228,9 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddMoongateService<IStartingItemsService, StartingItemsService>(-3);
             // After persistence is ready (it is, before any startup service): reserves item serials for the game loop.
             container.AddMoongateService<IItemSerialPool, ItemSerialPool>();
+            // After the data loaders and the maps (the sector grid needs them), before the game server takes players and
+            // the world save (40): the items on the ground are live before anyone can see them.
+            container.AddMoongateService<GroundItemsLoadService>(10);
         }
     }
 

@@ -1,6 +1,9 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Network.Packets.Data.Clients;
+using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Internal.World;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
@@ -17,7 +20,10 @@ public sealed class WorldViewService : IWorldViewService
 {
     public const int ViewRange = 18;
 
-    private readonly Dictionary<Serial, long> _sessions = [];
+    private static readonly ClientVersion StygianAbyss = new(7, 0, 0, 0);
+    private static readonly ClientVersion HighSeas = new(7, 0, 9, 0);
+
+    private readonly Dictionary<Serial, Viewer> _sessions = [];
     private readonly ISectorService _sectors;
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
@@ -31,9 +37,9 @@ public sealed class WorldViewService : IWorldViewService
         _sender = sender;
     }
 
-    public void Entered(MobileEntity mobile, long sessionId)
+    public void Entered(MobileEntity mobile, long sessionId, ClientVersion? version)
     {
-        _sessions[mobile.Id] = sessionId;
+        _sessions[mobile.Id] = new(sessionId, version);
         MobileIncomingPacket? incoming = null;
 
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
@@ -45,10 +51,15 @@ public sealed class WorldViewService : IWorldViewService
 
             _sender.TrySend(sessionId, Incoming(other));
 
-            if (_sessions.TryGetValue(other.Id, out var otherSession))
+            if (_sessions.TryGetValue(other.Id, out var viewer))
             {
-                _sender.TrySend(otherSession, incoming ??= Incoming(mobile));
+                _sender.TrySend(viewer.SessionId, incoming ??= Incoming(mobile));
             }
+        }
+
+        foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            _sender.TrySend(sessionId, WorldItem(item, version));
         }
     }
 
@@ -59,13 +70,13 @@ public sealed class WorldViewService : IWorldViewService
         {
             if (other.Id != mobile.Id &&
                 !InRange(other.Location, mobile.Location) &&
-                _sessions.TryGetValue(other.Id, out var otherSession))
+                _sessions.TryGetValue(other.Id, out var viewer))
             {
-                _sender.TrySend(otherSession, new RemoveEntityPacket(mobile.Id));
+                _sender.TrySend(viewer.SessionId, new RemoveEntityPacket(mobile.Id));
             }
         }
 
-        var hasSession = _sessions.TryGetValue(mobile.Id, out var ownSession);
+        var hasSession = _sessions.TryGetValue(mobile.Id, out var own);
         MobileMovingPacket? moving = null;
         MobileIncomingPacket? incoming = null;
 
@@ -78,15 +89,31 @@ public sealed class WorldViewService : IWorldViewService
 
             var sawIt = InRange(other.Location, oldLocation);
 
-            if (_sessions.TryGetValue(other.Id, out var otherSession))
+            if (_sessions.TryGetValue(other.Id, out var viewer))
             {
-                _sender.TrySend(otherSession, sawIt ? moving ??= Moving(mobile, running) : incoming ??= Incoming(mobile));
+                _sender.TrySend(
+                    viewer.SessionId,
+                    sawIt ? moving ??= Moving(mobile, running) : incoming ??= Incoming(mobile)
+                );
             }
 
             // The mover's client drops what it walks away from by itself, as in ModernUO; it only needs the newcomers.
             if (!sawIt && hasSession)
             {
-                _sender.TrySend(ownSession, Incoming(other));
+                _sender.TrySend(own!.SessionId, Incoming(other));
+            }
+        }
+
+        if (!hasSession)
+        {
+            return;
+        }
+
+        foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            if (item.GroundLocation is { } spot && !InRange(spot, oldLocation))
+            {
+                _sender.TrySend(own!.SessionId, WorldItem(item, own.Version));
             }
         }
     }
@@ -99,16 +126,73 @@ public sealed class WorldViewService : IWorldViewService
 
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
         {
-            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var otherSession))
+            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer))
             {
-                _sender.TrySend(otherSession, remove);
+                _sender.TrySend(viewer.SessionId, remove);
             }
         }
     }
 
+    public void ItemAppeared(ItemEntity item)
+    {
+        if (item.Map is not { } map || item.GroundLocation is not { } spot)
+        {
+            return;
+        }
+
+        foreach (var other in _sectors.GetMobilesInRange(map, spot, ViewRange))
+        {
+            if (_sessions.TryGetValue(other.Id, out var viewer))
+            {
+                _sender.TrySend(viewer.SessionId, WorldItem(item, viewer.Version));
+            }
+        }
+    }
+
+    public void ShowItemTo(MobileEntity viewer, ItemEntity item)
+    {
+        if (item.GroundLocation is not null && _sessions.TryGetValue(viewer.Id, out var session))
+        {
+            _sender.TrySend(session.SessionId, WorldItem(item, session.Version));
+        }
+    }
+
+    public void ItemDisappeared(ItemEntity item)
+    {
+        if (item.Map is not { } map || item.GroundLocation is not { } spot)
+        {
+            return;
+        }
+
+        var remove = new RemoveEntityPacket(item.Id);
+
+        foreach (var other in _sectors.GetMobilesInRange(map, spot, ViewRange))
+        {
+            if (_sessions.TryGetValue(other.Id, out var viewer))
+            {
+                _sender.TrySend(viewer.SessionId, remove);
+            }
+        }
+    }
+
+    private static IOutgoingPacket WorldItem(ItemEntity item, ClientVersion? version)
+    {
+        var spot = item.GroundLocation!.Value;
+
+        // As ModernUO: 0xF3 from 7.0.0.0 (Stygian Abyss), two bytes longer from 7.0.9.0 (High Seas); unknown is newest.
+        if (version is null || version.CompareTo(StygianAbyss) >= 0)
+        {
+            var highSeas = version is null || version.CompareTo(HighSeas) >= 0;
+
+            return new WorldItemSaPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue, highSeas);
+        }
+
+        return new WorldItemPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue);
+    }
+
     private MobileIncomingPacket Incoming(MobileEntity mobile)
     {
-        var worn = _items.GetOwnedBy(mobile.Id).Where(item => item.MobileId == mobile.Id);
+        var worn = _items.GetWorn(mobile.Id);
 
         return new(
             mobile.Id,

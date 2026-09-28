@@ -26,6 +26,16 @@ public interface IMovementService
     int GetAverageZ(MapType map, int x, int y);
 
     /// <summary>
+    ///     Gets the height an item dropped on cell <paramref name="x" />, <paramref name="y" /> lands at: the highest
+    ///     surface of the land or a static at or below <paramref name="maxZ" />, as ModernUO. Other items on the ground are
+    ///     not considered.
+    /// </summary>
+    /// <returns>
+    ///     False outside the map, on a map that is not loaded, or with no such surface.
+    /// </returns>
+    bool TryGetDropZ(MapType map, int x, int y, int maxZ, out int z);
+
+    /// <summary>
     ///     Checks one step from <paramref name="from" /> towards <paramref name="direction" />; only its low three bits count, so the running flag is
     ///     ignored. A diagonal step also needs both cells beside it to be passable.
     /// </summary>

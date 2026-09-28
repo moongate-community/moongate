@@ -23,6 +23,7 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Characters;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
@@ -36,7 +37,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
 {
     private readonly Container _events = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
-    private readonly ItemService _items = new();
+    private readonly ItemService _items = TestItems.Create();
     private readonly RecordingWorldViewService _view = new();
     private StubCharacterLeaveWorldService _leaves = new();
     private SessionService _sessions = null!;

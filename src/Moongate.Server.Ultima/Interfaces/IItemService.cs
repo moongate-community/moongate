@@ -3,12 +3,14 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
-///     The live items of the characters in the world: what they wear and everything inside those containers, at any
-///     depth. The world save writes their snapshots.
+///     The live items of the world: what the characters in the world wear, the items lying on the ground, and
+///     everything inside those containers, at any depth; the ground items are kept in the sector grid of
+///     <see cref="ISectorService" />. The world save writes their snapshots.
 /// </summary>
 /// <remarks>
 ///     The live items change on the game loop: add, remove and move them only there. It is also the deletion source of
@@ -54,9 +56,58 @@ public interface IItemService : IPersistenceDeletionSource
     IReadOnlyList<ItemEntity> GetOwnedBy(Serial mobile);
 
     /// <summary>
+    ///     Gets the live items the mobile wears, from an index kept by wearer.
+    /// </summary>
+    IReadOnlyList<ItemEntity> GetWorn(Serial mobile);
+
+    /// <summary>
     ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump.
     /// </summary>
     void MoveToContainer(ItemEntity item, Serial container, Point2D position);
+
+    /// <summary>
+    ///     Lays the live item on the ground of the map, in the sector grid.
+    /// </summary>
+    void PlaceOnGround(ItemEntity item, MapType map, Point3D location);
+
+    /// <summary>
+    ///     Gets whether the mobile can lift the ground item or drop onto it, as ModernUO: same map, within 2 tiles, in line
+    ///     of sight.
+    /// </summary>
+    bool CanReach(MobileEntity mobile, ItemEntity item);
+
+    /// <summary>
+    ///     Lays the item on the ground at <paramref name="x" />, <paramref name="y" /> within 2 tiles of the mobile, on the
+    ///     highest surface up to 16 above its feet and in line of sight; false leaves the item where it was. The caller
+    ///     shows it to the players in range.
+    /// </summary>
+    bool TryDropOnGround(MobileEntity mobile, ItemEntity item, int x, int y);
+
+    /// <summary>
+    ///     Gets whether the item lies on the ground in the sector grid: false while a player holds it.
+    /// </summary>
+    bool IsLyingOnGround(ItemEntity item);
+
+    /// <summary>
+    ///     Records that the character changed an item that no longer belongs to it, such as one it dropped on the ground
+    ///     or a ground stack it grew, so its leave saves the item in the same transaction as its own.
+    /// </summary>
+    void Release(ItemEntity item, Serial owner);
+
+    /// <summary>
+    ///     Takes the live items the character released; from then on only the caller saves them.
+    /// </summary>
+    IReadOnlyList<ItemEntity> TakeReleasedOf(Serial owner);
+
+    /// <summary>
+    ///     Takes a ground item out of the sector grid while a player holds it; it keeps its location.
+    /// </summary>
+    void Hide(ItemEntity item);
+
+    /// <summary>
+    ///     Puts a held ground item back into the sector grid where it lies.
+    /// </summary>
+    void Show(ItemEntity item);
 
     /// <summary>
     ///     Splits <paramref name="item" />: it keeps its serial and <paramref name="amount" />, and the rest becomes a new
@@ -71,6 +122,12 @@ public interface IItemService : IPersistenceDeletionSource
     ///     Forgets the item, merged into another, and queues its row for deletion by the next save.
     /// </summary>
     void Absorb(ItemEntity item);
+
+    /// <summary>
+    ///     Forgets the item as <see cref="Absorb(ItemEntity)" /> does, but queues its deletion for
+    ///     <paramref name="owner" />: the character that grew the stack, whose leave then deletes the row.
+    /// </summary>
+    void Absorb(ItemEntity item, Serial owner);
 
     /// <summary>
     ///     Gets the queued deletions of the items <paramref name="owner" /> carried when they were absorbed.

@@ -16,8 +16,9 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 
 /// <summary>
 ///     Drops the item the player holds (0x08) into a container their character carries, onto a carried stack of the
-///     same kind (they merge), or into the container of a carried item it was dropped on; anything else bounces the
-///     item back to where it was. The hand is always freed, and 0x25 shows the item where it really is.
+///     same kind (they merge), into the container of a carried item it was dropped on, on the ground within 2 tiles, or
+///     onto a ground stack of the same kind within reach; anything else bounces the item back to where it was. The hand
+///     is always freed: 0x25 shows the item where it really is, and a ground item is shown to everyone in range.
 /// </summary>
 /// <remarks>
 ///     The position is brought inside the container's gump bounds; a drop on the container's icon (-1, -1) takes a
@@ -29,19 +30,27 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private const int MaxStack = 60_000;
 
     private readonly ILogger _logger = Log.ForContext<DropRequestPacketHandler>();
+    private const uint GroundDestination = uint.MaxValue;
+
     private readonly IItemService _items;
+    private readonly IMobileService _mobiles;
+    private readonly IWorldViewService _view;
     private readonly ITileDataService _tiles;
     private readonly IContainerLayoutService _layouts;
     private readonly IPacketSendService _sender;
 
     public DropRequestPacketHandler(
         IItemService items,
+        IMobileService mobiles,
+        IWorldViewService view,
         ITileDataService tiles,
         IContainerLayoutService layouts,
         IPacketSendService sender
     )
     {
         _items = items;
+        _mobiles = mobiles;
+        _view = view;
         _tiles = tiles;
         _layouts = layouts;
         _sender = sender;
@@ -67,12 +76,49 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return;
         }
 
-        if (!TryPlace(session, item, packet))
+        var mobile = _mobiles.TryGet(session.CharacterId, out var live) ? live : null;
+
+        if (mobile is not null && TryMergeOnGround(mobile, item, packet.Destination, out var groundStack))
         {
-            _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
+            // The character's leave saves the grown stack and deletes the absorbed item in one transaction.
+            _items.Release(groundStack, session.CharacterId);
+            _view.ItemAppeared(groundStack);
+            _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
+
+            return;
         }
 
-        _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
+        if (packet.Destination.Value == GroundDestination)
+        {
+            if (mobile is not null && _items.TryDropOnGround(mobile, item, packet.X, packet.Y))
+            {
+                // Its row still says the character carries it: the character's leave saves where it lies now.
+                _items.Release(item, session.CharacterId);
+                _view.ItemAppeared(item);
+
+                return;
+            }
+        }
+        else if (TryPlace(session, item, packet))
+        {
+            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
+
+            return;
+        }
+
+        _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
+
+        // A lifted ground item still lies where it was: it is shown there again; anything else goes back into its
+        // container.
+        if (item.GroundLocation is not null)
+        {
+            _items.Show(item);
+            _view.ItemAppeared(item);
+        }
+        else
+        {
+            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
+        }
     }
 
     // Onto a carried stack of the same kind: the stack grows and the held item is absorbed.
@@ -90,7 +136,27 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         }
 
         stack.Amount += item.Amount;
-        _items.Absorb(item);
+        _items.Absorb(item, session.CharacterId);
+
+        return true;
+    }
+
+    // Onto a ground stack of the same kind within reach: the stack grows and the held item is absorbed.
+    private bool TryMergeOnGround(MobileEntity mobile, ItemEntity item, Serial destination, out ItemEntity stack)
+    {
+        if (!_items.TryGet(destination, out stack!) ||
+            stack.Id == item.Id ||
+            stack.GroundLocation is null ||
+            !_items.CanReach(mobile, stack) ||
+            !IsSameKind(stack, item) ||
+            (long)stack.Amount + item.Amount > MaxStack ||
+            !IsStackable(stack))
+        {
+            return false;
+        }
+
+        stack.Amount += item.Amount;
+        _items.Absorb(item, mobile.Id);
 
         return true;
     }

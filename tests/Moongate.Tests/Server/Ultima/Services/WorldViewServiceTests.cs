@@ -1,12 +1,14 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
+using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
@@ -20,12 +22,13 @@ public sealed class WorldViewServiceTests
 
     private readonly StubPacketSendService _sender = new();
     private readonly MobileService _mobiles;
-    private readonly ItemService _items = new();
+    private readonly ItemService _items;
     private readonly WorldViewService _view;
 
     public WorldViewServiceTests()
     {
         var sectors = TestSectors.Create();
+        _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
         _view = new(sectors, _mobiles, _items, _sender);
     }
@@ -182,7 +185,7 @@ public sealed class WorldViewServiceTests
         shirt.Equip(boris.Id, LayerType.Shirt);
         _items.Add([shirt]);
         _mobiles.EnterWorld(boris);
-        _view.Entered(boris, BorisSession);
+        _view.Entered(boris, BorisSession, null);
         ClearSent();
 
         Enter(2, 1496, 1628, AriaSession);
@@ -191,11 +194,114 @@ public sealed class WorldViewServiceTests
         Assert.Contains(incoming.Equipment, entry => entry.Serial == shirt.Id);
     }
 
+    [Fact]
+    public void Entered_ShowsTheGroundItemsInRange()
+    {
+        var gold = Ground(0x40000050, 1500, 1628);
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        var shown = Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(gold.Id, shown.Serial);
+        Assert.True(shown.HighSeas);
+    }
+
+    [Fact]
+    public void Entered_AnOldClient_GetsTheOldPacket()
+    {
+        Ground(0x40000050, 1500, 1628);
+        var aria = Mobile(2, 1496, 1628);
+        _mobiles.EnterWorld(aria);
+
+        _view.Entered(aria, AriaSession, new ClientVersion(6, 0, 14, 2));
+
+        Assert.IsType<WorldItemPacket>(Assert.Single(_sender.Sent));
+    }
+
+    [Fact]
+    public void Entered_AStygianAbyssClient_GetsTheShortSaPacket()
+    {
+        Ground(0x40000050, 1500, 1628);
+        var aria = Mobile(2, 1496, 1628);
+        _mobiles.EnterWorld(aria);
+
+        _view.Entered(aria, AriaSession, new ClientVersion(7, 0, 5, 0));
+
+        Assert.False(Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent)).HighSeas);
+    }
+
+    [Fact]
+    public void Moved_IntoRangeOfAGroundItem_ShowsItOnce()
+    {
+        var aria = Enter(2, 1481, 1628, AriaSession);
+        var gold = Ground(0x40000050, 1500, 1628);
+        ClearSent();
+
+        Step(aria, 1482, 1628, false);
+        Step(aria, 1483, 1628, false);
+
+        var shown = Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(gold.Id, shown.Serial);
+    }
+
+    [Fact]
+    public void ItemAppeared_ShowsItToEveryoneInRange()
+    {
+        Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        Enter(4, 3000, 3000, 30);
+        var gold = Ground(0x40000050, 1498, 1628);
+        ClearSent();
+
+        _view.ItemAppeared(gold);
+
+        Assert.All(_sender.Sent, packet => Assert.Equal(gold.Id, Assert.IsType<WorldItemSaPacket>(packet).Serial));
+        Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
+    }
+
+    [Fact]
+    public void ItemDisappeared_RemovesItFromEveryoneInRange()
+    {
+        Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var gold = Ground(0x40000050, 1498, 1628);
+        _items.Hide(gold);
+        ClearSent();
+
+        _view.ItemDisappeared(gold);
+
+        Assert.All(_sender.Sent, packet => Assert.Equal(gold.Id, Assert.IsType<RemoveEntityPacket>(packet).Serial));
+        Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
+    }
+
+    [Fact]
+    public void ShowItemTo_SendsItOnlyToThatPlayer()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        var gold = Ground(0x40000050, 1498, 1628);
+        ClearSent();
+
+        _view.ShowItemTo(aria, gold);
+
+        Assert.Equal(gold.Id, Assert.IsType<WorldItemSaPacket>(Assert.Single(_sender.Sent)).Serial);
+        Assert.Equal([AriaSession], _sender.SentSessionIds);
+    }
+
+    private ItemEntity Ground(uint serial, int x, int y)
+    {
+        var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        _items.Add([item]);
+        _items.PlaceOnGround(item, MapType.Trammel, new Point3D(x, y, 0));
+
+        return item;
+    }
+
     private MobileEntity Enter(uint serial, int x, int y, long session)
     {
         var mobile = Mobile(serial, x, y);
         _mobiles.EnterWorld(mobile);
-        _view.Entered(mobile, session);
+        _view.Entered(mobile, session, null);
 
         return mobile;
     }

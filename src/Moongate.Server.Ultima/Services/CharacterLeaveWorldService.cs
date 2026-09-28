@@ -4,6 +4,7 @@ using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Ultima.Data.Events;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Serilog;
@@ -49,15 +50,31 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
             return;
         }
 
+        // A lifted ground item still lies where it was: it goes back before the player's items leave.
+        if (session.Get(ItemSessionKeys.Held) is { } held &&
+            _items.TryGet(held.Item, out var lifted) &&
+            lifted.GroundLocation is not null)
+        {
+            _items.Show(lifted);
+            _view.ItemAppeared(lifted);
+        }
+
         var snapshot = character.Snapshot();
         var carried = _items.GetOwnedBy(character.Id);
         var items = carried.Select(item => item.Snapshot()).ToList();
+        var carriedIds = carried.Select(item => item.Id).ToHashSet();
+        // What it dropped on the ground or grew there: its rows still say what they were before.
+        var released = _items.TakeReleasedOf(character.Id)
+                             .Where(item => !carriedIds.Contains(item.Id))
+                             .Select(item => item.Snapshot())
+                             .ToList();
         // Taken on the loop: from now on only this leave deletes them, in the transaction that saves their stacks.
         var merged = _items.TakeTombstonesOf(character.Id);
         _items.Remove(carried.Select(item => item.Id));
         // Still in the sector grid: the players around it can be found and told.
         _view.Left(character);
         _mobiles.LeaveWorld(character.Id);
+        items.AddRange(released);
         Track(Task.Run(() => SaveAndPublishAsync(snapshot, items, merged)), character.AccountId);
     }
 

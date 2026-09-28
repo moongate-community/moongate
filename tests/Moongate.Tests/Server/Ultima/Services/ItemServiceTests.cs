@@ -3,6 +3,10 @@ using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -11,6 +15,12 @@ public sealed class ItemServiceTests
 {
     private static readonly Serial Aria = new(0x00000002);
 
+    private readonly StubMovementService _dropMovement = new() { DropZ = 3 };
+    private readonly StubLineOfSightService _sight = new();
+    private readonly MobileEntity _aria = new()
+    {
+        Id = new(2), Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1496, 1628, 10)
+    };
     private readonly ItemEntity _backpack = Item(0x40000001);
     private readonly ItemEntity _bag = Item(0x40000002);
     private readonly ItemEntity _coin = Item(0x40000003);
@@ -167,10 +177,248 @@ public sealed class ItemServiceTests
 
     private ItemService Service()
     {
-        var items = new ItemService();
+        var items = TestItems.Create();
         items.Add([_backpack, _bag, _coin, _dagger, _shirt, _ground]);
 
         return items;
+    }
+
+    [Fact]
+    public void PlaceOnGround_PutsTheItemInTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 5));
+
+        Assert.Equal(new Point3D(1496, 1628, 5), gold.GroundLocation);
+        Assert.Equal([gold], sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 0));
+    }
+
+    [Fact]
+    public void Add_AGroundItem_PutsItInTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var gold = Item(0x40000050);
+        gold.PlaceOnGround(MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        TestItems.Create(sectors).Add([gold]);
+
+        Assert.Equal([gold], sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 0));
+    }
+
+    [Fact]
+    public void MoveToContainer_TakesAGroundItemOutOfTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        items.MoveToContainer(gold, new Serial(0x40000001), new Point2D(44, 65));
+
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void RemoveAndAbsorb_TakeGroundItemsOutOfTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        var silver = Item(0x40000051);
+        items.Add([gold, silver]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+        items.PlaceOnGround(silver, MapType.Trammel, new Point3D(1497, 1628, 0));
+
+        items.Remove([gold.Id]);
+        items.Absorb(silver);
+
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void HideAndShow_TakeAndPutBackWithoutMovingIt()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        items.Hide(gold);
+
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+        Assert.Equal(new Point3D(1496, 1628, 0), gold.GroundLocation);
+
+        items.Show(gold);
+
+        Assert.Equal([gold], sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void Split_AGroundStack_PutsTheRestInTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        gold.Amount = 100;
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        var rest = items.Split(gold, 40, new Serial(0x40000060));
+
+        Assert.Contains(rest, sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 0));
+    }
+
+    [Fact]
+    public void TryDropOnGround_TwoTilesAway_PlacesItAtTheSurface()
+    {
+        var items = TestItems.Create(movement: _dropMovement, sight: _sight);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+
+        Assert.True(items.TryDropOnGround(_aria, gold, 1498, 1626));
+
+        Assert.Equal((MapType.Trammel, new Point3D(1498, 1626, 3)), (gold.Map!.Value, gold.GroundLocation!.Value));
+        Assert.Equal((new Point3D(1496, 1628, 24), new Point3D(1498, 1626, 4)), _sight.Checks.Single());
+    }
+
+    [Theory]
+    [InlineData(1499, 1628)]
+    [InlineData(1496, 1625)]
+    public void TryDropOnGround_ThreeTilesAway_Fails(int x, int y)
+    {
+        var items = TestItems.Create(movement: _dropMovement, sight: _sight);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+
+        Assert.False(items.TryDropOnGround(_aria, gold, x, y));
+        Assert.Null(gold.GroundLocation);
+    }
+
+    [Fact]
+    public void TryDropOnGround_WithoutASurfaceOrLineOfSight_Fails()
+    {
+        var items = TestItems.Create(movement: _dropMovement, sight: _sight);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        _dropMovement.DropZ = null;
+
+        Assert.False(items.TryDropOnGround(_aria, gold, 1497, 1628));
+
+        _dropMovement.DropZ = 3;
+        _sight.Allow = false;
+
+        Assert.False(items.TryDropOnGround(_aria, gold, 1497, 1628));
+        Assert.Null(gold.GroundLocation);
+    }
+
+    [Fact]
+    public void CanReach_AGroundItemNearbyInSight_IsTrue()
+    {
+        var items = TestItems.Create(sight: _sight);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1498, 1628, 10));
+
+        Assert.True(items.CanReach(_aria, gold));
+
+        _sight.Allow = false;
+
+        Assert.False(items.CanReach(_aria, gold));
+    }
+
+    [Fact]
+    public void CanReach_AGroundItemSomeoneHolds_IsFalse()
+    {
+        var items = TestItems.Create(sight: _sight);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1497, 1628, 10));
+
+        items.Hide(gold);
+
+        Assert.False(items.CanReach(_aria, gold));
+    }
+
+    [Fact]
+    public void CanReach_FarOrOnAnotherMapOrNotOnTheGround_IsFalse()
+    {
+        var items = TestItems.Create(sight: _sight);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+
+        Assert.False(items.CanReach(_aria, gold));
+
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1499, 1628, 10));
+        Assert.False(items.CanReach(_aria, gold));
+
+        items.PlaceOnGround(gold, MapType.Felucca, new Point3D(1497, 1628, 10));
+        Assert.False(items.CanReach(_aria, gold));
+    }
+
+    [Fact]
+    public void Release_ThenTakeReleasedOf_GivesTheLiveItemsOnce()
+    {
+        var items = TestItems.Create();
+        var gold = Item(0x40000050);
+        var gone = Item(0x40000051);
+        items.Add([gold, gone]);
+        items.Release(gold, Aria);
+        items.Release(gone, Aria);
+        items.Remove([gone.Id]);
+
+        Assert.Equal([gold], items.TakeReleasedOf(Aria));
+        Assert.Empty(items.TakeReleasedOf(Aria));
+    }
+
+    [Fact]
+    public void Absorb_WithAnOwner_QueuesTheDeletionForThatOwner()
+    {
+        var items = TestItems.Create();
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        items.Absorb(gold, Aria);
+
+        Assert.Equal([gold.Id], items.TombstonesOf(Aria));
+    }
+
+    [Fact]
+    public void GetWorn_GivesOnlyWhatTheMobileWears()
+    {
+        var items = TestItems.Create();
+        var shirt = Item(0x40000050);
+        var coins = Item(0x40000051);
+        shirt.Equip(Aria, LayerType.Shirt);
+        coins.PutInContainer(new Serial(0x40000052), new Point2D(1, 1));
+        items.Add([shirt, coins]);
+
+        Assert.Equal([shirt], items.GetWorn(Aria));
+
+        items.Remove([shirt.Id]);
+
+        Assert.Empty(items.GetWorn(Aria));
+    }
+
+    [Fact]
+    public void IsLyingOnGround_IsFalseWhileHeld()
+    {
+        var items = TestItems.Create();
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        Assert.True(items.IsLyingOnGround(gold));
+
+        items.Hide(gold);
+
+        Assert.False(items.IsLyingOnGround(gold));
     }
 
     private static ItemEntity Item(uint serial)

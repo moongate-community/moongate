@@ -2,6 +2,7 @@ using DryIoc;
 using Moongate.Persistence.Extensions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services.Internal;
 
 namespace Moongate.Server.Ultima.Extensions;
 
@@ -21,7 +22,7 @@ public static class WorldItemsContainerExtensions
         return container.AddPersistenceWorld<ItemEntity>(
             () => container.Resolve<IItemService>().Items,
             item => item.Snapshot(),
-            container.Resolve<IItemService>()
+            new LazyDeletionSource(() => container.Resolve<IItemService>())
         );
     }
 }
