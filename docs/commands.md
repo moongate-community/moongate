@@ -15,6 +15,7 @@ in-game access, when added, will use the invoking session's account level.
 | `help` | Yes | Yes | Regular | List accessible commands or show details for one command |
 | `script` | Game/Standalone | No | — | Reload one Lua script or show script metrics |
 | `account` | Login/Standalone | Yes | Administrator | Create an account in the Accounts database |
+| `character` | Game/Standalone | Yes | GameMaster | List characters pending deletion and restore them |
 
 ## Help
 
@@ -68,6 +69,21 @@ from display and logs.
 
 Plugins can add commands through `RegisterCommand<TExecutor>`; see
 [Writing a plugin](plugins.md#console-commands).
+
+## Character
+
+```text
+character pending [account-serial]
+character restore <character-serial>
+```
+
+A character a player deletes from the character list is only marked for deletion:
+it disappears from the list but keeps its slot, and stays restorable for
+`characters.deletion_delay_hours` (default 24). `character pending` lists every
+pending character, or those of one account, with when the deletion was requested
+and when the character becomes eligible for removal. `character restore` cancels
+the deletion; the character appears in the list again at the next login. Serials
+are hexadecimal with `0x` (`0x0000002A`) or decimal.
 
 ### Local API access provisioning
 
