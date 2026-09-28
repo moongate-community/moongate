@@ -68,6 +68,7 @@ public sealed class SpeechRequestPacketHandlerTests
 
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".help"), CancellationToken.None);
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".missing"), CancellationToken.None);
+        await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
 
         Assert.NotEmpty(fixture.Sender.Sent);
         Assert.All(fixture.Sender.SentSessionIds, sessionId => Assert.Equal(fixture.Speaker.SessionId, sessionId));
@@ -84,6 +85,7 @@ public sealed class SpeechRequestPacketHandlerTests
         await fixture.AddPlayerAsync(1001, 2, "Near", MapType.Trammel, 101, 100);
 
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".account create bob secret"), CancellationToken.None);
+        await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
 
         Assert.Empty(fixture.AccountExecutor.Invocations);
         Assert.All(fixture.Sender.SentSessionIds, id => Assert.Equal(fixture.Speaker.SessionId, id));
@@ -93,6 +95,7 @@ public sealed class SpeechRequestPacketHandlerTests
         fixture.Sender.Sent.Clear();
         fixture.Sender.SentSessionIds.Clear();
         await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".account create bob secret"), CancellationToken.None);
+        await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
 
         var invocation = Assert.Single(fixture.AccountExecutor.Invocations);
         Assert.Same(fixture.Speaker, invocation.Session);
@@ -116,6 +119,7 @@ public sealed class SpeechRequestPacketHandlerTests
             fixture.Unicode(".account\tcreate\tbob\tsecret"),
             CancellationToken.None
         );
+        await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
 
         var invocation = Assert.Single(fixture.AccountExecutor.Invocations);
         Assert.Equal(["create", "bob", "secret"], invocation.Arguments);
@@ -146,7 +150,27 @@ public sealed class SpeechRequestPacketHandlerTests
         fixture.ReplaceSpeakerSession();
         fixture.DelayedExecutor.Release();
         await handling.WaitAsync(TimeSpan.FromSeconds(5));
+        await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
 
         Assert.Empty(fixture.Sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_ASlowCommand_DoesNotHoldTheSessionAndRepliesWhenItEnds()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+
+        // A command waiting for the player (a target cursor) must not keep the session's next packets waiting.
+        var handling = fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".wait"), CancellationToken.None).AsTask();
+        await fixture.DelayedExecutor.Started.WaitAsync(TimeSpan.FromSeconds(5));
+
+        await handling.WaitAsync(TimeSpan.FromSeconds(5));
+        Assert.Empty(fixture.Sender.Sent);
+
+        fixture.DelayedExecutor.Release();
+        await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Equal("done", Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent)).Text);
     }
 }

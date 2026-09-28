@@ -1,3 +1,4 @@
+using System.Collections.Concurrent;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
@@ -9,6 +10,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Speech;
 using Moongate.Server.Ultima.Types.Speech;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Handlers.General;
 
@@ -26,6 +28,8 @@ public sealed class SpeechRequestPacketHandler :
     private static readonly Hue WarningHue = new(0x0035);
     private static readonly Hue ErrorHue = new(0x0021);
 
+    private readonly ILogger _logger = Log.ForContext<SpeechRequestPacketHandler>();
+    private readonly ConcurrentDictionary<Task, byte> _running = new();
     private readonly ICommandSystemService _commands;
     private readonly ISessionService _sessions;
     private readonly IMobileService _mobiles;
@@ -131,21 +135,54 @@ public sealed class SpeechRequestPacketHandler :
             return;
         }
 
-        var output = await _commands.ExecuteAsync(text[1..], CommandSourceType.InGame, invoker, cancellationToken);
+        Track(RunCommandAsync(context, text[1..], invoker));
+    }
 
-        foreach (var line in output)
+    /// <summary>
+    ///     Waits for the in-game commands still running.
+    /// </summary>
+    internal Task WaitForCommandsAsync()
+    {
+        return Task.WhenAll(_running.Keys);
+    }
+
+    // Detached from the packet: a command waiting for the player, such as for a target, must not hold back the
+    // session's next packets, the answer included. Its output is sent when it ends.
+    private async Task RunCommandAsync(PacketContext context, string commandLine, GameSession invoker)
+    {
+        try
         {
-            var hue = line.Level switch
-            {
-                CommandOutputLevel.Warning => WarningHue,
-                CommandOutputLevel.Error => ErrorHue,
-                _ => InformationHue
-            };
+            var output = await _commands.ExecuteAsync(
+                commandLine,
+                CommandSourceType.InGame,
+                invoker,
+                CancellationToken.None
+            );
 
-            if (!context.TrySend(SpeechMessageHelper.CreateSystem(line.Text, hue)))
+            foreach (var line in output)
             {
-                return;
+                var hue = line.Level switch
+                {
+                    CommandOutputLevel.Warning => WarningHue,
+                    CommandOutputLevel.Error => ErrorHue,
+                    _ => InformationHue
+                };
+
+                if (!context.TrySend(SpeechMessageHelper.CreateSystem(line.Text, hue)))
+                {
+                    return;
+                }
             }
         }
+        catch (Exception exception)
+        {
+            _logger.Error(exception, "In-game command {Command} failed", commandLine);
+        }
+    }
+
+    private void Track(Task task)
+    {
+        _running[task] = 0;
+        task.ContinueWith(done => _running.TryRemove(done, out _), TaskScheduler.Default);
     }
 }
