@@ -29,4 +29,17 @@ public sealed class CharacterScriptEventsTests
             fields
         );
     }
+
+    [Fact]
+    public void CharacterDeletionRequested_MapsSerialAccountAndName()
+    {
+        var character = new MobileEntity { Id = new(0x0003), AccountId = new Serial(42), Name = "Bran" };
+
+        var fields = CharacterScriptEvents.CharacterDeletionRequested(new CharacterDeletionRequestedEvent(character));
+
+        Assert.Equal(
+            new Dictionary<string, object?> { ["serial"] = 3L, ["account_id"] = 42L, ["name"] = "Bran" },
+            fields
+        );
+    }
 }
