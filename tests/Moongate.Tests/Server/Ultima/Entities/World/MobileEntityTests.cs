@@ -1,10 +1,39 @@
+using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Entities.World;
 
 public sealed class MobileEntityTests
 {
+    [Fact]
+    public void ToString_PlayerCharacter_ShowsItsAccountRaceGenderBodyAndLocation()
+    {
+        var where = new Point3D(4408, 1168, 5);
+        var aria = new MobileEntity
+        {
+            Id = new(0x00000002), AccountId = new Serial(0x2A), Name = "Aria", Race = RaceType.Elf,
+            Gender = GenderType.Female, Body = 0x025E, Map = MapType.Trammel, Location = where
+        };
+
+        Assert.Equal($"0x00000002 \"Aria\" player of 0x0000002A (Elf Female, body 0x025E) at Trammel {where}", aria.ToString());
+    }
+
+    [Fact]
+    public void ToString_Npc_ShowsItsTemplate()
+    {
+        var where = new Point3D(1496, 1628, 10);
+        var orc = new MobileEntity
+        {
+            Id = new(0x00000005), TemplateId = "orc", Name = "an orc", Body = 0x0011, Map = MapType.Felucca,
+            Location = where
+        };
+
+        Assert.Equal($"0x00000005 \"an orc\" npc \"orc\" (Human Male, body 0x0011) at Felucca {where}", orc.ToString());
+    }
+
     [Fact]
     public void Props_SetGetConvertAndRemove()
     {
