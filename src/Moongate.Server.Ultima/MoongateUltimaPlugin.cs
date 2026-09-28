@@ -36,6 +36,7 @@ using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Handlers.Characters;
 using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Handlers.Login;
+using Moongate.Server.Ultima.Handlers.Movement;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Loaders;
@@ -125,10 +126,11 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterIncomingPacket<DeleteCharacterPacket>();
             container.RegisterIncomingPacket<PlayCharacterPacket>();
             container.RegisterAsyncPacketHandler<PlayCharacterPacket, PlayCharacterPacketHandler>();
+            container.RegisterIncomingPacket<MoveRequestPacket>();
+            container.RegisterPacketHandler<MoveRequestPacket, MoveRequestPacketHandler>();
 
             // Sent by the client around and after entering the world; recognised so it is not disconnected.
             RegisterIgnoredPacket<ClientHardwareInfoPacket>(container);
-            RegisterIgnoredPacket<MoveRequestPacket>(container);
             RegisterIgnoredPacket<UseRequestPacket>(container);
             RegisterIgnoredPacket<LookRequestPacket>(container);
             RegisterIgnoredPacket<MobileQueryPacket>(container);
