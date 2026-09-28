@@ -1,4 +1,4 @@
-using Moongate.Persistence.Interfaces;
+using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
@@ -22,23 +22,20 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
     private readonly Lock _gate = new();
     private readonly HashSet<Task> _pending = [];
     private readonly IMobileService _mobiles;
-    private readonly IDataAccess<MobileEntity> _data;
     private readonly IItemService _items;
-    private readonly IDataAccess<ItemEntity> _itemData;
+    private readonly IWorldTransactionService _world;
     private readonly IMoongateEventBus _events;
 
     public CharacterLeaveWorldService(
         IMobileService mobiles,
-        IDataAccess<MobileEntity> data,
         IItemService items,
-        IDataAccess<ItemEntity> itemData,
+        IWorldTransactionService world,
         IMoongateEventBus events
     )
     {
         _mobiles = mobiles;
-        _data = data;
         _items = items;
-        _itemData = itemData;
+        _world = world;
         _events = events;
     }
 
@@ -52,9 +49,10 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
         var snapshot = character.Snapshot();
         var carried = _items.GetOwnedBy(character.Id);
         var items = carried.Select(item => item.Snapshot()).ToList();
+        var merged = _items.TombstonesOf(character.Id);
         _items.Remove(carried.Select(item => item.Id));
         _mobiles.LeaveWorld(character.Id);
-        Track(Task.Run(() => SaveAndPublishAsync(snapshot, items)));
+        Track(Task.Run(() => SaveAndPublishAsync(snapshot, items, merged)));
     }
 
     public Task StartAsync()
@@ -74,29 +72,39 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
         await Task.WhenAll(pending);
     }
 
-    private async Task SaveAndPublishAsync(MobileEntity character, IReadOnlyList<ItemEntity> items)
+    private async Task SaveAndPublishAsync(
+        MobileEntity character,
+        IReadOnlyList<ItemEntity> items,
+        IReadOnlyCollection<Serial> merged
+    )
     {
+        // One transaction: logging back in before the next world save must never find a merged stack again.
         try
         {
-            await _data.UpsertAsync(character, CancellationToken.None);
+            await _world.ExecuteAsync(
+                async transaction =>
+                {
+                    await transaction.GetDataAccess<MobileEntity>().UpsertAsync(character);
+                    var data = transaction.GetDataAccess<ItemEntity>();
+
+                    // After the character: the worn items point at its row.
+                    foreach (var item in items)
+                    {
+                        await data.UpsertAsync(item);
+                    }
+
+                    foreach (var serial in merged)
+                    {
+                        await data.DeleteAsync(serial);
+                    }
+                }
+            );
+            _items.Committed(merged);
             _logger.Information("{Character} left the world", character);
         }
         catch (Exception exception)
         {
-            _logger.Error(exception, "Saving {Character} as it left the world failed", character);
-        }
-
-        // After the character: the worn items point at its row.
-        foreach (var item in items)
-        {
-            try
-            {
-                await _itemData.UpsertAsync(item, CancellationToken.None);
-            }
-            catch (Exception exception)
-            {
-                _logger.Error(exception, "Saving {Item} of {Character} as it left the world failed", item, character);
-            }
+            _logger.Error(exception, "Saving {Character} and its items as it left the world failed", character);
         }
 
         try

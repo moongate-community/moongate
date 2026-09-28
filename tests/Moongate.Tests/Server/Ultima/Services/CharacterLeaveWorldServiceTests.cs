@@ -21,9 +21,8 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
 
     private readonly Container _events = new();
     private readonly MobileService _mobiles = new(new StubMovementService());
-    private readonly RecordingDataAccess<MobileEntity> _data = new();
+    private readonly RecordingWorldTransactionService _world = new();
     private readonly ItemService _items = new();
-    private readonly RecordingDataAccess<ItemEntity> _itemData = new();
     private readonly List<Serial> _saveOrder = [];
     private readonly List<CharacterLeftWorldEvent> _left = [];
     private readonly MobileEntity _aria = new()
@@ -48,7 +47,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         await service.StopAsync().WaitAsync(Timeout);
 
         Assert.False(_mobiles.IsInWorld(_aria.Id));
-        var saved = Assert.Single(_data.Upserted);
+        var saved = Assert.Single(_world.Mobiles.Upserted);
         Assert.NotSame(_aria, saved);
         Assert.Equal((_aria.Id, new Point3D(1497, 1628, 12)), (saved.Id, saved.Location));
         Assert.Same(saved, Assert.Single(_left).Character);
@@ -60,7 +59,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         await using var fixture = await SessionFixture.CreateAsync();
         var session = await SessionWithCharacterAsync(fixture);
         var hold = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
-        _data.HoldUpserts = hold.Task;
+        _world.Hold = hold.Task;
         var service = Service();
 
         await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
@@ -70,7 +69,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         Assert.False(stopping.IsCompleted);
         hold.SetResult();
         await stopping.WaitAsync(Timeout);
-        Assert.Single(_data.Upserted);
+        Assert.Single(_world.Mobiles.Upserted);
     }
 
     [Fact]
@@ -78,14 +77,14 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     {
         await using var fixture = await SessionFixture.CreateAsync();
         var session = await SessionWithCharacterAsync(fixture);
-        _data.FailUpserts = new InvalidOperationException("database down");
+        _world.Mobiles.FailUpserts = new InvalidOperationException("database down");
         var service = Service();
 
         await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
         await service.StopAsync().WaitAsync(Timeout);
 
         Assert.False(_mobiles.IsInWorld(_aria.Id));
-        Assert.Empty(_data.Upserted);
+        Assert.Empty(_world.Mobiles.Upserted);
         Assert.Single(_left);
     }
 
@@ -95,8 +94,8 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         await using var fixture = await SessionFixture.CreateAsync();
         var session = await SessionWithCharacterAsync(fixture);
         var (backpack, coin, ground) = CarriedItems();
-        _data.OnUpsert = mobile => _saveOrder.Add(mobile.Id);
-        _itemData.OnUpsert = item => _saveOrder.Add(item.Id);
+        _world.Mobiles.OnUpsert = mobile => _saveOrder.Add(mobile.Id);
+        _world.Items.OnUpsert = item => _saveOrder.Add(item.Id);
         var service = Service();
 
         await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
@@ -105,18 +104,39 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         Assert.Equal([ground], _items.Items);
         Assert.Equal(_aria.Id, _saveOrder[0]);
         Assert.Equal([backpack.Id, coin.Id], _saveOrder.Skip(1).Order());
-        Assert.All(_itemData.Upserted, saved => Assert.NotSame(backpack, saved));
+        Assert.All(_world.Items.Upserted, saved => Assert.NotSame(backpack, saved));
     }
 
     [Fact]
-    public async Task OnSessionClosed_AFailedItemSave_StillSavesTheOthersAndPublishes()
+    public async Task OnSessionClosed_SavesTheCharacterItsItemsAndDeletesItsMergedStacksInOneTransaction()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = await SessionWithCharacterAsync(fixture);
+        var (_, coin, _) = CarriedItems();
+        _items.Absorb(coin);
+        var service = Service();
+
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+        await service.StopAsync().WaitAsync(Timeout);
+
+        Assert.Equal(1, _world.Transactions);
+        Assert.Equal([coin.Id], _world.Deleted);
+        Assert.Empty(_items.TombstonesOf(_aria.Id));
+    }
+
+    [Fact]
+    public async Task OnSessionClosed_AFailedItemSave_SavesNothing_KeepsTheDeletionsQueuedAndPublishes()
     {
         await using var fixture = await SessionFixture.CreateAsync();
         var session = await SessionWithCharacterAsync(fixture);
         var (backpack, coin, _) = CarriedItems();
-        _itemData.OnUpsert = item =>
+        var absorbed = new ItemEntity { Id = new(0x40000009), TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        absorbed.PutInContainer(backpack.Id, new Point2D(1, 1));
+        _items.Add([absorbed]);
+        _items.Absorb(absorbed);
+        _world.Items.OnUpsert = item =>
         {
-            if (item.Id == backpack.Id)
+            if (item.Id == coin.Id)
             {
                 throw new InvalidOperationException("database down");
             }
@@ -126,7 +146,9 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
         await service.StopAsync().WaitAsync(Timeout);
 
-        Assert.Equal([coin.Id], _itemData.Upserted.Select(item => item.Id));
+        Assert.Empty(_world.Mobiles.Upserted);
+        Assert.Empty(_world.Items.Upserted);
+        Assert.Equal([absorbed.Id], _items.TombstonesOf(_aria.Id));
         Assert.Single(_left);
     }
 
@@ -142,7 +164,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         await service.StopAsync().WaitAsync(Timeout);
 
         Assert.True(_mobiles.IsInWorld(_aria.Id));
-        Assert.Empty(_data.Upserted);
+        Assert.Empty(_world.Mobiles.Upserted);
         Assert.Empty(_left);
     }
 
@@ -157,7 +179,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
         await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
         await service.StopAsync().WaitAsync(Timeout);
 
-        Assert.Empty(_data.Upserted);
+        Assert.Empty(_world.Mobiles.Upserted);
         Assert.Empty(_left);
     }
 
@@ -198,6 +220,6 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
             }
         );
 
-        return new(_mobiles, _data, _items, _itemData, bus);
+        return new(_mobiles, _items, _world, bus);
     }
 }
