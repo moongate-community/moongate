@@ -11,8 +11,8 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Keeps one <see cref="SectorGrid" /> per map, built from <c>maps.toml</c> the first time the map is used, as
-///     ModernUO keeps its sector array per map.
+///     Keeps one <see cref="SectorGrid" /> per map, with its mobiles and ground items, built from <c>maps.toml</c> the
+///     first time the map is used, as ModernUO keeps its sector array per map.
 /// </summary>
 public sealed class SectorService : ISectorService
 {
@@ -23,6 +23,7 @@ public sealed class SectorService : ISectorService
     private readonly IDataLoaderService _data;
     private readonly Dictionary<MapType, SectorGrid?> _grids = [];
     private readonly Dictionary<Serial, Sector> _sectorOf = [];
+    private readonly Dictionary<Serial, Sector> _itemSectorOf = [];
 
     public SectorService(IDataLoaderService data)
     {
@@ -31,7 +32,7 @@ public sealed class SectorService : ISectorService
 
     public void Add(MobileEntity mobile)
     {
-        var sector = GetOrCreateSector(mobile);
+        var sector = GetOrCreateSector(mobile.Map, mobile.Location, mobile);
 
         if (sector is null)
         {
@@ -52,7 +53,7 @@ public sealed class SectorService : ISectorService
 
     public void Move(MobileEntity mobile)
     {
-        var sector = GetOrCreateSector(mobile);
+        var sector = GetOrCreateSector(mobile.Map, mobile.Location, mobile);
 
         if (_sectorOf.TryGetValue(mobile.Id, out var current) && ReferenceEquals(current, sector))
         {
@@ -70,12 +71,77 @@ public sealed class SectorService : ISectorService
 
     public IReadOnlyList<MobileEntity> GetMobilesInRange(MapType map, Point3D center, int range)
     {
-        var grid = GetGrid(map);
         var found = new List<MobileEntity>();
+
+        foreach (var sector in SectorsAround(map, center, range))
+        {
+            foreach (var mobile in sector.Mobiles)
+            {
+                if (Math.Abs(mobile.Location.X - center.X) <= range && Math.Abs(mobile.Location.Y - center.Y) <= range)
+                {
+                    found.Add(mobile);
+                }
+            }
+        }
+
+        return found;
+    }
+
+    public void AddItem(ItemEntity item)
+    {
+        if (item.Map is not { } map || item.GroundLocation is not { } location)
+        {
+            return;
+        }
+
+        var sector = GetOrCreateSector(map, location, item);
+
+        if (sector is null)
+        {
+            return;
+        }
+
+        RemoveItem(item);
+        sector.Items.Add(item);
+        _itemSectorOf[item.Id] = sector;
+    }
+
+    public void RemoveItem(ItemEntity item)
+    {
+        if (_itemSectorOf.Remove(item.Id, out var sector))
+        {
+            sector.Items.RemoveAll(other => other.Id == item.Id);
+        }
+    }
+
+    public IReadOnlyList<ItemEntity> GetItemsInRange(MapType map, Point3D center, int range)
+    {
+        var found = new List<ItemEntity>();
+
+        foreach (var sector in SectorsAround(map, center, range))
+        {
+            foreach (var item in sector.Items)
+            {
+                if (item.GroundLocation is { } location &&
+                    Math.Abs(location.X - center.X) <= range &&
+                    Math.Abs(location.Y - center.Y) <= range)
+                {
+                    found.Add(item);
+                }
+            }
+        }
+
+        return found;
+    }
+
+    // The sectors that exist among those overlapping the square around the center.
+    private IEnumerable<Sector> SectorsAround(MapType map, Point3D center, int range)
+    {
+        var grid = GetGrid(map);
 
         if (grid is null)
         {
-            return found;
+            yield break;
         }
 
         var fromX = Math.Max(center.X - range, 0) >> SectorShift;
@@ -87,34 +153,21 @@ public sealed class SectorService : ISectorService
         {
             for (var sx = fromX; sx <= toX; sx++)
             {
-                var sector = grid.Cells[sy * grid.Columns + sx];
-
-                if (sector is null)
+                if (grid.Cells[sy * grid.Columns + sx] is { } sector)
                 {
-                    continue;
-                }
-
-                foreach (var mobile in sector.Mobiles)
-                {
-                    if (Math.Abs(mobile.Location.X - center.X) <= range && Math.Abs(mobile.Location.Y - center.Y) <= range)
-                    {
-                        found.Add(mobile);
-                    }
+                    yield return sector;
                 }
             }
         }
-
-        return found;
     }
 
-    private Sector? GetOrCreateSector(MobileEntity mobile)
+    private Sector? GetOrCreateSector(MapType map, Point3D location, object owner)
     {
-        var grid = GetGrid(mobile.Map);
-        var location = mobile.Location;
+        var grid = GetGrid(map);
 
         if (grid is null || (uint)location.X >= (uint)grid.Width || (uint)location.Y >= (uint)grid.Height)
         {
-            _logger.Warning("{Mobile} at {Location} on {Map} is outside the sector grid", mobile, location, mobile.Map);
+            _logger.Warning("{Owner} at {Location} on {Map} is outside the sector grid", owner, location, map);
 
             return null;
         }
