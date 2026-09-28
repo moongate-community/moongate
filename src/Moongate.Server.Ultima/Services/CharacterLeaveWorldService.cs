@@ -12,8 +12,9 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     Takes a player's character out of the world when its session closes: on the game loop it copies the character
-///     and removes it from <see cref="IMobileService" />, then saves the copy and publishes
-///     <see cref="CharacterLeftWorldEvent" /> off the loop. Stopping waits for the saves still running.
+///     and the items it carries and removes them from <see cref="IMobileService" /> and <see cref="IItemService" />,
+///     then off the loop saves the character, then its items, and publishes <see cref="CharacterLeftWorldEvent" />.
+///     Stopping waits for the saves still running.
 /// </summary>
 public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoongateStartupService
 {
@@ -22,12 +23,22 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
     private readonly HashSet<Task> _pending = [];
     private readonly IMobileService _mobiles;
     private readonly IDataAccess<MobileEntity> _data;
+    private readonly IItemService _items;
+    private readonly IDataAccess<ItemEntity> _itemData;
     private readonly IMoongateEventBus _events;
 
-    public CharacterLeaveWorldService(IMobileService mobiles, IDataAccess<MobileEntity> data, IMoongateEventBus events)
+    public CharacterLeaveWorldService(
+        IMobileService mobiles,
+        IDataAccess<MobileEntity> data,
+        IItemService items,
+        IDataAccess<ItemEntity> itemData,
+        IMoongateEventBus events
+    )
     {
         _mobiles = mobiles;
         _data = data;
+        _items = items;
+        _itemData = itemData;
         _events = events;
     }
 
@@ -39,8 +50,11 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
         }
 
         var snapshot = character.Snapshot();
+        var carried = _items.GetOwnedBy(character.Id);
+        var items = carried.Select(item => item.Snapshot()).ToList();
+        _items.Remove(carried.Select(item => item.Id));
         _mobiles.LeaveWorld(character.Id);
-        Track(Task.Run(() => SaveAndPublishAsync(snapshot)));
+        Track(Task.Run(() => SaveAndPublishAsync(snapshot, items)));
     }
 
     public Task StartAsync()
@@ -60,7 +74,7 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
         await Task.WhenAll(pending);
     }
 
-    private async Task SaveAndPublishAsync(MobileEntity character)
+    private async Task SaveAndPublishAsync(MobileEntity character, IReadOnlyList<ItemEntity> items)
     {
         try
         {
@@ -70,6 +84,19 @@ public sealed class CharacterLeaveWorldService : ISessionClosedListener, IMoonga
         catch (Exception exception)
         {
             _logger.Error(exception, "Saving {Character} as it left the world failed", character);
+        }
+
+        // After the character: the worn items point at its row.
+        foreach (var item in items)
+        {
+            try
+            {
+                await _itemData.UpsertAsync(item, CancellationToken.None);
+            }
+            catch (Exception exception)
+            {
+                _logger.Error(exception, "Saving {Item} of {Character} as it left the world failed", item, character);
+            }
         }
 
         try

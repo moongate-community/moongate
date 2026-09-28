@@ -16,6 +16,12 @@ public sealed class RecordingDataAccess<T> : IDataAccess<T> where T : class, IMo
 
     public Task? HoldUpserts { get; set; }
 
+    /// <summary>
+    ///     Gets or sets what runs on each upsert before it is stored, such as recording the order across entity types;
+    ///     an exception it throws fails that upsert.
+    /// </summary>
+    public Action<T>? OnUpsert { get; set; }
+
     public Task<bool> DeleteAsync(Serial id, CancellationToken cancellationToken = default)
     {
         return Task.FromResult(Upserted.RemoveAll(entity => entity.Id == id) > 0);
@@ -57,6 +63,8 @@ public sealed class RecordingDataAccess<T> : IDataAccess<T> where T : class, IMo
         {
             throw FailUpserts;
         }
+
+        OnUpsert?.Invoke(entity);
 
         lock (Upserted)
         {
