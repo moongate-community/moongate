@@ -14,6 +14,7 @@ using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.Characters;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
@@ -22,6 +23,7 @@ using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Characters;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Ultima.Types;
 
@@ -79,6 +81,20 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         var confirm = sender.Sent.OfType<LoginConfirmPacket>().Single();
         Assert.Equal((7168, 4096), (confirm.MapWidth, confirm.MapHeight));
         Assert.Equal(SeasonType.Winter, sender.Sent.OfType<SeasonChangePacket>().Single().Season);
+    }
+
+    [Fact]
+    public async Task HandleAsync_TheCharacterEntersTheWorldOnTheLoopWithTheSessionCharacter()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var (context, _, sender) = await Context(fixture, new Serial(42));
+        var mobiles = new LoopCheckingMobileService(_mobiles, fixture.Loop);
+
+        await Handler(new RecordingCharacterService { ForPlay = Aria() }, sender, mobiles)
+            .HandleAsync(context, Packet(0), CancellationToken.None);
+
+        // Entering on the loop, with the session's character, orders it before any session retirement.
+        Assert.Equal([true], mobiles.EnteredOnLoop);
     }
 
     [Fact]
@@ -172,7 +188,11 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         Assert.False(fixture.Client.IsConnected);
     }
 
-    private PlayCharacterPacketHandler Handler(RecordingCharacterService characters, StubPacketSendService sender)
+    private PlayCharacterPacketHandler Handler(
+        RecordingCharacterService characters,
+        StubPacketSendService sender,
+        IMobileService? mobiles = null
+    )
     {
         _events.RegisterMoongateEventBus();
         var bus = _events.Resolve<IMoongateEventBus>();
@@ -187,7 +207,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             new MapContent { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Season = SeasonType.Winter, Name = "Trammel" }
         );
 
-        return new(characters, _mobiles, loaders, bus, _sessions);
+        return new(characters, mobiles ?? _mobiles, loaders, bus, _sessions);
     }
 
     private static CharacterForPlay Aria(int hair = 0x203C, int beard = 0)
