@@ -214,6 +214,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddMoongateService<IMultiService, MultiService>(-4);
             // After the loaders and the item templates: checks the configured backpack and gold templates exist.
             container.AddMoongateService<IStartingItemsService, StartingItemsService>(-3);
+            // After persistence is ready (it is, before any startup service): reserves item serials for the game loop.
+            container.AddMoongateService<IItemSerialPool, ItemSerialPool>();
         }
     }
 
