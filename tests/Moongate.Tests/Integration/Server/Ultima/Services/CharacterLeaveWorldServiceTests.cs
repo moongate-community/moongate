@@ -13,6 +13,7 @@ using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Services;
@@ -24,7 +25,7 @@ public sealed class CharacterLeaveWorldServiceTests
     public async Task Leaving_AfterAMerge_TheAbsorbedStackIsGoneAndTheOtherHoldsTheSum()
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);
-        var mobiles = new MobileService(new StubMovementService());
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
         var items = new ItemService();
         host.Container.RegisterInstance<IMobileService>(mobiles);
         host.Container.RegisterInstance<IItemService>(items);

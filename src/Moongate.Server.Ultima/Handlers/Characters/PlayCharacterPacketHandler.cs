@@ -156,7 +156,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         var character = play.Character;
         var map = _data.GetEntities<MapContent>().FirstOrDefault(content => content.Map == character.Map);
         var body = new Body((ushort)character.Body);
-        var flags = character.Gender == GenderType.Female ? MobileFlagsType.Female : MobileFlagsType.None;
+        var flags = _mobiles.GetFlags(character);
         var direction = character.Direction;
 
         yield return new LoginConfirmPacket(

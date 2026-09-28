@@ -13,6 +13,7 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.Support.Timing;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Movement;
@@ -34,7 +35,7 @@ public sealed class MoveRequestPacketHandlerTests : IAsyncDisposable
 
     public MoveRequestPacketHandlerTests()
     {
-        _mobiles = new(_movement);
+        _mobiles = new(_movement, TestSectors.Create());
     }
 
     [Fact]

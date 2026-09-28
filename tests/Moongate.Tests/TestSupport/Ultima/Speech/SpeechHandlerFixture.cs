@@ -21,6 +21,7 @@ using Moongate.Tests.TestSupport.Commands;
 using Moongate.Tests.TestSupport.Network;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -46,7 +47,7 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
         _network = network;
         Sessions = new(network.Loop);
         Speaker = Sessions.GetOrCreate(network.Client);
-        Mobiles = new(new StubMovementService());
+        Mobiles = new(new StubMovementService(), TestSectors.Create());
         _container.RegisterCommand<HelpCommand>(
             "help",
             source: CommandSourceType.Console | CommandSourceType.InGame,

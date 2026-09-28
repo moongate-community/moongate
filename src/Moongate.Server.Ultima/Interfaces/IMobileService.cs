@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 
 namespace Moongate.Server.Ultima.Interfaces;
@@ -62,6 +63,11 @@ public interface IMobileService
     ///     Gets whether the mobile is in the world.
     /// </summary>
     bool IsInWorld(Serial mobile);
+
+    /// <summary>
+    ///     Gets the flags the client draws the mobile with (0x77, 0x78): female today.
+    /// </summary>
+    MobileFlagsType GetFlags(MobileEntity mobile);
 
     /// <summary>
     ///     Gets what the status bar shows for the mobile (0x11).
