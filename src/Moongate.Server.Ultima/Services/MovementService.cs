@@ -188,7 +188,6 @@ public class MovementService : IMovementService
         }
     }
 
-    // ModernUO MovementImpl.Check: the height the mover lands at in cell (x, y), preferring the one closest to fromZ.
     private bool Check(
         MapType map,
         int x,

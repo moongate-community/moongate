@@ -21,10 +21,8 @@ namespace Moongate.Server.Ultima.Entities.World;
 [Table(Name = "world.mobiles")]
 public class MobileEntity : IMoongateEntity
 {
-
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
-
 
     /// <summary>
     ///     The account of a player character; <see langword="null" /> for an NPC.
@@ -259,11 +257,13 @@ public class MobileEntity : IMoongateEntity
     public MobileEntity Snapshot()
     {
         var copy = (MobileEntity)MemberwiseClone();
-        copy.Skills = Skills.Select(
-                                skill => new MobileSkill
-                                    { Skill = skill.Skill, Base = skill.Base, Cap = skill.Cap, Lock = skill.Lock }
-                            )
-                            .ToList();
+        copy.Skills =
+        [
+            .. Skills.Select(
+                skill => new MobileSkill
+                    { Skill = skill.Skill, Base = skill.Base, Cap = skill.Cap, Lock = skill.Lock }
+            )
+        ];
         copy.Props = Props is null ? null : new Dictionary<string, object?>(Props);
 
         return copy;
