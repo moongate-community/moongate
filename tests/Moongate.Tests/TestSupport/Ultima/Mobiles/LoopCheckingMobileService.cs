@@ -5,6 +5,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 
 namespace Moongate.Tests.TestSupport.Ultima.Mobiles;
@@ -64,6 +65,11 @@ public sealed class LoopCheckingMobileService : IMobileService
     public bool IsInWorld(Serial mobile)
     {
         return _inner.IsInWorld(mobile);
+    }
+
+    public MobileFlagsType GetFlags(MobileEntity mobile)
+    {
+        return _inner.GetFlags(mobile);
     }
 
     public MobileStatusInfo GetStatus(MobileEntity mobile)

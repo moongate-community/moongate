@@ -23,18 +23,21 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
     private readonly Dictionary<Task, Serial?> _pending = [];
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
+    private readonly IWorldViewService _view;
     private readonly IWorldTransactionService _world;
     private readonly IMoongateEventBus _events;
 
     public CharacterLeaveWorldService(
         IMobileService mobiles,
         IItemService items,
+        IWorldViewService view,
         IWorldTransactionService world,
         IMoongateEventBus events
     )
     {
         _mobiles = mobiles;
         _items = items;
+        _view = view;
         _world = world;
         _events = events;
     }
@@ -52,6 +55,8 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         // Taken on the loop: from now on only this leave deletes them, in the transaction that saves their stacks.
         var merged = _items.TakeTombstonesOf(character.Id);
         _items.Remove(carried.Select(item => item.Id));
+        // Still in the sector grid: the players around it can be found and told.
+        _view.Left(character);
         _mobiles.LeaveWorld(character.Id);
         Track(Task.Run(() => SaveAndPublishAsync(snapshot, items, merged)), character.AccountId);
     }

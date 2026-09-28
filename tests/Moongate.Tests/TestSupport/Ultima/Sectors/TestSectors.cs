@@ -1,0 +1,23 @@
+using Moongate.Core.Geometry;
+using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Ultima.Types;
+
+namespace Moongate.Tests.TestSupport.Ultima.Sectors;
+
+/// <summary>
+///     Builds a <see cref="SectorService" /> over Trammel and Felucca at 7168×4096.
+/// </summary>
+public static class TestSectors
+{
+    public static SectorService Create()
+    {
+        var loaders = new StubDataLoaderService().With(
+            new MapContent { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Name = "Trammel" },
+            new MapContent { Map = MapType.Felucca, Size = new Point2D(7168, 4096), Name = "Felucca" }
+        );
+
+        return new(loaders);
+    }
+}

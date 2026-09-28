@@ -37,6 +37,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     private readonly IDataLoaderService _data;
     private readonly IMoongateEventBus _events;
     private readonly ISessionService _sessions;
+    private readonly IWorldViewService _view;
 
     public PlayCharacterPacketHandler(
         ICharacterService characters,
@@ -45,7 +46,8 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         ICharacterLeaveWorldService leaves,
         IDataLoaderService data,
         IMoongateEventBus events,
-        ISessionService sessions
+        ISessionService sessions,
+        IWorldViewService view
     )
     {
         _characters = characters;
@@ -55,6 +57,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         _data = data;
         _events = events;
         _sessions = sessions;
+        _view = view;
     }
 
     public async ValueTask HandleAsync(
@@ -140,6 +143,15 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
             context.TrySend(outgoing);
         }
 
+        // After the sequence: the client must know where it stands before it is shown the others.
+        if (!await context.RunOnGameLoopAsync(session => _view.Entered(character, session.SessionId), cancellationToken))
+        {
+            // The session closed during the sequence: its leave already ran, so the login never completed.
+            _logger.Information("Session {SessionId} closed while {Character} entered the world", context.SessionId, character);
+
+            return;
+        }
+
         _logger.Information(
             "Session {SessionId}: account {AccountId} entered the world with {Character}",
             context.SessionId,
@@ -156,7 +168,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         var character = play.Character;
         var map = _data.GetEntities<MapContent>().FirstOrDefault(content => content.Map == character.Map);
         var body = new Body((ushort)character.Body);
-        var flags = character.Gender == GenderType.Female ? MobileFlagsType.Female : MobileFlagsType.None;
+        var flags = _mobiles.GetFlags(character);
         var direction = character.Direction;
 
         yield return new LoginConfirmPacket(

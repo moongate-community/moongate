@@ -14,6 +14,7 @@ using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 using Npgsql;
 
@@ -256,7 +257,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);
         var items = new ItemService();
-        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService()));
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
         host.Container.RegisterInstance<IItemService>(items);
         host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
         await CoreMigrationFiles.ApplyAsync(host.Database, "world");
@@ -286,7 +287,7 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);
         var items = new ItemService();
-        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService()));
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
         host.Container.RegisterInstance<IItemService>(items);
         host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
         await CoreMigrationFiles.ApplyAsync(host.Database, "world");
