@@ -227,6 +227,24 @@ public class ItemEntity : IMoongateEntity
         return removed;
     }
 
+    /// <summary>
+    ///     A one-line description for logs and debugging: serial, its own name or the template id, graphic, amount above 1
+    ///     and where the item is. For the name a player sees use <c>ItemEntityExtensions.DisplayName</c>.
+    /// </summary>
+    public override string ToString()
+    {
+        var amount = Amount > 1 ? $" x{Amount}" : "";
+        var where = Location switch
+        {
+            ItemLocationType.Container => $"in {ContainerId}",
+            ItemLocationType.Equipped => $"on {MobileId} layer {Layer}",
+            ItemLocationType.Ground => $"at {Map} {GroundLocation}",
+            _ => "nowhere"
+        };
+
+        return $"{Id} \"{Name ?? TemplateId}\" (0x{ItemId:X4}){amount} {where}";
+    }
+
     private void ClearLocation()
     {
         Map = null;

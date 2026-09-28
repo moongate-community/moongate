@@ -236,4 +236,15 @@ public class MobileEntity : IMoongateEntity
 
         return removed;
     }
+
+    /// <summary>
+    ///     A one-line description for logs and debugging: serial, name, whose it is (the account of a player character,
+    ///     the template of an NPC), race, gender, body and where it stands.
+    /// </summary>
+    public override string ToString()
+    {
+        var owner = IsNpc ? $"npc \"{TemplateId}\"" : $"player of {AccountId}";
+
+        return $"{Id} \"{Name}\" {owner} ({Race} {Gender}, body 0x{Body:X4}) at {Map} {Location}";
+    }
 }

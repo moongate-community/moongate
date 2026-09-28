@@ -37,12 +37,20 @@ public sealed class FakeTileDataService : ITileDataService
         return this;
     }
 
-    public FakeTileDataService Item(int id, TileFlagType flags, byte height, byte weight = 0, byte layer = 0)
+    public FakeTileDataService Item(
+        int id,
+        TileFlagType flags,
+        byte height,
+        byte weight = 0,
+        byte layer = 0,
+        string name = ""
+    )
     {
         var standHeight = (flags & TileFlagType.Bridge) != 0 ? height / 2 : height;
         _items[id] = new()
         {
-            Id = id, Flags = flags, Height = height, StandHeight = standHeight, Weight = weight, Layer = layer
+            Id = id, Name = name, Flags = flags, Height = height, StandHeight = standHeight, Weight = weight,
+            Layer = layer
         };
 
         return this;
