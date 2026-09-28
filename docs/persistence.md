@@ -216,7 +216,17 @@ The clone function must copy every mutable nested value; returning the live
 instance is rejected. `SaveAllAsync` captures sources through the supplied owner
 callback and later writes one transaction per active database. It upserts the
 captured entities; absence from a snapshot is not deletion. Issue an explicit
-`DeleteAsync` for removed rows.
+`DeleteAsync` for removed rows, or register a deletion source:
+
+```csharp
+container.AddPersistenceWorld<Item>(() => world.Items.Values, item => item.Snapshot(), world);
+```
+
+`IPersistenceDeletionSource.Capture()` runs on the loop with the snapshot and returns the
+identities the source removed; the save deletes them in the same transaction as its upserts, then
+calls `Committed()` with exactly those. A failed save does not call it, so they stay pending.
+`IDataAccess<T>.ReserveSerialAsync()` takes the next identity from the entity's sequence without
+writing a row, for an entity made in memory and saved later.
 
 Capture and any post-commit update of owner state must run on and finish through
 the game loop, which owns that state. In the host, take
