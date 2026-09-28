@@ -99,6 +99,35 @@ public sealed class MotdServiceTests
         Assert.Empty(sender.Sent);
     }
 
+    [Fact]
+    public async Task SendAsync_CanceledDuringResolver_DoesNotSendCompletedResult()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        var sessions = new SessionService(fixture.Loop);
+        var entrant = sessions.GetOrCreate(fixture.Client);
+        await fixture.ExecuteOnLoopAsync(() => entrant.Set(SessionKeys.CharacterId, new Serial(2)));
+        var sender = new StubPacketSendService();
+        var context = new PacketContext(entrant, fixture.Loop, sessions, sender);
+        var pending = new TaskCompletionSource<string>(TaskCreationOptions.RunContinuationsAsynchronously);
+        var started = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var registry = new MotdVariableRegistry();
+        registry.Register("delayed", async (_, _) =>
+        {
+            started.SetResult();
+            return await pending.Task;
+        });
+        var service = CreateService(sessions, registry, new MotdLine(1, "${delayed}"));
+        using var cancellation = new CancellationTokenSource();
+
+        var sending = service.SendAsync(context, new MobileEntity { Id = new Serial(2), Name = "Aria" }, cancellation.Token).AsTask();
+        await started.Task.WaitAsync(TimeSpan.FromSeconds(5));
+        cancellation.Cancel();
+        pending.SetResult("Too late");
+        await sending.WaitAsync(TimeSpan.FromSeconds(5));
+
+        Assert.Empty(sender.Sent);
+    }
+
     private static MotdService CreateService(SessionService sessions, MotdVariableRegistry registry, params MotdLine[] lines)
     {
         var realm = new RealmInstance(new RealmDescriptor("local", 0, "Felucca", IPAddress.Loopback, 2593, AccountType.Regular), Guid.NewGuid());

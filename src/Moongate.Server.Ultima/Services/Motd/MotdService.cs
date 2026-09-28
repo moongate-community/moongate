@@ -85,6 +85,11 @@ public sealed class MotdService : IMotdService
                 {
                     var text = await _renderer.RenderAsync(line, snapshot, cancellationToken);
 
+                    if (cancellationToken.IsCancellationRequested)
+                    {
+                        return;
+                    }
+
                     if (string.IsNullOrWhiteSpace(text))
                     {
                         continue;
