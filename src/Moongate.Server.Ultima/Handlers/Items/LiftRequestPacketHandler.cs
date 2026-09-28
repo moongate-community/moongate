@@ -60,7 +60,8 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         _logger.Debug("Session {SessionId} cannot lift {Item}: {Reason}", session.SessionId, item, reason);
         _sender.TrySend(session.SessionId, new LiftRejectPacket(reason));
 
-        if (item?.ContainerId is not null)
+        // Only the character's own items are shown back: another player's item must not be revealed.
+        if (item?.ContainerId is not null && session.CharacterId.IsValid && _items.GetOwner(item) == session.CharacterId)
         {
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
         }
