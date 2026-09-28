@@ -11,8 +11,6 @@ using Moongate.Server.Core.Packets;
 using Moongate.Server.Ultima.Data.Characters;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Maps;
-using Moongate.Server.Ultima.Data.Mobiles;
-using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.Characters;
@@ -31,9 +29,6 @@ namespace Moongate.Server.Ultima.Handlers.Characters;
 /// </summary>
 public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharacterPacket>
 {
-    private const int StatCap = 225;
-    private const int FollowersMax = 5;
-
     private readonly ILogger _logger = Log.ForContext<PlayCharacterPacketHandler>();
     private readonly ICharacterService _characters;
     private readonly IMobileService _mobiles;
@@ -63,13 +58,12 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
     )
     {
         var accountId = Serial.Zero;
-        await context.RunOnGameLoopAsync(session => accountId = session.AccountId, cancellationToken)
-                     .ConfigureAwait(false);
+        await context.RunOnGameLoopAsync(session => accountId = session.AccountId, cancellationToken);
 
         if (!accountId.IsValid)
         {
             _logger.Warning("Play character from session {SessionId} without an account", context.SessionId);
-            await RefuseAsync(context, PopupMessageType.CouldNotAttach, cancellationToken).ConfigureAwait(false);
+            await RefuseAsync(context, PopupMessageType.CouldNotAttach, cancellationToken);
 
             return;
         }
@@ -79,12 +73,12 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         try
         {
             play = await _characters.GetForPlayAsync(accountId, packet.CharacterIndex, cancellationToken)
-                                    .ConfigureAwait(false);
+                .ConfigureAwait(false);
         }
         catch (Exception exception) when (exception is not OperationCanceledException)
         {
             _logger.Error(exception, "Loading the character to play for account {AccountId} failed", accountId);
-            await RefuseAsync(context, PopupMessageType.CouldNotAttach, cancellationToken).ConfigureAwait(false);
+            await RefuseAsync(context, PopupMessageType.CouldNotAttach, cancellationToken);
 
             return;
         }
@@ -96,7 +90,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
                 accountId,
                 packet.CharacterIndex
             );
-            await RefuseAsync(context, PopupMessageType.CharacterDoesNotExist, cancellationToken).ConfigureAwait(false);
+            await RefuseAsync(context, PopupMessageType.CharacterDoesNotExist, cancellationToken);
 
             return;
         }
@@ -104,27 +98,30 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         var character = play.Character;
         var admitted = false;
         await context.RunOnGameLoopAsync(
-                         session =>
-                         {
-                             // As ModernUO: one character per account in the world at a time.
-                             if (_sessions.GetAll().Any(other => other.SessionId != session.SessionId &&
-                                                                 other.AccountId == accountId &&
-                                                                 other.CharacterId.IsValid))
-                             {
-                                 return;
-                             }
+                session =>
+                {
+                    // As ModernUO: one character per account in the world at a time.
+                    if (_sessions.GetAll()
+                        .Any(
+                            other => other.SessionId != session.SessionId &&
+                                     other.AccountId == accountId &&
+                                     other.CharacterId.IsValid
+                        ))
+                    {
+                        return;
+                    }
 
-                             session.Set(SessionKeys.CharacterId, character.Id);
-                             admitted = true;
-                         },
-                         cancellationToken
-                     )
-                     .ConfigureAwait(false);
+                    session.Set(SessionKeys.CharacterId, character.Id);
+                    admitted = true;
+                },
+                cancellationToken
+            )
+            .ConfigureAwait(false);
 
         if (!admitted)
         {
             _logger.Information("Account {AccountId} already has a character in the world", accountId);
-            await RefuseAsync(context, PopupMessageType.CharacterInWorld, cancellationToken).ConfigureAwait(false);
+            await RefuseAsync(context, PopupMessageType.CharacterInWorld, cancellationToken);
 
             return;
         }
@@ -144,7 +141,7 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
         );
 
         // As in every emulator, the login hook runs once the client knows the login is complete.
-        await _events.PublishAsync(new CharacterEnteredWorldEvent(character), CancellationToken.None).ConfigureAwait(false);
+        await _events.PublishAsync(new CharacterEnteredWorldEvent(character), CancellationToken.None);
     }
 
     private IEnumerable<IOutgoingPacket> EnterWorldSequence(CharacterForPlay play)
@@ -176,68 +173,12 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
             character.SkinHue,
             flags,
             character.Notoriety ?? NotorietyType.Innocent,
-            Equipment(play)
+            _mobiles.GetEquipment(character, play.Equipment)
         );
-        yield return new MobileStatusPacket(Status(character));
+        yield return new MobileStatusPacket(_mobiles.GetStatus(character));
         yield return new WarModePacket(false);
         yield return new LoginCompletePacket();
         yield return new CurrentTimePacket(TimeOnly.FromDateTime(DateTime.UtcNow));
-    }
-
-    /// <summary>
-    ///     The worn items, one per layer, then the hair and beard the mobile has as virtual items.
-    /// </summary>
-    private List<MobileEquipmentEntry> Equipment(CharacterForPlay play)
-    {
-        var character = play.Character;
-        var entries = play.Equipment
-                          .Where(item => item.Layer is not null)
-                          .GroupBy(item => item.Layer!.Value)
-                          .Select(group => group.First())
-                          .Select(item => new MobileEquipmentEntry(item.Id, item.ItemId, item.Layer!.Value, item.Hue))
-                          .ToList();
-        var layers = entries.Select(entry => entry.Layer).ToHashSet();
-
-        if (character.HairStyle > 0 && layers.Add(LayerType.Hair))
-        {
-            entries.Add(new(_mobiles.HairSerial(character.Id), character.HairStyle, LayerType.Hair, character.HairHue));
-        }
-
-        if (character.BeardStyle > 0 && layers.Add(LayerType.FacialHair))
-        {
-            entries.Add(
-                new(_mobiles.BeardSerial(character.Id), character.BeardStyle, LayerType.FacialHair, character.BeardHue)
-            );
-        }
-
-        return entries;
-    }
-
-    private static MobileStatusInfo Status(MobileEntity character)
-    {
-        return new()
-        {
-            Serial = character.Id,
-            Name = character.Name,
-            Hits = character.Hits,
-            HitsMax = character.HitsMax,
-            Female = character.Gender == GenderType.Female,
-            Strength = character.Strength,
-            Dexterity = character.Dexterity,
-            Intelligence = character.Intelligence,
-            Stamina = character.Stamina,
-            StaminaMax = character.StaminaMax,
-            Mana = character.Mana,
-            ManaMax = character.ManaMax,
-            PhysicalResistance = character.ResistPhysical,
-            Race = character.Race,
-            StatCap = StatCap,
-            FollowersMax = FollowersMax,
-            FireResistance = character.ResistFire,
-            ColdResistance = character.ResistCold,
-            PoisonResistance = character.ResistPoison,
-            EnergyResistance = character.ResistEnergy
-        };
     }
 
     private static async Task RefuseAsync(PacketContext context, PopupMessageType popup, CancellationToken cancellationToken)

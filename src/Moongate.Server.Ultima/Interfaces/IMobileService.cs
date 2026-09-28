@@ -1,10 +1,12 @@
 using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Mobiles;
+using Moongate.Server.Ultima.Entities.World;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
-///     The mobiles in the world while the server runs: which are there, and the virtual serials the client needs for
-///     things a mobile shows but that are not items, such as hair and beard.
+///     The mobiles in the world while the server runs: which are there, the virtual serials the client needs for
+///     things a mobile shows but that are not items, such as hair and beard, and what the client is told about them.
 /// </summary>
 /// <remarks>
 ///     Everything here lives in memory and is not saved. Members may be called from any thread.
@@ -35,4 +37,15 @@ public interface IMobileService
     ///     Gets whether the mobile is in the world.
     /// </summary>
     bool IsInWorld(Serial mobile);
+
+    /// <summary>
+    ///     Gets what the status bar shows for the mobile (0x11).
+    /// </summary>
+    MobileStatusInfo GetStatus(MobileEntity mobile);
+
+    /// <summary>
+    ///     Gets what the mobile wears as the client draws it (0x78): the worn items, one per layer, then its hair and
+    ///     beard as virtual items unless an item already holds their layer.
+    /// </summary>
+    List<MobileEquipmentEntry> GetEquipment(MobileEntity mobile, IEnumerable<ItemEntity> worn);
 }
