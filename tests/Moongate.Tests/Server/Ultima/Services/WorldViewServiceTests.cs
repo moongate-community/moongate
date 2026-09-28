@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
@@ -20,12 +21,13 @@ public sealed class WorldViewServiceTests
 
     private readonly StubPacketSendService _sender = new();
     private readonly MobileService _mobiles;
-    private readonly ItemService _items = new();
+    private readonly ItemService _items;
     private readonly WorldViewService _view;
 
     public WorldViewServiceTests()
     {
         var sectors = TestSectors.Create();
+        _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
         _view = new(sectors, _mobiles, _items, _sender);
     }

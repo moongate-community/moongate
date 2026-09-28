@@ -208,9 +208,6 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddScriptModule<LocalizationModule>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
-            container.AddLiveWorldMobiles();
-            container.AddLiveWorldItems();
-
             container.AddMoongateService<IDataLoaderService, DataLoaderService>(-5);
             // After the loaders: the maps come from data/maps.toml.
             container.AddMoongateService<IMapService, MapService>(-4);
@@ -220,6 +217,10 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddMoongateService<IStartingItemsService, StartingItemsService>(-3);
             // After persistence is ready (it is, before any startup service): reserves item serials for the game loop.
             container.AddMoongateService<IItemSerialPool, ItemSerialPool>();
+
+            // Last: the item service is resolved here as the deletion source, and its sector grid needs the data loaders.
+            container.AddLiveWorldMobiles();
+            container.AddLiveWorldItems();
         }
     }
 

@@ -3,6 +3,8 @@ using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -167,10 +169,101 @@ public sealed class ItemServiceTests
 
     private ItemService Service()
     {
-        var items = new ItemService();
+        var items = TestItems.Create();
         items.Add([_backpack, _bag, _coin, _dagger, _shirt, _ground]);
 
         return items;
+    }
+
+    [Fact]
+    public void PlaceOnGround_PutsTheItemInTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 5));
+
+        Assert.Equal(new Point3D(1496, 1628, 5), gold.GroundLocation);
+        Assert.Equal([gold], sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 0));
+    }
+
+    [Fact]
+    public void Add_AGroundItem_PutsItInTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var gold = Item(0x40000050);
+        gold.PlaceOnGround(MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        TestItems.Create(sectors).Add([gold]);
+
+        Assert.Equal([gold], sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 0));
+    }
+
+    [Fact]
+    public void MoveToContainer_TakesAGroundItemOutOfTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        items.MoveToContainer(gold, new Serial(0x40000001), new Point2D(44, 65));
+
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void RemoveAndAbsorb_TakeGroundItemsOutOfTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        var silver = Item(0x40000051);
+        items.Add([gold, silver]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+        items.PlaceOnGround(silver, MapType.Trammel, new Point3D(1497, 1628, 0));
+
+        items.Remove([gold.Id]);
+        items.Absorb(silver);
+
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void HideAndShow_TakeAndPutBackWithoutMovingIt()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        items.Hide(gold);
+
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+        Assert.Equal(new Point3D(1496, 1628, 0), gold.GroundLocation);
+
+        items.Show(gold);
+
+        Assert.Equal([gold], sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void Split_AGroundStack_PutsTheRestInTheGrid()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var gold = Item(0x40000050);
+        gold.Amount = 100;
+        items.Add([gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        var rest = items.Split(gold, 40, new Serial(0x40000060));
+
+        Assert.Contains(rest, sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 0));
     }
 
     private static ItemEntity Item(uint serial)

@@ -23,7 +23,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     private static readonly Serial Aria = new(0x00000002);
     private static readonly Serial Bran = new(0x00000003);
 
-    private readonly ItemService _items = new();
+    private readonly ItemService _items = TestItems.Create();
     private readonly StubPacketSendService _sender = new();
     private readonly ItemEntity _backpack = Item(0x40000001, 1);
     private readonly ItemEntity _coins = Item(0x40000002, 250);

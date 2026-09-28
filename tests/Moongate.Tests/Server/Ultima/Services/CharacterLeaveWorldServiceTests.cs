@@ -11,6 +11,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Persistence;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -25,7 +26,7 @@ public sealed class CharacterLeaveWorldServiceTests : IDisposable
     private readonly Container _events = new();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly RecordingWorldTransactionService _world = new();
-    private readonly ItemService _items = new();
+    private readonly ItemService _items = TestItems.Create();
     private readonly RecordingWorldViewService _view = new();
     private readonly List<Serial> _saveOrder = [];
     private readonly List<CharacterLeftWorldEvent> _left = [];

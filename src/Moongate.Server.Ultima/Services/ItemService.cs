@@ -4,25 +4,39 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Keeps the live items by serial. Contents and owners are found by scanning: a player holds few items.
+///     Keeps the live items by serial, and the ones on the ground in the sector grid. Contents and owners are found by
+///     scanning: a player holds few items.
 /// </summary>
 public sealed class ItemService : IItemService
 {
     private readonly ConcurrentDictionary<Serial, ItemEntity> _items = new();
     private readonly ConcurrentDictionary<Serial, Serial?> _tombstones = new();
+    private readonly ISectorService _sectors;
 
     public IReadOnlyCollection<ItemEntity> Items => _items.Values.ToArray();
+
+    public ItemService(ISectorService sectors)
+    {
+        _sectors = sectors;
+    }
 
     public void Add(IEnumerable<ItemEntity> items)
     {
         foreach (var item in items)
         {
+            if (_items.TryGetValue(item.Id, out var previous))
+            {
+                _sectors.RemoveItem(previous);
+            }
+
             _items[item.Id] = item;
             _tombstones.TryRemove(item.Id, out _);
+            _sectors.AddItem(item);
         }
     }
 
@@ -35,7 +49,10 @@ public sealed class ItemService : IItemService
     {
         foreach (var serial in serials)
         {
-            _items.TryRemove(serial, out _);
+            if (_items.TryRemove(serial, out var item))
+            {
+                _sectors.RemoveItem(item);
+            }
         }
     }
 
@@ -75,7 +92,25 @@ public sealed class ItemService : IItemService
 
     public void MoveToContainer(ItemEntity item, Serial container, Point2D position)
     {
+        _sectors.RemoveItem(item);
         item.PutInContainer(container, position);
+    }
+
+    public void PlaceOnGround(ItemEntity item, MapType map, Point3D location)
+    {
+        _sectors.RemoveItem(item);
+        item.PlaceOnGround(map, location);
+        _sectors.AddItem(item);
+    }
+
+    public void Hide(ItemEntity item)
+    {
+        _sectors.RemoveItem(item);
+    }
+
+    public void Show(ItemEntity item)
+    {
+        _sectors.AddItem(item);
     }
 
     public ItemEntity Split(ItemEntity item, int amount, Serial serial)
@@ -85,6 +120,7 @@ public sealed class ItemService : IItemService
         rest.Amount = item.Amount - amount;
         item.Amount = amount;
         _items[rest.Id] = rest;
+        _sectors.AddItem(rest);
 
         return rest;
     }
@@ -93,6 +129,7 @@ public sealed class ItemService : IItemService
     {
         _tombstones[item.Id] = GetOwner(item);
         _items.TryRemove(item.Id, out _);
+        _sectors.RemoveItem(item);
     }
 
     public IReadOnlyCollection<Serial> TombstonesOf(Serial owner)

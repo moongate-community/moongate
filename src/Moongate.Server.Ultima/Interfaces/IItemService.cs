@@ -3,12 +3,14 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
-///     The live items of the characters in the world: what they wear and everything inside those containers, at any
-///     depth. The world save writes their snapshots.
+///     The live items of the world: what the characters in the world wear, the items lying on the ground, and
+///     everything inside those containers, at any depth; the ground items are kept in the sector grid of
+///     <see cref="ISectorService" />. The world save writes their snapshots.
 /// </summary>
 /// <remarks>
 ///     The live items change on the game loop: add, remove and move them only there. It is also the deletion source of
@@ -57,6 +59,21 @@ public interface IItemService : IPersistenceDeletionSource
     ///     Puts the live item inside <paramref name="container" /> at <paramref name="position" /> of its gump.
     /// </summary>
     void MoveToContainer(ItemEntity item, Serial container, Point2D position);
+
+    /// <summary>
+    ///     Lays the live item on the ground of the map, in the sector grid.
+    /// </summary>
+    void PlaceOnGround(ItemEntity item, MapType map, Point3D location);
+
+    /// <summary>
+    ///     Takes a ground item out of the sector grid while a player holds it; it keeps its location.
+    /// </summary>
+    void Hide(ItemEntity item);
+
+    /// <summary>
+    ///     Puts a held ground item back into the sector grid where it lies.
+    /// </summary>
+    void Show(ItemEntity item);
 
     /// <summary>
     ///     Splits <paramref name="item" />: it keeps its serial and <paramref name="amount" />, and the rest becomes a new

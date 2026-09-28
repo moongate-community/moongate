@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Ultima.Types;
@@ -28,7 +29,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private static readonly Serial Bran = new(0x00000003);
     private static readonly Serial Ground = new(0xFFFFFFFF);
 
-    private readonly ItemService _items = new();
+    private readonly ItemService _items = TestItems.Create();
     private readonly StubPacketSendService _sender = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                   .Item(BackpackGraphic, TileFlagType.Container, 0)

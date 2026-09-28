@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Items;
@@ -18,7 +19,7 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
 {
     private static readonly Serial Aria = new(0x00000002);
 
-    private readonly ItemService _items = new();
+    private readonly ItemService _items = TestItems.Create();
     private readonly StubPacketSendService _sender = new();
     private readonly ItemEntity _backpack = new() { Id = new(0x40000001), TemplateId = "backpack", ItemId = 0x0E75 };
     private readonly ItemEntity _dagger = new() { Id = new(0x40000002), TemplateId = "dagger", ItemId = 0x0F52 };

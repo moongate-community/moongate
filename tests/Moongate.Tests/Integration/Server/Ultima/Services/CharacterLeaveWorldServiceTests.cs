@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Persistence;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -27,7 +28,7 @@ public sealed class CharacterLeaveWorldServiceTests
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);
         var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
-        var items = new ItemService();
+        var items = TestItems.Create();
         host.Container.RegisterInstance<IMobileService>(mobiles);
         host.Container.RegisterInstance<IItemService>(items);
         host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
