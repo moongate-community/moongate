@@ -22,7 +22,38 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # Pull requests into develop and pushes to develop only build: the tests run locally before the pull request.
+  # The full pipeline runs where a release is cut, on pull requests into main and pushes to main.
+  build:
+    if: ${{ !((github.event_name == 'pull_request' && github.base_ref == 'main') || (github.event_name == 'push' && github.ref == 'refs/heads/main')) }}
+    runs-on: [self-hosted, gung-dotnet]
+
+    container:
+      image: mcr.microsoft.com/dotnet/sdk:10.0
+      volumes:
+        - moongate-nuget-packages:/nuget-packages
+
+    env:
+      DOTNET_CLI_TELEMETRY_OPTOUT: 1
+      DOTNET_NOLOGO: 1
+      DOTNET_SKIP_FIRST_TIME_EXPERIENCE: 1
+      NUGET_PACKAGES: /nuget-packages
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v7
+
+      - name: Restore
+        run: dotnet restore Moongate.slnx
+
+      - name: Verify method body style
+        run: dotnet format style Moongate.slnx --diagnostics IDE0022 --severity warn --no-restore --verify-no-changes
+
+      - name: Build
+        run: dotnet build Moongate.slnx -c Release --no-restore
+
   build-and-test:
+    if: ${{ (github.event_name == 'pull_request' && github.base_ref == 'main') || (github.event_name == 'push' && github.ref == 'refs/heads/main') }}
     # Self-hosted runner on gung-server-01, registered with the custom label
     # "gung-dotnet"; GitHub adds "self-hosted", "Linux" and "X64" on its own.
     # The container step below needs a working Docker daemon on that host.
@@ -108,23 +139,19 @@ jobs:
           # Documentation publishes the report of the released commit, possibly long after it ran.
           retention-days: ${{ github.ref == 'refs/heads/main' && 90 || 14 }}
 
-      # The distribution checks below guard what a release ships; develop pushes skip them, since every change
-      # reaches develop through a pull request that already ran them.
+      # The distribution checks below guard what a release ships.
       - name: Verify portable administration client
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: |
           apt-get update
           apt-get install -y --no-install-recommends python3-venv
           bash scripts/verify-admin-protos.sh
 
       - name: Verify NuGet packages and README examples
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: bash scripts/verify-packages.sh
 
       # The notices ship beside the binaries, so a dependency change that does not
       # reach them would distribute the wrong attributions.
       - name: Verify the third-party notices are current
-        if: github.event_name == 'pull_request' || github.ref == 'refs/heads/main'
         run: |
           ./scripts/third-party-notices.sh
           git diff --exit-code -- THIRD-PARTY-NOTICES.md
