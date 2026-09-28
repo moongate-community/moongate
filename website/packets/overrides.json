@@ -2178,5 +2178,164 @@
     ],
     "notes": "Recognized and ignored for now.",
     "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+  },
+  "0x03:incoming": {
+    "category": "Speech",
+    "tags": [
+      "Speech",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Packet length."
+      },
+      {
+        "offset": "3",
+        "name": "Speech type",
+        "type": "enum",
+        "size": "1",
+        "description": "Speech mode and flags."
+      },
+      {
+        "offset": "4",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Text hue."
+      },
+      {
+        "offset": "6",
+        "name": "Font",
+        "type": "ushort",
+        "size": "2",
+        "description": "Font identifier."
+      },
+      {
+        "offset": "8",
+        "name": "Text",
+        "type": "ascii",
+        "size": "variable",
+        "description": "NUL-terminated speech text."
+      }
+    ],
+    "notes": "Normal speech is local; dot-prefixed text enters the command system.",
+    "handler": "SpeechRequestPacketHandler: routes speech or executes a command"
+  },
+  "0x1D:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Entity to remove from the client."
+      }
+    ],
+    "notes": "Removes an item or mobile from the client view.",
+    "handler": "Outgoing packet emitted by world visibility and item handling"
+  },
+  "0xAE:outgoing": {
+    "category": "Speech",
+    "tags": [
+      "Speech",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Length",
+        "type": "ushort",
+        "size": "2",
+        "description": "Packet length."
+      },
+      {
+        "offset": "3",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Speaker serial."
+      },
+      {
+        "offset": "7",
+        "name": "Body",
+        "type": "ushort",
+        "size": "2",
+        "description": "Speaker body."
+      },
+      {
+        "offset": "9",
+        "name": "Speech type",
+        "type": "enum",
+        "size": "1",
+        "description": "Speech mode."
+      },
+      {
+        "offset": "10",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Text hue."
+      },
+      {
+        "offset": "12",
+        "name": "Font",
+        "type": "ushort",
+        "size": "2",
+        "description": "Font identifier."
+      },
+      {
+        "offset": "14",
+        "name": "Language",
+        "type": "ascii",
+        "size": "4",
+        "description": "Three-letter language code and terminator."
+      },
+      {
+        "offset": "18",
+        "name": "Name",
+        "type": "byte[]",
+        "size": "30",
+        "description": "Speaker name, padded to 30 bytes."
+      },
+      {
+        "offset": "48",
+        "name": "Text",
+        "type": "byte[]",
+        "size": "variable",
+        "description": "Big-endian Unicode text and terminator."
+      }
+    ],
+    "notes": "System speech is sent privately to one client; player speech may be sent to nearby clients.",
+    "handler": "Outgoing packet emitted by speech and MOTD services"
   }
 }
