@@ -34,7 +34,7 @@ public class MobileEntity : IMoongateEntity
     /// <summary>
     ///     The character-list slot of a player character; <see langword="null" /> for an NPC.
     /// </summary>
-    public byte? Slot { get; set; }
+    public int? Slot { get; set; }
 
     /// <summary>
     ///     When the player asked to delete this character, in UTC; null for an active character or an NPC.

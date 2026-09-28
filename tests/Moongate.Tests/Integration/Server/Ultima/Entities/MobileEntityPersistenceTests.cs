@@ -274,7 +274,7 @@ public sealed class MobileEntityPersistenceTests
 
         await mobiles.UpsertAsync(new MobileEntity { Name = "Aria", AccountId = account, Slot = 2 });
 
-        Assert.Equal((byte?)2, Assert.Single(await mobiles.QueryAsync(mobile => mobile.AccountId == account)).Slot);
+        Assert.Equal((int?)2, Assert.Single(await mobiles.QueryAsync(mobile => mobile.AccountId == account)).Slot);
         await Assert.ThrowsAnyAsync<Exception>(() =>
             mobiles.UpsertAsync(new MobileEntity { Name = "Bran", AccountId = account, Slot = 2 })
         );

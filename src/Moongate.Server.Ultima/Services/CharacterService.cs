@@ -193,13 +193,13 @@ public sealed class CharacterService : ICharacterService
 
         var used = (await GetCharactersAsync(character.AccountId.Value, cancellationToken))
                    .Where(other => other.DeletionRequestedAt is null && other.Slot is not null)
-                   .Select(other => (int)other.Slot!.Value)
+                   .Select(other => other.Slot!.Value)
                    .ToHashSet();
         var free = Enumerable.Range(0, _config.MaxPerAccount).Where(slot => !used.Contains(slot)).ToList();
 
         // An account that filled up meanwhile leaves the character without a slot: the list shows it once there is room.
         character.DeletionRequestedAt = null;
-        character.Slot = free.Count > 0 ? (byte)free[0] : null;
+        character.Slot = free.Count > 0 ? free[0] : null;
         await _mobiles.UpsertAsync(character, cancellationToken);
 
         return character;
@@ -207,7 +207,7 @@ public sealed class CharacterService : ICharacterService
 
     private static List<MobileEntity> BySlot(IEnumerable<MobileEntity> characters)
     {
-        return characters.OrderBy(character => character.Slot ?? byte.MaxValue).ThenBy(character => character.Id).ToList();
+        return characters.OrderBy(character => character.Slot ?? int.MaxValue).ThenBy(character => character.Id).ToList();
     }
 
     /// <summary>
@@ -215,19 +215,19 @@ public sealed class CharacterService : ICharacterService
     ///     client's slot altogether; keeping it when it fits preserves the player's choice without trusting its meaning.
     ///     An account below its limit always has a free slot.
     /// </summary>
-    private byte FreeSlot(int requested, IReadOnlyList<MobileEntity> existing)
+    private int FreeSlot(int requested, IReadOnlyList<MobileEntity> existing)
     {
-        var used = existing.Where(c => c.Slot is not null).Select(c => (int)c.Slot!.Value).ToHashSet();
+        var used = existing.Where(c => c.Slot is not null).Select(c => c.Slot!.Value).ToHashSet();
 
         if (requested >= 0 && requested < _config.MaxPerAccount && !used.Contains(requested))
         {
-            return (byte)requested;
+            return requested;
         }
 
-        return (byte)Enumerable.Range(0, _config.MaxPerAccount).First(slot => !used.Contains(slot));
+        return Enumerable.Range(0, _config.MaxPerAccount).First(slot => !used.Contains(slot));
     }
 
-    private MobileEntity Build(Serial accountId, CharacterCreationRequest request, byte slot)
+    private MobileEntity Build(Serial accountId, CharacterCreationRequest request, int slot)
     {
         var race = _data.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == request.Race) ??
                    _data.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == RaceType.Human) ??

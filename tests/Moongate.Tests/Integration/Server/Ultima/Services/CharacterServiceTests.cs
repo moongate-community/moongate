@@ -85,7 +85,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
 
         Assert.True(result.IsCreated);
         var stored = Assert.Single(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account));
-        Assert.Equal(("Aria", (byte?)0, 401, GenderType.Female), (stored.Name, stored.Slot, stored.Body, stored.Gender));
+        Assert.Equal(("Aria", (int?)0, 401, GenderType.Female), (stored.Name, stored.Slot, stored.Body, stored.Gender));
         Assert.Equal((60, 20, 10), (stored.Strength, stored.Dexterity, stored.Intelligence));
         Assert.Equal((60, 60, 20, 20, 10, 10), (stored.Hits, stored.HitsMax, stored.Stamina, stored.StaminaMax, stored.Mana, stored.ManaMax));
         Assert.Equal(
@@ -175,7 +175,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
 
         Assert.True(result.IsCreated);
         var bran = Assert.Single(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account && mobile.Name == "Bran"));
-        Assert.Equal((byte?)1, bran.Slot);
+        Assert.Equal((int?)1, bran.Slot);
     }
 
     [Fact]
@@ -185,7 +185,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
 
         await service.CreateAsync(Account, Request() with { Slot = 4 });
 
-        Assert.Equal((byte?)4, Assert.Single(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account)).Slot);
+        Assert.Equal((int?)4, Assert.Single(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account)).Slot);
     }
 
     [Fact]
@@ -352,7 +352,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         var result = await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Bran" });
 
         Assert.True(result.IsCreated);
-        Assert.Equal((byte?)0, result.Character!.Slot);
+        Assert.Equal((int?)0, result.Character!.Slot);
     }
 
     [Fact]
@@ -378,7 +378,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
 
         var restored = await service.RestoreAsync(deleted.Character!.Id);
 
-        Assert.Equal(("Aria", (byte?)0), (restored!.Name, restored.Slot));
+        Assert.Equal(("Aria", (int?)0), (restored!.Name, restored.Slot));
         Assert.Null(restored.DeletionRequestedAt);
         Assert.Equal(["Aria"], CharacterListBuilder.Names(await service.GetCharactersAsync(Account), 1));
     }
