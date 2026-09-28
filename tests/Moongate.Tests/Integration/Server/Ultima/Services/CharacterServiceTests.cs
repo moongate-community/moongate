@@ -7,6 +7,7 @@ using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
+using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Characters;
 using Moongate.Server.Ultima.Data.Cities;
 using Moongate.Server.Ultima.Data.Containers;
@@ -297,6 +298,27 @@ public sealed class CharacterServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RequestDeletionAsync_UnplacedCharacterDoesNotMoveIntoAPendingPosition()
+    {
+        // A character stored beyond the current limit is shown in the first free position; deleting another must not
+        // move it there, or a second request with the same position would mark it instead.
+        var service = CreateService(maxPerAccount: 7);
+        foreach (var (slot, name) in new[] { (0, "Aaron"), (1, "Bruno"), (2, "Carla"), (3, "Dario"), (4, "Elena"), (5, "Fabio") })
+        {
+            await service.CreateAsync(Account, Request() with { Slot = slot, Name = name });
+        }
+
+        var lowered = CreateService(maxPerAccount: 5);
+        var first = await lowered.RequestDeletionAsync(Account, 2);
+        var second = await lowered.RequestDeletionAsync(Account, 2);
+
+        Assert.Equal("Carla", first.Character!.Name);
+        Assert.Equal(["Aaron", "Bruno", null, "Dario", "Elena"], first.Names);
+        Assert.Equal(CharacterDeleteResultType.CharacterDoesNotExist, second.Refusal);
+        Assert.Null(Assert.Single(await _mobiles.QueryAsync(mobile => mobile.Name == "Fabio")).DeletionRequestedAt);
+    }
+
+    [Fact]
     public async Task RequestDeletionAsync_Twice_UsesTheUpdatedList()
     {
         var service = CreateService(maxPerAccount: 5);
@@ -310,15 +332,17 @@ public sealed class CharacterServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task GetCharactersAsync_HidesPending()
+    public async Task ThePendingCharacterIsLeftOutOfTheListButKeptByTheAccount()
     {
-        var service = CreateService();
+        var service = CreateService(maxPerAccount: 5);
         await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
         await service.CreateAsync(Account, Request() with { Slot = 1, Name = "Bran" });
 
         await service.RequestDeletionAsync(Account, 0);
 
-        Assert.Equal(["Bran"], (await service.GetCharactersAsync(Account)).Select(character => character.Name));
+        var characters = await service.GetCharactersAsync(Account);
+        Assert.Equal(["Aria", "Bran"], characters.Select(character => character.Name));
+        Assert.Equal([null, "Bran", null, null, null], CharacterListBuilder.Names(characters, 5));
     }
 
     [Fact]
@@ -356,7 +380,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
 
         Assert.Equal("Aria", restored!.Name);
         Assert.Null(restored.DeletionRequestedAt);
-        Assert.Equal(["Aria"], (await service.GetCharactersAsync(Account)).Select(character => character.Name));
+        Assert.Equal(["Aria"], CharacterListBuilder.Names(await service.GetCharactersAsync(Account), 1));
     }
 
     [Fact]

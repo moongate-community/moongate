@@ -9,7 +9,7 @@ the [changelog](../CHANGELOG.md) records what each published release added.
 client-file readers with movement and line-of-sight checks, and Redis-backed realm
 discovery and login-to-game handoff are in place; account
 authentication reaches a game session, which lists the account's characters; a new character
-is created and saved with its starting items, and a deleted character is kept restorable for 24 hours;
+is created and saved with its starting items, and a deleted character is only marked and can be restored by staff (nothing removes it yet);
 character selection and a playable world are not.
 
 | Area | Works today | Not built yet |
