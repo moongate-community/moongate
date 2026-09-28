@@ -1,7 +1,7 @@
-using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
@@ -20,9 +20,6 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 /// </remarks>
 public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
 {
-    private static readonly ClientVersion HighSeas = new(7, 0, 9, 0);
-    private static readonly ClientVersion ContainerGrid = new(6, 0, 1, 7);
-
     private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
     private readonly ITileDataService _tiles;
@@ -65,12 +62,8 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
             return;
         }
 
-        // An unknown version gets the modern formats.
-        var version = session.ClientVersion;
-        var highSeas = version is null || version.CompareTo(HighSeas) >= 0;
-        var gridBytes = version is null || version.CompareTo(ContainerGrid) >= 0;
-
-        _sender.TrySend(session.SessionId, new DisplayContainerPacket(item.Id, _layouts.GetLayout(item.ItemId).Gump, highSeas));
-        _sender.TrySend(session.SessionId, new ContainerContentPacket(_items.GetContents(item.Id), gridBytes));
+        var gump = _layouts.GetLayout(item.ItemId).Gump;
+        _sender.TrySend(session.SessionId, new DisplayContainerPacket(item.Id, gump, session.UsesHighSeasContainers()));
+        _sender.TrySend(session.SessionId, new ContainerContentPacket(_items.GetContents(item.Id), session.UsesContainerGrid()));
     }
 }

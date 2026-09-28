@@ -133,6 +133,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterPacketHandler<MoveRequestPacket, MoveRequestPacketHandler>();
             container.RegisterIncomingPacket<UseRequestPacket>();
             container.RegisterPacketHandler<UseRequestPacket, UseRequestPacketHandler>();
+            container.RegisterIncomingPacket<LiftRequestPacket>();
+            container.RegisterPacketHandler<LiftRequestPacket, LiftRequestPacketHandler>();
 
             // Sent by the client around and after entering the world; recognised so it is not disconnected.
             RegisterIgnoredPacket<ClientHardwareInfoPacket>(container);
@@ -143,7 +145,6 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             RegisterIgnoredPacket<ExtendedCommandPacket>(container);
             RegisterIgnoredPacket<QueryPropertiesPacket>(container);
             RegisterIgnoredPacket<AttackRequestPacket>(container);
-            RegisterIgnoredPacket<LiftRequestPacket>(container);
             RegisterIgnoredPacket<DropRequestPacket>(container);
             RegisterIgnoredPacket<TextCommandPacket>(container);
             RegisterIgnoredPacket<EquipRequestPacket>(container);
