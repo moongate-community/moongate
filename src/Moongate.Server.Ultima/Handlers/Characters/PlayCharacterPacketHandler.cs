@@ -110,7 +110,9 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
                         return;
                     }
 
+                    // Together on the loop: a session retirement then always finds the character live.
                     session.Set(SessionKeys.CharacterId, character.Id);
+                    _mobiles.EnterWorld(character);
                     admitted = true;
                 },
                 cancellationToken
@@ -123,8 +125,6 @@ public sealed class PlayCharacterPacketHandler : IAsyncPacketHandler<PlayCharact
 
             return;
         }
-
-        _mobiles.EnterWorld(character);
 
         foreach (var outgoing in EnterWorldSequence(play))
         {
