@@ -46,6 +46,9 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x22` | `MovementAckPacket` | Outgoing | Fixed 3 | — |
 | `0x21` | `MovementRejectPacket` | Outgoing | Fixed 8 | — |
 | `0x06` | `UseRequestPacket` | Incoming | Fixed 5 | `UseRequestPacketHandler`: opens a container the character carries |
+| `0x03` | `AsciiSpeechRequestPacket` | Incoming | Variable, minimum 9 | `SpeechRequestPacketHandler`: local say or in-game dot command |
+| `0xAD` | `UnicodeSpeechRequestPacket` | Incoming | Variable, minimum 14 | `SpeechRequestPacketHandler`: Unicode and encoded-keyword say or dot command |
+| `0xAE` | `UnicodeSpeechMessagePacket` | Outgoing | Variable, minimum 50 | Player speech and private command output |
 | `0x24` | `DisplayContainerPacket` | Outgoing | Fixed 7, or 9 from client 7.0.9.0 | — |
 | `0x3C` | `ContainerContentPacket` | Outgoing | Variable, minimum 5 | — |
 | `0x09`, `0x34`, `0x72`, `0xC8` | `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
@@ -55,7 +58,12 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x27` | `LiftRejectPacket` | Outgoing | Fixed 2 | — |
 | `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: bounces the held item back (equipping is not built yet) |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0x12`, `0xAD`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `UnicodeSpeechRequestPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x12`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+
+Normal speech (`say`) reaches the speaker and other player characters within 15
+tiles on the same map. Whisper, yell, emote, global chat and the separate chat
+window are not supported yet. A leading `.` invokes the existing command system
+privately; `..` escapes one dot. Empty or over-128-character speech is ignored.
 
 When a character enters the world the server sends, in this order (ModernUO's, checked against
 ServUO, UOX3, POL and Source-X): `0x1B` login confirm, `0xBF` subcommand `0x08` map, `0xBC`

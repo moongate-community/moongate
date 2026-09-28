@@ -133,6 +133,10 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterPacketHandler<MoveRequestPacket, MoveRequestPacketHandler>();
             container.RegisterIncomingPacket<UseRequestPacket>();
             container.RegisterPacketHandler<UseRequestPacket, UseRequestPacketHandler>();
+            container.RegisterIncomingPacket<AsciiSpeechRequestPacket>();
+            container.RegisterAsyncPacketHandler<AsciiSpeechRequestPacket, SpeechRequestPacketHandler>();
+            container.RegisterIncomingPacket<UnicodeSpeechRequestPacket>();
+            container.RegisterAsyncPacketHandler<UnicodeSpeechRequestPacket, SpeechRequestPacketHandler>();
             container.RegisterIncomingPacket<LiftRequestPacket>();
             container.RegisterPacketHandler<LiftRequestPacket, LiftRequestPacketHandler>();
             container.RegisterIncomingPacket<DropRequestPacket>();
@@ -151,7 +155,6 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             RegisterIgnoredPacket<AttackRequestPacket>(container);
             RegisterIgnoredPacket<TextCommandPacket>(container);
             RegisterIgnoredPacket<ResynchronizeRequestPacket>(container);
-            RegisterIgnoredPacket<UnicodeSpeechRequestPacket>(container);
             RegisterIgnoredPacket<OpenChatWindowPacket>(container);
             RegisterIgnoredPacket<ClientTypePacket>(container);
             RegisterIgnoredPacket<PublicHouseContentPacket>(container);

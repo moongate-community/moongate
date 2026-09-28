@@ -12,6 +12,7 @@ public sealed class StubPacketSendService : IPacketSendService
     ///     Gets every packet handed to TrySend, in order.
     /// </summary>
     public List<IOutgoingPacket> Sent { get; } = [];
+    public List<long> SentSessionIds { get; } = [];
     public INetworkConnection? ExpectedConnection { get; private set; }
     public bool RejectTerminalSend { get; init; }
 
@@ -34,6 +35,7 @@ public sealed class StubPacketSendService : IPacketSendService
     {
         SentCount++;
         Sent.Add(packet);
+        SentSessionIds.Add(sessionId);
 
         return true;
     }
