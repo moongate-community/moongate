@@ -37,6 +37,11 @@ public class MobileEntity : IMoongateEntity
     public byte? Slot { get; set; }
 
     /// <summary>
+    ///     When the player asked to delete this character, in UTC; null for an active character or an NPC.
+    /// </summary>
+    public DateTime? DeletionRequestedAt { get; set; }
+
+    /// <summary>
     ///     Gets whether this mobile is an NPC, that is, it belongs to no account.
     /// </summary>
     [Column(IsIgnore = true)]

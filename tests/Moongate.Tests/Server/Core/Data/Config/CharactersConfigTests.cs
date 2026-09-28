@@ -26,4 +26,18 @@ public sealed class CharactersConfigTests
 
         Assert.Contains("characters.max_per_account", error.Message, StringComparison.Ordinal);
     }
+
+    [Fact]
+    public void DeletionDelay_DefaultsToADay()
+    {
+        Assert.Equal(24, new CharactersConfig().DeletionDelayHours);
+    }
+
+    [Theory, InlineData(0), InlineData(-1)]
+    public void Validate_DeletionDelayBelowAnHour_Throws(int hours)
+    {
+        var error = Assert.Throws<InvalidOperationException>(new CharactersConfig { DeletionDelayHours = hours }.Validate);
+
+        Assert.Contains("characters.deletion_delay_hours", error.Message, StringComparison.Ordinal);
+    }
 }
