@@ -9,6 +9,7 @@ using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Plugins;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Characters;
@@ -136,6 +137,16 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ICharacterPresence, SessionCharacterPresence>(Reuse.Singleton);
             container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
             container.AddScriptEvent<CharacterCreatedEvent>("character_created", CharacterScriptEvents.CharacterCreated);
+            container.AddScriptEvent<CharacterDeletionRequestedEvent>(
+                "character_deletion_requested",
+                CharacterScriptEvents.CharacterDeletionRequested
+            );
+            container.RegisterCommand<CharacterCommand>(
+                "character",
+                "Pending character deletions: character pending [account-serial]; character restore <character-serial>.",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.GameMaster
+            );
             container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
             container.Register<IMovementService, MovementService>(Reuse.Singleton);
             container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);

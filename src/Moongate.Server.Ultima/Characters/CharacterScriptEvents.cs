@@ -28,4 +28,19 @@ public static class CharacterScriptEvents
             ["z"] = character.Z
         };
     }
+
+    /// <summary>
+    ///     The fields of <c>character_deletion_requested</c>: the character's serial, account and name.
+    /// </summary>
+    public static IReadOnlyDictionary<string, object?> CharacterDeletionRequested(CharacterDeletionRequestedEvent evt)
+    {
+        var character = evt.Character;
+
+        return new Dictionary<string, object?>
+        {
+            ["serial"] = (long)character.Id.Value,
+            ["account_id"] = character.AccountId is { } account ? (long)account.Value : null,
+            ["name"] = character.Name
+        };
+    }
 }
