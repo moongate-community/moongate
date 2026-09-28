@@ -3,8 +3,8 @@
 Place reviewed SQL in `auth/NNNN_description.sql` or `world/NNNN_description.sql`.
 The auth catalog contains the account ID sequence, the accounts table with its
 unique username index, and the administration API access column. The world catalog has the mobiles and items tables. A player character's character-list
-slot is unique per account, and a character the player deleted keeps its row with
-the time of the request until it is removed. An item is on the ground, in a
+slot is unique per account, and a character the player deleted keeps its row, without a slot
+and with the time of the request, until it is removed. An item is on the ground, in a
 container item or worn by a mobile, checked by the database, and deleting a container
 or a mobile deletes what it holds.
 Plugin SQL ships inside each plugin bundle with a stable migration manifest.

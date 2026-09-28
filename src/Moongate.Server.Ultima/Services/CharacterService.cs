@@ -64,10 +64,10 @@ public sealed class CharacterService : ICharacterService
         CancellationToken cancellationToken = default
     )
     {
-        // Characters pending deletion still hold their slot and count toward the limit: they can be restored.
+        // Characters pending deletion gave up their slot and no longer count toward the limit.
         var existing = await GetCharactersAsync(accountId, cancellationToken);
 
-        if (existing.Count >= _config.MaxPerAccount)
+        if (existing.Count(character => character.DeletionRequestedAt is null) >= _config.MaxPerAccount)
         {
             return CharacterCreationResult.Refused(CharacterCreationRefusalType.TooManyCharacters);
         }
@@ -170,7 +170,10 @@ public sealed class CharacterService : ICharacterService
             return CharacterDeletionResult.Refused(CharacterDeleteResultType.CharacterBeingPlayed);
         }
 
+        // The character gives up its slot, so a full account can create a new one right away; restoring puts it back
+        // in a free slot when there is one.
         character.DeletionRequestedAt = DateTime.UtcNow;
+        character.Slot = null;
         await _mobiles.UpsertAsync(character, cancellationToken);
 
         // After the save the request stands whatever happens: the event is published without cancellation.
@@ -188,7 +191,15 @@ public sealed class CharacterService : ICharacterService
             return null;
         }
 
+        var used = (await GetCharactersAsync(character.AccountId.Value, cancellationToken))
+                   .Where(other => other.DeletionRequestedAt is null && other.Slot is not null)
+                   .Select(other => (int)other.Slot!.Value)
+                   .ToHashSet();
+        var free = Enumerable.Range(0, _config.MaxPerAccount).Where(slot => !used.Contains(slot)).ToList();
+
+        // An account that filled up meanwhile leaves the character without a slot: the list shows it once there is room.
         character.DeletionRequestedAt = null;
+        character.Slot = free.Count > 0 ? (byte)free[0] : null;
         await _mobiles.UpsertAsync(character, cancellationToken);
 
         return character;

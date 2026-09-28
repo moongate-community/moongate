@@ -16,9 +16,9 @@ public sealed class CharacterListBuilderTests
     }
 
     [Fact]
-    public void Names_PendingDeletion_KeepsItsPositionEmpty()
+    public void Names_PendingDeletion_IsLeftOut()
     {
-        var pending = Character("Carla", 2);
+        var pending = Character("Carla", null);
         pending.DeletionRequestedAt = DateTime.UtcNow;
 
         var names = CharacterListBuilder.Names([Character("Aaron", 0), pending, Character("Fabio", 6)], 5);
