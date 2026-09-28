@@ -30,9 +30,15 @@ public sealed class LoopCheckingMobileService : IMobileService
         _gameLoop = gameLoop;
     }
 
-    public Serial HairSerial(Serial mobile) => _inner.HairSerial(mobile);
+    public Serial HairSerial(Serial mobile)
+    {
+        return _inner.HairSerial(mobile);
+    }
 
-    public Serial BeardSerial(Serial mobile) => _inner.BeardSerial(mobile);
+    public Serial BeardSerial(Serial mobile)
+    {
+        return _inner.BeardSerial(mobile);
+    }
 
     public void EnterWorld(MobileEntity mobile)
     {
@@ -40,16 +46,33 @@ public sealed class LoopCheckingMobileService : IMobileService
         _inner.EnterWorld(mobile);
     }
 
-    public bool TryGet(Serial serial, [NotNullWhen(true)] out MobileEntity? mobile) => _inner.TryGet(serial, out mobile);
+    public bool TryGet(Serial serial, [NotNullWhen(true)] out MobileEntity? mobile)
+    {
+        return _inner.TryGet(serial, out mobile);
+    }
 
-    public bool LeaveWorld(Serial serial) => _inner.LeaveWorld(serial);
+    public bool LeaveWorld(Serial serial)
+    {
+        return _inner.LeaveWorld(serial);
+    }
 
-    public MoveResultType TryMove(MobileEntity mobile, DirectionType direction) => _inner.TryMove(mobile, direction);
+    public MoveResultType TryMove(MobileEntity mobile, DirectionType direction)
+    {
+        return _inner.TryMove(mobile, direction);
+    }
 
-    public bool IsInWorld(Serial mobile) => _inner.IsInWorld(mobile);
+    public bool IsInWorld(Serial mobile)
+    {
+        return _inner.IsInWorld(mobile);
+    }
 
-    public MobileStatusInfo GetStatus(MobileEntity mobile) => _inner.GetStatus(mobile);
+    public MobileStatusInfo GetStatus(MobileEntity mobile)
+    {
+        return _inner.GetStatus(mobile);
+    }
 
-    public List<MobileEquipmentEntry> GetEquipment(MobileEntity mobile, IEnumerable<ItemEntity> worn) =>
-        _inner.GetEquipment(mobile, worn);
+    public List<MobileEquipmentEntry> GetEquipment(MobileEntity mobile, IEnumerable<ItemEntity> worn)
+    {
+        return _inner.GetEquipment(mobile, worn);
+    }
 }
