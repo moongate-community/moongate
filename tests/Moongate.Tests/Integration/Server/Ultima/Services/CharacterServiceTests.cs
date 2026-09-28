@@ -298,24 +298,20 @@ public sealed class CharacterServiceTests : IAsyncLifetime
     }
 
     [Fact]
-    public async Task RequestDeletionAsync_UnplacedCharacterDoesNotMoveIntoAPendingPosition()
+    public async Task RequestDeletionAsync_FreesTheSlotAndReturnsTheListTheClientWillSee()
     {
-        // A character stored beyond the current limit is shown in the first free position; deleting another must not
-        // move it there, or a second request with the same position would mark it instead.
+        // A character stored beyond a lowered limit is shown in the first free position, which the deletion frees.
         var service = CreateService(maxPerAccount: 7);
         foreach (var (slot, name) in new[] { (0, "Aaron"), (1, "Bruno"), (2, "Carla"), (3, "Dario"), (4, "Elena"), (5, "Fabio") })
         {
             await service.CreateAsync(Account, Request() with { Slot = slot, Name = name });
         }
 
-        var lowered = CreateService(maxPerAccount: 5);
-        var first = await lowered.RequestDeletionAsync(Account, 2);
-        var second = await lowered.RequestDeletionAsync(Account, 2);
+        var result = await CreateService(maxPerAccount: 5).RequestDeletionAsync(Account, 2);
 
-        Assert.Equal("Carla", first.Character!.Name);
-        Assert.Equal(["Aaron", "Bruno", null, "Dario", "Elena"], first.Names);
-        Assert.Equal(CharacterDeleteResultType.CharacterDoesNotExist, second.Refusal);
-        Assert.Null(Assert.Single(await _mobiles.QueryAsync(mobile => mobile.Name == "Fabio")).DeletionRequestedAt);
+        Assert.Equal("Carla", result.Character!.Name);
+        Assert.Equal(["Aaron", "Bruno", "Fabio", "Dario", "Elena"], result.Names);
+        Assert.Null(Assert.Single(await _mobiles.QueryAsync(mobile => mobile.Name == "Carla")).Slot);
     }
 
     [Fact]
@@ -341,12 +337,13 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         await service.RequestDeletionAsync(Account, 0);
 
         var characters = await service.GetCharactersAsync(Account);
-        Assert.Equal(["Aria", "Bran"], characters.Select(character => character.Name));
+        // Ordered by slot; the pending character gave up its slot and comes last.
+        Assert.Equal(["Bran", "Aria"], characters.Select(character => character.Name));
         Assert.Equal([null, "Bran", null, null, null], CharacterListBuilder.Names(characters, 5));
     }
 
     [Fact]
-    public async Task CreateAsync_PendingStillHoldsItsSlotAndCountsTowardTheLimit()
+    public async Task CreateAsync_PendingNoLongerCountsTowardTheLimit()
     {
         var service = CreateService(maxPerAccount: 1);
         await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
@@ -354,19 +351,22 @@ public sealed class CharacterServiceTests : IAsyncLifetime
 
         var result = await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Bran" });
 
-        Assert.Equal(CharacterCreationRefusalType.TooManyCharacters, result.Refusal);
+        Assert.True(result.IsCreated);
+        Assert.Equal((byte?)0, result.Character!.Slot);
     }
 
     [Fact]
-    public async Task CreateAsync_PendingCharacterSlotIsNotReused()
+    public async Task RestoreAsync_AccountFilledMeanwhile_LeavesItWithoutASlot()
     {
-        var service = CreateService(maxPerAccount: 5);
-        await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
-        await service.RequestDeletionAsync(Account, 0);
+        var service = CreateService(maxPerAccount: 1);
+        await service.CreateAsync(Account, Request() with { Name = "Aria" });
+        var deleted = await service.RequestDeletionAsync(Account, 0);
+        await service.CreateAsync(Account, Request() with { Name = "Bran" });
 
-        await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Bran" });
+        var restored = await service.RestoreAsync(deleted.Character!.Id);
 
-        Assert.Equal((byte?)1, Assert.Single(await _mobiles.QueryAsync(mobile => mobile.Name == "Bran")).Slot);
+        Assert.Null(restored!.Slot);
+        Assert.Null(restored.DeletionRequestedAt);
     }
 
     [Fact]
@@ -378,7 +378,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
 
         var restored = await service.RestoreAsync(deleted.Character!.Id);
 
-        Assert.Equal("Aria", restored!.Name);
+        Assert.Equal(("Aria", (byte?)0), (restored!.Name, restored.Slot));
         Assert.Null(restored.DeletionRequestedAt);
         Assert.Equal(["Aria"], CharacterListBuilder.Names(await service.GetCharactersAsync(Account), 1));
     }

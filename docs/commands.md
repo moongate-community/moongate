@@ -86,12 +86,14 @@ character restore <character-serial>
 ```
 
 A character a player deletes from the character list is only marked for deletion:
-it disappears from the list but keeps its slot and still counts toward
-`characters.max_per_account`, so on a full account deleting a character does not
-make room for a new one yet. It stays restorable until it is removed; after
+it disappears from the list, gives up its slot and no longer counts toward
+`characters.max_per_account`, so the player can create a new character in its
+place. It stays restorable until it is removed; after
 `characters.deletion_delay_hours` (default 24) it becomes eligible for removal,
 by a job that is not built yet. `character pending` lists every
 pending character, or those of one account, with when the deletion was requested
 and when the character becomes eligible for removal. `character restore` cancels
-the deletion; the character appears in the list again at the next login. Serials
+the deletion and gives the character the first free slot; if the account filled
+up meanwhile it stays without a slot, may exceed the limit by one, and appears in
+the list once a slot frees. Serials
 are hexadecimal with `0x` (`0x0000002A`) or decimal.

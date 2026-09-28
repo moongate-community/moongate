@@ -20,15 +20,15 @@ public static class CharacterListBuilder
 
     /// <summary>
     ///     Returns <paramref name="maxPerAccount" /> positions with the character shown in each, laid out as
-    ///     <see cref="Names" /> does; the client refers to a character by its position here. A character pending
-    ///     deletion keeps its position but is not shown, so deleting one never moves another into its place.
+    ///     <see cref="Names" /> does; the client refers to a character by its position here. Characters pending deletion
+    ///     are left out: they gave up their slot.
     /// </summary>
     public static MobileEntity?[] Layout(IReadOnlyList<MobileEntity> characters, int maxPerAccount)
     {
         var layout = new MobileEntity?[maxPerAccount];
         var unplaced = new List<MobileEntity>();
 
-        foreach (var character in characters)
+        foreach (var character in characters.Where(character => character.DeletionRequestedAt is null))
         {
             if (character.Slot is { } slot && slot < maxPerAccount && layout[slot] is null)
             {
@@ -50,14 +50,6 @@ public static class CharacterListBuilder
             }
 
             layout[free] = character;
-        }
-
-        for (var position = 0; position < layout.Length; position++)
-        {
-            if (layout[position]?.DeletionRequestedAt is not null)
-            {
-                layout[position] = null;
-            }
         }
 
         return layout;
