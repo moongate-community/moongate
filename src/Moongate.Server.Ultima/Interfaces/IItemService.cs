@@ -66,6 +66,19 @@ public interface IItemService : IPersistenceDeletionSource
     void PlaceOnGround(ItemEntity item, MapType map, Point3D location);
 
     /// <summary>
+    ///     Gets whether the mobile can lift the ground item or drop onto it, as ModernUO: same map, within 2 tiles, in line
+    ///     of sight.
+    /// </summary>
+    bool CanReach(MobileEntity mobile, ItemEntity item);
+
+    /// <summary>
+    ///     Lays the item on the ground at <paramref name="x" />, <paramref name="y" /> within 2 tiles of the mobile, on the
+    ///     highest surface up to 16 above its feet and in line of sight; false leaves the item where it was. The caller
+    ///     shows it to the players in range.
+    /// </summary>
+    bool TryDropOnGround(MobileEntity mobile, ItemEntity item, int x, int y);
+
+    /// <summary>
     ///     Takes a ground item out of the sector grid while a player holds it; it keeps its location.
     /// </summary>
     void Hide(ItemEntity item);

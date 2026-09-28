@@ -5,24 +5,36 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Ultima.Types;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
 ///     Keeps the live items by serial, and the ones on the ground in the sector grid. Contents and owners are found by
-///     scanning: a player holds few items.
+///     scanning: a player holds few items. The ground rules are ModernUO's <c>DropToWorld</c>, simplified: a player
+///     reaches 2 tiles in line of sight, and a dropped item lands on the highest surface up to 16 above the player's
+///     feet, without stacking on other ground items.
 /// </summary>
 public sealed class ItemService : IItemService
 {
+    public const int GroundReach = 2;
+    private const int DropCeiling = 16;
+    private const int EyeHeight = 14;
+
     private readonly ConcurrentDictionary<Serial, ItemEntity> _items = new();
     private readonly ConcurrentDictionary<Serial, Serial?> _tombstones = new();
+    private readonly ILogger _logger = Log.ForContext<ItemService>();
     private readonly ISectorService _sectors;
+    private readonly IMovementService _movement;
+    private readonly ILineOfSightService _sight;
 
     public IReadOnlyCollection<ItemEntity> Items => _items.Values.ToArray();
 
-    public ItemService(ISectorService sectors)
+    public ItemService(ISectorService sectors, IMovementService movement, ILineOfSightService sight)
     {
         _sectors = sectors;
+        _movement = movement;
+        _sight = sight;
     }
 
     public void Add(IEnumerable<ItemEntity> items)
@@ -103,6 +115,34 @@ public sealed class ItemService : IItemService
         _sectors.AddItem(item);
     }
 
+    public bool CanReach(MobileEntity mobile, ItemEntity item)
+    {
+        return item.Map == mobile.Map &&
+               item.GroundLocation is { } spot &&
+               IsNear(mobile.Location, spot.X, spot.Y) &&
+               Sees(mobile, spot);
+    }
+
+    public bool TryDropOnGround(MobileEntity mobile, ItemEntity item, int x, int y)
+    {
+        if (!IsNear(mobile.Location, x, y) ||
+            !_movement.TryGetDropZ(mobile.Map, x, y, mobile.Location.Z + DropCeiling, out var z))
+        {
+            return false;
+        }
+
+        var spot = new Point3D(x, y, z);
+
+        if (!Sees(mobile, spot))
+        {
+            return false;
+        }
+
+        PlaceOnGround(item, mobile.Map, spot);
+
+        return true;
+    }
+
     public void Hide(ItemEntity item)
     {
         _sectors.RemoveItem(item);
@@ -163,5 +203,27 @@ public sealed class ItemService : IItemService
         {
             _tombstones.TryRemove(serial, out _);
         }
+    }
+
+    // From the eyes to just above the spot, as ModernUO checks a drop.
+    private bool Sees(MobileEntity mobile, Point3D spot)
+    {
+        var eye = new Point3D(mobile.Location.X, mobile.Location.Y, mobile.Location.Z + EyeHeight);
+
+        try
+        {
+            return _sight.HasLineOfSight(mobile.Map, eye, new Point3D(spot.X, spot.Y, spot.Z + 1));
+        }
+        catch (KeyNotFoundException exception)
+        {
+            _logger.Warning(exception, "{Mobile} cannot see the ground: its map is not loaded", mobile);
+
+            return false;
+        }
+    }
+
+    private static bool IsNear(Point3D from, int x, int y)
+    {
+        return Math.Abs(from.X - x) <= GroundReach && Math.Abs(from.Y - y) <= GroundReach;
     }
 }
