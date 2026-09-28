@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Registry;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Sessions;
 using Moongate.Server.Services.Packets.Internal;
@@ -38,6 +39,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         FrozenDictionary<Type, Func<PacketContext, IPacket, CancellationToken, ValueTask>>.Empty;
 
     private AsyncPacketExecutor? _asyncExecutor;
+    private ISessionClosedListener[] _closedListeners = [];
 
     private bool _everStarted;
     private bool _running;
@@ -101,6 +103,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
                     };
                 }
 
+                _closedListeners = _resolver.ResolveMany<ISessionClosedListener>().ToArray();
                 _everStarted = true;
                 _running = true;
                 _logger.Information(
@@ -265,7 +268,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         {
             if (!_everStarted || _gameLoop.IsOnLoopThread || _gameLoop.Completion.IsCompleted)
             {
-                var retirement = new SessionRetirementWorkItem(_sessions, sessionId);
+                var retirement = new SessionRetirementWorkItem(_sessions, sessionId, _closedListeners);
                 retirement.Execute();
 
                 return retirement.Completion;
@@ -307,7 +310,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
     {
         try
         {
-            var retirement = new SessionRetirementWorkItem(_sessions, sessionId);
+            var retirement = new SessionRetirementWorkItem(_sessions, sessionId, _closedListeners);
             using var cancellation = new CancellationTokenSource();
 
             try
