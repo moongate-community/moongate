@@ -15,6 +15,7 @@ using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.Characters;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
@@ -37,6 +38,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
     private StubCharacterLeaveWorldService _leaves = new();
     private SessionService _sessions = null!;
     private readonly List<(CharacterEnteredWorldEvent Event, int SentBefore)> _entered = [];
+    private readonly RecordingMotdService _motd = new();
 
     public void Dispose()
     {
@@ -68,6 +70,7 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         Assert.Same(characters.ForPlay!.Character, live);
         var entered = Assert.Single(_entered);
         Assert.Equal(sender.Sent.Count, entered.SentBefore);
+        Assert.Equal([11], _motd.SentBefore);
         Assert.Equal("Aria", entered.Event.Character.Name);
         Assert.True(fixture.Client.IsConnected);
     }
@@ -242,7 +245,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             new MapContent { Map = MapType.Trammel, Size = new Point2D(7168, 4096), Season = SeasonType.Winter, Name = "Trammel" }
         );
 
-        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions);
+        _motd.Sender = sender;
+        return new(characters, mobiles ?? _mobiles, _items, _leaves, loaders, bus, _sessions, _motd);
     }
 
     private static CharacterForPlay Aria(int hair = 0x203C, int beard = 0)
@@ -286,5 +290,17 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
         }
 
         return (context, session, sender);
+    }
+
+    private sealed class RecordingMotdService : IMotdService
+    {
+        public StubPacketSendService? Sender { get; set; }
+        public List<int> SentBefore { get; } = [];
+
+        public ValueTask SendAsync(PacketContext context, MobileEntity character, CancellationToken cancellationToken)
+        {
+            SentBefore.Add(Sender!.Sent.Count);
+            return ValueTask.CompletedTask;
+        }
     }
 }

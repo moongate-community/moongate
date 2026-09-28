@@ -111,6 +111,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<IMotdVariableRegistry, MotdVariableRegistry>(Reuse.Singleton);
             MotdRenderer.RegisterBuiltins(container.Resolve<IMotdVariableRegistry>());
             container.Register<MotdRenderer>(Reuse.Singleton);
+            container.Register<IMotdService, MotdService>(Reuse.Singleton);
             container.AddUltimaDataLoader<MapLoader, MapContent>(0);
             container.AddUltimaDataLoader<StartingCitiesLoader, StartingCityContent>(1);
             container.AddUltimaDataLoader<SkillsLoader, SkillContent>(2);

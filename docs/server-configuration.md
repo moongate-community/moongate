@@ -6,6 +6,9 @@ deserialized and validated without being rewritten; omitted properties keep
 their model defaults. Invalid TOML, invalid settings and filesystem errors fail
 startup. Changes take effect at the next start; there is no configuration reload.
 
+The welcome text shown when a character enters the world lives in a separate
+[`data/motd.toml` file](motd.md), with its own variable and validation rules.
+
 ## Complete default configuration
 
 TOML keys use `snake_case`. Keep `mode` before the first table header:

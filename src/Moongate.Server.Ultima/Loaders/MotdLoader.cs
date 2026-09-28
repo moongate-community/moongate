@@ -1,10 +1,12 @@
 using Moongate.Core.Directories;
+using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Services.Motd;
+using Moongate.Server.Ultima.Speech;
 using Serilog;
 
 namespace Moongate.Server.Ultima.Loaders;
@@ -77,6 +79,15 @@ public sealed class MotdLoader : IDataLoader<MotdLine>
             if (string.IsNullOrWhiteSpace(template))
             {
                 continue;
+            }
+
+            try
+            {
+                _ = SpeechMessageHelper.CreateSystem(template, new Hue(0x03B2));
+            }
+            catch (ArgumentException exception)
+            {
+                throw new InvalidDataException($"{where} is not a valid Unicode speech line.", exception);
             }
 
             foreach (System.Text.RegularExpressions.Match match in MotdTemplateTokens.Find(template))

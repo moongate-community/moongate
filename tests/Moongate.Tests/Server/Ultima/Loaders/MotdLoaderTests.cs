@@ -71,6 +71,16 @@ public sealed class MotdLoaderTests
         Assert.Contains("motd.toml", exception.Message);
     }
 
+    [Fact]
+    public async Task OversizedLiteralLine_FailsAtStartupWithIndex()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile("data/motd.toml", $"lines = [\"{new string('x', 32744)}\"]\n");
+
+        var exception = await Assert.ThrowsAsync<InvalidDataException>(() => CreateLoader(root).LoadDataAsync());
+        Assert.Contains("line 1", exception.Message);
+    }
+
     private static MotdLoader CreateLoader(TemporaryDirectory root, MotdVariableRegistry? registry = null)
     {
         return new MotdLoader(new DirectoriesConfig(root.Path, ["data"]), registry ?? new MotdVariableRegistry());
