@@ -37,6 +37,7 @@ public sealed class CharacterService : ICharacterService
     private readonly IDataAccess<MobileEntity> _mobiles;
     private readonly IMoongateEventBus _events;
     private readonly CharactersConfig _config;
+    private readonly ICharacterPresence _presence;
 
     public CharacterService(
         IDataLoaderService data,
@@ -44,7 +45,8 @@ public sealed class CharacterService : ICharacterService
         MoongatePersistenceService persistence,
         IDataAccess<MobileEntity> mobiles,
         IMoongateEventBus events,
-        CharactersConfig config
+        CharactersConfig config,
+        ICharacterPresence presence
     )
     {
         _data = data;
@@ -53,6 +55,7 @@ public sealed class CharacterService : ICharacterService
         _mobiles = mobiles;
         _events = events;
         _config = config;
+        _presence = presence;
     }
 
     public async Task<CharacterCreationResult> CreateAsync(
@@ -61,7 +64,8 @@ public sealed class CharacterService : ICharacterService
         CancellationToken cancellationToken = default
     )
     {
-        var existing = await GetCharactersAsync(accountId, cancellationToken);
+        // Characters pending deletion still hold their slot and count toward the limit: they can be restored.
+        var existing = await _mobiles.QueryAsync(mobile => mobile.AccountId == accountId, cancellationToken);
 
         if (existing.Count >= _config.MaxPerAccount)
         {
@@ -123,8 +127,80 @@ public sealed class CharacterService : ICharacterService
     {
         // A plain read: a transaction would queue behind every realm write. The unique slot index, not this count,
         // is what stops two creates from sharing a slot.
-        var characters = await _mobiles.QueryAsync(mobile => mobile.AccountId == accountId, cancellationToken);
+        var characters = await _mobiles.QueryAsync(
+            mobile => mobile.AccountId == accountId && mobile.DeletionRequestedAt == null,
+            cancellationToken
+        );
 
+        return BySlot(characters);
+    }
+
+    public async Task<IReadOnlyList<MobileEntity>> GetPendingDeletionsAsync(
+        Serial? accountId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var pending = accountId is { } account
+            ? await _mobiles.QueryAsync(
+                mobile => mobile.AccountId == account && mobile.DeletionRequestedAt != null,
+                cancellationToken
+            )
+            : await _mobiles.QueryAsync(
+                mobile => mobile.AccountId != null && mobile.DeletionRequestedAt != null,
+                cancellationToken
+            );
+
+        return pending.OrderBy(character => character.DeletionRequestedAt).ToList();
+    }
+
+    public async Task<CharacterDeletionResult> RequestDeletionAsync(
+        Serial accountId,
+        int listIndex,
+        CancellationToken cancellationToken = default
+    )
+    {
+        // The client names the character by its position in the list it was sent, so lay the list out the same way.
+        var active = await GetCharactersAsync(accountId, cancellationToken);
+        var layout = CharacterListBuilder.Layout(active, _config.MaxPerAccount);
+
+        if (listIndex < 0 || listIndex >= layout.Length || layout[listIndex] is not { } character)
+        {
+            return CharacterDeletionResult.Refused(CharacterDeleteResultType.CharacterDoesNotExist);
+        }
+
+        if (_presence.IsInWorld(character.Id))
+        {
+            return CharacterDeletionResult.Refused(CharacterDeleteResultType.CharacterBeingPlayed);
+        }
+
+        character.DeletionRequestedAt = DateTime.UtcNow;
+        await _mobiles.UpsertAsync(character, cancellationToken);
+
+        // After the save the request stands whatever happens: the event is published without cancellation.
+        await _events.PublishAsync(new CharacterDeletionRequestedEvent(character), CancellationToken.None);
+
+        var remaining = active.Where(other => other.Id != character.Id).ToList();
+
+        return CharacterDeletionResult.Deleted(character, CharacterListBuilder.Names(remaining, _config.MaxPerAccount));
+    }
+
+    public async Task<MobileEntity?> RestoreAsync(Serial characterId, CancellationToken cancellationToken = default)
+    {
+        var character = await _mobiles.GetByIdAsync(characterId, cancellationToken);
+
+        if (character is not { AccountId: not null, DeletionRequestedAt: not null })
+        {
+            return null;
+        }
+
+        character.DeletionRequestedAt = null;
+        await _mobiles.UpsertAsync(character, cancellationToken);
+
+        return character;
+    }
+
+    private static List<MobileEntity> BySlot(IEnumerable<MobileEntity> characters)
+    {
         return characters.OrderBy(character => character.Slot ?? byte.MaxValue).ThenBy(character => character.Id).ToList();
     }
 

@@ -22,6 +22,7 @@ using Moongate.Server.Ultima.Types.Characters;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Persistence;
+using Moongate.Tests.TestSupport.Ultima.Characters;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Ultima.Types;
@@ -35,6 +36,8 @@ public sealed class CharacterServiceTests : IAsyncLifetime
 
     private readonly Container _eventContainer = new();
     private readonly List<CharacterCreatedEvent> _created = [];
+    private readonly List<CharacterDeletionRequestedEvent> _deletions = [];
+    private readonly FakeCharacterPresence _presence = new();
     private HostPersistenceFixture _host = null!;
     private IDataAccess<MobileEntity> _mobiles = null!;
     private IDataAccess<ItemEntity> _items = null!;
@@ -52,6 +55,14 @@ public sealed class CharacterServiceTests : IAsyncLifetime
             .Subscribe<CharacterCreatedEvent>((evt, _) =>
                 {
                     _created.Add(evt);
+
+                    return Task.CompletedTask;
+                }
+            );
+        _eventContainer.Resolve<IMoongateEventBus>()
+            .Subscribe<CharacterDeletionRequestedEvent>((evt, _) =>
+                {
+                    _deletions.Add(evt);
 
                     return Task.CompletedTask;
                 }
@@ -243,6 +254,135 @@ public sealed class CharacterServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task RequestDeletionAsync_IndexFollowsTheListTheClientSaw()
+    {
+        var service = CreateService(maxPerAccount: 5);
+        await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
+        await service.CreateAsync(Account, Request() with { Slot = 3, Name = "Bran" });
+
+        var result = await service.RequestDeletionAsync(Account, 3);
+
+        Assert.Equal("Bran", result.Character!.Name);
+        Assert.Equal(["Aria", null, null, null, null], result.Names);
+        var bran = Assert.Single(await _mobiles.QueryAsync(mobile => mobile.Name == "Bran"));
+        Assert.NotNull(bran.DeletionRequestedAt);
+        Assert.InRange(bran.DeletionRequestedAt!.Value, DateTime.UtcNow.AddMinutes(-1), DateTime.UtcNow.AddMinutes(1));
+        Assert.Equal(bran.Id, Assert.Single(_deletions).Character.Id);
+    }
+
+    [Theory, InlineData(1), InlineData(5), InlineData(-1)]
+    public async Task RequestDeletionAsync_EmptyOrOutOfRangeIndex_IsRefused(int index)
+    {
+        var service = CreateService(maxPerAccount: 5);
+        await service.CreateAsync(Account, Request() with { Slot = 0 });
+
+        var result = await service.RequestDeletionAsync(Account, index);
+
+        Assert.Equal(CharacterDeleteResultType.CharacterDoesNotExist, result.Refusal);
+        Assert.Null(Assert.Single(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account)).DeletionRequestedAt);
+        Assert.Empty(_deletions);
+    }
+
+    [Fact]
+    public async Task RequestDeletionAsync_CharacterInTheWorld_IsRefused()
+    {
+        var service = CreateService();
+        var created = await service.CreateAsync(Account, Request());
+        _presence.InWorld.Add(created.Character!.Id);
+
+        var result = await service.RequestDeletionAsync(Account, 0);
+
+        Assert.Equal(CharacterDeleteResultType.CharacterBeingPlayed, result.Refusal);
+        Assert.Null((await _mobiles.GetByIdAsync(created.Character.Id))!.DeletionRequestedAt);
+    }
+
+    [Fact]
+    public async Task RequestDeletionAsync_Twice_UsesTheUpdatedList()
+    {
+        var service = CreateService(maxPerAccount: 5);
+        await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
+
+        await service.RequestDeletionAsync(Account, 0);
+        var second = await service.RequestDeletionAsync(Account, 0);
+
+        Assert.Equal(CharacterDeleteResultType.CharacterDoesNotExist, second.Refusal);
+        Assert.Single(_deletions);
+    }
+
+    [Fact]
+    public async Task GetCharactersAsync_HidesPending()
+    {
+        var service = CreateService();
+        await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
+        await service.CreateAsync(Account, Request() with { Slot = 1, Name = "Bran" });
+
+        await service.RequestDeletionAsync(Account, 0);
+
+        Assert.Equal(["Bran"], (await service.GetCharactersAsync(Account)).Select(character => character.Name));
+    }
+
+    [Fact]
+    public async Task CreateAsync_PendingStillHoldsItsSlotAndCountsTowardTheLimit()
+    {
+        var service = CreateService(maxPerAccount: 1);
+        await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
+        await service.RequestDeletionAsync(Account, 0);
+
+        var result = await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Bran" });
+
+        Assert.Equal(CharacterCreationRefusalType.TooManyCharacters, result.Refusal);
+    }
+
+    [Fact]
+    public async Task CreateAsync_PendingCharacterSlotIsNotReused()
+    {
+        var service = CreateService(maxPerAccount: 5);
+        await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Aria" });
+        await service.RequestDeletionAsync(Account, 0);
+
+        await service.CreateAsync(Account, Request() with { Slot = 0, Name = "Bran" });
+
+        Assert.Equal((byte?)1, Assert.Single(await _mobiles.QueryAsync(mobile => mobile.Name == "Bran")).Slot);
+    }
+
+    [Fact]
+    public async Task RestoreAsync_BringsItBack()
+    {
+        var service = CreateService();
+        await service.CreateAsync(Account, Request() with { Name = "Aria" });
+        var deleted = await service.RequestDeletionAsync(Account, 0);
+
+        var restored = await service.RestoreAsync(deleted.Character!.Id);
+
+        Assert.Equal("Aria", restored!.Name);
+        Assert.Null(restored.DeletionRequestedAt);
+        Assert.Equal(["Aria"], (await service.GetCharactersAsync(Account)).Select(character => character.Name));
+    }
+
+    [Fact]
+    public async Task RestoreAsync_ActiveOrUnknown_ReturnsNull()
+    {
+        var service = CreateService();
+        var created = await service.CreateAsync(Account, Request());
+
+        Assert.Null(await service.RestoreAsync(created.Character!.Id));
+        Assert.Null(await service.RestoreAsync(new Serial(0x3FFFFFF0)));
+    }
+
+    [Fact]
+    public async Task GetPendingDeletionsAsync_FiltersByAccount()
+    {
+        var service = CreateService();
+        await service.CreateAsync(Account, Request() with { Name = "Aria" });
+        await service.CreateAsync(new Serial(0x999), Request() with { Name = "Other" });
+        await service.RequestDeletionAsync(Account, 0);
+        await service.RequestDeletionAsync(new Serial(0x999), 0);
+
+        Assert.Equal(["Aria"], (await service.GetPendingDeletionsAsync(Account)).Select(character => character.Name));
+        Assert.Equal(2, (await service.GetPendingDeletionsAsync(null)).Count);
+    }
+
+    [Fact]
     public async Task GetCharactersAsync_ReturnsOnlyThatAccountsPlayers_BySlot()
     {
         var service = CreateService();
@@ -314,7 +454,8 @@ public sealed class CharacterServiceTests : IAsyncLifetime
             _host.Owner,
             _mobiles,
             _eventContainer.Resolve<IMoongateEventBus>(),
-            new CharactersConfig { MaxPerAccount = maxPerAccount }
+            new CharactersConfig { MaxPerAccount = maxPerAccount },
+            _presence
         );
     }
 
