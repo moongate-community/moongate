@@ -31,7 +31,8 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly StubPacketSendService _sender = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                   .Item(BackpackGraphic, TileFlagType.Container, 0)
-                                                  .Item(BagGraphic, TileFlagType.Container, 0);
+                                                  .Item(BagGraphic, TileFlagType.Container, 0)
+                                                  .Item(CoinGraphic, TileFlagType.Generic, 0);
 
     private readonly ItemEntity _backpack = Item(0x40000001, BackpackGraphic);
     private readonly ItemEntity _bag = Item(0x40000002, BagGraphic);
@@ -39,6 +40,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _coins = Item(0x40000004, CoinGraphic);
     private readonly ItemEntity _dagger = Item(0x40000005, 0x0F52);
     private readonly ItemEntity _otherBackpack = Item(0x40000006, BackpackGraphic);
+    private readonly ItemEntity _pile = Item(0x40000007, CoinGraphic);
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -51,7 +53,10 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         _coins.PutInContainer(_backpack.Id, new Point2D(44, 65));
         _dagger.PutInContainer(_backpack.Id, new Point2D(100, 90));
         _otherBackpack.Equip(Bran, LayerType.Backpack);
-        _items.Add([_backpack, _bag, _innerBag, _coins, _dagger, _otherBackpack]);
+        _coins.Amount = 30;
+        _pile.Amount = 70;
+        _pile.PutInContainer(_backpack.Id, new Point2D(120, 100));
+        _items.Add([_backpack, _bag, _innerBag, _coins, _dagger, _otherBackpack, _pile]);
     }
 
     [Fact]
@@ -105,6 +110,57 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         await DropAsync(_coins.Id, 0, 0, _dagger.Id);
 
         AssertAt(_coins, _backpack.Id, new Point2D(100, 90));
+    }
+
+    [Fact]
+    public async Task Handle_OntoAStackOfTheSameKind_MergesIntoItAndRemovesTheHeldOne()
+    {
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, _pile.Id);
+
+        Assert.Equal(100, _pile.Amount);
+        Assert.False(_items.TryGet(_coins.Id, out _));
+        Assert.Equal([_coins.Id], _items.TombstonesOf(Aria));
+        Assert.Equal([typeof(ContainerItemUpdatePacket), typeof(RemoveEntityPacket)], _sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal((_pile.Id, 100), (((ContainerItemUpdatePacket)_sender.Sent[0]).Item.Serial, ((ContainerItemUpdatePacket)_sender.Sent[0]).Item.Amount));
+        Assert.Equal(_coins.Id, ((RemoveEntityPacket)_sender.Sent[1]).Serial);
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+    }
+
+    [Fact]
+    public async Task Handle_OntoAStackOfAnotherHue_IsPlacedBesideIt()
+    {
+        await HoldingAsync(_coins);
+        _pile.Hue = new(0x0481);
+
+        await DropAsync(_coins.Id, 0, 0, _pile.Id);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(120, 100));
+        Assert.Equal((30, 70), (_coins.Amount, _pile.Amount));
+    }
+
+    [Fact]
+    public async Task Handle_OntoAStackThatWouldPass60000_IsPlacedBesideIt()
+    {
+        await HoldingAsync(_coins);
+        _pile.Amount = 59_980;
+
+        await DropAsync(_coins.Id, 0, 0, _pile.Id);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(120, 100));
+        Assert.Empty(_items.TombstonesOf(Aria));
+    }
+
+    [Fact]
+    public async Task Handle_OntoAContainer_NeverMerges()
+    {
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 80, 70, _backpack.Id);
+
+        AssertAt(_coins, _backpack.Id, new Point2D(80, 70));
+        Assert.Equal(70, _pile.Amount);
     }
 
     [Fact]

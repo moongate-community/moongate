@@ -15,9 +15,9 @@ using Serilog;
 namespace Moongate.Server.Ultima.Handlers.Items;
 
 /// <summary>
-///     Drops the item the player holds (0x08) into a container their character carries, or into the container of a
-///     carried item it was dropped on; anything else bounces the item back to where it was. The hand is always freed,
-///     and 0x25 shows the item where it really is.
+///     Drops the item the player holds (0x08) into a container their character carries, onto a carried stack of the
+///     same kind (they merge), or into the container of a carried item it was dropped on; anything else bounces the
+///     item back to where it was. The hand is always freed, and 0x25 shows the item where it really is.
 /// </summary>
 /// <remarks>
 ///     The position is brought inside the container's gump bounds; a drop on the container's icon (-1, -1) takes a
@@ -26,6 +26,7 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 {
     private const short OnIcon = -1;
+    private const int MaxStack = 60_000;
 
     private readonly ILogger _logger = Log.ForContext<DropRequestPacketHandler>();
     private readonly IItemService _items;
@@ -58,12 +59,41 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             return;
         }
 
+        if (TryMerge(session, item, packet.Destination, out var stack))
+        {
+            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(stack, session.UsesContainerGrid()));
+            _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
+
+            return;
+        }
+
         if (!TryPlace(session, item, packet))
         {
             _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
         }
 
         _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
+    }
+
+    // Onto a carried stack of the same graphic and hue: the stack grows and the held item is absorbed.
+    private bool TryMerge(GameSession session, ItemEntity item, Serial destination, out ItemEntity stack)
+    {
+        if (!_items.TryGet(destination, out stack!) ||
+            stack.Id == item.Id ||
+            stack.ContainerId is null ||
+            _items.GetOwner(stack) != session.CharacterId ||
+            stack.ItemId != item.ItemId ||
+            stack.Hue != item.Hue ||
+            (long)stack.Amount + item.Amount > MaxStack ||
+            !IsStackable(stack))
+        {
+            return false;
+        }
+
+        stack.Amount += item.Amount;
+        _items.Absorb(item);
+
+        return true;
     }
 
     private bool TryPlace(GameSession session, ItemEntity item, DropRequestPacket packet)
@@ -136,6 +166,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         var bounds = _layouts.GetLayout(container.ItemId).Bounds;
 
         return new(Clamp(x, bounds.Start.X, bounds.End.X), Clamp(y, bounds.Start.Y, bounds.End.Y));
+    }
+
+    private bool IsStackable(ItemEntity item)
+    {
+        return _tiles.TryGetItem(item.ItemId, out var tile) && (tile.Flags & TileFlagType.Generic) != 0;
     }
 
     private bool IsContainer(ItemEntity item)
