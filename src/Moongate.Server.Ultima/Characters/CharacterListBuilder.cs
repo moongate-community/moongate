@@ -15,14 +15,24 @@ public static class CharacterListBuilder
     /// </summary>
     public static string?[] Names(IReadOnlyList<MobileEntity> characters, int maxPerAccount)
     {
-        var names = new string?[maxPerAccount];
+        return Layout(characters, maxPerAccount).Select(character => character?.Name).ToArray();
+    }
+
+    /// <summary>
+    ///     Returns <paramref name="maxPerAccount" /> positions with the character shown in each, laid out as
+    ///     <see cref="Names" /> does; the client refers to a character by its position here. Characters pending deletion
+    ///     are left out: they gave up their slot.
+    /// </summary>
+    public static MobileEntity?[] Layout(IReadOnlyList<MobileEntity> characters, int maxPerAccount)
+    {
+        var layout = new MobileEntity?[maxPerAccount];
         var unplaced = new List<MobileEntity>();
 
-        foreach (var character in characters)
+        foreach (var character in characters.Where(character => character.DeletionRequestedAt is null))
         {
-            if (character.Slot is { } slot && slot < maxPerAccount && names[slot] is null)
+            if (character.Slot is { } slot && slot < maxPerAccount && layout[slot] is null)
             {
-                names[slot] = character.Name;
+                layout[slot] = character;
             }
             else
             {
@@ -32,17 +42,17 @@ public static class CharacterListBuilder
 
         foreach (var character in unplaced)
         {
-            var free = Array.IndexOf(names, null);
+            var free = Array.IndexOf(layout, null);
 
             if (free < 0)
             {
                 break;
             }
 
-            names[free] = character.Name;
+            layout[free] = character;
         }
 
-        return names;
+        return layout;
     }
 
     /// <summary>

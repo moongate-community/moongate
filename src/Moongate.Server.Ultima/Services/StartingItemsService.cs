@@ -2,8 +2,8 @@ using Moongate.Core.Random;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
-using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Data.Characters;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
@@ -61,15 +61,15 @@ public class StartingItemsService : IStartingItemsService
         {
             if (!_templates.TryGet(templateId, out _))
             {
-                throw new InvalidDataException($"items.{key} '{templateId}' is not an item template.");
+                throw new InvalidDataException($"ultima.items.{key} '{templateId}' is not an item template.");
             }
         }
 
-        // Spawned NPCs get gold piles too, so the gold template must stack whatever the starting gold is.
+        // Spawned NPCs get gold piles, so the gold template must stack.
         if (!_templates.Get(_items.GoldTemplate).EffectiveStackable(_tiles))
         {
             throw new InvalidDataException(
-                $"items.gold_template '{_items.GoldTemplate}' does not stack, so it cannot hold a pile of coins."
+                $"ultima.items.gold_template '{_items.GoldTemplate}' does not stack, so it cannot hold a pile of coins."
             );
         }
 
@@ -120,14 +120,6 @@ public class StartingItemsService : IStartingItemsService
             }
         }
 
-        if (_config.Gold > 0)
-        {
-            var gold = _factory.Create(_items.GoldTemplate, _config.Gold);
-            PutInBackpack(gold, backpack);
-            await _factory.SaveAsync(transaction, gold, cancellationToken);
-            given.Add(gold);
-        }
-
         return given;
     }
 
@@ -135,16 +127,17 @@ public class StartingItemsService : IStartingItemsService
     {
         var sets = _dataLoaderService.GetEntities<StartingItemSet>();
         var bestSkills = request.Skills
-                                .Where(pair => pair.Value > 0)
-                                .OrderByDescending(pair => pair.Value)
-                                .ThenBy(pair => pair.Key)
-                                .Take(_config.BestSkills)
-                                .Select(pair => pair.Key);
+            .Where(pair => pair.Value > 0)
+            .OrderByDescending(pair => pair.Value)
+            .ThenBy(pair => pair.Key)
+            .Take(_config.BestSkills)
+            .Select(pair => pair.Key);
 
-        return bestSkills.SelectMany(skill => sets.Where(set => !set.Common && set.Skill == skill && MatchesBody(set, request)))
-                         .Concat(sets.Where(set => set.Common))
-                         .Concat(sets.Where(set => !set.Common && set.Skill is null && MatchesBody(set, request)))
-                         .ToList();
+        return bestSkills
+            .SelectMany(skill => sets.Where(set => !set.Common && set.Skill == skill && MatchesBody(set, request)))
+            .Concat(sets.Where(set => set.Common))
+            .Concat(sets.Where(set => !set.Common && set.Skill is null && MatchesBody(set, request)))
+            .ToList();
     }
 
     private static bool MatchesBody(StartingItemSet set, StartingItemsRequest request)
@@ -198,7 +191,7 @@ public class StartingItemsService : IStartingItemsService
     private static void ApplyBodyHue(ItemEntity item, LayerType layer, StartingItemsRequest request)
     {
         var hue = layer is LayerType.Shirt or LayerType.OuterTorso ? request.ShirtHue :
-                  layer is LayerType.Pants or LayerType.OuterLegs ? request.PantsHue : default;
+            layer is LayerType.Pants or LayerType.OuterLegs ? request.PantsHue : default;
 
         if (!hue.IsNone)
         {

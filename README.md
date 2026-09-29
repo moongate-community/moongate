@@ -16,17 +16,25 @@
   <a href="https://github.com/moongate-community/moongate/pkgs/container/moongate"><img src="https://img.shields.io/badge/ghcr.io-moongate-2496ED?logo=docker&amp;logoColor=white" alt="Container image"></a>
   <a href="https://dotnet.microsoft.com/en-us/download/dotnet/10.0"><img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&amp;logoColor=white" alt=".NET 10"></a>
   <a href="docs/scripting.md"><img src="https://img.shields.io/badge/Lua-5.2-2C2D72?logo=lua&amp;logoColor=white" alt="Lua 5.2 scripting"></a>
+  <a href="https://buymeacoffee.com/zk7bnrbk4i"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-support-FFDD00?logo=buymeacoffee&amp;logoColor=black" alt="Buy me a coffee"></a>
 </p>
 
 Moongate is an open-source Ultima Online server emulator written in C# on .NET 10.
 It combines Lua scripting, PostgreSQL persistence and Redis-backed login-to-game
 handoff, with reusable libraries for building server tools and services.
 
+Moongate is multi-shard: one login server lists any number of game servers (up to
+128), each running its own world with its own database, and players pick one from
+the client's server list. `standalone` mode runs the login and a single shard in
+one process. See [Docker login and realms](docs/docker-login-realms.md).
+
 ## Status
 
-**Under active development; there is no playable world yet.** Login lists the
-account's saved characters. New characters are created and saved with their
-starting items; character selection and world entry are not implemented.
+**Under active development; the world is not a game yet.** Characters are
+created, enter the world, walk and run, see each other and talk, move items in
+their backpack and on the ground, and game masters spawn and remove NPCs. NPCs
+near a player run their Lua mobile script, and items react to Lua item scripts.
+There is no combat, pathfinding AI, death or skill gain yet.
 
 The networking and packet pipeline, Lua runtime, persistence infrastructure,
 shard data loading, and client-file readers with movement and line-of-sight
@@ -91,8 +99,8 @@ timer.every(30, function()
 end)
 ```
 
-The runtime provides logging, timers, events, instruction budgets, and generated
-editor definitions. See [Writing Lua scripts](docs/scripting.md) for available
+The runtime provides logging, timers, events, NPC and item scripts, instruction
+budgets, and generated editor definitions. See [Writing Lua scripts](docs/scripting.md) for available
 APIs, reload commands and configuration, and the
 [package README](src/Moongate.Scripting/README.md) for C# bindings and sandbox limits.
 

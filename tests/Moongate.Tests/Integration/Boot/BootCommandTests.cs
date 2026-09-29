@@ -1,7 +1,9 @@
-using Moongate.Core.Utils;
-using Moongate.Server.Data.Config;
+using Moongate.Server.Admin.Data.Config;
 using Moongate.Tests.TestSupport.Boot;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
+using Tomlyn;
+using Tomlyn.Model;
 
 namespace Moongate.Tests.Integration.Boot;
 
@@ -14,6 +16,31 @@ public sealed class BootCommandTests
         Assert.Equal(0, result.ExitCode);
         Assert.Contains("--generate-admin-certificate", result.Output);
         Assert.Contains("--admin-certificate-hosts", result.Output);
+        Assert.DoesNotContain(".       .     _.--.", result.Output);
+    }
+
+    [Fact]
+    public async Task Run_Version_OmitsHeader()
+    {
+        var result = await BootProcess.RunAsync("--version");
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Matches(@"^\d+\.\d+\.\d+\s*$", result.Output);
+        Assert.DoesNotContain(".       .     _.--.", result.Output);
+    }
+
+    [Fact]
+    public async Task Run_Default_ShowsMoongateHeaderBeforePreparingRoot()
+    {
+        using var directory = new TemporaryDirectory();
+        var result = await BootProcess.RunAsync(directory.Path);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.StartsWith(".       .     _.--.", result.Output);
+        Assert.Matches("Version: [0-9]+\\.[0-9]+\\.[0-9]+ Codename: \"[^\"]+\"", result.Output);
+        Assert.Contains("Root setup", result.Output);
+        Assert.DoesNotContain("{Version}", result.Output);
+        Assert.DoesNotContain("{Codename}", result.Output);
     }
 
     [Fact]
@@ -28,9 +55,9 @@ public sealed class BootCommandTests
             "login.example.test,192.0.2.10"
         );
         Assert.True(result.ExitCode == 0, result.Output);
-        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(Path.Combine(root, "config/moongate.toml"))!;
-        Assert.True(config.AdminApi.Enabled);
-        Assert.True(File.Exists(Path.Combine(root, config.AdminApi.CertificatePath)));
+        var config = TomlSections.Read<AdminApiConfig>(File.ReadAllText(Path.Combine(root, "config/moongate.toml")), "admin_api");
+        Assert.True(config.Enabled);
+        Assert.True(File.Exists(Path.Combine(root, config.CertificatePath)));
         Assert.True(File.Exists(Path.Combine(root, "certificates/admin.crt")));
         Assert.False(File.Exists(Path.Combine(root, "moongate.pid")));
         Assert.Contains("No database connection or server startup", result.Output);
@@ -42,10 +69,11 @@ public sealed class BootCommandTests
         using var directory = new TemporaryDirectory();
         var result = await BootProcess.RunAsync(directory.Path);
         Assert.True(result.ExitCode == 0, result.Output);
-        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(
-            Path.Combine(directory.Path, "config/moongate.toml")
+        // The Administration plugin appends [admin_api] at the first server start; mgboot writes none by default.
+        var document = TomlSerializer.Deserialize<TomlTable>(
+            File.ReadAllText(Path.Combine(directory.Path, "config/moongate.toml"))
         )!;
-        Assert.False(config.AdminApi.Enabled);
+        Assert.False(document.ContainsKey("admin_api"));
         Assert.False(Directory.Exists(Path.Combine(directory.Path, "certificates")));
     }
 

@@ -27,6 +27,11 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
     private readonly Task[] _workers;
     private bool _accepting = true;
 
+    /// <summary>
+    ///     Called with the session id, outside the lock, once a session's handler is done and it can take the next packet.
+    /// </summary>
+    public Action<long>? Released { get; init; }
+
     public AsyncPacketExecutor(IGameLoopService gameLoop, ISessionService sessions, IPacketSendService sender)
     {
         _gameLoop = gameLoop;
@@ -126,11 +131,18 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
         return cancellationFailure;
     }
 
-    public void Release(AsyncPacketJob job)
+    public void Release(AsyncPacketJob job, bool notify = true)
     {
+        bool released;
+
         lock (_gate)
         {
-            ReleaseCore(job);
+            released = ReleaseCore(job);
+        }
+
+        if (released && notify)
+        {
+            Released?.Invoke(job.Session.SessionId);
         }
     }
 
@@ -193,13 +205,17 @@ internal sealed class AsyncPacketExecutor : IAsyncDisposable
         }
     }
 
-    private void ReleaseCore(AsyncPacketJob job)
+    private bool ReleaseCore(AsyncPacketJob job)
     {
         if (_jobs.TryGetValue(job.Session.SessionId, out var current) && ReferenceEquals(current, job))
         {
             _jobs.Remove(job.Session.SessionId);
             job.Cancellation.Dispose();
+
+            return true;
         }
+
+        return false;
     }
 
     private async Task RunWorkerAsync()

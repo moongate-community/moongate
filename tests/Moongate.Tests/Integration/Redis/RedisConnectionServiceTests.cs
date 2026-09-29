@@ -41,6 +41,7 @@ public sealed class RedisConnectionServiceTests
             );
 
         Assert.Contains("redis.connection_string", exception.Message);
+        Assert.Contains("127.0.0.1:1", exception.Message);
         Assert.DoesNotContain("not-for-errors", exception.ToString());
         await service.StopAsync();
     }

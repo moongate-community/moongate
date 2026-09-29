@@ -21,6 +21,8 @@ mgboot --help
 
 On Windows, use `mgboot.exe C:\MoongateData` from the extracted distribution.
 Keep `mgboot` and `Moongate.Server` from the same release together.
+When preparing a root, `mgboot` shows the same Moongate banner, version and codename
+as the server, followed by `Root setup`. Help and version output omit the banner.
 
 ## Generate an administration certificate
 
@@ -79,11 +81,13 @@ Distribute only `admin.crt`; clients must verify trust and hostname.
 
 | Path under the root | Purpose |
 | --- | --- |
-| `config/moongate.toml` | Current server defaults serialized as snake_case TOML |
-| `logs/`, `plugins/`, `scripts/` | Standard server directories |
+| `config/moongate.toml` | Current server defaults serialized as snake_case TOML; plugin sections such as `[ultima]` are appended at the first server start |
+| `logs/`, `plugins/` | Standard server directories |
 | `migrations/auth/` | The core auth SQL files included in the distribution |
 | `migrations/world/` | The core World SQL files included in the distribution: the mobiles and items tables |
 | `data/` | The shard data files included in the distribution: maps, regions, races, skills, messages and the rest; see [Shard data files](data-files.md) |
+| `templates/` | The item, loot and mobile templates included in the distribution; see [Templates](templates.md) |
+| `scripts/` | The example [mobile](scripting.md#mobile-scripts) and [item scripts](scripting.md#item-scripts) included in the distribution, `mobiles/wander.lua` and `items/potion.lua`; the engine writes `definitions.lua` and `.luarc.json` here at startup |
 | `.mgboot.lock` | Retained file used to prevent simultaneous initialization |
 
 The new config sets `persistence.migrations_directory` to the absolute `migrations`
@@ -94,10 +98,14 @@ generation and automatic schema synchronization are disabled. Runtime Redis
 credentials must be supplied before starting the server.
 The root does not need database access or Ultima Online client files to be prepared.
 
-Data files are copied only when missing, so a file you edited stays as it is. Run
-`mgboot` again after upgrading to add the data files a new release introduces; a
-file that exists in the root is never replaced, so compare it with the one beside
-the new `Moongate.Server` binary (`data/`) to pick up upstream changes.
+Data files, templates and scripts are copied only when missing, so a file you edited
+stays as it is. Run `mgboot` again after upgrading to add the files a new release
+introduces; a file that exists in the root is never replaced, so compare it with the
+one beside the new `Moongate.Server` binary (`data/`, `templates/`, `scripts/`) to pick
+up upstream changes. Nothing is removed either: a template a release renamed or moved
+stays in the root beside its new copy, and the server stops at startup on the
+duplicate id, so delete the stale file. A shipped file you deleted comes back on the
+next run; empty it instead to keep it out.
 
 Base migration preparation copies the versioned SQL distributed with Moongate.
 It does not generate new SQL from entities, load plugins, create databases or apply

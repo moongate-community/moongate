@@ -4,6 +4,7 @@ using Moongate.Persistence.Extensions;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
@@ -11,6 +12,8 @@ using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types;
+using Moongate.Tests.TestSupport.Config;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Server.Ultima;
 
@@ -24,6 +27,7 @@ public sealed class AccountCommandTests
         using var directory = new TemporaryPersistenceDirectory();
         using var container = new Container();
         container.RegisterInstance(new DirectoriesConfig(directory.Path, []));
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
         container.RegisterMoongatePersistence(new());
 
         new MoongateUltimaPlugin().Register(container);
@@ -83,7 +87,7 @@ public sealed class AccountCommandTests
 
         var output = await ExecuteAsync("account create alice synthetic-password", accounts);
 
-        Assert.Equal("Account 'alice' already exists.", Assert.Single(output).Text);
+        Assert.Equal("An account by that name already exists!", Assert.Single(output).Text);
         Assert.Equal(CommandOutputLevel.Error, output[0].Level);
     }
 
@@ -101,7 +105,7 @@ public sealed class AccountCommandTests
 
         var output = await ExecuteAsync("account create alice synthetic-password", accounts);
 
-        Assert.Equal("Account creation failed. Check server logs.", Assert.Single(output).Text);
+        Assert.Equal("The account creation failed. Check the server logs.", Assert.Single(output).Text);
         Assert.Equal(CommandOutputLevel.Error, output[0].Level);
     }
 
@@ -116,13 +120,34 @@ public sealed class AccountCommandTests
         Assert.Equal(CommandOutputLevel.Error, Assert.Single(output).Level);
     }
 
+    [Fact]
+    public async Task Create_Texts_AreInTheServerLanguage()
+    {
+        var accounts = new RecordingAccountService { Result = new(false, AccountCreateResultType.UsernameAlreadyExists) };
+
+        var output = await ExecuteAsync(
+            "account create alice synthetic-password",
+            accounts,
+            localization: TestLocalization.With((555, "Esiste già un account con quel nome!"))
+        );
+
+        Assert.Equal("Esiste già un account con quel nome!", Assert.Single(output).Text);
+    }
+
     private static async Task<IReadOnlyList<CommandOutputLine>> ExecuteAsync(
         string commandLine,
         RecordingAccountService accounts,
-        CommandSourceType source = CommandSourceType.Console
+        CommandSourceType source = CommandSourceType.Console,
+        ILocalizationService? localization = null
     )
     {
         using var container = new Container();
+
+        if (localization is not null)
+        {
+            container.RegisterInstance(localization);
+        }
+
         container.RegisterInstance<IAccountService>(accounts);
         container.RegisterCommand<AccountCommand>(
             "account",

@@ -50,6 +50,7 @@ Verified against real UOX3 data:
 | `amount=` | `Amount` | A fixed stack size |
 | `pileable=` | `Stackable` | |
 | `layer=` | `Layer` | The UOX3 layer number as a `LayerType` name |
+| `layer=2` without `type=107` (shield) or `dir=` (light) | `two_handed_weapon = true` | As UOX3 decides at equip time. An unlit torch (`0x0F64`) has neither, so UOX3, and the converter, treat it as two-handed; the shipped templates leave it off |
 | `value=buy sell` | `BuyPrice`, `SellPrice` | One number sets both |
 | `decay=` | `Decays` | `1` is true, anything else false |
 | `newbie` or `newbie=1` | `LootType = newbied` | |
@@ -194,7 +195,9 @@ Items resolve as npc equipment does: `listobjectN` gives every item of `[ITEMLIS
 an item block with no `id=` of its own is followed. Items that resolve to nothing are
 dropped and counted. The file is read back and every item must exist. UOX3's own rules
 (the three best skills, four with extended starting skills, and `STARTGOLD`) are not data
-and are not converted.
+and are not converted. Set `ultima.starting_items.best_skills` in the server
+configuration, and give the `STARTGOLD` coins with a gold entry in the common set, as
+the [shipped file](data-files/starting-items.md) does.
 
 ## Verifying the output
 

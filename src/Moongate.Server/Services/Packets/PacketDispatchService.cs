@@ -4,6 +4,7 @@ using Moongate.Network.Packets.Interfaces;
 using Moongate.Network.Packets.Registry;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Sessions;
 using Moongate.Server.Services.Packets.Internal;
@@ -16,6 +17,11 @@ namespace Moongate.Server.Services.Packets;
 /// </summary>
 public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDisposable
 {
+    /// <summary>
+    ///     How many packets a session may send while one of its async handlers runs; they wait and run after it, in order.
+    /// </summary>
+    public const int MaxPendingPerSession = 32;
+
     private readonly PacketRegistry _packets;
     private readonly Lock _gate = new();
     private readonly IGameLoopService _gameLoop;
@@ -23,6 +29,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
     private readonly PacketHandlerRegistry _registry;
     private readonly IResolverContext _resolver;
     private readonly Dictionary<long, Task> _disconnects = new();
+    private readonly Dictionary<long, Queue<IPacket>> _pending = new();
     private readonly ILogger _logger = Log.ForContext<PacketDispatchService>();
 
     private FrozenDictionary<Type, Action<GameSession, IPacket>> _handlers =
@@ -32,6 +39,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         FrozenDictionary<Type, Func<PacketContext, IPacket, CancellationToken, ValueTask>>.Empty;
 
     private AsyncPacketExecutor? _asyncExecutor;
+    private ISessionClosedListener[] _closedListeners = [];
 
     private bool _everStarted;
     private bool _running;
@@ -56,6 +64,11 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
     /// <inheritdoc />
     public Task DisconnectAsync(long sessionId)
     {
+        lock (_gate)
+        {
+            _pending.Remove(sessionId);
+        }
+
         var cancellationFailure = _asyncExecutor?.CancelSession(sessionId);
         var retirement = RetireSessionAsync(sessionId);
 
@@ -84,9 +97,13 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
 
                 if (_asyncHandlers.Count > 0)
                 {
-                    _asyncExecutor = new(_gameLoop, _sessions, _resolver.Resolve<IPacketSendService>());
+                    _asyncExecutor = new(_gameLoop, _sessions, _resolver.Resolve<IPacketSendService>())
+                    {
+                        Released = DispatchPending
+                    };
                 }
 
+                _closedListeners = _resolver.ResolveMany<ISessionClosedListener>().ToArray();
                 _everStarted = true;
                 _running = true;
                 _logger.Information(
@@ -122,7 +139,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
                 return false;
             }
 
-            if (!_handlers.TryGetValue(packet.GetType(), out var handler) &&
+            if (!_handlers.ContainsKey(packet.GetType()) &&
                 !_asyncHandlers.TryGetValue(packet.GetType(), out _))
             {
                 _logger.Debug("No packet handler for {PacketType} on session {SessionId}", packet.GetType().Name, sessionId);
@@ -137,43 +154,112 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
                 return false;
             }
 
-            if (_asyncExecutor?.IsBusy(sessionId) == true)
+            if (_asyncExecutor?.IsBusy(sessionId) == true || _pending.ContainsKey(sessionId))
             {
-                return false;
+                return TryHoldUntilIdle(sessionId, packet);
             }
 
-            if (_asyncHandlers.TryGetValue(packet.GetType(), out var asyncHandler))
-            {
-                var executor = _asyncExecutor!;
+            return DispatchCore(sessionId, packet);
+        }
+    }
 
-                if (!executor.TryReserve(session, packet, asyncHandler, out var job))
-                {
-                    return false;
-                }
+    /// <summary>
+    ///     Keeps a packet that arrived while the session's async handler runs, so it runs after it in arrival order
+    ///     instead of dropping the client (it answers the server while, for example, it enters the world).
+    /// </summary>
+    private bool TryHoldUntilIdle(long sessionId, IPacket packet)
+    {
+        if (!_pending.TryGetValue(sessionId, out var queue))
+        {
+            queue = new();
+            _pending.Add(sessionId, queue);
+        }
 
-                if (_gameLoop.TryPost(new AsyncPacketDispatchWorkItem(_sessions, job!, executor)))
-                {
-                    return true;
-                }
-
-                executor.Release(job!);
-
-                return false;
-            }
-
-            if (_gameLoop.TryPost(new PacketDispatchWorkItem(_sessions, sessionId, packet, handler!)))
-            {
-                return true;
-            }
-
+        if (queue.Count >= MaxPendingPerSession)
+        {
             _logger.Warning(
-                "Game loop inbox rejected {PacketType} for session {SessionId}: full or unavailable",
-                packet.GetType().Name,
-                sessionId
+                "Session {SessionId} sent more than {Max} packets while a handler was running",
+                sessionId,
+                MaxPendingPerSession
             );
 
             return false;
         }
+
+        queue.Enqueue(packet);
+        DispatchPending(sessionId);
+
+        return true;
+    }
+
+    private void DispatchPending(long sessionId)
+    {
+        lock (_gate)
+        {
+            while (_pending.TryGetValue(sessionId, out var queue) && _asyncExecutor?.IsBusy(sessionId) != true)
+            {
+                if (!_running || !_sessions.TryGet(sessionId, out _) || !queue.TryDequeue(out var packet))
+                {
+                    _pending.Remove(sessionId);
+
+                    return;
+                }
+
+                if (queue.Count == 0)
+                {
+                    _pending.Remove(sessionId);
+                }
+
+                if (!DispatchCore(sessionId, packet))
+                {
+                    _logger.Warning(
+                        "Dropped {PacketType} held for session {SessionId}: it could not be dispatched",
+                        packet.GetType().Name,
+                        sessionId
+                    );
+                }
+            }
+        }
+    }
+
+    private bool DispatchCore(long sessionId, IPacket packet)
+    {
+        if (!_sessions.TryGet(sessionId, out var session))
+        {
+            return false;
+        }
+
+        if (_asyncHandlers.TryGetValue(packet.GetType(), out var asyncHandler))
+        {
+            var executor = _asyncExecutor!;
+
+            if (!executor.TryReserve(session, packet, asyncHandler, out var job))
+            {
+                return false;
+            }
+
+            if (_gameLoop.TryPost(new AsyncPacketDispatchWorkItem(_sessions, job!, executor)))
+            {
+                return true;
+            }
+
+            executor.Release(job!, false);
+
+            return false;
+        }
+
+        if (_gameLoop.TryPost(new PacketDispatchWorkItem(_sessions, sessionId, packet, _handlers[packet.GetType()])))
+        {
+            return true;
+        }
+
+        _logger.Warning(
+            "Game loop inbox rejected {PacketType} for session {SessionId}: full or unavailable",
+            packet.GetType().Name,
+            sessionId
+        );
+
+        return false;
     }
 
     private Task RetireSessionAsync(long sessionId)
@@ -182,7 +268,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
         {
             if (!_everStarted || _gameLoop.IsOnLoopThread || _gameLoop.Completion.IsCompleted)
             {
-                var retirement = new SessionRetirementWorkItem(_sessions, sessionId);
+                var retirement = new SessionRetirementWorkItem(_sessions, sessionId, _closedListeners);
                 retirement.Execute();
 
                 return retirement.Completion;
@@ -224,7 +310,7 @@ public sealed class PacketDispatchService : IPacketDispatchService, IAsyncDispos
     {
         try
         {
-            var retirement = new SessionRetirementWorkItem(_sessions, sessionId);
+            var retirement = new SessionRetirementWorkItem(_sessions, sessionId, _closedListeners);
             using var cancellation = new CancellationTokenSource();
 
             try

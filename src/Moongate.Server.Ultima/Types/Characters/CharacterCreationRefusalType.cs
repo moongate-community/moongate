@@ -6,7 +6,7 @@ namespace Moongate.Server.Ultima.Types.Characters;
 public enum CharacterCreationRefusalType
 {
     /// <summary>
-    ///     The account already holds as many characters as <c>[characters] max_per_account</c> allows.
+    ///     The account already holds as many characters as <c>ultima.characters.max_per_account</c> allows.
     /// </summary>
     TooManyCharacters,
 

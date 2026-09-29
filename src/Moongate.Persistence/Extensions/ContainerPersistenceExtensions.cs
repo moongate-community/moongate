@@ -99,6 +99,24 @@ public static class ContainerPersistenceExtensions
         }
 
         /// <summary>
+        ///     Registers world entities with a detached snapshot function and the identities the source removed, which
+        ///     the world save deletes in the same transaction.
+        /// </summary>
+        public Container AddPersistenceWorld<T>(
+            Func<IEnumerable<T>> source,
+            Func<T, T> snapshot,
+            IPersistenceDeletionSource deletions
+        )
+            where T : class, IMoongateEntity
+        {
+            ArgumentNullException.ThrowIfNull(source);
+            ArgumentNullException.ThrowIfNull(snapshot);
+            ArgumentNullException.ThrowIfNull(deletions);
+
+            return RegisterEntity(container, source, snapshot, PersistenceDatabaseTarget.Realm, deletions);
+        }
+
+        /// <summary>
         ///     Registers the shared persistence owner.
         /// </summary>
         public Container RegisterMoongatePersistence(PostgreSqlPersistenceOptions options)
@@ -120,11 +138,12 @@ public static class ContainerPersistenceExtensions
         Container container,
         Func<IEnumerable<T>>? source,
         Func<T, T>? snapshot,
-        PersistenceDatabaseTarget? target = null
+        PersistenceDatabaseTarget? target = null,
+        IPersistenceDeletionSource? deletions = null
     ) where T : class, IMoongateEntity
     {
         ArgumentNullException.ThrowIfNull(container);
-        var facade = container.Resolve<MoongatePersistenceService>().RegisterEntity(source, snapshot, target);
+        var facade = container.Resolve<MoongatePersistenceService>().RegisterEntity(source, snapshot, target, deletions);
         var setup = Setup.With(preventDisposal: true);
         container.RegisterInstance(facade, setup: setup);
         container.RegisterInstance<IDataAccess<T>>(facade, setup: setup);

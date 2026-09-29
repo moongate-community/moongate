@@ -225,6 +225,9 @@ moongate.pid.lock
 moongate_root/*
 !moongate_root/data/
 !moongate_root/templates/
+!moongate_root/scripts/
+moongate_root/scripts/definitions.lua
+moongate_root/scripts/.luarc.json
 rcf/
 
 # Windows Store app package directories and files
@@ -601,6 +604,7 @@ website/node_modules/
 website/.astro/
 website/dist/
 website/src/content/docs/generated/
+website/src/generated/packets.json
 website/public/generated/
 website/public/install.sh
 website/public/coverage/

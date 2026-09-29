@@ -52,12 +52,81 @@ public sealed class AsyncPacketDispatchServiceTests
         await dispatcher.StartAsync();
 
         Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));
-        Assert.False(dispatcher.TryDispatch(session.SessionId, new PingPacket(2)));
         Assert.False(await entered.Task.WaitAsync(Timeout));
         await fixture.ExecuteOnLoopAsync(() => { });
         release.TrySetResult();
         await completed.Task.WaitAsync(Timeout);
         Assert.Equal(new(42), session.AccountId);
+        await dispatcher.StopAsync();
+    }
+
+    [Fact]
+    public async Task TryDispatch_PacketsArrivingWhileAHandlerRuns_RunAfterItInOrder()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        using var container = CreateContainer();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        var handled = new List<byte>();
+        container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, packet, cancellationToken) =>
+        {
+            if (packet.Sequence == 1)
+            {
+                await release.Task.WaitAsync(cancellationToken);
+            }
+
+            lock (handled)
+            {
+                handled.Add(packet.Sequence);
+            }
+        };
+        var dispatcher = CreateDispatcher(fixture, sessions, container);
+        await dispatcher.StartAsync();
+
+        Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(1)));
+        Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(2)));
+        Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(3)));
+        release.TrySetResult();
+
+        Assert.True(
+            SpinWait.SpinUntil(
+                () =>
+                {
+                    lock (handled)
+                    {
+                        return handled.Count == 3;
+                    }
+                },
+                Timeout
+            )
+        );
+        Assert.Equal([1, 2, 3], handled);
+        await dispatcher.StopAsync();
+    }
+
+    [Fact]
+    public async Task TryDispatch_TooManyPacketsWhileAHandlerRuns_RejectsTheExtraOne()
+    {
+        await using var fixture = await SessionFixture.CreateAsync();
+        using var container = CreateContainer();
+        var sessions = new SessionService(fixture.Loop);
+        var session = sessions.GetOrCreate(fixture.Client);
+        var release = new TaskCompletionSource(TaskCreationOptions.RunContinuationsAsynchronously);
+        container.Resolve<AsyncPingPacketHandler>().OnHandleAsync = async (_, _, cancellationToken) =>
+            await release.Task.WaitAsync(cancellationToken);
+        var dispatcher = CreateDispatcher(fixture, sessions, container);
+        await dispatcher.StartAsync();
+
+        Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket(0)));
+
+        for (var index = 1; index <= PacketDispatchService.MaxPendingPerSession; index++)
+        {
+            Assert.True(dispatcher.TryDispatch(session.SessionId, new PingPacket((byte)index)));
+        }
+
+        Assert.False(dispatcher.TryDispatch(session.SessionId, new PingPacket(255)));
+        release.TrySetResult();
         await dispatcher.StopAsync();
     }
 

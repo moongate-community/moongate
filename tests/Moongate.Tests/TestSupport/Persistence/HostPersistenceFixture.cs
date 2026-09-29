@@ -4,6 +4,7 @@ using Moongate.Persistence.Data.Config;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
+using Moongate.Tests.TestSupport.Config;
 
 namespace Moongate.Tests.TestSupport.Persistence;
 
@@ -31,6 +32,7 @@ public sealed class HostPersistenceFixture : IAsyncDisposable
         // services.RegisterInstance(directoriesConfig)); AccountServiceFixture calls
         // MoongateUltimaPlugin.Register directly on this container, which now needs it too.
         Container.RegisterInstance(new DirectoriesConfig(_directory.Path, []));
+        Container.RegisterInstance(TestConfigDocuments.Empty(_directory.Path));
         Container.RegisterMoongatePersistence(new(targets, autoSync));
     }
 

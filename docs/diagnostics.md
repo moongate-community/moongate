@@ -62,6 +62,8 @@ Each sample has a numeric `Value`, a `Unit`, and a `Type` of `Gauge` or `Counter
 | `timers.max_lateness_seconds` | Gauge | `seconds` |
 | `timers.max_callback_duration_seconds` | Gauge | `seconds` |
 | `timers.last_batch_duration_seconds` | Gauge | `seconds` |
+| `npcs.awake` | Gauge | `count` |
+| `npcs.thinks_total` | Counter | `count` |
 | `sessions.registered_sessions` | Gauge | `count` |
 
 CPU usage is calculated as:

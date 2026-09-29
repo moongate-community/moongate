@@ -1,0 +1,178 @@
+---
+import StarlightPage from '@astrojs/starlight/components/StarlightPage.astro';
+import packets from '../generated/packets.json';
+
+const sourceRef = process.env.MOONGATE_DOCS_REF || 'develop';
+const sourceUrl = (source: string) =>
+  `https://github.com/moongate-community/moongate/blob/${encodeURIComponent(sourceRef)}/${source}`;
+const categories = [...new Set(packets.map(packet => packet.category))].sort();
+const tags = [...new Set(packets.flatMap(packet => packet.tags))].sort();
+const legend = [
+  { title: 'Integers', entries: [
+    ['byte / sbyte', 'Unsigned / signed 8-bit integer'],
+    ['short / ushort', 'Signed / unsigned 16-bit integer'],
+    ['int / uint', 'Signed / unsigned 32-bit integer'],
+    ['long / ulong', 'Signed / unsigned 64-bit integer'],
+  ] },
+  { title: 'Strings', entries: [
+    ['ascii', 'ASCII text, fixed or variable width'],
+    ['utf8', 'UTF-8 text'],
+  ] },
+  { title: 'Special', entries: [
+    ['bool', 'Boolean value'], ['enum', 'Named numeric value'],
+    ['bitfield', 'Flags packed into bits'],
+  ] },
+  { title: 'Structures', entries: [
+    ['byte[]', 'Raw byte sequence'], ['loop', 'Repeated fields or records'],
+  ] },
+];
+---
+
+<StarlightPage frontmatter={{ title: 'Packet reference', description: 'Registered Moongate network packets and their wire structure.', pagefind: false }} hasSidebar={false}>
+  <div class="packets-page">
+    <header class="packets-heading">
+      <p class="eyebrow">Network protocol · ClassicUO 7.x</p>
+      <h1>Packet reference</h1>
+      <p>Packets registered by Moongate’s built-in registry and Ultima plugin. Directions are relative to the server; lengths include the opcode and length header.</p>
+      <p class="count-summary"><strong>{packets.length}</strong> packet definitions <span aria-hidden="true">·</span> <a href="/server/packets/">Packet and handler guide</a></p>
+    </header>
+
+    <div class="packet-workspace">
+      <aside class="packet-browser" aria-label="Packet browser">
+        <div class="browser-controls">
+          <label for="packet-search">Search packets</label>
+          <input id="packet-search" type="search" placeholder="Opcode, name, or field" autocomplete="off" />
+          <div class="direction-filters" role="group" aria-label="Direction">
+            <button type="button" data-direction="all" aria-pressed="true">All</button>
+            <button type="button" data-direction="incoming" aria-pressed="false">In</button>
+            <button type="button" data-direction="outgoing" aria-pressed="false">Out</button>
+            <button type="button" data-direction="both" aria-pressed="false">Both</button>
+          </div>
+          <div class="select-filters">
+            <label>Category
+              <select id="packet-category"><option value="all">All categories</option>{categories.map(category => <option value={category}>{category}</option>)}</select>
+            </label>
+            <label>Tag
+              <select id="packet-tag"><option value="all">All tags</option>{tags.map(tag => <option value={tag}>{tag}</option>)}</select>
+            </label>
+          </div>
+          <p id="packet-result-count" role="status" aria-live="polite">{packets.length} packets</p>
+        </div>
+        <ul id="packet-list" class="packet-list">
+          {packets.map((packet, index) => <li data-packet-item data-index={index} data-direction={packet.direction} data-category={packet.category} data-tags={packet.tags.join('|')} data-search={`${packet.id} ${packet.name} ${packet.fields.map(field => field.name).join(' ')}`.toLowerCase()}>
+            <button type="button" data-packet-select={index} aria-controls={`packet-${index}`} aria-current={index === 0 ? 'true' : undefined}>
+              <code>{packet.id}</code>
+              <span class="packet-name">{packet.name.replace(/Packet$/, '')}</span>
+              <span class={`direction-badge ${packet.direction}`}>{packet.direction === 'incoming' ? 'In' : packet.direction === 'outgoing' ? 'Out' : 'Both'}</span>
+            </button>
+          </li>)}
+        </ul>
+        <p id="packet-empty" hidden>No packets match these filters.</p>
+      </aside>
+
+      <div class="packet-detail" aria-label="Packet details">
+        {packets.map((packet, index) => <article id={`packet-${index}`} data-packet-detail={index} hidden={index !== 0} aria-labelledby={`packet-title-${index}`}>
+          <div class="detail-topline"><span class="detail-id">{packet.id}</span><span class={`direction-badge ${packet.direction}`}>{packet.direction}</span><span class="detail-category">{packet.category}</span></div>
+          <h2 id={`packet-title-${index}`} tabindex="-1">{packet.name}</h2>
+          {packet.description && <p class="packet-description">{packet.description}</p>}
+          <div class="packet-facts">
+            <div><span>Size</span><strong>{packet.size.kind === 'fixed' ? `Fixed · ${packet.size.bytes} bytes` : `Dynamic · minimum ${packet.size.minimum} bytes`}</strong></div>
+            <div><span>Direction</span><strong>{packet.direction}</strong></div>
+            <div><span>Source</span><a href={sourceUrl(packet.source)} target="_blank" rel="noopener noreferrer">View Source <span aria-hidden="true">↗</span></a></div>
+          </div>
+
+          <section aria-labelledby={`structure-${index}`}>
+            <h3 id={`structure-${index}`}>Packet Structure</h3>
+            <div class="table-scroll"><table>
+              <thead><tr><th scope="col">Offset</th><th scope="col">Name</th><th scope="col">Type</th><th scope="col">Size</th><th scope="col">Description</th></tr></thead>
+              <tbody>{packet.fields.map(field => <tr><td><code>{field.offset}</code></td><td>{field.name}</td><td><code>{field.type}</code></td><td>{field.size}</td><td>{field.description}</td></tr>)}</tbody>
+            </table></div>
+          </section>
+          <section aria-labelledby={`notes-${index}`} class="packet-notes">
+            <h3 id={`notes-${index}`}>Notes</h3>
+            <p>{packet.notes}</p>
+            <h4>Host handler</h4>
+            <p>{packet.handler}</p>
+          </section>
+        </article>)}
+        <p id="detail-empty" hidden>Select a packet to see its structure.</p>
+      </div>
+    </div>
+
+    <details class="type-legend">
+      <summary>Type Legend</summary>
+      <div class="legend-grid">{legend.map(group => <section><h2>{group.title}</h2><dl>{group.entries.map(([type, meaning]) => <><dt><code>{type}</code></dt><dd>{meaning}</dd></>)}</dl></section>)}</div>
+    </details>
+  </div>
+</StarlightPage>
+
+<script>import '../scripts/packets.ts';</script>
+
+<style>
+  .packets-page { max-width: 80rem; margin-inline: auto; color: var(--sl-color-gray-1); }
+  .packets-heading { margin-bottom: 1.6rem; max-width: 64rem; }
+  .eyebrow { color: var(--sl-color-accent-high); font-size: .75rem; font-weight: 700; letter-spacing: .16em; text-transform: uppercase; }
+  .packets-heading h1 { color: var(--sl-color-white); font-size: clamp(2rem, 5vw, 3.2rem); letter-spacing: -.04em; margin: .3rem 0 .55rem; }
+  .packets-heading > p:not(.eyebrow) { color: var(--sl-color-gray-2); line-height: 1.65; }
+  .count-summary { margin-top: .8rem; font-size: .9rem; }
+  .count-summary strong { color: var(--sl-color-accent-high); }
+  .count-summary a { color: var(--sl-color-accent-high); }
+  .packet-workspace { display: grid; grid-template-columns: minmax(16rem, 21rem) minmax(0, 1fr); gap: 1rem; align-items: start; }
+  .packet-browser, .packet-detail, .type-legend { border: 1px solid var(--sl-color-gray-5); border-radius: .65rem; background: var(--sl-color-gray-7); }
+  .packet-browser { overflow: hidden; position: sticky; top: 1rem; }
+  .browser-controls { padding: 1rem; border-bottom: 1px solid var(--sl-color-gray-5); }
+  .browser-controls label { display: block; font-size: .78rem; font-weight: 700; color: var(--sl-color-gray-2); }
+  .browser-controls input, .browser-controls select { width: 100%; margin-top: .35rem; min-height: 2.3rem; padding: .45rem .65rem; border: 1px solid var(--sl-color-gray-4); border-radius: .35rem; background: var(--sl-color-black); color: var(--sl-color-white); font: inherit; }
+  .browser-controls input::placeholder { color: var(--sl-color-gray-3); }
+  .direction-filters { display: grid; grid-template-columns: repeat(4, 1fr); gap: .25rem; margin: .85rem 0; }
+  .direction-filters button { padding: .45rem .2rem; border: 1px solid var(--sl-color-gray-4); border-radius: .3rem; background: transparent; color: var(--sl-color-gray-2); cursor: pointer; font: inherit; font-size: .77rem; }
+  .direction-filters button[aria-pressed='true'] { border-color: var(--sl-color-accent); background: var(--sl-color-accent-low); color: var(--sl-color-accent-high); font-weight: 700; }
+  .select-filters { display: grid; grid-template-columns: 1fr 1fr; gap: .6rem; }
+  #packet-result-count { color: var(--sl-color-gray-3); font-size: .75rem; margin: .8rem 0 0; }
+  .packet-list { list-style: none; padding: 0; margin: 0; max-height: min(60vh, 42rem); overflow: auto; }
+  .packet-list li { margin: 0; border-bottom: 1px solid var(--sl-color-gray-6); }
+  .packet-list li[hidden] { display: none; }
+  .packet-list button { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; gap: .65rem; align-items: center; width: 100%; padding: .7rem .9rem; border: 0; background: transparent; color: var(--sl-color-gray-1); cursor: pointer; text-align: left; font: inherit; font-size: .84rem; }
+  .packet-list button:hover, .packet-list button[aria-current='true'] { background: var(--sl-color-accent-low); }
+  .packet-list button[aria-current='true'] { box-shadow: inset 3px 0 var(--sl-color-accent); }
+  .packet-list code, .detail-id { color: var(--sl-color-accent-high); font: 700 .8rem ui-monospace, monospace; }
+  .packet-name { overflow-wrap: anywhere; }
+  .direction-badge { border-radius: 999px; padding: .2rem .48rem; font-size: .67rem; font-weight: 700; letter-spacing: .03em; text-transform: uppercase; }
+  .direction-badge.incoming { color: #9bc4ff; background: #183153; }
+  .direction-badge.outgoing { color: #a8e7bf; background: #173c2a; }
+  .direction-badge.both { color: #d4b9ff; background: #37234f; }
+  .packet-detail { padding: clamp(1rem, 3vw, 1.65rem); min-height: 30rem; }
+  .packet-detail article[hidden] { display: none; }
+  .detail-topline { display: flex; gap: .55rem; align-items: center; flex-wrap: wrap; }
+  .detail-id { padding: .27rem .5rem; border: 1px solid var(--sl-color-accent); border-radius: .25rem; }
+  .detail-category { color: var(--sl-color-gray-3); font-size: .75rem; }
+  .packet-detail h2 { color: var(--sl-color-white); font-size: clamp(1.35rem, 3vw, 2rem); overflow-wrap: anywhere; margin: .75rem 0 .5rem; }
+  .packet-detail h2:focus { outline: 2px solid var(--sl-color-accent); outline-offset: .2rem; }
+  .packet-description { color: var(--sl-color-gray-2); }
+  .packet-facts { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: .7rem; margin: 1.4rem 0 1.8rem; }
+  .packet-facts > div { padding: .75rem; border: 1px solid var(--sl-color-gray-5); border-radius: .35rem; background: var(--sl-color-black); }
+  .packet-facts span { display: block; color: var(--sl-color-gray-3); font-size: .7rem; text-transform: uppercase; letter-spacing: .08em; }
+  .packet-facts strong, .packet-facts a { display: block; margin-top: .2rem; color: var(--sl-color-white); font-size: .85rem; font-weight: 600; overflow-wrap: anywhere; }
+  .packet-facts a { color: var(--sl-color-accent-high); }
+  .packet-detail h3 { color: var(--sl-color-white); font-size: 1.12rem; margin: 1.4rem 0 .7rem; }
+  .packet-detail h4 { color: var(--sl-color-gray-1); font-size: .88rem; margin: 1rem 0 .25rem; }
+  .table-scroll { overflow-x: auto; }
+  .packet-detail table { width: 100%; border-collapse: collapse; font-size: .78rem; }
+  .packet-detail th { text-align: left; color: var(--sl-color-gray-2); background: var(--sl-color-black); }
+  .packet-detail th, .packet-detail td { padding: .65rem .55rem; border-bottom: 1px solid var(--sl-color-gray-5); vertical-align: top; }
+  .packet-detail td { color: var(--sl-color-gray-1); }
+  .packet-detail td:last-child { color: var(--sl-color-gray-2); min-width: 10rem; }
+  .packet-detail td code { color: var(--sl-color-accent-high); white-space: nowrap; }
+  .packet-notes p { color: var(--sl-color-gray-2); line-height: 1.6; margin: .25rem 0; }
+  #packet-empty, #detail-empty { color: var(--sl-color-gray-3); padding: 1rem; }
+  .type-legend { margin-top: 1rem; padding: 1rem 1.2rem; }
+  .type-legend summary { cursor: pointer; color: var(--sl-color-accent-high); font-weight: 700; }
+  .legend-grid { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 1rem 1.5rem; margin-top: 1rem; }
+  .legend-grid h2 { color: var(--sl-color-white); font-size: .95rem; margin: 0 0 .4rem; }
+  .legend-grid dl { display: grid; grid-template-columns: auto 1fr; gap: .4rem .8rem; margin: 0; font-size: .78rem; }
+  .legend-grid dt { color: var(--sl-color-accent-high); }
+  .legend-grid dd { margin: 0; color: var(--sl-color-gray-2); }
+  .packets-page :is(button, input, select, summary, a):focus-visible { outline: 2px solid var(--sl-color-accent); outline-offset: 2px; }
+  @media (max-width: 50rem) { .packet-workspace { grid-template-columns: 1fr; } .packet-browser { position: static; } .packet-list { max-height: 18rem; } .packet-facts { grid-template-columns: 1fr; } }
+  @media (max-width: 34rem) { .select-filters, .legend-grid { grid-template-columns: 1fr; } }
+</style>

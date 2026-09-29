@@ -43,6 +43,31 @@ public sealed class DataAccess<T> : IDataAccess<T> where T : class, IMoongateEnt
     }
 
     /// <inheritdoc />
+    public Task<Serial> ReserveSerialAsync(CancellationToken cancellationToken = default)
+    {
+        return RunAsync(
+            true,
+            async (orm, transaction, token) =>
+            {
+                Serial id;
+
+                do
+                {
+                    token.ThrowIfCancellationRequested();
+                    id = await PersistenceSerialSequence.ReserveAsync<T>(orm, transaction, token).ConfigureAwait(false);
+                } while (await orm.Select<T>()
+                             .WithTransaction(transaction)
+                             .Where(value => value.Id == id)
+                             .AnyAsync(token)
+                             .ConfigureAwait(false));
+
+                return id;
+            },
+            cancellationToken
+        );
+    }
+
+    /// <inheritdoc />
     public Task<IReadOnlyList<T>> GetAllAsync(CancellationToken cancellationToken = default)
     {
         return RunAsync<IReadOnlyList<T>>(

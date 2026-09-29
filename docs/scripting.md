@@ -63,9 +63,16 @@ exists but fails compilation/execution aborts server startup.
 | `dice.try_roll(expression)` | The same roll, or `nil` when the expression is malformed: `dice.try_roll(text) or 0` |
 | `localization.get(id, ...)` | Message `id` of `data/messages` in the server language, with `{0}`, `{1}`, ... filled by the extra arguments; see [Localization](localization.md#read-a-message-from-lua) |
 | `localization.text(id)`, `localization.language()` | The raw text of a message, or `nil`; the server language code |
+| `npc.say(serial, text)` | The NPC says `text` overhead to the players within 15 cells (cut to 128 characters); `false` for blank text or a serial that is not an NPC in the world |
+| `npc.step(serial, direction, running?)` | One step toward a `DirectionType` (`North` to `NorthWest`), turning first when needed, seen by the players in range; a run when `running` is `true`. How often the script calls it sets the speed. `false` when blocked or for `DirectionType.Running`, which is not a direction |
+| `npc.location(serial)`, `npc.name(serial)` | `{ x, y, z, map }` and the name of the NPC, or `nil` |
+| `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
+| `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` for a worn item, an `amount` below 1, fewer units left, or an item a player holds on the cursor |
+| `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
+| `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice` and `localization` in game and standalone modes.
+The Ultima plugin registers `dice`, `localization`, `npc` and `item` in game and standalone modes.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -79,8 +86,8 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-There are no built-in world, character or inventory APIs yet
-([Implementation status](implementation-status.md)). To expose application
+Apart from the `npc` and `item` modules of the [mobile](#mobile-scripts) and [item scripts](#item-scripts), there
+are no world, character or inventory APIs yet ([Implementation status](implementation-status.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Events
@@ -113,6 +120,9 @@ events.off(handle) -- returns false when the handle is unknown
 | Event | Fields |
 | --- | --- |
 | `character_created` | `serial`, `account_id`, `name`, `race` and `gender` (numbers of `RaceType` and `GenderType`), `map`, `x`, `y`, `z`. Raised after a new character and its starting items are saved. |
+| `character_deletion_requested` | `serial`, `account_id`, `name`. Raised after a player asks to delete a character; it stays restorable until removed. |
+| `character_entered_world` | `serial`, `account_id`, `name`, `map`, `x`, `y`, `z`. Raised after a character entered the world and the client's login completed. |
+| `character_left_world` | `serial`, `account_id`, `name`, `map`, `x`, `y`, `z`. Raised after a character left the world because its session closed, once its save was attempted. |
 
 ### Publishing an event from C#
 
@@ -130,6 +140,126 @@ The mapping runs on the publishing thread and must only read the event. It may
 return strings, booleans, numbers, enums (sent as numbers) or null. A mapping
 that fails is logged, and the event is skipped for Lua only. Events published
 while no script is subscribed cost one lookup and are not queued.
+
+## Mobile scripts
+
+A mobile template names its script with `script_id`, the name of a global Lua table
+defined by `scripts/mobiles/<script_id>.lua`. The server loads every `*.lua` directly
+in that directory at startup, in name order, after `init.lua`; a script that fails
+to load is reported like any script error, and the server starts with the others.
+
+```toml
+# templates/mobiles/animals.toml
+[[mobile]]
+id = "cat"
+name = "a cat"
+body = 201
+script_id = "wander"
+```
+
+The table may define these functions; each one is optional:
+
+| Function | When |
+| --- | --- |
+| `on_think(serial)` | On every think of the NPC: every `ultima.npcs.think_interval_ms` (500 ms by default) while a player is within the 5×5 sectors around it; see [NPC tick](game-loop-and-timers.md#npc-tick). A think is instantaneous, as ModernUO's: it must not call `wait` (the server warns once per script), so keep the timing in the script, for example by counting thinks. |
+| `on_speech(serial, speaker, text)` | When a player says `text` within 15 cells (commands are not heard). `speaker` is the player's serial. It may call `wait`. |
+| `on_spawn(serial)` | Once, right after the NPC is spawned (`.spawn`), in the world with its items and shown, before any other function of its script. Not when the saved NPCs are loaded at startup. It may call `wait`. |
+| `on_mobile_in_range(serial, other)` | Each time another mobile, player or NPC, comes within `ultima.npcs.sense_range` cells (8 by default, a square along X and Y) by a step or by entering the world. Once per arrival: it fires again only after the mobile has left the range and come back. Both ways: an NPC walking toward a mobile senses it too. NPCs loaded together at startup do not sense each other until one moves out of range and back. `other` is its serial; `npc.name(other)` gives `nil` for a player. It may call `wait`. |
+
+`on_spawn` and `on_mobile_in_range` run right after what caused them, on the next
+turn of the game loop: a step made by `npc.step` inside a running handler cannot
+start another script at once. No function runs before the scripts are loaded at
+startup, which is after the saved NPCs enter the world.
+
+Scripts act on their NPC with the `npc` module, passing its serial. A serial that
+is not an NPC in the world, such as a removed NPC or a player, gives `false` or
+`nil`, never an error: a handler that waited may outlive its NPC, and a script can
+never voice or move a player.
+
+The distribution's `scripts/mobiles/wander.lua`, copied into the root by `mgboot`:
+
+```lua
+wander = {}
+
+local thinks = {}
+
+function wander.on_think(serial)
+    thinks[serial] = (thinks[serial] or 0) + 1
+
+    if thinks[serial] % 4 == 0 then
+        npc.step(serial, dice.roll("1d8") - 1)
+    end
+end
+
+function wander.on_speech(serial, speaker, text)
+    if text:lower():find("hello", 1, true) then
+        wait(1)
+        npc.say(serial, "Well met, traveller.")
+    end
+end
+
+function wander.on_spawn(serial)
+    npc.say(serial, "*stretches*")
+end
+
+function wander.on_mobile_in_range(serial, other)
+    if npc.name(other) == nil then
+        npc.say(serial, "Who goes there?")
+    end
+end
+```
+
+No template in the repository uses it: add `script_id = "wander"` to a mobile template
+to try it.
+
+Reload one script with `script reload mobiles/wander.lua`. Its table is replaced,
+so the NPCs use the new functions from their next think; state kept in `local`
+tables of the old file starts again, and the waits its handlers left are cancelled,
+because a script's calls belong to `mobiles/<script_id>.lua`. When the server stops,
+the scripts are no longer called, before the script engine stops.
+
+## Item scripts
+
+An item template names its script with `script_id`, the name of a global Lua table
+defined by `scripts/items/<script_id>.lua`. The files of `scripts/items/` load at
+startup like the [mobile scripts](#mobile-scripts), and `script reload
+items/potion.lua` reloads one.
+
+```toml
+# a potion template of your own
+[[item]]
+id = "my_potion"
+item_id = 0x0F0C
+script_id = "potion"
+```
+
+| Function | When |
+| --- | --- |
+| `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Items inside a container lying on the ground cannot be used yet: the player reads "That is too far away.". A missing `on_use`, or one that raises an error, lets the default action follow. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled; after the wait the item may have moved, so check it again, for example `item.owner(serial) == user`. |
+| `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`, dropped on the paperdoll. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item. |
+| `on_unequip(serial, wearer)` | The item left the layer of `wearer`: dropped in a container or on the ground, or merged into a stack (the item is gone then, so `item.*` gives `nil`). Logging out, removing an NPC or deleting a mobile with its items raise nothing. |
+| `on_pickup(serial, picker)` | The player `picker` lifts the item from a container, the paperdoll or the ground; lifting part of a stack lifts this item, and the rest left behind is not new. While it is held, `item.consume` and `item.delete` refuse it. A held item ends in `on_drop`, in `on_equip` when it is worn by a new wearer, or in nothing: when it bounces back, is worn again on the layer it came from, or its player logs out holding it. |
+| `on_drop(serial, dropper)` | The player `dropper` puts the held item down: into a container, on the ground, or onto a stack (the item is gone then, so `item.*` gives `nil`). Not when it bounces back or is worn. A worn item put down runs `on_unequip` first, then `on_drop`. |
+| `on_create(serial)` | A newly created item enters the world: today the equipment, backpack and loot of a spawned NPC, before that NPC's `on_spawn`. A new character's starting items and the rest of a split stack raise nothing. |
+
+`on_equip`, `on_unequip`, `on_pickup`, `on_drop` and `on_create` run right after what
+caused them, on the next turn of the game loop, once the players have seen it: a script
+may then delete or consume the item. They are notifications: none can refuse the move.
+
+The script acts on its item with the `item` module, passing its serial; `user` is
+the serial of the player. The distribution's `scripts/items/potion.lua`, copied into the root by `mgboot`; no
+template uses it yet:
+
+```lua
+potion = {}
+
+function potion.on_use(serial, user)
+    item.message(serial, user, "You drink the potion.")
+    item.consume(serial)
+
+    return true
+end
+```
 
 ## Reload and ownership
 

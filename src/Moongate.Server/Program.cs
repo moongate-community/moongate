@@ -11,6 +11,7 @@ using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Bootstrap.Internal.Setup;
 using Moongate.Server.Commands;
 using Moongate.Server.Core.Data.Args;
+using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
@@ -75,7 +76,9 @@ await ConsoleApp.RunAsync(
                     Path.Combine(AppContext.BaseDirectory, "migrations"),
                     Path.Combine(AppContext.BaseDirectory, "data"),
                     Console.Out,
-                    generateAdminCertificate ? adminCertificateHosts?.Split(',') ?? [] : null
+                    generateAdminCertificate ? adminCertificateHosts?.Split(',') ?? [] : null,
+                    Path.Combine(AppContext.BaseDirectory, "templates"),
+                    Path.Combine(AppContext.BaseDirectory, "scripts")
                 );
             }
             catch (Exception exception)
@@ -196,7 +199,9 @@ await ConsoleApp.RunAsync(
 
         Log.Logger = loggingConfiguration.CreateLogger();
 
-        var serverConfig = ConfigHelper.Load(Path.Combine(directoriesConfig["config"], "moongate.toml"));
+        var configPath = Path.Combine(directoriesConfig["config"], "moongate.toml");
+        var serverConfig = ConfigHelper.Load(configPath);
+        var configDocument = ConfigHelper.ReadDocument(configPath);
         Log.Information("Server mode: {ServerMode}", serverConfig.Mode);
         Log.Information("Client encryption: {Encryption}", serverConfig.Network.Encryption.GetDescription());
 
@@ -206,12 +211,8 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(directoriesConfig);
                     services.RegisterInstance(serverArgs);
                     services.RegisterInstance(serverConfig);
+                    services.RegisterInstance(configDocument);
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
-                    services.RegisterInstance(serverConfig.Localization);
-                    services.RegisterInstance(serverConfig.LineOfSight);
-                    services.RegisterInstance(serverConfig.Items);
-                    services.RegisterInstance(serverConfig.StartingItems);
-                    services.RegisterInstance(serverConfig.Characters);
                     services.RegisterInstance(TimeProvider.System);
                     services.RegisterMoongatePersistence(
                             serverConfig.Persistence.ToOptions(
@@ -233,13 +234,15 @@ await ConsoleApp.RunAsync(
                             "echo|e",
                             "Echoes back its arguments.",
                             CommandSourceType.Console | CommandSourceType.InGame,
-                            AccountType.Regular
+                            AccountType.Regular,
+                            CommandMessages.EchoDescription
                         )
                         .RegisterCommand<HelpCommand>(
                             "help",
                             "Lists available commands or shows details for one command.",
                             CommandSourceType.Console | CommandSourceType.InGame,
-                            AccountType.Regular
+                            AccountType.Regular,
+                            CommandMessages.HelpDescriptionText
                         )
                         .AddMoongateService<IConsolePromptService>(consolePrompt)
                         .AddMoongateService<IConsoleInputService, ConsoleInputService>(1000);

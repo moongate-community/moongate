@@ -144,6 +144,24 @@ callback can finish. Services should retain their IDs and unregister them when
 stopping. Avoid `async void` callbacks: asynchronous work needs an explicitly
 owned worker and completion/error handling.
 
+## NPC tick
+
+The Ultima plugin gives every NPC near a player a repeating `npc_think` timer
+(`INpcTickService`), as ModernUO's `AITimer`. An NPC is near a player when it stands
+in one of the 5×5 sectors of 16×16 cells around a player's sector. The first think
+comes after a random 1–256 ms, so NPCs woken together do not think in the same
+tick, then one every `ultima.npcs.think_interval_ms` (default 500 ms).
+
+The sectors switch the timers: when a sector gets its first nearby player its NPCs
+wake, and when the last one leaves they sleep and their timers are unregistered. A
+sleeping NPC has no timer and costs nothing on the loop. A player crossing a sector
+edge does not restart the NPCs both positions cover, and an NPC crossing an edge
+inside the active area keeps its timer.
+
+Each think calls the registered `INpcThinker`, if any. An exception from it is
+logged with the NPC's serial and the NPC stays awake: it never reaches the timer
+wheel. The `npcs` metrics count the awake NPCs and the thinks.
+
 ## Failures, shutdown and observation
 
 An exception escaping an ordinary `IGameLoopWorkItem.Execute` is fatal to the loop

@@ -2,7 +2,9 @@ using System.Collections.Frozen;
 using DryIoc;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
@@ -19,16 +21,22 @@ public sealed class CommandSystemService : ICommandSystemService
     private readonly Lock _gate = new();
     private readonly CommandRegistry _registry;
     private readonly IResolverContext _resolver;
-    private readonly ILogger _logger = Log.ForContext<CommandSystemService>();
+    private readonly ILogger _logger;
 
     private FrozenDictionary<string, BoundCommand> _commands = FrozenDictionary<string, BoundCommand>.Empty;
     private bool _running;
     private bool _stopped;
 
     public CommandSystemService(CommandRegistry registry, IResolverContext resolver)
+        : this(registry, resolver, Log.ForContext<CommandSystemService>())
+    {
+    }
+
+    internal CommandSystemService(CommandRegistry registry, IResolverContext resolver, ILogger logger)
     {
         _registry = registry;
         _resolver = resolver;
+        _logger = logger;
     }
 
     /// <inheritdoc />
@@ -58,28 +66,30 @@ public sealed class CommandSystemService : ICommandSystemService
             return [];
         }
 
-        var tokens = commandLine.Split(' ', StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
+        var tokens = commandLine.Split((char[]?)null, StringSplitOptions.RemoveEmptyEntries | StringSplitOptions.TrimEntries);
         var name = tokens[0].ToLowerInvariant();
         var context = new CommandContext(commandLine, name, tokens[1..], source, session, cancellationToken);
+        // Absent on the login role: the texts are then the English ones.
+        var localization = _resolver.Resolve<ILocalizationService>(IfUnresolved.ReturnDefault);
 
         if (!commands.TryGetValue(name, out var command))
         {
-            _logger.Verbose("Command '{Command}' is not registered", name);
-            context.PrintError("Unknown command: {0}", name);
+            _logger.Verbose("An unregistered command was requested");
+            context.PrintError(localization.Text(CommandMessages.UnknownCommand, "Unknown command: {0}", name));
 
             return context.Output;
         }
 
         if (source == CommandSourceType.None || !command.Definition.Source.HasFlag(source))
         {
-            context.PrintError("Command '{0}' is not available from source '{1}'.", name, source);
+            context.PrintError(localization.Text(CommandMessages.NotAvailableHere, "The command '{0}' is not available here.", name));
 
             return context.Output;
         }
 
         if (ResolveInvokerAccountType(source, session) < command.Definition.MinimumAccountType)
         {
-            context.PrintError("Command '{0}' requires account type '{1}'.", name, command.Definition.MinimumAccountType);
+            context.PrintError(localization.Text(CommandMessages.NotAllowed, "You are not allowed to use the command '{0}'.", name));
 
             return context.Output;
         }
@@ -95,7 +105,7 @@ public sealed class CommandSystemService : ICommandSystemService
         catch (Exception exception)
         {
             _logger.Error(exception, "Command '{Command}' execution failed", name);
-            context.PrintError("Command '{0}' failed. Check logs for details.", name);
+            context.PrintError(localization.Text(CommandMessages.CommandFailed, "The command '{0}' failed.", name));
         }
 
         return context.Output;

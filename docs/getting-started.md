@@ -3,9 +3,9 @@
 This is the one first-start sequence for Moongate. It applies whether you installed
 the release with [the Linux installer](installation.md), run the
 [container image](docker.md), or build from source. Moongate is under active
-development: the transport, packet pipeline, scripting and persistence
-infrastructure and login-to-game handoff are available, but character selection
-and a playable world are not implemented yet. See [Implementation status](implementation-status.md).
+development: characters enter the world, walk and see each other, and NPCs and
+items run Lua scripts, but combat, pathfinding AI and most gameplay are not
+implemented yet. See [Implementation status](implementation-status.md).
 
 A server start needs a root, readable client files, the active role's PostgreSQL
 database and reviewed SQL, and a private Redis instance for realm leases and
@@ -57,9 +57,10 @@ use the documentation published for that version.
    mgboot /srv/moongate
    ```
 
-   This writes `config/moongate.toml` with the defaults, creates `logs/`, `plugins/`
-   and `scripts/`, copies the release's core SQL into `migrations/` and its shard
-   data files into `data/`. It needs no
+   This writes `config/moongate.toml` with the defaults, creates `logs/` and
+   `plugins/`, copies the release's core SQL into `migrations/`, its shard data files
+   into `data/`, its templates into `templates/` and its example scripts into
+   `scripts/`. It needs no
    database and no client files. [Prepare a root with mgboot](mgboot.md) describes
    what happens on a root that already exists.
 
@@ -180,10 +181,10 @@ All server-managed paths below are relative to `--root-directory`:
 | `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgboot` administration TLS identity: private server PFX and public PEM for client trust |
 | `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgboot` (releases after 0.6.0); plugins ship their own under `plugins/` |
 | `data/` | Shard data files copied by `mgboot`, read at game and standalone startup; see [Shard data files](data-files.md) |
-| `templates/items/`, `templates/loots/`, `templates/mobiles/` | Created at game and standalone startup for [templates](templates.md); nothing reads them yet |
+| `templates/items/`, `templates/loots/`, `templates/mobiles/` | [Templates](templates.md) copied by `mgboot`, loaded at game and standalone startup |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `plugins/` | One assembly bundle per plugin directory |
-| `scripts/` | Lua source and generated editor definitions |
+| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
 | `moongate.pid` | Current process identifier |
 | `moongate.pid.lock` | Lock file used to exclude another instance |
 

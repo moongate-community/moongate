@@ -11,6 +11,7 @@ using Moongate.Scripting.Modules;
 using Moongate.Scripting.Services;
 using Moongate.Server.Commands;
 using Moongate.Server.Core.Data.GameLoop;
+using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Data.Timing;
 using Moongate.Server.Core.Extensions;
@@ -27,6 +28,7 @@ using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Services.Timing;
 using Moongate.Server.Services.Ultima;
+using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Handlers.Login;
 
@@ -116,6 +118,7 @@ internal static class ServerRoleRegistration
 
     private static void RegisterGame(Container container, MoongateServerConfig config, DirectoriesConfig directories)
     {
+        container.RegisterInstance(new MotdServerIdentity(config.Shard.ShardName));
         container.RegisterInstance(config.WorldSave.ToOptions());
         container.RegisterInstance(config.Scripting.ToOptions(directories["scripts"]));
         container.RegisterInstance(new GameLoopOptions());
@@ -135,7 +138,8 @@ internal static class ServerRoleRegistration
             .AddScriptModule<LogModule>()
             .RegisterCommand<ScriptCommand>(
                 "script",
-                "Reloads a script file or prints the engine's counters: script reload <file> | script metrics."
+                "Reloads a script file or prints the engine's counters: script reload <file> | script metrics.",
+                descriptionMessage: CommandMessages.ScriptDescription
             )
             .RegisterPacketHandler<PingPacket, PingPacketHandler>()
             .RegisterPacketHandler<ClientVersionPacket, ClientVersionPacketHandler>();

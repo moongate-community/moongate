@@ -16,4 +16,6 @@ internal interface IPersistenceEntityRegistration
     ///     Copies and validates the source on its owner loop, returning deferred database work.
     /// </summary>
     Func<PersistenceTransaction, CancellationToken, Task> Capture(out int entityCount);
+
+    void Committed();
 }

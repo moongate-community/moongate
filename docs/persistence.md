@@ -216,7 +216,17 @@ The clone function must copy every mutable nested value; returning the live
 instance is rejected. `SaveAllAsync` captures sources through the supplied owner
 callback and later writes one transaction per active database. It upserts the
 captured entities; absence from a snapshot is not deletion. Issue an explicit
-`DeleteAsync` for removed rows.
+`DeleteAsync` for removed rows, or register a deletion source:
+
+```csharp
+container.AddPersistenceWorld<Item>(() => world.Items.Values, item => item.Snapshot(), world);
+```
+
+`IPersistenceDeletionSource.Capture()` runs on the loop with the snapshot and returns the
+identities the source removed; the save deletes them in the same transaction as its upserts, then
+calls `Committed()` with exactly those. A failed save does not call it, so they stay pending.
+`IDataAccess<T>.ReserveSerialAsync()` takes the next identity from the entity's sequence without
+writing a row, for an entity made in memory and saved later.
 
 Capture and any post-commit update of owner state must run on and finish through
 the game loop, which owns that state. In the host, take
@@ -247,6 +257,20 @@ one place, and the database checks it:
 | On the ground | `map`, `x`, `y`, `z` | `PlaceOnGround(map, location)` |
 | In a container item | `container_id`, `grid_x`, `grid_y` | `PutInContainer(containerId, gridLocation)`; read back as `GridLocation` |
 | Worn by a mobile | `mobile_id`, `layer` | `Equip(mobileId, layer)` |
+
+Items lying on the ground live in `IItemService` and the sector grid while the server runs:
+`IItemService` loads them, and everything inside them, at startup (migration `0010`
+indexes them by map), and the world save writes them with the characters' items.
+The NPCs (mobiles without an account) live in `IMobileService` too: `INpcService` loads them at
+startup with what they wear and carry, and spawns and removes them. A removed mobile is deleted by
+the next world save in its own transaction (`IMobileService` is the mobiles' deletion source), and
+its item rows go with it through the cascading keys. Its live items must leave `IItemService` first:
+the save writes the mobiles before the items, and a live item of a deleted mobile would break every
+later save.
+
+What a character drops on the ground, or a ground stack it grows, is also saved by its leave, in
+the same transaction as its own items and its merged stacks' deletions: its rows would otherwise
+still say the character carries them until the next world save.
 
 Each helper clears the other two groups, so move an item only through them. The
 database also rejects an item inside itself and two items on the same layer of one

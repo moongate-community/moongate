@@ -1,5 +1,5 @@
 using Moongate.Core.Directories;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Directories;
 

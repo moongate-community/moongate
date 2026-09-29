@@ -176,6 +176,61 @@ public sealed class MovementServiceTests
         Assert.NotEqual(0, newZ);
     }
 
+    [Fact]
+    public void TryGetDropZ_FlatLand_IsTheLand()
+    {
+        _map.SetLandZ(0, 0, 15, 15, 5);
+
+        Assert.True(CreateService().TryGetDropZ(MapType.Felucca, 4, 4, 21, out var z));
+        Assert.Equal(5, z);
+    }
+
+    [Fact]
+    public void TryGetDropZ_ATable_IsItsTop()
+    {
+        _tiles.Item(0x0B34, TileFlagType.Surface, 6);
+        _map.AddStatic(4, 4, 0x0B34, 0);
+
+        Assert.True(CreateService().TryGetDropZ(MapType.Felucca, 4, 4, 16, out var z));
+        Assert.Equal(6, z);
+    }
+
+    [Fact]
+    public void TryGetDropZ_ABridge_CountsHalfItsHeight()
+    {
+        _tiles.Item(0x0063, TileFlagType.Surface | TileFlagType.Bridge, 10);
+        _map.AddStatic(4, 4, 0x0063, 0);
+
+        Assert.True(CreateService().TryGetDropZ(MapType.Felucca, 4, 4, 16, out var z));
+        Assert.Equal(5, z);
+    }
+
+    [Fact]
+    public void TryGetDropZ_ASurfaceAboveTheCeiling_IsSkipped()
+    {
+        _tiles.Item(0x0B34, TileFlagType.Surface, 6);
+        _map.AddStatic(4, 4, 0x0B34, 20);
+
+        Assert.True(CreateService().TryGetDropZ(MapType.Felucca, 4, 4, 16, out var z));
+        Assert.Equal(0, z);
+    }
+
+    [Fact]
+    public void TryGetDropZ_ImpassableLandAndNoSurface_Fails()
+    {
+        _tiles.Land(0x00A8, TileFlagType.Impassable);
+        _map.SetLandId(4, 4, 4, 4, 0x00A8);
+
+        Assert.False(CreateService().TryGetDropZ(MapType.Felucca, 4, 4, 16, out _));
+    }
+
+    [Fact]
+    public void TryGetDropZ_OutsideTheMapOrMapNotLoaded_Fails()
+    {
+        Assert.False(CreateService().TryGetDropZ(MapType.Felucca, 99, 4, 16, out _));
+        Assert.False(CreateService().TryGetDropZ(MapType.Trammel, 4, 4, 16, out _));
+    }
+
     private MovementService CreateService()
     {
         return new(_map, _tiles);

@@ -2,16 +2,43 @@ using DryIoc;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Commands;
+using Moongate.Tests.TestSupport.Localization;
 
 namespace Moongate.Tests.Server.Services.Commands;
 
 public sealed class CommandSystemServiceTests
 {
+    [Fact]
+    public void Register_ThroughProductionContainer_ResolvesCommandService()
+    {
+        using var container = new Container();
+        container.Register<CommandRegistry>(Reuse.Singleton);
+
+        container.AddMoongateService<ICommandSystemService, CommandSystemService>();
+
+        Assert.IsType<CommandSystemService>(container.Resolve<ICommandSystemService>());
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_AnUnknownCommand_IsReportedInTheServerLanguage()
+    {
+        using var container = new Container();
+        container.RegisterInstance(TestLocalization.With((30010, "Comando sconosciuto: {0}")));
+        container.RegisterCommand<RecordingCommandExecutor>("echo", minimumAccountType: AccountType.Regular);
+        var service = new CommandSystemService(container.Resolve<CommandRegistry>(), container);
+        await service.StartAsync();
+
+        var lines = await service.ExecuteAsync("nope");
+
+        Assert.Equal("Comando sconosciuto: nope", Assert.Single(lines).Text);
+    }
+
     [Fact]
     public async Task ExecuteAsync_BeforeStartAndAfterStopIsRejected()
     {
@@ -166,7 +193,7 @@ public sealed class CommandSystemServiceTests
         var line = Assert.Single(await service.ExecuteAsync("echo hi", CommandSourceType.InGame));
 
         Assert.Equal(CommandOutputLevel.Error, line.Level);
-        Assert.Equal("Command 'echo' requires account type 'GameMaster'.", line.Text);
+        Assert.Equal("You are not allowed to use the command 'echo'.", line.Text);
         await service.StopAsync();
     }
 
@@ -225,7 +252,7 @@ public sealed class CommandSystemServiceTests
         var line = Assert.Single(await service.ExecuteAsync("echo hi", CommandSourceType.InGame));
 
         Assert.Equal(CommandOutputLevel.Error, line.Level);
-        Assert.Equal("Command 'echo' is not available from source 'InGame'.", line.Text);
+        Assert.Equal("The command 'echo' is not available here.", line.Text);
         Assert.Empty(container.Resolve<RecordingCommandExecutor>().Invocations);
         await service.StopAsync();
     }
@@ -241,7 +268,7 @@ public sealed class CommandSystemServiceTests
         var line = Assert.Single(await service.ExecuteAsync("boom"));
 
         Assert.Equal(CommandOutputLevel.Error, line.Level);
-        Assert.Equal("Command 'boom' failed. Check logs for details.", line.Text);
+        Assert.Equal("The command 'boom' failed.", line.Text);
         await service.StopAsync();
     }
 

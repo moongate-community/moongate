@@ -25,6 +25,7 @@
     <PropertyGroup>
         <IsPackable>false</IsPackable>
         <Version>0.9.0</Version>
+        <Codename>Lilly</Codename>
         <Authors>Squid Development</Authors>
         <Product>Moongate</Product>
         <Company>Squid Development</Company>

@@ -2,6 +2,7 @@ using FreeSql.DataAnnotations;
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.Internal;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -20,10 +21,8 @@ namespace Moongate.Server.Ultima.Entities.World;
 [Table(Name = "world.mobiles")]
 public class MobileEntity : IMoongateEntity
 {
-
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
     public Serial Id { get; set; }
-
 
     /// <summary>
     ///     The account of a player character; <see langword="null" /> for an NPC.
@@ -34,7 +33,12 @@ public class MobileEntity : IMoongateEntity
     /// <summary>
     ///     The character-list slot of a player character; <see langword="null" /> for an NPC.
     /// </summary>
-    public byte? Slot { get; set; }
+    public int? Slot { get; set; }
+
+    /// <summary>
+    ///     When the player asked to delete this character, in UTC; null for an active character or an NPC.
+    /// </summary>
+    public DateTime? DeletionRequestedAt { get; set; }
 
     /// <summary>
     ///     Gets whether this mobile is an NPC, that is, it belongs to no account.
@@ -187,6 +191,12 @@ public class MobileEntity : IMoongateEntity
     public MapType Map { get; set; }
 
     /// <summary>
+    ///     Where the mobile faces, without the running bit; a character comes back facing the same way.
+    /// </summary>
+    [Column(MapType = typeof(byte))]
+    public DirectionType Direction { get; set; } = DirectionType.South;
+
+    /// <summary>
     ///     Gets or sets <see cref="X" />, <see cref="Y" /> and <see cref="Z" /> together. It is not a column: the three
     ///     coordinates are stored apart so the database can filter and index them.
     /// </summary>
@@ -235,5 +245,34 @@ public class MobileEntity : IMoongateEntity
         Props = PropsDictionary.Remove(Props, key, out var removed);
 
         return removed;
+    }
+
+    /// <summary>
+    ///     A one-line description for logs and debugging: serial, name, whose it is (the account of a player character,
+    ///     the template of an NPC), race, gender, body and where it stands.
+    /// </summary>
+    /// <summary>
+    ///     Gets a detached copy to save: the live mobile keeps changing on the game loop while the copy is written.
+    /// </summary>
+    public MobileEntity Snapshot()
+    {
+        var copy = (MobileEntity)MemberwiseClone();
+        copy.Skills =
+        [
+            .. Skills.Select(
+                skill => new MobileSkill
+                    { Skill = skill.Skill, Base = skill.Base, Cap = skill.Cap, Lock = skill.Lock }
+            )
+        ];
+        copy.Props = Props is null ? null : new Dictionary<string, object?>(Props);
+
+        return copy;
+    }
+
+    public override string ToString()
+    {
+        var owner = IsNpc ? $"npc \"{TemplateId}\"" : $"player of {AccountId}";
+
+        return $"{Id} \"{Name}\" {owner} ({Race} {Gender}, body 0x{Body:X4}) at {Map} {Location}";
     }
 }

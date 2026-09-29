@@ -2,7 +2,8 @@
 
 Shard content that a designer authors by hand, such as item and mobile definitions,
 is a set of TOML files under `templates/` in the server root, read once when the
-shard starts. This page covers the loader contract in `Moongate.Server.Ultima` and
+shard starts. The distribution's templates are copied there by
+[`mgboot`](mgboot.md). This page covers the loader contract in `Moongate.Server.Ultima` and
 the TOML value types in `Moongate.Core` that make templates pleasant to write by
 hand; [TOML value types](toml-types.md) is the reference for their text forms. It
 assumes [writing a plugin](plugins.md), since a loader is registered from `Register`
@@ -99,12 +100,12 @@ karma and skills (template points × 10, the tenths the mobile stores). `title` 
 3. publishes `MobileBeforeSpawnEvent`: a handler may change the mobile, even move it; the
    place is checked against the map again afterwards;
 4. in one transaction, saves the mobile (its serial comes from the mobile range), then:
-   - a backpack (`items.backpack_template`) worn on the `Backpack` layer, for every NPC;
+   - a backpack (`ultima.items.backpack_template`) worn on the `Backpack` layer, for every NPC;
    - each equipment entry through `IItemFactoryService`: an entry with a `gender` is
      skipped for the other gender; the item is worn on its layer (the template's, else
      tiledata's for a wearable graphic); an item with no layer, or whose layer is taken,
      goes into the backpack, as UOX3 does;
-   - the rolled `gold`, as `items.gold_template` piles of at most 65535, into the backpack;
+   - the rolled `gold`, as `ultima.items.gold_template` piles of at most 65535, into the backpack;
    - one roll of each `loot` table (a table listed twice is rolled twice), into the
      backpack;
    - everything in the backpack lands at a random spot inside its `containers.toml` bounds;
@@ -274,12 +275,13 @@ own, see [TOML value types](toml-types.md).
 | `ItemId` | The base client graphic; runtime physical properties come from `ITileDataService` unless overridden |
 | `Name`, `Comment` | A display name override, and a designer note nobody reads at runtime |
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
-| `ScriptId` | Reserved Lua module identifier; stored and inherited, but template hooks are not dispatched yet |
+| `ScriptId` | The global Lua table, defined by `scripts/items/<script_id>.lua`, whose functions (`on_use`, `on_equip`, `on_unequip`, `on_pickup`, `on_drop`, `on_create`) handle what happens to the item; a lower-case Lua identifier, empty for none. See [Item scripts](scripting.md#item-scripts) |
 | `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted" |
 | `Weight` | Stones to two decimals (`weight = 0.02` for a coin); unset uses the whole-stone tiledata weight |
 | `Amount` | `RangeValueSpec<int>`: the stack size of a new item, fixed or `"10-20"`; unset is 1 |
 | `Stackable` | Unset uses the tiledata `Generic` flag |
 | `Layer` | A `LayerType` name such as `one_handed`; unset uses the tiledata layer |
+| `TwoHandedWeapon` | `two_handed_weapon = true` on a weapon held in both hands (bows, polearms, staves), as POL's `TwoHanded`: worn on `two_handed`, it leaves no hand free. Anything else on `two_handed` (shields, torches) goes in the other hand, with a one-handed weapon. Tiledata cannot tell them apart: it marks shields as weapons and bows as one-handed |
 | `BuyPrice`, `SellPrice` | What vendors sell it for and pay for it; unset means vendors do not trade it |
 | `Decays`, `DecayMinutes` | Unset decays when movable, after 60 minutes |
 | `LootType` | `regular`, `newbied`, `blessed` or `cursed`: what happens when the owner dies; unset is `regular` |
@@ -338,7 +340,7 @@ to 120; a constant is a bare integer.
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
 | `Loot`, `Gold` | Loot template ids and gold dice rolled into the backpack at spawn; no corpse system yet |
 | `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death` |
-| `ScriptId` | Reserved Lua module identifier; stored and inherited, but template hooks and AI are not dispatched yet |
+| `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn` and `on_mobile_in_range` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting.md#mobile-scripts) |
 | `Visibility` | As in `ItemTemplate` |
 | `Tags` | Free script values; child keys add to and override parent keys |
 
@@ -379,7 +381,7 @@ race = "human"
 name_list = "{gender}"
 title = "the guard"
 notoriety = "invulnerable"
-script_id = "ai.guard"
+script_id = "wander"
 
 [[mobile.equipment]]
 items = ["leather_skirt", "leather_shorts"]
@@ -387,8 +389,8 @@ gender = "female"
 ```
 
 The shipped `templates/mobiles/` holds UOX3's NPCs, converted by
-[`mg-uoxconv`](uox3-migration.md#mobiles-and-name-lists). No loader reads mobile
-templates yet.
+[`mg-uoxconv`](uox3-migration.md#mobiles-and-name-lists). They are loaded at game and
+standalone startup (`IMobileTemplateService`).
 
 `LootTemplate` and `LootEntry` are the same kind of shape:
 

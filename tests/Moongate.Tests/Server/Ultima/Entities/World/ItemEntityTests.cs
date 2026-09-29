@@ -15,6 +15,42 @@ public sealed class ItemEntityTests
     private static readonly Serial Mobile = new(0x00000010);
 
     [Fact]
+    public void ToString_InAContainer_ShowsSerialTemplateGraphicAmountAndContainer()
+    {
+        var coins = new ItemEntity { Id = new(0x40000012), TemplateId = "0x0eed_gold_coin", ItemId = 0x0EED, Amount = 250 };
+        coins.PutInContainer(Backpack, new Point2D(44, 65));
+
+        Assert.Equal("0x40000012 \"0x0eed_gold_coin\" (0x0EED) x250 in 0x40000001", coins.ToString());
+    }
+
+    [Fact]
+    public void ToString_Equipped_ShowsItsOwnNameAndTheLayer()
+    {
+        var sword = new ItemEntity { Id = new(0x40000013), TemplateId = "longsword", ItemId = 0x13B9, Amount = 1, Name = "Excalibur" };
+        sword.Equip(Mobile, LayerType.OneHanded);
+
+        Assert.Equal("0x40000013 \"Excalibur\" (0x13B9) on 0x00000010 layer OneHanded", sword.ToString());
+    }
+
+    [Fact]
+    public void ToString_OnTheGround_ShowsMapAndLocation()
+    {
+        var shirt = new ItemEntity { Id = new(0x40000014), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
+        var where = new Point3D(1602, 1591, 20);
+        shirt.PlaceOnGround(MapType.Trammel, where);
+
+        Assert.Equal($"0x40000014 \"shirt\" (0x1517) at Trammel {where}", shirt.ToString());
+    }
+
+    [Fact]
+    public void ToString_Nowhere_SaysSo()
+    {
+        var item = new ItemEntity { TemplateId = "bottle", ItemId = 0x0F0E, Amount = 1 };
+
+        Assert.Equal("0x00000000 \"bottle\" (0x0F0E) nowhere", item.ToString());
+    }
+
+    [Fact]
     public void NewItem_IsNowhere()
     {
         Assert.Equal(ItemLocationType.None, new ItemEntity().Location);
@@ -177,5 +213,24 @@ public sealed class ItemEntityTests
         item.SetProp(ItemPropKeys.Quality, ItemQualityType.Exceptional);
 
         Assert.Equal(ItemQualityType.Exceptional, item.GetProp(ItemPropKeys.Quality, ItemQualityType.Regular));
+    }
+
+    [Fact]
+    public void Snapshot_IsADetachedCopyWithTheSameValues()
+    {
+        var coins = new ItemEntity { Id = new(0x40000012), TemplateId = "gold", ItemId = 0x0EED, Amount = 250 };
+        coins.PutInContainer(Backpack, new Point2D(44, 65));
+        coins.SetProp("minted", 3);
+
+        var snapshot = coins.Snapshot();
+        coins.Amount = 1;
+        coins.PutInContainer(new Serial(0x40000099), new Point2D(1, 1));
+        coins.SetProp("minted", 4);
+
+        Assert.NotSame(coins, snapshot);
+        Assert.Equal(
+            (new Serial(0x40000012), 250, Backpack, new Point2D(44, 65), 3),
+            (snapshot.Id, snapshot.Amount, snapshot.ContainerId!.Value, snapshot.GridLocation!.Value, snapshot.GetProp<int>("minted"))
+        );
     }
 }

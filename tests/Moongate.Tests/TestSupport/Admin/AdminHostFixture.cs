@@ -3,11 +3,13 @@ using System.Net.Sockets;
 using DryIoc;
 using Grpc.Net.Client;
 using Moongate.Core.Directories;
+using Moongate.Core.Utils;
 using Moongate.Server.Admin;
 using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Core.Interfaces.Admin;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Persistence;
 
 namespace Moongate.Tests.TestSupport.Admin;
@@ -67,8 +69,12 @@ internal sealed class AdminHostFixture : IAsyncDisposable
         var port = ((IPEndPoint)listener.LocalEndpoint).Port;
         listener.Stop();
         container.RegisterInstance(new DirectoriesConfig(_directory.Path, []));
+        var adminApi = new AdminApiConfig { Enabled = true, Port = port, CertificatePath = Certificates.PfxPath };
         container.RegisterInstance(
-            new AdminApiConfig { Enabled = true, Port = port, CertificatePath = Certificates.PfxPath }
+            TestConfigDocuments.FromToml(
+                _directory.Path,
+                TomlUtils.Serialize(new Dictionary<string, AdminApiConfig> { ["admin_api"] = adminApi })
+            )
         );
         container.RegisterInstance(mode);
         container.RegisterInstance<IAdminSessionStore>(Backend.Redis.Store);

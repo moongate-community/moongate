@@ -1,11 +1,12 @@
 using System.Net;
+using Moongate.Server.Core.Interfaces.Config;
 
 namespace Moongate.Server.Admin.Data.Config;
 
 /// <summary>
 ///     Configures the optional embedded administration endpoint.
 /// </summary>
-public sealed class AdminApiConfig
+public sealed class AdminApiConfig : IConfigSection
 {
     public bool Enabled { get; set; }
 

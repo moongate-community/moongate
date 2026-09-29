@@ -1,23 +1,42 @@
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Registry;
+using Moongate.Network.Packets.Types.Packets;
 using Moongate.Persistence.Extensions;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Realms;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Diagnostics;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
-using Moongate.Server.Ultima.Interfaces.Loaders;
-using Moongate.Server.Ultima.Interfaces;
-using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Motd;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules;
+using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces.Motd;
+using Moongate.Server.Ultima.Packets.Characters;
+using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Motd;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
+
+using Moongate.Server.Ultima.Packets.General;
+using Moongate.Server.Ultima.Handlers.Items;
+using Moongate.Server.Ultima.Handlers.Movement;
+using Moongate.Server.Ultima.Handlers.General;
+using Moongate.Server.Core.Interfaces.Sessions;
 
 namespace Moongate.Tests.Server.Bootstrap.Internal;
 
@@ -32,12 +51,57 @@ public sealed class ServerRoleRegistrationTests
         var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
         config.Shard.ShardName = "Città di Luna";
         container.RegisterInstance(config);
+        container.RegisterInstance(new LineOfSightConfig());
+        container.RegisterInstance(new WorldConfig());
         container.RegisterInstance(directories);
         container.RegisterInstance(TimeProvider.System);
 
         ServerRoleRegistration.Register(container, config, directories);
 
         Assert.Equal("Moongate", container.Resolve<RealmInstance>().Descriptor.Name);
+        Assert.Equal("Città di Luna", container.Resolve<MotdServerIdentity>().ServerName);
+    }
+
+    [Fact]
+    public void Register_EveryCommand_HasATranslatedDescription()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Standalone));
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30049));
+    }
+
+    [Theory, InlineData(0x09), InlineData(0xBF), InlineData(0xD6)]
+    public void Register_TheTooltipRequests_AreIncomingPacketsTheFramerKnows(int opCode)
+    {
+        // A packet with a handler but no incoming registration closes the connection when the client sends it.
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Game };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Game));
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        Assert.True(container.Resolve<PacketRegistry>().TryGetDescriptor((byte)opCode, PacketDirection.Incoming, out _));
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
@@ -49,19 +113,44 @@ public sealed class ServerRoleRegistrationTests
         var config = new MoongateServerConfig { Mode = mode };
         config.Redis.HandoffSecret = new('x', 32);
         container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
         container.RegisterInstance(directories);
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
         container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: mode));
 
+        container.RegisterMoongateEventBus();
+        container.Register<IEventBusService, EventBusService>(Reuse.Singleton);
         ServerRoleRegistration.Register(container, config, directories);
         new MoongateUltimaPlugin().Register(container);
 
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IGameLoopService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ISessionService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IWorldSaveService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IEquipmentService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ITooltipService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<INpcTickService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginServerService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginPacketHandlerRegistry>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IDataLoaderService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<MotdServerIdentity>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IMotdService>());
+        if (mode != ServerMode.Login)
+        {
+            Assert.IsType<MotdService>(container.Resolve<IMotdService>());
+            Assert.IsType<SectorService>(container.Resolve<ISectorService>());
+            Assert.IsType<SpeechService>(container.Resolve<ISpeechService>());
+            Assert.NotNull(container.Resolve<NpcModule>());
+            Assert.NotNull(container.Resolve<ItemModule>());
+            Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
+            Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
+            Assert.NotNull(container.Resolve<INpcService>());
+            Assert.IsType<NpcSenseService>(container.Resolve<INpcSenseService>());
+            Assert.IsType<ItemScriptService>(container.Resolve<IItemScriptService>());
+            Assert.IsType<ItemService>(container.Resolve<IItemService>());
+            Assert.IsType<MobileService>(container.Resolve<IMobileService>());
+            Assert.IsType<NpcHearingService>(container.Resolve<INpcSpeechListener>());
+            Assert.Contains(container.ResolveMany<IMetricProvider>(), provider => provider.ProviderName == "npcs");
+        }
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());
         Assert.True(container.IsRegistered<RedisConnectionService>());
         Assert.True(container.IsRegistered<IRealmCatalog>());
@@ -110,6 +199,37 @@ public sealed class ServerRoleRegistrationTests
                 typeof(CreateCharacterEnhancedPacket),
                 container.Resolve<PacketHandlerRegistry>().Registrations.Keys
             );
+            Assert.All(
+                [
+                    typeof(ClientHardwareInfoPacket), typeof(AttackRequestPacket), typeof(LiftRequestPacket),
+                    typeof(DropRequestPacket), typeof(TextCommandPacket), typeof(EquipRequestPacket),
+                    typeof(ResynchronizeRequestPacket), typeof(UnicodeSpeechRequestPacket), typeof(OpenChatWindowPacket),
+                    typeof(ClientTypePacket), typeof(PublicHouseContentPacket)
+                ],
+                packet => Assert.Contains(packet, container.Resolve<PacketHandlerRegistry>().Registrations.Keys)
+            );
+            // The host registers the event bus; this test container does not.
+            container.RegisterMoongateEventBus();
+            var listeners = container.ResolveMany<ISessionClosedListener>().ToList();
+            Assert.Equal(2, listeners.Count);
+            Assert.Contains(listeners, listener => listener is CharacterLeaveWorldService);
+            Assert.Contains(listeners, listener => listener is TargetService);
+            Assert.Contains(
+                "character_left_world",
+                container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(registration => registration.Name)
+            );
+            Assert.True(container.IsRegistered<MoveRequestPacketHandler>());
+            Assert.True(container.IsRegistered<UseRequestPacketHandler>());
+            Assert.True(container.IsRegistered<LiftRequestPacketHandler>());
+            Assert.True(container.IsRegistered<DropRequestPacketHandler>());
+            Assert.True(container.IsRegistered<IItemSerialPool>());
+            Assert.True(container.IsRegistered<EquipRequestPacketHandler>());
+            Assert.False(container.IsRegistered<IgnoredPacketHandler<EquipRequestPacket>>());
+            Assert.False(container.IsRegistered<IgnoredPacketHandler<DropRequestPacket>>());
+            Assert.False(container.IsRegistered<IgnoredPacketHandler<LiftRequestPacket>>());
+            Assert.False(container.IsRegistered<IgnoredPacketHandler<UseRequestPacket>>());
+            Assert.False(container.IsRegistered<IgnoredPacketHandler<MoveRequestPacket>>());
+            Assert.Contains(typeof(MoveRequestPacket), container.Resolve<PacketHandlerRegistry>().Registrations.Keys);
             Assert.Contains(
                 "character_created",
                 container.Resolve<IScriptModuleRegistry>().EventRegistrations.Select(registration => registration.Name)
@@ -134,6 +254,8 @@ public sealed class ServerRoleRegistrationTests
             Network = new() { ListenAddress = "127.0.0.1", LoginPort = 2593, GamePort = 2595 }
         };
         container.RegisterInstance(config);
+        container.RegisterInstance(new LineOfSightConfig());
+        container.RegisterInstance(new WorldConfig());
         container.RegisterInstance(directories);
         container.RegisterInstance(TimeProvider.System);
         container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: config.Mode));

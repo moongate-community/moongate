@@ -7,9 +7,15 @@ using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Tests.TestSupport.Persistence;
+using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 using Npgsql;
 
@@ -245,5 +251,129 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
             exception is PostgresException || exception.InnerException is PostgresException,
             exception.ToString()
         );
+    }
+
+    [Fact]
+    public async Task WorldSave_WritesTheLiveItemsAsTheyAreNow()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = TestItems.Create();
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Map = MapType.Trammel };
+        await mobiles.UpsertAsync(aria);
+        var backpack = new ItemEntity { TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(aria.Id, LayerType.Backpack);
+        await data.UpsertAsync(backpack);
+        var coins = new ItemEntity { TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        coins.PutInContainer(backpack.Id, new Point2D(44, 65));
+        await data.UpsertAsync(coins);
+        items.Add([backpack, coins]);
+        coins.Amount = 7;
+        coins.PutInContainer(backpack.Id, new Point2D(90, 90));
+
+        await host.Owner.SaveAllAsync();
+
+        var stored = (await data.GetByIdAsync(coins.Id))!;
+        Assert.Equal((7, new Point2D(90, 90)), (stored.Amount, stored.GridLocation!.Value));
+    }
+
+    [Theory, InlineData(0x40000000u), InlineData(0x40003000u)]
+    public async Task WorldSave_ASwapOnTheSameLayer_KeepsTheNewOutfit(uint newShirtSerial)
+    {
+        // The new shirt's serial is below or above the old one's, so either write order is exercised.
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = TestItems.Create();
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Map = MapType.Trammel };
+        await mobiles.UpsertAsync(aria);
+        var backpack = new ItemEntity { Id = new(0x40001000), TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(aria.Id, LayerType.Backpack);
+        var oldShirt = new ItemEntity { Id = new(0x40002000), TemplateId = "shirt", ItemId = 0x1517 };
+        oldShirt.Equip(aria.Id, LayerType.Shirt);
+        var newShirt = new ItemEntity { Id = new(newShirtSerial + 1), TemplateId = "shirt", ItemId = 0x1517 };
+        newShirt.PutInContainer(backpack.Id, new Point2D(44, 65));
+        await data.UpsertAsync(backpack);
+        await data.UpsertAsync(oldShirt);
+        await data.UpsertAsync(newShirt);
+        items.Add([backpack, oldShirt, newShirt]);
+
+        items.MoveToContainer(oldShirt, backpack.Id, new Point2D(60, 70));
+        items.Equip(newShirt, aria.Id, LayerType.Shirt);
+        await host.Owner.SaveAllAsync();
+
+        var storedNew = (await data.GetByIdAsync(newShirt.Id))!;
+        var storedOld = (await data.GetByIdAsync(oldShirt.Id))!;
+        Assert.Equal((aria.Id, LayerType.Shirt), (storedNew.MobileId!.Value, storedNew.Layer!.Value));
+        Assert.Equal(backpack.Id, storedOld.ContainerId);
+        Assert.Null(storedOld.MobileId);
+    }
+
+    [Fact]
+    public async Task WorldSave_AnAbsorbedWornItem_FreesItsLayerForTheNextOne()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = TestItems.Create();
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Map = MapType.Trammel };
+        await mobiles.UpsertAsync(aria);
+        var backpack = new ItemEntity { TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(aria.Id, LayerType.Backpack);
+        var worn = new ItemEntity { TemplateId = "torch", ItemId = 0x0F64 };
+        worn.Equip(aria.Id, LayerType.TwoHanded);
+        var next = new ItemEntity { TemplateId = "torch", ItemId = 0x0F64 };
+        await data.UpsertAsync(backpack);
+        await data.UpsertAsync(worn);
+        next.PutInContainer(backpack.Id, new Point2D(44, 65));
+        await data.UpsertAsync(next);
+        items.Add([backpack, worn, next]);
+
+        // The worn torch is merged into a stack (its row is deleted by the save), and another goes on.
+        items.Absorb(worn, aria.Id);
+        items.Equip(next, aria.Id, LayerType.TwoHanded);
+        await host.Owner.SaveAllAsync();
+
+        Assert.Null(await data.GetByIdAsync(worn.Id));
+        Assert.Equal(LayerType.TwoHanded, (await data.GetByIdAsync(next.Id))!.Layer);
+    }
+
+    [Fact]
+    public async Task WorldSave_DeletesTheItemsAbsorbedIntoOtherStacks()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = TestItems.Create();
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var gold = new ItemEntity { TemplateId = "gold", ItemId = 0x0EED, Amount = 5 };
+        gold.PlaceOnGround(MapType.Trammel, new Point3D(1, 1, 0));
+        await data.UpsertAsync(gold);
+        items.Add([gold]);
+
+        items.Absorb(gold);
+        await host.Owner.SaveAllAsync();
+
+        Assert.Null(await data.GetByIdAsync(gold.Id));
+        Assert.Empty(((IPersistenceDeletionSource)items).Capture());
     }
 }

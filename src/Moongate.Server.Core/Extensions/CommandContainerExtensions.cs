@@ -19,7 +19,8 @@ public static class CommandContainerExtensions
         string commandName,
         string description = "",
         CommandSourceType source = CommandSourceType.Console,
-        AccountType minimumAccountType = AccountType.Administrator
+        AccountType minimumAccountType = AccountType.Administrator,
+        int descriptionMessage = 0
     )
         where TExecutor : class, ICommandExecutor
     {
@@ -29,7 +30,7 @@ public static class CommandContainerExtensions
         }
 
         container.Resolve<CommandRegistry>()
-            .Register<TExecutor>(container, commandName, description, source, minimumAccountType);
+            .Register<TExecutor>(container, commandName, description, source, minimumAccountType, descriptionMessage);
 
         return container;
     }

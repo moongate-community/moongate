@@ -2,6 +2,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -173,8 +174,9 @@ public class MobileTemplate
     public MobileSounds? Sounds { get; set; }
 
     /// <summary>
-    ///     Reserved Lua module identifier, stored and inherited with the template. Unset is none.
-    ///     The engine does not dispatch template hooks or AI yet.
+    ///     The global Lua table, defined by <c>scripts/mobiles/&lt;script_id&gt;.lua</c>, whose functions handle the NPC's events:
+    ///     <c>on_think</c>, <c>on_speech</c>, <c>on_spawn</c> and <c>on_mobile_in_range</c>. A lower-case Lua identifier.
+    ///     Unset: no script.
     /// </summary>
     public string? ScriptId { get; set; }
 
@@ -244,6 +246,11 @@ public class MobileTemplate
         if (Tags is not null && Tags.Keys.Any(string.IsNullOrWhiteSpace))
         {
             throw Invalid("tags", "must not have an empty key");
+        }
+
+        if (ScriptId is not null && !ScriptIdUtils.IsValid(ScriptId))
+        {
+            throw Invalid("script_id", ScriptIdUtils.Rule);
         }
     }
 

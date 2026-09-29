@@ -1,13 +1,20 @@
 using DryIoc;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Core.Types.Geometry;
 using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Persistence;
+using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Integration.Server.Ultima.Entities;
@@ -274,7 +281,7 @@ public sealed class MobileEntityPersistenceTests
 
         await mobiles.UpsertAsync(new MobileEntity { Name = "Aria", AccountId = account, Slot = 2 });
 
-        Assert.Equal((byte?)2, Assert.Single(await mobiles.QueryAsync(mobile => mobile.AccountId == account)).Slot);
+        Assert.Equal((int?)2, Assert.Single(await mobiles.QueryAsync(mobile => mobile.AccountId == account)).Slot);
         await Assert.ThrowsAnyAsync<Exception>(() =>
             mobiles.UpsertAsync(new MobileEntity { Name = "Bran", AccountId = account, Slot = 2 })
         );
@@ -293,5 +300,90 @@ public sealed class MobileEntityPersistenceTests
         await mobiles.UpsertAsync(new MobileEntity { Name = "an orc" });
 
         Assert.Equal(2, (await mobiles.QueryAsync(mobile => mobile.Name == "an orc")).Count);
+    }
+
+    [Fact]
+    public async Task DeletionRequestedAt_IsStoredInUtcAndReadBack()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        host.Container.AddPersistenceWorld<MobileEntity>();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var requested = new DateTime(2026, 9, 28, 10, 30, 0, DateTimeKind.Utc);
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, DeletionRequestedAt = requested };
+
+        await mobiles.UpsertAsync(aria);
+
+        var stored = (await mobiles.GetByIdAsync(aria.Id))!;
+        Assert.Equal(requested, stored.DeletionRequestedAt);
+        Assert.Equal(DateTimeKind.Utc, stored.DeletionRequestedAt!.Value.Kind);
+    }
+
+    [Fact]
+    public async Task Direction_IsStoredAndReadBack()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        host.Container.AddPersistenceWorld<MobileEntity>();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Direction = DirectionType.West };
+
+        await mobiles.UpsertAsync(aria);
+
+        Assert.Equal(DirectionType.West, (await mobiles.GetByIdAsync(aria.Id))!.Direction);
+    }
+
+    [Fact]
+    public async Task WorldSave_DeletesADeletedMobileAndItsItems()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var sectors = TestSectors.Create();
+        var mobiles = new MobileService(new StubMovementService(), sectors);
+        var items = TestItems.Create(sectors);
+        host.Container.RegisterInstance<IMobileService>(mobiles);
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobileData = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var itemData = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var orc = new MobileEntity { Name = "Orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) };
+        await mobileData.UpsertAsync(orc);
+        var backpack = new ItemEntity { TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(orc.Id, LayerType.Backpack);
+        await itemData.UpsertAsync(backpack);
+        mobiles.EnterWorld(orc);
+        items.Add([backpack]);
+
+        items.Remove([backpack.Id]);
+        Assert.True(mobiles.Delete(orc.Id));
+        await host.Owner.SaveAllAsync();
+
+        Assert.Null(await mobileData.GetByIdAsync(orc.Id));
+        Assert.Null(await itemData.GetByIdAsync(backpack.Id));
+    }
+
+    [Fact]
+    public async Task WorldSave_WritesTheLiveMobilesAsTheyAreNow()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
+        host.Container.RegisterInstance<IMobileService>(mobiles);
+        host.Container.AddLiveWorldMobiles();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var data = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Map = MapType.Trammel };
+        await data.UpsertAsync(aria);
+        mobiles.EnterWorld(aria);
+        aria.Location = new Point3D(1497, 1628, 12);
+        aria.Direction = DirectionType.East;
+
+        await host.Owner.SaveAllAsync();
+
+        var stored = (await data.GetByIdAsync(aria.Id))!;
+        Assert.Equal((new Point3D(1497, 1628, 12), DirectionType.East), (stored.Location, stored.Direction));
     }
 }

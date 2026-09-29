@@ -29,4 +29,56 @@ public sealed class CharacterScriptEventsTests
             fields
         );
     }
+
+    [Fact]
+    public void CharacterDeletionRequested_MapsSerialAccountAndName()
+    {
+        var character = new MobileEntity { Id = new(0x0003), AccountId = new Serial(42), Name = "Bran" };
+
+        var fields = CharacterScriptEvents.CharacterDeletionRequested(new CharacterDeletionRequestedEvent(character));
+
+        Assert.Equal(
+            new Dictionary<string, object?> { ["serial"] = 3L, ["account_id"] = 42L, ["name"] = "Bran" },
+            fields
+        );
+    }
+
+    [Fact]
+    public void CharacterEnteredWorld_MapsSerialAccountNameAndLocation()
+    {
+        var character = new MobileEntity
+        {
+            Id = new(0x0002), AccountId = new Serial(42), Name = "Aria", Map = MapType.Trammel,
+            Location = new Point3D(1496, 1628, 10)
+        };
+
+        var fields = CharacterScriptEvents.CharacterEnteredWorld(new CharacterEnteredWorldEvent(character));
+
+        Assert.Equal(
+            new Dictionary<string, object?>
+            {
+                ["serial"] = 2L, ["account_id"] = 42L, ["name"] = "Aria", ["map"] = MapType.Trammel, ["x"] = 1496,
+                ["y"] = 1628, ["z"] = 10
+            },
+            fields
+        );
+    }
+
+    [Fact]
+    public void CharacterLeftWorld_MapsSerialAccountNameAndLocation()
+    {
+        var character = new MobileEntity
+        {
+            Id = new(0x00000002), AccountId = new Serial(0x2A), Name = "Aria", Map = MapType.Trammel,
+            Location = new Point3D(1497, 1628, 12)
+        };
+
+        var fields = CharacterScriptEvents.CharacterLeftWorld(new CharacterLeftWorldEvent(character));
+
+        Assert.Equal(2L, fields["serial"]);
+        Assert.Equal(0x2AL, fields["account_id"]);
+        Assert.Equal("Aria", fields["name"]);
+        Assert.Equal(MapType.Trammel, fields["map"]);
+        Assert.Equal((1497, 1628, 12), ((int)fields["x"]!, (int)fields["y"]!, (int)fields["z"]!));
+    }
 }

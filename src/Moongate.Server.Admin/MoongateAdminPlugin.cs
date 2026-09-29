@@ -29,6 +29,8 @@ public sealed class MoongateAdminPlugin : IMoongatePlugin
 
     public void Register(Container container)
     {
+        container.AddConfig<AdminApiConfig>("admin_api");
+
         container.AddMoongateService<IAdminApiService, AdminGrpcHostService>(
             () =>
             {

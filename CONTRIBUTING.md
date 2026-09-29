@@ -117,10 +117,11 @@ keep assertions focused on observable behavior. Prose-only corrections do not
 need new C# tests.
 
 CI runs on pull requests and on pushes to `develop` and `main`; changes that touch only
-`docs/`, `website/` or Markdown files skip it. On pull requests and `main` it also verifies
-the portable administration client, NuGet packages, runnable README examples, and
-third-party notices; pushes to `develop` skip these, since every change reaches `develop`
-through a pull request that already ran them. The development Docker image
+`docs/`, `website/` or Markdown files skip it. Pull requests into `develop` and pushes to
+`develop` only restore, check the method body style and build: run the tests locally
+(`bash scripts/test.sh all`) before opening the pull request. Pull requests into `main`, which
+cut a release, and pushes to `main` run the full pipeline: the tests with coverage, the portable
+administration client, NuGet packages, runnable README examples, and third-party notices. The development Docker image
 (`ghcr.io/moongate-community/moongate:develop`) is rebuilt nightly, or on demand from the
 Actions tab. The administration check uses the same test
 connections and requires Python 3 with `venv` support and access to install the

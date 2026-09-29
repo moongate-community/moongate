@@ -1,12 +1,12 @@
 using DryIoc;
-using Moongate.Core.Geometry;
 using Moongate.Core.Directories;
+using Moongate.Core.Geometry;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Cities;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
-using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Data.Names;
@@ -74,9 +74,13 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5462, messages.Count);
+        Assert.Equal(5512, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
+        Assert.Equal(
+            ["Comune", "Non comune", "Raro", "Epico", "Leggendario"],
+            new[] { 30000, 30001, 30002, 30003, 30004 }.Select(id => messages.Single(message => message.Id == id).Text)
+        );
 
         var regions = service.GetEntities<RegionContent>();
         Assert.Equal(388, regions.Count);
@@ -129,7 +133,59 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5462, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5512, (await loader.LoadDataAsync()).Entities.Count);
+    }
+
+    [Theory,
+     InlineData("ita", "Comune", "Leggendario"), InlineData("ger", "Gewöhnlich", "Legendär"),
+     InlineData("fre", "Commun", "Légendaire"), InlineData("spa", "Común", "Legendario"),
+     InlineData("por", "Comum", "Lendário"), InlineData("pol", "Pospolity", "Legendarny"),
+     InlineData("cze", "Běžný", "Legendární")]
+    public async Task ShippedMessageFiles_TranslateTheRarities(string language, string common, string legendary)
+    {
+        var loader = new MessagesLoader(
+            new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data"]),
+            new LocalizationConfig { Language = language }
+        );
+        await loader.InitializeAsync();
+
+        var messages = (await loader.LoadDataAsync()).Entities.ToDictionary(message => message.Id, message => message.Text);
+
+        Assert.Equal((common, legendary), (messages[30000], messages[30004]));
+    }
+
+    [Theory,
+     InlineData("eng", "[Cursed]", "Weight: {0} stones"), InlineData("ita", "[Maledetto]", "Peso: {0} pietre"),
+     InlineData("ger", "[Verflucht]", "Gewicht: {0} Steine"), InlineData("fre", "[Maudit]", "Poids : {0} pierres"),
+     InlineData("spa", "[Maldito]", "Peso: {0} piedras"), InlineData("por", "[Amaldiçoado]", "Peso: {0} pedras"),
+     InlineData("pol", "[Przeklęty]", "Waga: {0} kam."), InlineData("cze", "[Prokletý]", "Váha: {0} kam.")]
+    public async Task ShippedMessageFiles_TranslateTheTooltipTexts(string language, string cursed, string stones)
+    {
+        var loader = new MessagesLoader(
+            new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data"]),
+            new LocalizationConfig { Language = language }
+        );
+        await loader.InitializeAsync();
+
+        var messages = (await loader.LoadDataAsync()).Entities.ToDictionary(message => message.Id, message => message.Text);
+
+        Assert.Equal((cursed, stones), (messages[30005], messages[30007]));
+        Assert.Contains("1", messages[30006]);
+    }
+
+    [Theory,
+     InlineData("eng"), InlineData("ita"), InlineData("ger"), InlineData("fre"),
+     InlineData("spa"), InlineData("por"), InlineData("pol"), InlineData("cze")]
+    public async Task ShippedMessageFiles_HaveEveryCommandText(string language)
+    {
+        var directories = new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data"]);
+        var own = Tomlyn.TomlSerializer.Deserialize<Tomlyn.Model.TomlTable>(
+            await File.ReadAllTextAsync(Path.Combine(directories["data"], "messages", language + ".toml"))
+        )!;
+        var messages = (Tomlyn.Model.TomlTable)own["messages"];
+
+        // Every language carries its own text, not the English fallback.
+        Assert.All(Enumerable.Range(30008, 42), id => Assert.True(messages.ContainsKey(id.ToString()), $"{language} lacks {id}"));
     }
 
     private static string FindRepositoryRoot()

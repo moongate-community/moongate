@@ -1,4 +1,5 @@
 using FreeSql.DataAnnotations;
+using Humanizer;
 using Moongate.Core.Attributes;
 using Moongate.Core.Geometry;
 using Moongate.Core.Interfaces.Entities;
@@ -8,6 +9,7 @@ using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.Internal;
 using Moongate.Server.Ultima.Types.Items;
 using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Ultima.Io;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Entities.World;
@@ -21,8 +23,7 @@ namespace Moongate.Server.Ultima.Entities.World;
 ///     the other two. Only what differs from the template is stored: a null <see cref="Name" />, <see cref="Movable" />
 ///     or <see cref="Visibility" /> means the template's value.
 /// </remarks>
-[Table(Name = "world.items")]
-[SerialRange(Serial.MinItem, Serial.MaxItem)]
+[Table(Name = "world.items"), SerialRange(Serial.MinItem, Serial.MaxItem)]
 public class ItemEntity : IMoongateEntity
 {
     [Column(Name = "id", IsPrimary = true, MapType = typeof(long))]
@@ -225,6 +226,35 @@ public class ItemEntity : IMoongateEntity
         Props = PropsDictionary.Remove(Props, key, out var removed);
 
         return removed;
+    }
+
+    /// <summary>
+    ///     Gets a detached copy to save: the live item keeps changing on the game loop while the copy is written.
+    /// </summary>
+    public ItemEntity Snapshot()
+    {
+        var copy = (ItemEntity)MemberwiseClone();
+        copy.Props = Props is null ? null : new Dictionary<string, object?>(Props);
+
+        return copy;
+    }
+
+    /// <summary>
+    ///     A one-line description for logs and debugging: serial, its own name or the template id, graphic, amount above 1
+    ///     and where the item is. For the name a player sees use <c>ItemEntityExtensions.DisplayName</c>.
+    /// </summary>
+    public override string ToString()
+    {
+        var amount = Amount > 1 ? $" x{Amount}" : "";
+        var where = Location switch
+        {
+            ItemLocationType.Container => $"in {ContainerId}",
+            ItemLocationType.Equipped => $"on {MobileId} layer {Layer}",
+            ItemLocationType.Ground => $"at {Map} {GroundLocation}",
+            _ => "nowhere"
+        };
+
+        return $"{Id} \"{Name ?? TemplateId}\" (0x{ItemId:X4}){amount} {where}";
     }
 
     private void ClearLocation()

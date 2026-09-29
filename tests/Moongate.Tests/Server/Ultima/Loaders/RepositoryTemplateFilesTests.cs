@@ -1,10 +1,12 @@
 using Moongate.Core.Directories;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Motd;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Loaders;
 
@@ -14,6 +16,27 @@ namespace Moongate.Tests.Server.Ultima.Loaders;
 /// </summary>
 public sealed class RepositoryTemplateFilesTests
 {
+    [Fact]
+    public async Task ShippedMotd_Loads()
+    {
+        var registry = new MotdVariableRegistry();
+        MotdRenderer.RegisterBuiltins(registry);
+        var loader = new MotdLoader(Directories(), registry);
+
+        Assert.NotEmpty((await loader.LoadDataAsync()).Entities);
+    }
+
+    [Fact]
+    public async Task ShippedTitles_LoadCompleteClassicGrid()
+    {
+        var rows = (await new TitlesLoader(Directories()).LoadDataAsync()).Entities;
+
+        Assert.Equal(55, rows.Count);
+        Assert.Contains(rows, row => row.Fame == 0 && row.Karma == -15000 && row.Title == "The Outcast");
+        Assert.Contains(rows, row => row.Fame == 10000 && row.Karma == 10000 &&
+                                     row.Title == "The Glorious Lord" && row.FemaleTitle == "The Glorious Lady");
+    }
+
     public RepositoryTemplateFilesTests()
     {
         TomlUtils.AddTomlConverter(new SerialTomlConverter());
@@ -37,6 +60,25 @@ public sealed class RepositoryTemplateFilesTests
     }
 
     [Fact]
+    public async Task ShippedItemTemplates_MarkTwoHandedWeaponsButNotShieldsOrTorches()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        // Bows, polearms, staves: both hands.
+        Assert.True(templates["0x13b2"].TwoHandedWeapon);
+        Assert.True(templates["base_halberd"].TwoHandedWeapon);
+        Assert.True(templates["base_quarter_staff"].TwoHandedWeapon);
+
+        // Shields and a torch share the layer but leave the other hand free.
+        Assert.Null(templates["base_heater_shield"].TwoHandedWeapon);
+        Assert.Null(templates["0x0f64_torch"].TwoHandedWeapon);
+        Assert.All(
+            templates.Values.Where(t => t.Name?.EndsWith("shield", StringComparison.Ordinal) == true && t.Layer == LayerType.TwoHanded),
+            shield => Assert.Null(shield.TwoHandedWeapon)
+        );
+    }
+
+    [Fact]
     public async Task ShippedStartingItems_ResolveAgainstTheShippedTemplates()
     {
         var directories = Directories();
@@ -47,7 +89,10 @@ public sealed class RepositoryTemplateFilesTests
         var sets = (await loader.LoadDataAsync()).Entities;
 
         Assert.Equal(56, sets.Count);
-        Assert.Single(sets, set => set.Common);
+        var common = Assert.Single(sets, set => set.Common);
+        var gold = Assert.Single(common.Items, entry => entry.Items.SequenceEqual([new ItemsConfig().GoldTemplate]));
+        Assert.Equal(1000, gold.Amount!.Value.Roll());
+        Assert.False(gold.Equip);
         Assert.Contains(templates, t => t.Id == new ItemsConfig().BackpackTemplate);
         Assert.Contains(templates, t => t.Id == new ItemsConfig().GoldTemplate);
     }

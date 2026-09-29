@@ -335,6 +335,15 @@ code being released. This check is mandatory.
 - Async methods must end with `Async`.
 - Include `CancellationToken` on I/O-bound public async methods.
 
+**`ConfigureAwait(false)`**
+- Use it in the library projects: `Moongate.Core`, `Moongate.Network`, `Moongate.Persistence`,
+  `Moongate.Scripting`, `Moongate.Server.Core` and `Moongate.Server` (game loop, dispatcher, hosting). Some of
+  their code is waited on synchronously (`Dispose` calling `StopAsync().GetAwaiter().GetResult()`, Lua), and a
+  caller with a `SynchronizationContext` (a test runner, a future UI host) must not be blocked by it.
+- Do not use it in game code (`Moongate.Server.Ultima`) or plugins. The server installs no
+  `SynchronizationContext`, so it changes nothing there. It never brings a handler back to the game loop
+  either: after an `await` the code runs on a pool thread, and state changes go through `RunOnGameLoopAsync`.
+
 **Exception handling**
 - Guard the arguments of public API surface with `ArgumentNullException.ThrowIfNull` and friends.
 - Do **not** guard constructor dependencies that arrive from the container: let the container fail on a

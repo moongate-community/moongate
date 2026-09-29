@@ -958,6 +958,29 @@ public sealed class UoxItemConverterCommandTests : IDisposable
     }
 
     [Fact]
+    public void Run_TwoHandedLayer_MarksWeaponsButNotShieldsOrLights()
+    {
+        // As UOX3: layer 2 is both hands unless the item is a shield (type=107, here from a base without id=) or a
+        // light (dir=), which go in the other hand.
+        _dirs.WriteSource(
+            "items.dfn",
+            "[base_shield]\n{\ntype=107\nlayer=0x02\n}\n" +
+            "[heater]\n{\nget=base_shield\nid=0x1b76\n}\n" +
+            "[halberd]\n{\nid=0x143e\nlayer=2\n}\n" +
+            "[torch]\n{\nid=0x0f6b\nlayer=2\ndir=14\n}\n" +
+            "[katana]\n{\nid=0x13ff\nlayer=1\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var items = ReadItems();
+        Assert.True(items["halberd"].TwoHandedWeapon);
+        Assert.Null(items["heater"].TwoHandedWeapon);
+        Assert.Null(items["torch"].TwoHandedWeapon);
+        Assert.Null(items["katana"].TwoHandedWeapon);
+    }
+
+    [Fact]
     public void Run_AHeaderDefinedTwice_KeepsTheLastDefinition_AsUox3Does()
     {
         _dirs.WriteSource(

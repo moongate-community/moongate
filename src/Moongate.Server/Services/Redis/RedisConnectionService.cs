@@ -55,7 +55,27 @@ public sealed class RedisConnectionService : IMoongateStartupService, IAsyncDisp
         }
         catch (Exception)
         {
-            throw new InvalidOperationException("Unable to connect to redis.connection_string.");
+            throw new InvalidOperationException(
+                $"Unable to connect to redis.connection_string ({DescribeEndpoints(connectionString)})."
+            );
+        }
+    }
+
+    /// <summary>
+    ///     The endpoints of a Redis connection string, for error messages: the password and every other setting are
+    ///     left out.
+    /// </summary>
+    private static string DescribeEndpoints(string connectionString)
+    {
+        try
+        {
+            var endpoints = ConfigurationOptions.Parse(connectionString).EndPoints;
+
+            return endpoints.Count == 0 ? "no endpoints" : string.Join(", ", endpoints);
+        }
+        catch (Exception)
+        {
+            return "unparsable";
         }
     }
 

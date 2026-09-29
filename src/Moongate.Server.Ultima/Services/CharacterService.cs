@@ -2,11 +2,11 @@ using Moongate.Core.Primitives;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
-using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Characters;
 using Moongate.Server.Ultima.Data.Cities;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Data.Names;
@@ -35,24 +35,30 @@ public sealed class CharacterService : ICharacterService
     private readonly IStartingItemsService _startingItems;
     private readonly MoongatePersistenceService _persistence;
     private readonly IDataAccess<MobileEntity> _mobiles;
+    private readonly IDataAccess<ItemEntity> _items;
     private readonly IMoongateEventBus _events;
     private readonly CharactersConfig _config;
+    private readonly ICharacterPresence _presence;
 
     public CharacterService(
         IDataLoaderService data,
         IStartingItemsService startingItems,
         MoongatePersistenceService persistence,
         IDataAccess<MobileEntity> mobiles,
+        IDataAccess<ItemEntity> items,
         IMoongateEventBus events,
-        CharactersConfig config
+        CharactersConfig config,
+        ICharacterPresence presence
     )
     {
         _data = data;
         _startingItems = startingItems;
         _persistence = persistence;
         _mobiles = mobiles;
+        _items = items;
         _events = events;
         _config = config;
+        _presence = presence;
     }
 
     public async Task<CharacterCreationResult> CreateAsync(
@@ -61,9 +67,10 @@ public sealed class CharacterService : ICharacterService
         CancellationToken cancellationToken = default
     )
     {
+        // Characters pending deletion gave up their slot and no longer count toward the limit.
         var existing = await GetCharactersAsync(accountId, cancellationToken);
 
-        if (existing.Count >= _config.MaxPerAccount)
+        if (existing.Count(character => character.DeletionRequestedAt is null) >= _config.MaxPerAccount)
         {
             return CharacterCreationResult.Refused(CharacterCreationRefusalType.TooManyCharacters);
         }
@@ -125,7 +132,116 @@ public sealed class CharacterService : ICharacterService
         // is what stops two creates from sharing a slot.
         var characters = await _mobiles.QueryAsync(mobile => mobile.AccountId == accountId, cancellationToken);
 
-        return characters.OrderBy(character => character.Slot ?? byte.MaxValue).ThenBy(character => character.Id).ToList();
+        return BySlot(characters);
+    }
+
+    public async Task<CharacterForPlay?> GetForPlayAsync(
+        Serial accountId,
+        int listIndex,
+        CancellationToken cancellationToken = default
+    )
+    {
+        // The client names the character by its position in the list it was sent, laid out as for deletion.
+        var layout = CharacterListBuilder.Layout(await GetCharactersAsync(accountId, cancellationToken), _config.MaxPerAccount);
+
+        if (listIndex < 0 || listIndex >= layout.Length || layout[listIndex] is not { } character)
+        {
+            return null;
+        }
+
+        var equipment = await _items.QueryAsync(item => item.MobileId == character.Id, cancellationToken);
+        var contents = new List<ItemEntity>();
+        var visited = equipment.Select(item => item.Id).ToHashSet();
+        var containers = visited.Select(serial => (Serial?)serial).ToList();
+
+        // One level of containers at a time; the visited set stops a cycle.
+        while (containers.Count > 0)
+        {
+            var level = await _items.QueryAsync(item => containers.Contains(item.ContainerId), cancellationToken);
+            var fresh = level.Where(item => visited.Add(item.Id)).ToList();
+            contents.AddRange(fresh);
+            containers = fresh.Select(item => (Serial?)item.Id).ToList();
+        }
+
+        return new(character, equipment, contents);
+    }
+
+    public async Task<IReadOnlyList<MobileEntity>> GetPendingDeletionsAsync(
+        Serial? accountId,
+        CancellationToken cancellationToken = default
+    )
+    {
+        var pending = accountId is { } account
+            ? await _mobiles.QueryAsync(
+                mobile => mobile.AccountId == account && mobile.DeletionRequestedAt != null,
+                cancellationToken
+            )
+            : await _mobiles.QueryAsync(
+                mobile => mobile.AccountId != null && mobile.DeletionRequestedAt != null,
+                cancellationToken
+            );
+
+        return pending.OrderBy(character => character.DeletionRequestedAt).ToList();
+    }
+
+    public async Task<CharacterDeletionResult> RequestDeletionAsync(
+        Serial accountId,
+        int listIndex,
+        CancellationToken cancellationToken = default
+    )
+    {
+        // The client names the character by its position in the list it was sent, so lay the list out the same way.
+        var characters = await GetCharactersAsync(accountId, cancellationToken);
+        var layout = CharacterListBuilder.Layout(characters, _config.MaxPerAccount);
+
+        if (listIndex < 0 || listIndex >= layout.Length || layout[listIndex] is not { } character)
+        {
+            return CharacterDeletionResult.Refused(CharacterDeleteResultType.CharacterDoesNotExist);
+        }
+
+        if (_presence.IsInWorld(character.Id))
+        {
+            return CharacterDeletionResult.Refused(CharacterDeleteResultType.CharacterBeingPlayed);
+        }
+
+        // The character gives up its slot, so a full account can create a new one right away; restoring puts it back
+        // in a free slot when there is one.
+        character.DeletionRequestedAt = DateTime.UtcNow;
+        character.Slot = null;
+        await _mobiles.UpsertAsync(character, cancellationToken);
+
+        // After the save the request stands whatever happens: the event is published without cancellation.
+        await _events.PublishAsync(new CharacterDeletionRequestedEvent(character), CancellationToken.None);
+
+        return CharacterDeletionResult.Deleted(character, CharacterListBuilder.Names(characters, _config.MaxPerAccount));
+    }
+
+    public async Task<MobileEntity?> RestoreAsync(Serial characterId, CancellationToken cancellationToken = default)
+    {
+        var character = await _mobiles.GetByIdAsync(characterId, cancellationToken);
+
+        if (character is not { AccountId: not null, DeletionRequestedAt: not null })
+        {
+            return null;
+        }
+
+        var used = (await GetCharactersAsync(character.AccountId.Value, cancellationToken))
+                   .Where(other => other.DeletionRequestedAt is null && other.Slot is not null)
+                   .Select(other => other.Slot!.Value)
+                   .ToHashSet();
+        var free = Enumerable.Range(0, _config.MaxPerAccount).Where(slot => !used.Contains(slot)).ToList();
+
+        // An account that filled up meanwhile leaves the character without a slot: the list shows it once there is room.
+        character.DeletionRequestedAt = null;
+        character.Slot = free.Count > 0 ? free[0] : null;
+        await _mobiles.UpsertAsync(character, cancellationToken);
+
+        return character;
+    }
+
+    private static List<MobileEntity> BySlot(IEnumerable<MobileEntity> characters)
+    {
+        return characters.OrderBy(character => character.Slot ?? int.MaxValue).ThenBy(character => character.Id).ToList();
     }
 
     /// <summary>
@@ -133,19 +249,19 @@ public sealed class CharacterService : ICharacterService
     ///     client's slot altogether; keeping it when it fits preserves the player's choice without trusting its meaning.
     ///     An account below its limit always has a free slot.
     /// </summary>
-    private byte FreeSlot(int requested, IReadOnlyList<MobileEntity> existing)
+    private int FreeSlot(int requested, IReadOnlyList<MobileEntity> existing)
     {
-        var used = existing.Where(c => c.Slot is not null).Select(c => (int)c.Slot!.Value).ToHashSet();
+        var used = existing.Where(c => c.Slot is not null).Select(c => c.Slot!.Value).ToHashSet();
 
         if (requested >= 0 && requested < _config.MaxPerAccount && !used.Contains(requested))
         {
-            return (byte)requested;
+            return requested;
         }
 
-        return (byte)Enumerable.Range(0, _config.MaxPerAccount).First(slot => !used.Contains(slot));
+        return Enumerable.Range(0, _config.MaxPerAccount).First(slot => !used.Contains(slot));
     }
 
-    private MobileEntity Build(Serial accountId, CharacterCreationRequest request, byte slot)
+    private MobileEntity Build(Serial accountId, CharacterCreationRequest request, int slot)
     {
         var race = _data.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == request.Race) ??
                    _data.GetEntities<RaceContent>().FirstOrDefault(content => content.Race == RaceType.Human) ??

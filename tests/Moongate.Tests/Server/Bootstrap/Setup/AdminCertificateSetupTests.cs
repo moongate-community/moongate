@@ -1,9 +1,9 @@
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-using Moongate.Core.Utils;
+using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Bootstrap.Internal.Setup;
-using Moongate.Server.Data.Config;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
 
 namespace Moongate.Tests.Server.Bootstrap.Setup;
@@ -17,13 +17,13 @@ public sealed class AdminCertificateSetupTests
         var configPath = CreateConfig(directory.Path);
         AdminCertificateSetup.Configure(directory.Path, ["login.example.test", "192.0.2.10"], TextWriter.Null);
         var text = File.ReadAllText(configPath);
-        var config = TomlUtils.Deserialize<MoongateServerConfig>(text)!;
-        Assert.True(config.AdminApi.Enabled);
-        Assert.False(config.AdminApi.AllowInsecureLoopback);
-        Assert.Equal("*", config.AdminApi.ListenAddress);
-        Assert.Equal(2599, config.AdminApi.Port);
-        Assert.Equal("certificates/admin.pfx", config.AdminApi.CertificatePath);
-        Assert.Equal("", config.AdminApi.CertificatePassword);
+        var config = TomlSections.Read<AdminApiConfig>(text, "admin_api");
+        Assert.True(config.Enabled);
+        Assert.False(config.AllowInsecureLoopback);
+        Assert.Equal("*", config.ListenAddress);
+        Assert.Equal(2599, config.Port);
+        Assert.Equal("certificates/admin.pfx", config.CertificatePath);
+        Assert.Equal("", config.CertificatePassword);
         Assert.Contains("# preserve this comment", text);
         Assert.Contains("custom_value = 'unchanged'", text);
         Assert.Contains("# keep port", text);

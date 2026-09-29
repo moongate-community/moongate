@@ -6,7 +6,7 @@ using Moongate.Server.Ultima.Entities.World;
 namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
-///     Gives a new character its backpack, the items of <c>data/starting_items.toml</c> and its starting gold.
+///     Gives a new character its backpack and the items of <c>data/starting_items.toml</c>, starting gold included.
 /// </summary>
 public interface IStartingItemsService : IMoongateStartupService
 {

@@ -1,13 +1,17 @@
 # Server commands
 
 Moongate accepts commands through its interactive server console. Press `*` to
-unlock the prompt after startup. Commands are separated on whitespace; quoted
-arguments and passwords containing spaces are not supported.
+unlock the prompt after startup. In game, type a command with a leading dot,
+such as `.help`. Commands are separated on whitespace; quoted arguments and
+passwords containing spaces are not supported.
 
-The command registry also describes which commands may run from `InGame` and their
-minimum account level. No packet handler currently submits in-game commands, so
-the console is the available input path. The console is treated as an administrator;
-in-game access, when added, will use the invoking session's account level.
+The command registry describes which commands may run from `InGame` and their
+minimum account level. The console is treated as an administrator; in-game
+commands use the invoking session's account level. Command input and ordinary
+command output stay private to the caller. `broadcast` explicitly sends a system
+message to everyone in the local world, and a successful `save` announces completion.
+`shutdown` also announces the requested server stop to players.
+Use `..text` to say `.text` literally.
 
 | Command | Console | In-game registration | Minimum in-game level | Purpose |
 | --- | --- | --- | --- | --- |
@@ -15,6 +19,10 @@ in-game access, when added, will use the invoking session's account level.
 | `help` | Yes | Yes | Regular | List accessible commands or show details for one command |
 | `script` | Game/Standalone | No | — | Reload one Lua script or show script metrics |
 | `account` | Login/Standalone | Yes | Administrator | Create an account in the Accounts database |
+| `character` | Game/Standalone | Yes | GameMaster | List characters pending deletion and restore them |
+| `save` | Game/Standalone | Yes | Administrator | Save the world and announce completion |
+| `broadcast` | Game/Standalone | Yes | Administrator | Send a system message to players on this instance |
+| `shutdown` | Game/Standalone | Yes | Administrator | Stop the server gracefully, immediately or after a delay |
 
 ## Help
 
@@ -62,12 +70,20 @@ token while it is typed and does not include the raw command line in its error l
 The account is stored in the shared Accounts PostgreSQL database.
 Game-only processes do not register this command or receive Accounts credentials.
 
-The command is registered for in-game administrators, but there is no in-game
-command input yet. Before enabling one, its input path must protect the password
-from display and logs.
+In-game administrators can type `.account create ...`. The server does not echo
+or broadcast the input and does not write it to its logs. The UO client may
+retain the typed command in its own local history.
 
 Plugins can add commands through `RegisterCommand<TExecutor>`; see
 [Writing a plugin](plugins.md#console-commands).
+
+Every text a command shows to players, its description in `help` and the dispatcher's replies
+(unknown command, not available here, not allowed, failed) come from the message files
+in the server language (`ILocalizationService`, ids 30008–30049; see
+[Localization](localization.md#moongates-own-messages)). Command syntax, account
+types, sources and map names stay technical names, as the commands take them. On a
+login-only process, which has no message files, the texts are English. Operator-only
+console output (`account api-access`, `script`) stays English.
 
 ### Local API access provisioning
 
@@ -76,3 +92,89 @@ account api-access <username> <on|off>
 ```
 
 Available only in the Login/Standalone local console, even when the caller is an in-game Administrator. Accounts created with `account create` start with API access disabled. Enable an existing Administrator to provision the first panel user; disabling access revokes its administrative sessions across hosts. Game login is unaffected. See [Administration API](admin-api.md).
+
+## Character
+
+```text
+character pending [account-serial]
+character restore <character-serial>
+```
+
+A character a player deletes from the character list is only marked for deletion:
+it disappears from the list, gives up its slot and no longer counts toward
+`ultima.characters.max_per_account`, so the player can create a new character in its
+place. It stays restorable until it is removed; after
+`ultima.characters.deletion_delay_hours` (default 24) it becomes eligible for removal,
+by a job that is not built yet. `character pending` lists every
+pending character, or those of one account, with when the deletion was requested
+and when the character becomes eligible for removal. `character restore` cancels
+the deletion and gives the character the first free slot; if the account filled
+up meanwhile it stays without a slot, may exceed the limit by one, and appears in
+the list once a slot frees. Serials
+are hexadecimal with `0x` (`0x0000002A`) or decimal.
+
+## Save
+
+```text
+save
+```
+
+In game, administrators use `.save`. The command requests a save through the existing
+world save coordinator and waits for durable persistence to finish. A request made
+during another save joins that save rather than starting a competing operation.
+Each successful command broadcasts `The world has been saved in <seconds> seconds.`
+(message 30015, in the server language) to connected characters currently in the
+world on this instance, across all maps. The console also prints the same completion
+message; an in-game caller receives it through the broadcast. The elapsed time
+measures the wait for saving, excluding broadcast delivery, in seconds with two
+decimals (for example, `The world has been saved in 1.23 seconds.`).
+
+A failed save produces an error for the caller and no success broadcast. Extra
+arguments print usage without saving. Automatic and shutdown saves keep their
+existing behavior; this announcement belongs to the `save` command.
+
+## Broadcast
+
+```text
+broadcast Server maintenance in five minutes.
+```
+
+In game, administrators use `.broadcast Server maintenance in five minutes.`.
+The text is delivered as a Unicode system chat message to connected characters
+currently in the world on this instance, regardless of map or distance. Character
+selection sessions and disconnected clients are excluded. Other server instances
+do not receive the message.
+
+Text after the command name is sent without needing quotes. Leading and trailing
+whitespace is trimmed; spaces inside the message are preserved. Empty input prints
+usage and sends nothing. The caller receives the number of players whose outgoing
+queues accepted the message; this is not a client receipt acknowledgment. In-game
+input retains the existing 128-character speech limit, including the dot and command.
+Console messages must fit both the Unicode speech packet and the compressed transport
+limit. Oversized messages are rejected before any player receives them.
+
+## Shutdown
+
+```text
+shutdown
+shutdown 60
+```
+
+In-game administrators use `.shutdown` or `.shutdown 60`. With no argument or `0`,
+the server announces `The server is shutting down now.` (message 30016) and requests
+graceful shutdown. A positive number announces `The server will shut down in <seconds>
+seconds.` (30017) and
+schedules the stop. The command returns without waiting for the countdown; console
+input and gameplay remain available until the deadline. The delay starts after
+the announcement is queued and is rounded up to the server timer resolution.
+
+The server accepts one shutdown request. Further requests report an error without
+changing the deadline or repeating the announcement. Seconds must be a whole number
+from `0` to `2147483647`; negative, fractional, overflowing and extra arguments are
+rejected. A scheduled shutdown survives the invoking player disconnecting.
+
+The command stops this process, including both roles in Standalone mode. It uses the
+same ordered cleanup as the host shutdown path: services stop, the final world save
+completes, and persistence is disposed. It does not force-kill the process. Other
+instances are unaffected. A manual host stop during the delay takes precedence and
+the timer is discarded with the game loop. There is no cancel or restart subcommand.

@@ -9,7 +9,7 @@ A Lua module is a plain C# class marked with `[ScriptModule("name", "help text")
 - every `[ScriptConstant]`-marked static member becomes a read-only value field;
 - every enum a bound signature or constant mentions — or that is registered explicitly — is published as its own read-only global table mapping member names to numbers.
 
-A module is registered from a plugin's `Register(Container container)` method, or, for a module the host itself owns, directly in `Program.cs` (`src/Moongate.Server/Program.cs` registers the built-in `log` module the same way, with `.AddScriptModule<LogModule>()`). Registration only records the type; nothing is reflected and no Lua table exists until the script engine starts and binds it.
+A module is registered from a plugin's `Register(Container container)` method, or, for a module the host itself owns, directly in the host (`src/Moongate.Server/Bootstrap/Internal/ServerRoleRegistration.cs` registers the built-in `log` module the same way, with `.AddScriptModule<LogModule>()`). Registration only records the type; nothing is reflected and no Lua table exists until the script engine starts and binds it.
 
 Scripts run inside a sandbox: `io`, `os` and `debug` are never opened, `dofile`, `loadfile` and `rawset` are removed, and `print` is redirected to the server log instead of the console. `string.rep` also refuses to build a result past a configured cap. See the [package README's "Sandbox" section](../src/Moongate.Scripting/README.md#sandbox) for the full list.
 
@@ -83,7 +83,7 @@ greeting = greeter.hello('Moongate', Tone.Warm)
 function report() return greeting, greeter.DEFAULT_GREETING end
 ```
 
-At startup the engine writes `definitions.lua` for editor completion. The full file begins with a `---@meta` header and the built-in `wait` function, and from a running server also declares the built-in `engine` and `timer` modules alongside anything else registered. The excerpt below is what the sample module and its enum produce:
+At startup the engine writes `definitions.lua` for editor completion. The full file begins with a `---@meta` header and the built-in `wait` function, and from a running server also declares the built-in `engine`, `timer`, `events` and `log` modules, the Ultima plugin's `dice`, `localization`, `npc` and `item`, and anything else registered. The excerpt below is what the sample module and its enum produce:
 
 ```lua
 ---@enum Tone

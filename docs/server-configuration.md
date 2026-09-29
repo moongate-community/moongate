@@ -6,9 +6,21 @@ deserialized and validated without being rewritten; omitted properties keep
 their model defaults. Invalid TOML, invalid settings and filesystem errors fail
 startup. Changes take effect at the next start; there is no configuration reload.
 
+The welcome text shown when a character enters the world lives in a separate
+[`data/motd.toml` file](motd.md), with its own variable and validation rules.
+
 ## Complete default configuration
 
-TOML keys use `snake_case`. Keep `mode` before the first table header:
+TOML keys use `snake_case`. Keep `mode` before the first table header.
+
+The server owns `mode` and the sections `[shard]`, `[network]`, `[redis]`,
+`[persistence]`, `[realm_directory]`, `[world_save]`, `[diagnostics]` and
+`[scripting]`. Plugins own the others: `[ultima]` belongs to the Ultima plugin and
+`[admin_api]` to the Administration plugin. A new root written by `mgboot` holds the server's
+sections (and `[admin_api]` when it sets up a certificate); at the first start each
+plugin appends its missing section,
+with the defaults, to the end of the file. See
+[Add a config section](plugins.md#add-a-config-section).
 
 ```toml
 mode = "standalone" # Runs login and game services together.
@@ -30,6 +42,7 @@ client_version = ""
 connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
 handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
+# Administration plugin.
 [admin_api]
 enabled = false
 # Use "*" or "0.0.0.0" for all IPv4 interfaces (TLS required).
@@ -42,8 +55,33 @@ allow_insecure_loopback = false
 certificate_path = ""
 certificate_password = ""
 
+# Ultima plugin.
 [ultima]
 ultima_path = "ChangeMe" # Replace with your client data directory.
+
+[ultima.localization]
+language = "eng" # Reads <root>/data/messages/eng.toml.
+
+[ultima.line_of_sight]
+max_distance = 25 # Farthest cells along X or Y a point can see.
+
+[ultima.world]
+view_range = 18 # How far players see mobiles and items, in cells along X or Y.
+
+[ultima.items]
+backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
+gold_template = "0x0eed_gold_coin"    # Item template of gold coins.
+
+[ultima.starting_items]
+best_skills = 3                       # How many of the highest skills pick skill sets.
+
+[ultima.characters]
+max_per_account = 7                   # Characters an account may hold: 1, 5, 6 or 7.
+deletion_delay_hours = 24             # Hours before a deleted character may be removed.
+
+[ultima.npcs]
+think_interval_ms = 500               # Milliseconds between two thinks of an NPC near a player.
+sense_range = 8                       # Cells within which an NPC's script senses another mobile.
 
 [persistence]
 auto_sync_schema = false
@@ -81,23 +119,6 @@ max_instructions_per_chunk = 10000000
 hook_interval = 1000
 write_definitions = true
 max_string_length = 16777216
-
-[localization]
-language = "eng" # Reads <root>/data/messages/eng.toml.
-
-[line_of_sight]
-max_distance = 25 # Farthest cells along X or Y a point can see.
-
-[items]
-backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
-gold_template = "0x0eed_gold_coin"    # Item template of gold coins.
-
-[starting_items]
-gold = 1000                           # Starting gold; 0 gives none.
-best_skills = 3                       # How many of the highest skills pick skill sets.
-
-[characters]
-max_per_account = 7                   # Characters an account may hold: 1, 5, 6 or 7.
 ```
 
 Only the databases for the active role must already exist and accept connections:
@@ -148,16 +169,44 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.hook_interval` | Positive instruction-check interval, no greater than either instruction budget. |
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
-| `localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
-| `line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
-| `items.backpack_template`, `items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack and gold of new characters and spawned NPCs. Both must exist in `templates/items/`, and the gold template must stack, or the game server stops at startup. These keys used to be under `[starting_items]`, where they are now ignored: move any custom value to `[items]`. See [Starting items](data-files/starting-items.md). |
-| `starting_items.gold` | From 0 to 65535 (one pile); default 1000. Gold coins put in a new character's backpack; above 1 the gold template must stack, or the game server stops at startup. |
-| `starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
-| `characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
+| `ultima.localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
+| `ultima.line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
+| `ultima.world.view_range` | From 5 to 24; default 18, as ModernUO and POL. How far players see mobiles and ground items along X or Y; the client's `0xC8` request is answered with it. Used in game and standalone modes. |
+| `ultima.items.backpack_template`, `ultima.items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack of new characters and spawned NPCs and for the gold of spawned NPCs; the starting gold of new characters is an item of the common set in [`starting_items.toml`](data-files/starting-items.md). Both must exist in `templates/items/`, and the gold template must stack, or the game server stops at startup. See [Starting items](data-files/starting-items.md). |
+| `ultima.starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
+| `ultima.characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
+| `ultima.characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
+| `ultima.npcs.think_interval_ms` | From 50 to 60000; default 500, ModernUO's passive speed. How often an NPC near a player thinks. Only NPCs within the 5×5 sectors around a player have a think timer; the others sleep and cost nothing. See [NPC tick](game-loop-and-timers.md#npc-tick). |
+| `ultima.npcs.sense_range` | From 1 to 24; default 8. How near, in cells along X or Y, another mobile must come for an NPC's mobile script to sense it with `on_mobile_in_range`. See [Mobile scripts](scripting.md#mobile-scripts). |
+
+The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
+`[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the
+common set in [`starting_items.toml`](data-files/starting-items.md).
 
 Redis is required at runtime in all three modes, including standalone. `redis.connection_string` is a StackExchange.Redis configuration string or an environment reference resolved at startup; the Docker example uses `redis:6379,password=...` on its private bridge. `redis.handoff_secret` is an independent cluster-wide secret, also supplied through an environment reference. Give the login and every game process the same values. The Docker example reads both from separate Compose secrets; keep the actual values out of TOML and the repository. A Redis connection failure prevents startup. A later Redis outage stops new realm lists and handoffs while existing game sessions continue; pending tickets are lost on Redis restart and game processes republish their leases. Configure Redis with `maxmemory-policy noeviction`.
 
 Game-loop queue limits, timer-wheel resolution and packet dispatch limits use C# option objects rather than additional TOML sections. See [Game loop and timers](game-loop-and-timers.md), [Packets](packets.md) and the [Docker topology](docker-login-realms.md).
+
+## Plugin sections
+
+Some sections of `config/moongate.toml` belong to plugins rather than to the server:
+`[ultima]` (with its sub-tables) to the Ultima plugin, `[admin_api]` to the
+Administration plugin, and any section a [disk plugin](plugins.md#add-a-config-section)
+adds. They are edited like any other section; what differs is who reads them and when.
+
+1. The server reads the file and keeps its own sections, ignoring the rest.
+2. Each plugin, while it registers, reads its section and checks its values. A value
+   that is not allowed stops the start with an error that names the setting,
+   reported as the cause of `Plugin '<id>' failed during registration.`
+3. A plugin whose section is missing uses its defaults and appends them to the end of
+   the file. The lines already there, comments included, are not changed. Edit the
+   appended values and restart to change them. If the file is read-only, the server
+   logs a warning and runs with the defaults.
+
+So a new root starts with the server's sections only, and after the first start the
+file lists every setting of every installed plugin. Removing a plugin leaves its
+section in the file; the server ignores it. Two owners cannot share a name: a plugin
+that claims `network`, or a name another plugin already took, stops the start.
 
 ## Command line and root directory
 

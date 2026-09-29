@@ -1,5 +1,3 @@
-using Moongate.Server.Admin.Data.Config;
-using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config.Sections;
 
@@ -16,11 +14,7 @@ public class MoongateServerConfig
 
     public NetworkConfig Network { get; set; } = new();
 
-    public AdminApiConfig AdminApi { get; set; } = new();
-
     public RedisConfig Redis { get; set; } = new();
-
-    public UltimaConfig Ultima { get; set; } = new();
 
     public PersistenceConfig Persistence { get; set; } = new();
 
@@ -31,16 +25,6 @@ public class MoongateServerConfig
     public DiagnosticConfig Diagnostics { get; set; } = new();
 
     public ScriptingConfig Scripting { get; set; } = new();
-
-    public LocalizationConfig Localization { get; set; } = new();
-
-    public LineOfSightConfig LineOfSight { get; set; } = new();
-
-    public ItemsConfig Items { get; set; } = new();
-
-    public StartingItemsConfig StartingItems { get; set; } = new();
-
-    public CharactersConfig Characters { get; set; } = new();
 
     /// <summary>
     ///     Validates configuration before server services begin startup.
@@ -65,13 +49,6 @@ public class MoongateServerConfig
         }
 
         Redis.Validate();
-
-        if (AdminApi is null)
-        {
-            throw new InvalidOperationException("The admin_api configuration section cannot be null.");
-        }
-
-        AdminApi.Validate();
 
         if (Persistence is null)
         {
@@ -107,40 +84,5 @@ public class MoongateServerConfig
         }
 
         Scripting.Validate();
-
-        if (Localization is null)
-        {
-            throw new InvalidOperationException("The localization configuration section cannot be null.");
-        }
-
-        Localization.Validate();
-
-        if (LineOfSight is null)
-        {
-            throw new InvalidOperationException("The line of sight configuration section cannot be null.");
-        }
-
-        LineOfSight.Validate();
-
-        if (Items is null)
-        {
-            throw new InvalidOperationException("The items configuration section cannot be null.");
-        }
-
-        Items.Validate();
-
-        if (StartingItems is null)
-        {
-            throw new InvalidOperationException("The starting items configuration section cannot be null.");
-        }
-
-        StartingItems.Validate();
-
-        if (Characters is null)
-        {
-            throw new InvalidOperationException("The characters configuration section cannot be null.");
-        }
-
-        Characters.Validate();
     }
 }

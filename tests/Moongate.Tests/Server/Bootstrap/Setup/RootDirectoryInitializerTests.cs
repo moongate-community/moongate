@@ -1,6 +1,8 @@
 using Moongate.Core.Utils;
+using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Bootstrap.Internal.Setup;
 using Moongate.Server.Data.Config;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
 
 namespace Moongate.Tests.Server.Bootstrap.Setup;
@@ -104,10 +106,10 @@ public sealed class RootDirectoryInitializerTests
         var source = CreateMigrations(directory);
         var root = Path.Combine(directory.Path, "root");
         RootDirectoryInitializer.Initialize(root, source, CreateData(directory), TextWriter.Null, ["login.example.test"]);
-        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(Path.Combine(root, "config/moongate.toml"))!;
-        Assert.True(config.AdminApi.Enabled);
-        Assert.False(config.AdminApi.AllowInsecureLoopback);
-        Assert.True(File.Exists(Path.Combine(root, config.AdminApi.CertificatePath)));
+        var config = TomlSections.Read<AdminApiConfig>(File.ReadAllText(Path.Combine(root, "config/moongate.toml")), "admin_api");
+        Assert.True(config.Enabled);
+        Assert.False(config.AllowInsecureLoopback);
+        Assert.True(File.Exists(Path.Combine(root, config.CertificatePath)));
         Assert.False(File.Exists(Path.Combine(root, "moongate.pid")));
     }
 
@@ -143,6 +145,64 @@ public sealed class RootDirectoryInitializerTests
         RootDirectoryInitializer.Initialize(root, source, data, TextWriter.Null);
         Assert.Equal("# edited\n", File.ReadAllText(edited));
         Assert.Equal("# new\n", File.ReadAllText(Path.Combine(root, "data/weather.toml")));
+    }
+
+    [Fact]
+    public void Initialize_NewRoot_CopiesTheTemplatesAndScripts()
+    {
+        using var directory = new TemporaryDirectory();
+        var templates = directory.CreateFile("distribution-templates/items/tools.toml", "[[item]]\n");
+        var scripts = directory.CreateFile("distribution-scripts/mobiles/wander.lua", "wander = {}\n");
+        var root = Path.Combine(directory.Path, "root");
+
+        RootDirectoryInitializer.Initialize(
+            root,
+            CreateMigrations(directory),
+            CreateData(directory),
+            TextWriter.Null,
+            templatesDirectory: Path.GetDirectoryName(Path.GetDirectoryName(templates)),
+            scriptsDirectory: Path.GetDirectoryName(Path.GetDirectoryName(scripts))
+        );
+
+        Assert.Equal("[[item]]\n", File.ReadAllText(Path.Combine(root, "templates/items/tools.toml")));
+        Assert.Equal("wander = {}\n", File.ReadAllText(Path.Combine(root, "scripts/mobiles/wander.lua")));
+    }
+
+    [Fact]
+    public void Initialize_RepeatedRun_PreservesEditedScriptsAndAddsNewOnes()
+    {
+        using var directory = new TemporaryDirectory();
+        var wander = directory.CreateFile("distribution-scripts/mobiles/wander.lua", "wander = {}\n");
+        var scripts = Path.GetDirectoryName(Path.GetDirectoryName(wander))!;
+        var root = Path.Combine(directory.Path, "root");
+        var migrations = CreateMigrations(directory);
+        var data = CreateData(directory);
+        RootDirectoryInitializer.Initialize(root, migrations, data, TextWriter.Null, scriptsDirectory: scripts);
+        File.WriteAllText(Path.Combine(root, "scripts/mobiles/wander.lua"), "-- mine\n");
+        directory.CreateFile("distribution-scripts/items/potion.lua", "potion = {}\n");
+
+        RootDirectoryInitializer.Initialize(root, migrations, data, TextWriter.Null, scriptsDirectory: scripts);
+
+        Assert.Equal("-- mine\n", File.ReadAllText(Path.Combine(root, "scripts/mobiles/wander.lua")));
+        Assert.Equal("potion = {}\n", File.ReadAllText(Path.Combine(root, "scripts/items/potion.lua")));
+    }
+
+    [Fact]
+    public void Initialize_WithoutTemplatesOrScriptsInTheDistribution_StillPreparesTheRoot()
+    {
+        using var directory = new TemporaryDirectory();
+        var root = Path.Combine(directory.Path, "root");
+
+        RootDirectoryInitializer.Initialize(
+            root,
+            CreateMigrations(directory),
+            CreateData(directory),
+            TextWriter.Null,
+            templatesDirectory: Path.Combine(directory.Path, "missing-templates"),
+            scriptsDirectory: Path.Combine(directory.Path, "missing-scripts")
+        );
+
+        Assert.True(Directory.Exists(Path.Combine(root, "scripts")));
     }
 
     [Fact]

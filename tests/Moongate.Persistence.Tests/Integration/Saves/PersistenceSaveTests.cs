@@ -1,3 +1,4 @@
+using Moongate.Core.Primitives;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Tests.TestSupport.Persistence;
 using Moongate.Persistence.Types.Persistence;
@@ -598,5 +599,42 @@ public sealed class PersistenceSaveTests
         await owner.InitializeAsync();
         await Assert.ThrowsAsync<InvalidOperationException>(() => owner.SaveAllAsync());
         Assert.Empty(await store.GetAllAsync());
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_DeletionSource_DeletesTheCapturedRowsAndReportsThemCommitted()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        var deletions = new RecordingDeletionSource();
+        var store = owner.RegisterEntity<CharacterEntity>(() => [], e => new() { Id = e.Id }, deletions: deletions);
+        owner.RegisterEntity<InventoryEntity>();
+        await owner.InitializeAsync();
+        await store.UpsertAsync(new() { Id = new(1) });
+        await store.UpsertAsync(new() { Id = new(2) });
+        deletions.Pending.Add(new(2));
+
+        await owner.SaveAllAsync();
+
+        Assert.Equal([new Serial(1)], (await store.GetAllAsync()).Select(entity => entity.Id));
+        Assert.Equal([new Serial(2)], Assert.Single(deletions.Committed));
+    }
+
+    [Fact]
+    public async Task SaveAllAsync_AFailedSave_DoesNotReportTheDeletions()
+    {
+        await using var database = await _postgres.CreateDatabaseAsync();
+        await using var owner = FacadeFixture.Create(database);
+        var deletions = new RecordingDeletionSource();
+        var store = owner.RegisterEntity<CharacterEntity>(() => [], e => new() { Id = e.Id }, deletions: deletions);
+        owner.RegisterEntity<InventoryEntity>(() => throw new InvalidOperationException("capture failed"), e => new() { Id = e.Id });
+        await owner.InitializeAsync();
+        await store.UpsertAsync(new() { Id = new(2) });
+        deletions.Pending.Add(new(2));
+
+        await Assert.ThrowsAnyAsync<Exception>(() => owner.SaveAllAsync());
+
+        Assert.Empty(deletions.Committed);
+        Assert.Single(await store.GetAllAsync());
     }
 }
