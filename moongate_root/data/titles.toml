@@ -1,0 +1,299 @@
+# ==============================================================================
+# Moongate - titles.toml
+#
+# What it is for:
+#   Fame and karma title prefixes, resolved from inclusive minimum thresholds.
+#   The file must contain every fame/karma threshold pair; restart after edits.
+#
+# Fields:
+#   fame           inclusive minimum fame for this band
+#   karma          inclusive minimum karma for this band
+#   title          title prefix; an empty string means no prefix
+#   female_title   optional prefix for female characters; defaults to title
+# ==============================================================================
+
+[[titles]]
+fame = 0
+karma = -15000
+title = "The Outcast"
+
+[[titles]]
+fame = 0
+karma = -9999
+title = "The Despicable"
+
+[[titles]]
+fame = 0
+karma = -4999
+title = "The Scoundrel"
+
+[[titles]]
+fame = 0
+karma = -2499
+title = "The Unsavory"
+
+[[titles]]
+fame = 0
+karma = -1249
+title = "The Rude"
+
+[[titles]]
+fame = 0
+karma = -624
+title = ""
+
+[[titles]]
+fame = 0
+karma = 625
+title = "The Fair"
+
+[[titles]]
+fame = 0
+karma = 1250
+title = "The Kind"
+
+[[titles]]
+fame = 0
+karma = 2500
+title = "The Good"
+
+[[titles]]
+fame = 0
+karma = 5000
+title = "The Honest"
+
+[[titles]]
+fame = 0
+karma = 10000
+title = "The Trustworthy"
+
+[[titles]]
+fame = 1250
+karma = -15000
+title = "The Wretched"
+
+[[titles]]
+fame = 1250
+karma = -9999
+title = "The Dastardly"
+
+[[titles]]
+fame = 1250
+karma = -4999
+title = "The Malicious"
+
+[[titles]]
+fame = 1250
+karma = -2499
+title = "The Dishonorable"
+
+[[titles]]
+fame = 1250
+karma = -1249
+title = "The Disreputable"
+
+[[titles]]
+fame = 1250
+karma = -624
+title = "The Notable"
+
+[[titles]]
+fame = 1250
+karma = 625
+title = "The Upstanding"
+
+[[titles]]
+fame = 1250
+karma = 1250
+title = "The Respectable"
+
+[[titles]]
+fame = 1250
+karma = 2500
+title = "The Honorable"
+
+[[titles]]
+fame = 1250
+karma = 5000
+title = "The Commendable"
+
+[[titles]]
+fame = 1250
+karma = 10000
+title = "The Estimable"
+
+[[titles]]
+fame = 2500
+karma = -15000
+title = "The Nefarious"
+
+[[titles]]
+fame = 2500
+karma = -9999
+title = "The Wicked"
+
+[[titles]]
+fame = 2500
+karma = -4999
+title = "The Vile"
+
+[[titles]]
+fame = 2500
+karma = -2499
+title = "The Ignoble"
+
+[[titles]]
+fame = 2500
+karma = -1249
+title = "The Notorious"
+
+[[titles]]
+fame = 2500
+karma = -624
+title = "The Prominent"
+
+[[titles]]
+fame = 2500
+karma = 625
+title = "The Reputable"
+
+[[titles]]
+fame = 2500
+karma = 1250
+title = "The Proper"
+
+[[titles]]
+fame = 2500
+karma = 2500
+title = "The Admirable"
+
+[[titles]]
+fame = 2500
+karma = 5000
+title = "The Famed"
+
+[[titles]]
+fame = 2500
+karma = 10000
+title = "The Great"
+
+[[titles]]
+fame = 5000
+karma = -15000
+title = "The Dread"
+
+[[titles]]
+fame = 5000
+karma = -9999
+title = "The Evil"
+
+[[titles]]
+fame = 5000
+karma = -4999
+title = "The Villainous"
+
+[[titles]]
+fame = 5000
+karma = -2499
+title = "The Sinister"
+
+[[titles]]
+fame = 5000
+karma = -1249
+title = "The Infamous"
+
+[[titles]]
+fame = 5000
+karma = -624
+title = "The Renowned"
+
+[[titles]]
+fame = 5000
+karma = 625
+title = "The Distinguished"
+
+[[titles]]
+fame = 5000
+karma = 1250
+title = "The Eminent"
+
+[[titles]]
+fame = 5000
+karma = 2500
+title = "The Noble"
+
+[[titles]]
+fame = 5000
+karma = 5000
+title = "The Illustrious"
+
+[[titles]]
+fame = 5000
+karma = 10000
+title = "The Glorious"
+
+[[titles]]
+fame = 10000
+karma = -15000
+title = "The Dread Lord"
+female_title = "The Dread Lady"
+
+[[titles]]
+fame = 10000
+karma = -9999
+title = "The Evil Lord"
+female_title = "The Evil Lady"
+
+[[titles]]
+fame = 10000
+karma = -4999
+title = "The Dark Lord"
+female_title = "The Dark Lady"
+
+[[titles]]
+fame = 10000
+karma = -2499
+title = "The Sinister Lord"
+female_title = "The Sinister Lady"
+
+[[titles]]
+fame = 10000
+karma = -1249
+title = "The Dishonored Lord"
+female_title = "The Dishonored Lady"
+
+[[titles]]
+fame = 10000
+karma = -624
+title = "Lord"
+female_title = "Lady"
+
+[[titles]]
+fame = 10000
+karma = 625
+title = "The Distinguished Lord"
+female_title = "The Distinguished Lady"
+
+[[titles]]
+fame = 10000
+karma = 1250
+title = "The Eminent Lord"
+female_title = "The Eminent Lady"
+
+[[titles]]
+fame = 10000
+karma = 2500
+title = "The Noble Lord"
+female_title = "The Noble Lady"
+
+[[titles]]
+fame = 10000
+karma = 5000
+title = "The Illustrious Lord"
+female_title = "The Illustrious Lady"
+
+[[titles]]
+fame = 10000
+karma = 10000
+title = "The Glorious Lord"
+female_title = "The Glorious Lady"
