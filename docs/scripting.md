@@ -63,9 +63,12 @@ exists but fails compilation/execution aborts server startup.
 | `dice.try_roll(expression)` | The same roll, or `nil` when the expression is malformed: `dice.try_roll(text) or 0` |
 | `localization.get(id, ...)` | Message `id` of `data/messages` in the server language, with `{0}`, `{1}`, ... filled by the extra arguments; see [Localization](localization.md#read-a-message-from-lua) |
 | `localization.text(id)`, `localization.language()` | The raw text of a message, or `nil`; the server language code |
+| `npc.say(serial, text)` | The NPC says `text` overhead to the players within 15 cells (cut to 128 characters); `false` for blank text or a serial that is not an NPC in the world |
+| `npc.step(serial, direction)` | One walking step toward a `DirectionType`, turning first when needed, seen by the players in range; `false` when blocked |
+| `npc.location(serial)`, `npc.name(serial)` | `{ x, y, z, map }` and the name of the NPC, or `nil` |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice` and `localization` in game and standalone modes.
+The Ultima plugin registers `dice`, `localization` and `npc` in game and standalone modes.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -79,8 +82,8 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-There are no built-in world, character or inventory APIs yet
-([Implementation status](implementation-status.md)). To expose application
+Apart from the `npc` module of the [mobile scripts](#mobile-scripts), there are no world, character or inventory
+APIs yet ([Implementation status](implementation-status.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Events
@@ -133,6 +136,61 @@ The mapping runs on the publishing thread and must only read the event. It may
 return strings, booleans, numbers, enums (sent as numbers) or null. A mapping
 that fails is logged, and the event is skipped for Lua only. Events published
 while no script is subscribed cost one lookup and are not queued.
+
+## Mobile scripts
+
+A mobile template names its script with `script_id`, the name of a global Lua table
+defined by a file of `scripts/mobiles/`. The server loads every `*.lua` directly in
+that directory at startup, in name order, after `init.lua`; a script that fails to
+load is reported like any script error and the others still load.
+
+```toml
+# templates/mobiles/animals.toml
+[[mobile]]
+id = "cat"
+name = "a cat"
+body = 201
+script_id = "wander"
+```
+
+The table may define these functions; each one is optional:
+
+| Function | When |
+| --- | --- |
+| `on_think(serial)` | On every think of the NPC: every `ultima.npcs.think_interval_ms` (500 ms by default) while a player is within the 5×5 sectors around it; see [NPC tick](game-loop-and-timers.md#npc-tick). A think is instantaneous, as ModernUO's: it must not call `wait` (the server warns once per script), so keep the timing in the script, for example by counting thinks. |
+| `on_speech(serial, speaker, text)` | When a player says `text` within 15 cells (commands are not heard). `speaker` is the player's serial. It may call `wait`. |
+
+Scripts act on their NPC with the `npc` module, passing its serial. A serial that
+is not an NPC in the world, such as a removed NPC or a player, gives `false` or
+`nil`, never an error: a handler that waited may outlive its NPC, and a script can
+never voice or move a player.
+
+The shipped `scripts/mobiles/wander.lua`:
+
+```lua
+wander = {}
+
+local thinks = {}
+
+function wander.on_think(serial)
+    thinks[serial] = (thinks[serial] or 0) + 1
+
+    if thinks[serial] % 4 == 0 then
+        npc.step(serial, dice.roll("1d8") - 1)
+    end
+end
+
+function wander.on_speech(serial, speaker, text)
+    if text:lower():find("hello", 1, true) then
+        wait(1)
+        npc.say(serial, "Well met, traveller.")
+    end
+end
+```
+
+Reload one script with `script reload mobiles/wander.lua`. Its table is replaced,
+so the NPCs use the new functions from their next think; state kept in `local`
+tables of the old file starts again.
 
 ## Reload and ownership
 
