@@ -24,6 +24,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 /// </summary>
 public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
 {
+    public const string PickupFunction = "on_pickup";
+
     private readonly ILogger _logger = Log.ForContext<LiftRequestPacketHandler>();
     private readonly IItemService _items;
     private readonly IMobileService _mobiles;
@@ -32,6 +34,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private readonly ITileDataService _tiles;
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
+    private readonly IItemScriptService? _scripts;
 
     public LiftRequestPacketHandler(
         IItemService items,
@@ -40,10 +43,12 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         IItemSerialPool serials,
         ITileDataService tiles,
         IPacketSendService sender,
-        ITooltipService tooltips
+        ITooltipService tooltips,
+        IItemScriptService? scripts = null
     )
     {
         _tooltips = tooltips;
+        _scripts = scripts;
         _items = items;
         _mobiles = mobiles;
         _view = view;
@@ -110,6 +115,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         }
 
         session.Set(ItemSessionKeys.Held, new(item.Id));
+        _scripts?.Queue(item, PickupFunction, (long)session.CharacterId.Value);
 
         if (onGround)
         {

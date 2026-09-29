@@ -32,6 +32,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemService _items;
     private readonly MobileService _mobiles;
     private readonly ItemEntity _groundGold = Item(0x40000007, 100);
+    private readonly RecordingItemScriptService _scripts = new();
     private readonly StubPacketSendService _sender = new StubPacketSendService().Ignore<PropertyListInfoPacket>();
     private readonly ItemEntity _backpack = Item(0x40000001, 1);
     private readonly ItemEntity _coins = Item(0x40000002, 250);
@@ -109,6 +110,52 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal([typeof(LiftRejectPacket), typeof(WornItemPacket)], _sender.Sent.Select(packet => packet.GetType()));
         Assert.Equal(LiftRejectReasonType.CannotLift, ((LiftRejectPacket)_sender.Sent[0]).Reason);
         Assert.Equal(_backpack.Id, ((WornItemPacket)_sender.Sent[1]).Item);
+    }
+
+    [Fact]
+    public async Task Handle_ALift_QueuesOnPickupWithThePicker_ASecondWhileHoldingDoesNot()
+    {
+        _scripts.Scripted.Add("shirt");
+        _scripts.Scripted.Add("item");
+        await StartAsync(Aria);
+
+        await LiftAsync(_shirt.Id, 1);
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Equal(["0x40000008 on_pickup 2"], _scripts.Queued);
+    }
+
+    [Fact]
+    public async Task Handle_PartOfAStack_QueuesOnPickupOfTheLiftedPartOnly()
+    {
+        _scripts.Scripted.Add("item");
+        await StartAsync(Aria);
+
+        await LiftAsync(_coins.Id, 50);
+
+        Assert.Equal(["0x40000002 on_pickup 2"], _scripts.Queued);
+    }
+
+    [Fact]
+    public async Task Handle_AGroundItemLifted_QueuesOnPickup()
+    {
+        _scripts.Scripted.Add("item");
+        await StartAsync(Aria);
+
+        await LiftAsync(_groundGold.Id, 100);
+
+        Assert.Equal(["0x40000007 on_pickup 2"], _scripts.Queued);
+    }
+
+    [Fact]
+    public async Task Handle_ARefusedLift_QueuesNothing()
+    {
+        _scripts.Scripted.Add("shirt");
+        await StartAsync(Aria);
+
+        await LiftAsync(_otherShirt.Id, 1);
+
+        Assert.Empty(_scripts.Queued);
     }
 
     [Fact]
@@ -324,7 +371,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private Task LiftAsync(Serial item, int amount)
     {
-        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles));
+        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles), _scripts);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new LiftRequestPacket { Item = item, Amount = amount }));
     }
