@@ -223,6 +223,8 @@ script_id = "potion"
 | Function | When |
 | --- | --- |
 | `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Items inside a container lying on the ground cannot be used yet. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled; after the wait the item may have moved, so check it again, for example `item.owner(serial) == user`. |
+| `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`: dropped on the paperdoll, or worn by another mobile. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item. |
+| `on_unequip(serial, wearer)` | The item left the layer of `wearer`: dropped in a container or on the ground, merged into a stack (the item is gone then, so `item.*` gives `nil`), or worn by another mobile, in which case `on_unequip` comes before its `on_equip`. |
 
 The script acts on its item with the `item` module, passing its serial; `user` is
 the serial of the player. The shipped `scripts/items/potion.lua`:
