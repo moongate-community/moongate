@@ -213,6 +213,19 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterMapping<ICharacterLeaveWorldService, CharacterLeaveWorldService>();
             container.Register<ITargetService, TargetService>(Reuse.Singleton);
             container.RegisterMapping<ISessionClosedListener, ITargetService>();
+            container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
+            container.RegisterCommand<SaveCommand>(
+                "save",
+                "Saves the world and broadcasts world saved after successful completion.",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.Administrator
+            );
+            container.RegisterCommand<BroadcastCommand>(
+                "broadcast",
+                "Sends a system message to every player in this world: broadcast <text>.",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.Administrator
+            );
             container.RegisterCommand<SpawnCommand>(
                 "spawn",
                 "Spawns an NPC from a mobile template where you target: spawn <template>.",

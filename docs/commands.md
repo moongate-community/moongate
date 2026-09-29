@@ -7,8 +7,10 @@ passwords containing spaces are not supported.
 
 The command registry describes which commands may run from `InGame` and their
 minimum account level. The console is treated as an administrator; in-game
-commands use the invoking session's account level. The command and its output
-are never broadcast to nearby players. Use `..text` to say `.text` literally.
+commands use the invoking session's account level. Command input and ordinary
+command output stay private to the caller. `broadcast` explicitly sends a system
+message to everyone in the local world, and a successful `save` announces completion.
+Use `..text` to say `.text` literally.
 
 | Command | Console | In-game registration | Minimum in-game level | Purpose |
 | --- | --- | --- | --- | --- |
@@ -17,6 +19,8 @@ are never broadcast to nearby players. Use `..text` to say `.text` literally.
 | `script` | Game/Standalone | No | — | Reload one Lua script or show script metrics |
 | `account` | Login/Standalone | Yes | Administrator | Create an account in the Accounts database |
 | `character` | Game/Standalone | Yes | GameMaster | List characters pending deletion and restore them |
+| `save` | Game/Standalone | Yes | Administrator | Save the world and announce completion |
+| `broadcast` | Game/Standalone | Yes | Administrator | Send a system message to players on this instance |
 
 ## Help
 
@@ -98,3 +102,40 @@ the deletion and gives the character the first free slot; if the account filled
 up meanwhile it stays without a slot, may exceed the limit by one, and appears in
 the list once a slot frees. Serials
 are hexadecimal with `0x` (`0x0000002A`) or decimal.
+
+## Save
+
+```text
+save
+```
+
+In game, administrators use `.save`. The command requests a save through the existing
+world save coordinator and waits for durable persistence to finish. A request made
+during another save joins that save rather than starting a competing operation.
+Each successful command broadcasts exactly `world saved` to connected characters
+currently in the world on this instance, across all maps. The console also prints
+the completion message; an in-game caller receives it through the broadcast.
+
+A failed save produces an error for the caller and no success broadcast. Extra
+arguments print usage without saving. Automatic and shutdown saves keep their
+existing behavior; this announcement belongs to the `save` command.
+
+## Broadcast
+
+```text
+broadcast Server maintenance in five minutes.
+```
+
+In game, administrators use `.broadcast Server maintenance in five minutes.`.
+The text is delivered as a Unicode system chat message to connected characters
+currently in the world on this instance, regardless of map or distance. Character
+selection sessions and disconnected clients are excluded. Other server instances
+do not receive the message.
+
+Text after the command name is sent without needing quotes. Leading and trailing
+whitespace is trimmed; spaces inside the message are preserved. Empty input prints
+usage and sends nothing. The caller receives the number of players whose outgoing
+queues accepted the message; this is not a client receipt acknowledgment. In-game
+input retains the existing 128-character speech limit, including the dot and command.
+Console messages must fit both the Unicode speech packet and the compressed transport
+limit. Oversized messages are rejected before any player receives them.
