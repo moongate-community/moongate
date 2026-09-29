@@ -38,6 +38,8 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _otherBackpack = Item(0x40000004, 1);
     private readonly ItemEntity _otherDagger = Item(0x40000005, 1);
     private readonly ItemEntity _bolts = new() { Id = new(0x40000006), TemplateId = "bolts", ItemId = 0x1BFB, Amount = 10 };
+    private readonly ItemEntity _shirt = new() { Id = new(0x40000008), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
+    private readonly ItemEntity _otherShirt = new() { Id = new(0x40000009), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
     private readonly StubItemSerialPool _pool = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService().Item(0x0EED, TileFlagType.Generic, 0);
 
@@ -56,10 +58,68 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         _otherBackpack.Equip(Bran, LayerType.Backpack);
         _otherDagger.PutInContainer(_otherBackpack.Id, new Point2D(60, 80));
         _bolts.PutInContainer(_backpack.Id, new Point2D(70, 90));
-        _items.Add([_backpack, _coins, _dagger, _otherBackpack, _otherDagger, _bolts]);
+        _shirt.Equip(Aria, LayerType.Shirt);
+        _otherShirt.Equip(Bran, LayerType.Shirt);
+        _items.Add([_backpack, _coins, _dagger, _otherBackpack, _otherDagger, _bolts, _shirt, _otherShirt]);
         _pool.Serials.Enqueue(new Serial(0x40000100));
         _items.Add([_groundGold]);
         _items.PlaceOnGround(_groundGold, MapType.Trammel, new Point3D(1497, 1628, 0));
+    }
+
+    [Fact]
+    public async Task Handle_AWornItemOfTheCharacter_LiftsItAndTakesItOffForTheOthers()
+    {
+        await StartAsync(Aria);
+
+        await LiftAsync(_shirt.Id, 1);
+
+        Assert.Equal(new HeldItem(_shirt.Id), _session.Get(ItemSessionKeys.Held));
+        Assert.Equal([$"Unworn {Aria.Value} {_shirt.Id.Value}"], _view.Calls);
+        Assert.Empty(_sender.Sent);
+        // Worn until it is dropped somewhere.
+        Assert.Equal((Aria, LayerType.Shirt), (_shirt.MobileId!.Value, _shirt.Layer!.Value));
+    }
+
+    [Fact]
+    public async Task Handle_PartOfAWornStack_IsRefused()
+    {
+        // Splitting it would leave two items on one layer, which no save can write.
+        var torches = new ItemEntity { Id = new(0x4000000A), TemplateId = "torch", ItemId = 0x0EED, Amount = 5 };
+        torches.Equip(Aria, LayerType.TwoHanded);
+        _items.Add([torches]);
+        await StartAsync(Aria);
+
+        await LiftAsync(torches.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(5, torches.Amount);
+        Assert.Single(_items.GetWorn(Aria), item => item.Layer == LayerType.TwoHanded);
+    }
+
+    [Fact]
+    public async Task Handle_TheBackpack_IsRefusedAndShownBackOnTheCharacter()
+    {
+        await StartAsync(Aria);
+
+        await LiftAsync(_backpack.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        // As ModernUO: the reject, then the equip update that puts it back on the paperdoll.
+        Assert.Equal([typeof(LiftRejectPacket), typeof(WornItemPacket)], _sender.Sent.Select(packet => packet.GetType()));
+        Assert.Equal(LiftRejectReasonType.CannotLift, ((LiftRejectPacket)_sender.Sent[0]).Reason);
+        Assert.Equal(_backpack.Id, ((WornItemPacket)_sender.Sent[1]).Item);
+    }
+
+    [Fact]
+    public async Task Handle_AnotherCharactersWornItem_IsRefusedWithoutShowingIt()
+    {
+        await StartAsync(Aria);
+
+        await LiftAsync(_otherShirt.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent));
+        Assert.Empty(_view.Calls);
     }
 
     [Fact]
@@ -218,16 +278,6 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         await LiftAsync(_otherDagger.Id, 1);
 
         Assert.Equal(LiftRejectReasonType.AreHolding, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
-    }
-
-    [Fact]
-    public async Task Handle_TheWornBackpack_IsRefusedWithoutAContainerUpdate()
-    {
-        await StartAsync(Aria);
-
-        await LiftAsync(_backpack.Id, 1);
-
-        Assert.Equal(LiftRejectReasonType.CannotLift, Assert.IsType<LiftRejectPacket>(Assert.Single(_sender.Sent)).Reason);
     }
 
     [Fact]

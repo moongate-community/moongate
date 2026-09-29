@@ -71,6 +71,11 @@ public interface IItemService : IPersistenceDeletionSource
     void PlaceOnGround(ItemEntity item, MapType map, Point3D location);
 
     /// <summary>
+    ///     Puts a live item on a mobile, on the given layer, taking it out of the sector grid and indexing it as worn.
+    /// </summary>
+    void Equip(ItemEntity item, Serial mobile, LayerType layer);
+
+    /// <summary>
     ///     Gets whether the mobile can lift the ground item or drop onto it, as ModernUO: same map, within 2 tiles, in line
     ///     of sight.
     /// </summary>

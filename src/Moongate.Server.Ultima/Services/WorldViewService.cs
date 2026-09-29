@@ -199,6 +199,32 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
+    public void WornItemChanged(MobileEntity wearer, ItemEntity item)
+    {
+        var worn = new WornItemPacket(item);
+
+        foreach (var other in _sectors.GetMobilesInRange(wearer.Map, wearer.Location, ViewRange))
+        {
+            if (_sessions.TryGetValue(other.Id, out var viewer))
+            {
+                _sender.TrySend(viewer.SessionId, worn);
+            }
+        }
+    }
+
+    public void WornItemRemoved(MobileEntity wearer, ItemEntity item)
+    {
+        var remove = new RemoveEntityPacket(item.Id);
+
+        foreach (var other in _sectors.GetMobilesInRange(wearer.Map, wearer.Location, ViewRange))
+        {
+            if (other.Id != wearer.Id && _sessions.TryGetValue(other.Id, out var viewer))
+            {
+                _sender.TrySend(viewer.SessionId, remove);
+            }
+        }
+    }
+
     private static IOutgoingPacket WorldItem(ItemEntity item, ClientVersion? version)
     {
         var spot = item.GroundLocation!.Value;

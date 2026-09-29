@@ -176,6 +176,7 @@ name = "crescent blade"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -220,6 +221,7 @@ name = "no-dachi"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -286,6 +288,7 @@ name = "daisho"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -346,6 +349,7 @@ name = "rune blade"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -544,6 +548,7 @@ name = "gargish daisho"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]

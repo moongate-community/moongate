@@ -23,6 +23,7 @@ name = "pickaxe"
 rarity = "common"
 weight = 11.0
 layer = "two_handed"
+two_handed_weapon = true
 buy_price = 34
 sell_price = 17
 decays = true

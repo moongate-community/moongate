@@ -6,6 +6,7 @@ name = "soul glaive"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -28,6 +29,7 @@ name = "boomerang"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -50,6 +52,7 @@ name = "cyclone"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]

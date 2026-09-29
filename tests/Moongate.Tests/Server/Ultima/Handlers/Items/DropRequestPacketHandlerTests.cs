@@ -49,6 +49,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _dagger = Item(0x40000005, 0x0F52);
     private readonly ItemEntity _otherBackpack = Item(0x40000006, BackpackGraphic);
     private readonly ItemEntity _pile = Item(0x40000007, CoinGraphic);
+    private readonly ItemEntity _shirt = Item(0x40000008, 0x1517);
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -68,7 +69,8 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
         _coins.Amount = 30;
         _pile.Amount = 70;
         _pile.PutInContainer(_backpack.Id, new Point2D(120, 100));
-        _items.Add([_backpack, _bag, _innerBag, _coins, _dagger, _otherBackpack, _pile]);
+        _shirt.Equip(Aria, LayerType.Shirt);
+        _items.Add([_backpack, _bag, _innerBag, _coins, _dagger, _otherBackpack, _pile, _shirt]);
     }
 
     [Fact]
@@ -287,6 +289,43 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AWornItemThatCannotBeDropped_GoesBackOnTheWearer()
+    {
+        await HoldingAsync(_shirt);
+
+        await DropAsync(_shirt.Id, 1500, 1628, Ground);
+
+        Assert.Equal((Aria, LayerType.Shirt), (_shirt.MobileId!.Value, _shirt.Layer!.Value));
+        Assert.Equal([$"Worn {Aria.Value} {_shirt.Id.Value}"], _view.Calls);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_ASerialThatIsNotTheHeldItem_BouncesTheHeldItem()
+    {
+        await HoldingAsync(_shirt);
+
+        await DropAsync(_dagger.Id, 60, 70, _backpack.Id);
+
+        Assert.Equal((Aria, LayerType.Shirt), (_shirt.MobileId!.Value, _shirt.Layer!.Value));
+        Assert.Equal([$"Worn {Aria.Value} {_shirt.Id.Value}"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_AWornItemIntoTheBackpack_IsNoLongerWorn()
+    {
+        await HoldingAsync(_shirt);
+
+        await DropAsync(_shirt.Id, 60, 70, _backpack.Id);
+
+        Assert.Equal(_backpack.Id, _shirt.ContainerId);
+        Assert.Null(_shirt.MobileId);
+        Assert.DoesNotContain(_shirt, _items.GetWorn(Aria));
+        // Anyone who came into range while it was held still saw it on the character.
+        Assert.Equal([$"Unworn {Aria.Value} {_shirt.Id.Value}"], _view.Calls);
+    }
+
+    [Fact]
     public async Task Handle_OnTheGroundOutOfSight_BouncesBackIntoTheContainer()
     {
         _sight.Allow = false;
@@ -382,13 +421,13 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task Handle_AnotherItemThanTheHeldOne_MovesNothingAndFreesTheHand()
+    public async Task Handle_AnotherItemThanTheHeldOne_MovesNothingAndPutsTheHeldOneBack()
     {
         await HoldingAsync(_coins);
 
         await DropAsync(_dagger.Id, 60, 70, _bag.Id);
 
-        Assert.Empty(_sender.Sent);
+        Assert.Equal(_coins.Id, Assert.IsType<ContainerItemUpdatePacket>(Assert.Single(_sender.Sent)).Item.Serial);
         Assert.Equal((_backpack.Id, _backpack.Id), (_coins.ContainerId!.Value, _dagger.ContainerId!.Value));
         Assert.Null(_session.Get(ItemSessionKeys.Held));
     }

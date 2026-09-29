@@ -272,6 +272,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             // After the data loaders and the maps (the sector grid needs them), before the game server takes players and
             // the world save (40): the items on the ground are live before anyone can see them.
             container.AddMoongateService<IItemService, ItemService>(10);
+            container.AddMoongateService<IEquipmentService, EquipmentService>();
             // As the ground items: the NPCs are live before the game server takes players.
             container.AddMoongateService<INpcService, NpcService>(10);
         }

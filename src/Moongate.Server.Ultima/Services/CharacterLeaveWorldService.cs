@@ -64,8 +64,10 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         var items = carried.Select(item => item.Snapshot()).ToList();
         var carriedIds = carried.Select(item => item.Id).ToHashSet();
         // What it dropped on the ground or grew there: its rows still say what they were before.
+        // One someone carries or wears now is saved by that owner's leave or the world save: writing it here could
+        // take a layer that owner's own saved row still holds.
         var released = _items.TakeReleasedOf(character.Id)
-                             .Where(item => !carriedIds.Contains(item.Id))
+                             .Where(item => !carriedIds.Contains(item.Id) && _items.GetOwner(item) is null)
                              .Select(item => item.Snapshot())
                              .ToList();
         // Taken on the loop: from now on only this leave deletes them, in the transaction that saves their stacks.
@@ -75,6 +77,8 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         _view.Left(character);
         _mobiles.LeaveWorld(character.Id);
         items.AddRange(released);
+        // Unworn items first: a layer taken off one item is free before another is written onto it.
+        items = items.OrderBy(item => item.MobileId is not null).ToList();
         Track(Task.Run(() => SaveAndPublishAsync(snapshot, items, merged)), character.AccountId);
     }
 
@@ -110,15 +114,16 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
                     await transaction.GetDataAccess<MobileEntity>().UpsertAsync(character);
                     var data = transaction.GetDataAccess<ItemEntity>();
 
+                    // Before the items: a merged-away worn item must free its layer for the one worn now.
+                    foreach (var serial in merged)
+                    {
+                        await data.DeleteAsync(serial);
+                    }
+
                     // After the character: the worn items point at its row.
                     foreach (var item in items)
                     {
                         await data.UpsertAsync(item);
-                    }
-
-                    foreach (var serial in merged)
-                    {
-                        await data.DeleteAsync(serial);
                     }
                 }
             );

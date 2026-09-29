@@ -61,14 +61,16 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         }
 
         var onGround = item?.GroundLocation is not null;
+        var worn = item is not null && IsOwnWornItem(session, item);
 
-        // An item inside a carried container, or on the ground: worn items need the paperdoll.
+        // An item inside a carried container, one the character wears (from the paperdoll), or on the ground.
         if (!session.CharacterId.IsValid ||
             item is null ||
-            (!onGround && (item.ContainerId is null || _items.GetOwner(item) != session.CharacterId)) ||
+            (!onGround && !worn && (item.ContainerId is null || _items.GetOwner(item) != session.CharacterId)) ||
             packet.Amount <= 0 ||
             packet.Amount > item.Amount ||
-            (packet.Amount < item.Amount && !IsStackable(item)))
+            // A worn stack is taken whole: the rest of a split would be a second item on the same layer.
+            (packet.Amount < item.Amount && (worn || !IsStackable(item))))
         {
             Refuse(session, LiftRejectReasonType.CannotLift, item);
 
@@ -110,6 +112,17 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             _items.Hide(item);
             _view.ItemDisappeared(item);
         }
+        else if (worn && _mobiles.TryGet(session.CharacterId, out var wearer))
+        {
+            // It stays on until it is dropped; the others see it taken off now.
+            _view.WornItemRemoved(wearer, item);
+        }
+    }
+
+    // The character's own worn item, except the backpack, which never leaves it.
+    private static bool IsOwnWornItem(GameSession session, ItemEntity item)
+    {
+        return item.MobileId == session.CharacterId && item.Layer is { } layer && layer != LayerType.Backpack;
     }
 
     private bool CanReachFromTheGround(GameSession session, ItemEntity item, out LiftRejectReasonType reason)
@@ -154,6 +167,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             {
                 _view.ShowItemTo(mobile, item);
             }
+        }
+        else if (item?.MobileId is not null && item.MobileId == session.CharacterId)
+        {
+            // Put back on the paperdoll the client took it off.
+            _sender.TrySend(session.SessionId, new WornItemPacket(item));
         }
         else if (item?.ContainerId is not null &&
                  session.CharacterId.IsValid &&

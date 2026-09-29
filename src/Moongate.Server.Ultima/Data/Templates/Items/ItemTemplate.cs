@@ -94,6 +94,13 @@ public class ItemTemplate
     public LayerType? Layer { get; set; }
 
     /// <summary>
+    ///     Whether the item is a weapon held in both hands (a bow, a halberd), as POL's itemdesc <c>TwoHanded</c>: worn
+    ///     on <see cref="LayerType.TwoHanded" />, it leaves no hand free. Anything else on that layer (a shield, a
+    ///     torch) is held in the other hand and goes with a one-handed weapon.
+    /// </summary>
+    public bool? TwoHandedWeapon { get; set; }
+
+    /// <summary>
     ///     The price vendors sell the item for; unset means vendors do not sell it.
     /// </summary>
     public int? BuyPrice { get; set; }

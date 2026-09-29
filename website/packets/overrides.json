@@ -118,7 +118,7 @@
       }
     ],
     "notes": "Only a whole carried item can be lifted. Rejection sends 0x27.",
-    "handler": "LiftRequestPacketHandler: picks up a whole item the character carries"
+    "handler": "LiftRequestPacketHandler: picks up an item the character carries or wears, or one on the ground within 2 tiles"
   },
   "0x08:incoming": {
     "category": "Items",
@@ -337,7 +337,7 @@
         "name": "Layer",
         "type": "byte",
         "size": "1",
-        "description": "Equipment layer"
+        "description": "Layer the client suggests; the server uses the item's own"
       },
       {
         "offset": "6",
@@ -347,8 +347,8 @@
         "description": "Target character."
       }
     ],
-    "notes": "Equipping is pending; the server returns the held item to its container.",
-    "handler": "EquipRequestPacketHandler: bounces the held item back (equipping is not built yet)"
+    "notes": "Wears the held item on the own character when its layer is free and both hands fit; anything else bounces back.",
+    "handler": "EquipRequestPacketHandler: puts the held item on the character, or bounces it back"
   },
   "0x1B:outgoing": {
     "category": "World",
@@ -2799,5 +2799,58 @@
     ],
     "notes": "Opens a mobile's paperdoll.",
     "handler": "UseRequestPacketHandler: sent in answer to a double click."
+  },
+  "0x2E:outgoing": {
+    "category": "Items",
+    "tags": [
+      "Items",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Item serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The worn item."
+      },
+      {
+        "offset": "5",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item graphic."
+      },
+      {
+        "offset": "7",
+        "name": "Layer",
+        "type": "ushort",
+        "size": "2",
+        "description": "Layer, written as 0 then the layer byte."
+      },
+      {
+        "offset": "9",
+        "name": "Wearer serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The mobile wearing it."
+      },
+      {
+        "offset": "13",
+        "name": "Hue",
+        "type": "ushort",
+        "size": "2",
+        "description": "Item hue."
+      }
+    ],
+    "notes": "Shows an item worn by a mobile.",
+    "handler": "EquipRequestPacketHandler and the world view: sent when an item goes on."
   }
 }

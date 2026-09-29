@@ -20,7 +20,9 @@ public static class WorldItemsContainerExtensions
     public static Container AddLiveWorldItems(this Container container)
     {
         return container.AddPersistenceWorld<ItemEntity>(
-            () => container.Resolve<IItemService>().Items,
+            // Unworn items first: a layer taken off one item is free before another is written onto it, which the
+            // unique (mobile, layer) index needs.
+            () => container.Resolve<IItemService>().Items.OrderBy(item => item.MobileId is not null),
             item => item.Snapshot(),
             new LazyDeletionSource(() => container.Resolve<IItemService>())
         );

@@ -6,6 +6,7 @@ name = "crook"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -28,6 +29,7 @@ name = "shepherd's crook"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -50,6 +52,7 @@ name = "gnarled staff"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -72,6 +75,7 @@ name = "black staff"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -94,6 +98,7 @@ name = "quarter staff"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -116,6 +121,7 @@ name = "halberd"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -139,6 +145,7 @@ rarity = "common"
 movable = true
 weight = 16.0
 layer = "two_handed"
+two_handed_weapon = true
 buy_price = 40
 sell_price = 20
 decays = true
@@ -152,6 +159,7 @@ name = "bardiche"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -174,6 +182,7 @@ name = "scythe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -196,6 +205,7 @@ name = "bladed staff"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -218,6 +228,7 @@ name = "double bladed staff"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -240,6 +251,7 @@ name = "wild staff"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -262,6 +274,7 @@ name = "gargish bardiche"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -284,6 +297,7 @@ name = "gargish scythe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -306,6 +320,7 @@ name = "serpentstone staff"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -328,6 +343,7 @@ name = "gargish gnarled staff"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -350,6 +366,7 @@ name = "glass staff"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
