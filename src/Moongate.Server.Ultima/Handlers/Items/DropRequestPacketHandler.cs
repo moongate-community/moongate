@@ -6,6 +6,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
+using Moongate.Server.Ultima.Handlers.Items.Internal;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
@@ -108,17 +109,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 
         _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
 
-        // A lifted ground item still lies where it was: it is shown there again; anything else goes back into its
-        // container.
-        if (item.GroundLocation is not null)
-        {
-            _items.Show(item);
-            _view.ItemAppeared(item);
-        }
-        else
-        {
-            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
-        }
+        HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender);
     }
 
     // Onto a carried stack of the same kind: the stack grows and the held item is absorbed.
