@@ -52,7 +52,8 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0xAE` | `UnicodeSpeechMessagePacket` | Outgoing | Variable, minimum 50 | Player speech and private command output |
 | `0x24` | `DisplayContainerPacket` | Outgoing | Fixed 7, or 9 from client 7.0.9.0 | — |
 | `0x3C` | `ContainerContentPacket` | Outgoing | Variable, minimum 5 | — |
-| `0x09`, `0x34`, `0x72` | `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket` | Incoming | Fixed 5, 10, 5 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x09` | `LookRequestPacket` | Incoming | Fixed 5 | `LookRequestPacketHandler`: shows the name over the object (`0xC1`) |
+| `0x34`, `0x72` | `MobileQueryPacket`, `WarModeRequestPacket` | Incoming | Fixed 10, 5 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0xC8` | `UpdateRangePacket` | Incoming | Fixed 2 | `UpdateRangePacketHandler`: answers with the server's view range |
 | `0xC8` | `ViewRangePacket` | Outgoing | Fixed 2 | — |
 | `0x88` | `DisplayPaperdollPacket` | Outgoing | Fixed 66 | — |
@@ -68,7 +69,12 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
-| `0x12`, `0xBF`, `0xD6`, `0xE1` | `TextCommandPacket`, `ExtendedCommandPacket`, `QueryPropertiesPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x12`, `0xE1` | `TextCommandPacket`, `ClientTypePacket` | Incoming | Variable | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0xBF` | `ExtendedCommandPacket` | Incoming | Variable | `ExtendedCommandPacketHandler`: subcommand `0x10` answers a tooltip; the others are ignored for now |
+| `0xD6` | `QueryPropertiesPacket` | Incoming | Variable, at most 500 serials | `QueryPropertiesPacketHandler`: one `0xD6` per object the character sees |
+| `0xD6` | `PropertyListPacket` | Outgoing | Variable | — |
+| `0xDC` | `PropertyListInfoPacket` | Outgoing | Fixed 9 | — |
+| `0xC1` | `LocalizedMessagePacket` | Outgoing | Variable | — |
 
 Normal speech (`say`) reaches the speaker and other player characters within 15
 tiles on the same map. Whisper, yell, emote, global chat and the separate chat
@@ -225,6 +231,34 @@ first byte, even on failure. Empty input returns false with opcode zero; inspect
 input length to distinguish that case. Decoding needs one **complete incoming
 frame**, including its header. It does not buffer a TCP stream. Outgoing-only
 packets have metadata but no incoming parser.
+
+## Tooltips
+
+The character list flags (`0xA9`) include AOS (`0x20`), so the client uses AOS tooltips
+(object property lists) and asks for them with `0xD6` (a list of serials, at most 500; a
+length that is not whole serials is refused) or `0xBF` subcommand `0x10` (one serial). The
+server answers one `0xD6` per object the character can see: an item it carries or wears, an
+item worn by a mobile or lying on the ground within `ultima.world.view_range`, or a mobile in
+that range on its map; anything else gets nothing. `ITooltipService` builds the lines, as
+ModernUO and UOX3:
+
+- an item's name: the client's cliloc for its graphic (1020000 + graphic, 1078872 + graphic
+  from `0x4000`), which the client shows in its own language, or the item's or template's
+  name as text; a stack uses 1050039 with the amount;
+- blessed or newbied (1038021) or cursed (1049643), the item's loot type else the template's;
+- the weight of the whole stack (1072788 / 1072789);
+- above `common`, the rarity: messages 30001–30004 in the server language, coloured;
+- a mobile: 1050045 with its name and title.
+
+Free text goes through the clilocs whose whole text is `~1_NOTHING~` (1042971, 1070722, ...),
+one per line; an argument is cut at 504 characters, which older clients cannot exceed. The
+tooltip's revision is a 26-bit hash of its lines, as ModernUO: `0xD6` carries it, and `0xDC`
+carries it with bit 30 set. Every `0x78` is followed by the `0xDC` of the mobile and of each
+worn item, every ground item shown (`0x1A`/`0xF3`) and every `0x2E` by the item's, and a drop
+that merges or places an item, or a bounce into a container, sends the item's `0xDC`: the
+client asks again when a revision changes. Nothing is cached: a tooltip is built when it is
+asked or its revision is sent. A single click (`0x09`) shows the first line, the name, over the
+object with `0xC1`.
 
 ## Define a packet and test its bytes
 

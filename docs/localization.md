@@ -151,6 +151,12 @@ The Ultima plugin registers the module in game and standalone modes, with the
 other data services. `definitions.lua` declares it for editor completion, with
 `localization.text` returning `string?`.
 
+## Moongate's own messages
+
+Numbers from 30000 are Moongate's, not UOX3's: 30001–30004 are the item rarities
+(uncommon, rare, epic, legendary) shown in tooltips, in English and Italian; the other
+languages fall back to English.
+
 ## Add or change a text
 
 1. Add the message to `data/messages/eng.toml` with a number that is not used yet.
