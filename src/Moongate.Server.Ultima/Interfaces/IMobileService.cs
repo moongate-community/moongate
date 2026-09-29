@@ -57,9 +57,14 @@ public interface IMobileService : IPersistenceDeletionSource
 
     /// <summary>
     ///     Takes the mobile out of the world and queues its row for deletion by the next world save, in the same
-    ///     transaction as the live mobiles; its items go with it through the database's cascading keys. False when it is
-    ///     not in the world.
+    ///     transaction as the live mobiles; its item rows go with it through the database's cascading keys. False when it
+    ///     is not in the world.
     /// </summary>
+    /// <remarks>
+    ///     Remove its live items from <see cref="IItemService" /> first: the save writes the mobiles before the items, so
+    ///     a live item of a deleted mobile would be written back pointing at a missing row, and every world save would
+    ///     fail.
+    /// </remarks>
     bool Delete(Serial serial);
 
     /// <summary>
