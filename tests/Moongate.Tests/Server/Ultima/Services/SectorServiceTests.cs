@@ -462,6 +462,45 @@ public sealed class SectorServiceTests
         Assert.False(ticks.IsAwake(npc.Id));
     }
 
+    [Fact]
+    public void Move_APlayerToAnotherMap_PutsTheOldNpcsToSleepAndWakesTheNewOnes()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        var trammelOrc = Mobile(0x100, 1600, 1600);
+        var feluccaOrc = Mobile(0x101, 1600, 1600, MapType.Felucca);
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(trammelOrc);
+        sectors.Add(feluccaOrc);
+        sectors.Add(aria);
+
+        aria.Map = MapType.Felucca;
+        sectors.Move(aria);
+
+        Assert.False(ticks.IsAwake(trammelOrc.Id));
+        Assert.True(ticks.IsAwake(feluccaOrc.Id));
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600, 1600, 0)));
+    }
+
+    [Fact]
+    public void Move_APlayerStepByStep_LeavesNoActiveSectorBehind()
+    {
+        var sectors = TestSectors.Create();
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(aria);
+
+        for (var x = 1601; x <= 1600 + 6 * 16; x++)
+        {
+            aria.Location = new Point3D(x, 1600, 0);
+            sectors.Move(aria);
+        }
+
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600, 1600, 0)));
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600 + 3 * 16, 1600, 0)));
+        Assert.True(sectors.IsActive(MapType.Trammel, new Point3D(1600 + 4 * 16, 1600, 0)));
+        Assert.Equal([aria], sectors.GetMobilesInRange(MapType.Trammel, new Point3D(1600 + 6 * 16, 1600, 0), 18));
+    }
+
     private static MobileEntity Player(uint serial, int x, int y)
     {
         var player = Mobile(serial, x, y);

@@ -8,7 +8,7 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     One repeating <c>npc_think</c> timer per awake NPC. The first think comes after a random 0–255 ms, as ModernUO's
+///     One repeating <c>npc_think</c> timer per awake NPC. The first think comes after a random 1–256 ms (the wheel refuses a zero delay), as ModernUO's
 ///     AITimer, so NPCs woken together do not think in the same tick.
 /// </summary>
 public sealed class NpcTickService : INpcTickService
@@ -44,13 +44,22 @@ public sealed class NpcTickService : INpcTickService
             return;
         }
 
-        _awake[npc.Id] = _timers.RegisterTimer(
-            TimerName,
-            TimeSpan.FromMilliseconds(_config.ThinkIntervalMs),
-            () => Think(npc),
-            TimeSpan.FromMilliseconds(Random.Shared.Next(256)),
-            true
-        );
+        // The sectors call Wake in the middle of their bookkeeping: a wheel that refuses (closed or full) must not
+        // throw into them, so the NPC just stays asleep.
+        try
+        {
+            _awake[npc.Id] = _timers.RegisterTimer(
+                TimerName,
+                TimeSpan.FromMilliseconds(_config.ThinkIntervalMs),
+                () => Think(npc),
+                TimeSpan.FromMilliseconds(Random.Shared.Next(1, 257)),
+                true
+            );
+        }
+        catch (InvalidOperationException exception)
+        {
+            _logger.Warning(exception, "NPC {Serial} ({Template}) could not get a think timer", npc.Id, npc.TemplateId);
+        }
     }
 
     public void Sleep(MobileEntity npc)

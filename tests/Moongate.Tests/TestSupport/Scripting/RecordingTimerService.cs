@@ -45,6 +45,10 @@ public sealed class RecordingTimerService : ITimerService
             throw new InvalidOperationException("Timer capacity has been reached.");
         }
 
+        // The same argument checks as the real wheel.
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(interval, TimeSpan.Zero);
+        ArgumentOutOfRangeException.ThrowIfLessThanOrEqual(delay ?? interval, TimeSpan.Zero, nameof(delay));
+
         var id = "t" + ++_next;
         Timers.Add(new(id, name, interval, delay, repeat, callback));
 

@@ -149,7 +149,7 @@ owned worker and completion/error handling.
 The Ultima plugin gives every NPC near a player a repeating `npc_think` timer
 (`INpcTickService`), as ModernUO's `AITimer`. An NPC is near a player when it stands
 in one of the 5×5 sectors of 16×16 cells around a player's sector. The first think
-comes after a random 0–255 ms, so NPCs woken together do not think in the same
+comes after a random 1–256 ms, so NPCs woken together do not think in the same
 tick, then one every `ultima.npcs.think_interval_ms` (default 500 ms).
 
 The sectors switch the timers: when a sector gets its first nearby player its NPCs
