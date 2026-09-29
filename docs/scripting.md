@@ -225,10 +225,13 @@ script_id = "potion"
 | `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Items inside a container lying on the ground cannot be used yet. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled; after the wait the item may have moved, so check it again, for example `item.owner(serial) == user`. |
 | `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`, dropped on the paperdoll. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item. |
 | `on_unequip(serial, wearer)` | The item left the layer of `wearer`: dropped in a container or on the ground, or merged into a stack (the item is gone then, so `item.*` gives `nil`). Logging out, removing an NPC or deleting a mobile with its items raise nothing. |
+| `on_pickup(serial, picker)` | The player `picker` lifts the item from a container, the paperdoll or the ground. While it is held, `item.consume` and `item.delete` refuse it. |
+| `on_drop(serial, dropper)` | The player `dropper` puts the held item down: into a container, on the ground, or onto a stack (the item is gone then, so `item.*` gives `nil`). Not when it bounces back. |
+| `on_create(serial)` | A newly created item enters the world: today the equipment, backpack and loot of a spawned NPC, before that NPC's `on_spawn`. A new character's starting items raise nothing. |
 
-`on_equip` and `on_unequip` run right after the move, on the next turn of the game
-loop, once the players have seen it: a script may then delete or consume the item it
-was taken off.
+`on_equip`, `on_unequip`, `on_pickup`, `on_drop` and `on_create` run right after what
+caused them, on the next turn of the game loop, once the players have seen it: a script
+may then delete or consume the item. They are notifications: none can refuse the move.
 
 The script acts on its item with the `item` module, passing its serial; `user` is
 the serial of the player. The shipped `scripts/items/potion.lua`:
