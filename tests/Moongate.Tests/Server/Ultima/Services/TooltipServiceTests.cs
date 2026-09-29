@@ -196,6 +196,57 @@ public sealed class TooltipServiceTests
     }
 
     [Fact]
+    public void Build_TwoItemsWithTheSameContent_ShareOneCachedTooltip()
+    {
+        var first = Item("robe", 0x1F03);
+        var second = Item("robe", 0x1F03);
+        second.Id = new(0x40000011);
+
+        Assert.Same(_tooltips.Build(first), _tooltips.Build(second));
+    }
+
+    [Fact]
+    public void Build_AChangedItem_GetsANewTooltip()
+    {
+        var gold = Item("gold", 0x0EED);
+        var before = _tooltips.Build(gold);
+
+        gold.Amount = 7;
+
+        var after = _tooltips.Build(gold);
+        Assert.NotSame(before, after);
+        Assert.Equal($"7\t#{1020000 + 0x0EED}", after.Entries[0].Arguments);
+    }
+
+    [Fact]
+    public void Build_AChangedMobile_GetsANewTooltip()
+    {
+        var mage = new MobileEntity { Id = new(0x00000010), Name = "Nystul" };
+        var before = _tooltips.Build(mage);
+
+        mage.Title = "the mage";
+
+        Assert.NotSame(before, _tooltips.Build(mage));
+        Assert.Same(_tooltips.Build(mage), _tooltips.Build(mage));
+    }
+
+    [Fact]
+    public void Build_AFullCache_StartsOver()
+    {
+        var gold = Item("gold", 0x0EED);
+        var first = _tooltips.Build(gold);
+
+        for (var amount = 2; amount <= TooltipService.MaxCachedTooltips + 1; amount++)
+        {
+            gold.Amount = amount;
+            _tooltips.Build(gold);
+        }
+
+        gold.Amount = 1;
+        Assert.NotSame(first, _tooltips.Build(gold));
+    }
+
+    [Fact]
     public void Info_CarriesTheSerialAndTheHashOfTheTooltip()
     {
         var robe = Item("robe", 0x1F03);

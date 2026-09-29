@@ -17,13 +17,15 @@ public sealed class PropertyList
 
     private readonly List<PropertyEntry> _entries = [];
     private int _texts;
+    private int? _hash;
 
     public IReadOnlyList<PropertyEntry> Entries => _entries;
 
     /// <summary>
-    ///     Gets the hash of the lines, 26 bits, as ModernUO masks it: equal lines give an equal hash.
+    ///     Gets the hash of the lines, 26 bits, as ModernUO masks it: equal lines give an equal hash. Computed once,
+    ///     again after a line is added.
     /// </summary>
-    public int Hash => ComputeHash();
+    public int Hash => _hash ??= ComputeHash();
 
     public void Add(int cliloc)
     {
@@ -35,6 +37,7 @@ public sealed class PropertyList
         ArgumentNullException.ThrowIfNull(arguments);
 
         _entries.Add(new(cliloc, arguments.Length > MaxArgumentLength ? arguments[..MaxArgumentLength] : arguments));
+        _hash = null;
     }
 
     /// <summary>

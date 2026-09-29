@@ -259,8 +259,11 @@ mobile coming into view (`0x78`) with each of its worn items, a ground item (`0x
 item put on (`0x2E`), each item of an opened container (`0x3C`), and a container item updated
 (`0x25`) after a split, a merge, a placement or a bounce; the client asks again when a revision
 changes. The character's own `0x78` at world entry is not followed yet: the client asks for
-tooltips it does not have when the cursor is over them. Nothing is cached: a tooltip is built when it is
-asked or its revision is sent. A single click (`0x09`) shows the first line, the name, over the
+tooltips it does not have when the cursor is over them. A tooltip depends only on a few fields of its
+object (for an item: template, graphic, amount, name, rarity, loot type, movable; for a mobile:
+name and title), so it is cached by them: equal objects share one tooltip, and a change gives
+another key, so nothing is ever invalidated. The cache keeps up to 10000 tooltips and starts
+over when full. A single click (`0x09`) shows the first line, the name, over the
 object with `0xC1`.
 
 ## Define a packet and test its bytes

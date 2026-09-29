@@ -1,7 +1,9 @@
+using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Internal.Tooltips;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Tooltips;
 using Moongate.Server.Ultima.Entities.World;
@@ -16,11 +18,18 @@ namespace Moongate.Server.Ultima.Services;
 /// <inheritdoc />
 /// <remarks>
 ///     Clilocs where the client has one, so it shows them in its own language; the server's own texts, such as the
-///     rarity, go through <see cref="ILocalizationService" /> as free text (as UOX3). Built on each request: nothing is
-///     cached.
+///     rarity, go through <see cref="ILocalizationService" /> as free text (as UOX3). A tooltip depends only on a few
+///     fields of its item or mobile (<see cref="ItemTooltipKey" />, <see cref="MobileTooltipKey" />), so it is cached by
+///     them: a change gives another key, and nothing is ever invalidated. The returned lists are shared and must not
+///     be changed.
 /// </remarks>
 public sealed class TooltipService : ITooltipService
 {
+    /// <summary>
+    ///     How many distinct tooltips are kept; a full cache starts over.
+    /// </summary>
+    public const int MaxCachedTooltips = 10_000;
+
     // The client's item names: 1020000 + graphic, and 1078872 + graphic from 0x4000 (ModernUO's LabelNumber).
     private const int ItemNameCliloc = 1020000;
     private const int HighItemNameCliloc = 1078872;
@@ -43,6 +52,8 @@ public sealed class TooltipService : ITooltipService
     private readonly IItemService _items;
     private readonly IMobileService _mobiles;
     private readonly WorldConfig _world;
+    private readonly ConcurrentDictionary<ItemTooltipKey, PropertyList> _itemTooltips = new();
+    private readonly ConcurrentDictionary<MobileTooltipKey, PropertyList> _mobileTooltips = new();
 
     public TooltipService(
         IItemTemplateService templates,
@@ -106,13 +117,19 @@ public sealed class TooltipService : ITooltipService
     {
         ArgumentNullException.ThrowIfNull(item);
 
+        var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own) ? own : (LootType?)null;
+        var key = new ItemTooltipKey(item.TemplateId, item.ItemId, item.Amount, item.Name, item.Rarity, lootType, item.Movable);
+
+        return Cached(_itemTooltips, key, () => BuildItem(item, lootType));
+    }
+
+    private PropertyList BuildItem(ItemEntity item, LootType? ownLootType)
+    {
         var list = new PropertyList();
         _templates.TryGet(item.TemplateId, out var template);
         AddName(list, item, Argument(item.Name ?? template?.Name));
 
-        var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own)
-                           ? own
-                           : template?.EffectiveLootType() ?? LootType.Regular;
+        var lootType = ownLootType ?? template?.EffectiveLootType() ?? LootType.Regular;
 
         if (lootType is LootType.Blessed or LootType.Newbied)
         {
@@ -144,6 +161,27 @@ public sealed class TooltipService : ITooltipService
     {
         ArgumentNullException.ThrowIfNull(mobile);
 
+        return Cached(_mobileTooltips, new MobileTooltipKey(mobile.Name, mobile.Title), () => BuildMobile(mobile));
+    }
+
+    private static PropertyList Cached<TKey>(ConcurrentDictionary<TKey, PropertyList> cache, TKey key, Func<PropertyList> build)
+        where TKey : notnull
+    {
+        if (cache.TryGetValue(key, out var cached))
+        {
+            return cached;
+        }
+
+        if (cache.Count >= MaxCachedTooltips)
+        {
+            cache.Clear();
+        }
+
+        return cache.GetOrAdd(key, _ => build());
+    }
+
+    private PropertyList BuildMobile(MobileEntity mobile)
+    {
         // The client needs a single space for an empty prefix or suffix.
         var list = new PropertyList();
         var title = Argument(mobile.Title);
