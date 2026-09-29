@@ -6,6 +6,7 @@ name = "large battle axe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -28,6 +29,7 @@ name = "two handed axe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -72,6 +74,7 @@ name = "executioner's axe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -94,6 +97,7 @@ name = "battle axe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -116,6 +120,7 @@ name = "axe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -138,6 +143,7 @@ name = "double axe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -160,6 +166,7 @@ name = "ornate axe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -182,6 +189,7 @@ name = "gargish battle axe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -204,6 +212,7 @@ name = "dual short axes"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -226,6 +235,7 @@ name = "gargish axe"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]

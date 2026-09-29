@@ -50,6 +50,7 @@ Verified against real UOX3 data:
 | `amount=` | `Amount` | A fixed stack size |
 | `pileable=` | `Stackable` | |
 | `layer=` | `Layer` | The UOX3 layer number as a `LayerType` name |
+| `layer=2` without `type=107` (shield) or `dir=` (light) | `two_handed_weapon = true` | As UOX3 decides at equip time. An unlit torch (`0x0F64`) has neither, so UOX3, and the converter, treat it as two-handed; the shipped templates leave it off |
 | `value=buy sell` | `BuyPrice`, `SellPrice` | One number sets both |
 | `decay=` | `Decays` | `1` is true, anything else false |
 | `newbie` or `newbie=1` | `LootType = newbied` | |

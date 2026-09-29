@@ -6,6 +6,7 @@ using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Motd;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Loaders;
 
@@ -45,6 +46,25 @@ public sealed class RepositoryTemplateFilesTests
 
         // Only abstract base templates may resolve to no graphic; anything else would spawn invisible.
         Assert.Empty(templates.Values.Where(t => t.ItemId.Value == 0 && !t.Id.Contains("base")).Select(t => t.Id));
+    }
+
+    [Fact]
+    public async Task ShippedItemTemplates_MarkTwoHandedWeaponsButNotShieldsOrTorches()
+    {
+        var templates = (await new ItemTemplatesLoader(Directories()).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        // Bows, polearms, staves: both hands.
+        Assert.True(templates["0x13b2"].TwoHandedWeapon);
+        Assert.True(templates["base_halberd"].TwoHandedWeapon);
+        Assert.True(templates["base_quarter_staff"].TwoHandedWeapon);
+
+        // Shields and a torch share the layer but leave the other hand free.
+        Assert.Null(templates["base_heater_shield"].TwoHandedWeapon);
+        Assert.Null(templates["0x0f64_torch"].TwoHandedWeapon);
+        Assert.All(
+            templates.Values.Where(t => t.Name?.EndsWith("shield", StringComparison.Ordinal) == true && t.Layer == LayerType.TwoHanded),
+            shield => Assert.Null(shield.TwoHandedWeapon)
+        );
     }
 
     [Fact]

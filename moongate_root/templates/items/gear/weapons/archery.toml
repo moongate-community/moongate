@@ -6,6 +6,7 @@ name = "crossbow"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -28,6 +29,7 @@ name = "heavy crossbow"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -50,6 +52,7 @@ name = "bow"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -72,6 +75,7 @@ name = "composite bow"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -95,6 +99,7 @@ rarity = "common"
 movable = true
 weight = 6.0
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -117,6 +122,7 @@ name = "yumi"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -139,6 +145,7 @@ name = "elven composite longbow"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]
@@ -161,6 +168,7 @@ name = "magical shortbow"
 rarity = "common"
 movable = true
 layer = "two_handed"
+two_handed_weapon = true
 decays = true
 
 [[item]]

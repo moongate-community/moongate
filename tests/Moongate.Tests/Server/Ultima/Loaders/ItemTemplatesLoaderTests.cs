@@ -38,6 +38,23 @@ public sealed class ItemTemplatesLoaderTests
     }
 
     [Fact]
+    public async Task LoadDataAsync_TwoHandedWeapon_IsReadAndInherited()
+    {
+        using var root = new TemporaryDirectory();
+        root.CreateFile(
+            "templates/items/a.toml",
+            "[[item]]\nid = \"base_bow\"\nitem_id = 0x13B2\nlayer = \"two_handed\"\ntwo_handed_weapon = true\n\n" +
+            "[[item]]\nid = \"elven_bow\"\nbase_id = \"base_bow\"\nitem_id = 0\n\n" +
+            "[[item]]\nid = \"heater\"\nitem_id = 0x1B76\nlayer = \"two_handed\"\n"
+        );
+
+        var templates = (await CreateLoader(root).LoadDataAsync()).Entities.ToDictionary(t => t.Id);
+
+        Assert.True(templates["elven_bow"].TwoHandedWeapon);
+        Assert.Null(templates["heater"].TwoHandedWeapon);
+    }
+
+    [Fact]
     public async Task LoadDataAsync_ZeroItemId_TakesTheParentGraphic()
     {
         using var root = new TemporaryDirectory();

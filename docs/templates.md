@@ -280,6 +280,7 @@ own, see [TOML value types](toml-types.md).
 | `Amount` | `RangeValueSpec<int>`: the stack size of a new item, fixed or `"10-20"`; unset is 1 |
 | `Stackable` | Unset uses the tiledata `Generic` flag |
 | `Layer` | A `LayerType` name such as `one_handed`; unset uses the tiledata layer |
+| `TwoHandedWeapon` | `two_handed_weapon = true` on a weapon held in both hands (bows, polearms, staves), as POL's `TwoHanded`: worn on `two_handed`, it leaves no hand free. Anything else on `two_handed` (shields, torches) goes in the other hand, with a one-handed weapon. Tiledata cannot tell them apart: it marks shields as weapons and bows as one-handed |
 | `BuyPrice`, `SellPrice` | What vendors sell it for and pay for it; unset means vendors do not trade it |
 | `Decays`, `DecayMinutes` | Unset decays when movable, after 60 minutes |
 | `LootType` | `regular`, `newbied`, `blessed` or `cursed`: what happens when the owner dies; unset is `regular` |

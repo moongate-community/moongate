@@ -16,6 +16,9 @@ namespace Moongate.UoxItemConverter.Internal;
 /// </summary>
 internal static class ItemTemplateBuilder
 {
+    // UOX3's IT_SHIELD item type.
+    private const int UoxShieldType = 107;
+
     /// <summary>
     ///     Computes a block's Id and item Serial, with no dependency on any other block. Used both to
     ///     precompute the full header-to-Id map up front and, once that map exists, by <see cref="Build" />.
@@ -163,6 +166,13 @@ internal static class ItemTemplateBuilder
             template.Layer = (LayerType)layer;
         }
 
+        // As UOX3 decides at equip time: layer 2 takes both hands unless the item is a shield (type=107) or a light
+        // (dir=, a torch or lantern), which go in the other hand.
+        if (template.Layer == LayerType.TwoHanded && !IsShield(block) && !IsLight(block))
+        {
+            template.TwoHandedWeapon = true;
+        }
+
         // value=buy sell; one number sets both.
         if (block.Fields.TryGetValue("value", out var valueText))
         {
@@ -188,6 +198,16 @@ internal static class ItemTemplateBuilder
         }
 
         ApplyTags(block, template);
+    }
+
+    private static bool IsShield(DfnBlock block)
+    {
+        return block.Fields.TryGetValue("type", out var typeText) && UoxNumber.TryParse(typeText, out var type) && type == UoxShieldType;
+    }
+
+    private static bool IsLight(DfnBlock block)
+    {
+        return block.Fields.TryGetValue("dir", out var dirText) && UoxNumber.TryParse(dirText, out var dir) && dir != 0;
     }
 
     // custominttag=name value and customstringtag=name text can repeat, so they are read from every line.
