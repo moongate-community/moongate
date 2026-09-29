@@ -1,3 +1,4 @@
+using System.Diagnostics;
 using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Services;
@@ -29,12 +30,14 @@ public sealed class SaveCommand : ICommandExecutor
             return;
         }
 
+        var start = Stopwatch.GetTimestamp();
         await _saves.SaveAsync(context.CancellationToken);
-        await _broadcast.BroadcastAsync("world saved", context.CancellationToken);
+        var elapsed = Stopwatch.GetElapsedTime(start);
+        await _broadcast.BroadcastAsync($"world saved in {elapsed}", context.CancellationToken);
 
         if (!context.IsInGame)
         {
-            context.Print("world saved");
+            context.Print($"world saved in {elapsed}");
         }
     }
 }

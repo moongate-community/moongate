@@ -55,7 +55,14 @@ public sealed class MoongateUltimaPluginWorldCommandsTests
         await registration.Bind(container)(context);
 
         var packet = Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent));
-        Assert.Equal(name == "save" ? "world saved" : "Maintenance soon", packet.Text);
+        if (name == "save")
+        {
+            Assert.StartsWith("world saved in ", packet.Text);
+        }
+        else
+        {
+            Assert.Equal("Maintenance soon", packet.Text);
+        }
     }
 
     [Fact]

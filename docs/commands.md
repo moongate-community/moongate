@@ -112,9 +112,11 @@ save
 In game, administrators use `.save`. The command requests a save through the existing
 world save coordinator and waits for durable persistence to finish. A request made
 during another save joins that save rather than starting a competing operation.
-Each successful command broadcasts exactly `world saved` to connected characters
+Each successful command broadcasts `world saved in <elapsed>` to connected characters
 currently in the world on this instance, across all maps. The console also prints
-the completion message; an in-game caller receives it through the broadcast.
+the same completion message; an in-game caller receives it through the broadcast.
+The elapsed time measures the wait for saving, excluding broadcast delivery, and
+uses the .NET `TimeSpan` format (for example, `world saved in 00:00:01.2345678`).
 
 A failed save produces an error for the caller and no success broadcast. Extra
 arguments print usage without saving. Automatic and shutdown saves keep their
