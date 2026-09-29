@@ -1,6 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Sectors;
 using Moongate.Server.Ultima.Data.Maps;
 using Moongate.Server.Ultima.Data.Sectors;

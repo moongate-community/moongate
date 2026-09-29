@@ -20,8 +20,6 @@ public class MoongateServerConfig
 
     public RedisConfig Redis { get; set; } = new();
 
-    public UltimaConfig Ultima { get; set; } = new();
-
     public PersistenceConfig Persistence { get; set; } = new();
 
     public RealmDirectoryConfig RealmDirectory { get; set; } = new();
@@ -97,12 +95,5 @@ public class MoongateServerConfig
         }
 
         Scripting.Validate();
-
-        if (Ultima is null)
-        {
-            throw new InvalidOperationException("The ultima configuration section cannot be null.");
-        }
-
-        Ultima.Validate();
     }
 }

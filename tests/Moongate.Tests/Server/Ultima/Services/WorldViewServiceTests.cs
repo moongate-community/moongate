@@ -3,7 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Interfaces;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;

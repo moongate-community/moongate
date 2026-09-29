@@ -2,7 +2,7 @@ using DryIoc;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Commands;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;

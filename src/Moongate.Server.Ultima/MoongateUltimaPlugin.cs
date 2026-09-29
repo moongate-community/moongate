@@ -67,6 +67,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
     public void Register(Container container)
     {
+        container.AddUltimaConfig();
+
         var directoriesConfig = container.Resolve<DirectoriesConfig>();
 
         // Configuration files

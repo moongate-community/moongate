@@ -1,4 +1,4 @@
-using Moongate.Server.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Services.Ultima;
 using Moongate.Tests.TestSupport.Directories;
 using Moongate.Tests.TestSupport.Ultima.Files;
@@ -30,9 +30,6 @@ public sealed class UltimaDataServiceTests
 
     private static UltimaDataService CreateService(string ultimaPath)
     {
-        var config = new MoongateServerConfig();
-        config.Ultima.UltimaPath = ultimaPath;
-
-        return new UltimaDataService(config);
+        return new UltimaDataService(new UltimaConfig { UltimaPath = ultimaPath });
     }
 }

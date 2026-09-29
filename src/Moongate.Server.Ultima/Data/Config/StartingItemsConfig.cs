@@ -1,4 +1,4 @@
-namespace Moongate.Server.Core.Data.Config;
+namespace Moongate.Server.Ultima.Data.Config;
 
 /// <summary>
 ///     The <c>[ultima.starting_items]</c> settings for choosing the sets of <c>data/starting_items.toml</c>, which also

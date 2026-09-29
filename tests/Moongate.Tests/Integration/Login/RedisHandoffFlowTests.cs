@@ -1,6 +1,6 @@
 using System.Net;
 using Moongate.Network.Packets.Outgoing.Login;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;

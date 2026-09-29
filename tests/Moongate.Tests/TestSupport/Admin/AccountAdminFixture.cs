@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Server.Ultima;
+using Moongate.Tests.TestSupport.Config;
 
 namespace Moongate.Tests.TestSupport.Admin;
 
@@ -51,6 +52,7 @@ internal sealed class AccountAdminFixture : IAsyncDisposable
         var directory = new TemporaryPersistenceDirectory();
         var peer = new Container();
         peer.RegisterInstance(new DirectoriesConfig(directory.Path, []));
+        peer.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
         peer.RegisterMoongatePersistence(new([new(PersistenceDatabaseTarget.Accounts, accounts.Database.ConnectionString)]));
         // An accounts-only peer is a login server: no Realm database, so no world entities.
         peer.RegisterInstance(ServerMode.Login);

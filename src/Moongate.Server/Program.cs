@@ -210,12 +210,6 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(serverConfig);
                     services.RegisterInstance(configDocument);
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
-                    services.RegisterInstance(serverConfig.Ultima.Localization);
-                    services.RegisterInstance(serverConfig.Ultima.LineOfSight);
-                    services.RegisterInstance(serverConfig.Ultima.World);
-                    services.RegisterInstance(serverConfig.Ultima.Items);
-                    services.RegisterInstance(serverConfig.Ultima.StartingItems);
-                    services.RegisterInstance(serverConfig.Ultima.Characters);
                     services.RegisterInstance(TimeProvider.System);
                     services.RegisterMoongatePersistence(
                             serverConfig.Persistence.ToOptions(

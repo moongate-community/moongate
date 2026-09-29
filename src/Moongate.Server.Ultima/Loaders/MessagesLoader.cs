@@ -1,7 +1,7 @@
 using System.Globalization;
 using Moongate.Core.Directories;
 using Moongate.Core.Utils;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data;
 using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Interfaces.Loaders;

@@ -7,7 +7,7 @@ using System.Threading.Channels;
 using DryIoc;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Registry;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Core.Data.Network;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Extensions;

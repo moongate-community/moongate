@@ -5,7 +5,7 @@ using Moongate.Core.Utils;
 using Moongate.Persistence.Interfaces;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Ultima.Data.Events;
 using Moongate.Server.Ultima.Data.Mobiles;

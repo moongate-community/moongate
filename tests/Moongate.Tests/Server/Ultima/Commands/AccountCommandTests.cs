@@ -13,6 +13,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Server.Ultima;
+using Moongate.Tests.TestSupport.Config;
 
 namespace Moongate.Tests.Server.Ultima.Commands;
 
@@ -24,6 +25,7 @@ public sealed class AccountCommandTests
         using var directory = new TemporaryPersistenceDirectory();
         using var container = new Container();
         container.RegisterInstance(new DirectoriesConfig(directory.Path, []));
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
         container.RegisterMoongatePersistence(new());
 
         new MoongateUltimaPlugin().Register(container);

@@ -1,7 +1,7 @@
 using System.Globalization;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Commands;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
