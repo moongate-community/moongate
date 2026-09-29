@@ -2,8 +2,11 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Persistence.Interfaces;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -13,9 +16,10 @@ namespace Moongate.Server.Ultima.Services;
 ///     Keeps the live items by serial, the ones on the ground in the sector grid, and the worn ones by wearer. Contents
 ///     and owners are found by scanning, which only a character's leave and its containers need. The ground rules are
 ///     ModernUO's <c>DropToWorld</c>, simplified: a player reaches 2 tiles in line of sight, and a dropped item lands on
-///     the highest surface up to 16 above the player's feet, without stacking on other ground items.
+///     the highest surface up to 16 above the player's feet, without stacking on other ground items. At startup it
+///     loads the items lying on the ground with their contents.
 /// </summary>
-public sealed class ItemService : IItemService
+public sealed class ItemService : IItemService, IMoongateStartupService
 {
     public const int GroundReach = 2;
     private const int DropCeiling = 16;
@@ -29,14 +33,42 @@ public sealed class ItemService : IItemService
     private readonly ISectorService _sectors;
     private readonly IMovementService _movement;
     private readonly ILineOfSightService _sight;
+    private readonly IDataAccess<ItemEntity> _data;
+    private readonly IGameLoopService _loop;
 
     public IReadOnlyCollection<ItemEntity> Items => _items.Values.ToArray();
 
-    public ItemService(ISectorService sectors, IMovementService movement, ILineOfSightService sight)
+    public ItemService(
+        ISectorService sectors,
+        IMovementService movement,
+        ILineOfSightService sight,
+        IDataAccess<ItemEntity> data,
+        IGameLoopService loop
+    )
     {
         _sectors = sectors;
         _movement = movement;
         _sight = sight;
+        _data = data;
+        _loop = loop;
+    }
+
+    public async Task StartAsync()
+    {
+        // The items lying on the ground and everything inside them; the characters' items come with them at login.
+        var roots = await _data.QueryAsync(item => item.Map != null);
+        var loaded = await ItemContentsLoader.LoadAsync(_data, roots);
+
+        // The live items and the sector grid change only on the game loop.
+        var work = new LoopActionWorkItem(() => Add(loaded));
+        await _loop.PostAsync(work);
+        await work.Completion;
+        _logger.Information("Loaded {Roots} items on the ground, {Total} with their contents", roots.Count, loaded.Count);
+    }
+
+    public Task StopAsync()
+    {
+        return Task.CompletedTask;
     }
 
     public void Add(IEnumerable<ItemEntity> items)

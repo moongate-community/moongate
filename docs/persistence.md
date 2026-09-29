@@ -259,7 +259,7 @@ one place, and the database checks it:
 | Worn by a mobile | `mobile_id`, `layer` | `Equip(mobileId, layer)` |
 
 Items lying on the ground live in `IItemService` and the sector grid while the server runs:
-`GroundItemsLoadService` loads them, and everything inside them, at startup (migration `0010`
+`IItemService` loads them, and everything inside them, at startup (migration `0010`
 indexes them by map), and the world save writes them with the characters' items.
 The NPCs (mobiles without an account) live in `IMobileService` too: `INpcService` loads them at
 startup with what they wear and carry, and spawns and removes them. A removed mobile is deleted by

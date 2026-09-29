@@ -184,7 +184,6 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ISectorService, SectorService>(Reuse.Singleton);
             container.Register<IMobileService, MobileService>(Reuse.Singleton);
             container.Register<IWorldViewService, WorldViewService>(Reuse.Singleton);
-            container.Register<IItemService, ItemService>(Reuse.Singleton);
             container.Register<IWorldTransactionService, WorldTransactionService>(Reuse.Singleton);
             container.Register<ICharacterPresence, SessionCharacterPresence>(Reuse.Singleton);
             container.Register<ICharacterService, CharacterService>(Reuse.Singleton);
@@ -253,7 +252,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddMoongateService<IItemSerialPool, ItemSerialPool>();
             // After the data loaders and the maps (the sector grid needs them), before the game server takes players and
             // the world save (40): the items on the ground are live before anyone can see them.
-            container.AddMoongateService<GroundItemsLoadService>(10);
+            container.AddMoongateService<IItemService, ItemService>(10);
             // As the ground items: the NPCs are live before the game server takes players.
             container.AddMoongateService<INpcService, NpcService>(10);
         }

@@ -48,18 +48,8 @@ public sealed class NpcService : INpcService
     {
         var npcs = await _mobileData.QueryAsync(mobile => mobile.AccountId == null);
         var ids = npcs.Select(mobile => (Serial?)mobile.Id).ToList();
-        var items = new List<ItemEntity>(await _itemData.QueryAsync(item => ids.Contains(item.MobileId)));
-        var visited = items.Select(item => item.Id).ToHashSet();
-        var containers = visited.Select(serial => (Serial?)serial).ToList();
-
-        // One level of containers at a time, as a character's items at login; the visited set stops a cycle.
-        while (containers.Count > 0)
-        {
-            var level = await _itemData.QueryAsync(item => containers.Contains(item.ContainerId));
-            var fresh = level.Where(item => visited.Add(item.Id)).ToList();
-            items.AddRange(fresh);
-            containers = fresh.Select(item => (Serial?)item.Id).ToList();
-        }
+        var worn = await _itemData.QueryAsync(item => ids.Contains(item.MobileId));
+        var items = await ItemContentsLoader.LoadAsync(_itemData, worn);
 
         await OnLoopAsync(
             () =>
