@@ -183,6 +183,27 @@ Redis is required at runtime in all three modes, including standalone. `redis.co
 
 Game-loop queue limits, timer-wheel resolution and packet dispatch limits use C# option objects rather than additional TOML sections. See [Game loop and timers](game-loop-and-timers.md), [Packets](packets.md) and the [Docker topology](docker-login-realms.md).
 
+## Plugin sections
+
+Some sections of `config/moongate.toml` belong to plugins rather than to the server:
+`[ultima]` (with its sub-tables) to the Ultima plugin, `[admin_api]` to the
+Administration plugin, and any section a [disk plugin](plugins.md#add-a-config-section)
+adds. They are edited like any other section; what differs is who reads them and when.
+
+1. The server reads the file and keeps its own sections, ignoring the rest.
+2. Each plugin, while it registers, reads its section and checks its values. A value
+   that is not allowed stops the start with an error that names the setting,
+   reported as the cause of `Plugin '<id>' failed during registration.`
+3. A plugin whose section is missing uses its defaults and appends them to the end of
+   the file. The lines already there, comments included, are not changed. Edit the
+   appended values and restart to change them. If the file is read-only, the server
+   logs a warning and runs with the defaults.
+
+So a new root starts with the server's sections only, and after the first start the
+file lists every setting of every installed plugin. Removing a plugin leaves its
+section in the file; the server ignores it. Two owners cannot share a name: a plugin
+that claims `network`, or a name another plugin already took, stops the start.
+
 ## Command line and root directory
 
 Inspect the installed executable with `--help`. From a checkout:

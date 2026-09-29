@@ -265,7 +265,49 @@ max_per_minute = 10
 - A section name belongs to one owner: the server's own sections (`network`, `redis`,
   `persistence`, ...) and a name another plugin already added stop the start with
   `The configuration section [name] is already owned by the server or by another plugin.`
+- A key with the section's name that is not a table (`greeter = 5`, `[[greeter]]`)
+  stops the start: appending `[greeter]` next to it would define the key twice.
 - Settings are read once, at startup; there is no reload.
+
+**How it works.** At startup the server reads `config/moongate.toml` once, takes its
+own sections, and registers the parsed file as a `ServerConfigDocument` before any
+plugin's `Register` runs. `AddConfig` claims the name in that document, so no two
+owners share it, then reads the table or writes the defaults. Everything happens
+during registration, before any service starts: a bad value never reaches a running
+server.
+
+**Use it in a service.** The section is an ordinary singleton, so a service asks for
+it in its constructor:
+
+```csharp
+public sealed class GreeterService
+{
+    private readonly GreeterConfig _config;
+
+    public GreeterService(GreeterConfig config)
+    {
+        _config = config;
+    }
+}
+```
+
+A sub-table the plugin wants to hand out on its own is registered with
+`container.RegisterInstance(config.Limits)`; the Ultima plugin does this so its
+services receive `WorldConfig` or `CharactersConfig` rather than the whole
+`UltimaConfig`.
+
+**Test it.** A test that calls the plugin's `Register` directly registers a
+`ServerConfigDocument` first, as the server does:
+
+```csharp
+var path = Path.Combine(directory, "moongate.toml");
+File.WriteAllText(path, "[greeter]\ngreeting = \"Hi\"\n");
+container.RegisterInstance(new ServerConfigDocument(path, TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!, []));
+
+new GreeterPlugin().Register(container);
+
+Assert.Equal("Hi", container.Resolve<GreeterConfig>().Greeting);
+```
 
 The Ultima plugin owns `[ultima]` and the Admin plugin owns `[admin_api]` this way.
 
