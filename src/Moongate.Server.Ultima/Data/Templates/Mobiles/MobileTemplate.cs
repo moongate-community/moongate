@@ -174,16 +174,11 @@ public partial class MobileTemplate
     public MobileSounds? Sounds { get; set; }
 
     /// <summary>
-    ///     Reserved Lua module identifier, stored and inherited with the template. Unset is none.
-    ///     The engine does not dispatch template hooks or AI yet.
+    ///     The global Lua table, defined by a file of <c>scripts/mobiles/</c>, whose functions handle the NPC's events:
+    ///     <c>on_think</c> and <c>on_speech</c>. A lower-case Lua identifier. Unset: no script.
     /// </summary>
     public string? ScriptId { get; set; }
 
-    /// <summary>
-    ///     The Lua brain in <c>scripts/brains/&lt;brain&gt;.lua</c> whose <c>on_think</c> and <c>on_speech</c> drive the
-    ///     NPC: a lower-case Lua identifier. Unset: no brain.
-    /// </summary>
-    public string? Brain { get; set; }
 
     /// <summary>
     ///     The lowest account type that sees the mobile. Unset: everyone.
@@ -253,14 +248,14 @@ public partial class MobileTemplate
             throw Invalid("tags", "must not have an empty key");
         }
 
-        if (Brain is not null && !BrainPattern().IsMatch(Brain))
+        if (ScriptId is not null && !ScriptIdPattern().IsMatch(ScriptId))
         {
-            throw Invalid("brain", "must be a Lua identifier of lower-case letters, digits and underscores");
+            throw Invalid("script_id", "must be a Lua identifier of lower-case letters, digits and underscores");
         }
     }
 
     [GeneratedRegex(@"^[a-z_][a-z0-9_]*\z")]
-    private static partial Regex BrainPattern();
+    private static partial Regex ScriptIdPattern();
 
     private InvalidDataException Invalid(string field, string rule)
     {
