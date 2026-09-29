@@ -67,8 +67,8 @@ exists but fails compilation/execution aborts server startup.
 | `npc.step(serial, direction, running?)` | One step toward a `DirectionType` (`North` to `NorthWest`), turning first when needed, seen by the players in range; a run when `running` is `true`. How often the script calls it sets the speed. `false` when blocked or for `DirectionType.Running`, which is not a direction |
 | `npc.location(serial)`, `npc.name(serial)` | `{ x, y, z, map }` and the name of the NPC, or `nil` |
 | `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
-| `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` when fewer are left |
-| `item.delete(serial)` | Deletes the item; `false` for a worn item or a container that still holds items |
+| `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` when fewer are left or a player holds it on the cursor |
+| `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` when that player is not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
@@ -222,7 +222,7 @@ script_id = "potion"
 
 | Function | When |
 | --- | --- |
-| `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled. |
+| `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Items inside a container lying on the ground cannot be used yet. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled; after the wait the item may have moved, so check it again, for example `item.owner(serial) == user`. |
 
 The script acts on its item with the `item` module, passing its serial; `user` is
 the serial of the player. The shipped `scripts/items/potion.lua`:

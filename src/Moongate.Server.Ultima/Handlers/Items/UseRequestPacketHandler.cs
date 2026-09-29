@@ -125,8 +125,12 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     // double click, by returning true or by waiting, so the default action must not follow.
     private bool RunOnUse(GameSession session, ItemEntity item)
     {
-        if (!_mobiles.TryGet(session.CharacterId, out var character) ||
-            (_items.GetOwner(item) != character.Id && !_items.CanReach(character, item)))
+        if (!_mobiles.TryGet(session.CharacterId, out var character))
+        {
+            return true;
+        }
+
+        if (_items.GetOwner(item) != character.Id && !_items.CanReach(character, item))
         {
             _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, TooFarCliloc, "", ""));
 

@@ -4,6 +4,8 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
+using Moongate.Server.Ultima.Data.Internal.Items;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.General;
@@ -92,6 +94,21 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.False(result[0].Read<bool>());
         Assert.Equal((3, 1), (_potions.Amount, _sword.Amount));
         Assert.Empty(_fixture.Sender.Sent);
+    }
+
+    [Theory, InlineData(0x40000002u), InlineData(0x40000003u)]
+    public async Task ConsumeAndDelete_AnItemAPlayerHolds_AreFalseAndShowNothing(uint serial)
+    {
+        // A lifted item stays where it was taken from until it is dropped: it must not be drawn there again.
+        var holder = _fixture.Sessions.GetAll().First(session => session.CharacterId == new Serial(3));
+        await _fixture.Network.ExecuteOnLoopAsync(() => holder.Set(ItemSessionKeys.Held, new HeldItem(new Serial(serial))));
+
+        var result = Run($"return item.consume({serial}), item.delete({serial})");
+
+        Assert.All(result, value => Assert.False(value.Read<bool>()));
+        Assert.True(_items.TryGet(new Serial(serial), out _));
+        Assert.Empty(_fixture.Sender.Sent);
+        Assert.Empty(_view.Calls);
     }
 
     [Fact]

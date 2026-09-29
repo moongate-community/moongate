@@ -57,7 +57,7 @@ public static class ScriptDirectoryLoader
 
         await loop.PostAsync(work);
         await work.Completion;
-        logger.Information("Loaded {Count} {Subdirectory} scripts", files.Count, subdirectory);
+        logger.Information("Loaded {Count} scripts from {Subdirectory}", files.Count, subdirectory);
 
         return files.Count;
     }

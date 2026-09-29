@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
@@ -16,7 +17,8 @@ namespace Moongate.Server.Ultima.Modules;
 /// <summary>
 ///     The <c>item</c> Lua module: an item script reads and changes its item by serial, as
 ///     <c>item.consume(serial)</c>. A serial that is not a live item gives <c>false</c> or <c>nil</c>, never an error.
-///     Worn items cannot be consumed or deleted yet, nor a container that still holds items.
+///     Worn items cannot be consumed or deleted yet, nor an item a player holds on the cursor, nor a container that
+///     still holds items.
 /// </summary>
 [ScriptModule("item", "Reads and changes an item: name, amount, owner, consume, delete, message.")]
 public sealed class ItemModule
@@ -76,10 +78,10 @@ public sealed class ItemModule
     /// <summary>
     ///     Takes <paramref name="amount" /> units off the item, deleting it at 0; <c>item.consume(serial, 1)</c>.
     /// </summary>
-    [ScriptFunction(helpText: "Takes amount units (default 1) off the item, deleting it at 0; false when fewer are left.")]
+    [ScriptFunction(helpText: "Takes amount units (default 1) off the item, deleting it at 0; false when fewer are left or a player holds it.")]
     public bool Consume(long serial, int amount = 1)
     {
-        if (amount < 1 || !TryGetItem(serial, out var item) || item.MobileId is not null || item.Amount < amount)
+        if (amount < 1 || !TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item) || item.Amount < amount)
         {
             return false;
         }
@@ -108,10 +110,13 @@ public sealed class ItemModule
     ///     Deletes the item; <c>item.delete(serial)</c>. A carried item's row is deleted by its owner's next save, a ground
     ///     item's by the world save.
     /// </summary>
-    [ScriptFunction(helpText: "Deletes the item; false for a worn item or a container that still holds items.")]
+    [ScriptFunction(helpText: "Deletes the item; false for a worn item, a held item or a container that still holds items.")]
     public bool Delete(long serial)
     {
-        if (!TryGetItem(serial, out var item) || item.MobileId is not null || _items.GetContents(item.Id).Count > 0)
+        if (!TryGetItem(serial, out var item) ||
+            item.MobileId is not null ||
+            IsHeld(item) ||
+            _items.GetContents(item.Id).Count > 0)
         {
             return false;
         }
@@ -124,21 +129,13 @@ public sealed class ItemModule
             return true;
         }
 
-        var owner = _items.GetOwner(item);
-
         if (OwnerSession(item) is { } session)
         {
             _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
         }
 
-        if (owner is { } carrier)
-        {
-            _items.Absorb(item, carrier);
-        }
-        else
-        {
-            _items.Absorb(item);
-        }
+        // Its owner's next save deletes the row, or the world save for an item nobody carries.
+        _items.Absorb(item);
 
         return true;
     }
@@ -165,7 +162,7 @@ public sealed class ItemModule
             LabelHue,
             SpeechFontType.Normal,
             "ENU",
-            item.Name ?? string.Empty,
+            string.Empty,
             text.Length > MaximumTextLength ? text[..MaximumTextLength] : text
         );
 
@@ -177,6 +174,13 @@ public sealed class ItemModule
         item = null;
 
         return serial is > 0 and <= uint.MaxValue && _items.TryGet(new Serial((uint)serial), out item);
+    }
+
+    // Lifted onto a player's cursor: it keeps the place it was taken from until it is dropped, so it must not be
+    // drawn there again.
+    private bool IsHeld(ItemEntity item)
+    {
+        return _sessions.GetAll().Any(session => session.Get(ItemSessionKeys.Held)?.Item == item.Id);
     }
 
     private GameSession? OwnerSession(ItemEntity item)
