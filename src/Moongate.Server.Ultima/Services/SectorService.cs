@@ -27,14 +27,16 @@ public sealed class SectorService : ISectorService
     private readonly ILogger _logger = Log.ForContext<SectorService>();
     private readonly IDataLoaderService _data;
     private readonly WorldConfig _world;
+    private readonly INpcTickService _ticks;
     private readonly Dictionary<MapType, SectorGrid?> _grids = [];
     private readonly Dictionary<Serial, Sector> _sectorOf = [];
     private readonly Dictionary<Serial, Sector> _itemSectorOf = [];
 
-    public SectorService(IDataLoaderService data, WorldConfig world)
+    public SectorService(IDataLoaderService data, WorldConfig world, INpcTickService ticks)
     {
         _data = data;
         _world = world;
+        _ticks = ticks;
     }
 
     public void Add(MobileEntity mobile)
@@ -56,6 +58,8 @@ public sealed class SectorService : ISectorService
             sector.Mobiles.RemoveAll(other => other.Id == mobile.Id);
             WakeAround(sector, mobile, -1);
         }
+
+        _ticks.Sleep(mobile);
     }
 
     public bool IsActive(MapType map, Point3D point)
@@ -73,17 +77,28 @@ public sealed class SectorService : ISectorService
     public void Move(MobileEntity mobile)
     {
         var sector = GetOrCreateSector(mobile.Map, mobile.Location, mobile);
+        _sectorOf.TryGetValue(mobile.Id, out var current);
 
-        if (_sectorOf.TryGetValue(mobile.Id, out var current) && ReferenceEquals(current, sector))
+        if (ReferenceEquals(current, sector))
         {
             return;
         }
 
-        Remove(mobile);
-
-        if (sector is not null)
+        if (sector is null)
         {
-            Enter(mobile, sector);
+            Remove(mobile);
+
+            return;
+        }
+
+        // The new area wakes before the old one sleeps, so the sectors both cover never drop to zero players and
+        // their NPCs keep their timers.
+        Enter(mobile, sector);
+
+        if (current is not null)
+        {
+            current.Mobiles.RemoveAll(other => other.Id == mobile.Id);
+            WakeAround(current, mobile, -1);
         }
     }
 
@@ -264,9 +279,24 @@ public sealed class SectorService : ISectorService
         sector.Mobiles.Add(mobile);
         _sectorOf[mobile.Id] = sector;
         WakeAround(sector, mobile, 1);
+
+        if (!mobile.IsNpc)
+        {
+            return;
+        }
+
+        if (sector.NearbyPlayers > 0)
+        {
+            _ticks.Wake(mobile);
+        }
+        else
+        {
+            _ticks.Sleep(mobile);
+        }
     }
 
-    // Only players keep sectors awake: the NPCs around them sleep when no player is near.
+    // Only players keep sectors awake: the NPCs of a sector wake when its first nearby player arrives and sleep when
+    // the last one leaves, as ModernUO's Sector.Activate and Deactivate.
     private void WakeAround(Sector sector, MobileEntity mobile, int change)
     {
         if (mobile.IsNpc || GetGrid(sector.Map) is not { } grid)
@@ -283,6 +313,35 @@ public sealed class SectorService : ISectorService
             {
                 var around = grid.Cells[sy * grid.Columns + sx] ??= new(sector.Map, sx, sy);
                 around.NearbyPlayers += change;
+
+                if (change > 0 && around.NearbyPlayers == 1)
+                {
+                    SetAwake(around, true);
+                }
+                else if (change < 0 && around.NearbyPlayers == 0)
+                {
+                    SetAwake(around, false);
+                }
+            }
+        }
+    }
+
+    private void SetAwake(Sector sector, bool awake)
+    {
+        foreach (var mobile in sector.Mobiles)
+        {
+            if (!mobile.IsNpc)
+            {
+                continue;
+            }
+
+            if (awake)
+            {
+                _ticks.Wake(mobile);
+            }
+            else
+            {
+                _ticks.Sleep(mobile);
             }
         }
     }
