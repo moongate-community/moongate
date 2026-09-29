@@ -19,6 +19,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
     private readonly Lazy<IMoongateEventBus> _eventBus;
     private readonly BootstrapLifecycleTasks _lifecycle = new();
     private readonly StartupServiceLifecycle _services;
+    private readonly IServerShutdownService _shutdown;
     private Task? _gameLoopCompletion;
     private bool _startupSucceeded;
     private bool _persistenceInitialized;
@@ -29,6 +30,8 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         _cancellationToken = cancellationToken;
         _container.RegisterMoongateEventBus();
         _container.Register<IServerShutdownService, ServerShutdownService>(Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Keep);
+        // Resolved now: RunAsync may run after a stop has already disposed the container.
+        _shutdown = _container.Resolve<IServerShutdownService>();
         _eventBus = new(() => _container.Resolve<IMoongateEventBus>());
         _services = new(container);
     }
@@ -64,7 +67,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             shutdownRequested
         );
 
-        var requested = Task.WhenAny(shutdownRequested.Task, _container.Resolve<IServerShutdownService>().Requested);
+        var requested = Task.WhenAny(shutdownRequested.Task, _shutdown.Requested);
 
         if (_gameLoopCompletion is null)
         {
