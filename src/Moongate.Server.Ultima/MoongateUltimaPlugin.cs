@@ -10,6 +10,7 @@ using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Plugins;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;

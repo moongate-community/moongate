@@ -1,4 +1,5 @@
 using Moongate.Scripting.Attributes.Scripts;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Interfaces;
 
 namespace Moongate.Server.Ultima.Modules;
