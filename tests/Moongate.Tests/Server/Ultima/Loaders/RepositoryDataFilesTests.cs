@@ -136,6 +136,24 @@ public sealed class RepositoryDataFilesTests
         Assert.Equal(5467, (await loader.LoadDataAsync()).Entities.Count);
     }
 
+    [Theory,
+     InlineData("ita", "Comune", "Leggendario"), InlineData("ger", "Gewöhnlich", "Legendär"),
+     InlineData("fre", "Commun", "Légendaire"), InlineData("spa", "Común", "Legendario"),
+     InlineData("por", "Comum", "Lendário"), InlineData("pol", "Pospolity", "Legendarny"),
+     InlineData("cze", "Běžný", "Legendární")]
+    public async Task ShippedMessageFiles_TranslateTheRarities(string language, string common, string legendary)
+    {
+        var loader = new MessagesLoader(
+            new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data"]),
+            new LocalizationConfig { Language = language }
+        );
+        await loader.InitializeAsync();
+
+        var messages = (await loader.LoadDataAsync()).Entities.ToDictionary(message => message.Id, message => message.Text);
+
+        Assert.Equal((common, legendary), (messages[30000], messages[30004]));
+    }
+
     private static string FindRepositoryRoot()
     {
         var directory = new DirectoryInfo(AppContext.BaseDirectory);

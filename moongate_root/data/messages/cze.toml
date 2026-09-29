@@ -5466,3 +5466,10 @@
 19339 = "střežený"
 19340 = "Duch toho tvora postrádá soudržnost. Zkuste to znovu za pár minut."
 20298 = "Nejsi dostatečně zkušený na to, abys mohl tento předmět rozplést."
+
+# Moongate: item rarity in tooltips (30000 + ItemRarityType).
+30000 = "Běžný"
+30001 = "Neobvyklý"
+30002 = "Vzácný"
+30003 = "Epický"
+30004 = "Legendární"

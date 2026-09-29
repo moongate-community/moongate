@@ -5473,3 +5473,10 @@
 19339 = "vigilado"
 19340 = "El espíritu de esa criatura carece de cohesión. Inténtalo de nuevo en unos minutos."
 20298 = "No tienes la suficiente habilidad para desenredar esto."
+
+# Moongate: item rarity in tooltips (30000 + ItemRarityType).
+30000 = "Común"
+30001 = "Poco común"
+30002 = "Raro"
+30003 = "Épico"
+30004 = "Legendario"

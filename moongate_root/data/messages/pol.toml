@@ -5470,3 +5470,10 @@
 19339 = "strzeżony"
 19340 = "Duch tego stworzenia jest pozbawiony spójności. Spróbuj ponownie za kilka minut."
 20298 = "Nie masz wystarczających umiejętności, aby to rozwikłać."
+
+# Moongate: item rarity in tooltips (30000 + ItemRarityType).
+30000 = "Pospolity"
+30001 = "Niepospolity"
+30002 = "Rzadki"
+30003 = "Epicki"
+30004 = "Legendarny"

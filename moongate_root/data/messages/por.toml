@@ -5460,3 +5460,10 @@
 19339 = "protegido"
 19340 = "O espírito daquela criatura não tem coesão. Tente novamente dentro de alguns minutos."
 20298 = "Não tem conhecimentos suficientes para desvendar isto."
+
+# Moongate: item rarity in tooltips (30000 + ItemRarityType).
+30000 = "Comum"
+30001 = "Incomum"
+30002 = "Raro"
+30003 = "Épico"
+30004 = "Lendário"

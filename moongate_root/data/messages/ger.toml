@@ -5474,3 +5474,10 @@
 19339 = "bewacht"
 19340 = "Der Geist dieser Kreatur ist nicht einheitlich. Versuchen Sie es in ein paar Minuten erneut."
 20298 = "Du bist nicht geschickt genug, um dies zu enträtseln."
+
+# Moongate: item rarity in tooltips (30000 + ItemRarityType).
+30000 = "Gewöhnlich"
+30001 = "Ungewöhnlich"
+30002 = "Selten"
+30003 = "Episch"
+30004 = "Legendär"
