@@ -203,6 +203,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterDelegate<INpcScriptService>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
             container.Register<INpcSpeechListener, NpcHearingService>(Reuse.Singleton);
             container.Register<INpcSenseService, NpcSenseService>(Reuse.Singleton);
+            // After the script engine (70), as the mobile scripts.
+            container.AddMoongateService<IItemScriptService, ItemScriptService>(LuaScriptEngineService.StartupPriority + 5);
             container.AddMetricProvider<NpcTickMetricsProvider>();
             container.Register<ISectorService, SectorService>(Reuse.Singleton);
             container.Register<IMobileService, MobileService>(Reuse.Singleton);
@@ -287,6 +289,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddScriptModule<DiceModule>();
             container.AddScriptModule<LocalizationModule>();
             container.AddScriptModule<NpcModule>();
+            container.AddScriptModule<ItemModule>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddLiveWorldMobiles();

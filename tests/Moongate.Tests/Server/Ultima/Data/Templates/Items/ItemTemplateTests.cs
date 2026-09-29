@@ -140,7 +140,10 @@ public sealed class ItemTemplateTests
      InlineData("amount", "0"),
      InlineData("buy_price", "-1"),
      InlineData("sell_price", "-5"),
-     InlineData("decay_minutes", "0")]
+     InlineData("decay_minutes", "0"),
+     InlineData("script_id", "\"items.potion\""),
+     InlineData("script_id", "\"Potion\""),
+     InlineData("script_id", "\"potion\\n\"")]
     public void Validate_ABadValue_NamesTheTemplateAndField(string field, string value)
     {
         var template = TomlUtils.Deserialize<ItemTemplate>($"id = \"bad\"\nitem_id = 1\n{field} = {value}\n")!;
@@ -163,5 +166,7 @@ public sealed class ItemTemplateTests
     public void Validate_AValidTemplate_Passes()
     {
         new ItemTemplate { Id = "ok", Weight = 7, BuyPrice = 1, DecayMinutes = 1 }.Validate();
+        new ItemTemplate { Id = "ok", DecayMinutes = 1, ScriptId = "potion" }.Validate();
+        new ItemTemplate { Id = "ok", DecayMinutes = 1, ScriptId = "" }.Validate();
     }
 }

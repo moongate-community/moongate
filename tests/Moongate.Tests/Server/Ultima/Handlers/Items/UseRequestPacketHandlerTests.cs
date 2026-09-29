@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
+using Moongate.Scripting.Data.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Data.Bodies;
@@ -42,11 +43,13 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
                                                   .Item(PouchGraphic, TileFlagType.Container, 0);
 
     private readonly ItemEntity _backpack = Item(0x40000001, BackpackGraphic);
-    private readonly ItemEntity _bag = Item(0x40000002, BagGraphic);
-    private readonly ItemEntity _dagger = Item(0x40000003, DaggerGraphic);
+    private readonly ItemEntity _bag = Item(0x40000002, BagGraphic, "bag");
+    private readonly ItemEntity _dagger = Item(0x40000003, DaggerGraphic, "dagger");
     private readonly ItemEntity _coin = Item(0x40000004, 0x0EED);
-    private readonly ItemEntity _otherBackpack = Item(0x40000005, BackpackGraphic);
+    private readonly ItemEntity _otherBackpack = Item(0x40000005, BackpackGraphic, "other_backpack");
     private readonly ItemEntity _pouch = Item(0x40000006, PouchGraphic);
+
+    private readonly RecordingItemScriptService _scripts = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
@@ -166,6 +169,72 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         await UseAsync(new Serial(Aria.Value | 0x80000000));
 
         Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_ACarriedScriptedItem_RunsOnUseWithTheCharacter()
+    {
+        _scripts.Scripted.Add("dagger");
+        _scripts.Result = ScriptResult.Completed([true]);
+        await StartAsync(Aria);
+
+        await UseAsync(_dagger.Id);
+
+        Assert.Equal(["0x40000003 on_use 2"], _scripts.Calls);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_AScriptedBagWhoseScriptReturnsNothing_StillOpens()
+    {
+        _scripts.Scripted.Add("bag");
+        await StartAsync(Aria);
+
+        await UseAsync(_bag.Id);
+
+        Assert.Equal(["0x40000002 on_use 2"], _scripts.Calls);
+        Assert.IsType<DisplayContainerPacket>(_sender.Sent[0]);
+    }
+
+    [Theory, InlineData(true), InlineData(false)]
+    public async Task Handle_AScriptedBagWhoseScriptHandledItOrWaited_DoesNotOpen(bool waited)
+    {
+        _scripts.Scripted.Add("bag");
+        _scripts.Result = waited ? ScriptResult.Suspended : ScriptResult.Completed([true]);
+        await StartAsync(Aria);
+
+        await UseAsync(_bag.Id);
+
+        Assert.Single(_scripts.Calls);
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_AScriptedItemSomeoneElseCarries_IsTooFarAndRunsNothing()
+    {
+        _scripts.Scripted.Add("other_backpack");
+        await StartAsync(Aria);
+
+        await UseAsync(_otherBackpack.Id);
+
+        Assert.Empty(_scripts.Calls);
+        var message = Assert.IsType<LocalizedMessagePacket>(Assert.Single(_sender.Sent));
+        Assert.Equal(500446, message.Cliloc);
+    }
+
+    [Theory, InlineData(1002, true), InlineData(1003, false)]
+    public async Task Handle_AScriptedGroundItem_RunsOnlyWithinTwoTiles(int x, bool reached)
+    {
+        var torch = new ItemEntity { Id = new(0x40000010), TemplateId = "torch", ItemId = 0x0F64, Amount = 1 };
+        torch.PlaceOnGround(MapType.Felucca, new Point3D(x, 1000, 0));
+        _items.Add([torch]);
+        _scripts.Scripted.Add("torch");
+        await StartAsync(Aria);
+
+        await UseAsync(torch.Id);
+
+        Assert.Equal(reached ? ["0x40000010 on_use 2"] : [], _scripts.Calls);
+        Assert.Equal(!reached, _sender.Sent.OfType<LocalizedMessagePacket>().Any(message => message.Cliloc == 500446));
     }
 
     [Fact]
@@ -307,7 +376,7 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             new BodyContent { Body = new(401), Type = BodyType.Human },
             new BodyContent { Body = new(17), Type = BodyType.Monster }
         );
-        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles));
+        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));
     }
@@ -317,9 +386,9 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         return new() { Id = id, Name = name, Body = body, Map = MapType.Felucca, Location = location };
     }
 
-    private static ItemEntity Item(uint serial, int graphic)
+    private static ItemEntity Item(uint serial, int graphic, string template = "item")
     {
-        return new() { Id = new(serial), TemplateId = "item", ItemId = graphic, Amount = 1 };
+        return new() { Id = new(serial), TemplateId = template, ItemId = graphic, Amount = 1 };
     }
 
     public async ValueTask DisposeAsync()
