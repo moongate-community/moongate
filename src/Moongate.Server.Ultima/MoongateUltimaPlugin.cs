@@ -214,6 +214,12 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ITargetService, TargetService>(Reuse.Singleton);
             container.RegisterMapping<ISessionClosedListener, ITargetService>();
             container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
+            container.RegisterCommand<ShutdownCommand>(
+                "shutdown",
+                "Shuts down this server gracefully, immediately or after a delay: shutdown [seconds].",
+                CommandSourceType.Console | CommandSourceType.InGame,
+                AccountType.Administrator
+            );
             container.RegisterCommand<SaveCommand>(
                 "save",
                 "Saves the world and broadcasts world saved after successful completion.",

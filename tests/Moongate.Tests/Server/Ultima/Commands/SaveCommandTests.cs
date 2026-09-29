@@ -31,11 +31,13 @@ public sealed class SaveCommandTests
         await saving.WaitAsync(TimeSpan.FromSeconds(5));
 
         var packet = Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent));
-        Assert.Equal("world saved", packet.Text);
+        Assert.StartsWith("world saved in ", packet.Text);
+        Assert.True(TimeSpan.TryParse(packet.Text["world saved in ".Length..], out var elapsed));
+        Assert.True(elapsed >= TimeSpan.Zero);
 
         if (source == CommandSourceType.Console)
         {
-            Assert.Equal("world saved", Assert.Single(context.Output).Text);
+            Assert.Equal(packet.Text, Assert.Single(context.Output).Text);
         }
         else
         {

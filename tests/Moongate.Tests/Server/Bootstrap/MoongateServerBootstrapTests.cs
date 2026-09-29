@@ -5,14 +5,64 @@ using Moongate.Server.Core.Data.Events;
 using Moongate.Server.Core.Data.Services;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
+using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Services.GameLoop;
+using Moongate.Server.Services.Timing;
 using Moongate.Tests.Support.Events;
 using Moongate.Tests.Support.Server;
 using Moongate.Tests.Support.Server.Interfaces;
+using Moongate.Tests.TestSupport.Bootstrap;
 
 namespace Moongate.Tests.Server.Bootstrap;
 
 public class MoongateServerBootstrapTests
 {
+    [Theory]
+    [InlineData(false)]
+    [InlineData(true)]
+    public async Task RunAsync_CommandShutdownWaitsForFinalSave(bool withGameLoop)
+    {
+        using var container = new Container();
+        using var cancellation = new CancellationTokenSource();
+        var saves = new ShutdownWorldSaveService();
+        var events = new List<string>();
+        container.AddMoongateService<IWorldSaveService>(saves, 40);
+        container.AddMoongateService<IRecordingStartupService>(new RecordingStartupService("network", events), 100);
+
+        if (withGameLoop)
+        {
+            var timers = new TimerWheelService(new(), TimeProvider.System);
+            container.AddMoongateService<IGameLoopService>(new GameLoopService(new(), timers, TimeProvider.System), 10);
+        }
+
+        var bootstrap = new MoongateServerBootstrap(container, cancellation.Token);
+        var running = MoongateServerRunner.RunAsync(bootstrap);
+
+        try
+        {
+            await saves.Activated.Task.WaitAsync(TimeSpan.FromSeconds(5));
+            var shutdown = container.Resolve<IServerShutdownService>();
+            Assert.False(running.IsCompleted);
+
+            shutdown.RequestShutdown();
+            shutdown.RequestShutdown();
+            await saves.StopStarted.Task.WaitAsync(TimeSpan.FromSeconds(5));
+
+            Assert.True(saves.SaveFinal);
+            Assert.Contains("stop:network", events);
+            Assert.False(running.IsCompleted);
+            saves.SaveCompleted.SetResult();
+            await running.WaitAsync(TimeSpan.FromSeconds(5));
+            Assert.True(container.IsDisposed);
+        }
+        finally
+        {
+            saves.SaveCompleted.TrySetResult();
+            cancellation.Cancel();
+            await running.WaitAsync(TimeSpan.FromSeconds(5));
+        }
+    }
+
     [Fact]
     public async Task Constructor_NoPluginsOrServices_EnsuresSharedEventBus()
     {
