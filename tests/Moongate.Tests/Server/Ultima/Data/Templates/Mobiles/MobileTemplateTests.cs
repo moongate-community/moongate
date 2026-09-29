@@ -48,6 +48,7 @@ public sealed class MobileTemplateTests
                             loot = ["guard_loot"]
                             gold = "1d50"
                             script_id = "ai.guard"
+                            brain = "guard_patrol"
                             visibility = "game_master"
 
                             [skills]
@@ -94,6 +95,7 @@ public sealed class MobileTemplateTests
             Assert.Equal("britain", loaded.Tags!["post"]);
             Assert.Equal(["guard_loot"], loaded.Loot);
             Assert.Equal(AccountType.GameMaster, loaded.Visibility);
+            Assert.Equal("guard_patrol", loaded.Brain);
             Assert.Equal(2, loaded.Equipment!.Count);
             Assert.Equal((GenderType.Female, (HueSpec?)null), (loaded.Equipment[0].Gender, loaded.Equipment[0].Hue));
             Assert.Null(loaded.Equipment[1].Gender);
@@ -105,7 +107,7 @@ public sealed class MobileTemplateTests
     {
         var toml = TomlUtils.Serialize(new MobileTemplate { Id = "orc", Equipment = [new() { Items = ["club"] }] });
 
-        foreach (var key in new[] { "base_id", "name", "body", "gender", "race", "strength", "hits", "skills", "resistances", "sounds", "notoriety", "karma", "loot", "gold", "visibility", "tags", "hue" })
+        foreach (var key in new[] { "base_id", "name", "body", "gender", "race", "strength", "hits", "skills", "resistances", "sounds", "notoriety", "karma", "loot", "gold", "visibility", "tags", "hue", "brain" })
         {
             Assert.DoesNotContain($"{key} =", toml);
             Assert.DoesNotContain($"[{key}]", toml);
@@ -122,7 +124,12 @@ public sealed class MobileTemplateTests
      InlineData("[sounds]\ndeath = -1\n", "sounds"),
      InlineData("[tags]\n\" \" = \"x\"\n", "tags"),
      InlineData("[[equipment]]\nitems = []\n", "equipment"),
-     InlineData("[[equipment]]\nitems = [\"\"]\n", "equipment")]
+     InlineData("[[equipment]]\nitems = [\"\"]\n", "equipment"),
+     InlineData("brain = \"ai.guard\"\n", "brain"),
+     InlineData("brain = \"Wander\"\n", "brain"),
+     InlineData("brain = \"1x\"\n", "brain"),
+     InlineData("brain = \"\"\n", "brain"),
+     InlineData("brain = \"wander\\n\"\n", "brain")]
     public void Validate_ABadValue_NamesTheTemplateAndField(string fields, string field)
     {
         var template = TomlUtils.Deserialize<MobileTemplate>("id = \"orc\"\n" + fields)!;

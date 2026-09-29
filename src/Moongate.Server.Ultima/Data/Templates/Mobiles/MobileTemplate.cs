@@ -1,3 +1,4 @@
+using System.Text.RegularExpressions;
 using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
@@ -14,7 +15,7 @@ namespace Moongate.Server.Ultima.Data.Templates.Mobiles;
 ///     . Every field but <see cref="Id" /> may be unset: it is then inherited through
 ///     <see cref="BaseId" />, and with none anywhere the stated default applies.
 /// </summary>
-public class MobileTemplate
+public partial class MobileTemplate
 {
     /// <summary>
     ///     The stable id a spawn, a loot table or the <c>addnpc</c> command names this template by.
@@ -179,6 +180,12 @@ public class MobileTemplate
     public string? ScriptId { get; set; }
 
     /// <summary>
+    ///     The Lua brain in <c>scripts/brains/&lt;brain&gt;.lua</c> whose <c>on_think</c> and <c>on_speech</c> drive the
+    ///     NPC: a lower-case Lua identifier. Unset: no brain.
+    /// </summary>
+    public string? Brain { get; set; }
+
+    /// <summary>
     ///     The lowest account type that sees the mobile. Unset: everyone.
     /// </summary>
     public AccountType? Visibility { get; set; }
@@ -245,7 +252,15 @@ public class MobileTemplate
         {
             throw Invalid("tags", "must not have an empty key");
         }
+
+        if (Brain is not null && !BrainPattern().IsMatch(Brain))
+        {
+            throw Invalid("brain", "must be a Lua identifier of lower-case letters, digits and underscores");
+        }
     }
+
+    [GeneratedRegex(@"^[a-z_][a-z0-9_]*\z")]
+    private static partial Regex BrainPattern();
 
     private InvalidDataException Invalid(string field, string rule)
     {
