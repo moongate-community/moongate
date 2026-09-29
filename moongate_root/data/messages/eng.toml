@@ -5476,3 +5476,9 @@
 19339 = "(guarded)"
 19340 = "That creature’s spirit lacks cohesion. Try again in a few minutes."
 20298 = "You aren't skilled enough to unravel this."
+
+# Moongate: item rarity in tooltips (30000 + ItemRarityType).
+30001 = "Uncommon"
+30002 = "Rare"
+30003 = "Epic"
+30004 = "Legendary"

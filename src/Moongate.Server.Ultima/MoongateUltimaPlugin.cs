@@ -273,6 +273,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             // the world save (40): the items on the ground are live before anyone can see them.
             container.AddMoongateService<IItemService, ItemService>(10);
             container.AddMoongateService<IEquipmentService, EquipmentService>();
+            container.AddMoongateService<ITooltipService, TooltipService>();
             // As the ground items: the NPCs are live before the game server takes players.
             container.AddMoongateService<INpcService, NpcService>(10);
         }

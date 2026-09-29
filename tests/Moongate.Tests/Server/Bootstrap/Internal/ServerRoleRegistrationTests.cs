@@ -77,6 +77,7 @@ public sealed class ServerRoleRegistrationTests
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ISessionService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IWorldSaveService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IEquipmentService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ITooltipService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginServerService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginPacketHandlerRegistry>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IDataLoaderService>());
