@@ -7,6 +7,7 @@ using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Persistence.Extensions;
 using Moongate.Scripting.Extensions.Scripts;
+using Moongate.Scripting.Services;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
@@ -196,6 +197,10 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ILootService, LootService>(Reuse.Singleton);
             container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
             container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);
+            // After the script engine (70) and its bootstrap: the mobile scripts load into the running engine.
+            container.AddMoongateService<NpcScriptService>(LuaScriptEngineService.StartupPriority + 5);
+            container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
+            container.Register<INpcSpeechListener, NpcHearingService>(Reuse.Singleton);
             container.AddMetricProvider<NpcTickMetricsProvider>();
             container.Register<ISectorService, SectorService>(Reuse.Singleton);
             container.Register<IMobileService, MobileService>(Reuse.Singleton);
@@ -224,6 +229,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ITargetService, TargetService>(Reuse.Singleton);
             container.RegisterMapping<ISessionClosedListener, ITargetService>();
             container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
+            container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
             container.RegisterCommand<ShutdownCommand>(
                 "shutdown",
                 "Shuts down this server gracefully, immediately or after a delay: shutdown [seconds].",
@@ -278,6 +284,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
             container.AddScriptModule<DiceModule>();
             container.AddScriptModule<LocalizationModule>();
+            container.AddScriptModule<NpcModule>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddLiveWorldMobiles();

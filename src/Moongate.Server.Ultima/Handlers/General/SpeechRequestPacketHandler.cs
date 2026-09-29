@@ -37,16 +37,19 @@ public sealed class SpeechRequestPacketHandler :
     private readonly IMobileService _mobiles;
     private readonly IPacketSendService _sender;
     private readonly ILocalizationService? _localization;
+    private readonly INpcSpeechListener? _npcs;
 
     public SpeechRequestPacketHandler(
         ICommandSystemService commands,
         ISessionService sessions,
         IMobileService mobiles,
         IPacketSendService sender,
-        ILocalizationService? localization = null
+        ILocalizationService? localization = null,
+        INpcSpeechListener? npcs = null
     )
     {
         _localization = localization;
+        _npcs = npcs;
         _commands = commands;
         _sessions = sessions;
         _mobiles = mobiles;
@@ -131,6 +134,8 @@ public sealed class SpeechRequestPacketHandler :
                         SpeechMessageHelper.TrySend(_sender, recipient, message);
                     }
                 }
+
+                _npcs?.Heard(speaker, text);
             },
             cancellationToken
         );

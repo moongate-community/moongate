@@ -28,10 +28,28 @@ public sealed class FakeScriptEngine : IScriptEngine
     /// </summary>
     public ScriptExecutionMetrics? Metrics { get; set; }
 
+    /// <summary>
+    ///     Gets the owner, table, function and arguments of every <see cref="CallMember" />, in order.
+    /// </summary>
+    public List<(string Owner, string Table, string Function, object?[] Args)> MemberCalls { get; } = [];
+
+    /// <summary>
+    ///     Gets or sets what <see cref="CallMember" /> returns.
+    /// </summary>
+    public ScriptResult MemberResult { get; set; } = ScriptResult.Completed([]);
+
     /// <inheritdoc />
     public ScriptResult Call(string functionName, params object?[] args)
     {
         return ScriptResult.Completed([]);
+    }
+
+    /// <inheritdoc />
+    public ScriptResult CallMember(string owner, string table, string function, params object?[] args)
+    {
+        MemberCalls.Add((owner, table, function, args));
+
+        return MemberResult;
     }
 
     /// <inheritdoc />

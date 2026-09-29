@@ -40,6 +40,18 @@ public interface IScriptEngine
     ScriptResult Call(string functionName, params object?[] args);
 
     /// <summary>
+    ///     Calls <c>table.function(args)</c>, a function stored in a global table, such as a mobile script's
+    ///     <c>wander.on_think</c>; it runs like <see cref="Call" />, but its coroutine belongs to
+    ///     <paramref name="owner" />, the script file that defines the table, so invalidating or reloading that file
+    ///     cancels the waits it left.
+    /// </summary>
+    /// <returns>
+    ///     <see cref="ScriptResult.Missing" /> without reporting anything when the global table or its function does not
+    ///     exist; otherwise the result as <see cref="Call" /> gives it.
+    /// </returns>
+    ScriptResult CallMember(string owner, string table, string function, params object?[] args);
+
+    /// <summary>
     ///     Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread;
     ///     diagnostics collectors run off the loop.
     /// </summary>

@@ -42,6 +42,7 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
     public RecordingCommandExecutor AccountExecutor => _container.Resolve<RecordingCommandExecutor>();
     public DelayedCommandExecutor DelayedExecutor => _container.Resolve<DelayedCommandExecutor>();
     public SpeechRequestPacketHandler Handler { get; }
+    public RecordingNpcSpeechListener Listener { get; } = new();
 
     private SpeechHandlerFixture(SessionFixture network, ILogger? commandLogger, ILocalizationService? localization)
     {
@@ -67,7 +68,7 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
         Commands = commandLogger is null
             ? new(_container.Resolve<CommandRegistry>(), _container)
             : new(_container.Resolve<CommandRegistry>(), _container, commandLogger);
-        Handler = new(Commands, Sessions, Mobiles, Sender, localization);
+        Handler = new(Commands, Sessions, Mobiles, Sender, localization, Listener);
     }
 
     public static async Task<SpeechHandlerFixture> CreateAsync(ILogger? commandLogger = null, ILocalizationService? localization = null)

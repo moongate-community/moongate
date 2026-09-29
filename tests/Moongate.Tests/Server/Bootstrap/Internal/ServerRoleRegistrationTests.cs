@@ -14,6 +14,7 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config;
+using Moongate.Server.Services.Events;
 using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Realms;
@@ -22,6 +23,7 @@ using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Packets.Characters;
@@ -116,6 +118,8 @@ public sealed class ServerRoleRegistrationTests
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
         container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: mode));
 
+        container.RegisterMoongateEventBus();
+        container.Register<IEventBusService, EventBusService>(Reuse.Singleton);
         ServerRoleRegistration.Register(container, config, directories);
         new MoongateUltimaPlugin().Register(container);
 
@@ -134,6 +138,10 @@ public sealed class ServerRoleRegistrationTests
         {
             Assert.IsType<MotdService>(container.Resolve<IMotdService>());
             Assert.IsType<SectorService>(container.Resolve<ISectorService>());
+            Assert.IsType<SpeechService>(container.Resolve<ISpeechService>());
+            Assert.NotNull(container.Resolve<NpcModule>());
+            Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
+            Assert.IsType<NpcHearingService>(container.Resolve<INpcSpeechListener>());
             Assert.Contains(container.ResolveMany<IMetricProvider>(), provider => provider.ProviderName == "npcs");
         }
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());

@@ -18,6 +18,11 @@ public sealed class ScriptResult
     public static ScriptResult Suspended { get; } = new(ScriptResultKind.Suspended, [], null);
 
     /// <summary>
+    ///     Gets the result of a call to a table or function that does not exist.
+    /// </summary>
+    public static ScriptResult Missing { get; } = new(ScriptResultKind.Missing, [], null);
+
+    /// <summary>
     ///     Gets how the call ended.
     /// </summary>
     public ScriptResultKind Kind { get; }
