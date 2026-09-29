@@ -22,11 +22,17 @@ Moongate is an open-source Ultima Online server emulator written in C# on .NET 1
 It combines Lua scripting, PostgreSQL persistence and Redis-backed login-to-game
 handoff, with reusable libraries for building server tools and services.
 
+Moongate is multi-shard: one login server lists any number of game servers (up to
+128), each running its own world with its own database, and players pick one from
+the client's server list. `standalone` mode runs the login and a single shard in
+one process. See [Docker login and realms](docs/docker-login-realms.md).
+
 ## Status
 
-**Under active development; there is no playable world yet.** Login lists the
-account's saved characters. New characters are created and saved with their
-starting items; character selection and world entry are not implemented.
+**Under active development; the world is not a game yet.** Characters are
+created, enter the world, walk and run, see each other and talk, move items in
+their backpack and on the ground, and game masters spawn and remove NPCs. There
+is no combat, NPC AI, death or skill gain yet.
 
 The networking and packet pipeline, Lua runtime, persistence infrastructure,
 shard data loading, and client-file readers with movement and line-of-sight

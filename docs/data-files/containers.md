@@ -29,8 +29,8 @@ items = [0x0E76, 0x2256, 0x2257]
 | `default` | `true` on the one entry used for containers not listed. |
 
 `IContainerLayoutService` resolves these layouts. Starting-item and mobile
-creation use their bounds to place items inside backpacks; interactive container
-windows and drag-and-drop behavior are not implemented yet.
+creation use their bounds to place items inside backpacks, and the container
+window (`0x24`) opens with the layout's gump; see [Packets](../packets.md).
 
 ## Validation at startup
 

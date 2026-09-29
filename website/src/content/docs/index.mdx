@@ -25,8 +25,30 @@ still plenty to learn—and plenty worth writing by hand.
 The foundation is C# and .NET 10, with Lua scripting, PostgreSQL persistence and
 Redis-backed realm handoff. Its libraries can also be used on their own.
 
-> **A work in progress.** There is no playable world yet.
+> **A work in progress.** Characters enter the world, walk, see each other, move
+> items and meet the NPCs a game master spawns; there is no combat or NPC AI yet.
 > [See what works today](/start/implementation-status/) before setting up a server.
+
+## Multi-shard by design
+
+One Moongate installation can run any number of shards. A login server
+authenticates the players and lists the shards that are online; each shard is a
+separate game server process with its own world database, and the players choose
+where to play from the client's server list.
+
+- **Add a shard by starting a game server.** It announces itself through Redis and
+  appears in the list within seconds; stop it and it drops out. Up to 128 shards
+  can share one login.
+- **One account for every shard.** Accounts live in their own database, reached
+  only by the login server; a game server never sees account credentials.
+- **Worlds stay apart.** Each shard keeps its characters, items and NPCs in its own
+  PostgreSQL database, so a test shard can run next to a live one.
+- **Per-shard access.** A shard can be reserved for game masters or administrators.
+- **Or keep it small.** `standalone` mode runs the login and one shard in a single
+  process.
+
+[Run a login server with two shards](/server/docker-login-realms/) with Docker
+Compose, or read [how login and game are separated](/server/network-game-separation/).
 
 ## Download
 

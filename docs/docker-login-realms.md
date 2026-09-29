@@ -2,7 +2,7 @@
 
 The [Compose example](../examples/docker/login-realms/compose.yaml) builds the current source and runs one login process, two game processes, PostgreSQL 16 and private Redis 7.4. PostgreSQL holds separate Accounts, Realm 1 and Realm 2 databases. Redis holds short-lived realm leases and one-use login handoff tickets. Nothing in the example publishes Redis to the host.
 
-A successful `0x80` login receives a filtered `0xA8` list. `0xA0` selects a realm; login sends `0x8C` with its IPv4 address, port and one-use key, then closes that login connection. The client reconnects to the chosen game port, sends the raw four-byte key as its seed, then `0x91` with the same key and credentials. The game consumes the ticket from Redis, associates the account with its local session and replies with the supported features (`0xB9`) and the account's saved characters (`0xA9`) with the starting cities. Character creation saves a new character and its starting items; selection and world entry are still under development.
+A successful `0x80` login receives a filtered `0xA8` list. `0xA0` selects a realm; login sends `0x8C` with its IPv4 address, port and one-use key, then closes that login connection. The client reconnects to the chosen game port, sends the raw four-byte key as its seed, then `0x91` with the same key and credentials. The game consumes the ticket from Redis, associates the account with its local session and replies with the supported features (`0xB9`) and the account's saved characters (`0xA9`) with the starting cities. Character creation saves a new character and its starting items; selecting a character brings it into that realm's world.
 
 ## Topology
 

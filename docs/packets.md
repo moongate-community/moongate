@@ -186,8 +186,8 @@ the session, turns on Huffman compression for everything it sends from then on,
 and sends `0xB9` followed by `0xA9`: the account's saved characters in the
 configured number of slots (`characters.max_per_account`, default 7), plus the
 starting cities from `data/starting_cities.toml`. The creation handlers save a new
-character and its starting items in one transaction. Selection and world entry
-remain future work.
+character and its starting items in one transaction. `0x5D` brings the chosen
+character into the world (see below).
 
 `TryGetDescriptor(opCode, out descriptor)` prefers incoming, then outgoing;
 `descriptor.PacketType.Name` gives its class name. The overload accepting

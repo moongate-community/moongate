@@ -3,9 +3,8 @@
 This is the one first-start sequence for Moongate. It applies whether you installed
 the release with [the Linux installer](installation.md), run the
 [container image](docker.md), or build from source. Moongate is under active
-development: the transport, packet pipeline, scripting and persistence
-infrastructure and login-to-game handoff are available, but character selection
-and a playable world are not implemented yet. See [Implementation status](implementation-status.md).
+development: characters enter the world, walk and see each other, but combat,
+NPC AI and most gameplay are not implemented yet. See [Implementation status](implementation-status.md).
 
 A server start needs a root, readable client files, the active role's PostgreSQL
 database and reviewed SQL, and a private Redis instance for realm leases and
