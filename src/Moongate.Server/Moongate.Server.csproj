@@ -8,7 +8,6 @@
         <TargetFramework>net10.0</TargetFramework>
         <ImplicitUsings>enable</ImplicitUsings>
         <Nullable>enable</Nullable>
-        <Codename>Lilly</Codename>
         <DockerDefaultTargetOS>Linux</DockerDefaultTargetOS>
         <PublishSingleFile>true</PublishSingleFile>
         <PublishSelfContained>true</PublishSelfContained>
