@@ -274,7 +274,7 @@ own, see [TOML value types](toml-types.md).
 | `ItemId` | The base client graphic; runtime physical properties come from `ITileDataService` unless overridden |
 | `Name`, `Comment` | A display name override, and a designer note nobody reads at runtime |
 | `Rarity` | `EnumValueSpec<ItemRarityType>` |
-| `ScriptId` | Reserved Lua module identifier; stored and inherited, but template hooks are not dispatched yet |
+| `ScriptId` | The global Lua table, defined by `scripts/items/<script_id>.lua`, whose `on_use` handles a double click; a lower-case Lua identifier, empty for none. See [Item scripts](scripting.md#item-scripts) |
 | `Movable` | Unset uses tiledata: movable unless the tiledata weight is 255, the client's "cannot be lifted" |
 | `Weight` | Stones to two decimals (`weight = 0.02` for a coin); unset uses the whole-stone tiledata weight |
 | `Amount` | `RangeValueSpec<int>`: the stack size of a new item, fixed or `"10-20"`; unset is 1 |

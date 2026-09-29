@@ -66,9 +66,13 @@ exists but fails compilation/execution aborts server startup.
 | `npc.say(serial, text)` | The NPC says `text` overhead to the players within 15 cells (cut to 128 characters); `false` for blank text or a serial that is not an NPC in the world |
 | `npc.step(serial, direction, running?)` | One step toward a `DirectionType` (`North` to `NorthWest`), turning first when needed, seen by the players in range; a run when `running` is `true`. How often the script calls it sets the speed. `false` when blocked or for `DirectionType.Running`, which is not a direction |
 | `npc.location(serial)`, `npc.name(serial)` | `{ x, y, z, map }` and the name of the NPC, or `nil` |
+| `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
+| `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` when fewer are left |
+| `item.delete(serial)` | Deletes the item; `false` for a worn item or a container that still holds items |
+| `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` when that player is not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization` and `npc` in game and standalone modes.
+The Ultima plugin registers `dice`, `localization`, `npc` and `item` in game and standalone modes.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
@@ -200,6 +204,39 @@ so the NPCs use the new functions from their next think; state kept in `local`
 tables of the old file starts again, and the waits its handlers left are cancelled,
 because a script's calls belong to `mobiles/<script_id>.lua`. When the server stops,
 the scripts are no longer called, before the script engine stops.
+
+## Item scripts
+
+An item template names its script with `script_id`, the name of a global Lua table
+defined by `scripts/items/<script_id>.lua`. The files of `scripts/items/` load at
+startup like the [mobile scripts](#mobile-scripts), and `script reload
+items/potion.lua` reloads one.
+
+```toml
+# templates/items/potions.toml
+[[item]]
+id = "0x0f0e_potion"
+item_id = 0x0F0E
+script_id = "potion"
+```
+
+| Function | When |
+| --- | --- |
+| `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled. |
+
+The script acts on its item with the `item` module, passing its serial; `user` is
+the serial of the player. The shipped `scripts/items/potion.lua`:
+
+```lua
+potion = {}
+
+function potion.on_use(serial, user)
+    item.message(serial, user, "You drink the potion.")
+    item.consume(serial)
+
+    return true
+end
+```
 
 ## Reload and ownership
 
