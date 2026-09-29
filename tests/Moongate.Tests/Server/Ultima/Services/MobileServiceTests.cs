@@ -267,6 +267,48 @@ public sealed class MobileServiceTests
         Assert.Equal(expected, mobiles.GetFlags(aria));
     }
 
+    [Fact]
+    public void Delete_LeavesTheWorldAndQueuesTheRowForTheSave()
+    {
+        var sectors = TestSectors.Create();
+        var mobiles = new MobileService(new StubMovementService(), sectors);
+        var aria = Aria();
+        mobiles.EnterWorld(aria);
+
+        Assert.True(mobiles.Delete(aria.Id));
+
+        Assert.False(mobiles.IsInWorld(aria.Id));
+        Assert.Empty(sectors.GetMobilesInRange(aria.Map, aria.Location, 18));
+        Assert.Equal([aria.Id], mobiles.Capture());
+        Assert.False(mobiles.Delete(aria.Id));
+    }
+
+    [Fact]
+    public void Committed_ForgetsTheSavedDeletions()
+    {
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
+        var aria = Aria();
+        mobiles.EnterWorld(aria);
+        mobiles.Delete(aria.Id);
+
+        mobiles.Committed(mobiles.Capture());
+
+        Assert.Empty(mobiles.Capture());
+    }
+
+    [Fact]
+    public void EnterWorld_AfterDelete_CancelsTheDeletion()
+    {
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
+        var aria = Aria();
+        mobiles.EnterWorld(aria);
+        mobiles.Delete(aria.Id);
+
+        mobiles.EnterWorld(aria);
+
+        Assert.Empty(mobiles.Capture());
+    }
+
     private static MobileEntity Aria(int hair = 0x203C, int beard = 0)
     {
         return new()

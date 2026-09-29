@@ -12,6 +12,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Tests.TestSupport.Persistence;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
@@ -332,6 +333,36 @@ public sealed class MobileEntityPersistenceTests
         await mobiles.UpsertAsync(aria);
 
         Assert.Equal(DirectionType.West, (await mobiles.GetByIdAsync(aria.Id))!.Direction);
+    }
+
+    [Fact]
+    public async Task WorldSave_DeletesADeletedMobileAndItsItems()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var sectors = TestSectors.Create();
+        var mobiles = new MobileService(new StubMovementService(), sectors);
+        var items = TestItems.Create(sectors);
+        host.Container.RegisterInstance<IMobileService>(mobiles);
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobileData = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var itemData = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var orc = new MobileEntity { Name = "Orc", TemplateId = "orc", Map = MapType.Trammel, Location = new Point3D(1497, 1628, 0) };
+        await mobileData.UpsertAsync(orc);
+        var backpack = new ItemEntity { TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(orc.Id, LayerType.Backpack);
+        await itemData.UpsertAsync(backpack);
+        mobiles.EnterWorld(orc);
+        items.Add([backpack]);
+
+        items.Remove([backpack.Id]);
+        Assert.True(mobiles.Delete(orc.Id));
+        await host.Owner.SaveAllAsync();
+
+        Assert.Null(await mobileData.GetByIdAsync(orc.Id));
+        Assert.Null(await itemData.GetByIdAsync(backpack.Id));
     }
 
     [Fact]

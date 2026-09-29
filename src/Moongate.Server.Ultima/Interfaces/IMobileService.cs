@@ -1,6 +1,7 @@
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
+using Moongate.Persistence.Interfaces;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Types.Mobiles;
@@ -14,9 +15,10 @@ namespace Moongate.Server.Ultima.Interfaces;
 ///     their steps.
 /// </summary>
 /// <remarks>
-///     The live mobiles change on the game loop: move them only there. The world save writes their snapshots.
+///     The live mobiles change on the game loop: move them only there. The world save writes their snapshots and deletes
+///     the mobiles <see cref="Delete" /> took out.
 /// </remarks>
-public interface IMobileService
+public interface IMobileService : IPersistenceDeletionSource
 {
     /// <summary>
     ///     Gets the mobiles in the world.
@@ -52,6 +54,13 @@ public interface IMobileService
     ///     Forgets the mobile; false when it was not in the world.
     /// </summary>
     bool LeaveWorld(Serial serial);
+
+    /// <summary>
+    ///     Takes the mobile out of the world and queues its row for deletion by the next world save, in the same
+    ///     transaction as the live mobiles; its items go with it through the database's cascading keys. False when it is
+    ///     not in the world.
+    /// </summary>
+    bool Delete(Serial serial);
 
     /// <summary>
     ///     Turns the mobile towards <paramref name="direction" /> or, when it already faces that way, steps it to the next
