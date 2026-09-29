@@ -71,6 +71,39 @@ public sealed class ItemScriptServiceTests : IDisposable
         Assert.Empty(_engine.MemberCalls);
     }
 
+    [Fact]
+    public async Task Queue_RunsTheFunctionOnTheNextLoopTurn()
+    {
+        var loop = new StubGameLoop();
+        var service = Create(loop, new ItemTemplate { Id = "potion", ScriptId = "potion" });
+        await service.StartAsync();
+        loop.DeferTryPost = true;
+
+        service.Queue(_potion, "on_unequip", 2L);
+
+        Assert.Empty(_engine.MemberCalls);
+        loop.RunDeferred();
+        var call = Assert.Single(_engine.MemberCalls);
+        Assert.Equal(("potion", "on_unequip"), (call.Table, call.Function));
+        Assert.Equal([0x40000100L, 2L], call.Args);
+    }
+
+    [Fact]
+    public async Task Queue_NoScriptOrNotRunning_PostsNothing()
+    {
+        var loop = new StubGameLoop();
+        var scripted = Create(loop, new ItemTemplate { Id = "potion", ScriptId = "potion" });
+        scripted.Queue(_potion, "on_equip", 2L);
+        var plain = Create(loop, new ItemTemplate { Id = "potion" });
+        await plain.StartAsync();
+        var before = loop.PostedWorkItems;
+
+        plain.Queue(_potion, "on_equip", 2L);
+
+        Assert.Equal(before, loop.PostedWorkItems);
+        Assert.Empty(_engine.MemberCalls);
+    }
+
     public void Dispose()
     {
         _scripts.Dispose();
@@ -78,10 +111,15 @@ public sealed class ItemScriptServiceTests : IDisposable
 
     private ItemScriptService Create(params ItemTemplate[] templates)
     {
+        return Create(new StubGameLoop(), templates);
+    }
+
+    private ItemScriptService Create(StubGameLoop loop, params ItemTemplate[] templates)
+    {
         return new(
             _engine,
             new ItemTemplateService(new StubDataLoaderService().With(templates)),
-            new StubGameLoop(),
+            loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
         );
     }
