@@ -57,9 +57,10 @@ use the documentation published for that version.
    mgboot /srv/moongate
    ```
 
-   This writes `config/moongate.toml` with the defaults, creates `logs/`, `plugins/`
-   and `scripts/`, copies the release's core SQL into `migrations/` and its shard
-   data files into `data/`. It needs no
+   This writes `config/moongate.toml` with the defaults, creates `logs/` and
+   `plugins/`, copies the release's core SQL into `migrations/`, its shard data files
+   into `data/`, its templates into `templates/` and its example scripts into
+   `scripts/`. It needs no
    database and no client files. [Prepare a root with mgboot](mgboot.md) describes
    what happens on a root that already exists.
 
@@ -180,7 +181,7 @@ All server-managed paths below are relative to `--root-directory`:
 | `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgboot` administration TLS identity: private server PFX and public PEM for client trust |
 | `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgboot` (releases after 0.6.0); plugins ship their own under `plugins/` |
 | `data/` | Shard data files copied by `mgboot`, read at game and standalone startup; see [Shard data files](data-files.md) |
-| `templates/items/`, `templates/loots/`, `templates/mobiles/` | Created at game and standalone startup for [templates](templates.md), and loaded then |
+| `templates/items/`, `templates/loots/`, `templates/mobiles/` | [Templates](templates.md) copied by `mgboot`, loaded at game and standalone startup |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `plugins/` | One assembly bundle per plugin directory |
 | `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, and the generated `definitions.lua` and `.luarc.json` |

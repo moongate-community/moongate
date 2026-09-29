@@ -176,7 +176,7 @@ is not an NPC in the world, such as a removed NPC or a player, gives `false` or
 `nil`, never an error: a handler that waited may outlive its NPC, and a script can
 never voice or move a player.
 
-The repository's `moongate_root/scripts/mobiles/wander.lua`:
+The distribution's `scripts/mobiles/wander.lua`, copied into the root by `mgboot`:
 
 ```lua
 wander = {}
@@ -247,8 +247,8 @@ caused them, on the next turn of the game loop, once the players have seen it: a
 may then delete or consume the item. They are notifications: none can refuse the move.
 
 The script acts on its item with the `item` module, passing its serial; `user` is
-the serial of the player. The repository's `moongate_root/scripts/items/potion.lua`, which no
-template uses yet:
+the serial of the player. The distribution's `scripts/items/potion.lua`, copied into the root by `mgboot`; no
+template uses it yet:
 
 ```lua
 potion = {}

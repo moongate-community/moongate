@@ -14,7 +14,7 @@ against the checksum published beside it, and puts it in place:
 
 | Path | Contents |
 | --- | --- |
-| `/opt/moongate/` | The archive's contents: the server binary, the core SQL in `migrations/`, the migration runner in `migration-runner/`, `mgboot` (releases after 0.6.0), `LICENSE`, `THIRD-PARTY-NOTICES.md` and the debug symbols |
+| `/opt/moongate/` | The archive's contents: the server binary, the core SQL in `migrations/`, the shard data in `data/`, the templates in `templates/`, the example scripts in `scripts/`, the migration runner in `migration-runner/`, `mgboot` (releases after 0.6.0), `LICENSE`, `THIRD-PARTY-NOTICES.md` and the debug symbols |
 | `/usr/local/bin/moongate` | A symlink to `/opt/moongate/Moongate.Server` |
 | `/usr/local/bin/mgboot` | A symlink to `/opt/moongate/mgboot`, when the release contains it |
 
