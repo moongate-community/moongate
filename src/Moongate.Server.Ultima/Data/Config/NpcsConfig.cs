@@ -11,7 +11,14 @@ public sealed class NpcsConfig
     public int ThinkIntervalMs { get; set; } = 500;
 
     /// <summary>
-    ///     Validates the section before server services begin startup: the interval must be from 50 ms to one minute.
+    ///     Gets or sets how near, in cells along X or Y, another mobile must come for an NPC's script to sense it
+    ///     (<c>on_mobile_in_range</c>).
+    /// </summary>
+    public int SenseRange { get; set; } = 8;
+
+    /// <summary>
+    ///     Validates the section before server services begin startup: the interval must be from 50 ms to one minute,
+    ///     the sense range from 1 to 24 cells, the farthest a client sees.
     /// </summary>
     public void Validate()
     {
@@ -20,6 +27,11 @@ public sealed class NpcsConfig
             throw new InvalidOperationException(
                 $"ultima.npcs.think_interval_ms must be from 50 to 60000, found {ThinkIntervalMs}."
             );
+        }
+
+        if (SenseRange is < 1 or > 24)
+        {
+            throw new InvalidOperationException($"ultima.npcs.sense_range must be from 1 to 24, found {SenseRange}.");
         }
     }
 }

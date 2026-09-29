@@ -19,6 +19,7 @@ public sealed class NpcScriptServiceTests : IDisposable
     private readonly TemporaryDirectory _scripts = new();
     private readonly FakeScriptEngine _engine = new();
     private readonly CapturingLogSink _log = new();
+    private readonly StubGameLoop _loop = new();
     private readonly MobileEntity _orc = new()
     {
         Id = new Serial(0x100), Name = "an orc", TemplateId = "orc", Map = MapType.Trammel,
@@ -75,7 +76,7 @@ public sealed class NpcScriptServiceTests : IDisposable
     [Fact]
     public async Task Think_AfterStop_CallsNothing()
     {
-        var service = Create(new MobileTemplate { Id = "orc", ScriptId = "wander" });
+        var service = await StartedAsync(new MobileTemplate { Id = "orc", ScriptId = "wander" });
         await service.StopAsync();
 
         service.Think(_orc);
@@ -84,9 +85,56 @@ public sealed class NpcScriptServiceTests : IDisposable
     }
 
     [Fact]
-    public void Think_CallsOnThinkOfTheTemplateScript()
+    public void Think_BeforeTheScriptsAreLoaded_CallsNothing()
     {
+        // NPCs are loaded into the world before the script engine starts.
         Create(new MobileTemplate { Id = "orc", ScriptId = "wander" }).Think(_orc);
+
+        Assert.Empty(_engine.MemberCalls);
+    }
+
+    [Fact]
+    public async Task Queue_RunsTheFunctionOnTheNextLoopTurn()
+    {
+        var service = await StartedAsync(new MobileTemplate { Id = "orc", ScriptId = "wander" });
+        _loop.DeferTryPost = true;
+
+        service.Queue(_orc, "on_mobile_in_range", 2L);
+
+        Assert.Empty(_engine.MemberCalls);
+        _loop.RunDeferred();
+        var call = Assert.Single(_engine.MemberCalls);
+        Assert.Equal(("wander", "on_mobile_in_range"), (call.Table, call.Function));
+        Assert.Equal([0x100L, 2L], call.Args);
+    }
+
+    [Fact]
+    public async Task Queue_ForAnNpcWithoutAScript_PostsNothing()
+    {
+        var service = await StartedAsync(new MobileTemplate { Id = "orc" });
+        var before = _loop.PostedWorkItems;
+
+        service.Queue(_orc, "on_spawn");
+
+        Assert.Equal(before, _loop.PostedWorkItems);
+    }
+
+    [Fact]
+    public async Task Queue_WhenTheLoopRefuses_IsDroppedWithAWarning()
+    {
+        var service = await StartedAsync(new MobileTemplate { Id = "orc", ScriptId = "wander" });
+        _loop.RefuseTryPost = true;
+
+        service.Queue(_orc, "on_spawn");
+
+        Assert.Empty(_engine.MemberCalls);
+        Assert.Contains(_log.Events, e => e.Level == Serilog.Events.LogEventLevel.Warning);
+    }
+
+    [Fact]
+    public async Task Think_CallsOnThinkOfTheTemplateScript()
+    {
+        (await StartedAsync(new MobileTemplate { Id = "orc", ScriptId = "wander" })).Think(_orc);
 
         var call = Assert.Single(_engine.MemberCalls);
         Assert.Equal(("mobiles/wander.lua", "wander", "on_think"), (call.Owner, call.Table, call.Function));
@@ -94,9 +142,9 @@ public sealed class NpcScriptServiceTests : IDisposable
     }
 
     [Fact]
-    public void Think_NoScriptOrUnknownTemplate_CallsNothing()
+    public async Task Think_NoScriptOrUnknownTemplate_CallsNothing()
     {
-        var service = Create(new MobileTemplate { Id = "orc" });
+        var service = await StartedAsync(new MobileTemplate { Id = "orc" });
 
         service.Think(_orc);
         service.Think(new MobileEntity { Id = new Serial(0x101), TemplateId = "gone" });
@@ -105,10 +153,10 @@ public sealed class NpcScriptServiceTests : IDisposable
     }
 
     [Fact]
-    public void Think_ThatWaits_IsWarnedOncePerScript()
+    public async Task Think_ThatWaits_IsWarnedOncePerScript()
     {
         _engine.MemberResult = ScriptResult.Suspended;
-        var service = Create(new MobileTemplate { Id = "orc", ScriptId = "wander" });
+        var service = await StartedAsync(new MobileTemplate { Id = "orc", ScriptId = "wander" });
 
         service.Think(_orc);
         service.Think(_orc);
@@ -122,6 +170,14 @@ public sealed class NpcScriptServiceTests : IDisposable
         _scripts.Dispose();
     }
 
+    private async Task<NpcScriptService> StartedAsync(params MobileTemplate[] templates)
+    {
+        var service = Create(templates);
+        await service.StartAsync();
+
+        return service;
+    }
+
     private NpcScriptService Create(params MobileTemplate[] templates)
     {
         var logger = new LoggerConfiguration().MinimumLevel.Debug().WriteTo.Sink(_log).CreateLogger();
@@ -129,7 +185,7 @@ public sealed class NpcScriptServiceTests : IDisposable
         return new(
             _engine,
             new MobileTemplateService(new StubDataLoaderService().With(templates)),
-            new StubGameLoop(),
+            _loop,
             new ScriptEngineOptions { ScriptsDirectory = _scripts.Path },
             logger
         );

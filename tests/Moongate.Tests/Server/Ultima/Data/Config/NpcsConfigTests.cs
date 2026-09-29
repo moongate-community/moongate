@@ -27,6 +27,26 @@ public sealed class NpcsConfigTests
     }
 
     [Fact]
+    public void SenseRange_Default_Is8()
+    {
+        Assert.Equal(8, new NpcsConfig().SenseRange);
+    }
+
+    [Theory, InlineData(1), InlineData(24)]
+    public void Validate_SenseRangeInRange_Passes(int range)
+    {
+        new NpcsConfig { SenseRange = range }.Validate();
+    }
+
+    [Theory, InlineData(0), InlineData(25)]
+    public void Validate_SenseRangeOutOfRange_Throws(int range)
+    {
+        var exception = Assert.Throws<InvalidOperationException>(() => new NpcsConfig { SenseRange = range }.Validate());
+
+        Assert.Contains("ultima.npcs.sense_range", exception.Message);
+    }
+
+    [Fact]
     public void UltimaConfig_NullNpcs_Throws()
     {
         var exception = Assert.Throws<InvalidOperationException>(() => new UltimaConfig { Npcs = null! }.Validate());

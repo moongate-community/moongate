@@ -23,11 +23,13 @@ public sealed class NpcHearingServiceTests
     };
 
     [Fact]
-    public void Heard_CallsOnSpeechOfTheNpcsWithAScriptWithin15Cells()
+    public async Task Heard_CallsOnSpeechOfTheNpcsWithAScriptWithin15Cells()
     {
         Add(0x100, "orc", 1615, 1600);
+        var hearing = Create();
+        await _scripts.StartAsync();
 
-        Create().Heard(_aria, "hello");
+        hearing.Heard(_aria, "hello");
 
         var call = Assert.Single(_engine.MemberCalls);
         Assert.Equal(("mobiles/wander.lua", "wander", "on_speech"), (call.Owner, call.Table, call.Function));
@@ -35,7 +37,7 @@ public sealed class NpcHearingServiceTests
     }
 
     [Fact]
-    public void Heard_SkipsFarOtherMapScriptlessNpcsAndPlayers()
+    public async Task Heard_SkipsFarOtherMapScriptlessNpcsAndPlayers()
     {
         Add(0x101, "orc", 1616, 1600);
         Add(0x102, "orc", 1600, 1600, MapType.Felucca);
@@ -47,7 +49,10 @@ public sealed class NpcHearingServiceTests
             }
         );
 
-        Create().Heard(_aria, "hello");
+        var hearing = Create();
+        await _scripts.StartAsync();
+
+        hearing.Heard(_aria, "hello");
 
         Assert.Empty(_engine.MemberCalls);
     }

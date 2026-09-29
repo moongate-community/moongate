@@ -89,9 +89,10 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         );
         using var engine = NewEngine();
         await engine.StartAsync();
-        await NewScripts(engine).StartAsync();
+        var scripts = NewScripts(engine);
+        await scripts.StartAsync();
 
-        NewScripts(engine).Think(_cat);
+        scripts.Think(_cat);
 
         Assert.Empty(_errors);
         Assert.Equal((_cat, "Meow, I am a cat"), Assert.Single(_speech.Said));
@@ -116,9 +117,10 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         );
         using var engine = NewEngine();
         await engine.StartAsync();
-        await NewScripts(engine).StartAsync();
+        var scripts = NewScripts(engine);
+        await scripts.StartAsync();
 
-        new NpcHearingService(NewScripts(engine), _sectors).Heard(_aria, "HELLO cat");
+        new NpcHearingService(scripts, _sectors).Heard(_aria, "HELLO cat");
         Assert.Empty(_speech.Said);
         _timers.Fire(_timers.Timers.Single().Id);
 

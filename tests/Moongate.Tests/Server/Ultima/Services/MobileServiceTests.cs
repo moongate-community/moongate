@@ -6,6 +6,7 @@ using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Npcs;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 
@@ -71,6 +72,38 @@ public sealed class MobileServiceTests
         Assert.False(mobiles.IsInWorld(aria.Id));
         Assert.False(mobiles.TryGet(aria.Id, out _));
         Assert.False(mobiles.LeaveWorld(aria.Id));
+    }
+
+    [Fact]
+    public void EnterWorld_TellsTheSensesAfterTheSectors()
+    {
+        var senses = new RecordingNpcSenseService();
+        var sectors = TestSectors.Create();
+        var mobiles = new MobileService(new StubMovementService(), sectors, senses);
+        var aria = new MobileEntity { Id = new Serial(2), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0) };
+
+        mobiles.EnterWorld(aria);
+
+        Assert.Equal(["Appeared 2"], senses.Calls);
+        Assert.Contains(aria, sectors.GetMobilesInRange(MapType.Trammel, aria.Location, 0));
+    }
+
+    [Fact]
+    public void TryMove_AStep_TellsTheSensesWhereItCameFrom_ATurnDoesNot()
+    {
+        var senses = new RecordingNpcSenseService();
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create(), senses);
+        var aria = new MobileEntity
+        {
+            Id = new Serial(2), Map = MapType.Trammel, Location = new Point3D(1600, 1600, 0), Direction = DirectionType.North
+        };
+        mobiles.EnterWorld(aria);
+        senses.Calls.Clear();
+
+        mobiles.TryMove(aria, DirectionType.East);
+        mobiles.TryMove(aria, DirectionType.East);
+
+        Assert.Equal(["Moved 2 1600,1600,0"], senses.Calls);
     }
 
     [Fact]

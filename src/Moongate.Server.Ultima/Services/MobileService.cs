@@ -29,6 +29,7 @@ public sealed class MobileService : IMobileService
     private readonly ConcurrentDictionary<Serial, byte> _deleted = new();
     private readonly IMovementService _movement;
     private readonly ISectorService _sectors;
+    private readonly INpcSenseService? _senses;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
     private long _nextVirtual = Serial.MinVirtual;
 
@@ -36,10 +37,11 @@ public sealed class MobileService : IMobileService
 
     public IReadOnlyCollection<MobileEntity> Mobiles => _inWorld.Values.ToArray();
 
-    public MobileService(IMovementService movement, ISectorService sectors)
+    public MobileService(IMovementService movement, ISectorService sectors, INpcSenseService? senses = null)
     {
         _movement = movement;
         _sectors = sectors;
+        _senses = senses;
     }
 
     public Serial HairSerial(Serial mobile)
@@ -62,6 +64,7 @@ public sealed class MobileService : IMobileService
         _inWorld[mobile.Id] = mobile;
         _deleted.TryRemove(mobile.Id, out _);
         _sectors.Add(mobile);
+        _senses?.Appeared(mobile);
     }
 
     public bool TryGet(Serial serial, [NotNullWhen(true)] out MobileEntity? mobile)
@@ -133,9 +136,11 @@ public sealed class MobileService : IMobileService
             return MoveResultType.Blocked;
         }
 
-        var next = mobile.Location.Move(facing);
+        var oldLocation = mobile.Location;
+        var next = oldLocation.Move(facing);
         mobile.Location = new(next.X, next.Y, newZ);
         _sectors.Move(mobile);
+        _senses?.Moved(mobile, oldLocation);
 
         return MoveResultType.Moved;
     }

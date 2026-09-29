@@ -11,10 +11,10 @@ public sealed class NpcHearingService : INpcSpeechListener
 {
     public const int HearingRange = SpeechService.SayRange;
 
-    private readonly NpcScriptService _scripts;
+    private readonly INpcScriptService _scripts;
     private readonly ISectorService _sectors;
 
-    public NpcHearingService(NpcScriptService scripts, ISectorService sectors)
+    public NpcHearingService(INpcScriptService scripts, ISectorService sectors)
     {
         _scripts = scripts;
         _sectors = sectors;

@@ -29,6 +29,17 @@ public sealed class StubGameLoop : IGameLoopService
     public bool RefuseTryPost { get; set; }
 
     /// <summary>
+    ///     Gets or sets whether TryPost keeps the work for <see cref="RunDeferred" /> instead of running it at once, as the
+    ///     loop runs a posted item after the current one.
+    /// </summary>
+    public bool DeferTryPost { get; set; }
+
+    /// <summary>
+    ///     Gets the work TryPost kept while <see cref="DeferTryPost" /> is set.
+    /// </summary>
+    public List<IGameLoopWorkItem> Deferred { get; } = [];
+
+    /// <summary>
     ///     When true, PostAsync refuses the item with the real loop's "not accepting work" error after counting the attempt.
     /// </summary>
     public bool ThrowOnPost { get; set; }
@@ -100,8 +111,29 @@ public sealed class StubGameLoop : IGameLoopService
         }
 
         PostedWorkItems++;
+
+        if (DeferTryPost)
+        {
+            Deferred.Add(workItem);
+
+            return true;
+        }
+
         workItem.Execute();
 
         return true;
+    }
+
+    /// <summary>
+    ///     Runs the work TryPost kept, and the work it posts in turn, in order.
+    /// </summary>
+    public void RunDeferred()
+    {
+        while (Deferred.Count > 0)
+        {
+            var next = Deferred[0];
+            Deferred.RemoveAt(0);
+            next.Execute();
+        }
     }
 }

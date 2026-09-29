@@ -81,6 +81,7 @@ deletion_delay_hours = 24             # Hours before a deleted character may be 
 
 [ultima.npcs]
 think_interval_ms = 500               # Milliseconds between two thinks of an NPC near a player.
+sense_range = 8                       # Cells within which an NPC's script senses another mobile.
 
 [persistence]
 auto_sync_schema = false
@@ -176,6 +177,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
 | `ultima.characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
 | `ultima.npcs.think_interval_ms` | From 50 to 60000; default 500, ModernUO's passive speed. How often an NPC near a player thinks. Only NPCs within the 5×5 sectors around a player have a think timer; the others sleep and cost nothing. See [NPC tick](game-loop-and-timers.md#npc-tick). |
+| `ultima.npcs.sense_range` | From 1 to 24; default 8. How near, in cells along X or Y, another mobile must come for an NPC's mobile script to sense it with `on_mobile_in_range`. See [Mobile scripts](scripting.md#mobile-scripts). |
 
 The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
 `[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the

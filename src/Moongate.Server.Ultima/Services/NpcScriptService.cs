@@ -14,9 +14,10 @@ namespace Moongate.Server.Ultima.Services;
 ///     Runs the mobile scripts: loads every <c>scripts/mobiles/*.lua</c> at startup and calls the functions of the global
 ///     table an NPC's template names with <c>script_id</c>, defined by <c>scripts/mobiles/&lt;script_id&gt;.lua</c>. It
 ///     is the NPC thinker: each think calls <c>on_think(serial)</c>, which is instantaneous, as ModernUO's; a script
-///     that waits in it is warned once. Once stopped, before the script engine, it calls nothing.
+///     that waits in it is warned once. It calls nothing before the scripts are loaded, which is after the NPCs are,
+///     nor once stopped, before the script engine.
 /// </summary>
-public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
+public sealed class NpcScriptService : INpcScriptService, INpcThinker, IMoongateStartupService
 {
     public const string MobilesDirectory = "mobiles";
 
@@ -27,7 +28,7 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
     private readonly ScriptEngineOptions _options;
     private readonly HashSet<string> _warnedWait = new(StringComparer.Ordinal);
 
-    private bool _stopped;
+    private bool _running;
 
     public NpcScriptService(
         IScriptEngine engine,
@@ -51,6 +52,7 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
         if (!Directory.Exists(directory))
         {
             _logger.Debug("No mobile scripts: {Directory} does not exist", directory);
+            _running = true;
 
             return;
         }
@@ -81,12 +83,13 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
 
         await _loop.PostAsync(work);
         await work.Completion;
+        _running = true;
         _logger.Information("Loaded {Count} mobile scripts", files.Count);
     }
 
     public Task StopAsync()
     {
-        _stopped = true;
+        _running = false;
 
         return Task.CompletedTask;
     }
@@ -104,14 +107,10 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
         }
     }
 
-    /// <summary>
-    ///     Calls <paramref name="function" /> of the NPC's mobile script with its serial followed by
-    ///     <paramref name="args" />; <see cref="ScriptResult.Missing" /> when it has no script, the script lacks the
-    ///     function, or the scripts have stopped.
-    /// </summary>
+    /// <inheritdoc />
     public ScriptResult Run(MobileEntity npc, string function, params object?[] args)
     {
-        if (_stopped || ScriptOf(npc) is not { } script)
+        if (!_running || ScriptOf(npc) is not { } script)
         {
             return ScriptResult.Missing;
         }
@@ -122,6 +121,20 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
             function,
             [(long)npc.Id.Value, ..args]
         );
+    }
+
+    /// <inheritdoc />
+    public void Queue(MobileEntity npc, string function, params object?[] args)
+    {
+        if (!_running || ScriptOf(npc) is null)
+        {
+            return;
+        }
+
+        if (!_loop.TryPost(new LoopActionWorkItem(() => Run(npc, function, args))))
+        {
+            _logger.Warning("NPC {Serial}: {Function} was dropped, the game loop is full or stopping", npc.Id, function);
+        }
     }
 
     private string? ScriptOf(MobileEntity npc)
