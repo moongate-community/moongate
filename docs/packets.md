@@ -46,7 +46,7 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x22` | `MovementAckPacket` | Outgoing | Fixed 3 | — |
 | `0x21` | `MovementRejectPacket` | Outgoing | Fixed 8 | — |
 | `0x77` | `MobileMovingPacket` | Outgoing | Fixed 17 | — |
-| `0x06` | `UseRequestPacket` | Incoming | Fixed 5 | `UseRequestPacketHandler`: opens a container the character carries |
+| `0x06` | `UseRequestPacket` | Incoming | Fixed 5 | `UseRequestPacketHandler`: opens a container the character carries, or a paperdoll |
 | `0x03` | `AsciiSpeechRequestPacket` | Incoming | Variable, minimum 9 | `SpeechRequestPacketHandler`: local say or in-game dot command |
 | `0xAD` | `UnicodeSpeechRequestPacket` | Incoming | Variable, minimum 14 | `SpeechRequestPacketHandler`: Unicode and encoded-keyword say or dot command |
 | `0xAE` | `UnicodeSpeechMessagePacket` | Outgoing | Variable, minimum 50 | Player speech and private command output |
@@ -55,6 +55,7 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0x09`, `0x34`, `0x72` | `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket` | Incoming | Fixed 5, 10, 5 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
 | `0xC8` | `UpdateRangePacket` | Incoming | Fixed 2 | `UpdateRangePacketHandler`: answers with the server's view range |
 | `0xC8` | `ViewRangePacket` | Outgoing | Fixed 2 | — |
+| `0x88` | `DisplayPaperdollPacket` | Outgoing | Fixed 66 | — |
 | `0x07` | `LiftRequestPacket` | Incoming | Fixed 7 | `LiftRequestPacketHandler`: picks up an item the character carries, or one on the ground within 2 tiles |
 | `0x08` | `DropRequestPacket` | Incoming | Fixed 15 | `DropRequestPacketHandler`: drops the held item into a carried container or on the ground |
 | `0x25` | `ContainerItemUpdatePacket` | Outgoing | Fixed 21, or 20 before client 6.0.1.7 | — |
@@ -113,7 +114,16 @@ item opens it when its graphic has the tiledata Container flag and the session's
 carries it, worn or inside something worn: `0x24` with the gump from `containers.toml` (the
 default entry when the graphic has none), then `0x3C` with its direct contents, even when empty.
 Clients before 7.0.9.0 get the 7-byte `0x24`, and before 6.0.1.7 a `0x3C` without the grid byte;
-an unknown version gets the modern formats. Other double clicks are not handled yet.
+an unknown version gets the modern formats.
+
+A double click on a mobile opens its paperdoll (`0x88`) when its body is human in
+`data/bodies.toml` (a monster has none) and it is on the character's map within
+`ultima.world.view_range` along X and Y; the character's own paperdoll button sends its serial
+with the high bit `0x80000000` set and always opens. The title is the name, followed by
+`, <title>` when the mobile has one (NPC templates give titles such as "the mage"). The flags
+say war mode (always off for now) and whether the viewer may take items off, set only on the
+character's own paperdoll. The worn items are already known to the client from `0x78`. Other
+double clicks are not handled yet.
 
 Picking an item up (`0x07`) records it as held in the session; it stays in its container until
 the drop. Only a whole item inside a container the character carries can be picked up: holding

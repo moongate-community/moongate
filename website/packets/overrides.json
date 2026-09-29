@@ -82,11 +82,11 @@
         "name": "Target serial",
         "type": "uint",
         "size": "4",
-        "description": "Item or mobile selected by the client."
+        "description": "Item or mobile selected by the client; the high bit (0x80000000) asks for the own paperdoll."
       }
     ],
-    "notes": "A double click opens a carried container when its graphic has the Container flag.",
-    "handler": "UseRequestPacketHandler: opens a container the character carries"
+    "notes": "A double click opens a carried container when its graphic has the Container flag, or the paperdoll of a human-bodied mobile in view range.",
+    "handler": "UseRequestPacketHandler: opens a container the character carries, or a paperdoll"
   },
   "0x07:incoming": {
     "category": "Items",
@@ -2760,5 +2760,44 @@
     ],
     "notes": "Tells the client the server's view range.",
     "handler": "UpdateRangePacketHandler: sent in answer to the client's 0xC8."
+  },
+  "0x88:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Mobile serial",
+        "type": "uint",
+        "size": "4",
+        "description": "The mobile whose paperdoll opens."
+      },
+      {
+        "offset": "5",
+        "name": "Title",
+        "type": "ascii",
+        "size": "60",
+        "description": "Name, then ', title' when the mobile has one; zero-padded."
+      },
+      {
+        "offset": "65",
+        "name": "Flags",
+        "type": "byte",
+        "size": "1",
+        "description": "0x01 war mode, 0x02 the viewer may take items off."
+      }
+    ],
+    "notes": "Opens a mobile's paperdoll.",
+    "handler": "UseRequestPacketHandler: sent in answer to a double click."
   }
 }
