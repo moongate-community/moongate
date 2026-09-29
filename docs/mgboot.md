@@ -21,6 +21,8 @@ mgboot --help
 
 On Windows, use `mgboot.exe C:\MoongateData` from the extracted distribution.
 Keep `mgboot` and `Moongate.Server` from the same release together.
+When preparing a root, `mgboot` shows the same Moongate banner, version and codename
+as the server, followed by `Root setup`. Help and version output omit the banner.
 
 ## Generate an administration certificate
 

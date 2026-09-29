@@ -14,6 +14,31 @@ public sealed class BootCommandTests
         Assert.Equal(0, result.ExitCode);
         Assert.Contains("--generate-admin-certificate", result.Output);
         Assert.Contains("--admin-certificate-hosts", result.Output);
+        Assert.DoesNotContain(".       .     _.--.", result.Output);
+    }
+
+    [Fact]
+    public async Task Run_Version_OmitsHeader()
+    {
+        var result = await BootProcess.RunAsync("--version");
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.Matches(@"^\d+\.\d+\.\d+\s*$", result.Output);
+        Assert.DoesNotContain(".       .     _.--.", result.Output);
+    }
+
+    [Fact]
+    public async Task Run_Default_ShowsMoongateHeaderBeforePreparingRoot()
+    {
+        using var directory = new TemporaryDirectory();
+        var result = await BootProcess.RunAsync(directory.Path);
+
+        Assert.Equal(0, result.ExitCode);
+        Assert.StartsWith(".       .     _.--.", result.Output);
+        Assert.Matches("Version: [0-9]+\\.[0-9]+\\.[0-9]+ Codename: \"[^\"]+\"", result.Output);
+        Assert.Contains("Root setup", result.Output);
+        Assert.DoesNotContain("{Version}", result.Output);
+        Assert.DoesNotContain("{Codename}", result.Output);
     }
 
     [Fact]

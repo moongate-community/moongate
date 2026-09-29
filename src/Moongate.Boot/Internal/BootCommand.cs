@@ -1,5 +1,6 @@
 using System.Diagnostics;
 using ConsoleAppFramework;
+using Moongate.Core.Utils;
 
 namespace Moongate.Boot.Internal;
 
@@ -51,6 +52,13 @@ internal static class BootCommand
                     server
                 );
             }
+
+            var assembly = typeof(BootCommand).Assembly;
+            var header = ResourceUtils.GetEmbeddedResourceString(assembly, "Assets/header.txt")
+                .Replace("{Version}", VersionUtils.GetVersion(assembly), StringComparison.Ordinal)
+                .Replace("{Codename}", VersionUtils.GetCodename(assembly), StringComparison.Ordinal);
+            Console.WriteLine(header);
+            Console.WriteLine("Root setup");
 
             var start = new ProcessStartInfo(server) { UseShellExecute = false };
             start.ArgumentList.Add("--initialize-root");
