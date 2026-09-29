@@ -8,6 +8,7 @@ using Moongate.Server.Services.Commands;
 using Moongate.Server.Services.Sessions;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Commands;
+using Moongate.Tests.TestSupport.Localization;
 
 namespace Moongate.Tests.Server.Commands;
 
@@ -80,6 +81,32 @@ public sealed class HelpCommandTests
 
         Assert.Equal(expected, line.Text);
         Assert.Equal(CommandOutputLevel.Error, line.Level);
+        await commands.StopAsync();
+    }
+
+    [Fact]
+    public async Task Help_TranslatesItsLinesAndTheDescriptions()
+    {
+        using var container = new Container();
+        container.RegisterInstance(
+            TestLocalization.With((30025, "Comandi disponibili:"), (30047, "Ripete i suoi argomenti."), (30048, "Elenca i comandi."))
+        );
+        container.RegisterCommand<HelpCommand>("help", "Lists commands", CommandSourceType.Console, AccountType.Regular, 30048);
+        container.RegisterCommand<EchoCommand>(
+            "echo",
+            "Echoes arguments",
+            CommandSourceType.Console,
+            AccountType.Regular,
+            30047
+        );
+        var commands = await StartAsync(container);
+
+        var lines = await commands.ExecuteAsync("help");
+
+        Assert.Equal(
+            ["Comandi disponibili:", "echo - Ripete i suoi argomenti.", "help - Elenca i comandi."],
+            lines.Select(line => line.Text).ToArray()
+        );
         await commands.StopAsync();
     }
 

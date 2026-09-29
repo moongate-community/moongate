@@ -24,6 +24,11 @@ public sealed class CommandDefinition
     public string Description { get; }
 
     /// <summary>
+    ///     Gets the id in <c>data/messages</c> of the translated description; 0 shows <see cref="Description" />.
+    /// </summary>
+    public int DescriptionMessage { get; }
+
+    /// <summary>
     ///     Gets the sources allowed to invoke the command.
     /// </summary>
     public CommandSourceType Source { get; }
@@ -44,9 +49,11 @@ public sealed class CommandDefinition
         string description,
         CommandSourceType source,
         AccountType minimumAccountType,
-        Type executorType
+        Type executorType,
+        int descriptionMessage = 0
     )
     {
+        DescriptionMessage = descriptionMessage;
         Name = name;
         Aliases = aliases;
         Description = description;

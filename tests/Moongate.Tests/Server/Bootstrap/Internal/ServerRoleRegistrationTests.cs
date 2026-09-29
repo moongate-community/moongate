@@ -6,6 +6,7 @@ using Moongate.Network.Packets.Types.Packets;
 using Moongate.Persistence.Extensions;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
@@ -56,6 +57,27 @@ public sealed class ServerRoleRegistrationTests
 
         Assert.Equal("Moongate", container.Resolve<RealmInstance>().Descriptor.Name);
         Assert.Equal("Città di Luna", container.Resolve<MotdServerIdentity>().ServerName);
+    }
+
+    [Fact]
+    public void Register_EveryCommand_HasATranslatedDescription()
+    {
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Standalone));
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        var definitions = container.Resolve<CommandRegistry>().Registrations.Values.Select(registration => registration.Definition).Distinct();
+        Assert.All(definitions, definition => Assert.InRange(definition.DescriptionMessage, 30039, 30049));
     }
 
     [Theory, InlineData(0x09), InlineData(0xBF), InlineData(0xD6)]

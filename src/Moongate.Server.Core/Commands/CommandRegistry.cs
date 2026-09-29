@@ -46,7 +46,8 @@ public sealed class CommandRegistry
         string commandName,
         string description,
         CommandSourceType source,
-        AccountType minimumAccountType
+        AccountType minimumAccountType,
+        int descriptionMessage = 0
     )
         where TExecutor : class, ICommandExecutor
     {
@@ -91,7 +92,8 @@ public sealed class CommandRegistry
                     description,
                     source,
                     minimumAccountType,
-                    typeof(TExecutor)
+                    typeof(TExecutor),
+                    descriptionMessage
                 ),
                 resolver =>
                 {
