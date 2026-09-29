@@ -1,9 +1,14 @@
+using System.Diagnostics.CodeAnalysis;
+using Moongate.Core.Geometry;
+using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Items;
 using Moongate.Server.Ultima.Data.Tooltips;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Services;
 
@@ -32,12 +37,56 @@ public sealed class TooltipService : ITooltipService
     private readonly IItemTemplateService _templates;
     private readonly ITileDataService _tiles;
     private readonly ILocalizationService _localization;
+    private readonly IItemService _items;
+    private readonly IMobileService _mobiles;
+    private readonly WorldConfig _world;
 
-    public TooltipService(IItemTemplateService templates, ITileDataService tiles, ILocalizationService localization)
+    public TooltipService(
+        IItemTemplateService templates,
+        ITileDataService tiles,
+        ILocalizationService localization,
+        IItemService items,
+        IMobileService mobiles,
+        WorldConfig world
+    )
     {
         _templates = templates;
         _tiles = tiles;
         _localization = localization;
+        _items = items;
+        _mobiles = mobiles;
+        _world = world;
+    }
+
+    public bool TryBuildFor(Serial viewer, Serial target, [NotNullWhen(true)] out PropertyList? list)
+    {
+        list = null;
+
+        if (!_mobiles.TryGet(viewer, out var character))
+        {
+            return false;
+        }
+
+        if (_mobiles.TryGet(target, out var mobile))
+        {
+            if (!InView(character, mobile.Map, mobile.Location))
+            {
+                return false;
+            }
+
+            list = Build(mobile);
+
+            return true;
+        }
+
+        if (!_items.TryGet(target, out var item) || !IsVisibleTo(character, item))
+        {
+            return false;
+        }
+
+        list = Build(item);
+
+        return true;
     }
 
     public PropertyList Build(ItemEntity item)
@@ -81,6 +130,29 @@ public sealed class TooltipService : ITooltipService
         list.Add(MobileNameCliloc, $" \t{mobile.Name}\t{(string.IsNullOrEmpty(mobile.Title) ? " " : " " + mobile.Title)}");
 
         return list;
+    }
+
+    // Carried or worn by the viewer, worn by a mobile it sees, or lying on the ground in view; never inside someone
+    // else's containers.
+    private bool IsVisibleTo(MobileEntity viewer, ItemEntity item)
+    {
+        if (_items.GetOwner(item) is { } owner)
+        {
+            return owner == viewer.Id ||
+                   (item.MobileId == owner && _mobiles.TryGet(owner, out var wearer) && InView(viewer, wearer.Map, wearer.Location));
+        }
+
+        return item.Map is { } map &&
+               item.GroundLocation is { } spot &&
+               _items.IsLyingOnGround(item) &&
+               InView(viewer, map, spot);
+    }
+
+    private bool InView(MobileEntity viewer, MapType map, Point3D location)
+    {
+        return viewer.Map == map &&
+               Math.Abs(viewer.Location.X - location.X) <= _world.ViewRange &&
+               Math.Abs(viewer.Location.Y - location.Y) <= _world.ViewRange;
     }
 
     private static void AddName(PropertyList list, ItemEntity item, string? name)

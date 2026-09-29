@@ -1,3 +1,4 @@
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Items;
@@ -6,7 +7,10 @@ using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Ultima.Types;
 
@@ -14,7 +18,12 @@ namespace Moongate.Tests.Server.Ultima.Services;
 
 public sealed class TooltipServiceTests
 {
+    private static readonly Serial Aria = new(0x00000002);
+    private static readonly Serial Bran = new(0x00000003);
+
     private readonly TooltipService _tooltips;
+    private readonly ItemService _items;
+    private readonly MobileService _mobiles;
 
     public TooltipServiceTests()
     {
@@ -33,7 +42,19 @@ public sealed class TooltipServiceTests
                     .Item(0x1F03, TileFlagType.Wearable, 0)
                     .Item(0x108A, TileFlagType.Wearable, 0)
                     .Item(0x4001, TileFlagType.None, 0);
-        _tooltips = new(new ItemTemplateService(data), tiles, new LocalizationService(new LocalizationConfig { Language = "ita" }, data));
+        var sectors = TestSectors.Create();
+        _items = TestItems.Create(sectors);
+        _mobiles = new(new StubMovementService(), sectors);
+        _mobiles.EnterWorld(new() { Id = Aria, Name = "Aria", Map = MapType.Trammel, Location = new Point3D(1000, 1000, 0) });
+        _mobiles.EnterWorld(new() { Id = Bran, Name = "Bran", Map = MapType.Trammel, Location = new Point3D(1010, 1000, 0) });
+        _tooltips = new(
+            new ItemTemplateService(data),
+            tiles,
+            new LocalizationService(new LocalizationConfig { Language = "ita" }, data),
+            _items,
+            _mobiles,
+            new WorldConfig()
+        );
     }
 
     [Fact]
@@ -128,6 +149,72 @@ public sealed class TooltipServiceTests
 
         Assert.Equal((1050045, " \tNystul\t the mage"), Line(_tooltips.Build(mage)));
         Assert.Equal((1050045, " \ta guard\t "), Line(_tooltips.Build(guard)));
+    }
+
+    [Fact]
+    public void TryBuildFor_AnItemTheCharacterCarries_IsBuilt()
+    {
+        var backpack = Placed(0x40000001, item => item.Equip(Aria, LayerType.Backpack));
+        var coin = Placed(0x40000002, item => item.PutInContainer(backpack.Id, new Point2D(44, 65)));
+
+        Assert.True(_tooltips.TryBuildFor(Aria, coin.Id, out var list));
+        Assert.NotEmpty(list.Entries);
+    }
+
+    [Fact]
+    public void TryBuildFor_AnItemInAnotherCharactersBackpack_IsRefused()
+    {
+        var backpack = Placed(0x40000001, item => item.Equip(Bran, LayerType.Backpack));
+        var coin = Placed(0x40000002, item => item.PutInContainer(backpack.Id, new Point2D(44, 65)));
+
+        Assert.False(_tooltips.TryBuildFor(Aria, coin.Id, out _));
+    }
+
+    [Fact]
+    public void TryBuildFor_AWornItemOfAMobileInRange_IsBuilt()
+    {
+        var shirt = Placed(0x40000003, item => item.Equip(Bran, LayerType.Shirt));
+
+        Assert.True(_tooltips.TryBuildFor(Aria, shirt.Id, out _));
+    }
+
+    [Fact]
+    public void TryBuildFor_AGroundItem_IsBuiltOnlyInViewRange()
+    {
+        var near = Placed(0x40000004, item => { });
+        _items.PlaceOnGround(near, MapType.Trammel, new Point3D(1005, 1000, 0));
+        var far = Placed(0x40000005, item => { });
+        _items.PlaceOnGround(far, MapType.Trammel, new Point3D(1100, 1000, 0));
+
+        Assert.True(_tooltips.TryBuildFor(Aria, near.Id, out _));
+        Assert.False(_tooltips.TryBuildFor(Aria, far.Id, out _));
+    }
+
+    [Fact]
+    public void TryBuildFor_AMobile_IsBuiltOnlyInViewRangeOnTheSameMap()
+    {
+        var elsewhere = new MobileEntity { Id = new(0x00000004), Name = "Far", Map = MapType.Felucca, Location = new Point3D(1000, 1000, 0) };
+        _mobiles.EnterWorld(elsewhere);
+
+        Assert.True(_tooltips.TryBuildFor(Aria, Bran, out var list));
+        Assert.Equal(1050045, list.Entries[0].Cliloc);
+        Assert.True(_tooltips.TryBuildFor(Aria, Aria, out _));
+        Assert.False(_tooltips.TryBuildFor(Aria, elsewhere.Id, out _));
+    }
+
+    [Fact]
+    public void TryBuildFor_AnUnknownSerial_IsRefused()
+    {
+        Assert.False(_tooltips.TryBuildFor(Aria, new Serial(0x40009999), out _));
+    }
+
+    private ItemEntity Placed(uint serial, Action<ItemEntity> place)
+    {
+        var item = new ItemEntity { Id = new(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        place(item);
+        _items.Add([item]);
+
+        return item;
     }
 
     private static (int, string) Line(Moongate.Server.Ultima.Data.Tooltips.PropertyList list)

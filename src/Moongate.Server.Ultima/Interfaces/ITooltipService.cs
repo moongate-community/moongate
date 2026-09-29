@@ -1,3 +1,5 @@
+using System.Diagnostics.CodeAnalysis;
+using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Tooltips;
 using Moongate.Server.Ultima.Entities.World;
 
@@ -19,4 +21,12 @@ public interface ITooltipService
     ///     The mobile's line: its name and title.
     /// </summary>
     PropertyList Build(MobileEntity mobile);
+
+    /// <summary>
+    ///     Builds the tooltip of <paramref name="target" /> when <paramref name="viewer" />, a mobile in the world, can
+    ///     see it: an item it carries or wears, an item worn by a mobile in view range, an item on the ground in view
+    ///     range, or a mobile in view range on its map. False for anything else, so a client cannot read what it does
+    ///     not see.
+    /// </summary>
+    bool TryBuildFor(Serial viewer, Serial target, [NotNullWhen(true)] out PropertyList? list);
 }

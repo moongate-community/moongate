@@ -7,21 +7,31 @@ using Moongate.Network.Packets.Types.Packets;
 namespace Moongate.Server.Ultima.Packets.General;
 
 /// <summary>
-///     A general information subcommand, such as the client's language or screen size. (0xBF, variable). Only its frame is read: the server does not act on it yet.
+///     An extended command (0xBF): a subcommand number and its own data, read by the handler of that subcommand.
 /// </summary>
 [PacketHandler(0xBF, PacketSizing.Variable, MinimumLength = 5, Description = "Extended command")]
 public sealed class ExtendedCommandPacket : BasePacket<ExtendedCommandPacket>, IIncomingPacket<ExtendedCommandPacket>
 {
+    private const int HeaderLength = 5;
+
     public override int Length { get; }
 
-    private ExtendedCommandPacket(int length)
+    public ushort Subcommand { get; }
+
+    public byte[] Payload { get; }
+
+    private ExtendedCommandPacket(int length, ushort subcommand, byte[] payload)
     {
         Length = length;
+        Subcommand = subcommand;
+        Payload = payload;
     }
 
     public static bool TryParse(ReadOnlySpan<byte> data, [NotNullWhen(true)] out ExtendedCommandPacket? packet)
     {
-        packet = HasValidHeader(data) ? new ExtendedCommandPacket(data.Length) : null;
+        packet = HasValidHeader(data) && data.Length >= HeaderLength
+                     ? new ExtendedCommandPacket(data.Length, (ushort)(data[3] << 8 | data[4]), data[HeaderLength..].ToArray())
+                     : null;
 
         return packet is not null;
     }
