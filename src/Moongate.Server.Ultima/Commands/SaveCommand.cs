@@ -1,5 +1,8 @@
 using System.Diagnostics;
+using System.Globalization;
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Data.Localization;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Interfaces;
@@ -13,9 +16,11 @@ public sealed class SaveCommand : ICommandExecutor
 {
     private readonly IWorldSaveService _saves;
     private readonly IBroadcastService _broadcast;
+    private readonly ILocalizationService? _localization;
 
-    public SaveCommand(IWorldSaveService saves, IBroadcastService broadcast)
+    public SaveCommand(IWorldSaveService saves, IBroadcastService broadcast, ILocalizationService? localization = null)
     {
+        _localization = localization;
         _saves = saves;
         _broadcast = broadcast;
     }
@@ -25,7 +30,7 @@ public sealed class SaveCommand : ICommandExecutor
     {
         if (context.Arguments.Length != 0)
         {
-            context.PrintError("Usage: save");
+            context.PrintError(_localization.Text(CommandMessages.Usage, "Usage: {0}", "save"));
 
             return;
         }
@@ -33,11 +38,16 @@ public sealed class SaveCommand : ICommandExecutor
         var start = Stopwatch.GetTimestamp();
         await _saves.SaveAsync(context.CancellationToken);
         var elapsed = Stopwatch.GetElapsedTime(start);
-        await _broadcast.BroadcastAsync($"world saved in {elapsed}", context.CancellationToken);
+        var message = _localization.Text(
+            CommandMessages.WorldSaved,
+            "The world has been saved in {0} seconds.",
+            elapsed.TotalSeconds.ToString("0.00", CultureInfo.InvariantCulture)
+        );
+        await _broadcast.BroadcastAsync(message, context.CancellationToken);
 
         if (!context.IsInGame)
         {
-            context.Print($"world saved in {elapsed}");
+            context.Print(message);
         }
     }
 }

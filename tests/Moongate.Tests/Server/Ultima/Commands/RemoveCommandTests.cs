@@ -1,11 +1,13 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Tests.Support.Sessions;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Targeting;
 using Moongate.Ultima.Types;
@@ -38,7 +40,7 @@ public sealed class RemoveCommandTests : IAsyncDisposable
 
         var context = await RunAsync();
 
-        Assert.Equal("Not an NPC.", Assert.Single(context.Output).Text);
+        Assert.Equal("That is not an NPC.", Assert.Single(context.Output).Text);
     }
 
     [Fact]
@@ -48,7 +50,7 @@ public sealed class RemoveCommandTests : IAsyncDisposable
 
         var context = await RunAsync();
 
-        Assert.Equal("Canceled.", Assert.Single(context.Output).Text);
+        Assert.Equal("Target canceled.", Assert.Single(context.Output).Text);
         Assert.Empty(_npcs.Removals);
     }
 
@@ -63,13 +65,23 @@ public sealed class RemoveCommandTests : IAsyncDisposable
         Assert.Equal(0, _targets.Requests);
     }
 
-    private async Task<CommandContext> RunAsync()
+    [Fact]
+    public async Task ExecuteAsync_Texts_AreInTheServerLanguage()
+    {
+        _targets.Result = TargetResult.ForLocation(MapType.Trammel, new Point3D(1, 1, 0));
+
+        var context = await RunAsync(TestLocalization.With((30008, "Bersaglio annullato.")));
+
+        Assert.Equal("Bersaglio annullato.", Assert.Single(context.Output).Text);
+    }
+
+    private async Task<CommandContext> RunAsync(ILocalizationService? localization = null)
     {
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         var context = new CommandContext(".remove", "remove", [], CommandSourceType.InGame, session);
 
-        await new RemoveCommand(_npcs, _targets).ExecuteAsync(context);
+        await new RemoveCommand(_npcs, _targets, localization).ExecuteAsync(context);
 
         return context;
     }

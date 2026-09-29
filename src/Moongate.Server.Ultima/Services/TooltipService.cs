@@ -2,6 +2,8 @@ using System.Collections.Concurrent;
 using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Tooltips;
 using Moongate.Server.Ultima.Data.Items;
@@ -134,21 +136,21 @@ public sealed class TooltipService : ITooltipService
 
         if (lootType is LootType.Blessed or LootType.Newbied)
         {
-            list.AddText(Text(BlessedMessage, "[Blessed]"));
+            list.AddText(_localization.Text(BlessedMessage, "[Blessed]"));
         }
         else if (lootType == LootType.Cursed)
         {
-            list.AddText(Text(CursedMessage, "[Cursed]"));
+            list.AddText(_localization.Text(CursedMessage, "[Cursed]"));
         }
 
         // As ModernUO: rounded up (a feather weighs a stone), and not shown for what cannot be picked up.
         if (item.Movable ?? template?.EffectiveMovable(_tiles) ?? TiledataWeight(item) < CannotLiftWeight)
         {
             var weight = (int)Math.Ceiling((template?.EffectiveWeight(_tiles) ?? TiledataWeight(item)) * item.Amount);
-            list.AddText(weight == 1 ? Text(OneStoneMessage, "Weight: 1 stone") : Text(StonesMessage, "Weight: {0} stones", weight));
+            list.AddText(weight == 1 ? _localization.Text(OneStoneMessage, "Weight: 1 stone") : _localization.Text(StonesMessage, "Weight: {0} stones", weight));
         }
 
-        var rarity = Text(RarityMessageBase + (int)item.Rarity, item.Rarity.ToString());
+        var rarity = _localization.Text(RarityMessageBase + (int)item.Rarity, item.Rarity.ToString());
         list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{rarity}</BASEFONT>");
 
         return list;
@@ -224,12 +226,6 @@ public sealed class TooltipService : ITooltipService
         {
             list.Add(NameCliloc(item));
         }
-    }
-
-    // A message file without the text gives the English one rather than failing the whole broadcast.
-    private string Text(int id, string english, params object[] values)
-    {
-        return _localization.TryGetText(id, out _) ? _localization.Get(id, values) : string.Format(english, values);
     }
 
     // A tab would split the text into another cliloc argument.

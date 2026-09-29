@@ -1,6 +1,7 @@
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Packets.General;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Commands;
 
 namespace Moongate.Tests.Server.Ultima.Commands;
@@ -21,7 +22,7 @@ public sealed class ShutdownCommandTests
         Assert.True(fixture.Shutdown.Requested.IsCompletedSuccessfully);
         Assert.Equal(0, fixture.Timers.GetMetricsSnapshot().ActiveTimers);
         var packet = Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.World.Sender.Sent));
-        Assert.Equal("Server is shutting down now.", packet.Text);
+        Assert.Equal("The server is shutting down now.", packet.Text);
         Assert.Equal(packet.Text, Assert.Single(context.Output).Text);
     }
 
@@ -33,7 +34,7 @@ public sealed class ShutdownCommandTests
 
         await fixture.Command.ExecuteAsync(fixture.Context("30", cancellation.Token)).WaitAsync(TimeSpan.FromSeconds(5));
         Assert.False(fixture.Shutdown.Requested.IsCompleted);
-        Assert.Equal("Server will shut down in 30 seconds.",
+        Assert.Equal("The server will shut down in 30 seconds.",
             Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.World.Sender.Sent)).Text);
         cancellation.Cancel();
         await fixture.AdvanceAsync(TimeSpan.FromSeconds(29));
@@ -90,6 +91,23 @@ public sealed class ShutdownCommandTests
         Assert.False(fixture.Shutdown.Requested.IsCompleted);
         Assert.Equal(0, fixture.Timers.GetMetricsSnapshot().ActiveTimers);
         Assert.Empty(fixture.World.Sender.Sent);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_TheAnnouncement_IsInTheServerLanguage()
+    {
+        await using var fixture = await ShutdownCommandFixture.CreateAsync();
+        var broadcast = new ControlledBroadcastService { Delivery = Task.FromResult(1) };
+        var command = new ShutdownCommand(
+            fixture.Shutdown,
+            fixture.Timers,
+            broadcast,
+            TestLocalization.With((30016, "Il server si sta spegnendo ora."))
+        );
+
+        await command.ExecuteAsync(fixture.Context());
+
+        Assert.Equal("Il server si sta spegnendo ora.", Assert.Single(broadcast.Messages));
     }
 
     [Fact]

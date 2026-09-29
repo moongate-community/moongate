@@ -1,6 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
 
-namespace Moongate.Server.Ultima.Interfaces;
+namespace Moongate.Server.Core.Interfaces.Services;
 
 /// <summary>
 ///     Gives the texts of <c>data/messages</c> in the server's language, as set by <c>ultima.localization.language</c> in

@@ -11,6 +11,7 @@ using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Bootstrap.Internal.Setup;
 using Moongate.Server.Commands;
 using Moongate.Server.Core.Data.Args;
+using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
@@ -231,13 +232,15 @@ await ConsoleApp.RunAsync(
                             "echo|e",
                             "Echoes back its arguments.",
                             CommandSourceType.Console | CommandSourceType.InGame,
-                            AccountType.Regular
+                            AccountType.Regular,
+                            CommandMessages.EchoDescription
                         )
                         .RegisterCommand<HelpCommand>(
                             "help",
                             "Lists available commands or shows details for one command.",
                             CommandSourceType.Console | CommandSourceType.InGame,
-                            AccountType.Regular
+                            AccountType.Regular,
+                            CommandMessages.HelpDescriptionText
                         )
                         .AddMoongateService<IConsolePromptService>(consolePrompt)
                         .AddMoongateService<IConsoleInputService, ConsoleInputService>(1000);

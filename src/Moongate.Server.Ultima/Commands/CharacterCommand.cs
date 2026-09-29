@@ -1,7 +1,10 @@
 using System.Globalization;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Data.Localization;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
@@ -14,15 +17,17 @@ namespace Moongate.Server.Ultima.Commands;
 /// </summary>
 public sealed class CharacterCommand : ICommandExecutor
 {
-    private const string Usage = "Usage: character pending [account-serial] | character restore <character-serial>";
+    private const string Syntax = "character pending [account-serial] | character restore <character-serial>";
     private const string TimeFormat = "yyyy-MM-dd HH:mm";
 
     private readonly ILogger _logger = Log.ForContext<CharacterCommand>();
     private readonly ICharacterService _characters;
     private readonly CharactersConfig _config;
+    private readonly ILocalizationService? _localization;
 
-    public CharacterCommand(ICharacterService characters, CharactersConfig config)
+    public CharacterCommand(ICharacterService characters, CharactersConfig config, ILocalizationService? localization = null)
     {
+        _localization = localization;
         _characters = characters;
         _config = config;
     }
@@ -46,7 +51,7 @@ public sealed class CharacterCommand : ICommandExecutor
 
                 return;
             default:
-                context.PrintError(Usage);
+                context.PrintError(_localization.Text(CommandMessages.Usage, "Usage: {0}", Syntax));
 
                 return;
         }
@@ -58,7 +63,7 @@ public sealed class CharacterCommand : ICommandExecutor
 
         if (pending.Count == 0)
         {
-            context.Print("No characters are pending deletion.");
+            context.Print(_localization.Text(CommandMessages.NoPendingDeletions, "No characters are pending deletion."));
 
             return;
         }
@@ -68,8 +73,15 @@ public sealed class CharacterCommand : ICommandExecutor
             var requested = character.DeletionRequestedAt!.Value;
             var removable = requested.AddHours(_config.DeletionDelayHours);
             context.Print(
-                $"{character.Id} \"{character.DisplayName()}\" account {character.AccountId}: " +
-                $"requested {Format(requested)} UTC, removable after {Format(removable)} UTC"
+                _localization.Text(
+                    CommandMessages.PendingDeletion,
+                    "{0} \"{1}\" account {2}: requested {3} UTC, removable after {4} UTC",
+                    character.Id,
+                    character.DisplayName(),
+                    character.AccountId!,
+                    Format(requested),
+                    Format(removable)
+                )
             );
         }
     }
@@ -80,13 +92,13 @@ public sealed class CharacterCommand : ICommandExecutor
 
         if (restored is null)
         {
-            context.PrintError($"No character {characterId} is pending deletion.");
+            context.PrintError(_localization.Text(CommandMessages.NotPendingDeletion, "No character {0} is pending deletion.", characterId));
 
             return;
         }
 
         _logger.Information("Character {Character} restored from pending deletion", restored);
-        context.Print($"Character {restored.Id} \"{restored.DisplayName()}\" restored.");
+        context.Print(_localization.Text(CommandMessages.CharacterRestored, "Character {0} \"{1}\" restored.", restored.Id, restored.DisplayName()));
     }
 
     private static string Format(DateTime utc)

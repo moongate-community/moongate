@@ -1,6 +1,8 @@
 using System.Collections.Concurrent;
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
@@ -34,14 +36,17 @@ public sealed class SpeechRequestPacketHandler :
     private readonly ISessionService _sessions;
     private readonly IMobileService _mobiles;
     private readonly IPacketSendService _sender;
+    private readonly ILocalizationService? _localization;
 
     public SpeechRequestPacketHandler(
         ICommandSystemService commands,
         ISessionService sessions,
         IMobileService mobiles,
-        IPacketSendService sender
+        IPacketSendService sender,
+        ILocalizationService? localization = null
     )
     {
+        _localization = localization;
         _commands = commands;
         _sessions = sessions;
         _mobiles = mobiles;
@@ -138,7 +143,12 @@ public sealed class SpeechRequestPacketHandler :
         // One command at a time per session, as when commands held the session's packets.
         if (_running.TryGetValue(invoker.SessionId, out var running) && !running.IsCompleted)
         {
-            context.TrySend(SpeechMessageHelper.CreateSystem("A command is already running.", WarningHue));
+            context.TrySend(
+                SpeechMessageHelper.CreateSystem(
+                    _localization.Text(CommandMessages.CommandAlreadyRunning, "A command is already running."),
+                    WarningHue
+                )
+            );
 
             return;
         }

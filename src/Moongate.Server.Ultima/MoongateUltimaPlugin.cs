@@ -7,9 +7,11 @@ using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Persistence.Extensions;
 using Moongate.Scripting.Extensions.Scripts;
+using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Plugins;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Interfaces.Sessions;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
@@ -101,7 +103,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterCommand<AccountCommand>(
                 "account",
                 "Creates an account: account create <username> <password> [Regular|GameMaster|Administrator]. Console provisioning: account api-access <username> <on|off>.",
-                CommandSourceType.Console | CommandSourceType.InGame
+                CommandSourceType.Console | CommandSourceType.InGame,
+                descriptionMessage: CommandMessages.AccountDescription
             );
 
             container.RegisterLoginPacketHandler<PingPacket, LoginRolePingPacketHandler>();
@@ -222,43 +225,50 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 "shutdown",
                 "Shuts down this server gracefully, immediately or after a delay: shutdown [seconds].",
                 CommandSourceType.Console | CommandSourceType.InGame,
-                AccountType.Administrator
+                AccountType.Administrator,
+                CommandMessages.ShutdownDescription
             );
             container.RegisterCommand<SaveCommand>(
                 "save",
-                "Saves the world and broadcasts world saved after successful completion.",
+                "Saves the world and tells every player when it is done.",
                 CommandSourceType.Console | CommandSourceType.InGame,
-                AccountType.Administrator
+                AccountType.Administrator,
+                CommandMessages.SaveDescription
             );
             container.RegisterCommand<BroadcastCommand>(
                 "broadcast",
                 "Sends a system message to every player in this world: broadcast <text>.",
                 CommandSourceType.Console | CommandSourceType.InGame,
-                AccountType.Administrator
+                AccountType.Administrator,
+                CommandMessages.BroadcastDescription
             );
             container.RegisterCommand<SpawnCommand>(
                 "spawn",
                 "Spawns an NPC from a mobile template where you target: spawn <template>.",
                 CommandSourceType.InGame,
-                AccountType.GameMaster
+                AccountType.GameMaster,
+                CommandMessages.SpawnDescription
             );
             container.RegisterCommand<RemoveCommand>(
                 "remove",
                 "Removes the NPC you target.",
                 CommandSourceType.InGame,
-                AccountType.GameMaster
+                AccountType.GameMaster,
+                CommandMessages.RemoveDescription
             );
             container.RegisterCommand<WhereCommand>(
                 "where",
                 "Shows what you target: its serial, or the map and location of a spot.",
                 CommandSourceType.InGame,
-                AccountType.GameMaster
+                AccountType.GameMaster,
+                CommandMessages.WhereDescription
             );
             container.RegisterCommand<CharacterCommand>(
                 "character",
                 "Pending character deletions: character pending [account-serial]; character restore <character-serial>.",
                 CommandSourceType.Console | CommandSourceType.InGame,
-                AccountType.GameMaster
+                AccountType.GameMaster,
+                CommandMessages.CharacterDescription
             );
             container.Register<ITileDataService, TileDataService>(Reuse.Singleton);
             container.Register<IMovementService, MovementService>(Reuse.Singleton);

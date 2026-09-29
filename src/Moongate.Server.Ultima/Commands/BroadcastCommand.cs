@@ -1,5 +1,8 @@
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Data.Localization;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Interfaces;
 
 namespace Moongate.Server.Ultima.Commands;
@@ -10,10 +13,12 @@ namespace Moongate.Server.Ultima.Commands;
 public sealed class BroadcastCommand : ICommandExecutor
 {
     private readonly IBroadcastService _broadcast;
+    private readonly ILocalizationService? _localization;
 
-    public BroadcastCommand(IBroadcastService broadcast)
+    public BroadcastCommand(IBroadcastService broadcast, ILocalizationService? localization = null)
     {
         _broadcast = broadcast;
+        _localization = localization;
     }
 
     /// <inheritdoc />
@@ -21,13 +26,13 @@ public sealed class BroadcastCommand : ICommandExecutor
     {
         if (context.Arguments.Length == 0)
         {
-            context.PrintError("Usage: broadcast <text>");
+            context.PrintError(_localization.Text(CommandMessages.Usage, "Usage: {0}", "broadcast <text>"));
 
             return;
         }
 
         var text = context.CommandLine.AsSpan().TrimStart()[context.CommandName.Length..].Trim().ToString();
         var sent = await _broadcast.BroadcastAsync(text, context.CancellationToken);
-        context.Print("Broadcast queued for {0} player(s).", sent);
+        context.Print(_localization.Text(CommandMessages.BroadcastSent, "Broadcast sent to {0} player(s).", sent));
     }
 }

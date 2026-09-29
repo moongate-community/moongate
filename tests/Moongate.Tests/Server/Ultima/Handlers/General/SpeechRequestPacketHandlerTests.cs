@@ -1,6 +1,7 @@
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Types.Speech;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Ultima.Types;
 using Serilog;
@@ -167,6 +168,26 @@ public sealed class SpeechRequestPacketHandlerTests
 
         Assert.Equal(
             "A command is already running.",
+            Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent)).Text
+        );
+        fixture.DelayedExecutor.Release();
+        await fixture.Handler.WaitForCommandsAsync().WaitAsync(TimeSpan.FromSeconds(5));
+    }
+
+    [Fact]
+    public async Task Handle_ASecondCommandWhileOneRuns_IsRefusedInTheServerLanguage()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync(
+            localization: TestLocalization.With((30009, "Un comando è già in esecuzione."))
+        );
+        await fixture.EnterSpeakerAsync();
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".wait"), CancellationToken.None);
+        await fixture.DelayedExecutor.Started.WaitAsync(TimeSpan.FromSeconds(5));
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".help"), CancellationToken.None);
+
+        Assert.Equal(
+            "Un comando è già in esecuzione.",
             Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent)).Text
         );
         fixture.DelayedExecutor.Release();
