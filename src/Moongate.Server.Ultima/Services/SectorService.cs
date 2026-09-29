@@ -21,6 +21,9 @@ public sealed class SectorService : ISectorService
     public const int SectorSize = 16;
     private const int SectorShift = 4;
 
+    // As ModernUO's Map.SectorActiveRange: a player wakes the 5×5 sectors around its own.
+    private const int ActiveRange = 2;
+
     private readonly ILogger _logger = Log.ForContext<SectorService>();
     private readonly IDataLoaderService _data;
     private readonly WorldConfig _world;
@@ -43,8 +46,7 @@ public sealed class SectorService : ISectorService
             return;
         }
 
-        sector.Mobiles.Add(mobile);
-        _sectorOf[mobile.Id] = sector;
+        Enter(mobile, sector);
     }
 
     public void Remove(MobileEntity mobile)
@@ -52,7 +54,20 @@ public sealed class SectorService : ISectorService
         if (_sectorOf.Remove(mobile.Id, out var sector))
         {
             sector.Mobiles.RemoveAll(other => other.Id == mobile.Id);
+            WakeAround(sector, mobile, -1);
         }
+    }
+
+    public bool IsActive(MapType map, Point3D point)
+    {
+        var grid = GetGrid(map);
+
+        if (grid is null || (uint)point.X >= (uint)grid.Width || (uint)point.Y >= (uint)grid.Height)
+        {
+            return false;
+        }
+
+        return grid.Cells[(point.Y >> SectorShift) * grid.Columns + (point.X >> SectorShift)] is { NearbyPlayers: > 0 };
     }
 
     public void Move(MobileEntity mobile)
@@ -68,8 +83,7 @@ public sealed class SectorService : ISectorService
 
         if (sector is not null)
         {
-            sector.Mobiles.Add(mobile);
-            _sectorOf[mobile.Id] = sector;
+            Enter(mobile, sector);
         }
     }
 
@@ -212,7 +226,7 @@ public sealed class SectorService : ISectorService
 
         var index = (location.Y >> SectorShift) * grid.Columns + (location.X >> SectorShift);
 
-        return grid.Cells[index] ??= new();
+        return grid.Cells[index] ??= new(map, location.X >> SectorShift, location.Y >> SectorShift);
     }
 
     private SectorGrid? GetGrid(MapType map)
@@ -243,5 +257,33 @@ public sealed class SectorService : ISectorService
     private static bool IsInRange(Point3D point, Point3D center, int range)
     {
         return Math.Abs(point.X - center.X) <= range && Math.Abs(point.Y - center.Y) <= range;
+    }
+
+    private void Enter(MobileEntity mobile, Sector sector)
+    {
+        sector.Mobiles.Add(mobile);
+        _sectorOf[mobile.Id] = sector;
+        WakeAround(sector, mobile, 1);
+    }
+
+    // Only players keep sectors awake: the NPCs around them sleep when no player is near.
+    private void WakeAround(Sector sector, MobileEntity mobile, int change)
+    {
+        if (mobile.IsNpc || GetGrid(sector.Map) is not { } grid)
+        {
+            return;
+        }
+
+        var lastRow = Math.Min(sector.Y + ActiveRange, grid.Rows - 1);
+        var lastColumn = Math.Min(sector.X + ActiveRange, grid.Columns - 1);
+
+        for (var sy = Math.Max(sector.Y - ActiveRange, 0); sy <= lastRow; sy++)
+        {
+            for (var sx = Math.Max(sector.X - ActiveRange, 0); sx <= lastColumn; sx++)
+            {
+                var around = grid.Cells[sy * grid.Columns + sx] ??= new(sector.Map, sx, sy);
+                around.NearbyPlayers += change;
+            }
+        }
     }
 }

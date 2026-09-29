@@ -98,7 +98,9 @@ client drops what it walks away from by itself. When a character leaves the worl
 range get its `0x1D`. The range is `world.view_range` (default 18, from 5 to 24); the client's
 `0xC8` request is answered with it, whatever the client asked, so both sides use the same range.
 `ISectorService.Query` returns the players, the NPCs and the ground items around a point, in the
-view range unless another is given.
+view range unless another is given. A sector is active while a player stands within two sectors of it (the 5×5
+sectors around each player, as ModernUO); NPCs do not wake sectors. `ISectorService.IsActive` tells
+it, for the NPC AI to come.
 
 When the session closes, `CharacterLeaveWorldService` (an `ISessionClosedListener`) copies the
 character, removes it from the world, saves the copy and publishes `CharacterLeftWorldEvent`. The

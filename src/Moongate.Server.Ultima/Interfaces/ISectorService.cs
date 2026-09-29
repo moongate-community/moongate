@@ -30,6 +30,12 @@ public interface ISectorService
     void Move(MobileEntity mobile);
 
     /// <summary>
+    ///     Gets whether the sector of the point is active: a player stands within two sectors of it, as ModernUO wakes
+    ///     the 5×5 sectors around each player. NPCs do not wake sectors.
+    /// </summary>
+    bool IsActive(MapType map, Point3D point);
+
+    /// <summary>
     ///     Gets the mobiles on the map within <paramref name="range" /> tiles of the center on both axes.
     /// </summary>
     IReadOnlyList<MobileEntity> GetMobilesInRange(MapType map, Point3D center, int range);

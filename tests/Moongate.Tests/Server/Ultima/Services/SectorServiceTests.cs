@@ -210,6 +210,103 @@ public sealed class SectorServiceTests
         return item;
     }
 
+    [Theory]
+    [InlineData(1600, 1600, true)]
+    [InlineData(1600 + 2 * 16, 1600, true)]
+    [InlineData(1600 - 2 * 16, 1600 + 2 * 16, true)]
+    [InlineData(1600 + 3 * 16, 1600, false)]
+    [InlineData(1600, 1600 - 3 * 16, false)]
+    public void IsActive_WithinTwoSectorsOfAPlayer(int x, int y, bool expected)
+    {
+        var sectors = TestSectors.Create();
+
+        sectors.Add(Player(2, 1600, 1600));
+
+        Assert.Equal(expected, sectors.IsActive(MapType.Trammel, new Point3D(x, y, 0)));
+    }
+
+    [Fact]
+    public void IsActive_NobodyOrOnlyNpcs_IsFalse()
+    {
+        var sectors = TestSectors.Create();
+
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600, 1600, 0)));
+
+        sectors.Add(Mobile(0x100, 1600, 1600));
+
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600, 1600, 0)));
+    }
+
+    [Fact]
+    public void Remove_ThePlayer_PutsTheSectorsToSleep()
+    {
+        var sectors = TestSectors.Create();
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(aria);
+
+        sectors.Remove(aria);
+
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600, 1600, 0)));
+    }
+
+    [Fact]
+    public void Move_ThePlayer_MovesTheActiveBlock()
+    {
+        var sectors = TestSectors.Create();
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(aria);
+
+        aria.Location = new Point3D(1600 + 16, 1600, 0);
+        sectors.Move(aria);
+
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600 - 2 * 16, 1600, 0)));
+        Assert.True(sectors.IsActive(MapType.Trammel, new Point3D(1600 + 3 * 16, 1600, 0)));
+    }
+
+    [Fact]
+    public void Remove_OneOfTwoPlayers_KeepsTheSharedSectorsAwake()
+    {
+        var sectors = TestSectors.Create();
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(aria);
+        sectors.Add(Player(3, 1600 + 4 * 16, 1600));
+
+        sectors.Remove(aria);
+
+        Assert.True(sectors.IsActive(MapType.Trammel, new Point3D(1600 + 2 * 16, 1600, 0)));
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600 + 16, 1600, 0)));
+    }
+
+    [Fact]
+    public void IsActive_DoesNotMixMaps()
+    {
+        var sectors = TestSectors.Create();
+
+        sectors.Add(Player(2, 1600, 1600));
+
+        Assert.False(sectors.IsActive(MapType.Felucca, new Point3D(1600, 1600, 0)));
+    }
+
+    [Fact]
+    public void Add_APlayerAtTheMapCorner_ActivatesOnlyInsideTheMap()
+    {
+        var sectors = TestSectors.Create();
+
+        sectors.Add(Player(2, 0, 0));
+
+        Assert.True(sectors.IsActive(MapType.Trammel, new Point3D(0, 0, 0)));
+        Assert.True(sectors.IsActive(MapType.Trammel, new Point3D(2 * 16, 2 * 16, 0)));
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(-1, 0, 0)));
+    }
+
+    private static MobileEntity Player(uint serial, int x, int y)
+    {
+        var player = Mobile(serial, x, y);
+        player.AccountId = new Serial(0x42);
+
+        return player;
+    }
+
     private static MobileEntity Mobile(uint serial, int x, int y, MapType map = MapType.Trammel)
     {
         return new() { Id = new Serial(serial), Name = $"M{serial}", Map = map, Location = new Point3D(x, y, 0) };
