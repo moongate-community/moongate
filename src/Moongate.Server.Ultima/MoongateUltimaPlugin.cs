@@ -200,6 +200,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             // After the script engine (70) and its bootstrap: the mobile scripts load into the running engine.
             container.AddMoongateService<NpcScriptService>(LuaScriptEngineService.StartupPriority + 5);
             container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
+            container.Register<INpcSpeechListener, NpcHearingService>(Reuse.Singleton);
             container.AddMetricProvider<NpcTickMetricsProvider>();
             container.Register<ISectorService, SectorService>(Reuse.Singleton);
             container.Register<IMobileService, MobileService>(Reuse.Singleton);

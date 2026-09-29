@@ -50,6 +50,30 @@ public sealed class SpeechRequestPacketHandlerTests
     }
 
     [Fact]
+    public async Task Handle_Say_TellsTheNpcsWhatThePlayerSaid()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("hello"), CancellationToken.None);
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode("..dot"), CancellationToken.None);
+
+        Assert.Equal([("Alice", "hello"), ("Alice", ".dot")], fixture.Listener.Heard.Select(entry => (entry.Speaker.Name, entry.Text)));
+    }
+
+    [Fact]
+    public async Task Handle_ACommand_IsNotHeardByTheNpcs()
+    {
+        await using var fixture = await SpeechHandlerFixture.CreateAsync();
+        await fixture.EnterSpeakerAsync();
+
+        await fixture.Handler.HandleAsync(fixture.Context(), fixture.Unicode(".help"), CancellationToken.None);
+        await fixture.Handler.WaitForCommandsAsync();
+
+        Assert.Empty(fixture.Listener.Heard);
+    }
+
+    [Fact]
     public async Task Handle_DoubleDot_SaysOneLiteralDot()
     {
         await using var fixture = await SpeechHandlerFixture.CreateAsync();
