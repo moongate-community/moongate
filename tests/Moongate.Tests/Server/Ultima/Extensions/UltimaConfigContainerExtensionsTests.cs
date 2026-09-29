@@ -68,37 +68,6 @@ public sealed class UltimaConfigContainerExtensionsTests
         Assert.False(Assert.IsType<TomlTable>(ultima["starting_items"]).ContainsKey("gold"));
     }
 
-    [Theory,
-     InlineData("localization"),
-     InlineData("line_of_sight"),
-     InlineData("world"),
-     InlineData("items"),
-     InlineData("starting_items"),
-     InlineData("characters")]
-    public void AddUltimaConfig_ATopLevelSectionThatMovedUnderUltima_StopsAndSaysWhere(string section)
-    {
-        using var directory = new TemporaryDirectory();
-        var toml = $"[{section}]\n";
-        var container = Container(directory, toml);
-
-        var exception = Assert.Throws<InvalidOperationException>(() => container.AddUltimaConfig());
-
-        Assert.Contains($"[{section}]", exception.Message);
-        Assert.Contains($"[ultima.{section}]", exception.Message);
-        Assert.Equal(toml, File.ReadAllText(Path.Combine(directory.Path, "moongate.toml")));
-    }
-
-    [Fact]
-    public void AddUltimaConfig_StartingGoldInTheConfig_StopsAndPointsToTheStartingItemsFile()
-    {
-        using var directory = new TemporaryDirectory();
-        var container = Container(directory, "[ultima.starting_items]\ngold = 500\n");
-
-        var exception = Assert.Throws<InvalidOperationException>(() => container.AddUltimaConfig());
-
-        Assert.Contains("starting_items.toml", exception.Message);
-    }
-
     [Fact]
     public void AddUltimaConfig_AnInvalidSubTable_Stops()
     {

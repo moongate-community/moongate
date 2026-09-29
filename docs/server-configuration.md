@@ -173,11 +173,9 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
 | `ultima.characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
 
-The gameplay settings live under `[ultima]` as sub-tables. A file that still has the
-older top-level `[localization]`, `[line_of_sight]`, `[world]`, `[items]`,
-`[starting_items]` or `[characters]` section, or a `gold` key in
-`[ultima.starting_items]`, stops the server at startup with a message saying where
-the setting moved; move the keys and start again.
+The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
+`[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the
+common set in [`starting_items.toml`](data-files/starting-items.md).
 
 Redis is required at runtime in all three modes, including standalone. `redis.connection_string` is a StackExchange.Redis configuration string or an environment reference resolved at startup; the Docker example uses `redis:6379,password=...` on its private bridge. `redis.handoff_secret` is an independent cluster-wide secret, also supplied through an environment reference. Give the login and every game process the same values. The Docker example reads both from separate Compose secrets; keep the actual values out of TOML and the repository. A Redis connection failure prevents startup. A later Redis outage stops new realm lists and handoffs while existing game sessions continue; pending tickets are lost on Redis restart and game processes republish their leases. Configure Redis with `maxmemory-policy noeviction`.
 

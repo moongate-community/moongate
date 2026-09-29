@@ -263,9 +263,7 @@ max_per_minute = 10
   be written, a warning is logged and the defaults are used.
 - `Validate()` runs after reading; an exception stops the start.
 - A section name belongs to one owner: the server's own sections (`network`, `redis`,
-  `persistence`, ...), the old top-level names of the Ultima settings (`world`,
-  `items`, `characters`, `starting_items`, `localization`, `line_of_sight`, now under
-  `[ultima]`) and a name another plugin already added stop the start with
+  `persistence`, ...) and a name another plugin already added stop the start with
   `The configuration section [name] is already owned by the server or by another plugin.`
 - A key with the section's name that is not a table (`greeter = 5`, `[[greeter]]`)
   stops the start: appending `[greeter]` next to it would define the key twice.
