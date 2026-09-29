@@ -202,6 +202,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
             container.RegisterDelegate<INpcScriptService>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
             container.Register<INpcSpeechListener, NpcHearingService>(Reuse.Singleton);
+            container.Register<INpcSenseService, NpcSenseService>(Reuse.Singleton);
             container.AddMetricProvider<NpcTickMetricsProvider>();
             container.Register<ISectorService, SectorService>(Reuse.Singleton);
             container.Register<IMobileService, MobileService>(Reuse.Singleton);

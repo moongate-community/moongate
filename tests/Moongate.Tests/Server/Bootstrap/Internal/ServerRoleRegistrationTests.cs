@@ -143,6 +143,8 @@ public sealed class ServerRoleRegistrationTests
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
             Assert.NotNull(container.Resolve<INpcService>());
+            Assert.IsType<NpcSenseService>(container.Resolve<INpcSenseService>());
+            Assert.IsType<MobileService>(container.Resolve<IMobileService>());
             Assert.IsType<NpcHearingService>(container.Resolve<INpcSpeechListener>());
             Assert.Contains(container.ResolveMany<IMetricProvider>(), provider => provider.ProviderName == "npcs");
         }
