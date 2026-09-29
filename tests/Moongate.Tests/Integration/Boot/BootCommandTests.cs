@@ -1,6 +1,6 @@
-using Moongate.Core.Utils;
-using Moongate.Server.Data.Config;
+using Moongate.Server.Admin.Data.Config;
 using Moongate.Tests.TestSupport.Boot;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
 
 namespace Moongate.Tests.Integration.Boot;
@@ -53,9 +53,9 @@ public sealed class BootCommandTests
             "login.example.test,192.0.2.10"
         );
         Assert.True(result.ExitCode == 0, result.Output);
-        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(Path.Combine(root, "config/moongate.toml"))!;
-        Assert.True(config.AdminApi.Enabled);
-        Assert.True(File.Exists(Path.Combine(root, config.AdminApi.CertificatePath)));
+        var config = TomlSections.Read<AdminApiConfig>(File.ReadAllText(Path.Combine(root, "config/moongate.toml")), "admin_api");
+        Assert.True(config.Enabled);
+        Assert.True(File.Exists(Path.Combine(root, config.CertificatePath)));
         Assert.True(File.Exists(Path.Combine(root, "certificates/admin.crt")));
         Assert.False(File.Exists(Path.Combine(root, "moongate.pid")));
         Assert.Contains("No database connection or server startup", result.Output);
@@ -67,10 +67,11 @@ public sealed class BootCommandTests
         using var directory = new TemporaryDirectory();
         var result = await BootProcess.RunAsync(directory.Path);
         Assert.True(result.ExitCode == 0, result.Output);
-        var config = TomlUtils.DeserializeFromFile<MoongateServerConfig>(
-            Path.Combine(directory.Path, "config/moongate.toml")
-        )!;
-        Assert.False(config.AdminApi.Enabled);
+        var config = TomlSections.Read<AdminApiConfig>(
+            File.ReadAllText(Path.Combine(directory.Path, "config/moongate.toml")),
+            "admin_api"
+        );
+        Assert.False(config.Enabled);
         Assert.False(Directory.Exists(Path.Combine(directory.Path, "certificates")));
     }
 

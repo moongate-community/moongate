@@ -1,7 +1,7 @@
 using System.Collections.Frozen;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;

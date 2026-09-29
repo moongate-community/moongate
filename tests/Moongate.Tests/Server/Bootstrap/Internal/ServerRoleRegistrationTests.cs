@@ -14,14 +14,16 @@ using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
-using Moongate.Server.Ultima.Interfaces.Loaders;
-using Moongate.Server.Ultima.Interfaces;
-using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima;
-using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
+using Moongate.Server.Ultima.Packets.Characters;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Motd;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
 
 using Moongate.Server.Ultima.Packets.General;
@@ -43,8 +45,8 @@ public sealed class ServerRoleRegistrationTests
         var config = new MoongateServerConfig { Mode = ServerMode.Standalone };
         config.Shard.ShardName = "Città di Luna";
         container.RegisterInstance(config);
-        container.RegisterInstance(config.Ultima.LineOfSight);
-        container.RegisterInstance(config.Ultima.World);
+        container.RegisterInstance(new LineOfSightConfig());
+        container.RegisterInstance(new WorldConfig());
         container.RegisterInstance(directories);
         container.RegisterInstance(TimeProvider.System);
 
@@ -63,8 +65,7 @@ public sealed class ServerRoleRegistrationTests
         var config = new MoongateServerConfig { Mode = mode };
         config.Redis.HandoffSecret = new('x', 32);
         container.RegisterInstance(config);
-        container.RegisterInstance(config.Ultima.LineOfSight);
-        container.RegisterInstance(config.Ultima.World);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
         container.RegisterInstance(directories);
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
         container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: mode));
@@ -187,8 +188,8 @@ public sealed class ServerRoleRegistrationTests
             Network = new() { ListenAddress = "127.0.0.1", LoginPort = 2593, GamePort = 2595 }
         };
         container.RegisterInstance(config);
-        container.RegisterInstance(config.Ultima.LineOfSight);
-        container.RegisterInstance(config.Ultima.World);
+        container.RegisterInstance(new LineOfSightConfig());
+        container.RegisterInstance(new WorldConfig());
         container.RegisterInstance(directories);
         container.RegisterInstance(TimeProvider.System);
         container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: config.Mode));

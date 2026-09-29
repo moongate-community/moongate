@@ -1,6 +1,6 @@
 using Moongate.Core.Extensions.Directories;
 using Moongate.Server.Core.Interfaces.Services;
-using Moongate.Server.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Ultima.Io;
 using Moongate.Ultima.Tiles;
 using Serilog;
@@ -9,26 +9,26 @@ namespace Moongate.Server.Services.Ultima;
 
 public class UltimaDataService : IUltimaDataService
 {
-    private readonly MoongateServerConfig _serverConfig;
+    private readonly UltimaConfig _config;
     private readonly ILogger _logger = Log.ForContext<UltimaDataService>();
 
-    public UltimaDataService(MoongateServerConfig serverConfig)
+    public UltimaDataService(UltimaConfig config)
     {
-        _serverConfig = serverConfig;
+        _config = config;
     }
 
     public Task StartAsync()
     {
-        _serverConfig.Ultima.UltimaPath = _serverConfig.Ultima.UltimaPath.ResolvePathAndEnvs();
+        _config.UltimaPath = _config.UltimaPath.ResolvePathAndEnvs();
 
-        if (!Directory.Exists(_serverConfig.Ultima.UltimaPath))
+        if (!Directory.Exists(_config.UltimaPath))
         {
-            _logger.Error("Ultima path does not exist: {UltimaPath}", _serverConfig.Ultima.UltimaPath);
+            _logger.Error("Ultima path does not exist: {UltimaPath}", _config.UltimaPath);
 
-            throw new DirectoryNotFoundException($"Ultima path does not exist: {_serverConfig.Ultima.UltimaPath}");
+            throw new DirectoryNotFoundException($"Ultima path does not exist: {_config.UltimaPath}");
         }
 
-        Files.SetDirectory(_serverConfig.Ultima.UltimaPath);
+        Files.SetDirectory(_config.UltimaPath);
 
         var clientVersion = ClientVersionReader.Read();
         _logger.Information("Ultima client version: {ClientVersion}", clientVersion);
@@ -44,7 +44,7 @@ public class UltimaDataService : IUltimaDataService
         if (Files.GetFilePath("tiledata.mul") is null)
         {
             throw new FileNotFoundException(
-                $"tiledata.mul not found in the Ultima path: {_serverConfig.Ultima.UltimaPath}"
+                $"tiledata.mul not found in the Ultima path: {_config.UltimaPath}"
             );
         }
 

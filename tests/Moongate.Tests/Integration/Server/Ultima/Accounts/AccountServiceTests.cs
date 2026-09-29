@@ -1,4 +1,3 @@
-using Moongate.Server.Core.Types.Hosting;
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Core.Primitives;
@@ -7,9 +6,11 @@ using Moongate.Persistence.Extensions;
 using Moongate.Persistence.Services;
 using Moongate.Persistence.Types.Persistence;
 using Moongate.Server.Core.Types.Accounts;
+using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Server.Ultima;
 using Npgsql;
@@ -186,6 +187,7 @@ public sealed class AccountServiceTests
         using var peerDirectory = new TemporaryPersistenceDirectory();
         using var peer = new Container();
         peer.RegisterInstance(new DirectoriesConfig(peerDirectory.Path, []));
+        peer.RegisterInstance(TestConfigDocuments.Empty(peerDirectory.Path));
         peer.RegisterMoongatePersistence(
             new([new(PersistenceDatabaseTarget.Accounts, fixture.Database.ConnectionString)], true)
         );
@@ -224,6 +226,7 @@ public sealed class AccountServiceTests
         using var peerDirectory = new TemporaryPersistenceDirectory();
         using var peer = new Container();
         peer.RegisterInstance(new DirectoriesConfig(peerDirectory.Path, []));
+        peer.RegisterInstance(TestConfigDocuments.Empty(peerDirectory.Path));
         peer.RegisterMoongatePersistence(
             new([new(PersistenceDatabaseTarget.Accounts, fixture.Database.ConnectionString)], true)
         );

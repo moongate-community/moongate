@@ -27,18 +27,31 @@ internal static class PersistenceSchemaCommand
         string? migrationTarget = null
     )
     {
-        using var container = new Container();
+        using var container = CreateContainer(rootDirectory);
+        await using var persistence = container.Resolve<MoongatePersistenceService>();
+        await RunAsync(container, mode, output, cancellationToken, migrationOutput, migrationTarget);
+    }
+
+    /// <summary>
+    ///     Builds the container the command runs in: the config, the parsed config document that disk plugins read
+    ///     their sections from, persistence and the plugin loader.
+    /// </summary>
+    public static Container CreateContainer(string rootDirectory)
+    {
+        var container = new Container();
         var directories = new DirectoriesConfig(rootDirectory, ["config", "plugins"]);
-        var config = ConfigHelper.Load(Path.Combine(directories["config"], "moongate.toml"));
+        var configPath = Path.Combine(directories["config"], "moongate.toml");
+        var config = ConfigHelper.Load(configPath);
         container.RegisterInstance(directories);
         container.RegisterInstance(config);
+        container.RegisterInstance(ConfigHelper.ReadDocument(configPath));
         container.RegisterMoongateEventBus();
         container.RegisterMoongatePersistence(
             config.Persistence.ToOptions(pluginsDirectory: directories["plugins"], rootDirectory: rootDirectory)
         );
         container.RegisterInstance<IPluginLoaderService>(new PluginLoaderService(container, directories));
-        await using var persistence = container.Resolve<MoongatePersistenceService>();
-        await RunAsync(container, mode, output, cancellationToken, migrationOutput, migrationTarget);
+
+        return container;
     }
 
     public static async Task RunAsync(

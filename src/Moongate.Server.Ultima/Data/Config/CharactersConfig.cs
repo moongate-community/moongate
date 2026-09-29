@@ -1,4 +1,4 @@
-namespace Moongate.Server.Core.Data.Config;
+namespace Moongate.Server.Ultima.Data.Config;
 
 /// <summary>
 ///     TOML settings for player characters.

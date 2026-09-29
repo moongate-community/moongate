@@ -1,11 +1,11 @@
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Core.Interfaces.Config;
 
-namespace Moongate.Server.Data.Config.Sections;
+namespace Moongate.Server.Ultima.Data.Config;
 
 /// <summary>
 ///     The <c>[ultima]</c> section: the client files and, as sub-tables, the gameplay settings of the game server.
 /// </summary>
-public class UltimaConfig
+public class UltimaConfig : IConfigSection
 {
     public string UltimaPath { get; set; } = "ChangeMe";
 

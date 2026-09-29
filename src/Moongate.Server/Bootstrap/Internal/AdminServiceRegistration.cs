@@ -1,4 +1,5 @@
 using DryIoc;
+using Moongate.Server.Admin.Data.Config;
 using Moongate.Server.Core.Data.Admin;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Interfaces.Admin;
@@ -12,8 +13,13 @@ internal static class AdminServiceRegistration
 {
     public static void Register(Container container, MoongateServerConfig config)
     {
-        container.RegisterInstance(config.AdminApi);
-        container.RegisterInstance(new AdminSessionOptions(TimeSpan.FromMinutes(config.AdminApi.SessionLifetimeMinutes)));
+        // The Admin plugin adds AdminApiConfig when its Register runs, after this.
+        container.RegisterDelegate(
+            resolver => new AdminSessionOptions(
+                TimeSpan.FromMinutes(resolver.Resolve<AdminApiConfig>().SessionLifetimeMinutes)
+            ),
+            Reuse.Singleton
+        );
         container.Register<IAdminSessionStore, RedisAdminSessionStore>(Reuse.Singleton);
         container.Register<IAdminLoginThrottle, RedisAdminLoginThrottle>(Reuse.Singleton);
         container.RegisterDelegate<IAdminServerInfoProvider>(

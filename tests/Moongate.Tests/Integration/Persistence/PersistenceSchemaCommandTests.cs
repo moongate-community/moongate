@@ -1,9 +1,11 @@
 using DryIoc;
 using Moongate.Server.Bootstrap.Internal;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Types.Persistence;
 using Moongate.Tests.Support.Server;
+using Moongate.Tests.TestSupport.Directories;
 using Moongate.Tests.TestSupport.Persistence;
 
 namespace Moongate.Tests.Integration.Persistence;
@@ -11,6 +13,18 @@ namespace Moongate.Tests.Integration.Persistence;
 [Collection(PostgresTestCollection.Name)]
 public sealed class PersistenceSchemaCommandTests
 {
+    [Fact]
+    public void CreateContainer_RegistersTheConfigDocumentForDiskPlugins()
+    {
+        using var directory = new TemporaryDirectory();
+
+        using var container = PersistenceSchemaCommand.CreateContainer(directory.Path);
+
+        // A disk plugin that calls AddConfig in Register resolves the document.
+        Assert.True(container.IsRegistered<ServerConfigDocument>());
+        Assert.EndsWith("moongate.toml", container.Resolve<ServerConfigDocument>().FilePath);
+    }
+
     [Fact]
     public async Task Apply_RejectsDirectSchemaSynchronization()
     {

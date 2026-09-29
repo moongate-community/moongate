@@ -81,7 +81,7 @@ Distribute only `admin.crt`; clients must verify trust and hostname.
 
 | Path under the root | Purpose |
 | --- | --- |
-| `config/moongate.toml` | Current server defaults serialized as snake_case TOML |
+| `config/moongate.toml` | Current server defaults serialized as snake_case TOML; plugin sections such as `[ultima]` are appended at the first server start |
 | `logs/`, `plugins/`, `scripts/` | Standard server directories |
 | `migrations/auth/` | The core auth SQL files included in the distribution |
 | `migrations/world/` | The core World SQL files included in the distribution: the mobiles and items tables |

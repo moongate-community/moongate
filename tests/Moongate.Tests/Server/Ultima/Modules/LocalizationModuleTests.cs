@@ -3,7 +3,7 @@ using Lua.Standard;
 using Moongate.Scripting.Binding;
 using Moongate.Scripting.Internal;
 using Moongate.Scripting.Utils;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Messages;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;

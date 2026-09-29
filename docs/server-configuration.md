@@ -11,7 +11,16 @@ The welcome text shown when a character enters the world lives in a separate
 
 ## Complete default configuration
 
-TOML keys use `snake_case`. Keep `mode` before the first table header:
+TOML keys use `snake_case`. Keep `mode` before the first table header.
+
+The server owns `mode` and the sections `[shard]`, `[network]`, `[redis]`,
+`[persistence]`, `[realm_directory]`, `[world_save]`, `[diagnostics]` and
+`[scripting]`. Plugins own the others: `[ultima]` belongs to the Ultima plugin and
+`[admin_api]` to the Administration plugin. A new root written by `mgboot` holds the server's
+sections (and `[admin_api]` when it sets up a certificate); at the first start each
+plugin appends its missing section,
+with the defaults, to the end of the file. See
+[Add a config section](plugins.md#add-a-config-section).
 
 ```toml
 mode = "standalone" # Runs login and game services together.
@@ -33,6 +42,7 @@ client_version = ""
 connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
 handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
+# Administration plugin.
 [admin_api]
 enabled = false
 # Use "*" or "0.0.0.0" for all IPv4 interfaces (TLS required).
@@ -45,6 +55,7 @@ allow_insecure_loopback = false
 certificate_path = ""
 certificate_password = ""
 
+# Ultima plugin.
 [ultima]
 ultima_path = "ChangeMe" # Replace with your client data directory.
 
@@ -162,15 +173,34 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `ultima.characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
 | `ultima.characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
 
-The gameplay settings live under `[ultima]` as sub-tables. A file that still has the
-older top-level `[localization]`, `[line_of_sight]`, `[world]`, `[items]`,
-`[starting_items]` or `[characters]` section, or a `gold` key in
-`[ultima.starting_items]`, stops the server at startup with a message saying where
-the setting moved; move the keys and start again.
+The gameplay settings live under `[ultima]` as sub-tables (`[ultima.world]`,
+`[ultima.characters]`, ...). The starting gold is not a setting: it is an item of the
+common set in [`starting_items.toml`](data-files/starting-items.md).
 
 Redis is required at runtime in all three modes, including standalone. `redis.connection_string` is a StackExchange.Redis configuration string or an environment reference resolved at startup; the Docker example uses `redis:6379,password=...` on its private bridge. `redis.handoff_secret` is an independent cluster-wide secret, also supplied through an environment reference. Give the login and every game process the same values. The Docker example reads both from separate Compose secrets; keep the actual values out of TOML and the repository. A Redis connection failure prevents startup. A later Redis outage stops new realm lists and handoffs while existing game sessions continue; pending tickets are lost on Redis restart and game processes republish their leases. Configure Redis with `maxmemory-policy noeviction`.
 
 Game-loop queue limits, timer-wheel resolution and packet dispatch limits use C# option objects rather than additional TOML sections. See [Game loop and timers](game-loop-and-timers.md), [Packets](packets.md) and the [Docker topology](docker-login-realms.md).
+
+## Plugin sections
+
+Some sections of `config/moongate.toml` belong to plugins rather than to the server:
+`[ultima]` (with its sub-tables) to the Ultima plugin, `[admin_api]` to the
+Administration plugin, and any section a [disk plugin](plugins.md#add-a-config-section)
+adds. They are edited like any other section; what differs is who reads them and when.
+
+1. The server reads the file and keeps its own sections, ignoring the rest.
+2. Each plugin, while it registers, reads its section and checks its values. A value
+   that is not allowed stops the start with an error that names the setting,
+   reported as the cause of `Plugin '<id>' failed during registration.`
+3. A plugin whose section is missing uses its defaults and appends them to the end of
+   the file. The lines already there, comments included, are not changed. Edit the
+   appended values and restart to change them. If the file is read-only, the server
+   logs a warning and runs with the defaults.
+
+So a new root starts with the server's sections only, and after the first start the
+file lists every setting of every installed plugin. Removing a plugin leaves its
+section in the file; the server ignores it. Two owners cannot share a name: a plugin
+that claims `network`, or a name another plugin already took, stops the start.
 
 ## Command line and root directory
 
