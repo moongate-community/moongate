@@ -17,6 +17,7 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class NpcService : INpcService
 {
     public const string SpawnFunction = "on_spawn";
+    public const string CreateFunction = "on_create";
 
     private readonly ILogger _logger = Log.ForContext<NpcService>();
     private readonly IMobileFactoryService _factory;
@@ -27,6 +28,7 @@ public sealed class NpcService : INpcService
     private readonly IDataAccess<ItemEntity> _itemData;
     private readonly IGameLoopService _loop;
     private readonly INpcScriptService? _scripts;
+    private readonly IItemScriptService? _itemScripts;
 
     public NpcService(
         IMobileFactoryService factory,
@@ -36,7 +38,8 @@ public sealed class NpcService : INpcService
         IDataAccess<MobileEntity> mobileData,
         IDataAccess<ItemEntity> itemData,
         IGameLoopService loop,
-        INpcScriptService? scripts = null
+        INpcScriptService? scripts = null,
+        IItemScriptService? itemScripts = null
     )
     {
         _factory = factory;
@@ -47,6 +50,7 @@ public sealed class NpcService : INpcService
         _itemData = itemData;
         _loop = loop;
         _scripts = scripts;
+        _itemScripts = itemScripts;
     }
 
     public async Task StartAsync()
@@ -90,11 +94,19 @@ public sealed class NpcService : INpcService
         await OnLoopAsync(
             () =>
             {
-                // Queued first, so on_spawn runs before what entering the world queues, such as on_mobile_in_range; it
-                // still runs after this action, with the NPC in the world, dressed and shown.
+                // Queued first, so the new items' on_create and then on_spawn run before what entering the world queues,
+                // such as on_mobile_in_range; they still run after this action, with the NPC in the world, dressed and
+                // shown.
+                var created = spawned.Equipment.Append(spawned.Backpack).Concat(spawned.BackpackItems).ToList();
+
+                foreach (var item in created)
+                {
+                    _itemScripts?.Queue(item, CreateFunction);
+                }
+
                 _scripts?.Queue(npc, SpawnFunction);
                 _mobiles.EnterWorld(npc);
-                _items.Add(spawned.Equipment.Append(spawned.Backpack).Concat(spawned.BackpackItems));
+                _items.Add(created);
                 _view.MobileAppeared(npc);
             },
             CancellationToken.None

@@ -21,6 +21,7 @@ public sealed class NpcServiceTests : IAsyncDisposable
     private readonly RecordingWorldViewService _view = new();
     private readonly RecordingNpcTickService _ticks = new();
     private readonly RecordingNpcScriptService _scripts = new();
+    private readonly RecordingItemScriptService _itemScripts = new();
     private readonly SectorService _sectors;
     private readonly MobileService _mobiles;
     private readonly ItemService _items;
@@ -81,6 +82,18 @@ public sealed class NpcServiceTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task SpawnAsync_QueuesOnCreateOfTheNewItemsWithAScript()
+    {
+        _itemScripts.Scripted.Add("shirt");
+        _itemScripts.Scripted.Add("gold");
+        var npcs = await CreateAsync();
+
+        await npcs.SpawnAsync("orc", MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        Assert.Equal(["0x40000100 on_create", "0x40000102 on_create"], _itemScripts.Queued);
+    }
+
+    [Fact]
     public async Task StartAsync_LoadingTheSavedNpcs_IsNoSpawn()
     {
         var npcs = await CreateAsync();
@@ -88,6 +101,7 @@ public sealed class NpcServiceTests : IAsyncDisposable
         await npcs.StartAsync();
 
         Assert.Empty(_scripts.Calls);
+        Assert.Empty(_itemScripts.Queued);
     }
 
     [Fact]
@@ -150,7 +164,8 @@ public sealed class NpcServiceTests : IAsyncDisposable
             new RecordingDataAccess<MobileEntity>(),
             new RecordingDataAccess<ItemEntity>(),
             _fixture.Loop,
-            _scripts
+            _scripts,
+            _itemScripts
         );
     }
 
