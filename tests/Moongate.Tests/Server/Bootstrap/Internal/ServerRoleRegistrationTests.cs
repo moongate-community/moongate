@@ -140,6 +140,7 @@ public sealed class ServerRoleRegistrationTests
             Assert.IsType<SectorService>(container.Resolve<ISectorService>());
             Assert.IsType<SpeechService>(container.Resolve<ISpeechService>());
             Assert.NotNull(container.Resolve<NpcModule>());
+            Assert.NotNull(container.Resolve<ItemModule>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
             Assert.NotNull(container.Resolve<INpcService>());
