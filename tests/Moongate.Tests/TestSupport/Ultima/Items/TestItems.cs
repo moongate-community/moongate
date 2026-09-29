@@ -22,7 +22,8 @@ public static class TestItems
         IMovementService? movement = null,
         ILineOfSightService? sight = null,
         IDataAccess<ItemEntity>? data = null,
-        IGameLoopService? loop = null
+        IGameLoopService? loop = null,
+        IItemScriptService? scripts = null
     )
     {
         return new(
@@ -30,7 +31,8 @@ public static class TestItems
             movement ?? new StubMovementService(),
             sight ?? new StubLineOfSightService(),
             data ?? new RecordingDataAccess<ItemEntity>(),
-            loop ?? new StubGameLoop()
+            loop ?? new StubGameLoop(),
+            scripts
         );
     }
 }

@@ -22,6 +22,8 @@ namespace Moongate.Server.Ultima.Services;
 public sealed class ItemService : IItemService, IMoongateStartupService
 {
     public const int GroundReach = 2;
+    public const string EquipFunction = "on_equip";
+    public const string UnequipFunction = "on_unequip";
     private const int DropCeiling = 16;
     private const int EyeHeight = 14;
 
@@ -35,6 +37,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
     private readonly ILineOfSightService _sight;
     private readonly IDataAccess<ItemEntity> _data;
     private readonly IGameLoopService _loop;
+    private readonly IItemScriptService? _scripts;
 
     public IReadOnlyCollection<ItemEntity> Items => _items.Values.ToArray();
 
@@ -43,7 +46,8 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         IMovementService movement,
         ILineOfSightService sight,
         IDataAccess<ItemEntity> data,
-        IGameLoopService loop
+        IGameLoopService loop,
+        IItemScriptService? scripts = null
     )
     {
         _sectors = sectors;
@@ -51,6 +55,7 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         _sight = sight;
         _data = data;
         _loop = loop;
+        _scripts = scripts;
     }
 
     public async Task StartAsync()
@@ -146,25 +151,31 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
     public void MoveToContainer(ItemEntity item, Serial container, Point2D position)
     {
+        var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
         item.PutInContainer(container, position);
+        WearerChanged(item, wearer);
     }
 
     public void PlaceOnGround(ItemEntity item, MapType map, Point3D location)
     {
+        var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
         item.PlaceOnGround(map, location);
         _sectors.AddItem(item);
+        WearerChanged(item, wearer);
     }
 
     public void Equip(ItemEntity item, Serial mobile, LayerType layer)
     {
+        var wearer = item.MobileId;
         _sectors.RemoveItem(item);
         Unindex(item);
         item.Equip(mobile, layer);
         Index(item);
+        WearerChanged(item, wearer);
     }
 
     public bool CanReach(MobileEntity mobile, ItemEntity item)
@@ -317,6 +328,32 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         _items.TryRemove(item.Id, out _);
         _sectors.RemoveItem(item);
         Unindex(item);
+
+        // A worn item merged into a stack leaves its layer for good.
+        if (item.MobileId is { } wearer)
+        {
+            _scripts?.Run(item, UnequipFunction, (long)wearer.Value);
+        }
+    }
+
+    // The item's script hears a wearer change: on_unequip for the one it left, then on_equip for the one it went onto.
+    // Items loaded or spawned already dressed never pass here.
+    private void WearerChanged(ItemEntity item, Serial? before)
+    {
+        if (_scripts is null || before == item.MobileId)
+        {
+            return;
+        }
+
+        if (before is { } left)
+        {
+            _scripts.Run(item, UnequipFunction, (long)left.Value);
+        }
+
+        if (item.MobileId is { } wearer)
+        {
+            _scripts.Run(item, EquipFunction, (long)wearer.Value);
+        }
     }
 
     // Worn items by wearer: a mobile shown to others (0x78) must not scan every item of the world.
