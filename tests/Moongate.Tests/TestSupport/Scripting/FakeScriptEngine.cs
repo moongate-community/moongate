@@ -29,9 +29,9 @@ public sealed class FakeScriptEngine : IScriptEngine
     public ScriptExecutionMetrics? Metrics { get; set; }
 
     /// <summary>
-    ///     Gets the table, function and arguments of every <see cref="CallMember" />, in order.
+    ///     Gets the owner, table, function and arguments of every <see cref="CallMember" />, in order.
     /// </summary>
-    public List<(string Table, string Function, object?[] Args)> MemberCalls { get; } = [];
+    public List<(string Owner, string Table, string Function, object?[] Args)> MemberCalls { get; } = [];
 
     /// <summary>
     ///     Gets or sets what <see cref="CallMember" /> returns.
@@ -45,9 +45,9 @@ public sealed class FakeScriptEngine : IScriptEngine
     }
 
     /// <inheritdoc />
-    public ScriptResult CallMember(string table, string function, params object?[] args)
+    public ScriptResult CallMember(string owner, string table, string function, params object?[] args)
     {
-        MemberCalls.Add((table, function, args));
+        MemberCalls.Add((owner, table, function, args));
 
         return MemberResult;
     }

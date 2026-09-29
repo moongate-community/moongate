@@ -251,9 +251,10 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     }
 
     /// <inheritdoc />
-    public ScriptResult CallMember(string table, string function, params object?[] args)
+    public ScriptResult CallMember(string owner, string table, string function, params object?[] args)
     {
         _guard.EnsureScriptThread(nameof(CallMember));
+        ArgumentException.ThrowIfNullOrWhiteSpace(owner);
         ArgumentException.ThrowIfNullOrWhiteSpace(table);
         ArgumentException.ThrowIfNullOrWhiteSpace(function);
         var state = Ready(_state);
@@ -267,10 +268,9 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
             return ScriptResult.Missing;
         }
 
-        var owner = Ready(_files).CurrentFile ?? _options.BootstrapFile;
         _callsStarted++;
 
-        return scheduler.Start(value.Read<LuaFunction>(), owner, args);
+        return scheduler.Start(value.Read<LuaFunction>(), ScriptFileLoader.Normalize(owner), args);
     }
 
     /// <summary>

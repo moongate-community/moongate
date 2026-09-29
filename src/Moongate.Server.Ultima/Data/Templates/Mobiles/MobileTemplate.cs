@@ -174,11 +174,10 @@ public partial class MobileTemplate
     public MobileSounds? Sounds { get; set; }
 
     /// <summary>
-    ///     The global Lua table, defined by a file of <c>scripts/mobiles/</c>, whose functions handle the NPC's events:
+    ///     The global Lua table, defined by <c>scripts/mobiles/&lt;script_id&gt;.lua</c>, whose functions handle the NPC's events:
     ///     <c>on_think</c> and <c>on_speech</c>. A lower-case Lua identifier. Unset: no script.
     /// </summary>
     public string? ScriptId { get; set; }
-
 
     /// <summary>
     ///     The lowest account type that sees the mobile. Unset: everyone.

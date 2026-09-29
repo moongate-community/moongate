@@ -1,4 +1,5 @@
 using Moongate.Scripting.Data.Config;
+using Moongate.Scripting.Data.Scripts;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
@@ -10,9 +11,10 @@ using Serilog;
 namespace Moongate.Server.Ultima.Services;
 
 /// <summary>
-///     Runs the mobile scripts: loads every <c>scripts/mobiles/*.lua</c> at startup and, on each think of an NPC, calls
-///     <c>on_think(serial)</c> of the global table its template names with <c>script_id</c>. A think is instantaneous,
-///     as ModernUO's: a script that waits in it is warned once.
+///     Runs the mobile scripts: loads every <c>scripts/mobiles/*.lua</c> at startup and calls the functions of the global
+///     table an NPC's template names with <c>script_id</c>, defined by <c>scripts/mobiles/&lt;script_id&gt;.lua</c>. It
+///     is the NPC thinker: each think calls <c>on_think(serial)</c>, which is instantaneous, as ModernUO's; a script
+///     that waits in it is warned once. Once stopped, before the script engine, it calls nothing.
 /// </summary>
 public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
 {
@@ -24,6 +26,8 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
     private readonly IGameLoopService _loop;
     private readonly ScriptEngineOptions _options;
     private readonly HashSet<string> _warnedWait = new(StringComparer.Ordinal);
+
+    private bool _stopped;
 
     public NpcScriptService(
         IScriptEngine engine,
@@ -61,12 +65,15 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
                 {
                     try
                     {
-                        // A script that fails to compile or run is reported by the engine; the others still load.
                         _engine.LoadFile($"{MobilesDirectory}/{file}");
                     }
                     catch (FileNotFoundException exception)
                     {
                         _logger.Warning(exception, "Mobile script {File} disappeared before it was loaded", file);
+                    }
+                    catch (InvalidOperationException)
+                    {
+                        // The engine has reported the broken script; the server starts with the others.
                     }
                 }
             }
@@ -79,25 +86,42 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
 
     public Task StopAsync()
     {
+        _stopped = true;
+
         return Task.CompletedTask;
     }
 
     public void Think(MobileEntity npc)
     {
-        if (ScriptOf(npc) is not { } script)
-        {
-            return;
-        }
+        var result = Run(npc, "on_think");
 
-        var result = _engine.CallMember(script, "on_think", (long)npc.Id.Value);
-
-        if (result.Kind == ScriptResultKind.Suspended && _warnedWait.Add(script))
+        if (result.Kind == ScriptResultKind.Suspended && ScriptOf(npc) is { } script && _warnedWait.Add(script))
         {
             _logger.Warning(
                 "Mobile script {Script}: on_think called wait(); a think must not wait, keep the timing in the script",
                 script
             );
         }
+    }
+
+    /// <summary>
+    ///     Calls <paramref name="function" /> of the NPC's mobile script with its serial followed by
+    ///     <paramref name="args" />; <see cref="ScriptResult.Missing" /> when it has no script, the script lacks the
+    ///     function, or the scripts have stopped.
+    /// </summary>
+    public ScriptResult Run(MobileEntity npc, string function, params object?[] args)
+    {
+        if (_stopped || ScriptOf(npc) is not { } script)
+        {
+            return ScriptResult.Missing;
+        }
+
+        return _engine.CallMember(
+            $"{MobilesDirectory}/{script}.lua",
+            script,
+            function,
+            [(long)npc.Id.Value, ..args]
+        );
     }
 
     private string? ScriptOf(MobileEntity npc)

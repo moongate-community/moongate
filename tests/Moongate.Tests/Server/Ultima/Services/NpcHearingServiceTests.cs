@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Scripting.Data.Config;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
@@ -14,6 +15,7 @@ public sealed class NpcHearingServiceTests
 {
     private readonly FakeScriptEngine _engine = new();
     private readonly SectorService _sectors = TestSectors.Create();
+    private NpcScriptService _scripts = null!;
     private readonly MobileEntity _aria = new()
     {
         Id = new Serial(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel,
@@ -28,7 +30,7 @@ public sealed class NpcHearingServiceTests
         Create().Heard(_aria, "hello");
 
         var call = Assert.Single(_engine.MemberCalls);
-        Assert.Equal(("wander", "on_speech"), (call.Table, call.Function));
+        Assert.Equal(("mobiles/wander.lua", "wander", "on_speech"), (call.Owner, call.Table, call.Function));
         Assert.Equal([0x100L, 2L, "hello"], call.Args);
     }
 
@@ -46,6 +48,18 @@ public sealed class NpcHearingServiceTests
         );
 
         Create().Heard(_aria, "hello");
+
+        Assert.Empty(_engine.MemberCalls);
+    }
+
+    [Fact]
+    public async Task Heard_AfterTheScriptsStopped_CallsNothing()
+    {
+        Add(0x100, "orc", 1601, 1600);
+        var hearing = Create();
+        await _scripts.StopAsync();
+
+        hearing.Heard(_aria, "hello");
 
         Assert.Empty(_engine.MemberCalls);
     }
@@ -68,6 +82,8 @@ public sealed class NpcHearingServiceTests
             )
         );
 
-        return new(_engine, templates, _sectors);
+        _scripts = new NpcScriptService(_engine, templates, new StubGameLoop(), new ScriptEngineOptions { ScriptsDirectory = "unused" });
+
+        return new(_scripts, _sectors);
     }
 }

@@ -118,7 +118,7 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         await engine.StartAsync();
         await NewScripts(engine).StartAsync();
 
-        new NpcHearingService(engine, _templates, _sectors).Heard(_aria, "HELLO cat");
+        new NpcHearingService(NewScripts(engine), _sectors).Heard(_aria, "HELLO cat");
         Assert.Empty(_speech.Said);
         _timers.Fire(_timers.Timers.Single().Id);
 
@@ -152,11 +152,27 @@ public sealed class NpcScriptIntegrationTests : IDisposable
         scripts.Think(_cat);
         Assert.Single(_view.Calls);
 
-        new NpcHearingService(engine, templates, _sectors).Heard(_aria, "Hello!");
+        new NpcHearingService(scripts, _sectors).Heard(_aria, "Hello!");
         _timers.Fire(_timers.Timers.Single().Id);
 
         Assert.Empty(_errors);
         Assert.Equal("Well met, traveller.", Assert.Single(_speech.Said).Text);
+    }
+
+    [Fact]
+    public async Task AMobileScriptWithASyntaxError_IsReportedAndTheServerStartsWithTheOthers()
+    {
+        _scripts.Write("mobiles/broken.lua", "broken = {} function broken.on_think(serial) npc.say(serial, end");
+        _scripts.Write("mobiles/greeter.lua", "greeter = {} function greeter.on_think(serial) npc.say(serial, 'ok') end");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        var scripts = NewScripts(engine);
+
+        await scripts.StartAsync();
+        scripts.Think(_cat);
+
+        Assert.Single(_errors);
+        Assert.Equal("ok", Assert.Single(_speech.Said).Text);
     }
 
     public void Dispose()

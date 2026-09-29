@@ -140,9 +140,9 @@ while no script is subscribed cost one lookup and are not queued.
 ## Mobile scripts
 
 A mobile template names its script with `script_id`, the name of a global Lua table
-defined by a file of `scripts/mobiles/`. The server loads every `*.lua` directly in
-that directory at startup, in name order, after `init.lua`; a script that fails to
-load is reported like any script error and the others still load.
+defined by `scripts/mobiles/<script_id>.lua`. The server loads every `*.lua` directly
+in that directory at startup, in name order, after `init.lua`; a script that fails
+to load is reported like any script error, and the server starts with the others.
 
 ```toml
 # templates/mobiles/animals.toml
@@ -190,7 +190,9 @@ end
 
 Reload one script with `script reload mobiles/wander.lua`. Its table is replaced,
 so the NPCs use the new functions from their next think; state kept in `local`
-tables of the old file starts again.
+tables of the old file starts again, and the waits its handlers left are cancelled,
+because a script's calls belong to `mobiles/<script_id>.lua`. When the server stops,
+the scripts are no longer called, before the script engine stops.
 
 ## Reload and ownership
 

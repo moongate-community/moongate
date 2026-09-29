@@ -60,12 +60,36 @@ public sealed class NpcScriptServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task StartAsync_AScriptThatFailsToLoad_IsSkippedAndTheOthersLoad()
+    {
+        // The engine has already reported the error when LoadFile throws it.
+        _scripts.CreateFile("mobiles/a.lua");
+        _scripts.CreateFile("mobiles/b.lua");
+        _engine.LoadFileThrows = new InvalidOperationException("mobiles/a.lua:1: unexpected symbol");
+
+        await Create().StartAsync();
+
+        Assert.Equal(["mobiles/a.lua", "mobiles/b.lua"], _engine.Loaded);
+    }
+
+    [Fact]
+    public async Task Think_AfterStop_CallsNothing()
+    {
+        var service = Create(new MobileTemplate { Id = "orc", ScriptId = "wander" });
+        await service.StopAsync();
+
+        service.Think(_orc);
+
+        Assert.Empty(_engine.MemberCalls);
+    }
+
+    [Fact]
     public void Think_CallsOnThinkOfTheTemplateScript()
     {
         Create(new MobileTemplate { Id = "orc", ScriptId = "wander" }).Think(_orc);
 
         var call = Assert.Single(_engine.MemberCalls);
-        Assert.Equal(("wander", "on_think"), (call.Table, call.Function));
+        Assert.Equal(("mobiles/wander.lua", "wander", "on_think"), (call.Owner, call.Table, call.Function));
         Assert.Equal([0x100L], call.Args);
     }
 

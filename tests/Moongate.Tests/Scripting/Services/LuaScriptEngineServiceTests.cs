@@ -65,7 +65,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         using var engine = NewEngine();
         await engine.StartAsync();
 
-        var result = engine.CallMember("calc", "add", 2, 3);
+        var result = engine.CallMember("init.lua", "calc", "add", 2, 3);
 
         Assert.Equal(ScriptResultKind.Completed, result.Kind);
         Assert.Equal([5d], result.Values);
@@ -82,7 +82,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         using var engine = NewEngine();
         await engine.StartAsync();
 
-        var result = engine.CallMember(table, function);
+        var result = engine.CallMember("init.lua", table, function);
 
         Assert.Equal(ScriptResultKind.Missing, result.Kind);
         Assert.Empty(_events);
@@ -95,7 +95,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         using var engine = NewEngine();
         await engine.StartAsync();
 
-        var result = engine.CallMember("calc", "boom");
+        var result = engine.CallMember("init.lua", "calc", "boom");
 
         Assert.Equal(ScriptResultKind.Failed, result.Kind);
         Assert.Single(_events);
@@ -108,7 +108,22 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         using var engine = NewEngine();
         await engine.StartAsync();
 
-        Assert.Equal(ScriptResultKind.Suspended, engine.CallMember("calc", "slow").Kind);
+        Assert.Equal(ScriptResultKind.Suspended, engine.CallMember("init.lua", "calc", "slow").Kind);
+    }
+
+    [Fact]
+    public async Task CallMember_ItsCoroutineBelongsToTheOwner_AndInvalidatingTheOwnerCancelsIt()
+    {
+        _scripts.Write("init.lua", "");
+        _scripts.Write("mobiles/slow.lua", "slow = {} function slow.later() wait(1) slow_done = true end");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+        engine.LoadFile("mobiles/slow.lua");
+
+        Assert.Equal(ScriptResultKind.Suspended, engine.CallMember("mobiles/slow.lua", "slow", "later").Kind);
+        engine.Invalidate("mobiles/slow.lua");
+
+        Assert.Empty(_timers.Timers);
     }
 
     [Fact]
@@ -117,7 +132,7 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
         using var engine = NewEngine();
         await engine.StartAsync();
 
-        Assert.NotEqual(ScriptResultKind.Missing, engine.CallMember("log", "info", "x").Kind);
+        Assert.NotEqual(ScriptResultKind.Missing, engine.CallMember("init.lua", "log", "info", "x").Kind);
     }
 
     [Fact]
