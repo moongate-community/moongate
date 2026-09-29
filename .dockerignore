@@ -13,6 +13,12 @@
 !moongate_root/
 !moongate_root/data/
 !moongate_root/data/**
+!moongate_root/templates/
+!moongate_root/templates/**
+!moongate_root/scripts/
+!moongate_root/scripts/**
+moongate_root/scripts/definitions.lua
+moongate_root/scripts/.luarc.json
 !samples/
 !samples/Moongate.Sample.Plugin/
 !samples/Moongate.Sample.Plugin/**

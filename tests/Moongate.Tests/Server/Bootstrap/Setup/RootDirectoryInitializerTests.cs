@@ -148,6 +148,64 @@ public sealed class RootDirectoryInitializerTests
     }
 
     [Fact]
+    public void Initialize_NewRoot_CopiesTheTemplatesAndScripts()
+    {
+        using var directory = new TemporaryDirectory();
+        var templates = directory.CreateFile("distribution-templates/items/tools.toml", "[[item]]\n");
+        var scripts = directory.CreateFile("distribution-scripts/mobiles/wander.lua", "wander = {}\n");
+        var root = Path.Combine(directory.Path, "root");
+
+        RootDirectoryInitializer.Initialize(
+            root,
+            CreateMigrations(directory),
+            CreateData(directory),
+            TextWriter.Null,
+            templatesDirectory: Path.GetDirectoryName(Path.GetDirectoryName(templates)),
+            scriptsDirectory: Path.GetDirectoryName(Path.GetDirectoryName(scripts))
+        );
+
+        Assert.Equal("[[item]]\n", File.ReadAllText(Path.Combine(root, "templates/items/tools.toml")));
+        Assert.Equal("wander = {}\n", File.ReadAllText(Path.Combine(root, "scripts/mobiles/wander.lua")));
+    }
+
+    [Fact]
+    public void Initialize_RepeatedRun_PreservesEditedScriptsAndAddsNewOnes()
+    {
+        using var directory = new TemporaryDirectory();
+        var wander = directory.CreateFile("distribution-scripts/mobiles/wander.lua", "wander = {}\n");
+        var scripts = Path.GetDirectoryName(Path.GetDirectoryName(wander))!;
+        var root = Path.Combine(directory.Path, "root");
+        var migrations = CreateMigrations(directory);
+        var data = CreateData(directory);
+        RootDirectoryInitializer.Initialize(root, migrations, data, TextWriter.Null, scriptsDirectory: scripts);
+        File.WriteAllText(Path.Combine(root, "scripts/mobiles/wander.lua"), "-- mine\n");
+        directory.CreateFile("distribution-scripts/items/potion.lua", "potion = {}\n");
+
+        RootDirectoryInitializer.Initialize(root, migrations, data, TextWriter.Null, scriptsDirectory: scripts);
+
+        Assert.Equal("-- mine\n", File.ReadAllText(Path.Combine(root, "scripts/mobiles/wander.lua")));
+        Assert.Equal("potion = {}\n", File.ReadAllText(Path.Combine(root, "scripts/items/potion.lua")));
+    }
+
+    [Fact]
+    public void Initialize_WithoutTemplatesOrScriptsInTheDistribution_StillPreparesTheRoot()
+    {
+        using var directory = new TemporaryDirectory();
+        var root = Path.Combine(directory.Path, "root");
+
+        RootDirectoryInitializer.Initialize(
+            root,
+            CreateMigrations(directory),
+            CreateData(directory),
+            TextWriter.Null,
+            templatesDirectory: Path.Combine(directory.Path, "missing-templates"),
+            scriptsDirectory: Path.Combine(directory.Path, "missing-scripts")
+        );
+
+        Assert.True(Directory.Exists(Path.Combine(root, "scripts")));
+    }
+
+    [Fact]
     public void Initialize_MissingDistributionData_FailsBeforeCreatingRoot()
     {
         using var directory = new TemporaryDirectory();
