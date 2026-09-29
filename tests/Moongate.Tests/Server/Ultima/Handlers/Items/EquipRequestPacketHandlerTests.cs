@@ -127,6 +127,17 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_AStackOfMoreThanOne_BouncesBack()
+    {
+        _dagger.Amount = 3;
+        await StartAsync(_dagger);
+
+        await EquipAsync(_dagger, Aria);
+
+        AssertBouncedToTheBackpack(_dagger);
+    }
+
+    [Fact]
     public async Task Handle_AnItemThatIsNotWorn_BouncesBack()
     {
         await StartAsync(_apple);
@@ -158,6 +169,16 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
 
         Assert.True(_items.IsLyingOnGround(_groundDagger));
         Assert.Equal([$"Appeared {_groundDagger.Id.Value}"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task Handle_ASerialThatIsNotTheHeldItem_BouncesTheHeldItem()
+    {
+        await StartAsync(_dagger);
+
+        await EquipAsync(_apple, Aria);
+
+        AssertBouncedToTheBackpack(_dagger);
     }
 
     [Fact]

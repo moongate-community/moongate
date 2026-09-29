@@ -81,6 +81,22 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_PartOfAWornStack_IsRefused()
+    {
+        // Splitting it would leave two items on one layer, which no save can write.
+        var torches = new ItemEntity { Id = new(0x4000000A), TemplateId = "torch", ItemId = 0x0EED, Amount = 5 };
+        torches.Equip(Aria, LayerType.TwoHanded);
+        _items.Add([torches]);
+        await StartAsync(Aria);
+
+        await LiftAsync(torches.Id, 1);
+
+        Assert.Null(_session.Get(ItemSessionKeys.Held));
+        Assert.Equal(5, torches.Amount);
+        Assert.Single(_items.GetWorn(Aria), item => item.Layer == LayerType.TwoHanded);
+    }
+
+    [Fact]
     public async Task Handle_TheBackpack_IsRefusedAndShownBackOnTheCharacter()
     {
         await StartAsync(Aria);

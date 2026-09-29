@@ -69,7 +69,8 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             (!onGround && !worn && (item.ContainerId is null || _items.GetOwner(item) != session.CharacterId)) ||
             packet.Amount <= 0 ||
             packet.Amount > item.Amount ||
-            (packet.Amount < item.Amount && !IsStackable(item)))
+            // A worn stack is taken whole: the rest of a split would be a second item on the same layer.
+            (packet.Amount < item.Amount && (worn || !IsStackable(item))))
         {
             Refuse(session, LiftRejectReasonType.CannotLift, item);
 

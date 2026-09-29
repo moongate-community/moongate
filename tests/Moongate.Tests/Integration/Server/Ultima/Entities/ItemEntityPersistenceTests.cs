@@ -321,6 +321,40 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task WorldSave_AnAbsorbedWornItem_FreesItsLayerForTheNextOne()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = TestItems.Create();
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Map = MapType.Trammel };
+        await mobiles.UpsertAsync(aria);
+        var backpack = new ItemEntity { TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(aria.Id, LayerType.Backpack);
+        var worn = new ItemEntity { TemplateId = "torch", ItemId = 0x0F64 };
+        worn.Equip(aria.Id, LayerType.TwoHanded);
+        var next = new ItemEntity { TemplateId = "torch", ItemId = 0x0F64 };
+        await data.UpsertAsync(backpack);
+        await data.UpsertAsync(worn);
+        next.PutInContainer(backpack.Id, new Point2D(44, 65));
+        await data.UpsertAsync(next);
+        items.Add([backpack, worn, next]);
+
+        // The worn torch is merged into a stack (its row is deleted by the save), and another goes on.
+        items.Absorb(worn, aria.Id);
+        items.Equip(next, aria.Id, LayerType.TwoHanded);
+        await host.Owner.SaveAllAsync();
+
+        Assert.Null(await data.GetByIdAsync(worn.Id));
+        Assert.Equal(LayerType.TwoHanded, (await data.GetByIdAsync(next.Id))!.Layer);
+    }
+
+    [Fact]
     public async Task WorldSave_DeletesTheItemsAbsorbedIntoOtherStacks()
     {
         await using var host = await HostPersistenceFixture.CreateAsync(false);

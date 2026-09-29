@@ -130,8 +130,8 @@ double clicks are not handled yet.
 Picking an item up (`0x07`) records it as held in the session; it stays in its container until
 the drop. A whole item inside a container the character carries, or one the character wears
 (from the paperdoll; not the backpack), can be picked up: holding another item already
-(`AreHolding`), part of a stack, the backpack or an item not carried is refused with `0x27`
-(`CannotLift`); an item of the character's inside a container is shown back with `0x25`, and a
+(`AreHolding`), part of a non-stackable item or of a worn stack, the backpack or an item not
+carried is refused with `0x27` (`CannotLift`); an item of the character's inside a container is shown back with `0x25`, and a
 worn one is put back on the paperdoll with `0x2E`, as ModernUO; another player's item is never
 shown. A worn item picked up stays on the character until the drop, and the other players in
 range see it taken off (`0x1D`). Dropping it (`0x08`)
@@ -160,9 +160,12 @@ ModernUO and POL: a template with `two_handed_weapon = true` needs both hands fr
 else goes in hand while one is worn; shields and torches go with a one-handed weapon. The item
 leaves its container or the ground and everyone in range, the character included, gets `0x2E`.
 Anything else bounces back to where the item still is: its container (`0x25`), the ground, or
-the character it was taken off (`0x2E` to everyone in range). The hand is always freed. The
-world save and the leave save write unworn items before worn ones, so taking one shirt off and
-putting another on the same layer never breaks the unique `(mobile_id, layer)` index.
+the character it was taken off (`0x2E` to everyone in range). A stack of more than one is not
+worn. The hand is always freed, and a drop or equip that names another item than the held one
+puts the held one back. To keep the unique `(mobile_id, layer)` index satisfied after a change of
+clothes, the world save and the leave save delete removed rows first and write unworn items
+before worn ones, and a leave save skips an item the character dropped that someone else now
+carries or wears (that owner's save writes it).
 
 Items on the ground live in the sector grid with the mobiles. Dropping the held item on the
 ground (`0x08` with destination `0xFFFFFFFF`) works within 2 tiles of the character, in line of

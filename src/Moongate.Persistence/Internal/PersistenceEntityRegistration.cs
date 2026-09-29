@@ -63,16 +63,17 @@ internal sealed class PersistenceEntityRegistration<T> : IPersistenceEntityRegis
 
         return async (transaction, cancellationToken) =>
         {
-            foreach (var batch in values.Chunk(SnapshotBatchSize))
-            {
-                await transaction.UpsertSnapshotsAsync(batch, cancellationToken).ConfigureAwait(false);
-            }
-
+            // Deletions first: a deleted row must not hold a unique value (such as a worn layer) a saved row now takes.
             var data = transaction.GetDataAccess<T>();
 
             foreach (var id in deletions)
             {
                 await data.DeleteAsync(id, cancellationToken).ConfigureAwait(false);
+            }
+
+            foreach (var batch in values.Chunk(SnapshotBatchSize))
+            {
+                await transaction.UpsertSnapshotsAsync(batch, cancellationToken).ConfigureAwait(false);
             }
         };
     }

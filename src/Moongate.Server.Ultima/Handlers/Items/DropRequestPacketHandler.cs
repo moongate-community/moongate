@@ -62,15 +62,28 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         var held = session.Get(ItemSessionKeys.Held);
         session.Set(ItemSessionKeys.Held, null);
 
-        if (held is null || held.Item != packet.Item || !_items.TryGet(held.Item, out var item))
+        if (held is not null && held.Item != packet.Item && _items.TryGet(held.Item, out var other))
+        {
+            // The hand is freed either way, so the held item must go back where it still is.
+            _logger.Debug("Session {SessionId} named {Item} while holding {Held}", session.SessionId, packet.Item, other);
+            HeldItemBounce.Return(session, other, _items, _mobiles, _view, _sender);
+
+            return;
+        }
+
+        if (held is null || !_items.TryGet(held.Item, out var item))
         {
             _logger.Debug("Session {SessionId} dropped {Item} without holding it", session.SessionId, packet.Item);
 
             return;
         }
 
+        // Taken off the paperdoll: players who came into range while it was held still see it worn.
+        var wearer = item.MobileId is { } wearerId && _mobiles.TryGet(wearerId, out var worn) ? worn : null;
+
         if (TryMerge(session, item, packet.Destination, out var stack))
         {
+            TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(stack, session.UsesContainerGrid()));
             _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
 
@@ -84,6 +97,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             // The character's leave saves the grown stack and deletes the absorbed item in one transaction.
             _items.Release(groundStack, session.CharacterId);
             _view.ItemAppeared(groundStack);
+            TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
 
             return;
@@ -102,6 +116,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         }
         else if (TryPlace(session, item, packet))
         {
+            TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
 
             return;
@@ -110,6 +125,14 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
 
         HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender);
+    }
+
+    private void TakenOff(MobileEntity? wearer, ItemEntity item)
+    {
+        if (wearer is not null)
+        {
+            _view.WornItemRemoved(wearer, item);
+        }
     }
 
     // Onto a carried stack of the same kind: the stack grows and the held item is absorbed.

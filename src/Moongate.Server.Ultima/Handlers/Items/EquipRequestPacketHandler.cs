@@ -44,14 +44,25 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
         var held = session.Get(ItemSessionKeys.Held);
         session.Set(ItemSessionKeys.Held, null);
 
-        if (held is null || held.Item != packet.Item || !_items.TryGet(held.Item, out var item))
+        if (held is not null && held.Item != packet.Item && _items.TryGet(held.Item, out var other))
+        {
+            // The hand is freed either way, so the held item must go back where it still is.
+            _logger.Debug("Session {SessionId} named {Item} while holding {Held}", session.SessionId, packet.Item, other);
+            HeldItemBounce.Return(session, other, _items, _mobiles, _view, _sender);
+
+            return;
+        }
+
+        if (held is null || !_items.TryGet(held.Item, out var item))
         {
             _logger.Debug("Session {SessionId} tried to wear {Item} without holding it", session.SessionId, packet.Item);
 
             return;
         }
 
+        // One item per layer: a stack goes on only as a single item, as a worn stack could not be split later.
         if (packet.Mobile == session.CharacterId &&
+            item.Amount == 1 &&
             _mobiles.TryGet(session.CharacterId, out var character) &&
             _equipment.TryGetLayer(item, out var layer) &&
             _equipment.CanWear(character.Id, item, layer))
