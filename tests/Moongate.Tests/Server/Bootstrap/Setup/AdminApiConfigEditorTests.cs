@@ -1,4 +1,6 @@
 using Moongate.Core.Utils;
+using Moongate.Server.Admin.Data.Config;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Server.Bootstrap.Internal.Setup;
 using Moongate.Server.Data.Config;
 
@@ -25,20 +27,20 @@ public sealed class AdminApiConfigEditorTests
         Assert.Contains("[admin_api] # Admin" + newline, result);
         Assert.EndsWith("[redis]" + newline + "connection_string = '${REDIS}'" + newline, result);
         Assert.DoesNotContain("\n", result.Replace(newline, ""));
-        var config = TomlUtils.Deserialize<MoongateServerConfig>(result)!;
-        Assert.True(config.AdminApi.Enabled);
-        Assert.Equal("certificates/admin.pfx", config.AdminApi.CertificatePath);
-        Assert.Equal("0.0.0.0", config.AdminApi.ListenAddress);
+        var config = TomlSections.Read<AdminApiConfig>(result, "admin_api");
+        Assert.True(config.Enabled);
+        Assert.Equal("certificates/admin.pfx", config.CertificatePath);
+        Assert.Equal("0.0.0.0", config.ListenAddress);
     }
 
     [Theory, InlineData("# Empty"), InlineData("[admin_api]"), InlineData("[admin_api] # Last comment")]
     public void EnableGeneratedCertificate_MissingValues_AppendsValidTlsConfiguration(string source)
     {
         var result = AdminApiConfigEditor.EnableGeneratedCertificate(source);
-        var config = TomlUtils.Deserialize<MoongateServerConfig>(result)!;
-        Assert.True(config.AdminApi.Enabled);
-        Assert.False(config.AdminApi.AllowInsecureLoopback);
-        Assert.Equal("certificates/admin.pfx", config.AdminApi.CertificatePath);
+        var config = TomlSections.Read<AdminApiConfig>(result, "admin_api");
+        Assert.True(config.Enabled);
+        Assert.False(config.AllowInsecureLoopback);
+        Assert.Equal("certificates/admin.pfx", config.CertificatePath);
     }
 
     [Theory, InlineData("[invalid"), InlineData("admin_api = { enabled = false }"), InlineData("admin_api.enabled = false")]

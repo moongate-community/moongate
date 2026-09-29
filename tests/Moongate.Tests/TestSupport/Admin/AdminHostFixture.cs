@@ -1,4 +1,6 @@
 using System.Net;
+using Moongate.Core.Utils;
+using Moongate.Tests.TestSupport.Config;
 using System.Net.Sockets;
 using DryIoc;
 using Grpc.Net.Client;
@@ -67,8 +69,12 @@ internal sealed class AdminHostFixture : IAsyncDisposable
         var port = ((IPEndPoint)listener.LocalEndpoint).Port;
         listener.Stop();
         container.RegisterInstance(new DirectoriesConfig(_directory.Path, []));
+        var adminApi = new AdminApiConfig { Enabled = true, Port = port, CertificatePath = Certificates.PfxPath };
         container.RegisterInstance(
-            new AdminApiConfig { Enabled = true, Port = port, CertificatePath = Certificates.PfxPath }
+            TestConfigDocuments.FromToml(
+                _directory.Path,
+                TomlUtils.Serialize(new Dictionary<string, AdminApiConfig> { ["admin_api"] = adminApi })
+            )
         );
         container.RegisterInstance(mode);
         container.RegisterInstance<IAdminSessionStore>(Backend.Redis.Store);
