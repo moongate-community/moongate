@@ -250,6 +250,29 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
         return scheduler.Start(value.Read<LuaFunction>(), owner, args);
     }
 
+    /// <inheritdoc />
+    public ScriptResult CallMember(string table, string function, params object?[] args)
+    {
+        _guard.EnsureScriptThread(nameof(CallMember));
+        ArgumentException.ThrowIfNullOrWhiteSpace(table);
+        ArgumentException.ThrowIfNullOrWhiteSpace(function);
+        var state = Ready(_state);
+        var scheduler = Ready(_scheduler);
+
+        if (!state.Environment.TryGetValue(table, out var holder) ||
+            !holder.TryRead<LuaTable>(out var members) ||
+            !TryGetMember(members, function, out var value) ||
+            value.Type != LuaValueType.Function)
+        {
+            return ScriptResult.Missing;
+        }
+
+        var owner = Ready(_files).CurrentFile ?? _options.BootstrapFile;
+        _callsStarted++;
+
+        return scheduler.Start(value.Read<LuaFunction>(), owner, args);
+    }
+
     /// <summary>
     ///     Returns a snapshot of the execution counters. Unlike the other members this may be called from any thread;
     ///     diagnostics collectors run off the loop.
@@ -338,6 +361,20 @@ public sealed class LuaScriptEngineService : IScriptEngine, IMoongateStartupServ
     public async Task StopAsync()
     {
         await RunOnLoopAsync(Dispose, "stop").ConfigureAwait(false);
+    }
+
+    // A module table is an empty read-only proxy whose __index is the real table: follow it once.
+    private static bool TryGetMember(LuaTable table, string name, out LuaValue value)
+    {
+        if (table.TryGetValue(name, out value) && value.Type != LuaValueType.Nil)
+        {
+            return true;
+        }
+
+        return table.Metatable is { } metatable &&
+               metatable["__index"].TryRead<LuaTable>(out var hidden) &&
+               hidden.TryGetValue(name, out value) &&
+               value.Type != LuaValueType.Nil;
     }
 
     private void BindModules(

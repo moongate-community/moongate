@@ -23,5 +23,10 @@ public enum ScriptResultKind
     /// <summary>
     ///     The function failed. The error is in the result, and has already been logged and published as a script error event.
     /// </summary>
-    Failed = 2
+    Failed = 2,
+
+    /// <summary>
+    ///     The table or its function does not exist; nothing ran and nothing was reported.
+    /// </summary>
+    Missing = 3
 }

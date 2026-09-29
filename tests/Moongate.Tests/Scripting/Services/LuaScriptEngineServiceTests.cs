@@ -59,6 +59,68 @@ public sealed class LuaScriptEngineServiceTests : IDisposable
     }
 
     [Fact]
+    public async Task CallMember_CallsTheFunctionOfAGlobalTable()
+    {
+        _scripts.Write("init.lua", "calc = {} function calc.add(a, b) return a + b end");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+
+        var result = engine.CallMember("calc", "add", 2, 3);
+
+        Assert.Equal(ScriptResultKind.Completed, result.Kind);
+        Assert.Equal([5d], result.Values);
+    }
+
+    [Theory,
+     InlineData("missing", "add"),
+     InlineData("calc", "missing"),
+     InlineData("calc", "value"),
+     InlineData("number", "add")]
+    public async Task CallMember_NoSuchFunction_IsMissingAndReportsNothing(string table, string function)
+    {
+        _scripts.Write("init.lua", "calc = { value = 1 } function calc.add(a, b) return a + b end number = 3");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+
+        var result = engine.CallMember(table, function);
+
+        Assert.Equal(ScriptResultKind.Missing, result.Kind);
+        Assert.Empty(_events);
+    }
+
+    [Fact]
+    public async Task CallMember_AFunctionThatFails_IsFailedAndReported()
+    {
+        _scripts.Write("init.lua", "calc = {} function calc.boom() error('broken') end");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+
+        var result = engine.CallMember("calc", "boom");
+
+        Assert.Equal(ScriptResultKind.Failed, result.Kind);
+        Assert.Single(_events);
+    }
+
+    [Fact]
+    public async Task CallMember_AFunctionThatWaits_IsSuspended()
+    {
+        _scripts.Write("init.lua", "calc = {} function calc.slow() wait(1) end");
+        using var engine = NewEngine();
+        await engine.StartAsync();
+
+        Assert.Equal(ScriptResultKind.Suspended, engine.CallMember("calc", "slow").Kind);
+    }
+
+    [Fact]
+    public async Task CallMember_OnAModuleTable_ReadsThroughTheReadOnlyProxy()
+    {
+        using var engine = NewEngine();
+        await engine.StartAsync();
+
+        Assert.NotEqual(ScriptResultKind.Missing, engine.CallMember("log", "info", "x").Kind);
+    }
+
+    [Fact]
     public async Task Call_MissingFunction_FailsWithoutThrowing()
     {
         using var engine = NewEngine();
