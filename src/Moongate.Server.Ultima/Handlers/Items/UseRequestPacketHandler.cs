@@ -38,6 +38,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private readonly ITileDataService _tiles;
     private readonly IContainerLayoutService _layouts;
     private readonly IPacketSendService _sender;
+    private readonly ITooltipService _tooltips;
 
     public UseRequestPacketHandler(
         IItemService items,
@@ -46,9 +47,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         WorldConfig world,
         ITileDataService tiles,
         IContainerLayoutService layouts,
-        IPacketSendService sender
+        IPacketSendService sender,
+        ITooltipService tooltips
     )
     {
+        _tooltips = tooltips;
         _items = items;
         _mobiles = mobiles;
         _bodies = new(() => data.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type));
@@ -97,7 +100,14 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
 
         var gump = _layouts.GetLayout(item.ItemId).Gump;
         _sender.TrySend(session.SessionId, new DisplayContainerPacket(item.Id, gump, session.UsesHighSeasContainers()));
-        _sender.TrySend(session.SessionId, new ContainerContentPacket(_items.GetContents(item.Id), session.UsesContainerGrid()));
+        var contents = _items.GetContents(item.Id);
+        _sender.TrySend(session.SessionId, new ContainerContentPacket(contents, session.UsesContainerGrid()));
+
+        // As ModernUO and Source-X: each item shown is followed by its tooltip revision.
+        foreach (var content in contents)
+        {
+            _sender.TrySend(session.SessionId, _tooltips.Info(content));
+        }
     }
 
     private void OpenOwnPaperdoll(GameSession session)

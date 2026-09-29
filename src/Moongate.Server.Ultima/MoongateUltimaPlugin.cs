@@ -41,6 +41,7 @@ using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Handlers.Movement;
 using Moongate.Server.Ultima.Handlers.Targeting;
+using Moongate.Server.Ultima.Handlers.Tooltips;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
@@ -162,13 +163,13 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
             // Sent by the client around and after entering the world; recognised so it is not disconnected.
             RegisterIgnoredPacket<ClientHardwareInfoPacket>(container);
-            RegisterIgnoredPacket<LookRequestPacket>(container);
+            container.RegisterPacketHandler<LookRequestPacket, LookRequestPacketHandler>();
             RegisterIgnoredPacket<MobileQueryPacket>(container);
             RegisterIgnoredPacket<WarModeRequestPacket>(container);
             container.RegisterIncomingPacket<UpdateRangePacket>();
             container.RegisterPacketHandler<UpdateRangePacket, UpdateRangePacketHandler>();
-            RegisterIgnoredPacket<ExtendedCommandPacket>(container);
-            RegisterIgnoredPacket<QueryPropertiesPacket>(container);
+            container.RegisterPacketHandler<ExtendedCommandPacket, ExtendedCommandPacketHandler>();
+            container.RegisterPacketHandler<QueryPropertiesPacket, QueryPropertiesPacketHandler>();
             RegisterIgnoredPacket<AttackRequestPacket>(container);
             RegisterIgnoredPacket<TextCommandPacket>(container);
             RegisterIgnoredPacket<ResynchronizeRequestPacket>(container);
@@ -279,6 +280,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             // the world save (40): the items on the ground are live before anyone can see them.
             container.AddMoongateService<IItemService, ItemService>(10);
             container.AddMoongateService<IEquipmentService, EquipmentService>();
+            container.AddMoongateService<ITooltipService, TooltipService>();
             // As the ground items: the NPCs are live before the game server takes players.
             container.AddMoongateService<INpcService, NpcService>(10);
         }

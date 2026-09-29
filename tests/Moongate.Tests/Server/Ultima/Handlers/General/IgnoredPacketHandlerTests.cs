@@ -62,7 +62,7 @@ public sealed class IgnoredPacketHandlerTests
         await using var fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(fixture.Loop).GetOrCreate(fixture.Client);
 
-        await fixture.ExecuteOnLoopAsync(() => new IgnoredPacketHandler<LookRequestPacket>().Handle(session, new LookRequestPacket()));
+        await fixture.ExecuteOnLoopAsync(() => new IgnoredPacketHandler<LookRequestPacket>().Handle(session, new LookRequestPacket { Target = default }));
 
         Assert.True(fixture.Client.IsConnected);
     }

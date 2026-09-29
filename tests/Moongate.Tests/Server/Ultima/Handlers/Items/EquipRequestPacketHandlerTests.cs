@@ -16,6 +16,7 @@ using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
@@ -29,7 +30,7 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemService _items;
     private readonly MobileService _mobiles;
     private readonly RecordingWorldViewService _view = new();
-    private readonly StubPacketSendService _sender = new();
+    private readonly StubPacketSendService _sender = new StubPacketSendService().Ignore<PropertyListInfoPacket>();
     private readonly EquipmentService _equipment;
     private readonly ItemEntity _backpack = Item(0x40000001, "backpack", 0x0E75);
     private readonly ItemEntity _dagger = Item(0x40000002, "dagger", 0x0F52);
@@ -219,7 +220,7 @@ public sealed class EquipRequestPacketHandlerTests : IAsyncDisposable
 
     private Task EquipAsync(ItemEntity item, Serial mobile, LayerType layer = LayerType.OneHanded)
     {
-        var handler = new EquipRequestPacketHandler(_items, _mobiles, _equipment, _view, _sender);
+        var handler = new EquipRequestPacketHandler(_items, _mobiles, _equipment, _view, _sender, TestTooltips.Create(_items, _mobiles));
 
         return _fixture.ExecuteOnLoopAsync(() =>
             handler.Handle(_session, new EquipRequestPacket { Item = item.Id, Layer = layer, Mobile = mobile })

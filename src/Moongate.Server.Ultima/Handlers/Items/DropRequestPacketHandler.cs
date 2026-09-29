@@ -39,6 +39,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private readonly ITileDataService _tiles;
     private readonly IContainerLayoutService _layouts;
     private readonly IPacketSendService _sender;
+    private readonly ITooltipService _tooltips;
 
     public DropRequestPacketHandler(
         IItemService items,
@@ -46,9 +47,11 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         IWorldViewService view,
         ITileDataService tiles,
         IContainerLayoutService layouts,
-        IPacketSendService sender
+        IPacketSendService sender,
+        ITooltipService tooltips
     )
     {
+        _tooltips = tooltips;
         _items = items;
         _mobiles = mobiles;
         _view = view;
@@ -66,7 +69,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         {
             // The hand is freed either way, so the held item must go back where it still is.
             _logger.Debug("Session {SessionId} named {Item} while holding {Held}", session.SessionId, packet.Item, other);
-            HeldItemBounce.Return(session, other, _items, _mobiles, _view, _sender);
+            HeldItemBounce.Return(session, other, _items, _mobiles, _view, _sender, _tooltips);
 
             return;
         }
@@ -85,6 +88,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         {
             TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(stack, session.UsesContainerGrid()));
+            _sender.TrySend(session.SessionId, _tooltips.Info(stack));
             _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
 
             return;
@@ -118,13 +122,14 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         {
             TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
+            _sender.TrySend(session.SessionId, _tooltips.Info(item));
 
             return;
         }
 
         _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
 
-        HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender);
+        HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
     }
 
     private void TakenOff(MobileEntity? wearer, ItemEntity item)

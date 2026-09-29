@@ -10,7 +10,7 @@ namespace Moongate.Server.Ultima.Handlers.Items.Internal;
 /// <summary>
 ///     Puts a held item back where it still is, since a picked-up item does not move until it is dropped: back on its
 ///     wearer (0x2E to everyone in range, who were told it was taken off), lying on the ground again, or in its
-///     container (0x25 to the holder).
+///     container (0x25 and its tooltip revision, 0xDC, to the holder).
 /// </summary>
 internal static class HeldItemBounce
 {
@@ -20,7 +20,8 @@ internal static class HeldItemBounce
         IItemService items,
         IMobileService mobiles,
         IWorldViewService view,
-        IPacketSendService sender
+        IPacketSendService sender,
+        ITooltipService tooltips
     )
     {
         if (item.MobileId is { } wearer)
@@ -42,5 +43,7 @@ internal static class HeldItemBounce
         }
 
         sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
+        // Its amount may have changed with a split since the client last read its tooltip.
+        sender.TrySend(session.SessionId, tooltips.Info(item));
     }
 }

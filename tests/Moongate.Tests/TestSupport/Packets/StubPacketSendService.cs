@@ -6,13 +6,20 @@ namespace Moongate.Tests.TestSupport.Packets;
 
 public sealed class StubPacketSendService : IPacketSendService
 {
+    private readonly HashSet<Type> _ignored = [];
+
     public int SentCount { get; private set; }
 
     /// <summary>
-    ///     Gets every packet handed to TrySend, in order.
+    ///     Gets every packet handed to TrySend, in order, except those of the types passed to <see cref="Ignore{T}" />.
     /// </summary>
     public List<IOutgoingPacket> Sent { get; } = [];
     public List<long> SentSessionIds { get; } = [];
+
+    /// <summary>
+    ///     Gets the packets of the ignored types, in order, kept apart from <see cref="Sent" />.
+    /// </summary>
+    public List<IOutgoingPacket> Ignored { get; } = [];
     public INetworkConnection? ExpectedConnection { get; private set; }
     public bool RejectTerminalSend { get; init; }
 
@@ -36,8 +43,26 @@ public sealed class StubPacketSendService : IPacketSendService
         return Task.CompletedTask;
     }
 
+    /// <summary>
+    ///     Stops recording packets of <typeparamref name="T" />, for tests about other packets; TrySend still succeeds.
+    /// </summary>
+    public StubPacketSendService Ignore<T>()
+        where T : IOutgoingPacket
+    {
+        _ignored.Add(typeof(T));
+
+        return this;
+    }
+
     public bool TrySend(long sessionId, IOutgoingPacket packet)
     {
+        if (_ignored.Contains(packet.GetType()))
+        {
+            Ignored.Add(packet);
+
+            return true;
+        }
+
         SentCount++;
         Sent.Add(packet);
         SentSessionIds.Add(sessionId);

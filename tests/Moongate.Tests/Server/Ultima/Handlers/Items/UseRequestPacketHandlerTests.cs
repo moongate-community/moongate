@@ -18,6 +18,7 @@ using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Handlers.Items;
@@ -34,7 +35,7 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
 
     private readonly ItemService _items = TestItems.Create();
     private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
-    private readonly StubPacketSendService _sender = new();
+    private readonly StubPacketSendService _sender = new StubPacketSendService().Ignore<PropertyListInfoPacket>();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                   .Item(BackpackGraphic, TileFlagType.Container, 0)
                                                   .Item(BagGraphic, TileFlagType.Container, 0)
@@ -180,6 +181,8 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         var content = (ContainerContentPacket)_sender.Sent[1];
         Assert.Equal([_bag.Id, _dagger.Id, _pouch.Id], content.Items.Select(item => item.Serial));
         Assert.True(content.GridBytes);
+        // As ModernUO, each item shown is followed by its tooltip revision.
+        Assert.Equal([_bag.Id, _dagger.Id, _pouch.Id], _sender.Ignored.Cast<PropertyListInfoPacket>().Select(info => info.Serial));
     }
 
     [Fact]
@@ -304,7 +307,7 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
             new BodyContent { Body = new(401), Type = BodyType.Human },
             new BodyContent { Body = new(17), Type = BodyType.Monster }
         );
-        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender);
+        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles));
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));
     }
