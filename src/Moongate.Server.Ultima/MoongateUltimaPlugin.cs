@@ -31,6 +31,7 @@ using Moongate.Server.Ultima.Data.Skills;
 using Moongate.Server.Ultima.Data.Templates.Items;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Data.Templates.StartingItems;
+using Moongate.Server.Ultima.Data.Titles;
 using Moongate.Server.Ultima.Data.Weather;
 using Moongate.Server.Ultima.Entities.Auth;
 using Moongate.Server.Ultima.Extensions;
@@ -43,12 +44,14 @@ using Moongate.Server.Ultima.Handlers.Targeting;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
+using Moongate.Server.Ultima.Interfaces.Titles;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Motd;
+using Moongate.Server.Ultima.Services.Titles;
 
 namespace Moongate.Server.Ultima;
 
@@ -113,6 +116,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             MotdRenderer.RegisterBuiltins(container.Resolve<IMotdVariableRegistry>());
             container.Register<MotdRenderer>(Reuse.Singleton);
             container.Register<IMotdService, MotdService>(Reuse.Singleton);
+            container.Register<IFameKarmaTitleService, FameKarmaTitleService>(Reuse.Singleton);
             container.AddUltimaDataLoader<MapLoader, MapContent>(0);
             container.AddUltimaDataLoader<StartingCitiesLoader, StartingCityContent>(1);
             container.AddUltimaDataLoader<SkillsLoader, SkillContent>(2);
@@ -130,6 +134,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddUltimaDataLoader<LootTemplatesLoader, LootTemplate>(14);
             container.AddUltimaDataLoader<MobileTemplatesLoader, MobileTemplate>(15);
             container.AddUltimaDataLoader<MotdLoader, MotdLine>(16);
+            container.AddUltimaDataLoader<TitlesLoader, FameKarmaTitle>(17);
 
             container.RegisterPacketHandler<LoginSeedPacket, LoginSeedPacketHandler>();
             container.RegisterAsyncPacketHandler<GameLoginPacket, GameLoginPacketHandler>();

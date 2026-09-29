@@ -25,6 +25,17 @@ public sealed class RepositoryTemplateFilesTests
         Assert.NotEmpty((await loader.LoadDataAsync()).Entities);
     }
 
+    [Fact]
+    public async Task ShippedTitles_LoadCompleteClassicGrid()
+    {
+        var rows = (await new TitlesLoader(Directories()).LoadDataAsync()).Entities;
+
+        Assert.Equal(55, rows.Count);
+        Assert.Contains(rows, row => row.Fame == 0 && row.Karma == -15000 && row.Title == "The Outcast");
+        Assert.Contains(rows, row => row.Fame == 10000 && row.Karma == 10000 &&
+                                     row.Title == "The Glorious Lord" && row.FemaleTitle == "The Glorious Lady");
+    }
+
     public RepositoryTemplateFilesTests()
     {
         TomlUtils.AddTomlConverter(new SerialTomlConverter());

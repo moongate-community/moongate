@@ -1,8 +1,8 @@
 # Shard data files
 
 The shard data files describe the world the game server runs: its maps, starting
-cities, skills, professions, races, containers, bodies, weather, regions and
-messages. They are TOML files under `data/` in the server root. The server reads
+cities, skills, professions, races, containers, bodies, weather, regions,
+messages and reputation titles. They are TOML files under `data/` in the server root. The server reads
 them once at startup, in game and standalone modes, through the `IDataLoader<T>`
 loaders of `Moongate.Server.Ultima`. A required file that is missing or invalid
 stops the server at startup with an error that says what is wrong. The
@@ -48,7 +48,8 @@ it.
 | <span id="messages"></span>[`messages/<lang>.toml`](data-files/messages.md) | `MessageContent` | regions | Yes, through `ILocalizationService` |
 | <span id="names"></span><span id="validation-at-startup-6"></span>[`names.toml`](data-files/names.md) | `NameList` | messages | Yes, through `INameService` |
 | <span id="starting-items"></span><span id="validation-at-startup-7"></span>[`starting_items.toml`](data-files/starting-items.md) | `StartingItemSet` | names (after the item templates of `templates/items/`, which every item must name) | Yes, through `IStartingItemsService` |
-| [`motd.toml`](motd.md) | `MotdLine` | last, after plugin variable registration | Yes, on every character entry; optional file |
+| [`motd.toml`](motd.md) | `MotdLine` | after mobile templates and plugin variable registration | Yes, on every character entry; optional file |
+| [`titles.toml`](data-files/titles.md) | `FameKarmaTitle` | after MOTD | Lookup API available; client display pending |
 
 "No" means the file is loaded and validated, but no game system reads it yet. A
 mistake in such a file still stops the server.
