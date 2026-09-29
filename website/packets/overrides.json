@@ -2608,5 +2608,132 @@
     ],
     "notes": "Shows an item on the ground to clients from 7.0.0.0; 26 bytes from 7.0.9.0.",
     "handler": "WorldViewService: sent to the players in range when an item is dropped, and when they come into range of it."
+  },
+  "0x6C:outgoing": {
+    "category": "Targeting",
+    "tags": [
+      "Targeting",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Cursor",
+        "type": "enum",
+        "size": "1",
+        "description": "0 object, 1 location"
+      },
+      {
+        "offset": "2",
+        "name": "Cursor id",
+        "type": "int",
+        "size": "4",
+        "description": "Id the response must carry; 0 when cancelling"
+      },
+      {
+        "offset": "6",
+        "name": "Flags",
+        "type": "enum",
+        "size": "1",
+        "description": "0 neutral, 1 harmful, 2 beneficial, 3 cancel"
+      },
+      {
+        "offset": "7",
+        "name": "Unused",
+        "type": "byte[]",
+        "size": "12",
+        "description": "Zero."
+      }
+    ],
+    "notes": "Shows the target cursor, or with flags 3 takes it away.",
+    "handler": "TargetService: sent when a target begins or is cancelled by the server."
+  },
+  "0x6C:incoming": {
+    "category": "Targeting",
+    "tags": [
+      "Targeting",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Cursor",
+        "type": "enum",
+        "size": "1",
+        "description": "0 object, 1 location"
+      },
+      {
+        "offset": "2",
+        "name": "Cursor id",
+        "type": "int",
+        "size": "4",
+        "description": "Id of the cursor answered"
+      },
+      {
+        "offset": "6",
+        "name": "Flags",
+        "type": "enum",
+        "size": "1",
+        "description": "Flags of the cursor"
+      },
+      {
+        "offset": "7",
+        "name": "Serial",
+        "type": "uint",
+        "size": "4",
+        "description": "Item or mobile picked, 0 for a spot"
+      },
+      {
+        "offset": "11",
+        "name": "X",
+        "type": "short",
+        "size": "2",
+        "description": "World X, -1 when cancelled"
+      },
+      {
+        "offset": "13",
+        "name": "Y",
+        "type": "short",
+        "size": "2",
+        "description": "World Y, -1 when cancelled"
+      },
+      {
+        "offset": "15",
+        "name": "Unused",
+        "type": "byte",
+        "size": "1",
+        "description": "Ignored."
+      },
+      {
+        "offset": "16",
+        "name": "Z",
+        "type": "sbyte",
+        "size": "1",
+        "description": "World Z as the client sees it"
+      },
+      {
+        "offset": "17",
+        "name": "Graphic",
+        "type": "ushort",
+        "size": "2",
+        "description": "Static graphic, 0 for the ground or an object"
+      }
+    ],
+    "notes": "The player's pick for a target cursor, or a cancel.",
+    "handler": "TargetResponsePacketHandler: completes the player's pending target."
   }
 }

@@ -41,6 +41,7 @@ using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Handlers.Movement;
+using Moongate.Server.Ultima.Handlers.Targeting;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Interfaces;
@@ -145,6 +146,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterAsyncPacketHandler<AsciiSpeechRequestPacket, SpeechRequestPacketHandler>();
             container.RegisterIncomingPacket<UnicodeSpeechRequestPacket>();
             container.RegisterAsyncPacketHandler<UnicodeSpeechRequestPacket, SpeechRequestPacketHandler>();
+            container.RegisterIncomingPacket<TargetResponsePacket>();
+            container.RegisterPacketHandler<TargetResponsePacket, TargetResponsePacketHandler>();
             container.RegisterIncomingPacket<LiftRequestPacket>();
             container.RegisterPacketHandler<LiftRequestPacket, LiftRequestPacketHandler>();
             container.RegisterIncomingPacket<DropRequestPacket>();
@@ -203,6 +206,14 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddMoongateService<CharacterLeaveWorldService>(50);
             container.RegisterMapping<ISessionClosedListener, CharacterLeaveWorldService>();
             container.RegisterMapping<ICharacterLeaveWorldService, CharacterLeaveWorldService>();
+            container.Register<ITargetService, TargetService>(Reuse.Singleton);
+            container.RegisterMapping<ISessionClosedListener, ITargetService>();
+            container.RegisterCommand<WhereCommand>(
+                "where",
+                "Shows what you target: its serial, or the map and location of a spot.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster
+            );
             container.RegisterCommand<CharacterCommand>(
                 "character",
                 "Pending character deletions: character pending [account-serial]; character restore <character-serial>.",
