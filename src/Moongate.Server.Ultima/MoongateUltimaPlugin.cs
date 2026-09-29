@@ -7,6 +7,7 @@ using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Interfaces;
 using Moongate.Persistence.Extensions;
 using Moongate.Scripting.Extensions.Scripts;
+using Moongate.Scripting.Services;
 using Moongate.Server.Core.Data.Localization;
 using Moongate.Server.Core.Data.Plugins;
 using Moongate.Server.Core.Extensions;
@@ -196,6 +197,9 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ILootService, LootService>(Reuse.Singleton);
             container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
             container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);
+            // After the script engine (70) and its bootstrap: the mobile scripts load into the running engine.
+            container.AddMoongateService<NpcScriptService>(LuaScriptEngineService.StartupPriority + 5);
+            container.RegisterDelegate<INpcThinker>(resolver => resolver.Resolve<NpcScriptService>(), Reuse.Singleton);
             container.AddMetricProvider<NpcTickMetricsProvider>();
             container.Register<ISectorService, SectorService>(Reuse.Singleton);
             container.Register<IMobileService, MobileService>(Reuse.Singleton);
