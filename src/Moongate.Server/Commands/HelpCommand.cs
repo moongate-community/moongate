@@ -77,9 +77,12 @@ public sealed class HelpCommand : ICommandExecutor
 
     private string Description(CommandDefinition definition)
     {
-        return definition.DescriptionMessage == 0
-                   ? definition.Description
-                   : _localization.Text(definition.DescriptionMessage, definition.Description);
+        // The registered description is shown as is: it is not a format, and may hold braces.
+        return definition.DescriptionMessage != 0 &&
+               _localization is not null &&
+               _localization.TryGetText(definition.DescriptionMessage, out var text)
+                   ? text
+                   : definition.Description;
     }
 
     private static bool IsAvailable(CommandDefinition definition, CommandContext context)

@@ -110,6 +110,20 @@ public sealed class HelpCommandTests
         await commands.StopAsync();
     }
 
+    [Fact]
+    public async Task Help_ADescriptionWithBracesAndNoTranslation_IsShownAsIs()
+    {
+        using var container = new Container();
+        container.RegisterCommand<HelpCommand>("help", "Lists commands", CommandSourceType.Console, AccountType.Regular);
+        container.RegisterCommand<EchoCommand>("set", "Sets {key}", CommandSourceType.Console, AccountType.Regular, 39999);
+        var commands = await StartAsync(container);
+
+        var lines = await commands.ExecuteAsync("help");
+
+        Assert.Contains("set - Sets {key}", lines.Select(line => line.Text));
+        await commands.StopAsync();
+    }
+
     private static Container CreateContainer()
     {
         var container = new Container();

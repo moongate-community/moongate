@@ -77,12 +77,13 @@ retain the typed command in its own local history.
 Plugins can add commands through `RegisterCommand<TExecutor>`; see
 [Writing a plugin](plugins.md#console-commands).
 
-Every text a command shows, its description in `help` and the dispatcher's replies
+Every text a command shows to players, its description in `help` and the dispatcher's replies
 (unknown command, not available here, not allowed, failed) come from the message files
 in the server language (`ILocalizationService`, ids 30008–30049; see
 [Localization](localization.md#moongates-own-messages)). Command syntax, account
 types, sources and map names stay technical names, as the commands take them. On a
-login-only process, which has no message files, the texts are English.
+login-only process, which has no message files, the texts are English. Operator-only
+console output (`account api-access`, `script`) stays English.
 
 ### Local API access provisioning
 
