@@ -55,6 +55,8 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
 
+    private readonly RecordingItemScriptService _scripts = new();
+
     public DropRequestPacketHandlerTests()
     {
         var sectors = TestSectors.Create();
@@ -207,6 +209,42 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
 
         AssertAt(_coins, _backpack.Id, new Point2D(80, 70));
         Assert.Equal(70, _pile.Amount);
+    }
+
+    [Theory, InlineData("backpack"), InlineData("bag"), InlineData("pile"), InlineData("ground")]
+    public async Task Handle_ADrop_QueuesOnDropWithTheDropper(string where)
+    {
+        _scripts.Scripted.Add(_coins.TemplateId);
+        await HoldingAsync(_coins);
+
+        switch (where)
+        {
+            case "backpack":
+                await DropAsync(_coins.Id, 80, 70, _backpack.Id);
+                break;
+            case "bag":
+                await DropAsync(_coins.Id, 60, 70, _bag.Id);
+                break;
+            case "pile":
+                await DropAsync(_coins.Id, 0, 0, _pile.Id);
+                break;
+            default:
+                await DropAsync(_coins.Id, 1497, 1628, Ground);
+                break;
+        }
+
+        Assert.Equal([$"0x{_coins.Id.Value:X8} on_drop 2"], _scripts.Queued);
+    }
+
+    [Fact]
+    public async Task Handle_ADropThatBounces_QueuesNothing()
+    {
+        _scripts.Scripted.Add(_bag.TemplateId);
+        await HoldingAsync(_bag);
+
+        await DropAsync(_bag.Id, 60, 70, _bag.Id);
+
+        Assert.Empty(_scripts.Queued);
     }
 
     [Fact]
@@ -493,7 +531,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
                 }
             )
         );
-        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles));
+        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles), _scripts);
         var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, Destination = destination };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));

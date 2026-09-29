@@ -27,6 +27,8 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 /// </remarks>
 public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
 {
+    public const string DropFunction = "on_drop";
+
     private const short OnIcon = -1;
     private const int MaxStack = 60_000;
 
@@ -40,6 +42,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
     private readonly IContainerLayoutService _layouts;
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
+    private readonly IItemScriptService? _scripts;
 
     public DropRequestPacketHandler(
         IItemService items,
@@ -48,10 +51,12 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         ITileDataService tiles,
         IContainerLayoutService layouts,
         IPacketSendService sender,
-        ITooltipService tooltips
+        ITooltipService tooltips,
+        IItemScriptService? scripts = null
     )
     {
         _tooltips = tooltips;
+        _scripts = scripts;
         _items = items;
         _mobiles = mobiles;
         _view = view;
@@ -90,6 +95,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(stack, session.UsesContainerGrid()));
             _sender.TrySend(session.SessionId, _tooltips.Info(stack));
             _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
+            Dropped(session, item);
 
             return;
         }
@@ -103,6 +109,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             _view.ItemAppeared(groundStack);
             TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new RemoveEntityPacket(item.Id));
+            Dropped(session, item);
 
             return;
         }
@@ -114,6 +121,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
                 // Its row still says the character carries it: the character's leave saves where it lies now.
                 _items.Release(item, session.CharacterId);
                 _view.ItemAppeared(item);
+                Dropped(session, item);
 
                 return;
             }
@@ -123,6 +131,7 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
             TakenOff(wearer, item);
             _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
             _sender.TrySend(session.SessionId, _tooltips.Info(item));
+            Dropped(session, item);
 
             return;
         }
@@ -130,6 +139,12 @@ public sealed class DropRequestPacketHandler : IPacketHandler<DropRequestPacket>
         _logger.Debug("{Item} dropped on {Destination} bounces back", item, packet.Destination);
 
         HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
+    }
+
+    // The item's script hears it was put down, after the packets: merged into a stack, the item is already gone.
+    private void Dropped(GameSession session, ItemEntity item)
+    {
+        _scripts?.Queue(item, DropFunction, (long)session.CharacterId.Value);
     }
 
     private void TakenOff(MobileEntity? wearer, ItemEntity item)
