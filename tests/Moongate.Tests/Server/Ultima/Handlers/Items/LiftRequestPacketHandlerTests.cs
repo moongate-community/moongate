@@ -113,7 +113,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
-    public async Task Handle_ALift_QueuesOnPickupWithThePicker()
+    public async Task Handle_ALift_QueuesOnPickupWithThePicker_ASecondWhileHoldingDoesNot()
     {
         _scripts.Scripted.Add("shirt");
         _scripts.Scripted.Add("item");
@@ -123,6 +123,17 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         await LiftAsync(_groundGold.Id, 100);
 
         Assert.Equal(["0x40000008 on_pickup 2"], _scripts.Queued);
+    }
+
+    [Fact]
+    public async Task Handle_PartOfAStack_QueuesOnPickupOfTheLiftedPartOnly()
+    {
+        _scripts.Scripted.Add("item");
+        await StartAsync(Aria);
+
+        await LiftAsync(_coins.Id, 50);
+
+        Assert.Equal(["0x40000002 on_pickup 2"], _scripts.Queued);
     }
 
     [Fact]

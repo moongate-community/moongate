@@ -51,11 +51,10 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemEntity _otherBackpack = Item(0x40000006, BackpackGraphic);
     private readonly ItemEntity _pile = Item(0x40000007, CoinGraphic);
     private readonly ItemEntity _shirt = Item(0x40000008, 0x1517);
+    private readonly RecordingItemScriptService _scripts = new();
 
     private SessionFixture _fixture = null!;
     private GameSession _session = null!;
-
-    private readonly RecordingItemScriptService _scripts = new();
 
     public DropRequestPacketHandlerTests()
     {
