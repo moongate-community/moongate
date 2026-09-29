@@ -1,4 +1,5 @@
 using System.Collections.Frozen;
+using Moongate.Scripting.Types.Scripts;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
@@ -29,6 +30,8 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
 {
     // The client sets this bit on the serial when the player asks for their own paperdoll.
     private const uint PaperdollRequestFlag = 0x80000000;
+    private const int TooFarCliloc = 500446;
+    private const string UseFunction = "on_use";
 
     private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
@@ -39,6 +42,7 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private readonly IContainerLayoutService _layouts;
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
+    private readonly IItemScriptService? _scripts;
 
     public UseRequestPacketHandler(
         IItemService items,
@@ -48,10 +52,12 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         ITileDataService tiles,
         IContainerLayoutService layouts,
         IPacketSendService sender,
-        ITooltipService tooltips
+        ITooltipService tooltips,
+        IItemScriptService? scripts = null
     )
     {
         _tooltips = tooltips;
+        _scripts = scripts;
         _items = items;
         _mobiles = mobiles;
         _bodies = new(() => data.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type));
@@ -84,6 +90,11 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
             return;
         }
 
+        if (_scripts is not null && _scripts.HasScript(item) && RunOnUse(session, item))
+        {
+            return;
+        }
+
         if (!_tiles.TryGetItem(item.ItemId, out var tile) || (tile.Flags & TileFlagType.Container) == 0)
         {
             _logger.Debug("Session {SessionId} used {Item}, which is not a container", session.SessionId, item);
@@ -108,6 +119,24 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         {
             _sender.TrySend(session.SessionId, _tooltips.Info(content));
         }
+    }
+
+    // The item's on_use, for an item the character carries or reaches on the ground; true when the script handled the
+    // double click, by returning true or by waiting, so the default action must not follow.
+    private bool RunOnUse(GameSession session, ItemEntity item)
+    {
+        if (!_mobiles.TryGet(session.CharacterId, out var character) ||
+            (_items.GetOwner(item) != character.Id && !_items.CanReach(character, item)))
+        {
+            _sender.TrySend(session.SessionId, new LocalizedMessagePacket(item.Id, item.ItemId, TooFarCliloc, "", ""));
+
+            return true;
+        }
+
+        var result = _scripts!.Run(item, UseFunction, (long)character.Id.Value);
+
+        return result.Kind == ScriptResultKind.Suspended ||
+               (result.Kind == ScriptResultKind.Completed && result.Values is [true, ..]);
     }
 
     private void OpenOwnPaperdoll(GameSession session)

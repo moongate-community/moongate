@@ -11,6 +11,11 @@ namespace Moongate.Server.Ultima.Interfaces;
 public interface IItemScriptService
 {
     /// <summary>
+    ///     Gets whether the item's template names a script.
+    /// </summary>
+    bool HasScript(ItemEntity item);
+
+    /// <summary>
     ///     Calls <paramref name="function" />; <see cref="ScriptResult.Missing" /> when the item has no script or the
     ///     script lacks it.
     /// </summary>

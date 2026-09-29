@@ -41,6 +41,7 @@ public sealed class ItemScriptServiceTests : IDisposable
 
         service.Run(_potion, "on_use", 2L);
 
+        Assert.True(service.HasScript(_potion));
         var call = Assert.Single(_engine.MemberCalls);
         Assert.Equal(("items/potion.lua", "potion", "on_use"), (call.Owner, call.Table, call.Function));
         Assert.Equal([0x40000100L, 2L], call.Args);
@@ -52,6 +53,7 @@ public sealed class ItemScriptServiceTests : IDisposable
         var service = Create(new ItemTemplate { Id = "potion", ScriptId = "" });
         await service.StartAsync();
 
+        Assert.False(service.HasScript(_potion));
         Assert.Equal(ScriptResultKind.Missing, service.Run(_potion, "on_use").Kind);
         Assert.Equal(ScriptResultKind.Missing, service.Run(new ItemEntity { Id = new Serial(0x40000101), TemplateId = "gone" }, "on_use").Kind);
         Assert.Empty(_engine.MemberCalls);

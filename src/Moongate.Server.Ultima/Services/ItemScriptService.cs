@@ -52,20 +52,25 @@ public sealed class ItemScriptService : IItemScriptService, IMoongateStartupServ
         return Task.CompletedTask;
     }
 
+    public bool HasScript(ItemEntity item)
+    {
+        return ScriptOf(item) is not null;
+    }
+
     public ScriptResult Run(ItemEntity item, string function, params object?[] args)
     {
-        if (!_running ||
-            !_templates.TryGet(item.TemplateId, out var template) ||
-            string.IsNullOrEmpty(template.ScriptId))
+        if (!_running || ScriptOf(item) is not { } script)
         {
             return ScriptResult.Missing;
         }
 
-        return _engine.CallMember(
-            $"{ItemsDirectory}/{template.ScriptId}.lua",
-            template.ScriptId,
-            function,
-            [(long)item.Id.Value, ..args]
-        );
+        return _engine.CallMember($"{ItemsDirectory}/{script}.lua", script, function, [(long)item.Id.Value, ..args]);
+    }
+
+    private string? ScriptOf(ItemEntity item)
+    {
+        return _templates.TryGet(item.TemplateId, out var template) && !string.IsNullOrEmpty(template.ScriptId)
+            ? template.ScriptId
+            : null;
     }
 }
