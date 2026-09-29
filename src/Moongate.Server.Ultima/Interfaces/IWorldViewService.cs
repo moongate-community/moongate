@@ -32,6 +32,11 @@ public interface IWorldViewService
     void Left(MobileEntity mobile);
 
     /// <summary>
+    ///     Shows a mobile that just came into the world, such as a spawned NPC, to the players in range (0x78).
+    /// </summary>
+    void MobileAppeared(MobileEntity mobile);
+
+    /// <summary>
     ///     Shows a ground item to the players in range (0x1A before client 7.0.0.0, 0xF3 after); also after its amount
     ///     changed.
     /// </summary>

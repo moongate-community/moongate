@@ -6,9 +6,9 @@ using Moongate.Server.Ultima.Interfaces;
 namespace Moongate.Tests.TestSupport.Ultima.World;
 
 /// <summary>
-///     Records the calls it gets, in order, as "Entered 2 10", "Moved 2 1496,1628,10 run", "Left 2", "Appeared 7",
-///     "ShownTo 2 7" and "Disappeared 7", running <see cref="OnCall" /> first so a test can look at the state at that
-///     moment.
+///     Records the calls it gets, in order, as "Entered 2 10", "Moved 2 1496,1628,10 run", "Left 2",
+///     "MobileAppeared 9", "Appeared 7", "ShownTo 2 7" and "Disappeared 7", running <see cref="OnCall" /> first so a
+///     test can look at the state at that moment.
 /// </summary>
 public sealed class RecordingWorldViewService : IWorldViewService
 {
@@ -29,6 +29,11 @@ public sealed class RecordingWorldViewService : IWorldViewService
     public void Left(MobileEntity mobile)
     {
         Record($"Left {mobile.Id.Value}");
+    }
+
+    public void MobileAppeared(MobileEntity mobile)
+    {
+        Record($"MobileAppeared {mobile.Id.Value}");
     }
 
     public void ItemAppeared(ItemEntity item)
