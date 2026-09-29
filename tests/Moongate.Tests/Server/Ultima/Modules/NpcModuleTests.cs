@@ -104,6 +104,26 @@ public sealed class NpcModuleTests
     }
 
     [Fact]
+    public void Step_Running_RunsAndShowsItAsARun()
+    {
+        var result = Run("return npc.step(256, 'North', true)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(new Point3D(1600, 1599, 0), _orc.Location);
+        Assert.Equal(["Moved 256 1600,1600,0 run"], _view.Calls);
+    }
+
+    [Fact]
+    public void Step_TheRunningFlagAsADirection_IsFalseAndDoesNothing()
+    {
+        var result = Run("return npc.step(256, 'Running')");
+
+        Assert.False(result[0].Read<bool>());
+        Assert.Equal((DirectionType.North, new Point3D(1600, 1600, 0)), (_orc.Direction, _orc.Location));
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
     public void Step_APlayer_DoesNothing()
     {
         var result = Run("return npc.step(2, 'North')");

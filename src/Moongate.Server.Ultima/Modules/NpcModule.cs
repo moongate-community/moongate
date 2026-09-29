@@ -19,6 +19,8 @@ public sealed class NpcModule
 {
     public const int MaximumTextLength = 128;
 
+    private const DirectionType DirectionMask = (DirectionType)0x07;
+
     private readonly IMobileService _mobiles;
     private readonly ISpeechService _speech;
     private readonly IWorldViewService _view;
@@ -47,13 +49,14 @@ public sealed class NpcModule
     }
 
     /// <summary>
-    ///     Turns the NPC toward <paramref name="direction" /> when needed and takes one walking step;
-    ///     <c>npc.step(serial, DirectionType.North)</c>. The players in range see the turn and the step.
+    ///     Turns the NPC toward <paramref name="direction" /> when needed and takes one step, a run when
+    ///     <paramref name="running" />; <c>npc.step(serial, DirectionType.North, true)</c>. The players in range see the
+    ///     turn and the step. <c>DirectionType.Running</c> is not a direction: pass <paramref name="running" /> instead.
     /// </summary>
-    [ScriptFunction(helpText: "One walking step in a direction, turning first when needed; false when blocked.")]
-    public bool Step(long serial, DirectionType direction)
+    [ScriptFunction(helpText: "One step in a direction, a run when running is true, turning first when needed; false when blocked.")]
+    public bool Step(long serial, DirectionType direction, bool running = false)
     {
-        if (!TryGetNpc(serial, out var npc))
+        if ((direction & ~DirectionMask) != 0 || !TryGetNpc(serial, out var npc))
         {
             return false;
         }
@@ -69,7 +72,7 @@ public sealed class NpcModule
 
         if (npc.Location != oldLocation || npc.Direction != oldDirection)
         {
-            _view.Moved(npc, oldLocation, false);
+            _view.Moved(npc, oldLocation, running);
         }
 
         return result == MoveResultType.Moved;
