@@ -2007,7 +2007,7 @@
       }
     ],
     "notes": "Recognized and ignored for now.",
-    "handler": "IgnoredPacketHandler<T>: recognised and ignored for now (Debug log)"
+    "handler": "UpdateRangePacketHandler: answers with the server's view range."
   },
   "0xD6:incoming": {
     "category": "World",
@@ -2735,5 +2735,30 @@
     ],
     "notes": "The player's pick for a target cursor, or a cancel.",
     "handler": "TargetResponsePacketHandler: completes the player's pending target."
+  },
+  "0xC8:outgoing": {
+    "category": "World",
+    "tags": [
+      "World",
+      "Ultima plugin"
+    ],
+    "fields": [
+      {
+        "offset": "0",
+        "name": "Opcode",
+        "type": "byte",
+        "size": "1",
+        "description": "Packet identifier."
+      },
+      {
+        "offset": "1",
+        "name": "Range",
+        "type": "byte",
+        "size": "1",
+        "description": "View range in cells, from 5 to 24"
+      }
+    ],
+    "notes": "Tells the client the server's view range.",
+    "handler": "UpdateRangePacketHandler: sent in answer to the client's 0xC8."
   }
 }

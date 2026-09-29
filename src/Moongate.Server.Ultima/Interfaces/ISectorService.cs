@@ -1,4 +1,5 @@
 using Moongate.Core.Geometry;
+using Moongate.Server.Ultima.Data.Sectors;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Ultima.Types;
 
@@ -32,6 +33,12 @@ public interface ISectorService
     ///     Gets the mobiles on the map within <paramref name="range" /> tiles of the center on both axes.
     /// </summary>
     IReadOnlyList<MobileEntity> GetMobilesInRange(MapType map, Point3D center, int range);
+
+    /// <summary>
+    ///     Gets the players, the NPCs and the ground items on the map within <paramref name="range" /> tiles of the center
+    ///     on both axes, in one pass over the sectors; without a range, the configured view range.
+    /// </summary>
+    SectorQueryResult Query(MapType map, Point3D center, int? range = null);
 
     /// <summary>
     ///     Puts a ground item in the sector of its location; an item not on the ground is ignored.

@@ -91,6 +91,9 @@ language = "eng" # Reads <root>/data/messages/eng.toml.
 [line_of_sight]
 max_distance = 25 # Farthest cells along X or Y a point can see.
 
+[world]
+view_range = 18 # How far players see mobiles and items, in cells along X or Y.
+
 [items]
 backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
 gold_template = "0x0eed_gold_coin"    # Item template of gold coins.
@@ -154,6 +157,7 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
 | `localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
 | `line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
+| `world.view_range` | From 5 to 24; default 18, as ModernUO and POL. How far players see mobiles and ground items along X or Y; the client's `0xC8` request is answered with it. Used in game and standalone modes. |
 | `items.backpack_template`, `items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack and gold of new characters and spawned NPCs. Both must exist in `templates/items/`, and the gold template must stack, or the game server stops at startup. These keys used to be under `[starting_items]`, where they are now ignored: move any custom value to `[items]`. See [Starting items](data-files/starting-items.md). |
 | `starting_items.gold` | From 0 to 65535 (one pile); default 1000. Gold coins put in a new character's backpack; above 1 the gold template must stack, or the game server stops at startup. |
 | `starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |

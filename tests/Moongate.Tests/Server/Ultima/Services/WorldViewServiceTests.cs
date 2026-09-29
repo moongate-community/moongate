@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Core.Types.Geometry;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
@@ -21,16 +22,17 @@ public sealed class WorldViewServiceTests
     private const long BorisSession = 20;
 
     private readonly StubPacketSendService _sender = new();
+    private readonly WorldConfig _world = new();
     private readonly MobileService _mobiles;
     private readonly ItemService _items;
     private readonly WorldViewService _view;
 
     public WorldViewServiceTests()
     {
-        var sectors = TestSectors.Create();
+        var sectors = TestSectors.Create(_world);
         _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
-        _view = new(sectors, _mobiles, _items, _sender);
+        _view = new(sectors, _mobiles, _items, _sender, _world);
     }
 
     [Fact]
@@ -301,6 +303,19 @@ public sealed class WorldViewServiceTests
 
         Assert.Equal(orc.Id, IncomingTo(AriaSession));
         Assert.Equal([AriaSession], _sender.SentSessionIds);
+    }
+
+    [Fact]
+    public void Entered_UsesTheConfiguredViewRange()
+    {
+        _world.ViewRange = 5;
+        Enter(3, 1502, 1628, BorisSession);
+        Enter(4, 1501, 1628, 30);
+        ClearSent();
+
+        Enter(2, 1496, 1628, AriaSession);
+
+        Assert.Equal([AriaSession, 30L], _sender.SentSessionIds.Distinct().Order());
     }
 
     private ItemEntity Ground(uint serial, int x, int y)

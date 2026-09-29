@@ -2,6 +2,7 @@ using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Network.Packets.Interfaces;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Data.Internal.World;
 using Moongate.Server.Ultima.Entities.World;
@@ -18,7 +19,6 @@ namespace Moongate.Server.Ultima.Services;
 /// </summary>
 public sealed class WorldViewService : IWorldViewService
 {
-    public const int ViewRange = 18;
 
     private static readonly ClientVersion StygianAbyss = new(7, 0, 0, 0);
     private static readonly ClientVersion HighSeas = new(7, 0, 9, 0);
@@ -28,13 +28,24 @@ public sealed class WorldViewService : IWorldViewService
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
     private readonly IPacketSendService _sender;
+    private readonly WorldConfig _world;
 
-    public WorldViewService(ISectorService sectors, IMobileService mobiles, IItemService items, IPacketSendService sender)
+    // Read on every use: the configured range of the live world (world.view_range).
+    private int ViewRange => _world.ViewRange;
+
+    public WorldViewService(
+        ISectorService sectors,
+        IMobileService mobiles,
+        IItemService items,
+        IPacketSendService sender,
+        WorldConfig world
+    )
     {
         _sectors = sectors;
         _mobiles = mobiles;
         _items = items;
         _sender = sender;
+        _world = world;
     }
 
     public void Entered(MobileEntity mobile, long sessionId, ClientVersion? version)
@@ -233,7 +244,7 @@ public sealed class WorldViewService : IWorldViewService
         );
     }
 
-    private static bool InRange(Point3D a, Point3D b)
+    private bool InRange(Point3D a, Point3D b)
     {
         return Math.Abs(a.X - b.X) <= ViewRange && Math.Abs(a.Y - b.Y) <= ViewRange;
     }

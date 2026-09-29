@@ -44,6 +44,7 @@ public sealed class ServerRoleRegistrationTests
         config.Shard.ShardName = "Città di Luna";
         container.RegisterInstance(config);
         container.RegisterInstance(config.LineOfSight);
+        container.RegisterInstance(config.World);
         container.RegisterInstance(directories);
         container.RegisterInstance(TimeProvider.System);
 
@@ -63,6 +64,7 @@ public sealed class ServerRoleRegistrationTests
         config.Redis.HandoffSecret = new('x', 32);
         container.RegisterInstance(config);
         container.RegisterInstance(config.LineOfSight);
+        container.RegisterInstance(config.World);
         container.RegisterInstance(directories);
         container.RegisterInstance<TimeProvider>(TimeProvider.System);
         container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: mode));
@@ -186,6 +188,7 @@ public sealed class ServerRoleRegistrationTests
         };
         container.RegisterInstance(config);
         container.RegisterInstance(config.LineOfSight);
+        container.RegisterInstance(config.World);
         container.RegisterInstance(directories);
         container.RegisterInstance(TimeProvider.System);
         container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: config.Mode));

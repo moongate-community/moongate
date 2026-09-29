@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
@@ -104,7 +105,7 @@ public sealed class SectorServiceTests
     [Fact]
     public void Add_OnAMapWithoutContent_IsIgnored()
     {
-        var sectors = new SectorService(new StubDataLoaderService());
+        var sectors = new SectorService(new StubDataLoaderService(), new WorldConfig());
 
         sectors.Add(Mobile(2, 1496, 1628));
 
@@ -167,6 +168,38 @@ public sealed class SectorServiceTests
         sectors.AddItem(GroundItem(0x40000001, 1496, 1628));
 
         Assert.Empty(sectors.GetMobilesInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void Query_SplitsPlayersNpcsAndItemsInRange()
+    {
+        var sectors = TestSectors.Create();
+        var aria = Mobile(2, 1496, 1628);
+        aria.AccountId = new Serial(0x42);
+        var orc = Mobile(0x100, 1500, 1628);
+        var far = Mobile(0x101, 1600, 1628);
+        var gold = GroundItem(0x40000001, 1498, 1628);
+        sectors.Add(aria);
+        sectors.Add(orc);
+        sectors.Add(far);
+        sectors.AddItem(gold);
+
+        var result = sectors.Query(MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        Assert.Equal([aria], result.Players);
+        Assert.Equal([orc], result.Npcs);
+        Assert.Equal([gold], result.Items);
+    }
+
+    [Fact]
+    public void Query_WithoutARange_UsesTheConfiguredViewRange()
+    {
+        var sectors = TestSectors.Create(new WorldConfig { ViewRange = 5 });
+        var orc = Mobile(0x100, 1502, 1628);
+        sectors.Add(orc);
+
+        Assert.Empty(sectors.Query(MapType.Trammel, new Point3D(1496, 1628, 0)).Npcs);
+        Assert.Equal([orc], sectors.Query(MapType.Trammel, new Point3D(1496, 1628, 0), 6).Npcs);
     }
 
     private static ItemEntity GroundItem(uint serial, int x, int y)

@@ -1,10 +1,12 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Ultima.Data.Internal.Sectors;
 using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Data.Sectors;
 using Moongate.Server.Ultima.Entities.World;
-using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Ultima.Types;
 using Serilog;
 
@@ -21,13 +23,15 @@ public sealed class SectorService : ISectorService
 
     private readonly ILogger _logger = Log.ForContext<SectorService>();
     private readonly IDataLoaderService _data;
+    private readonly WorldConfig _world;
     private readonly Dictionary<MapType, SectorGrid?> _grids = [];
     private readonly Dictionary<Serial, Sector> _sectorOf = [];
     private readonly Dictionary<Serial, Sector> _itemSectorOf = [];
 
-    public SectorService(IDataLoaderService data)
+    public SectorService(IDataLoaderService data, WorldConfig world)
     {
         _data = data;
+        _world = world;
     }
 
     public void Add(MobileEntity mobile)
@@ -85,6 +89,35 @@ public sealed class SectorService : ISectorService
         }
 
         return found;
+    }
+
+    public SectorQueryResult Query(MapType map, Point3D center, int? range = null)
+    {
+        var reach = range ?? _world.ViewRange;
+        var players = new List<MobileEntity>();
+        var npcs = new List<MobileEntity>();
+        var items = new List<ItemEntity>();
+
+        foreach (var sector in SectorsAround(map, center, reach))
+        {
+            foreach (var mobile in sector.Mobiles)
+            {
+                if (IsInRange(mobile.Location, center, reach))
+                {
+                    (mobile.IsNpc ? npcs : players).Add(mobile);
+                }
+            }
+
+            foreach (var item in sector.Items)
+            {
+                if (item.GroundLocation is { } spot && IsInRange(spot, center, reach))
+                {
+                    items.Add(item);
+                }
+            }
+        }
+
+        return new(players, npcs, items);
     }
 
     public void AddItem(ItemEntity item)
@@ -205,5 +238,10 @@ public sealed class SectorService : ISectorService
         _grids[map] = grid;
 
         return grid;
+    }
+
+    private static bool IsInRange(Point3D point, Point3D center, int range)
+    {
+        return Math.Abs(point.X - center.X) <= range && Math.Abs(point.Y - center.Y) <= range;
     }
 }

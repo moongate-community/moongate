@@ -52,7 +52,9 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0xAE` | `UnicodeSpeechMessagePacket` | Outgoing | Variable, minimum 50 | Player speech and private command output |
 | `0x24` | `DisplayContainerPacket` | Outgoing | Fixed 7, or 9 from client 7.0.9.0 | — |
 | `0x3C` | `ContainerContentPacket` | Outgoing | Variable, minimum 5 | — |
-| `0x09`, `0x34`, `0x72`, `0xC8` | `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket`, `UpdateRangePacket` | Incoming | Fixed 5, 10, 5, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0x09`, `0x34`, `0x72` | `LookRequestPacket`, `MobileQueryPacket`, `WarModeRequestPacket` | Incoming | Fixed 5, 10, 5 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
+| `0xC8` | `UpdateRangePacket` | Incoming | Fixed 2 | `UpdateRangePacketHandler`: answers with the server's view range |
+| `0xC8` | `ViewRangePacket` | Outgoing | Fixed 2 | — |
 | `0x07` | `LiftRequestPacket` | Incoming | Fixed 7 | `LiftRequestPacketHandler`: picks up an item the character carries, or one on the ground within 2 tiles |
 | `0x08` | `DropRequestPacket` | Incoming | Fixed 15 | `DropRequestPacketHandler`: drops the held item into a carried container or on the ground |
 | `0x25` | `ContainerItemUpdatePacket` | Outgoing | Fixed 21, or 20 before client 6.0.1.7 | — |
@@ -86,14 +88,17 @@ direction books the next one 400 ms later walking or 200 ms running, and may com
 early; an earlier step, or one `IMovementService` blocks, is refused. `0x22` accepts the step with
 the character's notoriety; `0x21` refuses it and puts the client back at the real position.
 
-Players see each other within 18 tiles on both axes. `ISectorService` keeps the live mobiles in
+Players see each other within the view range (18 tiles by default) on both axes. `ISectorService` keeps the live mobiles in
 16×16 sectors per map, and `IWorldViewService` recomputes what changed from the old and new
 position of each step, as ModernUO and POL do. After the enter-world sequence the player gets
 `0x78` of everyone in range and they get its `0x78`. An accepted step or turn sends `0x77` (bit
 `0x80` of the direction marks a run) to the players that already saw the mover, `0x78` both ways
 to the players that just came into range, and `0x1D` to the players that lost it; the mover's
 client drops what it walks away from by itself. When a character leaves the world the players in
-range get its `0x1D`. `0xC8` is still ignored, so the range stays 18.
+range get its `0x1D`. The range is `world.view_range` (default 18, from 5 to 24); the client's
+`0xC8` request is answered with it, whatever the client asked, so both sides use the same range.
+`ISectorService.Query` returns the players, the NPCs and the ground items around a point, in the
+view range unless another is given.
 
 When the session closes, `CharacterLeaveWorldService` (an `ISessionClosedListener`) copies the
 character, removes it from the world, saves the copy and publishes `CharacterLeftWorldEvent`. The

@@ -160,7 +160,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             RegisterIgnoredPacket<LookRequestPacket>(container);
             RegisterIgnoredPacket<MobileQueryPacket>(container);
             RegisterIgnoredPacket<WarModeRequestPacket>(container);
-            RegisterIgnoredPacket<UpdateRangePacket>(container);
+            container.RegisterIncomingPacket<UpdateRangePacket>();
+            container.RegisterPacketHandler<UpdateRangePacket, UpdateRangePacketHandler>();
             RegisterIgnoredPacket<ExtendedCommandPacket>(container);
             RegisterIgnoredPacket<QueryPropertiesPacket>(container);
             RegisterIgnoredPacket<AttackRequestPacket>(container);

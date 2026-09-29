@@ -209,6 +209,7 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
                     services.RegisterInstance(serverConfig.Localization);
                     services.RegisterInstance(serverConfig.LineOfSight);
+                    services.RegisterInstance(serverConfig.World);
                     services.RegisterInstance(serverConfig.Items);
                     services.RegisterInstance(serverConfig.StartingItems);
                     services.RegisterInstance(serverConfig.Characters);

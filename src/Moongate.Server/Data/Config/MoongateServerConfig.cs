@@ -36,6 +36,8 @@ public class MoongateServerConfig
 
     public LineOfSightConfig LineOfSight { get; set; } = new();
 
+    public WorldConfig World { get; set; } = new();
+
     public ItemsConfig Items { get; set; } = new();
 
     public StartingItemsConfig StartingItems { get; set; } = new();
@@ -121,6 +123,13 @@ public class MoongateServerConfig
         }
 
         LineOfSight.Validate();
+
+        if (World is null)
+        {
+            throw new InvalidOperationException("The world configuration section cannot be null.");
+        }
+
+        World.Validate();
 
         if (Items is null)
         {
