@@ -6,7 +6,7 @@ Moongate publishes Linux images to [GitHub Container Registry](https://github.co
 docker build -f src/Moongate.Server/Dockerfile -t moongate:local .
 ```
 
-The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships `mgboot`, the migration runner, the core SQL, the [shard data files](data-files.md) and `mg-uoxconv`. The `sample-plugin` build target adds the sample plugin bundle.
+The image runs as a non-root user with `MOONGATE_ROOT=/data`. Mount a persistent writable volume there and mount your own Ultima Online client files read-only; client files are not distributed with Moongate. It ships `mgboot`, the migration runner, the core SQL, the [shard data files](data-files.md), the [templates](templates.md), the example [scripts](scripting.md) and `mg-uoxconv`. The `sample-plugin` build target adds the sample plugin bundle.
 
 ## Build cache
 
@@ -14,7 +14,7 @@ The Dockerfile restores dependencies before copying source files, then publishes
 executable with `--no-restore`. Restore and publish use the same configuration, target architecture
 and self-contained setting. There is no separate server build before publication.
 
-The build context includes source, core migrations, the shard data files (`moongate_root/data`), build settings, licenses and the sample plugin.
+The build context includes source, core migrations, the shard data files, templates and example scripts (`moongate_root/data`, `templates`, `scripts`, without the generated `definitions.lua` and `.luarc.json`), build settings, licenses and the sample plugin.
 Documentation, tests, the website, local `bin`/`obj` directories and environment files are excluded.
 Sample plugin source is copied only into its own build target. When adding a new image input,
 update `.dockerignore` and the relevant `COPY` instructions together.
@@ -75,7 +75,7 @@ handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
 Supply the four referenced variables from a secret provider in the container environment. PostgreSQL variables are `postgres://` URIs for role-specific databases. The Redis variable is a StackExchange.Redis connection string such as `redis:6379,password=<secret>` on a private Docker network; the handoff secret is a different value. Do not commit either value into TOML, Compose or `.env`. The [configuration reference](server-configuration.md) covers the other settings.
 
-Prepare a root before starting (this also copies the shard data files into `/data/data`), then apply Auth and World SQL to their respective databases:
+Prepare a root before starting (this also copies the shard data files, templates and example scripts into `/data/data`, `/data/templates` and `/data/scripts`), then apply Auth and World SQL to their respective databases:
 
 ```sh
 docker volume create moongate-data

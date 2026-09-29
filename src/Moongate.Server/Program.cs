@@ -76,7 +76,9 @@ await ConsoleApp.RunAsync(
                     Path.Combine(AppContext.BaseDirectory, "migrations"),
                     Path.Combine(AppContext.BaseDirectory, "data"),
                     Console.Out,
-                    generateAdminCertificate ? adminCertificateHosts?.Split(',') ?? [] : null
+                    generateAdminCertificate ? adminCertificateHosts?.Split(',') ?? [] : null,
+                    Path.Combine(AppContext.BaseDirectory, "templates"),
+                    Path.Combine(AppContext.BaseDirectory, "scripts")
                 );
             }
             catch (Exception exception)

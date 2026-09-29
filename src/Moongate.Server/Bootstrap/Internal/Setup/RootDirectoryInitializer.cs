@@ -17,7 +17,9 @@ internal static class RootDirectoryInitializer
         string migrationsDirectory,
         string dataDirectory,
         TextWriter output,
-        IReadOnlyList<string>? adminCertificateHosts = null
+        IReadOnlyList<string>? adminCertificateHosts = null,
+        string? templatesDirectory = null,
+        string? scriptsDirectory = null
     )
     {
         ArgumentException.ThrowIfNullOrWhiteSpace(rootDirectory);
@@ -112,12 +114,16 @@ internal static class RootDirectoryInitializer
             }
         }
 
-        // Copy only missing files, so data the operator edited survives a later run.
-        foreach (var file in dataFiles.Order(StringComparer.Ordinal))
+        // Copy only missing files, so data, templates and scripts the operator edited survive a later run.
+        CopyMissing(dataFiles, dataDirectory, Path.Combine(root, "data"), output);
+
+        foreach (var (shipped, name) in new[] { (templatesDirectory, "templates"), (scriptsDirectory, "scripts") })
         {
-            var path = Path.Combine(root, "data", Path.GetRelativePath(dataDirectory, file));
-            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
-            CreateIfMissing(path, File.ReadAllBytes(file), output);
+            if (shipped is not null && Directory.Exists(shipped))
+            {
+                var files = Directory.GetFiles(shipped, "*", SearchOption.AllDirectories);
+                CopyMissing(files, shipped, Path.Combine(root, name), output);
+            }
         }
 
         if (adminCertificateHosts is not null)
@@ -130,6 +136,16 @@ internal static class RootDirectoryInitializer
             "Configure config/moongate.toml, create the PostgreSQL databases, then apply the auth and world migrations."
         );
         output.WriteLine("No database connection or server startup was performed.");
+    }
+
+    private static void CopyMissing(string[] files, string sourceDirectory, string destination, TextWriter output)
+    {
+        foreach (var file in files.Order(StringComparer.Ordinal))
+        {
+            var path = Path.Combine(destination, Path.GetRelativePath(sourceDirectory, file));
+            Directory.CreateDirectory(Path.GetDirectoryName(path)!);
+            CreateIfMissing(path, File.ReadAllBytes(file), output);
+        }
     }
 
     private static void CreateIfMissing(string path, byte[] content, TextWriter output)
