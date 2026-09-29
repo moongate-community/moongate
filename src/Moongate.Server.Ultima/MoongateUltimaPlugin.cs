@@ -208,6 +208,18 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.RegisterMapping<ICharacterLeaveWorldService, CharacterLeaveWorldService>();
             container.Register<ITargetService, TargetService>(Reuse.Singleton);
             container.RegisterMapping<ISessionClosedListener, ITargetService>();
+            container.RegisterCommand<SpawnCommand>(
+                "spawn",
+                "Spawns an NPC from a mobile template where you target: spawn <template>.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster
+            );
+            container.RegisterCommand<RemoveCommand>(
+                "remove",
+                "Removes the NPC you target.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster
+            );
             container.RegisterCommand<WhereCommand>(
                 "where",
                 "Shows what you target: its serial, or the map and location of a spot.",
