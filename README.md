@@ -16,6 +16,7 @@
   <a href="https://github.com/moongate-community/moongate/pkgs/container/moongate"><img src="https://img.shields.io/badge/ghcr.io-moongate-2496ED?logo=docker&amp;logoColor=white" alt="Container image"></a>
   <a href="https://dotnet.microsoft.com/en-us/download/dotnet/10.0"><img src="https://img.shields.io/badge/.NET-10-512BD4?logo=dotnet&amp;logoColor=white" alt=".NET 10"></a>
   <a href="docs/scripting.md"><img src="https://img.shields.io/badge/Lua-5.2-2C2D72?logo=lua&amp;logoColor=white" alt="Lua 5.2 scripting"></a>
+  <a href="https://buymeacoffee.com/zk7bnrbk4i"><img src="https://img.shields.io/badge/Buy%20me%20a%20coffee-support-FFDD00?logo=buymeacoffee&amp;logoColor=black" alt="Buy me a coffee"></a>
 </p>
 
 Moongate is an open-source Ultima Online server emulator written in C# on .NET 10.
