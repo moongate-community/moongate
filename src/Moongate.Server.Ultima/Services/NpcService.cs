@@ -16,6 +16,8 @@ namespace Moongate.Server.Ultima.Services;
 /// </summary>
 public sealed class NpcService : INpcService
 {
+    public const string SpawnFunction = "on_spawn";
+
     private readonly ILogger _logger = Log.ForContext<NpcService>();
     private readonly IMobileFactoryService _factory;
     private readonly IMobileService _mobiles;
@@ -88,10 +90,12 @@ public sealed class NpcService : INpcService
         await OnLoopAsync(
             () =>
             {
+                // Queued first, so on_spawn runs before what entering the world queues, such as on_mobile_in_range; it
+                // still runs after this action, with the NPC in the world, dressed and shown.
+                _scripts?.Queue(npc, SpawnFunction);
                 _mobiles.EnterWorld(npc);
                 _items.Add(spawned.Equipment.Append(spawned.Backpack).Concat(spawned.BackpackItems));
                 _view.MobileAppeared(npc);
-                _scripts?.Queue(npc, "on_spawn");
             },
             CancellationToken.None
         );

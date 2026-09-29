@@ -159,8 +159,8 @@ The table may define these functions; each one is optional:
 | --- | --- |
 | `on_think(serial)` | On every think of the NPC: every `ultima.npcs.think_interval_ms` (500 ms by default) while a player is within the 5×5 sectors around it; see [NPC tick](game-loop-and-timers.md#npc-tick). A think is instantaneous, as ModernUO's: it must not call `wait` (the server warns once per script), so keep the timing in the script, for example by counting thinks. |
 | `on_speech(serial, speaker, text)` | When a player says `text` within 15 cells (commands are not heard). `speaker` is the player's serial. It may call `wait`. |
-| `on_spawn(serial)` | Once, right after the NPC is spawned (`.spawn`), in the world with its items and shown. Not when the saved NPCs are loaded at startup. It may call `wait`. |
-| `on_mobile_in_range(serial, other)` | Once when another mobile, player or NPC, comes within `ultima.npcs.sense_range` cells (8 by default, a square along X and Y) by a step or by entering the world. Both ways: an NPC walking toward a mobile senses it too. `other` is its serial; `npc.name(other)` gives `nil` for a player. It may call `wait`. |
+| `on_spawn(serial)` | Once, right after the NPC is spawned (`.spawn`), in the world with its items and shown, before any other function of its script. Not when the saved NPCs are loaded at startup. It may call `wait`. |
+| `on_mobile_in_range(serial, other)` | Each time another mobile, player or NPC, comes within `ultima.npcs.sense_range` cells (8 by default, a square along X and Y) by a step or by entering the world. Once per arrival: it fires again only after the mobile has left the range and come back. Both ways: an NPC walking toward a mobile senses it too. NPCs loaded together at startup do not sense each other until one moves out of range and back. `other` is its serial; `npc.name(other)` gives `nil` for a player. It may call `wait`. |
 
 `on_spawn` and `on_mobile_in_range` run right after what caused them, on the next
 turn of the game loop: a step made by `npc.step` inside a running handler cannot

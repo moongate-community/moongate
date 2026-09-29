@@ -1,5 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
@@ -35,7 +36,7 @@ public sealed class NpcServiceTests : IAsyncDisposable
     {
         var sectors = TestSectors.Create(ticks: _ticks);
         _sectors = sectors;
-        _mobiles = new(new StubMovementService(), sectors);
+        _mobiles = new(new StubMovementService(), sectors, new NpcSenseService(_scripts, sectors, new NpcsConfig()));
         _items = TestItems.Create(sectors);
         _shirt.Equip(_orc.Id, LayerType.Shirt);
         _backpack.Equip(_orc.Id, LayerType.Backpack);
@@ -65,6 +66,18 @@ public sealed class NpcServiceTests : IAsyncDisposable
         await npcs.SpawnAsync("orc", MapType.Trammel, new Point3D(1496, 1628, 0));
 
         Assert.Equal(["Queue 256 on_spawn"], _scripts.Calls);
+    }
+
+    [Fact]
+    public async Task SpawnAsync_NextToAPlayer_QueuesOnSpawnBeforeItSensesThePlayer()
+    {
+        // A script sets itself up in on_spawn: nothing else of it may run before.
+        var npcs = await CreateAsync();
+        _sectors.Add(new MobileEntity { Id = new(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1496, 1630, 0) });
+
+        await npcs.SpawnAsync("orc", MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        Assert.Equal(["Queue 256 on_spawn", "Queue 256 on_mobile_in_range 2"], _scripts.Calls);
     }
 
     [Fact]
