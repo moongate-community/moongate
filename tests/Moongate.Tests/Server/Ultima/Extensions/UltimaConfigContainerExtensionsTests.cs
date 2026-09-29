@@ -42,6 +42,7 @@ public sealed class UltimaConfigContainerExtensionsTests
 
             [ultima.npcs]
             think_interval_ms = 250
+            sense_range = 6
             """
         );
 
@@ -55,7 +56,7 @@ public sealed class UltimaConfigContainerExtensionsTests
         Assert.Equal(("pack", "coin"), (container.Resolve<ItemsConfig>().BackpackTemplate, container.Resolve<ItemsConfig>().GoldTemplate));
         Assert.Equal(2, container.Resolve<StartingItemsConfig>().BestSkills);
         Assert.Equal((5, 48), (container.Resolve<CharactersConfig>().MaxPerAccount, container.Resolve<CharactersConfig>().DeletionDelayHours));
-        Assert.Equal(250, container.Resolve<NpcsConfig>().ThinkIntervalMs);
+        Assert.Equal((250, 6), (container.Resolve<NpcsConfig>().ThinkIntervalMs, container.Resolve<NpcsConfig>().SenseRange));
     }
 
     [Fact]
