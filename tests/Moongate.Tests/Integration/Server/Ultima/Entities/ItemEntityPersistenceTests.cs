@@ -283,6 +283,43 @@ public sealed class ItemEntityPersistenceTests : IAsyncLifetime
         Assert.Equal((7, new Point2D(90, 90)), (stored.Amount, stored.GridLocation!.Value));
     }
 
+    [Theory, InlineData(0x40000000u), InlineData(0x40003000u)]
+    public async Task WorldSave_ASwapOnTheSameLayer_KeepsTheNewOutfit(uint newShirtSerial)
+    {
+        // The new shirt's serial is below or above the old one's, so either write order is exercised.
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var items = TestItems.Create();
+        host.Container.RegisterInstance<IMobileService>(new MobileService(new StubMovementService(), TestSectors.Create()));
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobiles = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var data = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Map = MapType.Trammel };
+        await mobiles.UpsertAsync(aria);
+        var backpack = new ItemEntity { Id = new(0x40001000), TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(aria.Id, LayerType.Backpack);
+        var oldShirt = new ItemEntity { Id = new(0x40002000), TemplateId = "shirt", ItemId = 0x1517 };
+        oldShirt.Equip(aria.Id, LayerType.Shirt);
+        var newShirt = new ItemEntity { Id = new(newShirtSerial + 1), TemplateId = "shirt", ItemId = 0x1517 };
+        newShirt.PutInContainer(backpack.Id, new Point2D(44, 65));
+        await data.UpsertAsync(backpack);
+        await data.UpsertAsync(oldShirt);
+        await data.UpsertAsync(newShirt);
+        items.Add([backpack, oldShirt, newShirt]);
+
+        items.MoveToContainer(oldShirt, backpack.Id, new Point2D(60, 70));
+        items.Equip(newShirt, aria.Id, LayerType.Shirt);
+        await host.Owner.SaveAllAsync();
+
+        var storedNew = (await data.GetByIdAsync(newShirt.Id))!;
+        var storedOld = (await data.GetByIdAsync(oldShirt.Id))!;
+        Assert.Equal((aria.Id, LayerType.Shirt), (storedNew.MobileId!.Value, storedNew.Layer!.Value));
+        Assert.Equal(backpack.Id, storedOld.ContainerId);
+        Assert.Null(storedOld.MobileId);
+    }
+
     [Fact]
     public async Task WorldSave_DeletesTheItemsAbsorbedIntoOtherStacks()
     {

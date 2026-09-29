@@ -69,6 +69,54 @@ public sealed class CharacterLeaveWorldServiceTests
         Assert.Empty(items.TombstonesOf(aria.Id));
     }
 
+    [Fact]
+    public async Task Leaving_AfterASwapOnTheSameLayer_SavesTheNewOutfit()
+    {
+        await using var host = await HostPersistenceFixture.CreateAsync(false);
+        var mobiles = new MobileService(new StubMovementService(), TestSectors.Create());
+        var items = TestItems.Create();
+        host.Container.RegisterInstance<IMobileService>(mobiles);
+        host.Container.RegisterInstance<IItemService>(items);
+        host.Container.AddLiveWorldMobiles().AddLiveWorldItems();
+        host.Container.RegisterMoongateEventBus();
+        await CoreMigrationFiles.ApplyAsync(host.Database, "world");
+        await host.Owner.InitializeAsync();
+        var mobileData = host.Container.Resolve<IDataAccess<MobileEntity>>();
+        var itemData = host.Container.Resolve<IDataAccess<ItemEntity>>();
+        var aria = new MobileEntity { Name = "Aria", AccountId = new Serial(0x42), Slot = 0, Map = MapType.Trammel };
+        await mobileData.UpsertAsync(aria);
+        var backpack = new ItemEntity { Id = new(0x40001000), TemplateId = "backpack", ItemId = 0x0E75 };
+        backpack.Equip(aria.Id, LayerType.Backpack);
+        // The new shirt's serial is the lower one, so it would be written first.
+        var newShirt = new ItemEntity { Id = new(0x40000001), TemplateId = "shirt", ItemId = 0x1517 };
+        newShirt.PutInContainer(backpack.Id, new Point2D(44, 65));
+        var oldShirt = new ItemEntity { Id = new(0x40002000), TemplateId = "shirt", ItemId = 0x1517 };
+        oldShirt.Equip(aria.Id, LayerType.Shirt);
+        await itemData.UpsertAsync(backpack);
+        await itemData.UpsertAsync(newShirt);
+        await itemData.UpsertAsync(oldShirt);
+        mobiles.EnterWorld(aria);
+        items.Add([backpack, newShirt, oldShirt]);
+        items.MoveToContainer(oldShirt, backpack.Id, new Point2D(60, 70));
+        items.Equip(newShirt, aria.Id, LayerType.Shirt);
+        await using var fixture = await SessionFixture.CreateAsync();
+        var session = new SessionService(fixture.Loop).GetOrCreate(fixture.Client);
+        await fixture.ExecuteOnLoopAsync(() => session.Set(SessionKeys.CharacterId, aria.Id));
+        var service = new CharacterLeaveWorldService(
+            mobiles,
+            items,
+            new RecordingWorldViewService(),
+            new WorldTransactionService(host.Owner),
+            host.Container.Resolve<IMoongateEventBus>()
+        );
+
+        await fixture.ExecuteOnLoopAsync(() => service.OnSessionClosed(session));
+        await service.StopAsync().WaitAsync(TimeSpan.FromSeconds(10));
+
+        Assert.Equal(LayerType.Shirt, (await itemData.GetByIdAsync(newShirt.Id))!.Layer);
+        Assert.Equal(backpack.Id, (await itemData.GetByIdAsync(oldShirt.Id))!.ContainerId);
+    }
+
     private static ItemEntity Gold(Serial container, int amount)
     {
         var gold = new ItemEntity { TemplateId = "gold", ItemId = 0x0EED, Amount = amount };

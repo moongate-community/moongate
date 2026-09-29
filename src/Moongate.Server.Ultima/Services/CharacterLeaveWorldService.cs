@@ -75,6 +75,8 @@ public sealed class CharacterLeaveWorldService : ICharacterLeaveWorldService, IS
         _view.Left(character);
         _mobiles.LeaveWorld(character.Id);
         items.AddRange(released);
+        // Unworn items first: a layer taken off one item is free before another is written onto it.
+        items = items.OrderBy(item => item.MobileId is not null).ToList();
         Track(Task.Run(() => SaveAndPublishAsync(snapshot, items, merged)), character.AccountId);
     }
 
