@@ -339,7 +339,7 @@ to 120; a constant is a bare integer.
 | `Equipment` | `[[mobile.equipment]]` entries: `items` (item template ids, one picked), `hue`, and `gender` to equip only one gender |
 | `Loot`, `Gold` | Loot template ids and gold dice rolled into the backpack at spawn; no corpse system yet |
 | `Sounds` | `[mobile.sounds]` with `start_attack`, `idle`, `attack`, `hurt`, `death` |
-| `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think` and `on_speech` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting.md#mobile-scripts) |
+| `ScriptId` | The global Lua table, defined by `scripts/mobiles/<script_id>.lua`, whose `on_think`, `on_speech`, `on_spawn` and `on_mobile_in_range` handle the NPC; a lower-case Lua identifier. See [Mobile scripts](scripting.md#mobile-scripts) |
 | `Visibility` | As in `ItemTemplate` |
 | `Tags` | Free script values; child keys add to and override parent keys |
 
@@ -380,7 +380,7 @@ race = "human"
 name_list = "{gender}"
 title = "the guard"
 notoriety = "invulnerable"
-script_id = "guard"
+script_id = "wander"
 
 [[mobile.equipment]]
 items = ["leather_skirt", "leather_shorts"]
@@ -388,8 +388,8 @@ gender = "female"
 ```
 
 The shipped `templates/mobiles/` holds UOX3's NPCs, converted by
-[`mg-uoxconv`](uox3-migration.md#mobiles-and-name-lists). No loader reads mobile
-templates yet.
+[`mg-uoxconv`](uox3-migration.md#mobiles-and-name-lists). They are loaded at game and
+standalone startup (`IMobileTemplateService`).
 
 `LootTemplate` and `LootEntry` are the same kind of shape:
 

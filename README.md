@@ -31,8 +31,9 @@ one process. See [Docker login and realms](docs/docker-login-realms.md).
 
 **Under active development; the world is not a game yet.** Characters are
 created, enter the world, walk and run, see each other and talk, move items in
-their backpack and on the ground, and game masters spawn and remove NPCs. There
-is no combat, NPC AI, death or skill gain yet.
+their backpack and on the ground, and game masters spawn and remove NPCs. NPCs
+near a player run their Lua mobile script, and items react to Lua item scripts.
+There is no combat, pathfinding AI, death or skill gain yet.
 
 The networking and packet pipeline, Lua runtime, persistence infrastructure,
 shard data loading, and client-file readers with movement and line-of-sight
@@ -97,8 +98,8 @@ timer.every(30, function()
 end)
 ```
 
-The runtime provides logging, timers, events, instruction budgets, and generated
-editor definitions. See [Writing Lua scripts](docs/scripting.md) for available
+The runtime provides logging, timers, events, NPC and item scripts, instruction
+budgets, and generated editor definitions. See [Writing Lua scripts](docs/scripting.md) for available
 APIs, reload commands and configuration, and the
 [package README](src/Moongate.Scripting/README.md) for C# bindings and sandbox limits.
 

@@ -16,7 +16,9 @@ dotnet add package Moongate.Scripting
 ## Features
 
 - `[ScriptModule]`, `[ScriptFunction]` and `[ScriptConstant]` publish a C# class to Lua behind a read-only table.
-- `IScriptEngine` loads files, calls functions, invalidates files for reload and reports metrics.
+- `IScriptEngine` loads files, calls global functions (`Call`) and functions of a global table (`CallMember(owner, table,
+  function, args)`, whose coroutine belongs to `owner` and which returns `ScriptResultKind.Missing` without reporting
+  when the table or function is absent), invalidates files for reload and reports metrics.
 - `wait(seconds)` suspends a script and the timer wheel resumes it on the game loop.
 - `AddScriptEvent<TEvent>(name, map)` publishes a bus event to Lua; scripts subscribe with `events.on(name, fn)` and
   each handler runs as a coroutine on the game loop.

@@ -67,9 +67,9 @@ exists but fails compilation/execution aborts server startup.
 | `npc.step(serial, direction, running?)` | One step toward a `DirectionType` (`North` to `NorthWest`), turning first when needed, seen by the players in range; a run when `running` is `true`. How often the script calls it sets the speed. `false` when blocked or for `DirectionType.Running`, which is not a direction |
 | `npc.location(serial)`, `npc.name(serial)` | `{ x, y, z, map }` and the name of the NPC, or `nil` |
 | `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
-| `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` when fewer are left or a player holds it on the cursor |
+| `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` for a worn item, an `amount` below 1, fewer units left, or an item a player holds on the cursor |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
-| `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` when that player is not in the world |
+| `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
 The Ultima plugin registers `dice`, `localization`, `npc` and `item` in game and standalone modes.
@@ -86,8 +86,8 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-Apart from the `npc` module of the [mobile scripts](#mobile-scripts), there are no world, character or inventory
-APIs yet ([Implementation status](implementation-status.md)). To expose application
+Apart from the `npc` and `item` modules of the [mobile](#mobile-scripts) and [item scripts](#item-scripts), there
+are no world, character or inventory APIs yet ([Implementation status](implementation-status.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Events
@@ -176,7 +176,7 @@ is not an NPC in the world, such as a removed NPC or a player, gives `false` or
 `nil`, never an error: a handler that waited may outlive its NPC, and a script can
 never voice or move a player.
 
-The shipped `scripts/mobiles/wander.lua`:
+The repository's `moongate_root/scripts/mobiles/wander.lua`:
 
 ```lua
 wander = {}
@@ -197,7 +197,20 @@ function wander.on_speech(serial, speaker, text)
         npc.say(serial, "Well met, traveller.")
     end
 end
+
+function wander.on_spawn(serial)
+    npc.say(serial, "*stretches*")
+end
+
+function wander.on_mobile_in_range(serial, other)
+    if npc.name(other) == nil then
+        npc.say(serial, "Who goes there?")
+    end
+end
 ```
+
+No template in the repository uses it: add `script_id = "wander"` to a mobile template
+to try it.
 
 Reload one script with `script reload mobiles/wander.lua`. Its table is replaced,
 so the NPCs use the new functions from their next think; state kept in `local`
@@ -213,16 +226,16 @@ startup like the [mobile scripts](#mobile-scripts), and `script reload
 items/potion.lua` reloads one.
 
 ```toml
-# templates/items/potions.toml
+# a potion template of your own
 [[item]]
-id = "0x0f0e_potion"
-item_id = 0x0F0E
+id = "my_potion"
+item_id = 0x0F0C
 script_id = "potion"
 ```
 
 | Function | When |
 | --- | --- |
-| `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Items inside a container lying on the ground cannot be used yet. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled; after the wait the item may have moved, so check it again, for example `item.owner(serial) == user`. |
+| `on_use(serial, user)` | A player double clicks the item, carried (worn or in its containers) or on the ground within 2 tiles and in sight; farther, the player reads "That is too far away." and nothing runs. Items inside a container lying on the ground cannot be used yet: the player reads "That is too far away.". A missing `on_use`, or one that raises an error, lets the default action follow. Return `true` to stop the default action, such as opening a container; return nothing to let it follow. A handler that calls `wait` counts as handled; after the wait the item may have moved, so check it again, for example `item.owner(serial) == user`. |
 | `on_equip(serial, wearer)` | The item went onto a layer of the mobile `wearer`, dropped on the paperdoll. A worn item lifted and bounced back never left its layer, and items loaded or spawned already dressed raise nothing. It cannot refuse the item. |
 | `on_unequip(serial, wearer)` | The item left the layer of `wearer`: dropped in a container or on the ground, or merged into a stack (the item is gone then, so `item.*` gives `nil`). Logging out, removing an NPC or deleting a mobile with its items raise nothing. |
 | `on_pickup(serial, picker)` | The player `picker` lifts the item from a container, the paperdoll or the ground; lifting part of a stack lifts this item, and the rest left behind is not new. While it is held, `item.consume` and `item.delete` refuse it. A held item ends in `on_drop`, in `on_equip` when it is worn by a new wearer, or in nothing: when it bounces back, is worn again on the layer it came from, or its player logs out holding it. |
@@ -234,7 +247,8 @@ caused them, on the next turn of the game loop, once the players have seen it: a
 may then delete or consume the item. They are notifications: none can refuse the move.
 
 The script acts on its item with the `item` module, passing its serial; `user` is
-the serial of the player. The shipped `scripts/items/potion.lua`:
+the serial of the player. The repository's `moongate_root/scripts/items/potion.lua`, which no
+template uses yet:
 
 ```lua
 potion = {}

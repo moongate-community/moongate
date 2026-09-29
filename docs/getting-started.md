@@ -3,8 +3,9 @@
 This is the one first-start sequence for Moongate. It applies whether you installed
 the release with [the Linux installer](installation.md), run the
 [container image](docker.md), or build from source. Moongate is under active
-development: characters enter the world, walk and see each other, but combat,
-NPC AI and most gameplay are not implemented yet. See [Implementation status](implementation-status.md).
+development: characters enter the world, walk and see each other, and NPCs and
+items run Lua scripts, but combat, pathfinding AI and most gameplay are not
+implemented yet. See [Implementation status](implementation-status.md).
 
 A server start needs a root, readable client files, the active role's PostgreSQL
 database and reviewed SQL, and a private Redis instance for realm leases and
@@ -179,10 +180,10 @@ All server-managed paths below are relative to `--root-directory`:
 | `certificates/admin.pfx`, `certificates/admin.crt` | Optional `mgboot` administration TLS identity: private server PFX and public PEM for client trust |
 | `migrations/auth/`, `migrations/world/` | Core SQL copied by `mgboot` (releases after 0.6.0); plugins ship their own under `plugins/` |
 | `data/` | Shard data files copied by `mgboot`, read at game and standalone startup; see [Shard data files](data-files.md) |
-| `templates/items/`, `templates/loots/`, `templates/mobiles/` | Created at game and standalone startup for [templates](templates.md); nothing reads them yet |
+| `templates/items/`, `templates/loots/`, `templates/mobiles/` | Created at game and standalone startup for [templates](templates.md), and loaded then |
 | `logs/moongate-*.clef` | Structured JSON log events, one per line |
 | `plugins/` | One assembly bundle per plugin directory |
-| `scripts/` | Lua source and generated editor definitions |
+| `scripts/` | Lua source: `init.lua`, the [mobile scripts](scripting.md#mobile-scripts) `mobiles/<script_id>.lua`, the [item scripts](scripting.md#item-scripts) `items/<script_id>.lua`, and the generated `definitions.lua` and `.luarc.json` |
 | `moongate.pid` | Current process identifier |
 | `moongate.pid.lock` | Lock file used to exclude another instance |
 

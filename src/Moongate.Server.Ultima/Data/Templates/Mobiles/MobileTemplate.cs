@@ -175,7 +175,8 @@ public class MobileTemplate
 
     /// <summary>
     ///     The global Lua table, defined by <c>scripts/mobiles/&lt;script_id&gt;.lua</c>, whose functions handle the NPC's events:
-    ///     <c>on_think</c> and <c>on_speech</c>. A lower-case Lua identifier. Unset: no script.
+    ///     <c>on_think</c>, <c>on_speech</c>, <c>on_spawn</c> and <c>on_mobile_in_range</c>. A lower-case Lua identifier.
+    ///     Unset: no script.
     /// </summary>
     public string? ScriptId { get; set; }
 
