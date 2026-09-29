@@ -56,14 +56,15 @@ The Ultima plugin adds these packets in game and standalone modes, with
 | `0xC8` | `UpdateRangePacket` | Incoming | Fixed 2 | `UpdateRangePacketHandler`: answers with the server's view range |
 | `0xC8` | `ViewRangePacket` | Outgoing | Fixed 2 | — |
 | `0x88` | `DisplayPaperdollPacket` | Outgoing | Fixed 66 | — |
-| `0x07` | `LiftRequestPacket` | Incoming | Fixed 7 | `LiftRequestPacketHandler`: picks up an item the character carries, or one on the ground within 2 tiles |
+| `0x07` | `LiftRequestPacket` | Incoming | Fixed 7 | `LiftRequestPacketHandler`: picks up an item the character carries or wears, or one on the ground within 2 tiles |
 | `0x08` | `DropRequestPacket` | Incoming | Fixed 15 | `DropRequestPacketHandler`: drops the held item into a carried container or on the ground |
 | `0x25` | `ContainerItemUpdatePacket` | Outgoing | Fixed 21, or 20 before client 6.0.1.7 | — |
 | `0x27` | `LiftRejectPacket` | Outgoing | Fixed 2 | — |
 | `0x1D` | `RemoveEntityPacket` | Outgoing | Fixed 5 | — |
 | `0x1A` | `WorldItemPacket` | Outgoing | Variable, minimum 16 | — |
 | `0xF3` | `WorldItemSaPacket` | Outgoing | 24, or 26 from client 7.0.9.0 | — |
-| `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: bounces the held item back (equipping is not built yet) |
+| `0x13` | `EquipRequestPacket` | Incoming | Fixed 10 | `EquipRequestPacketHandler`: puts the held item on the character, or bounces it back |
+| `0x2E` | `WornItemPacket` | Outgoing | Fixed 15 | — |
 | `0x6C` | `TargetCursorPacket` | Outgoing | Fixed 19 | — |
 | `0x6C` | `TargetResponsePacket` | Incoming | Fixed 19 | `TargetResponsePacketHandler`: completes the player's pending target |
 | `0x05`, `0x22`, `0xB5`, `0xFB` | `AttackRequestPacket`, `ResynchronizeRequestPacket`, `OpenChatWindowPacket`, `PublicHouseContentPacket` | Incoming | Fixed 5, 3, 64, 2 | `IgnoredPacketHandler<T>`: recognised and ignored for now (Debug log) |
@@ -127,10 +128,13 @@ character's own paperdoll. The worn items are already known to the client from `
 double clicks are not handled yet.
 
 Picking an item up (`0x07`) records it as held in the session; it stays in its container until
-the drop. Only a whole item inside a container the character carries can be picked up: holding
-another item already (`AreHolding`), part of a stack, a worn item, or an item not carried is
-refused with `0x27` (`CannotLift`), and an item of the character's inside a container is shown back with
-`0x25`; another player's item is never shown. Dropping it (`0x08`)
+the drop. A whole item inside a container the character carries, or one the character wears
+(from the paperdoll; not the backpack), can be picked up: holding another item already
+(`AreHolding`), part of a stack, the backpack or an item not carried is refused with `0x27`
+(`CannotLift`); an item of the character's inside a container is shown back with `0x25`, and a
+worn one is put back on the paperdoll with `0x2E`, as ModernUO; another player's item is never
+shown. A worn item picked up stays on the character until the drop, and the other players in
+range see it taken off (`0x1D`). Dropping it (`0x08`)
 puts it into a carried container at the drop position, brought inside the gump bounds, or at a
 random spot when dropped on the container's icon; dropped on a carried item that is not a
 container, it goes into that item's container at that item's position. Mobiles, items not
@@ -148,8 +152,17 @@ world save in the same transaction as the grown stack, or by the leave save, whi
 character's pending deletions and drops them if it fails (the database then still holds both
 stacks as before the merge). Dropping onto a container never merges. `0x5D` waits for the leave
 saves of the account's last session before it loads the character, so it never reads rows older
-than what that session saved. A held item dropped on a paperdoll (`0x13`) bounces back to its container with `0x25`
-and frees the hand: equipping is not built yet.
+than what that session saved. A held item dropped on a paperdoll (`0x13`) is worn when the paperdoll is the character's own and
+`IEquipmentService` allows it: the item's own layer (the template's, else tiledata's for a
+wearable graphic; the layer the client suggests is ignored, as ModernUO) must be one worn from
+the paperdoll (not backpack, hair, beard, mount, shop or bank), free, and fit both hands as
+ModernUO and POL: a template with `two_handed_weapon = true` needs both hands free, and nothing
+else goes in hand while one is worn; shields and torches go with a one-handed weapon. The item
+leaves its container or the ground and everyone in range, the character included, gets `0x2E`.
+Anything else bounces back to where the item still is: its container (`0x25`), the ground, or
+the character it was taken off (`0x2E` to everyone in range). The hand is always freed. The
+world save and the leave save write unworn items before worn ones, so taking one shirt off and
+putting another on the same layer never breaks the unique `(mobile_id, layer)` index.
 
 Items on the ground live in the sector grid with the mobiles. Dropping the held item on the
 ground (`0x08` with destination `0xFFFFFFFF`) works within 2 tiles of the character, in line of
