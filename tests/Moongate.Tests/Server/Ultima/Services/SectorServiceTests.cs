@@ -4,6 +4,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Npcs;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Ultima.Types;
 
@@ -105,7 +106,7 @@ public sealed class SectorServiceTests
     [Fact]
     public void Add_OnAMapWithoutContent_IsIgnored()
     {
-        var sectors = new SectorService(new StubDataLoaderService(), new WorldConfig());
+        var sectors = new SectorService(new StubDataLoaderService(), new WorldConfig(), new RecordingNpcTickService());
 
         sectors.Add(Mobile(2, 1496, 1628));
 
@@ -297,6 +298,207 @@ public sealed class SectorServiceTests
         Assert.True(sectors.IsActive(MapType.Trammel, new Point3D(0, 0, 0)));
         Assert.True(sectors.IsActive(MapType.Trammel, new Point3D(2 * 16, 2 * 16, 0)));
         Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(-1, 0, 0)));
+    }
+
+    [Fact]
+    public void Add_APlayer_WakesTheNpcsInTheFiveByFiveAndNoFurther()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        var near = Mobile(0x100, 1600 + 2 * 16, 1600);
+        var far = Mobile(0x101, 1600 + 3 * 16, 1600);
+        sectors.Add(near);
+        sectors.Add(far);
+
+        sectors.Add(Player(2, 1600, 1600));
+
+        Assert.True(ticks.IsAwake(near.Id));
+        Assert.False(ticks.IsAwake(far.Id));
+    }
+
+    [Fact]
+    public void Remove_TheLastPlayer_PutsTheNpcsToSleep()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        var npc = Mobile(0x100, 1600, 1600);
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(npc);
+        sectors.Add(aria);
+
+        sectors.Remove(aria);
+
+        Assert.False(ticks.IsAwake(npc.Id));
+    }
+
+    [Fact]
+    public void Remove_OneOfTwoPlayers_KeepsTheSharedNpcsAwake()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        var shared = Mobile(0x100, 1600 + 2 * 16, 1600);
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(shared);
+        sectors.Add(aria);
+        sectors.Add(Player(3, 1600 + 4 * 16, 1600));
+
+        sectors.Remove(aria);
+
+        Assert.True(ticks.IsAwake(shared.Id));
+        Assert.Equal(1, ticks.Wakes);
+    }
+
+    [Fact]
+    public void Move_APlayerAcrossASectorEdge_DoesNotRestartTheNpcsBothPositionsCover()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        var npc = Mobile(0x100, 1600, 1600);
+        var aria = Player(2, 1599, 1600);
+        sectors.Add(npc);
+        sectors.Add(aria);
+
+        aria.Location = new Point3D(1600, 1600, 0);
+        sectors.Move(aria);
+
+        Assert.True(ticks.IsAwake(npc.Id));
+        Assert.Equal(1, ticks.Wakes);
+        Assert.Equal(0, ticks.Sleeps);
+    }
+
+    [Fact]
+    public void Move_APlayerAway_PutsTheNpcsLeftBehindToSleep()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        var npc = Mobile(0x100, 1600, 1600);
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(npc);
+        sectors.Add(aria);
+
+        aria.Location = new Point3D(3000, 3000, 0);
+        sectors.Move(aria);
+
+        Assert.False(ticks.IsAwake(npc.Id));
+    }
+
+    [Fact]
+    public void Add_AnNpcNextToAPlayer_WakesIt_FarAway_DoesNot()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        sectors.Add(Player(2, 1600, 1600));
+        var near = Mobile(0x100, 1610, 1600);
+        var far = Mobile(0x101, 3000, 3000);
+
+        sectors.Add(near);
+        sectors.Add(far);
+
+        Assert.True(ticks.IsAwake(near.Id));
+        Assert.False(ticks.IsAwake(far.Id));
+    }
+
+    [Fact]
+    public void Move_AnNpcOutOfTheActiveArea_SleepsAndBackIn_Wakes()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        sectors.Add(Player(2, 1600, 1600));
+        var npc = Mobile(0x100, 1600 + 2 * 16, 1600);
+        sectors.Add(npc);
+
+        npc.Location = new Point3D(1600 + 3 * 16, 1600, 0);
+        sectors.Move(npc);
+        Assert.False(ticks.IsAwake(npc.Id));
+
+        npc.Location = new Point3D(1600 + 2 * 16, 1600, 0);
+        sectors.Move(npc);
+        Assert.True(ticks.IsAwake(npc.Id));
+    }
+
+    [Fact]
+    public void Move_AnNpcAcrossASectorEdgeInsideTheActiveArea_KeepsItsTimer()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        sectors.Add(Player(2, 1600, 1600));
+        var npc = Mobile(0x100, 1599, 1600);
+        sectors.Add(npc);
+
+        npc.Location = new Point3D(1600, 1600, 0);
+        sectors.Move(npc);
+
+        Assert.True(ticks.IsAwake(npc.Id));
+        Assert.Equal(1, ticks.Wakes);
+        Assert.Equal(0, ticks.Sleeps);
+    }
+
+    [Fact]
+    public void Remove_AnAwakeNpc_PutsItToSleep()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        sectors.Add(Player(2, 1600, 1600));
+        var npc = Mobile(0x100, 1600, 1600);
+        sectors.Add(npc);
+
+        sectors.Remove(npc);
+
+        Assert.False(ticks.IsAwake(npc.Id));
+    }
+
+    [Fact]
+    public void Move_AnAwakeNpcOffTheMap_PutsItToSleep()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        sectors.Add(Player(2, 1600, 1600));
+        var npc = Mobile(0x100, 1600, 1600);
+        sectors.Add(npc);
+
+        npc.Location = new Point3D(9000, 1600, 0);
+        sectors.Move(npc);
+
+        Assert.False(ticks.IsAwake(npc.Id));
+    }
+
+    [Fact]
+    public void Move_APlayerToAnotherMap_PutsTheOldNpcsToSleepAndWakesTheNewOnes()
+    {
+        var ticks = new RecordingNpcTickService();
+        var sectors = TestSectors.Create(ticks: ticks);
+        var trammelOrc = Mobile(0x100, 1600, 1600);
+        var feluccaOrc = Mobile(0x101, 1600, 1600, MapType.Felucca);
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(trammelOrc);
+        sectors.Add(feluccaOrc);
+        sectors.Add(aria);
+
+        aria.Map = MapType.Felucca;
+        sectors.Move(aria);
+
+        Assert.False(ticks.IsAwake(trammelOrc.Id));
+        Assert.True(ticks.IsAwake(feluccaOrc.Id));
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600, 1600, 0)));
+    }
+
+    [Fact]
+    public void Move_APlayerStepByStep_LeavesNoActiveSectorBehind()
+    {
+        var sectors = TestSectors.Create();
+        var aria = Player(2, 1600, 1600);
+        sectors.Add(aria);
+
+        for (var x = 1601; x <= 1600 + 6 * 16; x++)
+        {
+            aria.Location = new Point3D(x, 1600, 0);
+            sectors.Move(aria);
+        }
+
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600, 1600, 0)));
+        Assert.False(sectors.IsActive(MapType.Trammel, new Point3D(1600 + 3 * 16, 1600, 0)));
+        Assert.True(sectors.IsActive(MapType.Trammel, new Point3D(1600 + 4 * 16, 1600, 0)));
+        Assert.Equal([aria], sectors.GetMobilesInRange(MapType.Trammel, new Point3D(1600 + 6 * 16, 1600, 0), 18));
     }
 
     private static MobileEntity Player(uint serial, int x, int y)

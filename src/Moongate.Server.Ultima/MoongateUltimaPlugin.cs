@@ -53,6 +53,7 @@ using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Services.Diagnostics;
 using Moongate.Server.Ultima.Services.Motd;
 using Moongate.Server.Ultima.Services.Titles;
 
@@ -194,6 +195,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<IItemFactoryService, ItemFactoryService>(Reuse.Singleton);
             container.Register<ILootService, LootService>(Reuse.Singleton);
             container.Register<IMobileFactoryService, MobileFactoryService>(Reuse.Singleton);
+            container.Register<INpcTickService, NpcTickService>(Reuse.Singleton);
+            container.AddMetricProvider<NpcTickMetricsProvider>();
             container.Register<ISectorService, SectorService>(Reuse.Singleton);
             container.Register<IMobileService, MobileService>(Reuse.Singleton);
             container.Register<IWorldViewService, WorldViewService>(Reuse.Singleton);

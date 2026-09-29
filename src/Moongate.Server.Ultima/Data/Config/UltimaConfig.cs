@@ -21,6 +21,8 @@ public class UltimaConfig : IConfigSection
 
     public CharactersConfig Characters { get; set; } = new();
 
+    public NpcsConfig Npcs { get; set; } = new();
+
     /// <summary>
     ///     Validates the sub-tables before server services begin startup.
     /// </summary>
@@ -67,5 +69,12 @@ public class UltimaConfig : IConfigSection
         }
 
         Characters.Validate();
+
+        if (Npcs is null)
+        {
+            throw new InvalidOperationException("The ultima.npcs configuration section cannot be null.");
+        }
+
+        Npcs.Validate();
     }
 }

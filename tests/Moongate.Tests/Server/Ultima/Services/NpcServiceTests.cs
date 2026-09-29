@@ -7,6 +7,7 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
+using Moongate.Tests.TestSupport.Ultima.Npcs;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -17,6 +18,8 @@ namespace Moongate.Tests.Server.Ultima.Services;
 public sealed class NpcServiceTests : IAsyncDisposable
 {
     private readonly RecordingWorldViewService _view = new();
+    private readonly RecordingNpcTickService _ticks = new();
+    private readonly SectorService _sectors;
     private readonly MobileService _mobiles;
     private readonly ItemService _items;
     private readonly MobileEntity _orc = new() { Id = new(0x00000100), Name = "Orc", TemplateId = "orc", Body = 0x0011 };
@@ -29,7 +32,8 @@ public sealed class NpcServiceTests : IAsyncDisposable
 
     public NpcServiceTests()
     {
-        var sectors = TestSectors.Create();
+        var sectors = TestSectors.Create(ticks: _ticks);
+        _sectors = sectors;
         _mobiles = new(new StubMovementService(), sectors);
         _items = TestItems.Create(sectors);
         _shirt.Equip(_orc.Id, LayerType.Shirt);
@@ -64,6 +68,19 @@ public sealed class NpcServiceTests : IAsyncDisposable
         Assert.False(_mobiles.IsInWorld(_orc.Id));
         Assert.All([_shirt.Id, _backpack.Id, _gold.Id], serial => Assert.False(_items.TryGet(serial, out _)));
         Assert.Equal([_orc.Id], _mobiles.Capture());
+    }
+
+    [Fact]
+    public async Task RemoveAsync_AnNpcNextToAPlayer_StopsItsThinks()
+    {
+        var npcs = await CreateAsync();
+        _sectors.Add(new MobileEntity { Id = new(2), Name = "Aria", AccountId = new Serial(0x42), Map = MapType.Trammel, Location = new Point3D(1496, 1628, 0) });
+        await npcs.SpawnAsync("orc", MapType.Trammel, new Point3D(1496, 1628, 0));
+        Assert.True(_ticks.IsAwake(_orc.Id));
+
+        Assert.True(await npcs.RemoveAsync(_orc.Id));
+
+        Assert.False(_ticks.IsAwake(_orc.Id));
     }
 
     [Fact]
