@@ -5475,6 +5475,7 @@
 20298 = "Non sei abbastanza abile per disfare questo."
 
 # Moongate: item rarity in tooltips (30000 + ItemRarityType).
+30000 = "Comune"
 30001 = "Non comune"
 30002 = "Raro"
 30003 = "Epico"

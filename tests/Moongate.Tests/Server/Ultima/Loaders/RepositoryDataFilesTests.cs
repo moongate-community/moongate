@@ -74,12 +74,12 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5466, messages.Count);
+        Assert.Equal(5467, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
-            ["Non comune", "Raro", "Epico", "Leggendario"],
-            new[] { 30001, 30002, 30003, 30004 }.Select(id => messages.Single(message => message.Id == id).Text)
+            ["Comune", "Non comune", "Raro", "Epico", "Leggendario"],
+            new[] { 30000, 30001, 30002, 30003, 30004 }.Select(id => messages.Single(message => message.Id == id).Text)
         );
 
         var regions = service.GetEntities<RegionContent>();
@@ -133,7 +133,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5466, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5467, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     private static string FindRepositoryRoot()

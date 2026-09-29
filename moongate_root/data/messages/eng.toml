@@ -5478,6 +5478,7 @@
 20298 = "You aren't skilled enough to unravel this."
 
 # Moongate: item rarity in tooltips (30000 + ItemRarityType).
+30000 = "Common"
 30001 = "Uncommon"
 30002 = "Rare"
 30003 = "Epic"

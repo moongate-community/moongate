@@ -147,12 +147,9 @@ public sealed class TooltipService : ITooltipService
             list.Add(weight == 1 ? OneStoneCliloc : StonesCliloc, weight.ToString());
         }
 
-        if (item.Rarity != ItemRarityType.Common)
-        {
-            // A message file without the text shows the English name rather than failing the whole broadcast.
-            var rarity = _localization.TryGetText(RarityMessageBase + (int)item.Rarity, out var text) ? text : item.Rarity.ToString();
-            list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{rarity}</BASEFONT>");
-        }
+        // A message file without the text shows the English name rather than failing the whole broadcast.
+        var rarity = _localization.TryGetText(RarityMessageBase + (int)item.Rarity, out var text) ? text : item.Rarity.ToString();
+        list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{rarity}</BASEFONT>");
 
         return list;
     }
@@ -249,6 +246,7 @@ public sealed class TooltipService : ITooltipService
     {
         return rarity switch
         {
+            ItemRarityType.Common => "#FFFFFF",
             ItemRarityType.Uncommon => "#1EFF00",
             ItemRarityType.Rare => "#0070DD",
             ItemRarityType.Epic => "#A335EE",

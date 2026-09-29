@@ -153,8 +153,8 @@ other data services. `definitions.lua` declares it for editor completion, with
 
 ## Moongate's own messages
 
-Numbers from 30000 are Moongate's, not UOX3's: 30001–30004 are the item rarities
-(uncommon, rare, epic, legendary) shown in tooltips, in English and Italian; the other
+Numbers from 30000 are Moongate's, not UOX3's: 30000–30004 are the item rarities
+(common, uncommon, rare, epic, legendary) shown in tooltips, in English and Italian; the other
 languages fall back to English.
 
 ## Add or change a text

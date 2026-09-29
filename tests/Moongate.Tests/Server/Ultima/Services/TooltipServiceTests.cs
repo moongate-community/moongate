@@ -36,6 +36,7 @@ public sealed class TooltipServiceTests
                        new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false }
                    )
                    .With(
+                       new MessageContent { Id = 30000, Text = "Comune" },
                        new MessageContent { Id = 30002, Text = "Raro" },
                        new MessageContent { Id = 30004, Text = "Leggendario" }
                    );
@@ -180,9 +181,12 @@ public sealed class TooltipServiceTests
     }
 
     [Fact]
-    public void Build_ACommonItem_ShowsNoRarity()
+    public void Build_ACommonItem_ShowsItsRarityInWhite()
     {
-        Assert.DoesNotContain(_tooltips.Build(Item("robe", 0x1F03)).Entries, line => line.Arguments.Contains("BASEFONT"));
+        Assert.Contains(
+            _tooltips.Build(Item("robe", 0x1F03)).Entries,
+            line => line.Arguments == "<BASEFONT COLOR=#FFFFFF>Comune</BASEFONT>"
+        );
     }
 
     [Fact]

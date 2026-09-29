@@ -248,7 +248,7 @@ ModernUO and UOX3:
   name as text; a stack uses 1050039 with the amount;
 - blessed or newbied (1038021) or cursed (1049643), the item's loot type else the template's;
 - the weight of the whole stack (1072788 / 1072789);
-- above `common`, the rarity: messages 30001–30004 in the server language, coloured;
+- the rarity: messages 30000–30004 in the server language, coloured (common white);
 - a mobile: 1050045 with its name and title.
 
 Free text goes through the clilocs whose whole text is `~1_NOTHING~` (1042971, 1070722, ...),
