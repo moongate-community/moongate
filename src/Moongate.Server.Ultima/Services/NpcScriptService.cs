@@ -17,7 +17,7 @@ namespace Moongate.Server.Ultima.Services;
 ///     that waits in it is warned once. It calls nothing before the scripts are loaded, which is after the NPCs are,
 ///     nor once stopped, before the script engine.
 /// </summary>
-public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
+public sealed class NpcScriptService : INpcScriptService, INpcThinker, IMoongateStartupService
 {
     public const string MobilesDirectory = "mobiles";
 
@@ -107,12 +107,7 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
         }
     }
 
-    /// <summary>
-    ///     Calls <paramref name="function" /> of the NPC's mobile script with its serial followed by
-    ///     <paramref name="args" />; <see cref="ScriptResult.Missing" /> when it has no script, the script lacks the
-    ///     function, or the scripts are not loaded yet or have stopped. It must not be called from inside a running
-    ///     script: use <see cref="Queue" /> where a script may be running.
-    /// </summary>
+    /// <inheritdoc />
     public ScriptResult Run(MobileEntity npc, string function, params object?[] args)
     {
         if (!_running || ScriptOf(npc) is not { } script)
@@ -128,11 +123,7 @@ public sealed class NpcScriptService : INpcThinker, IMoongateStartupService
         );
     }
 
-    /// <summary>
-    ///     Runs <paramref name="function" /> of the NPC's mobile script on the next turn of the game loop, after the
-    ///     current work: the engine cannot start a script from inside a running one, as when <c>npc.step</c> in a think
-    ///     brings the NPC near another. Nothing is posted for an NPC without a script.
-    /// </summary>
+    /// <inheritdoc />
     public void Queue(MobileEntity npc, string function, params object?[] args)
     {
         if (!_running || ScriptOf(npc) is null)

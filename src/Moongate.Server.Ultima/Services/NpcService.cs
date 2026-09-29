@@ -24,6 +24,7 @@ public sealed class NpcService : INpcService
     private readonly IDataAccess<MobileEntity> _mobileData;
     private readonly IDataAccess<ItemEntity> _itemData;
     private readonly IGameLoopService _loop;
+    private readonly INpcScriptService? _scripts;
 
     public NpcService(
         IMobileFactoryService factory,
@@ -32,7 +33,8 @@ public sealed class NpcService : INpcService
         IWorldViewService view,
         IDataAccess<MobileEntity> mobileData,
         IDataAccess<ItemEntity> itemData,
-        IGameLoopService loop
+        IGameLoopService loop,
+        INpcScriptService? scripts = null
     )
     {
         _factory = factory;
@@ -42,6 +44,7 @@ public sealed class NpcService : INpcService
         _mobileData = mobileData;
         _itemData = itemData;
         _loop = loop;
+        _scripts = scripts;
     }
 
     public async Task StartAsync()
@@ -88,6 +91,7 @@ public sealed class NpcService : INpcService
                 _mobiles.EnterWorld(npc);
                 _items.Add(spawned.Equipment.Append(spawned.Backpack).Concat(spawned.BackpackItems));
                 _view.MobileAppeared(npc);
+                _scripts?.Queue(npc, "on_spawn");
             },
             CancellationToken.None
         );

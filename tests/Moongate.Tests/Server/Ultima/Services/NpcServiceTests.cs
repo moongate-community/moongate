@@ -19,6 +19,7 @@ public sealed class NpcServiceTests : IAsyncDisposable
 {
     private readonly RecordingWorldViewService _view = new();
     private readonly RecordingNpcTickService _ticks = new();
+    private readonly RecordingNpcScriptService _scripts = new();
     private readonly SectorService _sectors;
     private readonly MobileService _mobiles;
     private readonly ItemService _items;
@@ -54,6 +55,26 @@ public sealed class NpcServiceTests : IAsyncDisposable
         Assert.True(_mobiles.IsInWorld(_orc.Id));
         Assert.All([_shirt.Id, _backpack.Id, _gold.Id], serial => Assert.True(_items.TryGet(serial, out _)));
         Assert.Equal(["MobileAppeared 256"], _view.Calls);
+    }
+
+    [Fact]
+    public async Task SpawnAsync_QueuesOnSpawnOfItsScript()
+    {
+        var npcs = await CreateAsync();
+
+        await npcs.SpawnAsync("orc", MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        Assert.Equal(["Queue 256 on_spawn"], _scripts.Calls);
+    }
+
+    [Fact]
+    public async Task StartAsync_LoadingTheSavedNpcs_IsNoSpawn()
+    {
+        var npcs = await CreateAsync();
+
+        await npcs.StartAsync();
+
+        Assert.Empty(_scripts.Calls);
     }
 
     [Fact]
@@ -115,7 +136,8 @@ public sealed class NpcServiceTests : IAsyncDisposable
             _view,
             new RecordingDataAccess<MobileEntity>(),
             new RecordingDataAccess<ItemEntity>(),
-            _fixture.Loop
+            _fixture.Loop,
+            _scripts
         );
     }
 
