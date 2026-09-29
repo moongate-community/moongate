@@ -8,7 +8,7 @@ using Moongate.Server.Ultima.Packets.World;
 namespace Moongate.Server.Ultima.Handlers.General;
 
 /// <summary>
-///     Answers the client's view range request (0xC8) with the server's (world.view_range), whatever it asked, as
+///     Answers the client's view range request (0xC8) with the server's (ultima.world.view_range), whatever it asked, as
 ///     ModernUO answers with its fixed 18: the server decides what the client sees.
 /// </summary>
 public sealed class UpdateRangePacketHandler : IPacketHandler<UpdateRangePacket>

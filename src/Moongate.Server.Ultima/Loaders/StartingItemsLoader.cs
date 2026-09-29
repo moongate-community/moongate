@@ -76,6 +76,12 @@ public class StartingItemsLoader : IDataLoader<StartingItemSet>
                 {
                     throw new InvalidDataException($"{where} has amount '{amount}', which can roll below 1.");
                 }
+
+                // One pile holds at most 65535; the client shows a larger amount wrapped.
+                if (entry.Amount is { } large && large.Max > ushort.MaxValue)
+                {
+                    throw new InvalidDataException($"{where} has amount '{large}', which can roll above 65535.");
+                }
             }
         }
 

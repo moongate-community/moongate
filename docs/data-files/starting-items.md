@@ -52,8 +52,10 @@ character gets nothing:
 7. Items in the backpack go to a random spot inside its `containers.toml` bounds.
 
 The starting gold is an ordinary entry: the shipped file gives 1000 coins with an
-entry of the common set. Change its `amount` to give more or less, or remove the
-entry to give none:
+entry of the common set. Change its `amount` (at most 65535) to give more or less,
+or remove the entry to give none. A root prepared before this change keeps its own
+`starting_items.toml`, which `mgboot` does not overwrite: add this entry to its common
+set, or new characters start without gold:
 
 ```toml
 [[set]]
@@ -71,7 +73,7 @@ The server stops when:
 - `starting_items.toml` does not exist;
 - a set has no items, or is not common and has no skill, race or gender;
 - an entry has no items, names an item that is not an item template, or has an
-  `amount` that can roll below 1;
+  `amount` that can roll below 1 or above 65535;
 - `ultima.items.backpack_template` or `ultima.items.gold_template` is not an item template;
 - the gold template does not stack.
 

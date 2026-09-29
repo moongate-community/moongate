@@ -47,6 +47,8 @@ public sealed class StartingItemsLoaderTests
      InlineData("[[set]]\ncommon = true\n"),
      InlineData("[[set]]\ncommon = true\n[[set.items]]\nitems = [\"cape\"]\n"),
      InlineData("[[set]]\ncommon = true\n[[set.items]]\nitems = [\"dagger\"]\namount = \"1d3-3\"\n"),
+     InlineData("[[set]]\ncommon = true\n[[set.items]]\nitems = [\"dagger\"]\namount = 65536\n"),
+     InlineData("[[set]]\ncommon = true\n[[set.items]]\nitems = [\"dagger\"]\namount = \"65000+1d1000\"\n"),
      InlineData("[[set]]\n[[set.items]]\nitems = [\"dagger\"]\n"),
      InlineData("[[set]]\ncommon = true\n[[set.items]]\nitems = []\n")]
     public async Task LoadDataAsync_ABadSet_ThrowsInvalidDataException(string toml)

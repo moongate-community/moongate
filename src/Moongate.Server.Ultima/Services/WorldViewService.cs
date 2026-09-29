@@ -30,7 +30,7 @@ public sealed class WorldViewService : IWorldViewService
     private readonly IPacketSendService _sender;
     private readonly WorldConfig _world;
 
-    // Read on every use: the configured range of the live world (world.view_range).
+    // Read on every use: the configured range of the live world (ultima.world.view_range).
     private int ViewRange => _world.ViewRange;
 
     public WorldViewService(

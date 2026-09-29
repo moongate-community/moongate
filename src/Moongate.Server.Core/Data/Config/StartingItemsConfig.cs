@@ -1,8 +1,8 @@
 namespace Moongate.Server.Core.Data.Config;
 
 /// <summary>
-///     The <c>[ultima.starting_items]</c> settings for choosing the sets of <c>data/starting_items.toml</c>, starting
-///     gold included; the backpack template is in <see cref="ItemsConfig" />.
+///     The <c>[ultima.starting_items]</c> settings for choosing the sets of <c>data/starting_items.toml</c>, which also
+///     give the starting gold; the backpack template is in <see cref="ItemsConfig" />.
 /// </summary>
 public sealed class StartingItemsConfig
 {
