@@ -66,6 +66,18 @@ public sealed class ConfigContainerExtensionsTests
         Assert.Equal(original, File.ReadAllText(directory.Path + "/moongate.toml"));
     }
 
+    [Theory, InlineData("sample = 5\n"), InlineData("[[sample]]\ngreeting = \"x\"\n")]
+    public void AddConfig_ASectionThatIsNotATable_ThrowsAndLeavesTheFile(string toml)
+    {
+        using var directory = new TemporaryDirectory();
+        var container = Container(directory, toml);
+
+        var exception = Assert.Throws<InvalidOperationException>(() => container.AddConfig<SampleSection>("sample"));
+
+        Assert.Contains("[sample]", exception.Message);
+        Assert.Equal(toml, File.ReadAllText(directory.Path + "/moongate.toml"));
+    }
+
     [Fact]
     public void AddConfig_AHostSectionName_Throws()
     {

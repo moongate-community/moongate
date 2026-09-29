@@ -16,8 +16,9 @@ TOML keys use `snake_case`. Keep `mode` before the first table header.
 The server owns `mode` and the sections `[shard]`, `[network]`, `[redis]`,
 `[persistence]`, `[realm_directory]`, `[world_save]`, `[diagnostics]` and
 `[scripting]`. Plugins own the others: `[ultima]` belongs to the Ultima plugin and
-`[admin_api]` to the Administration plugin. A new root written by `mgboot` holds only
-the server's sections; at the first start each plugin appends its missing section,
+`[admin_api]` to the Administration plugin. A new root written by `mgboot` holds the server's
+sections (and `[admin_api]` when it sets up a certificate); at the first start each
+plugin appends its missing section,
 with the defaults, to the end of the file. See
 [Add a config section](plugins.md#add-a-config-section).
 

@@ -40,8 +40,16 @@ public static class ConfigContainerExtensions
 
             T config;
 
-            if (document.Table.TryGetValue(section, out var value) && value is TomlTable table)
+            if (document.Table.TryGetValue(section, out var value))
             {
+                // Appending [section] next to a key of another kind would define it twice and break the next start.
+                if (value is not TomlTable table)
+                {
+                    throw new InvalidOperationException(
+                        $"'{document.FilePath}': [{section}] must be a table, found {value?.GetType().Name ?? "nothing"}."
+                    );
+                }
+
                 config = TomlUtils.Deserialize<T>(TomlUtils.Serialize(table)) ?? new T();
             }
             else

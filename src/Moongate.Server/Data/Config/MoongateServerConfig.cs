@@ -51,7 +51,6 @@ public class MoongateServerConfig
 
         Redis.Validate();
 
-
         if (Persistence is null)
         {
             throw new InvalidOperationException("The persistence configuration section cannot be null.");
