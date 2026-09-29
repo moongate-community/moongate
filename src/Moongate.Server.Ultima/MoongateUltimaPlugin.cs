@@ -224,6 +224,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ITargetService, TargetService>(Reuse.Singleton);
             container.RegisterMapping<ISessionClosedListener, ITargetService>();
             container.Register<IBroadcastService, BroadcastService>(Reuse.Singleton);
+            container.Register<ISpeechService, SpeechService>(Reuse.Singleton);
             container.RegisterCommand<ShutdownCommand>(
                 "shutdown",
                 "Shuts down this server gracefully, immediately or after a delay: shutdown [seconds].",
@@ -278,6 +279,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.Register<ILineOfSightService, LineOfSightService>(Reuse.Singleton);
             container.AddScriptModule<DiceModule>();
             container.AddScriptModule<LocalizationModule>();
+            container.AddScriptModule<NpcModule>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddLiveWorldMobiles();

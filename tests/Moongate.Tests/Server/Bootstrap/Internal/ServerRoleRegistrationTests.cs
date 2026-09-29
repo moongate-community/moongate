@@ -22,6 +22,7 @@ using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Packets.Characters;
@@ -134,6 +135,8 @@ public sealed class ServerRoleRegistrationTests
         {
             Assert.IsType<MotdService>(container.Resolve<IMotdService>());
             Assert.IsType<SectorService>(container.Resolve<ISectorService>());
+            Assert.IsType<SpeechService>(container.Resolve<ISpeechService>());
+            Assert.NotNull(container.Resolve<NpcModule>());
             Assert.Contains(container.ResolveMany<IMetricProvider>(), provider => provider.ProviderName == "npcs");
         }
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());
