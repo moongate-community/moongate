@@ -3,7 +3,7 @@ using System.Diagnostics.CodeAnalysis;
 namespace Moongate.Server.Ultima.Interfaces;
 
 /// <summary>
-///     Gives the texts of <c>data/messages</c> in the server's language, as set by <c>localization.language</c> in
+///     Gives the texts of <c>data/messages</c> in the server's language, as set by <c>ultima.localization.language</c> in
 ///     <c>moongate.toml</c>.
 /// </summary>
 public interface ILocalizationService

@@ -88,9 +88,9 @@ character restore <character-serial>
 
 A character a player deletes from the character list is only marked for deletion:
 it disappears from the list, gives up its slot and no longer counts toward
-`characters.max_per_account`, so the player can create a new character in its
+`ultima.characters.max_per_account`, so the player can create a new character in its
 place. It stays restorable until it is removed; after
-`characters.deletion_delay_hours` (default 24) it becomes eligible for removal,
+`ultima.characters.deletion_delay_hours` (default 24) it becomes eligible for removal,
 by a job that is not built yet. `character pending` lists every
 pending character, or those of one account, with when the deletion was requested
 and when the character becomes eligible for removal. `character restore` cancels

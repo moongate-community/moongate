@@ -213,10 +213,10 @@ public sealed class CharacterServiceTests : IAsyncLifetime
     [Fact]
     public async Task CreateAsync_StartingItemsFail_RollsBackTheCharacter()
     {
-        // Gold on a template that does not stack makes the item factory throw after the mobile was inserted.
-        var service = CreateService(goldTemplate: "shirt");
+        // An unknown template makes the item factory throw after the mobile was inserted.
+        var service = CreateService(startingItem: "missing");
 
-        await Assert.ThrowsAsync<ArgumentException>(() => service.CreateAsync(Account, Request()));
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => service.CreateAsync(Account, Request()));
 
         Assert.Empty(await _mobiles.QueryAsync(mobile => mobile.AccountId == Account));
         Assert.Empty(_created);
@@ -475,7 +475,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
         Assert.Equal(["Aria", "Bran"], characters.Select(character => character.Name));
     }
 
-    private CharacterService CreateService(int maxPerAccount = 7, string goldTemplate = "gold")
+    private CharacterService CreateService(int maxPerAccount = 7, string startingItem = "bottle")
     {
         var loaders = new StubDataLoaderService()
                       .With(
@@ -485,7 +485,17 @@ public sealed class CharacterServiceTests : IAsyncLifetime
                           Template("shirt", 0x1517)
                       )
                       .With(new ContainerContent { Name = "default", Bounds = new(new Point2D(44, 65), new Point2D(186, 159)), Default = true })
-                      .With(new StartingItemSet { Common = true, Items = [new StartingItemEntry { Items = ["bottle"] }] })
+                      .With(
+                          new StartingItemSet
+                          {
+                              Common = true,
+                              Items =
+                              [
+                                  new StartingItemEntry { Items = [startingItem] },
+                                  new StartingItemEntry { Items = ["gold"], Amount = DiceSpec.Parse("1000") }
+                              ]
+                          }
+                      )
                       .With(
                           new RaceContent
                           {
@@ -525,7 +535,7 @@ public sealed class CharacterServiceTests : IAsyncLifetime
             tiles,
             _host.Owner,
             new StartingItemsConfig(),
-            new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = goldTemplate }
+            new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "gold" }
         );
 
         return new CharacterService(

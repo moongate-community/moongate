@@ -126,7 +126,7 @@ var visible = lineOfSightService.HasLineOfSight(MapType.Felucca,
 
 - Statics flagged `Window` or `NoShoot` and terrain block the line; a blocker at the
   target's cell and height does not.
-- Points farther than [`line_of_sight.max_distance`](server-configuration.md#settings-and-validation)
+- Points farther than [`ultima.line_of_sight.max_distance`](server-configuration.md#settings-and-validation)
   (default 25) along X or Y are never in sight, and neither is a point outside the map.
 - A map that is not loaded throws `KeyNotFoundException`.
 - The service allocates nothing: each cell's statics are read once, even when the

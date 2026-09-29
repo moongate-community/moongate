@@ -48,6 +48,26 @@ certificate_password = ""
 [ultima]
 ultima_path = "ChangeMe" # Replace with your client data directory.
 
+[ultima.localization]
+language = "eng" # Reads <root>/data/messages/eng.toml.
+
+[ultima.line_of_sight]
+max_distance = 25 # Farthest cells along X or Y a point can see.
+
+[ultima.world]
+view_range = 18 # How far players see mobiles and items, in cells along X or Y.
+
+[ultima.items]
+backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
+gold_template = "0x0eed_gold_coin"    # Item template of gold coins.
+
+[ultima.starting_items]
+best_skills = 3                       # How many of the highest skills pick skill sets.
+
+[ultima.characters]
+max_per_account = 7                   # Characters an account may hold: 1, 5, 6 or 7.
+deletion_delay_hours = 24             # Hours before a deleted character may be removed.
+
 [persistence]
 auto_sync_schema = false
 
@@ -84,27 +104,6 @@ max_instructions_per_chunk = 10000000
 hook_interval = 1000
 write_definitions = true
 max_string_length = 16777216
-
-[localization]
-language = "eng" # Reads <root>/data/messages/eng.toml.
-
-[line_of_sight]
-max_distance = 25 # Farthest cells along X or Y a point can see.
-
-[world]
-view_range = 18 # How far players see mobiles and items, in cells along X or Y.
-
-[items]
-backpack_template = "0x0e75_backpack" # Item template of the backpack of new characters and spawned NPCs.
-gold_template = "0x0eed_gold_coin"    # Item template of gold coins.
-
-[starting_items]
-gold = 1000                           # Starting gold; 0 gives none.
-best_skills = 3                       # How many of the highest skills pick skill sets.
-
-[characters]
-max_per_account = 7                   # Characters an account may hold: 1, 5, 6 or 7.
-deletion_delay_hours = 24             # Hours before a deleted character may be removed.
 ```
 
 Only the databases for the active role must already exist and accept connections:
@@ -155,14 +154,19 @@ the connection checks. See [PostgreSQL persistence](persistence.md).
 | `scripting.hook_interval` | Positive instruction-check interval, no greater than either instruction budget. |
 | `scripting.write_definitions` | Generates `definitions.lua` and `.luarc.json` for editor support. |
 | `scripting.max_string_length` | Positive maximum result length enforced by `string.rep`, measured in UTF-16 characters; not a global Lua memory limit. |
-| `localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
-| `line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
-| `world.view_range` | From 5 to 24; default 18, as ModernUO and POL. How far players see mobiles and ground items along X or Y; the client's `0xC8` request is answered with it. Used in game and standalone modes. |
-| `items.backpack_template`, `items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack and gold of new characters and spawned NPCs. Both must exist in `templates/items/`, and the gold template must stack, or the game server stops at startup. These keys used to be under `[starting_items]`, where they are now ignored: move any custom value to `[items]`. See [Starting items](data-files/starting-items.md). |
-| `starting_items.gold` | From 0 to 65535 (one pile); default 1000. Gold coins put in a new character's backpack; above 1 the gold template must stack, or the game server stops at startup. |
-| `starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
-| `characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
-| `characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
+| `ultima.localization.language` | Code of ASCII letters naming the texts file `data/messages/<language>.toml`; default `eng`. Shipped: `eng`, `ita`, `ger`, `fre`, `spa`, `por`, `pol`, `cze`. `eng.toml` must also exist: a message missing from the chosen language falls back to English. Used in game and standalone modes. See [Localization](localization.md). |
+| `ultima.line_of_sight.max_distance` | From 1 to 255; default 25. The farthest a point can see along X or Y, as ModernUO; farther points are never in sight. Used in game and standalone modes. |
+| `ultima.world.view_range` | From 5 to 24; default 18, as ModernUO and POL. How far players see mobiles and ground items along X or Y; the client's `0xC8` request is answered with it. Used in game and standalone modes. |
+| `ultima.items.backpack_template`, `ultima.items.gold_template` | Item template ids; defaults `0x0e75_backpack` and `0x0eed_gold_coin`. Used for the backpack of new characters and spawned NPCs and for the gold of spawned NPCs; the starting gold of new characters is an item of the common set in [`starting_items.toml`](data-files/starting-items.md). Both must exist in `templates/items/`, and the gold template must stack, or the game server stops at startup. See [Starting items](data-files/starting-items.md). |
+| `ultima.starting_items.best_skills` | At least 1; default 3, as UOX3 (four with its extended starting skills). How many of a new character's highest skills pick skill sets. |
+| `ultima.characters.max_per_account` | 1, 5, 6 or 7, the slot counts the client can show; default 7. How many characters an account may hold. The game-login character list shows this many slots, and creating a character beyond it is refused with a popup and a disconnect. A new character goes in the slot the client chose when it is free, otherwise in the first free one. Lowering it keeps existing characters: those beyond the new count are listed in the first free slots, while the rest stay stored but hidden. |
+| `ultima.characters.deletion_delay_hours` | At least 1; default 24. When a player deletes a character (packet `0x83`) it is only marked: it leaves the character list, gives up its slot and no longer counts toward `max_per_account`, and staff can restore it with `character restore` (into the first free slot). After this many hours it becomes eligible for removal; the job that removes it is not built yet. |
+
+The gameplay settings live under `[ultima]` as sub-tables. A file that still has the
+older top-level `[localization]`, `[line_of_sight]`, `[world]`, `[items]`,
+`[starting_items]` or `[characters]` section, or a `gold` key in
+`[ultima.starting_items]`, stops the server at startup with a message saying where
+the setting moved; move the keys and start again.
 
 Redis is required at runtime in all three modes, including standalone. `redis.connection_string` is a StackExchange.Redis configuration string or an environment reference resolved at startup; the Docker example uses `redis:6379,password=...` on its private bridge. `redis.handoff_secret` is an independent cluster-wide secret, also supplied through an environment reference. Give the login and every game process the same values. The Docker example reads both from separate Compose secrets; keep the actual values out of TOML and the repository. A Redis connection failure prevents startup. A later Redis outage stops new realm lists and handoffs while existing game sessions continue; pending tickets are lost on Redis restart and game processes republish their leases. Configure Redis with `maxmemory-policy noeviction`.
 

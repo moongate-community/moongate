@@ -25,14 +25,14 @@ public sealed class CharactersConfig
         if (!SupportedSlotCounts.Contains(MaxPerAccount))
         {
             throw new InvalidOperationException(
-                $"characters.max_per_account must be 1, 5, 6 or 7, found {MaxPerAccount}."
+                $"ultima.characters.max_per_account must be 1, 5, 6 or 7, found {MaxPerAccount}."
             );
         }
 
         if (DeletionDelayHours < 1)
         {
             throw new InvalidOperationException(
-                $"characters.deletion_delay_hours must be at least 1, found {DeletionDelayHours}."
+                $"ultima.characters.deletion_delay_hours must be at least 1, found {DeletionDelayHours}."
             );
         }
     }

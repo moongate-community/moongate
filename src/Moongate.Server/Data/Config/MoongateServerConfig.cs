@@ -32,18 +32,6 @@ public class MoongateServerConfig
 
     public ScriptingConfig Scripting { get; set; } = new();
 
-    public LocalizationConfig Localization { get; set; } = new();
-
-    public LineOfSightConfig LineOfSight { get; set; } = new();
-
-    public WorldConfig World { get; set; } = new();
-
-    public ItemsConfig Items { get; set; } = new();
-
-    public StartingItemsConfig StartingItems { get; set; } = new();
-
-    public CharactersConfig Characters { get; set; } = new();
-
     /// <summary>
     ///     Validates configuration before server services begin startup.
     /// </summary>
@@ -110,46 +98,11 @@ public class MoongateServerConfig
 
         Scripting.Validate();
 
-        if (Localization is null)
+        if (Ultima is null)
         {
-            throw new InvalidOperationException("The localization configuration section cannot be null.");
+            throw new InvalidOperationException("The ultima configuration section cannot be null.");
         }
 
-        Localization.Validate();
-
-        if (LineOfSight is null)
-        {
-            throw new InvalidOperationException("The line of sight configuration section cannot be null.");
-        }
-
-        LineOfSight.Validate();
-
-        if (World is null)
-        {
-            throw new InvalidOperationException("The world configuration section cannot be null.");
-        }
-
-        World.Validate();
-
-        if (Items is null)
-        {
-            throw new InvalidOperationException("The items configuration section cannot be null.");
-        }
-
-        Items.Validate();
-
-        if (StartingItems is null)
-        {
-            throw new InvalidOperationException("The starting items configuration section cannot be null.");
-        }
-
-        StartingItems.Validate();
-
-        if (Characters is null)
-        {
-            throw new InvalidOperationException("The characters configuration section cannot be null.");
-        }
-
-        Characters.Validate();
+        Ultima.Validate();
     }
 }

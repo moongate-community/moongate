@@ -95,7 +95,7 @@ position of each step, as ModernUO and POL do. After the enter-world sequence th
 `0x80` of the direction marks a run) to the players that already saw the mover, `0x78` both ways
 to the players that just came into range, and `0x1D` to the players that lost it; the mover's
 client drops what it walks away from by itself. When a character leaves the world the players in
-range get its `0x1D`. The range is `world.view_range` (default 18, from 5 to 24); the client's
+range get its `0x1D`. The range is `ultima.world.view_range` (default 18, from 5 to 24); the client's
 `0xC8` request is answered with it, whatever the client asked, so both sides use the same range.
 `ISectorService.Query` returns the players, the NPCs and the ground items around a point, in the
 view range unless another is given. A sector is active while a player stands within two sectors of it (the 5×5
@@ -184,7 +184,7 @@ still works on game listeners.
 After a valid `0x91` the game server copies the client version from the ticket to
 the session, turns on Huffman compression for everything it sends from then on,
 and sends `0xB9` followed by `0xA9`: the account's saved characters in the
-configured number of slots (`characters.max_per_account`, default 7), plus the
+configured number of slots (`ultima.characters.max_per_account`, default 7), plus the
 starting cities from `data/starting_cities.toml`. The creation handlers save a new
 character and its starting items in one transaction. `0x5D` brings the chosen
 character into the world (see below).

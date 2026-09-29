@@ -10,16 +10,13 @@ public sealed class StartingItemsConfigTests
         var config = new StartingItemsConfig();
 
         config.Validate();
-        Assert.Equal((1000, 3), (config.Gold, config.BestSkills));
+        Assert.Equal(3, config.BestSkills);
     }
 
-    [Theory,
-     InlineData(-1, 3),
-     InlineData(0, 0),
-     InlineData(65536, 3)]
-    public void Validate_BadValues_Throw(int amount, int bestSkills)
+    [Theory, InlineData(0), InlineData(-1)]
+    public void Validate_BadBestSkills_Throws(int bestSkills)
     {
-        var config = new StartingItemsConfig { Gold = amount, BestSkills = bestSkills };
+        var config = new StartingItemsConfig { BestSkills = bestSkills };
 
         Assert.Throws<InvalidOperationException>(config.Validate);
     }

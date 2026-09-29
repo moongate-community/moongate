@@ -18,7 +18,7 @@ public sealed class WorldConfig
     {
         if (ViewRange is < 5 or > 24)
         {
-            throw new InvalidOperationException($"world.view_range must be from 5 to 24, found {ViewRange}.");
+            throw new InvalidOperationException($"ultima.world.view_range must be from 5 to 24, found {ViewRange}.");
         }
     }
 }

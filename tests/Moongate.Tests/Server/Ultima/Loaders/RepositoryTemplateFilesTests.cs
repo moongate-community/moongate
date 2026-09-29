@@ -58,7 +58,10 @@ public sealed class RepositoryTemplateFilesTests
         var sets = (await loader.LoadDataAsync()).Entities;
 
         Assert.Equal(56, sets.Count);
-        Assert.Single(sets, set => set.Common);
+        var common = Assert.Single(sets, set => set.Common);
+        var gold = Assert.Single(common.Items, entry => entry.Items.SequenceEqual([new ItemsConfig().GoldTemplate]));
+        Assert.Equal(1000, gold.Amount!.Value.Roll());
+        Assert.False(gold.Equip);
         Assert.Contains(templates, t => t.Id == new ItemsConfig().BackpackTemplate);
         Assert.Contains(templates, t => t.Id == new ItemsConfig().GoldTemplate);
     }

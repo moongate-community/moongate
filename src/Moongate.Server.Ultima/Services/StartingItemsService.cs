@@ -61,15 +61,15 @@ public class StartingItemsService : IStartingItemsService
         {
             if (!_templates.TryGet(templateId, out _))
             {
-                throw new InvalidDataException($"items.{key} '{templateId}' is not an item template.");
+                throw new InvalidDataException($"ultima.items.{key} '{templateId}' is not an item template.");
             }
         }
 
-        // Spawned NPCs get gold piles too, so the gold template must stack whatever the starting gold is.
+        // Spawned NPCs get gold piles, so the gold template must stack.
         if (!_templates.Get(_items.GoldTemplate).EffectiveStackable(_tiles))
         {
             throw new InvalidDataException(
-                $"items.gold_template '{_items.GoldTemplate}' does not stack, so it cannot hold a pile of coins."
+                $"ultima.items.gold_template '{_items.GoldTemplate}' does not stack, so it cannot hold a pile of coins."
             );
         }
 
@@ -118,14 +118,6 @@ public class StartingItemsService : IStartingItemsService
                 await _factory.SaveAsync(transaction, item, cancellationToken);
                 given.Add(item);
             }
-        }
-
-        if (_config.Gold > 0)
-        {
-            var gold = _factory.Create(_items.GoldTemplate, _config.Gold);
-            PutInBackpack(gold, backpack);
-            await _factory.SaveAsync(transaction, gold, cancellationToken);
-            given.Add(gold);
         }
 
         return given;

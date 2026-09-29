@@ -1,5 +1,7 @@
 using Moongate.Core.Utils;
 using Moongate.Server.Data.Config;
+using Tomlyn;
+using Tomlyn.Model;
 
 namespace Moongate.Server.Helpers;
 
@@ -8,6 +10,10 @@ namespace Moongate.Server.Helpers;
 /// </summary>
 public static class ConfigHelper
 {
+    // Top-level sections that moved under [ultima]; a file that still has one would otherwise lose its values silently.
+    private static readonly string[] MovedUnderUltima =
+        ["localization", "line_of_sight", "world", "items", "starting_items", "characters"];
+
     /// <summary>
     ///     Reads an existing TOML file or creates it, including any missing parent directories.
     /// </summary>
@@ -20,6 +26,8 @@ public static class ConfigHelper
 
         if (File.Exists(filePath))
         {
+            RejectMovedSettings(filePath);
+
             var loaded = TomlUtils.DeserializeFromFile<MoongateServerConfig>(filePath) ??
                          throw new InvalidDataException(
                              $"Configuration file '{filePath}' did not contain a server configuration."
@@ -34,5 +42,37 @@ public static class ConfigHelper
         TomlUtils.SerializeToFile(config, filePath);
 
         return config;
+    }
+
+    private static void RejectMovedSettings(string filePath)
+    {
+        var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(filePath));
+
+        if (document is null)
+        {
+            return;
+        }
+
+        foreach (var section in MovedUnderUltima)
+        {
+            if (document.ContainsKey(section))
+            {
+                throw new InvalidOperationException(
+                    $"'{filePath}': the [{section}] section moved to [ultima.{section}]; move its keys there."
+                );
+            }
+        }
+
+        if (document.TryGetValue("ultima", out var ultima) &&
+            ultima is TomlTable ultimaTable &&
+            ultimaTable.TryGetValue("starting_items", out var startingItems) &&
+            startingItems is TomlTable startingItemsTable &&
+            startingItemsTable.ContainsKey("gold"))
+        {
+            throw new InvalidOperationException(
+                $"'{filePath}': starting gold is no longer a setting; give it with a common set in " +
+                "data/starting_items.toml and remove ultima.starting_items.gold."
+            );
+        }
     }
 }

@@ -194,7 +194,9 @@ Items resolve as npc equipment does: `listobjectN` gives every item of `[ITEMLIS
 an item block with no `id=` of its own is followed. Items that resolve to nothing are
 dropped and counted. The file is read back and every item must exist. UOX3's own rules
 (the three best skills, four with extended starting skills, and `STARTGOLD`) are not data
-and are not converted.
+and are not converted. Set `ultima.starting_items.best_skills` in the server
+configuration, and give the `STARTGOLD` coins with a gold entry in the common set, as
+the [shipped file](data-files/starting-items.md) does.
 
 ## Verifying the output
 
