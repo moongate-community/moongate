@@ -2,6 +2,8 @@ using Moongate.Server.Admin.Data.Config;
 using Moongate.Tests.TestSupport.Boot;
 using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
+using Tomlyn;
+using Tomlyn.Model;
 
 namespace Moongate.Tests.Integration.Boot;
 
@@ -67,11 +69,11 @@ public sealed class BootCommandTests
         using var directory = new TemporaryDirectory();
         var result = await BootProcess.RunAsync(directory.Path);
         Assert.True(result.ExitCode == 0, result.Output);
-        var config = TomlSections.Read<AdminApiConfig>(
-            File.ReadAllText(Path.Combine(directory.Path, "config/moongate.toml")),
-            "admin_api"
-        );
-        Assert.False(config.Enabled);
+        // The Administration plugin appends [admin_api] at the first server start; mgboot writes none by default.
+        var document = TomlSerializer.Deserialize<TomlTable>(
+            File.ReadAllText(Path.Combine(directory.Path, "config/moongate.toml"))
+        )!;
+        Assert.False(document.ContainsKey("admin_api"));
         Assert.False(Directory.Exists(Path.Combine(directory.Path, "certificates")));
     }
 

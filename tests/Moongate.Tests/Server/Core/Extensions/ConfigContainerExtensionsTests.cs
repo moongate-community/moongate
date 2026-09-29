@@ -112,15 +112,23 @@ public sealed class ConfigContainerExtensionsTests
     public void AddConfig_AFileThatCannotBeWritten_UsesTheDefaults()
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("moongate.toml", "");
-        var container = new Container();
-        // The document points at a directory, so appending to it fails.
-        container.RegisterInstance(new ServerConfigDocument(directory.Path, new(), []));
+        const string original = "[network]\ngame_port = 4001\n";
+        var container = Container(directory, original);
+        var path = Path.Combine(directory.Path, "moongate.toml");
+        File.SetUnixFileMode(path, UnixFileMode.UserRead);
 
-        var config = container.AddConfig<SampleSection>("sample");
+        try
+        {
+            var config = container.AddConfig<SampleSection>("sample");
 
-        Assert.Equal("hello", config.Greeting);
-        Assert.Equal("", File.ReadAllText(path));
+            Assert.Equal("hello", config.Greeting);
+            Assert.Equal(original, File.ReadAllText(path));
+            Assert.False(container.Resolve<ServerConfigDocument>().Table.ContainsKey("sample"));
+        }
+        finally
+        {
+            File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite);
+        }
     }
 
     private static Container Container(TemporaryDirectory directory, string toml, params string[] reserved)
