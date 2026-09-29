@@ -7,6 +7,7 @@ using Moongate.Server.Ultima.Data.Tooltips;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Templates;
 using Moongate.Ultima.Types;
 
@@ -56,6 +57,16 @@ public sealed class TooltipService : ITooltipService
         _items = items;
         _mobiles = mobiles;
         _world = world;
+    }
+
+    public PropertyListInfoPacket Info(ItemEntity item)
+    {
+        return new(item.Id, Build(item).Hash);
+    }
+
+    public PropertyListInfoPacket Info(MobileEntity mobile)
+    {
+        return new(mobile.Id, Build(mobile).Hash);
     }
 
     public bool TryBuildFor(Serial viewer, Serial target, [NotNullWhen(true)] out PropertyList? list)

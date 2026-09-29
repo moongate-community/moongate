@@ -2,6 +2,7 @@ using System.Diagnostics.CodeAnalysis;
 using Moongate.Core.Primitives;
 using Moongate.Server.Ultima.Data.Tooltips;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Server.Ultima.Packets.World;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
@@ -29,4 +30,14 @@ public interface ITooltipService
     ///     not see.
     /// </summary>
     bool TryBuildFor(Serial viewer, Serial target, [NotNullWhen(true)] out PropertyList? list);
+
+    /// <summary>
+    ///     The 0xDC that tells a client the item's current tooltip revision; sent after anything that shows the item.
+    /// </summary>
+    PropertyListInfoPacket Info(ItemEntity item);
+
+    /// <summary>
+    ///     The 0xDC that tells a client the mobile's current tooltip revision.
+    /// </summary>
+    PropertyListInfoPacket Info(MobileEntity mobile);
 }

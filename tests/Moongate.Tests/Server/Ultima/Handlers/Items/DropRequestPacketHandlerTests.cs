@@ -17,6 +17,7 @@ using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
@@ -36,7 +37,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     private readonly RecordingWorldViewService _view = new();
     private readonly ItemService _items;
     private readonly MobileService _mobiles;
-    private readonly StubPacketSendService _sender = new();
+    private readonly StubPacketSendService _sender = new StubPacketSendService().Ignore<PropertyListInfoPacket>();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                   .Item(BackpackGraphic, TileFlagType.Container, 0)
                                                   .Item(BagGraphic, TileFlagType.Container, 0)
@@ -289,6 +290,16 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task Handle_OntoAStack_SendsTheGrownStacksTooltipRevision()
+    {
+        await HoldingAsync(_coins);
+
+        await DropAsync(_coins.Id, 0, 0, _pile.Id);
+
+        Assert.Equal(_pile.Id, Assert.IsType<PropertyListInfoPacket>(Assert.Single(_sender.Ignored)).Serial);
+    }
+
+    [Fact]
     public async Task Handle_AWornItemThatCannotBeDropped_GoesBackOnTheWearer()
     {
         await HoldingAsync(_shirt);
@@ -482,7 +493,7 @@ public sealed class DropRequestPacketHandlerTests : IAsyncDisposable
                 }
             )
         );
-        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender);
+        var handler = new DropRequestPacketHandler(_items, _mobiles, _view, _tiles, layouts, _sender, TestTooltips.Create(_items, _mobiles));
         var packet = new DropRequestPacket { Item = item, X = x, Y = y, Z = 0, Destination = destination };
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, packet));

@@ -23,15 +23,18 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
     private readonly IEquipmentService _equipment;
     private readonly IWorldViewService _view;
     private readonly IPacketSendService _sender;
+    private readonly ITooltipService _tooltips;
 
     public EquipRequestPacketHandler(
         IItemService items,
         IMobileService mobiles,
         IEquipmentService equipment,
         IWorldViewService view,
-        IPacketSendService sender
+        IPacketSendService sender,
+        ITooltipService tooltips
     )
     {
+        _tooltips = tooltips;
         _items = items;
         _mobiles = mobiles;
         _equipment = equipment;
@@ -48,7 +51,7 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
         {
             // The hand is freed either way, so the held item must go back where it still is.
             _logger.Debug("Session {SessionId} named {Item} while holding {Held}", session.SessionId, packet.Item, other);
-            HeldItemBounce.Return(session, other, _items, _mobiles, _view, _sender);
+            HeldItemBounce.Return(session, other, _items, _mobiles, _view, _sender, _tooltips);
 
             return;
         }
@@ -74,6 +77,6 @@ public sealed class EquipRequestPacketHandler : IPacketHandler<EquipRequestPacke
         }
 
         _logger.Debug("{Item} cannot be worn by {Mobile}: it bounces back", item, packet.Mobile);
-        HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender);
+        HeldItemBounce.Return(session, item, _items, _mobiles, _view, _sender, _tooltips);
     }
 }

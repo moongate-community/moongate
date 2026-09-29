@@ -152,6 +152,16 @@ public sealed class TooltipServiceTests
     }
 
     [Fact]
+    public void Info_CarriesTheSerialAndTheHashOfTheTooltip()
+    {
+        var robe = Item("robe", 0x1F03);
+
+        var info = _tooltips.Info(robe);
+
+        Assert.Equal((robe.Id, _tooltips.Build(robe).Hash), (info.Serial, info.Hash));
+    }
+
+    [Fact]
     public void TryBuildFor_AnItemTheCharacterCarries_IsBuilt()
     {
         var backpack = Placed(0x40000001, item => item.Equip(Aria, LayerType.Backpack));

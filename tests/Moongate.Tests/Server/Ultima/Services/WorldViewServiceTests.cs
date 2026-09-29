@@ -12,6 +12,7 @@ using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
+using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.Server.Ultima.Services;
@@ -32,7 +33,8 @@ public sealed class WorldViewServiceTests
         var sectors = TestSectors.Create(_world);
         _items = TestItems.Create(sectors);
         _mobiles = new(new StubMovementService(), sectors);
-        _view = new(sectors, _mobiles, _items, _sender, _world);
+        // The tooltip revisions (0xDC) are checked on their own below.
+        _view = new(sectors, _mobiles, _items, _sender.Ignore<PropertyListInfoPacket>(), TestTooltips.Create(_items, _mobiles), _world);
     }
 
     [Fact]
@@ -275,6 +277,55 @@ public sealed class WorldViewServiceTests
         // The wearer's client already took it off when it was picked up.
         Assert.Equal([BorisSession], _sender.SentSessionIds);
         Assert.Equal(shirt.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent)).Serial);
+    }
+
+    [Fact]
+    public void Entered_FollowsEachMobileAndItemShownWithItsTooltipRevision()
+    {
+        var sender = new StubPacketSendService();
+        var sectors = TestSectors.Create(_world);
+        var items = TestItems.Create(sectors);
+        var mobiles = new MobileService(new StubMovementService(), sectors);
+        var view = new WorldViewService(sectors, mobiles, items, sender, TestTooltips.Create(items, mobiles), _world);
+        var boris = Mobile(3, 1500, 1628);
+        var shirt = new ItemEntity { Id = new(0x40000010), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
+        shirt.Equip(boris.Id, LayerType.Shirt);
+        var gold = new ItemEntity { Id = new(0x40000050), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
+        items.Add([shirt, gold]);
+        items.PlaceOnGround(gold, MapType.Trammel, new Point3D(1500, 1629, 0));
+        mobiles.EnterWorld(boris);
+        var aria = Mobile(2, 1496, 1628);
+        mobiles.EnterWorld(aria);
+
+        view.Entered(aria, AriaSession, null);
+
+        Assert.Equal(
+            [typeof(MobileIncomingPacket), typeof(PropertyListInfoPacket), typeof(PropertyListInfoPacket), typeof(WorldItemSaPacket), typeof(PropertyListInfoPacket)],
+            sender.Sent.Select(packet => packet.GetType())
+        );
+        Assert.Equal(
+            [boris.Id, shirt.Id, gold.Id],
+            sender.Sent.OfType<PropertyListInfoPacket>().Select(info => info.Serial)
+        );
+    }
+
+    [Fact]
+    public void WornItemChanged_FollowsTheItemWithItsTooltipRevision()
+    {
+        var sender = new StubPacketSendService();
+        var sectors = TestSectors.Create(_world);
+        var items = TestItems.Create(sectors);
+        var mobiles = new MobileService(new StubMovementService(), sectors);
+        var view = new WorldViewService(sectors, mobiles, items, sender, TestTooltips.Create(items, mobiles), _world);
+        var aria = Mobile(2, 1496, 1628);
+        mobiles.EnterWorld(aria);
+        view.Entered(aria, AriaSession, null);
+        var shirt = Worn(0x40000010, aria);
+        sender.Sent.Clear();
+
+        view.WornItemChanged(aria, shirt);
+
+        Assert.Equal([typeof(WornItemPacket), typeof(PropertyListInfoPacket)], sender.Sent.Select(packet => packet.GetType()));
     }
 
     [Fact]

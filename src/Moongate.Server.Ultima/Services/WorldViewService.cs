@@ -28,6 +28,7 @@ public sealed class WorldViewService : IWorldViewService
     private readonly IMobileService _mobiles;
     private readonly IItemService _items;
     private readonly IPacketSendService _sender;
+    private readonly ITooltipService _tooltips;
     private readonly WorldConfig _world;
 
     // Read on every use: the configured range of the live world (ultima.world.view_range).
@@ -38,9 +39,11 @@ public sealed class WorldViewService : IWorldViewService
         IMobileService mobiles,
         IItemService items,
         IPacketSendService sender,
+        ITooltipService tooltips,
         WorldConfig world
     )
     {
+        _tooltips = tooltips;
         _sectors = sectors;
         _mobiles = mobiles;
         _items = items;
@@ -60,17 +63,17 @@ public sealed class WorldViewService : IWorldViewService
                 continue;
             }
 
-            _sender.TrySend(sessionId, Incoming(other));
+            SendMobile(sessionId, other, Incoming(other));
 
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
-                _sender.TrySend(viewer.SessionId, incoming ??= Incoming(mobile));
+                SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
             }
         }
 
         foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
         {
-            _sender.TrySend(sessionId, WorldItem(item, version));
+            SendItem(sessionId, item, version);
         }
     }
 
@@ -102,16 +105,20 @@ public sealed class WorldViewService : IWorldViewService
 
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
-                _sender.TrySend(
-                    viewer.SessionId,
-                    sawIt ? moving ??= Moving(mobile, running) : incoming ??= Incoming(mobile)
-                );
+                if (sawIt)
+                {
+                    _sender.TrySend(viewer.SessionId, moving ??= Moving(mobile, running));
+                }
+                else
+                {
+                    SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
+                }
             }
 
             // The mover's client drops what it walks away from by itself, as in ModernUO; it only needs the newcomers.
             if (!sawIt && hasSession)
             {
-                _sender.TrySend(own!.SessionId, Incoming(other));
+                SendMobile(own!.SessionId, other, Incoming(other));
             }
         }
 
@@ -124,7 +131,7 @@ public sealed class WorldViewService : IWorldViewService
         {
             if (item.GroundLocation is { } spot && !InRange(spot, oldLocation))
             {
-                _sender.TrySend(own!.SessionId, WorldItem(item, own.Version));
+                SendItem(own!.SessionId, item, own.Version);
             }
         }
     }
@@ -152,7 +159,7 @@ public sealed class WorldViewService : IWorldViewService
         {
             if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer))
             {
-                _sender.TrySend(viewer.SessionId, incoming ??= Incoming(mobile));
+                SendMobile(viewer.SessionId, mobile, incoming ??= Incoming(mobile));
             }
         }
     }
@@ -168,7 +175,7 @@ public sealed class WorldViewService : IWorldViewService
         {
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
-                _sender.TrySend(viewer.SessionId, WorldItem(item, viewer.Version));
+                SendItem(viewer.SessionId, item, viewer.Version);
             }
         }
     }
@@ -177,7 +184,7 @@ public sealed class WorldViewService : IWorldViewService
     {
         if (item.GroundLocation is not null && _sessions.TryGetValue(viewer.Id, out var session))
         {
-            _sender.TrySend(session.SessionId, WorldItem(item, session.Version));
+            SendItem(session.SessionId, item, session.Version);
         }
     }
 
@@ -202,12 +209,14 @@ public sealed class WorldViewService : IWorldViewService
     public void WornItemChanged(MobileEntity wearer, ItemEntity item)
     {
         var worn = new WornItemPacket(item);
+        var info = _tooltips.Info(item);
 
         foreach (var other in _sectors.GetMobilesInRange(wearer.Map, wearer.Location, ViewRange))
         {
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
                 _sender.TrySend(viewer.SessionId, worn);
+                _sender.TrySend(viewer.SessionId, info);
             }
         }
     }
@@ -238,6 +247,25 @@ public sealed class WorldViewService : IWorldViewService
         }
 
         return new WorldItemPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue);
+    }
+
+    // The mobile, then the revision of its tooltip and of each worn item's, as ModernUO: the client asks for the
+    // tooltips it does not have yet.
+    private void SendMobile(long sessionId, MobileEntity mobile, MobileIncomingPacket incoming)
+    {
+        _sender.TrySend(sessionId, incoming);
+        _sender.TrySend(sessionId, _tooltips.Info(mobile));
+
+        foreach (var item in _items.GetWorn(mobile.Id))
+        {
+            _sender.TrySend(sessionId, _tooltips.Info(item));
+        }
+    }
+
+    private void SendItem(long sessionId, ItemEntity item, ClientVersion? version)
+    {
+        _sender.TrySend(sessionId, WorldItem(item, version));
+        _sender.TrySend(sessionId, _tooltips.Info(item));
     }
 
     private MobileIncomingPacket Incoming(MobileEntity mobile)
