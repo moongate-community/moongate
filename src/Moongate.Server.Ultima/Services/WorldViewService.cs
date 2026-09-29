@@ -133,6 +133,19 @@ public sealed class WorldViewService : IWorldViewService
         }
     }
 
+    public void MobileAppeared(MobileEntity mobile)
+    {
+        MobileIncomingPacket? incoming = null;
+
+        foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
+        {
+            if (other.Id != mobile.Id && _sessions.TryGetValue(other.Id, out var viewer))
+            {
+                _sender.TrySend(viewer.SessionId, incoming ??= Incoming(mobile));
+            }
+        }
+    }
+
     public void ItemAppeared(ItemEntity item)
     {
         if (item.Map is not { } map || item.GroundLocation is not { } spot)

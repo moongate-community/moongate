@@ -67,6 +67,21 @@ public sealed class LoopCheckingMobileService : IMobileService
         return _inner.IsInWorld(mobile);
     }
 
+    public bool Delete(Serial serial)
+    {
+        return _inner.Delete(serial);
+    }
+
+    public IReadOnlyCollection<Serial> Capture()
+    {
+        return _inner.Capture();
+    }
+
+    public void Committed(IReadOnlyCollection<Serial> serials)
+    {
+        _inner.Committed(serials);
+    }
+
     public MobileFlagsType GetFlags(MobileEntity mobile)
     {
         return _inner.GetFlags(mobile);

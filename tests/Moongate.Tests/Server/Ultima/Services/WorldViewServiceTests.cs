@@ -288,6 +288,21 @@ public sealed class WorldViewServiceTests
         Assert.Equal([AriaSession], _sender.SentSessionIds);
     }
 
+    [Fact]
+    public void MobileAppeared_ShowsItToThePlayersInRange()
+    {
+        Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 3000, 3000, BorisSession);
+        var orc = Mobile(9, 1500, 1628);
+        _mobiles.EnterWorld(orc);
+        ClearSent();
+
+        _view.MobileAppeared(orc);
+
+        Assert.Equal(orc.Id, IncomingTo(AriaSession));
+        Assert.Equal([AriaSession], _sender.SentSessionIds);
+    }
+
     private ItemEntity Ground(uint serial, int x, int y)
     {
         var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };

@@ -26,6 +26,7 @@ public sealed class MobileService : IMobileService
     private readonly ConcurrentDictionary<Serial, Serial> _hair = new();
     private readonly ConcurrentDictionary<Serial, Serial> _beard = new();
     private readonly ConcurrentDictionary<Serial, MobileEntity> _inWorld = new();
+    private readonly ConcurrentDictionary<Serial, byte> _deleted = new();
     private readonly IMovementService _movement;
     private readonly ISectorService _sectors;
     private readonly ILogger _logger = Log.ForContext<MobileService>();
@@ -59,6 +60,7 @@ public sealed class MobileService : IMobileService
         }
 
         _inWorld[mobile.Id] = mobile;
+        _deleted.TryRemove(mobile.Id, out _);
         _sectors.Add(mobile);
     }
 
@@ -77,6 +79,31 @@ public sealed class MobileService : IMobileService
         _sectors.Remove(mobile);
 
         return true;
+    }
+
+    public bool Delete(Serial serial)
+    {
+        if (!LeaveWorld(serial))
+        {
+            return false;
+        }
+
+        _deleted[serial] = 0;
+
+        return true;
+    }
+
+    public IReadOnlyCollection<Serial> Capture()
+    {
+        return _deleted.Keys.ToArray();
+    }
+
+    public void Committed(IReadOnlyCollection<Serial> serials)
+    {
+        foreach (var serial in serials)
+        {
+            _deleted.TryRemove(serial, out _);
+        }
     }
 
     public MoveResultType TryMove(MobileEntity mobile, DirectionType direction)
