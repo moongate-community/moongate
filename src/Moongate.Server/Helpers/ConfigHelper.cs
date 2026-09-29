@@ -1,4 +1,6 @@
+using System.Text.Json;
 using Moongate.Core.Utils;
+using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Data.Config;
 using Tomlyn;
 using Tomlyn.Model;
@@ -42,6 +44,23 @@ public static class ConfigHelper
         TomlUtils.SerializeToFile(config, filePath);
 
         return config;
+    }
+
+    /// <summary>
+    ///     Parses the configuration file for the plugins, reserving the sections of <see cref="MoongateServerConfig" />.
+    /// </summary>
+    /// <remarks>
+    ///     Call it after <see cref="Load" />, which creates a missing file.
+    /// </remarks>
+    public static ServerConfigDocument ReadDocument(string filePath)
+    {
+        ArgumentException.ThrowIfNullOrWhiteSpace(filePath);
+
+        var table = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(filePath)) ?? new TomlTable();
+        var sections = typeof(MoongateServerConfig).GetProperties()
+                                                   .Select(property => JsonNamingPolicy.SnakeCaseLower.ConvertName(property.Name));
+
+        return new(filePath, table, sections);
     }
 
     private static void RejectMovedSettings(string filePath)

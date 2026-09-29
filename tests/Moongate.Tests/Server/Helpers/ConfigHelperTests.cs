@@ -298,6 +298,33 @@ public sealed class ConfigHelperTests
     }
 
     [Fact]
+    public void Load_APluginSection_DoesNotBreakTheServerConfig()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", "[network]\ngame_port = 4001\n\n[some_plugin]\nanswer = 42\n");
+
+        var config = ConfigHelper.Load(path);
+
+        Assert.Equal(4001, config.Network.GamePort);
+    }
+
+    [Fact]
+    public void ReadDocument_ReservesTheServerSectionsAndKeepsThePluginOnes()
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", "[some_plugin]\nanswer = 42\n");
+
+        var document = ConfigHelper.ReadDocument(path);
+
+        Assert.Equal(path, document.FilePath);
+        Assert.Equal(42L, Assert.IsType<TomlTable>(document.Table["some_plugin"])["answer"]);
+        Assert.False(document.TryReserve("network"));
+        Assert.False(document.TryReserve("world_save"));
+        Assert.False(document.TryReserve("mode"));
+        Assert.True(document.TryReserve("some_plugin"));
+    }
+
+    [Fact]
     public void Load_UltimaSubTables_ReadsTheGameplaySettings()
     {
         using var directory = new TemporaryDirectory();
