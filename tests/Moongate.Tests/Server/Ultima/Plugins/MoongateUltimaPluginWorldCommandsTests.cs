@@ -14,6 +14,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Commands;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 
@@ -55,6 +56,8 @@ public sealed class MoongateUltimaPluginWorldCommandsTests
         container.RegisterInstance<ISessionService>(fixture.Sessions);
         container.RegisterInstance<IPacketSendService>(fixture.Sender);
         container.RegisterInstance<IMobileService>(fixture.Mobiles, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
+        // No message files are loaded here: the texts are the English ones.
+        container.RegisterInstance(TestLocalization.With(), ifAlreadyRegistered: IfAlreadyRegistered.Replace);
         var context = name == "broadcast"
             ? new CommandContext("broadcast Maintenance soon", name, ["Maintenance", "soon"], CommandSourceType.Console, null)
             : new CommandContext(name, name, [], CommandSourceType.Console, null);
@@ -64,11 +67,11 @@ public sealed class MoongateUltimaPluginWorldCommandsTests
         var packet = Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent));
         if (name == "save")
         {
-            Assert.StartsWith("world saved in ", packet.Text);
+            Assert.StartsWith("The world has been saved in ", packet.Text);
         }
         else if (name == "shutdown")
         {
-            Assert.Equal("Server is shutting down now.", packet.Text);
+            Assert.Equal("The server is shutting down now.", packet.Text);
             Assert.True(shutdown.Requested.IsCompletedSuccessfully);
         }
         else

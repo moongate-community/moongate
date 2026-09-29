@@ -1,5 +1,8 @@
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Data.Localization;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types.Targeting;
 
@@ -12,9 +15,11 @@ namespace Moongate.Server.Ultima.Commands;
 public sealed class WhereCommand : ICommandExecutor
 {
     private readonly ITargetService _targets;
+    private readonly ILocalizationService? _localization;
 
-    public WhereCommand(ITargetService targets)
+    public WhereCommand(ITargetService targets, ILocalizationService? localization = null)
     {
+        _localization = localization;
         _targets = targets;
     }
 
@@ -46,7 +51,7 @@ public sealed class WhereCommand : ICommandExecutor
 
                 break;
             default:
-                context.Print("Target canceled.");
+                context.Print(_localization.Text(CommandMessages.TargetCanceled, "Target canceled."));
 
                 break;
         }

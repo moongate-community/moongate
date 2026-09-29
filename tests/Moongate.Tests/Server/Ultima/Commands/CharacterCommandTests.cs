@@ -3,6 +3,7 @@ using Moongate.Core.Primitives;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Commands;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Commands;
@@ -10,6 +11,7 @@ using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Characters;
 
 namespace Moongate.Tests.Server.Ultima.Commands;
@@ -67,6 +69,18 @@ public sealed class CharacterCommandTests
         Assert.StartsWith("Usage: character", Assert.Single(output).Text, StringComparison.Ordinal);
     }
 
+    [Fact]
+    public async Task Pending_Texts_AreInTheServerLanguage()
+    {
+        var output = await ExecuteAsync(
+            "character pending",
+            new RecordingCharacterService(),
+            TestLocalization.With((30032, "Nessun personaggio è in attesa di cancellazione."))
+        );
+
+        Assert.Equal("Nessun personaggio è in attesa di cancellazione.", Assert.Single(output).Text);
+    }
+
     private static MobileEntity Pending(uint serial, string name, uint account)
     {
         return new() { Id = new(serial), Name = name, AccountId = new Serial(account), DeletionRequestedAt = Requested };
@@ -74,10 +88,17 @@ public sealed class CharacterCommandTests
 
     private static async Task<IReadOnlyList<CommandOutputLine>> ExecuteAsync(
         string commandLine,
-        RecordingCharacterService characters
+        RecordingCharacterService characters,
+        ILocalizationService? localization = null
     )
     {
         using var container = new Container();
+
+        if (localization is not null)
+        {
+            container.RegisterInstance(localization);
+        }
+
         container.RegisterInstance<ICharacterService>(characters);
         container.RegisterInstance(new CharactersConfig());
         container.RegisterCommand<CharacterCommand>(

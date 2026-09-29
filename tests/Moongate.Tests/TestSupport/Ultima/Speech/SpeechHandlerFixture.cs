@@ -7,6 +7,7 @@ using Moongate.Server.Commands;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
@@ -42,7 +43,7 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
     public DelayedCommandExecutor DelayedExecutor => _container.Resolve<DelayedCommandExecutor>();
     public SpeechRequestPacketHandler Handler { get; }
 
-    private SpeechHandlerFixture(SessionFixture network, ILogger? commandLogger)
+    private SpeechHandlerFixture(SessionFixture network, ILogger? commandLogger, ILocalizationService? localization)
     {
         _network = network;
         Sessions = new(network.Loop);
@@ -66,12 +67,12 @@ public sealed class SpeechHandlerFixture : IAsyncDisposable
         Commands = commandLogger is null
             ? new(_container.Resolve<CommandRegistry>(), _container)
             : new(_container.Resolve<CommandRegistry>(), _container, commandLogger);
-        Handler = new(Commands, Sessions, Mobiles, Sender);
+        Handler = new(Commands, Sessions, Mobiles, Sender, localization);
     }
 
-    public static async Task<SpeechHandlerFixture> CreateAsync(ILogger? commandLogger = null)
+    public static async Task<SpeechHandlerFixture> CreateAsync(ILogger? commandLogger = null, ILocalizationService? localization = null)
     {
-        var fixture = new SpeechHandlerFixture(await SessionFixture.CreateAsync(), commandLogger);
+        var fixture = new SpeechHandlerFixture(await SessionFixture.CreateAsync(), commandLogger, localization);
         await fixture.Commands.StartAsync();
 
         return fixture;

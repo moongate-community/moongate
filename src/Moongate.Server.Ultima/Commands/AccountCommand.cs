@@ -1,5 +1,8 @@
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Data.Localization;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Ultima.Interfaces;
@@ -13,14 +16,20 @@ namespace Moongate.Server.Ultima.Commands;
 /// </summary>
 public sealed class AccountCommand : ICommandExecutor
 {
-    private const string Usage = "Usage: account create <username> <password> [Regular|GameMaster|Administrator]";
+    private const string Syntax = "account create <username> <password> [Regular|GameMaster|Administrator]";
 
     private readonly ILogger _logger = Log.ForContext<AccountCommand>();
     private readonly IAccountService _accounts;
     private readonly IAccountAdminAccessService? _adminAccess;
+    private readonly ILocalizationService? _localization;
 
-    public AccountCommand(IAccountService accounts, IAccountAdminAccessService? adminAccess = null)
+    public AccountCommand(
+        IAccountService accounts,
+        IAccountAdminAccessService? adminAccess = null,
+        ILocalizationService? localization = null
+    )
     {
+        _localization = localization;
         _accounts = accounts;
         _adminAccess = adminAccess;
     }
@@ -40,7 +49,7 @@ public sealed class AccountCommand : ICommandExecutor
         if (arguments.Length is not (3 or 4) ||
             !string.Equals(arguments[0], "create", StringComparison.OrdinalIgnoreCase))
         {
-            context.PrintError(Usage);
+            context.PrintError(_localization.Text(CommandMessages.Usage, "Usage: {0}", Syntax));
 
             return;
         }
@@ -50,7 +59,7 @@ public sealed class AccountCommand : ICommandExecutor
         if (arguments.Length == 4 &&
             (!Enum.TryParse(arguments[3], true, out accountType) || !Enum.IsDefined(accountType)))
         {
-            context.PrintError(Usage);
+            context.PrintError(_localization.Text(CommandMessages.Usage, "Usage: {0}", Syntax));
 
             return;
         }
@@ -65,15 +74,15 @@ public sealed class AccountCommand : ICommandExecutor
 
         if (result.Success)
         {
-            context.Print("Account '{0}' created ({1}).", username, accountType);
+            context.Print(_localization.Text(CommandMessages.AccountCreated, "Account '{0}' created ({1}).", username, accountType));
         }
         else if (result.ResultType == AccountCreateResultType.UsernameAlreadyExists)
         {
-            context.PrintError("Account '{0}' already exists.", username);
+            context.PrintError(_localization.Text(CommandMessages.AccountExists, "An account by that name already exists!"));
         }
         else
         {
-            context.PrintError("Account creation failed. Check server logs.");
+            context.PrintError(_localization.Text(CommandMessages.AccountCreationFailed, "The account creation failed. Check the server logs."));
         }
     }
 
@@ -83,7 +92,7 @@ public sealed class AccountCommand : ICommandExecutor
 
         if (context.Source != CommandSourceType.Console)
         {
-            context.PrintError("API access provisioning is available only from the local console.");
+            context.PrintError(_localization.Text(CommandMessages.LocalConsoleOnly, "This is available only from the local console."));
 
             return;
         }

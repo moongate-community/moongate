@@ -1,12 +1,14 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Types.Targeting;
 using Moongate.Tests.Support.Sessions;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Targeting;
 using Moongate.Ultima.Types;
 
@@ -57,13 +59,21 @@ public sealed class WhereCommandTests : IAsyncDisposable
         Assert.Equal(0, _targets.Requests);
     }
 
-    private async Task<CommandContext> RunAsync()
+    [Fact]
+    public async Task ExecuteAsync_Texts_AreInTheServerLanguage()
+    {
+        var context = await RunAsync(TestLocalization.With((30008, "Bersaglio annullato.")));
+
+        Assert.Equal("Bersaglio annullato.", Assert.Single(context.Output).Text);
+    }
+
+    private async Task<CommandContext> RunAsync(ILocalizationService? localization = null)
     {
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         var context = new CommandContext(".where", "where", [], CommandSourceType.InGame, session);
 
-        await new WhereCommand(_targets).ExecuteAsync(context);
+        await new WhereCommand(_targets, localization).ExecuteAsync(context);
 
         return context;
     }

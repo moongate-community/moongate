@@ -169,7 +169,7 @@ runnable walk-through from entity class to applied migration.
 | Registration helper | What it registers | Documented in |
 | --- | --- | --- |
 | `AddMoongateService<TService, TImpl>(priority)` / `AddMoongateService<TService>(instance)` | A singleton service; if the implementation also implements `IMoongateStartupService`, it autostarts at the given `priority` and stops in reverse order. Further overloads accept factories and runtime types | this page |
-| `RegisterCommand<TExecutor>(name, description, source, minimumAccountType)` | One console/in-game command executor, as a singleton | [Console commands](#console-commands) |
+| `RegisterCommand<TExecutor>(name, description, source, minimumAccountType, descriptionMessage)` | One console/in-game command executor, as a singleton | [Console commands](#console-commands) |
 | `RegisterPacketHandler<TPacket, THandler>()` | One packet handler singleton bound to an incoming packet type | this page |
 | `RegisterIncomingPacket<TPacket>()` | An incoming packet type added to the packet registry the host builds at startup, so the server can frame and decode its opcode | [Packets and handlers](packets.md#host-integration) |
 | `RegisterAsyncPacketHandler<TPacket, THandler>()` | One async packet handler singleton for I/O; results return to the game loop through `PacketContext` | [Packets and handlers](packets.md#register-a-game-handler) |
@@ -352,8 +352,13 @@ For the built-in `echo`, `help`, `script`, and `account` commands, see
 [Server commands](commands.md).
 
 A command is a class implementing `ICommandExecutor`, registered with
-`RegisterCommand<T>(name, description, source, minimumAccountType)` as in
-[the plugin class](#the-plugin-class) above. `CommandContext` gives it `Arguments`
+`RegisterCommand<T>(name, description, source, minimumAccountType, descriptionMessage)` as in
+[the plugin class](#the-plugin-class) above. `descriptionMessage` is optional: the id of a
+message in `data/messages` that `help` shows in the server language instead of
+`description`; a plugin can take ids above those Moongate uses. A command's own texts
+can go through `ILocalizationService` too: take it as an optional constructor
+parameter and use `localization.Text(id, english, values)`, which falls back to the
+English text when a message is missing. `CommandContext` gives it `Arguments`
 (the tokens after the command name), `Print` and `PrintError` (one output line each)
 and the `CancellationToken` of the invocation.
 

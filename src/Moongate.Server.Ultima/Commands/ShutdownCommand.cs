@@ -1,5 +1,7 @@
 using System.Globalization;
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Data.Localization;
+using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Commands;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Interfaces;
@@ -14,10 +16,17 @@ public sealed class ShutdownCommand : ICommandExecutor
     private readonly IServerShutdownService _shutdown;
     private readonly ITimerService _timers;
     private readonly IBroadcastService _broadcast;
+    private readonly ILocalizationService? _localization;
     private int _scheduled;
 
-    public ShutdownCommand(IServerShutdownService shutdown, ITimerService timers, IBroadcastService broadcast)
+    public ShutdownCommand(
+        IServerShutdownService shutdown,
+        ITimerService timers,
+        IBroadcastService broadcast,
+        ILocalizationService? localization = null
+    )
     {
+        _localization = localization;
         _shutdown = shutdown;
         _timers = timers;
         _broadcast = broadcast;
@@ -32,7 +41,7 @@ public sealed class ShutdownCommand : ICommandExecutor
             (context.Arguments.Length == 1 &&
              !int.TryParse(context.Arguments[0], NumberStyles.None, CultureInfo.InvariantCulture, out seconds)))
         {
-            context.PrintError("Usage: shutdown [seconds] (a whole number from 0 to 2147483647).");
+            context.PrintError(_localization.Text(CommandMessages.Usage, "Usage: {0}", "shutdown [seconds] (0-2147483647)"));
 
             return;
         }
@@ -41,7 +50,7 @@ public sealed class ShutdownCommand : ICommandExecutor
 
         if (_shutdown.Requested.IsCompleted || Interlocked.CompareExchange(ref _scheduled, 1, 0) != 0)
         {
-            context.PrintError("Shutdown is already scheduled or in progress.");
+            context.PrintError(_localization.Text(CommandMessages.ShutdownAlreadyScheduled, "A shutdown is already scheduled or in progress."));
 
             return;
         }
@@ -49,8 +58,8 @@ public sealed class ShutdownCommand : ICommandExecutor
         try
         {
             var message = seconds == 0
-                ? "Server is shutting down now."
-                : FormattableString.Invariant($"Server will shut down in {seconds} seconds.");
+                ? _localization.Text(CommandMessages.ShuttingDownNow, "The server is shutting down now.")
+                : _localization.Text(CommandMessages.ShuttingDownIn, "The server will shut down in {0} seconds.", seconds);
             await _broadcast.BroadcastAsync(message, context.CancellationToken);
 
             if (seconds == 0)

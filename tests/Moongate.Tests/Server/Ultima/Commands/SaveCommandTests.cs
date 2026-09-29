@@ -1,8 +1,10 @@
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Services;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Commands;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 
@@ -10,6 +12,21 @@ namespace Moongate.Tests.Server.Ultima.Commands;
 
 public sealed class SaveCommandTests
 {
+    [Fact]
+    public async Task ExecuteAsync_TheBroadcast_IsInTheServerLanguage()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        await fixture.AddAsync(1);
+        var saves = new ControlledWorldSaveService();
+        saves.Completion.SetResult();
+        var broadcast = new BroadcastService(fixture.Network.Loop, fixture.Sessions, fixture.Mobiles, fixture.Sender);
+        var command = new SaveCommand(saves, broadcast, TestLocalization.With((30015, "Il mondo è stato salvato in {0} secondi.")));
+
+        await command.ExecuteAsync(new CommandContext("save", "save", [], CommandSourceType.Console, null));
+
+        Assert.StartsWith("Il mondo è stato salvato in ", Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent)).Text);
+    }
+
     [Theory]
     [InlineData(CommandSourceType.Console)]
     [InlineData(CommandSourceType.InGame)]
@@ -31,9 +48,7 @@ public sealed class SaveCommandTests
         await saving.WaitAsync(TimeSpan.FromSeconds(5));
 
         var packet = Assert.IsType<UnicodeSpeechMessagePacket>(Assert.Single(fixture.Sender.Sent));
-        Assert.StartsWith("world saved in ", packet.Text);
-        Assert.True(TimeSpan.TryParse(packet.Text["world saved in ".Length..], out var elapsed));
-        Assert.True(elapsed >= TimeSpan.Zero);
+        Assert.Matches(@"^The world has been saved in \d+\.\d\d seconds\.$", packet.Text);
 
         if (source == CommandSourceType.Console)
         {

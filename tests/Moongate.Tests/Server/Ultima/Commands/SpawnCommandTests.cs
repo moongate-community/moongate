@@ -1,6 +1,7 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Data.Commands;
+using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Services.Sessions;
 using Moongate.Server.Ultima.Commands;
@@ -8,6 +9,7 @@ using Moongate.Server.Ultima.Data.Targeting;
 using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.Support.Sessions;
+using Moongate.Tests.TestSupport.Localization;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Mobiles;
 using Moongate.Tests.TestSupport.Ultima.Targeting;
@@ -59,7 +61,7 @@ public sealed class SpawnCommandTests : IAsyncDisposable
     {
         var context = await RunAsync("orc");
 
-        Assert.Equal("Canceled.", Assert.Single(context.Output).Text);
+        Assert.Equal("Target canceled.", Assert.Single(context.Output).Text);
         Assert.Empty(_npcs.Spawns);
     }
 
@@ -70,7 +72,7 @@ public sealed class SpawnCommandTests : IAsyncDisposable
 
         var context = await RunAsync("orc");
 
-        Assert.Equal("Canceled.", Assert.Single(context.Output).Text);
+        Assert.Equal("Target canceled.", Assert.Single(context.Output).Text);
         Assert.Empty(_npcs.Spawns);
     }
 
@@ -84,7 +86,8 @@ public sealed class SpawnCommandTests : IAsyncDisposable
 
         var line = Assert.Single(context.Output);
         Assert.Equal(CommandOutputLevel.Error, line.Level);
-        Assert.Contains("outside the map", line.Text, StringComparison.Ordinal);
+        // The exception goes to the log, not to the GM.
+        Assert.Equal("The spawn failed. Check the server logs.", line.Text);
     }
 
     [Fact]
@@ -98,13 +101,26 @@ public sealed class SpawnCommandTests : IAsyncDisposable
         Assert.Equal(0, _targets.Requests);
     }
 
-    private async Task<CommandContext> RunAsync(params string[] arguments)
+    private Task<CommandContext> RunAsync(params string[] arguments)
+    {
+        return RunAsync(null, arguments);
+    }
+
+    [Fact]
+    public async Task ExecuteAsync_Texts_AreInTheServerLanguage()
+    {
+        var context = await RunAsync(TestLocalization.With((30022, "Modello di creatura sconosciuto: {0}")), "nothing");
+
+        Assert.Equal("Modello di creatura sconosciuto: nothing", Assert.Single(context.Output).Text);
+    }
+
+    private async Task<CommandContext> RunAsync(ILocalizationService? localization, params string[] arguments)
     {
         _fixture = await SessionFixture.CreateAsync();
         var session = new SessionService(_fixture.Loop).GetOrCreate(_fixture.Client);
         var context = new CommandContext(".spawn", "spawn", arguments, CommandSourceType.InGame, session);
 
-        await new SpawnCommand(_npcs, _templates, _targets).ExecuteAsync(context);
+        await new SpawnCommand(_npcs, _templates, _targets, localization).ExecuteAsync(context);
 
         return context;
     }

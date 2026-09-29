@@ -160,8 +160,11 @@ Numbers from 30000 are Moongate's, not UOX3's, all translated in every shipped l
 | 30000–30004 | Common, Uncommon, Rare, Epic, Legendary | Tooltip rarity |
 | 30005 | [Cursed] | Tooltip loot type |
 | 30006, 30007 | Weight: 1 stone, Weight: {0} stones | Tooltip weight |
+| 30008–30038 | Target canceled., Unknown command: {0}, Usage: {0}, The world has been saved in {0} seconds., ... | Command replies and broadcasts (`CommandMessages`) |
+| 30039–30049 | One per built-in command | Command descriptions in `help` |
 
-Tooltips also use UOX3's 9055 "[Blessed]". Polish and Czech write the plural weight
+Tooltips also use UOX3's 9055 "[Blessed]", and `.account` its 555 "An account by that
+name already exists!". Polish and Czech write the plural weight
 abbreviated ("kam."), since one text with `{0}` cannot follow their plural forms.
 
 ## Add or change a text

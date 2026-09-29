@@ -77,6 +77,13 @@ retain the typed command in its own local history.
 Plugins can add commands through `RegisterCommand<TExecutor>`; see
 [Writing a plugin](plugins.md#console-commands).
 
+Every text a command shows, its description in `help` and the dispatcher's replies
+(unknown command, not available here, not allowed, failed) come from the message files
+in the server language (`ILocalizationService`, ids 30008–30049; see
+[Localization](localization.md#moongates-own-messages)). Command syntax, account
+types, sources and map names stay technical names, as the commands take them. On a
+login-only process, which has no message files, the texts are English.
+
 ### Local API access provisioning
 
 ```text
@@ -114,11 +121,12 @@ save
 In game, administrators use `.save`. The command requests a save through the existing
 world save coordinator and waits for durable persistence to finish. A request made
 during another save joins that save rather than starting a competing operation.
-Each successful command broadcasts `world saved in <elapsed>` to connected characters
-currently in the world on this instance, across all maps. The console also prints
-the same completion message; an in-game caller receives it through the broadcast.
-The elapsed time measures the wait for saving, excluding broadcast delivery, and
-uses the .NET `TimeSpan` format (for example, `world saved in 00:00:01.2345678`).
+Each successful command broadcasts `The world has been saved in <seconds> seconds.`
+(message 30015, in the server language) to connected characters currently in the
+world on this instance, across all maps. The console also prints the same completion
+message; an in-game caller receives it through the broadcast. The elapsed time
+measures the wait for saving, excluding broadcast delivery, in seconds with two
+decimals (for example, `The world has been saved in 1.23 seconds.`).
 
 A failed save produces an error for the caller and no success broadcast. Extra
 arguments print usage without saving. Automatic and shutdown saves keep their
@@ -152,8 +160,9 @@ shutdown 60
 ```
 
 In-game administrators use `.shutdown` or `.shutdown 60`. With no argument or `0`,
-the server announces `Server is shutting down now.` and requests graceful shutdown.
-A positive number announces `Server will shut down in <seconds> seconds.` and
+the server announces `The server is shutting down now.` (message 30016) and requests
+graceful shutdown. A positive number announces `The server will shut down in <seconds>
+seconds.` (30017) and
 schedules the stop. The command returns without waiting for the countdown; console
 input and gameplay remain available until the deadline. The delay starts after
 the announcement is queued and is rounded up to the server timer resolution.
