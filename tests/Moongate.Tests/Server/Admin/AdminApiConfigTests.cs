@@ -1,23 +1,24 @@
 using Moongate.Core.Utils;
 using Moongate.Server.Admin.Data.Config;
-using Moongate.Server.Data.Config;
+using Moongate.Tests.TestSupport.Config;
 
 namespace Moongate.Tests.Server.Admin;
 
 public class AdminApiConfigTests
 {
     [Fact]
-    public void ServerConfig_AdminSection_BindsSnakeCaseAndValidates()
+    public void AdminSection_BindsSnakeCaseAndValidates()
     {
-        var config = TomlUtils.Deserialize<MoongateServerConfig>(
-            "[admin_api]\nenabled=true\nport=2591\nallow_insecure_loopback=true"
-        )!;
+        var config = TomlSections.Read<AdminApiConfig>(
+            "[admin_api]\nenabled=true\nport=2591\nallow_insecure_loopback=true",
+            "admin_api"
+        );
         config.Validate();
-        Assert.True(config.AdminApi.Enabled);
-        Assert.Equal(2591, config.AdminApi.Port);
-        var copy = TomlUtils.Deserialize<MoongateServerConfig>(TomlUtils.Serialize(config))!;
-        Assert.Equal(2591, copy.AdminApi.Port);
-        copy.AdminApi.Port = 0;
+        Assert.True(config.Enabled);
+        Assert.Equal(2591, config.Port);
+        var copy = TomlUtils.Deserialize<AdminApiConfig>(TomlUtils.Serialize(config))!;
+        Assert.Equal(2591, copy.Port);
+        copy.Port = 0;
         Assert.Throws<InvalidOperationException>(copy.Validate);
     }
 

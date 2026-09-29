@@ -3,6 +3,8 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Services.Sessions;
+using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.Items;
@@ -13,6 +15,8 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
+using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Ultima.Types;
 
@@ -29,6 +33,7 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
     private static readonly Serial Bran = new(0x00000003);
 
     private readonly ItemService _items = TestItems.Create();
+    private readonly MobileService _mobiles = new(new StubMovementService(), TestSectors.Create());
     private readonly StubPacketSendService _sender = new();
     private readonly FakeTileDataService _tiles = new FakeTileDataService()
                                                   .Item(BackpackGraphic, TileFlagType.Container, 0)
@@ -54,6 +59,112 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         _otherBackpack.Equip(Bran, LayerType.Backpack);
         _pouch.PutInContainer(_backpack.Id, new Point2D(90, 90));
         _items.Add([_backpack, _bag, _dagger, _coin, _otherBackpack, _pouch]);
+        _mobiles.EnterWorld(Mobile(Aria, "Aria", 401, new(1000, 1000, 0)));
+        _mobiles.EnterWorld(Mobile(Bran, "Bran", 400, new(1010, 1000, 0)));
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnPaperdollRequest_OpensItWithCanLift()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(new Serial(Aria.Value | 0x80000000));
+
+        var paperdoll = Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal((Aria, "Aria", false, true), (paperdoll.Mobile, paperdoll.Title, paperdoll.WarMode, paperdoll.CanLift));
+    }
+
+    [Fact]
+    public async Task Handle_TheOwnCharacter_OpensItsPaperdoll()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(Aria);
+
+        Assert.True(Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent)).CanLift);
+    }
+
+    [Fact]
+    public async Task Handle_AnotherPlayerInRange_OpensItsPaperdollWithoutCanLift()
+    {
+        await StartAsync(Aria);
+
+        await UseAsync(Bran);
+
+        var paperdoll = Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent));
+        Assert.Equal((Bran, "Bran", false), (paperdoll.Mobile, paperdoll.Title, paperdoll.CanLift));
+    }
+
+    [Fact]
+    public async Task Handle_AHumanNpcWithATitle_ShowsNameAndTitle()
+    {
+        var mage = Mobile(new(0x00000010), "Nystul", 400, new(1005, 1000, 0));
+        mage.Title = "the mage";
+        _mobiles.EnterWorld(mage);
+        await StartAsync(Aria);
+
+        await UseAsync(mage.Id);
+
+        Assert.Equal("Nystul, the mage", Assert.IsType<DisplayPaperdollPacket>(Assert.Single(_sender.Sent)).Title);
+    }
+
+    [Fact]
+    public async Task Handle_AMonster_DoesNotOpenAPaperdoll()
+    {
+        var orc = Mobile(new(0x00000011), "an orc", 17, new(1005, 1000, 0));
+        _mobiles.EnterWorld(orc);
+        await StartAsync(Aria);
+
+        await UseAsync(orc.Id);
+
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_ABodyNotInBodiesToml_DoesNotOpenAPaperdoll()
+    {
+        var ghost = Mobile(new(0x00000014), "a ghost", 970, new(1005, 1000, 0));
+        _mobiles.EnterWorld(ghost);
+        await StartAsync(Aria);
+
+        await UseAsync(ghost.Id);
+
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_APlayerOutOfViewRange_DoesNotOpenAPaperdoll()
+    {
+        var far = Mobile(new(0x00000012), "Far", 400, new(1019, 1000, 0));
+        _mobiles.EnterWorld(far);
+        await StartAsync(Aria);
+
+        await UseAsync(far.Id);
+
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_APlayerOnAnotherMap_DoesNotOpenAPaperdoll()
+    {
+        var other = Mobile(new(0x00000013), "Other", 400, new(1001, 1000, 0));
+        other.Map = MapType.Trammel;
+        _mobiles.EnterWorld(other);
+        await StartAsync(Aria);
+
+        await UseAsync(other.Id);
+
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_APaperdollRequestWithoutACharacter_IsIgnored()
+    {
+        await StartAsync(null);
+
+        await UseAsync(new Serial(Aria.Value | 0x80000000));
+
+        Assert.Empty(_sender.Sent);
     }
 
     [Fact]
@@ -188,9 +299,19 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
                 new ContainerContent { Name = "bag", Gump = 0x003D, Items = [BagGraphic] }
             )
         );
-        var handler = new UseRequestPacketHandler(_items, _tiles, layouts, _sender);
+        var bodies = new StubDataLoaderService().With(
+            new BodyContent { Body = new(400), Type = BodyType.Human },
+            new BodyContent { Body = new(401), Type = BodyType.Human },
+            new BodyContent { Body = new(17), Type = BodyType.Monster }
+        );
+        var handler = new UseRequestPacketHandler(_items, _mobiles, bodies, new WorldConfig(), _tiles, layouts, _sender);
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));
+    }
+
+    private static MobileEntity Mobile(Serial id, string name, int body, Point3D location)
+    {
+        return new() { Id = id, Name = name, Body = body, Map = MapType.Felucca, Location = location };
     }
 
     private static ItemEntity Item(uint serial, int graphic)

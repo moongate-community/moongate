@@ -1,6 +1,5 @@
 using DryIoc;
 using Moongate.Core.Directories;
-using Moongate.Core.Extensions.Container;
 using Moongate.Core.Serialization.Toml;
 using Moongate.Core.Utils;
 using Moongate.Network.Packets.General;
@@ -35,7 +34,6 @@ using Moongate.Server.Ultima.Data.Templates.StartingItems;
 using Moongate.Server.Ultima.Data.Titles;
 using Moongate.Server.Ultima.Data.Weather;
 using Moongate.Server.Ultima.Entities.Auth;
-using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Handlers.Characters;
 using Moongate.Server.Ultima.Handlers.General;
@@ -43,10 +41,10 @@ using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Server.Ultima.Handlers.Movement;
 using Moongate.Server.Ultima.Handlers.Targeting;
+using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
 using Moongate.Server.Ultima.Interfaces.Titles;
-using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Loaders;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Packets.Characters;
@@ -70,6 +68,8 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
     public void Register(Container container)
     {
+        container.AddUltimaConfig();
+
         var directoriesConfig = container.Resolve<DirectoriesConfig>();
 
         // Configuration files

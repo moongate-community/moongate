@@ -196,7 +196,9 @@ await ConsoleApp.RunAsync(
 
         Log.Logger = loggingConfiguration.CreateLogger();
 
-        var serverConfig = ConfigHelper.Load(Path.Combine(directoriesConfig["config"], "moongate.toml"));
+        var configPath = Path.Combine(directoriesConfig["config"], "moongate.toml");
+        var serverConfig = ConfigHelper.Load(configPath);
+        var configDocument = ConfigHelper.ReadDocument(configPath);
         Log.Information("Server mode: {ServerMode}", serverConfig.Mode);
         Log.Information("Client encryption: {Encryption}", serverConfig.Network.Encryption.GetDescription());
 
@@ -206,13 +208,8 @@ await ConsoleApp.RunAsync(
                     services.RegisterInstance(directoriesConfig);
                     services.RegisterInstance(serverArgs);
                     services.RegisterInstance(serverConfig);
+                    services.RegisterInstance(configDocument);
                     services.RegisterInstance(serverConfig.Diagnostics.ToOptions());
-                    services.RegisterInstance(serverConfig.Ultima.Localization);
-                    services.RegisterInstance(serverConfig.Ultima.LineOfSight);
-                    services.RegisterInstance(serverConfig.Ultima.World);
-                    services.RegisterInstance(serverConfig.Ultima.Items);
-                    services.RegisterInstance(serverConfig.Ultima.StartingItems);
-                    services.RegisterInstance(serverConfig.Ultima.Characters);
                     services.RegisterInstance(TimeProvider.System);
                     services.RegisterMoongatePersistence(
                             serverConfig.Persistence.ToOptions(

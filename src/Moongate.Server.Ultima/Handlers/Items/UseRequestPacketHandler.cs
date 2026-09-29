@@ -1,8 +1,13 @@
+using System.Collections.Frozen;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Ultima.Types;
@@ -11,8 +16,10 @@ using Serilog;
 namespace Moongate.Server.Ultima.Handlers.Items;
 
 /// <summary>
-///     Answers a double click (0x06) on a container the session's character carries, such as its backpack or a bag in
-///     it: the container's gump (0x24), then its items (0x3C). Anything else is not handled yet.
+///     Answers a double click (0x06). On a container the session's character carries, such as its backpack or a bag in
+///     it: the container's gump (0x24), then its items (0x3C). On a human-bodied mobile in view range, or on the
+///     character's own paperdoll button (the serial with its high bit set): the paperdoll (0x88), with lifting allowed
+///     only on the character's own. Anything else is not handled yet.
 /// </summary>
 /// <remarks>
 ///     A container is an item whose graphic has the tiledata Container flag; <see cref="IContainerLayoutService" />
@@ -20,20 +27,32 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 /// </remarks>
 public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
 {
+    // The client sets this bit on the serial when the player asks for their own paperdoll.
+    private const uint PaperdollRequestFlag = 0x80000000;
+
     private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
+    private readonly IMobileService _mobiles;
+    private readonly Lazy<FrozenDictionary<int, BodyType>> _bodies;
+    private readonly WorldConfig _world;
     private readonly ITileDataService _tiles;
     private readonly IContainerLayoutService _layouts;
     private readonly IPacketSendService _sender;
 
     public UseRequestPacketHandler(
         IItemService items,
+        IMobileService mobiles,
+        IDataLoaderService data,
+        WorldConfig world,
         ITileDataService tiles,
         IContainerLayoutService layouts,
         IPacketSendService sender
     )
     {
         _items = items;
+        _mobiles = mobiles;
+        _bodies = new(() => data.GetEntities<BodyContent>().ToFrozenDictionary(body => (int)body.Body.Value, body => body.Type));
+        _world = world;
         _tiles = tiles;
         _layouts = layouts;
         _sender = sender;
@@ -41,6 +60,20 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
 
     public void Handle(GameSession session, UseRequestPacket packet)
     {
+        if ((packet.Target.Value & PaperdollRequestFlag) != 0)
+        {
+            OpenOwnPaperdoll(session);
+
+            return;
+        }
+
+        if (session.CharacterId.IsValid && _mobiles.TryGet(packet.Target, out var mobile))
+        {
+            OpenPaperdoll(session, mobile);
+
+            return;
+        }
+
         if (!session.CharacterId.IsValid || !_items.TryGet(packet.Target, out var item))
         {
             _logger.Debug("Session {SessionId} used {Target}, which is not a live item", session.SessionId, packet.Target);
@@ -65,5 +98,42 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
         var gump = _layouts.GetLayout(item.ItemId).Gump;
         _sender.TrySend(session.SessionId, new DisplayContainerPacket(item.Id, gump, session.UsesHighSeasContainers()));
         _sender.TrySend(session.SessionId, new ContainerContentPacket(_items.GetContents(item.Id), session.UsesContainerGrid()));
+    }
+
+    private void OpenOwnPaperdoll(GameSession session)
+    {
+        if (session.CharacterId.IsValid && _mobiles.TryGet(session.CharacterId, out var character))
+        {
+            OpenPaperdoll(session, character);
+        }
+    }
+
+    // As ModernUO: only human bodies have a paperdoll, and only a mobile the character can see opens it.
+    private void OpenPaperdoll(GameSession session, MobileEntity mobile)
+    {
+        var own = mobile.Id == session.CharacterId;
+
+        if (!own)
+        {
+            if (!_mobiles.TryGet(session.CharacterId, out var character) ||
+                character.Map != mobile.Map ||
+                Math.Abs(character.Location.X - mobile.Location.X) > _world.ViewRange ||
+                Math.Abs(character.Location.Y - mobile.Location.Y) > _world.ViewRange)
+            {
+                _logger.Debug("Session {SessionId} asked for the paperdoll of {Mobile}, out of view", session.SessionId, mobile.Id);
+
+                return;
+            }
+        }
+
+        if (!_bodies.Value.TryGetValue(mobile.Body, out var type) || type != BodyType.Human)
+        {
+            _logger.Debug("Session {SessionId} asked for the paperdoll of {Mobile}, which has no human body", session.SessionId, mobile.Id);
+
+            return;
+        }
+
+        var title = string.IsNullOrEmpty(mobile.Title) ? mobile.Name : $"{mobile.Name}, {mobile.Title}";
+        _sender.TrySend(session.SessionId, new DisplayPaperdollPacket(mobile.Id, title, false, own));
     }
 }

@@ -298,94 +298,30 @@ public sealed class ConfigHelperTests
     }
 
     [Fact]
-    public void Load_UltimaSubTables_ReadsTheGameplaySettings()
+    public void Load_APluginSection_DoesNotBreakTheServerConfig()
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile(
-            "moongate.toml",
-            """
-            [ultima]
-            ultima_path = "/uo"
+        var path = directory.CreateFile("moongate.toml", "[network]\ngame_port = 4001\n\n[some_plugin]\nanswer = 42\n");
 
-            [ultima.localization]
-            language = "ita"
+        var config = ConfigHelper.Load(path);
 
-            [ultima.line_of_sight]
-            max_distance = 20
-
-            [ultima.world]
-            view_range = 12
-
-            [ultima.items]
-            backpack_template = "pack"
-            gold_template = "coin"
-
-            [ultima.starting_items]
-            best_skills = 2
-
-            [ultima.characters]
-            max_per_account = 5
-            deletion_delay_hours = 48
-            """
-        );
-
-        var ultima = ConfigHelper.Load(path).Ultima;
-
-        Assert.Equal("/uo", ultima.UltimaPath);
-        Assert.Equal("ita", ultima.Localization.Language);
-        Assert.Equal(20, ultima.LineOfSight.MaxDistance);
-        Assert.Equal(12, ultima.World.ViewRange);
-        Assert.Equal(("pack", "coin"), (ultima.Items.BackpackTemplate, ultima.Items.GoldTemplate));
-        Assert.Equal(2, ultima.StartingItems.BestSkills);
-        Assert.Equal((5, 48), (ultima.Characters.MaxPerAccount, ultima.Characters.DeletionDelayHours));
-    }
-
-    [Theory,
-     InlineData("localization"),
-     InlineData("line_of_sight"),
-     InlineData("world"),
-     InlineData("items"),
-     InlineData("starting_items"),
-     InlineData("characters")]
-    public void Load_ATopLevelSectionThatMovedUnderUltima_StopsAndSaysWhere(string section)
-    {
-        using var directory = new TemporaryDirectory();
-        var toml = $"[{section}]\n";
-        var path = directory.CreateFile("moongate.toml", toml);
-
-        var exception = Assert.Throws<InvalidOperationException>(() => ConfigHelper.Load(path));
-
-        Assert.Contains($"[{section}]", exception.Message);
-        Assert.Contains($"[ultima.{section}]", exception.Message);
-        Assert.Equal(toml, File.ReadAllText(path));
+        Assert.Equal(4001, config.Network.GamePort);
     }
 
     [Fact]
-    public void Load_StartingGoldInTheConfig_StopsAndPointsToTheStartingItemsFile()
+    public void ReadDocument_ReservesTheServerSectionsAndKeepsThePluginOnes()
     {
         using var directory = new TemporaryDirectory();
-        var path = directory.CreateFile("moongate.toml", "[ultima.starting_items]\ngold = 500\n");
+        var path = directory.CreateFile("moongate.toml", "[some_plugin]\nanswer = 42\n");
 
-        var exception = Assert.Throws<InvalidOperationException>(() => ConfigHelper.Load(path));
+        var document = ConfigHelper.ReadDocument(path);
 
-        Assert.Contains("starting_items.toml", exception.Message);
-    }
-
-    [Fact]
-    public void Load_MissingFile_WritesTheGameplaySettingsUnderUltima()
-    {
-        using var directory = new TemporaryDirectory();
-        var path = Path.Combine(directory.Path, "moongate.toml");
-
-        ConfigHelper.Load(path);
-
-        var document = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(path))!;
-        var ultima = Assert.IsType<TomlTable>(document["ultima"]);
-        Assert.Equal(18L, Assert.IsType<TomlTable>(ultima["world"])["view_range"]);
-        Assert.Equal(7L, Assert.IsType<TomlTable>(ultima["characters"])["max_per_account"]);
-        Assert.False(Assert.IsType<TomlTable>(ultima["starting_items"]).ContainsKey("gold"));
-        Assert.False(document.ContainsKey("world"));
-        Assert.False(document.ContainsKey("characters"));
+        Assert.Equal(path, document.FilePath);
+        Assert.Equal(42L, Assert.IsType<TomlTable>(document.Table["some_plugin"])["answer"]);
+        Assert.False(document.TryReserve("network"));
+        Assert.False(document.TryReserve("world_save"));
+        Assert.False(document.TryReserve("mode"));
+        Assert.True(document.TryReserve("some_plugin"));
     }
 
     [Fact]

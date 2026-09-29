@@ -1,5 +1,5 @@
-using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Services.Sessions;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Handlers.General;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;

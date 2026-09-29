@@ -1,6 +1,6 @@
 using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
-using Moongate.Server.Core.Data.Config;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
