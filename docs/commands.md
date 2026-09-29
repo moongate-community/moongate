@@ -10,6 +10,7 @@ minimum account level. The console is treated as an administrator; in-game
 commands use the invoking session's account level. Command input and ordinary
 command output stay private to the caller. `broadcast` explicitly sends a system
 message to everyone in the local world, and a successful `save` announces completion.
+`shutdown` also announces the requested server stop to players.
 Use `..text` to say `.text` literally.
 
 | Command | Console | In-game registration | Minimum in-game level | Purpose |
@@ -21,6 +22,7 @@ Use `..text` to say `.text` literally.
 | `character` | Game/Standalone | Yes | GameMaster | List characters pending deletion and restore them |
 | `save` | Game/Standalone | Yes | Administrator | Save the world and announce completion |
 | `broadcast` | Game/Standalone | Yes | Administrator | Send a system message to players on this instance |
+| `shutdown` | Game/Standalone | Yes | Administrator | Stop the server gracefully, immediately or after a delay |
 
 ## Help
 
@@ -141,3 +143,28 @@ queues accepted the message; this is not a client receipt acknowledgment. In-gam
 input retains the existing 128-character speech limit, including the dot and command.
 Console messages must fit both the Unicode speech packet and the compressed transport
 limit. Oversized messages are rejected before any player receives them.
+
+## Shutdown
+
+```text
+shutdown
+shutdown 60
+```
+
+In-game administrators use `.shutdown` or `.shutdown 60`. With no argument or `0`,
+the server announces `Server is shutting down now.` and requests graceful shutdown.
+A positive number announces `Server will shut down in <seconds> seconds.` and
+schedules the stop. The command returns without waiting for the countdown; console
+input and gameplay remain available until the deadline. The delay starts after
+the announcement is queued and is rounded up to the server timer resolution.
+
+The server accepts one shutdown request. Further requests report an error without
+changing the deadline or repeating the announcement. Seconds must be a whole number
+from `0` to `2147483647`; negative, fractional, overflowing and extra arguments are
+rejected. A scheduled shutdown survives the invoking player disconnecting.
+
+The command stops this process, including both roles in Standalone mode. It uses the
+same ordered cleanup as the host shutdown path: services stop, the final world save
+completes, and persistence is disposed. It does not force-kill the process. Other
+instances are unaffected. A manual host stop during the delay takes precedence and
+the timer is discarded with the game loop. There is no cancel or restart subcommand.

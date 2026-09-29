@@ -7,6 +7,8 @@ using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Types.Commands;
 using Moongate.Server.Core.Types.Hosting;
+using Moongate.Server.Services.Hosting;
+using Moongate.Server.Services.Timing;
 using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.General;
@@ -22,8 +24,10 @@ public sealed class MoongateUltimaPluginWorldCommandsTests
     [Theory]
     [InlineData(ServerMode.Game, "save")]
     [InlineData(ServerMode.Game, "broadcast")]
+    [InlineData(ServerMode.Game, "shutdown")]
     [InlineData(ServerMode.Standalone, "save")]
     [InlineData(ServerMode.Standalone, "broadcast")]
+    [InlineData(ServerMode.Standalone, "shutdown")]
     public async Task Register_WorldCommandsResolveAndRequireAdministratorFromConsoleOrGame(ServerMode mode, string name)
     {
         using var root = new TemporaryDirectory();
@@ -44,13 +48,16 @@ public sealed class MoongateUltimaPluginWorldCommandsTests
         var saves = new ControlledWorldSaveService();
         saves.Completion.SetResult();
         container.RegisterInstance<IWorldSaveService>(saves);
+        var shutdown = new ServerShutdownService();
+        container.RegisterInstance<IServerShutdownService>(shutdown);
+        container.RegisterInstance<ITimerService>(new TimerWheelService(new(), TimeProvider.System));
         container.RegisterInstance<IGameLoopService>(fixture.Network.Loop);
         container.RegisterInstance<ISessionService>(fixture.Sessions);
         container.RegisterInstance<IPacketSendService>(fixture.Sender);
         container.RegisterInstance<IMobileService>(fixture.Mobiles, ifAlreadyRegistered: IfAlreadyRegistered.Replace);
-        var context = name == "save"
-            ? new CommandContext("save", "save", [], CommandSourceType.Console, null)
-            : new CommandContext("broadcast Maintenance soon", "broadcast", ["Maintenance", "soon"], CommandSourceType.Console, null);
+        var context = name == "broadcast"
+            ? new CommandContext("broadcast Maintenance soon", name, ["Maintenance", "soon"], CommandSourceType.Console, null)
+            : new CommandContext(name, name, [], CommandSourceType.Console, null);
 
         await registration.Bind(container)(context);
 
@@ -58,6 +65,11 @@ public sealed class MoongateUltimaPluginWorldCommandsTests
         if (name == "save")
         {
             Assert.StartsWith("world saved in ", packet.Text);
+        }
+        else if (name == "shutdown")
+        {
+            Assert.Equal("Server is shutting down now.", packet.Text);
+            Assert.True(shutdown.Requested.IsCompletedSuccessfully);
         }
         else
         {
@@ -80,6 +92,7 @@ public sealed class MoongateUltimaPluginWorldCommandsTests
         var registrations = container.Resolve<CommandRegistry>().Registrations;
         Assert.False(registrations.ContainsKey("save"));
         Assert.False(registrations.ContainsKey("broadcast"));
+        Assert.False(registrations.ContainsKey("shutdown"));
         Assert.False(container.IsRegistered<IBroadcastService>());
     }
 }

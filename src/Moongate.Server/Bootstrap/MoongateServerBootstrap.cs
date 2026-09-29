@@ -6,6 +6,7 @@ using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Bootstrap;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
+using Moongate.Server.Services.Hosting;
 using Serilog;
 
 namespace Moongate.Server.Bootstrap;
@@ -27,6 +28,7 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
         _container = container;
         _cancellationToken = cancellationToken;
         _container.RegisterMoongateEventBus();
+        _container.Register<IServerShutdownService, ServerShutdownService>(Reuse.Singleton, ifAlreadyRegistered: IfAlreadyRegistered.Keep);
         _eventBus = new(() => _container.Resolve<IMoongateEventBus>());
         _services = new(container);
     }
@@ -62,23 +64,25 @@ public class MoongateServerBootstrap : IMoongateServerBootstrap
             shutdownRequested
         );
 
+        var requested = Task.WhenAny(shutdownRequested.Task, _container.Resolve<IServerShutdownService>().Requested);
+
         if (_gameLoopCompletion is null)
         {
-            await shutdownRequested.Task;
+            await requested.ConfigureAwait(false);
         }
         else
         {
-            await Task.WhenAny(_gameLoopCompletion, shutdownRequested.Task);
+            await Task.WhenAny(_gameLoopCompletion, requested).ConfigureAwait(false);
 
             if (_gameLoopCompletion.IsCompleted)
             {
-                await _gameLoopCompletion;
+                await _gameLoopCompletion.ConfigureAwait(false);
 
                 return;
             }
         }
 
-        _logger.Debug("Moongate Server is shutting down due to cancellation request.");
+        _logger.Debug("Moongate Server shutdown requested.");
     }
 
     public Task StartAsync()
