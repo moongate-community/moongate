@@ -1,8 +1,8 @@
-using System.Text.RegularExpressions;
 using Moongate.Core.Primitives;
 using Moongate.Core.Utils;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Data.Templates.Mobiles;
@@ -15,7 +15,7 @@ namespace Moongate.Server.Ultima.Data.Templates.Mobiles;
 ///     . Every field but <see cref="Id" /> may be unset: it is then inherited through
 ///     <see cref="BaseId" />, and with none anywhere the stated default applies.
 /// </summary>
-public partial class MobileTemplate
+public class MobileTemplate
 {
     /// <summary>
     ///     The stable id a spawn, a loot table or the <c>addnpc</c> command names this template by.
@@ -247,14 +247,11 @@ public partial class MobileTemplate
             throw Invalid("tags", "must not have an empty key");
         }
 
-        if (ScriptId is not null && !ScriptIdPattern().IsMatch(ScriptId))
+        if (ScriptId is not null && !ScriptIdUtils.IsValid(ScriptId))
         {
-            throw Invalid("script_id", "must be a Lua identifier of lower-case letters, digits and underscores");
+            throw Invalid("script_id", ScriptIdUtils.Rule);
         }
     }
-
-    [GeneratedRegex(@"^[a-z_][a-z0-9_]*\z")]
-    private static partial Regex ScriptIdPattern();
 
     private InvalidDataException Invalid(string field, string rule)
     {

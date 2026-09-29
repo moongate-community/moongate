@@ -1,6 +1,7 @@
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Types.Templates;
+using Moongate.Server.Ultima.Utils;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Data.Templates.Items;
@@ -61,8 +62,8 @@ public class ItemTemplate
         EnumValueSpec<ItemRarityType>.FromValue(ItemRarityType.Common);
 
     /// <summary>
-    ///     Reserved Lua module identifier, stored and inherited with the template.
-    ///     The engine does not dispatch template hooks such as on_use or on_equip yet.
+    ///     The global Lua table, defined by <c>scripts/items/&lt;script_id&gt;.lua</c>, whose functions handle the item's
+    ///     events, such as <c>on_use</c>. A lower-case Lua identifier; empty: no script.
     /// </summary>
     public string ScriptId { get; set; }
 
@@ -189,6 +190,11 @@ public class ItemTemplate
         if (Tags is not null && Tags.Keys.Any(string.IsNullOrWhiteSpace))
         {
             throw Invalid("tags", "must not have an empty key");
+        }
+
+        if (!string.IsNullOrEmpty(ScriptId) && !ScriptIdUtils.IsValid(ScriptId))
+        {
+            throw Invalid("script_id", ScriptIdUtils.Rule);
         }
     }
 
