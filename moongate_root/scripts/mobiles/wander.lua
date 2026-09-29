@@ -1,5 +1,18 @@
--- A mobile script: a template uses it with script_id = "wander".
--- The NPC wanders around while a player is near and answers a greeting.
+-- ==============================================================================
+-- Moongate - scripts/mobiles/wander.lua
+--
+-- What it is for:
+--   A mobile script: the NPC wanders around while a player is near and answers
+--   a greeting. A mobile template uses it with script_id = "wander"; the file is
+--   named after its script_id and defines the global table of the same name.
+--
+-- Functions:
+--   on_think(serial)                 every think of an NPC near a player
+--                                    (ultima.npcs.think_interval_ms); must not
+--                                    call wait()
+--   on_speech(serial, speaker, text) a player says text within 15 cells; may
+--                                    call wait()
+-- ==============================================================================
 
 wander = {}
 
