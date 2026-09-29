@@ -1,8 +1,6 @@
-using Moongate.Core.Types.Expansions;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Network.Packets.Outgoing.Login;
 using Moongate.Network.Packets.Types.Login;
-using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Core.Interfaces.Packets;
@@ -11,7 +9,7 @@ using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Sessions;
 using Moongate.Server.Ultima.Characters;
 using Moongate.Server.Ultima.Data.Cities;
-using Moongate.Server.Ultima.Data.Maps;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Interfaces.Loaders;

@@ -1,6 +1,4 @@
 using DryIoc;
-using Moongate.Tests.TestSupport.Config;
-using Moongate.Server.Ultima.Data.Config;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.Incoming.Login;
 using Moongate.Persistence.Extensions;
@@ -16,14 +14,16 @@ using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Network;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
-using Moongate.Server.Ultima.Interfaces.Loaders;
-using Moongate.Server.Ultima.Interfaces;
-using Moongate.Server.Ultima.Packets.Characters;
 using Moongate.Server.Ultima;
-using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Motd;
+using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces.Motd;
+using Moongate.Server.Ultima.Packets.Characters;
+using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Services.Motd;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Directories;
 
 using Moongate.Server.Ultima.Packets.General;

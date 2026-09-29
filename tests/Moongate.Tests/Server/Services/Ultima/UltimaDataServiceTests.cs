@@ -1,5 +1,5 @@
-using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Services.Ultima;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Tests.TestSupport.Directories;
 using Moongate.Tests.TestSupport.Ultima.Files;
 

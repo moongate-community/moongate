@@ -11,9 +11,9 @@ using Moongate.Server.Ultima;
 using Moongate.Server.Ultima.Commands;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Types;
+using Moongate.Tests.TestSupport.Config;
 using Moongate.Tests.TestSupport.Persistence;
 using Moongate.Tests.TestSupport.Server.Ultima;
-using Moongate.Tests.TestSupport.Config;
 
 namespace Moongate.Tests.Server.Ultima.Commands;
 

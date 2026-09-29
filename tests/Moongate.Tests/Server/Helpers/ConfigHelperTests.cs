@@ -308,6 +308,24 @@ public sealed class ConfigHelperTests
         Assert.Equal(4001, config.Network.GamePort);
     }
 
+    [Theory,
+     InlineData("localization"),
+     InlineData("line_of_sight"),
+     InlineData("world"),
+     InlineData("items"),
+     InlineData("starting_items"),
+     InlineData("characters")]
+    public void ReadDocument_ReservesTheSectionsThatMovedUnderUltima(string section)
+    {
+        using var directory = new TemporaryDirectory();
+        var path = directory.CreateFile("moongate.toml", "");
+
+        var document = ConfigHelper.ReadDocument(path);
+
+        // A plugin taking one of these would be refused at the next start as a section that moved.
+        Assert.False(document.TryReserve(section));
+    }
+
     [Fact]
     public void ReadDocument_ReservesTheServerSectionsAndKeepsThePluginOnes()
     {

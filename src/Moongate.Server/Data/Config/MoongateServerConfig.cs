@@ -1,4 +1,3 @@
-using Moongate.Server.Core.Data.Config;
 using Moongate.Server.Core.Types.Hosting;
 using Moongate.Server.Data.Config.Sections;
 

@@ -12,6 +12,10 @@ namespace Moongate.Server.Helpers;
 /// </summary>
 public static class ConfigHelper
 {
+    // Old top-level names of the [ultima] sub-tables: the Ultima plugin refuses them, so no plugin may take them.
+    private static readonly string[] RetiredSections =
+        ["localization", "line_of_sight", "world", "items", "starting_items", "characters"];
+
     /// <summary>
     ///     Reads an existing TOML file or creates it, including any missing parent directories.
     /// </summary>
@@ -41,7 +45,8 @@ public static class ConfigHelper
     }
 
     /// <summary>
-    ///     Parses the configuration file for the plugins, reserving the sections of <see cref="MoongateServerConfig" />.
+    ///     Parses the configuration file for the plugins, reserving the sections of <see cref="MoongateServerConfig" />
+    ///     and the old top-level names of the <c>[ultima]</c> sub-tables.
     /// </summary>
     /// <remarks>
     ///     Call it after <see cref="Load" />, which creates a missing file.
@@ -52,7 +57,8 @@ public static class ConfigHelper
 
         var table = TomlSerializer.Deserialize<TomlTable>(File.ReadAllText(filePath)) ?? new TomlTable();
         var sections = typeof(MoongateServerConfig).GetProperties()
-                                                   .Select(property => JsonNamingPolicy.SnakeCaseLower.ConvertName(property.Name));
+                                                   .Select(property => JsonNamingPolicy.SnakeCaseLower.ConvertName(property.Name))
+                                                   .Concat(RetiredSections);
 
         return new(filePath, table, sections);
     }

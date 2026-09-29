@@ -1,6 +1,5 @@
 using System.Net;
 using Moongate.Network.Packets.Outgoing.Login;
-using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Accounts;
@@ -8,6 +7,7 @@ using Moongate.Server.Services.Login;
 using Moongate.Server.Services.Realms;
 using Moongate.Server.Services.Redis;
 using Moongate.Server.Services.Sessions;
+using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Handlers.Login;
 using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Containers;
