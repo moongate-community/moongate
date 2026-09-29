@@ -47,44 +47,8 @@ public sealed class NpcScriptService : INpcScriptService, INpcThinker, IMoongate
 
     public async Task StartAsync()
     {
-        var directory = Path.Combine(_options.ScriptsDirectory, MobilesDirectory);
-
-        if (!Directory.Exists(directory))
-        {
-            _logger.Debug("No mobile scripts: {Directory} does not exist", directory);
-            _running = true;
-
-            return;
-        }
-
-        var files = Directory.GetFiles(directory, "*.lua", SearchOption.TopDirectoryOnly)
-                             .Select(Path.GetFileName)
-                             .Order(StringComparer.Ordinal)
-                             .ToList();
-        var work = new LoopActionWorkItem(() =>
-            {
-                foreach (var file in files)
-                {
-                    try
-                    {
-                        _engine.LoadFile($"{MobilesDirectory}/{file}");
-                    }
-                    catch (FileNotFoundException exception)
-                    {
-                        _logger.Warning(exception, "Mobile script {File} disappeared before it was loaded", file);
-                    }
-                    catch (InvalidOperationException)
-                    {
-                        // The engine has reported the broken script; the server starts with the others.
-                    }
-                }
-            }
-        );
-
-        await _loop.PostAsync(work);
-        await work.Completion;
+        await ScriptDirectoryLoader.LoadAsync(_engine, _loop, _options.ScriptsDirectory, MobilesDirectory, _logger);
         _running = true;
-        _logger.Information("Loaded {Count} mobile scripts", files.Count);
     }
 
     public Task StopAsync()
