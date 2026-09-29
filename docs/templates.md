@@ -2,7 +2,8 @@
 
 Shard content that a designer authors by hand, such as item and mobile definitions,
 is a set of TOML files under `templates/` in the server root, read once when the
-shard starts. This page covers the loader contract in `Moongate.Server.Ultima` and
+shard starts. The distribution's templates are copied there by
+[`mgboot`](mgboot.md). This page covers the loader contract in `Moongate.Server.Ultima` and
 the TOML value types in `Moongate.Core` that make templates pleasant to write by
 hand; [TOML value types](toml-types.md) is the reference for their text forms. It
 assumes [writing a plugin](plugins.md), since a loader is registered from `Register`

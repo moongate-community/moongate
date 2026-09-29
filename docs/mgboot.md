@@ -102,7 +102,10 @@ Data files, templates and scripts are copied only when missing, so a file you ed
 stays as it is. Run `mgboot` again after upgrading to add the files a new release
 introduces; a file that exists in the root is never replaced, so compare it with the
 one beside the new `Moongate.Server` binary (`data/`, `templates/`, `scripts/`) to pick
-up upstream changes.
+up upstream changes. Nothing is removed either: a template a release renamed or moved
+stays in the root beside its new copy, and the server stops at startup on the
+duplicate id, so delete the stale file. A shipped file you deleted comes back on the
+next run; empty it instead to keep it out.
 
 Base migration preparation copies the versioned SQL distributed with Moongate.
 It does not generate new SQL from entities, load plugins, create databases or apply

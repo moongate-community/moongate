@@ -116,8 +116,15 @@ internal static class RootDirectoryInitializer
 
         // Copy only missing files, so data, templates and scripts the operator edited survive a later run.
         CopyMissing(dataFiles, dataDirectory, Path.Combine(root, "data"), output);
-        CopyMissing(ShippedFiles(templatesDirectory), templatesDirectory, Path.Combine(root, "templates"), output);
-        CopyMissing(ShippedFiles(scriptsDirectory), scriptsDirectory, Path.Combine(root, "scripts"), output);
+
+        foreach (var (shipped, name) in new[] { (templatesDirectory, "templates"), (scriptsDirectory, "scripts") })
+        {
+            if (shipped is not null && Directory.Exists(shipped))
+            {
+                var files = Directory.GetFiles(shipped, "*", SearchOption.AllDirectories);
+                CopyMissing(files, shipped, Path.Combine(root, name), output);
+            }
+        }
 
         if (adminCertificateHosts is not null)
         {
@@ -131,18 +138,11 @@ internal static class RootDirectoryInitializer
         output.WriteLine("No database connection or server startup was performed.");
     }
 
-    private static string[] ShippedFiles(string? directory)
-    {
-        return directory is not null && Directory.Exists(directory)
-                   ? Directory.GetFiles(directory, "*", SearchOption.AllDirectories)
-                   : [];
-    }
-
-    private static void CopyMissing(string[] files, string? sourceDirectory, string destination, TextWriter output)
+    private static void CopyMissing(string[] files, string sourceDirectory, string destination, TextWriter output)
     {
         foreach (var file in files.Order(StringComparer.Ordinal))
         {
-            var path = Path.Combine(destination, Path.GetRelativePath(sourceDirectory!, file));
+            var path = Path.Combine(destination, Path.GetRelativePath(sourceDirectory, file));
             Directory.CreateDirectory(Path.GetDirectoryName(path)!);
             CreateIfMissing(path, File.ReadAllBytes(file), output);
         }
