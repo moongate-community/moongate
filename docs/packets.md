@@ -236,7 +236,8 @@ packets have metadata but no incoming parser.
 
 The character list flags (`0xA9`) include AOS (`0x20`), so the client uses AOS tooltips
 (object property lists) and asks for them with `0xD6` (a list of serials, at most 500; a
-length that is not whole serials is refused) or `0xBF` subcommand `0x10` (one serial). The
+length that is not whole serials, or more serials, cannot be read and closes the connection, as
+any unreadable packet) or `0xBF` subcommand `0x10` (one serial). The
 server answers one `0xD6` per object the character can see: an item it carries or wears, an
 item worn by a mobile or lying on the ground within `ultima.world.view_range`, or a mobile in
 that range on its map; anything else gets nothing. `ITooltipService` builds the lines, as
@@ -253,10 +254,12 @@ ModernUO and UOX3:
 Free text goes through the clilocs whose whole text is `~1_NOTHING~` (1042971, 1070722, ...),
 one per line; an argument is cut at 504 characters, which older clients cannot exceed. The
 tooltip's revision is a 26-bit hash of its lines, as ModernUO: `0xD6` carries it, and `0xDC`
-carries it with bit 30 set. Every `0x78` is followed by the `0xDC` of the mobile and of each
-worn item, every ground item shown (`0x1A`/`0xF3`) and every `0x2E` by the item's, and a drop
-that merges or places an item, or a bounce into a container, sends the item's `0xDC`: the
-client asks again when a revision changes. Nothing is cached: a tooltip is built when it is
+carries it with bit 30 set. As ModernUO, what is shown is followed by its `0xDC`: a
+mobile coming into view (`0x78`) with each of its worn items, a ground item (`0x1A`/`0xF3`), an
+item put on (`0x2E`), each item of an opened container (`0x3C`), and a container item updated
+(`0x25`) after a split, a merge, a placement or a bounce; the client asks again when a revision
+changes. The character's own `0x78` at world entry is not followed yet: the client asks for
+tooltips it does not have when the cursor is over them. Nothing is cached: a tooltip is built when it is
 asked or its revision is sent. A single click (`0x09`) shows the first line, the name, over the
 object with `0xC1`.
 

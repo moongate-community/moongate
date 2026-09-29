@@ -54,7 +54,7 @@ public sealed class LocalizedMessagePacket : BasePacket<LocalizedMessagePacket>,
         writer.WriteUInt16BigEndian(LabelHue);
         writer.WriteUInt16BigEndian(LabelFont);
         writer.WriteUInt32BigEndian((uint)Cliloc);
-        writer.WriteFixedAscii(new string(Name.Select(c => char.IsAscii(c) ? c : '?').ToArray()), NameLength);
+        writer.WriteFixedAscii(new string(Name.Select(c => c is > '\0' and <= '\x7F' ? c : '?').ToArray()), NameLength);
         writer.WriteBytes(Encoding.Unicode.GetBytes(Arguments));
         writer.WriteUInt16BigEndian(0);
     }

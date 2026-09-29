@@ -16,6 +16,7 @@ using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
+using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
 
@@ -31,7 +32,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
     private readonly ItemService _items;
     private readonly MobileService _mobiles;
     private readonly ItemEntity _groundGold = Item(0x40000007, 100);
-    private readonly StubPacketSendService _sender = new();
+    private readonly StubPacketSendService _sender = new StubPacketSendService().Ignore<PropertyListInfoPacket>();
     private readonly ItemEntity _backpack = Item(0x40000001, 1);
     private readonly ItemEntity _coins = Item(0x40000002, 250);
     private readonly ItemEntity _dagger = Item(0x40000003, 1);
@@ -222,6 +223,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
         Assert.Equal((220, _backpack.Id, new Point2D(44, 65)), (rest.Amount, rest.ContainerId!.Value, rest.GridLocation!.Value));
         var update = Assert.IsType<ContainerItemUpdatePacket>(Assert.Single(_sender.Sent));
         Assert.Equal((rest.Id, 220), (update.Item.Serial, update.Item.Amount));
+        Assert.Equal(rest.Id, Assert.IsType<PropertyListInfoPacket>(Assert.Single(_sender.Ignored)).Serial);
     }
 
     [Fact]
@@ -322,7 +324,7 @@ public sealed class LiftRequestPacketHandlerTests : IAsyncDisposable
 
     private Task LiftAsync(Serial item, int amount)
     {
-        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender);
+        var handler = new LiftRequestPacketHandler(_items, _mobiles, _view, _pool, _tiles, _sender, TestTooltips.Create(_items, _mobiles));
 
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new LiftRequestPacket { Item = item, Amount = amount }));
     }

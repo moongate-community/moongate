@@ -31,6 +31,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
     private readonly IItemSerialPool _serials;
     private readonly ITileDataService _tiles;
     private readonly IPacketSendService _sender;
+    private readonly ITooltipService _tooltips;
 
     public LiftRequestPacketHandler(
         IItemService items,
@@ -38,9 +39,11 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
         IWorldViewService view,
         IItemSerialPool serials,
         ITileDataService tiles,
-        IPacketSendService sender
+        IPacketSendService sender,
+        ITooltipService tooltips
     )
     {
+        _tooltips = tooltips;
         _items = items;
         _mobiles = mobiles;
         _view = view;
@@ -102,6 +105,7 @@ public sealed class LiftRequestPacketHandler : IPacketHandler<LiftRequestPacket>
             else
             {
                 _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(rest, session.UsesContainerGrid()));
+                _sender.TrySend(session.SessionId, _tooltips.Info(rest));
             }
         }
 

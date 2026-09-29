@@ -32,6 +32,8 @@ public sealed class TooltipService : ITooltipService
     private const int StonesCliloc = 1072789; // Weight: ~1_WEIGHT~ stones
     private const int MobileNameCliloc = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 
+    private const byte CannotLiftWeight = 255;
+
     // messages/*.toml: 30000 + rarity.
     private const int RarityMessageBase = 30000;
 
@@ -106,7 +108,7 @@ public sealed class TooltipService : ITooltipService
 
         var list = new PropertyList();
         _templates.TryGet(item.TemplateId, out var template);
-        AddName(list, item, item.Name ?? template?.Name);
+        AddName(list, item, Argument(item.Name ?? template?.Name));
 
         var lootType = item.TryGetProp<LootType>(ItemPropKeys.LootType, out var own)
                            ? own
@@ -121,12 +123,18 @@ public sealed class TooltipService : ITooltipService
             list.Add(CursedCliloc);
         }
 
-        var weight = (int)Math.Round((template?.EffectiveWeight(_tiles) ?? TiledataWeight(item)) * item.Amount);
-        list.Add(weight == 1 ? OneStoneCliloc : StonesCliloc, weight.ToString());
+        // As ModernUO: rounded up (a feather weighs a stone), and not shown for what cannot be picked up.
+        if (item.Movable ?? template?.EffectiveMovable(_tiles) ?? TiledataWeight(item) < CannotLiftWeight)
+        {
+            var weight = (int)Math.Ceiling((template?.EffectiveWeight(_tiles) ?? TiledataWeight(item)) * item.Amount);
+            list.Add(weight == 1 ? OneStoneCliloc : StonesCliloc, weight.ToString());
+        }
 
         if (item.Rarity != ItemRarityType.Common)
         {
-            list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{_localization.Get(RarityMessageBase + (int)item.Rarity)}</BASEFONT>");
+            // A message file without the text shows the English name rather than failing the whole broadcast.
+            var rarity = _localization.TryGetText(RarityMessageBase + (int)item.Rarity, out var text) ? text : item.Rarity.ToString();
+            list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{rarity}</BASEFONT>");
         }
 
         return list;
@@ -138,7 +146,8 @@ public sealed class TooltipService : ITooltipService
 
         // The client needs a single space for an empty prefix or suffix.
         var list = new PropertyList();
-        list.Add(MobileNameCliloc, $" \t{mobile.Name}\t{(string.IsNullOrEmpty(mobile.Title) ? " " : " " + mobile.Title)}");
+        var title = Argument(mobile.Title);
+        list.Add(MobileNameCliloc, $" \t{Argument(mobile.Name) ?? " "}\t{(string.IsNullOrEmpty(title) ? " " : " " + title)}");
 
         return list;
     }
@@ -180,6 +189,12 @@ public sealed class TooltipService : ITooltipService
         {
             list.Add(NameCliloc(item));
         }
+    }
+
+    // A tab would split the text into another cliloc argument.
+    private static string? Argument(string? text)
+    {
+        return text?.Replace('\t', ' ');
     }
 
     private static int NameCliloc(ItemEntity item)

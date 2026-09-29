@@ -45,7 +45,7 @@ public sealed class PropertyList
         Add(TextClilocs[_texts++ % TextClilocs.Length], text);
     }
 
-    // FNV-1a over what the packet writes for the lines: cliloc and UTF-16 arguments.
+    // FNV-1a over what the packet writes for the lines: cliloc, argument length and UTF-16 arguments.
     private int ComputeHash()
     {
         const uint offset = 2166136261;
@@ -62,7 +62,11 @@ public sealed class PropertyList
                 hash = (hash ^ value) * prime;
             }
 
-            foreach (var value in Encoding.Unicode.GetBytes(entry.Arguments))
+            var arguments = Encoding.Unicode.GetBytes(entry.Arguments);
+            hash = (hash ^ (uint)(arguments.Length >> 8)) * prime;
+            hash = (hash ^ (uint)(arguments.Length & 0xFF)) * prime;
+
+            foreach (var value in arguments)
             {
                 hash = (hash ^ value) * prime;
             }

@@ -11,7 +11,7 @@ public sealed class StubPacketSendService : IPacketSendService
     public int SentCount { get; private set; }
 
     /// <summary>
-    ///     Gets every packet handed to TrySend, in order.
+    ///     Gets every packet handed to TrySend, in order, except those of the types passed to <see cref="Ignore{T}" />.
     /// </summary>
     public List<IOutgoingPacket> Sent { get; } = [];
     public List<long> SentSessionIds { get; } = [];

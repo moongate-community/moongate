@@ -31,7 +31,9 @@ public sealed class TooltipServiceTests
                    .With(
                        new ItemTemplate { Id = "gold", ItemId = new Serial(0x0EED) },
                        new ItemTemplate { Id = "robe", ItemId = new Serial(0x1F03), Name = "robe of the magi", Weight = 2m },
-                       new ItemTemplate { Id = "blessed_ring", ItemId = new Serial(0x108A), LootType = LootType.Blessed }
+                       new ItemTemplate { Id = "blessed_ring", ItemId = new Serial(0x108A), LootType = LootType.Blessed },
+                       new ItemTemplate { Id = "feather", ItemId = new Serial(0x1BD1), Weight = 0.1m },
+                       new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false }
                    )
                    .With(
                        new MessageContent { Id = 30002, Text = "Raro" },
@@ -107,6 +109,48 @@ public sealed class TooltipServiceTests
         var robe = Item("robe", 0x1F03);
 
         Assert.Contains(_tooltips.Build(robe).Entries, line => line.Cliloc == 1072789 && line.Arguments == "2");
+    }
+
+    [Fact]
+    public void Build_ALightItem_WeighsAtLeastOneStone()
+    {
+        // As ModernUO's PileWeight: the weight is rounded up.
+        Assert.Contains(_tooltips.Build(Item("feather", 0x1BD1)).Entries, line => line.Cliloc == 1072788 && line.Arguments == "1");
+    }
+
+    [Fact]
+    public void Build_AnImmovableItem_ShowsNoWeight()
+    {
+        Assert.DoesNotContain(_tooltips.Build(Item("statue", 0x1224)).Entries, line => line.Cliloc is 1072788 or 1072789);
+    }
+
+    [Fact]
+    public void Build_AnItemMadeImmovable_ShowsNoWeight()
+    {
+        var robe = Item("robe", 0x1F03);
+        robe.Movable = false;
+
+        Assert.DoesNotContain(_tooltips.Build(robe).Entries, line => line.Cliloc is 1072788 or 1072789);
+    }
+
+    [Fact]
+    public void Build_ARarityWithoutAMessage_ShowsItsEnglishName()
+    {
+        // The message files have no text for Epic here: the tooltip must not throw.
+        var robe = Item("robe", 0x1F03);
+        robe.Rarity = ItemRarityType.Epic;
+
+        Assert.Contains(_tooltips.Build(robe).Entries, line => line.Arguments.Contains(">Epic<"));
+    }
+
+    [Fact]
+    public void Build_ANameWithATab_KeepsItInOneArgument()
+    {
+        var robe = Item("robe", 0x1F03);
+        robe.Name = "a\tb";
+        robe.Amount = 2;
+
+        Assert.Equal("2\ta b", _tooltips.Build(robe).Entries[0].Arguments);
     }
 
     [Theory, InlineData(LootType.Blessed, 1038021), InlineData(LootType.Newbied, 1038021), InlineData(LootType.Cursed, 1049643)]
