@@ -11,10 +11,10 @@ player's language. Use `ILocalizationService` for texts that the server writes i
 
 ## Choose the language
 
-Set the language code in the `[localization]` section:
+Set the language code in the `[ultima.localization]` section:
 
 ```toml
-[localization]
+[ultima.localization]
 language = "ita"
 ```
 

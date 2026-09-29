@@ -36,11 +36,11 @@ equip = true
 `GiveAsync` works in one transaction on the world database; if anything fails, the
 character gets nothing:
 
-1. It takes the character's `starting_items.best_skills` highest skills (default 3; ties
+1. It takes the character's `ultima.starting_items.best_skills` highest skills (default 3; ties
    go to the lower skill id; skills at 0 do not count).
 2. It applies, in order, the sets of those skills, the common sets, then the sets of
    the character's race and gender.
-3. It creates the backpack (`items.backpack_template`) and puts it on the
+3. It creates the backpack (`ultima.items.backpack_template`) and puts it on the
    `Backpack` layer.
 4. For each entry it picks one item. A stackable item gets the whole `amount`;
    any other item is created `amount` times.
@@ -50,8 +50,21 @@ character gets nothing:
 6. Worn shirts and robes take the shirt hue picked at creation, pants and skirts the
    pants hue; a hue of 0 keeps the item's own.
 7. Items in the backpack go to a random spot inside its `containers.toml` bounds.
-8. Last, `starting_items.gold` coins (default 1000, 0 for none) of
-   `items.gold_template` go in the backpack.
+
+The starting gold is an ordinary entry: the shipped file gives 1000 coins with an
+entry of the common set. Change its `amount` (at most 65535) to give more or less,
+or remove the entry to give none. A root prepared before this change keeps its own
+`starting_items.toml`, which `mgboot` does not overwrite: add this entry to its common
+set, or new characters start without gold:
+
+```toml
+[[set]]
+common = true
+[[set.items]]
+items = ["0x0eed_gold_coin"]
+amount = 1000
+equip = false
+```
 
 ## Validation at startup
 
@@ -60,8 +73,8 @@ The server stops when:
 - `starting_items.toml` does not exist;
 - a set has no items, or is not common and has no skill, race or gender;
 - an entry has no items, names an item that is not an item template, or has an
-  `amount` that can roll below 1;
-- `items.backpack_template` or `items.gold_template` is not an item template;
+  `amount` that can roll below 1 or above 65535;
+- `ultima.items.backpack_template` or `ultima.items.gold_template` is not an item template;
 - the gold template does not stack.
 
 ## See also

@@ -99,12 +99,12 @@ karma and skills (template points × 10, the tenths the mobile stores). `title` 
 3. publishes `MobileBeforeSpawnEvent`: a handler may change the mobile, even move it; the
    place is checked against the map again afterwards;
 4. in one transaction, saves the mobile (its serial comes from the mobile range), then:
-   - a backpack (`items.backpack_template`) worn on the `Backpack` layer, for every NPC;
+   - a backpack (`ultima.items.backpack_template`) worn on the `Backpack` layer, for every NPC;
    - each equipment entry through `IItemFactoryService`: an entry with a `gender` is
      skipped for the other gender; the item is worn on its layer (the template's, else
      tiledata's for a wearable graphic); an item with no layer, or whose layer is taken,
      goes into the backpack, as UOX3 does;
-   - the rolled `gold`, as `items.gold_template` piles of at most 65535, into the backpack;
+   - the rolled `gold`, as `ultima.items.gold_template` piles of at most 65535, into the backpack;
    - one roll of each `loot` table (a table listed twice is rolled twice), into the
      backpack;
    - everything in the backpack lands at a random spot inside its `containers.toml` bounds;

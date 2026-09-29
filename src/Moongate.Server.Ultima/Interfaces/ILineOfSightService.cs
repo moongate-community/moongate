@@ -10,7 +10,7 @@ namespace Moongate.Server.Ultima.Interfaces;
 /// <remarks>
 ///     Pass both points at eye or target height; a mobile's eye is its Z plus 14. Statics flagged <c>Window</c> or
 ///     <c>NoShoot</c> and terrain block the line; a blocker at the target's cell and height does not. Points farther
-///     than <c>line_of_sight.max_distance</c> along X or Y are never in sight. World items, mobiles and placed multis
+///     than <c>ultima.line_of_sight.max_distance</c> along X or Y are never in sight. World items, mobiles and placed multis
 ///     are not considered yet. Call it from the game loop, as <see cref="IMapService" />.
 /// </remarks>
 public interface ILineOfSightService

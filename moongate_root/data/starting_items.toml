@@ -3,7 +3,7 @@
 #
 # What it is for:
 #   The items a new character gets: every common set, plus every set whose
-#   filters it matches.
+#   filters it matches. The starting gold is an item of the common set.
 #
 # Fields of a [[set]]:
 #   common  true gives the set to every character
@@ -785,6 +785,11 @@ equip = true
 
 [[set]]
 common = true
+[[set.items]]
+items = ["0x0eed_gold_coin"]
+amount = 1000
+equip = false
+
 [[set.items]]
 items = ["0x0f51"]
 equip = false

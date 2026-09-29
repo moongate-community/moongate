@@ -18,7 +18,7 @@ public sealed class LineOfSightConfig
         if (MaxDistance is < 1 or > 255)
         {
             throw new InvalidOperationException(
-                $"line_of_sight.max_distance must be from 1 to 255, found {MaxDistance}."
+                $"ultima.line_of_sight.max_distance must be from 1 to 255, found {MaxDistance}."
             );
         }
     }

@@ -48,7 +48,7 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
     {
         var service = CreateService(
             Set(skill: SkillType.Alchemy, entries: [Entry("pearl", "3"), Entry("shirt", equip: true)]),
-            Set(common: true, entries: [Entry("bottle", "2"), Entry("fancy_shirt", equip: true)]),
+            Set(common: true, entries: [Entry("bottle", "2"), Entry("fancy_shirt", equip: true), Entry("gold", "1000")]),
             Set(race: RaceType.Human, gender: GenderType.Male, entries: [Entry("pants", equip: true)]),
             Set(race: RaceType.Elf, entries: [Entry("elven_boots", equip: true)]),
             Set(skill: SkillType.Magery, entries: [Entry("spellbook")])
@@ -83,6 +83,16 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task GiveAsync_NoSetWithGold_GivesNoGold()
+    {
+        var service = CreateService(Set(common: true, entries: [Entry("bottle")]));
+
+        var given = await service.GiveAsync(Request(new()));
+
+        Assert.DoesNotContain(given, item => item.TemplateId == "gold");
+    }
+
+    [Fact]
     public async Task GiveAsync_AllSkillsZero_GetsCommonAndBodySetsOnly()
     {
         var service = CreateService(
@@ -92,7 +102,7 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
 
         var given = await service.GiveAsync(Request(new() { [SkillType.Alchemy] = 0 }));
 
-        Assert.Equal(["backpack", "bottle", "gold"], given.Select(item => item.TemplateId));
+        Assert.Equal(["backpack", "bottle"], given.Select(item => item.TemplateId));
     }
 
     [Fact]
@@ -108,13 +118,10 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
     [Fact]
     public async Task GiveAsync_AFailure_RollsEverythingBack()
     {
-        // Gold on a template that does not stack makes Create throw after the other items were saved.
-        var service = CreateService(
-            new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "shirt" },
-            Set(common: true, entries: [Entry("bottle")])
-        );
+        // An unknown template makes Create throw after the other items were saved.
+        var service = CreateService(Set(common: true, entries: [Entry("bottle"), Entry("missing")]));
 
-        await Assert.ThrowsAsync<ArgumentException>(() => service.GiveAsync(Request(new())));
+        await Assert.ThrowsAsync<KeyNotFoundException>(() => service.GiveAsync(Request(new())));
 
         Assert.Empty(await _items.QueryAsync(item => item.MobileId == _mobile.Id));
     }
@@ -143,17 +150,6 @@ public sealed class StartingItemsServiceTests : IAsyncLifetime
     public async Task StartAsync_AMissingConfiguredTemplate_Throws()
     {
         var service = CreateService(new StartingItemsConfig(), new ItemsConfig { BackpackTemplate = "chest", GoldTemplate = "gold" });
-
-        await Assert.ThrowsAsync<InvalidDataException>(service.StartAsync);
-    }
-
-    [Fact]
-    public async Task StartAsync_AGoldTemplateThatDoesNotStack_Throws_EvenWithoutStartingGold()
-    {
-        var service = CreateService(
-            new StartingItemsConfig { Gold = 0 },
-            new ItemsConfig { BackpackTemplate = "backpack", GoldTemplate = "shirt" }
-        );
 
         await Assert.ThrowsAsync<InvalidDataException>(service.StartAsync);
     }
