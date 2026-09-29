@@ -21,6 +21,10 @@ concurrency:
   group: ci-${{ github.ref }}
   cancel-in-progress: true
 
+# The jobs only check out the code and upload artifacts.
+permissions:
+  contents: read
+
 jobs:
   # Pull requests into develop and pushes to develop only build: the tests run locally before the pull request.
   # The full pipeline runs where a release is cut, on pull requests into main and pushes to main.

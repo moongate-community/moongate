@@ -111,24 +111,21 @@ public sealed class ConfigContainerExtensionsTests
     [Fact]
     public void AddConfig_AFileThatCannotBeWritten_UsesTheDefaults()
     {
+        // A directory where the file should be: writing fails even for root, which ignores read-only file modes.
         using var directory = new TemporaryDirectory();
-        const string original = "[network]\ngame_port = 4001\n";
-        var container = Container(directory, original);
         var path = Path.Combine(directory.Path, "moongate.toml");
-        File.SetUnixFileMode(path, UnixFileMode.UserRead);
+        Directory.CreateDirectory(path);
+        var container = new Container();
+        container.RegisterInstance(
+            new ServerConfigDocument(path, TomlSerializer.Deserialize<TomlTable>("[network]\ngame_port = 4001\n")!, [])
+        );
 
-        try
-        {
-            var config = container.AddConfig<SampleSection>("sample");
+        var config = container.AddConfig<SampleSection>("sample");
 
-            Assert.Equal("hello", config.Greeting);
-            Assert.Equal(original, File.ReadAllText(path));
-            Assert.False(container.Resolve<ServerConfigDocument>().Table.ContainsKey("sample"));
-        }
-        finally
-        {
-            File.SetUnixFileMode(path, UnixFileMode.UserRead | UnixFileMode.UserWrite);
-        }
+        Assert.Equal("hello", config.Greeting);
+        Assert.False(File.Exists(path));
+        Assert.Empty(Directory.GetFileSystemEntries(path));
+        Assert.False(container.Resolve<ServerConfigDocument>().Table.ContainsKey("sample"));
     }
 
     private static Container Container(TemporaryDirectory directory, string toml, params string[] reserved)
