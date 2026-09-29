@@ -5,8 +5,8 @@ using Moongate.Server.Ultima.Interfaces;
 namespace Moongate.Tests.TestSupport.Ultima.Items;
 
 /// <summary>
-///     Gives a script to the items whose template id is in <see cref="Scripted" />, records the calls as
-///     "0x40000003 on_use 2" and answers them with <see cref="Result" />.
+///     Gives a script to the items whose template id is in <see cref="Scripted" />, records the calls run as
+///     "0x40000003 on_use 2" in <see cref="Calls" /> and the queued ones in <see cref="Queued" /> and answers them with <see cref="Result" />.
 /// </summary>
 public sealed class RecordingItemScriptService : IItemScriptService
 {
@@ -15,6 +15,8 @@ public sealed class RecordingItemScriptService : IItemScriptService
     public ScriptResult Result { get; set; } = ScriptResult.Completed([]);
 
     public List<string> Calls { get; } = [];
+
+    public List<string> Queued { get; } = [];
 
     public bool HasScript(ItemEntity item)
     {
@@ -28,8 +30,21 @@ public sealed class RecordingItemScriptService : IItemScriptService
             return ScriptResult.Missing;
         }
 
-        Calls.Add(string.Join(' ', new[] { $"0x{item.Id.Value:X8}", function }.Concat(args.Select(arg => $"{arg}"))));
+        Calls.Add(Describe(item, function, args));
 
         return Result;
+    }
+
+    public void Queue(ItemEntity item, string function, params object?[] args)
+    {
+        if (HasScript(item))
+        {
+            Queued.Add(Describe(item, function, args));
+        }
+    }
+
+    private static string Describe(ItemEntity item, string function, object?[] args)
+    {
+        return string.Join(' ', new[] { $"0x{item.Id.Value:X8}", function }.Concat(args.Select(arg => $"{arg}")));
     }
 }

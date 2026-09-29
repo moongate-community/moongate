@@ -452,13 +452,13 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
-    public void Equip_AnItemFromABag_RunsOnEquipOfItsScript()
+    public void Equip_AnItemFromABag_QueuesOnEquipOfItsScript()
     {
         var (items, scripts) = Scripted();
 
         items.Equip(_dagger, Aria, LayerType.OneHanded);
 
-        Assert.Equal(["0x40000004 on_equip 2"], scripts.Calls);
+        Assert.Equal(["0x40000004 on_equip 2"], scripts.Queued);
     }
 
     [Fact]
@@ -469,21 +469,21 @@ public sealed class ItemServiceTests
 
         items.Equip(_shirt, Aria, LayerType.Shirt);
 
-        Assert.Empty(scripts.Calls);
+        Assert.Empty(scripts.Queued);
     }
 
     [Fact]
-    public void Equip_AnItemAnotherMobileWore_RunsOnUnequipThenOnEquip()
+    public void Equip_AnItemAnotherMobileWore_QueuesOnUnequipThenOnEquip()
     {
         var (items, scripts) = Scripted();
 
         items.Equip(_shirt, new Serial(3), LayerType.Shirt);
 
-        Assert.Equal(["0x40000005 on_unequip 2", "0x40000005 on_equip 3"], scripts.Calls);
+        Assert.Equal(["0x40000005 on_unequip 2", "0x40000005 on_equip 3"], scripts.Queued);
     }
 
     [Fact]
-    public void MoveToContainerPlaceOnGroundAndAbsorb_OfAWornItem_RunOnUnequip()
+    public void MoveToContainerPlaceOnGroundAndAbsorb_OfAWornItem_QueueOnUnequip()
     {
         var (items, scripts) = Scripted();
 
@@ -498,7 +498,7 @@ public sealed class ItemServiceTests
                 "0x40000005 on_unequip 2", "0x40000004 on_equip 2", "0x40000004 on_unequip 2", "0x40000003 on_equip 2",
                 "0x40000003 on_unequip 2"
             ],
-            scripts.Calls
+            scripts.Queued
         );
     }
 
@@ -510,7 +510,7 @@ public sealed class ItemServiceTests
         items.MoveToContainer(_dagger, _bag.Id, new Point2D(10, 10));
         items.PlaceOnGround(_coin, MapType.Trammel, new Point3D(1496, 1629, 10));
 
-        Assert.Empty(scripts.Calls);
+        Assert.Empty(scripts.Queued);
     }
 
     private (ItemService Items, RecordingItemScriptService Scripts) Scripted()

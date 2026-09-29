@@ -332,12 +332,13 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         // A worn item merged into a stack leaves its layer for good.
         if (item.MobileId is { } wearer)
         {
-            _scripts?.Run(item, UnequipFunction, (long)wearer.Value);
+            _scripts?.Queue(item, UnequipFunction, (long)wearer.Value);
         }
     }
 
     // The item's script hears a wearer change: on_unequip for the one it left, then on_equip for the one it went onto.
-    // Items loaded or spawned already dressed never pass here.
+    // Queued, so the caller's packets go out first: a script that deletes the item must not leave it drawn. Items loaded
+    // or spawned already dressed never pass here.
     private void WearerChanged(ItemEntity item, Serial? before)
     {
         if (_scripts is null || before == item.MobileId)
@@ -347,12 +348,12 @@ public sealed class ItemService : IItemService, IMoongateStartupService
 
         if (before is { } left)
         {
-            _scripts.Run(item, UnequipFunction, (long)left.Value);
+            _scripts.Queue(item, UnequipFunction, (long)left.Value);
         }
 
         if (item.MobileId is { } wearer)
         {
-            _scripts.Run(item, EquipFunction, (long)wearer.Value);
+            _scripts.Queue(item, EquipFunction, (long)wearer.Value);
         }
     }
 

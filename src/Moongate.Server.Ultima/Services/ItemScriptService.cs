@@ -67,6 +67,19 @@ public sealed class ItemScriptService : IItemScriptService, IMoongateStartupServ
         return _engine.CallMember($"{ItemsDirectory}/{script}.lua", script, function, [(long)item.Id.Value, ..args]);
     }
 
+    public void Queue(ItemEntity item, string function, params object?[] args)
+    {
+        if (!_running || ScriptOf(item) is null)
+        {
+            return;
+        }
+
+        if (!_loop.TryPost(new LoopActionWorkItem(() => Run(item, function, args))))
+        {
+            _logger.Warning("Item {Serial}: {Function} was dropped, the game loop is full or stopping", item.Id, function);
+        }
+    }
+
     private string? ScriptOf(ItemEntity item)
     {
         return _templates.TryGet(item.TemplateId, out var template) && !string.IsNullOrEmpty(template.ScriptId)
