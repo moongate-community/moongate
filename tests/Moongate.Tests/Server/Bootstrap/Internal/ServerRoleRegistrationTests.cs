@@ -9,6 +9,7 @@ using Moongate.Server.Bootstrap.Internal;
 using Moongate.Server.Core.Commands;
 using Moongate.Server.Core.Data.Realms;
 using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Diagnostics;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Packets;
 using Moongate.Server.Core.Types.Hosting;
@@ -123,6 +124,7 @@ public sealed class ServerRoleRegistrationTests
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IWorldSaveService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IEquipmentService>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<ITooltipService>());
+        Assert.Equal(mode != ServerMode.Login, container.IsRegistered<INpcTickService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginServerService>());
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<LoginPacketHandlerRegistry>());
         Assert.Equal(mode != ServerMode.Login, container.IsRegistered<IDataLoaderService>());
@@ -131,6 +133,8 @@ public sealed class ServerRoleRegistrationTests
         if (mode != ServerMode.Login)
         {
             Assert.IsType<MotdService>(container.Resolve<IMotdService>());
+            Assert.IsType<SectorService>(container.Resolve<ISectorService>());
+            Assert.Contains(container.ResolveMany<IMetricProvider>(), provider => provider.ProviderName == "npcs");
         }
         Assert.Equal(mode != ServerMode.Game, container.IsRegistered<IAccountService>());
         Assert.True(container.IsRegistered<RedisConnectionService>());

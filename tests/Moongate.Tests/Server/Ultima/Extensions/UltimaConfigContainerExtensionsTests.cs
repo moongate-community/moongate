@@ -39,6 +39,9 @@ public sealed class UltimaConfigContainerExtensionsTests
             [ultima.characters]
             max_per_account = 5
             deletion_delay_hours = 48
+
+            [ultima.npcs]
+            think_interval_ms = 250
             """
         );
 
@@ -52,6 +55,7 @@ public sealed class UltimaConfigContainerExtensionsTests
         Assert.Equal(("pack", "coin"), (container.Resolve<ItemsConfig>().BackpackTemplate, container.Resolve<ItemsConfig>().GoldTemplate));
         Assert.Equal(2, container.Resolve<StartingItemsConfig>().BestSkills);
         Assert.Equal((5, 48), (container.Resolve<CharactersConfig>().MaxPerAccount, container.Resolve<CharactersConfig>().DeletionDelayHours));
+        Assert.Equal(250, container.Resolve<NpcsConfig>().ThinkIntervalMs);
     }
 
     [Fact]
