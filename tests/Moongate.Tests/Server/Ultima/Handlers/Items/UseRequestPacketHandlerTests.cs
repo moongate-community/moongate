@@ -3,9 +3,9 @@ using Moongate.Core.Primitives;
 using Moongate.Network.Packets.Data.Clients;
 using Moongate.Server.Core.Data.Sessions;
 using Moongate.Server.Services.Sessions;
-using Moongate.Server.Ultima.Data.Containers;
-using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Bodies;
+using Moongate.Server.Ultima.Data.Config;
+using Moongate.Server.Ultima.Data.Containers;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Handlers.Items;
 using Moongate.Server.Ultima.Packets.General;
@@ -15,8 +15,8 @@ using Moongate.Tests.Support.Sessions;
 using Moongate.Tests.TestSupport.Packets;
 using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
-using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Movement;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Tiles;
 using Moongate.Ultima.Types;
 
@@ -116,6 +116,18 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         await StartAsync(Aria);
 
         await UseAsync(orc.Id);
+
+        Assert.Empty(_sender.Sent);
+    }
+
+    [Fact]
+    public async Task Handle_ABodyNotInBodiesToml_DoesNotOpenAPaperdoll()
+    {
+        var ghost = Mobile(new(0x00000014), "a ghost", 970, new(1005, 1000, 0));
+        _mobiles.EnterWorld(ghost);
+        await StartAsync(Aria);
+
+        await UseAsync(ghost.Id);
 
         Assert.Empty(_sender.Sent);
     }

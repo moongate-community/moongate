@@ -6,8 +6,8 @@ using Moongate.Server.Ultima.Data.Bodies;
 using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Extensions;
-using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Ultima.Types;
@@ -27,10 +27,10 @@ namespace Moongate.Server.Ultima.Handlers.Items;
 /// </remarks>
 public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
 {
-    private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     // The client sets this bit on the serial when the player asks for their own paperdoll.
     private const uint PaperdollRequestFlag = 0x80000000;
 
+    private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
     private readonly IMobileService _mobiles;
     private readonly Lazy<FrozenDictionary<int, BodyType>> _bodies;
