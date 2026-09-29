@@ -52,4 +52,15 @@ public interface IWorldViewService
     ///     location still set.
     /// </summary>
     void ItemDisappeared(ItemEntity item);
+
+    /// <summary>
+    ///     Shows an item now worn by <paramref name="wearer" /> (0x2E) to every player in range, the wearer included.
+    /// </summary>
+    void WornItemChanged(MobileEntity wearer, ItemEntity item);
+
+    /// <summary>
+    ///     Takes an item off <paramref name="wearer" /> (0x1D) for the other players in range; the wearer's client
+    ///     already took it off when it was picked up.
+    /// </summary>
+    void WornItemRemoved(MobileEntity wearer, ItemEntity item);
 }

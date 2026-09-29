@@ -51,6 +51,16 @@ public sealed class RecordingWorldViewService : IWorldViewService
         Record($"Disappeared {item.Id.Value}");
     }
 
+    public void WornItemChanged(MobileEntity wearer, ItemEntity item)
+    {
+        Record($"Worn {wearer.Id.Value} {item.Id.Value}");
+    }
+
+    public void WornItemRemoved(MobileEntity wearer, ItemEntity item)
+    {
+        Record($"Unworn {wearer.Id.Value} {item.Id.Value}");
+    }
+
     private void Record(string call)
     {
         OnCall?.Invoke(call);

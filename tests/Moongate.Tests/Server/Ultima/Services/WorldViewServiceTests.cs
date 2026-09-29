@@ -247,6 +247,37 @@ public sealed class WorldViewServiceTests
     }
 
     [Fact]
+    public void WornItemChanged_ShowsItOnTheWearerToEveryoneInRange()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        Enter(4, 3000, 3000, 30);
+        var shirt = Worn(0x40000010, aria);
+        ClearSent();
+
+        _view.WornItemChanged(aria, shirt);
+
+        Assert.Equal([AriaSession, BorisSession], _sender.SentSessionIds.Order());
+        Assert.All(_sender.Sent, packet => Assert.Equal(shirt.Id, Assert.IsType<WornItemPacket>(packet).Item));
+    }
+
+    [Fact]
+    public void WornItemRemoved_TakesItOffTheWearerForTheOthersInRange()
+    {
+        var aria = Enter(2, 1496, 1628, AriaSession);
+        Enter(3, 1500, 1628, BorisSession);
+        Enter(4, 3000, 3000, 30);
+        var shirt = Worn(0x40000010, aria);
+        ClearSent();
+
+        _view.WornItemRemoved(aria, shirt);
+
+        // The wearer's client already took it off when it was picked up.
+        Assert.Equal([BorisSession], _sender.SentSessionIds);
+        Assert.Equal(shirt.Id, Assert.IsType<RemoveEntityPacket>(Assert.Single(_sender.Sent)).Serial);
+    }
+
+    [Fact]
     public void ItemAppeared_ShowsItToEveryoneInRange()
     {
         Enter(2, 1496, 1628, AriaSession);
@@ -323,6 +354,15 @@ public sealed class WorldViewServiceTests
         var item = new ItemEntity { Id = new Serial(serial), TemplateId = "gold", ItemId = 0x0EED, Amount = 1 };
         _items.Add([item]);
         _items.PlaceOnGround(item, MapType.Trammel, new Point3D(x, y, 0));
+
+        return item;
+    }
+
+    private ItemEntity Worn(uint serial, MobileEntity wearer)
+    {
+        var item = new ItemEntity { Id = new(serial), TemplateId = "shirt", ItemId = 0x1517, Amount = 1 };
+        item.Equip(wearer.Id, LayerType.Shirt);
+        _items.Add([item]);
 
         return item;
     }

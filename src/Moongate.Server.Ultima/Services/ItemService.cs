@@ -159,6 +159,14 @@ public sealed class ItemService : IItemService, IMoongateStartupService
         _sectors.AddItem(item);
     }
 
+    public void Equip(ItemEntity item, Serial mobile, LayerType layer)
+    {
+        _sectors.RemoveItem(item);
+        Unindex(item);
+        item.Equip(mobile, layer);
+        Index(item);
+    }
+
     public bool CanReach(MobileEntity mobile, ItemEntity item)
     {
         // Lying in the grid: a ground item someone holds keeps its location but is out of reach.

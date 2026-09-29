@@ -210,6 +210,36 @@ public sealed class ItemServiceTests
     }
 
     [Fact]
+    public void Equip_PutsTheItemOnTheWearerAndInTheWornIndex()
+    {
+        var sectors = TestSectors.Create();
+        var items = TestItems.Create(sectors);
+        var sword = Item(0x40000050);
+        items.Add([sword]);
+        items.PlaceOnGround(sword, MapType.Trammel, new Point3D(1496, 1628, 0));
+
+        items.Equip(sword, new Serial(0x00000002), LayerType.OneHanded);
+
+        Assert.Equal((new Serial(0x00000002), LayerType.OneHanded), (sword.MobileId!.Value, sword.Layer!.Value));
+        Assert.Null(sword.GroundLocation);
+        Assert.Equal([sword], items.GetWorn(new Serial(0x00000002)));
+        Assert.Empty(sectors.GetItemsInRange(MapType.Trammel, new Point3D(1496, 1628, 0), 18));
+    }
+
+    [Fact]
+    public void MoveToContainer_TakesAWornItemOutOfTheWornIndex()
+    {
+        var items = TestItems.Create();
+        var sword = Item(0x40000050);
+        sword.Equip(new Serial(0x00000002), LayerType.OneHanded);
+        items.Add([sword]);
+
+        items.MoveToContainer(sword, new Serial(0x40000001), new Point2D(44, 65));
+
+        Assert.Empty(items.GetWorn(new Serial(0x00000002)));
+    }
+
+    [Fact]
     public void MoveToContainer_TakesAGroundItemOutOfTheGrid()
     {
         var sectors = TestSectors.Create();
