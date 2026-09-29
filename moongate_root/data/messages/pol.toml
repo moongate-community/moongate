@@ -5477,3 +5477,8 @@
 30002 = "Rzadki"
 30003 = "Epicki"
 30004 = "Legendarny"
+
+# Moongate: tooltip texts.
+30005 = "[Przeklęty]"
+30006 = "Waga: 1 kamień"
+30007 = "Waga: {0} kam."

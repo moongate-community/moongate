@@ -5467,3 +5467,8 @@
 30002 = "Raro"
 30003 = "Épico"
 30004 = "Lendário"
+
+# Moongate: tooltip texts.
+30005 = "[Amaldiçoado]"
+30006 = "Peso: 1 pedra"
+30007 = "Peso: {0} pedras"

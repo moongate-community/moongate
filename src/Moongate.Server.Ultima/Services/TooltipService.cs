@@ -17,8 +17,9 @@ namespace Moongate.Server.Ultima.Services;
 
 /// <inheritdoc />
 /// <remarks>
-///     Clilocs where the client has one, so it shows them in its own language; the server's own texts, such as the
-///     rarity, go through <see cref="ILocalizationService" /> as free text (as UOX3). A tooltip depends only on a few
+///     The texts are the server's, in the server language, through <see cref="ILocalizationService" /> as free text
+///     (as UOX3): blessed and cursed, the weight and the rarity. Names stay the client's clilocs (its item names, the
+///     amount and a mobile's name and title) until the server has translated names. A tooltip depends only on a few
 ///     fields of its item or mobile (<see cref="ItemTooltipKey" />, <see cref="MobileTooltipKey" />), so it is cached by
 ///     them: a change gives another key, and nothing is ever invalidated. The returned lists are shared and must not
 ///     be changed.
@@ -35,16 +36,16 @@ public sealed class TooltipService : ITooltipService
     private const int HighItemNameCliloc = 1078872;
     private const int HighItemGraphic = 0x4000;
     private const int AmountAndNameCliloc = 1050039; // ~1_NUMBER~ ~2_ITEMNAME~
-    private const int BlessedCliloc = 1038021;
-    private const int CursedCliloc = 1049643;
-    private const int OneStoneCliloc = 1072788; // Weight: ~1_WEIGHT~ stone
-    private const int StonesCliloc = 1072789; // Weight: ~1_WEIGHT~ stones
     private const int MobileNameCliloc = 1050045; // ~1_PREFIX~~2_NAME~~3_SUFFIX~
 
     private const byte CannotLiftWeight = 255;
 
-    // messages/*.toml: 30000 + rarity.
-    private const int RarityMessageBase = 30000;
+    // messages/*.toml: the server's own tooltip texts, in the server language.
+    private const int RarityMessageBase = 30000; // + rarity
+    private const int BlessedMessage = 9055; // [Blessed], as UOX3
+    private const int CursedMessage = 30005;
+    private const int OneStoneMessage = 30006;
+    private const int StonesMessage = 30007;
 
     private readonly IItemTemplateService _templates;
     private readonly ITileDataService _tiles;
@@ -133,22 +134,21 @@ public sealed class TooltipService : ITooltipService
 
         if (lootType is LootType.Blessed or LootType.Newbied)
         {
-            list.Add(BlessedCliloc);
+            list.AddText(Text(BlessedMessage, "[Blessed]"));
         }
         else if (lootType == LootType.Cursed)
         {
-            list.Add(CursedCliloc);
+            list.AddText(Text(CursedMessage, "[Cursed]"));
         }
 
         // As ModernUO: rounded up (a feather weighs a stone), and not shown for what cannot be picked up.
         if (item.Movable ?? template?.EffectiveMovable(_tiles) ?? TiledataWeight(item) < CannotLiftWeight)
         {
             var weight = (int)Math.Ceiling((template?.EffectiveWeight(_tiles) ?? TiledataWeight(item)) * item.Amount);
-            list.Add(weight == 1 ? OneStoneCliloc : StonesCliloc, weight.ToString());
+            list.AddText(weight == 1 ? Text(OneStoneMessage, "Weight: 1 stone") : Text(StonesMessage, "Weight: {0} stones", weight));
         }
 
-        // A message file without the text shows the English name rather than failing the whole broadcast.
-        var rarity = _localization.TryGetText(RarityMessageBase + (int)item.Rarity, out var text) ? text : item.Rarity.ToString();
+        var rarity = Text(RarityMessageBase + (int)item.Rarity, item.Rarity.ToString());
         list.AddText($"<BASEFONT COLOR={RarityColor(item.Rarity)}>{rarity}</BASEFONT>");
 
         return list;
@@ -224,6 +224,12 @@ public sealed class TooltipService : ITooltipService
         {
             list.Add(NameCliloc(item));
         }
+    }
+
+    // A message file without the text gives the English one rather than failing the whole broadcast.
+    private string Text(int id, string english, params object[] values)
+    {
+        return _localization.TryGetText(id, out _) ? _localization.Get(id, values) : string.Format(english, values);
     }
 
     // A tab would split the text into another cliloc argument.

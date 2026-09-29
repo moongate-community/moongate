@@ -153,9 +153,16 @@ other data services. `definitions.lua` declares it for editor completion, with
 
 ## Moongate's own messages
 
-Numbers from 30000 are Moongate's, not UOX3's: 30000–30004 are the item rarities
-(common, uncommon, rare, epic, legendary) shown in tooltips, translated in every shipped
-language.
+Numbers from 30000 are Moongate's, not UOX3's, all translated in every shipped language:
+
+| Id | Text | Used by |
+| --- | --- | --- |
+| 30000–30004 | Common, Uncommon, Rare, Epic, Legendary | Tooltip rarity |
+| 30005 | [Cursed] | Tooltip loot type |
+| 30006, 30007 | Weight: 1 stone, Weight: {0} stones | Tooltip weight |
+
+Tooltips also use UOX3's 9055 "[Blessed]". Polish and Czech write the plural weight
+abbreviated ("kam."), since one text with `{0}` cannot follow their plural forms.
 
 ## Add or change a text
 

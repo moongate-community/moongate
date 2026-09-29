@@ -13,8 +13,8 @@ public interface ITooltipService
 {
     /// <summary>
     ///     The item's lines: its name (the client's cliloc for its graphic when it has no name of its own or from its
-    ///     template, with the amount for a stack), blessed or cursed, its weight and its rarity in the
-    ///     server language.
+    ///     template, with the amount for a stack), then, in the server language, blessed or cursed, its weight and its
+    ///     rarity.
     /// </summary>
     PropertyList Build(ItemEntity item);
 

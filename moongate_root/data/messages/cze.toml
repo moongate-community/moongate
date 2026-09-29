@@ -5473,3 +5473,8 @@
 30002 = "Vzácný"
 30003 = "Epický"
 30004 = "Legendární"
+
+# Moongate: tooltip texts.
+30005 = "[Prokletý]"
+30006 = "Váha: 1 kámen"
+30007 = "Váha: {0} kam."

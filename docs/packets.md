@@ -246,10 +246,15 @@ ModernUO and UOX3:
 - an item's name: the client's cliloc for its graphic (1020000 + graphic, 1078872 + graphic
   from `0x4000`), which the client shows in its own language, or the item's or template's
   name as text; a stack uses 1050039 with the amount;
-- blessed or newbied (1038021) or cursed (1049643), the item's loot type else the template's;
-- the weight of the whole stack (1072788 / 1072789);
-- the rarity: messages 30000–30004 in the server language, coloured (common white);
+- in the server language, from the message files (`ILocalizationService`, as UOX3):
+  blessed or newbied (9055 "[Blessed]") or cursed (30005), the item's loot type else the
+  template's; the weight of the whole stack (30006 / 30007); the rarity (30000–30004),
+  coloured (common white). A text missing from the files falls back to English;
 - a mobile: 1050045 with its name and title.
+
+Names (items' clilocs, amounts, mobiles' names and titles) stay the client's until the server
+has translated names; every other line is the server's, so the tooltips follow the server
+language.
 
 Free text goes through the clilocs whose whole text is `~1_NOTHING~` (1042971, 1070722, ...),
 one per line; an argument is cut at 504 characters, which older clients cannot exceed. The

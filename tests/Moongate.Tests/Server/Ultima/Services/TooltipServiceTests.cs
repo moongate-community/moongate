@@ -36,6 +36,10 @@ public sealed class TooltipServiceTests
                        new ItemTemplate { Id = "statue", ItemId = new Serial(0x1224), Movable = false }
                    )
                    .With(
+                       new MessageContent { Id = 9055, Text = "[Benedetto]" },
+                       new MessageContent { Id = 30005, Text = "[Maledetto]" },
+                       new MessageContent { Id = 30006, Text = "Peso: 1 pietra" },
+                       new MessageContent { Id = 30007, Text = "Peso: {0} pietre" },
                        new MessageContent { Id = 30000, Text = "Comune" },
                        new MessageContent { Id = 30002, Text = "Raro" },
                        new MessageContent { Id = 30004, Text = "Leggendario" }
@@ -109,20 +113,20 @@ public sealed class TooltipServiceTests
     {
         var robe = Item("robe", 0x1F03);
 
-        Assert.Contains(_tooltips.Build(robe).Entries, line => line.Cliloc == 1072789 && line.Arguments == "2");
+        Assert.Contains(_tooltips.Build(robe).Entries, line => line.Arguments == "Peso: 2 pietre");
     }
 
     [Fact]
     public void Build_ALightItem_WeighsAtLeastOneStone()
     {
         // As ModernUO's PileWeight: the weight is rounded up.
-        Assert.Contains(_tooltips.Build(Item("feather", 0x1BD1)).Entries, line => line.Cliloc == 1072788 && line.Arguments == "1");
+        Assert.Contains(_tooltips.Build(Item("feather", 0x1BD1)).Entries, line => line.Arguments == "Peso: 1 pietra");
     }
 
     [Fact]
     public void Build_AnImmovableItem_ShowsNoWeight()
     {
-        Assert.DoesNotContain(_tooltips.Build(Item("statue", 0x1224)).Entries, line => line.Cliloc is 1072788 or 1072789);
+        Assert.DoesNotContain(_tooltips.Build(Item("statue", 0x1224)).Entries, line => line.Arguments.StartsWith("Peso"));
     }
 
     [Fact]
@@ -131,7 +135,7 @@ public sealed class TooltipServiceTests
         var robe = Item("robe", 0x1F03);
         robe.Movable = false;
 
-        Assert.DoesNotContain(_tooltips.Build(robe).Entries, line => line.Cliloc is 1072788 or 1072789);
+        Assert.DoesNotContain(_tooltips.Build(robe).Entries, line => line.Arguments.StartsWith("Peso"));
     }
 
     [Fact]
@@ -154,19 +158,19 @@ public sealed class TooltipServiceTests
         Assert.Equal("2\ta b", _tooltips.Build(robe).Entries[0].Arguments);
     }
 
-    [Theory, InlineData(LootType.Blessed, 1038021), InlineData(LootType.Newbied, 1038021), InlineData(LootType.Cursed, 1049643)]
-    public void Build_TheLootTypeOfTheItem_AddsItsLine(LootType type, int cliloc)
+    [Theory, InlineData(LootType.Blessed, "[Benedetto]"), InlineData(LootType.Newbied, "[Benedetto]"), InlineData(LootType.Cursed, "[Maledetto]")]
+    public void Build_TheLootTypeOfTheItem_AddsItsLineInTheServerLanguage(LootType type, string text)
     {
         var robe = Item("robe", 0x1F03);
         robe.SetProp(ItemPropKeys.LootType, type);
 
-        Assert.Contains(_tooltips.Build(robe).Entries, line => line.Cliloc == cliloc);
+        Assert.Contains(_tooltips.Build(robe).Entries, line => line.Arguments == text);
     }
 
     [Fact]
     public void Build_TheTemplatesLootType_IsUsedWhenTheItemHasNone()
     {
-        Assert.Contains(_tooltips.Build(Item("blessed_ring", 0x108A)).Entries, line => line.Cliloc == 1038021);
+        Assert.Contains(_tooltips.Build(Item("blessed_ring", 0x108A)).Entries, line => line.Arguments == "[Benedetto]");
     }
 
     [Fact]

@@ -74,7 +74,7 @@ public sealed class RepositoryDataFilesTests
         Assert.Contains("a daemon", names.Single(list => list.Id == "daemon").Names);
 
         var messages = service.GetEntities<MessageContent>();
-        Assert.Equal(5467, messages.Count);
+        Assert.Equal(5470, messages.Count);
         Assert.Equal("Si sale a bordo della barca.", messages.Single(message => message.Id == 1).Text);
         Assert.Equal("[{0:x} {1:x} {2:x} {3:x}]", messages.Single(message => message.Id == 1737).Text);
         Assert.Equal(
@@ -133,7 +133,7 @@ public sealed class RepositoryDataFilesTests
 
         await loader.InitializeAsync();
 
-        Assert.Equal(5467, (await loader.LoadDataAsync()).Entities.Count);
+        Assert.Equal(5470, (await loader.LoadDataAsync()).Entities.Count);
     }
 
     [Theory,
@@ -152,6 +152,25 @@ public sealed class RepositoryDataFilesTests
         var messages = (await loader.LoadDataAsync()).Entities.ToDictionary(message => message.Id, message => message.Text);
 
         Assert.Equal((common, legendary), (messages[30000], messages[30004]));
+    }
+
+    [Theory,
+     InlineData("eng", "[Cursed]", "Weight: {0} stones"), InlineData("ita", "[Maledetto]", "Peso: {0} pietre"),
+     InlineData("ger", "[Verflucht]", "Gewicht: {0} Steine"), InlineData("fre", "[Maudit]", "Poids : {0} pierres"),
+     InlineData("spa", "[Maldito]", "Peso: {0} piedras"), InlineData("por", "[Amaldiçoado]", "Peso: {0} pedras"),
+     InlineData("pol", "[Przeklęty]", "Waga: {0} kam."), InlineData("cze", "[Prokletý]", "Váha: {0} kam.")]
+    public async Task ShippedMessageFiles_TranslateTheTooltipTexts(string language, string cursed, string stones)
+    {
+        var loader = new MessagesLoader(
+            new DirectoriesConfig(Path.Combine(FindRepositoryRoot(), "moongate_root"), ["data"]),
+            new LocalizationConfig { Language = language }
+        );
+        await loader.InitializeAsync();
+
+        var messages = (await loader.LoadDataAsync()).Entities.ToDictionary(message => message.Id, message => message.Text);
+
+        Assert.Equal((cursed, stones), (messages[30005], messages[30007]));
+        Assert.Contains("1", messages[30006]);
     }
 
     private static string FindRepositoryRoot()

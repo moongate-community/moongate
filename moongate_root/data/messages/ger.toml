@@ -5481,3 +5481,8 @@
 30002 = "Selten"
 30003 = "Episch"
 30004 = "Legendär"
+
+# Moongate: tooltip texts.
+30005 = "[Verflucht]"
+30006 = "Gewicht: 1 Stein"
+30007 = "Gewicht: {0} Steine"
