@@ -163,12 +163,15 @@ public class MoongateUltimaPlugin : IMoongatePlugin
 
             // Sent by the client around and after entering the world; recognised so it is not disconnected.
             RegisterIgnoredPacket<ClientHardwareInfoPacket>(container);
+            container.RegisterIncomingPacket<LookRequestPacket>();
             container.RegisterPacketHandler<LookRequestPacket, LookRequestPacketHandler>();
             RegisterIgnoredPacket<MobileQueryPacket>(container);
             RegisterIgnoredPacket<WarModeRequestPacket>(container);
             container.RegisterIncomingPacket<UpdateRangePacket>();
             container.RegisterPacketHandler<UpdateRangePacket, UpdateRangePacketHandler>();
+            container.RegisterIncomingPacket<ExtendedCommandPacket>();
             container.RegisterPacketHandler<ExtendedCommandPacket, ExtendedCommandPacketHandler>();
+            container.RegisterIncomingPacket<QueryPropertiesPacket>();
             container.RegisterPacketHandler<QueryPropertiesPacket, QueryPropertiesPacketHandler>();
             RegisterIgnoredPacket<AttackRequestPacket>(container);
             RegisterIgnoredPacket<TextCommandPacket>(container);

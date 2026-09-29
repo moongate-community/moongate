@@ -1,6 +1,8 @@
 using DryIoc;
 using Moongate.Core.Directories;
 using Moongate.Network.Packets.Incoming.Login;
+using Moongate.Network.Packets.Registry;
+using Moongate.Network.Packets.Types.Packets;
 using Moongate.Persistence.Extensions;
 using Moongate.Scripting.Interfaces;
 using Moongate.Server.Bootstrap.Internal;
@@ -54,6 +56,27 @@ public sealed class ServerRoleRegistrationTests
 
         Assert.Equal("Moongate", container.Resolve<RealmInstance>().Descriptor.Name);
         Assert.Equal("Città di Luna", container.Resolve<MotdServerIdentity>().ServerName);
+    }
+
+    [Theory, InlineData(0x09), InlineData(0xBF), InlineData(0xD6)]
+    public void Register_TheTooltipRequests_AreIncomingPacketsTheFramerKnows(int opCode)
+    {
+        // A packet with a handler but no incoming registration closes the connection when the client sends it.
+        using var directory = new TemporaryDirectory();
+        var directories = new DirectoriesConfig(directory.Path, ["config", "plugins", "scripts"]);
+        using var container = new Container();
+        var config = new MoongateServerConfig { Mode = ServerMode.Game };
+        config.Redis.HandoffSecret = new('x', 32);
+        container.RegisterInstance(config);
+        container.RegisterInstance(TestConfigDocuments.Empty(directory.Path));
+        container.RegisterInstance(directories);
+        container.RegisterInstance<TimeProvider>(TimeProvider.System);
+        container.RegisterMoongatePersistence(config.Persistence.ToOptions(mode: ServerMode.Game));
+
+        ServerRoleRegistration.Register(container, config, directories);
+        new MoongateUltimaPlugin().Register(container);
+
+        Assert.True(container.Resolve<PacketRegistry>().TryGetDescriptor((byte)opCode, PacketDirection.Incoming, out _));
     }
 
     [Theory, InlineData(ServerMode.Login), InlineData(ServerMode.Game), InlineData(ServerMode.Standalone)]
