@@ -176,6 +176,7 @@ runnable walk-through from entity class to applied migration.
 | `OnEvent<TEvent>(handler)` | A `Func<TEvent, CancellationToken, Task>` subscription to one exact `IMoongateEvent` type, kept for the container's lifetime | this page |
 | `AddScriptModule<T>()` / `RegisterScriptEnum<T>()` | A `[ScriptModule]` class as a singleton, published to Lua; or an enum published as a read-only global table | [Writing a Lua module](lua-modules.md) |
 | `AddMetricProvider<T>()` | An `IMetricProvider` contribution, singleton, added to the diagnostics collector | [Registering a metric provider](metric-providers.md) |
+| `AddConfig<T>(section)` | The plugin's own `[section]` of `config/moongate.toml`, bound to `T` and registered as a singleton | [Add a config section](#add-a-config-section) |
 | `AddPersistenceAuth<T>()` / `AddPersistenceWorld<T>()` | A typed entity facade for Accounts or Realm, with modules managed internally (needs `Moongate.Persistence`) | [PostgreSQL persistence](persistence.md) |
 
 `priority` only matters for a service that also implements `IMoongateStartupService`:
@@ -214,6 +215,59 @@ not add its opcode to the wire registry; see [Host integration](packets.md#host-
 `OnEvent<TEvent>(handler)` subscribes to the container-owned event bus from
 `Register`; the handler is awaited for every published `TEvent` as long as the
 container lives.
+
+### Add a config section
+
+A plugin keeps its settings in its own table of `config/moongate.toml`. Write a class
+with the defaults, implement `IConfigSection` when some values are not allowed, and add
+it at the start of `Register`:
+
+```csharp
+using Moongate.Server.Core.Extensions;
+using Moongate.Server.Core.Interfaces.Config;
+
+public sealed class GreeterConfig : IConfigSection
+{
+    public string Greeting { get; set; } = "Welcome";
+
+    public GreeterLimits Limits { get; set; } = new(); // [greeter.limits]
+
+    public void Validate()
+    {
+        if (Limits.MaxPerMinute < 1)
+        {
+            throw new InvalidOperationException("greeter.limits.max_per_minute must be at least 1.");
+        }
+    }
+}
+
+public void Register(Container container)
+{
+    var config = container.AddConfig<GreeterConfig>("greeter");
+    // Services can now take GreeterConfig in their constructor.
+}
+```
+
+```toml
+[greeter]
+greeting = "Welcome"
+
+[greeter.limits]
+max_per_minute = 10
+```
+
+- Property names map to `snake_case` keys; a nested class is a sub-table.
+- When the file has no `[greeter]` table, the plugin gets the defaults and the server
+  **appends** them to the end of the file, so the operator sees every setting. The rest
+  of the file is not rewritten: comments and order stay as they are. If the file cannot
+  be written, a warning is logged and the defaults are used.
+- `Validate()` runs after reading; an exception stops the start.
+- A section name belongs to one owner: the server's own sections (`network`, `redis`,
+  `persistence`, ...) and a name another plugin already added stop the start with
+  `The configuration section [name] is already owned by the server or by another plugin.`
+- Settings are read once, at startup; there is no reload.
+
+The Ultima plugin owns `[ultima]` and the Admin plugin owns `[admin_api]` this way.
 
 ### Persistence lifecycle events
 
@@ -339,7 +393,7 @@ leaves previously registered plugins untouched:
 | `Plugin '{id}' requires missing plugin '{dependency}'.` | A dependency names an ID nothing supplies |
 | `Plugin '{id}' requires '{dependency}' >= {minimum}; found {version}.` | The available plugin is older than `minimumVersion` |
 | `Plugin dependency cycle: first -> second -> first.` | A cycle in the dependency graph, printed as the path that closed it |
-| `Plugin '{id}' failed during registration.` | The plugin's own `Register` threw; the exception is the `InnerException` |
+| `Plugin '{id}' failed during registration.` | The plugin's own `Register` threw, including an invalid or already-owned config section; the exception is the `InnerException` |
 
 ## Testing a plugin
 

@@ -11,7 +11,15 @@ The welcome text shown when a character enters the world lives in a separate
 
 ## Complete default configuration
 
-TOML keys use `snake_case`. Keep `mode` before the first table header:
+TOML keys use `snake_case`. Keep `mode` before the first table header.
+
+The server owns `mode` and the sections `[shard]`, `[network]`, `[redis]`,
+`[persistence]`, `[realm_directory]`, `[world_save]`, `[diagnostics]` and
+`[scripting]`. Plugins own the others: `[ultima]` belongs to the Ultima plugin and
+`[admin_api]` to the Administration plugin. A new root written by `mgboot` holds only
+the server's sections; at the first start each plugin appends its missing section,
+with the defaults, to the end of the file. See
+[Add a config section](plugins.md#add-a-config-section).
 
 ```toml
 mode = "standalone" # Runs login and game services together.
@@ -33,6 +41,7 @@ client_version = ""
 connection_string = "$MOONGATE_REDIS_CONNECTION_STRING"
 handoff_secret = "$MOONGATE_HANDOFF_SECRET"
 
+# Administration plugin.
 [admin_api]
 enabled = false
 # Use "*" or "0.0.0.0" for all IPv4 interfaces (TLS required).
@@ -45,6 +54,7 @@ allow_insecure_loopback = false
 certificate_path = ""
 certificate_password = ""
 
+# Ultima plugin.
 [ultima]
 ultima_path = "ChangeMe" # Replace with your client data directory.
 
