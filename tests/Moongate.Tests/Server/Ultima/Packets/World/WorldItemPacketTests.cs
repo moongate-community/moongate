@@ -24,4 +24,12 @@ public sealed class WorldItemPacketTests
 
         Assert.Equal(Convert.FromHexString("1A0012C00000120EED000105D8865C000481"), PacketCodec.Encode(packet));
     }
+
+    [Fact]
+    public void Encode_ALight_FlagsTheXAndWritesItsByteAfterTheY()
+    {
+        var packet = new WorldItemPacket(new Serial(0x40000012), 0x0EED, 1, new Point3D(1496, 1628, 0), default, 2);
+
+        Assert.Equal(Convert.FromHexString("1A0011C00000120EED000185D8065C0200"), PacketCodec.Encode(packet));
+    }
 }

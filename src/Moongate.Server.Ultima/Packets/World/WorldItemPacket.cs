@@ -18,6 +18,7 @@ public sealed class WorldItemPacket : BasePacket<WorldItemPacket>, IOutgoingPack
 {
     private const int FixedLength = 16;
     private const int HueLength = 2;
+    private const int LightLength = 1;
 
     public override int Length { get; }
 
@@ -31,19 +32,26 @@ public sealed class WorldItemPacket : BasePacket<WorldItemPacket>, IOutgoingPack
 
     public Hue Hue { get; }
 
-    public WorldItemPacket(Serial serial, int itemId, int amount, Point3D location, Hue hue)
+    /// <summary>
+    ///     The shape of the light a light source gives, a LightType value; 0 sends none.
+    /// </summary>
+    public int Light { get; }
+
+    public WorldItemPacket(Serial serial, int itemId, int amount, Point3D location, Hue hue, int light = 0)
     {
+        Light = light;
         Serial = serial;
         ItemId = itemId;
         Amount = amount;
         Location = location;
         Hue = hue;
-        Length = FixedLength + (hue.Value != 0 ? HueLength : 0);
+        Length = FixedLength + (hue.Value != 0 ? HueLength : 0) + (light != 0 ? LightLength : 0);
     }
 
     public void Write(ref PacketWriter writer)
     {
         var hasHue = Hue.Value != 0;
+        var hasLight = Light != 0;
 
         writer.EnsureCapacity(Length);
         writer.WriteByte(OpCode);
@@ -52,8 +60,15 @@ public sealed class WorldItemPacket : BasePacket<WorldItemPacket>, IOutgoingPack
         writer.WriteUInt32BigEndian(Serial.Value | 0x80000000);
         writer.WriteUInt16BigEndian((ushort)(ItemId & 0x3FFF));
         writer.WriteUInt16BigEndian((ushort)Amount);
-        writer.WriteUInt16BigEndian((ushort)(Location.X & 0x7FFF));
+        // The high bit of X says the light (the direction byte) follows Y.
+        writer.WriteUInt16BigEndian((ushort)((Location.X & 0x7FFF) | (hasLight ? 0x8000 : 0)));
         writer.WriteUInt16BigEndian((ushort)((Location.Y & 0x3FFF) | (hasHue ? 0x8000 : 0)));
+
+        if (hasLight)
+        {
+            writer.WriteByte((byte)Light);
+        }
+
         writer.WriteByte(unchecked((byte)(sbyte)Location.Z));
 
         if (hasHue)
