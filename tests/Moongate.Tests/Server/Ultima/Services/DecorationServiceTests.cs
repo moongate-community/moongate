@@ -125,6 +125,7 @@ public sealed class DecorationServiceTests
         var result = await Service(File("trammel", Block("Static", 0x0063, new Point3D(9000, 100, 0)))).DecorateAsync(_progress);
 
         Assert.Equal(new DecorationResult(0, 0, 1, 1), result);
+        Assert.Equal(1, Assert.Single(_progress.Reports).SkippedByType["outside the map"]);
         Assert.Empty(_items.Items);
     }
 
@@ -168,6 +169,60 @@ public sealed class DecorationServiceTests
         Assert.False(byX[(110, 100)].Props!.ContainsKey("door.link"));
         Assert.False(byX[(110, 101)].Props!.ContainsKey("door.link"));
         Assert.Contains(_factory.Saved.SelectMany(batch => batch), item => item.Props?.ContainsKey("door.link") == true);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_AnOpenDoor_CountsAsThereOnItsClosedSpot()
+    {
+        var service = Service(File("trammel", Block("MetalDoor", 0x0675, props: new() { ["facing"] = "west_cw" })));
+        await service.DecorateAsync(_progress);
+        var door = Assert.Single(_items.Items);
+
+        // What door.lua leaves on an open door: the next graphic, moved aside, the closed spot kept.
+        _sectors.RemoveItem(door);
+        door.ItemId = 0x0676;
+        door.PlaceOnGround(MapType.Trammel, new Point3D(1499, 1601, 10));
+        door.Props!["door.open"] = true;
+        door.Props["door.x"] = 1500L;
+        door.Props["door.y"] = 1600L;
+        door.Props["door.z"] = 10L;
+        _sectors.AddItem(door);
+
+        var second = await service.DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(0, 1, 0, 1), second);
+        Assert.Single(_items.Items);
+    }
+
+    [Fact]
+    public async Task DecorateAsync_TheSavedItemsEnterTheWorld_EvenWhenSavingTheLinksFails()
+    {
+        _factory.FailingSave = 2;
+
+        var result = await Service(
+                         File("trammel", Block("MetalDoor", 0x0675, new Point3D(100, 100, 0), new Point3D(101, 100, 0)))
+                     )
+                     .DecorateAsync(_progress);
+
+        Assert.Equal(new DecorationResult(2, 0, 0, 1), result);
+        Assert.Equal(2, _items.Items.Count);
+        Assert.All(_items.Items, door => Assert.True(door.Props!.ContainsKey("door.link")));
+    }
+
+    [Fact]
+    public async Task DecorateAsync_WhileAnotherRuns_IsRefused()
+    {
+        var loader = new StubDecorationsLoader(File("trammel", Block("Static", 0x0063))) { Gate = new() };
+        var service = new DecorationService(loader, _factory, _items, _sectors, _view, new StubGameLoop());
+
+        var first = service.DecorateAsync(_progress);
+        Assert.True(service.IsRunning);
+        await Assert.ThrowsAsync<InvalidOperationException>(() => service.DecorateAsync(_progress));
+        loader.Gate.SetResult();
+
+        Assert.Equal(1, (await first).Placed);
+        Assert.False(service.IsRunning);
+        Assert.Equal(0, (await service.DecorateAsync(_progress)).Placed);
     }
 
     [Fact]

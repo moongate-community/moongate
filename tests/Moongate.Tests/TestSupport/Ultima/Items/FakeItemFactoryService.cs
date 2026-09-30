@@ -17,6 +17,11 @@ public sealed class FakeItemFactoryService : IItemFactoryService
 
     public List<IReadOnlyList<ItemEntity>> Saved { get; } = [];
 
+    /// <summary>
+    ///     The 1-based number of the save call that throws, as a failing database would; 0 never throws.
+    /// </summary>
+    public int FailingSave { get; set; }
+
     public FakeItemFactoryService(IItemTemplateService templates, ITileDataService tiles)
     {
         _factory = new(templates, tiles, null!);
@@ -34,6 +39,13 @@ public sealed class FakeItemFactoryService : IItemFactoryService
 
     public Task SaveAsync(IReadOnlyList<ItemEntity> items, CancellationToken cancellationToken = default)
     {
+        if (FailingSave == Saved.Count + 1)
+        {
+            Saved.Add([]);
+
+            throw new IOException("The database is gone.");
+        }
+
         foreach (var item in items.Where(item => item.Id == default))
         {
             item.Id = new Serial(_next++);

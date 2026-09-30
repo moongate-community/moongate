@@ -22,6 +22,7 @@ public sealed class DecorationService : IDecorationService
     public const string TypeProp = "decoration_type";
     public const string LinkProp = "door.link";
     public const string OutsideTheMap = "outside the map";
+    public const string OpenProp = "door.open";
 
     private readonly ILogger _logger = Log.ForContext<DecorationService>();
     private readonly IDecorationsLoader _loader;
@@ -30,6 +31,9 @@ public sealed class DecorationService : IDecorationService
     private readonly ISectorService _sectors;
     private readonly IWorldViewService _view;
     private readonly IGameLoopService _loop;
+    private readonly SemaphoreSlim _running = new(1, 1);
+
+    public bool IsRunning => _running.CurrentCount == 0;
 
     public DecorationService(
         IDecorationsLoader loader,
@@ -51,6 +55,27 @@ public sealed class DecorationService : IDecorationService
     public async Task<DecorationResult> DecorateAsync(
         IProgress<DecorationFileResult>? progress = null,
         CancellationToken cancellationToken = default
+    )
+    {
+        // Two runs would both find the spots free before either adds its items.
+        if (!_running.Wait(0))
+        {
+            throw new InvalidOperationException("A decoration is already running.");
+        }
+
+        try
+        {
+            return await DecorateFilesAsync(progress, cancellationToken);
+        }
+        finally
+        {
+            _running.Release();
+        }
+    }
+
+    private async Task<DecorationResult> DecorateFilesAsync(
+        IProgress<DecorationFileResult>? progress,
+        CancellationToken cancellationToken
     )
     {
         var files = await _loader.LoadAsync(cancellationToken);
@@ -144,12 +169,20 @@ public sealed class DecorationService : IDecorationService
         {
             await _factory.SaveAsync(items, cancellationToken);
 
-            // The links need the serials the save gave; the linked doors are saved again with them.
+            // Saved: from here the items enter the world whatever happens, or a second run would save them again. The
+            // links need the serials the save gave; if saving them fails, the next world save writes them.
             var linked = LinkDoors(items);
 
             if (linked.Count > 0)
             {
-                await _factory.SaveAsync(linked, cancellationToken);
+                try
+                {
+                    await _factory.SaveAsync(linked, CancellationToken.None);
+                }
+                catch (Exception exception)
+                {
+                    _logger.Warning(exception, "Saving the door links of {Folder}/{Name} failed", file.Folder, file.Name);
+                }
             }
 
             await OnLoopAsync(
@@ -181,10 +214,22 @@ public sealed class DecorationService : IDecorationService
         return type.Contains("Door", StringComparison.Ordinal) || type.Contains("Gate", StringComparison.Ordinal);
     }
 
+    // The same graphic on the spot, or a door opened from it: one graphic further and up to a tile aside, its closed
+    // spot kept by door.lua.
     private bool IsThere(MapType map, Point3D location, int graphic)
     {
-        return _sectors.GetItemsInRange(map, location, 0)
-                       .Any(item => item.ItemId == graphic && item.GroundLocation == location);
+        return _sectors.GetItemsInRange(map, location, 1)
+                       .Any(item => item.ItemId == graphic && item.GroundLocation == location ||
+                                    item.ItemId == graphic + 1 && IsOpenFrom(item, location));
+    }
+
+    private static bool IsOpenFrom(ItemEntity item, Point3D location)
+    {
+        return item.Props is { } props &&
+               props.GetValueOrDefault(OpenProp) is true &&
+               props.GetValueOrDefault("door.x") is long x && x == location.X &&
+               props.GetValueOrDefault("door.y") is long y && y == location.Y &&
+               props.GetValueOrDefault("door.z") is long z && z == location.Z;
     }
 
     private ItemEntity Build(DecorationBlock block, MapType map, Point3D location)

@@ -43,6 +43,7 @@ public static class CommandMessages
     public const int DecoratingFile = 30055;
     public const int DecorationDone = 30056;
     public const int DecorationFailed = 30057;
+    public const int DecorationRunning = 30059;
 
     // UOX3's "An account by that name already exists!".
     public const int AccountExists = 555;

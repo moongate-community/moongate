@@ -45,6 +45,13 @@ public sealed class DecorateCommand : ICommandExecutor
             return;
         }
 
+        if (_decorations.IsRunning)
+        {
+            context.PrintError(_localization.Text(CommandMessages.DecorationRunning, "A decoration is already running."));
+
+            return;
+        }
+
         var progress = context.Session is { } session
             ? new ActionProgress<DecorationFileResult>(
                 file => SpeechMessageHelper.TrySend(_sender, session, SpeechMessageHelper.CreateSystem(FileLine(file), ProgressHue))

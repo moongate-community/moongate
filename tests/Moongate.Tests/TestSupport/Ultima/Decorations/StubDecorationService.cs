@@ -14,6 +14,8 @@ public sealed class StubDecorationService : IDecorationService
 
     public int Calls { get; private set; }
 
+    public bool IsRunning { get; init; }
+
     public StubDecorationService(params DecorationFileResult[] files)
     {
         _files = files;

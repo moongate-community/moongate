@@ -63,6 +63,21 @@ public sealed class DecorateCommandTests : IAsyncDisposable
     }
 
     [Fact]
+    public async Task WhileADecorationRuns_SaysSo_AndStartsNoOther()
+    {
+        var running = new StubDecorationService { IsRunning = true };
+        var context = new CommandContext("decorate", "decorate", [], CommandSourceType.Console, null);
+
+        await new DecorateCommand(running, _sender).ExecuteAsync(context);
+
+        Assert.Equal(
+            (CommandOutputLevel.Error, "A decoration is already running."),
+            (Assert.Single(context.Output).Level, context.Output[0].Text)
+        );
+        Assert.Equal(0, running.Calls);
+    }
+
+    [Fact]
     public async Task AFailure_PointsToTheLogs()
     {
         var failing = new StubDecorationService { Failure = new InvalidDataException("bad folder") };

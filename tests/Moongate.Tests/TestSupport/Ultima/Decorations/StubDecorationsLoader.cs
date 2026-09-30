@@ -10,13 +10,23 @@ public sealed class StubDecorationsLoader : IDecorationsLoader
 {
     private readonly IReadOnlyList<DecorationFile> _files;
 
+    /// <summary>
+    ///     When set, loading waits for it, to keep a decoration running.
+    /// </summary>
+    public TaskCompletionSource? Gate { get; set; }
+
     public StubDecorationsLoader(params DecorationFile[] files)
     {
         _files = files;
     }
 
-    public Task<IReadOnlyList<DecorationFile>> LoadAsync(CancellationToken cancellationToken = default)
+    public async Task<IReadOnlyList<DecorationFile>> LoadAsync(CancellationToken cancellationToken = default)
     {
-        return Task.FromResult(_files);
+        if (Gate is not null)
+        {
+            await Gate.Task;
+        }
+
+        return _files;
     }
 }

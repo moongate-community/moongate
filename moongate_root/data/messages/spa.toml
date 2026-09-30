@@ -5486,7 +5486,7 @@
 30006 = "Peso: 1 piedra"
 30007 = "Peso: {0} piedras"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057) and command descriptions (30039-30049, 30053-30054, 30058).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059) and command descriptions (30039-30049, 30053-30054, 30058).
 30008 = "Objetivo cancelado."
 30009 = "Ya hay un comando en ejecución."
 30010 = "Comando desconocido: {0}"
@@ -5538,3 +5538,4 @@
 30056 = "Decoración terminada: {0} colocados, {1} ya presentes, {2} omitidos en {3} archivos."
 30057 = "La decoración ha fallado. Revisa los registros del servidor."
 30058 = "Coloca la decoración del mundo: puertas, carteles, luces y muebles."
+30059 = "Ya hay una decoración en curso."
