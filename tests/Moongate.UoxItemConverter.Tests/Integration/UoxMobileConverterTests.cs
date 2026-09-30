@@ -352,6 +352,29 @@ public sealed class UoxMobileConverterTests : IDisposable
     }
 
     [Fact]
+    public void Run_MovementComesFromCreaturesOnTheBlockThatSetsTheBody()
+    {
+        WriteItemsAndNames();
+        _dirs.WriteMobileSource(
+            "creatures/creatures.dfn",
+            "[CREATURE 0x97]\n{ Dolphin\nMOVEMENT=WATER\n}\n[CREATURE 0xdd]\n{ Walrus\nMOVEMENT=BOTH\n}\n" +
+            "[CREATURE 0x11]\n{ Orc\nMOVEMENT=LAND\n}\n"
+        );
+        _dirs.WriteMobileSource(
+            "npc/a.dfn",
+            "[dolphin]\n{\nID=0x0097\n}\n[big_dolphin]\n{\nGET=dolphin\n}\n[walrus]\n{\nID=0x00dd\n}\n[orc]\n{\nID=0x0011\n}\n"
+        );
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var mobiles = ReadMobiles("a.toml");
+        Assert.Equal(
+            [MobileMovementType.Water, null, MobileMovementType.Both, null],
+            new[] { "dolphin", "big_dolphin", "walrus", "orc" }.Select(id => mobiles[id].Movement)
+        );
+    }
+
+    [Fact]
     public void Run_AMaleFemalePair_BecomesOneRandomGenderTemplate_AndOtherPairsAreSkipped()
     {
         _dirs.WriteSource("items.dfn", "[0x13e4]\n{\nid=0x13e4\n}\n[0x1517]\n{\nid=0x1517\n}\n[0x1516]\n{\nid=0x1516\n}\n");

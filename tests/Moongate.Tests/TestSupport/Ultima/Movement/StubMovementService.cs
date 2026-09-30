@@ -22,13 +22,44 @@ public sealed class StubMovementService : IMovementService
     /// </summary>
     public int? DropZ { get; set; } = 0;
 
+    /// <summary>
+    ///     Gets or sets where a mobile can be placed at a cell; null means nowhere. Every cell is on the land at 0 by default.
+    /// </summary>
+    public Func<int, int, int?> SpawnZ { get; set; } = (_, _) => 0;
+
     public List<(MapType Map, Point3D From, DirectionType Direction)> Checks { get; } = [];
+
+    public List<int> SpawnCeilings { get; } = [];
+
+    /// <summary>
+    ///     Gets or sets where a swimming mobile can be placed at a cell; null means nowhere, the default.
+    /// </summary>
+    public Func<int, int, int?> SwimZ { get; set; } = (_, _) => null;
+
+    public List<MovementAbilityType> Abilities { get; } = [];
 
     public bool TryGetDropZ(MapType map, int x, int y, int maxZ, out int z)
     {
         z = DropZ ?? 0;
 
         return DropZ is not null;
+    }
+
+    public bool TryGetSpawnZ(MapType map, int x, int y, int maxZ, out int z)
+    {
+        SpawnCeilings.Add(maxZ);
+        var found = SpawnZ(x, y);
+        z = found ?? 0;
+
+        return found is not null;
+    }
+
+    public bool TryGetSwimZ(MapType map, int x, int y, out int z)
+    {
+        var found = SwimZ(x, y);
+        z = found ?? 0;
+
+        return found is not null;
     }
 
     public int GetAverageZ(MapType map, int x, int y)
@@ -45,6 +76,7 @@ public sealed class StubMovementService : IMovementService
     )
     {
         Checks.Add((map, from, direction));
+        Abilities.Add(ability);
 
         if (ThrowMapNotLoaded)
         {

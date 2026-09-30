@@ -57,9 +57,13 @@ public sealed class LoopCheckingMobileService : IMobileService
         return _inner.LeaveWorld(serial);
     }
 
-    public MoveResultType TryMove(MobileEntity mobile, DirectionType direction)
+    public MoveResultType TryMove(
+        MobileEntity mobile,
+        DirectionType direction,
+        MovementAbilityType ability = MovementAbilityType.Walk
+    )
     {
-        return _inner.TryMove(mobile, direction);
+        return _inner.TryMove(mobile, direction, ability);
     }
 
     public bool IsInWorld(Serial mobile)

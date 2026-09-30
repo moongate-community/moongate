@@ -87,6 +87,13 @@ public static class UltimaCommandsContainerExtensions
             AccountType.GameMaster,
             CommandMessages.WeatherDescription
         );
+        container.RegisterCommand<SpawnsCommand>(
+            "spawns",
+            "Lists the spawn regions where you stand, with their live NPCs and the minutes to their next spawn.",
+            CommandSourceType.InGame,
+            AccountType.GameMaster,
+            CommandMessages.SpawnsDescription
+        );
         container.RegisterCommand<LockCommand>(
             "lock",
             "Locks the door you target and the door linked to it: players cannot open it.",

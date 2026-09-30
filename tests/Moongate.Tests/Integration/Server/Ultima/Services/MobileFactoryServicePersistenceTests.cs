@@ -152,6 +152,18 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
     }
 
     [Fact]
+    public async Task SpawnAsync_SavesTheGivenPropsWithTheMobile()
+    {
+        var props = new Dictionary<string, object?> { ["spawn.region"] = "forest", ["spawn.x1"] = 10L };
+
+        var spawned = await _factory.SpawnAsync("plain", MapType.Felucca, new Point3D(10, 20, 0), props);
+
+        var loaded = (await _mobiles.GetByIdAsync(spawned.Mobile.Id))!;
+        Assert.Equal("forest", loaded.GetProp<string>("spawn.region"));
+        Assert.Equal(10L, loaded.GetProp<long>("spawn.x1"));
+    }
+
+    [Fact]
     public async Task SpawnAsync_APlainNpc_StillWearsABackpack()
     {
         var spawned = await _factory.SpawnAsync("plain", MapType.Felucca, new Point3D(10, 20, 0));
@@ -311,7 +323,7 @@ public sealed class MobileFactoryServicePersistenceTests : IAsyncLifetime
             }
         );
 
-        var spawned = await _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0), cancellation.Token);
+        var spawned = await _factory.SpawnAsync("guard", MapType.Felucca, new Point3D(10, 20, 0), cancellationToken: cancellation.Token);
 
         Assert.NotNull(await _mobiles.GetByIdAsync(spawned.Mobile.Id));
         Assert.Contains(_published, e => e is MobileAfterSpawnEvent);

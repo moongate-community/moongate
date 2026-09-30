@@ -24,6 +24,7 @@ public sealed class StubMobileFactoryService : IMobileFactoryService
         string templateId,
         MapType map,
         Point3D location,
+        IReadOnlyDictionary<string, object?>? props = null,
         CancellationToken cancellationToken = default
     )
     {

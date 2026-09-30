@@ -32,6 +32,7 @@ export const contentEntries = [
   { source: 'docs/commands/fame.md', slug: 'server/commands/fame', title: 'fame', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/karma.md', slug: 'server/commands/karma', title: 'karma', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/weather.md', slug: 'server/commands/weather', title: 'weather', group: 'Run a shard', subgroup: 'Commands' },
+  { source: 'docs/commands/spawns.md', slug: 'server/commands/spawns', title: 'spawns', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/lock.md', slug: 'server/commands/lock', title: 'lock', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/unlock.md', slug: 'server/commands/unlock', title: 'unlock', group: 'Run a shard', subgroup: 'Commands' },
   { source: 'docs/commands/key.md', slug: 'server/commands/key', title: 'key', group: 'Run a shard', subgroup: 'Commands' },

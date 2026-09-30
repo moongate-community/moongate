@@ -184,6 +184,7 @@ public class MobileTemplatesLoader : IDataLoader<MobileTemplate>
         child.Gold ??= parent.Gold;
         child.ScriptId ??= parent.ScriptId;
         child.Visibility ??= parent.Visibility;
+        child.Movement ??= parent.Movement;
         child.Loot ??= parent.Loot is null ? null : [..parent.Loot];
         child.Equipment ??= parent.Equipment?.Select(
                                                 entry => new MobileEquipmentEntry

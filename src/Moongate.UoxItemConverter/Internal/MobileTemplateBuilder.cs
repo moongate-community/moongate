@@ -90,6 +90,11 @@ internal static class MobileTemplateBuilder
                 };
             }
 
+            if (context.CreatureMovements.TryGetValue(body, out var movement))
+            {
+                template.Movement = movement;
+            }
+
             if (HumanoidBodies.TryGetValue(body, out var humanoid))
             {
                 (template.Race, template.Gender) = (humanoid.Race, humanoid.Gender);

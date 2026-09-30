@@ -6,6 +6,7 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Modules.Internal;
+using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Server.Ultima.Types.Movement;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -88,11 +89,12 @@ public sealed class NpcModule
 
         var oldLocation = npc.Location;
         var oldDirection = npc.Direction;
-        var result = _mobiles.TryMove(npc, direction);
+        var ability = AbilityOf(npc);
+        var result = _mobiles.TryMove(npc, direction, ability);
 
         if (result == MoveResultType.Turned)
         {
-            result = _mobiles.TryMove(npc, direction);
+            result = _mobiles.TryMove(npc, direction, ability);
         }
 
         if (npc.Location != oldLocation || npc.Direction != oldDirection)
@@ -196,6 +198,19 @@ public sealed class NpcModule
         npc.SetProp(key, prop);
 
         return true;
+    }
+
+    // As its template says: a water mobile swims, an amphibious one walks and swims.
+    private MovementAbilityType AbilityOf(MobileEntity npc)
+    {
+        var movement = npc.TemplateId is { } id && _templates.TryGet(id, out var template) ? template.Movement : null;
+
+        return movement switch
+        {
+            MobileMovementType.Water => MovementAbilityType.Swim,
+            MobileMovementType.Both => MovementAbilityType.Walk | MovementAbilityType.Swim,
+            _ => MovementAbilityType.Walk
+        };
     }
 
     private bool TryGetNpc(long serial, [NotNullWhen(true)] out MobileEntity? npc)

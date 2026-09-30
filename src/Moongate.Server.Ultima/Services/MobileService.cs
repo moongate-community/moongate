@@ -118,7 +118,11 @@ public sealed class MobileService : IMobileService
         }
     }
 
-    public MoveResultType TryMove(MobileEntity mobile, DirectionType direction)
+    public MoveResultType TryMove(
+        MobileEntity mobile,
+        DirectionType direction,
+        MovementAbilityType ability = MovementAbilityType.Walk
+    )
     {
         var facing = (DirectionType)((byte)direction & DirectionMask);
 
@@ -133,7 +137,7 @@ public sealed class MobileService : IMobileService
 
         try
         {
-            if (!_movement.CheckMovement(mobile.Map, mobile.Location, facing, MovementAbilityType.Walk, out newZ))
+            if (!_movement.CheckMovement(mobile.Map, mobile.Location, facing, ability, out newZ))
             {
                 return MoveResultType.Blocked;
             }

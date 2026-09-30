@@ -145,7 +145,8 @@ items:
   per source file under `--mobile-destination`, id = the header in snake_case;
 - the twenty `[RANDOMNAME n]` lists of `npc/namelists.dfn` into `--names-destination`.
 
-It also reads `creatures/creatures.dfn` (sounds), `colors/colors.dfn` (colour lists) and
+It also reads `creatures/creatures.dfn` (sounds, and `MOVEMENT=WATER` or `BOTH` as
+`movement`), `colors/colors.dfn` (colour lists) and
 `../dictionaries/dictionary.ENG` (numeric names and titles). Equipment and loot are
 resolved against the items and loot tables of the same run.
 

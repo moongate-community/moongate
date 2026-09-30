@@ -186,6 +186,11 @@ public class MobileTemplate
     public AccountType? Visibility { get; set; }
 
     /// <summary>
+    ///     Where the mobiles move: land, water or both. Unset is land.
+    /// </summary>
+    public MobileMovementType? Movement { get; set; }
+
+    /// <summary>
     ///     Free values for scripts. A child template's tags add to and override its base's.
     /// </summary>
     public Dictionary<string, string>? Tags { get; set; }
