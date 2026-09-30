@@ -15,6 +15,7 @@ export const contentEntries = [
   { source: 'docs/docker.md', slug: 'server/docker', title: 'Run with Docker', group: 'Run a shard' },
   { source: 'docs/docker-login-realms.md', slug: 'server/docker-login-realms', title: 'Docker login and realms', group: 'Run a shard' },
   { source: 'docs/server-configuration.md', slug: 'server/configuration', title: 'Configuration', group: 'Run a shard' },
+  { source: 'docs/commands.md', slug: 'server/commands', title: 'Commands', group: 'Run a shard' },
   { source: 'docs/motd.md', slug: 'server/motd', title: 'Message of the day', group: 'Run a shard' },
   { source: 'docs/persistence-operations.md', slug: 'server/persistence-operations', title: 'Operate PostgreSQL', group: 'Run a shard' },
   { source: 'docs/diagnostics.md', slug: 'server/diagnostics', title: 'Diagnostics', group: 'Run a shard' },

@@ -13,22 +13,46 @@ message to everyone in the local world, and a successful `save` announces comple
 `shutdown` also announces the requested server stop to players.
 Use `..text` to say `.text` literally.
 
-| Command | Console | In-game registration | Minimum in-game level | Purpose |
-| --- | --- | --- | --- | --- |
-| `echo`, `e` | Yes | Yes | Regular | Print the arguments back to the caller |
-| `help` | Yes | Yes | Regular | List accessible commands or show details for one command |
-| `script` | Game/Standalone | No | — | Reload one Lua script or show script metrics |
-| `account` | Login/Standalone | Yes | Administrator | Create an account in the Accounts database |
-| `character` | Game/Standalone | Yes | GameMaster | List characters pending deletion and restore them |
-| `save` | Game/Standalone | Yes | Administrator | Save the world and announce completion |
-| `broadcast` | Game/Standalone | Yes | Administrator | Send a system message to players on this instance |
-| `shutdown` | Game/Standalone | Yes | Administrator | Stop the server gracefully, immediately or after a delay |
-| `fame`, `karma` | No | Game/Standalone | GameMaster | Set the fame or karma of the character or NPC you target |
-| `decorate` | Game/Standalone | Yes | Administrator | Place the world decoration: doors, signs, lights and furniture |
-| `globallight` | Game/Standalone | Yes | GameMaster | Give every player the same light, or go back to the time of day |
-| `weather` | No | Game/Standalone | GameMaster | Show the weather where you stand, or force it until the next game hour |
-| `lock`, `unlock` | No | Game/Standalone | GameMaster | Lock or unlock the door you target and its linked door |
-| `key` | No | Game/Standalone | GameMaster | Put in your backpack a key for the door you target |
+## All commands at a glance
+
+"Console" means the server console (always treated as an administrator); "In game" means
+typed with a leading dot by a character whose account has at least the minimum level. The
+role is the server mode that registers the command: `Login`, `Game`, or both in `Standalone`.
+
+| Command | Syntax | Console | In game | Minimum level | Role |
+| --- | --- | --- | --- | --- | --- |
+| [`help`](#help) | `help [command]` | Yes | Yes | Regular | Every role |
+| [`echo`, `e`](#echo) | `echo <text>` | Yes | Yes | Regular | Every role |
+| [`script`](#script) | `script reload <file>` / `script metrics` | Yes | No | — | Game |
+| [`account`](#account) | `account create <username> <password> [level]` / `account api-access <username> <on\|off>` | Yes | Yes | Administrator | Login |
+| [`character`](#character) | `character pending [account-serial]` / `character restore <character-serial>` | Yes | Yes | GameMaster | Game |
+| [`save`](#save) | `save` | Yes | Yes | Administrator | Game |
+| [`broadcast`](#broadcast) | `broadcast <text>` | Yes | Yes | Administrator | Game |
+| [`shutdown`](#shutdown) | `shutdown [seconds]` | Yes | Yes | Administrator | Game |
+| [`decorate`](#decorate) | `decorate` | Yes | Yes | Administrator | Game |
+| [`globallight`](#global-light) | `globallight [0-31]` | Yes | Yes | GameMaster | Game |
+| [`spawn`](#spawn) | `spawn <template>`, then target a spot | No | Yes | GameMaster | Game |
+| [`remove`](#remove) | `remove`, then target an NPC | No | Yes | GameMaster | Game |
+| [`where`](#where) | `where`, then target anything | No | Yes | GameMaster | Game |
+| [`fame`](#fame-and-karma) | `fame <0..32000>`, then target a mobile | No | Yes | GameMaster | Game |
+| [`karma`](#fame-and-karma) | `karma <-32000..32000>`, then target a mobile | No | Yes | GameMaster | Game |
+| [`weather`](#weather) | `weather [none\|rain\|snow\|storm]` | No | Yes | GameMaster | Game |
+| [`lock`](#lock-and-unlock) | `lock`, then target a door | No | Yes | GameMaster | Game |
+| [`unlock`](#lock-and-unlock) | `unlock`, then target a door | No | Yes | GameMaster | Game |
+| [`key`](#key) | `key`, then target a door | No | Yes | GameMaster | Game |
+
+### By who uses them
+
+- **Everyone:** `help`, `echo`.
+- **Game masters:** `character`, `spawn`, `remove`, `where`, `fame`, `karma`, `globallight`,
+  `weather`, `lock`, `unlock`, `key`.
+- **Administrators:** `account`, `save`, `broadcast`, `shutdown`, `decorate`, plus everything a
+  game master uses.
+- **Console only:** `script`.
+
+Commands that ask for a target open the client's target cursor after checking their
+arguments; pressing Escape prints `Target canceled.` and changes nothing. The texts they
+print are in the server language (see [Localization](localization.md)).
 
 ## Help
 
@@ -196,6 +220,38 @@ In game only. The value is checked first; then a target cursor opens and the cha
 you pick gets it: `Bran now has 10000 fame.` Picking an item or cancelling changes nothing. The
 paperdoll title follows at once: the [fame and karma prefix](data-files/titles.md), which says
 `Lord` or `Lady` from 10,000 fame. The value is saved with the mobile by its next save.
+
+## Spawn
+
+```text
+.spawn orione
+```
+
+In game only. The template id is checked first (`Unknown mobile template: <id>` otherwise);
+then a target cursor opens and the NPC appears on the spot you pick, dressed and with its
+loot, and runs its Lua `on_spawn`: `Spawned Orione (0x00000123) at Trammel (1496, 1628, 10).`
+The NPC is saved with the world. A failure prints `The spawn failed. Check the server logs.`
+The mobile templates are in `templates/mobiles` (see [Loading TOML templates](templates.md)).
+
+## Remove
+
+```text
+.remove
+```
+
+In game only. Target an NPC: it disappears for everyone, with what it wears and carries, and
+its row is deleted by the next world save: `Removed 0x00000123.` Targeting a player
+character, an item or a spot prints `That is not an NPC.` and removes nothing.
+
+## Where
+
+```text
+.where
+```
+
+In game only. Target anything: an item or a mobile prints its serial (`0x40000012`); a spot
+on the ground or on a static prints its map and location, and the region it belongs to when
+the region has a name: `Trammel (1496, 1628, 10) in Britain`.
 
 ## Decorate
 
