@@ -188,8 +188,10 @@ ground item that bounces goes back where it lay, and one still held when the ses
 put back too. Dropping onto a ground stack within reach merges them as in the backpack. Players
 walking into range of a ground item, or entering the world near it, get it with the same old and
 new position test as the mobiles. The items on the ground and everything inside them are loaded
-at startup and saved by the world save; they do not decay yet, and a container on the ground
-cannot be opened yet.
+at startup and saved by the world save. A ground item decays after its template's time, 60 minutes
+unless `decay_minutes` says otherwise, counted from when it landed on the ground and restarted
+each time it is put down again; a decayed container takes its contents with it (see
+[Templates](templates.md)). A container on the ground cannot be opened yet.
 
 `ITargetService` shows a player the target cursor (`0x6C`) and hands the pick to a callback on the
 game loop, or to a command awaiting `RequestAsync`. A player has one target at a time: a new one
