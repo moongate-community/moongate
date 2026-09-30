@@ -173,7 +173,8 @@ public sealed class SpawnRegionService : ISpawnRegionService
                                        region.Template.Name,
                                        live.GetValueOrDefault(region.Template.Id),
                                        region.Template.Max,
-                                       region.NextSpawn > now ? region.NextSpawn - now : TimeSpan.Zero
+                                       region.NextSpawn > now ? region.NextSpawn - now : TimeSpan.Zero,
+                                       region.Retrying
                                    )
                                )
                                .ToList();
@@ -240,6 +241,7 @@ public sealed class SpawnRegionService : ISpawnRegionService
             }
 
             var missed = count > 0 && found == 0;
+            region.Retrying = missed;
 
             region.NextSpawn = missed
                 ? now + RetryDelay
@@ -248,6 +250,7 @@ public sealed class SpawnRegionService : ISpawnRegionService
         catch (Exception exception)
         {
             region.NextSpawn = now + RetryDelay;
+            region.Retrying = true;
             _logger.Error(exception, "Spawn {Region} failed its check", template.Id);
         }
     }

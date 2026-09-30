@@ -28,8 +28,9 @@ public sealed class SpawnsCommandTests : IAsyncDisposable
     [Fact]
     public async Task PrintsTheRegionsWhereYouStand()
     {
-        _spawns.Here.Add(new("felucca_0", "The Hammer And Anvil", 1, 2, TimeSpan.FromSeconds(61)));
-        _spawns.Here.Add(new("felucca_7", null, 0, 5, TimeSpan.Zero));
+        _spawns.Here.Add(new("felucca_0", "The Hammer And Anvil", 1, 2, TimeSpan.FromSeconds(61), false));
+        _spawns.Here.Add(new("felucca_7", null, 0, 5, TimeSpan.Zero, false));
+        _spawns.Here.Add(new("felucca_9", "Deep Sea", 0, 3, TimeSpan.FromSeconds(40), true));
 
         var context = await RunAsync();
 
@@ -37,7 +38,8 @@ public sealed class SpawnsCommandTests : IAsyncDisposable
         Assert.Equal(
             [
                 "The Hammer And Anvil (felucca_0): 1/2 NPCs, next spawn in 2 min.",
-                "felucca_7 (felucca_7): 0/5 NPCs, next spawn in 0 min."
+                "felucca_7 (felucca_7): 0/5 NPCs, next spawn in 0 min.",
+                "Deep Sea (felucca_9): 0/3 NPCs, no spot found, retrying in 1 min."
             ],
             context.Output.Select(line => line.Text)
         );

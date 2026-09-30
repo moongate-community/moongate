@@ -13,7 +13,9 @@ Spawns an NPC from a mobile template where you target.
 In game only. The template id is checked first (`Unknown mobile template: <id>` otherwise);
 then a target cursor opens and the NPC appears on the spot you pick, dressed and with its
 loot, and runs its Lua `on_spawn`: `Spawned Orione (0x00000123) at Trammel (1496, 1628, 10).`
-The NPC is saved with the world. A failure prints `The spawn failed. Check the server logs.`
+The NPC is saved with the world. A template with `movement = "water"`, such as `dolphin`, only
+spawns on water: on land it prints `dolphin lives in the water: target the water.` A failure
+prints `The spawn failed. Check the server logs.`
 The mobile templates are in `templates/mobiles` (see [Loading TOML templates](../templates.md)).
 
 ## See also

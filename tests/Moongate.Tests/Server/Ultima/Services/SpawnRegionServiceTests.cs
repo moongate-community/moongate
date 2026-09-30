@@ -338,10 +338,25 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         var here = await _service.RegionsAtAsync(MapType.Felucca, 16, 16);
 
         Assert.Equal(
-            [new("forest", "Yew Woods", 1, 4, TimeSpan.FromSeconds(90)), new SpawnRegionStatus("glade", null, 0, 2, TimeSpan.FromSeconds(90))],
+            [new("forest", "Yew Woods", 1, 4, TimeSpan.FromSeconds(90), false), new SpawnRegionStatus("glade", null, 0, 2, TimeSpan.FromSeconds(90), false)],
             here
         );
         Assert.Empty(await _service.RegionsAtAsync(MapType.Trammel, 16, 16));
+    }
+
+    [Fact]
+    public async Task RegionsAtAsync_ARegionWithNoSpot_IsRetrying_UntilItSpawns()
+    {
+        var tries = 0;
+        _movement.SpawnZ = (_, _) => ++tries > 100 ? 0 : null;
+        await StartAsync(new ScriptedRandom(0), Spawn("forest", minMinutes: 30, maxMinutes: 30));
+
+        await TickAsync();
+        Assert.True(Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10)).Retrying);
+
+        _clock.Advance(TimeSpan.FromMinutes(1));
+        await TickAsync();
+        Assert.False(Assert.Single(await _service.RegionsAtAsync(MapType.Felucca, 10, 10)).Retrying);
     }
 
     [Fact]

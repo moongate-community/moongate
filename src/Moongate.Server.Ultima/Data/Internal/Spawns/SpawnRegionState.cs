@@ -13,4 +13,6 @@ internal sealed class SpawnRegionState
     public required SpawnPool Pool { get; init; }
 
     public DateTimeOffset NextSpawn { get; set; }
+
+    public bool Retrying { get; set; }
 }

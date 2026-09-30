@@ -19,8 +19,9 @@ The Hammer And Anvil (felucca_0): 1/1 NPCs, next spawn in 312 min.
 
 The name comes first (the id when the region has none), then the id, the live NPCs against the
 region's `max`, and the minutes until the next check spawns there. A region at its `max` still has
-a next spawn: it spawns nothing then and waits again. `No spawn region here.` means no region
-covers the spot. See [NPC lists and spawns](../templates.md#npc-lists-and-spawns).
+a next spawn: it spawns nothing then and waits again. A region whose last check found no spot
+says so, `no spot found, retrying in 1 min.`, until it spawns again. `No spawn region here.`
+means no region covers the spot. See [NPC lists and spawns](../templates.md#npc-lists-and-spawns).
 
 ## See also
 
