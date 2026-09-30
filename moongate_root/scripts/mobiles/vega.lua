@@ -14,8 +14,8 @@
 vega = {}
 
 local MESSAGES = {
-    "Miaaow! Voglio uscire in terrazza!",
-    "Meow... Mi nascondo nell'armadio!",
+    "Miaaow! I want to go out on the terrace!",
+    "Meow... I'm hiding in the wardrobe!",
 }
 
 local SOUNDS = { 0x69, 0x6A }
