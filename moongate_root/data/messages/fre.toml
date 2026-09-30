@@ -5456,7 +5456,7 @@
 30006 = "Poids : 1 pierre"
 30007 = "Poids : {0} pierres"
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070).
 30008 = "Cible annulée."
 30009 = "Une commande est déjà en cours."
 30010 = "Commande inconnue : {0}"
@@ -5515,3 +5515,8 @@
 30063 = "Météo ici ({0}) : {1}, densité {2}, température {3}."
 30064 = "La météo de {0} est maintenant {1} jusqu'à la prochaine heure."
 30065 = "Affiche la météo où vous êtes ou, avec none, rain, snow ou storm, l'impose jusqu'à la prochaine heure de jeu."
+30066 = "La porte est maintenant verrouillée."
+30067 = "La porte est maintenant déverrouillée."
+30068 = "Ce n'est pas une porte."
+30069 = "Verrouille la porte ciblée et celle qui lui est liée : les joueurs ne peuvent pas l'ouvrir."
+30070 = "Déverrouille la porte ciblée et celle qui lui est liée."

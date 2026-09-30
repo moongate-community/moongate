@@ -27,6 +27,7 @@ Use `..text` to say `.text` literally.
 | `decorate` | Game/Standalone | Yes | Administrator | Place the world decoration: doors, signs, lights and furniture |
 | `globallight` | Game/Standalone | Yes | GameMaster | Give every player the same light, or go back to the time of day |
 | `weather` | No | Game/Standalone | GameMaster | Show the weather where you stand, or force it until the next game hour |
+| `lock`, `unlock` | No | Game/Standalone | GameMaster | Lock or unlock the door you target and its linked door |
 
 ## Help
 
@@ -248,3 +249,16 @@ In game only. Without a kind it prints the weather where you stand:
 `storm` it forces that weather on the profile of the place (every region using the profile
 gets it) until the next game hour rolls it again. See the
 [weather profiles](data-files/weather.md).
+
+## Lock and unlock
+
+```text
+.lock
+.unlock
+```
+
+In game only. A target cursor opens; the door you pick, and the door linked to it (a double
+door), gets or loses the prop `locked`: `The door is now locked.` A locked closed door does not
+open for players, who read "That is locked."; game masters and administrators still open it
+(see the [door script](scripting.md)). Picking anything that is not a door prints
+`That is not a door.` The lock is saved with the door by the next world save.

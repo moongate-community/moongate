@@ -5479,7 +5479,7 @@
 30006 = "Váha: 1 kámen"
 30007 = "Váha: {0} kam."
 
-# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065).
+# Moongate: command texts (30008-30038, 30050-30052, 30055-30057, 30059-30061, 30063-30064, 30066-30068) and command descriptions (30039-30049, 30053-30054, 30058, 30062, 30065, 30069-30070).
 30008 = "Cíl zrušen."
 30009 = "Příkaz již běží."
 30010 = "Neznámý příkaz: {0}"
@@ -5538,3 +5538,8 @@
 30063 = "Počasí zde ({0}): {1}, hustota {2}, teplota {3}."
 30064 = "Počasí v {0} je nyní {1} do další hodiny."
 30065 = "Ukáže počasí tam, kde stojíš, nebo ho s none, rain, snow či storm vynutí do další herní hodiny."
+30066 = "Dveře jsou nyní zamčené."
+30067 = "Dveře jsou nyní odemčené."
+30068 = "To nejsou dveře."
+30069 = "Zamkne dveře, na které ukážeš, i dveře s nimi spojené: hráči je neotevřou."
+30070 = "Odemkne dveře, na které ukážeš, i dveře s nimi spojené."

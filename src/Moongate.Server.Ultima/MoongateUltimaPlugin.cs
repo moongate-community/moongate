@@ -308,6 +308,20 @@ public class MoongateUltimaPlugin : IMoongatePlugin
                 AccountType.GameMaster,
                 CommandMessages.WeatherDescription
             );
+            container.RegisterCommand<LockCommand>(
+                "lock",
+                "Locks the door you target and the door linked to it: players cannot open it.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster,
+                CommandMessages.LockDescription
+            );
+            container.RegisterCommand<UnlockCommand>(
+                "unlock",
+                "Unlocks the door you target and the door linked to it.",
+                CommandSourceType.InGame,
+                AccountType.GameMaster,
+                CommandMessages.UnlockDescription
+            );
             container.RegisterCommand<WhereCommand>(
                 "where",
                 "Shows what you target: its serial, or the map and location of a spot.",
