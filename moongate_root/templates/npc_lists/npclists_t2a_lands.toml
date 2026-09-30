@@ -1,0 +1,591 @@
+[[npc_list]]
+id = "oasis"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 1
+npc_list_id = "allettin"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gazer"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantspider"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 1
+npc_list_id = "allratmen"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 1
+npc_list_id = "alltroll"
+
+[[npc_list]]
+id = "cyclops_valley"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "titan"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cyclops"
+
+[[npc_list]]
+id = "the_ruins"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wraith"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "spectre"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "ghoul"
+
+[[npc_list]]
+id = "city_of_the_dead"
+[[npc_list.entries]]
+weight = 2
+mobile_id = "skeleton"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "boneaxeman"
+
+[[npc_list.entries]]
+weight = 2
+mobile_id = "ghoul"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lich"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "boneknight"
+
+[[npc_list]]
+id = "orc_fort"
+[[npc_list.entries]]
+weight = 1
+npc_list_id = "weakorc"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "orclord"
+
+[[npc_list]]
+id = "orc_fort_savages"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "savageshaman"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "savagewarrior"
+
+[[npc_list]]
+id = "ophidian_lair"
+[[npc_list.entries]]
+weight = 1
+npc_list_id = "allophidians"
+
+[[npc_list]]
+id = "kos_heb_west_east"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "frosttroll"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snowele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "iceserpent"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "icesnake"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "polarbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snowleopard"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "walrus"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "whitewolf"
+
+[[npc_list]]
+id = "damwin_thicket"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "blackbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "brownbear"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "cougar"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "eagle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "forestostard"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "frenziedostard"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "greatermongbat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "rat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "raven"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "timberwolf"
+
+[[npc_list]]
+id = "lost_lands_desert"
+[[npc_list.entries]]
+weight = 115
+mobile_id = "scorpion"
+
+[[npc_list.entries]]
+weight = 110
+mobile_id = "imp"
+
+[[npc_list.entries]]
+weight = 105
+mobile_id = "wyvern"
+
+[[npc_list.entries]]
+weight = 100
+mobile_id = "desertostard"
+
+[[npc_list.entries]]
+weight = 95
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 90
+mobile_id = "stonegargoyle"
+
+[[npc_list.entries]]
+weight = 80
+mobile_id = "stoneharpy"
+
+[[npc_list.entries]]
+weight = 70
+npc_list_id = "allettin"
+
+[[npc_list.entries]]
+weight = 60
+npc_list_id = "weakorc"
+
+[[npc_list.entries]]
+weight = 50
+mobile_id = "orcmage"
+
+[[npc_list.entries]]
+weight = 40
+mobile_id = "mummy"
+
+[[npc_list.entries]]
+weight = 30
+mobile_id = "orclord"
+
+[[npc_list.entries]]
+weight = 25
+mobile_id = "llama"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "frenziedostard"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "bird"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "rat"
+
+[[npc_list]]
+id = "sak_teb_swamp"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swamptentacle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "bullfrog"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantserpent"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gianttoad"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "snake"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "swamptentacle"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mongbat"
+
+[[npc_list]]
+id = "sak_teb_lava"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "efreet"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "fireele"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hellhound"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "hellcat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lavalizard"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lavaserpent"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "lavasnake"
+
+[[npc_list]]
+id = "terra_sanctum"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "giantserpent"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "gorilla"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "panther"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "silverserpent"
+
+[[npc_list]]
+id = "wyvern_isle"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wyvern"
+
+[[npc_list]]
+id = "wyvern_point"
+[[npc_list.entries]]
+weight = 1
+mobile_id = "wyvern"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "imp"
+
+[[npc_list.entries]]
+weight = 1
+mobile_id = "scorpion"
+
+[[npc_list]]
+id = "lost_lands_plains"
+[[npc_list.entries]]
+weight = 24
+mobile_id = "sheep"
+
+[[npc_list.entries]]
+weight = 22
+mobile_id = "cow"
+
+[[npc_list.entries]]
+weight = 22
+mobile_id = "bull"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "goat"
+
+[[npc_list.entries]]
+weight = 18
+mobile_id = "jackrabbit"
+
+[[npc_list.entries]]
+weight = 18
+mobile_id = "rabbit"
+
+[[npc_list.entries]]
+weight = 16
+mobile_id = "rat"
+
+[[npc_list.entries]]
+weight = 14
+mobile_id = "llama"
+
+[[npc_list.entries]]
+weight = 14
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "graywolf"
+
+[[npc_list.entries]]
+weight = 10
+npc_list_id = "allhorselist"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "headless"
+
+[[npc_list]]
+id = "lost_lands_forest"
+[[npc_list.entries]]
+weight = 22
+mobile_id = "greatermongbat"
+
+[[npc_list.entries]]
+weight = 22
+npc_list_id = "allhorselist"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "timberwolf"
+
+[[npc_list.entries]]
+weight = 20
+mobile_id = "hind"
+
+[[npc_list.entries]]
+weight = 18
+mobile_id = "llama"
+
+[[npc_list.entries]]
+weight = 18
+mobile_id = "forestostard"
+
+[[npc_list.entries]]
+weight = 16
+mobile_id = "cougar"
+
+[[npc_list.entries]]
+weight = 16
+mobile_id = "headless"
+
+[[npc_list.entries]]
+weight = 14
+mobile_id = "hart"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "frenziedostard"
+
+[[npc_list.entries]]
+weight = 8
+npc_list_id = "allettin"
+
+[[npc_list.entries]]
+weight = 8
+npc_list_id = "alltroll"
+
+[[npc_list.entries]]
+weight = 6
+mobile_id = "harpy"
+
+[[npc_list.entries]]
+weight = 4
+mobile_id = "reaper"
+
+[[npc_list.entries]]
+weight = 4
+mobile_id = "corpser"
+
+[[npc_list]]
+id = "lost_lands_jungle"
+[[npc_list.entries]]
+weight = 25
+mobile_id = "gorilla"
+
+[[npc_list.entries]]
+weight = 22
+mobile_id = "tropicalbird"
+
+[[npc_list.entries]]
+weight = 19
+mobile_id = "giantserpent"
+
+[[npc_list.entries]]
+weight = 16
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 13
+mobile_id = "corpser"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "panther"
+
+[[npc_list]]
+id = "lost_lands_swamp"
+[[npc_list.entries]]
+weight = 18
+mobile_id = "alligator"
+
+[[npc_list.entries]]
+weight = 17
+mobile_id = "giantserpent"
+
+[[npc_list.entries]]
+weight = 15
+mobile_id = "bogling"
+
+[[npc_list.entries]]
+weight = 14
+mobile_id = "gianttoad"
+
+[[npc_list.entries]]
+weight = 13
+mobile_id = "bullfrog"
+
+[[npc_list.entries]]
+weight = 12
+mobile_id = "bogthing"
+
+[[npc_list.entries]]
+weight = 11
+mobile_id = "mongbat"
+
+[[npc_list.entries]]
+weight = 10
+mobile_id = "snake"
+
+[[npc_list.entries]]
+weight = 9
+mobile_id = "giantrat"
+
+[[npc_list.entries]]
+weight = 8
+mobile_id = "sewerrat"
+
+[[npc_list.entries]]
+weight = 6
+mobile_id = "swamptentacle"
+
+[[npc_list.entries]]
+weight = 5
+mobile_id = "swampdragon"
+
+[[npc_list]]
+id = "delucia_town_animals"
+[[npc_list.entries]]
+weight = 60
+mobile_id = "sheep"
+
+[[npc_list.entries]]
+weight = 40
+mobile_id = "cow"

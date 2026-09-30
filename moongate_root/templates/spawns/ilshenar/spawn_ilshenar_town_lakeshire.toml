@@ -1,0 +1,71 @@
+[[spawn]]
+id = "ilshenar_17950"
+map = "ilshenar"
+name = "Lakeshire 1_1"
+mobile_ids = []
+npc_list_ids = ["lakeshire_npclist_1"]
+max = 16
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1163
+y1 = 1098
+x2 = 1243
+y2 = 1178
+
+[[spawn]]
+id = "ilshenar_17951"
+map = "ilshenar"
+name = "Lakeshire Forest"
+mobile_ids = []
+npc_list_ids = ["lakeshire_npclist_2"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1102
+y1 = 1087
+x2 = 1152
+y2 = 1137
+
+[[spawn]]
+id = "ilshenar_17952"
+map = "ilshenar"
+name = "Lakeshire Fruit Trees 1_1"
+mobile_ids = ["snake"]
+npc_list_ids = []
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1165
+y1 = 1173
+x2 = 1195
+y2 = 1203
+
+[[spawn]]
+id = "ilshenar_17953"
+map = "ilshenar"
+name = "Lakeshire Fruit Trees 1_2"
+mobile_ids = ["giantserpent"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1169
+y1 = 1177
+x2 = 1193
+y2 = 1201

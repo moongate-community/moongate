@@ -1,0 +1,626 @@
+[[spawn]]
+id = "felucca_1600"
+map = "felucca"
+name = "Papua - The Just Inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 14
+only_outside = false
+[[spawn.areas]]
+x1 = 5762
+y1 = 3155
+x2 = 5782
+y2 = 3167
+
+[[spawn]]
+id = "felucca_1601"
+map = "felucca"
+name = "Papua - Strange Rocks"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 13
+only_outside = false
+[[spawn.areas]]
+x1 = 5654
+y1 = 3143
+x2 = 5668
+y2 = 3153
+
+[[spawn]]
+id = "felucca_1602"
+map = "felucca"
+name = "Papua - Ye Olde Loan and Savings"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 3
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 14
+only_outside = false
+[[spawn.areas]]
+x1 = 5660
+y1 = 3123
+x2 = 5678
+y2 = 3137
+
+[[spawn]]
+id = "felucca_1603"
+map = "felucca"
+name = "Papua - The Carpentry House"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 11
+only_outside = false
+[[spawn.areas]]
+x1 = 5689
+y1 = 3204
+x2 = 5700
+y2 = 3210
+
+[[spawn]]
+id = "felucca_1604"
+map = "felucca"
+name = "Papua - The Reagent Shop"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 12
+only_outside = false
+[[spawn.areas]]
+x1 = 5713
+y1 = 3198
+x2 = 5716
+y2 = 3206
+
+[[spawn]]
+id = "felucca_1605"
+map = "felucca"
+name = "Papua - Tricks of the Trade"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+z = 9
+only_outside = false
+[[spawn.areas]]
+x1 = 5725
+y1 = 3189
+x2 = 5734
+y2 = 3200
+
+[[spawn]]
+id = "felucca_1606"
+map = "felucca"
+name = "Papua - Natures Best Baked Goods"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+z = 16
+only_outside = false
+[[spawn.areas]]
+x1 = 5744
+y1 = 3191
+x2 = 5760
+y2 = 3199
+
+[[spawn]]
+id = "felucca_1607"
+map = "felucca"
+name = "Papua - The Healing Hand"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 11
+only_outside = false
+[[spawn.areas]]
+x1 = 5734
+y1 = 3218
+x2 = 5737
+y2 = 3223
+
+[[spawn]]
+id = "felucca_1608"
+map = "felucca"
+name = "Papua - Tinkers Paradise"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 5724
+y1 = 3240
+x2 = 5730
+y2 = 3246
+
+[[spawn]]
+id = "felucca_1609"
+map = "felucca"
+name = "Papua - Adventure Outfitters"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 5734
+y1 = 3258
+x2 = 5737
+y2 = 3269
+
+[[spawn]]
+id = "felucca_1610"
+map = "felucca"
+name = "Papua - Tailors"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 5751
+y1 = 3269
+x2 = 5754
+y2 = 3273
+
+[[spawn]]
+id = "felucca_1611"
+map = "felucca"
+name = "Papua - Pier 39"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 12
+only_outside = false
+[[spawn.areas]]
+x1 = 5797
+y1 = 3265
+x2 = 5801
+y2 = 3275
+
+[[spawn]]
+id = "felucca_1612"
+map = "felucca"
+name = "Papua - The Revenge Shoppe"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 12
+only_outside = false
+[[spawn.areas]]
+x1 = 5795
+y1 = 3296
+x2 = 5815
+y2 = 3305
+
+[[spawn]]
+id = "felucca_1613"
+map = "felucca"
+name = "Papua - The Revenge Shoppe"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 12
+only_outside = false
+[[spawn.areas]]
+x1 = 5795
+y1 = 3296
+x2 = 5815
+y2 = 3305
+
+[[spawn]]
+id = "felucca_1614"
+map = "felucca"
+name = "Papua - The Revenge Shoppe"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 12
+only_outside = false
+[[spawn.areas]]
+x1 = 5795
+y1 = 3296
+x2 = 5815
+y2 = 3305
+
+[[spawn]]
+id = "felucca_1615"
+map = "felucca"
+name = "Papua - The Southside Butchery"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 5696
+y1 = 3280
+x2 = 5700
+y2 = 3285
+
+[[spawn]]
+id = "felucca_1616"
+map = "felucca"
+name = "Papua - Southside Stables 1"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 12
+only_outside = false
+[[spawn.areas]]
+x1 = 5667
+y1 = 3284
+x2 = 5676
+y2 = 3289
+
+[[spawn]]
+id = "felucca_1617"
+map = "felucca"
+name = "Papua - Docks"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = -2
+only_outside = false
+[[spawn.areas]]
+x1 = 5821
+y1 = 3239
+x2 = 5830
+y2 = 3267
+
+[[spawn]]
+id = "felucca_1618"
+map = "felucca"
+name = "Papua - Southside Stables 2"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 12
+only_outside = false
+[[spawn.areas]]
+x1 = 5678
+y1 = 3287
+x2 = 5683
+y2 = 3300
+
+[[spawn]]
+id = "felucca_1619"
+map = "felucca"
+name = "Papua - Adventure Outfitters"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 5734
+y1 = 3258
+x2 = 5737
+y2 = 3269
+
+[[spawn]]
+id = "felucca_1620"
+map = "felucca"
+name = "Papua - Tailors"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 5751
+y1 = 3269
+x2 = 5754
+y2 = 3273
+
+[[spawn]]
+id = "felucca_1621"
+map = "felucca"
+name = "Papua - Pier 39"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 12
+only_outside = false
+[[spawn.areas]]
+x1 = 5797
+y1 = 3265
+x2 = 5801
+y2 = 3275
+
+[[spawn]]
+id = "felucca_1622"
+map = "felucca"
+name = "Papua - Docks"
+mobile_ids = ["sailor"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = -2
+only_outside = false
+[[spawn.areas]]
+x1 = 5821
+y1 = 3239
+x2 = 5830
+y2 = 3267
+
+[[spawn]]
+id = "felucca_1623"
+map = "felucca"
+name = "Papua - Tricks of the Trade"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+z = 9
+only_outside = false
+[[spawn.areas]]
+x1 = 5725
+y1 = 3189
+x2 = 5734
+y2 = 3200
+
+[[spawn]]
+id = "felucca_1624"
+map = "felucca"
+name = "Papua - Tricks of the Trade"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+z = 9
+only_outside = false
+[[spawn.areas]]
+x1 = 5725
+y1 = 3189
+x2 = 5734
+y2 = 3200
+
+[[spawn]]
+id = "felucca_1626"
+map = "felucca"
+name = "Papua - The Carpentry House"
+mobile_ids = ["architect"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 11
+only_outside = false
+[[spawn.areas]]
+x1 = 5689
+y1 = 3204
+x2 = 5700
+y2 = 3210
+
+[[spawn]]
+id = "felucca_8619"
+map = "felucca"
+name = "Papua - Adventure Outfitters"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 5734
+y1 = 3258
+x2 = 5737
+y2 = 3269
+
+[[spawn]]
+id = "felucca_8620"
+map = "felucca"
+name = "Papua - Tailors"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 15
+only_outside = false
+[[spawn.areas]]
+x1 = 5751
+y1 = 3269
+x2 = 5754
+y2 = 3273
+
+[[spawn]]
+id = "felucca_8621"
+map = "felucca"
+name = "Papua - Pier 39"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 12
+only_outside = false
+[[spawn.areas]]
+x1 = 5797
+y1 = 3265
+x2 = 5801
+y2 = 3275
+
+[[spawn]]
+id = "felucca_8622"
+map = "felucca"
+name = "Papua - Docks"
+mobile_ids = ["sailor"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+pref_z = -2
+only_outside = false
+[[spawn.areas]]
+x1 = 5821
+y1 = 3239
+x2 = 5830
+y2 = 3267
+
+[[spawn]]
+id = "felucca_8623"
+map = "felucca"
+name = "Papua - Tricks of the Trade"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+z = 9
+only_outside = false
+[[spawn.areas]]
+x1 = 5725
+y1 = 3189
+x2 = 5734
+y2 = 3200
+
+[[spawn]]
+id = "felucca_8624"
+map = "felucca"
+name = "Papua - Tricks of the Trade"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 2
+exclude = []
+z = 9
+only_outside = false
+[[spawn.areas]]
+x1 = 5725
+y1 = 3189
+x2 = 5734
+y2 = 3200
+
+[[spawn]]
+id = "felucca_8626"
+map = "felucca"
+name = "Papua - The Carpentry House"
+mobile_ids = ["architect"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+z = 11
+only_outside = false
+[[spawn.areas]]
+x1 = 5689
+y1 = 3204
+x2 = 5700
+y2 = 3210

@@ -1,0 +1,89 @@
+[[spawn]]
+id = "ilshenar_17701"
+map = "ilshenar"
+name = "Spectre 1_1"
+mobile_ids = []
+npc_list_ids = ["spectre_npclist_1"]
+max = 10
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1962
+y1 = 1015
+x2 = 1982
+y2 = 1067
+
+[[spawn]]
+id = "ilshenar_17702"
+map = "ilshenar"
+name = "Spectre 1_2"
+mobile_ids = []
+npc_list_ids = ["spectre_npclist_1"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1950
+y1 = 1054
+x2 = 1981
+y2 = 1064
+
+[[spawn]]
+id = "ilshenar_17703"
+map = "ilshenar"
+name = "Spectre 1_3"
+mobile_ids = []
+npc_list_ids = ["spectre_npclist_1"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1982
+y1 = 1054
+x2 = 2014
+y2 = 1064
+
+[[spawn]]
+id = "ilshenar_17704"
+map = "ilshenar"
+name = "Spectre 1_4"
+mobile_ids = []
+npc_list_ids = ["spectre_npclist_1"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1955
+y1 = 1077
+x2 = 1981
+y2 = 1097
+
+[[spawn]]
+id = "ilshenar_17705"
+map = "ilshenar"
+name = "Spectre 1_5"
+mobile_ids = []
+npc_list_ids = ["spectre_npclist_1"]
+max = 5
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1982
+y1 = 1077
+x2 = 2009
+y2 = 1097

@@ -1,0 +1,17 @@
+[[spawn]]
+id = "ilshenar_18750"
+map = "ilshenar"
+name = "Reg Volom 1_1"
+mobile_ids = ["ethwarrior"]
+npc_list_ids = []
+max = 4
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1347
+y1 = 1031
+x2 = 1379
+y2 = 1049

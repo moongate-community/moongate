@@ -1,0 +1,539 @@
+[[spawn]]
+id = "felucca_700"
+map = "felucca"
+name = "Nujelm blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3708
+y1 = 1383
+x2 = 3714
+y2 = 1386
+
+[[spawn]]
+id = "felucca_701"
+map = "felucca"
+name = "Nujelm guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 3
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3715
+y1 = 1395
+x2 = 3722
+y2 = 1400
+
+[[spawn]]
+id = "felucca_702"
+map = "felucca"
+name = "Nujelm butcher"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3553
+y1 = 1169
+x2 = 3558
+y2 = 1172
+
+[[spawn]]
+id = "felucca_703"
+map = "felucca"
+name = "Nujelm leatherworker"
+mobile_ids = ["leatherworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3544
+y1 = 1176
+x2 = 3550
+y2 = 1182
+
+[[spawn]]
+id = "felucca_704"
+map = "felucca"
+name = "Nujelm weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3545
+y1 = 1185
+x2 = 3550
+y2 = 1190
+
+[[spawn]]
+id = "felucca_705"
+map = "felucca"
+name = "Nujelm bowyer"
+mobile_ids = ["bowyer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3545
+y1 = 1193
+x2 = 3548
+y2 = 1198
+
+[[spawn]]
+id = "felucca_706"
+map = "felucca"
+name = "Nujelm blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3552
+y1 = 1202
+x2 = 3556
+y2 = 1206
+
+[[spawn]]
+id = "felucca_707"
+map = "felucca"
+name = "Nujelm guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3656
+y1 = 1219
+x2 = 3662
+y2 = 1222
+
+[[spawn]]
+id = "felucca_708"
+map = "felucca"
+name = "Nujelm guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3648
+y1 = 1235
+x2 = 3654
+y2 = 1238
+
+[[spawn]]
+id = "felucca_709"
+map = "felucca"
+name = "Nujelm guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3656
+y1 = 1186
+x2 = 3660
+y2 = 1190
+
+[[spawn]]
+id = "felucca_710"
+map = "felucca"
+name = "Nujelm guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3681
+y1 = 1186
+x2 = 3685
+y2 = 1189
+
+[[spawn]]
+id = "felucca_711"
+map = "felucca"
+name = "Nujelm guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3696
+y1 = 1178
+x2 = 3701
+y2 = 1181
+
+[[spawn]]
+id = "felucca_712"
+map = "felucca"
+name = "Nujelm - Seaborne Ships"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3696
+y1 = 1208
+x2 = 3702
+y2 = 1210
+
+[[spawn]]
+id = "felucca_713"
+map = "felucca"
+name = "Nujelm bard"
+mobile_ids = ["bard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3736
+y1 = 1184
+x2 = 3741
+y2 = 1188
+
+[[spawn]]
+id = "felucca_714"
+map = "felucca"
+name = "Nujelm jeweler"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3768
+y1 = 1166
+x2 = 3771
+y2 = 1167
+
+[[spawn]]
+id = "felucca_715"
+map = "felucca"
+name = "Nujelm - Mystical Spirits"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3767
+y1 = 1234
+x2 = 3770
+y2 = 1237
+
+[[spawn]]
+id = "felucca_716"
+map = "felucca"
+name = "Nujelm tailor"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3761
+y1 = 1269
+x2 = 3764
+y2 = 1270
+
+[[spawn]]
+id = "felucca_717"
+map = "felucca"
+name = "Nujelm - Restful Slumber"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3731
+y1 = 1320
+x2 = 3732
+y2 = 1322
+
+[[spawn]]
+id = "felucca_718"
+map = "felucca"
+name = "Nujelm banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3762
+y1 = 1313
+x2 = 3765
+y2 = 1316
+
+[[spawn]]
+id = "felucca_719"
+map = "felucca"
+name = "Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 3592
+y1 = 1192
+x2 = 3782
+y2 = 1306
+
+[[spawn]]
+id = "felucca_720"
+map = "felucca"
+name = "Nujelm Tanner"
+mobile_ids = ["tanner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3545
+y1 = 1177
+x2 = 3549
+y2 = 1181
+
+[[spawn]]
+id = "felucca_721"
+map = "felucca"
+name = "Nujelm - The Silver Bow"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3729
+y1 = 1256
+x2 = 3730
+y2 = 1261
+
+[[spawn]]
+id = "felucca_722"
+map = "felucca"
+name = "Nujelm - The Silver Bow"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3733
+y1 = 1248
+x2 = 3740
+y2 = 1260
+
+[[spawn]]
+id = "felucca_723"
+map = "felucca"
+name = "Nujelm - The Silver Bow"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3736
+y1 = 1265
+x2 = 3747
+y2 = 1269
+
+[[spawn]]
+id = "felucca_724"
+map = "felucca"
+name = "Nujelm - Tailor of the Isle"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3760
+y1 = 1256
+x2 = 3768
+y2 = 1267
+
+[[spawn]]
+id = "felucca_725"
+map = "felucca"
+name = "Nujelm - Mystical Spirits"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3760
+y1 = 1218
+x2 = 3773
+y2 = 1229
+
+[[spawn]]
+id = "felucca_726"
+map = "felucca"
+name = "Nujelm - Restful Slumber"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3737
+y1 = 1325
+x2 = 3742
+y2 = 1341
+
+[[spawn]]
+id = "felucca_727"
+map = "felucca"
+name = "Nujelm - Restful Slumber"
+mobile_ids = ["cook"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3730
+y1 = 1336
+x2 = 3734
+y2 = 1340
+
+[[spawn]]
+id = "felucca_728"
+map = "felucca"
+name = "Nujelm - Tailor of the Isle"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3760
+y1 = 1256
+x2 = 3768
+y2 = 1267
+
+[[spawn]]
+id = "felucca_729"
+map = "felucca"
+name = "Nujelm - Seaborne Ships"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 3705
+y1 = 1225
+x2 = 3716
+y2 = 1229

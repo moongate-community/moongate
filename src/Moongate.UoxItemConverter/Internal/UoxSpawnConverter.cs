@@ -206,9 +206,10 @@ internal static class UoxSpawnConverter
 
         foreach (var (_, blocks) in blocksByFile)
         {
+            // UOX3 keeps the last definition of a header.
             foreach (var block in blocks.Where(block => block.Header.StartsWith(SpawnHeaderPrefix, StringComparison.OrdinalIgnoreCase)))
             {
-                byNumber.TryAdd(block.Header[SpawnHeaderPrefix.Length..].Trim(), block);
+                byNumber[block.Header[SpawnHeaderPrefix.Length..].Trim()] = block;
             }
         }
 
@@ -225,6 +226,14 @@ internal static class UoxSpawnConverter
             foreach (var block in blocks.Where(block => block.Header.StartsWith(SpawnHeaderPrefix, StringComparison.OrdinalIgnoreCase)))
             {
                 var number = block.Header[SpawnHeaderPrefix.Length..].Trim();
+
+                if (!ReferenceEquals(byNumber[number], block))
+                {
+                    report.Count("duplicate spawn region");
+
+                    continue;
+                }
+
                 var fields = Resolve(block, byNumber, []);
 
                 if (Build(number, fields, folder, mobileIds, listIds, report) is not { } spawn)

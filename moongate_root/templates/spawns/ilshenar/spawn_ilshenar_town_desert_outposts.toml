@@ -1,0 +1,252 @@
+[[spawn]]
+id = "ilshenar_17900"
+map = "ilshenar"
+name = "Desert Outpost West 1_1"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1503
+y1 = 618
+x2 = 1509
+y2 = 622
+
+[[spawn]]
+id = "ilshenar_17901"
+map = "ilshenar"
+name = "Desert Outpost West 1_2"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1503
+y1 = 618
+x2 = 1509
+y2 = 622
+
+[[spawn]]
+id = "ilshenar_17902"
+map = "ilshenar"
+name = "Desert Outpost West 1_3"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1608
+y1 = 553
+x2 = 1608
+y2 = 556
+
+[[spawn]]
+id = "ilshenar_17903"
+map = "ilshenar"
+name = "Desert Outpost West 1_4"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1518
+y1 = 624
+x2 = 1524
+y2 = 626
+
+[[spawn]]
+id = "ilshenar_17904"
+map = "ilshenar"
+name = "Desert Outpost West 1_5"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1504
+y1 = 610
+x2 = 1507
+y2 = 612
+
+[[spawn]]
+id = "ilshenar_17905"
+map = "ilshenar"
+name = "Desert Outpost West 1_6"
+mobile_ids = ["alchemist"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1504
+y1 = 610
+x2 = 1507
+y2 = 612
+
+[[spawn]]
+id = "ilshenar_17906"
+map = "ilshenar"
+name = "Desert Outpost West 1_7"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1502
+y1 = 621
+x2 = 1504
+y2 = 623
+
+[[spawn]]
+id = "ilshenar_17907"
+map = "ilshenar"
+name = "Desert Outpost West 1_8"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1515
+y1 = 612
+x2 = 1515
+y2 = 612
+
+[[spawn]]
+id = "ilshenar_17925"
+map = "ilshenar"
+name = "Desert Outpost East 1_1"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1626
+y1 = 550
+x2 = 1626
+y2 = 550
+
+[[spawn]]
+id = "ilshenar_17926"
+map = "ilshenar"
+name = "Desert Outpost East 1_2"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1617
+y1 = 551
+x2 = 1624
+y2 = 552
+
+[[spawn]]
+id = "ilshenar_17927"
+map = "ilshenar"
+name = "Desert Outpost East 1_3"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1607
+y1 = 541
+x2 = 1607
+y2 = 541
+
+[[spawn]]
+id = "ilshenar_17928"
+map = "ilshenar"
+name = "Desert Outpost East 1_4"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1597
+y1 = 538
+x2 = 1601
+y2 = 540
+
+[[spawn]]
+id = "ilshenar_17929"
+map = "ilshenar"
+name = "Desert Outpost East 1_5"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1597
+y1 = 538
+x2 = 1601
+y2 = 540
+
+[[spawn]]
+id = "ilshenar_17930"
+map = "ilshenar"
+name = "Desert Outpost East 1_6"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = -15
+only_outside = false
+[[spawn.areas]]
+x1 = 1600
+y1 = 551
+x2 = 1600
+y2 = 551

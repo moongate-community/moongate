@@ -1,0 +1,35 @@
+[[spawn]]
+id = "felucca_4100"
+map = "felucca"
+name = "terathan keep lvl 1 Pt1"
+mobile_ids = []
+npc_list_ids = ["terathankeeplvl1"]
+max = 80
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5129
+y1 = 1542
+x2 = 5376
+y2 = 1712
+
+[[spawn]]
+id = "felucca_4101"
+map = "felucca"
+name = "terathan keep lvl 1 Pt2"
+mobile_ids = []
+npc_list_ids = ["terathankeeplvl1"]
+max = 30
+min_minutes = 20
+max_minutes = 30
+call = 5
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 5278
+y1 = 1712
+x2 = 5375
+y2 = 1782

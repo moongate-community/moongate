@@ -1,0 +1,107 @@
+[[spawn]]
+id = "ilshenar_18000"
+map = "ilshenar"
+name = "Mistas 1_1"
+mobile_ids = []
+npc_list_ids = ["mistas_npclist_1"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 754
+y1 = 1003
+x2 = 820
+y2 = 1074
+
+[[spawn]]
+id = "ilshenar_18001"
+map = "ilshenar"
+name = "Mistas 1_2"
+mobile_ids = []
+npc_list_ids = ["mistas_npclist_1"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 754
+y1 = 1075
+x2 = 820
+y2 = 1123
+
+[[spawn]]
+id = "ilshenar_18002"
+map = "ilshenar"
+name = "Mistas 1_3"
+mobile_ids = []
+npc_list_ids = ["mistas_npclist_1"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 821
+y1 = 1003
+x2 = 880
+y2 = 1074
+
+[[spawn]]
+id = "ilshenar_18003"
+map = "ilshenar"
+name = "Mistas 1_4"
+mobile_ids = []
+npc_list_ids = ["mistas_npclist_1"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 2
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 821
+y1 = 1075
+x2 = 880
+y2 = 1123
+
+[[spawn]]
+id = "ilshenar_18004"
+map = "ilshenar"
+name = "Mistas 1_5"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 774
+y1 = 1144
+x2 = 774
+y2 = 1144
+
+[[spawn]]
+id = "ilshenar_18005"
+map = "ilshenar"
+name = "Mistas 1_6"
+mobile_ids = ["animaltrainer"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 763
+y1 = 1157
+x2 = 781
+y2 = 1163

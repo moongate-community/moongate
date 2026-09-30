@@ -408,6 +408,43 @@ standalone startup (`IMobileTemplateService`).
 To produce these files from an existing UOX3 shard, see
 [Migrate from UOX3](uox3-migration.md).
 
+## NPC lists and spawns
+
+`templates/npc_lists/` holds lists of mobile templates a spawn picks from, converted from UOX3's
+`[NPCLIST name]` blocks (446 lists). An entry names a mobile template or another list, and is
+picked in proportion to its `weight` (1 by default):
+
+```toml
+[[npc_list]]
+id = "jungle"
+entries = [{ mobile_id = "gorilla", weight = 20 }, { npc_list_id = "all_trolls", weight = 7 }]
+```
+
+`templates/spawns/<map>/` holds the spawn regions, converted from UOX3's `[REGIONSPAWN n]` blocks
+(2784 regions, up to about 25,000 NPCs); the folder is the map:
+
+```toml
+[[spawn]]
+id = "felucca_0"                      # unique
+name = "The Hammer And Anvil"
+mobile_ids = ["weaponsmith"]          # mobile templates, picked at random with the lists' entries
+npc_list_ids = []                     # npc lists
+max = 1                               # NPCs alive at once
+min_minutes = 480                     # a new one every min_minutes to max_minutes
+max_minutes = 600
+call = 1                              # NPCs that come at a time
+areas = [{ x1 = 1422, y1 = 1547, x2 = 1426, y2 = 1550 }]   # both corners included
+exclude = []                          # parts of the areas where nothing spawns
+only_outside = false                  # true: never under a roof
+# pref_z = 18                         # how high above the ground a spot may be
+# z = 36                              # a fixed height instead
+```
+
+Both load at startup, after the mobile templates. A list or a spawn that names a mobile template
+or list that does not exist, a list without entries or looping through its nested lists, a spawn
+with nothing to spawn, a `max` or `call` below 1, `min_minutes` above `max_minutes`, no area or a
+folder that is not a map stop the server. Nothing spawns them yet: the runtime comes next.
+
 ## Decorations
 
 `templates/decorations/` holds the world decoration the client's map files do not: doors, signs,

@@ -1,0 +1,91 @@
+[[spawn]]
+id = "ilshenar_18200"
+map = "ilshenar"
+name = "Ancient Citadel 1_1"
+mobile_ids = ["skeleton"]
+npc_list_ids = []
+max = 6
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1502
+y1 = 525
+x2 = 1534
+y2 = 554
+
+[[spawn]]
+id = "ilshenar_18201"
+map = "ilshenar"
+name = "Ancient Citadel 1_2"
+mobile_ids = []
+npc_list_ids = ["ilshenar_ancient_citadel_1"]
+max = 12
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1502
+y1 = 525
+x2 = 1534
+y2 = 554
+
+[[spawn]]
+id = "ilshenar_18202"
+map = "ilshenar"
+name = "Ancient Citadel 1_3"
+mobile_ids = []
+npc_list_ids = ["ilshenar_ancient_citadel_2"]
+max = 7
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1502
+y1 = 525
+x2 = 1534
+y2 = 554
+
+[[spawn]]
+id = "ilshenar_18203"
+map = "ilshenar"
+name = "Ancient Citadel 1_4"
+mobile_ids = ["lich"]
+npc_list_ids = []
+max = 2
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 36
+only_outside = false
+[[spawn.areas]]
+x1 = 1510
+y1 = 534
+x2 = 1523
+y2 = 548
+
+[[spawn]]
+id = "ilshenar_18204"
+map = "ilshenar"
+name = "Ancient Citadel 1_5"
+mobile_ids = ["lichlord"]
+npc_list_ids = []
+max = 1
+min_minutes = 5
+max_minutes = 10
+call = 1
+exclude = []
+z = 60
+only_outside = false
+[[spawn.areas]]
+x1 = 1512
+y1 = 536
+x2 = 1521
+y2 = 541

@@ -1,0 +1,773 @@
+[[spawn]]
+id = "trammel_7300"
+map = "trammel"
+name = "Jehlom weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1482
+y1 = 3856
+x2 = 1485
+y2 = 3862
+
+[[spawn]]
+id = "trammel_7301"
+map = "trammel"
+name = "Jehlom jeweler"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1312
+y1 = 3778
+x2 = 1318
+y2 = 3782
+
+[[spawn]]
+id = "trammel_7302"
+map = "trammel"
+name = "Jehlom innkeeper"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1369
+y1 = 3809
+x2 = 1374
+y2 = 3811
+
+[[spawn]]
+id = "trammel_7303"
+map = "trammel"
+name = "Jehlom farmer"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1385
+y1 = 3824
+x2 = 1387
+y2 = 3826
+
+[[spawn]]
+id = "trammel_7304"
+map = "trammel"
+name = "Jehlom tinker"
+mobile_ids = ["tinker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1403
+y1 = 3800
+x2 = 1406
+y2 = 3805
+
+[[spawn]]
+id = "trammel_7305"
+map = "trammel"
+name = "Jehlom guard"
+mobile_ids = ["guard"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1378
+y1 = 3792
+x2 = 1382
+y2 = 3798
+
+[[spawn]]
+id = "trammel_7306"
+map = "trammel"
+name = "Jehlom tailor"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1360
+y1 = 3778
+x2 = 1366
+y2 = 3782
+
+[[spawn]]
+id = "trammel_7307"
+map = "trammel"
+name = "Jehlom spinner"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1352
+y1 = 3777
+x2 = 1358
+y2 = 3780
+
+[[spawn]]
+id = "trammel_7308"
+map = "trammel"
+name = "Jehlom weaponsmith"
+mobile_ids = ["weaponsmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1352
+y1 = 3753
+x2 = 1355
+y2 = 3756
+
+[[spawn]]
+id = "trammel_7309"
+map = "trammel"
+name = "Jehlom baker"
+mobile_ids = ["baker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1353
+y1 = 3729
+x2 = 1357
+y2 = 3732
+
+[[spawn]]
+id = "trammel_7310"
+map = "trammel"
+name = "Jehlom armorer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1360
+y1 = 3697
+x2 = 1362
+y2 = 3699
+
+[[spawn]]
+id = "trammel_7311"
+map = "trammel"
+name = "Jehlom armorer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1392
+y1 = 3709
+x2 = 1397
+y2 = 3713
+
+[[spawn]]
+id = "trammel_7312"
+map = "trammel"
+name = "Jehlom armorer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1442
+y1 = 3712
+x2 = 1446
+y2 = 3717
+
+[[spawn]]
+id = "trammel_7313"
+map = "trammel"
+name = "Jehlom fisherman"
+mobile_ids = ["fisher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1432
+y1 = 3744
+x2 = 1434
+y2 = 3750
+
+[[spawn]]
+id = "trammel_7314"
+map = "trammel"
+name = "Jehlom shipwright"
+mobile_ids = ["shipwright"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1457
+y1 = 3737
+x2 = 1462
+y2 = 3742
+
+[[spawn]]
+id = "trammel_7315"
+map = "trammel"
+name = "Jehlom tavernkeeper"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1442
+y1 = 3777
+x2 = 1445
+y2 = 3781
+
+[[spawn]]
+id = "trammel_7316"
+map = "trammel"
+name = "Jehlom healer"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1409
+y1 = 3770
+x2 = 1415
+y2 = 3774
+
+[[spawn]]
+id = "trammel_7317"
+map = "trammel"
+name = "Jehlom provisioner"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1441
+y1 = 3801
+x2 = 1446
+y2 = 3805
+
+[[spawn]]
+id = "trammel_7318"
+map = "trammel"
+name = "Jehlom carpenter"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1433
+y1 = 3825
+x2 = 1438
+y2 = 3830
+
+[[spawn]]
+id = "trammel_7319"
+map = "trammel"
+name = "Jehlom blacksmith"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1419
+y1 = 3850
+x2 = 1422
+y2 = 3859
+
+[[spawn]]
+id = "trammel_7320"
+map = "trammel"
+name = "Jehlom armorer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1426
+y1 = 3880
+x2 = 1431
+y2 = 3885
+
+[[spawn]]
+id = "trammel_7321"
+map = "trammel"
+name = "Jehlom armorer"
+mobile_ids = ["armourer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1448
+y1 = 3849
+x2 = 1451
+y2 = 3853
+
+[[spawn]]
+id = "trammel_7322"
+map = "trammel"
+name = "Town People"
+mobile_ids = []
+npc_list_ids = ["alltownfolk"]
+max = 50
+min_minutes = 18
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1305
+y1 = 3672
+x2 = 1534
+y2 = 4061
+
+[[spawn]]
+id = "trammel_7323"
+map = "trammel"
+name = "animal spawn"
+mobile_ids = []
+npc_list_ids = ["britainanimallist"]
+max = 50
+min_minutes = 18
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1242
+y1 = 3603
+x2 = 1510
+y2 = 3907
+
+[[spawn]]
+id = "trammel_7324"
+map = "trammel"
+name = "Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1305
+y1 = 3672
+x2 = 1534
+y2 = 4061
+
+[[spawn]]
+id = "trammel_7325"
+map = "trammel"
+name = "Jehlom Banker"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 2
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1312
+y1 = 3778
+x2 = 1318
+y2 = 3782
+
+[[spawn]]
+id = "trammel_7326"
+map = "trammel"
+name = "Jehlom - Mage Shop (South)"
+mobile_ids = ["mage"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1420
+y1 = 3978
+x2 = 1421
+y2 = 3982
+
+[[spawn]]
+id = "trammel_7327"
+map = "trammel"
+name = "Jehlom - Mage Shop (South)"
+mobile_ids = ["herbalist"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1425
+y1 = 3979
+x2 = 1430
+y2 = 3984
+
+[[spawn]]
+id = "trammel_7328"
+map = "trammel"
+name = "Jehlom - The Pearl of Jhelom"
+mobile_ids = ["jeweler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1441
+y1 = 3977
+x2 = 1448
+y2 = 3982
+
+[[spawn]]
+id = "trammel_7329"
+map = "trammel"
+name = "Jehlom - Fine Tailoring"
+mobile_ids = ["tailor"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1451
+y1 = 4001
+x2 = 1456
+y2 = 4006
+
+[[spawn]]
+id = "trammel_7330"
+map = "trammel"
+name = "Jehlom - Fine Tailoring"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1441
+y1 = 3977
+x2 = 1448
+y2 = 3982
+
+[[spawn]]
+id = "trammel_7331"
+map = "trammel"
+name = "Jehlom - Finest Cuts"
+mobile_ids = ["butcher"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1449
+y1 = 4025
+x2 = 1452
+y2 = 4028
+
+[[spawn]]
+id = "trammel_7332"
+map = "trammel"
+name = "animal spawn (south island)"
+mobile_ids = []
+npc_list_ids = ["britainanimallist"]
+max = 20
+min_minutes = 18
+max_minutes = 20
+call = 5
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 1379
+y1 = 3956
+x2 = 1500
+y2 = 4041
+
+[[spawn]]
+id = "trammel_7333"
+map = "trammel"
+name = "Jhelom Bull Pen 1"
+mobile_ids = ["bull"]
+npc_list_ids = []
+max = 5
+min_minutes = 18
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1115
+y1 = 3571
+x2 = 1140
+y2 = 3592
+
+[[spawn]]
+id = "trammel_7334"
+map = "trammel"
+name = "Jhelom Bull Pen 3"
+mobile_ids = ["bull"]
+npc_list_ids = []
+max = 5
+min_minutes = 18
+max_minutes = 30
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1176
+y1 = 3600
+x2 = 1196
+y2 = 3620
+
+[[spawn]]
+id = "trammel_7335"
+map = "trammel"
+name = "Jhelom Farm 1"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1169
+y1 = 3633
+x2 = 1174
+y2 = 3645
+
+[[spawn]]
+id = "trammel_7336"
+map = "trammel"
+name = "Jhelom Farm 1"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1169
+y1 = 3633
+x2 = 1174
+y2 = 3645
+
+[[spawn]]
+id = "trammel_7337"
+map = "trammel"
+name = "Jhelom Farm 2"
+mobile_ids = ["farmer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1121
+y1 = 3610
+x2 = 1134
+y2 = 3614
+
+[[spawn]]
+id = "trammel_7338"
+map = "trammel"
+name = "Jhelom Farm 2"
+mobile_ids = ["peasant"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1121
+y1 = 3610
+x2 = 1134
+y2 = 3614
+
+[[spawn]]
+id = "trammel_7339"
+map = "trammel"
+name = "Jehlom provisioner"
+mobile_ids = ["cobbler"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1433
+y1 = 3795
+x2 = 1443
+y2 = 3796
+
+[[spawn]]
+id = "trammel_7342"
+map = "trammel"
+name = "Jehlom - Adventurer's Needle"
+mobile_ids = ["weaver"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1355
+y1 = 3778
+x2 = 1357
+y2 = 3786
+
+[[spawn]]
+id = "trammel_7343"
+map = "trammel"
+name = "Jehlom - Adventurer's Needle"
+mobile_ids = ["spinner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1355
+y1 = 3778
+x2 = 1357
+y2 = 3786
+
+[[spawn]]
+id = "trammel_7344"
+map = "trammel"
+name = "Jehlom - Sailor's Keeper"
+mobile_ids = ["mapmaker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 1451
+y1 = 3737
+x2 = 1455
+y2 = 3742

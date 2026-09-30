@@ -1,0 +1,233 @@
+[[spawn]]
+id = "trammel_7150"
+map = "trammel"
+name = "Buccaneer's Den Leatherworks"
+mobile_ids = ["leatherworker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2705
+y1 = 2177
+x2 = 2710
+y2 = 2182
+
+[[spawn]]
+id = "trammel_7151"
+map = "trammel"
+name = "Healer Of Buccaneers Den"
+mobile_ids = ["healer"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2705
+y1 = 2144
+x2 = 2709
+y2 = 2148
+
+[[spawn]]
+id = "trammel_7152"
+map = "trammel"
+name = "The Peg Leg Inn"
+mobile_ids = ["innkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2713
+y1 = 2097
+x2 = 2718
+y2 = 2102
+
+[[spawn]]
+id = "trammel_7153"
+map = "trammel"
+name = "Cutlass Smithing"
+mobile_ids = ["blacksmith"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2633
+y1 = 2081
+x2 = 2638
+y2 = 2085
+
+[[spawn]]
+id = "trammel_7154"
+map = "trammel"
+name = "Voilente Woodworks"
+mobile_ids = ["carpenter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2624
+y1 = 2097
+x2 = 2629
+y2 = 2102
+
+[[spawn]]
+id = "trammel_7155"
+map = "trammel"
+name = "Pirates Den"
+mobile_ids = ["pirate"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2656
+y1 = 2197
+x2 = 2662
+y2 = 2202
+
+[[spawn]]
+id = "trammel_7156"
+map = "trammel"
+name = "Pirates Den"
+mobile_ids = ["pirate"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2656
+y1 = 2185
+x2 = 2662
+y2 = 2191
+
+[[spawn]]
+id = "trammel_7157"
+map = "trammel"
+name = "The Pirates Plunder"
+mobile_ids = ["tavernkeeper"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2682
+y1 = 2242
+x2 = 2686
+y2 = 2244
+
+[[spawn]]
+id = "trammel_7158"
+map = "trammel"
+name = "The Pirate's Provision"
+mobile_ids = ["provisioner"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2731
+y1 = 2250
+x2 = 2742
+y2 = 2254
+
+[[spawn]]
+id = "trammel_7159"
+map = "trammel"
+name = "Buc Den Bank"
+mobile_ids = ["banker"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2731
+y1 = 2187
+x2 = 2733
+y2 = 2189
+
+[[spawn]]
+id = "trammel_7160"
+map = "trammel"
+name = "The Pirates Plunder"
+mobile_ids = ["waiter"]
+npc_list_ids = []
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2672
+y1 = 2232
+x2 = 2686
+y2 = 2239
+
+[[spawn]]
+id = "trammel_7161"
+map = "trammel"
+name = "Thief Guildmaster"
+mobile_ids = []
+npc_list_ids = ["thiefguildmaster"]
+max = 1
+min_minutes = 480
+max_minutes = 600
+call = 1
+exclude = []
+only_outside = false
+[[spawn.areas]]
+x1 = 2664
+y1 = 2233
+x2 = 2670
+y2 = 2238
+
+[[spawn]]
+id = "trammel_7167"
+map = "trammel"
+name = "Bucc's Den Town"
+mobile_ids = []
+npc_list_ids = ["buccsden_town"]
+max = 10
+min_minutes = 30
+max_minutes = 60
+call = 3
+exclude = []
+only_outside = true
+[[spawn.areas]]
+x1 = 2622
+y1 = 2070
+x2 = 2764
+y2 = 2266

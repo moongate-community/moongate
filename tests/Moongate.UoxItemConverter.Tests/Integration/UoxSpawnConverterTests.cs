@@ -143,6 +143,20 @@ public sealed class UoxSpawnConverterTests : IDisposable
         );
     }
 
+    [Fact]
+    public void Run_ARegionNumberDefinedTwice_KeepsTheLastDefinition_AsUox3()
+    {
+        WriteSources(spawns: Region(0, world: 0).Replace("MAXNPCS=1", "MAXNPCS=1") + Region(0, world: 0).Replace("MAXNPCS=1", "MAXNPCS=4"));
+
+        Assert.True(Run() == 0, CombinedOutput);
+
+        var spawn = Assert.Single(
+            TomlUtils.DeserializeFromFile<SpawnTemplateFile>(Path.Combine(_dirs.SpawnsDestinationDirectory, "felucca", "town_test.toml"))!.Spawn
+        );
+        Assert.Equal(4, spawn.Max);
+        Assert.Contains("1 x duplicate spawn region", CombinedOutput);
+    }
+
     private static string Region(int number, int world)
     {
         return $"[REGIONSPAWN {number}]\n{{\nNPC=orc\nMAXNPCS=1\nX1=1\nY1=1\nX2=5\nY2=5\nWORLD={world}\n}}\n";
