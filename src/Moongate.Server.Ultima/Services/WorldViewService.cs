@@ -10,6 +10,7 @@ using Moongate.Server.Ultima.Interfaces;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Types.Mobiles;
 using Moongate.Ultima.Primitives;
+using Serilog;
 
 namespace Moongate.Server.Ultima.Services;
 
@@ -30,6 +31,7 @@ public sealed class WorldViewService : IWorldViewService
     private readonly IPacketSendService _sender;
     private readonly ITooltipService _tooltips;
     private readonly WorldConfig _world;
+    private readonly ILogger _logger;
 
     // Read on every use: the configured range of the live world (ultima.world.view_range).
     private int ViewRange => _world.ViewRange;
@@ -40,9 +42,11 @@ public sealed class WorldViewService : IWorldViewService
         IItemService items,
         IPacketSendService sender,
         ITooltipService tooltips,
-        WorldConfig world
+        WorldConfig world,
+        ILogger? logger = null
     )
     {
+        _logger = logger ?? Log.ForContext<WorldViewService>();
         _tooltips = tooltips;
         _sectors = sectors;
         _mobiles = mobiles;
@@ -55,6 +59,7 @@ public sealed class WorldViewService : IWorldViewService
     {
         _sessions[mobile.Id] = new(sessionId, version);
         MobileIncomingPacket? incoming = null;
+        var sent = new SentCounts();
 
         foreach (var other in _sectors.GetMobilesInRange(mobile.Map, mobile.Location, ViewRange))
         {
@@ -64,6 +69,7 @@ public sealed class WorldViewService : IWorldViewService
             }
 
             SendMobile(sessionId, other, Incoming(other));
+            sent.Add(other);
 
             if (_sessions.TryGetValue(other.Id, out var viewer))
             {
@@ -74,7 +80,10 @@ public sealed class WorldViewService : IWorldViewService
         foreach (var item in _sectors.GetItemsInRange(mobile.Map, mobile.Location, ViewRange))
         {
             SendItem(sessionId, item, version);
+            sent.Items++;
         }
+
+        LogSectorEntry(mobile, sent);
     }
 
     public void Moved(MobileEntity mobile, Point3D oldLocation, bool running)
@@ -91,6 +100,7 @@ public sealed class WorldViewService : IWorldViewService
         }
 
         var hasSession = _sessions.TryGetValue(mobile.Id, out var own);
+        var sent = new SentCounts();
         MobileMovingPacket? moving = null;
         MobileIncomingPacket? incoming = null;
 
@@ -119,6 +129,7 @@ public sealed class WorldViewService : IWorldViewService
             if (!sawIt && hasSession)
             {
                 SendMobile(own!.SessionId, other, Incoming(other));
+                sent.Add(other);
             }
         }
 
@@ -132,7 +143,13 @@ public sealed class WorldViewService : IWorldViewService
             if (item.GroundLocation is { } spot && !InRange(spot, oldLocation))
             {
                 SendItem(own!.SessionId, item, own.Version);
+                sent.Items++;
             }
+        }
+
+        if (SectorOf(mobile.Location) != SectorOf(oldLocation))
+        {
+            LogSectorEntry(mobile, sent);
         }
     }
 
@@ -247,6 +264,26 @@ public sealed class WorldViewService : IWorldViewService
         }
 
         return new WorldItemPacket(item.Id, item.ItemId, item.Amount, spot, item.Hue);
+    }
+
+    private static (int X, int Y) SectorOf(Point3D location)
+    {
+        return (location.X / SectorService.SectorSize, location.Y / SectorService.SectorSize);
+    }
+
+    private void LogSectorEntry(MobileEntity mobile, SentCounts sent)
+    {
+        var (x, y) = SectorOf(mobile.Location);
+        _logger.Debug(
+            "{Name} entered sector ({SectorX}, {SectorY}) of {Map}: sent {Items} items, {Npcs} NPCs and {Players} players",
+            mobile.Name,
+            x,
+            y,
+            mobile.Map,
+            sent.Items,
+            sent.Npcs,
+            sent.Players
+        );
     }
 
     // The mobile, then the revision of its tooltip and of each worn item's, as ModernUO: the client asks for the
