@@ -10,6 +10,8 @@ using Moongate.Server.Ultima.Data.Templates.Mobiles;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Modules;
 using Moongate.Server.Ultima.Services;
+using Moongate.Server.Ultima.Types.Mobiles;
+using Moongate.Server.Ultima.Types.Movement;
 using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Movement;
 using Moongate.Tests.TestSupport.Ultima.Sectors;
@@ -41,7 +43,9 @@ public sealed class NpcModuleTests
             {
                 Id = "orc", Sounds = new MobileSounds { StartAttack = 0x69, Idle = 0x2A3, Attack = 0x6B, Hurt = 0x6C, Death = 0x6D }
             },
-            new MobileTemplate { Id = "quiet" }
+            new MobileTemplate { Id = "quiet" },
+            new MobileTemplate { Id = "dolphin", Movement = MobileMovementType.Water },
+            new MobileTemplate { Id = "walrus", Movement = MobileMovementType.Both }
         )
     );
     private readonly MobileEntity _player = new()
@@ -96,6 +100,19 @@ public sealed class NpcModuleTests
         Assert.True(result[0].Read<bool>());
         Assert.Equal(new Point3D(1600, 1599, 0), _orc.Location);
         Assert.Equal(["Moved 256 1600,1600,0"], _view.Calls);
+    }
+
+    [Theory,
+     InlineData("orc", MovementAbilityType.Walk),
+     InlineData("dolphin", MovementAbilityType.Swim),
+     InlineData("walrus", MovementAbilityType.Walk | MovementAbilityType.Swim)]
+    public void Step_MovesAsTheTemplateSays(string templateId, MovementAbilityType expected)
+    {
+        _orc.TemplateId = templateId;
+
+        Run("return npc.step(256, 'North')");
+
+        Assert.Equal([expected], _movement.Abilities);
     }
 
     [Fact]
