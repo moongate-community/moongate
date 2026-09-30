@@ -95,7 +95,15 @@ public sealed class RegionService : IRegionService
 
     public void Left(Serial mobile)
     {
-        _players.TryRemove(mobile, out _);
+        if (!_players.TryRemove(mobile, out _))
+        {
+            return;
+        }
+
+        foreach (var listener in _listeners)
+        {
+            listener.Left(mobile);
+        }
     }
 
     private void Notify(MobileEntity player, RegionContent? previous, RegionContent? current)

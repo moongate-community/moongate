@@ -142,6 +142,7 @@ public sealed class ServerRoleRegistrationTests
             Assert.NotNull(container.Resolve<NpcModule>());
             Assert.NotNull(container.Resolve<ItemModule>());
             Assert.NotNull(container.Resolve<WorldModule>());
+            Assert.Same(container.Resolve<IWeatherService>(), Assert.Single(container.Resolve<IEnumerable<IRegionChangeListener>>()));
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcThinker>());
             Assert.Same(container.Resolve<NpcScriptService>(), container.Resolve<INpcScriptService>());
             Assert.NotNull(container.Resolve<INpcService>());

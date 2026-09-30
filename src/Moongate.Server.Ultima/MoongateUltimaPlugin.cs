@@ -345,6 +345,9 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddMoongateService<ItemDecayService>(11);
             // The light cycle's timer, like the decay's: the players it lights come after the game server starts.
             container.AddMoongateService<ILightService, LightService>(11);
+            // The weather follows the players' regions: RegionService tells it, as its region change listener.
+            container.AddMoongateService<IWeatherService, WeatherService>(11);
+            container.RegisterDelegate<IRegionChangeListener>(resolver => resolver.Resolve<IWeatherService>(), Reuse.Singleton);
             container.AddMoongateService<IEquipmentService, EquipmentService>();
             container.AddMoongateService<ITooltipService, TooltipService>();
             // As the ground items: the NPCs are live before the game server takes players.
