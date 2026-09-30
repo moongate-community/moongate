@@ -1,3 +1,4 @@
+using Moongate.Tests.TestSupport.Ultima.Items;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Data.Sessions;
@@ -21,6 +22,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
 {
     private readonly SectorService _sectors = TestSectors.Create();
     private readonly StubClockService _clock = new() { Time = new GameTime(21, 5) };
+    private readonly ItemService _items = TestItems.Create();
     private BroadcastFixture _fixture = null!;
 
     public WorldModuleTests()
@@ -38,6 +40,17 @@ public sealed class WorldModuleTests : IAsyncLifetime
     {
         _fixture = await BroadcastFixture.CreateAsync();
         await _fixture.AddAsync(2);
+        var backpack = new ItemEntity { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
+        backpack.Equip(new Serial(2), LayerType.Backpack);
+        var pouch = new ItemEntity { Id = new Serial(0x40000002), TemplateId = "pouch", ItemId = 0x0E79, Amount = 1 };
+        pouch.PutInContainer(backpack.Id, new Point2D(44, 65));
+        var key = new ItemEntity
+        {
+            Id = new Serial(0x40000003), TemplateId = "0x1010_iron_key", ItemId = 0x1010, Amount = 1,
+            Props = new() { ["key.value"] = 1234L }
+        };
+        key.PutInContainer(pouch.Id, new Point2D(44, 65));
+        _items.Add([backpack, pouch, key]);
         var gm = await _fixture.AddAsync(3);
         await _fixture.Network.ExecuteOnLoopAsync(() => gm.Set(SessionKeys.AccountType, AccountType.GameMaster));
     }
@@ -52,6 +65,16 @@ public sealed class WorldModuleTests : IAsyncLifetime
      InlineData("return world.is_staff(2)", false),
      InlineData("return world.is_staff(0x100)", false)]
     public void IsStaff_TellsWhetherThePlayersAccountIsAGameMasterOrAbove(string chunk, bool expected)
+    {
+        Assert.Equal(expected, Run(chunk)[0].Read<bool>());
+    }
+
+    [Theory,
+     InlineData("return world.carries(2, 'key.value', 1234)", true),
+     InlineData("return world.carries(2, 'key.value', 999)", false),
+     InlineData("return world.carries(3, 'key.value', 1234)", false),
+     InlineData("return world.carries(2, 'door.open', true)", false)]
+    public void Carries_LooksThroughEverythingThePlayerWearsAndCarries(string chunk, bool expected)
     {
         Assert.Equal(expected, Run(chunk)[0].Read<bool>());
     }
@@ -79,7 +102,7 @@ public sealed class WorldModuleTests : IAsyncLifetime
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
         var binder = new LuaModuleBinder(NoThreadGuard.Instance);
-        binder.Bind(state, new WorldModule(_sectors, _clock, _fixture.Sessions));
+        binder.Bind(state, new WorldModule(_sectors, _clock, _fixture.Sessions, _items));
         binder.BindEnum(state, typeof(MapType));
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));

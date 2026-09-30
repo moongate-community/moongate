@@ -5,6 +5,7 @@ using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Modules.Internal;
 using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Modules;
@@ -19,12 +20,31 @@ public sealed class WorldModule
     private readonly ISectorService _sectors;
     private readonly IClockService _clock;
     private readonly ISessionService _sessions;
+    private readonly IItemService _items;
 
-    public WorldModule(ISectorService sectors, IClockService clock, ISessionService sessions)
+    public WorldModule(ISectorService sectors, IClockService clock, ISessionService sessions, IItemService items)
     {
         _sectors = sectors;
         _clock = clock;
         _sessions = sessions;
+        _items = items;
+    }
+
+    /// <summary>
+    ///     Gets whether <paramref name="mobile" /> wears or carries, at any depth of its containers, an item whose prop
+    ///     <paramref name="key" /> is <paramref name="value" />, such as the key of a door;
+    ///     <c>world.carries(user, "key.value", 1234)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Whether the mobile wears or carries, in its containers at any depth, an item whose prop key is value.")]
+    public bool Carries(long mobile, string key, object value)
+    {
+        if (mobile is <= 0 or > uint.MaxValue || !ScriptPropValue.TryFromLua(value, out var wanted))
+        {
+            return false;
+        }
+
+        return _items.GetOwnedBy(new Serial((uint)mobile))
+                     .Any(item => item.Props?.GetValueOrDefault(key) is { } prop && Equals(prop, wanted));
     }
 
     /// <summary>

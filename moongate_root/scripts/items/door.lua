@@ -8,14 +8,17 @@
 --   its linked door opens with it. Double clicking an open door closes both,
 --   when nobody stands in either doorway. An open door closes by itself after
 --   20 seconds, then retries every 10 seconds while the doorway is taken.
---   A locked closed door does not open for players ("That is locked."); game
---   masters and administrators open it, as in ModernUO. Keys come later.
+--   A locked closed door opens only for a player carrying a key with its
+--   key.value (anywhere in the backpack) and for game masters and
+--   administrators, as in ModernUO; it stays locked. Anyone else reads
+--   "That is locked.".
 --
 -- Props it reads (set by .decorate):
 --   facing           the DoorFacingType, such as west_cw; none opens in place
 --   decoration_type  the kind, such as MetalDoor, which picks the sounds
 --   door.link        the serial of the door that opens with this one
 --   locked           true keeps the closed door shut for players
+--   key.value        the number a key must carry (prop key.value) to open it
 --
 -- Props it keeps:
 --   door.open        true while the door is open
@@ -195,14 +198,39 @@ local function schedule_auto_close(serial, seconds)
     end)
 end
 
--- UOX3's "That is locked.", in the server's language.
+-- UOX3's messages, in the server's language.
 local LOCKED_MESSAGE = 398
+local STAFF_MESSAGE = 404
+local KEY_MESSAGE = 405
+
+local function say(serial, user, id, english)
+    item.message(serial, user, localization.text(id) or english)
+end
+
+-- Whether the player gets through a locked door: staff always, others with its key.
+local function may_pass(serial, user)
+    if world.is_staff(user) then
+        say(serial, user, STAFF_MESSAGE, "The door being locked magically unlocks itself to allow you passage.")
+
+        return true
+    end
+
+    local key = item.get_prop(serial, "key.value")
+
+    if key and world.carries(user, "key.value", key) then
+        say(serial, user, KEY_MESSAGE, "Using your key, you quickly unlock and open the door.  You hastily relock it.")
+
+        return true
+    end
+
+    say(serial, user, LOCKED_MESSAGE, "That is locked.")
+
+    return false
+end
 
 -- Called when a player double clicks the door.
 function door.on_use(serial, user)
-    if not is_open(serial) and item.get_prop(serial, "locked") and not world.is_staff(user) then
-        item.message(serial, user, localization.text(LOCKED_MESSAGE) or "That is locked.")
-
+    if not is_open(serial) and item.get_prop(serial, "locked") and not may_pass(serial, user) then
         return true
     end
 

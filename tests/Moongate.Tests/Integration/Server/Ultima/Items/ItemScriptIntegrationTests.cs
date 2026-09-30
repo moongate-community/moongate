@@ -74,7 +74,7 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         _container.RegisterInstance<ITooltipService>(TestTooltips.Create(_items, _fixture.Mobiles));
         _container.AddScriptModule<ItemModule>();
         _container.AddScriptModule<WorldModule>();
-        _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura.")));
+        _container.RegisterInstance(TestLocalization.With((398, "C'è una serratura."), (405, "Using your key, you open the door.")));
         _container.AddScriptModule<LocalizationModule>();
         _container.Resolve<IMoongateEventBus>()
             .Subscribe<ScriptErrorEvent>((evt, _) =>
@@ -217,6 +217,48 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         var label = Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>());
         Assert.Equal((SpeechType.Label, "C'è una serratura."), (label.Type, label.Text));
         Assert.Empty(_speech.PlacedSounds);
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ALockedDoor_OpensForAPlayerCarryingItsKey_AndStaysLocked()
+    {
+        var (left, right) = PlaceDoubleDoor();
+        left.Props!["locked"] = true;
+        left.Props["key.value"] = 77L;
+        var key = new ItemEntity
+        {
+            Id = new Serial(0x40000030), TemplateId = "0x1010_iron_key", ItemId = 0x1010, Amount = 1,
+            Props = new() { ["key.value"] = 77L }
+        };
+        key.PutInContainer(_backpack.Id, new Point2D(50, 70));
+        _items.Add([key]);
+        var scripts = await StartDoorScriptAsync();
+
+        scripts.Run(left, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((0x0676, 0x0678, (object?)true), (left.ItemId, right.ItemId, left.Props["locked"]));
+        Assert.Equal("Using your key, you open the door.", Assert.Single(_fixture.Sender.Sent.OfType<UnicodeSpeechMessagePacket>()).Text);
+    }
+
+    [Fact]
+    public async Task TheShippedDoorScript_ALockedDoor_StaysShutForAnotherKey()
+    {
+        var (left, _) = PlaceDoubleDoor();
+        left.Props!["locked"] = true;
+        left.Props["key.value"] = 77L;
+        var key = new ItemEntity
+        {
+            Id = new Serial(0x40000030), TemplateId = "0x1010_iron_key", ItemId = 0x1010, Amount = 1,
+            Props = new() { ["key.value"] = 78L }
+        };
+        key.PutInContainer(_backpack.Id, new Point2D(50, 70));
+        _items.Add([key]);
+        var scripts = await StartDoorScriptAsync();
+
+        scripts.Run(left, "on_use", 2L);
+
+        Assert.Equal(0x0675, left.ItemId);
     }
 
     [Fact]
