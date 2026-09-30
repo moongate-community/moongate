@@ -14,8 +14,8 @@
 orione = {}
 
 local MESSAGES = {
-    "Meow meow! Ho fame!",
-    "Meow, Voglio i chicchini!",
+    "Meow meow! I'm hungry!",
+    "Meow, I want my kibble!",
 }
 
 local SOUNDS = { 0x69, 0x6A }
