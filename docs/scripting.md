@@ -72,10 +72,12 @@ exists but fails compilation/execution aborts server startup.
 | `item.consume(serial, amount?)` | Takes `amount` units (default 1) off the item, deleting it at 0, and updates the owner's container or the players around a ground stack; `false` for a worn item, an `amount` below 1, fewer units left, or an item a player holds on the cursor |
 | `item.get_prop(serial, key)`, `item.set_prop(serial, key, value)` | The same for an item, saved with it by the world save or its owner's save |
 | `item.item_id(serial)`, `item.set_item_id(serial, graphic)` | The item's graphic, and changing it (0 to 65535), as a door opening: the players around a ground item, or the owner of a carried one, see it change; `false` for an unknown, worn or held item or a graphic out of range; an item inside a container on the ground changes without being shown again |
+| `item.set_light(serial, type)` | The light shape a light source gives, by `LightType` name such as `circle150`, `circle300` or `west_big`; `nil` clears it. The players who see the item are shown it again; the client draws the light only for a lit graphic. `false` for an unknown shape or a worn or held item |
 | `item.location(serial)`, `item.move_to(serial, x, y, z)` | Where a ground item lies, `{ x, y, z, map }`, and moving it on its map: the players around the old spot lose it and those around the new one see it; `nil`/`false` for an item not on the ground, a spot outside the map or a `z` outside -128 to 127; moving restarts a decaying item's decay |
 | `item.play_sound(serial, sound)` | Plays a sound id (0 to 65535) where the item lies, or where the mobile carrying it stands, for the players within 15 cells; `false` for an unknown item, a sound out of range, or an item inside a container on the ground |
 | `world.is_occupied(map, x, y)` | Whether a player or an NPC stands on the tile, at any height, such as a door's doorway; `map` is a `MapType` |
 | `world.time(map, x)` | The time of day on the map at the column `x`, as `{ hours, minutes }`: `world.time(MapType.Trammel, 1600).hours`; see `ultima.world.seconds_per_uo_minute` |
+| `world.is_staff(player)` | Whether the player is a game master or an administrator in the world; `false` for an NPC or a player not in the world |
 | `item.delete(serial)` | Deletes the item; `false` for a worn item, an item a player holds on the cursor, or a container that still holds items |
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
@@ -295,6 +297,18 @@ tries again every 10 seconds while the doorway is taken. A door that cannot swin
 as one at the edge of the map, stays closed. The open state is the prop `door.open`, with the
 closed spot in `door.x`, `door.y` and `door.z`, saved with the door; the auto-close timer is not, so a door left open when the
 server stops stays open until someone uses it. Locks and keys come later.
+
+`scripts/items/light.lua` lights and douses candles, candelabras, lanterns, lamp posts, wall
+sconces and torches: the `decoration_light` template and the light templates of
+`templates/items` use it. Double clicking an unlit light gives it the lit graphic (ModernUO's
+pairs), a light shape if it has none, and sound `0x47`; double clicking a lit one gives the
+unlit graphic and sound `0x3BE`, keeping the shape for the next time. A light without an unlit
+graphic, such as a brazier, stays as it is. The lights `.decorate` places have the prop
+`protected`: only game masters and administrators light or douse them.
+
+LuaCSharp does not read a hexadecimal number between brackets (`t[0x0A27]` or
+`{ [0x0A27] = ... }` fail with "malformed number"): pass it through a function or a variable,
+as `light.lua` does with `add(0x0A27, 0x0B1D, "circle225")`.
 
 ## Reload and ownership
 

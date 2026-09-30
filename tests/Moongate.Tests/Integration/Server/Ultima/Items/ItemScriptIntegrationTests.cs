@@ -7,6 +7,8 @@ using Moongate.Scripting.Extensions.Scripts;
 using Moongate.Scripting.Interfaces;
 using Moongate.Scripting.Services;
 using Moongate.Scripting.Types.Scripts;
+using Moongate.Server.Core.Data.Sessions;
+using Moongate.Server.Core.Types.Accounts;
 using Moongate.Server.Core.Extensions;
 using Moongate.Server.Core.Interfaces.Events;
 using Moongate.Server.Core.Interfaces.Services;
@@ -254,6 +256,98 @@ public sealed class ItemScriptIntegrationTests : IAsyncLifetime
         Assert.Empty(_errors);
         Assert.Equal((0x00E9, new Point3D(1600, 1600, 0)), (door.ItemId, door.GroundLocation!.Value));
         Assert.Equal([0xED], _speech.PlacedSounds.Select(sound => sound.Sound));
+    }
+
+    [Fact]
+    public async Task TheShippedLightScript_LightsACandleWithItsShape_AndDousesIt()
+    {
+        var candle = PlaceLight(0x0A28, null);
+        var scripts = await StartLightScriptAsync();
+
+        var result = scripts.Run(candle, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal((ScriptResultKind.Completed, true), (result.Kind, result.Values[0]));
+        Assert.Equal((0x0A0F, (object?)"circle150"), (candle.ItemId, candle.Props?.GetValueOrDefault("light")));
+
+        scripts.Run(candle, "on_use", 2L);
+
+        Assert.Equal(0x0A28, candle.ItemId);
+        Assert.Equal([0x47, 0x3BE], _speech.PlacedSounds.Select(sound => sound.Sound));
+    }
+
+    [Fact]
+    public async Task TheShippedLightScript_KeepsTheShapeALightAlreadyHas()
+    {
+        var sconce = PlaceLight(0x0A00, null);
+        sconce.Props = new() { ["light"] = "north_big" };
+        var scripts = await StartLightScriptAsync();
+
+        scripts.Run(sconce, "on_use", 2L);
+
+        Assert.Equal((0x0A02, (object?)"north_big"), (sconce.ItemId, sconce.Props!["light"]));
+    }
+
+    [Fact]
+    public async Task TheShippedLightScript_AProtectedLight_OnlyStaffLightsIt()
+    {
+        var lamp = PlaceLight(0x0B21, true);
+        var scripts = await StartLightScriptAsync();
+
+        scripts.Run(lamp, "on_use", 2L);
+        Assert.Equal(0x0B21, lamp.ItemId);
+
+        _fixture.Sessions.TryGetByCharacterId(new Serial(2), out var session);
+        await _fixture.Network.ExecuteOnLoopAsync(() => session!.Set(SessionKeys.AccountType, AccountType.GameMaster));
+        scripts.Run(lamp, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(0x0B20, lamp.ItemId);
+    }
+
+    [Fact]
+    public async Task TheShippedLightScript_ALightWithoutAnUnlitGraphic_StaysAsItIs()
+    {
+        var brazier = PlaceLight(0x0E31, null);
+        var scripts = await StartLightScriptAsync();
+
+        var result = scripts.Run(brazier, "on_use", 2L);
+
+        Assert.Empty(_errors);
+        Assert.Equal(((object?)true, 0x0E31), (result.Values[0], brazier.ItemId));
+        Assert.Empty(_speech.PlacedSounds);
+    }
+
+    private ItemEntity PlaceLight(int graphic, bool? isProtected)
+    {
+        var light = new ItemEntity { Id = new Serial(0x40000020), TemplateId = "decoration_light", ItemId = graphic, Amount = 1 };
+
+        if (isProtected is { } value)
+        {
+            light.Props = new() { ["protected"] = value };
+        }
+
+        light.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
+        _items.Add([light]);
+
+        return light;
+    }
+
+    private async Task<ItemScriptService> StartLightScriptAsync()
+    {
+        _scripts.Write("items/light.lua", File.ReadAllText(ShippedScript("items/light.lua")));
+        var engine = NewEngine();
+        _engines.Add(engine);
+        await engine.StartAsync();
+        var scripts = new ItemScriptService(
+            engine,
+            new ItemTemplateService(new StubDataLoaderService().With(new ItemTemplate { Id = "decoration_light", ScriptId = "light" })),
+            _loop,
+            new ScriptEngineOptions { ScriptsDirectory = _scripts.Path }
+        );
+        await scripts.StartAsync();
+
+        return scripts;
     }
 
     private (ItemEntity Left, ItemEntity Right) PlaceDoubleDoor()

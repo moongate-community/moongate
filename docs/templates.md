@@ -431,10 +431,14 @@ locations = [[1411, 1621, 30], [1411, 1622, 30]]
 A block without `item_id` is an addon built from several graphics. `extras`, when present, gives a
 setting per location in the order of `locations`.
 
-[`.decorate`](commands.md#decorate) places them with the two templates of
-`templates/items/decorations.toml`: `decoration`, fixed and never decaying, for most kinds, and
+[`.decorate`](commands.md#decorate) places them with the templates of
+`templates/items/decorations.toml`: `decoration`, fixed and never decaying, for most kinds;
 `decoration_door`, the same with `script_id = "door"`, for the kinds whose name contains `Door`
-or `Gate`. Each item takes the block's graphic, `hue` and `name`; its other settings stay in the
-item's props, with `decoration_type` = the kind for a door. Teleporters, spawners, mark
+or `Gate`; and `decoration_light`, with `script_id = "light"`, for ModernUO's light kinds
+(candles, candelabras, lanterns, lamp posts, sconces, torches, braziers). Each item takes the
+block's graphic, `hue` and `name`; its other settings stay in the item's props, with
+`decoration_type` = the kind for a door or a light. A light also gets its `light` shape (the
+block's or the kind's) and `protected` unless the block says `unprotected`; the graphic already
+says whether it is lit. Teleporters, spawners, mark
 containers, public moongates and addons are not placed yet.
 
