@@ -1,0 +1,798 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/lakeshire.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "wooden gate"
+type = "DarkWoodGate"
+item_id = 0x0866
+props = { facing = "west_cw" }
+locations = [
+    [1219, 1158, -26],
+    [1221, 1158, -26],
+    [1223, 1158, -26],
+]
+
+[[decoration]]
+comment = "wooden gate"
+type = "DarkWoodGate"
+item_id = 0x086A
+props = { facing = "west_ccw" }
+locations = [
+    [1219, 1161, -26],
+    [1222, 1161, -26],
+]
+
+[[decoration]]
+comment = "bed"
+type = "Static"
+item_id = 0x0A69
+locations = [
+    [1199, 1179, -25],
+    [1224, 1136, -5],
+]
+
+[[decoration]]
+comment = "bed"
+type = "Static"
+item_id = 0x0A6B
+props = { hue = 0x0541 }
+locations = [[1200, 1179, -25]]
+
+[[decoration]]
+comment = "bed"
+type = "Static"
+item_id = 0x0A6B
+props = { hue = 0x059B }
+locations = [[1225, 1136, -5]]
+
+[[decoration]]
+comment = "table"
+type = "Static"
+item_id = 0x0B75
+locations = [
+    [1222, 1130, -25],
+    [1222, 1134, -25],
+    [1226, 1130, -25],
+    [1226, 1134, -25],
+]
+
+[[decoration]]
+comment = "table"
+type = "Static"
+item_id = 0x0B76
+locations = [
+    [1222, 1129, -25],
+    [1222, 1133, -25],
+    [1226, 1129, -25],
+    [1226, 1133, -25],
+]
+
+[[decoration]]
+comment = "broken chair"
+type = "Static"
+item_id = 0x0C10
+locations = [
+    [1220, 1123, -25],
+    [1223, 1130, -25],
+]
+
+[[decoration]]
+comment = "broken chair"
+type = "Static"
+item_id = 0x0C11
+locations = [[1203, 1174, -25]]
+
+[[decoration]]
+comment = "broken armoire"
+type = "Static"
+item_id = 0x0C12
+locations = [
+    [1167, 1166, -25],
+    [1218, 1150, -25],
+]
+
+[[decoration]]
+comment = "broken armoire"
+type = "Static"
+item_id = 0x0C13
+locations = [
+    [1224, 1123, -25],
+    [1228, 1123, -5],
+    [1230, 1133, -5],
+]
+
+[[decoration]]
+comment = "ruined bookcase"
+type = "Static"
+item_id = 0x0C14
+locations = [
+    [1222, 1123, -25],
+    [1228, 1123, -25],
+]
+
+[[decoration]]
+comment = "ruined bookcase"
+type = "Static"
+item_id = 0x0C15
+locations = [
+    [1167, 1162, -25],
+    [1167, 1164, -25],
+    [1199, 1176, -25],
+    [1218, 1154, -25],
+    [1224, 1134, -5],
+]
+
+[[decoration]]
+comment = "damaged books"
+type = "Static"
+item_id = 0x0C16
+locations = [
+    [1167, 1163, -25],
+    [1221, 1178, -25],
+    [1223, 1124, -25],
+    [1225, 1134, -5],
+]
+
+[[decoration]]
+comment = "covered chair"
+type = "Static"
+item_id = 0x0C17
+locations = [[1205, 1173, -25]]
+
+[[decoration]]
+comment = "broken chair"
+type = "Static"
+item_id = 0x0C19
+locations = [
+    [1167, 1160, -25],
+    [1218, 1153, -25],
+]
+
+[[decoration]]
+comment = "broken chair"
+type = "Static"
+item_id = 0x0C1A
+locations = [[1226, 1131, -25]]
+
+[[decoration]]
+comment = "broken chair"
+type = "Static"
+item_id = 0x0C1B
+locations = [[1199, 1173, -25]]
+
+[[decoration]]
+comment = "broken chair"
+type = "Static"
+item_id = 0x0C1C
+locations = [[1221, 1175, -25]]
+
+[[decoration]]
+comment = "broken clock"
+type = "Static"
+item_id = 0x0C1F
+locations = [[1199, 1177, -25]]
+
+[[decoration]]
+comment = "broken dresser"
+type = "Static"
+item_id = 0x0C20
+locations = [[1224, 1127, -5]]
+
+[[decoration]]
+comment = "broken dresser"
+type = "Static"
+item_id = 0x0C21
+locations = [[1224, 1126, -5]]
+
+[[decoration]]
+comment = "broken dresser"
+type = "Static"
+item_id = 0x0C22
+locations = [[1203, 1173, -25]]
+
+[[decoration]]
+comment = "broken dresser"
+type = "Static"
+item_id = 0x0C23
+locations = [[1202, 1173, -25]]
+
+[[decoration]]
+comment = "broken furniture"
+type = "Static"
+item_id = 0x0C24
+locations = [
+    [1201, 1173, -25],
+    [1229, 1123, -5],
+]
+
+[[decoration]]
+comment = "broken furniture"
+type = "Static"
+item_id = 0x0C25
+locations = [[1218, 1174, -25]]
+
+[[decoration]]
+comment = "ruined bed"
+type = "Static"
+item_id = 0x0C29
+locations = [[1226, 1123, -5]]
+
+[[decoration]]
+comment = "ruined bed"
+type = "Static"
+item_id = 0x0C2A
+locations = [[1225, 1124, -5]]
+
+[[decoration]]
+comment = "ruined bed"
+type = "Static"
+item_id = 0x0C2B
+locations = [[1224, 1125, -5]]
+
+[[decoration]]
+comment = "debris"
+type = "Static"
+item_id = 0x0C2E
+locations = [
+    [1179, 1156, -25],
+    [1221, 1182, -22],
+    [1226, 1123, -25],
+    [1226, 1133, -5],
+]
+
+[[decoration]]
+comment = "debris"
+type = "Static"
+item_id = 0x0C2F
+locations = [
+    [1177, 1151, -25],
+    [1177, 1163, -25],
+    [1181, 1156, -25],
+    [1205, 1175, -25],
+    [1207, 1177, -25],
+    [1226, 1126, -5],
+    [1229, 1136, -5],
+]
+
+[[decoration]]
+comment = "debris"
+type = "Static"
+item_id = 0x0C30
+locations = [
+    [1167, 1167, -25],
+    [1199, 1178, -25],
+    [1232, 1129, -25],
+]
+
+[[decoration]]
+comment = "sheets"
+type = "Static"
+item_id = 0x0C33
+locations = [[1223, 1176, -25]]
+
+[[decoration]]
+comment = "sheets"
+type = "Static"
+item_id = 0x0C34
+locations = [[1222, 1176, -25]]
+
+[[decoration]]
+comment = "sheets"
+type = "Static"
+item_id = 0x0C35
+locations = [
+    [1223, 1174, -25],
+    [1223, 1175, -25],
+]
+
+[[decoration]]
+comment = "sheets"
+type = "Static"
+item_id = 0x0C36
+locations = [
+    [1222, 1174, -25],
+    [1222, 1175, -25],
+]
+
+[[decoration]]
+comment = "grasses"
+type = "Static"
+item_id = 0x0CAC
+locations = [[1208, 1159, -25]]
+
+[[decoration]]
+comment = "grasses"
+type = "Static"
+item_id = 0x0CAD
+locations = [[1196, 1163, -25]]
+
+[[decoration]]
+comment = "grasses"
+type = "Static"
+item_id = 0x0CAF
+locations = [[1208, 1174, -25]]
+
+[[decoration]]
+comment = "grasses"
+type = "Static"
+item_id = 0x0CB0
+locations = [
+    [1204, 1164, -25],
+    [1228, 1157, -25],
+]
+
+[[decoration]]
+comment = "grasses"
+type = "Static"
+item_id = 0x0CB1
+locations = [
+    [1218, 1182, -25],
+    [1220, 1139, -25],
+    [1225, 1182, -25],
+    [1226, 1139, -25],
+]
+
+[[decoration]]
+comment = "grasses"
+type = "Static"
+item_id = 0x0CB3
+locations = [[1230, 1150, -25]]
+
+[[decoration]]
+comment = "grasses"
+type = "Static"
+item_id = 0x0CB5
+locations = [
+    [1214, 1185, -25],
+    [1229, 1139, -25],
+]
+
+[[decoration]]
+comment = "grasses"
+type = "Static"
+item_id = 0x0CB6
+locations = [
+    [1212, 1169, -25],
+    [1219, 1135, -25],
+    [1227, 1183, -25],
+]
+
+[[decoration]]
+comment = "vines"
+type = "Static"
+item_id = 0x0CEB
+locations = [[1223, 1182, -25]]
+
+[[decoration]]
+comment = "vines"
+type = "Static"
+item_id = 0x0CEC
+locations = [
+    [1220, 1182, -25],
+    [1221, 1182, -25],
+    [1226, 1182, -25],
+]
+
+[[decoration]]
+comment = "vines"
+type = "Static"
+item_id = 0x0CED
+locations = [
+    [1218, 1182, -25],
+    [1221, 1173, -25],
+    [1224, 1182, -25],
+]
+
+[[decoration]]
+comment = "vines"
+type = "Static"
+item_id = 0x0CEF
+locations = [[1227, 1175, -25]]
+
+[[decoration]]
+comment = "vines"
+type = "Static"
+item_id = 0x0CF0
+locations = [[1227, 1176, -25]]
+
+[[decoration]]
+comment = "vines"
+type = "Static"
+item_id = 0x0CF1
+locations = [[1227, 1177, -25]]
+
+[[decoration]]
+comment = "apple tree"
+type = "Static"
+item_id = 0x0D94
+locations = [
+    [1175, 1173, -25],
+    [1180, 1177, -25],
+    [1182, 1186, -25],
+]
+
+[[decoration]]
+comment = "apple tree"
+type = "Static"
+item_id = 0x0D96
+locations = [
+    [1175, 1173, -25],
+    [1180, 1177, -25],
+    [1182, 1186, -25],
+]
+
+[[decoration]]
+comment = "apple tree"
+type = "Static"
+item_id = 0x0D98
+locations = [
+    [1172, 1179, -25],
+    [1175, 1187, -25],
+    [1185, 1182, -25],
+]
+
+[[decoration]]
+comment = "apple tree"
+type = "Static"
+item_id = 0x0D9A
+locations = [
+    [1172, 1179, -25],
+    [1175, 1187, -25],
+    [1185, 1182, -25],
+]
+
+[[decoration]]
+comment = "peach tree"
+type = "Static"
+item_id = 0x0D9C
+locations = [
+    [1174, 1200, -25],
+    [1175, 1192, -25],
+]
+
+[[decoration]]
+comment = "peach tree"
+type = "Static"
+item_id = 0x0D9E
+locations = [
+    [1174, 1200, -25],
+    [1175, 1192, -25],
+]
+
+[[decoration]]
+comment = "pear tree"
+type = "Static"
+item_id = 0x0DA4
+locations = [
+    [1184, 1195, -25],
+    [1186, 1197, -25],
+    [1194, 1185, -25],
+    [1194, 1198, -25],
+]
+
+[[decoration]]
+comment = "pear tree"
+type = "Static"
+item_id = 0x0DA6
+locations = [
+    [1184, 1195, -25],
+    [1186, 1197, -25],
+    [1194, 1185, -25],
+    [1194, 1198, -25],
+]
+
+[[decoration]]
+comment = "pear tree"
+type = "Static"
+item_id = 0x0DA8
+locations = [
+    [1188, 1189, -25],
+    [1194, 1189, -25],
+]
+
+[[decoration]]
+comment = "pear tree"
+type = "Static"
+item_id = 0x0DAA
+locations = [
+    [1188, 1189, -25],
+    [1194, 1189, -25],
+]
+
+[[decoration]]
+comment = "spiderweb"
+type = "Static"
+item_id = 0x0EE4
+locations = [[1218, 1157, -25]]
+
+[[decoration]]
+comment = "spiderweb"
+type = "Static"
+item_id = 0x0EE6
+locations = [[1224, 1133, -5]]
+
+[[decoration]]
+comment = "hay"
+type = "Static"
+item_id = 0x0F34
+locations = [
+    [1219, 1160, -25],
+    [1225, 1160, -25],
+]
+
+[[decoration]]
+comment = "garbage"
+type = "Static"
+item_id = 0x10EE
+locations = [
+    [1202, 1179, -25],
+    [1220, 1133, -25],
+    [1221, 1140, -25],
+    [1221, 1177, -25],
+    [1222, 1151, -25],
+    [1222, 1160, -25],
+    [1228, 1125, -25],
+    [1229, 1152, -25],
+]
+
+[[decoration]]
+comment = "garbage"
+type = "Static"
+item_id = 0x10EF
+locations = [
+    [1201, 1174, -25],
+    [1220, 1154, -25],
+    [1227, 1145, -25],
+    [1228, 1135, -25],
+]
+
+[[decoration]]
+comment = "garbage"
+type = "Static"
+item_id = 0x10F0
+locations = [
+    [1223, 1153, -25],
+    [1224, 1179, -25],
+    [1229, 1160, -25],
+]
+
+[[decoration]]
+comment = "garbage"
+type = "Static"
+item_id = 0x10F1
+locations = [
+    [1220, 1178, -25],
+    [1221, 1174, -25],
+]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x1986
+locations = [
+    [1228, 1097, -25],
+    [1228, 1106, -25],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x198A
+locations = [
+    [1228, 1098, -25],
+    [1228, 1107, -25],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x198E
+locations = [
+    [1228, 1099, -25],
+    [1228, 1108, -25],
+]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x1992
+locations = [
+    [1229, 1099, -25],
+    [1229, 1108, -25],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x1996
+locations = [
+    [1229, 1098, -25],
+    [1229, 1107, -25],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x199A
+locations = [
+    [1229, 1097, -25],
+    [1229, 1106, -25],
+]
+
+[[decoration]]
+comment = "leaves"
+type = "Static"
+item_id = 0x1B1F
+locations = [
+    [1222, 1125, -25],
+    [1228, 1132, -25],
+]
+
+[[decoration]]
+comment = "leaves"
+type = "Static"
+item_id = 0x1B23
+locations = [
+    [1218, 1175, -25],
+    [1232, 1124, -25],
+]
+
+[[decoration]]
+comment = "leaves"
+type = "Static"
+item_id = 0x1B24
+locations = [
+    [1218, 1173, -25],
+    [1232, 1123, -25],
+]
+
+[[decoration]]
+comment = "wall cracks"
+type = "Static"
+item_id = 0x1B6C
+locations = [
+    [1195, 1160, -25],
+    [1227, 1179, -25],
+]
+
+[[decoration]]
+comment = "wall cracks"
+type = "Static"
+item_id = 0x1B6D
+locations = [[1195, 1163, -25]]
+
+[[decoration]]
+comment = "wall cracks"
+type = "Static"
+item_id = 0x1B6E
+locations = [[1205, 1163, -25]]
+
+[[decoration]]
+comment = "wall cracks"
+type = "Static"
+item_id = 0x1B6F
+locations = [
+    [1202, 1149, -25],
+    [1204, 1163, -25],
+    [1208, 1151, -25],
+    [1218, 1176, -25],
+]
+
+[[decoration]]
+comment = "refuse"
+type = "Static"
+item_id = 0x1BB0
+locations = [[1196, 1149, -25]]
+
+[[decoration]]
+comment = "refuse"
+type = "Static"
+item_id = 0x1BB1
+locations = [[1196, 1150, -25]]
+
+[[decoration]]
+comment = "refuse"
+type = "Static"
+item_id = 0x1BB5
+locations = [[1195, 1150, -25]]
+
+[[decoration]]
+comment = "refuse"
+type = "Static"
+item_id = 0x1BB6
+locations = [[1195, 1149, -25]]
+
+[[decoration]]
+comment = "broken barrel"
+type = "Static"
+item_id = 0x1DB3
+locations = [[1196, 1154, -25]]
+
+[[decoration]]
+comment = "broken barrel"
+type = "Static"
+item_id = 0x1DB4
+locations = [[1196, 1153, -25]]
+
+[[decoration]]
+comment = "broken barrel"
+type = "Static"
+item_id = 0x1DB5
+locations = [[1195, 1153, -25]]
+
+[[decoration]]
+comment = "broken barrel"
+type = "Static"
+item_id = 0x1DB6
+locations = [[1195, 1154, -25]]
+
+[[decoration]]
+comment = "mud"
+type = "Static"
+item_id = 0x1E01
+locations = [
+    [1197, 1157, -25],
+    [1207, 1155, -25],
+]
+
+[[decoration]]
+comment = "mud"
+type = "Static"
+item_id = 0x1E02
+locations = [
+    [1200, 1162, -25],
+    [1201, 1149, -25],
+    [1204, 1179, -25],
+    [1205, 1159, -25],
+    [1220, 1150, -25],
+    [1228, 1127, -25],
+]
+
+[[decoration]]
+comment = "book"
+type = "Static"
+item_id = 0x1E20
+locations = [
+    [1168, 1165, -25],
+    [1200, 1177, -25],
+]
+
+[[decoration]]
+comment = "books"
+type = "Static"
+item_id = 0x1E21
+locations = [
+    [1168, 1162, -25],
+    [1202, 1176, -25],
+]
+
+[[decoration]]
+comment = "barrel staves"
+type = "Static"
+item_id = 0x1EB2
+locations = [[1195, 1154, -25]]
+
+[[decoration]]
+comment = "unfinished barrel"
+type = "Static"
+item_id = 0x1EB5
+locations = [
+    [1195, 1152, -24],
+    [1225, 1157, -25],
+]

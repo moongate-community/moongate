@@ -1,0 +1,1091 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/bucs.toml
+#
+# What it is for:
+#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x051E
+locations = [[2669, 2071, -20]]
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x051F
+locations = [[2669, 2072, -20]]
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x0520
+locations = [[2669, 2073, -20]]
+
+[[decoration]]
+comment = "bottle of ale"
+type = "BeverageBottle"
+item_id = 0x099F
+props = { content = "Ale" }
+locations = [
+    [2659, 2187, 8],
+    [2660, 2203, 8],
+    [2666, 2234, 8],
+    [2668, 2235, 8],
+    [2668, 2236, 8],
+    [2673, 2233, 4],
+    [2675, 2238, 4],
+    [2684, 2233, 4],
+]
+
+[[decoration]]
+comment = "bottles of ale"
+type = "Static"
+item_id = 0x09A0
+locations = [[2666, 2236, 8]]
+
+[[decoration]]
+comment = "metal box"
+type = "FillableMetalBox"
+item_id = 0x09A8
+locations = [[2730, 2185, 6]]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalChest"
+item_id = 0x09AB
+locations = [[2662, 2250, -20]]
+
+[[decoration]]
+comment = "metal chest"
+type = "FillableMetalChest"
+item_id = 0x09AB
+locations = [
+    [2648, 2192, 4],
+    [2649, 2192, 4],
+    [2650, 2192, 4],
+    [2718, 2080, 0],
+    [2719, 2080, 20],
+]
+
+[[decoration]]
+comment = "silverware"
+type = "Static"
+item_id = 0x09BD
+locations = [[2757, 2219, 6]]
+
+[[decoration]]
+comment = "bottle of wine"
+type = "BeverageBottle"
+item_id = 0x09C7
+props = { content = "Wine" }
+locations = [
+    [2659, 2201, 8],
+    [2660, 2186, 8],
+]
+
+[[decoration]]
+comment = "silverware"
+type = "Static"
+item_id = 0x09D4
+locations = [[2748, 2113, 4]]
+
+[[decoration]]
+comment = "pitcher"
+type = "Static"
+item_id = 0x09D6
+locations = [
+    [2668, 2129, 4],
+    [2692, 2200, 4],
+]
+
+[[decoration]]
+comment = "plate"
+type = "Plate"
+item_id = 0x09D7
+locations = [[2757, 2219, 6]]
+
+[[decoration]]
+comment = "plate of food"
+type = "Static"
+item_id = 0x09DB
+locations = [[2748, 2113, 4]]
+
+[[decoration]]
+comment = "mug of ale"
+type = "GlassMug"
+item_id = 0x09EE
+props = { content = "Ale" }
+locations = [[2679, 2233, 4]]
+
+[[decoration]]
+comment = "wall sconce"
+type = "WallSconce"
+item_id = 0x09FD
+props = { light = "WestBig" }
+locations = [[2681, 2245, 16]]
+
+[[decoration]]
+comment = "wall sconce"
+type = "WallSconce"
+item_id = 0x0A02
+props = { light = "NorthBig" }
+locations = [
+    [2683, 2241, 16],
+    [2678, 2241, 16],
+]
+
+[[decoration]]
+comment = "wall torch"
+type = "WallTorch"
+item_id = 0x0A07
+props = { light = "WestBig" }
+locations = [[2728, 2187, 16]]
+
+[[decoration]]
+comment = "wall torch"
+type = "Static"
+item_id = 0x0A0C
+props = { light = "NorthBig" }
+locations = [[2729, 2184, 16]]
+
+[[decoration]]
+comment = "candle"
+type = "Candle"
+item_id = 0x0A0F
+locations = [[2691, 2200, 4]]
+
+[[decoration]]
+comment = "lantern"
+type = "Lantern"
+item_id = 0x0A18
+props = { unlit = true }
+locations = [[2744, 2253, 10]]
+
+[[decoration]]
+comment = "hanging lantern"
+type = "HangingLantern"
+item_id = 0x0A1A
+locations = [
+    [2717, 2104, 9],
+    [2721, 2085, 0],
+    [2721, 2086, 0],
+    [2722, 2086, 0],
+    [2736, 2158, 18],
+]
+
+[[decoration]]
+comment = "hanging lantern"
+type = "Static"
+item_id = 0x0A1D
+locations = [[2736, 2174, 20]]
+
+[[decoration]]
+comment = "lantern post"
+type = "Static"
+item_id = 0x0A20
+locations = [
+    [2735, 2157, -1],
+    [2735, 2173, 0],
+]
+
+[[decoration]]
+comment = "candle"
+type = "CandleLarge"
+item_id = 0x0A26
+props = { unlit = true }
+locations = [[2632, 2086, 14]]
+
+[[decoration]]
+comment = "stool"
+type = "Stool"
+item_id = 0x0A2A
+locations = [
+    [2669, 2076, 5],
+    [2709, 2178, 0],
+    [2713, 2086, 0],
+    [2723, 2085, 0],
+    [2726, 2086, 0],
+    [2730, 2260, 0],
+    [2730, 2261, 0],
+    [2731, 2259, 0],
+    [2731, 2262, 0],
+    [2732, 2259, 0],
+    [2732, 2262, 0],
+    [2733, 2260, 0],
+    [2733, 2261, 0],
+]
+
+[[decoration]]
+comment = "stool"
+type = "Static"
+item_id = 0x0A2B
+locations = [
+    [2637, 2080, 10],
+    [2638, 2081, 10],
+    [2638, 2082, 10],
+]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "Drawer"
+item_id = 0x0A2C
+locations = [[2676, 2152, 0]]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "Drawer"
+item_id = 0x0A34
+locations = [
+    [2664, 2131, 0],
+    [2744, 2115, 0],
+    [2776, 2132, 0],
+]
+
+[[decoration]]
+comment = "armoire"
+type = "Armoire"
+item_id = 0x0A53
+locations = [
+    [2624, 2099, 10],
+    [2712, 2084, 0],
+    [2720, 2084, 0],
+]
+
+[[decoration]]
+comment = "bedroll"
+type = "Static"
+item_id = 0x0A55
+locations = [
+    [2689, 2201, 0],
+    [2715, 2209, 0],
+]
+
+[[decoration]]
+comment = "bedroll"
+type = "Static"
+item_id = 0x0A56
+locations = [
+    [2694, 2201, 0],
+    [2718, 2209, 0],
+]
+
+[[decoration]]
+comment = "bedroll"
+type = "Static"
+item_id = 0x0A57
+locations = [[2718, 2209, 0]]
+
+[[decoration]]
+comment = "bedroll"
+type = "Static"
+item_id = 0x0A58
+locations = [
+    [2689, 2201, 0],
+    [2715, 2209, 0],
+]
+
+[[decoration]]
+comment = "bed"
+type = "Static"
+item_id = 0x0A5C
+locations = [[2752, 2217, 0]]
+
+[[decoration]]
+comment = "bed"
+type = "Static"
+item_id = 0x0A63
+locations = [[2752, 2216, 0]]
+
+[[decoration]]
+comment = "folded sheet"
+type = "Static"
+item_id = 0x0A92
+locations = [
+    [2632, 2080, 12],
+    [2704, 2146, 2],
+    [2704, 2149, 2],
+    [2709, 2132, 2],
+    [2726, 2089, 2],
+    [2729, 2260, -3],
+    [2744, 2112, 2],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0AA0
+locations = [
+    [2733, 2249, 4],
+    [2734, 2249, 4],
+    [2739, 2249, 4],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0AA2
+locations = [
+    [2733, 2248, 4],
+    [2734, 2248, 4],
+    [2739, 2248, 4],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0AA3
+locations = [
+    [2732, 2248, 4],
+    [2738, 2248, 4],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0AA4
+locations = [
+    [2735, 2248, 4],
+    [2740, 2248, 4],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0AA5
+locations = [
+    [2732, 2249, 4],
+    [2738, 2249, 4],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0B10
+locations = [
+    [2732, 2248, 0],
+    [2738, 2248, 0],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0B11
+locations = [
+    [2735, 2249, 0],
+    [2740, 2249, 0],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0B12
+locations = [
+    [2732, 2249, 0],
+    [2738, 2249, 0],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0B13
+locations = [
+    [2735, 2248, 0],
+    [2740, 2248, 0],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0B15
+locations = [
+    [2733, 2249, 0],
+    [2734, 2249, 0],
+    [2739, 2249, 0],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0B17
+locations = [
+    [2733, 2248, 0],
+    [2734, 2248, 0],
+    [2739, 2248, 0],
+]
+
+[[decoration]]
+comment = "display case"
+type = "Static"
+item_id = 0x0B18
+locations = [
+    [2735, 2249, 4],
+    [2740, 2249, 4],
+]
+
+[[decoration]]
+comment = "candle"
+type = "CandleLarge"
+item_id = 0x0B1A
+locations = [
+    [2672, 2153, 8],
+    [2672, 2156, 6],
+    [2728, 2259, 8],
+]
+
+[[decoration]]
+comment = "candle"
+type = "CandleLarge"
+item_id = 0x0B1B
+locations = [
+    [2634, 2080, 18],
+    [2712, 2212, 7],
+    [2732, 2185, 6],
+]
+
+[[decoration]]
+comment = "counter"
+type = "Static"
+item_id = 0x0B3E
+locations = [[2731, 2185, 0]]
+
+[[decoration]]
+comment = "counter"
+type = "Static"
+item_id = 0x0B3F
+locations = [
+    [2728, 2258, 0],
+    [2728, 2259, 0],
+    [2730, 2184, 0],
+    [2731, 2260, 0],
+    [2731, 2261, 0],
+    [2732, 2260, 0],
+    [2732, 2261, 0],
+]
+
+[[decoration]]
+comment = "counter"
+type = "Static"
+item_id = 0x0B40
+locations = [
+    [2730, 2185, 0],
+    [2732, 2185, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "FancyWoodenChairCushion"
+item_id = 0x0B4E
+locations = [
+    [2658, 2187, 4],
+    [2658, 2201, 4],
+    [2658, 2203, 4],
+    [2712, 2097, 0],
+    [2712, 2101, 0],
+    [2720, 2092, 0],
+    [2720, 2093, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "FancyWoodenChairCushion"
+item_id = 0x0B4F
+locations = [
+    [2660, 2185, 4],
+    [2713, 2096, 0],
+    [2715, 2080, 0],
+    [2715, 2089, 0],
+    [2715, 2096, 0],
+    [2724, 2080, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "FancyWoodenChairCushion"
+item_id = 0x0B50
+locations = [[2660, 2189, 4]]
+
+[[decoration]]
+comment = "chair"
+type = "FancyWoodenChairCushion"
+item_id = 0x0B51
+locations = [
+    [2661, 2187, 4],
+    [2661, 2201, 4],
+    [2661, 2203, 4],
+]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChair"
+item_id = 0x0B56
+locations = [
+    [2624, 2097, 10],
+    [2728, 2251, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChair"
+item_id = 0x0B57
+locations = [
+    [2629, 2096, 10],
+    [2730, 2248, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChair"
+item_id = 0x0B59
+locations = [[2748, 2114, 0]]
+
+[[decoration]]
+comment = "chair"
+type = "BambooChair"
+item_id = 0x0B5A
+locations = [
+    [2665, 2235, 2],
+    [2672, 2238, 4],
+    [2756, 2219, 0],
+    [2779, 2132, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "BambooChair"
+item_id = 0x0B5B
+locations = [
+    [2667, 2128, 0],
+    [2667, 2233, 2],
+    [2669, 2128, 0],
+    [2674, 2232, 4],
+    [2674, 2237, 2],
+    [2679, 2232, 4],
+    [2684, 2232, 4],
+    [2712, 2210, 0],
+    [2757, 2218, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "BambooChair"
+item_id = 0x0B5C
+locations = [
+    [2667, 2237, 2],
+    [2674, 2239, 4],
+    [2712, 2213, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "BambooChair"
+item_id = 0x0B5D
+locations = [
+    [2669, 2235, 2],
+    [2781, 2131, 0],
+    [2781, 2133, 0],
+]
+
+[[decoration]]
+comment = "foot stool"
+type = "FootStool"
+item_id = 0x0B5E
+locations = [
+    [2691, 2201, 0],
+    [2692, 2201, 0],
+]
+
+[[decoration]]
+comment = "bench"
+type = "Static"
+item_id = 0x0B60
+locations = [[2728, 2188, 0]]
+
+[[decoration]]
+comment = "bench"
+type = "Static"
+item_id = 0x0B65
+locations = [[2755, 2216, 0]]
+
+[[decoration]]
+comment = "table"
+type = "Static"
+item_id = 0x0B70
+locations = [
+    [2659, 2188, 4],
+    [2659, 2204, 4],
+]
+
+[[decoration]]
+comment = "table"
+type = "Static"
+item_id = 0x0B71
+locations = [
+    [2660, 2188, 4],
+    [2660, 2204, 4],
+]
+
+[[decoration]]
+comment = "table"
+type = "Static"
+item_id = 0x0B72
+locations = [
+    [2660, 2186, 4],
+    [2660, 2200, 4],
+]
+
+[[decoration]]
+comment = "table"
+type = "Static"
+item_id = 0x0B73
+locations = [
+    [2659, 2186, 4],
+    [2659, 2187, 4],
+    [2659, 2200, 4],
+    [2659, 2201, 4],
+    [2659, 2202, 4],
+    [2659, 2203, 4],
+    [2660, 2187, 4],
+    [2660, 2201, 4],
+    [2660, 2202, 4],
+    [2660, 2203, 4],
+]
+
+[[decoration]]
+comment = "wooden signpost"
+type = "Static"
+item_id = 0x0B97
+locations = [
+    [2632, 2099, 10],
+    [2632, 2102, 10],
+    [2664, 2192, 4],
+    [2688, 2234, 4],
+    [2688, 2237, 4],
+]
+
+[[decoration]]
+comment = "wooden signpost"
+type = "Static"
+item_id = 0x0B98
+locations = [
+    [2732, 2192, 0],
+    [2666, 2096, 5],
+]
+
+[[decoration]]
+comment = "broken chair"
+type = "Static"
+item_id = 0x0C11
+locations = [[2627, 2097, 16]]
+
+[[decoration]]
+comment = "bloody bandage"
+type = "Static"
+item_id = 0x0E20
+locations = [[2704, 2136, 6]]
+
+[[decoration]]
+comment = "crate"
+type = "FillableLargeCrate"
+item_id = 0x0E3D
+locations = [
+    [2675, 2241, 2],
+    [2676, 2241, 2],
+    [2676, 2245, 2],
+    [2677, 2241, 2],
+    [2677, 2245, 2],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "FillableMetalGoldenChest"
+item_id = 0x0E40
+locations = [[2672, 2243, 2]]
+
+[[decoration]]
+comment = "wooden chest"
+type = "WoodenChest"
+item_id = 0x0E42
+locations = [
+    [2712, 2209, 0],
+    [2752, 2221, 0],
+]
+
+[[decoration]]
+comment = "wooden chest"
+type = "FillableWoodenChest"
+item_id = 0x0E42
+locations = [[2728, 2187, 0]]
+
+[[decoration]]
+comment = "wooden chest"
+type = "WoodenChest"
+item_id = 0x0E43
+locations = [
+    [2677, 2158, 0],
+    [2678, 2157, 0],
+]
+
+[[decoration]]
+comment = "wooden chest"
+type = "FillableWoodenChest"
+item_id = 0x0E43
+locations = [
+    [2733, 2184, 0],
+    [2734, 2184, 0],
+]
+
+[[decoration]]
+comment = "barrel"
+type = "Barrel"
+item_id = 0x0E77
+locations = [
+    [2675, 2245, -20],
+    [2676, 2244, -20],
+    [2676, 2245, -20],
+    [2692, 2205, 0],
+    [2693, 2204, 0],
+    [2693, 2205, 0],
+    [2746, 2112, 0],
+    [2664, 2133, 0],
+]
+
+[[decoration]]
+comment = "barrel"
+type = "FillableBarrel"
+item_id = 0x0E77
+locations = [
+    [2637, 2084, 10],
+    [2637, 2085, 10],
+    [2672, 2245, 2],
+    [2673, 2245, 2],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalChest"
+item_id = 0x0E7C
+locations = [
+    [2664, 2134, 0],
+    [2744, 2117, 0],
+]
+
+[[decoration]]
+comment = "clean bandage"
+type = "Static"
+item_id = 0x0EE9
+locations = [
+    [2704, 2145, 8],
+    [2709, 2136, 6],
+    [2710, 2145, 8],
+]
+
+[[decoration]]
+comment = "playing cards"
+type = "Static"
+item_id = 0x0FA2
+locations = [
+    [2660, 2202, 8],
+    [2667, 2236, 8],
+]
+
+[[decoration]]
+comment = "playing cards"
+type = "Static"
+item_id = 0x0FA3
+locations = [
+    [2660, 2187, 8],
+    [2668, 2235, 8],
+]
+
+[[decoration]]
+comment = "checkers"
+type = "Static"
+item_id = 0x0FA4
+locations = [[2674, 2233, 7]]
+
+[[decoration]]
+comment = "checkers"
+type = "Static"
+item_id = 0x0FA5
+locations = [[2674, 2233, 7]]
+
+[[decoration]]
+comment = "checker board"
+type = "CheckerBoard"
+item_id = 0x0FA6
+locations = [[2674, 2233, 6]]
+
+[[decoration]]
+comment = "dice and cup"
+type = "Dices"
+item_id = 0x0FA7
+locations = [
+    [2678, 2233, 2],
+    [2680, 2233, 4],
+]
+
+[[decoration]]
+comment = "backgammon game"
+type = "Backgammon"
+item_id = 0x0FAD
+locations = [[2674, 2238, 6]]
+
+[[decoration]]
+comment = "barrel"
+type = "Static"
+item_id = 0x0FAE
+locations = [
+    [2633, 2091, 10],
+    [2749, 2164, -3],
+    [2753, 2164, -3],
+    [2753, 2169, -3],
+]
+
+[[decoration]]
+comment = "anvil"
+type = "AnvilEastAddon"
+item_id = 0x0FAF
+locations = [[2634, 2091, 10]]
+
+[[decoration]]
+comment = "forge"
+type = "SmallForgeAddon"
+item_id = 0x0FB1
+locations = [[2634, 2089, 10]]
+
+[[decoration]]
+comment = "sledge hammer"
+type = "Static"
+item_id = 0x0FB4
+locations = [[2634, 2090, 10]]
+
+[[decoration]]
+comment = "sledge hammer"
+type = "Static"
+item_id = 0x0FB5
+locations = [[2636, 2083, 10]]
+
+[[decoration]]
+comment = "tongs"
+type = "Static"
+item_id = 0x0FBB
+locations = [[2636, 2083, 11]]
+
+[[decoration]]
+comment = "book"
+type = "Static"
+item_id = 0x0FBD
+locations = [
+    [2632, 2085, 14],
+    [2665, 2090, 11],
+    [2714, 2097, 1],
+]
+
+[[decoration]]
+comment = "book"
+type = "Static"
+item_id = 0x0FBE
+locations = [[2733, 2248, 2]]
+
+[[decoration]]
+comment = "pen and ink"
+type = "Static"
+item_id = 0x0FBF
+locations = [[2734, 2248, 4]]
+
+[[decoration]]
+comment = "pen and ink"
+type = "Static"
+item_id = 0x0FC0
+locations = [
+    [2666, 2090, 11],
+    [2709, 2177, 6],
+    [2715, 2097, 4],
+]
+
+[[decoration]]
+comment = "chisels"
+type = "Static"
+item_id = 0x1027
+locations = [[2627, 2097, 16]]
+
+[[decoration]]
+comment = "moulding planes"
+type = "Static"
+item_id = 0x102D
+locations = [[2627, 2096, 16]]
+
+[[decoration]]
+comment = "nails"
+type = "Static"
+item_id = 0x102F
+locations = [[2626, 2097, 16]]
+
+[[decoration]]
+comment = "jointing plane"
+type = "Static"
+item_id = 0x1030
+locations = [[2626, 2097, 16]]
+
+[[decoration]]
+comment = "smoothing plane"
+type = "Static"
+item_id = 0x1033
+locations = [[2627, 2097, 16]]
+
+[[decoration]]
+comment = "saw"
+type = "Static"
+item_id = 0x1034
+locations = [[2627, 2097, 16]]
+
+[[decoration]]
+comment = "globe"
+type = "Static"
+item_id = 0x1047
+locations = [[2728, 2260, 0]]
+
+[[decoration]]
+comment = "clock frame"
+type = "Static"
+item_id = 0x104D
+locations = [[2627, 2096, 16]]
+
+[[decoration]]
+comment = "axle"
+type = "Axle"
+item_id = 0x105B
+locations = [
+    [2626, 2096, 16],
+    [2627, 2097, 16],
+]
+
+[[decoration]]
+comment = "cut leather"
+type = "Static"
+item_id = 0x1067
+locations = [
+    [2704, 2177, 0],
+    [2705, 2176, 0],
+]
+
+[[decoration]]
+comment = "pile of hides"
+type = "Static"
+item_id = 0x1078
+locations = [[2706, 2177, 0]]
+
+[[decoration]]
+comment = "pile of hides"
+type = "Static"
+item_id = 0x1079
+locations = [[2705, 2178, 0]]
+
+[[decoration]]
+comment = "hanging pole"
+type = "Static"
+item_id = 0x10AC
+locations = [[2718, 2082, 0]]
+
+[[decoration]]
+comment = "hanging pole"
+type = "Static"
+item_id = 0x10AD
+locations = [[2718, 2081, 0]]
+
+[[decoration]]
+comment = "hanging pole"
+type = "Static"
+item_id = 0x10AE
+locations = [[2718, 2080, 0]]
+
+[[decoration]]
+comment = "flowerpot"
+type = "PottedPlant1"
+item_id = 0x11CB
+locations = [[2667, 2072, 11]]
+
+[[decoration]]
+comment = "log table"
+type = "Static"
+item_id = 0x11DF
+locations = [
+    [2632, 2086, 10],
+    [2672, 2157, 0],
+]
+
+[[decoration]]
+comment = "map"
+type = "Static"
+item_id = 0x14EC
+locations = [[2728, 2258, 6]]
+
+[[decoration]]
+comment = "rope"
+type = "Static"
+item_id = 0x14FA
+locations = [
+    [2744, 2169, -3],
+    [2749, 2177, -3],
+    [2752, 2160, -3],
+    [2752, 2173, -3],
+    [2758, 2166, -3],
+]
+
+[[decoration]]
+comment = "lockpick"
+type = "Static"
+item_id = 0x14FC
+locations = [
+    [2732, 2260, 6],
+    [2732, 2261, 6],
+]
+
+[[decoration]]
+comment = "lockpicks"
+type = "Static"
+item_id = 0x14FE
+locations = [[2731, 2261, 6]]
+
+[[decoration]]
+comment = "water barrel"
+type = "Static"
+item_id = 0x154D
+locations = [
+    [2672, 2244, 2],
+    [2741, 2169, -3],
+    [2749, 2171, -3],
+]
+
+[[decoration]]
+comment = "ore"
+type = "Static"
+item_id = 0x19B9
+locations = [[2637, 2082, 16]]
+
+[[decoration]]
+comment = "glass"
+type = "GlassMug"
+item_id = 0x1F81
+locations = [[2679, 2233, 4]]
+
+[[decoration]]
+comment = "glass of water"
+type = "GlassMug"
+item_id = 0x1F91
+props = { content = "Water" }
+locations = [[2679, 2233, 4]]

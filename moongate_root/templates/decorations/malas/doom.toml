@@ -1,0 +1,251 @@
+# ==============================================================================
+# Moongate - templates/decorations/malas/doom.toml
+#
+# What it is for:
+#   World decoration placed on Malas: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "pedestal"
+type = "Static"
+item_id = 0x1F2A
+locations = [[467, 92, -1]]
+
+[[decoration]]
+comment = "alchemical symbol"
+type = "Static"
+item_id = 0x181D
+props = { hue = 0x0482 }
+locations = [[468, 92, -1]]
+
+[[decoration]]
+comment = "alchemical symbol"
+type = "Static"
+item_id = 0x1821
+props = { hue = 0x03FD }
+locations = [[469, 92, -1]]
+
+[[decoration]]
+comment = "alchemical symbol"
+type = "Static"
+item_id = 0x1825
+props = { hue = 0x066D }
+locations = [[470, 92, -1]]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x067D
+props = { facing = "south_cw" }
+locations = [
+    [269, 74, -1],
+    [278, 96, -1],
+    [334, 15, -1],
+    [344, 15, -1],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x067F
+props = { facing = "north_ccw" }
+locations = [
+    [269, 73, -1],
+    [278, 95, -1],
+    [334, 14, -1],
+    [344, 14, -1],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0675
+props = { facing = "west_cw" }
+locations = [[308, 88, -1]]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0677
+props = { facing = "east_ccw" }
+locations = [[309, 88, -1]]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x108C
+props = { hue = 0x083E }
+locations = [[307, 143, 5]]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x1095
+props = { hue = 0x083F }
+locations = [[308, 143, 5]]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x1095
+props = { hue = 0x0843 }
+locations = [
+    [309, 143, 5],
+    [308, 146, 8],
+]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x1093
+props = { hue = 0x0845 }
+locations = [[310, 143, 5]]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x108C
+props = { hue = 0x083D }
+locations = [[307, 144, 5]]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x108E
+props = { hue = 0x083E }
+locations = [
+    [307, 145, 5],
+    [311, 144, 9],
+]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x1093
+props = { hue = 0x0835 }
+locations = [[309, 146, 8]]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x1093
+props = { hue = 0x083B }
+locations = [[310, 146, 8]]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x108C
+props = { hue = 0x0845 }
+locations = [[311, 145, 9]]
+
+[[decoration]]
+comment = "crumbling floor"
+type = "FireColumnTrap"
+item_id = 0x11C5
+props = { hue = 0x0455 }
+locations = [
+    [2347, 1264, -110],
+    [2347, 1271, -110],
+    [2340, 1272, -110],
+    [2340, 1264, -110],
+]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0681
+props = { hue = 0x0455, facing = "south_ccw" }
+locations = [[2333, 1269, -110]]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x067F
+props = { hue = 0x0455, facing = "north_cw" }
+locations = [[2333, 1268, -110]]
+
+[[decoration]]
+comment = "floor spikes"
+type = "SpikeTrap"
+item_id = 0x11A0
+locations = [
+    [378, 140, 1],
+    [378, 139, 2],
+    [379, 140, -1],
+    [384, 138, 4],
+    [385, 138, -2],
+]
+
+[[decoration]]
+comment = "iron gate"
+type = "IronGate"
+item_id = 0x082C
+props = { facing = "south_cw" }
+locations = [[351, 40, -1]]
+
+[[decoration]]
+comment = "switch"
+type = "Static"
+item_id = 0x108F
+locations = [[351, 47, 10]]
+
+[[decoration]]
+comment = "skinning knife"
+type = "Static"
+item_id = 0x0EC4
+locations = [
+    [445, 15, 5],
+    [445, 15, 6],
+    [453, 15, 5],
+    [452, 16, 5],
+]
+
+[[decoration]]
+comment = "skinning knife"
+type = "Static"
+item_id = 0x0EC5
+locations = [
+    [444, 16, 5],
+    [449, 16, 5],
+    [449, 16, 6],
+]
+
+[[decoration]]
+comment = "floor spikes"
+type = "SpikeTrap"
+item_id = 0x119A
+locations = [
+    [379, 139, 0],
+    [383, 138, 3],
+    [383, 140, -2],
+    [386, 144, -1],
+]
+
+[[decoration]]
+comment = "empty tub"
+type = "Static"
+item_id = 0x0E83
+locations = [
+    [385, 28, -1],
+    [387, 28, -1],
+]
+
+[[decoration]]
+comment = "iron gate"
+type = "IronGateShort"
+item_id = 0x084C
+props = { facing = "west_cw" }
+locations = [[391, 29, -1]]

@@ -1,0 +1,95 @@
+# ==============================================================================
+# Moongate - templates/decorations/malas/summoning_quest.toml
+#
+# What it is for:
+#   World decoration placed on Malas: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "Victoria spawner"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Victoria", home_range = 2, count = 1, min_delay = "00:01:00" }
+locations = [[423, 195, -1]]
+
+[[decoration]]
+comment = "Altar for summoning bone demons"
+type = "SummoningAltar"
+item_id = 0x1216
+locations = [[441, 205, -1]]
+
+[[decoration]]
+comment = "Bell for summoning Chyloth"
+type = "BellOfTheDead"
+item_id = 0x091A
+locations = [[417, 246, 23]]
+
+[[decoration]]
+comment = "No teleporting on Chyloth's spot"
+type = "Blocker"
+item_id = 0x21A4
+locations = [[417, 246, 7]]
+
+[[decoration]]
+comment = "Teleporter (pad) from first boat to second"
+type = "Static"
+item_id = 0x1822
+props = { hue = 0x044E }
+locations = [[408, 254, 2]]
+
+[[decoration]]
+comment = "Teleporter (obj) from first boat to second"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [428, 318, 2] }
+locations = [
+    [407, 254, 2],
+    [408, 254, 2],
+    [409, 254, 2],
+]
+
+[[decoration]]
+comment = "Teleporter (pad) from second boat to land"
+type = "Static"
+item_id = 0x1822
+props = { hue = 0x044E }
+locations = [[428, 321, 2]]
+
+[[decoration]]
+comment = "Teleporter (obj) from second boat to land"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [422, 327, -1], dest_effect = "true", sound_id = 0x01FE }
+locations = [
+    [427, 321, 2],
+    [428, 321, 2],
+    [429, 321, 2],
+]
+
+[[decoration]]
+comment = "Daemon Bones"
+type = "Static"
+item_id = 0x0F80
+locations = [
+    [421, 198, -1],
+    [422, 195, -1],
+]
+
+[[decoration]]
+comment = "book - The Akashic Records"
+type = "LocalizedStatic"
+item_id = 0x0FBE
+props = { hue = 0x0482, label_number = 1060023 }
+locations = [[420, 192, 8]]

@@ -1,0 +1,320 @@
+# ==============================================================================
+# Moongate - templates/decorations/malas/_luna.toml
+#
+# What it is for:
+#   World decoration placed on Malas: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "wooden door"
+type = "DarkWoodDoor"
+item_id = 0x06AD
+props = { facing = "south_cw" }
+locations = [
+    [989, 519, -30],
+    [999, 527, -50],
+]
+
+[[decoration]]
+comment = "wooden door"
+type = "DarkWoodDoor"
+item_id = 0x06AF
+props = { facing = "north_ccw" }
+locations = [
+    [999, 512, -50],
+    [989, 518, -30],
+]
+
+[[decoration]]
+comment = "wooden door"
+type = "DarkWoodDoor"
+item_id = 0x06A7
+props = { facing = "east_ccw" }
+locations = [
+    [991, 522, -30],
+    [978, 522, -50],
+    [1002, 522, -50],
+    [1002, 522, -30],
+]
+
+[[decoration]]
+comment = "backpack"
+type = "Backpack"
+item_id = 0x0E75
+locations = [[992, 509, -47]]
+
+[[decoration]]
+comment = "bookcase"
+type = "LibraryBookcase"
+item_id = 0x0A9B
+locations = [
+    [950, 493, -30],
+    [951, 498, -30],
+    [953, 493, -30],
+    [952, 496, -30],
+    [952, 498, -30],
+    [953, 496, -30],
+    [986, 525, -30],
+    [1004, 523, -50],
+]
+
+[[decoration]]
+comment = "wooden shelf"
+type = "EmptyBookcase"
+item_id = 0x0A9E
+props = { hue = 0x047E }
+locations = [
+    [947, 496, -70],
+    [947, 498, -70],
+    [947, 499, -70],
+    [947, 540, -70],
+    [947, 542, -70],
+    [948, 543, -30],
+    [949, 541, -50],
+    [947, 544, -70],
+    [1022, 494, -50],
+    [1022, 495, -50],
+    [1022, 543, -70],
+    [1022, 544, -70],
+    [1024, 499, -50],
+    [949, 543, -50],
+    [1024, 500, -50],
+]
+
+[[decoration]]
+comment = "empty tub"
+type = "Static"
+item_id = 0x0E83
+props = { hue = 0x047E }
+locations = [[947, 497, -70]]
+
+[[decoration]]
+comment = "barrel"
+type = "Barrel"
+item_id = 0x0FAE
+props = { hue = 0x047E }
+locations = [
+    [947, 538, -70],
+    [948, 538, -70],
+    [1028, 541, -70],
+    [1028, 542, -64],
+    [1028, 542, -70],
+]
+
+[[decoration]]
+comment = "wooden shelf"
+type = "EmptyBookcase"
+item_id = 0x0A9D
+props = { hue = 0x047E }
+locations = [
+    [954, 538, -30],
+    [1025, 493, -30],
+    [1028, 493, -30],
+    [1026, 538, -30],
+]
+
+[[decoration]]
+comment = "forge"
+type = "SmallForgeAddon"
+item_id = 0x0FB1
+locations = [
+    [974, 509, -50],
+    [977, 509, -50],
+]
+
+[[decoration]]
+comment = "anvil"
+type = "AnvilSouthAddon"
+item_id = 0x0FB0
+locations = [
+    [975, 509, -50],
+    [976, 509, -50],
+]
+
+[[decoration]]
+comment = "anvil"
+type = "AnvilEastAddon"
+item_id = 0x0FAF
+locations = [[973, 513, -50]]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x1986
+locations = [[973, 514, -50]]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x198A
+locations = [[973, 515, -50]]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x198E
+locations = [[973, 516, -50]]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalChest"
+item_id = 0x09AB
+props = { hue = 0x047E }
+locations = [
+    [987, 516, -44],
+    [993, 516, -44],
+    [994, 516, -44],
+    [1004, 509, -30],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "Metalchest"
+item_id = 0x0E7C
+props = { hue = 0x047E }
+locations = [
+    [985, 523, -40],
+    [985, 523, -45],
+    [985, 523, -50],
+]
+
+[[decoration]]
+comment = "dresser"
+type = "Static"
+item_id = 0x0A3D
+locations = [[987, 525, -30]]
+
+[[decoration]]
+comment = "dresser"
+type = "Static"
+item_id = 0x0A3C
+locations = [[988, 525, -30]]
+
+[[decoration]]
+comment = "armoire"
+type = "Armoire"
+item_id = 0x0A4F
+locations = [
+    [999, 523, -30],
+    [1001, 523, -30],
+]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "Drawer"
+item_id = 0x0A34
+locations = [[996, 530, -30]]
+
+[[decoration]]
+comment = "bookcase"
+type = "LibraryBookcase"
+item_id = 0x0A99
+locations = [
+    [1000, 524, -50],
+    [1000, 525, -50],
+    [1000, 529, -50],
+    [1000, 530, -50],
+]
+
+[[decoration]]
+comment = "barrel"
+type = "Barrel"
+item_id = 0x0E77
+props = { hue = 0x047E }
+locations = [
+    [1022, 538, -70],
+    [1022, 538, -64],
+    [1022, 539, -70],
+    [1022, 540, -70],
+    [1023, 538, -70],
+]
+
+[[decoration]]
+comment = "spinning wheel"
+type = "SpinningWheelSouthAddon"
+item_id = 0x1015
+locations = [[973, 530, -50]]
+
+[[decoration]]
+comment = "upright loom"
+type = "LoomSouthAddon"
+item_id = 0x1065
+locations = [[975, 523, -50]]
+
+[[decoration]]
+comment = "wooden door"
+type = "DarkWoodDoor"
+item_id = 0x06AB
+props = { facing = "east_cw" }
+locations = [
+    [978, 517, -50],
+    [994, 516, -30],
+]
+
+[[decoration]]
+comment = "wooden door"
+type = "DarkWoodDoor"
+item_id = 0x06B3
+props = { facing = "north_cw" }
+locations = [[980, 527, -50]]
+
+[[decoration]]
+comment = "wooden door"
+type = "DarkWoodDoor"
+item_id = 0x06B1
+props = { facing = "south_ccw" }
+locations = [[980, 512, -50]]
+
+[[decoration]]
+comment = "wooden door"
+type = "LightWoodDoor"
+item_id = 0x06D5
+props = { facing = "west_cw" }
+locations = [[926, 642, -90]]
+
+[[decoration]]
+comment = "Bakery"
+type = "LocalizedSign"
+item_id = 0x0BA3
+props = { label_number = 1061836 }
+locations = [[962, 633, -90]]
+
+[[decoration]]
+comment = "Tavern"
+type = "LocalizedSign"
+item_id = 0x0BC3
+props = { label_number = 1061835 }
+locations = [[962, 641, -90]]
+
+[[decoration]]
+comment = "wooden door"
+type = "LightWoodDoor"
+item_id = 0x06D7
+props = { facing = "east_ccw" }
+locations = [[927, 642, -90]]
+
+[[decoration]]
+comment = "wooden gate"
+type = "LightWoodGate"
+item_id = 0x0843
+props = { facing = "north_ccw" }
+locations = [[952, 637, -90]]
+
+[[decoration]]
+comment = "wooden door"
+type = "LightWoodDoor"
+item_id = 0x06DD
+props = { facing = "south_cw" }
+locations = [[928, 637, -90]]

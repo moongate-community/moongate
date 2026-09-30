@@ -1,0 +1,69 @@
+# ==============================================================================
+# Moongate - templates/decorations/felucca/_star_room.toml
+#
+# What it is for:
+#   World decoration placed on Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5171, 1586, 0] }
+locations = [[5140, 1773, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5143, 1774, 0], sound_id = 0x01FE }
+locations = [[5172, 1589, -4]]
+
+[[decoration]]
+comment = "champion skull platform"
+type = "ChampionSkullPlatform"
+item_id = 0x0001
+locations = [[5140, 1761, 1]]
+
+[[decoration]]
+comment = "dark moongate"
+type = "LocalizedStatic"
+item_id = 0x1FD3
+props = { label_number = 1049498, light = "Circle300" }
+locations = [[5172, 1589, -4]]
+
+[[decoration]]
+comment = "music stand"
+type = "Static"
+item_id = 0x0EBA
+locations = [[5155, 1762, 1]]
+
+[[decoration]]
+comment = "music stand"
+type = "Static"
+item_id = 0x0EBB
+locations = [[5151, 1758, 0]]
+
+[[decoration]]
+comment = "sheet music"
+type = "Static"
+item_id = 0x0EBF
+locations = [[5151, 1758, 0]]
+
+[[decoration]]
+comment = "moongate"
+type = "PublicMoongate"
+item_id = 0x0F6C
+locations = [[5153, 1760, 0]]

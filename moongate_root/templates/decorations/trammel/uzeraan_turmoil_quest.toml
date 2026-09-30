@@ -1,0 +1,197 @@
+# ==============================================================================
+# Moongate - templates/decorations/trammel/uzeraan_turmoil_quest.toml
+#
+# What it is for:
+#   World decoration placed on Trammel: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "a magical teleporter"
+type = "UzeraanTurmoilTeleporter"
+item_id = 0x1822
+locations = [[3597, 2582, 0]]
+
+[[decoration]]
+comment = "metal chest"
+type = "DaemonBloodChest"
+item_id = 0x09AB
+locations = [[3456, 2558, 50]]
+
+[[decoration]]
+comment = "Mansion guard"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "MansionGuard", count = 1, home_range = 0 }
+locations = [
+    [3585, 2588, 0],
+    [3585, 2586, 0],
+    [3603, 2583, 0],
+    [3613, 2586, 0],
+    [3613, 2589, 0],
+]
+
+[[decoration]]
+comment = "Uzeraan"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Uzeraan", count = 1, home_range = 0 }
+locations = [[3595, 2587, 0]]
+
+[[decoration]]
+comment = "Schmendrick"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Schmendrick", count = 1, home_range = 0 }
+locations = [[5211, 1818, 0]]
+
+[[decoration]]
+comment = "Schmendrick apprentice corpse"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "SchmendrickApprenticeCorpse", count = 1, home_range = 15, min_delay = "0:10:0", max_delay = "0:10:0" }
+locations = [[5261, 1831, 0]]
+
+[[decoration]]
+comment = "Schmendrick cave teleporter"
+type = "Static"
+item_id = 0x1822
+locations = [[5260, 1841, 0]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [3613, 2592, 0] }
+locations = [[5260, 1841, 0]]
+
+[[decoration]]
+comment = "Dryad"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Dryad", count = 1, home_range = 2 }
+locations = [[3555, 2698, 5]]
+
+[[decoration]]
+comment = "fire"
+type = "Static"
+item_id = 0x19AB
+locations = [
+    [5210, 1817, 0],
+    [5211, 1814, 0],
+    [5205, 1818, 0],
+]
+
+[[decoration]]
+comment = "sparkle"
+type = "Static"
+item_id = 0x374A
+locations = [[5208, 1817, 0]]
+
+[[decoration]]
+comment = "sparkle"
+type = "Static"
+item_id = 0x377A
+locations = [[5209, 1815, 0]]
+
+[[decoration]]
+comment = "sparkle"
+type = "Static"
+item_id = 0x376A
+locations = [[5208, 1815, 0]]
+
+[[decoration]]
+comment = "magical sparkles"
+type = "Static"
+item_id = 0x1153
+locations = [
+    [5207, 1816, 0],
+    [5260, 1842, 0],
+    [5261, 1841, 0],
+]
+
+[[decoration]]
+comment = "death vortex"
+type = "Static"
+item_id = 0x3789
+locations = [[5208, 1815, 0]]
+
+[[decoration]]
+comment = "magical sparkles"
+type = "Static"
+item_id = 0x1156
+locations = [
+    [5261, 1841, 0],
+    [5261, 1842, 0],
+]
+
+[[decoration]]
+comment = "cannon south"
+type = "Cannon"
+item_id = 0x0000
+props = { cannon_direction = "South" }
+locations = [
+    [3678, 2768, 33],
+    [3675, 2767, 31],
+    [3593, 2810, 50],
+]
+
+[[decoration]]
+comment = "cannon west"
+type = "Cannon"
+item_id = 0x0000
+props = { cannon_direction = "West" }
+locations = [
+    [3681, 2776, 39],
+    [3683, 2779, 44],
+    [3659, 2790, 47],
+    [3705, 2832, 29],
+]
+
+[[decoration]]
+comment = "cannon east"
+type = "Cannon"
+item_id = 0x0000
+props = { cannon_direction = "East" }
+locations = [
+    [3662, 2795, 68],
+    [3596, 2807, 50],
+]
+
+[[decoration]]
+comment = "cannon north"
+type = "Cannon"
+item_id = 0x0000
+props = { cannon_direction = "North" }
+locations = [
+    [3593, 2804, 50],
+    [3702, 2837, 33],
+]
+
+[[decoration]]
+comment = "cannon balls"
+type = "Static"
+item_id = 0x0E74
+locations = [
+    [3706, 2833, 24],
+    [3595, 2808, 49],
+    [3594, 2808, 50],
+    [3663, 2793, 67],
+    [3661, 2791, 53],
+    [3662, 2793, 67],
+    [3676, 2768, 32],
+    [3676, 2767, 31],
+    [3682, 2777, 41],
+    [3683, 2777, 42],
+    [3681, 2777, 40],
+]

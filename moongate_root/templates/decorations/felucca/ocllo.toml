@@ -1,0 +1,1970 @@
+# ==============================================================================
+# Moongate - templates/decorations/felucca/ocllo.toml
+#
+# What it is for:
+#   World decoration placed on Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x001A
+locations = [[3692, 2508, 0]]
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x001B
+locations = [
+    [3692, 2504, 0],
+    [3692, 2505, 0],
+    [3692, 2506, 0],
+    [3692, 2507, 0],
+]
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x001C
+locations = [[3688, 2508, 0]]
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x001E
+locations = [[3691, 2508, 0]]
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x0021
+locations = [[3689, 2508, 0]]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0675
+props = { facing = "west_cw" }
+locations = [[3690, 2508, 0]]
+
+[[decoration]]
+comment = "chimney"
+type = "Static"
+item_id = 0x08DC
+locations = [[3740, 2680, 64]]
+
+[[decoration]]
+comment = "chimney"
+type = "Static"
+item_id = 0x08DD
+locations = [[3741, 2680, 64]]
+
+[[decoration]]
+comment = "oven"
+type = "StoneOvenEastAddon"
+item_id = 0x092C
+locations = [[3656, 2506, 0]]
+
+[[decoration]]
+comment = "oven"
+type = "StoneOvenSouthAddon"
+item_id = 0x0930
+locations = [
+    [3615, 2568, 0],
+    [3653, 2464, 0],
+    [3666, 2639, 0],
+    [3738, 2679, 40],
+]
+
+[[decoration]]
+comment = "fireplace"
+type = "StoneFireplaceEastAddon"
+item_id = 0x0959
+locations = [[3656, 2508, 0]]
+
+[[decoration]]
+comment = "fireplace"
+type = "Static"
+item_id = 0x095F
+locations = [
+    [3650, 2464, 0],
+    [3669, 2640, 0],
+    [3741, 2680, 40],
+]
+
+[[decoration]]
+comment = "fireplace"
+type = "Static"
+item_id = 0x0960
+locations = [
+    [3649, 2464, 0],
+    [3668, 2640, 0],
+    [3740, 2680, 40],
+]
+
+[[decoration]]
+comment = "cauldron"
+type = "Static"
+item_id = 0x0974
+locations = [
+    [3735, 2645, 40],
+    [3736, 2572, 40],
+]
+
+[[decoration]]
+comment = "slab of bacon"
+type = "Static"
+item_id = 0x0976
+locations = [[3704, 2650, 26]]
+
+[[decoration]]
+comment = "tray"
+type = "Static"
+item_id = 0x0991
+locations = [
+    [3651, 2469, 6],
+    [3736, 2683, 46],
+]
+
+[[decoration]]
+comment = "tray"
+type = "Static"
+item_id = 0x0992
+locations = [
+    [3658, 2504, 6],
+    [3664, 2644, 6],
+]
+
+[[decoration]]
+comment = "ceramic mug"
+type = "CeramicMug"
+item_id = 0x0995
+locations = [
+    [3595, 2600, 4],
+    [3627, 2632, 4],
+    [3634, 2496, 4],
+    [3650, 2475, 4],
+    [3672, 2652, 6],
+    [3676, 2653, 4],
+    [3731, 2632, 46],
+    [3738, 2689, 44],
+]
+
+[[decoration]]
+comment = "ceramic mug"
+type = "CeramicMug"
+item_id = 0x0996
+locations = [
+    [3650, 2474, 4],
+    [3662, 2507, 4],
+    [3738, 2688, 44],
+]
+
+[[decoration]]
+comment = "ceramic mug"
+type = "CeramicMug"
+item_id = 0x0997
+locations = [
+    [3704, 2589, 26],
+    [3736, 2565, 46],
+]
+
+[[decoration]]
+comment = "fork"
+type = "Fork"
+item_id = 0x09A4
+locations = [
+    [3651, 2474, 4],
+    [3663, 2507, 4],
+    [3739, 2688, 44],
+]
+
+[[decoration]]
+comment = "knife"
+type = "Knife"
+item_id = 0x09A6
+locations = [
+    [3651, 2474, 4],
+    [3663, 2507, 4],
+    [3739, 2688, 44],
+]
+
+[[decoration]]
+comment = "metal box"
+type = "FillableMetalBox"
+item_id = 0x09A8
+locations = [
+    [3632, 2568, 6],
+    [3641, 2596, 6],
+    [3664, 2584, 6],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalChest"
+item_id = 0x09AB
+locations = [
+    [3688, 2504, 0],
+    [3690, 2504, 0],
+    [3690, 2505, 0],
+]
+
+[[decoration]]
+comment = "sausage"
+type = "Sausage"
+item_id = 0x09C1
+locations = [[3704, 2652, 26]]
+
+[[decoration]]
+comment = "spoon"
+type = "Spoon"
+item_id = 0x09C3
+locations = [
+    [3651, 2474, 4],
+    [3663, 2507, 4],
+    [3739, 2688, 44],
+]
+
+[[decoration]]
+comment = "bottles of wine"
+type = "Static"
+item_id = 0x09C4
+locations = [[3664, 2642, 6]]
+
+[[decoration]]
+comment = "bottles of wine"
+type = "Static"
+item_id = 0x09C5
+locations = [[3669, 2644, 0]]
+
+[[decoration]]
+comment = "bottle of wine"
+type = "BeverageBottle"
+item_id = 0x09C7
+props = { content = "Wine" }
+locations = [
+    [3668, 2651, 6],
+    [3672, 2653, 4],
+    [3676, 2648, 4],
+]
+
+[[decoration]]
+comment = "ceramic mug"
+type = "CeramicMug"
+item_id = 0x09CA
+locations = [
+    [3608, 2467, 4],
+    [3664, 2508, 4],
+    [3665, 2651, 6],
+    [3667, 2651, 6],
+    [3676, 2649, 4],
+]
+
+[[decoration]]
+comment = "pitcher"
+type = "Static"
+item_id = 0x09D6
+locations = [[3608, 2568, 6]]
+
+[[decoration]]
+comment = "plate"
+type = "Plate"
+item_id = 0x09D7
+locations = [
+    [3596, 2600, 4],
+    [3608, 2466, 4],
+    [3628, 2632, 4],
+    [3635, 2496, 4],
+    [3651, 2474, 4],
+    [3651, 2475, 4],
+    [3663, 2507, 4],
+    [3663, 2508, 4],
+    [3704, 2588, 26],
+    [3732, 2632, 46],
+    [3736, 2564, 46],
+    [3739, 2688, 44],
+    [3739, 2689, 44],
+]
+
+[[decoration]]
+comment = "pot"
+type = "Static"
+item_id = 0x09E0
+locations = [[3653, 2469, 6]]
+
+[[decoration]]
+comment = "pot"
+type = "Static"
+item_id = 0x09E1
+locations = [
+    [3652, 2469, 6],
+    [3737, 2681, 40],
+]
+
+[[decoration]]
+comment = "frypan"
+type = "Static"
+item_id = 0x09E2
+locations = [
+    [3657, 2504, 6],
+    [3664, 2641, 6],
+]
+
+[[decoration]]
+comment = "pot"
+type = "Static"
+item_id = 0x09E3
+locations = [
+    [3659, 2504, 6],
+    [3669, 2642, 0],
+    [3738, 2683, 40],
+]
+
+[[decoration]]
+comment = "kettle"
+type = "Static"
+item_id = 0x09ED
+locations = [
+    [3610, 2569, 6],
+    [3651, 2465, 0],
+    [3657, 2508, 0],
+    [3667, 2641, 0],
+    [3739, 2680, 40],
+]
+
+[[decoration]]
+comment = "milk"
+type = "Pitcher"
+item_id = 0x09F0
+props = { content = "Milk" }
+locations = [[3664, 2643, 6]]
+
+[[decoration]]
+comment = "fork"
+type = "Fork"
+item_id = 0x09F4
+locations = [
+    [3596, 2600, 4],
+    [3628, 2632, 4],
+    [3635, 2496, 4],
+    [3651, 2475, 4],
+    [3663, 2508, 4],
+    [3732, 2632, 46],
+    [3739, 2689, 44],
+]
+
+[[decoration]]
+comment = "fork"
+type = "Fork"
+item_id = 0x09F5
+locations = [
+    [3608, 2466, 4],
+    [3704, 2588, 26],
+    [3736, 2564, 46],
+]
+
+[[decoration]]
+comment = "knife"
+type = "Knife"
+item_id = 0x09F6
+locations = [
+    [3596, 2600, 4],
+    [3628, 2632, 4],
+    [3635, 2496, 4],
+    [3651, 2475, 4],
+    [3663, 2508, 4],
+    [3732, 2632, 46],
+    [3739, 2689, 44],
+]
+
+[[decoration]]
+comment = "knife"
+type = "Knife"
+item_id = 0x09F7
+locations = [
+    [3608, 2466, 4],
+    [3704, 2588, 26],
+    [3736, 2564, 46],
+]
+
+[[decoration]]
+comment = "spoon"
+type = "Spoon"
+item_id = 0x09F8
+locations = [
+    [3596, 2600, 4],
+    [3628, 2632, 4],
+    [3635, 2496, 4],
+    [3651, 2475, 4],
+    [3663, 2508, 4],
+    [3732, 2632, 46],
+    [3739, 2689, 44],
+]
+
+[[decoration]]
+comment = "spoon"
+type = "Spoon"
+item_id = 0x09F9
+locations = [
+    [3608, 2466, 4],
+    [3704, 2588, 26],
+    [3736, 2564, 46],
+]
+
+[[decoration]]
+comment = "stool"
+type = "Static"
+item_id = 0x0A2B
+locations = [
+    [3664, 2652, 0],
+    [3665, 2652, 0],
+    [3666, 2652, 0],
+    [3667, 2652, 0],
+    [3668, 2652, 0],
+]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "Drawer"
+item_id = 0x0A2C
+locations = [
+    [3594, 2600, 0],
+    [3610, 2464, 0],
+    [3617, 2576, 0],
+    [3626, 2632, 0],
+    [3633, 2561, 0],
+    [3633, 2592, 0],
+    [3633, 2601, 0],
+    [3666, 2496, 0],
+    [3666, 2608, 0],
+    [3666, 2613, 0],
+    [3673, 2584, 0],
+    [3674, 2613, 0],
+    [3675, 2608, 0],
+    [3675, 2618, 0],
+    [3705, 2584, 20],
+    [3738, 2561, 40],
+    [3745, 2680, 40],
+]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "FancyDrawer"
+item_id = 0x0A30
+locations = [[3633, 2544, 0]]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "Drawer"
+item_id = 0x0A34
+locations = [
+    [3632, 2501, 0],
+    [3640, 2466, 0],
+    [3728, 2634, 40],
+]
+
+[[decoration]]
+comment = "chest of drawers"
+type = "FancyDrawer"
+item_id = 0x0A38
+locations = [
+    [3600, 2505, 0],
+    [3608, 2498, 0],
+]
+
+[[decoration]]
+comment = "armoire"
+type = "FancyArmoire"
+item_id = 0x0A4D
+locations = [
+    [3602, 2504, 0],
+    [3609, 2496, 0],
+]
+
+[[decoration]]
+comment = "armoire"
+type = "Armoire"
+item_id = 0x0A4F
+locations = [
+    [3592, 2600, 0],
+    [3621, 2576, 0],
+    [3624, 2632, 0],
+    [3635, 2561, 0],
+    [3635, 2592, 0],
+    [3641, 2464, 0],
+]
+
+[[decoration]]
+comment = "armoire"
+type = "FancyArmoire"
+item_id = 0x0A51
+locations = [[3632, 2549, 0]]
+
+[[decoration]]
+comment = "armoire"
+type = "Armoire"
+item_id = 0x0A53
+locations = [
+    [3632, 2497, 0],
+    [3632, 2606, 0],
+    [3664, 2497, 0],
+    [3672, 2589, 0],
+    [3744, 2685, 40],
+]
+
+[[decoration]]
+comment = "bookcase"
+type = "LibraryBookcase"
+item_id = 0x0A97
+locations = [
+    [3609, 2504, 0],
+    [3617, 2472, 0],
+    [3619, 2472, 0],
+    [3620, 2472, 0],
+    [3622, 2475, 0],
+    [3633, 2632, 0],
+    [3640, 2592, 0],
+    [3663, 2504, 0],
+]
+
+[[decoration]]
+comment = "bookcase"
+type = "LibraryBookcase"
+item_id = 0x0A98
+locations = [
+    [3609, 2469, 0],
+    [3616, 2472, 0],
+    [3619, 2475, 0],
+    [3621, 2475, 0],
+    [3634, 2632, 0],
+    [3638, 2592, 0],
+    [3664, 2504, 0],
+    [3669, 2504, 0],
+]
+
+[[decoration]]
+comment = "bookcase"
+type = "LibraryBookcase"
+item_id = 0x0A99
+locations = [
+    [3608, 2470, 0],
+    [3608, 2472, 0],
+    [3608, 2505, 0],
+    [3615, 2477, 0],
+    [3632, 2602, 0],
+    [3648, 2470, 0],
+    [3648, 2473, 0],
+    [3672, 2585, 0],
+    [3736, 2686, 40],
+]
+
+[[decoration]]
+comment = "bookcase"
+type = "LibraryBookcase"
+item_id = 0x0A9A
+locations = [
+    [3608, 2473, 0],
+    [3615, 2476, 0],
+    [3648, 2471, 0],
+    [3648, 2476, 0],
+    [3736, 2688, 40],
+]
+
+[[decoration]]
+comment = "bookcase"
+type = "LibraryBookcase"
+item_id = 0x0A9B
+locations = [
+    [3618, 2475, 0],
+    [3620, 2475, 0],
+    [3622, 2472, 0],
+    [3639, 2592, 0],
+    [3665, 2504, 0],
+]
+
+[[decoration]]
+comment = "bookcase"
+type = "LibraryBookcase"
+item_id = 0x0A9C
+locations = [
+    [3615, 2475, 0],
+    [3648, 2472, 0],
+    [3648, 2475, 0],
+    [3736, 2689, 40],
+    [3736, 2692, 40],
+]
+
+[[decoration]]
+comment = "wooden shelf"
+type = "EmptyBookcase"
+item_id = 0x0A9D
+locations = [
+    [3613, 2469, 0],
+    [3614, 2469, 0],
+]
+
+[[decoration]]
+comment = "wooden shelf"
+type = "EmptyBookcase"
+item_id = 0x0A9E
+locations = [
+    [3736, 2685, 40],
+    [3736, 2691, 40],
+]
+
+[[decoration]]
+comment = "candle"
+type = "CandleLarge"
+item_id = 0x0B1A
+locations = [
+    [3597, 2600, 4],
+    [3603, 2504, 4],
+    [3604, 2573, 6],
+    [3604, 2605, 6],
+    [3608, 2465, 4],
+    [3608, 2499, 4],
+    [3611, 2477, 4],
+    [3614, 2471, 4],
+    [3624, 2605, 4],
+    [3629, 2632, 4],
+    [3631, 2500, 20],
+    [3632, 2571, 6],
+    [3636, 2496, 4],
+    [3640, 2467, 4],
+    [3641, 2594, 6],
+    [3643, 2501, 6],
+    [3652, 2475, 4],
+    [3654, 2464, 6],
+    [3656, 2504, 6],
+    [3664, 2507, 4],
+    [3664, 2588, 6],
+    [3669, 2496, 4],
+    [3669, 2651, 6],
+    [3704, 2587, 26],
+    [3704, 2653, 26],
+    [3714, 2648, 26],
+    [3733, 2632, 46],
+    [3736, 2563, 46],
+    [3740, 2688, 44],
+]
+
+[[decoration]]
+comment = "lamp post"
+type = "LampPost1"
+item_id = 0x0B20
+locations = [
+    [3599, 2592, 0],
+    [3611, 2582, 0],
+    [3614, 2480, 0],
+    [3614, 2593, 0],
+    [3614, 2605, 0],
+    [3614, 2617, 0],
+    [3614, 2624, 0],
+    [3615, 2520, 0],
+    [3616, 2504, 0],
+    [3625, 2489, 0],
+    [3625, 2510, 0],
+    [3625, 2593, 0],
+    [3627, 2582, 0],
+    [3632, 2536, 0],
+    [3632, 2615, 0],
+    [3645, 2478, 0],
+    [3646, 2521, 0],
+    [3646, 2534, 0],
+    [3646, 2545, 0],
+    [3646, 2582, 0],
+    [3646, 2607, 0],
+    [3646, 2614, 0],
+    [3646, 2625, 0],
+    [3651, 2510, 0],
+    [3657, 2478, 0],
+    [3657, 2521, 0],
+    [3657, 2545, 0],
+    [3657, 2598, 0],
+    [3657, 2622, 0],
+    [3657, 2633, 0],
+    [3657, 2654, 0],
+    [3658, 2563, 0],
+    [3658, 2568, 0],
+    [3669, 2478, 0],
+    [3669, 2545, 0],
+    [3672, 2510, 0],
+    [3672, 2633, 0],
+    [3678, 2489, 0],
+    [3678, 2521, 0],
+    [3689, 2480, 0],
+    [3694, 2521, 0],
+    [3711, 2592, 20],
+    [3720, 2655, 20],
+    [3735, 2640, 40],
+    [3735, 2696, 40],
+    [3743, 2568, 40],
+]
+
+[[decoration]]
+comment = "candelabra"
+type = "CandelabraStand"
+item_id = 0x0B26
+locations = [
+    [3614, 2510, 0],
+    [3638, 2550, 0],
+    [3656, 2528, 0],
+    [3670, 2528, 0],
+    [3670, 2608, 0],
+    [3672, 2472, 0],
+    [3672, 2542, 0],
+    [3672, 2622, 0],
+    [3677, 2542, 0],
+    [3682, 2472, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChairCushion"
+item_id = 0x0B52
+locations = [
+    [3608, 2509, 0],
+    [3625, 2531, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChairCushion"
+item_id = 0x0B53
+locations = [[3613, 2504, 0]]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChairCushion"
+item_id = 0x0B54
+locations = [[3604, 2505, 0]]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChairCushion"
+item_id = 0x0B55
+locations = [[3609, 2500, 0]]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChair"
+item_id = 0x0B56
+locations = [
+    [3672, 2473, 0],
+    [3672, 2477, 0],
+    [3673, 2532, 0],
+    [3683, 2473, 0],
+    [3683, 2475, 0],
+    [3683, 2477, 0],
+    [3685, 2473, 0],
+    [3685, 2475, 0],
+    [3685, 2477, 0],
+    [3687, 2473, 0],
+    [3687, 2475, 0],
+    [3687, 2477, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChair"
+item_id = 0x0B57
+locations = [
+    [3602, 2572, 0],
+    [3602, 2604, 0],
+    [3613, 2470, 0],
+    [3626, 2544, 0],
+    [3627, 2529, 0],
+    [3629, 2529, 0],
+    [3631, 2529, 0],
+    [3633, 2529, 0],
+    [3634, 2636, 0],
+    [3635, 2529, 0],
+    [3642, 2500, 0],
+    [3651, 2473, 0],
+    [3663, 2506, 0],
+    [3666, 2619, 0],
+    [3674, 2472, 0],
+    [3678, 2472, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChair"
+item_id = 0x0B58
+locations = [
+    [3625, 2606, 0],
+    [3641, 2468, 0],
+    [3665, 2586, 0],
+    [3667, 2531, 0],
+    [3676, 2532, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "WoodenChair"
+item_id = 0x0B59
+locations = [
+    [3596, 2601, 0],
+    [3626, 2546, 0],
+    [3627, 2533, 0],
+    [3629, 2533, 0],
+    [3631, 2533, 0],
+    [3633, 2533, 0],
+    [3635, 2497, 0],
+    [3635, 2533, 0],
+    [3651, 2476, 0],
+    [3663, 2509, 0],
+    [3668, 2497, 0],
+]
+
+[[decoration]]
+comment = "chair"
+type = "BambooChair"
+item_id = 0x0B5A
+locations = [
+    [3609, 2475, 0],
+    [3609, 2476, 0],
+    [3640, 2595, 0],
+    [3665, 2530, 0],
+    [3665, 2532, 0],
+    [3673, 2534, 0],
+    [3673, 2536, 0],
+    [3673, 2538, 0],
+    [3673, 2540, 0],
+    [3713, 2649, 20],
+]
+
+[[decoration]]
+comment = "chair"
+type = "BambooChair"
+item_id = 0x0B5B
+locations = [[3739, 2687, 40]]
+
+[[decoration]]
+comment = "chair"
+type = "BambooChair"
+item_id = 0x0B5C
+locations = [
+    [3666, 2621, 0],
+    [3732, 2633, 40],
+    [3739, 2690, 40],
+]
+
+[[decoration]]
+comment = "chair"
+type = "BambooChair"
+item_id = 0x0B5D
+locations = [
+    [3609, 2466, 0],
+    [3612, 2475, 0],
+    [3612, 2476, 0],
+    [3676, 2534, 0],
+    [3676, 2536, 0],
+    [3676, 2538, 0],
+    [3676, 2540, 0],
+    [3705, 2588, 20],
+    [3737, 2564, 40],
+]
+
+[[decoration]]
+comment = "wooden signpost"
+type = "Static"
+item_id = 0x0B98
+locations = [[3666, 2512, 0]]
+
+[[decoration]]
+comment = "brass sign"
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { label_number = 1023026 }
+locations = [[3666, 2512, 0]]
+
+[[decoration]]
+comment = "small fish"
+type = "Static"
+item_id = 0x0DD6
+locations = [
+    [3648, 2668, -3],
+    [3661, 2671, -3],
+    [3669, 2659, -3],
+]
+
+[[decoration]]
+comment = "small fish"
+type = "Static"
+item_id = 0x0DD7
+locations = [
+    [3660, 2661, -3],
+    [3662, 2670, -3],
+]
+
+[[decoration]]
+comment = "small fish"
+type = "Static"
+item_id = 0x0DD8
+locations = [
+    [3662, 2666, -3],
+    [3666, 2660, -3],
+]
+
+[[decoration]]
+comment = "small fish"
+type = "Static"
+item_id = 0x0DD9
+locations = [
+    [3646, 2669, -3],
+    [3663, 2672, -3],
+    [3667, 2664, -3],
+]
+
+[[decoration]]
+comment = "knitting"
+type = "Static"
+item_id = 0x0DF7
+locations = [[3669, 2590, 6]]
+
+[[decoration]]
+comment = "pile of wool"
+type = "Static"
+item_id = 0x0DF8
+locations = [[3669, 2581, 0]]
+
+[[decoration]]
+comment = "bale of cotton"
+type = "Static"
+item_id = 0x0DF9
+locations = [[3664, 2581, 0]]
+
+[[decoration]]
+comment = "chessmen"
+type = "Static"
+item_id = 0x0E13
+locations = [[3672, 2648, 4]]
+
+[[decoration]]
+comment = "chessmen"
+type = "Static"
+item_id = 0x0E14
+locations = [[3672, 2648, 4]]
+
+[[decoration]]
+comment = "bloody water"
+type = "Static"
+item_id = 0x0E23
+locations = [
+    [3625, 2603, 0],
+    [3628, 2601, 0],
+    [3629, 2609, 0],
+]
+
+[[decoration]]
+comment = "crystal ball"
+type = "Static"
+item_id = 0x0E2F
+props = { light = "Circle150" }
+locations = [[3626, 2545, 6]]
+
+[[decoration]]
+comment = "brazier"
+type = "Brazier"
+item_id = 0x0E31
+locations = [[3624, 2536, 0]]
+
+[[decoration]]
+comment = "crate"
+type = "FillableLargeCrate"
+item_id = 0x0E3D
+locations = [
+    [3637, 2577, 0],
+    [3637, 2577, 3],
+    [3637, 2578, 0],
+    [3637, 2578, 3],
+    [3638, 2576, 0],
+    [3638, 2576, 3],
+    [3638, 2577, 0],
+    [3638, 2577, 3],
+    [3638, 2577, 6],
+    [3638, 2578, 0],
+    [3638, 2578, 3],
+    [3638, 2578, 6],
+    [3638, 2579, 0],
+    [3638, 2579, 3],
+]
+
+[[decoration]]
+comment = "crate"
+type = "MediumCrate"
+item_id = 0x0E3E
+locations = [
+    [3633, 2568, 0],
+    [3633, 2568, 3],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E41
+locations = [[3688, 2505, 0]]
+
+[[decoration]]
+comment = "wooden chest"
+type = "WoodenChest"
+item_id = 0x0E42
+locations = [[3744, 2681, 40]]
+
+[[decoration]]
+comment = "wooden chest"
+type = "FillableWoodenChest"
+item_id = 0x0E42
+locations = [
+    [3674, 2611, 0],
+    [3674, 2622, 0],
+]
+
+[[decoration]]
+comment = "wooden chest"
+type = "WoodenChest"
+item_id = 0x0E43
+locations = [[3690, 2506, 0]]
+
+[[decoration]]
+comment = "wooden chest"
+type = "FillableWoodenChest"
+item_id = 0x0E43
+locations = [
+    [3665, 2608, 0],
+    [3665, 2613, 0],
+    [3678, 2613, 0],
+    [3709, 2584, 20],
+    [3730, 2632, 40],
+    [3737, 2561, 40],
+]
+
+[[decoration]]
+comment = "barrel"
+type = "FillableBarrel"
+item_id = 0x0E77
+locations = [
+    [3616, 2652, -3],
+    [3616, 2653, -3],
+    [3616, 2653, 2],
+    [3616, 2654, -3],
+    [3616, 2654, 2],
+    [3629, 2574, 0],
+    [3629, 2574, 5],
+    [3630, 2574, 0],
+    [3630, 2574, 5],
+    [3631, 2574, 0],
+    [3631, 2574, 5],
+    [3632, 2574, 0],
+    [3632, 2574, 5],
+    [3632, 2575, 0],
+    [3632, 2575, 5],
+    [3644, 2649, -3],
+    [3644, 2649, 2],
+    [3645, 2649, -3],
+    [3645, 2649, 2],
+    [3645, 2650, -3],
+    [3645, 2650, 2],
+    [3646, 2662, -3],
+    [3646, 2662, 2],
+    [3646, 2663, -3],
+    [3646, 2663, 2],
+    [3647, 2662, -3],
+    [3647, 2662, 2],
+    [3647, 2679, -3],
+    [3647, 2679, 2],
+    [3647, 2680, -3],
+    [3647, 2680, 2],
+    [3648, 2680, -3],
+    [3648, 2680, 2],
+    [3651, 2654, 0],
+    [3651, 2654, 5],
+    [3651, 2655, 0],
+    [3651, 2655, 5],
+    [3652, 2654, 0],
+    [3652, 2654, 5],
+    [3652, 2655, 0],
+    [3652, 2655, 5],
+    [3658, 2665, -3],
+    [3658, 2665, 2],
+    [3659, 2665, -3],
+    [3659, 2665, 2],
+    [3659, 2666, -3],
+    [3659, 2666, 2],
+    [3661, 2673, -3],
+    [3661, 2673, 2],
+    [3664, 2648, 0],
+    [3664, 2648, 5],
+    [3664, 2648, 10],
+    [3664, 2649, 0],
+    [3664, 2649, 5],
+    [3665, 2648, 0],
+    [3665, 2648, 5],
+    [3668, 2662, -3],
+    [3668, 2662, 2],
+    [3668, 2663, -3],
+    [3668, 2663, 2],
+    [3669, 2662, -3],
+    [3669, 2662, 2],
+    [3669, 2663, -3],
+    [3669, 2663, 2],
+]
+
+[[decoration]]
+comment = "strong box"
+type = "FillableMetalBox"
+item_id = 0x0E80
+locations = [
+    [3600, 2573, 6],
+    [3600, 2605, 6],
+    [3624, 2545, 6],
+    [3640, 2501, 6],
+]
+
+[[decoration]]
+comment = "drum"
+type = "Static"
+item_id = 0x0E9C
+locations = [
+    [3674, 2534, 4],
+    [3675, 2540, 4],
+    [3691, 2475, 0],
+]
+
+[[decoration]]
+comment = "tambourine"
+type = "Static"
+item_id = 0x0E9D
+locations = [
+    [3674, 2540, 4],
+    [3675, 2536, 4],
+]
+
+[[decoration]]
+comment = "tambourine"
+type = "Static"
+item_id = 0x0E9E
+locations = [
+    [3674, 2536, 4],
+    [3675, 2538, 4],
+    [3691, 2477, 0],
+]
+
+[[decoration]]
+comment = "standing harp"
+type = "Static"
+item_id = 0x0EB1
+locations = [
+    [3663, 2528, 0],
+    [3664, 2528, 0],
+    [3665, 2528, 0],
+    [3673, 2528, 0],
+    [3676, 2528, 0],
+    [3693, 2472, 2],
+    [3693, 2476, 2],
+]
+
+[[decoration]]
+comment = "lute"
+type = "Static"
+item_id = 0x0EB3
+locations = [
+    [3674, 2538, 4],
+    [3675, 2534, 4],
+]
+
+[[decoration]]
+comment = "lute"
+type = "Static"
+item_id = 0x0EB4
+locations = [[3688, 2474, 0]]
+
+[[decoration]]
+comment = "music stand"
+type = "Static"
+item_id = 0x0EB6
+locations = [
+    [3659, 2528, 0],
+    [3660, 2528, 0],
+    [3661, 2528, 0],
+    [3662, 2528, 0],
+]
+
+[[decoration]]
+comment = "music stand"
+type = "Static"
+item_id = 0x0EBB
+locations = [
+    [3666, 2528, 0],
+    [3667, 2528, 0],
+    [3668, 2528, 0],
+    [3669, 2528, 0],
+    [3674, 2528, 0],
+    [3675, 2528, 0],
+]
+
+[[decoration]]
+comment = "music stand"
+type = "Static"
+item_id = 0x0EBC
+locations = [
+    [3690, 2473, 1],
+    [3690, 2475, 1],
+    [3690, 2477, 1],
+    [3692, 2473, 1],
+    [3692, 2477, 1],
+]
+
+[[decoration]]
+comment = "sheet music"
+type = "Static"
+item_id = 0x0EBF
+locations = [
+    [3674, 2528, 0],
+    [3675, 2528, 0],
+]
+
+[[decoration]]
+comment = "sheet music"
+type = "Static"
+item_id = 0x0EC0
+locations = [
+    [3690, 2473, 1],
+    [3690, 2475, 1],
+    [3690, 2477, 1],
+    [3692, 2473, 1],
+    [3692, 2477, 1],
+]
+
+[[decoration]]
+comment = "cleaver"
+type = "Static"
+item_id = 0x0EC2
+locations = [[3704, 2649, 26]]
+
+[[decoration]]
+comment = "dress form"
+type = "Static"
+item_id = 0x0EC6
+locations = [
+    [3664, 2592, 0],
+    [3666, 2580, 0],
+]
+
+[[decoration]]
+comment = "dress form"
+type = "Static"
+item_id = 0x0EC7
+locations = [[3669, 2579, 0]]
+
+[[decoration]]
+comment = "easel with canvas"
+type = "Static"
+item_id = 0x0F66
+locations = [[3642, 2496, 0]]
+
+[[decoration]]
+comment = "easel"
+type = "Static"
+item_id = 0x0F67
+locations = [[3640, 2510, 0]]
+
+[[decoration]]
+comment = "easel with canvas"
+type = "Static"
+item_id = 0x0F68
+locations = [[3640, 2508, 0]]
+
+[[decoration]]
+comment = "bolt of cloth"
+type = "Static"
+item_id = 0x0F96
+props = { hue = 0x0012 }
+locations = [
+    [3668, 2577, 0],
+    [3668, 2591, 0],
+    [3669, 2591, 0],
+]
+
+[[decoration]]
+comment = "bolt of cloth"
+type = "Static"
+item_id = 0x0F97
+props = { hue = 0x0026 }
+locations = [[3668, 2577, 0]]
+
+[[decoration]]
+comment = "bolt of cloth"
+type = "Static"
+item_id = 0x0F98
+props = { hue = 0x0026 }
+locations = [
+    [3665, 2579, 0],
+    [3665, 2594, 0],
+]
+
+[[decoration]]
+comment = "bolt of cloth"
+type = "Static"
+item_id = 0x0F99
+props = { hue = 0x001D }
+locations = [[3665, 2579, 0]]
+
+[[decoration]]
+comment = "bolt of cloth"
+type = "Static"
+item_id = 0x0F9A
+props = { hue = 0x0021 }
+locations = [
+    [3665, 2578, 0],
+    [3665, 2595, 0],
+]
+
+[[decoration]]
+comment = "bolt of cloth"
+type = "Static"
+item_id = 0x0F9B
+props = { hue = 0x0021 }
+locations = [[3669, 2577, 0]]
+
+[[decoration]]
+comment = "bolt of cloth"
+type = "Static"
+item_id = 0x0F9C
+props = { hue = 0x0026 }
+locations = [[3669, 2577, 0]]
+
+[[decoration]]
+comment = "sewing kit"
+type = "Static"
+item_id = 0x0F9D
+locations = [[3667, 2590, 6]]
+
+[[decoration]]
+comment = "scissors"
+type = "Scissors"
+item_id = 0x0F9E
+locations = [[3668, 2590, 6]]
+
+[[decoration]]
+comment = "scissors"
+type = "Scissors"
+item_id = 0x0F9F
+locations = [[3664, 2596, 6]]
+
+[[decoration]]
+comment = "playing cards"
+type = "Static"
+item_id = 0x0FA3
+locations = [[3676, 2652, 4]]
+
+[[decoration]]
+comment = "chess board"
+type = "ChessBoard"
+item_id = 0x0FA6
+locations = [[3672, 2649, 4]]
+
+[[decoration]]
+comment = "dice and cup"
+type = "Dices"
+item_id = 0x0FA7
+locations = [[3676, 2650, 4]]
+
+[[decoration]]
+comment = "dying tub"
+type = "DyeTub"
+item_id = 0x0FAB
+locations = [[3642, 2600, 0]]
+
+[[decoration]]
+comment = "fire pit"
+type = "Static"
+item_id = 0x0FAC
+props = { light = "Circle225" }
+locations = [
+    [3704, 2596, 20],
+    [3735, 2645, 40],
+    [3736, 2572, 40],
+]
+
+[[decoration]]
+comment = "backgammon game"
+type = "Backgammon"
+item_id = 0x0FAD
+locations = [[3676, 2650, 4]]
+
+[[decoration]]
+comment = "barrel"
+type = "Static"
+item_id = 0x0FAE
+locations = [
+    [3616, 2651, -3],
+    [3632, 2649, -3],
+    [3645, 2674, -3],
+    [3661, 2672, -3],
+    [3671, 2665, -3],
+]
+
+[[decoration]]
+comment = "anvil"
+type = "AnvilSouthAddon"
+item_id = 0x0FB0
+locations = [[3643, 2603, 0]]
+
+[[decoration]]
+comment = "forge"
+type = "SmallForgeAddon"
+item_id = 0x0FB1
+locations = [[3645, 2603, 0]]
+
+[[decoration]]
+comment = "sledge hammer"
+type = "Static"
+item_id = 0x0FB4
+locations = [[3643, 2604, 0]]
+
+[[decoration]]
+comment = "horse shoes"
+type = "Static"
+item_id = 0x0FB6
+locations = [[3641, 2601, 4]]
+
+[[decoration]]
+comment = "tongs"
+type = "Static"
+item_id = 0x0FBB
+locations = [[3641, 2603, 4]]
+
+[[decoration]]
+comment = "book"
+type = "Static"
+item_id = 0x0FBD
+locations = [
+    [3608, 2500, 4],
+    [3624, 2606, 4],
+    [3626, 2531, 4],
+    [3640, 2468, 4],
+    [3641, 2595, 6],
+    [3664, 2586, 6],
+    [3666, 2531, 4],
+    [3675, 2532, 4],
+    [3714, 2649, 26],
+]
+
+[[decoration]]
+comment = "book"
+type = "Static"
+item_id = 0x0FBE
+locations = [
+    [3602, 2573, 6],
+    [3602, 2605, 6],
+    [3604, 2504, 4],
+    [3613, 2471, 4],
+    [3625, 2545, 6],
+    [3634, 2571, 6],
+    [3642, 2501, 6],
+    [3666, 2620, 4],
+    [3668, 2496, 4],
+    [3676, 2472, 4],
+]
+
+[[decoration]]
+comment = "pen and ink"
+type = "Static"
+item_id = 0x0FBF
+locations = [
+    [3608, 2500, 4],
+    [3624, 2606, 4],
+    [3626, 2531, 4],
+    [3640, 2468, 4],
+    [3641, 2595, 6],
+    [3664, 2586, 6],
+    [3666, 2531, 4],
+    [3675, 2532, 4],
+    [3714, 2649, 26],
+]
+
+[[decoration]]
+comment = "pen and ink"
+type = "Static"
+item_id = 0x0FC0
+locations = [
+    [3602, 2573, 6],
+    [3602, 2605, 6],
+    [3604, 2504, 4],
+    [3613, 2471, 4],
+    [3625, 2545, 6],
+    [3634, 2571, 6],
+    [3642, 2501, 6],
+    [3666, 2620, 4],
+    [3668, 2496, 4],
+]
+
+[[decoration]]
+comment = "paints and brush"
+type = "Static"
+item_id = 0x0FC1
+locations = [[3642, 2497, 0]]
+
+[[decoration]]
+comment = "book"
+type = "CallToAnarchy"
+item_id = 0x0FEF
+locations = [[3610, 2476, 4]]
+
+[[decoration]]
+comment = "book"
+type = "GrammarOfOrcish"
+item_id = 0x0FEF
+locations = [[3672, 2474, 4]]
+
+[[decoration]]
+comment = "book"
+type = "RedBook"
+item_id = 0x0FF1
+locations = [[3677, 2472, 4]]
+
+[[decoration]]
+comment = "book"
+type = "BlueBook"
+item_id = 0x0FF2
+locations = [[3610, 2474, 4]]
+
+[[decoration]]
+comment = "book"
+type = "BritannianFlora"
+item_id = 0x0FF3
+locations = [[3611, 2476, 4]]
+
+[[decoration]]
+comment = "book"
+type = "BirdsOfBritannia"
+item_id = 0x0FF4
+locations = [[3611, 2475, 4]]
+
+[[decoration]]
+comment = "book"
+type = "TreatiseOnAlchemy"
+item_id = 0x0FF4
+locations = [[3672, 2475, 4]]
+
+[[decoration]]
+comment = "spinning wheel"
+type = "SpinningWheelEastAddon"
+item_id = 0x1019
+locations = [[3667, 2597, 0]]
+
+[[decoration]]
+comment = "pile of wool"
+type = "Static"
+item_id = 0x101F
+locations = [[3667, 2578, 0]]
+
+[[decoration]]
+comment = "sack of flour"
+type = "Static"
+item_id = 0x1039
+locations = [
+    [3608, 2570, 0],
+    [3621, 2568, 0],
+    [3621, 2569, 0],
+]
+
+[[decoration]]
+comment = "open sack of flour"
+type = "Static"
+item_id = 0x103A
+locations = [
+    [3613, 2572, 0],
+    [3614, 2573, 0],
+    [3619, 2568, 6],
+    [3740, 2682, 40],
+]
+
+[[decoration]]
+comment = "dough"
+type = "Static"
+item_id = 0x103D
+locations = [[3616, 2568, 6]]
+
+[[decoration]]
+comment = "cookie mix"
+type = "Static"
+item_id = 0x103F
+locations = [
+    [3611, 2568, 6],
+    [3618, 2569, 6],
+]
+
+[[decoration]]
+comment = "rolling pin"
+type = "Static"
+item_id = 0x1043
+locations = [
+    [3610, 2568, 6],
+    [3618, 2568, 6],
+]
+
+[[decoration]]
+comment = "loom bench"
+type = "Static"
+item_id = 0x104A
+locations = [[3668, 2594, 0]]
+
+[[decoration]]
+comment = "upright loom"
+type = "LoomSouthAddon"
+item_id = 0x1061
+locations = [[3668, 2594, 0]]
+
+[[decoration]]
+comment = "cut leather"
+type = "Static"
+item_id = 0x1068
+locations = [[3605, 2619, 6]]
+
+[[decoration]]
+comment = "stretched hide"
+type = "Static"
+item_id = 0x106A
+locations = [[3601, 2612, 0]]
+
+[[decoration]]
+comment = "stretched hide"
+type = "Static"
+item_id = 0x106B
+locations = [[3601, 2614, 0]]
+
+[[decoration]]
+comment = "pile of hides"
+type = "Static"
+item_id = 0x1078
+locations = [
+    [3605, 2617, 0],
+    [3606, 2601, 0],
+]
+
+[[decoration]]
+comment = "pile of hides"
+type = "Static"
+item_id = 0x1079
+locations = [
+    [3601, 2601, 0],
+    [3603, 2621, 0],
+]
+
+[[decoration]]
+comment = "cut leather"
+type = "Static"
+item_id = 0x1081
+locations = [
+    [3603, 2600, 6],
+    [3604, 2619, 6],
+]
+
+[[decoration]]
+comment = "cut leather"
+type = "Static"
+item_id = 0x1082
+locations = [[3604, 2600, 6]]
+
+[[decoration]]
+comment = "garbage"
+type = "Static"
+item_id = 0x10EE
+locations = [
+    [3703, 2597, 20],
+    [3706, 2596, 20],
+]
+
+[[decoration]]
+comment = "potted tree"
+type = "PottedTree"
+item_id = 0x11C8
+locations = [
+    [3637, 2496, 0],
+    [3641, 2592, 0],
+    [3665, 2496, 0],
+    [3736, 2687, 40],
+]
+
+[[decoration]]
+comment = "potted tree"
+type = "PottedTree1"
+item_id = 0x11C9
+locations = [
+    [3600, 2568, 0],
+    [3608, 2504, 0],
+    [3633, 2496, 0],
+    [3640, 2465, 0],
+    [3656, 2589, 0],
+    [3704, 2584, 20],
+]
+
+[[decoration]]
+comment = "flowerpot"
+type = "PottedPlant"
+item_id = 0x11CA
+locations = [
+    [3600, 2504, 0],
+    [3632, 2544, 0],
+    [3632, 2601, 0],
+    [3637, 2561, 0],
+    [3640, 2496, 0],
+    [3673, 2472, 0],
+    [3679, 2472, 0],
+    [3728, 2632, 40],
+]
+
+[[decoration]]
+comment = "flowerpot"
+type = "PottedPlant1"
+item_id = 0x11CB
+locations = [
+    [3608, 2501, 7],
+    [3632, 2569, 9],
+    [3667, 2620, 7],
+]
+
+[[decoration]]
+comment = "flowerpot"
+type = "PottedPlant2"
+item_id = 0x11CC
+locations = [
+    [3636, 2571, 9],
+    [3644, 2501, 9],
+]
+
+[[decoration]]
+comment = "fur"
+type = "Static"
+item_id = 0x11F4
+locations = [[3604, 2615, 6]]
+
+[[decoration]]
+comment = "fur"
+type = "Static"
+item_id = 0x11F5
+locations = [[3606, 2615, 6]]
+
+[[decoration]]
+comment = "fur"
+type = "Static"
+item_id = 0x11F6
+locations = [[3604, 2609, 6]]
+
+[[decoration]]
+comment = "fur"
+type = "Static"
+item_id = 0x11F7
+locations = [[3606, 2609, 6]]
+
+[[decoration]]
+comment = "fur"
+type = "Static"
+item_id = 0x11F8
+locations = [[3600, 2613, 6]]
+
+[[decoration]]
+comment = "fur"
+type = "Static"
+item_id = 0x11F9
+locations = [[3600, 2618, 6]]
+
+[[decoration]]
+comment = "fur"
+type = "Static"
+item_id = 0x11FA
+locations = [[3600, 2611, 6]]
+
+[[decoration]]
+comment = "fur"
+type = "Static"
+item_id = 0x11FB
+locations = [[3600, 2620, 6]]
+
+[[decoration]]
+comment = "tarot"
+type = "Static"
+item_id = 0x12A5
+locations = [[3627, 2545, 6]]
+
+[[decoration]]
+comment = "moulding board"
+type = "Static"
+item_id = 0x14E9
+locations = [[3617, 2569, 6]]
+
+[[decoration]]
+comment = "moulding board"
+type = "Static"
+item_id = 0x14EA
+locations = [[3611, 2569, 7]]
+
+[[decoration]]
+comment = "ship model"
+type = "Static"
+item_id = 0x14F3
+locations = [[3635, 2637, 6]]
+
+[[decoration]]
+comment = "rope"
+type = "Static"
+item_id = 0x14F8
+locations = [
+    [3632, 2632, 0],
+    [3647, 2669, -3],
+    [3660, 2677, -3],
+]
+
+[[decoration]]
+comment = "rope"
+type = "Static"
+item_id = 0x14FA
+locations = [[3669, 2660, -3]]
+
+[[decoration]]
+comment = "plough"
+type = "Static"
+item_id = 0x1500
+locations = [[3740, 2645, 40]]
+
+[[decoration]]
+comment = "harrow"
+type = "Static"
+item_id = 0x1505
+locations = [[3740, 2643, 40]]
+
+[[decoration]]
+comment = "water barrel"
+type = "Static"
+item_id = 0x154D
+locations = [[3613, 2573, 0]]
+
+[[decoration]]
+comment = "bowl of carrots"
+type = "Static"
+item_id = 0x15F9
+locations = [[3736, 2681, 46]]
+
+[[decoration]]
+comment = "pewter bowl"
+type = "Static"
+item_id = 0x15FD
+locations = [[3654, 2465, 6]]
+
+[[decoration]]
+comment = "bowl of lettuce"
+type = "Static"
+item_id = 0x1600
+locations = [[3736, 2682, 46]]
+
+[[decoration]]
+comment = "large pewter bowl"
+type = "Static"
+item_id = 0x1603
+locations = [[3654, 2467, 6]]
+
+[[decoration]]
+comment = "folded cloth"
+type = "Static"
+item_id = 0x175F
+props = { hue = 0x06C5 }
+locations = [[3664, 2576, 6]]
+
+[[decoration]]
+comment = "folded cloth"
+type = "Static"
+item_id = 0x1761
+props = { hue = 0x04BD }
+locations = [[3667, 2576, 6]]
+
+[[decoration]]
+comment = "folded cloth"
+type = "Static"
+item_id = 0x1762
+props = { hue = 0x0021 }
+locations = [[3664, 2580, 6]]
+
+[[decoration]]
+comment = "folded cloth"
+type = "Static"
+item_id = 0x1762
+props = { hue = 0x072B }
+locations = [[3666, 2576, 6]]
+
+[[decoration]]
+comment = "folded cloth"
+type = "Static"
+item_id = 0x1763
+props = { hue = 0x0522 }
+locations = [[3668, 2576, 6]]
+
+[[decoration]]
+comment = "folded cloth"
+type = "Static"
+item_id = 0x1763
+props = { hue = 0x05F6 }
+locations = [[3664, 2579, 6]]
+
+[[decoration]]
+comment = "folded cloth"
+type = "Static"
+item_id = 0x1764
+props = { hue = 0x058A }
+locations = [[3669, 2576, 6]]
+
+[[decoration]]
+comment = "folded cloth"
+type = "Static"
+item_id = 0x1764
+props = { hue = 0x064D }
+locations = [[3664, 2577, 6]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1778
+locations = [[3767, 2718, 21]]
+
+[[decoration]]
+comment = "skull with candle"
+type = "CandleSkull"
+item_id = 0x1858
+locations = [
+    [3628, 2531, 4],
+    [3628, 2545, 6],
+    [3631, 2531, 4],
+    [3634, 2531, 4],
+]
+
+[[decoration]]
+comment = "silver wire"
+type = "Static"
+item_id = 0x1877
+locations = [[3641, 2602, 4]]
+
+[[decoration]]
+comment = "spilled flour"
+type = "Static"
+item_id = 0x187E
+locations = [[3615, 2574, 0]]
+
+[[decoration]]
+comment = "spilled flour"
+type = "Static"
+item_id = 0x187F
+locations = [[3610, 2572, 0]]

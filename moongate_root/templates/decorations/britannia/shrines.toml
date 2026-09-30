@@ -1,0 +1,225 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/shrines.toml
+#
+# What it is for:
+#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "Chaos"
+type = "AnkhWest"
+item_id = 0x0003
+locations = [[1456, 843, 5]]
+
+[[decoration]]
+type = "CandelabraStand"
+item_id = 0x0B26
+locations = [
+    [1457, 841, 0],
+    [1457, 846, 0],
+]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0788
+locations = [
+    [1456, 843, 0],
+    [1456, 844, 0],
+    [1457, 843, 0],
+    [1457, 844, 0],
+    [1458, 843, 0],
+    [1458, 844, 0],
+]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0789
+locations = [
+    [1456, 845, 0],
+    [1457, 845, 0],
+    [1458, 845, 0],
+]
+
+[[decoration]]
+type = "Static"
+item_id = 0x078A
+locations = [
+    [1459, 843, 0],
+    [1459, 844, 0],
+]
+
+[[decoration]]
+type = "Static"
+item_id = 0x078B
+locations = [
+    [1456, 842, 0],
+    [1457, 842, 0],
+    [1458, 842, 0],
+]
+
+[[decoration]]
+type = "Static"
+item_id = 0x078E
+locations = [[1459, 845, 0]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x078F
+locations = [[1459, 842, 0]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x14E3
+locations = [[1457, 843, 5]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x14E4
+locations = [[1457, 844, 5]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x14E5
+locations = [[1458, 844, 5]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x14E6
+locations = [[1458, 843, 5]]
+
+[[decoration]]
+comment = "Compassion"
+type = "AnkhNorth"
+item_id = 0x0004
+locations = [[1857, 877, -1]]
+
+[[decoration]]
+comment = "Honesty (locations unconfirmed)"
+type = "AnkhWest"
+item_id = 0x0003
+locations = [
+    [4208, 561, 42],
+    [4208, 565, 42],
+]
+
+[[decoration]]
+comment = "Humility (location unconfirmed)"
+type = "AnkhWest"
+item_id = 0x0003
+locations = [[4272, 3696, 0]]
+
+[[decoration]]
+comment = "Honor"
+type = "AnkhWest"
+item_id = 0x0003
+locations = [[1723, 3527, 8]]
+
+[[decoration]]
+comment = "Justice"
+type = "AnkhNorth"
+item_id = 0x0004
+locations = [[1300, 629, 21]]
+
+[[decoration]]
+comment = "Valor (location unconfirmed)"
+type = "AnkhWest"
+item_id = 0x0003
+locations = [[2489, 3930, 2]]
+
+[[decoration]]
+comment = "Sacrifice"
+type = "AnkhNorth"
+item_id = 0x1E5D
+props = { bloodied = true }
+locations = [[3354, 287, 4]]
+
+[[decoration]]
+comment = "Spirituality"
+type = "AnkhWest"
+item_id = 0x0003
+locations = [[1592, 2489, 20]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x00DB
+locations = [[1588, 2488, 5]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x070A
+locations = [
+    [1594, 2491, 15],
+    [1595, 2491, 15],
+]
+
+[[decoration]]
+type = "Static"
+item_id = 0x070B
+locations = [
+    [1600, 2489, 10],
+    [1600, 2490, 10],
+    [1596, 2489, 15],
+    [1596, 2490, 15],
+]
+
+[[decoration]]
+type = "Static"
+item_id = 0x070C
+locations = [
+    [1594, 2488, 15],
+    [1595, 2488, 15],
+]
+
+[[decoration]]
+type = "Static"
+item_id = 0x070E
+locations = [[1593, 2488, 15]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x070F
+locations = [[1596, 2491, 15]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0710
+locations = [[1596, 2488, 15]]
+
+[[decoration]]
+type = "Static"
+item_id = 0x0711
+locations = [[1593, 2491, 15]]
+
+[[decoration]]
+type = "KeywordTeleporter"
+item_id = 0x1BC3
+props = { substring = "om om om", range = 0, point_dest = [1595, 2489, 20], source_effect = "true", dest_effect = "true", sound_id = 0x01FE, delay = "0:0:1" }
+locations = [[1600, 2489, 12]]
+
+[[decoration]]
+type = "KeywordTeleporter"
+item_id = 0x1BC3
+props = { substring = "om om om", range = 0, point_dest = [1595, 2490, 20], source_effect = "true", dest_effect = "true", sound_id = 0x01FE, delay = "0:0:1" }
+locations = [[1600, 2490, 12]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [1600, 2489, 12] }
+locations = [
+    [1593, 2488, 17],
+    [1594, 2488, 17],
+    [1595, 2488, 17],
+]

@@ -1,0 +1,140 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/misc.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "barrel"
+type = "Static"
+item_id = 0x0FAE
+locations = [
+    [387, 1255, -41],
+    [388, 1255, -42],
+]
+
+[[decoration]]
+comment = "a swarm of flies"
+type = "SwarmOfFlies"
+item_id = 0x091B
+locations = [
+    [1052, 736, -80],
+    [1082, 750, -75],
+    [1088, 759, -80],
+    [1107, 735, -80],
+    [1138, 736, -80],
+    [1156, 767, -80],
+    [1166, 690, -80],
+    [1183, 661, -80],
+]
+
+[[decoration]]
+comment = "tribal berry"
+type = "TribalBerry"
+item_id = 0x09D0
+locations = [
+    [1029, 679, -65],
+    [1029, 680, -48],
+    [1029, 681, -60],
+    [1029, 700, -72],
+    [1030, 679, -63],
+    [1030, 700, -50],
+    [1030, 702, -50],
+    [1031, 705, -60],
+    [1032, 712, -39],
+    [1033, 706, -30],
+    [1033, 711, -43],
+    [1033, 712, -40],
+    [1036, 715, -51],
+    [1037, 714, -61],
+    [1037, 715, -62],
+    [1038, 689, -70],
+    [1038, 689, -60],
+    [1038, 709, -56],
+    [1038, 711, -58],
+    [1040, 679, -58],
+    [1040, 680, -66],
+    [1040, 680, -43],
+    [1041, 714, -54],
+    [1041, 715, -60],
+    [1042, 680, -38],
+    [1043, 686, -51],
+    [1043, 687, -63],
+    [1043, 688, -50],
+    [1043, 699, -60],
+    [1043, 701, -60],
+    [1043, 714, -58],
+    [1044, 686, -60],
+    [1044, 686, -57],
+    [1044, 699, -60],
+    [1051, 704, -50],
+    [1051, 705, -22],
+    [1051, 706, -20],
+]
+
+[[decoration]]
+comment = "fern"
+type = "Static"
+item_id = 0x0C9F
+locations = [
+    [1028, 713, -80],
+    [1034, 704, -79],
+]
+
+[[decoration]]
+comment = "fern"
+type = "Static"
+item_id = 0x0CA0
+locations = [
+    [1028, 695, -80],
+    [1045, 678, -80],
+]
+
+[[decoration]]
+comment = "large fern"
+type = "Static"
+item_id = 0x0CA1
+locations = [
+    [1030, 718, -80],
+    [1046, 696, -80],
+]
+
+[[decoration]]
+comment = "fern"
+type = "Static"
+item_id = 0x0CA2
+locations = [
+    [1031, 708, -80],
+    [1033, 676, -80],
+    [1036, 692, -80],
+    [1044, 718, -80],
+]
+
+[[decoration]]
+comment = "fern"
+type = "Static"
+item_id = 0x0CA3
+locations = [
+    [1029, 691, -80],
+    [1047, 684, -80],
+    [1051, 707, -80],
+]
+
+[[decoration]]
+comment = "fern"
+type = "Static"
+item_id = 0x0CA4
+locations = [[1038, 680, -80]]

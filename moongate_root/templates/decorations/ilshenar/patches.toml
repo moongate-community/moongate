@@ -1,0 +1,50 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/patches.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "invisible tile, can walk over"
+type = "Static"
+item_id = 0x2198
+locations = [
+    [827, 777, -80],
+    [828, 777, -80],
+    [829, 777, -80],
+    [827, 778, -80],
+    [828, 778, -80],
+    [829, 778, -80],
+    [827, 779, -80],
+    [828, 779, -80],
+    [829, 779, -80],
+    [1978, 114, -28],
+    [1979, 114, -28],
+    [1980, 114, -28],
+    [1981, 114, -28],
+    [1978, 115, -28],
+    [1979, 115, -28],
+    [1980, 115, -28],
+    [1981, 115, -28],
+    [1978, 116, -28],
+    [1979, 116, -28],
+    [1980, 116, -28],
+    [1981, 116, -28],
+    [1978, 117, -28],
+    [1979, 117, -28],
+    [1980, 117, -28],
+    [1981, 117, -28],
+]
