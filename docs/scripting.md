@@ -97,8 +97,8 @@ the timer prevents later starts; it does not cancel an already-started coroutine
 For sequences that must not overlap, use a one-shot callback that schedules its
 next run only after its work finishes.
 
-Apart from the `npc` and `item` modules of the [mobile](#mobile-scripts) and [item scripts](#item-scripts), there
-are no world, character or inventory APIs yet ([Implementation status](implementation-status.md)). To expose application
+Apart from the `npc`, `item` and `world` modules of the [mobile](#mobile-scripts) and [item scripts](#item-scripts),
+there are no character or inventory APIs yet ([Implementation status](implementation-status.md)). To expose application
 behavior, bind a C# module using [Writing a Lua module](lua-modules.md).
 
 ## Events
