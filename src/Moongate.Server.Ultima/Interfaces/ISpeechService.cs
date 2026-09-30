@@ -1,4 +1,6 @@
+using Moongate.Core.Geometry;
 using Moongate.Server.Ultima.Entities.World;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Interfaces;
 
@@ -20,4 +22,11 @@ public interface ISpeechService
     /// </summary>
     /// <returns>How many players it was sent to.</returns>
     int PlaySound(MobileEntity source, int sound);
+
+    /// <summary>
+    ///     Plays <paramref name="sound" /> once at <paramref name="location" /> on <paramref name="map" /> (0x54), for the
+    ///     players within 15 cells, such as where an item lies.
+    /// </summary>
+    /// <returns>How many players it was sent to.</returns>
+    int PlaySound(MapType map, Point3D location, int sound);
 }

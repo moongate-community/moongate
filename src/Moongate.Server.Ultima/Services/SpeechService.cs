@@ -1,3 +1,4 @@
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Server.Core.Interfaces.Services;
 using Moongate.Server.Ultima.Entities.World;
@@ -7,6 +8,8 @@ using Moongate.Server.Ultima.Packets.General;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Speech;
 using Moongate.Server.Ultima.Types.Speech;
+
+using Moongate.Ultima.Types;
 
 namespace Moongate.Server.Ultima.Services;
 
@@ -42,15 +45,20 @@ public sealed class SpeechService : ISpeechService
             speaker.Name,
             text
         );
-        return SendAround(speaker, message);
+        return SendAround(speaker.Map, speaker.Location, message);
     }
 
     public int PlaySound(MobileEntity source, int sound)
     {
-        return SendAround(source, new PlaySoundPacket(sound, source.Location));
+        return PlaySound(source.Map, source.Location, sound);
     }
 
-    private int SendAround(MobileEntity source, IOutgoingPacket packet)
+    public int PlaySound(MapType map, Point3D location, int sound)
+    {
+        return SendAround(map, location, new PlaySoundPacket(sound, location));
+    }
+
+    private int SendAround(MapType map, Point3D location, IOutgoingPacket packet)
     {
         var sent = 0;
 
@@ -58,8 +66,8 @@ public sealed class SpeechService : ISpeechService
         {
             if (session.CharacterId.IsValid &&
                 _mobiles.TryGet(session.CharacterId, out var listener) &&
-                listener.Map == source.Map &&
-                listener.Location.InRange(source.Location, SayRange) &&
+                listener.Map == map &&
+                listener.Location.InRange(location, SayRange) &&
                 session.NetworkSession.Client is { IsConnected: true } connection &&
                 _sender.TrySend(session.SessionId, connection, packet))
             {

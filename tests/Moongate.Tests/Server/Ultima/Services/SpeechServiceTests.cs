@@ -62,6 +62,23 @@ public sealed class SpeechServiceTests
         Assert.Equal((0x69, cat.Location), (sound.Sound, sound.Location));
     }
 
+    [Fact]
+    public async Task PlaySound_AtALocation_ReachesThePlayersWithin15Cells()
+    {
+        await using var fixture = await BroadcastFixture.CreateAsync();
+        var near = await fixture.AddAsync(2);
+        await fixture.AddAsync(3);
+        Place(fixture, 2, 110, 100);
+        Place(fixture, 3, 116, 100);
+        var speech = new SpeechService(fixture.Sessions, fixture.Mobiles, fixture.Sender);
+
+        await fixture.Network.ExecuteOnLoopAsync(() => speech.PlaySound(MapType.Trammel, new Point3D(100, 100, 5), 0xEA));
+
+        Assert.Equal([near.SessionId], fixture.Sender.SentSessionIds);
+        var sound = Assert.IsType<PlaySoundPacket>(Assert.Single(fixture.Sender.Sent));
+        Assert.Equal((0xEA, new Point3D(100, 100, 5)), (sound.Sound, sound.Location));
+    }
+
     private static void Place(BroadcastFixture fixture, uint serial, int x, int y)
     {
         Assert.True(fixture.Mobiles.TryGet(new Serial(serial), out var mobile));

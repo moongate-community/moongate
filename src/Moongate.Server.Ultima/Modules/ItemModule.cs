@@ -1,4 +1,6 @@
 using System.Diagnostics.CodeAnalysis;
+using Lua;
+using Moongate.Core.Geometry;
 using Moongate.Core.Primitives;
 using Moongate.Scripting.Attributes.Scripts;
 using Moongate.Server.Core.Data.Sessions;
@@ -33,13 +35,17 @@ public sealed class ItemModule
     private readonly IPacketSendService _sender;
     private readonly IWorldViewService _view;
     private readonly ITooltipService _tooltips;
+    private readonly IMobileService _mobiles;
+    private readonly ISpeechService _speech;
 
     public ItemModule(
         IItemService items,
         ISessionService sessions,
         IPacketSendService sender,
         IWorldViewService view,
-        ITooltipService tooltips
+        ITooltipService tooltips,
+        IMobileService mobiles,
+        ISpeechService speech
     )
     {
         _items = items;
@@ -47,6 +53,8 @@ public sealed class ItemModule
         _sender = sender;
         _view = view;
         _tooltips = tooltips;
+        _mobiles = mobiles;
+        _speech = speech;
     }
 
     /// <summary>
@@ -93,16 +101,7 @@ public sealed class ItemModule
         }
 
         item.Amount -= amount;
-
-        if (item.GroundLocation is not null)
-        {
-            _view.ItemAppeared(item);
-        }
-        else if (OwnerSession(item) is { } session)
-        {
-            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
-            _sender.TrySend(session.SessionId, _tooltips.Info(item));
-        }
+        Refresh(item);
 
         return true;
     }
@@ -209,11 +208,125 @@ public sealed class ItemModule
         return true;
     }
 
+    /// <summary>
+    ///     Gets the item's graphic; <c>item.item_id(serial)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "The item's graphic; nil for an unknown item.")]
+    public int? ItemId(long serial)
+    {
+        return TryGetItem(serial, out var item) ? item.ItemId : null;
+    }
+
+    /// <summary>
+    ///     Changes the item's graphic, such as a door opening; <c>item.set_item_id(serial, 0x0676)</c>. The players in
+    ///     range see a ground item change, the owner an item in its containers.
+    /// </summary>
+    [ScriptFunction(helpText: "Changes the item's graphic (0 to 65535), shown to the players who see it; false for a worn or held item.")]
+    public bool SetItemId(long serial, int graphic)
+    {
+        if (graphic is < 0 or > ushort.MaxValue || !TryGetItem(serial, out var item) || item.MobileId is not null || IsHeld(item))
+        {
+            return false;
+        }
+
+        item.ItemId = graphic;
+        Refresh(item);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Gets where a ground item lies as <c>{ x, y, z, map }</c>; <c>item.location(serial)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Where a ground item lies, as a table { x, y, z, map }; nil for an item not on the ground.")]
+    public LuaTable? Location(long serial)
+    {
+        if (!TryGetItem(serial, out var item) || item.Map is not { } map || item.GroundLocation is not { } spot)
+        {
+            return null;
+        }
+
+        var table = new LuaTable();
+        table["x"] = spot.X;
+        table["y"] = spot.Y;
+        table["z"] = spot.Z;
+        table["map"] = (int)map;
+
+        return table;
+    }
+
+    /// <summary>
+    ///     Moves a ground item on its map, such as a door swinging; <c>item.move_to(serial, x, y, z)</c>. The players
+    ///     around the old spot lose it and those around the new one see it.
+    /// </summary>
+    [ScriptFunction(helpText: "Moves a ground item to x, y, z on its map; false for an item not on the ground or an impossible spot.")]
+    public bool MoveTo(long serial, int x, int y, int z)
+    {
+        if (x < 0 ||
+            y < 0 ||
+            z is < sbyte.MinValue or > sbyte.MaxValue ||
+            !TryGetItem(serial, out var item) ||
+            item.Map is not { } map ||
+            !_items.IsLyingOnGround(item))
+        {
+            return false;
+        }
+
+        _view.ItemDisappeared(item);
+        _items.PlaceOnGround(item, map, new Point3D(x, y, z));
+        _view.ItemAppeared(item);
+
+        return true;
+    }
+
+    /// <summary>
+    ///     Plays <paramref name="sound" /> where the item is, on the ground or on the mobile carrying it, for the players
+    ///     within 15 cells; <c>item.play_sound(serial, 0xEA)</c>.
+    /// </summary>
+    [ScriptFunction(helpText: "Plays a sound id (0 to 65535) where the item is, on the ground or with its owner; false for an unknown item or sound.")]
+    public bool PlaySound(long serial, int sound)
+    {
+        if (sound is < 0 or > ushort.MaxValue || !TryGetItem(serial, out var item))
+        {
+            return false;
+        }
+
+        if (item.Map is { } map && item.GroundLocation is { } spot)
+        {
+            _speech.PlaySound(map, spot, sound);
+
+            return true;
+        }
+
+        if (_items.GetOwner(item) is { } owner && _mobiles.TryGet(owner, out var carrier))
+        {
+            _speech.PlaySound(carrier.Map, carrier.Location, sound);
+
+            return true;
+        }
+
+        return false;
+    }
+
     private bool TryGetItem(long serial, [NotNullWhen(true)] out ItemEntity? item)
     {
         item = null;
 
         return serial is > 0 and <= uint.MaxValue && _items.TryGet(new Serial((uint)serial), out item);
+    }
+
+    // Shows a changed item again: to the players around it on the ground, or to its owner in a container.
+    private void Refresh(ItemEntity item)
+    {
+        if (item.GroundLocation is not null)
+        {
+            _view.ItemAppeared(item);
+        }
+        else if (OwnerSession(item) is { } session)
+        {
+            _sender.TrySend(session.SessionId, new ContainerItemUpdatePacket(item, session.UsesContainerGrid()));
+            _sender.TrySend(session.SessionId, _tooltips.Info(item));
+        }
     }
 
     // Lifted onto a player's cursor: it keeps the place it was taken from until it is dropped, so it must not be
