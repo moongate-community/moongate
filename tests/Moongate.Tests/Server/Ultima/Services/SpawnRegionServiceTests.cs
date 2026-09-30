@@ -293,6 +293,21 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         Assert.Equal(["rabbit"], _npcs.Spawns.Select(spawn => spawn.TemplateId));
     }
 
+    [Fact]
+    public async Task OnlyOutside_RefusesWaterUnderARoof()
+    {
+        _movement.SwimZ = (_, _) => -5;
+        _map.AddStatic(10, 10, 0x0519, 20);
+        var pier = Spawn("pier", x1: 10, y1: 10, x2: 10, y2: 10);
+        pier.MobileIds = ["dolphin"];
+        pier.OnlyOutside = true;
+        await StartAsync(new ScriptedRandom(0), pier);
+
+        await TickAsync();
+
+        Assert.Empty(_npcs.Spawns);
+    }
+
     [Theory, InlineData(0, 0), InlineData(null, -5)]
     public async Task AnAmphibian_SpawnsOnLand_ElseOnTheWater(int? land, int expectedZ)
     {

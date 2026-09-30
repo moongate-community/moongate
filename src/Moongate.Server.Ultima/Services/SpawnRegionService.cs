@@ -283,7 +283,8 @@ public sealed class SpawnRegionService : ISpawnRegionService
             }
 
             if (!(movement != MobileMovementType.Water && TryGetLandZ(template, x, y, out var z) ||
-                  movement != MobileMovementType.Land && _movement.TryGetSwimZ(template.Map, x, y, out z)))
+                  movement != MobileMovementType.Land && _movement.TryGetSwimZ(template.Map, x, y, out z)) ||
+                template.OnlyOutside && IsUnderRoof(template, x, y, z))
             {
                 continue;
             }
