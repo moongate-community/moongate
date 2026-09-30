@@ -1,5 +1,103 @@
 # Changelog
 
+## [0.11.0](https://github.com/moongate-community/moongate/compare/v0.10.0...v0.11.0) (2026-09-30)
+
+
+### Upgrade notes
+
+- No new database migrations.
+- New optional `[ultima.world]` settings for the game clock and the light (`seconds_per_uo_minute`, `day_light`, `night_light`, `dungeon_light`, `jail_light`, `lamp_post_light`) start with their defaults; nothing to change.
+- Run `mgboot` again to add the new data (regions, weather), templates (world decoration, NPC lists, spawn regions, mobiles with `movement`) and scripts (`door.lua`, `light.lua`, the updated `wander.lua`); existing files are preserved. Then run `.decorate` once as an administrator to place the world decoration.
+- The world fills itself with NPCs from the spawn regions over the first minutes; days and nights pass, dungeons are dark and regions have their weather. Combat, pathfinding AI, death and skill gain are not yet available.
+
+### Features
+
+* **commands:** add .spawns to list the spawn regions where you stand ([566cd21](https://github.com/moongate-community/moongate/commit/566cd21e547c4cdf1f2c211d1017ad79db6767c1))
+* **commands:** add fame and karma for game masters ([dd33911](https://github.com/moongate-community/moongate/commit/dd339110dbfffc7df3f9e2a58b6c871b808735bd))
+* **commands:** add the decorate command ([e9e69a9](https://github.com/moongate-community/moongate/commit/e9e69a9f81fd3cc2203cb6c940e05a55fb4a56e7))
+* **commands:** add the globallight command ([ae4dd20](https://github.com/moongate-community/moongate/commit/ae4dd20e08a7f8db76cab959a7f9fe407340a04b))
+* **commands:** add the lock and unlock commands ([3675634](https://github.com/moongate-community/moongate/commit/3675634979f5a5c8c4b1c987e9c986ba0dd88eca))
+* **commands:** add the weather command ([7296108](https://github.com/moongate-community/moongate/commit/72961087ac3ac3b759bce0fec5b8d8b85c92085a))
+* **commands:** give doors key numbers and make their keys ([43390b3](https://github.com/moongate-community/moongate/commit/43390b389194748a5b1dfa9c77f0acb01cbfdb0b))
+* **commands:** print the region of the targeted spot in where ([18479bb](https://github.com/moongate-community/moongate/commit/18479bb7cf7750e914b335a6c336f97a9df1e8a4))
+* **converter:** carry UOX3's light script over as script_id light ([70dc1da](https://github.com/moongate-community/moongate/commit/70dc1da6df84fb88c786055d15ac7ae572f7f716))
+* **converter:** convert UOX3 npc lists and spawn regions ([90b308c](https://github.com/moongate-community/moongate/commit/90b308ce34de6acf49aa574d2447e6667f7693d1))
+* **decorations:** add New Haven's decoration from ServUO ([2339d34](https://github.com/moongate-community/moongate/commit/2339d34802debab3422df2127e301c3e81c160d7))
+* **decorations:** add the decoration and decoration_door item templates ([7920cab](https://github.com/moongate-community/moongate/commit/7920cab458531746c70636bf7e5d8b5b7c4155a1))
+* **decorations:** convert ModernUO's world decoration into TOML ([439556f](https://github.com/moongate-community/moongate/commit/439556f40ef0cad045207310e00c2f01e021a469)), closes [#193](https://github.com/moongate-community/moongate/issues/193)
+* **decorations:** place the decoration files in the world ([27f8753](https://github.com/moongate-community/moongate/commit/27f87536cbe61c690f1454ec0a8f4057a7726ba7))
+* **decorations:** place the lights with the light template ([8ed4b7e](https://github.com/moongate-community/moongate/commit/8ed4b7e7abf7c237090966955b0f453ae83dece5))
+* **decorations:** place the world decoration with .decorate and open doors from Lua ([470e53d](https://github.com/moongate-community/moongate/commit/470e53d1f670673382a95cf483fada383b249d4c))
+* **decorations:** read the decoration files on demand ([ebefb54](https://github.com/moongate-community/moongate/commit/ebefb543247f04102c14f2ef968eb2edd59fbf28))
+* **decorations:** world decoration data converted from ModernUO ([4581ec7](https://github.com/moongate-community/moongate/commit/4581ec72833e872146b16cdc7adb31bab7b373bc))
+* **doors:** keep locked doors shut for players ([b2940de](https://github.com/moongate-community/moongate/commit/b2940de8997648ec928e1999f9d3db76add24030))
+* **doors:** open a locked door with its key ([9877296](https://github.com/moongate-community/moongate/commit/98772963d06bb68c3b61daedc0dd879f92ffa3fc))
+* **items:** add the ground item decay queue ([b807adc](https://github.com/moongate-community/moongate/commit/b807adcb57007047b7b883af78b4afb34077846e)), closes [#191](https://github.com/moongate-community/moongate/issues/191)
+* **items:** delete the ground items whose decay time has passed ([454cd40](https://github.com/moongate-community/moongate/commit/454cd408aab6891dba339a18dd3ecb777e5b1c57)), closes [#191](https://github.com/moongate-community/moongate/issues/191)
+* **items:** ground items decay ([966b89b](https://github.com/moongate-community/moongate/commit/966b89b349cd32999b0e32835a94f45c5a4b2e6f))
+* **items:** keep the decay queue up to date with the ground items ([a460a3d](https://github.com/moongate-community/moongate/commit/a460a3df76696d2b71630c6a33734260341455a1)), closes [#191](https://github.com/moongate-community/moongate/issues/191)
+* **items:** let item scripts change, move and sound an item ([806577f](https://github.com/moongate-community/moongate/commit/806577fbaf11f0417388e989515524c31fa22083)), closes [#195](https://github.com/moongate-community/moongate/issues/195)
+* **items:** lights you can light and douse from Lua ([37563ad](https://github.com/moongate-community/moongate/commit/37563adbe862f5cfea73bc97932a0e4b581c3b92))
+* **items:** send the light shape of a light source ([1d6affe](https://github.com/moongate-community/moongate/commit/1d6affeae288bec23fc5f36a9eb575e18cb4692d))
+* **movement:** find where a mobile can be placed at a cell ([29a0847](https://github.com/moongate-community/moongate/commit/29a08479eaa1b2b18deefe57cf5aa1261b32e12b))
+* **movement:** let a mobile template say where its mobiles move ([8adb606](https://github.com/moongate-community/moongate/commit/8adb606555a2b31f3a2b73af141a2ba5e17c321d))
+* **npcs:** keep the spawned NPCs of wander.lua in their home area ([2e79f54](https://github.com/moongate-community/moongate/commit/2e79f5497ded31d130e4d8ceef4f508abed4b711))
+* **npcs:** let mobile scripts play a sound ([6daaf5b](https://github.com/moongate-community/moongate/commit/6daaf5bb26c79c5a69ac5ba153e91f41d599d0bd))
+* **npcs:** let water and amphibious NPCs swim ([407019f](https://github.com/moongate-community/moongate/commit/407019f34264125084a0c287043d630712f9c313))
+* **npcs:** play a mobile's template sounds by kind ([d9a00c3](https://github.com/moongate-community/moongate/commit/d9a00c313087e37d76b556fd3dedc46c190b98e1))
+* **packets:** add the weather packet ([a4a261c](https://github.com/moongate-community/moongate/commit/a4a261c8bc00bf47b20d6aeba10044f8d55a8ab4))
+* **paperdoll:** show the fame and karma title in the paperdoll ([afdbb4b](https://github.com/moongate-community/moongate/commit/afdbb4bc65b3f4149e140de3958f4fce6120ec79))
+* **regions:** find the region of a place ([dd19409](https://github.com/moongate-community/moongate/commit/dd19409118580e46e3d37540b61921a424af2c14))
+* **regions:** follow the region each player stands in ([39da79c](https://github.com/moongate-community/moongate/commit/39da79c0d5c141205245a652a0d2264271ee32bb))
+* **regions:** know which region a player is in ([aa8cb53](https://github.com/moongate-community/moongate/commit/aa8cb5338ac70c330437fd05f8f5dd4415352a03))
+* **regions:** tell listeners when a player changes region ([2f20298](https://github.com/moongate-community/moongate/commit/2f202982dd5d561037ab0d09333ba090ac986cb9))
+* **scripts:** add the world module and a door-like integration test ([20b121b](https://github.com/moongate-community/moongate/commit/20b121bb0ec3a2db4c67cd27b55902cf04cd2c78)), closes [#195](https://github.com/moongate-community/moongate/issues/195)
+* **scripts:** bring Orione and Vega, the cats of Moongate v2 ([7fd14e6](https://github.com/moongate-community/moongate/commit/7fd14e6077fb43227f9eb75f2463f9a2df690539))
+* **scripts:** let scripts keep values on NPCs and items across restarts ([a724f77](https://github.com/moongate-community/moongate/commit/a724f771f8ad8b987885c60fdd51cd2bb3229734))
+* **scripts:** let scripts read the time of day ([50070fa](https://github.com/moongate-community/moongate/commit/50070fa847f8666318c5adba2998600dbd854dc3))
+* **scripts:** let scripts set an item's light and ask whether a player is staff ([729b3e2](https://github.com/moongate-community/moongate/commit/729b3e2bc3ce88d54bf0578af3f44321afff7145))
+* **scripts:** light and douse the lights from Lua ([1b2519d](https://github.com/moongate-community/moongate/commit/1b2519d3d691a7dc0ebfdef75ba23e5cf90d878a))
+* **scripts:** Lua APIs to change, move and sound items ([2bc4608](https://github.com/moongate-community/moongate/commit/2bc46084ef0559488f709f89542cffef94ac2a65))
+* **scripts:** open and close the decoration doors from Lua ([b17befb](https://github.com/moongate-community/moongate/commit/b17befbc2e53b00a11f397dece80961da94a2c80))
+* **scripts:** Orione speaks English ([9ab34ea](https://github.com/moongate-community/moongate/commit/9ab34ea17aa515223dd4cde194adfc17fbbbd9a6))
+* **scripts:** Vega remembers how many times you said hello ([af096fc](https://github.com/moongate-community/moongate/commit/af096fcc7c3f1cd003f3064885cec6498eb6053d))
+* **scripts:** Vega speaks English ([b0ef77a](https://github.com/moongate-community/moongate/commit/b0ef77a666330af88b7fd824963a98850d584437))
+* **spawns:** convert and load the UOX3 spawn regions ([3124837](https://github.com/moongate-community/moongate/commit/31248371fdef4a565053eb747c9aa01b774d19e8))
+* **spawns:** load the npc lists and the spawn regions ([c851dc8](https://github.com/moongate-community/moongate/commit/c851dc8e4f87b9c4db8ebdece619cf40812bdce7))
+* **spawns:** show retrying regions in .spawns and keep .spawn from putting swimmers on land ([405522e](https://github.com/moongate-community/moongate/commit/405522eee19c9a57d1ad0399c081a82f8c0d2fed))
+* **spawns:** spawn the NPCs of the spawn regions at runtime ([71d60d3](https://github.com/moongate-community/moongate/commit/71d60d3440b6d00584b61b63262bfa2139bf9ba8))
+* **spawns:** spawn the NPCs of the spawn regions at runtime ([d0f6523](https://github.com/moongate-community/moongate/commit/d0f6523c0fa9d72f457504134e8ae327adc2af0c))
+* **spawns:** spawn water and amphibious mobiles on the water ([9ae503d](https://github.com/moongate-community/moongate/commit/9ae503dffc035fe080fd520c82e4541dff3a0f87))
+* **templates:** bring Lilly, the noble lady of Moongate v2 ([8259870](https://github.com/moongate-community/moongate/commit/82598703838e398688089a4626070a209e0a90d7))
+* **weather:** region weather with thunder and the in-building check ([cc83090](https://github.com/moongate-community/moongate/commit/cc830901a784bb59b683ce78efc8596389d18e0c))
+* **weather:** roll the weather of a profile ([9aa50aa](https://github.com/moongate-community/moongate/commit/9aa50aa9f928c120b1e22daf8fdd988235bc59cb))
+* **weather:** send the players the weather of their region ([fa41203](https://github.com/moongate-community/moongate/commit/fa41203486fb3da0f2ec391a78245a73aab89418))
+* **world:** add the day and night light cycle ([55822f1](https://github.com/moongate-community/moongate/commit/55822f1d25878eb2f7ca57a836b2ede21f25aff7))
+* **world:** add the game clock and the light cycle settings ([8454fcd](https://github.com/moongate-community/moongate/commit/8454fcd95a27231eca7d867b906193ffbe2eae4d))
+* **world:** dark dungeons and dim jails ([94458a5](https://github.com/moongate-community/moongate/commit/94458a5360404129fee2ed991c5ee669ee6eeae7))
+* **world:** light the town lamp posts at night ([6a4faff](https://github.com/moongate-community/moongate/commit/6a4faffc6c31b9214f6bb51869da5b4363203019))
+* **world:** log at debug what a player is sent on entering a sector ([b27f3af](https://github.com/moongate-community/moongate/commit/b27f3af7375c99a27aab22e587b069dc7a1abe69))
+* **world:** make dungeons dark and jails dim ([d1d8a16](https://github.com/moongate-community/moongate/commit/d1d8a16a25c59804ccbaf4e10e024244397a4ba2))
+* **world:** send the players the light of their time of day ([dd38f9e](https://github.com/moongate-community/moongate/commit/dd38f9ef53fd4286dc396ef18edbb74eb2227707))
+
+
+### Bug Fixes
+
+* **converter:** convert spawn regions as UOX3 loads them ([9cf6b93](https://github.com/moongate-community/moongate/commit/9cf6b9353e0c0e76b05d540d5722a34be440df74))
+* **converter:** keep a GET child with a land body from inheriting water movement ([edbf3ec](https://github.com/moongate-community/moongate/commit/edbf3ec944c1a46a9884b26cf4c99013fe543d12))
+* **decorations:** keep open doors, saved items and a running decoration from doubling the world ([84acb6b](https://github.com/moongate-community/moongate/commit/84acb6b28e1002648b42761c6c4dcfaec569620e))
+* **items:** delete a decayed dropped item with its dropper's save and honour an immovable template ([f219b18](https://github.com/moongate-community/moongate/commit/f219b1855f33f4aebcc6edf13c8dc9a31d66c507)), closes [#191](https://github.com/moongate-community/moongate/issues/191)
+* **items:** refuse to move an item outside its map ([532d897](https://github.com/moongate-community/moongate/commit/532d89771165b0b4ca356f72ac03050ddf111d80)), closes [#195](https://github.com/moongate-community/moongate/issues/195)
+* **movement:** refuse water under the ground's centre as a swim spot ([a84237f](https://github.com/moongate-community/moongate/commit/a84237f87dde0ec3ad24d11359959c483498da9d))
+* **paperdoll:** do not add Lord or Lady twice ([10ff181](https://github.com/moongate-community/moongate/commit/10ff181d68fe0a8ec0d42c8b67b875311276a98f))
+* **scripts:** keep whole numbers of script props as long and give doors their closed spot ([7e6cf93](https://github.com/moongate-community/moongate/commit/7e6cf933b2755b17c3cb44efa4f39b030a77c26c))
+* **spawns:** keep only_outside regions from spawning swimmers under a roof ([dce0759](https://github.com/moongate-community/moongate/commit/dce075900fcdef5e1fc12e5e515e276bf18be77b))
+* **spawns:** place swimmers only on real water and keep a call going past a missed pick ([e2e204b](https://github.com/moongate-community/moongate/commit/e2e204b9e6c3481b65fb6afe20d5a134ee767897))
+* **spawns:** register the spawn service once and make the spawns survive failures and shutdown ([17eca2f](https://github.com/moongate-community/moongate/commit/17eca2f4eb76b9cfb571629b79bb16f1b2a334b0))
+* **weather:** handle logins on the game loop and resend the weather ([aa9e621](https://github.com/moongate-community/moongate/commit/aa9e621f88b093f8b942b7f99ca8798e5b385f14))
+* **world:** light the plain regions inside a dungeon as the dungeon ([5aa14fb](https://github.com/moongate-community/moongate/commit/5aa14fb85daa789286ee13939bc9d55500c4649f))
+* **world:** send the light cycle only to characters whose login sent their light ([a8ca6fd](https://github.com/moongate-community/moongate/commit/a8ca6fd31bb5ee5cbd5ee1cc2b14f7e6552c15ec))
+
 ## [0.10.0](https://github.com/moongate-community/moongate/compare/v0.9.0...v0.10.0) (2026-09-29)
 
 
