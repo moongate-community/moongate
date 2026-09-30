@@ -1,0 +1,28 @@
+# ==============================================================================
+# Moongate - templates/mobiles/moongate_cats.toml
+#
+# What it is for:
+#   Orione and Vega, the two cats of Moongate v2: cats with a name, a grey coat
+#   and a mobile script each (scripts/mobiles/orione.lua, scripts/mobiles/vega.lua).
+#   Spawn them with ".spawn orione" or ".spawn vega".
+#
+# Fields:
+#   base_id    inherits the cat of animals.toml (body, stats, skills, sounds)
+#   script_id  the mobile script that makes the cat walk, meow and talk
+# ==============================================================================
+
+[[mobile]]
+id = "orione"
+base_id = "cat"
+name = "Orione"
+title = "a beautiful cat"
+skin_hue = 779
+script_id = "orione"
+
+[[mobile]]
+id = "vega"
+base_id = "cat"
+name = "Vega"
+title = "a beautiful cat"
+skin_hue = 779
+script_id = "vega"

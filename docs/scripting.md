@@ -64,6 +64,7 @@ exists but fails compilation/execution aborts server startup.
 | `localization.get(id, ...)` | Message `id` of `data/messages` in the server language, with `{0}`, `{1}`, ... filled by the extra arguments; see [Localization](localization.md#read-a-message-from-lua) |
 | `localization.text(id)`, `localization.language()` | The raw text of a message, or `nil`; the server language code |
 | `npc.say(serial, text)` | The NPC says `text` overhead to the players within 15 cells (cut to 128 characters); `false` for blank text or a serial that is not an NPC in the world |
+| `npc.play_sound(serial, sound)` | Plays a sound id (0 to 65535, such as `0x69`, a cat's meow) where the NPC stands, for the players within 15 cells (0x54); `false` for a sound out of range or a serial that is not an NPC in the world |
 | `npc.step(serial, direction, running?)` | One step toward a `DirectionType` (`North` to `NorthWest`), turning first when needed, seen by the players in range; a run when `running` is `true`. How often the script calls it sets the speed. `false` when blocked or for `DirectionType.Running`, which is not a direction |
 | `npc.location(serial)`, `npc.name(serial)` | `{ x, y, z, map }` and the name of the NPC, or `nil` |
 | `item.name(serial)`, `item.amount(serial)`, `item.owner(serial)` | The item's name (its template id when it has none), its amount, and the serial of the mobile carrying or wearing it (`nil` on the ground); `nil` for an unknown item |
@@ -72,7 +73,7 @@ exists but fails compilation/execution aborts server startup.
 | `item.message(serial, player, text)` | A label over the item seen only by `player` (cut to 128 characters); `false` for blank text, an unknown item, or a player not in the world |
 
 The default host registers `log`; the engine supplies `engine`, `timer`, `events` and `wait`.
-The Ultima plugin registers `dice`, `localization`, `npc` and `item` in game and standalone modes.
+The Ultima plugin registers `dice`, `localization`, `npc` and `item` in game and standalone modes. The repository also ships two cats of Moongate v2, `orione` and `vega` (`templates/mobiles/moongate_cats.toml` with `scripts/mobiles/orione.lua` and `vega.lua`): spawn them with `.spawn orione` or `.spawn vega`.
 Log levels still follow the host's logging policy, so a `log.debug` call need not
 appear in the default console output. Use templates rather than concatenating
 changing values into messages.
