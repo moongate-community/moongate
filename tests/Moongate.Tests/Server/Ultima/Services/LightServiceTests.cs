@@ -51,20 +51,33 @@ public sealed class LightServiceTests : IAsyncLifetime
     [Fact]
     public async Task Tick_SendsTheLevelToThePlayersInTheWorld_OnlyWhenItChanges()
     {
-        await _fixture.AddAsync(1);
+        await LoginAsync(1);
         await _fixture.AddAsync(2, entered: false);
+        _clock.Time = new GameTime(23, 0);
         var timer = Assert.Single(_timers.Timers);
         Assert.Equal((LightService.TimerName, TimeSpan.FromSeconds(5), true), (timer.Name, timer.Interval, timer.Repeat));
 
         _timers.Fire(timer.Id);
         _timers.Fire(timer.Id);
 
-        Assert.Equal([(1L, 0)], Sent());
+        Assert.Equal([(1L, 6)], Sent());
 
         _clock.Time = new GameTime(1, 0);
         _timers.Fire(timer.Id);
 
-        Assert.Equal([(1L, 0), (1L, 12)], Sent());
+        Assert.Equal([(1L, 6), (1L, 12)], Sent());
+    }
+
+    [Fact]
+    public async Task Tick_SkipsACharacterInTheWorldBeforeItsLoginSequenceSentItsLight()
+    {
+        // In the world, but the login has not sent 0x1B yet: a 0x4F now would reach the client too early.
+        await _fixture.AddAsync(1);
+
+        _timers.Fire(Assert.Single(_timers.Timers).Id);
+        await _light.SetOverrideAsync(25);
+
+        Assert.Empty(Sent());
     }
 
     [Fact]
@@ -82,7 +95,8 @@ public sealed class LightServiceTests : IAsyncLifetime
     [Fact]
     public async Task SetOverrideAsync_SendsTheLevelAtOnce_AndClearingItGoesBackToTheClock()
     {
-        await _fixture.AddAsync(1);
+        await LoginAsync(1);
+        _clock.Time = new GameTime(1, 0);
         _timers.Fire(Assert.Single(_timers.Timers).Id);
 
         await _light.SetOverrideAsync(25);
@@ -90,7 +104,7 @@ public sealed class LightServiceTests : IAsyncLifetime
         await _light.SetOverrideAsync(null);
 
         Assert.Null(_light.Override);
-        Assert.Equal([(1L, 0), (1L, 25), (1L, 0)], Sent());
+        Assert.Equal([(1L, 12), (1L, 25), (1L, 12)], Sent());
     }
 
     [Fact]
@@ -104,6 +118,13 @@ public sealed class LightServiceTests : IAsyncLifetime
     public async Task DisposeAsync()
     {
         await _fixture.DisposeAsync();
+    }
+
+    private async Task LoginAsync(long id)
+    {
+        await _fixture.AddAsync(id);
+        _fixture.Mobiles.TryGet(new Serial((uint)id), out var character);
+        _light.LevelOnLogin(character!);
     }
 
     private List<(long, int)> Sent()

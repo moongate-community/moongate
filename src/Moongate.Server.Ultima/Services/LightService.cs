@@ -142,9 +142,16 @@ public sealed class LightService : ILightService
             }
 
             seen.Add(character.Id);
+
+            // Only LevelOnLogin starts a character: before its login sequence the client has no LoginConfirm yet.
+            if (!_sent.TryGetValue(character.Id, out var last))
+            {
+                continue;
+            }
+
             var level = LevelFor(character);
 
-            if (_sent.TryGetValue(character.Id, out var last) && last == level)
+            if (last == level)
             {
                 continue;
             }
@@ -155,7 +162,7 @@ public sealed class LightService : ILightService
             }
         }
 
-        // The characters that left the world are sent their level again at their next login.
+        // The characters that left the world get their level again from their next login.
         foreach (var gone in _sent.Keys.Where(serial => !seen.Contains(serial)))
         {
             _sent.TryRemove(gone, out _);
