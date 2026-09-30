@@ -2,7 +2,8 @@
 
 Moongate is under active development: **the world is not a game yet**. This page says what the
 server does today and what it does not. It describes the current source tree; the
-[changelog](../CHANGELOG.md) records what each release added.
+[changelog](../CHANGELOG.md) records what each release added, and the
+[feature checklist](feature-checklist.md) goes system by system through what UO emulators usually offer.
 
 ## At a glance
 
