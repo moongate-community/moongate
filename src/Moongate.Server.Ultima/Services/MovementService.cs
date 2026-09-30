@@ -137,12 +137,13 @@ public class MovementService : IMovementService
             return false;
         }
 
-        // UOX3's water spawn: the land or a static flagged Wet, as MovementImpl lets a swimmer stand there.
+        // UOX3's water spawn. Water is wet and impassable (so a walker cannot enter it) and flat; a wet static that is
+        // passable or has a height, such as blood or a trough, is not water.
         var found = false;
         var land = _mapService.GetLand(map, x, y);
         var statics = _mapService.GetStatics(map, x, y);
 
-        if (!LandHeights.IsIgnored(land.Id) && (_tileDataService.GetLand(land.Id & 0x3FFF).Flags & TileFlagType.Wet) != 0)
+        if (!LandHeights.IsIgnored(land.Id) && IsWater(_tileDataService.GetLand(land.Id & 0x3FFF).Flags))
         {
             var average = GetAverageZ(map, x, y);
 
@@ -157,7 +158,7 @@ public class MovementService : IMovementService
         {
             var item = _tileDataService.GetItem(tile.Id);
 
-            if ((item.Flags & TileFlagType.Wet) == 0)
+            if (!IsWater(item.Flags) || item.Height != 0)
             {
                 continue;
             }
@@ -397,6 +398,11 @@ public class MovementService : IMovementService
         }
 
         return moveIsOk;
+    }
+
+    private static bool IsWater(TileFlagType flags)
+    {
+        return (flags & (TileFlagType.Wet | TileFlagType.Impassable)) == (TileFlagType.Wet | TileFlagType.Impassable);
     }
 
     // ModernUO MovementImpl.IsOk: no impassable or surface static overlaps the space from ourZ to ourTop.

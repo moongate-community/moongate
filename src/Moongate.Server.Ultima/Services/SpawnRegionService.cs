@@ -224,23 +224,22 @@ public sealed class SpawnRegionService : ISpawnRegionService
         try
         {
             var count = Math.Min(template.Call, template.Max - live.GetValueOrDefault(template.Id));
-            var missed = false;
+            var found = 0;
 
+            // A pick with no spot, such as a sea creature in a region with little water, leaves the others to spawn.
             for (var i = 0; i < count; i++)
             {
                 var templateId = region.Pool.Pick(_random);
-
                 var movement = _movements.GetValueOrDefault(templateId, MobileMovementType.Land);
 
-                if (!TryFindSpot(template, movement, out var location, out var area))
+                if (TryFindSpot(template, movement, out var location, out var area))
                 {
-                    missed = true;
-
-                    break;
+                    planned.Add(new(template, templateId, location, area));
+                    found++;
                 }
-
-                planned.Add(new(template, templateId, location, area));
             }
+
+            var missed = count > 0 && found == 0;
 
             region.NextSpawn = missed
                 ? now + RetryDelay

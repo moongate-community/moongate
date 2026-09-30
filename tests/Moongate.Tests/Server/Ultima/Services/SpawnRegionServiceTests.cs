@@ -280,6 +280,19 @@ public sealed class SpawnRegionServiceTests : IAsyncLifetime
         Assert.Single(_npcs.Spawns);
     }
 
+    [Fact]
+    public async Task ASeaCreatureWithNoWater_DoesNotStopTheLandNpcsOfTheSameCall()
+    {
+        // Rolls: the first spawn at once, then dolphin (0) with no water in 100 tries, then rabbit (1) on land.
+        var mixed = Spawn("coast", call: 2, max: 2, x1: 10, y1: 10, x2: 10, y2: 10);
+        mixed.MobileIds = ["dolphin", "rabbit"];
+        await StartAsync(new ScriptedRandom([0, 0, .. Enumerable.Repeat(0, 300), 1]), mixed);
+
+        await TickAsync();
+
+        Assert.Equal(["rabbit"], _npcs.Spawns.Select(spawn => spawn.TemplateId));
+    }
+
     [Theory, InlineData(0, 0), InlineData(null, -5)]
     public async Task AnAmphibian_SpawnsOnLand_ElseOnTheWater(int? land, int expectedZ)
     {

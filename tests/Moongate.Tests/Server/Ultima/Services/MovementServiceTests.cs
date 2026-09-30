@@ -344,6 +344,26 @@ public sealed class MovementServiceTests
     }
 
     [Fact]
+    public void TryGetSwimZ_BloodOrATrough_IsNotWater()
+    {
+        // Blood is wet but passable; a trough is wet and impassable but stands 6 high.
+        _tiles.Item(0x122A, TileFlagType.Wet, 0).Item(0x0B41, TileFlagType.Wet | TileFlagType.Impassable, 6);
+        _map.AddStatic(4, 4, 0x122A, 0).AddStatic(5, 5, 0x0B41, 0);
+
+        Assert.False(CreateService().TryGetSwimZ(MapType.Felucca, 4, 4, out _));
+        Assert.False(CreateService().TryGetSwimZ(MapType.Felucca, 5, 5, out _));
+    }
+
+    [Fact]
+    public void TryGetSwimZ_WetLandAMoverWalksOn_IsNotWater()
+    {
+        _tiles.Land(0x2E0E, TileFlagType.Wet);
+        _map.SetLandId(4, 4, 4, 4, 0x2E0E);
+
+        Assert.False(CreateService().TryGetSwimZ(MapType.Felucca, 4, 4, out _));
+    }
+
+    [Fact]
     public void TryGetSwimZ_OutsideTheMapOrMapNotLoaded_Fails()
     {
         Assert.False(CreateService().TryGetSwimZ(MapType.Felucca, 99, 4, out _));
