@@ -3,6 +3,13 @@
 ## [0.11.0](https://github.com/moongate-community/moongate/compare/v0.10.0...v0.11.0) (2026-09-30)
 
 
+### Upgrade notes
+
+- No new database migrations.
+- New optional `[ultima.world]` settings for the game clock and the light (`seconds_per_uo_minute`, `day_light`, `night_light`, `dungeon_light`, `jail_light`, `lamp_post_light`) start with their defaults; nothing to change.
+- Run `mgboot` again to add the new data (regions, weather), templates (world decoration, NPC lists, spawn regions, mobiles with `movement`) and scripts (`door.lua`, `light.lua`, the updated `wander.lua`); existing files are preserved. Then run `.decorate` once as an administrator to place the world decoration.
+- The world fills itself with NPCs from the spawn regions over the first minutes; days and nights pass, dungeons are dark and regions have their weather. Combat, pathfinding AI, death and skill gain are not yet available.
+
 ### Features
 
 * **commands:** add .spawns to list the spawn regions where you stand ([566cd21](https://github.com/moongate-community/moongate/commit/566cd21e547c4cdf1f2c211d1017ad79db6767c1))
