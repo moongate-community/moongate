@@ -65,7 +65,8 @@ public sealed class PlayCharacterPacketHandlerTests : IDisposable
             sender,
             new RecordingTimerService(),
             fixture.Loop,
-            new WorldConfig()
+            new WorldConfig(),
+            new StubDataLoaderService()
         );
 
         await Handler(characters, sender, light: light).HandleAsync(context, Packet(2), CancellationToken.None);

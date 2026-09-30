@@ -5,6 +5,7 @@ using Moongate.Server.Ultima.Data.Config;
 using Moongate.Server.Ultima.Data.Regions;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Server.Ultima.Interfaces.Loaders;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services.Internal;
 using Moongate.Ultima.Types;
@@ -35,6 +36,7 @@ public sealed class LightService : ILightService
     private readonly ITimerService _timers;
     private readonly IGameLoopService _loop;
     private readonly WorldConfig _world;
+    private readonly Lazy<Dictionary<(MapType Map, string Name), RegionContent>> _regionsByName;
 
     private string? _timerId;
     private volatile int _override = NoOverride;
@@ -48,9 +50,16 @@ public sealed class LightService : ILightService
         IPacketSendService sender,
         ITimerService timers,
         IGameLoopService loop,
-        WorldConfig world
+        WorldConfig world,
+        IDataLoaderService data
     )
     {
+        _regionsByName = new(
+            () => data.GetEntities<RegionContent>()
+                      .Where(region => region.Name is not null)
+                      .GroupBy(region => (region.Map, region.Name!))
+                      .ToDictionary(group => group.Key, group => group.First())
+        );
         _clock = clock;
         _sessions = sessions;
         _mobiles = mobiles;
@@ -86,7 +95,7 @@ public sealed class LightService : ILightService
         }
 
         // ModernUO's DungeonRegion and JailRegion.
-        switch (_regions.GetValueOrDefault(mobile.Id)?.Type)
+        switch (LightTypeOf(_regions.GetValueOrDefault(mobile.Id)))
         {
             case RegionType.Dungeon:
                 return _world.DungeonLight;
@@ -113,9 +122,14 @@ public sealed class LightService : ILightService
         _regions[player.Id] = current;
 
         // As ModernUO's region change, at once; only once the login sent the player its light.
-        if (!_sent.TryGetValue(player.Id, out var last) ||
-            LevelFor(player) is var level && level == last ||
-            !_sessions.TryGetByCharacterId(player.Id, out var session))
+        if (!_sent.TryGetValue(player.Id, out var last))
+        {
+            return;
+        }
+
+        var level = LevelFor(player);
+
+        if (level == last || !_sessions.TryGetByCharacterId(player.Id, out var session))
         {
             return;
         }
@@ -151,6 +165,23 @@ public sealed class LightService : ILightService
         );
         await _loop.PostAsync(work, cancellationToken);
         await work.Completion;
+    }
+
+    // A plain region inside a dungeon or a jail, such as the lairs of the Abyss, is lit as its parent, as ModernUO's
+    // regions hand the light over to their parent. The loader refused parent loops.
+    private RegionType? LightTypeOf(RegionContent? region)
+    {
+        while (region is not null)
+        {
+            if (region.Type is RegionType.Dungeon or RegionType.Jail)
+            {
+                return region.Type;
+            }
+
+            region = region.Parent is { } parent ? _regionsByName.Value.GetValueOrDefault((region.Map, parent)) : null;
+        }
+
+        return null;
     }
 
     // A timer callback that throws closes the timer wheel.

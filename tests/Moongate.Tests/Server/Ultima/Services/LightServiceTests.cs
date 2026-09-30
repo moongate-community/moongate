@@ -6,6 +6,7 @@ using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Tests.TestSupport.Scripting;
+using Moongate.Tests.TestSupport.Ultima.Loaders;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.World;
 using Moongate.Ultima.Types;
@@ -16,6 +17,7 @@ public sealed class LightServiceTests : IAsyncLifetime
 {
     private static readonly RegionContent Despise = new() { Map = MapType.Trammel, Name = "Despise", Type = RegionType.Dungeon };
     private static readonly RegionContent Jail = new() { Map = MapType.Trammel, Name = "Jail", Type = RegionType.Jail };
+    private static readonly RegionContent MedusasLair = new() { Map = MapType.Trammel, Name = "Medusas Lair", Parent = "Despise" };
 
     private readonly StubClockService _clock = new();
     private readonly RecordingTimerService _timers = new();
@@ -26,7 +28,16 @@ public sealed class LightServiceTests : IAsyncLifetime
     public async Task InitializeAsync()
     {
         _fixture = await BroadcastFixture.CreateAsync();
-        _light = new(_clock, _fixture.Sessions, _fixture.Mobiles, _fixture.Sender, _timers, _fixture.Network.Loop, _world);
+        _light = new(
+            _clock,
+            _fixture.Sessions,
+            _fixture.Mobiles,
+            _fixture.Sender,
+            _timers,
+            _fixture.Network.Loop,
+            _world,
+            new StubDataLoaderService().With(Despise, Jail, MedusasLair)
+        );
         await _light.StartAsync();
     }
 
@@ -124,6 +135,16 @@ public sealed class LightServiceTests : IAsyncLifetime
 
         _light.Left(mobile.Id);
         Assert.Equal(0, _light.LevelFor(mobile));
+    }
+
+    [Fact]
+    public void LevelFor_APlainChildOfADungeon_IsDarkToo()
+    {
+        var mobile = Mobile();
+
+        _light.RegionChanged(mobile, Despise, MedusasLair);
+
+        Assert.Equal(26, _light.LevelFor(mobile));
     }
 
     [Fact]
