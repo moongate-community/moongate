@@ -21,7 +21,7 @@ The name comes first (the id when the region has none), then the id, the live NP
 region's `max`, and the minutes until the next check spawns there. A region at its `max` still has
 a next spawn: it spawns nothing then and waits again. A region whose last check found no spot
 says so, `no spot found, retrying in 1 min.`, until it spawns again. `No spawn region here.`
-means no region covers the spot. See [NPC lists and spawns](../templates.md#npc-lists-and-spawns).
+means no region covers the spot. See [NPC spawns](../spawns.md).
 
 ## See also
 

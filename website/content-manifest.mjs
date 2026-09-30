@@ -45,6 +45,7 @@ export const contentEntries = [
   // Scripting and content: shard content without C#.
   { source: 'docs/scripting.md', slug: 'server/scripting', title: 'Writing Lua scripts', group: 'Scripting and content' },
   { source: 'docs/templates.md', slug: 'server/templates', title: 'Loading TOML templates', group: 'Scripting and content' },
+  { source: 'docs/spawns.md', slug: 'server/spawns', title: 'NPC spawns', group: 'Scripting and content' },
   { source: 'docs/toml-types.md', slug: 'server/toml-types', title: 'TOML value types', group: 'Scripting and content' },
   { source: 'docs/localization.md', slug: 'server/localization', title: 'Localization', group: 'Scripting and content' },
   { source: 'docs/data-files.md', slug: 'server/data-files', title: 'Overview', group: 'Scripting and content', subgroup: 'Data files' },
