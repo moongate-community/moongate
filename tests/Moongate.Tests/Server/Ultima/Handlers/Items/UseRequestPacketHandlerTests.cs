@@ -424,15 +424,15 @@ public sealed class UseRequestPacketHandlerTests : IAsyncDisposable
         return _fixture.ExecuteOnLoopAsync(() => handler.Handle(_session, new UseRequestPacket { Target = target }));
     }
 
-    // The classic bands this test needs: no prefix at 0/0, The Outcast for bad karma, The Glorious from 10000 fame.
+    // The classic bands this test needs, as titles.toml writes them: the rows from 10000 fame already say Lord or Lady.
     private static FameKarmaTitleService Titles()
     {
         return new(
             new StubDataLoaderService().With(
                 new FameKarmaTitle(0, -15000, "The Outcast"),
                 new FameKarmaTitle(0, 0, ""),
-                new FameKarmaTitle(10000, -15000, "The Dread"),
-                new FameKarmaTitle(10000, 0, "The Glorious")
+                new FameKarmaTitle(10000, -15000, "The Dread Lord", "The Dread Lady"),
+                new FameKarmaTitle(10000, 0, "The Glorious Lord", "The Glorious Lady")
             )
         );
     }

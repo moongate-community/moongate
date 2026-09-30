@@ -33,7 +33,6 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
     private const uint PaperdollRequestFlag = 0x80000000;
     private const int TooFarCliloc = 500446;
     private const string UseFunction = "on_use";
-    private const int NobleFame = 10000;
 
     private readonly ILogger _logger = Log.ForContext<UseRequestPacketHandler>();
     private readonly IItemService _items;
@@ -148,25 +147,12 @@ public sealed class UseRequestPacketHandler : IPacketHandler<UseRequestPacket>
                (result.Kind == ScriptResultKind.Completed && result.Values is [true, ..]);
     }
 
-    // As ModernUO's Titles.ComputeTitle: the fame and karma prefix, Lord or Lady from 10000 fame, the name, then the
-    // mobile's own title, such as "The Glorious Lord Aria, the Guard".
+    // As ModernUO's Titles.ComputeTitle: the fame and karma prefix of titles.toml, whose rows from 10000 fame already
+    // say Lord or Lady, the name, then the mobile's own title, such as "The Glorious Lady Lilly, the Noble".
     private string PaperdollTitle(MobileEntity mobile)
     {
-        var parts = new List<string>(3);
         var prefix = _titles.GetTitle(mobile);
-
-        if (!string.IsNullOrEmpty(prefix))
-        {
-            parts.Add(prefix);
-        }
-
-        if (mobile.Fame >= NobleFame)
-        {
-            parts.Add(mobile.Gender == GenderType.Female ? "Lady" : "Lord");
-        }
-
-        parts.Add(mobile.Name);
-        var name = string.Join(' ', parts);
+        var name = string.IsNullOrEmpty(prefix) ? mobile.Name : $"{prefix} {mobile.Name}";
 
         return string.IsNullOrEmpty(mobile.Title) ? name : $"{name}, {mobile.Title}";
     }

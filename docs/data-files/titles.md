@@ -43,6 +43,6 @@ C# callers resolve `IFameKarmaTitleService` and call `GetTitle(mobile)` or
 `"The Glorious Lady"`; callers decide how to combine it with a name. The
 service calculates the result from current scores on each call. It does not
 change `MobileEntity.Title`, which remains the custom or template suffix.
-The paperdoll shows the prefix before the name, with `Lord` or `Lady` from 10,000 fame (see [packets](../packets.md)); tooltips and the single-click name do not, as in ModernUO.
+The paperdoll shows the prefix before the name (see [packets](../packets.md)), `female_title` for women; tooltips and the single-click name do not, as in ModernUO.
 
 See [data files](../data-files.md) for installation and validation guidance.

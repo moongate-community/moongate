@@ -189,5 +189,5 @@ the timer is discarded with the game loop. There is no cancel or restart subcomm
 
 In game only. The value is checked first; then a target cursor opens and the character or NPC
 you pick gets it: `Bran now has 10000 fame.` Picking an item or cancelling changes nothing. The
-paperdoll title follows at once: the [fame and karma prefix](data-files/titles.md), and `Lord` or
-`Lady` from 10,000 fame. The value is saved with the mobile by its next save.
+paperdoll title follows at once: the [fame and karma prefix](data-files/titles.md), which says
+`Lord` or `Lady` from 10,000 fame. The value is saved with the mobile by its next save.
