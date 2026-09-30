@@ -414,8 +414,10 @@ To produce these files from an existing UOX3 shard, see
 lights, furniture, teleporters and the like, about 40,500 placements in 100 files. It was
 converted once from ModernUO's `Data/Decoration`, one TOML file per source file, in one folder
 per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
-`tokuno/`, and the special sets `ruined_magincia_tram/`, `ruined_magincia_fel/` and
-`bounty_boards/`.
+`tokuno/`, and the special sets `_ruined_magincia_tram/`, `_ruined_magincia_fel/` and
+`_bounty_boards/`. A folder whose name starts with `_` is not loaded: rename it without the `_`
+to place its decoration. Files starting with `_` inside a loaded folder (the dungeons, such as
+`britannia/_covetous.toml`) are loaded.
 
 ```toml
 [[decoration]]
