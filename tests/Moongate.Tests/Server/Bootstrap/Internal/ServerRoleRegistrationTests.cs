@@ -147,6 +147,8 @@ public sealed class ServerRoleRegistrationTests
             Assert.IsType<NpcSenseService>(container.Resolve<INpcSenseService>());
             Assert.IsType<ItemScriptService>(container.Resolve<IItemScriptService>());
             Assert.IsType<ItemService>(container.Resolve<IItemService>());
+            Assert.IsType<ItemDecayQueue>(container.Resolve<IItemDecayQueue>());
+            Assert.NotNull(container.Resolve<ItemDecayService>());
             Assert.IsType<MobileService>(container.Resolve<IMobileService>());
             Assert.IsType<NpcHearingService>(container.Resolve<INpcSpeechListener>());
             Assert.Contains(container.ResolveMany<IMetricProvider>(), provider => provider.ProviderName == "npcs");
