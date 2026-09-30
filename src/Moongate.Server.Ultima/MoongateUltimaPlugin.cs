@@ -36,10 +36,10 @@ public class MoongateUltimaPlugin : IMoongatePlugin
         if ((mode & ServerMode.Game) != 0)
         {
             container.AddUltimaMotd()
-                     .AddUltimaDataLoaders()
-                     .AddUltimaGamePackets()
-                     .AddUltimaWorldServices()
-                     .AddUltimaCommands();
+                .AddUltimaDataLoaders()
+                .AddUltimaGamePackets()
+                .AddUltimaWorldServices()
+                .AddUltimaCommands();
         }
     }
 

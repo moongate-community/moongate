@@ -80,7 +80,8 @@ public sealed class EquipmentService : IEquipmentService
 
     private static bool IsWornFromThePaperdoll(LayerType layer)
     {
-        return layer is >= LayerType.OneHanded and <= LayerType.InnerLegs and
-                        not (LayerType.Hair or LayerType.FacialHair or LayerType.Backpack);
+        return layer is >= LayerType.OneHanded and
+            <= LayerType.InnerLegs and
+            not (LayerType.Hair or LayerType.FacialHair or LayerType.Backpack);
     }
 }
