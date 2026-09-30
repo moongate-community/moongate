@@ -1,0 +1,209 @@
+# ==============================================================================
+# Moongate - templates/decorations/malas/dark_tides_quest.toml
+#
+# What it is for:
+#   World decoration placed on Malas: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "a magical teleporter"
+type = "DarkTidesTeleporter"
+item_id = 0x1822
+locations = [
+    [2105, 1307, -50],
+    [2018, 1226, -90],
+    [1068, 458, -90],
+]
+
+[[decoration]]
+comment = "Mardoth"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Mardoth", count = 1, home_range = 0 }
+locations = [[2110, 1306, -50]]
+
+[[decoration]]
+comment = "Maabus coffin"
+type = "MaabusCoffin"
+item_id = 0x0000
+props = { spawn_location = [2024, 1224, -90] }
+locations = [[2023, 1223, -83]]
+
+[[decoration]]
+comment = "Horus"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Horus", count = 1, home_range = 0 }
+locations = [[1192, 513, -90]]
+
+[[decoration]]
+comment = "Crystal cave barrier"
+type = "CrystalCaveBarrier"
+item_id = 0x3967
+locations = [
+    [1193, 512, -90],
+    [1194, 512, -90],
+    [1195, 512, -90],
+    [1196, 512, -90],
+    [1197, 512, -90],
+]
+
+[[decoration]]
+comment = "Kronus scroll box"
+type = "KronusScrollBox"
+item_id = 0x0E80
+locations = [[1185, 451, -90]]
+
+[[decoration]]
+comment = "Vault of secrets barrier"
+type = "VaultOfSecretsBarrier"
+item_id = 0x049E
+locations = [
+    [1073, 450, -90],
+    [1073, 451, -90],
+    [1073, 452, -90],
+    [1078, 450, -90],
+    [1078, 451, -90],
+    [1078, 452, -90],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalChest"
+item_id = 0x09AB
+props = { hue = 0x0499 }
+locations = [
+    [1076, 453, -84],
+    [1076, 449, -84],
+]
+
+[[decoration]]
+comment = "Vault of secrets sign"
+type = "LocalizedSign"
+item_id = 0x0BD0
+props = { hue = 0x0482, label_number = 1060189 }
+locations = [[1079, 454, -84]]
+
+[[decoration]]
+comment = "crate"
+type = "MediumCrate"
+item_id = 0x0E3E
+locations = [
+    [1185, 450, -90],
+    [1185, 450, -87],
+    [1200, 438, -87],
+    [1203, 439, -90],
+    [1185, 454, -87],
+]
+
+[[decoration]]
+comment = "crate"
+type = "MediumCrate"
+item_id = 0x0E3F
+locations = [
+    [1185, 448, -90],
+    [1186, 439, -87],
+    [1201, 438, -87],
+    [1194, 447, -90],
+    [1194, 448, -90],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+props = { hue = 0x0835 }
+locations = [
+    [1185, 447, -90],
+    [1184, 446, -90],
+    [1184, 443, -86],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E41
+props = { hue = 0x0835 }
+locations = [
+    [1184, 445, -90],
+    [1188, 437, -90],
+    [1188, 437, -86],
+    [1189, 437, -90],
+    [1194, 438, -90],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+locations = [[1184, 444, -90]]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+props = { hue = 0x0849 }
+locations = [[1184, 443, -90]]
+
+[[decoration]]
+comment = "bookcase"
+type = "FullBookcase"
+item_id = 0x0A9A
+locations = [[1185, 440, -90]]
+
+[[decoration]]
+comment = "crate"
+type = "LargeCrate"
+item_id = 0x0E3D
+locations = [
+    [1186, 439, -90],
+    [1200, 438, -90],
+    [1201, 438, -90],
+    [1202, 439, -90],
+    [1202, 439, -87],
+    [1185, 454, -90],
+    [1185, 453, -90],
+    [1186, 453, -87],
+    [1186, 453, -90],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E41
+props = { hue = 0x0849 }
+locations = [
+    [1188, 437, -82],
+    [1190, 437, -90],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E41
+props = { hue = 0x0482 }
+locations = [[1189, 437, -86]]
+
+[[decoration]]
+comment = "small fish"
+type = "Static"
+item_id = 0x0DD9
+locations = [[1192, 438, -90]]
+
+[[decoration]]
+comment = "bookcase"
+type = "FullBookcase"
+item_id = 0x0A97
+locations = [[1197, 437, -90]]

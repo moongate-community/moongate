@@ -1,0 +1,60 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/camp2.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "wooden gate"
+type = "LightWoodGate"
+item_id = 0x0839
+props = { facing = "west_cw" }
+locations = [[1400, 433, -6]]
+
+[[decoration]]
+comment = "wooden gate"
+type = "LightWoodGate"
+item_id = 0x083B
+props = { facing = "east_ccw" }
+locations = [[1401, 433, -6]]
+
+[[decoration]]
+comment = "wooden gate"
+type = "LightWoodGate"
+item_id = 0x0841
+props = { facing = "south_cw" }
+locations = [[1395, 441, 13]]
+
+[[decoration]]
+comment = "wooden gate"
+type = "LightWoodGate"
+item_id = 0x0843
+props = { facing = "north_ccw" }
+locations = [[1395, 440, 13]]
+
+[[decoration]]
+comment = "wooden gate"
+type = "DarkWoodGate"
+item_id = 0x0866
+props = { facing = "west_cw" }
+locations = [[1390, 432, -16]]
+
+[[decoration]]
+comment = "bag"
+type = "Bag"
+item_id = 0x0E76
+props = { hue = 0x0010 }
+locations = [[1391, 439, 19]]

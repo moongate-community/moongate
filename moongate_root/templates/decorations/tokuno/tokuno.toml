@@ -1,0 +1,239 @@
+# ==============================================================================
+# Moongate - templates/decorations/tokuno/tokuno.toml
+#
+# What it is for:
+#   World decoration placed on Tokuno: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "ankh"
+type = "Static"
+item_id = 0x0002
+locations = [
+    [296, 712, 55],
+    [780, 1219, 46],
+    [1042, 508, 15],
+    [1051, 508, 15],
+]
+
+[[decoration]]
+comment = "ankh"
+type = "Static"
+item_id = 0x0003
+locations = [
+    [296, 711, 55],
+    [780, 1218, 46],
+    [1042, 507, 15],
+    [1051, 507, 15],
+]
+
+[[decoration]]
+comment = "ankh"
+type = "Static"
+item_id = 0x0004
+locations = [[717, 1158, 27]]
+
+[[decoration]]
+comment = "ankh"
+type = "Static"
+item_id = 0x0005
+locations = [[718, 1158, 27]]
+
+[[decoration]]
+comment = "backgammon board"
+type = "Backgammon"
+item_id = 0x0E1C
+locations = [[691, 1255, 48]]
+
+[[decoration]]
+comment = "backgammon game"
+type = "Backgammon"
+item_id = 0x0FAD
+locations = [[668, 1258, 47]]
+
+[[decoration]]
+comment = "archery butte"
+type = "ArcheryButte"
+item_id = 0x100B
+locations = [
+    [660, 1193, 25],
+    [663, 1193, 25],
+]
+
+[[decoration]]
+comment = "spinning wheel"
+type = "SpinningWheelEastAddon"
+item_id = 0x1019
+locations = [
+    [742, 1205, 25],
+    [749, 1203, 25],
+]
+
+[[decoration]]
+comment = "upright loom"
+type = "LoomEastAddon"
+item_id = 0x1060
+locations = [
+    [742, 1208, 25],
+    [742, 1219, 25],
+    [750, 1208, 25],
+]
+
+[[decoration]]
+comment = "upright loom"
+type = "LoomSouthAddon"
+item_id = 0x1061
+locations = [
+    [746, 1218, 25],
+    [746, 1213, 25],
+]
+
+[[decoration]]
+comment = "training dummy"
+type = "TrainingDummy"
+item_id = 0x1074
+locations = [
+    [662, 1206, 25],
+    [662, 1212, 25],
+]
+
+[[decoration]]
+comment = "Valor -> Shrine of Isamu"
+type = "LocalizedStatic"
+item_id = 0x14B7
+props = { label_number = 1070790 }
+locations = [[1050, 517, 15]]
+
+[[decoration]]
+comment = "Valor -> Shrine of Isamu"
+type = "LocalizedStatic"
+item_id = 0x14B8
+props = { label_number = 1070790 }
+locations = [[1050, 518, 15]]
+
+[[decoration]]
+comment = "Valor -> Shrine of Isamu"
+type = "LocalizedStatic"
+item_id = 0x14B9
+props = { label_number = 1070790 }
+locations = [[1051, 518, 15]]
+
+[[decoration]]
+comment = "Valor -> Shrine of Isamu"
+type = "LocalizedStatic"
+item_id = 0x14BA
+props = { label_number = 1070790 }
+locations = [[1051, 517, 15]]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x197A
+locations = [
+    [767, 1257, 25],
+    [767, 1262, 25],
+]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x197D
+locations = [[767, 1257, 25]]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x197E
+props = { light = "Circle300" }
+locations = [
+    [768, 1257, 25],
+    [768, 1262, 25],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x1982
+props = { light = "Circle300" }
+locations = [
+    [769, 1257, 25],
+    [769, 1262, 25],
+]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x1986
+locations = [
+    [638, 1204, 52],
+    [638, 1208, 32],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x198A
+props = { light = "Circle300" }
+locations = [
+    [638, 1205, 52],
+    [638, 1209, 32],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x198E
+props = { light = "Circle300" }
+locations = [[764, 1258, 25]]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x1991
+props = { light = "Circle300" }
+locations = [[764, 1258, 25]]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x1992
+locations = [
+    [638, 1207, 52],
+    [638, 1211, 32],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x1996
+props = { light = "Circle300" }
+locations = [
+    [638, 1206, 52],
+    [638, 1210, 32],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x199D
+props = { light = "Circle300" }
+locations = [[764, 1257, 25]]
+
+[[decoration]]
+comment = "May the town of Zento prosper.  Memorial tree planted by Dept and maha."
+type = "LocalizedStatic"
+item_id = 0x241A
+props = { label_number = 1063344 }
+locations = [[748, 1231, 25]]

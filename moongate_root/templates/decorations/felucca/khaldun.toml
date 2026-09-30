@@ -1,0 +1,1209 @@
+# ==============================================================================
+# Moongate - templates/decorations/felucca/khaldun.toml
+#
+# What it is for:
+#   World decoration placed on Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5572, 1307, 0] }
+locations = [[5543, 1355, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5412, 1396, 0] }
+locations = [[5527, 1340, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5396, 1297, 0] }
+locations = [[5557, 1317, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5620, 1341, 0] }
+locations = [[5566, 1337, 0]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5435, 1341, 0] }
+locations = [[5451, 1360, 5]]
+
+[[decoration]]
+comment = "teleporter"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [5436, 1341, 0] }
+locations = [[5453, 1360, 5]]
+
+[[decoration]]
+comment = "teleporter"
+type = "KhaldunPitTeleporter"
+item_id = 0x053B
+locations = [
+    [5479, 1348, 0],
+    [5479, 1346, 0],
+    [5478, 1348, 0],
+    [5478, 1347, 0],
+    [5478, 1346, 0],
+    [5477, 1347, 0],
+    [5477, 1348, 0],
+    [5479, 1347, 0],
+]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x1568
+locations = [
+    [5422, 1344, 0],
+    [5410, 1360, 0],
+    [5410, 1344, 0],
+]
+
+[[decoration]]
+comment = "tavara's journal"
+type = "TavarasJournal3"
+item_id = 0x0FF2
+locations = [[5486, 1295, 0]]
+
+[[decoration]]
+comment = "tavara's journal"
+type = "TavarasJournal11"
+item_id = 0x0FF2
+locations = [[5437, 1337, 0]]
+
+[[decoration]]
+comment = "tavara's journal"
+type = "TavarasJournal7"
+item_id = 0x0FF2
+locations = [[5440, 1290, 0]]
+
+[[decoration]]
+comment = "tavara's journal"
+type = "TavarasJournal1"
+item_id = 0x0FF1
+locations = [[5540, 1288, 0]]
+
+[[decoration]]
+comment = "tavara's journal"
+type = "TavarasJournal2"
+item_id = 0x0FF1
+locations = [[5531, 1303, 8]]
+
+[[decoration]]
+comment = "tavara's journal"
+type = "TavarasJournal6"
+item_id = 0x0FF1
+locations = [[5440, 1326, 0]]
+
+[[decoration]]
+comment = "tavara's journal"
+type = "TavarasJournal8"
+item_id = 0x0FF1
+locations = [[5394, 1312, 0]]
+
+[[decoration]]
+comment = "tavara's journal"
+type = "TavarasJournal9"
+item_id = 0x0FF1
+locations = [[5433, 1339, 0]]
+
+[[decoration]]
+comment = "crate"
+type = "SmallCrate"
+item_id = 0x0E7E
+locations = [
+    [5432, 1346, 6],
+    [5517, 1296, 4],
+]
+
+[[decoration]]
+comment = "crate"
+type = "MediumCrate"
+item_id = 0x0E3E
+locations = [
+    [5432, 1346, 3],
+    [5544, 1290, 3],
+    [5518, 1296, 1],
+]
+
+[[decoration]]
+comment = "crate"
+type = "LargeCrate"
+item_id = 0x0E3C
+locations = [
+    [5432, 1346, 0],
+    [5432, 1345, 6],
+    [5432, 1345, 3],
+    [5432, 1345, 0],
+    [5520, 1289, 0],
+]
+
+[[decoration]]
+comment = "scimitar"
+type = "Static"
+item_id = 0x13B6
+locations = [
+    [5405, 1352, 5],
+    [5405, 1352, 6],
+    [5409, 1352, 5],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+props = { hue = 0x0973 }
+locations = [
+    [5432, 1348, 5],
+    [5416, 1487, 0],
+    [5416, 1481, 0],
+    [5416, 1484, 0],
+    [5392, 1444, 0],
+    [5448, 1443, 0],
+]
+
+[[decoration]]
+comment = "sledge hammer"
+type = "Static"
+item_id = 0x0FB4
+locations = [
+    [5384, 1341, 5],
+    [5386, 1336, 5],
+    [5386, 1342, 0],
+]
+
+[[decoration]]
+comment = "magical door"
+type = "LocalizedStatic"
+item_id = 0x1EFC
+props = { label_number = 1016469 }
+locations = [
+    [5520, 1299, 10],
+    [5520, 1306, 10],
+]
+
+[[decoration]]
+comment = "viking sword"
+type = "Static"
+item_id = 0x13B9
+locations = [
+    [5407, 1352, 5],
+    [5391, 1340, 6],
+]
+
+[[decoration]]
+comment = "scimitar"
+type = "Static"
+item_id = 0x13B5
+locations = [
+    [5391, 1338, 5],
+    [5456, 1408, 4],
+    [5410, 1352, 5],
+    [5410, 1352, 6],
+    [5391, 1339, 5],
+]
+
+[[decoration]]
+comment = "magical door"
+type = "LocalizedStatic"
+item_id = 0x1EEA
+props = { label_number = 1016469 }
+locations = [
+    [5528, 1288, 10],
+    [5535, 1288, 10],
+    [5548, 1296, 10],
+    [5547, 1296, 10],
+]
+
+[[decoration]]
+comment = "bucket"
+type = "Static"
+item_id = 0x14E0
+locations = [[5539, 1288, 0]]
+
+[[decoration]]
+comment = "fur%s%"
+type = "Static"
+item_id = 0x11F7
+locations = [[5539, 1289, 0]]
+
+[[decoration]]
+comment = "fur%s%"
+type = "Static"
+item_id = 0x11F8
+locations = [[5540, 1291, 0]]
+
+[[decoration]]
+comment = "bone armor"
+type = "Static"
+item_id = 0x144F
+props = { hue = 0x0835 }
+locations = [
+    [5384, 1338, 5],
+    [5517, 1340, 5],
+]
+
+[[decoration]]
+comment = "bone gloves"
+type = "Static"
+item_id = 0x1450
+props = { hue = 0x0835 }
+locations = [
+    [5384, 1336, 5],
+    [5515, 1339, 5],
+]
+
+[[decoration]]
+comment = "bone leggings"
+type = "Static"
+item_id = 0x1452
+props = { hue = 0x0835 }
+locations = [[5385, 1336, 5]]
+
+[[decoration]]
+comment = "pickaxe"
+type = "Static"
+item_id = 0x0E86
+locations = [[5544, 1289, 9]]
+
+[[decoration]]
+comment = "bone armor"
+type = "Static"
+item_id = 0x1454
+props = { hue = 0x0835 }
+locations = [
+    [5391, 1336, 5],
+    [5389, 1336, 5],
+]
+
+[[decoration]]
+comment = "crate"
+type = "LargeCrate"
+item_id = 0x0E3D
+locations = [
+    [5544, 1289, 0],
+    [5544, 1289, 3],
+    [5544, 1290, 0],
+]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12CC
+props = { hue = 0x0978, label_number = 1016041 }
+locations = [[5431, 1287, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12CC
+props = { hue = 0x0978, label_number = 1016032 }
+locations = [[5395, 1311, 2]]
+
+[[decoration]]
+comment = "sparkle"
+type = "Static"
+item_id = 0x375A
+locations = [
+    [5557, 1316, 0],
+    [5543, 1355, 0],
+    [5527, 1340, 0],
+    [5566, 1336, 0],
+]
+
+[[decoration]]
+comment = "brass sign"
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { hue = 0x0835, label_number = 1016174 }
+locations = [[5448, 1483, -6]]
+
+[[decoration]]
+comment = "brass sign"
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { hue = 0x0835, label_number = 1016043 }
+locations = [[5452, 1481, -6]]
+
+[[decoration]]
+comment = "brass sign"
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { hue = 0x0835, label_number = 1016056 }
+locations = [[5456, 1483, -6]]
+
+[[decoration]]
+comment = "brass sign"
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { hue = 0x0835, label_number = 1016161 }
+locations = [[5445, 1487, -6]]
+
+[[decoration]]
+comment = "brass sign"
+type = "LocalizedSign"
+item_id = 0x0BD2
+props = { hue = 0x0835, label_number = 1016039 }
+locations = [[5459, 1487, -6]]
+
+[[decoration]]
+comment = "broadsword"
+type = "Static"
+item_id = 0x0F5F
+locations = [[5456, 1406, 4]]
+
+[[decoration]]
+comment = "swamp"
+type = "Static"
+item_id = 0x326A
+props = { hue = 0x0021, name = "Blood" }
+locations = [
+    [5606, 1344, 0],
+    [5604, 1344, 0],
+    [5604, 1342, 0],
+    [5422, 1491, 0],
+    [5423, 1492, 0],
+    [5421, 1491, 0],
+    [5423, 1491, 0],
+    [5422, 1489, 0],
+    [5420, 1490, 0],
+    [5423, 1489, 0],
+    [5424, 1490, 0],
+    [5424, 1491, 0],
+    [5606, 1343, 0],
+    [5606, 1342, 0],
+    [5605, 1342, 0],
+    [5605, 1344, 0],
+    [5423, 1490, 0],
+    [5604, 1343, 0],
+    [5605, 1343, 0],
+]
+
+[[decoration]]
+comment = "blank scroll%s%"
+type = "LocalizedStatic"
+item_id = 0x0E34
+props = { hue = 0x066D, label_number = 1016462 }
+locations = [[5561, 1352, 5]]
+
+[[decoration]]
+comment = "viking sword"
+type = "Static"
+item_id = 0x13BA
+locations = [
+    [5456, 1407, 4],
+    [5402, 1352, 6],
+    [5402, 1352, 7],
+    [5391, 1340, 5],
+    [5402, 1352, 5],
+]
+
+[[decoration]]
+comment = "blank scroll%s%"
+type = "LocalizedStatic"
+item_id = 0x0EF3
+props = { hue = 0x0978, label_number = 1016459 }
+locations = [[5562, 1352, 6]]
+
+[[decoration]]
+comment = "blank scroll%s%"
+type = "LocalizedStatic"
+item_id = 0x0EF3
+props = { hue = 0x08AE, label_number = 1016460 }
+locations = [[5562, 1352, 5]]
+
+[[decoration]]
+comment = "kryss"
+type = "Static"
+item_id = 0x1400
+locations = [
+    [5564, 1352, 5],
+    [5616, 1331, 6],
+]
+
+[[decoration]]
+comment = "skull"
+type = "Static"
+item_id = 0x1AE2
+locations = [
+    [5369, 1343, 16],
+    [5369, 1343, 6],
+    [5369, 1368, 22],
+    [5369, 1368, 11],
+    [5369, 1343, 22],
+    [5369, 1368, 16],
+    [5369, 1368, 6],
+    [5369, 1343, 11],
+]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12D3
+props = { hue = 0x0978, label_number = 1016023 }
+locations = [[5391, 1296, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12D3
+props = { hue = 0x0978, label_number = 1016025 }
+locations = [[5407, 1308, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x1265
+props = { hue = 0x0978, label_number = 1016023 }
+locations = [[5391, 1297, 2]]
+
+[[decoration]]
+comment = "bone gloves"
+type = "Static"
+item_id = 0x1455
+props = { hue = 0x0835 }
+locations = [[5391, 1338, 6]]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x1563
+locations = [[5416, 1359, 0]]
+
+[[decoration]]
+comment = "glowing rune"
+type = "Static"
+item_id = 0x0E68
+locations = [
+    [5453, 1360, 5],
+    [5451, 1360, 5],
+]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x156A
+locations = [[5416, 1356, 0]]
+
+[[decoration]]
+comment = "mushroom"
+type = "Static"
+item_id = 0x0D18
+locations = [
+    [5480, 1329, 0],
+    [5473, 1329, 0],
+]
+
+[[decoration]]
+comment = "skull mug"
+type = "Static"
+item_id = 0x0FFB
+locations = [[5544, 1290, 7]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12CF
+props = { hue = 0x0978, label_number = 1016026 }
+locations = [[5441, 1287, 3]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12CF
+props = { hue = 0x0978, label_number = 1016029 }
+locations = [[5556, 1313, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12D0
+props = { hue = 0x0978, label_number = 1016026 }
+locations = [
+    [5443, 1287, 3],
+    [5442, 1287, 3],
+]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12D0
+props = { hue = 0x0978, label_number = 1016029 }
+locations = [[5557, 1313, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12CE
+props = { hue = 0x0978, label_number = 1016029 }
+locations = [[5558, 1313, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12CE
+props = { hue = 0x0978, label_number = 1016041 }
+locations = [[5433, 1287, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12CE
+props = { hue = 0x0978, label_number = 1016032 }
+locations = [[5397, 1311, 2]]
+
+[[decoration]]
+comment = "puzzlechest"
+type = "MetalGoldenPuzzleChest"
+item_id = 0x0E40
+props = { hue = 0x0839 }
+locations = [[5392, 1468, 0]]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+props = { hue = 0x096F }
+locations = [[5400, 1408, 5]]
+
+[[decoration]]
+comment = "skull with candle"
+type = "CandleSkull"
+item_id = 0x1854
+locations = [
+    [5400, 1410, 5],
+    [5432, 1343, 5],
+    [5432, 1337, 7],
+    [5435, 1339, 5],
+    [5432, 1340, 5],
+    [5434, 1336, 20],
+    [5400, 1405, 5],
+    [5515, 1338, 5],
+    [5525, 1352, 6],
+    [5389, 1343, 5],
+    [5547, 1330, 6],
+    [5547, 1334, 6],
+    [5396, 1290, 20],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+locations = [
+    [5456, 1367, 0],
+    [5456, 1362, 0],
+    [5448, 1362, 0],
+    [5448, 1371, 0],
+    [5610, 1339, 0],
+]
+
+[[decoration]]
+comment = "khaldun puzzle chest"
+type = "MetalGoldenPuzzleChest"
+item_id = 0x0E40
+locations = [
+    [5448, 1367, 0],
+    [5610, 1343, 0],
+]
+
+[[decoration]]
+comment = "skull with candle"
+type = "CandleSkull"
+item_id = 0x1858
+locations = [
+    [5439, 1337, 5],
+    [5439, 1343, 5],
+    [5439, 1340, 5],
+    [5437, 1336, 5],
+    [5516, 1340, 5],
+    [5550, 1334, 6],
+    [5550, 1330, 6],
+    [5547, 1332, 6],
+    [5389, 1348, 5],
+]
+
+[[decoration]]
+comment = "spike trap"
+type = "GiantSpikeTrap"
+item_id = 0x0000
+locations = [
+    [5442, 1395, 0],
+    [5443, 1395, 0],
+    [5444, 1395, 0],
+    [5445, 1395, 0],
+]
+
+[[decoration]]
+comment = "mushroom"
+type = "Static"
+item_id = 0x0D19
+locations = [[5472, 1335, 0]]
+
+[[decoration]]
+comment = "coffin"
+type = "Static"
+item_id = 0x1C53
+locations = [[5491, 1393, -4]]
+
+[[decoration]]
+comment = "coffin"
+type = "Static"
+item_id = 0x1C52
+locations = [[5491, 1392, -4]]
+
+[[decoration]]
+comment = "double axe"
+type = "Static"
+item_id = 0x0F4C
+locations = [
+    [5456, 1409, 3],
+    [5408, 1352, 5],
+]
+
+[[decoration]]
+comment = "kryss"
+type = "Static"
+item_id = 0x1401
+locations = [
+    [5523, 1352, 5],
+    [5623, 1330, 5],
+]
+
+[[decoration]]
+comment = "stone pavers"
+type = "Static"
+item_id = 0x0519
+locations = [
+    [5491, 1394, -7],
+    [5491, 1393, -7],
+    [5491, 1392, -7],
+]
+
+[[decoration]]
+comment = "stone wall"
+type = "Static"
+item_id = 0x01D0
+locations = [[5524, 1367, -20]]
+
+[[decoration]]
+comment = "cutlass"
+type = "Static"
+item_id = 0x1440
+locations = [
+    [5456, 1411, 5],
+    [5616, 1328, 5],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E41
+locations = [
+    [5605, 1348, 2],
+    [5542, 1287, 0],
+]
+
+[[decoration]]
+comment = "flask"
+type = "Static"
+item_id = 0x1841
+locations = [[5432, 1338, 5]]
+
+[[decoration]]
+comment = "mortar and pestle"
+type = "Static"
+item_id = 0x0E9B
+locations = [[5432, 1339, 5]]
+
+[[decoration]]
+comment = "scales"
+type = "Static"
+item_id = 0x1852
+locations = [[5432, 1342, 5]]
+
+[[decoration]]
+comment = "book"
+type = "LocalizedStatic"
+item_id = 0x0FF4
+props = { label_number = 1016445 }
+locations = [[5436, 1340, 5]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x121E
+props = { label_number = 1016028 }
+locations = [[5406, 1295, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x121E
+props = { label_number = 1016027 }
+locations = [[5573, 1299, 34]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x121F
+props = { label_number = 1016028 }
+locations = [[5407, 1295, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x121F
+props = { label_number = 1016027 }
+locations = [[5574, 1299, 34]]
+
+[[decoration]]
+comment = "shovel"
+type = "Static"
+item_id = 0x0F3A
+locations = [[5537, 1298, 0]]
+
+[[decoration]]
+comment = "pickaxe"
+type = "Static"
+item_id = 0x0E85
+locations = [[5536, 1299, 4]]
+
+[[decoration]]
+comment = "platemail gloves"
+type = "Static"
+item_id = 0x1414
+locations = [[5391, 1343, 5]]
+
+[[decoration]]
+comment = "bone arms"
+type = "Static"
+item_id = 0x1453
+props = { hue = 0x0835 }
+locations = [[5384, 1339, 5]]
+
+[[decoration]]
+comment = "swamp"
+type = "Static"
+item_id = 0x326D
+props = { hue = 0x0021, name = "Blood" }
+locations = [
+    [5424, 1489, 0],
+    [5420, 1492, 0],
+    [5421, 1492, 0],
+    [5421, 1489, 0],
+]
+
+[[decoration]]
+comment = "swamp"
+type = "Static"
+item_id = 0x326E
+props = { hue = 0x0021, name = "Blood" }
+locations = [
+    [5424, 1488, 0],
+    [5422, 1488, 0],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E41
+props = { hue = 0x0973 }
+locations = [
+    [5416, 1343, 5],
+    [5444, 1392, 5],
+    [5443, 1392, 5],
+    [5442, 1392, 5],
+    [5445, 1392, 20],
+    [5443, 1392, 20],
+    [5442, 1392, 20],
+    [5445, 1392, 5],
+    [5418, 1343, 5],
+    [5444, 1392, 20],
+    [5420, 1440, 0],
+]
+
+[[decoration]]
+comment = "blank scroll%s%"
+type = "Static"
+item_id = 0x0EF3
+locations = [[5436, 1336, 7]]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+props = { hue = 0x0974 }
+locations = [[5400, 1407, 5]]
+
+[[decoration]]
+comment = "light"
+type = "Static"
+item_id = 0x1ED0
+props = { light = "Circle300" }
+locations = [
+    [5536, 1337, 0],
+    [5537, 1336, 0],
+    [5537, 1337, 0],
+    [5536, 1336, 0],
+]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x121D
+props = { label_number = 1016028 }
+locations = [[5405, 1295, 2]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x121D
+props = { label_number = 1016027 }
+locations = [[5572, 1299, 34]]
+
+[[decoration]]
+comment = "executioner's axe"
+type = "Static"
+item_id = 0x0F45
+locations = [[5456, 1409, 3]]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x1566
+locations = [[5416, 1358, 0]]
+
+[[decoration]]
+comment = "large battle axe"
+type = "Static"
+item_id = 0x13FA
+props = { hue = 0x0835 }
+locations = [[5395, 1448, 5]]
+
+[[decoration]]
+comment = "dagger"
+type = "Static"
+item_id = 0x0F52
+locations = [[5623, 1329, 5]]
+
+[[decoration]]
+comment = "bone legs"
+type = "Static"
+item_id = 0x1457
+props = { hue = 0x0835 }
+locations = [[5517, 1338, 5]]
+
+[[decoration]]
+comment = "bone arms"
+type = "Static"
+item_id = 0x144E
+props = { hue = 0x0835 }
+locations = [[5516, 1339, 5]]
+
+[[decoration]]
+comment = "viking sword"
+type = "Static"
+item_id = 0x13BA
+props = { hue = 0x0835 }
+locations = [[5517, 1339, 5]]
+
+[[decoration]]
+comment = "khaldun puzzle chest"
+type = "StrongBoxPuzzle"
+item_id = 0x0E80
+props = { hue = 0x066D }
+locations = [[5537, 1337, 9]]
+
+[[decoration]]
+comment = "candelabra"
+type = "Candelabra"
+item_id = 0x0B1D
+locations = [[5470, 1331, 0]]
+
+[[decoration]]
+comment = "candle"
+type = "Static"
+item_id = 0x0A0F
+props = { light = "Circle150" }
+locations = [[5451, 1375, -3]]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x1562
+locations = [[5416, 1354, 0]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12CD
+props = { hue = 0x0978, label_number = 1016041 }
+locations = [[5432, 1287, 2]]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x156B
+locations = [[5416, 1355, 0]]
+
+[[decoration]]
+comment = "statue"
+type = "Static"
+item_id = 0x139D
+props = { hue = 0x096E }
+locations = [[5491, 1395, 6]]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+props = { hue = 0x0962 }
+locations = [[5400, 1409, 5]]
+
+[[decoration]]
+comment = "Corpser Frame"
+type = "LocalizedStatic"
+item_id = 0x20D2
+props = { hue = 0x0482, label_number = 1016465 }
+locations = [[5564, 1354, 6]]
+
+[[decoration]]
+comment = "fur%s%"
+type = "Static"
+item_id = 0x11F6
+locations = [[5543, 1291, 0]]
+
+[[decoration]]
+comment = "bellows"
+type = "LargeForgeEastAddon"
+item_id = 0x1986
+locations = [[5387, 1339, 0]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x12D4
+props = { hue = 0x0978, label_number = 1016025 }
+locations = [[5407, 1307, 2]]
+
+[[decoration]]
+comment = "blank scroll%s%"
+type = "LocalizedStatic"
+item_id = 0x0E34
+props = { label_number = 1016461 }
+locations = [[5566, 1352, 5]]
+
+[[decoration]]
+comment = "platemail gloves"
+type = "Static"
+item_id = 0x1418
+locations = [[5391, 1341, 5]]
+
+[[decoration]]
+comment = "swamp"
+type = "Static"
+item_id = 0x326B
+props = { hue = 0x0021, name = "Blood" }
+locations = [[5420, 1489, 0]]
+
+[[decoration]]
+comment = "statue"
+type = "Static"
+item_id = 0x1226
+locations = [[5552, 1333, 16]]
+
+[[decoration]]
+comment = "lantern"
+type = "Static"
+item_id = 0x0A25
+locations = [[5543, 1287, 5]]
+
+[[decoration]]
+comment = "khaldun puzzle chest"
+type = "MetalGoldenPuzzleChest"
+item_id = 0x0E7C
+props = { hue = 0x089E }
+locations = [
+    [5445, 1503, 0],
+    [5457, 1503, 0],
+]
+
+[[decoration]]
+comment = "wave"
+type = "Static"
+item_id = 0x1FBC
+props = { hue = 0x0021, name = "Blood" }
+locations = [[5422, 1491, 0]]
+
+[[decoration]]
+comment = "wooden chest"
+type = "WoodenChest"
+item_id = 0x0E43
+locations = [
+    [5541, 1287, 4],
+    [5541, 1287, 0],
+]
+
+[[decoration]]
+comment = "swamp"
+type = "Static"
+item_id = 0x3241
+props = { hue = 0x0021, name = "Blood" }
+locations = [
+    [5423, 1488, 0],
+    [5422, 1492, 0],
+]
+
+[[decoration]]
+comment = "swamp"
+type = "Static"
+item_id = 0x3228
+props = { hue = 0x0021, name = "Blood" }
+locations = [[5420, 1491, 0]]
+
+[[decoration]]
+comment = "no draw"
+type = "Static"
+item_id = 0x21A4
+props = { hue = 0x0044 }
+locations = [[5392, 1290, 0]]
+
+[[decoration]]
+comment = "wave"
+type = "Static"
+item_id = 0x1FA3
+props = { hue = 0x0021, name = "Blood" }
+locations = [[5422, 1489, 0]]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x1567
+locations = [[5416, 1357, 0]]
+
+[[decoration]]
+comment = "axe"
+type = "Static"
+item_id = 0x0F4A
+locations = [[5456, 1410, 3]]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x1569
+locations = [
+    [5411, 1360, 0],
+    [5411, 1344, 0],
+    [5423, 1344, 0],
+]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x1560
+locations = [[5414, 1360, 0]]
+
+[[decoration]]
+comment = "table"
+type = "Static"
+item_id = 0x0B34
+locations = [[5517, 1296, 0]]
+
+[[decoration]]
+comment = "Pot%s% of Wax"
+type = "LocalizedStatic"
+item_id = 0x142A
+props = { hue = 0x0835, label_number = 1016518 }
+locations = [[5389, 1347, 5]]
+
+[[decoration]]
+comment = "coffin"
+type = "Static"
+item_id = 0x1C54
+locations = [[5491, 1394, -5]]
+
+[[decoration]]
+comment = "swamp"
+type = "Static"
+item_id = 0x3236
+props = { hue = 0x0021, name = "Blood" }
+locations = [[5422, 1490, 0]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x1220
+props = { label_number = 1016030 }
+locations = [[5417, 1295, 3]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x1221
+props = { label_number = 1016030 }
+locations = [[5418, 1295, 3]]
+
+[[decoration]]
+comment = "wall carving"
+type = "LocalizedStatic"
+item_id = 0x1222
+props = { label_number = 1016030 }
+locations = [[5419, 1295, 3]]
+
+[[decoration]]
+comment = "blank scroll%s%"
+type = "LocalizedStatic"
+item_id = 0x0EF3
+props = { hue = 0x044E, label_number = 1016463 }
+locations = [[5562, 1352, 7]]
+
+[[decoration]]
+comment = "statue"
+type = "Static"
+item_id = 0x139B
+locations = [[5552, 1331, 16]]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x155E
+locations = [[5400, 1350, 0]]
+
+[[decoration]]
+comment = "decorative weapons"
+type = "Static"
+item_id = 0x155F
+locations = [[5400, 1347, 0]]
+
+[[decoration]]
+comment = "stone"
+type = "Static"
+item_id = 0x0788
+props = { hue = 0x0001 }
+locations = [[5564, 1354, -3]]

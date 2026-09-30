@@ -1,0 +1,107 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/savagecamp.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "tribal berry"
+type = "TribalBerry"
+item_id = 0x09D0
+locations = [
+    [1258, 752, -74],
+    [1259, 752, -72],
+    [1264, 752, -74],
+    [1267, 752, -73],
+]
+
+[[decoration]]
+comment = "tribal paint"
+type = "TribalPaint"
+item_id = 0x09EC
+locations = [[1259, 765, -74]]
+
+[[decoration]]
+comment = "horse dung"
+type = "Static"
+item_id = 0x0F3B
+locations = [[1276, 785, -80]]
+
+[[decoration]]
+comment = "horse dung"
+type = "Static"
+item_id = 0x0F3C
+locations = [[1287, 777, -80]]
+
+[[decoration]]
+comment = "spear"
+type = "Static"
+item_id = 0x0F62
+locations = [
+    [1270, 756, -71],
+    [1270, 756, -70],
+]
+
+[[decoration]]
+comment = "mask of orcish kin"
+type = "OrcishKinMask"
+item_id = 0x141B
+locations = [
+    [1255, 755, -74],
+    [1255, 760, -74],
+    [1255, 761, -74],
+]
+
+[[decoration]]
+comment = "tribal mask"
+type = "SavageMask"
+item_id = 0x154B
+props = { hue = 0x084C }
+locations = [
+    [1248, 702, -74],
+    [1258, 765, -74],
+]
+
+[[decoration]]
+comment = "tribal mask"
+type = "SavageMask"
+item_id = 0x154B
+props = { hue = 0x084E }
+locations = [[1260, 765, -74]]
+
+[[decoration]]
+comment = "tribal mask"
+type = "SavageMask"
+item_id = 0x154C
+props = { hue = 0x0845 }
+locations = [[1266, 765, -74]]
+
+[[decoration]]
+comment = "tribal mask"
+type = "SavageMask"
+item_id = 0x154C
+props = { hue = 0x0851 }
+locations = [[1257, 765, -74]]
+
+[[decoration]]
+comment = "bolas"
+type = "Bola"
+item_id = 0x26AC
+locations = [
+    [1211, 742, -74],
+    [1217, 740, -74],
+    [1270, 762, -74],
+]

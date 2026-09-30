@@ -1,0 +1,205 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/camp.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "wooden gate"
+type = "LightWoodGate"
+item_id = 0x0839
+props = { facing = "west_cw" }
+locations = [
+    [1234, 543, -6],
+    [1253, 588, -11],
+]
+
+[[decoration]]
+comment = "wooden gate"
+type = "LightWoodGate"
+item_id = 0x083B
+props = { facing = "east_ccw" }
+locations = [
+    [1235, 543, -6],
+    [1254, 588, -11],
+]
+
+[[decoration]]
+comment = "wooden gate"
+type = "LightWoodGate"
+item_id = 0x0841
+props = { facing = "south_cw" }
+locations = [[1227, 555, -11]]
+
+[[decoration]]
+comment = "wooden gate"
+type = "LightWoodGate"
+item_id = 0x0843
+props = { facing = "north_ccw" }
+locations = [[1227, 554, -11]]
+
+[[decoration]]
+comment = "wooden gate"
+type = "DarkWoodGate"
+item_id = 0x0872
+props = { facing = "south_ccw" }
+locations = [[1229, 563, -19]]
+
+[[decoration]]
+comment = "flowstone"
+type = "Static"
+item_id = 0x08E2
+locations = [
+    [1237, 582, -19],
+    [1237, 586, -19],
+]
+
+[[decoration]]
+comment = "pickaxe"
+type = "Static"
+item_id = 0x0E85
+locations = [[1238, 580, -19]]
+
+[[decoration]]
+comment = "pickaxe"
+type = "Static"
+item_id = 0x0E86
+locations = [[1239, 586, -19]]
+
+[[decoration]]
+comment = "anvil"
+type = "AnvilEastAddon"
+item_id = 0x0FAF
+locations = [[1260, 583, -19]]
+
+[[decoration]]
+comment = "tapestry"
+type = "Static"
+item_id = 0x0FE3
+props = { hue = 0x0001, name = "a cave entrance" }
+locations = [[1237, 585, -22]]
+
+[[decoration]]
+comment = "tapestry"
+type = "Static"
+item_id = 0x0FE4
+props = { hue = 0x0001, name = "a cave entrance" }
+locations = [[1237, 583, -22]]
+
+[[decoration]]
+comment = "boulder"
+type = "Static"
+item_id = 0x1355
+locations = [[1237, 585, 5]]
+
+[[decoration]]
+comment = "boulder"
+type = "Static"
+item_id = 0x1356
+locations = [[1237, 584, 5]]
+
+[[decoration]]
+comment = "boulder"
+type = "Static"
+item_id = 0x1361
+locations = [[1236, 586, -6]]
+
+[[decoration]]
+comment = "boulder"
+type = "Static"
+item_id = 0x1362
+locations = [[1237, 586, -6]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1363
+locations = [[1237, 582, -1]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1364
+locations = [[1237, 583, 4]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x136B
+locations = [[1237, 583, 1]]
+
+[[decoration]]
+comment = "rocks"
+type = "Static"
+item_id = 0x136D
+locations = [[1237, 586, 1]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1772
+locations = [[1237, 583, 1]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1773
+locations = [[1237, 585, 0]]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1775
+locations = [
+    [1237, 585, 4],
+    [1237, 586, 3],
+]
+
+[[decoration]]
+comment = "rock"
+type = "Static"
+item_id = 0x1777
+locations = [[1236, 584, -1]]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x197A
+locations = [[1258, 585, -19]]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x197E
+props = { light = "Circle300" }
+locations = [[1259, 585, -19]]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x1982
+locations = [[1260, 585, -19]]
+
+[[decoration]]
+comment = "nodraw--surface"
+type = "Static"
+item_id = 0x2198
+locations = [
+    [1139, 592, -80],
+    [1140, 592, -80],
+    [1141, 592, -80],
+    [1142, 592, -80],
+]

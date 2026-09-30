@@ -1,0 +1,136 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/yew.toml
+#
+# What it is for:
+#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "ankh"
+type = "AnkhNorth"
+item_id = 0x0004
+locations = [[634, 816, 0]]
+
+[[decoration]]
+comment = "book"
+type = "MyStory"
+item_id = 0x0FEF
+locations = [[337, 875, 0]]
+
+[[decoration]]
+comment = "book"
+type = "TaleOfThreeTribes"
+item_id = 0x0FEF
+locations = [[472, 840, 0]]
+
+[[decoration]]
+comment = "book"
+type = "TamingDragons"
+item_id = 0x0FEF
+locations = [[624, 836, 0]]
+
+[[decoration]]
+comment = "book"
+type = "RegardingLlamas"
+item_id = 0x0FEF
+locations = [[624, 842, 0]]
+
+[[decoration]]
+comment = "book"
+type = "QuestOfVirtues"
+item_id = 0x0FEF
+locations = [[627, 841, 0]]
+
+[[decoration]]
+comment = "book"
+type = "DeceitDungeonOfHorror"
+item_id = 0x0FEF
+locations = [[641, 852, 0]]
+
+[[decoration]]
+comment = "book"
+type = "WildGirlOfTheForest"
+item_id = 0x0FF0
+locations = [[337, 873, 0]]
+
+[[decoration]]
+comment = "book"
+type = "VirtueBook"
+item_id = 0x0FF0
+locations = [[337, 875, 20]]
+
+[[decoration]]
+comment = "book"
+type = "LifeOfATravellingMinstrel"
+item_id = 0x0FF0
+locations = [[338, 884, 20]]
+
+[[decoration]]
+comment = "book"
+type = "RedBook"
+item_id = 0x0FF1
+locations = [
+    [336, 877, 6],
+    [337, 883, 20],
+    [338, 873, 20],
+    [476, 840, 0],
+    [625, 852, 0],
+    [628, 836, 0],
+    [640, 819, 26],
+    [641, 849, 0],
+    [643, 850, 6],
+]
+
+[[decoration]]
+comment = "book"
+type = "BlueBook"
+item_id = 0x0FF2
+locations = [
+    [337, 873, 20],
+    [339, 883, 0],
+    [625, 832, 0],
+    [628, 848, 0],
+    [630, 819, 26],
+]
+
+[[decoration]]
+comment = "book"
+type = "MajorTradeAssociation"
+item_id = 0x0FF4
+locations = [[336, 877, 26]]
+
+[[decoration]]
+comment = "book"
+type = "ChildrenTalesVol2"
+item_id = 0x0FF4
+locations = [[338, 873, 0]]
+
+[[decoration]]
+comment = "book"
+type = "TheFight"
+item_id = 0x0FF4
+locations = [[473, 842, 0]]
+
+[[decoration]]
+comment = "book"
+type = "EthicalHedonism"
+item_id = 0x0FF4
+locations = [[562, 810, 4]]
+
+[[decoration]]
+comment = "book"
+type = "GrammarOfOrcish"
+item_id = 0x0FF4
+locations = [[631, 819, 26]]

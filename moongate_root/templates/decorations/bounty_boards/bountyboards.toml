@@ -1,0 +1,55 @@
+# ==============================================================================
+# Moongate - templates/decorations/bounty_boards/bountyboards.toml
+#
+# What it is for:
+#   World decoration placed on Felucca, the bounty boards: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "0x1E5E = east-facing, 0x1E5F = south-facing"
+type = "BountyBoard"
+item_id = 0x1E5E
+locations = [
+    [2887, 3482, 17],
+    [2734, 2184, 0],
+    [2891, 680, 0],
+    [5668, 3123, 13],
+]
+
+[[decoration]]
+type = "BountyBoard"
+item_id = 0x1E5F
+locations = [
+    [5278, 3981, 37],
+    [1442, 1687, 0],
+    [2512, 551, 0],
+    [600, 2147, 0],
+]
+
+[[decoration]]
+comment = "Guards — one per board, standing in front"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "WarriorGuard", count = 1, home_range = 0, walking_range = 5, name = "Bounty Board Guard Spawner" }
+locations = [
+    [2887, 3487, 17],
+    [2734, 2189, 0],
+    [2891, 685, 0],
+    [5668, 3128, 13],
+    [5283, 3981, 37],
+    [1447, 1687, 0],
+    [2517, 551, 0],
+    [605, 2147, 0],
+]

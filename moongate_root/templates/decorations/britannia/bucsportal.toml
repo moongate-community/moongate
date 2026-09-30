@@ -1,0 +1,203 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/bucsportal.toml
+#
+# What it is for:
+#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "##############"
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [2727, 2133, 5] }
+locations = [[2618, 977, 5]]
+
+[[decoration]]
+type = "Teleporter"
+item_id = 0x1BC3
+props = { point_dest = [2618, 977, 5] }
+locations = [[2727, 2133, 5]]
+
+[[decoration]]
+comment = "sign"
+type = "Static"
+item_id = 0x0BD0
+props = { name = "to the Mainland" }
+locations = [[2728, 2133, 25]]
+
+[[decoration]]
+comment = "stone"
+type = "Static"
+item_id = 0x071E
+locations = [
+    [2726, 2133, 0],
+    [2727, 2131, 0],
+    [2727, 2131, 5],
+    [2727, 2131, 10],
+    [2727, 2131, 15],
+    [2727, 2131, 20],
+    [2727, 2131, 25],
+    [2727, 2132, 0],
+    [2727, 2132, 30],
+    [2727, 2133, 0],
+    [2727, 2133, 30],
+    [2727, 2133, 35],
+    [2727, 2134, 0],
+    [2727, 2134, 30],
+    [2727, 2135, 0],
+    [2727, 2135, 5],
+    [2727, 2135, 10],
+    [2727, 2135, 15],
+    [2727, 2135, 20],
+    [2727, 2135, 25],
+    [2728, 2133, 0],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x071F
+locations = [
+    [2727, 2134, 35],
+    [2727, 2135, 30],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x0737
+locations = [
+    [2727, 2131, 30],
+    [2727, 2132, 35],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A0
+locations = [[2726, 2132, 0]]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A1
+locations = [[2728, 2134, 0]]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A2
+locations = [[2728, 2132, 0]]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07DA
+locations = [[2726, 2134, 0]]
+
+[[decoration]]
+comment = "sign"
+type = "Static"
+item_id = 0x0BCF
+props = { name = "to Buccaneer's Den" }
+locations = [[2618, 978, 25]]
+
+[[decoration]]
+comment = "stone"
+type = "Static"
+item_id = 0x07A3
+locations = [
+    [2616, 977, 0],
+    [2616, 977, 5],
+    [2616, 977, 10],
+    [2616, 977, 15],
+    [2616, 977, 20],
+    [2616, 977, 25],
+    [2617, 977, 0],
+    [2617, 977, 30],
+    [2618, 977, 0],
+    [2618, 977, 30],
+    [2618, 977, 35],
+    [2619, 977, 0],
+    [2619, 977, 30],
+    [2620, 977, 0],
+    [2620, 977, 5],
+    [2620, 977, 10],
+    [2620, 977, 15],
+    [2620, 977, 20],
+    [2620, 977, 25],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A4
+locations = [
+    [2617, 978, 0],
+    [2618, 978, 0],
+    [2619, 978, 0],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A5
+locations = [
+    [2619, 977, 35],
+    [2620, 977, 30],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A6
+locations = [
+    [2617, 976, 0],
+    [2618, 976, 0],
+    [2619, 976, 0],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A7
+locations = [
+    [2616, 977, 30],
+    [2617, 977, 35],
+]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A8
+locations = [[2616, 976, 0]]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07A9
+locations = [[2620, 978, 0]]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07AA
+locations = [[2620, 976, 0]]
+
+[[decoration]]
+comment = "stone stairs"
+type = "Static"
+item_id = 0x07AB
+locations = [[2616, 978, 0]]

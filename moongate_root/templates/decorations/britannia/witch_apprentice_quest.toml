@@ -1,0 +1,95 @@
+# ==============================================================================
+# Moongate - templates/decorations/britannia/witch_apprentice_quest.toml
+#
+# What it is for:
+#   World decoration placed on Trammel and Felucca: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "Grizelda"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Grizelda", count = 1, home_range = 0 }
+locations = [[850, 1544, 0]]
+
+[[decoration]]
+comment = "Captain Blackheart"
+type = "Spawner"
+item_id = 0x1F13
+props = { spawn = "Blackheart", count = 1, home_range = 0 }
+locations = [[2679, 2234, 2]]
+
+[[decoration]]
+comment = "barrel"
+type = "Barrel"
+item_id = 0x0E77
+locations = [
+    [844, 1547, 0],
+    [860, 1547, 0],
+]
+
+[[decoration]]
+comment = "lantern"
+type = "Lantern"
+item_id = 0x0A15
+locations = [[851, 1537, 0]]
+
+[[decoration]]
+comment = "grasses"
+type = "Static"
+item_id = 0x0CB5
+locations = [[851, 1549, 0]]
+
+[[decoration]]
+comment = "empty tub"
+type = "Static"
+item_id = 0x0E83
+locations = [[855, 1534, 0]]
+
+[[decoration]]
+comment = "sledge hammer"
+type = "Static"
+item_id = 0x0FB4
+locations = [[856, 1537, 0]]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalChest"
+item_id = 0x09AB
+locations = [[858, 1538, 0]]
+
+[[decoration]]
+comment = "pitchfork"
+type = "Pitchfork"
+item_id = 0x0E87
+locations = [[861, 1546, 0]]
+
+[[decoration]]
+comment = "stew"
+type = "Static"
+item_id = 0x0970
+locations = [[849, 1544, 8]]
+
+[[decoration]]
+comment = "fire pit"
+type = "Static"
+item_id = 0x0FAC
+locations = [[849, 1544, 0]]
+
+[[decoration]]
+comment = "cauldron"
+type = "Static"
+item_id = 0x0974
+locations = [[849, 1544, 0]]

@@ -1,0 +1,322 @@
+# ==============================================================================
+# Moongate - templates/decorations/ilshenar/gargoylecity.toml
+#
+# What it is for:
+#   World decoration placed on Ilshenar: doors, signs, lights, furniture and
+#   the other items the client's map files do not hold. Each block is one kind
+#   of item placed at every location it lists.
+#
+# Fields:
+#   comment    what the block places, when the data names it
+#   type       the kind of decoration, such as Static, MetalDoor or LocalizedSign
+#   item_id    the graphic; unset for an addon built from several graphics
+#   props      the kind's settings, such as hue, name, facing (DoorFacingType),
+#              label_number or point_dest
+#   args       settings given without a name
+#   locations  [x, y, z] of every item of the block
+#   extras     a setting per location, in the order of locations, when the kind has one
+# ==============================================================================
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0675
+props = { facing = "west_cw", hue = 0x0835 }
+locations = [[856, 677, -40]]
+
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"
+item_id = 0x0677
+props = { facing = "east_ccw", hue = 0x0835 }
+locations = [[853, 672, -40]]
+
+[[decoration]]
+comment = "metal door"
+type = "Static"
+item_id = 0x067B
+props = { facing = "east_cw", hue = 0x0835 }
+locations = [
+    [856, 606, -40],
+    [859, 611, -40],
+]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor2"
+item_id = 0x1FED
+props = { facing = "west_cw", hue = 0x0835 }
+locations = [[892, 674, -40]]
+
+[[decoration]]
+comment = "barred metal door"
+type = "BarredMetalDoor2"
+item_id = 0x1FF5
+props = { facing = "south_cw", hue = 0x0835 }
+locations = [
+    [896, 657, -40],
+    [896, 662, -40],
+    [896, 667, -40],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalChest"
+item_id = 0x09AB
+locations = [
+    [848, 719, 0],
+    [850, 719, 0],
+    [854, 607, -40],
+    [854, 607, -35],
+    [857, 670, -40],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E40
+locations = [
+    [828, 725, 0],
+    [844, 717, 0],
+    [852, 608, -40],
+    [852, 609, -40],
+    [852, 609, -36],
+    [852, 609, -32],
+    [852, 611, -40],
+    [852, 611, -36],
+    [852, 613, -40],
+    [852, 613, -36],
+    [852, 675, -40],
+    [852, 675, -36],
+    [852, 676, -40],
+    [852, 676, -36],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalGoldenChest"
+item_id = 0x0E41
+locations = [
+    [832, 712, 0],
+    [856, 670, -40],
+    [856, 670, -36],
+    [856, 670, -32],
+    [858, 670, -40],
+    [858, 670, -36],
+]
+
+[[decoration]]
+comment = "metal chest"
+type = "MetalChest"
+item_id = 0x0E7C
+locations = [
+    [852, 612, -40],
+    [852, 675, -32],
+]
+
+[[decoration]]
+comment = "skinning knife"
+type = "Static"
+item_id = 0x0EC5
+locations = [[864, 583, -34]]
+
+[[decoration]]
+comment = "anvil"
+type = "AnvilSouthAddon"
+item_id = 0x0FB0
+locations = [
+    [786, 662, 0],
+    [786, 671, 0],
+    [791, 662, 0],
+    [791, 671, 0],
+    [796, 662, 0],
+    [796, 671, 0],
+]
+
+[[decoration]]
+comment = "spinning wheel"
+type = "SpinningWheelEastAddon"
+item_id = 0x1019
+locations = [
+    [893, 620, -40],
+    [893, 622, -40],
+    [893, 624, -40],
+]
+
+[[decoration]]
+comment = "upright loom"
+type = "LoomEastAddon"
+item_id = 0x1060
+locations = [
+    [893, 617, -40],
+    [893, 626, -40],
+]
+
+[[decoration]]
+comment = "lever"
+type = "Static"
+item_id = 0x1093
+locations = [[760, 645, 10]]
+
+[[decoration]]
+comment = "butcher knife"
+type = "Static"
+item_id = 0x13F7
+locations = [[864, 582, -34]]
+
+[[decoration]]
+comment = "platemail arms"
+type = "Static"
+item_id = 0x1417
+props = { hue = 0x044E }
+locations = [[768, 631, 5]]
+
+[[decoration]]
+comment = "map"
+type = "Static"
+item_id = 0x14EB
+locations = [[876, 661, -34]]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x1986
+locations = [
+    [786, 659, 0],
+    [786, 668, 0],
+    [791, 659, 0],
+    [791, 668, 0],
+    [796, 659, 0],
+    [796, 668, 0],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x198A
+props = { light = "Circle300" }
+locations = [
+    [786, 660, 0],
+    [786, 669, 0],
+    [791, 660, 0],
+    [791, 669, 0],
+    [796, 660, 0],
+    [796, 669, 0],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x198E
+locations = [
+    [786, 661, 0],
+    [786, 670, 0],
+    [791, 661, 0],
+    [791, 670, 0],
+    [796, 661, 0],
+    [796, 670, 0],
+]
+
+[[decoration]]
+comment = "bellows"
+type = "Static"
+item_id = 0x1992
+locations = [
+    [786, 665, 0],
+    [786, 674, 0],
+    [791, 665, 0],
+    [791, 674, 0],
+    [796, 665, 0],
+    [796, 674, 0],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x1996
+locations = [
+    [786, 664, 0],
+    [786, 673, 0],
+    [791, 664, 0],
+    [791, 673, 0],
+    [796, 664, 0],
+    [796, 673, 0],
+]
+
+[[decoration]]
+comment = "forge"
+type = "Static"
+item_id = 0x199A
+locations = [
+    [786, 663, 0],
+    [786, 672, 0],
+    [791, 663, 0],
+    [791, 672, 0],
+    [796, 663, 0],
+    [796, 672, 0],
+]
+
+[[decoration]]
+comment = "heater shield"
+type = "Static"
+item_id = 0x1B76
+props = { hue = 0x044E }
+locations = [[766, 630, 6]]
+
+[[decoration]]
+comment = "heater shield"
+type = "Static"
+item_id = 0x1B77
+props = { hue = 0x044E }
+locations = [[768, 630, 5]]
+
+[[decoration]]
+comment = "Bell of Courage"
+type = "Static"
+item_id = 0x1C12
+locations = [
+    [846, 601, -34],
+    [846, 682, -34],
+]
+
+[[decoration]]
+comment = "brain"
+type = "Static"
+item_id = 0x1CF0
+props = { hue = 0x096E }
+locations = [[771, 631, 11]]
+
+[[decoration]]
+comment = "table leg"
+type = "Static"
+item_id = 0x1E7D
+props = { hue = 0x0451 }
+locations = [[766, 631, 6]]
+
+[[decoration]]
+comment = "barrel staves"
+type = "Static"
+item_id = 0x1EB1
+props = { hue = 0x044E }
+locations = [[775, 632, -1]]
+
+[[decoration]]
+comment = "barrel staves"
+type = "Static"
+item_id = 0x1EB2
+props = { hue = 0x044E }
+locations = [[773, 632, -1]]
+
+[[decoration]]
+comment = "barrel staves"
+type = "Static"
+item_id = 0x1EB3
+props = { hue = 0x044E }
+locations = [[767, 631, 2]]
+
+[[decoration]]
+comment = "statue"
+type = "Static"
+item_id = 0x1F18
+props = { hue = 0x0451 }
+locations = [[767, 630, 6]]

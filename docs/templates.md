@@ -407,3 +407,26 @@ standalone startup (`IMobileTemplateService`).
 
 To produce these files from an existing UOX3 shard, see
 [Migrate from UOX3](uox3-migration.md).
+
+## Decorations
+
+`templates/decorations/` holds the world decoration the client's map files do not: doors, signs,
+lights, furniture, teleporters and the like, about 40,500 placements in 100 files. It was
+converted once from ModernUO's `Data/Decoration`, one TOML file per source file, in one folder
+per map: `britannia/` (Trammel and Felucca), `trammel/`, `felucca/`, `ilshenar/`, `malas/`,
+`tokuno/`, and the special sets `ruined_magincia_tram/`, `ruined_magincia_fel/` and
+`bounty_boards/`.
+
+```toml
+[[decoration]]
+comment = "metal door"
+type = "MetalDoor"                # the kind, kept as ModernUO names it
+item_id = 0x0675
+props = { facing = "west_cw" }    # the kind's settings; facing is a DoorFacingType
+locations = [[1411, 1621, 30], [1411, 1622, 30]]
+```
+
+A block without `item_id` is an addon built from several graphics. `extras`, when present, gives a
+setting per location in the order of `locations`. The files are data only for now: nothing
+places them in the world yet.
+
