@@ -1,5 +1,7 @@
+using Moongate.Core.Geometry;
 using Moongate.Server.Ultima.Entities.World;
 using Moongate.Server.Ultima.Interfaces;
+using Moongate.Ultima.Types;
 
 namespace Moongate.Tests.TestSupport.Ultima.Speech;
 
@@ -12,6 +14,8 @@ public sealed class RecordingSpeechService : ISpeechService
 
     public List<(MobileEntity Source, int Sound)> Sounds { get; } = [];
 
+    public List<(MapType Map, Point3D Location, int Sound)> PlacedSounds { get; } = [];
+
     public int Say(MobileEntity speaker, string text)
     {
         Said.Add((speaker, text));
@@ -22,6 +26,13 @@ public sealed class RecordingSpeechService : ISpeechService
     public int PlaySound(MobileEntity source, int sound)
     {
         Sounds.Add((source, sound));
+
+        return 1;
+    }
+
+    public int PlaySound(MapType map, Point3D location, int sound)
+    {
+        PlacedSounds.Add((map, location, sound));
 
         return 1;
     }

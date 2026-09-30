@@ -304,6 +304,7 @@ public class MoongateUltimaPlugin : IMoongatePlugin
             container.AddScriptModule<LocalizationModule>();
             container.AddScriptModule<NpcModule>();
             container.AddScriptModule<ItemModule>();
+            container.AddScriptModule<WorldModule>();
 
             // After IUltimaDataService (-10): loaders read MUL/UOP files after Files.SetDirectory.
             container.AddLiveWorldMobiles();

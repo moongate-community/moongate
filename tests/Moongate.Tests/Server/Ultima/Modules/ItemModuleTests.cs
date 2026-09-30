@@ -13,6 +13,7 @@ using Moongate.Server.Ultima.Packets.World;
 using Moongate.Server.Ultima.Services;
 using Moongate.Server.Ultima.Types.Speech;
 using Moongate.Tests.TestSupport.Ultima.Items;
+using Moongate.Tests.TestSupport.Ultima.Sectors;
 using Moongate.Tests.TestSupport.Ultima.Speech;
 using Moongate.Tests.TestSupport.Ultima.Tooltips;
 using Moongate.Tests.TestSupport.Ultima.World;
@@ -23,19 +24,28 @@ namespace Moongate.Tests.Server.Ultima.Modules;
 public sealed class ItemModuleTests : IAsyncLifetime
 {
     private readonly RecordingWorldViewService _view = new();
-    private readonly ItemService _items = TestItems.Create();
+    private readonly RecordingSpeechService _speech = new();
+    private readonly SectorService _sectors = TestSectors.Create();
+    private readonly ItemService _items;
     private readonly ItemEntity _backpack = new() { Id = new Serial(0x40000001), TemplateId = "backpack", ItemId = 0x0E75, Amount = 1 };
     private readonly ItemEntity _potions = new() { Id = new Serial(0x40000002), TemplateId = "potion", Name = "a potion", ItemId = 0x0F0E, Amount = 3 };
     private readonly ItemEntity _ground = new() { Id = new Serial(0x40000003), TemplateId = "potion", ItemId = 0x0F0E, Amount = 2 };
     private readonly ItemEntity _sword = new() { Id = new Serial(0x40000004), TemplateId = "sword", ItemId = 0x0F5E, Amount = 1 };
 
     private BroadcastFixture _fixture = null!;
+    private MobileEntity _owner = null!;
+
+    public ItemModuleTests()
+    {
+        _items = TestItems.Create(_sectors);
+    }
 
     public async Task InitializeAsync()
     {
         _fixture = await BroadcastFixture.CreateAsync();
         await _fixture.AddAsync(2);
         await _fixture.AddAsync(3);
+        Assert.True(_fixture.Mobiles.TryGet(new Serial(2), out _owner!));
         _backpack.Equip(new Serial(2), LayerType.Backpack);
         _potions.PutInContainer(_backpack.Id, new Point2D(44, 65));
         _ground.PlaceOnGround(MapType.Trammel, new Point3D(1600, 1600, 0));
@@ -76,6 +86,90 @@ public sealed class ItemModuleTests : IAsyncLifetime
         Assert.False(result[1].Read<bool>());
         Assert.Equal(LuaValue.Nil, result[2]);
         Assert.Equal(2L, _potions.GetProp<long>("potion.charges"));
+    }
+
+    [Fact]
+    public void ItemId_AndSetItemId_OnTheGround_ChangeTheGraphicAndShowIt()
+    {
+        var result = Run("local before = item.item_id(0x40000003) return before, item.set_item_id(0x40000003, 0x0676), item.item_id(0x40000003)");
+
+        Assert.Equal((0x0F0E, true, 0x0676), (result[0].Read<int>(), result[1].Read<bool>(), result[2].Read<int>()));
+        Assert.Equal(0x0676, _ground.ItemId);
+        Assert.Equal(["Appeared 1073741827"], _view.Calls);
+    }
+
+    [Fact]
+    public void SetItemId_InAContainer_UpdatesTheOwner()
+    {
+        Assert.True(Run("return item.set_item_id(0x40000002, 0x0F0C)")[0].Read<bool>());
+
+        Assert.Equal(0x0F0C, _potions.ItemId);
+        Assert.Contains(_fixture.Sender.Sent, packet => packet is ContainerItemUpdatePacket);
+    }
+
+    [Theory,
+     InlineData("return item.set_item_id(0x40000004, 0x0676)"),
+     InlineData("return item.set_item_id(0x40000003, -1)"),
+     InlineData("return item.set_item_id(0x40000003, 0x10000)"),
+     InlineData("return item.set_item_id(12, 0x0676)")]
+    public void SetItemId_AWornItemAGraphicOutOfRangeOrUnknown_IsFalse(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+        Assert.Equal((0x0F0E, 0x0F5E), (_ground.ItemId, _sword.ItemId));
+    }
+
+    [Fact]
+    public void Location_OfAGroundItem_AndNilOtherwise()
+    {
+        var result = Run("local l = item.location(0x40000003) return l.x, l.y, l.z, l.map, item.location(0x40000002)");
+
+        Assert.Equal([1600d, 1600d, 0d, (double)(int)MapType.Trammel], result[..4].Select(value => value.Read<double>()));
+        Assert.Equal(LuaValue.Nil, result[4]);
+    }
+
+    [Fact]
+    public void MoveTo_MovesAGroundItemAndTakesItOffTheOldScreensFirst()
+    {
+        var result = Run("return item.move_to(0x40000003, 1601, 1599, 5)");
+
+        Assert.True(result[0].Read<bool>());
+        Assert.Equal(new Point3D(1601, 1599, 5), _ground.GroundLocation);
+        Assert.Equal(["Disappeared 1073741827", "Appeared 1073741827"], _view.Calls);
+        Assert.True(_items.IsLyingOnGround(_ground));
+    }
+
+    [Theory,
+     InlineData("return item.move_to(0x40000002, 1601, 1599, 5)"),
+     InlineData("return item.move_to(0x40000004, 1601, 1599, 5)"),
+     InlineData("return item.move_to(0x40000003, -1, 1599, 5)"),
+     InlineData("return item.move_to(0x40000003, 1601, 1599, 200)"),
+     InlineData("return item.move_to(12, 1601, 1599, 5)"),
+     InlineData("return item.move_to(0x40000003, 7168, 1599, 5)"),
+     InlineData("return item.move_to(0x40000003, 1601, 4096, 5)")]
+    public void MoveTo_AnItemNotOnTheGroundOrAnImpossibleSpot_IsFalse(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+        Assert.Equal(new Point3D(1600, 1600, 0), _ground.GroundLocation);
+        Assert.Empty(_view.Calls);
+    }
+
+    [Fact]
+    public void PlaySound_OnTheGroundOrCarried_PlaysWhereItIs()
+    {
+        Assert.True(Run("return item.play_sound(0x40000003, 0xEA)")[0].Read<bool>());
+        Assert.True(Run("return item.play_sound(0x40000002, 0x240)")[0].Read<bool>());
+
+        Assert.Equal(
+            [(MapType.Trammel, new Point3D(1600, 1600, 0), 0xEA), (MapType.Trammel, _owner.Location, 0x240)],
+            _speech.PlacedSounds
+        );
+    }
+
+    [Theory, InlineData("return item.play_sound(0x40000003, -1)"), InlineData("return item.play_sound(12, 0xEA)")]
+    public void PlaySound_ASoundOutOfRangeOrUnknown_IsFalse(string chunk)
+    {
+        Assert.False(Run(chunk)[0].Read<bool>());
+        Assert.Empty(_speech.PlacedSounds);
     }
 
     [Fact]
@@ -180,7 +274,7 @@ public sealed class ItemModuleTests : IAsyncLifetime
     {
         using var state = LuaState.Create();
         state.OpenBasicLibrary();
-        var module = new ItemModule(_items, _fixture.Sessions, _fixture.Sender, _view, TestTooltips.Create(_items, _fixture.Mobiles));
+        var module = new ItemModule(_items, _fixture.Sessions, _fixture.Sender, _view, TestTooltips.Create(_items, _fixture.Mobiles), _fixture.Mobiles, _speech, _sectors);
         new LuaModuleBinder(NoThreadGuard.Instance).Bind(state, module);
 
         return SyncValueTask.Run(state.DoStringAsync(chunk, "t"));

@@ -74,6 +74,11 @@ public sealed class SectorService : ISectorService
         return grid.Cells[(point.Y >> SectorShift) * grid.Columns + (point.X >> SectorShift)] is { NearbyPlayers: > 0 };
     }
 
+    public bool IsInside(MapType map, int x, int y)
+    {
+        return GetGrid(map) is { } grid && (uint)x < (uint)grid.Width && (uint)y < (uint)grid.Height;
+    }
+
     public void Move(MobileEntity mobile)
     {
         var sector = GetOrCreateSector(mobile.Map, mobile.Location, mobile);
